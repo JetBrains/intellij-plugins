@@ -32,10 +32,6 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- * User: Andrey.Vokin
- * Date: 10/23/12
- */
 public class CucumberJavaApplicationConfigurable extends SettingsEditor<CucumberJavaRunConfiguration> implements PanelWithAnchor {
   private final Project myProject;
   private JComponent myAnchor;

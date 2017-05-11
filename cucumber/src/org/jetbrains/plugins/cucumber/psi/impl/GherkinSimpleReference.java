@@ -9,10 +9,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.GherkinPsiElement;
 
-/**
- * User: Andrey.Vokin
- * Date: 4/15/11
- */
 public class GherkinSimpleReference implements PsiReference {
 
   private GherkinPsiElement myElement;

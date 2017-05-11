@@ -15,9 +15,6 @@
  */
 package com.intellij.coldFusion;
 
-/**
- * User: Nadya.Zabrodina
- */
 public class CfmlAnnotationTest extends CfmlCodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {

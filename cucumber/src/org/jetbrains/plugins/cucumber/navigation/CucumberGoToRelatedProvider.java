@@ -19,10 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * User: Andrey.Vokin
- * Date: 3/25/13
- */
 public class CucumberGoToRelatedProvider extends GotoRelatedProvider {
   @NotNull
   public List<? extends GotoRelatedItem> getItems(@NotNull DataContext context) {

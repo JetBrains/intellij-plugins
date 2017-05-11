@@ -2,10 +2,6 @@ package org.jetbrains.plugins.cucumber.java.inspections;
 
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
-/**
- * User: Andrey.Vokin
- * Date: 1/9/13
- */
 public class CucumberJavaStepDefClassInDefaultPackageInspectionTest extends CucumberJavaBaseInspectionTest {
   public void testStepDefClassInDefaultPackage() {
     doTest("StepDefClassInDefaultPackage.java");

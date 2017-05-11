@@ -41,10 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * User: Andrey.Vokin
- * Date: 10/8/2014.
- */
 public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
   private static final Logger LOG = Logger.getInstance("#org.jetbrains.plugins.cucumber.inspections.CucumberCreateStepFixBase");
   protected abstract void createStepOrSteps(GherkinStep step, @Nullable final Pair<PsiFile, BDDFrameworkType> fileAndFrameworkType);

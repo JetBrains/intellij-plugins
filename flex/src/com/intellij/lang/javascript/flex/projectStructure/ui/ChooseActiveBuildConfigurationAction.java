@@ -32,9 +32,6 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.Comparator;
 
-/**
- * User: ksafonov
- */
 public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
 
   private static final Icon ICON_ACTIVE = PlatformIcons.CHECK_ICON;

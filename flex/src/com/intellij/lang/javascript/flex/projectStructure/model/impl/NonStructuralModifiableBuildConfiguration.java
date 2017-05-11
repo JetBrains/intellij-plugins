@@ -10,9 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.Collection;
 
-/**
- * User: ksafonov
- */
 public class NonStructuralModifiableBuildConfiguration implements FlexBuildConfiguration {
 
   private final FlexBuildConfigurationImpl myOriginal;

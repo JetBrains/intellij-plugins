@@ -5,9 +5,6 @@ import com.intellij.util.messages.Topic;
 
 import java.util.Map;
 
-/**
- * User: ksafonov
- */
 public interface FlexBuildConfigurationChangeListener {
   Topic<FlexBuildConfigurationChangeListener> TOPIC =
     new Topic<>("Flash build configuration changed",

@@ -9,10 +9,6 @@ import org.jetbrains.plugins.cucumber.CucumberCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 
-/**
- * User: Andrey.Vokin
- * Date: 7/20/12
- */
 public abstract class CucumberResolveTest extends CucumberCodeInsightTestCase {
   protected void checkReference(@NotNull final String step, @Nullable final String stepDefinitionName) {
     final CucumberStepReference ref = (CucumberStepReference)findReferenceBySignature(step);

@@ -25,11 +25,6 @@ import org.jetbrains.annotations.Nullable;
 import static com.intellij.psi.util.TypeConversionUtil.isNumericType;
 import static com.intellij.psi.util.TypeConversionUtil.unboxAndBalanceTypes;
 
-/**
- * Created by IntelliJ IDEA.
- * User: vnikolaenko
- * Date: 28.04.2009
- */
 public abstract class CfmlExpressionTypeCalculator {
   private CfmlExpressionTypeCalculator() {
   }

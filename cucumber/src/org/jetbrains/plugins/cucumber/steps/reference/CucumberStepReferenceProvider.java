@@ -13,10 +13,6 @@ import org.jetbrains.plugins.cucumber.psi.GherkinElementTypes;
 import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinStepImpl;
 
-/**
- * User: Andrey.Vokin
- * Date: 7/23/12
- */
 public class CucumberStepReferenceProvider extends PsiReferenceProvider {
   @NotNull
   @Override

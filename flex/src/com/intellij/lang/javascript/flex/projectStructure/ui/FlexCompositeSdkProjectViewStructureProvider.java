@@ -23,9 +23,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-/**
- * User: ksafonov
- */
 public class FlexCompositeSdkProjectViewStructureProvider implements TreeStructureProvider, DumbAware {
 
   @NotNull

@@ -10,9 +10,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 
 import javax.swing.*;
 
-/**
- * User: ksafonov
- */
 public class FlexModuleRendererFactory extends ModuleRendererFactory {
 
   @Override

@@ -26,11 +26,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- * Date: 12/30/11
- */
 public class CfmlAttributeValueManipulator extends AbstractElementManipulator<CfmlCompositeElement> {
   @Override
   public CfmlCompositeElement handleContentChange(@NotNull CfmlCompositeElement expr, @NotNull TextRange range, String newContent) throws

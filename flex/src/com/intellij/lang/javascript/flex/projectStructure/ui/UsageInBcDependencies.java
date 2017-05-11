@@ -7,9 +7,6 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.*;
 
 import javax.swing.*;
 
-/**
- * User: ksafonov
- */
 public abstract class UsageInBcDependencies extends ProjectStructureElementUsage {
   private final BuildConfigurationProjectStructureElement myContainingElement;
   private final ProjectStructureElement mySourceElement;

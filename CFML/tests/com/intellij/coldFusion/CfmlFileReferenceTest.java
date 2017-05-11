@@ -18,11 +18,6 @@ package com.intellij.coldFusion;
 import com.intellij.openapi.command.WriteCommandAction;
 import org.jetbrains.annotations.NonNls;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- * Date: 1/26/12
- */
 public class CfmlFileReferenceTest extends CfmlCodeInsightFixtureTestCase {
 
   public void testRename() throws Throwable {

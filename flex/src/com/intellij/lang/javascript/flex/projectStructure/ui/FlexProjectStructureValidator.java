@@ -17,9 +17,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * User: ksafonov
- */
 public class FlexProjectStructureValidator extends ProjectStructureValidator {
 
   @Override

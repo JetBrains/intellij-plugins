@@ -36,10 +36,6 @@ import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
 import java.util.ArrayList;
 
-/**
- * User: Andrey.Vokin
- * Date: 8/1/12
- */
 public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
   public static final String STEP_DEFINITION_SUFFIX = "MyStepdefs";
 

@@ -5,11 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-/**
-* User: Maxim.Mossienko
-* Date: Mar 6, 2008
-* Time: 7:13:44 PM
-*/
 class DebuggerCommand {
   private final String myText;
   private final CommandOutputProcessingType myOutputProcessingType; // program will consume immediate server response (no infinite blocking allowed)

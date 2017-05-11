@@ -16,10 +16,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-/**
- * User: Andrey.Vokin
- * Date: 12/13/10
- */
 public interface CucumberJvmExtensionPoint {
   ExtensionPointName<CucumberJvmExtensionPoint> EP_NAME =
     ExtensionPointName.create("org.jetbrains.plugins.cucumber.steps.cucumberJvmExtensionPoint");

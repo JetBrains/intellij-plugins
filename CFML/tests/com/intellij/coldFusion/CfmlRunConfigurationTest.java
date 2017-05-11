@@ -29,9 +29,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by karashevich on 18/04/16.
- */
 public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
 
   private static final String WWWROOT_SRC = "wwwroot/src/";

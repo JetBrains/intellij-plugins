@@ -8,10 +8,6 @@ import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
 import java.io.IOException;
 import java.util.Collection;
 
-/**
- * User: Andrey.Vokin
- * Date: 9/26/12
- */
 public abstract class AbstractGherkinKeywordProviderTest extends TestCase {
   private GherkinKeywordProvider myKeywordProvider;
 

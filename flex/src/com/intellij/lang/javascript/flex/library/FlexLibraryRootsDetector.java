@@ -18,9 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * User: ksafonov
- */
 public class FlexLibraryRootsDetector extends LibraryRootsDetectorImpl {
 
   public FlexLibraryRootsDetector() {

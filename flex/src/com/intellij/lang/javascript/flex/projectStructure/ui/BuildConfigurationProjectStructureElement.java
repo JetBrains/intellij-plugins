@@ -32,9 +32,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * User: ksafonov
- */
 public class BuildConfigurationProjectStructureElement extends ProjectStructureElement {
 
   private final ModifiableFlexBuildConfiguration myBc;

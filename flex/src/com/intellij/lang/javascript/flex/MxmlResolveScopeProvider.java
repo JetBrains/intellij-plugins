@@ -4,9 +4,6 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * User: ksafonov
- */
 public class MxmlResolveScopeProvider extends ActionScriptResolveScopeProvider {
 
   @Override

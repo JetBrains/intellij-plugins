@@ -7,10 +7,6 @@ import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * User: Andrey.Vokin
- * Date: 9/26/12
- */
 public class JsonGherkinKeywordProviderTest extends AbstractGherkinKeywordProviderTest {
   private static final String TEST_DATA_PATH = "/keywords";
 

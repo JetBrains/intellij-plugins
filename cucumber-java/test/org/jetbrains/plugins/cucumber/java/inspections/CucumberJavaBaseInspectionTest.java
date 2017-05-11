@@ -2,10 +2,6 @@ package org.jetbrains.plugins.cucumber.java.inspections;
 
 import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
 
-/**
- * User: Andrey.Vokin
- * Date: 1/9/13
- */
 public abstract class CucumberJavaBaseInspectionTest extends JavaCodeInsightFixtureTestCase {
   public void setUp() throws Exception {
     super.setUp();

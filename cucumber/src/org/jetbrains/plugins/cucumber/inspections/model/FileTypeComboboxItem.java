@@ -4,10 +4,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 
-/**
- * User: Andrey.Vokin
- * Date: 1/3/11
- */
 public class FileTypeComboboxItem {
 
   private final BDDFrameworkType myFrameworkType;

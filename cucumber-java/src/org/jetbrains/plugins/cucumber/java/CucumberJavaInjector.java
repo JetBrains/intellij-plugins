@@ -11,10 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * User: Andrey.Vokin
- * Date: 10/30/2014.
- */
 public class CucumberJavaInjector implements MultiHostInjector {
   public static final Language regexpLanguage = Language.findLanguageByID("RegExp");
 

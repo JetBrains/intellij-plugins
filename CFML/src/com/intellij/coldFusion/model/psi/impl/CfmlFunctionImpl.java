@@ -32,10 +32,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-/**
- * User: vnikolaenko
- * Date: 29.04.2009
- */
 public class CfmlFunctionImpl extends CfmlCompositeElement implements CfmlFunction, PsiNameIdentifierOwner {
   public CfmlFunctionImpl(@NotNull ASTNode node) {
     super(node);

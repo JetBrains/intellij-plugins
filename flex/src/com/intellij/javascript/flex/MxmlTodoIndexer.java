@@ -16,12 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Maxim.Mossienko
- * Date: 2/17/12
- * Time: 9:32 PM
- */
 public class MxmlTodoIndexer extends XmlTodoIndexer {
   @NotNull
   @Override

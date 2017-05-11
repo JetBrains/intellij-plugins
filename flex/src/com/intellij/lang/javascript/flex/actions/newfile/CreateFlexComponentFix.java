@@ -37,9 +37,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * User: ksafonov
- */
 public class CreateFlexComponentFix extends CreateClassOrInterfaceFix {
   public static final Collection<String> FLEX_TEMPLATES_EXTENSIONS =
     Arrays.asList(JavaScriptSupportLoader.MXML_FILE_EXTENSION);

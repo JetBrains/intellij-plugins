@@ -10,10 +10,6 @@ import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 import java.util.List;
 
-/**
- * User: Andrey.Vokin
- * Date: 3/25/13
- */
 public class CucumberGotoRelatedFileTest extends CucumberJavaCodeInsightTestCase {
   public void testGotoRelated() {
     CucumberStepsIndex.getInstance(getProject()).reset();

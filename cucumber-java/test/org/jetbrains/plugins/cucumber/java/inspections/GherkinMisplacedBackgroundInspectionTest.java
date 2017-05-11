@@ -5,10 +5,6 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
-/**
- * User: Andrey.Vokin
- * Date: 10/3/2014.
- */
 public class GherkinMisplacedBackgroundInspectionTest extends CucumberJavaCodeInsightTestCase {
   public void testMisplacedBackground() {
     doTest();

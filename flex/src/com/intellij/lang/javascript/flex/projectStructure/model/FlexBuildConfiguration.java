@@ -10,9 +10,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Collection;
 
-/**
- * User: ksafonov
- */
 public interface FlexBuildConfiguration {
 
   class RLMInfo {

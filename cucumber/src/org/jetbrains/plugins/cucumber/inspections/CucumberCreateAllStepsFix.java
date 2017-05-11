@@ -20,10 +20,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-/**
- * User: Andrey.Vokin
- * Date: 10/8/2014.
- */
 public class CucumberCreateAllStepsFix extends CucumberCreateStepFixBase {
   @NotNull
   @Override

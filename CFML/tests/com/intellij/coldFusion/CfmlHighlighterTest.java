@@ -20,11 +20,6 @@ import com.intellij.coldFusion.model.CfmlLanguage;
 
 import java.util.concurrent.Callable;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- * Date: 4/23/12
- */
 public class CfmlHighlighterTest extends CfmlCodeInsightFixtureTestCase {
 
   protected void doTest() throws Exception {

@@ -12,10 +12,6 @@ import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * User: Andrey.Vokin
- * Date: 8/9/12
- */
 public class CucumberJavaTestUtil {
   public static final String RELATED_TEST_DATA_PATH = "/contrib/cucumber-java/testData/";
 

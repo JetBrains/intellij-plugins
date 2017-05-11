@@ -5,10 +5,6 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import org.jetbrains.plugins.cucumber.CucumberCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.CucumberTestUtil;
 
-/**
- * User: Andrey.Vokin
- * Date: 10/16/13
- */
 public class CompletionTest extends CucumberCodeInsightTestCase {
   public void testOutline() {
     doTest();

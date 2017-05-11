@@ -10,10 +10,6 @@ import org.jetbrains.plugins.cucumber.psi.*;
 
 import java.util.List;
 
-/**
- * User: Andrey.Vokin
- * Date: 10/29/13
- */
 public class GherkinBrokenTableInspection extends GherkinInspection {
   @NotNull
   @Override

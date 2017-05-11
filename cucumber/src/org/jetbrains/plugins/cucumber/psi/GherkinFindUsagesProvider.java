@@ -9,10 +9,6 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 
-/**
- * User: Andrey.Vokin
- * Date: 4/4/11
- */
 public class GherkinFindUsagesProvider implements FindUsagesProvider {
   @Override
   public WordsScanner getWordsScanner() {

@@ -8,9 +8,6 @@ import com.intellij.ui.navigation.Place;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * User: ksafonov
- */
 public class PlaceInBuildConfiguration extends PlaceInProjectStructure {
 
   private final BuildConfigurationProjectStructureElement myStructureElement;

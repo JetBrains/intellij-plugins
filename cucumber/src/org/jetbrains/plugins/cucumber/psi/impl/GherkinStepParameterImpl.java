@@ -14,10 +14,6 @@ import org.jetbrains.plugins.cucumber.psi.GherkinElementFactory;
 import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
 import org.jetbrains.plugins.cucumber.psi.GherkinStepParameter;
 
-/**
- * User: Andrey.Vokin
- * Date: 3/31/11
- */
 public class GherkinStepParameterImpl extends GherkinPsiElementBase implements GherkinStepParameter {
   public GherkinStepParameterImpl(@NotNull final ASTNode node) {
     super(node);

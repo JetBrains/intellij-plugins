@@ -10,10 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-/**
- * User: Andrey.Vokin
- * Date: 12/13/10
- */
 public class CucumberPsiTreeListener extends PsiTreeChangeAdapter {
 
   private Map<PsiElement, ChangesWatcher> changesWatchersMap;

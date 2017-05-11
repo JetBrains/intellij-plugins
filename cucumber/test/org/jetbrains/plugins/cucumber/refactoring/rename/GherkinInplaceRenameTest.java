@@ -7,10 +7,6 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import org.jetbrains.plugins.cucumber.CucumberTestUtil;
 import org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinInplaceRenameHandler;
 
-/**
- * User: Andrey.Vokin
- * Date: 10/8/13
- */
 public class GherkinInplaceRenameTest extends LightPlatformCodeInsightFixtureTestCase {
   private static final String TEST_DATA_PATH = "/refactoring/rename";
 

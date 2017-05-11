@@ -7,13 +7,6 @@ import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 
-/**
-* Created by IntelliJ IDEA.
-* User: Maxim.Mossienko
-* Date: 04.06.2009
-* Time: 18:25:39
-* To change this template use File | Settings | File Templates.
-*/
 public class CreateJSPropertyAccessorIntentionAction extends CreateJSFunctionIntentionActionBase {
   private final boolean myIsGetter;
   public CreateJSPropertyAccessorIntentionAction(String name, boolean getter) {

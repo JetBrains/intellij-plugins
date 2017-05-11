@@ -5,10 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
 import org.jetbrains.plugins.cucumber.psi.GherkinPystring;
 
-/**
- * User: Andrey.Vokin
- * Date: 4/19/11
- */
 public class GherkinPystringImpl extends GherkinPsiElementBase implements GherkinPystring {
   public GherkinPystringImpl(@NotNull final ASTNode node) {
     super(node);

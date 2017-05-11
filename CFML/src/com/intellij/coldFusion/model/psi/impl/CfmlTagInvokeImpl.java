@@ -22,11 +22,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * User: vnikolaenko
- * Date: 29.04.2009
- */
-// corresponding text pattern: <cfinvoke ... > 
+// corresponding text pattern: <cfinvoke ... >
 public class CfmlTagInvokeImpl extends CfmlTagImpl implements CfmlFunctionCall {
   private static final String TAG_NAME = "cfinvoke";
 

@@ -6,10 +6,6 @@ import org.junit.Test;
 
 import java.util.List;
 
-/**
- * User: avokin
- * Date: 27/06/14
- */
 public class CucumberRenameRegexpPreparationTest {
   @Test
   public void testClass() {

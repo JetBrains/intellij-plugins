@@ -23,10 +23,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-/**
- * User: vnikolaenko
- * Date: 29.04.2009
- */
 // an element which declared in <cftag name = "CfmlNamedElement" ... >
 public class CfmlNamedAttributeImpl extends CfmlAttributeNameImpl implements CfmlVariable {
   public CfmlNamedAttributeImpl(@NotNull ASTNode node) {

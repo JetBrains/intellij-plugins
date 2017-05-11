@@ -11,10 +11,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 
-/**
- * User: Andrey.Vokin
- * Date: 7/16/12
- */
 public class JavaStepDefinition extends AbstractStepDefinition {
   public JavaStepDefinition(PsiElement stepDef) {
     super(stepDef);

@@ -23,9 +23,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
-/**
-* User: ksafonov
-*/
 public class FlexMainStep extends MainStep {
   private final WizardModel myModel;
 

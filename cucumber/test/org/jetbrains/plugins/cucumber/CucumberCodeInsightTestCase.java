@@ -24,10 +24,6 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * User: Andrey.Vokin
- * Date: 7/23/12
- */
 public abstract class CucumberCodeInsightTestCase extends LightPlatformCodeInsightFixtureTestCase {
   @NonNls protected static final String CARET_STR = "<caret>";
 

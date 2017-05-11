@@ -1,9 +1,5 @@
 package org.jetbrains.plugins.cucumber.java.completion;
 
-/**
- * User: Andrey.Vokin
- * Date: 3/14/13
- */
 
 import com.intellij.testFramework.fixtures.CompletionTester;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;

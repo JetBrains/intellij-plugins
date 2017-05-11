@@ -22,11 +22,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- * Date: 11/28/11
- */
 public class CfmlSharpSurrounder implements Surrounder {
 
   @Override

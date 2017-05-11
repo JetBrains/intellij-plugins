@@ -23,10 +23,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.EnumSet;
 
-/**
- * User: avokin
- * Date: 20/06/14
- */
 public class CucumberStepRenameDialog extends RenameDialog {
   private AbstractStepDefinition myStepDefinition;
 

@@ -33,11 +33,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- * Date: 2/21/12
- */
 
 public class CfmlFileReferenceSet extends FileReferenceSet implements PlatformIcons {
   private static class CfmlFileReference extends FileReference {

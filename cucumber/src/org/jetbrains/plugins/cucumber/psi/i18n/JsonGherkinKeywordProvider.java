@@ -13,10 +13,6 @@ import org.jetbrains.plugins.cucumber.psi.*;
 import java.io.*;
 import java.util.*;
 
-/**
- * User: Andrey.Vokin
- * Date: 9/26/12
- */
 public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
   private static final Logger LOG = Logger.getInstance(JsonGherkinKeywordProvider.class.getName());
 

@@ -8,10 +8,6 @@ import com.intellij.refactoring.rename.inplace.VariableInplaceRenamer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.GherkinScenarioOutline;
 
-/**
- * User: Andrey.Vokin
- * Date: 10/7/13
- */
 public class GherkinInplaceRenamer extends VariableInplaceRenamer {
   public GherkinInplaceRenamer(@NotNull PsiNamedElement elementToRename, Editor editor) {
     super(elementToRename, editor);

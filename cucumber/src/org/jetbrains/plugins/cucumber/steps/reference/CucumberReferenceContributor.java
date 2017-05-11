@@ -6,10 +6,6 @@ import com.intellij.psi.PsiReferenceRegistrar;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinStepImpl;
 
-/**
- * User: Andrey.Vokin
- * Date: 3/29/11
- */
 public class CucumberReferenceContributor extends PsiReferenceContributor {
   @Override
   public void registerReferenceProviders(@NotNull final PsiReferenceRegistrar registrar) {

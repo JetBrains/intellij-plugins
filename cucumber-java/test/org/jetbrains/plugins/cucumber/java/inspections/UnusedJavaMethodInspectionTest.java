@@ -3,10 +3,6 @@ package org.jetbrains.plugins.cucumber.java.inspections;
 import com.intellij.codeInspection.deadCode.UnusedDeclarationInspectionBase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
-/**
- * User: Andrey.Vokin
- * Date: 10/20/12
- */
 public class UnusedJavaMethodInspectionTest extends CucumberJavaBaseInspectionTest {
   protected void doTest(final String file) {
     myFixture.enableInspections(new UnusedDeclarationInspectionBase(true));

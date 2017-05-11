@@ -14,10 +14,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.steps.search.CucumberStepSearchUtil;
 
-/**
- * User: Andrey.Vokin
- * Date: 7/11/12
- */
 public class CucumberUtil {
   @NonNls public static final String STEP_DEFINITIONS_DIR_NAME = "step_definitions";
 

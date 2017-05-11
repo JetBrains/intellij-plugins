@@ -26,9 +26,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 
-/**
- * Created by karashevich on 02/03/16.
- */
 public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlRunConfiguration> {
   private static final Logger LOG = Logger.getInstance("#com.intellij.coldFusion.UI.runner.CfmlRunConfigurationProducer");
   public final static String WWW_ROOT = "wwwroot";

@@ -11,10 +11,6 @@ import org.jetbrains.plugins.cucumber.psi.structure.GherkinStructureViewElement;
 
 import java.io.File;
 
-/**
- * User: Andrey.Vokin
- * Date: 1/10/13
- */
 public class CucumberStructureViewCucumberTest extends CodeInsightFixtureTestCase {
   private static final String BASE_PATH = "/structureView/";
 

@@ -17,10 +17,6 @@ import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
-/**
- * User: avokin
- * Date: 19/06/14
- */
 public class GherkinStepRenameHandler extends PsiElementRenameHandler {
   @Override
   public boolean isAvailableOnDataContext(DataContext dataContext) {

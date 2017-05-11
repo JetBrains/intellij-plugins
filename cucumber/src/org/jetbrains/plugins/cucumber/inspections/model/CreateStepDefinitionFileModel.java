@@ -12,10 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * User: Andrey.Vokin
- * Date: 1/3/11
- */
 public class CreateStepDefinitionFileModel {
 
   private String myFileName;

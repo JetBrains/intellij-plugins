@@ -33,11 +33,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.util.containers.ContainerUtil.map2Set;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- * Date: 11/23/11
- */
 public class CfmlArgumentValuesCompletionProvider extends CompletionProvider<CompletionParameters> {
 
   @Override

@@ -43,11 +43,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- * Date: 7/20/11
- */
 public class CfmlBlock extends TemplateLanguageBlock {
   private Indent myIndent;
   private Wrap myChildWrap;

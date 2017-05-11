@@ -7,9 +7,6 @@ import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
 
-/**
-* User: ksafonov
-*/
 @Tag("configuration")
 public class FlexBuildConfigurationState {
   @Attribute(value = "name")

@@ -55,9 +55,6 @@ import org.jetbrains.jps.model.serialization.java.JpsJavaModelSerializerExtensio
 import java.io.File;
 import java.util.*;
 
-/**
- * User: ksafonov
- */
 class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
 
   private static final Logger LOG = Logger.getInstance(FlexModuleConverter.class.getName());

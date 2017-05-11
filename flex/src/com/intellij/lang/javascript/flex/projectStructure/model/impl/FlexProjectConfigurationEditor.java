@@ -43,9 +43,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.event.ChangeListener;
 import java.util.*;
 
-/**
- * User: ksafonov
- */
 public class FlexProjectConfigurationEditor implements Disposable {
 
   private static final Logger LOG = Logger.getInstance(FlexProjectConfigurationEditor.class.getName());

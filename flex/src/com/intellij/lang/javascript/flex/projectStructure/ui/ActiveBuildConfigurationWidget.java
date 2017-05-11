@@ -38,9 +38,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-/**
- * User: ksafonov
- */
 public class ActiveBuildConfigurationWidget {
 
   private final Project myProject;

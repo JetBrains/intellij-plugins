@@ -3,10 +3,6 @@ package org.jetbrains.plugins.cucumber.java.resolve;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
-/**
- * User: Andrey.Vokin
- * Date: 7/20/12
- */
 public class CucumberJavaTestResolveTest extends BaseCucumberJavaResolveTest {
   public void testNavigationFromStepToStepDef01() throws Exception {
     doTest("stepResolve_01", "I p<caret>ay 25", "i_pay");

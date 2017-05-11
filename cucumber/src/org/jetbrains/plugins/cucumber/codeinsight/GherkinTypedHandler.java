@@ -17,10 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * User: Andrey.Vokin
- * Date: 3/24/11
- */
 public class GherkinTypedHandler extends TypedHandlerDelegate {
 
   public static final char PIPE = '|';

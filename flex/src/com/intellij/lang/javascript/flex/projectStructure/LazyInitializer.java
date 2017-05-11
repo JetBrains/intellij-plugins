@@ -2,9 +2,6 @@ package com.intellij.lang.javascript.flex.projectStructure;
 
 import org.jetbrains.annotations.Nullable;
 
-/**
- * User: ksafonov
- */
 public abstract class LazyInitializer<T> {
 
   @Nullable

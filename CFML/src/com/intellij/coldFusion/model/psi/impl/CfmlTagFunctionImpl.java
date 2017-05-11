@@ -29,10 +29,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-/**
- * User: vnikolaenko
- * Date: 29.04.2009
- */
 public class CfmlTagFunctionImpl extends CfmlNamedTagImpl implements CfmlFunction, PlatformIcons {
   public static final String TAG_NAME = "cffunction";
 

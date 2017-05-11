@@ -23,9 +23,6 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * User: ksafonov
- */
 public class FlexProjectRootsUtil {
 
   public static boolean dependsOnLibrary(@NotNull FlexBuildConfiguration bc, @NotNull final Library library, final boolean transitive,

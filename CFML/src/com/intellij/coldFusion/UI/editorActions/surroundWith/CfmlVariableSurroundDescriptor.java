@@ -27,11 +27,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- * Date: 11/28/11
- */
 public class CfmlVariableSurroundDescriptor implements SurroundDescriptor {
   public static final Surrounder[] SURROUNDERS = new Surrounder[]{
     new CfmlSharpSurrounder()

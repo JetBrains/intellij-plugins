@@ -7,10 +7,6 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
 import java.io.File;
 
-/**
- * User: Andrey.Vokin
- * Date: 3/13/13
- */
 public class CucumberCompletionVariantsTest extends CucumberCodeInsightTestCase {
   private CompletionTester myCompletionTester;
 

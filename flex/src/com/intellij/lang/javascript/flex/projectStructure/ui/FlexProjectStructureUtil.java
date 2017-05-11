@@ -11,9 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * User: ksafonov
- */
 public class FlexProjectStructureUtil {
 
   public static Place createPlace(FlexBCConfigurable configurable, @Nullable String tabName) {

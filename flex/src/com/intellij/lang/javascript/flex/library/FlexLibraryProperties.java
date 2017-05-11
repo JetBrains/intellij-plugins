@@ -5,9 +5,6 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.Nullable;
 
-/**
-* User: ksafonov
-*/
 public class FlexLibraryProperties extends LibraryProperties<FlexLibraryProperties> {
   @Nullable
   private String myId;

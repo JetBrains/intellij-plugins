@@ -6,9 +6,6 @@ import com.intellij.openapi.module.ModuleType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * User: ksafonov
- */
 public abstract class FlexBuildConfigurationManager {
 
   public abstract FlexBuildConfiguration[] getBuildConfigurations();

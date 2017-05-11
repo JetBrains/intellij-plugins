@@ -20,13 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-/**
- * Created by IntelliJ IDEA.
-* User: Maxim.Mossienko
-* Date: 05.03.2009
-* Time: 0:43:37
-* To change this template use File | Settings | File Templates.
-*/
 class AS3InterfaceStubDumper extends AS3InterfaceDumper {
   final LinkedList<StubElement> parents;
   private static final JSAttributeList.AccessType[] ourAccessTypes = JSAttributeList.AccessType.values();

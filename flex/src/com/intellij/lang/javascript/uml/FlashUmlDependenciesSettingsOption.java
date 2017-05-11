@@ -7,9 +7,6 @@ import org.jetbrains.annotations.PropertyKey;
 
 import java.util.EnumSet;
 
-/**
- * User: ksafonov
- */
 public enum FlashUmlDependenciesSettingsOption {
 
   ONE_TO_ONE("uml.dependencies.one.to.one"),

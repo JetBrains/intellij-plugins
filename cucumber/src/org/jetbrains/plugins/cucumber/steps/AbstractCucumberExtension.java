@@ -13,10 +13,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-/**
- * User: Andrey.Vokin
- * Date: 6/28/13
- */
 public abstract class AbstractCucumberExtension implements CucumberJvmExtensionPoint {
   @Override
   public List<PsiElement> resolveStep(@NotNull final PsiElement element) {

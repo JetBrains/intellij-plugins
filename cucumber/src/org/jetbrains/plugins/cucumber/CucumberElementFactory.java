@@ -7,10 +7,6 @@ import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
-/**
- * User: Andrey.Vokin
- * Date: 2/20/12
- */
 public class CucumberElementFactory {
 
   public static PsiElement createTempPsiFile(@NotNull final Project project, @NotNull final String text) {

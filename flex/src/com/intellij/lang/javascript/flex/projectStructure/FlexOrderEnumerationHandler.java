@@ -26,9 +26,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * User: ksafonov
- */
 public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
 
   public static Key<FlexBuildConfiguration> FORCE_BC = Key.create(FlexOrderEnumerationHandler.class.getName() + ".forceBc");

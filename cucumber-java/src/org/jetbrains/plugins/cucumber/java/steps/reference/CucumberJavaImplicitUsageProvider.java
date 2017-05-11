@@ -7,10 +7,6 @@ import com.intellij.psi.PsiMethod;
 
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.*;
 
-/**
- * User: Andrey.Vokin
- * Date: 10/4/12
- */
 public class CucumberJavaImplicitUsageProvider implements ImplicitUsageProvider {
   @Override
   public boolean isImplicitUsage(PsiElement element) {

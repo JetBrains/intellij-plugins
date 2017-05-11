@@ -8,9 +8,6 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * User: ksafonov
- */
 class FlexSwcLibrariesRootDetector extends RootFilter {
 
   public FlexSwcLibrariesRootDetector() {

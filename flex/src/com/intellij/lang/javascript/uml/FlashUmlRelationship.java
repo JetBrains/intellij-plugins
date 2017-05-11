@@ -13,9 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
-/**
- * User: ksafonov
- */
 public interface FlashUmlRelationship extends DiagramRelationshipInfo {
 
   @NotNull

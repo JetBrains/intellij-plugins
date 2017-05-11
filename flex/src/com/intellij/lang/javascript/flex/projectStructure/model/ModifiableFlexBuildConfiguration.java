@@ -7,9 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-/**
- * User: ksafonov
- */
 public interface ModifiableFlexBuildConfiguration extends FlexBuildConfiguration {
 
   @NotNull

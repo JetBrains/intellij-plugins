@@ -12,10 +12,6 @@ import org.jetbrains.plugins.cucumber.psi.GherkinScenario;
 import org.jetbrains.plugins.cucumber.psi.GherkinScenarioOutline;
 import org.jetbrains.plugins.cucumber.psi.GherkinStepsHolder;
 
-/**
- * User: Andrey.Vokin
- * Date: 10/22/12
- */
 public class CucumberJavaScenarioRunConfigurationProducer extends CucumberJavaFeatureRunConfigurationProducer {
   @Override
   protected String getNameFilter(@NotNull ConfigurationContext context) {

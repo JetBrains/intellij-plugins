@@ -13,10 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-/**
- * User: Andrey.Vokin
- * Date: 8/6/12
- */
 public class CucumberJavaRunConfigurationType extends ApplicationConfigurationType {
   @NonNls
   public static final String ID = "CucumberJavaRunConfigurationType";

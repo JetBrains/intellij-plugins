@@ -5,9 +5,6 @@ import com.intellij.flex.model.bc.LinkageType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * User: ksafonov
- */
 public interface Dependencies {
 
   @Nullable

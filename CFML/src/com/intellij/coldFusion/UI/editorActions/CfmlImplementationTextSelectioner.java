@@ -22,11 +22,6 @@ import com.intellij.coldFusion.model.psi.CfmlTag;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- * Date: 4/23/12
- */
 public class CfmlImplementationTextSelectioner extends DefaultImplementationTextSelectioner {
 
   @Override

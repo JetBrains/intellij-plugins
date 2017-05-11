@@ -19,11 +19,6 @@ import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.hint.ImplementationViewComponent;
 import com.intellij.psi.PsiElement;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- * Date: 4/24/12
- */
 public class CfmlImplementationsViewTest extends CfmlCodeInsightFixtureTestCase {
   public void testQuickDefinitionViewForTagFunctions() {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));

@@ -15,10 +15,6 @@ import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
-/**
- * User: Andrey.Vokin
- * Date: 7/27/12
- */
 public class CucumberJavaMethodUsageSearcher extends QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters> {
   public CucumberJavaMethodUsageSearcher() {
     super(true);

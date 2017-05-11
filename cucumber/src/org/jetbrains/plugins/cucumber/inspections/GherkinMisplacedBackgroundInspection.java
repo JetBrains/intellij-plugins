@@ -10,10 +10,6 @@ import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
 import org.jetbrains.plugins.cucumber.psi.GherkinScenario;
 
-/**
- * User: Andrey.Vokin
- * Date: 10/3/2014.
- */
 public class GherkinMisplacedBackgroundInspection extends GherkinInspection {
   @NotNull
   @Override

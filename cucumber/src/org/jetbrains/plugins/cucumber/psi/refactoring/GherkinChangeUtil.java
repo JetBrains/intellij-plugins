@@ -7,10 +7,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.*;
 
-/**
- * User: avokin
- * Date: 20/06/14
- */
 public class GherkinChangeUtil {
   @NotNull
   public static GherkinStep createStep(final String text, final Project project) {

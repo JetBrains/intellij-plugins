@@ -2,11 +2,6 @@ package com.intellij.lang.javascript.flex.debug;
 
 import java.util.*;
 
-/**
-* User: Maxim.Mossienko
-* Date: 29.12.2009
-* Time: 16:27:48
-*/
 class ResponseLineIterator implements Iterator<String> {
   private final List<String> lines;
   private int current;

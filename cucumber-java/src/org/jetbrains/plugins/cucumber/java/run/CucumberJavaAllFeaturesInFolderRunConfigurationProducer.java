@@ -17,10 +17,6 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 
 import java.util.Set;
 
-/**
- * User: avokin
- * Date: 10/12/12
- */
 public class CucumberJavaAllFeaturesInFolderRunConfigurationProducer extends CucumberJavaRunConfigurationProducer {
   @Override
   protected NullableComputable<String> getStepsGlue(@NotNull final PsiElement element) {

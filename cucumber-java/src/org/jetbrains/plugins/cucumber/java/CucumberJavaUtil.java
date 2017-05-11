@@ -17,10 +17,6 @@ import java.util.Set;
 import static com.intellij.psi.util.PsiTreeUtil.getChildOfType;
 import static com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList;
 
-/**
- * User: Andrey.Vokin
- * Date: 7/25/12
- */
 public class CucumberJavaUtil {
   public static final String CUCUMBER_STEP_ANNOTATION_PREFIX_1_0 = "cucumber.annotation.";
   public static final String CUCUMBER_STEP_ANNOTATION_PREFIX_1_1 = "cucumber.api.java.";

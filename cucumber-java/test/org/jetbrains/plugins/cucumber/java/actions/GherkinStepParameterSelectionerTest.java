@@ -6,10 +6,6 @@ import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import org.jetbrains.plugins.cucumber.CucumberCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
-/**
- * User: zolotov
- * Date: 10/7/13
- */
 @TestDataPath("$CONTENT_ROOT/testData/selectWord")
 public class GherkinStepParameterSelectionerTest extends CucumberCodeInsightTestCase {
 

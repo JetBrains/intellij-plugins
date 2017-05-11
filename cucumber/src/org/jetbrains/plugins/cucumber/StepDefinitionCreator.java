@@ -7,10 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.GherkinFeature;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
-/**
- * User: Andrey.Vokin
- * Date: 8/1/12
- */
 public interface StepDefinitionCreator {
   /**
    * Creates step definition file

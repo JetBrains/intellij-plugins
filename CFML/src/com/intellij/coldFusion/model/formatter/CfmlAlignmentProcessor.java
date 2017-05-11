@@ -22,11 +22,6 @@ import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- * Date: 8/9/11
- */
 public class CfmlAlignmentProcessor extends CfmlFormatterUtil {
 
   private final ASTNode myNode;

@@ -5,10 +5,6 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
-/**
- * User: Andrey.Vokin
- * Date: 3/1/13
- */
 public class CucumberHighlightingTest extends CucumberJavaCodeInsightTestCase {
   public void testStepParameter() {
     doTest();

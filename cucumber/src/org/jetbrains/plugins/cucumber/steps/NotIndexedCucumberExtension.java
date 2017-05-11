@@ -24,10 +24,6 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 
 import java.util.*;
 
-/**
- * User: Andrey.Vokin
- * Date: 6/26/13
- */
 public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtension {
   public Object getDataObject(@NotNull final Project project) {
     final DataObject result = new DataObject();

@@ -25,10 +25,6 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaBundle;
 
 import java.io.File;
 
-/**
- * User: Andrey.Vokin
- * Date: 8/6/12
- */
 
 public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
   private NullableComputable<String> glueInitializer = null;

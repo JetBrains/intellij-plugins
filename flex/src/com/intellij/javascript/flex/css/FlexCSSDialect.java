@@ -8,10 +8,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * User: anna
- * Date: 5/15/13
- */
 public class FlexCSSDialect extends CssDialect {
   @Override
   public String getName() {

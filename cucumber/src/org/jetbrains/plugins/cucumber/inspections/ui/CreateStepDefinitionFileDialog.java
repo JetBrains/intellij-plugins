@@ -25,10 +25,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-/**
- * User: Andrey.Vokin
- * Date: 1/3/11
- */
 public class CreateStepDefinitionFileDialog extends DialogWrapper {
 
   private JTextField myFileNameTextField;

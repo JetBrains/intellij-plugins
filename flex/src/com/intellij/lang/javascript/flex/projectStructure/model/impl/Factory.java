@@ -3,9 +3,6 @@ package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * User: ksafonov
- */
 public class Factory {
 
   public static ModifiableCompilerOptions createCompilerOptions() {

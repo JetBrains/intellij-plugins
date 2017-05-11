@@ -33,9 +33,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * User: ksafonov
- */
 public class FlashUmlDependencyProvider {
   private static final Language CSS = Language.findLanguageByID("CSS");
 

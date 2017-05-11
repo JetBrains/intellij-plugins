@@ -30,10 +30,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-/**
- * User: vnikolaenko
- * Date: 28.04.2009
- */
 public class CfmlAssignmentExpression extends CfmlCompositeElement implements CfmlExpression {
   private AssignedVariable myAssignedVariable = null;
   private boolean myVariableWasInitialized = false;

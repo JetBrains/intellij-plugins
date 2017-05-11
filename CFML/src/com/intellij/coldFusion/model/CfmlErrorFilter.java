@@ -15,11 +15,6 @@
  */
 package com.intellij.coldFusion.model;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- * Date: 4/23/12
- */
 
 import com.intellij.codeInsight.highlighting.HighlightErrorFilter;
 import com.intellij.coldFusion.model.files.CfmlFileType;

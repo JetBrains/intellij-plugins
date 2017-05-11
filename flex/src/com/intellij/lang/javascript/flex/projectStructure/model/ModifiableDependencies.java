@@ -7,9 +7,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * User: ksafonov
- */
 public interface ModifiableDependencies extends Dependencies {
 
   List<ModifiableDependencyEntry> getModifiableEntries();

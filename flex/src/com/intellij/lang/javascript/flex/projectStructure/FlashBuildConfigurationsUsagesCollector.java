@@ -18,9 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * User: ksafonov
- */
 public class FlashBuildConfigurationsUsagesCollector extends AbstractApplicationUsagesCollector {
 
   private static final String GROUP_ID = "Flash build configurations";

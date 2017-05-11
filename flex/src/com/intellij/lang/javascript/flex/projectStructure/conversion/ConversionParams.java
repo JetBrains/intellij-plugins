@@ -34,9 +34,6 @@ import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
 
 import java.util.*;
 
-/**
- * User: ksafonov
- */
 public class ConversionParams {
   public static final String OLD_FLEX_SDK_TYPE_NAME = "Flex SDK Type";
   public static final String OLD_AIR_SDK_TYPE_NAME = "AIR SDK Type";

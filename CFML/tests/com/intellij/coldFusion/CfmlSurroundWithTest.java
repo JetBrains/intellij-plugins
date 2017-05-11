@@ -26,11 +26,6 @@ import com.intellij.psi.PsiElement;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- * Date: 12/5/11
- */
 public class CfmlSurroundWithTest extends CfmlCodeInsightFixtureTestCase {
 
 

@@ -7,13 +7,6 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiFile;
 
-/**
-* Created by IntelliJ IDEA.
-* User: Maxim.Mossienko
-* Date: 04.06.2009
-* Time: 18:25:54
-* To change this template use File | Settings | File Templates.
-*/
 public class CreateJSEventMethod extends CreateJSFunctionIntentionActionBase {
   private final Computable<String> myEventTypeGenerator;
 

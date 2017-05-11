@@ -8,9 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-/**
- * User: ksafonov
- */
 class FlexProjectConverter extends ProjectConverter {
   private ConversionParams myParams;
   private final ConversionContext myContext;

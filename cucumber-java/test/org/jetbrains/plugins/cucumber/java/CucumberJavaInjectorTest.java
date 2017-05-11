@@ -2,10 +2,6 @@ package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.ide.highlighter.JavaFileType;
 
-/**
- * User: Andrey.Vokin
- * Date: 10/30/2014.
- */
 public class CucumberJavaInjectorTest extends CucumberJavaCodeInsightTestCase {
   public void testRegexIntoHookAndStepAnnotation() {
     myFixture.configureByText(JavaFileType.INSTANCE,

@@ -23,11 +23,6 @@ import com.intellij.sql.dialects.SqlDialectMappings;
 import com.intellij.sql.highlighting.SqlSyntaxHighlighter;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- * Date: 9/5/11
- */
 public class CfmlSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
 
   @NotNull

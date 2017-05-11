@@ -13,9 +13,6 @@ import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * User: ksafonov
- */
 public class ConversionHelper {
 
   private static class LightweightBuildConfigurationEntry

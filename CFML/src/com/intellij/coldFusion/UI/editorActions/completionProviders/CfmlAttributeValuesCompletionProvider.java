@@ -28,10 +28,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * User: vnikolaenko
- * Date: 17.03.2009
- */
 class CfmlAttributeValuesCompletionProvider extends CompletionProvider<CompletionParameters> {
   public void addCompletions(@NotNull final CompletionParameters parameters,
                              final ProcessingContext context,

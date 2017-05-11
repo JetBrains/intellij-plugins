@@ -25,10 +25,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * User: Andrey.Vokin
- * Date: 11/28/13
- */
 public abstract class AbstractStepDefinitionCreator implements StepDefinitionCreator {
   @NotNull
   public String getStepDefinitionFilePath(@NotNull final PsiFile psiFile) {

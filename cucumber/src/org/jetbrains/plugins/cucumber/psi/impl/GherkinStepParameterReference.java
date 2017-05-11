@@ -4,10 +4,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.plugins.cucumber.psi.*;
 
-/**
- * User: Andrey.Vokin
- * Date: 4/13/11
- */
 public class GherkinStepParameterReference extends GherkinSimpleReference {
 
   public GherkinStepParameterReference(GherkinStepParameter stepParameter) {

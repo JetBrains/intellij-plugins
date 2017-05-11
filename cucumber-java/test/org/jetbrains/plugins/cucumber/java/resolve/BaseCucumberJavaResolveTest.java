@@ -9,10 +9,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.resolve.CucumberResolveTest;
 
-/**
- * User: Andrey.Vokin
- * Date: 8/9/12
- */
 public abstract class BaseCucumberJavaResolveTest extends CucumberResolveTest {
   @Nullable
   @Override

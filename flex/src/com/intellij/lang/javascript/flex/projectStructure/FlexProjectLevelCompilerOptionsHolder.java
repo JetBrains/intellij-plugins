@@ -4,9 +4,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.ModuleOrProjectC
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 
-/**
- * User: ksafonov
- */
 public abstract class FlexProjectLevelCompilerOptionsHolder {
   // TODO should be getModifiableModel()!
   public abstract ModuleOrProjectCompilerOptions getProjectLevelCompilerOptions();

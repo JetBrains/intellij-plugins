@@ -7,9 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Map;
 
-/**
- * User: ksafonov
- */
 public class NonStructuralModifiableCompilerOptions implements CompilerOptions {
   private final CompilerOptionsImpl myOriginal;
 

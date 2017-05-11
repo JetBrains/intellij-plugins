@@ -11,10 +11,6 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
-/**
- * User: Andrey.Vokin
- * Date: 10/8/2014.
- */
 public class CucumberJavaCreateStepTest extends CucumberJavaCodeInsightTestCase {
   public void testCreateAllSteps() {
     doTest(true);

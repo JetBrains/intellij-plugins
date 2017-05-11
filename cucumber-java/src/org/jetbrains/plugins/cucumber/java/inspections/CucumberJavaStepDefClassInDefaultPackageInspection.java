@@ -9,10 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaBundle;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
-/**
- * User: Andrey.Vokin
- * Date: 3/12/13
- */
 public class CucumberJavaStepDefClassInDefaultPackageInspection extends BaseLocalInspectionTool {
   public boolean isEnabledByDefault() {
     return true;

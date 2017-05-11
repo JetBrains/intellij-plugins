@@ -6,9 +6,6 @@ import com.intellij.conversion.ProjectConverter;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * User: ksafonov
- */
 public class FlexBuildConfigurationsConverterProvider extends ConverterProvider {
   protected FlexBuildConfigurationsConverterProvider() {
     super("flex-build-configurations");
