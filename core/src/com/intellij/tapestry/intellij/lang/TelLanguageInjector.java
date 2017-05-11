@@ -17,10 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * User: Maxim.Mossienko
- * Date: 2/4/13
- */
 public class TelLanguageInjector implements MultiHostInjector {
   @Override
   public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {

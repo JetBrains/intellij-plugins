@@ -5,11 +5,6 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Alexey Chmutov
- * Date: 07.06.2008
- */
 public class TelLiteralExpressionType extends TelCompositeElementType {
   private final String myTypeName;
   private final PsiPrimitiveType myPrimitiveType;

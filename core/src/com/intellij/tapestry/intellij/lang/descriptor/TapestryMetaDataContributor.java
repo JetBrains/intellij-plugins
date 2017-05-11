@@ -6,9 +6,6 @@ import com.intellij.psi.meta.MetaDataContributor;
 import com.intellij.psi.meta.MetaDataRegistrar;
 import com.intellij.tapestry.core.TapestryConstants;
 
-/**
- * Created by Maxim.Mossienko on 7/28/2015.
- */
 public class TapestryMetaDataContributor implements MetaDataContributor {
   @Override
   public void contributeMetaData(MetaDataRegistrar registrar) {

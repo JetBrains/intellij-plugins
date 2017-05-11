@@ -8,13 +8,6 @@ import com.intellij.psi.PsiField;
 import java.util.Arrays;
 import java.util.Collection;
 
-/**
-* Created with IntelliJ IDEA.
-* User: Maxim.Mossienko
-* Date: 11/5/12
-* Time: 3:58 PM
-* To change this template use File | Settings | File Templates.
-*/
 public class TapestryImplicitUsageProvider implements ImplicitUsageProvider {
   private static final Collection<String> ourAnnotations = Arrays.asList(
     "org.apache.tapestry5.ioc.annotations.Inject", "org.apache.tapestry5.annotations.Component");
