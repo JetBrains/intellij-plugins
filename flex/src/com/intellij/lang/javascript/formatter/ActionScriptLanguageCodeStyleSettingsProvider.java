@@ -82,8 +82,6 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
     else if (settingsType == SettingsType.BLANK_LINES_SETTINGS) {
       List<String> blankLinesOptions = new ArrayList<>();
       blankLinesOptions.addAll(Arrays.asList("KEEP_BLANK_LINES_IN_CODE",
-                                             "KEEP_BLANK_LINES_IN_DECLARATIONS",
-                                             "KEEP_BLANK_LINES_BEFORE_RBRACE",
                                              "BLANK_LINES_AFTER_IMPORTS",
                                              "BLANK_LINES_BEFORE_IMPORTS",
                                              "BLANK_LINES_AROUND_METHOD",
