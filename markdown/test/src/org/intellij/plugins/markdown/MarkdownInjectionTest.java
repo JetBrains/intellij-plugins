@@ -19,7 +19,7 @@ public class MarkdownInjectionTest extends LightPlatformCodeInsightFixtureTestCa
 
   public void testFenceWithJs() {
     assert JavascriptLanguage.INSTANCE != null;
-    assertNotNull(LanguageGuesser.INSTANCE.guessLanguage("js") != null);
+    assertNotNull(LanguageGuesser.INSTANCE.guessLanguage("js"));
   }
 
   private void doTest(String text, boolean shouldHaveInjection) {
