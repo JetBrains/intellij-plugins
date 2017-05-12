@@ -127,8 +127,7 @@ public class ActionScriptRearranger extends JSRearrangerBase {
       return commonSettings.BLANK_LINES_AROUND_METHOD;
     }
     else {
-      LOG.error(target.getType());
-      return 0;
+      return -1;
     }
   }
 
