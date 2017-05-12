@@ -2,7 +2,6 @@ package com.jetbrains.lang.dart.ide.completion;
 
 import com.intellij.CommonBundle;
 import com.intellij.codeInsight.editorActions.smartEnter.SmartEnterProcessor;
-import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
@@ -28,7 +27,7 @@ public class DartServerStatementCompletionProcessor extends SmartEnterProcessor 
         Position position = sourceChange.getSelection();
         if (position != null) {
           // The position should never be null but it might be if unit tests are flaky.
-          editor.getCaretModel().moveToOffset(position.getOffset());
+          editor.getCaretModel().moveToOffset(service.getConvertedOffset(psiFile.getVirtualFile(), position.getOffset()));
         }
       }
       catch (DartSourceEditException e) {
