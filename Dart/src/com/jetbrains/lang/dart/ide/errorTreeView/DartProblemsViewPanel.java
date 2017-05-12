@@ -74,18 +74,15 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
   @NotNull private final Project myProject;
   @NotNull private final TableView<DartProblem> myTable;
 
-  @NotNull private DartProblemsViewSettings mySettings;
-  @NotNull private final DartProblemsFilter myFilter;
+  @NotNull private final DartProblemsPresentationHelper myPresentationHelper;
 
   private DartProblemsView.ToolWindowUpdater myToolWindowUpdater;
 
   public DartProblemsViewPanel(@NotNull final Project project,
-                               @NotNull final DartProblemsFilter filter,
-                               @NotNull DartProblemsViewSettings settings) {
+                               @NotNull final DartProblemsPresentationHelper presentationHelper) {
     super(false, true);
     myProject = project;
-    myFilter = filter;
-    mySettings = settings;
+    myPresentationHelper = presentationHelper;
 
     myTable = createTable();
     setToolbar(createToolbar());
@@ -96,7 +93,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
   @NotNull
   private TableView<DartProblem> createTable() {
-    final TableView<DartProblem> table = new TableView<>(new DartProblemsTableModel(myProject, myFilter));
+    final TableView<DartProblem> table = new TableView<>(new DartProblemsTableModel(myProject, myPresentationHelper));
 
     table.addKeyListener(new KeyAdapter() {
       @Override
@@ -117,7 +114,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     });
 
     //noinspection unchecked
-    ((DefaultRowSorter)table.getRowSorter()).setRowFilter(myFilter);
+    ((DefaultRowSorter)table.getRowSorter()).setRowFilter(myPresentationHelper.getRowFilter());
 
     table.getRowSorter().addRowSorterListener(e -> {
       final List<? extends RowSorter.SortKey> sortKeys = myTable.getRowSorter().getSortKeys();
@@ -195,12 +192,12 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     final AutoScrollToSourceHandler autoScrollToSourceHandler = new AutoScrollToSourceHandler() {
       @Override
       protected boolean isAutoScrollMode() {
-        return mySettings.autoScrollToSource;
+        return myPresentationHelper.isAutoScrollToSource();
       }
 
       @Override
       protected void setAutoScrollMode(boolean autoScrollToSource) {
-        mySettings.autoScrollToSource = autoScrollToSource;
+        myPresentationHelper.setAutoScrollToSource(autoScrollToSource);
       }
     };
 
@@ -214,12 +211,12 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
                                              AllIcons.Nodes.SortBySeverity) {
       @Override
       public boolean isSelected(AnActionEvent e) {
-        return ((DartProblemsTableModel)myTable.getModel()).isGroupBySeverity();
+        return myPresentationHelper.isGroupBySeverity();
       }
 
       @Override
       public void setSelected(AnActionEvent e, boolean groupBySeverity) {
-        ((DartProblemsTableModel)myTable.getModel()).setGroupBySeverity(groupBySeverity);
+        myPresentationHelper.setGroupBySeverity(groupBySeverity);
         fireGroupingOrFilterChanged();
       }
     };
@@ -235,19 +232,19 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
   private void showFiltersPopup() {
     final DartProblemsFilterForm form = new DartProblemsFilterForm();
-    form.reset(myFilter);
+    form.reset(myPresentationHelper);
 
     form.addListener(new DartProblemsFilterForm.FilterListener() {
       @Override
       public void filtersChanged() {
-        myFilter.updateFromUI(form);
+        myPresentationHelper.updateFromUI(form);
         fireGroupingOrFilterChanged();
       }
 
       @Override
       public void filtersResetRequested() {
-        myFilter.resetAllFilters();
-        form.reset(myFilter);
+        myPresentationHelper.resetAllFilters();
+        form.reset(myPresentationHelper);
         fireGroupingOrFilterChanged();
       }
     });
@@ -346,10 +343,6 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     myToolWindowUpdater = toolWindowUpdater;
   }
 
-  void updateFromSettings(DartProblemsViewSettings settings) {
-    mySettings = settings;
-  }
-
   private class FilterProblemsAction extends DumbAwareAction implements Toggleable {
     public FilterProblemsAction() {
       super(DartBundle.message("filter.problems"), DartBundle.message("filter.problems.description"), AllIcons.General.Filter);
@@ -358,7 +351,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     @Override
     public void update(final AnActionEvent e) {
       // show icon as toggled on if any filter is active
-      e.getPresentation().putClientProperty(Toggleable.SELECTED_PROPERTY, myFilter.areFiltersApplied());
+      e.getPresentation().putClientProperty(Toggleable.SELECTED_PROPERTY, myPresentationHelper.areFiltersApplied());
     }
 
     @Override

@@ -63,13 +63,12 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   };
 
   private final Project myProject;
-  @NotNull private final DartProblemsFilter myFilter;
+  @NotNull private final DartProblemsPresentationHelper myPresentationHelper;
 
   // Kind of hack to keep a reference to the live collection used in a super class, but it allows to improve performance greatly.
   // Having it in hand we can do bulk rows removal with a single fireTableRowsDeleted() call afterwards
   private final List<DartProblem> myItems;
 
-  private boolean myGroupBySeverity = true;
   private RowSorter.SortKey mySortKey = new RowSorter.SortKey(1, SortOrder.ASCENDING);
 
   private int myErrorCount = 0;
@@ -83,9 +82,9 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   private final Comparator<DartProblem> myDescriptionComparator = new DartProblemsComparator(DartProblemsComparator.MESSAGE_COLUMN_ID);
   private final Comparator<DartProblem> myLocationComparator = new DartProblemsComparator(DartProblemsComparator.LOCATION_COLUMN_ID);
 
-  public DartProblemsTableModel(@NotNull final Project project, @NotNull final DartProblemsFilter filter) {
+  public DartProblemsTableModel(@NotNull final Project project, @NotNull final DartProblemsPresentationHelper presentationHelper) {
     myProject = project;
-    myFilter = filter;
+    myPresentationHelper = presentationHelper;
     myItems = new ArrayList<>();
     setColumnInfos(new ColumnInfo[]{createDescriptionColumn(), createLocationColumn()});
     setItems(myItems);
@@ -317,7 +316,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   }
 
   private void updateProblemsCountAfterFilter(@NotNull final DartProblem problem, final boolean incrementNotDecrement) {
-    if (myFilter.include(problem)) {
+    if (myPresentationHelper.shouldShowProblem(problem)) {
       if (incrementNotDecrement) {
         if (AnalysisErrorSeverity.ERROR.equals(problem.getSeverity())) myErrorCountAfterFilter++;
         if (AnalysisErrorSeverity.WARNING.equals(problem.getSeverity())) myWarningCountAfterFilter++;
@@ -331,21 +330,13 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
     }
   }
 
-  public boolean isGroupBySeverity() {
-    return myGroupBySeverity;
-  }
-
-  public void setGroupBySeverity(boolean groupBySeverity) {
-    myGroupBySeverity = groupBySeverity;
-  }
-
   public void setSortKey(@NotNull final RowSorter.SortKey sortKey) {
     mySortKey = sortKey;
   }
 
   public void onFilterChanged() {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    if (myFilter.areFiltersApplied()) {
+    if (myPresentationHelper.areFiltersApplied()) {
       myErrorCountAfterFilter = 0;
       myWarningCountAfterFilter = 0;
       myHintCountAfterFilter = 0;
@@ -373,19 +364,19 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
     final StringBuilder b = new StringBuilder();
     final List<String> summary = new ArrayList<>();
 
-    if (myFilter.isShowErrors() && myErrorCountAfterFilter > 0) {
+    if (myPresentationHelper.isShowErrors() && myErrorCountAfterFilter > 0) {
       summary.add(myErrorCountAfterFilter + " " + StringUtil.pluralize("error", myErrorCountAfterFilter));
     }
-    if (myFilter.isShowWarnings() && myWarningCountAfterFilter > 0) {
+    if (myPresentationHelper.isShowWarnings() && myWarningCountAfterFilter > 0) {
       summary.add(myWarningCountAfterFilter + " " + StringUtil.pluralize("warning", myWarningCountAfterFilter));
     }
-    if (myFilter.isShowHints() && myHintCountAfterFilter > 0) {
+    if (myPresentationHelper.isShowHints() && myHintCountAfterFilter > 0) {
       summary.add(myHintCountAfterFilter + " " + StringUtil.pluralize("hint", myHintCountAfterFilter));
     }
 
 
     if (summary.isEmpty()) {
-      if (myFilter.areFiltersApplied()) {
+      if (myPresentationHelper.areFiltersApplied()) {
         return getFilterTypeText();
       }
       else {
@@ -400,7 +391,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       b.append(StringUtil.join(summary, ", "));
     }
 
-    if (myFilter.areFiltersApplied()) {
+    if (myPresentationHelper.areFiltersApplied()) {
       b.append(" (");
       b.append(getFilterTypeText());
       b.append(")");
@@ -412,7 +403,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   private String getFilterTypeText() {
     final StringBuilder builder = new StringBuilder();
 
-    switch (myFilter.getFileFilterMode()) {
+    switch (myPresentationHelper.getFileFilterMode()) {
       case All:
         break;
       case ContentRoot:
@@ -429,7 +420,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
         break;
     }
 
-    if (!myFilter.isShowErrors() || !myFilter.isShowWarnings() || !myFilter.isShowHints()) {
+    if (!myPresentationHelper.isShowErrors() || !myPresentationHelper.isShowWarnings() || !myPresentationHelper.isShowHints()) {
       builder.append(builder.length() == 0 ? "filtering by severity" : " and severity");
     }
 
@@ -448,7 +439,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
 
     @Override
     public int compare(@NotNull final DartProblem problem1, @NotNull final DartProblem problem2) {
-      if (myGroupBySeverity) {
+      if (myPresentationHelper.isGroupBySeverity()) {
         final int s1 = getSeverityIndex(problem1);
         final int s2 = getSeverityIndex(problem2);
         if (s1 != s2) {

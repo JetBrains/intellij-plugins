@@ -67,13 +67,12 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   private static final int TABLE_REFRESH_PERIOD = 300;
 
   private final Project myProject;
-  private final DartProblemsFilter myFilter;
+  private final DartProblemsPresentationHelper myPresentationHelper;
   private DartProblemsViewPanel myPanel;
 
   private final Object myLock = new Object(); // use this lock to access myScheduledFilePathToErrors and myAlarm
   private final Map<String, List<AnalysisError>> myScheduledFilePathToErrors = new THashMap<>();
   private final Alarm myAlarm;
-  private DartProblemsViewSettings mySettings = new DartProblemsViewSettings();
 
   private ToolWindow myToolWindow;
   private Icon myCurrentIcon;
@@ -106,7 +105,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
   public DartProblemsView(@NotNull final Project project, @NotNull final ToolWindowManager toolWindowManager) {
     myProject = project;
-    myFilter = new DartProblemsFilter(project);
+    myPresentationHelper = new DartProblemsPresentationHelper(project);
     myAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, project);
     Disposer.register(project, myAlarm);
 
@@ -115,7 +114,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
         return;
       }
 
-      myPanel = new DartProblemsViewPanel(project, myFilter, mySettings);
+      myPanel = new DartProblemsViewPanel(project, myPresentationHelper);
 
       myToolWindow = toolWindowManager.registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
       myCurrentIcon = DartIcons.Dart_13;
@@ -224,21 +223,20 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
   @Override
   public DartProblemsViewSettings getState() {
-    return mySettings;
+    return myPresentationHelper.getSettings();
   }
 
   @Override
   public void loadState(DartProblemsViewSettings state) {
-    mySettings = state;
-
-    // Update children.
+    myPresentationHelper.setSettings(state);
     if (myPanel != null) {
-      myPanel.updateFromSettings(mySettings);
+      myPanel.fireGroupingOrFilterChanged();
     }
   }
 
   public void setCurrentFile(@Nullable final VirtualFile file) {
-    if (myFilter.setCurrentFile(file) && myFilter.getFileFilterMode() != DartProblemsFilter.FileFilterMode.All) {
+    if (myPresentationHelper.setCurrentFile(file) &&
+        myPresentationHelper.getFileFilterMode() != DartProblemsViewSettings.FileFilterMode.All) {
       if (myPanel != null) {
         myPanel.fireGroupingOrFilterChanged();
       }

@@ -48,21 +48,21 @@ public class DartProblemsFilterForm {
     });
   }
 
-  public void reset(@NotNull final DartProblemsFilter filter) {
-    myErrorsCheckBox.setSelected(filter.isShowErrors());
-    myWarningsCheckBox.setSelected(filter.isShowWarnings());
-    myHintsCheckBox.setSelected(filter.isShowHints());
+  public void reset(@NotNull final DartProblemsPresentationHelper presentationHelper) {
+    myErrorsCheckBox.setSelected(presentationHelper.isShowErrors());
+    myWarningsCheckBox.setSelected(presentationHelper.isShowWarnings());
+    myHintsCheckBox.setSelected(presentationHelper.isShowHints());
 
-    if (filter.getFileFilterMode() == DartProblemsFilter.FileFilterMode.File) {
+    if (presentationHelper.getFileFilterMode() == DartProblemsViewSettings.FileFilterMode.File) {
       myCurrentFileRadioButton.setSelected(true);
     }
-    else if (filter.getFileFilterMode() == DartProblemsFilter.FileFilterMode.Directory) {
+    else if (presentationHelper.getFileFilterMode() == DartProblemsViewSettings.FileFilterMode.Directory) {
       myCurrentDirectoryRadioButton.setSelected(true);
     }
-    else if (filter.getFileFilterMode() == DartProblemsFilter.FileFilterMode.DartPackage) {
+    else if (presentationHelper.getFileFilterMode() == DartProblemsViewSettings.FileFilterMode.DartPackage) {
       myCurrentDartPackageRadioButton.setSelected(true);
     }
-    else if (filter.getFileFilterMode() == DartProblemsFilter.FileFilterMode.ContentRoot) {
+    else if (presentationHelper.getFileFilterMode() == DartProblemsViewSettings.FileFilterMode.ContentRoot) {
       myCurrentContentRootRadioButton.setSelected(true);
     }
     else {
@@ -102,11 +102,11 @@ public class DartProblemsFilterForm {
     return myHintsCheckBox.isSelected();
   }
 
-  public DartProblemsFilter.FileFilterMode getFileFilterMode() {
-    if (myCurrentFileRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.File;
-    if (myCurrentDirectoryRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.Directory;
-    if (myCurrentDartPackageRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.DartPackage;
-    if (myCurrentContentRootRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.ContentRoot;
-    return DartProblemsFilter.FileFilterMode.All;
+  public DartProblemsViewSettings.FileFilterMode getFileFilterMode() {
+    if (myCurrentFileRadioButton.isSelected()) return DartProblemsViewSettings.FileFilterMode.File;
+    if (myCurrentDirectoryRadioButton.isSelected()) return DartProblemsViewSettings.FileFilterMode.Directory;
+    if (myCurrentDartPackageRadioButton.isSelected()) return DartProblemsViewSettings.FileFilterMode.DartPackage;
+    if (myCurrentContentRootRadioButton.isSelected()) return DartProblemsViewSettings.FileFilterMode.ContentRoot;
+    return DartProblemsViewSettings.FileFilterMode.All;
   }
 }
