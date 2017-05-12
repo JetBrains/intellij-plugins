@@ -11,6 +11,8 @@ import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import org.dartlang.analysis.server.protocol.Position;
 import org.dartlang.analysis.server.protocol.SourceChange;
+import org.dartlang.analysis.server.protocol.SourceEdit;
+import org.dartlang.analysis.server.protocol.SourceFileEdit;
 import org.jetbrains.annotations.NotNull;
 
 public class DartServerStatementCompletionProcessor extends SmartEnterProcessor {
@@ -21,7 +23,7 @@ public class DartServerStatementCompletionProcessor extends SmartEnterProcessor 
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance(psiFile.getProject());
     service.updateFilesContent();
     SourceChange sourceChange = service.edit_getStatementCompletion(psiFile.getVirtualFile(), offset);
-    if (sourceChange != null) {
+    if (sourceChange != null && !isNoop(sourceChange)) {
       try {
         AssistUtils.applySourceChange(project, sourceChange, true);
         Position position = sourceChange.getSelection();
@@ -36,5 +38,16 @@ public class DartServerStatementCompletionProcessor extends SmartEnterProcessor 
       return true;
     }
     return false;
+  }
+
+  private static boolean isNoop(@NotNull final SourceChange sourceChange) {
+    for (SourceFileEdit fileEdit : sourceChange.getEdits()) {
+      for (SourceEdit edit : fileEdit.getEdits()) {
+        if (edit.getLength() != 0 || !edit.getReplacement().isEmpty()) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 }
