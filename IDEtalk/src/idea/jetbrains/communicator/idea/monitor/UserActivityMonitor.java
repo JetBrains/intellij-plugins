@@ -18,11 +18,7 @@ package jetbrains.communicator.idea.monitor;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.project.ProjectManagerListener;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.util.MessageBusUtil;
+import com.intellij.openapi.project.ProjectUtil;
 import jetbrains.communicator.core.IDEtalkOptions;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.transport.Transport;
@@ -74,21 +70,13 @@ public class UserActivityMonitor implements Disposable, Runnable, ApplicationCom
         AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
 
     activity();
-    class MyProjectManagerListener implements ProjectManagerListener, Disposable {
-      @Override
-      public void projectOpened(Project project) {
-        //noinspection HardCodedStringLiteral
-        Thread t = new Thread(UserActivityMonitor.this, getComponentName() + " thread");
-        t.setDaemon(true);
-        t.start();
-        Disposer.dispose(this);
-      }
 
-      @Override
-      public void dispose() {
-      }
-    }
-    MessageBusUtil.subscribe(ProjectManager.TOPIC, new MyProjectManagerListener());
+    ProjectUtil.runWhenProjectOpened(project -> {
+      //noinspection HardCodedStringLiteral
+      Thread t = new Thread(this, getComponentName() + " thread");
+      t.setDaemon(true);
+      t.start();
+    });
   }
 
   @Override
