@@ -67,7 +67,7 @@ public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    if (StringUtil.indexOf(text, '/') != -1) {
+    if (text.indexOf('/') != -1) {
       return new PsiReference[]{
         new ActionLinkPackageReference(psiElement, offset, text, soft, strutsModel),
         new ActionLinkReference(psiElement, offset, text, soft, strutsModel, actionExtensions)

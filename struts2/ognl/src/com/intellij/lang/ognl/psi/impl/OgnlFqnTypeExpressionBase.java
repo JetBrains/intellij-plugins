@@ -51,7 +51,7 @@ abstract class OgnlFqnTypeExpressionBase extends OgnlExpressionImpl implements O
   public PsiType getType() {
     final String text = getText();
     final String qualifiedClassName = StringUtil.containsChar(text, '.') ? text : CommonClassNames.DEFAULT_PACKAGE + "." + text;
-    final String escapedName = StringUtil.replaceChar(qualifiedClassName, '$', '.');
+    final String escapedName = qualifiedClassName.replace('$', '.');
     return JavaPsiFacade.getInstance(getProject()).getElementFactory().createTypeByFQClassName(escapedName);
   }
 }

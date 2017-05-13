@@ -54,11 +54,11 @@ final class ActionUtil {
   static boolean matchesPath(@NotNull @NonNls final String actionPath,
                              @NotNull @NonNls final String checkPath) {
     // strip everything behind "!"
-    final int bangIdx = StringUtil.indexOf(checkPath, '!');
+    final int bangIdx = checkPath.indexOf('!');
     final String strippedCheckPath = bangIdx == -1 ? checkPath : checkPath.substring(0, bangIdx);
 
     // do we have any wildcard-markers in our path? no --> exact compare
-    if (StringUtil.indexOf(actionPath, '*') == -1) {
+    if (actionPath.indexOf('*') == -1) {
       return Comparing.equal(strippedCheckPath, actionPath);
     }
 
