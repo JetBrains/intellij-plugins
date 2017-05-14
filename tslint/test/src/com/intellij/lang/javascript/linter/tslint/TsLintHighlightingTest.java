@@ -2,21 +2,29 @@ package com.intellij.lang.javascript.linter.tslint;
 
 import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.lang.javascript.linter.LinterHighlightingTest;
+import com.intellij.lang.javascript.linter.eslint.EslintUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.LineSeparator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Irina.Chernushina on 6/4/2015.
@@ -63,6 +71,35 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   public void testLineSeparatorsWin() throws Exception {
     if (!SystemInfo.isWindows) return;
     doTest("lineSeparators", "lineSeparators/data.ts", true, true, LineSeparator.CRLF);
+  }
+
+  public void testAllRulesAreInConfig() throws Exception {
+    myFixture.configureByFile(getTestName(true) + "/tslint.json");
+    final Set<String> fromConfig =
+      Arrays.stream(myFixture.completeBasic()).map(lookup -> StringUtil.unquoteString(lookup.getLookupString())).collect(Collectors.toSet());
+
+    final Path rulesDir = myNodeLinterPackageTestPaths.getPackagePath().resolve("lib").resolve("rules");
+    Assert.assertTrue(Files.exists(rulesDir));
+    final Set<String> fromDir = Files.list(rulesDir).map(path -> path.toFile().getName())
+      .filter(name -> name.endsWith("Rule.js"))
+      .map(name -> {
+        name = name.substring(0, name.length() - 7);
+        final StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < name.length(); i++) {
+          final char ch = name.charAt(i);
+          if (Character.isUpperCase(ch)) sb.append("-").append(Character.toLowerCase(ch));
+          else sb.append(ch);
+        }
+        return sb.toString();
+      })
+      .collect(Collectors.toSet());
+
+    final List<String> outdated = fromConfig.stream().filter(name -> !fromDir.contains(name)).sorted().collect(Collectors.toList());
+    final List<String> newRules = fromDir.stream().filter(name -> !fromConfig.contains(name)).sorted().collect(Collectors.toList());
+
+    if (!outdated.isEmpty() || !newRules.isEmpty()) {
+      Assert.assertTrue(String.format("Outdated: (%d)\n%s\nMissing: (%d)\n%s\n", outdated.size(), outdated, newRules.size(), newRules), false);
+    }
   }
 
   private void doTest(@NotNull String directoryToCopy, @NotNull String filePathToTest, boolean copyConfig,

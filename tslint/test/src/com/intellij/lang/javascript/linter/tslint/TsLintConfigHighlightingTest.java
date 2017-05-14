@@ -51,4 +51,8 @@ public class TsLintConfigHighlightingTest extends LightPlatformCodeInsightFixtur
   public void testCompletedDocs() throws Exception {
     doTest();
   }
+
+  public void testPreferSwitchPreferTemplate() throws Exception {
+    doTest();
+  }
 }

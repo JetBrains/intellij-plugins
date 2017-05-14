@@ -251,6 +251,9 @@
           "description": "Enforces a threshold of cyclomatic complexity",
           "$ref": "#/definitions/withOptionalIntegerParam"
         },
+        "deprecation": {
+          "description": "Warns when deprecated APIs are used"
+        },
         "eofline": {
           "description": "Enforces the file to end with a newline",
           "type": "boolean"
@@ -568,6 +571,9 @@
           "description": "Disallows internal module, use namespace instead",
           "type": "boolean"
         },
+        "no-invalid-template-strings": {
+          "description": "Warns on use of ${ in non-template strings"
+        },
         "no-invalid-this": {
           "description": "Disallows using the this keyword outside of classes",
           "oneOf": [
@@ -585,6 +591,9 @@
               }
             }
           ]
+        },
+        "no-irregular-whitespace": {
+          "description": "Disallow irregular whitespace outside of strings and comments"
         },
         "no-magic-numbers": {
           "description": "Disallows the use constant number values outside of variable assignments",
@@ -638,6 +647,9 @@
           "description": "Disallows use of the null keyword literal",
           "type": "boolean"
         },
+        "no-object-literal-type-assertion": {
+          "description": "Forbids an object literal to appear in a type assertion expression"
+        },
         "no-parameter-properties": {
           "description": "Disallows parameter properties in class constructors",
           "type": "boolean"
@@ -646,6 +658,9 @@
           "description": "Disallows /// <reference path=> imports (use ES6-style imports instead)",
           "type": "boolean"
         },
+        "no-reference-import": {
+          "description": "Don’t if you import “foo” anyway"
+        },
         "no-require-imports": {
           "description": "Disallows invocation of require()",
           "type": "boolean"
@@ -653,6 +668,9 @@
         "no-shadowed-variable": {
           "description": "Disallows shadowing variable declarations",
           "type": "boolean"
+        },
+        "no-sparse-arrays": {
+          "description": "Forbids array literals to contain missing elements"
         },
         "no-string-literal": {
           "description": "Disallows object access via string literals",
@@ -688,6 +706,9 @@
           "description": "Warns when a method is used as outside of a method call",
           "type": "boolean"
         },
+        "no-unnecessary-callback-wrapper": {
+          "description": "Replaces x => f(x) with just f. To catch more cases, enable only-arrow-functions and arrow-return-shorthand too"
+        },
         "no-unnecessary-initializer": {
           "description": "Forbids a ‘var’/’let’ statement or destructuring initializer to be initialized to ‘undefined’",
           "type": "boolean"
@@ -695,6 +716,9 @@
         "no-unnecessary-qualifier": {
           "description": "Warns when a namespace qualifier (A.x) is unnecessary",
           "type": "boolean"
+        },
+        "no-unnecessary-type-assertion": {
+          "description": "Warns if a type assertion does not change the type of an expression"
         },
         "no-unsafe-any": {
           "description": "Warns when using an expression of type ‘any’ in an unsafe way",
@@ -721,10 +745,6 @@
               }
             }
           ]
-        },
-        "no-unused-new": {
-          "description": "Disallows unused ‘new’ expression statements",
-          "type": "boolean"
         },
         "no-unused-variable": {
           "description": "Disallows unused imports, variables, functions and private class members",
@@ -765,6 +785,9 @@
         "no-void-expression": {
           "description": "Requires expressions of type void to appear in statement position",
           "type": "boolean"
+        },
+        "number-literal-format": {
+          "description": "Checks that decimal literals should begin with ‘0.’ instead of just ‘.’, and should not end with a trailing ‘0’"
         },
         "object-literal-key-quotes": {
           "description": "Enforces consistent object literal property quote style",
@@ -893,6 +916,46 @@
           "description": "Prefer foo(): void over foo: () => void in interfaces and types",
           "type": "boolean"
         },
+        "prefer-switch": {
+          "description": "Prefer a switch statement to an if statement with simple === comparisons",
+          "oneOf": [
+            {"type": "boolean"},
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {"type": "boolean", "enum": [true]},
+                  {
+                    "type": "object",
+                    "properties": {
+                      "min-cases": {
+                        "type": "integer"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "prefer-template": {
+          "description": "Prefer a template expression over string literal concatenation",
+          "oneOf": [
+            {"type": "boolean"},
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {"type": "boolean", "enum": [true]},
+                  {
+                    "type": "string",
+                    "enum": ["allow-single-concat"]                  }
+                ]
+              }
+            }
+          ]
+        },
         "promise-function-async": {
           "description": "Requires any function or method that returns a promise to be marked async",
           "type": "boolean"
@@ -915,6 +978,9 @@
         "restrict-plus-operands": {
           "description": "When adding two variables, operands must both be of type number or of type string",
           "type": "boolean"
+        },
+        "return-undefined": {
+          "descriptor": "Prefer return; in void functions and return undefined; in value-returning functions"
         },
         "semicolon": {
           "description": "Enforces semicolons at the end of every statement",
