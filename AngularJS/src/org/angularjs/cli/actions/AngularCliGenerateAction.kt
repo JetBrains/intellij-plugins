@@ -75,7 +75,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     refresh.registerCustomShortcutSet(refresh.shortcutSet, list)
     actionGroup.addAction(refresh)
 
-    val actionToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.TOOLBAR, actionGroup, true)
+    val actionToolbar = ActionManager.getInstance().createActionToolbar("AngularCliGenerate", actionGroup, true)
     actionToolbar.setReservePlaceAutoPopupIcon(false)
     actionToolbar.setMinimumButtonSize(Dimension(22, 22))
     val toolbarComponent = actionToolbar.component
