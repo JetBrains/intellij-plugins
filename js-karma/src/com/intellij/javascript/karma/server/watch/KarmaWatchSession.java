@@ -153,25 +153,5 @@ public class KarmaWatchSession {
         myChangedFilesManager.onFileAdded(watchedPath);
       }
     }
-
-    @Override
-    public void beforePropertyChange(@NotNull VirtualFilePropertyEvent event) {
-      // ignored
-    }
-
-    @Override
-    public void beforeContentsChange(@NotNull VirtualFileEvent event) {
-      // ignored
-    }
-
-    @Override
-    public void beforeFileDeletion(@NotNull VirtualFileEvent event) {
-      // ignored
-    }
-
-    @Override
-    public void beforeFileMovement(@NotNull VirtualFileMoveEvent event) {
-      // ignored
-    }
   }
 }
