@@ -10,6 +10,7 @@ import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
 import com.intellij.javascript.nodejs.NodeSettings;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
+import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.openapi.fileTypes.FileType;
@@ -129,12 +130,12 @@ public class KarmaUtil {
     return requester;
   }
 
-  public static boolean isPathUnderContentRoots(@NotNull Project project, @NotNull String filePath) {
-    VirtualFile file = LocalFileFinder.findFile(FileUtil.toSystemIndependentName(filePath));
+  public static boolean isPathUnderContentRoots(@NotNull Project project, @NotNull NodePackage pkg) {
+    VirtualFile file = LocalFileFinder.findFile(pkg.getSystemIndependentPath());
     if (file == null || !file.isValid()) {
       return false;
     }
-    VirtualFile contentRoot = ProjectFileIndex.SERVICE.getInstance(project).getContentRootForFile(file, false);
+    VirtualFile contentRoot = ProjectFileIndex.getInstance(project).getContentRootForFile(file, false);
     return contentRoot != null;
   }
 

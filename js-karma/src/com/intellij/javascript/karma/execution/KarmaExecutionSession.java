@@ -125,7 +125,7 @@ public class KarmaExecutionSession {
     commandLine.setExePath(interpreter.getInterpreterSystemDependentPath());
     //NodeCommandLineUtil.addNodeOptionsForDebugging(commandLine, Collections.emptyList(), 5858, false, interpreter, true);
     commandLine.addParameter(clientAppFile.getAbsolutePath());
-    commandLine.addParameter("--karmaPackageDir=" + myKarmaServer.getKarmaJsSourcesLocator().getKarmaPackageDir());
+    commandLine.addParameter("--karmaPackageDir=" + myKarmaServer.getServerSettings().getKarmaPackage().getSystemDependentPath());
     commandLine.addParameter("--serverPort=" + serverPort);
     if (config != null) {
       commandLine.addParameter("--urlRoot=" + config.getUrlRoot());

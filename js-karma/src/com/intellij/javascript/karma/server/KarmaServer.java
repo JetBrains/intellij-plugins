@@ -56,7 +56,7 @@ public class KarmaServer {
 
   public KarmaServer(@NotNull Project project, @NotNull KarmaServerSettings serverSettings) throws IOException {
     myServerSettings = serverSettings;
-    myKarmaJsSourcesLocator = new KarmaJsSourcesLocator(serverSettings.getKarmaPackageDir());
+    myKarmaJsSourcesLocator = new KarmaJsSourcesLocator(serverSettings.getKarmaPackage());
     myCoveragePeer = serverSettings.isWithCoverage() ? new KarmaCoveragePeer() : null;
     KillableColoredProcessHandler processHandler = startServer(serverSettings);
     myProcessHashCode = System.identityHashCode(processHandler.getProcess());
@@ -114,11 +114,6 @@ public class KarmaServer {
     return myRestarter;
   }
 
-  @NotNull
-  public File getKarmaPackageDir() {
-    return myServerSettings.getKarmaPackageDir();
-  }
-
   @Nullable
   public KarmaCoveragePeer getCoveragePeer() {
     return myCoveragePeer;
@@ -148,7 +143,7 @@ public class KarmaServer {
     //NodeCommandLineUtil.addNodeOptionsForDebugging(commandLine, Collections.emptyList(), 34598, true,
     //                                               serverSettings.getNodeInterpreter(), true);
     commandLine.addParameter(serverFile.getAbsolutePath());
-    commandLine.addParameter("--karmaPackageDir=" + myKarmaJsSourcesLocator.getKarmaPackageDir().getAbsolutePath());
+    commandLine.addParameter("--karmaPackageDir=" + myServerSettings.getKarmaPackage().getSystemDependentPath());
     commandLine.addParameter("--configFile=" + serverSettings.getConfigurationFilePath());
     String browsers = serverSettings.getRunSettings().getBrowsers();
     if (!StringUtil.isEmptyOrSpaces(browsers)) {

@@ -1,5 +1,6 @@
 package com.intellij.javascript.karma.server;
 
+import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,45 +11,49 @@ import java.io.IOException;
  * @author Sergey Simonchik
  */
 public class KarmaJsSourcesLocator {
+  private static final String KARMA_INTELLIJ_NAME = "karma-intellij";
+  private static final String JS_REPORTER_NAME = "js_reporter";
 
-  private final File myKarmaPackageDir;
   private final File myKarmaIntellijPackageDir;
 
-  public KarmaJsSourcesLocator(@NotNull File karmaPackageDir) throws IOException {
-    myKarmaPackageDir = karmaPackageDir;
-    myKarmaIntellijPackageDir = findKarmaIntellijPackageDir(karmaPackageDir);
+  public KarmaJsSourcesLocator(@NotNull NodePackage karmaPackage) throws IOException {
+    myKarmaIntellijPackageDir = findKarmaIntellijPackageDir(karmaPackage);
   }
 
   /**
    * 'karma-intellij' directory contains installed node module 'karma-intellij'
    * Source code: https://github.com/karma-runner/karma-intellij
    *
-   * @param karmaPackageDir 'karma' package directory
+   * @param karmaPackage 'karma' package
    * @return 'karma-intellij' directory
    */
-  private static File findKarmaIntellijPackageDir(@NotNull File karmaPackageDir) {
-    File dir = new File(karmaPackageDir.getParentFile(), "karma-intellij");
-    if (dir.isDirectory()) {
-      return dir;
+  @NotNull
+  private static File findKarmaIntellijPackageDir(@NotNull NodePackage karmaPackage) {
+    File parentDir = new File(karmaPackage.getSystemDependentPath()).getParentFile();
+    if (parentDir != null && parentDir.isAbsolute() && parentDir.isDirectory()) {
+      File dir = new File(parentDir, KARMA_INTELLIJ_NAME);
+      if (dir.isDirectory()) {
+        return dir;
+      }
     }
     File jsReporterDir = getBundledJsReporterDir();
     if (!jsReporterDir.isDirectory()) {
       throw new RuntimeException("Can't find bundled version of karma-intellij node module!");
     }
-    return new File(jsReporterDir, "karma-intellij");
+    return new File(jsReporterDir, KARMA_INTELLIJ_NAME);
   }
 
   private static File getBundledJsReporterDir() {
     String jarPath = PathUtil.getJarPathForClass(KarmaServer.class);
     if (!jarPath.endsWith(".jar")) {
-      return new File(jarPath, "js_reporter");
+      return new File(jarPath, JS_REPORTER_NAME);
     }
     File jarFile = new File(jarPath);
     if (!jarFile.isFile()) {
       throw new RuntimeException("jar file cannot be null");
     }
     File pluginBaseDir = jarFile.getParentFile().getParentFile();
-    return new File(pluginBaseDir, "js_reporter");
+    return new File(pluginBaseDir, JS_REPORTER_NAME);
   }
 
   private File getAppFile(@NotNull String baseName) throws IOException {
@@ -68,10 +73,4 @@ public class KarmaJsSourcesLocator {
   public File getClientAppFile() throws IOException {
     return getAppFile("intellijRunner.js");
   }
-
-  @NotNull
-  public File getKarmaPackageDir() {
-    return myKarmaPackageDir;
-  }
-
 }
