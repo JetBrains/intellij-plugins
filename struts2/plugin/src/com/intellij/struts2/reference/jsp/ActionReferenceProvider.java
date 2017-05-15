@@ -65,7 +65,7 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
     final List<Action> actions = strutsModel.findActionsByName(actionName, namespace);
     final Action action = actions.isEmpty() ? null : actions.get(0);
 
-    final int bangIndex = StringUtil.indexOf(path, TaglibUtil.BANG_SYMBOL);
+    final int bangIndex = path.indexOf(TaglibUtil.BANG_SYMBOL);
     if (bangIndex == -1) {
       return new PsiReference[]{new ActionReference(xmlAttributeValue, action, namespace, strutsModel)};
     }

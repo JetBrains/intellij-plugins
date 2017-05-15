@@ -12,7 +12,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.PairConsumer;
 import com.intellij.util.PathUtilRt;
 import com.intellij.util.Processor;
 import com.intellij.util.SystemProperties;
@@ -765,7 +764,7 @@ public class CompilerConfigGeneratorRt {
     final String hash1 =
       Integer.toHexString((SystemProperties.getUserName() + bc.getModule().getProject().getName()).hashCode()).toUpperCase();
     final String hash2 = Integer.toHexString((bc.getModule().getName() + StringUtil.notNullize(bc.getName())).hashCode()).toUpperCase();
-    return prefix + "-" + hash1 + "-" + hash2 + (postfix == null ? ".xml" : ("-" + StringUtil.replaceChar(postfix, ' ', '-') + ".xml"));
+    return prefix + "-" + hash1 + "-" + hash2 + (postfix == null ? ".xml" : ("-" + postfix.replace(' ', '-') + ".xml"));
   }
 
   private static String getLinkReportFilePath(final JpsFlexBuildConfiguration bc) {

@@ -5,7 +5,6 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.intellij.javascript.karma.KarmaConfig;
-import com.intellij.javascript.karma.util.GsonUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
@@ -201,7 +200,7 @@ public class KarmaServerState {
         JsonObject event = eventBody.getAsJsonObject();
         String id = JsonUtil.getChildAsString(event, "id");
         String name = JsonUtil.getChildAsString(event, "name");
-        Boolean autoCaptured = GsonUtil.getBooleanProperty(event, "isAutoCaptured");
+        Boolean autoCaptured = JsonUtil.getChildAsBooleanObj(event, "isAutoCaptured");
         if (id != null && name != null) {
           handleBrowsersChange(myEventType, id, name, autoCaptured);
         }

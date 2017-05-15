@@ -9,13 +9,12 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
+import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.testFramework.PreferableRunConfiguration;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -26,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Objects;
 
 public class KarmaRunConfiguration extends LocatableConfigurationBase implements RefactoringListenerProvider,
                                                                                  PreferableRunConfiguration {
@@ -48,9 +48,9 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
   public void readExternal(Element element) throws InvalidDataException {
     super.readExternal(element);
     myRunSettings = KarmaRunSettingsSerializationUtil.readXml(element);
-    String karmaPackageDir = myRunSettings.getKarmaPackageDir();
-    if ("true".equals(element.getAttributeValue("default")) && karmaPackageDir != null && karmaPackageDir.isEmpty()) {
-      myRunSettings = myRunSettings.builder().setKarmaPackageDir(null).build();
+    NodePackage karmaPackage = myRunSettings.getKarmaPackage();
+    if ("true".equals(element.getAttributeValue("default")) && karmaPackage != null && karmaPackage.isEmptyPath()) {
+      myRunSettings = myRunSettings.builder().setKarmaPackage(null).build();
     }
   }
 
@@ -61,35 +61,35 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
   }
 
   @NotNull
-  public String getKarmaPackageDir() {
+  public NodePackage getKarmaPackage() {
     if (isTemplate()) {
-      return StringUtil.notNullize(myRunSettings.getKarmaPackageDir());
+      NodePackage pkg = myRunSettings.getKarmaPackage();
+      return pkg != null ? pkg : new NodePackage("");
     }
-    String karmaPackageDir = getOrInitKarmaPackageDir();
-    if (StringUtil.isNotEmpty(karmaPackageDir)) {
-      return karmaPackageDir;
+    NodePackage karmaPackage = getOrInitKarmaPackage();
+    if (karmaPackage.isEmptyPath()) {
+      karmaPackage = KarmaProjectSettings.getKarmaPackage(getProject());
     }
-    return KarmaProjectSettings.getKarmaPackageDir(getProject());
+    return karmaPackage;
   }
 
   @NotNull
-  private String getOrInitKarmaPackageDir() {
-    if (myRunSettings.getKarmaPackageDir() == null) {
+  private NodePackage getOrInitKarmaPackage() {
+    NodePackage pkg = myRunSettings.getKarmaPackage();
+    if (pkg == null) {
       Project project = getProject();
-      String karmaPackageDir = KarmaUtil.detectKarmaPackageDir(project,
-                                                               myRunSettings.getConfigPath(),
-                                                               myRunSettings.getInterpreterRef());
-      karmaPackageDir = StringUtil.notNullize(karmaPackageDir);
-      if (StringUtil.isNotEmpty(karmaPackageDir) && !KarmaUtil.isPathUnderContentRoots(project, karmaPackageDir)) {
-        String projectKarmaPackageDir = KarmaProjectSettings.getKarmaPackageDir(project);
-        if (StringUtil.isEmpty(projectKarmaPackageDir)) {
-          KarmaProjectSettings.setKarmaPackageDir(project, karmaPackageDir);
+      NodeJsLocalInterpreter interpreter = NodeJsLocalInterpreter.tryCast(myRunSettings.getInterpreterRef().resolve(project));
+      pkg = NodePackage.findPreferredPackage(project, KarmaUtil.NODE_PACKAGE_NAME, interpreter);
+      if (!pkg.isEmptyPath() && !KarmaUtil.isPathUnderContentRoots(project, pkg)) {
+        NodePackage projectKarmaPackage = KarmaProjectSettings.getKarmaPackage(project);
+        if (projectKarmaPackage.isEmptyPath()) {
+          KarmaProjectSettings.setKarmaPackage(project, pkg);
         }
-        karmaPackageDir = "";
+        pkg = new NodePackage("");
       }
-      myRunSettings = myRunSettings.builder().setKarmaPackageDir(karmaPackageDir).build();
+      myRunSettings = myRunSettings.builder().setKarmaPackage(pkg).build();
     }
-    return ObjectUtils.assertNotNull(myRunSettings.getKarmaPackageDir());
+    return pkg;
   }
 
   private boolean isTemplate() {
@@ -114,30 +114,21 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
   @Nullable
   @Override
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
-    String karmaPackageDir = getKarmaPackageDir();
     return new KarmaRunProfileState(getProject(),
                                     this,
                                     env,
-                                    karmaPackageDir);
+                                    getKarmaPackage());
   }
 
   @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
-    check(getKarmaPackageDir());
+    check(getKarmaPackage());
   }
 
-  private void check(@NotNull String karmaPackageDirPath) throws RuntimeConfigurationException {
+  private void check(@NotNull NodePackage karmaPackage) throws RuntimeConfigurationException {
     NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolve(getProject());
     NodeJsLocalInterpreter.checkForRunConfiguration(interpreter);
-
-    if (StringUtil.isEmpty(karmaPackageDirPath)) {
-      throw new RuntimeConfigurationError("Please specify Karma package path");
-    }
-    File karmaPackageDir = new File(karmaPackageDirPath);
-    if (!karmaPackageDir.isDirectory() || !karmaPackageDir.isAbsolute()) {
-      throw new RuntimeConfigurationError("Please specify Karma package path correctly");
-    }
-
+    karmaPackage.validateForRunConfiguration(KarmaUtil.NODE_PACKAGE_NAME);
     String configPath = myRunSettings.getConfigPath();
     if (configPath.trim().isEmpty()) {
       throw new RuntimeConfigurationError("Please specify config file path");
@@ -157,21 +148,21 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
   }
 
   public void setRunSettings(@NotNull KarmaRunSettings runSettings) {
-    String newKarmaPackageDir = StringUtil.notNullize(runSettings.getKarmaPackageDir());
-    String oldKarmaPackageDir = FileUtil.toSystemDependentName(StringUtil.notNullize(myRunSettings.getKarmaPackageDir()));
-    if (FileUtil.toSystemDependentName(newKarmaPackageDir).equals(oldKarmaPackageDir)) {
+    NodePackage newKarmaPackage = Objects.requireNonNull(runSettings.getKarmaPackage());
+    NodePackage oldKarmaPackage = myRunSettings.getKarmaPackage();
+    if (newKarmaPackage.equals(oldKarmaPackage)) {
       myRunSettings = runSettings;
       return;
     }
     Project project = getProject();
-    if (!KarmaUtil.isPathUnderContentRoots(project, newKarmaPackageDir)) {
-      KarmaProjectSettings.setKarmaPackageDir(project, newKarmaPackageDir);
-      newKarmaPackageDir = "";
+    if (!KarmaUtil.isPathUnderContentRoots(project, newKarmaPackage)) {
+      KarmaProjectSettings.setKarmaPackage(project, newKarmaPackage);
+      newKarmaPackage = new NodePackage("");
     }
-    if (newKarmaPackageDir.isEmpty() && isTemplate()) {
-      newKarmaPackageDir = null;
+    if (newKarmaPackage.isEmptyPath() && isTemplate()) {
+      newKarmaPackage = null;
     }
-    myRunSettings = runSettings.builder().setKarmaPackageDir(newKarmaPackageDir).build();
+    myRunSettings = runSettings.builder().setKarmaPackage(newKarmaPackage).build();
   }
 
   public void setConfigFilePath(@NotNull String configFilePath) {

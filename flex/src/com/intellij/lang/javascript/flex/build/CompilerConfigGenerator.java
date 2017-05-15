@@ -832,7 +832,7 @@ public class CompilerConfigGenerator {
                                           final String prefix, final @Nullable String postfix) {
     final String hash1 = Integer.toHexString((SystemProperties.getUserName() + module.getProject().getName()).hashCode()).toUpperCase();
     final String hash2 = Integer.toHexString((module.getName() + StringUtil.notNullize(bcName)).hashCode()).toUpperCase();
-    return prefix + "-" + hash1 + "-" + hash2 + (postfix == null ? ".xml" : ("-" + StringUtil.replaceChar(postfix, ' ', '-') + ".xml"));
+    return prefix + "-" + hash1 + "-" + hash2 + (postfix == null ? ".xml" : ("-" + postfix.replace(' ', '-') + ".xml"));
   }
 
   private static String getLinkReportFilePath(final Module module, final String bcName) {

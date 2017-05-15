@@ -2,6 +2,7 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.configuration.EnvironmentVariablesData;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
+import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.openapi.util.JDOMExternalizerUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -37,7 +38,7 @@ public class KarmaRunSettingsSerializationUtil {
     }
     String karmaPackageDir = JDOMExternalizerUtil.getFirstChildValueAttribute(element, KARMA_PACKAGE_DIR);
     if (karmaPackageDir != null) {
-      builder.setKarmaPackageDir(FileUtil.toSystemDependentName(karmaPackageDir));
+      builder.setKarmaPackage(new NodePackage(karmaPackageDir));
     }
 
     String interpreterRefName = JDOMExternalizerUtil.getFirstChildValueAttribute(element, NODE_INTERPRETER);
@@ -63,9 +64,9 @@ public class KarmaRunSettingsSerializationUtil {
     if (StringUtil.isNotEmpty(settings.getBrowsers())) {
       JDOMExternalizerUtil.addElementWithValueAttribute(element, BROWSERS, settings.getBrowsers());
     }
-    if (settings.getKarmaPackageDirSystemIndependentPath() != null) {
+    if (settings.getKarmaPackage() != null) {
       JDOMExternalizerUtil.addElementWithValueAttribute(element, KARMA_PACKAGE_DIR,
-                                                        settings.getKarmaPackageDirSystemIndependentPath());
+                                                        settings.getKarmaPackage().getSystemIndependentPath());
     }
     JDOMExternalizerUtil.addElementWithValueAttribute(element, NODE_INTERPRETER, settings.getInterpreterRef().getReferenceName());
     settings.getEnvData().writeExternal(element);

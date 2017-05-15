@@ -1,8 +1,8 @@
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,54 +13,17 @@ import org.jetbrains.annotations.NotNull;
 public class KarmaProjectSettings {
 
   private static final String KARMA_PACKAGE_DIR__KEY = "javascript.karma.karma_node_package_dir";
-  private static final Key<KarmaProjectSettings> SETTINGS_KEY = Key.create("KARMA_SETTINGS_KEY");
 
-  private final String myKarmaPackageDir;
-
-  public KarmaProjectSettings(@NotNull String karmaPackageDir) {
-    myKarmaPackageDir = karmaPackageDir;
+  private KarmaProjectSettings() {
   }
 
   @NotNull
-  public String getKarmaPackageDir() {
-    return myKarmaPackageDir;
+  public static NodePackage getKarmaPackage(@NotNull Project project) {
+    String path = StringUtil.notNullize(PropertiesComponent.getInstance(project).getValue(KARMA_PACKAGE_DIR__KEY));
+    return new NodePackage(path);
   }
 
-  @NotNull
-  public static String getKarmaPackageDir(@NotNull Project project) {
-    return get(project).getKarmaPackageDir();
-  }
-
-  public static void setKarmaPackageDir(@NotNull Project project, @NotNull String karmaPackageDir) {
-    setProjectSetting(project, KARMA_PACKAGE_DIR__KEY, karmaPackageDir);
-    SETTINGS_KEY.set(project, null);
-  }
-
-  @NotNull
-  private static KarmaProjectSettings get(@NotNull Project project) {
-    KarmaProjectSettings settings = SETTINGS_KEY.get(project);
-    if (settings != null) {
-      return settings;
-    }
-    String karmaPackageDir = doGetKarmaPackageDir(project);
-    settings = new KarmaProjectSettings(karmaPackageDir);
-    SETTINGS_KEY.set(project, settings);
-    return settings;
-  }
-
-  @NotNull
-  private static String doGetKarmaPackageDir(@NotNull Project project) {
-    return getProjectSetting(project, KARMA_PACKAGE_DIR__KEY);
-  }
-
-  @NotNull
-  private static String getProjectSetting(@NotNull Project project, @NotNull String key) {
-    PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
-    return StringUtil.notNullize(propertiesComponent.getValue(key));
-  }
-
-  private static void setProjectSetting(@NotNull Project project, @NotNull String key, @NotNull String value) {
-    PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
-    propertiesComponent.setValue(key, value);
+  public static void setKarmaPackage(@NotNull Project project, @NotNull NodePackage karmaPackage) {
+    PropertiesComponent.getInstance(project).setValue(KARMA_PACKAGE_DIR__KEY, karmaPackage.getSystemIndependentPath());
   }
 }

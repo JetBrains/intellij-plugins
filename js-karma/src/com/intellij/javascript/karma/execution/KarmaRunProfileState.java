@@ -13,6 +13,7 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
+import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -27,18 +28,18 @@ public class KarmaRunProfileState implements RunProfileState {
   private final Project myProject;
   private final KarmaRunConfiguration myRunConfiguration;
   private final ExecutionEnvironment myEnvironment;
-  private final String myKarmaPackageDirPath;
+  private final NodePackage myKarmaPackage;
   private final KarmaRunSettings myRunSettings;
   private final KarmaExecutionType myExecutionType;
 
   public KarmaRunProfileState(@NotNull Project project,
                               @NotNull KarmaRunConfiguration runConfiguration,
                               @NotNull ExecutionEnvironment environment,
-                              @NotNull String karmaPackageDirPath) {
+                              @NotNull NodePackage karmaPackage) {
     myProject = project;
     myRunConfiguration = runConfiguration;
     myEnvironment = environment;
-    myKarmaPackageDirPath = karmaPackageDirPath;
+    myKarmaPackage = karmaPackage;
     myRunSettings = runConfiguration.getRunSettings();
     myExecutionType = findExecutionType(myEnvironment.getExecutor());
   }
@@ -59,7 +60,7 @@ public class KarmaRunProfileState implements RunProfileState {
     NodeJsLocalInterpreter localInterpreter = NodeJsLocalInterpreter.castAndValidate(interpreter);
     KarmaServerSettings serverSettings = new KarmaServerSettings.Builder()
       .setNodeInterpreter(localInterpreter)
-      .setKarmaPackageDirPath(myKarmaPackageDirPath)
+      .setKarmaPackage(myKarmaPackage)
       .setRunSettings(myRunSettings)
       .setWithCoverage(myExecutionType == KarmaExecutionType.COVERAGE)
       .setDebug(myExecutionType == KarmaExecutionType.DEBUG)

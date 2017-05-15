@@ -5,19 +5,13 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.RunnerLayoutUi;
-import com.intellij.javascript.nodejs.CompletionModuleInfo;
-import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
-import com.intellij.javascript.nodejs.NodeSettings;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
-import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
+import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -26,10 +20,8 @@ import com.intellij.ui.content.Content;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.io.LocalFileFinder;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
@@ -114,49 +106,13 @@ public class KarmaUtil {
     return false;
   }
 
-  @Nullable
-  public static VirtualFile getRequester(@NotNull Project project, @NotNull String configFilePath) {
-    VirtualFile requester = null;
-    if (StringUtil.isNotEmpty(configFilePath)) {
-      File configFile = new File(configFilePath);
-      if (configFile.isFile()) {
-        requester = VfsUtil.findFileByIoFile(configFile, false);
-      }
-    }
-    if (requester == null || !requester.isValid()) {
-      requester = project.getBaseDir();
-    }
-    return requester;
-  }
-
-  public static boolean isPathUnderContentRoots(@NotNull Project project, @NotNull String filePath) {
-    VirtualFile file = LocalFileFinder.findFile(FileUtil.toSystemIndependentName(filePath));
+  public static boolean isPathUnderContentRoots(@NotNull Project project, @NotNull NodePackage pkg) {
+    VirtualFile file = LocalFileFinder.findFile(pkg.getSystemIndependentPath());
     if (file == null || !file.isValid()) {
       return false;
     }
-    VirtualFile contentRoot = ProjectFileIndex.SERVICE.getInstance(project).getContentRootForFile(file, false);
+    VirtualFile contentRoot = ProjectFileIndex.getInstance(project).getContentRootForFile(file, false);
     return contentRoot != null;
-  }
-
-  @Nullable
-  public static String detectKarmaPackageDir(@NotNull Project project,
-                                             @NotNull String configFilePath,
-                                             @NotNull NodeJsInterpreterRef interpreterRef) {
-    List<CompletionModuleInfo> modules = ContainerUtil.newArrayList();
-    VirtualFile requester = getRequester(project, configFilePath);
-    NodeJsLocalInterpreter interpreter = NodeJsLocalInterpreter.tryCast(interpreterRef.resolve(project));
-    NodeModuleSearchUtil.findModulesWithName(modules,
-                                             NODE_PACKAGE_NAME,
-                                             requester,
-                                             NodeSettings.create(interpreter),
-                                             true);
-    for (CompletionModuleInfo module : modules) {
-      VirtualFile moduleRoot = module.getVirtualFile();
-      if (moduleRoot != null && moduleRoot.isValid() && moduleRoot.isDirectory()) {
-        return FileUtil.toSystemDependentName(moduleRoot.getPath());
-      }
-    }
-    return null;
   }
 
   @NotNull

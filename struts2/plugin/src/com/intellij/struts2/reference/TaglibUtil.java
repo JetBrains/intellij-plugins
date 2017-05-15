@@ -55,7 +55,7 @@ public final class TaglibUtil {
   @NotNull
   @NonNls
   public static String trimActionPath(@NotNull @NonNls final String attributeValue) {
-    final int bangIndex = StringUtil.indexOf(attributeValue, BANG_SYMBOL);
+    final int bangIndex = attributeValue.indexOf(BANG_SYMBOL);
     if (bangIndex == -1) {
       return attributeValue;
     }

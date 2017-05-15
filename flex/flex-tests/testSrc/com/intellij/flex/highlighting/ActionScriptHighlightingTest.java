@@ -9,6 +9,9 @@ import com.intellij.codeInsight.lookup.LookupEx;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
+import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
+import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeInspection;
+import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
@@ -2409,5 +2412,12 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithSemanticKeywords})
   public void testSemanticHighlighting() throws Exception {
     defaultTest(); // IDEA-110040
+  }
+
+  public void testNoHtmlInspectionsForXmlLiteral() throws Exception {
+    enableInspectionTools(new HtmlUnknownTagInspection(),
+                          new HtmlUnknownAttributeInspection(),
+                          new HtmlUnknownBooleanAttributeInspection());
+    defaultTest();
   }
 }

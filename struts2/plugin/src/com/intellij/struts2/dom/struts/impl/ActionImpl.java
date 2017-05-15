@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.struts2.dom.struts.action.Action;
@@ -44,7 +43,7 @@ public abstract class ActionImpl implements Action {
   @Override
   public boolean isWildcardMapping() {
     final String name = getNameValue();
-    return name != null && StringUtil.indexOf(name, '*') != -1;
+    return name != null && name.indexOf('*') != -1;
   }
 
   public boolean matchesPath(@NotNull final String path) {

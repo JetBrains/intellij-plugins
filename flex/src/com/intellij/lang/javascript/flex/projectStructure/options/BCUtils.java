@@ -205,7 +205,7 @@ public class BCUtils {
   }
 
   public static String suggestRLMOutputPath(final String mainClass) {
-    return StringUtil.replaceChar(mainClass, '.', '/') + ".swf";
+    return mainClass.replace('.', '/') + ".swf";
   }
 
   public static void initTargetPlatformCombo(final JComboBox targetPlatformCombo) {

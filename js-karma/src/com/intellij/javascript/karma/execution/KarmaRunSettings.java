@@ -2,8 +2,8 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.configuration.EnvironmentVariablesData;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
+import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,15 +11,14 @@ import org.jetbrains.annotations.Nullable;
 public class KarmaRunSettings {
 
   private final String myConfigPath;
-  private final String myKarmaPackageDir;
+  private final NodePackage myKarmaPackage;
   private final String myBrowsers;
   private final NodeJsInterpreterRef myInterpreterRef;
   private final EnvironmentVariablesData myEnvData;
 
   public KarmaRunSettings(@NotNull Builder builder) {
     myConfigPath = FileUtil.toSystemDependentName(builder.myConfigPath);
-    myKarmaPackageDir = builder.myKarmaPackageDir != null ? FileUtil.toSystemDependentName(builder.myKarmaPackageDir)
-                                                          : null;
+    myKarmaPackage = builder.myKarmaPackage;
     myBrowsers = builder.myBrowsers;
     myInterpreterRef = builder.myInterpreterRef;
     myEnvData = builder.myEnvData;
@@ -36,13 +35,8 @@ public class KarmaRunSettings {
   }
 
   @Nullable
-  public String getKarmaPackageDir() {
-    return myKarmaPackageDir;
-  }
-
-  @Nullable
-  public String getKarmaPackageDirSystemIndependentPath() {
-    return myKarmaPackageDir == null ? null : FileUtil.toSystemIndependentName(myKarmaPackageDir);
+  public NodePackage getKarmaPackage() {
+    return myKarmaPackage;
   }
 
   @NotNull
@@ -68,7 +62,7 @@ public class KarmaRunSettings {
     KarmaRunSettings that = (KarmaRunSettings)o;
 
     return myConfigPath.equals(that.myConfigPath) &&
-          ComparatorUtil.equalsNullable(myKarmaPackageDir, that.myKarmaPackageDir) &&
+          ComparatorUtil.equalsNullable(myKarmaPackage, that.myKarmaPackage) &&
           myBrowsers.equals(that.myBrowsers) &&
           myInterpreterRef.getReferenceName().equals(that.myInterpreterRef.getReferenceName()) &&
           myEnvData.equals(that.myEnvData);
@@ -77,7 +71,7 @@ public class KarmaRunSettings {
   @Override
   public int hashCode() {
     int result = myConfigPath.hashCode();
-    result = 31 * result + StringUtil.notNullize(myKarmaPackageDir).hashCode();
+    result = 31 * result + (myKarmaPackage != null ? myKarmaPackage.hashCode() : 0);
     result = 31 * result + myBrowsers.hashCode();
     result = 31 * result + myInterpreterRef.getReferenceName().hashCode();
     result = 31 * result + myEnvData.hashCode();
@@ -92,7 +86,7 @@ public class KarmaRunSettings {
   public static class Builder {
 
     private String myConfigPath = "";
-    private String myKarmaPackageDir = null;
+    private NodePackage myKarmaPackage = null;
     private String myBrowsers = "";
     private NodeJsInterpreterRef myInterpreterRef = NodeJsInterpreterRef.createProjectRef();
     private EnvironmentVariablesData myEnvData = EnvironmentVariablesData.DEFAULT;
@@ -101,7 +95,7 @@ public class KarmaRunSettings {
 
     public Builder(@NotNull KarmaRunSettings settings) {
       myConfigPath = settings.getConfigPath();
-      myKarmaPackageDir = settings.getKarmaPackageDir();
+      myKarmaPackage = settings.getKarmaPackage();
       myBrowsers = settings.getBrowsers();
       myInterpreterRef = settings.getInterpreterRef();
       myEnvData = settings.myEnvData;
@@ -114,8 +108,8 @@ public class KarmaRunSettings {
     }
 
     @NotNull
-    public Builder setKarmaPackageDir(@Nullable String karmaPackageDir) {
-      myKarmaPackageDir = karmaPackageDir;
+    public Builder setKarmaPackage(@Nullable NodePackage karmaPackage) {
+      myKarmaPackage = karmaPackage;
       return this;
     }
 
