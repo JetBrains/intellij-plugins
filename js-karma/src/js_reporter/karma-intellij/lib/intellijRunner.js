@@ -70,11 +70,16 @@ function runTests() {
   if (urlRoot.charAt(urlRoot.length - 1) !== '/') {
     urlRoot = urlRoot + '/';
   }
-  runWithConfig({
+  var config = {
     port: serverPort,
     refresh: false,
     urlRoot: urlRoot
-  });
+  };
+  var testName = cli.getTestName();
+  if (typeof testName !== 'undefined') {
+    config.clientArgs = ['--grep=' + testName];
+  }
+  runWithConfig(config);
 }
 
 if (cli.isDebug()) {

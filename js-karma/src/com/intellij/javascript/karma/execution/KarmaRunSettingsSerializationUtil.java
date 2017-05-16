@@ -1,6 +1,7 @@
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.configuration.EnvironmentVariablesData;
+import com.intellij.javascript.karma.scope.KarmaScopeKind;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.openapi.util.JDOMExternalizerUtil;
@@ -11,12 +12,18 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
+
 public class KarmaRunSettingsSerializationUtil {
 
   private static final String CONFIG_FILE = "config-file";
   private static final String KARMA_PACKAGE_DIR = "karma-package-dir";
   private static final String BROWSERS = "browsers";
   private static final String NODE_INTERPRETER = "node-interpreter";
+  private static final String SCOPE_KIND = "scope-kind";
+  private static final String TEST_NAMES = "test-names";
+  private static final String TEST_NAME = "test-name";
 
   private KarmaRunSettingsSerializationUtil() {}
 
@@ -47,8 +54,35 @@ public class KarmaRunSettingsSerializationUtil {
 
     EnvironmentVariablesData envData = EnvironmentVariablesData.readExternal(element);
     builder.setEnvData(envData);
+    KarmaScopeKind scopeKind = readScopeKind(element);
+    builder.setScopeKind(scopeKind);
+    if (scopeKind == KarmaScopeKind.SUITE || scopeKind == KarmaScopeKind.TEST) {
+      builder.setTestNames(readTestNames(element));
+    }
 
     return builder.build();
+  }
+
+  @NotNull
+  private static KarmaScopeKind readScopeKind(@NotNull Element element) {
+    String value = JDOMExternalizerUtil.getFirstChildValueAttribute(element, SCOPE_KIND);
+    if (StringUtil.isNotEmpty(value)) {
+      try {
+        return KarmaScopeKind.valueOf(value);
+      }
+      catch (IllegalArgumentException ignored) {
+      }
+    }
+    return KarmaScopeKind.ALL;
+  }
+
+  @NotNull
+  private static List<String> readTestNames(@NotNull Element parent) {
+    Element testNamesElement = parent.getChild(TEST_NAMES);
+    if (testNamesElement == null) {
+      return Collections.emptyList();
+    }
+    return JDOMExternalizerUtil.getChildrenValueAttributes(testNamesElement, TEST_NAME);
   }
 
   @Nullable
@@ -70,5 +104,16 @@ public class KarmaRunSettingsSerializationUtil {
     }
     JDOMExternalizerUtil.addElementWithValueAttribute(element, NODE_INTERPRETER, settings.getInterpreterRef().getReferenceName());
     settings.getEnvData().writeExternal(element);
+    KarmaScopeKind scopeKind = settings.getScopeKind();
+    if (scopeKind != KarmaScopeKind.ALL) {
+      JDOMExternalizerUtil.addElementWithValueAttribute(element, SCOPE_KIND, scopeKind.name());
+    }
+    if (scopeKind == KarmaScopeKind.SUITE || scopeKind == KarmaScopeKind.TEST) {
+      Element testNamesElement = new Element(TEST_NAMES);
+      if (!settings.getTestNames().isEmpty()) {
+        JDOMExternalizerUtil.addChildrenWithValueAttribute(testNamesElement, TEST_NAME, settings.getTestNames());
+      }
+      element.addContent(testNamesElement);
+    }
   }
 }

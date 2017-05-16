@@ -46,7 +46,7 @@ public class KarmaServerState {
 
   public KarmaServerState(@NotNull KarmaServer server, @NotNull File configurationFile) {
     myServer = server;
-    myOverriddenBrowsers = parseBrowsers(server.getServerSettings().getRunSettings().getBrowsers());
+    myOverriddenBrowsers = parseBrowsers(server.getServerSettings().getBrowsers());
     myServer.registerStreamEventHandler(new BrowserEventHandler(BROWSER_CONNECTED_EVENT_TYPE));
     myServer.registerStreamEventHandler(new BrowserEventHandler(BROWSER_DISCONNECTED_EVENT_TYPE));
     myServer.registerStreamEventHandler(new ConfigHandler(configurationFile));

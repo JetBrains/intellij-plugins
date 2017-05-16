@@ -6,26 +6,30 @@ import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.javascript.karma.scope.KarmaScopeKind;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.testFramework.PreferableRunConfiguration;
+import com.intellij.javascript.testFramework.util.JsTestFqn;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.PathUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Objects;
 
 public class KarmaRunConfiguration extends LocatableConfigurationBase implements RefactoringListenerProvider,
                                                                                  PreferableRunConfiguration {
@@ -50,7 +54,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     myRunSettings = KarmaRunSettingsSerializationUtil.readXml(element);
     NodePackage karmaPackage = myRunSettings.getKarmaPackage();
     if ("true".equals(element.getAttributeValue("default")) && karmaPackage != null && karmaPackage.isEmptyPath()) {
-      myRunSettings = myRunSettings.builder().setKarmaPackage(null).build();
+      myRunSettings = myRunSettings.toBuilder().setKarmaPackage(null).build();
     }
   }
 
@@ -87,7 +91,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
         }
         pkg = new NodePackage("");
       }
-      myRunSettings = myRunSettings.builder().setKarmaPackage(pkg).build();
+      myRunSettings = myRunSettings.toBuilder().setKarmaPackage(pkg).build();
     }
     return pkg;
   }
@@ -148,9 +152,9 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
   }
 
   public void setRunSettings(@NotNull KarmaRunSettings runSettings) {
-    NodePackage newKarmaPackage = Objects.requireNonNull(runSettings.getKarmaPackage());
+    NodePackage newKarmaPackage = runSettings.getKarmaPackage();
     NodePackage oldKarmaPackage = myRunSettings.getKarmaPackage();
-    if (newKarmaPackage.equals(oldKarmaPackage)) {
+    if (newKarmaPackage == null || newKarmaPackage.equals(oldKarmaPackage)) {
       myRunSettings = runSettings;
       return;
     }
@@ -162,17 +166,34 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     if (newKarmaPackage.isEmptyPath() && isTemplate()) {
       newKarmaPackage = null;
     }
-    myRunSettings = runSettings.builder().setKarmaPackage(newKarmaPackage).build();
+    myRunSettings = runSettings.toBuilder().setKarmaPackage(newKarmaPackage).build();
   }
 
   public void setConfigFilePath(@NotNull String configFilePath) {
-    myRunSettings = myRunSettings.builder().setConfigPath(configFilePath).build();
+    myRunSettings = myRunSettings.toBuilder().setConfigPath(configFilePath).build();
   }
 
   @Override
   public String suggestedName() {
-    File file = new File(myRunSettings.getConfigPath());
-    return file.getName();
+    KarmaRunSettings settings = myRunSettings;
+    KarmaScopeKind scopeKind = settings.getScopeKind();
+    if (scopeKind == KarmaScopeKind.ALL) {
+      return PathUtil.getFileName(settings.getConfigSystemIndependentPath());
+    }
+    if (scopeKind == KarmaScopeKind.SUITE || scopeKind == KarmaScopeKind.TEST) {
+      return JsTestFqn.getPresentableName(settings.getTestNames());
+    }
+    return super.suggestedName();
+  }
+
+  @Nullable
+  @Override
+  public String getActionName() {
+    KarmaScopeKind scopeKind = myRunSettings.getScopeKind();
+    if (scopeKind == KarmaScopeKind.SUITE || scopeKind == KarmaScopeKind.TEST) {
+      return StringUtil.notNullize(ContainerUtil.getLastItem(myRunSettings.getTestNames()));
+    }
+    return super.getActionName();
   }
 
   @Nullable

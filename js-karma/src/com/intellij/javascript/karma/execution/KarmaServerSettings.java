@@ -1,25 +1,31 @@
 package com.intellij.javascript.karma.execution;
 
+import com.intellij.execution.configuration.EnvironmentVariablesData;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
 public class KarmaServerSettings {
 
-  private final NodeJsLocalInterpreter myNodeInterpreter;
-  private final NodePackage myKarmaPackage;
-  private final KarmaRunSettings myRunSettings;
   private final boolean myWithCoverage;
   private final boolean myDebug;
+  private final NodeJsLocalInterpreter myNodeInterpreter;
+  private final NodePackage myKarmaPackage;
+  private final String myConfigFilePath;
+  private final String myBrowsers;
+  private final EnvironmentVariablesData myEnvData;
 
   private KarmaServerSettings(@NotNull Builder builder) {
-    myNodeInterpreter = builder.myNodeInterpreter;
-    myKarmaPackage = builder.myKarmaPackage;
-    myRunSettings = builder.myRunSettings;
     myWithCoverage = builder.myWithCoverage;
     myDebug = builder.myDebug;
+    myNodeInterpreter = builder.myNodeInterpreter;
+    myKarmaPackage = builder.myKarmaPackage;
+    myConfigFilePath = FileUtil.toSystemDependentName(builder.myRunSettings.getConfigPath());
+    myBrowsers = builder.myRunSettings.getBrowsers();
+    myEnvData = builder.myRunSettings.getEnvData();
   }
 
   @NotNull
@@ -32,11 +38,6 @@ public class KarmaServerSettings {
     return myKarmaPackage;
   }
 
-  @NotNull
-  public KarmaRunSettings getRunSettings() {
-    return myRunSettings;
-  }
-
   public boolean isWithCoverage() {
     return myWithCoverage;
   }
@@ -47,12 +48,22 @@ public class KarmaServerSettings {
 
   @NotNull
   public File getConfigurationFile() {
-    return new File(myRunSettings.getConfigPath());
+    return new File(myConfigFilePath);
   }
 
   @NotNull
   public String getConfigurationFilePath() {
-    return myRunSettings.getConfigPath();
+    return myConfigFilePath;
+  }
+
+  @NotNull
+  public String getBrowsers() {
+    return myBrowsers;
+  }
+
+  @NotNull
+  public EnvironmentVariablesData getEnvData() {
+    return myEnvData;
   }
 
   @Override
@@ -62,20 +73,24 @@ public class KarmaServerSettings {
 
     KarmaServerSettings that = (KarmaServerSettings)o;
 
-    return myKarmaPackage.equals(that.myKarmaPackage) &&
+    return myWithCoverage == that.myWithCoverage &&
+           myDebug == that.myDebug &&
            myNodeInterpreter.getInterpreterSystemIndependentPath().equals(that.myNodeInterpreter.getInterpreterSystemIndependentPath()) &&
-           myRunSettings.equals(that.myRunSettings) &&
-           myWithCoverage == that.myWithCoverage &&
-           myDebug == that.myDebug;
+           myKarmaPackage.equals(that.myKarmaPackage) &&
+           myConfigFilePath.equals(that.myConfigFilePath) &&
+           myBrowsers.equals(that.myBrowsers) &&
+           myEnvData.equals(that.myEnvData);
   }
 
   @Override
   public int hashCode() {
-    int result = myNodeInterpreter.getInterpreterSystemIndependentPath().hashCode();
-    result = 31 * result + myKarmaPackage.hashCode();
-    result = 31 * result + myRunSettings.hashCode();
-    result = 31 * result + (myWithCoverage ? 1 : 0);
+    int result = myWithCoverage ? 1 : 0;
     result = 31 * result + (myDebug ? 1 : 0);
+    result = 31 * result + myNodeInterpreter.getInterpreterSystemIndependentPath().hashCode();
+    result = 31 * result + myKarmaPackage.hashCode();
+    result = 31 * result + myConfigFilePath.hashCode();
+    result = 31 * result + myBrowsers.hashCode();
+    result = 31 * result + myEnvData.hashCode();
     return result;
   }
 

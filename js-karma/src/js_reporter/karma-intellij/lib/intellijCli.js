@@ -6,7 +6,8 @@ var SERVER_PORT_KEY = 'serverPort'
   , DEBUG_KEY = 'debug'
   , URL_ROOT_KEY = 'urlRoot'
   , BROWSERS_KEY = 'browsers'
-  , COVERAGE_TEMP_DIR = 'coverageTempDir';
+  , COVERAGE_TEMP_DIR = 'coverageTempDir'
+  , TEST_NAME = 'testName';
 
 function parseArguments() {
   var argv = process.argv
@@ -91,6 +92,10 @@ function isWithCoverage() {
   return options.hasOwnProperty(COVERAGE_TEMP_DIR);
 }
 
+function getTestName() {
+  return options[TEST_NAME];
+}
+
 exports.getKarmaFilePath = getKarmaFilePath;
 exports.requireKarmaModule = requireKarmaModule;
 exports.getConfigFile = getConfigFile;
@@ -100,3 +105,4 @@ exports.getUrlRoot = getUrlRoot;
 exports.getBrowsers = getBrowsers;
 exports.getCoverageTempDirPath = getCoverageTempDirPath;
 exports.isWithCoverage = isWithCoverage;
+exports.getTestName = getTestName;

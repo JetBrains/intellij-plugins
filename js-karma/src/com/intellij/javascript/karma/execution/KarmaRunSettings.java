@@ -1,12 +1,17 @@
 package com.intellij.javascript.karma.execution;
 
+import com.google.common.collect.ImmutableList;
 import com.intellij.execution.configuration.EnvironmentVariablesData;
+import com.intellij.javascript.karma.scope.KarmaScopeKind;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.List;
 
 public class KarmaRunSettings {
 
@@ -15,6 +20,8 @@ public class KarmaRunSettings {
   private final String myBrowsers;
   private final NodeJsInterpreterRef myInterpreterRef;
   private final EnvironmentVariablesData myEnvData;
+  private final KarmaScopeKind myScopeKind;
+  private final List<String> myTestNames;
 
   public KarmaRunSettings(@NotNull Builder builder) {
     myConfigPath = FileUtil.toSystemDependentName(builder.myConfigPath);
@@ -22,6 +29,8 @@ public class KarmaRunSettings {
     myBrowsers = builder.myBrowsers;
     myInterpreterRef = builder.myInterpreterRef;
     myEnvData = builder.myEnvData;
+    myScopeKind = builder.myScopeKind;
+    myTestNames = ImmutableList.copyOf(builder.myTestNames);
   }
 
   @NotNull
@@ -54,6 +63,16 @@ public class KarmaRunSettings {
     return myEnvData;
   }
 
+  @NotNull
+  public KarmaScopeKind getScopeKind() {
+    return myScopeKind;
+  }
+
+  @NotNull
+  public List<String> getTestNames() {
+    return myTestNames;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -65,7 +84,9 @@ public class KarmaRunSettings {
           ComparatorUtil.equalsNullable(myKarmaPackage, that.myKarmaPackage) &&
           myBrowsers.equals(that.myBrowsers) &&
           myInterpreterRef.getReferenceName().equals(that.myInterpreterRef.getReferenceName()) &&
-          myEnvData.equals(that.myEnvData);
+          myEnvData.equals(that.myEnvData) &&
+          myScopeKind.equals(that.myScopeKind) &&
+          myTestNames.equals(that.myTestNames);
   }
 
   @Override
@@ -75,11 +96,13 @@ public class KarmaRunSettings {
     result = 31 * result + myBrowsers.hashCode();
     result = 31 * result + myInterpreterRef.getReferenceName().hashCode();
     result = 31 * result + myEnvData.hashCode();
+    result = 31 * result + myScopeKind.hashCode();
+    result = 31 * result + myTestNames.hashCode();
     return result;
   }
 
   @NotNull
-  public Builder builder() {
+  public Builder toBuilder() {
     return new Builder(this);
   }
 
@@ -90,6 +113,8 @@ public class KarmaRunSettings {
     private String myBrowsers = "";
     private NodeJsInterpreterRef myInterpreterRef = NodeJsInterpreterRef.createProjectRef();
     private EnvironmentVariablesData myEnvData = EnvironmentVariablesData.DEFAULT;
+    private KarmaScopeKind myScopeKind = KarmaScopeKind.ALL;
+    private List<String> myTestNames = Collections.emptyList();
 
     public Builder() {}
 
@@ -99,6 +124,8 @@ public class KarmaRunSettings {
       myBrowsers = settings.getBrowsers();
       myInterpreterRef = settings.getInterpreterRef();
       myEnvData = settings.myEnvData;
+      myScopeKind = settings.myScopeKind;
+      myTestNames = settings.myTestNames;
     }
 
     @NotNull
@@ -128,6 +155,18 @@ public class KarmaRunSettings {
     @NotNull
     public Builder setEnvData(@NotNull EnvironmentVariablesData envData) {
       myEnvData = envData;
+      return this;
+    }
+
+    @NotNull
+    public Builder setScopeKind(@NotNull KarmaScopeKind scopeKind) {
+      myScopeKind = scopeKind;
+      return this;
+    }
+
+    @NotNull
+    public Builder setTestNames(@NotNull List<String> testNames) {
+      myTestNames = testNames;
       return this;
     }
 

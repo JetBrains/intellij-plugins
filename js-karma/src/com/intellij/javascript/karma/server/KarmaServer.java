@@ -8,7 +8,6 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.*;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.coverage.KarmaCoveragePeer;
-import com.intellij.javascript.karma.execution.KarmaRunSettings;
 import com.intellij.javascript.karma.execution.KarmaServerSettings;
 import com.intellij.javascript.karma.server.watch.KarmaWatcher;
 import com.intellij.javascript.karma.util.StreamEventListener;
@@ -135,8 +134,7 @@ public class KarmaServer {
 
   private KillableColoredProcessHandler startServer(@NotNull KarmaServerSettings serverSettings) throws IOException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
-    KarmaRunSettings runSettings = serverSettings.getRunSettings();
-    runSettings.getEnvData().configureCommandLine(commandLine, true);
+    serverSettings.getEnvData().configureCommandLine(commandLine, true);
     commandLine.withWorkDirectory(serverSettings.getConfigurationFile().getParentFile());
     commandLine.setExePath(serverSettings.getNodeInterpreter().getInterpreterSystemDependentPath());
     File serverFile = myKarmaJsSourcesLocator.getServerAppFile();
@@ -145,7 +143,7 @@ public class KarmaServer {
     commandLine.addParameter(serverFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myServerSettings.getKarmaPackage().getSystemDependentPath());
     commandLine.addParameter("--configFile=" + serverSettings.getConfigurationFilePath());
-    String browsers = serverSettings.getRunSettings().getBrowsers();
+    String browsers = serverSettings.getBrowsers();
     if (!StringUtil.isEmptyOrSpaces(browsers)) {
       commandLine.addParameter("--browsers=" + browsers);
     }
