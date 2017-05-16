@@ -22,7 +22,7 @@ import com.intellij.codeInspection.LocalQuickFixProvider;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.beanProperties.CreateBeanPropertyFix;
+import com.intellij.psi.impl.beanProperties.CreateBeanPropertyFixes;
 import com.intellij.psi.util.PropertyUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -126,7 +126,7 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
       return LocalQuickFix.EMPTY_ARRAY;
     }
 
-    return CreateBeanPropertyFix.createFixes(value, psiClass, null, true);
+    return CreateBeanPropertyFixes.createFixes(value, psiClass, null, true);
   }
 
   @Nullable
