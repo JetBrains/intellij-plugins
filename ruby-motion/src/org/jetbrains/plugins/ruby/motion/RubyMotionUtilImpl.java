@@ -37,6 +37,7 @@ import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
+import com.jetbrains.cidr.CocoaDocumentationManagerImpl;
 import com.jetbrains.cidr.CocoaDocumentationManager;
 import com.jetbrains.cidr.execution.ProcessHandlerWithPID;
 import com.jetbrains.cidr.execution.RunParameters;
@@ -99,11 +100,11 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
   public String getMotionDoc(PsiElement targetElement, @Nullable Symbol targetSymbol) {
     String descriptionText;
     final MotionSymbol motionSymbol = (MotionSymbol)targetSymbol;
-    CocoaDocumentationManager.DocTokenType type = motionSymbol.getInfoType();
-    CocoaDocumentationManager manager = CocoaDocumentationManager.getInstance(targetSymbol.getProject());
+    CocoaDocumentationManagerImpl.DocTokenType type = motionSymbol.getInfoType();
+    CocoaDocumentationManagerImpl manager = (CocoaDocumentationManagerImpl)CocoaDocumentationManager.getInstance(targetSymbol.getProject());
     final Symbol parent = targetSymbol.getParentSymbol();
     final String parentName = parent != null ? parent.getName() : null;
-    final CocoaDocumentationManager.DocumentationBean info =
+    final CocoaDocumentationManagerImpl.DocumentationBean info =
       manager.getTokenInfo(targetElement, motionSymbol.getInfoName(),
                            Collections.singletonList(Pair.create(parentName, type)));
     descriptionText = info != null ? patchObjCDoc(info.html, motionSymbol) : null;

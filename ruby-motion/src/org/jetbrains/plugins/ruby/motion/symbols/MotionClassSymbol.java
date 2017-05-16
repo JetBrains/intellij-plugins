@@ -2,7 +2,7 @@ package org.jetbrains.plugins.ruby.motion.symbols;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.cidr.CocoaDocumentationManager;
+import com.jetbrains.cidr.CocoaDocumentationManagerImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.ruby.motion.RubyMotionUtil;
@@ -81,8 +81,8 @@ public class MotionClassSymbol extends SymbolImpl implements MotionSymbol {
   }
 
   @Override
-  public CocoaDocumentationManager.DocTokenType getInfoType() {
-    return CocoaDocumentationManager.DocTokenType.CLASS;
+  public CocoaDocumentationManagerImpl.DocTokenType getInfoType() {
+    return CocoaDocumentationManagerImpl.DocTokenType.CLASS;
   }
 
   @Override
