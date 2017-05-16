@@ -95,9 +95,7 @@ public class Struts2GraphComponent extends JPanel implements DataProvider, Dispo
   private JComponent createToolbarPanel() {
     final DefaultActionGroup actions = new DefaultActionGroup();
     actions.add(GraphViewUtil.getBasicToolbar(myBuilder));
-    final ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN,
-                                                                                        actions,
-                                                                                        true);
+    final ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar("Struts2Graph", actions, true);
     return actionToolbar.getComponent();
   }
 
