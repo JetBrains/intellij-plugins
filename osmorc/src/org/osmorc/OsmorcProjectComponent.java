@@ -29,7 +29,6 @@ import com.intellij.ProjectTopics;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.notification.*;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.BaseComponent;
 import com.intellij.openapi.module.Module;
@@ -69,18 +68,15 @@ public class OsmorcProjectComponent implements BaseComponent {
   public static final NotificationGroup IMPORTANT_NOTIFICATIONS =
     new NotificationGroup("OSGi Important Messages", NotificationDisplayType.STICKY_BALLOON, true);
 
-  private final Application myApplication;
   private final OsgiConfigurationType myConfigurationType;
   private final Project myProject;
   private final ProjectSettings myProjectSettings;
   private final MergingUpdateQueue myQueue;
   private final AtomicBoolean myReimportNotification = new AtomicBoolean(false);
 
-  public OsmorcProjectComponent(@NotNull Application application,
-                                @NotNull OsgiConfigurationType configurationType,
+  public OsmorcProjectComponent(@NotNull OsgiConfigurationType configurationType,
                                 @NotNull Project project,
                                 @NotNull ProjectSettings projectSettings) {
-    myApplication = application;
     myConfigurationType = configurationType;
     myProject = project;
     myProjectSettings = projectSettings;
@@ -90,15 +86,13 @@ public class OsmorcProjectComponent implements BaseComponent {
 
   @Override
   public void initComponent() {
-    MessageBusConnection appBus = myApplication.getMessageBus().connect(myProject);
-    appBus.subscribe(FrameworkDefinitionListener.TOPIC, new MyFrameworkDefinitionListener());
-
-    MessageBusConnection projectBus = myProject.getMessageBus().connect(myProject);
-    projectBus.subscribe(ProjectTopics.MODULES, new MyModuleRenameHandler());
+    MessageBusConnection connection = myProject.getMessageBus().connect();
+    connection.subscribe(FrameworkDefinitionListener.TOPIC, new MyFrameworkDefinitionListener());
+    connection.subscribe(ProjectTopics.MODULES, new MyModuleRenameHandler());
 
     Workspace workspace = BndProjectImporter.findWorkspace(myProject);
     if (workspace != null) {
-      appBus.subscribe(VirtualFileManager.VFS_CHANGES, new MyVfsListener());
+      connection.subscribe(VirtualFileManager.VFS_CHANGES, new MyVfsListener());
     }
   }
   
