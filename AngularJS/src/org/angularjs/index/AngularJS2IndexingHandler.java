@@ -133,8 +133,10 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
         for (CssSelectorSuffix suffix : simpleSelector.getSelectorSuffixes()) {
           if (!(suffix instanceof CssAttribute)) continue;
           String name = ((CssAttribute)suffix).getAttributeName();
-          if (seenAttribute) name = "[" + name + "]";
-          attributesToElements.putValue(name, elementName);
+          if (!StringUtil.isEmpty(name)) {
+            if (seenAttribute) name = "[" + name + "]";
+            attributesToElements.putValue(name, elementName);
+          }
           seenAttribute = true;
         }
         if (!seenAttribute) attributesToElements.putValue("", elementName);
