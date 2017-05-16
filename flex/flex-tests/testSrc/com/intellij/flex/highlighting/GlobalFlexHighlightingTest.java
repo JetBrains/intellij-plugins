@@ -22,7 +22,6 @@ import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
 public class GlobalFlexHighlightingTest extends InspectionTestCase {
-
   @Override
   protected void setUp() throws Exception {
     VfsRootAccess.allowRootAccess(getTestRootDisposable(),
@@ -30,6 +29,7 @@ public class GlobalFlexHighlightingTest extends InspectionTestCase {
     super.setUp();
   }
 
+  @Override
   protected Sdk getTestProjectJdk() {
     return getTestProjectSdk();
   }
@@ -89,7 +89,7 @@ public class GlobalFlexHighlightingTest extends InspectionTestCase {
       doTest(getTestName(false), new DefaultHighlightVisitorBasedInspection.AnnotatorBasedInspection());
     }
     finally {
-      profile.disableTool(JSUnresolvedVariableInspection.SHORT_NAME, myProject);
+      profile.setToolEnabled(JSUnresolvedVariableInspection.SHORT_NAME, false);
     }
   }
 
