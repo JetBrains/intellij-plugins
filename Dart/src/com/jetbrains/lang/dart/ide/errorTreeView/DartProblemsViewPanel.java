@@ -163,7 +163,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
     group.addAction(new ContextHelpAction("reference.toolWindow.DartAnalysis"));
 
-    return ActionManager.getInstance().createActionToolbar(ActionPlaces.TOOLBAR, group, false).getComponent();
+    return ActionManager.getInstance().createActionToolbar("DartProblemsView", group, false).getComponent();
   }
 
   @NotNull
