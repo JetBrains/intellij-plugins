@@ -48,7 +48,7 @@ public CfmlTagComponentImpl(ASTNode astNode) {
   }
 
   public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return null;
   }
 
   @NotNull
@@ -134,11 +134,11 @@ public CfmlTagComponentImpl(ASTNode astNode) {
   }
 
   public String[] getInterfaceNames() {
-    return ArrayUtil.EMPTY_STRING_ARRAY;  //To change body of implemented methods use File | Settings | File Templates.
+    return ArrayUtil.EMPTY_STRING_ARRAY;
   }
 
   public CfmlComponent[] getImplementedInterfaces() {
-    return CfmlComponent.EMPTY_ARRAY;  //To change body of implemented methods use File | Settings | File Templates.
+    return CfmlComponent.EMPTY_ARRAY;
   }
 
   @Nullable

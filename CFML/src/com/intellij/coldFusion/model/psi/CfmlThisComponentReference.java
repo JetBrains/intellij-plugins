@@ -106,6 +106,6 @@ public class CfmlThisComponentReference extends CfmlCompositeElement implements 
 
   @Override
   public PsiType getPsiType() {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return null;
   }
 }

@@ -30,11 +30,11 @@ import java.util.List;
  */
 public class CfmlDocumentProvider implements DocumentationProvider {
   public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return null;
   }
 
   public List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return null;
   }
 
   public String generateDoc(PsiElement element, PsiElement originalElement) {
@@ -49,14 +49,14 @@ public class CfmlDocumentProvider implements DocumentationProvider {
       }
     }
     return "No documentation provided for " +
-           element.getText();  //To change body of implemented methods use File | Settings | File Templates.
+           element.getText();
   }
 
   public PsiElement getDocumentationElementForLookupItem(PsiManager psiManager, Object object, PsiElement element) {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return null;
   }
 
   public PsiElement getDocumentationElementForLink(PsiManager psiManager, String link, PsiElement context) {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return null;
   }
 }

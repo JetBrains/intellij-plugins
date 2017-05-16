@@ -20,7 +20,6 @@ import com.intellij.coldFusion.model.psi.CfmlFunction;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.structureView.TextEditorBasedStructureViewModel;
 import com.intellij.ide.util.treeView.smartTree.Filter;
-import com.intellij.ide.util.treeView.smartTree.Grouper;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -50,12 +49,6 @@ public class CfmlStructureViewModel extends TextEditorBasedStructureViewModel {
   @NotNull
   public StructureViewTreeElement getRoot() {
     return myRoot;
-  }
-
-  @Override
-  @NotNull
-  public Grouper[] getGroupers() {
-    return Grouper.EMPTY_ARRAY;  //To change body of implemented methods use File | Settings | File Templates.
   }
 
   @Override

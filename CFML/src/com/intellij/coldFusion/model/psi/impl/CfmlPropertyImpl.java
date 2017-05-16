@@ -88,7 +88,7 @@ public class CfmlPropertyImpl extends CfmlCompositeElement implements CfmlProper
 
   @Override
   public PsiType getPsiType() {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return null;
   }
 
   @NotNull

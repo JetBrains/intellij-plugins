@@ -29,12 +29,10 @@ import com.intellij.coldFusion.model.psi.CfmlComponentReference;
 import com.intellij.coldFusion.model.psi.CfmlProperty;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.StdLanguages;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.patterns.PatternCondition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Function;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -75,11 +73,6 @@ public class CfmlCompletionContributor extends CompletionContributor {
                 context.setFileCopyPatcher(new DummyIdentifierPatcher("f"));
             }
     }*/
-  }
-
-  @Override
-  public String handleEmptyLookup(@NotNull CompletionParameters parameters, Editor editor) {
-    return super.handleEmptyLookup(parameters, editor);    //To change body of overridden methods use File | Settings | File Templates.
   }
 
   public CfmlCompletionContributor() {

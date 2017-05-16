@@ -126,6 +126,6 @@ public class CfmlStringLiteralExpression extends CfmlCompositeElement implements
       }
     }
 
-    return super.getReferences();    //To change body of overridden methods use File | Settings | File Templates.
+    return super.getReferences();
   }
 }

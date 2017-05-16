@@ -72,7 +72,7 @@ public class CfmlComponentConstructorReference {
       }
 
     }
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return null;
   }
 
   @NotNull
@@ -87,28 +87,28 @@ public class CfmlComponentConstructorReference {
 
   @Override
   public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return null;
   }
 
   @Override
   public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return null;
   }
 
   @Override
   public boolean isReferenceTo(PsiElement element) {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
+    return false;
   }
 
   @NotNull
   @Override
   public Object[] getVariants() {
-    return new Object[0];  //To change body of implemented methods use File | Settings | File Templates.
+    return new Object[0];
   }
 
   @Override
   public boolean isSoft() {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
+    return false;
   }
 }
 */

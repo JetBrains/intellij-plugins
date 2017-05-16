@@ -72,7 +72,7 @@ public class ClearHistoryCommandTest extends LightTestCase {
       public Object invoke(Invocation invocation) throws Throwable {
         final FutureTask task = new FutureTask((Runnable) invocation.parameterValues.get(0), null);
         task.run();
-        return task;  //To change body of implemented methods use File | Settings | File Templates.
+        return task;
       }
     });
     myDispatcherMock.expects(once()).method("clearHistory");

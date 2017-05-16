@@ -152,11 +152,6 @@ public class CfmlFile extends PsiFileBase {
       }
 
       @Override
-      public void visitCfmlTag(CfmlTag tag) {
-        super.visitCfmlTag(tag);    //To change body of overridden methods use File | Settings | File Templates.
-      }
-
-      @Override
       public void visitElement(PsiElement element) {
         if (element instanceof CfmlFile || element instanceof CfmlTag) {
           super.visitElement(element);

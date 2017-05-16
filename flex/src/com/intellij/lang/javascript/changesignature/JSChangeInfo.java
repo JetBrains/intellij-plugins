@@ -36,7 +36,7 @@ public class JSChangeInfo implements ChangeInfo {
 
   @Override
   public boolean isParameterSetOrOrderChanged() {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
+    return false;
   }
 
   @Override
@@ -46,7 +46,7 @@ public class JSChangeInfo implements ChangeInfo {
 
   @Override
   public boolean isReturnTypeChanged() {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
+    return false;
   }
 
   @Override
@@ -61,22 +61,22 @@ public class JSChangeInfo implements ChangeInfo {
 
   @Override
   public boolean isParameterTypesChanged() {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
+    return false;
   }
 
   @Override
   public boolean isParameterNamesChanged() {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
+    return false;
   }
 
   @Override
   public boolean isGenerateDelegate() {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
+    return false;
   }
 
   @Override
   public boolean isNameChanged() {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
+    return false;
   }
 
   public JSAttributeList.AccessType getNewVisibility() {

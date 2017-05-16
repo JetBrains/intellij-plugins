@@ -35,7 +35,6 @@ import com.intellij.psi.scope.JavaScopeProcessorEvent;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiUtil;
-import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
@@ -168,7 +167,6 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
       }
     }
     return false;
-    //return super.isReferenceTo(element);    //To change body of overridden methods use File | Settings | File Templates.
   }
 
   @NotNull

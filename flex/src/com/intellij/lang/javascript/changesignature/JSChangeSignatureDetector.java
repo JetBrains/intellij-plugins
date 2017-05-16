@@ -141,7 +141,7 @@ public class JSChangeSignatureDetector implements LanguageChangeSignatureDetecto
 
   @Override
   public boolean ignoreChanges(PsiElement element) {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
+    return false;
   }
 
   @Override
@@ -156,6 +156,6 @@ public class JSChangeSignatureDetector implements LanguageChangeSignatureDetecto
 
   @Override
   public JSChangeInfo createNextChangeInfo(String signature, @NotNull JSChangeInfo currentInfo, boolean delegate) {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return null;
   }
 }

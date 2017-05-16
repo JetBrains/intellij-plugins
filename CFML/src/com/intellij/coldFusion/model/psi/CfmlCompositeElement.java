@@ -49,7 +49,7 @@ public class CfmlCompositeElement extends StubBasedPsiElementBase<NamedStub> imp
   @NotNull
   @Override
   public CfmlFile getContainingFile() {
-    return (CfmlFile)super.getContainingFile();    //To change body of overridden methods use File | Settings | File Templates.
+    return (CfmlFile)super.getContainingFile();
   }
 
   @NotNull
