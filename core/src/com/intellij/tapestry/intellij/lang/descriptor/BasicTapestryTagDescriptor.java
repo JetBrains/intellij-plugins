@@ -96,6 +96,6 @@ public abstract class BasicTapestryTagDescriptor implements XmlElementDescriptor
   }
 
   public void setName(String name) throws IncorrectOperationException {
-    //To change body of implemented methods use File | Settings | File Templates.
+
   }
 }
