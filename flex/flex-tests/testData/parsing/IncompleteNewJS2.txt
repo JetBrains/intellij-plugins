@@ -1,6 +1,6 @@
 JSFile:IncompleteNewJS2.js2
   ActionScriptClass
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
@@ -10,7 +10,7 @@ JSFile:IncompleteNewJS2.js2
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n  ')
     JSVarStatement
-      JSAttributeList
+      ActionScriptAttributeList
         <empty list>
       PsiElement(JS:VAR_KEYWORD)('var')
       PsiWhiteSpace(' ')

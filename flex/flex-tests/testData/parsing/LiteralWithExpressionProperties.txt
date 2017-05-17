@@ -1,6 +1,6 @@
 JSFile:LiteralWithExpressionProperties.js2
   ActionScriptFunction
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')

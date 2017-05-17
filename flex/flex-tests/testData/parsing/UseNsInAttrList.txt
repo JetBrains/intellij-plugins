@@ -5,7 +5,7 @@ JSFile:UseNsInAttrList.js2
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n')
     ActionScriptClass
-      JSAttributeList
+      ActionScriptAttributeList
         JSAttribute
           PsiElement(JS:LBRACKET)('[')
           PsiElement(JS:IDENTIFIER)('Deprecated')
@@ -30,7 +30,7 @@ JSFile:UseNsInAttrList.js2
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n    ')
       JSVarStatement
-        JSAttributeList
+        ActionScriptAttributeList
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('some_namespace')
         PsiWhiteSpace(' ')
@@ -44,7 +44,7 @@ JSFile:UseNsInAttrList.js2
         PsiElement(JS:SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')
       ActionScriptFunction
-        JSAttributeList
+        ActionScriptAttributeList
           PsiElement(JS:PUBLIC_KEYWORD)('public')
         PsiWhiteSpace(' ')
         PsiElement(JS:FUNCTION_KEYWORD)('function')

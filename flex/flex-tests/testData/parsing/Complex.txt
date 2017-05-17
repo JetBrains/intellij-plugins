@@ -14,7 +14,7 @@ JSFile:Complex.js2
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n\n')
     ActionScriptClass
-      JSAttributeList
+      ActionScriptAttributeList
         PsiElement(JS:PUBLIC_KEYWORD)('public')
       PsiWhiteSpace(' ')
       PsiElement(JS:CLASS_KEYWORD)('class')
@@ -25,7 +25,7 @@ JSFile:Complex.js2
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n  ')
       JSVarStatement
-        JSAttributeList
+        ActionScriptAttributeList
           JSConditionalCompileVariableReference
             JSReferenceExpression
               JSE4XNamespaceReference

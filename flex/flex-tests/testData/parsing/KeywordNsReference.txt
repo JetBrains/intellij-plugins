@@ -1,6 +1,6 @@
 JSFile:KeywordNsReference.js2
   ActionScriptClass
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
@@ -10,7 +10,7 @@ JSFile:KeywordNsReference.js2
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n    ')
     ActionScriptFunction
-      JSAttributeList
+      ActionScriptAttributeList
         <empty list>
       PsiElement(JS:FUNCTION_KEYWORD)('function')
       PsiWhiteSpace(' ')

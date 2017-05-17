@@ -1,6 +1,6 @@
 JSFile:KeywordsInE4X.js2
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')
@@ -41,7 +41,7 @@ JSFile:KeywordsInE4X.js2
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')
@@ -63,7 +63,7 @@ JSFile:KeywordsInE4X.js2
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n\n')
   ActionScriptFunction
-    JSAttributeList
+    ActionScriptAttributeList
       JSReferenceExpression
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('err')

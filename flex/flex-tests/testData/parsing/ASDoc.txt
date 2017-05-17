@@ -1,6 +1,6 @@
 JSFile:ASDoc.js2
   ActionScriptClass
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
@@ -19,7 +19,7 @@ JSFile:ASDoc.js2
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n')
     ActionScriptClass
-      JSAttributeList
+      ActionScriptAttributeList
         <empty list>
       PsiElement(JS:CLASS_KEYWORD)('class')
       PsiWhiteSpace(' ')
@@ -41,7 +41,7 @@ JSFile:ASDoc.js2
         PsiWhiteSpace('\n ')
         PsiElement(JS:DOC_COMMENT_END)('*/')
       PsiWhiteSpace('\n')
-      JSAttributeList
+      ActionScriptAttributeList
         <empty list>
       PsiElement(JS:CLASS_KEYWORD)('class')
       PsiWhiteSpace(' ')
@@ -63,7 +63,7 @@ JSFile:ASDoc.js2
         PsiWhiteSpace('\n ')
         PsiElement(JS:DOC_COMMENT_END)('*/')
       PsiWhiteSpace('\n\n')
-      JSAttributeList
+      ActionScriptAttributeList
         PsiElement(JS:PUBLIC_KEYWORD)('public')
       PsiWhiteSpace(' ')
       PsiElement(JS:CLASS_KEYWORD)('class')
@@ -99,7 +99,7 @@ JSFile:ASDoc.js2
       PsiWhiteSpace('\n')
       PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
       PsiWhiteSpace('\n')
-      JSAttributeList
+      ActionScriptAttributeList
         PsiElement(JS:PUBLIC_KEYWORD)('public')
       PsiWhiteSpace(' ')
       PsiElement(JS:CLASS_KEYWORD)('class')
@@ -128,7 +128,7 @@ JSFile:ASDoc.js2
       PsiWhiteSpace('\n')
       PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
       PsiWhiteSpace('\n')
-      JSAttributeList
+      ActionScriptAttributeList
         PsiElement(JS:PUBLIC_KEYWORD)('public')
       PsiWhiteSpace(' ')
       PsiElement(JS:CLASS_KEYWORD)('class')
@@ -157,7 +157,7 @@ JSFile:ASDoc.js2
       PsiWhiteSpace('\n\n')
       PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
       PsiWhiteSpace('\n\n')
-      JSAttributeList
+      ActionScriptAttributeList
         PsiElement(JS:PUBLIC_KEYWORD)('public')
       PsiWhiteSpace(' ')
       PsiElement(JS:CLASS_KEYWORD)('class')
@@ -179,7 +179,7 @@ JSFile:ASDoc.js2
           PsiWhiteSpace('\n ')
           PsiElement(JS:DOC_COMMENT_END)('*/')
         PsiWhiteSpace('\n')
-        JSAttributeList
+        ActionScriptAttributeList
           <empty list>
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
@@ -204,7 +204,7 @@ JSFile:ASDoc.js2
           PsiWhiteSpace('\n ')
           PsiElement(JS:DOC_COMMENT_END)('*/')
         PsiWhiteSpace('\n\n')
-        JSAttributeList
+        ActionScriptAttributeList
           PsiElement(JS:PUBLIC_KEYWORD)('public')
         PsiWhiteSpace(' ')
         PsiElement(JS:FUNCTION_KEYWORD)('function')
@@ -243,7 +243,7 @@ JSFile:ASDoc.js2
         PsiWhiteSpace('\n')
         PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
         PsiWhiteSpace('\n')
-        JSAttributeList
+        ActionScriptAttributeList
           PsiElement(JS:PUBLIC_KEYWORD)('public')
         PsiWhiteSpace(' ')
         PsiElement(JS:FUNCTION_KEYWORD)('function')
@@ -275,7 +275,7 @@ JSFile:ASDoc.js2
         PsiWhiteSpace('\n')
         PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
         PsiWhiteSpace('\n')
-        JSAttributeList
+        ActionScriptAttributeList
           PsiElement(JS:PUBLIC_KEYWORD)('public')
         PsiWhiteSpace(' ')
         PsiElement(JS:FUNCTION_KEYWORD)('function')
@@ -307,7 +307,7 @@ JSFile:ASDoc.js2
         PsiWhiteSpace('\n\n')
         PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
         PsiWhiteSpace('\n\n')
-        JSAttributeList
+        ActionScriptAttributeList
           PsiElement(JS:PUBLIC_KEYWORD)('public')
         PsiWhiteSpace(' ')
         PsiElement(JS:FUNCTION_KEYWORD)('function')
@@ -324,7 +324,7 @@ JSFile:ASDoc.js2
       PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
       PsiWhiteSpace('\n')
       ActionScriptFunction
-        JSAttributeList
+        ActionScriptAttributeList
           PsiElement(JS:PUBLIC_KEYWORD)('public')
         PsiWhiteSpace(' ')
         PsiElement(JS:FUNCTION_KEYWORD)('function')
@@ -358,7 +358,7 @@ JSFile:ASDoc.js2
         PsiWhiteSpace('\n')
         PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
         PsiWhiteSpace('\n')
-        JSAttributeList
+        ActionScriptAttributeList
           <empty list>
         PsiElement(JS:VAR_KEYWORD)('var')
         PsiWhiteSpace(' ')
@@ -387,7 +387,7 @@ JSFile:ASDoc.js2
         PsiWhiteSpace('\n\n')
         PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
         PsiWhiteSpace('\n\n')
-        JSAttributeList
+        ActionScriptAttributeList
           <empty list>
         PsiElement(JS:VAR_KEYWORD)('var')
         PsiWhiteSpace(' ')
@@ -399,7 +399,7 @@ JSFile:ASDoc.js2
       PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
       PsiWhiteSpace('\n')
       JSVarStatement
-        JSAttributeList
+        ActionScriptAttributeList
           <empty list>
         PsiElement(JS:VAR_KEYWORD)('var')
         PsiWhiteSpace(' ')
@@ -415,7 +415,7 @@ JSFile:ASDoc.js2
   PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
   PsiWhiteSpace('\n')
   ActionScriptClass
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')

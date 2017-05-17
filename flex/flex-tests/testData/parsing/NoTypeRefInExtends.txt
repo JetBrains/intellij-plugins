@@ -1,6 +1,6 @@
 JSFile:NoTypeRefInExtends.js2
   ActionScriptClass
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
@@ -16,7 +16,7 @@ JSFile:NoTypeRefInExtends.js2
     PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n')
   ActionScriptClass
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')

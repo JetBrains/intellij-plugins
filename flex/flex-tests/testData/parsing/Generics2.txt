@@ -1,6 +1,6 @@
 JSFile:Generics2.js2
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')
@@ -49,7 +49,7 @@ JSFile:Generics2.js2
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')
@@ -109,7 +109,7 @@ JSFile:Generics2.js2
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')
@@ -164,7 +164,7 @@ JSFile:Generics2.js2
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:CONST_KEYWORD)('const')
     PsiWhiteSpace(' ')

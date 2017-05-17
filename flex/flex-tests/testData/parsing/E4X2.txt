@@ -14,7 +14,7 @@ JSFile:E4X2.js2
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')
@@ -26,7 +26,7 @@ JSFile:E4X2.js2
         PsiElement(JS:IDENTIFIER)('XML')
   PsiWhiteSpace('\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')
@@ -65,7 +65,7 @@ JSFile:E4X2.js2
       PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')
@@ -85,7 +85,7 @@ JSFile:E4X2.js2
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')
@@ -103,7 +103,7 @@ JSFile:E4X2.js2
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')
@@ -129,7 +129,7 @@ JSFile:E4X2.js2
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')

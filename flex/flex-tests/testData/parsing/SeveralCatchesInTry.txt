@@ -1,6 +1,6 @@
 JSFile:SeveralCatchesInTry.js2
   ActionScriptClass
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
@@ -10,7 +10,7 @@ JSFile:SeveralCatchesInTry.js2
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n  ')
     ActionScriptFunction
-      JSAttributeList
+      ActionScriptAttributeList
         PsiElement(JS:PROTECTED_KEYWORD)('protected')
       PsiWhiteSpace(' ')
       PsiElement(JS:FUNCTION_KEYWORD)('function')
