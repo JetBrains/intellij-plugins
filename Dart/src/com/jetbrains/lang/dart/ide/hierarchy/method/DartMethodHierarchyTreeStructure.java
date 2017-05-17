@@ -12,7 +12,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
-import com.jetbrains.lang.dart.psi.DartMethodDeclaration;
 import org.dartlang.analysis.server.protocol.TypeHierarchyItem;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +24,7 @@ import static com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil.getTypeHie
 public class DartMethodHierarchyTreeStructure extends HierarchyTreeStructure {
   private final SmartPsiElementPointer myMethod;
 
-  public DartMethodHierarchyTreeStructure(Project project, DartMethodDeclaration element) {
+  public DartMethodHierarchyTreeStructure(Project project, DartComponent element) {
     super(project, null);
     DartClass baseClass = PsiTreeUtil.getParentOfType(element, DartClass.class);
     myBaseDescriptor = new DartMethodHierarchyNodeDescriptor(project, null, baseClass, true, this);
@@ -109,7 +108,7 @@ public class DartMethodHierarchyTreeStructure extends HierarchyTreeStructure {
     descriptor.setCachedChildren(subDescriptors.toArray(new HierarchyNodeDescriptor[subDescriptors.size()]));
   }
 
-  private DartMethodDeclaration getBaseMethod() {
-    return (DartMethodDeclaration)myMethod.getElement();
+  private DartComponent getBaseMethod() {
+    return (DartComponent)myMethod.getElement();
   }
 }
