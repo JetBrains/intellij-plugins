@@ -129,16 +129,7 @@ public class DartIndentProcessor {
       if (COMMENTS.contains(elementType)) {
         return Indent.getNormalIndent();
       }
-      if (mode == FormattingMode.ADJUST_INDENT_ON_ENTER) {
-        ASTNode last = node.getLastChildNode();
-        if (last == null) return Indent.getNoneIndent();
-        return last.getElementType() == COMMA && superParentType != METADATA
-               ? Indent.getNormalIndent()
-               : Indent.getNoneIndent();
-      }
-      else {
-        return Indent.getNoneIndent();
-      }
+      return Indent.getNoneIndent();
     }
     if (parentType == ARGUMENT_LIST) {
       // see https://github.com/dart-lang/dart_style/issues/551

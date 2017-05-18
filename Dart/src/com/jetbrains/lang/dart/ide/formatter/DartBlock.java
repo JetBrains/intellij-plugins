@@ -94,6 +94,11 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
     return null;
   }
 
+  @Override
+  public boolean isIncomplete() {
+    return super.isIncomplete() || myNode.getElementType() == ARGUMENT_LIST;
+  }
+
   @NotNull
   @Override
   public ChildAttributes getChildAttributes(final int newIndex) {
