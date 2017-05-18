@@ -4,7 +4,6 @@ import com.intellij.execution.configurations.CommandLineTokenizer
 import com.intellij.icons.AllIcons
 import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
-import com.intellij.javascript.nodejs.NodeSettings
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.openapi.actionSystem.*
@@ -24,6 +23,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.*
 import com.intellij.ui.components.JBList
 import com.intellij.ui.speedSearch.ListWithFilter
+import com.intellij.util.gist.GistManager
+import com.intellij.util.gist.GistManagerImpl
 import com.intellij.util.ui.EmptyIcon
 import com.intellij.util.ui.JBUI
 import icons.JavaScriptLanguageIcons
@@ -45,10 +46,11 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
     val file = e.getData(PlatformDataKeys.VIRTUAL_FILE)
     val editor = e.getData(PlatformDataKeys.FILE_EDITOR)
+    val cli = findAngularCliFolder(project, file) ?: return
 
     val model = DefaultListModel<Blueprint>()
     val list = JBList<Blueprint>(model)
-    updateList(list, model, project)
+    updateList(list, model, project, cli)
     list.cellRenderer = object: JBList.StripedListCellRenderer() {
       override fun getListCellRendererComponent(list: JList<*>?,
                                                 value: Any?,
@@ -68,8 +70,8 @@ class AngularCliGenerateAction : DumbAwareAction() {
       }
 
       override fun actionPerformed(e: AnActionEvent?) {
-        BlueprintsLoader.CacheModificationTracker.count++
-        updateList(list, model, project)
+        (GistManager.getInstance() as GistManagerImpl).invalidateData()
+        updateList(list, model, project, cli)
       }
     }
     refresh.registerCustomShortcutSet(refresh.shortcutSet, list)
@@ -105,14 +107,14 @@ class AngularCliGenerateAction : DumbAwareAction() {
       override fun keyPressed(e: KeyEvent?) {
         if (e?.keyCode == KeyEvent.VK_ENTER) {
           e?.consume()
-          askOptions(project, popup, list.selectedValue as Blueprint, workingDir(editor, file))
+          askOptions(project, popup, list.selectedValue as Blueprint, cli, workingDir(editor, file))
         }
       }
     })
     object: DoubleClickListener() {
       override fun onDoubleClick(event: MouseEvent?): Boolean {
         if (list.selectedValue == null) return true
-        askOptions(project, popup, list.selectedValue as Blueprint, workingDir(editor, file))
+        askOptions(project, popup, list.selectedValue as Blueprint, cli, workingDir(editor, file))
         return true
       }
     }.installOn(list)
@@ -127,11 +129,11 @@ class AngularCliGenerateAction : DumbAwareAction() {
     return null
   }
 
-  private fun updateList(list: JBList<Blueprint>, model: DefaultListModel<Blueprint>, project: Project) {
+  private fun updateList(list: JBList<Blueprint>, model: DefaultListModel<Blueprint>, project: Project, cli: VirtualFile) {
     list.setPaintBusy(true)
     model.clear()
     ApplicationManager.getApplication().executeOnPooledThread({
-      val blueprints = BlueprintsLoader.load(project)
+      val blueprints = BlueprintsLoader.load(project, cli)
       ApplicationManager.getApplication().invokeLater({
                                                         blueprints.forEach {
                                                           model.addElement(it)
@@ -141,7 +143,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     })
   }
 
-  private fun askOptions(project: Project, popup: JBPopup, blueprint: Blueprint, workingDir: VirtualFile?) {
+  private fun askOptions(project: Project, popup: JBPopup, blueprint: Blueprint, cli: VirtualFile, workingDir: VirtualFile?) {
     popup.closeOk(null)
     val dialog = object: DialogWrapper(project, true) {
       private lateinit var editor:EditorTextField
@@ -174,28 +176,29 @@ class AngularCliGenerateAction : DumbAwareAction() {
     }
 
     if (dialog.showAndGet()) {
-      runGenerator(project, blueprint, dialog.arguments(), workingDir)
+      runGenerator(project, blueprint, dialog.arguments(), cli, workingDir)
     }
   }
 
-  private fun runGenerator(project: Project, blueprint: Blueprint, arguments: Array<String>, workingDir: VirtualFile?) {
+  private fun runGenerator(project: Project, blueprint: Blueprint, arguments: Array<String>, cli: VirtualFile, workingDir: VirtualFile?) {
     val interpreter = NodeJsInterpreterManager.getInstance(project).default
     val node = NodeJsLocalInterpreter.tryCast(interpreter) ?: return
 
     val modules:MutableList<CompletionModuleInfo> = mutableListOf()
-    val baseDir = project.baseDir
-    NodeModuleSearchUtil.findModulesWithName(modules, AngularCLIProjectGenerator.PACKAGE_NAME, baseDir, NodeSettings.create(node), false)
+    NodeModuleSearchUtil.findModulesWithName(modules, AngularCLIProjectGenerator.PACKAGE_NAME, cli, false, node)
 
     val module = modules.firstOrNull() ?: return
 
-    val filter = AngularCLIFilter(project, baseDir.path)
+    val filter = AngularCLIFilter(project, cli.path)
     AngularCLIProjectGenerator.generate(node, AngularCLIProjectGenerator.ng(module.virtualFile?.path!!),
-                                        project.baseDir, VfsUtilCore.virtualToIoFile(workingDir ?: project.baseDir), project,
+                                        cli, VfsUtilCore.virtualToIoFile(workingDir ?: cli), project,
                                         null, arrayOf(filter), "generate", blueprint.name, *arguments)
   }
 
   override fun update(e: AnActionEvent?) {
     val project = e?.project
-    e?.presentation?.isEnabledAndVisible = project != null && project.baseDir?.findChild(AngularJSProjectConfigurator.ANGULAR_CLI_JSON) != null
+    val file = e?.getData(PlatformDataKeys.VIRTUAL_FILE)
+
+    e?.presentation?.isEnabledAndVisible = project != null && findAngularCliFolder(project, file) != null
   }
 }
