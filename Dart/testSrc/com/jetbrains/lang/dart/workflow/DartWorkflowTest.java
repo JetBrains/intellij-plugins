@@ -61,6 +61,8 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
         contentEntry.addExcludeFolder(rootUrl + "/dir1/web/packages");
         contentEntry.addExcludeFolder(rootUrl + "/dir2/packages/oldProject2Name");
         contentEntry.addExcludeFolder(rootUrl + "/dir2/someFolder");
+        contentEntry.addExcludeFolder(rootUrl + "/dir2/packages");
+        contentEntry.addExcludeFolder(rootUrl + "/dir2/web/packages");
         contentEntry.addExcludeFolder(rootUrl + "/dir2/lib/someFolder");
         contentEntry.addExcludeFolder(rootUrl + "/dir2/example/nonexistent/packages");
         contentEntry.addExcludeFolder(rootUrl + "/dir2/example/packages/oldProject3Name");
@@ -75,23 +77,8 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
                          rootUrl + "/dir1/web/packages",
                          rootUrl + "/dir2/.pub",
                          rootUrl + "/dir2/build",
-                         rootUrl + "/dir2/packages",
                          rootUrl + "/dir2/someFolder",
                          rootUrl + "/dir2/lib/someFolder",
-                         rootUrl + "/dir2/bin/packages",
-                         rootUrl + "/dir2/benchmark/packages",
-                         rootUrl + "/dir2/benchmark/sub/packages",
-                         rootUrl + "/dir2/test/packages",
-                         rootUrl + "/dir2/test/sub/packages",
-                         rootUrl + "/dir2/tool/packages",
-                         rootUrl + "/dir2/tool/sub/packages",
-                         rootUrl + "/dir2/web/packages",
-                         rootUrl + "/dir2/web/sub/packages",
-                         rootUrl + "/dir2/example/packages",
-                         rootUrl + "/dir2/example/lib/packages",
-                         rootUrl + "/dir2/example/lib/sub/packages",
-                         rootUrl + "/dir2/example/web/packages",
-                         rootUrl + "/dir2/example/web/sub/packages",
                          rootUrl + "/dir2/example/packages/oldProject3Name"
       );
 
@@ -103,25 +90,10 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
                          rootUrl + "/dir1/web/packages",
                          rootUrl + "/dir2/.pub",
                          rootUrl + "/dir2/build",
-                         rootUrl + "/dir2/packages",
                          rootUrl + "/dir2/someFolder",
                          rootUrl + "/dir2/lib/someFolder",
-                         rootUrl + "/dir2/bin/packages",
-                         rootUrl + "/dir2/benchmark/packages",
-                         rootUrl + "/dir2/benchmark/sub/packages",
-                         rootUrl + "/dir2/test/packages",
-                         rootUrl + "/dir2/test/sub/packages",
-                         rootUrl + "/dir2/tool/packages",
-                         rootUrl + "/dir2/tool/sub/packages",
-                         rootUrl + "/dir2/web/packages",
-                         rootUrl + "/dir2/web/sub/packages",
                          rootUrl + "/dir2/example/.pub",
-                         rootUrl + "/dir2/example/build",
-                         rootUrl + "/dir2/example/packages",
-                         rootUrl + "/dir2/example/lib/packages",
-                         rootUrl + "/dir2/example/lib/sub/packages",
-                         rootUrl + "/dir2/example/web/packages",
-                         rootUrl + "/dir2/example/web/sub/packages"
+                         rootUrl + "/dir2/example/build"
       );
     }
     finally {

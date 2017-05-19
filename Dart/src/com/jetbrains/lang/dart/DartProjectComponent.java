@@ -34,6 +34,7 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -233,39 +234,48 @@ public class DartProjectComponent extends AbstractProjectComponent {
         }
       });
 
-    final Set<String> newExcludedUrls = collectFolderUrlsToExclude(module, pubspecYamlFile, true);
+    final Set<String> newExcludedUrls = collectFolderUrlsToExclude(module, pubspecYamlFile);
 
     if (oldExcludedUrls.size() != newExcludedUrls.size() || !newExcludedUrls.containsAll(oldExcludedUrls)) {
       ModuleRootModificationUtil.updateExcludedFolders(module, contentRoot, oldExcludedUrls, newExcludedUrls);
     }
   }
 
-  public static Set<String> collectFolderUrlsToExclude(@NotNull final Module module,
-                                                       @NotNull final VirtualFile pubspecYamlFile,
-                                                       final boolean withDotPubAndBuild) {
+  private static Set<String> collectFolderUrlsToExclude(@NotNull final Module module,
+                                                        @NotNull final VirtualFile pubspecYamlFile) {
     final THashSet<String> newExcludedPackagesUrls = new THashSet<>();
-    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(module.getProject()).getFileIndex();
     final VirtualFile root = pubspecYamlFile.getParent();
 
-    if (withDotPubAndBuild) {
-      newExcludedPackagesUrls.add(root.getUrl() + "/.pub");
-      newExcludedPackagesUrls.add(root.getUrl() + "/build");
-    }
+    newExcludedPackagesUrls.add(root.getUrl() + "/.pub");
+    newExcludedPackagesUrls.add(root.getUrl() + "/build");
 
-    newExcludedPackagesUrls.add(root.getUrl() + "/packages");
-
-    final VirtualFile binFolder = root.findChild("bin");
-    if (binFolder != null && binFolder.isDirectory() && fileIndex.isInContent(binFolder)) {
-      newExcludedPackagesUrls.add(binFolder.getUrl() + "/packages");
-    }
-
-    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("benchmark"), fileIndex);
-    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("example"), fileIndex);
-    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("test"), fileIndex);
-    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("tool"), fileIndex);
-    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("web"), fileIndex);
+    newExcludedPackagesUrls.addAll(getExcludedPackageSymlinkUrls(module.getProject(), root));
 
     return newExcludedPackagesUrls;
+  }
+
+  public static THashSet<String> getExcludedPackageSymlinkUrls(@NotNull final Project project, @NotNull final VirtualFile dartProjectRoot) {
+    final THashSet<String> result = new THashSet<>();
+    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+
+    // java.io.File is used intentionally, VFS may not yet know these files at this point
+    if (new File(dartProjectRoot.getPath() + "/packages").isDirectory()) {
+      result.add(dartProjectRoot.getUrl() + "/packages");
+    }
+
+    final VirtualFile binFolder = dartProjectRoot.findChild("bin");
+    if (binFolder != null && binFolder.isDirectory() && fileIndex.isInContent(binFolder)) {
+      if (new File(binFolder.getPath() + "/packages").isDirectory()) {
+        result.add(binFolder.getUrl() + "/packages");
+      }
+    }
+
+    appendPackagesFolders(result, dartProjectRoot.findChild("benchmark"), fileIndex);
+    appendPackagesFolders(result, dartProjectRoot.findChild("example"), fileIndex);
+    appendPackagesFolders(result, dartProjectRoot.findChild("test"), fileIndex);
+    appendPackagesFolders(result, dartProjectRoot.findChild("tool"), fileIndex);
+    appendPackagesFolders(result, dartProjectRoot.findChild("web"), fileIndex);
+    return result;
   }
 
   private static void appendPackagesFolders(final @NotNull Collection<String> excludedPackagesUrls,
@@ -285,7 +295,10 @@ public class DartProjectComponent extends AbstractProjectComponent {
             return SKIP_CHILDREN;
           }
           else {
-            excludedPackagesUrls.add(file.getUrl() + "/packages");
+            // java.io.File is used intentionally, VFS may not yet know these files at this point
+            if (new File(file.getPath() + "/packages").isDirectory()) {
+              excludedPackagesUrls.add(file.getUrl() + "/packages");
+            }
           }
         }
 

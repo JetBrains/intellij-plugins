@@ -49,59 +49,60 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
       //final VirtualFile inPackages = myFixture.addFileToProject("DartProject1/packages/inPackages.dart", "").getVirtualFile();
       final VirtualFile inWeb = myFixture.addFileToProject("DartProject1/web/inWeb.dart", "").getVirtualFile();
       final VirtualFile inWebSub = myFixture.addFileToProject("DartProject1/web/sub/inWebSub.dart", "").getVirtualFile();
-      final VirtualFile inExcluded = myFixture.addFileToProject("DartProject1/web/packages/inExcluded.dart", "").getVirtualFile();
+      //final VirtualFile inExcluded = myFixture.addFileToProject("DartProject1/web/packages/inExcluded.dart", "").getVirtualFile();
       final VirtualFile inTest = myFixture.addFileToProject("DartProject1/test/inTest.dart", "").getVirtualFile();
       final VirtualFile inExample = myFixture.addFileToProject("DartProject1/example/inExample.dart", "").getVirtualFile();
 
       DartProjectComponent.excludeBuildAndPackagesFolders(myModule, pubspec);
 
-      doTestResolveScope(inExcluded, null, null, true);
+      //doTestResolveScope(/*inExcluded,*/ null, null, true);
       doTestResolveScope(new VirtualFile[]{inSdk1, inSdk2},
                          new VirtualFile[]{inSdk1, inSdk2},
                          new VirtualFile[]{inIdeLib1, inIdeLib2, inContent, inProject2Web, inProject2Lib, inProject3Web, inProject3Lib,
-                           inProject1Root, inLib, /*inPackages,*/ inWeb, inWebSub, inExcluded, inTest, inExample});
+                           inProject1Root, inLib, /*inPackages,*/ inWeb, inWebSub, /*inExcluded,*/ inTest, inExample});
       doTestResolveScope(new VirtualFile[]{inIdeLib1, inIdeLib2},
                          new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2},
                          new VirtualFile[]{inContent, inProject2Web, inProject2Lib, inProject3Web, inProject3Lib,
-                           inProject1Root, inLib, /*inPackages,*/ inWeb, inWebSub, inExcluded, inTest, inExample});
+                           inProject1Root, inLib, /*inPackages,*/ inWeb, inWebSub, /*inExcluded,*/ inTest, inExample});
       doTestResolveScope(new VirtualFile[]{inContent},
                          new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inContent, inProject2Web, inProject2Lib, inProject3Web,
                            inProject3Lib, inProject1Root, inLib, /*inPackages,*/ inWeb, inWebSub, inTest, inExample},
-                         new VirtualFile[]{inExcluded});
+                         VirtualFile.EMPTY_ARRAY) /*inExcluded*/;
       doTestResolveScope(inLib,
                          new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inProject3Lib, inLib, /*inPackages*/},
-                         new VirtualFile[]{inContent, inProject2Web, inProject3Web, inExcluded, inProject1Root, inWeb, inWebSub, inTest,
+                         new VirtualFile[]{inContent, inProject2Web, inProject3Web, /*inExcluded,*/ inProject1Root, inWeb, inWebSub, inTest,
                            inExample},
                          true);
       doTestResolveScope(VirtualFile.EMPTY_ARRAY /*inPackages*/,
                          new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inProject3Lib, inLib, /*inPackages*/},
-                         new VirtualFile[]{inContent, inProject2Web, inProject3Web, inExcluded, inProject1Root, inWeb, inWebSub, inTest,
+                         new VirtualFile[]{inContent, inProject2Web, inProject3Web, /*inExcluded,*/ inProject1Root, inWeb, inWebSub, inTest,
                            inExample});
       doTestResolveScope(new VirtualFile[]{inWeb, inWebSub},
                          new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inProject3Lib, inLib, /*inPackages,*/ inWeb,
                            inWebSub},
-                         new VirtualFile[]{inContent, inProject2Web, inProject3Web, inExcluded, inProject1Root, inTest, inExample},
+                         new VirtualFile[]{inContent, inProject2Web, inProject3Web, /*inExcluded,*/ inProject1Root, inTest, inExample},
                          true);
       doTestResolveScope(inExample,
                          new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inProject3Lib, inLib, /*inPackages,*/
                            inExample},
-                         new VirtualFile[]{inContent, inProject2Web, inProject3Web, inExcluded, inProject1Root, inTest, inWeb, inWebSub},
+                         new VirtualFile[]{inContent, inProject2Web, inProject3Web, /*inExcluded,*/ inProject1Root, inTest, inWeb,
+                           inWebSub},
                          true);
       doTestResolveScope(new VirtualFile[]{inProject1Root, inTest},
                          new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inProject3Lib,
                            inProject1Root, inLib, /*inPackages,*/ inWeb, inWebSub, inTest, inExample},
-                         new VirtualFile[]{inContent, inProject2Web, inProject3Web, inExcluded},
+                         new VirtualFile[]{inContent, inProject2Web, inProject3Web/*, inExcluded,*/},
                          true);
       doTestResolveScope(new VirtualFile[]{inProject1Root, inLib, inWeb, inWebSub, inTest, inExample},
                          new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inProject3Lib,
                            inProject1Root, inLib, /*inPackages,*/ inWeb, inWebSub, inTest, inExample},
-                         new VirtualFile[]{inContent, inProject2Web, inProject3Web, inExcluded},
+                         new VirtualFile[]{inContent, inProject2Web, inProject3Web/*, inExcluded,*/},
                          false);
 
       doTestUseScope(new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2},
                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inContent, inProject2Web, inProject2Lib, inProject3Web,
                        inProject3Lib, inProject1Root, inLib, /*inPackages,*/ inWeb, inWebSub, inTest, inExample},
-                     new VirtualFile[]{inExcluded});
+                     VirtualFile.EMPTY_ARRAY) /*inExcluded*/;
       doTestUseScope(new VirtualFile[]{inContent},
                      new VirtualFile[]{inContent},
                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Web, inProject2Lib, inProject3Web,
