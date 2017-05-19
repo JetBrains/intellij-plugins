@@ -3,6 +3,7 @@ package org.angularjs.editor;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
 import com.intellij.ide.highlighter.HtmlFileType;
+import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;
@@ -11,7 +12,6 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.MultiplePsiFilesPerDocumentFileViewProvider;
 import com.intellij.psi.PsiFile;
-import org.angularjs.settings.AngularJSConfig;
 
 /**
  * @author Dennis.Ushakov
@@ -30,7 +30,8 @@ public class AngularBracesInterpolationTypedHandler extends TypedHandlerDelegate
       if (c == '{') {
         if (!AngularJSBracesUtil.DEFAULT_START.equals(AngularJSBracesUtil.getInjectionStart(project)) ||
             !AngularJSBracesUtil.DEFAULT_END.equals(AngularJSBracesUtil.getInjectionEnd(project))) return Result.CONTINUE;
-        boolean addWhiteSpaceBetweenBraces = AngularJSConfig.getInstance().INSERT_WHITESPACE;
+        JSCodeStyleSettings jsSettings = JSCodeStyleSettings.getSettings(file);
+        boolean addWhiteSpaceBetweenBraces = jsSettings.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS;
         int offset = editor.getCaretModel().getOffset();
         String chars = document.getText();
         if (offset > 0 && (chars.charAt(offset - 1)) == '{') {
