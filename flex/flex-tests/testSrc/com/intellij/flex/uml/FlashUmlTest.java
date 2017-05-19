@@ -217,8 +217,8 @@ public class FlashUmlTest extends CodeInsightTestCase {
     String difference = JDOMCompare.diffElements(expected, actual.getDocument().getRootElement());
     if (difference != null) {
       // this will fail if structure is different
-      assertEquals(expectedDataFileName + ": " + difference, JDOMUtil.writeElement(expected, "\n"),
-                   JDOMUtil.writeElement(actual.getDocument().getRootElement(), "\n").trim());
+      assertEquals(expectedDataFileName + ": " + difference, JDOMUtil.writeElement(expected),
+                   JDOMUtil.writeElement(actual.getDocument().getRootElement()).trim());
     }
   }
 

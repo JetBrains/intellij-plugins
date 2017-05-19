@@ -109,7 +109,7 @@ public class CompilerConfigGeneratorRt {
     addOtherOptions(rootElement);
     addInputOutputPaths(rootElement);
 
-    return JDOMUtil.writeElement(rootElement, "\n");
+    return JDOMUtil.writeElement(rootElement);
   }
 
   private void addMandatoryOptions(final Element rootElement) {
