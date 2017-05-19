@@ -4,6 +4,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonParser
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.lang.javascript.JavaScriptSupportLoader
+import com.intellij.lang.javascript.linter.LinterCodeStyleImportTrackerHelper
 import com.intellij.lang.javascript.linter.tslint.TsLintBundle
 import com.intellij.lang.javascript.linter.tslint.config.style.rules.TsLintConfigWrapper
 import com.intellij.lang.javascript.linter.tslint.config.style.rules.TsLintRule
@@ -27,48 +28,43 @@ import com.intellij.ui.EditorNotifications
 
 private val KEY = Key.create<EditorNotificationPanel>("TsLint.Import.Code.Style.Notification")
 private val DISMISS_KEY = "tslint.code.style.apply.dismiss"
-val RULES_TO_APPLY: ParameterizedCachedValueProvider<TsLintConfigWrapper, PsiFile> = ParameterizedCachedValueProvider {
-  if (it == null || PsiTreeUtil.hasErrorElements(it)) {
-    return@ParameterizedCachedValueProvider CachedValueProvider.Result.create(null, it)
-  }
-
-  var jsonElement: JsonElement? = null
-  try {
-    jsonElement = JsonParser().parse(it.text)
-  }
-  catch (e: Exception) {
-    //do nothing
-  }
-  if (jsonElement == null) {
-    return@ParameterizedCachedValueProvider CachedValueProvider.Result.create(null, it)
-  }
-
-  val result = (if (jsonElement.isJsonObject) TsLintConfigWrapper(jsonElement.asJsonObject) else null)
-
-  return@ParameterizedCachedValueProvider CachedValueProvider.Result.create(result, it)
-}
 
 val RULES_CACHE_KEY = Key.create<ParameterizedCachedValue<TsLintConfigWrapper, PsiFile>>("tslint.cache.key.config.json")
 
-class TsLintCodeStyleEditorNotificationProvider : EditorNotifications.Provider<EditorNotificationPanel>() {
+class TsLintCodeStyleEditorNotificationProvider(project: Project) : EditorNotifications.Provider<EditorNotificationPanel>() {
+  private val trackerHelper: LinterCodeStyleImportTrackerHelper =
+    LinterCodeStyleImportTrackerHelper(project, DISMISS_KEY, { it.fileType == TsLintConfigFileType.INSTANCE })
+  private val RULES_TO_APPLY: ParameterizedCachedValueProvider<TsLintConfigWrapper, PsiFile> = ParameterizedCachedValueProvider {
+    if (it == null || PsiTreeUtil.hasErrorElements(it)) {
+      return@ParameterizedCachedValueProvider CachedValueProvider.Result.create(null, it, trackerHelper.tracker)
+    }
+
+    var jsonElement: JsonElement? = null
+    try {
+      jsonElement = JsonParser().parse(it.text)
+    }
+    catch (e: Exception) {
+      //do nothing
+    }
+    if (jsonElement == null) {
+      return@ParameterizedCachedValueProvider CachedValueProvider.Result.create(null, it, trackerHelper.tracker)
+    }
+
+    val result = (if (jsonElement.isJsonObject) TsLintConfigWrapper(jsonElement.asJsonObject) else null)
+
+    return@ParameterizedCachedValueProvider CachedValueProvider.Result.create(result, it, trackerHelper.tracker)
+  }
 
   override fun getKey(): Key<EditorNotificationPanel> = KEY
 
-
   override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): EditorNotificationPanel? {
-    if (fileEditor !is TextEditor ||
-        fileEditor.editor !is EditorEx ||
-        file.fileType != TsLintConfigFileType.INSTANCE) return null
-
+    if (fileEditor !is TextEditor || fileEditor.editor !is EditorEx) return null
 
     val project = fileEditor.editor.project ?: return null
 
-    if (PropertiesComponent.getInstance(project).getBoolean(DISMISS_KEY)) {
-      return null
-    }
+    if (trackerHelper.shouldDismiss(file)) return null
 
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
-
 
     val wrapper = CachedValuesManager.getManager(project)
                     .getParameterizedCachedValue(psiFile, RULES_CACHE_KEY, RULES_TO_APPLY, false, psiFile) ?: return null
