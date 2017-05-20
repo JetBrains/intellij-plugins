@@ -28,7 +28,7 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
 
   @Override
   public String getDescription() {
-    return "The Angular2 CLI makes it easy to create an application that already works, right out of the box. It already follows Angular best practices!";
+    return "The Angular CLI makes it easy to create an application that already works, right out of the box. It already follows our best practices!";
   }
 
   @Override
