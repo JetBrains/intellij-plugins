@@ -166,14 +166,15 @@ public class VmServiceWrapper implements Disposable {
 
     // Just to make sure that the main isolate is not handled twice, both from handleDebuggerConnected() and DartVmServiceListener.received(PauseStart)
     if (newIsolate) {
-      addRequest(() -> myVmService.setExceptionPauseMode(isolateRef.getId(),
-                                                         ExceptionPauseMode.Unhandled,
-                                                         new VmServiceConsumers.SuccessConsumerWrapper() {
-                                                           @Override
-                                                           public void received(Success response) {
-                                                             setInitialBreakpointsAndResume(isolateRef);
-                                                           }
-                                                         }));
+      addRequest(() -> myVmService.setExceptionPauseMode(
+        isolateRef.getId(),
+        myBreakpointHandler.getBreakOnExceptionsMode(),
+        new VmServiceConsumers.SuccessConsumerWrapper() {
+          @Override
+          public void received(Success response) {
+            setInitialBreakpointsAndResume(isolateRef);
+          }
+        }));
     }
     else {
       checkInitialResume(isolateRef);
@@ -327,6 +328,13 @@ public class VmServiceWrapper implements Disposable {
       myLatestStep = stepOption;
       myVmService.resume(isolateId, stepOption, null, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER);
     });
+  }
+
+  public void setExceptionPauseMode(@NotNull final String isolateId, @NotNull ExceptionPauseMode mode) {
+    addRequest(() -> myVmService.setExceptionPauseMode(
+      isolateId,
+      mode,
+      VmServiceConsumers.EMPTY_SUCCESS_CONSUMER));
   }
 
   /**

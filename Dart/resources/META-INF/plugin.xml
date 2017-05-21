@@ -203,6 +203,7 @@
     <console.folding implementation="com.jetbrains.lang.dart.ide.runner.server.DartConsoleFolding"/>
 
     <xdebugger.breakpointType implementation="com.jetbrains.lang.dart.ide.runner.DartLineBreakpointType"/>
+    <xdebugger.breakpointType implementation="com.jetbrains.lang.dart.ide.runner.DartExceptionBreakpointType"/>
 
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfigurationType"/>
     <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRuntimeConfigurationProducer"/>
