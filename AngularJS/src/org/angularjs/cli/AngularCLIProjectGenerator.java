@@ -6,6 +6,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.PathUtil;
+import com.intellij.xml.util.XmlStringUtil;
 import icons.AngularJSIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -82,5 +84,20 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
   @NotNull
   protected String presentablePackageName() {
     return "Angular &CLI:";
+  }
+
+  @Override
+  protected String validateProjectPath(@NotNull String path) {
+    String fileName = PathUtil.getFileName(path);
+    for (String segment : fileName.split("-")) {
+      if (!segment.matches("[a-zA-Z][.0-9a-zA-Z]*(-[.0-9a-zA-Z]*)*")) {
+        return XmlStringUtil.wrapInHtml(
+          "Project name " + fileName + " is not valid. New project names must<br>\n" +
+                "start with a letter, and must contain only alphanumeric characters or dashes.<br>\n" +
+                "When adding a dash the segment after the dash must also start with a letter."
+        );
+      }
+    }
+    return super.validateProjectPath(path);
   }
 }
