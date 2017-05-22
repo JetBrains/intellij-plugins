@@ -16,7 +16,9 @@
 package com.jetbrains.lang.dart.ide.imports;
 
 import com.intellij.lang.ImportOptimizer;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
@@ -42,7 +44,14 @@ public class DartImportOptimizer implements ImportOptimizer {
           final String filePath = vFile.getPath();
           final SourceFileEdit fileEdit = DartAnalysisServerService.getInstance(file.getProject()).edit_organizeDirectives(filePath);
           if (fileEdit != null) {
-            myFileChanged = AssistUtils.applyFileEdit(file.getProject(), fileEdit);
+            if (AssistUtils.applyFileEdit(file.getProject(), fileEdit)) {
+              myFileChanged = true;
+              final Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
+              if (document != null) {
+                // Tricky story. Committing a document here is required in oder to guarantee that DartPostFormatProcessor.processText() is called afterwards.
+                PsiDocumentManager.getInstance(file.getProject()).commitDocument(document);
+              }
+            }
           }
         }
       }

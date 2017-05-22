@@ -4,6 +4,7 @@ import com.intellij.application.options.TabbedLanguageCodeStylePanel;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.ide.application.options.DartCodeGenerationPanel;
+import com.jetbrains.lang.dart.ide.application.options.DartfmtCodeStylePanel;
 import org.jetbrains.annotations.NotNull;
 
 public class DartCodeStyleMainPanel extends TabbedLanguageCodeStylePanel {
@@ -13,6 +14,7 @@ public class DartCodeStyleMainPanel extends TabbedLanguageCodeStylePanel {
 
   @Override
   protected void initTabs(@NotNull final CodeStyleSettings settings) {
+    addTab(new DartfmtCodeStylePanel(settings));
     super.initTabs(settings);
     addTab(new DartCodeGenerationPanel(settings));
   }
