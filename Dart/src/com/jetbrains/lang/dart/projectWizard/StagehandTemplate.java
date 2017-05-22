@@ -26,7 +26,7 @@ class StagehandTemplate extends DartProjectTemplate {
   }
 
   private static String getLabel(final Stagehand.StagehandDescriptor descriptor) {
-    return !StringUtil.isEmptyOrSpaces(descriptor.myLabel) ? descriptor.myLabel : prettify(descriptor.myId);
+    return !StringUtil.isEmptyOrSpaces(descriptor.myLabel) ? descriptor.myLabel : descriptor.myId;
   }
 
   @Override
@@ -67,14 +67,5 @@ class StagehandTemplate extends DartProjectTemplate {
     }
 
     return files;
-  }
-
-  private static String prettify(@NotNull String name) {
-    // consoleapp -> Console App
-    name = StringUtil.capitalize(name);
-    if (name.endsWith("app")) {
-      name = name.substring(0, name.length() - "app".length()) + " App";
-    }
-    return name;
   }
 }

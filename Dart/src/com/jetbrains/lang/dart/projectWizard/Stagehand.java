@@ -113,6 +113,9 @@ public class Stagehand {
           obj.optString("entrypoint")));
       }
 
+      // Sort the stagehand templates lexically by name.
+      result.sort((one, two) -> one.myLabel.compareToIgnoreCase(two.myLabel));
+
       return result;
     }
     catch (StagehandException | JSONException e) {
