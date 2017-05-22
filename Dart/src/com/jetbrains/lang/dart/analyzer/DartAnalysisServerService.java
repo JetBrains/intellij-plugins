@@ -73,6 +73,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -1404,6 +1405,26 @@ public class DartAnalysisServerService implements Disposable {
 
       String analysisServerPath = FileUtil.toSystemDependentName(mySdkHome + "/bin/snapshots/analysis_server.dart.snapshot");
       analysisServerPath = System.getProperty("dart.server.path", analysisServerPath);
+
+      String dasStartupErrorMessage = "";
+      final File runtimePathFile = new File(runtimePath);
+      final File dasSnapshotFile = new File(analysisServerPath);
+      if (!runtimePathFile.exists()) {
+        dasStartupErrorMessage = "the Dart VM file does not exist at location: " + runtimePath;
+      }
+      else if (!dasSnapshotFile.exists()) {
+        dasStartupErrorMessage = "the Dart Analysis Server snapshot file does not exist at location: " + analysisServerPath;
+      }
+      else if (!runtimePathFile.canExecute()) {
+        dasStartupErrorMessage = "the Dart VM file is not executable at location: " + runtimePath;
+      }
+      else if (!dasSnapshotFile.canRead()) {
+        dasStartupErrorMessage = "the Dart Analysis Server snapshot file is not readable at location: " + analysisServerPath;
+      }
+      if (!dasStartupErrorMessage.isEmpty()) {
+        LOG.warn("Failed to start Dart analysis server: " + dasStartupErrorMessage);
+        stopServer();
+      }
 
       final DebugPrintStream debugStream = str -> {
         str = str.substring(0, Math.min(str.length(), MAX_DEBUG_LOG_LINE_LENGTH));
