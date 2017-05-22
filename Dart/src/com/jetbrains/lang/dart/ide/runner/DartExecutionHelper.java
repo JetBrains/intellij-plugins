@@ -15,11 +15,8 @@
  */
 package com.jetbrains.lang.dart.ide.runner;
 
-import com.intellij.openapi.editor.ScrollType;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
@@ -94,7 +91,7 @@ public class DartExecutionHelper {
     problemsView.showErrorNotification(launchTitle, content, icon);
 
     // Jump to and highlight the first error (order unspecified) in the editor.
-    // TODO: easy opt-out
+    /*
     DartServerData.DartError error = errors.get(0);
     final VirtualFile errorFile = LocalFileSystem.getInstance().findFileByPath(error.getAnalysisErrorFileSD());
     if (errorFile != null) {
@@ -102,6 +99,7 @@ public class DartExecutionHelper {
       descriptor.setScrollType(ScrollType.MAKE_VISIBLE);
       descriptor.navigate(true);
     }
+    */
   }
 
   public static void clearIssueNotifications(@NotNull final Project project) {
