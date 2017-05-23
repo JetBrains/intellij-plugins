@@ -300,11 +300,11 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  protected void checkImplementedMethods(JSClass jsClass, ErrorReportingClient reportingClient) {
+  protected void checkImplementedMethods(@NotNull JSClass jsClass, ErrorReportingClient reportingClient) {
     checkActionScriptImplementedMethods(jsClass, reportingClient);
   }
 
-  public static void checkActionScriptImplementedMethods(final JSClass jsClass, final ErrorReportingClient reportingClient) {
+  public static void checkActionScriptImplementedMethods(@NotNull final JSClass jsClass, final ErrorReportingClient reportingClient) {
     final JSCollectMembersToImplementProcessor implementedMethodProcessor = new JSImplementedMethodProcessor(jsClass) {
       ImplementMethodsFix implementMethodsFix = null;
 
