@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class JavaScriptGenerateToStringAction extends ActionScriptBaseJSGenerateAction {
 
   protected BaseJSGenerateHandler getGenerateHandler() {
-    return new JavaScriptGenerateToStringHandler();
+    return new ActionScriptGenerateToStringHandler();
   }
 
   protected boolean isApplicableForJsClass(final @NotNull JSClass jsClass, final PsiFile psiFile, final @NotNull Editor editor) {
