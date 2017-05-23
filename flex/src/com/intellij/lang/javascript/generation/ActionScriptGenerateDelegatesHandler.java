@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
+public class ActionScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
 
   public static final String[] PRIMITIVE_TYPES = JSCommonTypeNames.ALL;
 

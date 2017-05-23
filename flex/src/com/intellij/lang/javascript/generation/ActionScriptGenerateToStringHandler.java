@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-class JavaScriptGenerateToStringHandler extends BaseJSGenerateHandler {
+class ActionScriptGenerateToStringHandler extends BaseJSGenerateHandler {
 
   protected String getTitleKey() {
     return "generate.to.string.chooser.title";
