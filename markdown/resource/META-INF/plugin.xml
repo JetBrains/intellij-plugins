@@ -1,7 +1,6 @@
 <idea-plugin>
   <id>org.intellij.plugins.markdown</id>
   <name>Markdown support</name>
-  <version>VERSION</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
   <depends>com.intellij.modules.lang</depends>
