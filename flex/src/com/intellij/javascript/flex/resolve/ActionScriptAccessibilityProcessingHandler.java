@@ -150,7 +150,7 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
     if (openedNses != null &&
         !openedNses.containsKey(attributeNs) &&
         !AS3_NAMESPACE_VALUE.equals(attributeNs) &&
-        !ResolveProcessor.AS3_NAMESPACE.equals(attributeNs) // AS3 is opened by default from compiler settings and for JavaScript symbols
+        !ActionScriptResolveUtil.AS3_NAMESPACE.equals(attributeNs) // AS3 is opened by default from compiler settings and for JavaScript symbols
       ) {
       if (attributeNs != null || defaultNsIsNotAllowed) {
         resolveProcessor.addPossibleCandidateResult(element, JSResolveResult.MEMBER_FROM_UNOPENED_NAMESPACE);
