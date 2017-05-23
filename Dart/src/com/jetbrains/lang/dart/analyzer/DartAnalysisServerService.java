@@ -64,6 +64,7 @@ import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
+import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -1401,7 +1402,7 @@ public class DartAnalysisServerService implements Disposable {
     synchronized (myLock) {
       mySdkHome = sdk.getHomePath();
 
-      final String runtimePath = FileUtil.toSystemDependentName(mySdkHome + "/bin/dart");
+      final String runtimePath = FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(sdk));
 
       String analysisServerPath = FileUtil.toSystemDependentName(mySdkHome + "/bin/snapshots/analysis_server.dart.snapshot");
       analysisServerPath = System.getProperty("dart.server.path", analysisServerPath);
@@ -1424,6 +1425,7 @@ public class DartAnalysisServerService implements Disposable {
       if (!dasStartupErrorMessage.isEmpty()) {
         LOG.warn("Failed to start Dart analysis server: " + dasStartupErrorMessage);
         stopServer();
+        return;
       }
 
       final DebugPrintStream debugStream = str -> {
