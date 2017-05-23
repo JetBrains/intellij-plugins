@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.linter.tslint.schema;
 
 import com.intellij.lang.javascript.EmbeddedJsonSchemaFileProvider;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.jsonSchema.extension.JsonSchemaFileProvider;
 import com.jetbrains.jsonSchema.extension.JsonSchemaProviderFactory;
@@ -27,7 +28,7 @@ public final class TsLintJsonSchemaProviderFactory implements JsonSchemaProvider
 
   @NotNull
   @Override
-  public List<JsonSchemaFileProvider> getProviders() {
+  public List<JsonSchemaFileProvider> getProviders(@NotNull final Project project) {
     return myProviders;
   }
 }
