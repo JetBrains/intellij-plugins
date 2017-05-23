@@ -4,8 +4,6 @@ import com.dmarcotte.handlebars.file.HbFileType;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 
-import java.util.Arrays;
-
 public class HbKeywordCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
   public void doBasicTest(String text, String... expected) {
     myFixture.configureByText(HbFileType.INSTANCE, text);
@@ -13,7 +11,15 @@ public class HbKeywordCompletionTest extends LightPlatformCodeInsightFixtureTest
     assertContainsElements(myFixture.getLookupElementStrings(), expected);
   }
 
-  public void testSimple() {
-    doBasicTest("{{#<caret>}}", "if", "each");
+  public void testMustacheCompletions() {
+    doBasicTest("{{<caret>}}", "log");
+  }
+
+  public void testBlockCompletions() {
+    doBasicTest("{{#<caret>}}", "if", "each", "unless", "with");
+  }
+
+  public void testElseCompletion() {
+    doBasicTest("{{#if}}{{<caret>}}{{/if}}", "else", "log");
   }
 }
