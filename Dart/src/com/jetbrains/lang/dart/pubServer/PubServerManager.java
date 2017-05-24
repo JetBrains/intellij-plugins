@@ -136,6 +136,15 @@ public class PubServerManager implements Disposable {
   }
 
   @NotNull
+  public Collection<String> getAllAlivePubServerAuthorities() {
+    final Collection<String> result = new SmartList<>();
+    for (PubServerService service : myServedDirToPubService.asMap().values()) {
+      result.addAll(service.getAllPubServeAuthorities());
+    }
+    return result;
+  }
+
+  @NotNull
   public Collection<String> getAlivePubServerAuthoritiesForDartRoot(@NotNull final VirtualFile dartProjectRoot) {
     final Collection<String> result = new SmartList<>();
     for (VirtualFile subdir : dartProjectRoot.getChildren()) {
