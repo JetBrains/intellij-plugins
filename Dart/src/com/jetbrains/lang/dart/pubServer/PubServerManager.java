@@ -17,6 +17,7 @@ import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.builtInWebServer.ConsoleManager;
 
 import java.util.Collection;
@@ -135,7 +136,7 @@ public class PubServerManager implements Disposable {
   }
 
   @NotNull
-  public Collection<String> getAlivePubServerAuthorities(@NotNull final VirtualFile dartProjectRoot) {
+  public Collection<String> getAlivePubServerAuthoritiesForDartRoot(@NotNull final VirtualFile dartProjectRoot) {
     final Collection<String> result = new SmartList<>();
     for (VirtualFile subdir : dartProjectRoot.getChildren()) {
       if (!subdir.isDirectory()) continue;
@@ -144,5 +145,13 @@ public class PubServerManager implements Disposable {
       ContainerUtil.addIfNotNull(result, service.getPubServeAuthority(subdir));
     }
     return result;
+  }
+
+  @Nullable
+  public String getPubServerAuthorityForServedDir(@NotNull final VirtualFile servedDir) {
+    LOG.assertTrue(servedDir.isDirectory() && servedDir.getParent().findChild(PubspecYamlUtil.PUBSPEC_YAML) != null,
+                   "Bad argument: " + servedDir.getPath());
+    final PubServerService service = myServedDirToPubService.getIfPresent(servedDir);
+    return service != null ? service.getPubServeAuthority(servedDir) : null;
   }
 }

@@ -5,6 +5,8 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -16,6 +18,7 @@ import com.intellij.util.Urls;
 import com.jetbrains.javascript.debugger.FileUrlMapper;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.pubServer.PubServerManager;
+import com.jetbrains.lang.dart.pubServer.PubServerPathHandlerKt;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
@@ -39,6 +42,18 @@ final class DartFileUrlMapper extends FileUrlMapper {
   public List<Url> getUrls(@NotNull final VirtualFile file, @NotNull final Project project, @Nullable final String currentAuthority) {
     if (currentAuthority == null || file.getFileType() != DartFileType.INSTANCE) return Collections.emptyList();
 
+    if (Registry.is("dart.redirect.to.pub.server", true) && ProjectFileIndex.getInstance(project).isInContent(file)) {
+      final Pair<VirtualFile, String> servedDirAndPath = PubServerPathHandlerKt.getServedDirAndPathForPubServer(project, file);
+      if (servedDirAndPath != null) {
+        final VirtualFile servedDir = servedDirAndPath.first;
+        final String path = servedDirAndPath.second;
+        final String pubAuthority = PubServerManager.getInstance(project).getPubServerAuthorityForServedDir(servedDir);
+        if (pubAuthority != null) {
+          return Collections.singletonList(Urls.newHttpUrl(pubAuthority, path));
+        }
+      }
+    }
+
     final String dartUri = DartUrlResolver.getInstance(project, file).getDartUrlForFile(file);
     if (!dartUri.startsWith(PACKAGE_PREFIX)) return Collections.emptyList();
 
@@ -61,7 +76,7 @@ final class DartFileUrlMapper extends FileUrlMapper {
       result.add(Urls.newHttpUrl(currentAuthority, urlPath));
 
       if (Registry.is("dart.redirect.to.pub.server", true)) {
-        for (String pubAuthority : PubServerManager.getInstance(project).getAlivePubServerAuthorities(dartRoot)) {
+        for (String pubAuthority : PubServerManager.getInstance(project).getAlivePubServerAuthoritiesForDartRoot(dartRoot)) {
           final String pubUrlPath = "/packages/" + dartUri.substring(PACKAGE_PREFIX.length());
           result.add(Urls.newHttpUrl(pubAuthority, pubUrlPath));
         }

@@ -69,17 +69,7 @@ private fun getServedDirAndPathForPubServer(project: Project, path: String): Pai
   val pathToFileManager = WebServerPathToFileManager.getInstance(project)
   val file = pathToFileManager.findVirtualFile(path, pathQuery = pathQuery)
   if (file != null && ProjectFileIndex.getInstance(project).isInContent(file)) {
-    val dartRoot = PubspecYamlUtil.findPubspecYamlFile(project, file)?.parent ?: return null
-    val relativePath = VfsUtilCore.getRelativePath(file, dartRoot)
-    // we only handle files 2 levels deeper than the Dart project root
-    val slashIndex = relativePath?.indexOf('/') ?: -1
-    val folderName = if (slashIndex == -1) null else relativePath!!.substring(0, slashIndex)
-    if (folderName == null || folderName == "build" || folderName == "lib" || DartUrlResolver.PACKAGES_FOLDER_NAME == folderName) {
-      return null
-    }
-
-    val pubServePath = relativePath!!.substring(slashIndex)
-    return Pair.create(dartRoot.findChild(folderName), escapeUrl(pubServePath))
+    return getServedDirAndPathForPubServer(project, file)
   }
 
   // If above failed then take the longest path part that corresponds to an existing folder
@@ -114,6 +104,20 @@ private fun getServedDirAndPathForPubServer(project: Project, path: String): Pai
   }
 
   return servedDir?.let { Pair.create(it, escapeUrl(pubServePath!!)) }
+}
+
+fun getServedDirAndPathForPubServer(project: Project, file: VirtualFile): Pair<VirtualFile, String>? {
+  val dartRoot = PubspecYamlUtil.findPubspecYamlFile(project, file)?.parent ?: return null
+  val relativePath = VfsUtilCore.getRelativePath(file, dartRoot)
+  // we only handle files 2 levels deeper than the Dart project root
+  val slashIndex = relativePath?.indexOf('/') ?: -1
+  val folderName = if (slashIndex == -1) null else relativePath!!.substring(0, slashIndex)
+  if (folderName == null || folderName == "build" || folderName == "lib" || DartUrlResolver.PACKAGES_FOLDER_NAME == folderName) {
+    return null
+  }
+
+  val pubServePath = relativePath!!.substring(slashIndex)
+  return Pair.create(dartRoot.findChild(folderName), escapeUrl(pubServePath))
 }
 
 private fun escapeUrl(path: String): String {
