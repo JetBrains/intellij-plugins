@@ -47,7 +47,9 @@ final class DartFileUrlMapper extends FileUrlMapper {
       if (servedDirAndPath != null) {
         final VirtualFile servedDir = servedDirAndPath.first;
         final String path = servedDirAndPath.second;
-        final String pubAuthority = PubServerManager.getInstance(project).getPubServerAuthorityForServedDir(servedDir);
+        final String pubAuthority = BuiltInServerManagerImpl.isOnBuiltInWebServerByAuthority(currentAuthority)
+                                    ? PubServerManager.getInstance(project).getPubServerAuthorityForServedDir(servedDir)
+                                    : currentAuthority;
         if (pubAuthority != null) {
           return Collections.singletonList(Urls.newHttpUrl(pubAuthority, path));
         }
