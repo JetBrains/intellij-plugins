@@ -11,6 +11,7 @@ class ClassName {
     }
 }
 }
+
 function created(x:int, y:int):Object {
     var a = 1 + x + y;
     x = 2;

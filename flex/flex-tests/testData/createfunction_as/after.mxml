@@ -2,6 +2,7 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
 <mx:Script>
 _bbb("1","2");
+
 private function _bbb(s:String, s2:String):void {
     <caret>
 }

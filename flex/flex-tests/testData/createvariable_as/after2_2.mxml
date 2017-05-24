@@ -2,6 +2,7 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
 <mx:Script><![CDATA[
 aaa = 1
+
 private function set aaa(aaa:int):void {
     _aaa<caret> = aaa;
 }

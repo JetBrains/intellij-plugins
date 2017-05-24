@@ -2,6 +2,7 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
 <mx:Script><![CDATA[
 removeEventListener(MouseEvent.CLICK, handleEvent)
+
 private function handleEvent(event:MouseEvent):void {
     <caret>
 }
