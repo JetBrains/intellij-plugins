@@ -9,7 +9,6 @@ import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.platform.DirectoryProjectGenerator;
 import com.intellij.platform.HideableProjectGenerator;
 import icons.RubyIcons;
 import org.jetbrains.annotations.Nls;
@@ -27,7 +26,7 @@ import javax.swing.*;
  * @author Dennis.Ushakov
  */
 public class RubyMotionGenerator extends RubyFrameworkProjectGenerator<RubyMotionSettingsHolder>
-  implements DirectoryProjectGenerator<RubyMotionSettingsHolder>, HideableProjectGenerator {
+  implements HideableProjectGenerator {
   private static final String TITLE = RBundle.message("ruby.motion.application.settings");
   private RubyMotionSettingsHolder mySettings;
   private RubyMotionGeneratorTabBase myGeneratorTab;
