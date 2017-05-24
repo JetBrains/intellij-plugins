@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.meta.PsiPresentableMetaData;
@@ -97,7 +98,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
     Project project = declaration.getProject();
     Collection<String> keys = StubIndex.getInstance().getAllKeys(AngularDecoratorsIndex.KEY, project);
     GlobalSearchScope scope = GlobalSearchScope.fileScope(declaration.getContainingFile());
-    JSVariable context = PsiTreeUtil.getContextOfType(declaration, JSVariable.class);
+    JSAssignmentExpression context = PsiTreeUtil.getContextOfType(declaration, JSAssignmentExpression.class);
     if (context == null) return EMPTY;
 
     final List<XmlAttributeDescriptor> result = new ArrayList<>();
@@ -109,8 +110,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
           for (JSImplicitElement element : elements) {
             if (key.equals(element.getName())) {
               String type = element.getTypeString();
-              if (type != null && type.startsWith(decorator + ";") &&
-                  context.isEquivalentTo(PsiTreeUtil.getContextOfType(element, JSVariable.class))) {
+              if (type != null && type.startsWith(decorator + ";") && inContext(context, element)) {
                 ContainerUtil.addIfNotNull(result, factory.fun(Pair.create(element, element.getName())));
               }
             }
@@ -120,6 +120,21 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
       });
     }
     return result.toArray(new XmlAttributeDescriptor[result.size()]);
+  }
+
+  private static boolean inContext(@NotNull JSAssignmentExpression context, JSImplicitElement element) {
+    JSAssignmentExpression elementContext = PsiTreeUtil.getContextOfType(element, JSAssignmentExpression.class);
+    if (elementContext != null) {
+      JSDefinitionExpression declarationDef = context.getDefinitionExpression();
+      JSDefinitionExpression elementDef = elementContext.getDefinitionExpression();
+      if (declarationDef != null && elementDef != null &&
+          Comparing.equal(declarationDef.getNamespace(), elementDef.getNamespace())) {
+        return true;
+      }
+    }
+    JSVariable declarationVar = PsiTreeUtil.getContextOfType(context, JSVariable.class);
+    JSVariable elementVar = PsiTreeUtil.getContextOfType(element, JSVariable.class);
+    return declarationVar != null && elementVar != null && declarationVar.isEquivalentTo(elementVar);
   }
 
   private static String getDecoratedName(JSAttributeListOwner field, String name) {

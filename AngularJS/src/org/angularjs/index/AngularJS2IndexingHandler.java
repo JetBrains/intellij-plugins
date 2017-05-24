@@ -71,8 +71,9 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   @Nullable
   @Override
   public JSElementIndexingData processAnyProperty(@NotNull JSProperty property, @Nullable JSElementIndexingData outData) {
-    if ("args".equals(property.getName())) {
-      final JSObjectLiteralExpression object = (JSObjectLiteralExpression)property.getParent();
+    final JSObjectLiteralExpression object = (JSObjectLiteralExpression)property.getParent();
+    String name = property.getName();
+    if ("args".equals(name)) {
       final JSProperty type = object.findProperty("type");
       if (type != null) {
         final JSExpression value = type.getValue();
@@ -81,7 +82,42 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
         }
       }
     }
-    return super.processAnyProperty(property, outData);
+    if (name != null && object.getParent() instanceof JSAssignmentExpression) {
+      JSDefinitionExpression definition = ((JSAssignmentExpression)object.getParent()).getDefinitionExpression();
+      JSExpression value = property.getValue();
+      if (definition != null && "propDecorators".equals(definition.getName()) && value instanceof JSArrayLiteralExpression) {
+        for (JSExpression expression : ((JSArrayLiteralExpression)value).getExpressions()) {
+          if (expression instanceof JSObjectLiteralExpression) {
+            JSObjectLiteralExpression decoratorProperties = (JSObjectLiteralExpression)expression;
+            JSProperty type = decoratorProperties.findProperty("type");
+            String decoratorName = type != null && type.getValue() != null ? type.getValue().getText() : null;
+            if (isInterestingDecorator(decoratorName)) {
+              JSImplicitElementImpl.Builder builder =
+                new JSImplicitElementImpl.Builder(getDecoratedName(property.getName(), decoratorProperties), property).setUserString(DECORATORS)
+                  .setTypeString(decoratorName + ";Object");
+              if (outData == null) outData = new JSElementIndexingDataImpl();
+              outData.addImplicitElement(builder.toImplicitElement());
+            }
+          }
+        }
+      }
+    }
+    return outData;
+  }
+
+  private static String getDecoratedName(String name, JSObjectLiteralExpression decorator) {
+    JSProperty args = decorator.findProperty("args");
+    if (args != null) {
+      JSExpression argv = args.getValue();
+      if (argv instanceof JSArrayLiteralExpression) {
+        JSExpression[] expressions = ((JSArrayLiteralExpression)argv).getExpressions();
+        if (expressions[0] instanceof JSLiteralExpression) {
+          Object value = ((JSLiteralExpression)expressions[0]).getValue();
+          if (value instanceof String) return (String)value;
+        }
+      }
+    }
+    return name;
   }
 
   @Override
@@ -356,7 +392,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
 
         JSExpression decorator = expressions[0];
         String decoratorName = getCallName(decorator);
-        if (!"Input".equals(decoratorName) && !"Output".equals(decoratorName)) return;
+        if (!isInterestingDecorator(decoratorName)) return;
 
         JSExpression metadata = expressions[1];
         String metadataName = getCallName(metadata);
@@ -398,6 +434,10 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
         return null;
       }
     };
+  }
+
+  protected boolean isInterestingDecorator(String decoratorName) {
+    return "Input".equals(decoratorName) || "Output".equals(decoratorName);
   }
 
   @Override
