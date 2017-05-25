@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.formatter;
 import com.intellij.application.options.TabbedLanguageCodeStylePanel;
 import com.intellij.lang.javascript.ActionScriptFileType;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.formatter.punctuation.JSCodeStylePunctuationPanel;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
