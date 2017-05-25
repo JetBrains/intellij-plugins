@@ -50,6 +50,7 @@ import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -205,6 +206,10 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
                 DartProjectComponent.excludeBuildAndPackagesFolders(module, pubspecYamlFile);
                 // refresh later than exclude, otherwise IDE may start indexing excluded folders
                 VfsUtil.markDirtyAndRefresh(true, true, true, pubspecYamlFile.getParent());
+
+                if (DartSdkLibUtil.isDartSdkEnabled(module)) {
+                  DartAnalysisServerService.getInstance(module.getProject()).serverReadyForRequest(module.getProject());
+                }
               }
             });
           }

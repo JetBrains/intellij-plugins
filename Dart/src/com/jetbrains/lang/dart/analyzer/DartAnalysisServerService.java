@@ -59,6 +59,7 @@ import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.assists.DartQuickAssistIntention;
 import com.jetbrains.lang.dart.assists.QuickAssistSet;
+import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartFeedbackBuilder;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -1399,6 +1400,8 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   private void startServer(@NotNull final DartSdk sdk) {
+    if (DartPubActionBase.isInProgress()) return; // DartPubActionBase will start the server itself when finished
+
     synchronized (myLock) {
       mySdkHome = sdk.getHomePath();
 
