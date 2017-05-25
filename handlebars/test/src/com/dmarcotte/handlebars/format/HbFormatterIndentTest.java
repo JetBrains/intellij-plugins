@@ -2,8 +2,9 @@ package com.dmarcotte.handlebars.format;
 
 import com.dmarcotte.handlebars.config.HbConfig;
 import com.intellij.openapi.fileTypes.StdFileTypes;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
+import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings;
+import org.jetbrains.annotations.NotNull;
 
 public class HbFormatterIndentTest extends HbFormatterTest {
 
@@ -260,7 +261,7 @@ public class HbFormatterIndentTest extends HbFormatterTest {
 
   public void testFormattingInsideDoNotIndentElems1() {
 
-    CodeStyleSettings settings = CodeStyleSettingsManager.getSettings(getProject());
+    HtmlCodeStyleSettings settings = getHtmlSettings();
     settings.HTML_DO_NOT_INDENT_CHILDREN_OF = "body";
 
     doStringBasedTest(
@@ -281,7 +282,7 @@ public class HbFormatterIndentTest extends HbFormatterTest {
 
   public void testFormattingInsideDoNotIndentElems2() {
 
-    CodeStyleSettings settings = CodeStyleSettingsManager.getSettings(getProject());
+    HtmlCodeStyleSettings settings = getHtmlSettings();
     settings.HTML_DO_NOT_INDENT_CHILDREN_OF = "body";
 
     doStringBasedTest(
@@ -300,7 +301,7 @@ public class HbFormatterIndentTest extends HbFormatterTest {
 
   public void testFormattingInsideNestedDoNotIndentElems() {
 
-    CodeStyleSettings settings = CodeStyleSettingsManager.getSettings(getProject());
+    HtmlCodeStyleSettings settings = getHtmlSettings();
     settings.HTML_DO_NOT_INDENT_CHILDREN_OF = "span";
 
     doStringBasedTest(
@@ -325,5 +326,10 @@ public class HbFormatterIndentTest extends HbFormatterTest {
       "{{/foo}}\n" +
       "</span>"
     );
+  }
+
+  @NotNull
+  private HtmlCodeStyleSettings getHtmlSettings() {
+    return CodeStyleSettingsManager.getSettings(getProject()).getCustomSettings(HtmlCodeStyleSettings.class);
   }
 }
