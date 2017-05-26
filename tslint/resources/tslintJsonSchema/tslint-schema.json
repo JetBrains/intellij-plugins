@@ -254,6 +254,10 @@
         "deprecation": {
           "description": "Warns when deprecated APIs are used"
         },
+        "encoding": {
+          "description": "Enforces UTF-8 file encoding",
+          "type": "boolean"
+        },
         "eofline": {
           "description": "Enforces the file to end with a newline",
           "type": "boolean"
@@ -893,6 +897,10 @@
             }
           ]
         },
+        "prefer-conditional-expression": {
+          "description": "Recommends to use a conditional expression instead of assigning to the same thing in each branch of an if statement",
+          "type": "boolean"
+        },
         "prefer-const": {
           "description": "Requires that variable declarations use const instead of let if possible",
           "type": "boolean"
@@ -914,6 +922,10 @@
         },
         "prefer-method-signature": {
           "description": "Prefer foo(): void over foo: () => void in interfaces and types",
+          "type": "boolean"
+        },
+        "prefer-object-spread": {
+          "description": "Enforces the use of the ES2015 object spread operator over `Object.assign()` where appropriate",
           "type": "boolean"
         },
         "prefer-switch": {
