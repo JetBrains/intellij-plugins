@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.literal.JSLiteralImplicitElementCustomProvider;
-import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
+import com.intellij.lang.javascript.psi.resolve.JSTypeInfo;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure;
@@ -319,7 +319,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Override
-  public void addContextType(BaseJSSymbolProcessor.TypeInfo info, PsiElement context) {
+  public void addContextType(JSTypeInfo info, PsiElement context) {
     if (context instanceof JSReferenceExpression && ((JSReferenceExpression)context).getQualifier() == null) {
       final JSQualifiedName directiveNamespace = findDirective(context);
       if (directiveNamespace != null) {
