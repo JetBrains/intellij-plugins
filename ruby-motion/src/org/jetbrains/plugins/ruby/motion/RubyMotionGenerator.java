@@ -16,6 +16,7 @@ import org.jetbrains.plugins.ruby.RBundle;
 import org.jetbrains.plugins.ruby.motion.ui.RubyMotionSettingsHolder;
 import org.jetbrains.plugins.ruby.ruby.RModuleUtil;
 import org.jetbrains.plugins.ruby.wizard.RubyFrameworkProjectGenerator;
+import org.jetbrains.plugins.ruby.wizard.RubyProjectSharedSettings;
 
 import javax.swing.*;
 
@@ -25,8 +26,8 @@ import javax.swing.*;
 public class RubyMotionGenerator extends RubyFrameworkProjectGenerator<RubyMotionSettingsHolder> implements HideableProjectGenerator {
   @NotNull
   @Override
-  protected ProjectGeneratorPeer<RubyMotionSettingsHolder> createPeer() {
-    return new RubyMotionGeneratorPeer();
+  protected ProjectGeneratorPeer<RubyMotionSettingsHolder> createPeer(@NotNull RubyProjectSharedSettings sharedSettings) {
+    return new RubyMotionGeneratorPeer(sharedSettings);
   }
 
   @NotNull

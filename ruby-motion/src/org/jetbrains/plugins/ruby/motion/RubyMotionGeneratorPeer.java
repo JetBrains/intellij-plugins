@@ -5,11 +5,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.ruby.motion.ui.RubyMotionGeneratorTabBase;
 import org.jetbrains.plugins.ruby.motion.ui.RubyMotionSettingsHolder;
 import org.jetbrains.plugins.ruby.wizard.RubyGeneratorPeer;
+import org.jetbrains.plugins.ruby.wizard.RubyProjectSharedSettings;
 
 import javax.swing.*;
 
 public class RubyMotionGeneratorPeer extends RubyGeneratorPeer<RubyMotionSettingsHolder> {
   private RubyMotionGeneratorTabBase myGeneratorTab;
+
+  public RubyMotionGeneratorPeer(@NotNull final RubyProjectSharedSettings sharedSettings) {
+    super(sharedSettings);
+  }
 
   @NotNull
   @Override
