@@ -58,6 +58,7 @@
                                       implementationClass="com.intellij.javascript.flex.compiled.SwfFileViewProviderFactory"/>
     <filetype.decompiler filetype="SWF" implementationClass="com.intellij.javascript.flex.compiled.SwfFileDecompiler"/>
     <filetype.stubBuilder filetype="SWF" implementationClass="com.intellij.javascript.flex.compiled.SwfFileStubBuilder"/>
+    <stubElementTypeHolder class="com.intellij.javascript.flex.compiled.DecompiledSwfElementTypes"/>
     <syntaxHighlighter key="SWF" factoryClass="com.intellij.javascript.flex.compiled.SwfSyntaxHighlighterProvider"/>
     <codeInsight.lineMarkerProvider language="Mxml"
                                     implementationClass="com.intellij.javascript.flex.mxml.XmlBackedClassLineMarkerProvider"/>
