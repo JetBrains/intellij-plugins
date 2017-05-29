@@ -89,6 +89,8 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
                                              "BLANK_LINES_BEFORE_PACKAGE",
                                              "BLANK_LINES_AFTER_PACKAGE"));
       consumer.showStandardOptions(ArrayUtil.toStringArray(blankLinesOptions));
+      consumer.showCustomOption(ECMA4CodeStyleSettings.class, "BLANK_LINES_AROUND_FUNCTION",
+                                JSBundle.message("js.blank.lines.around.function"), CodeStyleSettingsCustomizable.BLANK_LINES);
     }
     else if (settingsType == SettingsType.WRAPPING_AND_BRACES_SETTINGS) {
       List<String> wrappingOptions = new ArrayList<>();
