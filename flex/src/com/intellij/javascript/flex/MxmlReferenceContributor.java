@@ -21,7 +21,7 @@ import com.intellij.lang.javascript.psi.impl.JSTextReference;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.resolve.ResultSink;
 import com.intellij.lang.javascript.validation.fixes.CreateClassIntentionWithCallback;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
+import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.lang.javascript.validation.fixes.CreateFlexMobileViewIntentionAndFix;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -44,7 +44,6 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.util.XmlTagUtil;
 import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -279,7 +278,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
       }
       else {
         intentions = new CreateClassIntentionWithCallback[]{
-          new CreateClassOrInterfaceFix(classFqn, null, element),
+          new ActionScriptCreateClassOrInterfaceFix(classFqn, null, element),
           new CreateFlexComponentFix(classFqn, element)
         };
       }

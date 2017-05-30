@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.flex.ReferenceSupport;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexComponentFix;
 import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
 import com.intellij.lang.javascript.psi.util.JSUtils;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
+import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.util.text.StringUtil;
@@ -71,11 +71,11 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
                 return LocalQuickFix.EMPTY_ARRAY;
               }
 
-              CreateClassOrInterfaceFix[] fixes = new CreateClassOrInterfaceFix[]{
-                new CreateClassOrInterfaceFix(value, null, element),
+              ActionScriptCreateClassOrInterfaceFix[] fixes = new ActionScriptCreateClassOrInterfaceFix[]{
+                new ActionScriptCreateClassOrInterfaceFix(value, null, element),
                 new CreateFlexComponentFix(value, element)
               };
-              for (CreateClassOrInterfaceFix fix : fixes) {
+              for (ActionScriptCreateClassOrInterfaceFix fix : fixes) {
                 fix.setCreatedClassFqnConsumer(newFqn -> ElementManipulators.getManipulator(element).handleContentChange(element, newFqn));
               }
               return fixes;

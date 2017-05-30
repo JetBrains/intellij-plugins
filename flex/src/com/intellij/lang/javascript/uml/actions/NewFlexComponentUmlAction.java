@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexComponentFix;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
+import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.lang.javascript.validation.fixes.CreateClassParameters;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.CommandProcessor;
@@ -13,7 +13,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.util.Consumer;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.HashMap;
 import icons.JavaScriptPsiIcons;
@@ -44,7 +43,7 @@ public class NewFlexComponentUmlAction extends NewJSClassUmlActionBase {
     final Ref<JSClass> clazz = new Ref<>();
     CommandProcessor.getInstance().executeCommand(params.getTargetDirectory().getProject(), () -> {
       try {
-        CreateClassOrInterfaceFix
+        ActionScriptCreateClassOrInterfaceFix
           .createClass(params.getTemplateName(), params.getClassName(), params.getPackageName(), getSuperClass(params),
                        params.getInterfacesFqns(), params.getTargetDirectory(), getActionName(), true,
                        new HashMap<>(params.getTemplateAttributes()),

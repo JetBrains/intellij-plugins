@@ -40,7 +40,7 @@ import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
+import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
@@ -1155,12 +1155,12 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
                      "}\n" +
                      "}";
     String prevText =
-      JSTestUtils.modifyTemplate(CreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, newText, getProject());
+      JSTestUtils.modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, newText, getProject());
     try {
       doCreateClassOrInterfaceTestWithCheck("Abc", true);
     }
     finally {
-      JSTestUtils.modifyTemplate(CreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, prevText, getProject());
+      JSTestUtils.modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, prevText, getProject());
     }
   }
 
@@ -1178,12 +1178,12 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
                      "}\n" +
                      "}";
     String prevText =
-      JSTestUtils.modifyTemplate(CreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, newText, getProject());
+      JSTestUtils.modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, newText, getProject());
     try {
       doCreateClassOrInterfaceTestWithCheck("Abc", false);
     }
     finally {
-      JSTestUtils.modifyTemplate(CreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, prevText, getProject());
+      JSTestUtils.modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, prevText, getProject());
     }
   }
 

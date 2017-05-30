@@ -7,7 +7,7 @@ import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
+import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Pair;
@@ -37,7 +37,7 @@ public class NewFlexComponentAction extends NewActionScriptClassAction {
   }
 
   @Override
-  protected CreateClassOrInterfaceFix createAction(final PsiDirectory dir) {
+  protected ActionScriptCreateClassOrInterfaceFix createAction(final PsiDirectory dir) {
     return new CreateFlexComponentFix(dir);
   }
 

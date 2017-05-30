@@ -12,7 +12,7 @@ import com.intellij.lang.javascript.ui.newclass.CreateFlashClassWizard;
 import com.intellij.lang.javascript.ui.newclass.CustomVariablesStep;
 import com.intellij.lang.javascript.ui.newclass.MainStep;
 import com.intellij.lang.javascript.ui.newclass.WizardModel;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
+import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.lang.javascript.validation.fixes.CreateClassParameters;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
@@ -22,7 +22,6 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -37,7 +36,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class CreateFlexComponentFix extends CreateClassOrInterfaceFix {
+public class CreateFlexComponentFix extends ActionScriptCreateClassOrInterfaceFix {
   public static final Collection<String> FLEX_TEMPLATES_EXTENSIONS =
     Arrays.asList(JavaScriptSupportLoader.MXML_FILE_EXTENSION);
   @NonNls static final String FLEX3_COMPONENT_TEMPLATE_NAME = "Flex 3 Component";
@@ -125,7 +124,7 @@ public class CreateFlexComponentFix extends CreateClassOrInterfaceFix {
     Module module = ModuleUtilCore.findModuleForPsiElement(context);
     final String[] allowedBuiltin = getAllowedBuiltInTemplates(module);
     return ContainerUtil
-      .filter(CreateClassOrInterfaceFix.getApplicableTemplates(FLEX_TEMPLATES_EXTENSIONS, context.getProject()), fileTemplate -> {
+      .filter(ActionScriptCreateClassOrInterfaceFix.getApplicableTemplates(FLEX_TEMPLATES_EXTENSIONS, context.getProject()), fileTemplate -> {
         String name = fileTemplate.getName();
         return ArrayUtil.contains(name, allowedBuiltin) || !NewFlexComponentAction.isClassifierTemplate(name);
       });

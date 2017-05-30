@@ -16,7 +16,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
+import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.lang.javascript.validation.fixes.CreateClassParameters;
 import com.intellij.lang.javascript.validation.fixes.ImplementMethodsFix;
 import com.intellij.openapi.application.ApplicationManager;
@@ -130,7 +130,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
     if (!(parent instanceof JSPackageStatement)) return;
     final JSPackageStatement jsPackageStatement = (JSPackageStatement)parent;
 
-    final String defaultTemplateName = CreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME;
+    final String defaultTemplateName = ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME;
 
     final String className;
     final String packageName;
@@ -145,17 +145,17 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
       packageName = "foo";
       templateName = defaultTemplateName;
       targetDirectory = WriteAction
-        .compute(() -> CreateClassOrInterfaceFix.findOrCreateDirectory(packageName, jsPackageStatement));
+        .compute(() -> ActionScriptCreateClassOrInterfaceFix.findOrCreateDirectory(packageName, jsPackageStatement));
       interfaces = jsClass.isInterface() ? Collections.singletonList(jsClass.getQualifiedName()) : Collections.emptyList();
       templateAttributes = Collections.emptyMap();
       superClass = jsClass.isInterface() ? null : jsClass;
     }
     else {
-      CreateClassParameters p = CreateClassOrInterfaceFix
+      CreateClassParameters p = ActionScriptCreateClassOrInterfaceFix
         .createAndShow(defaultTemplateName, jsClass, suggestSubclassName(jsClass.getName()), true, jsPackageStatement.getQualifiedName(),
                        jsClass, JSBundle.message("new.actionscript.class.dialog.title"),
-                       () -> CreateClassOrInterfaceFix.getApplicableTemplates(CreateClassOrInterfaceFix.ACTIONSCRIPT_TEMPLATES_EXTENSIONS,
-                                                                                         project));
+                       () -> ActionScriptCreateClassOrInterfaceFix.getApplicableTemplates(ActionScriptCreateClassOrInterfaceFix.ACTIONSCRIPT_TEMPLATES_EXTENSIONS,
+                                                                                          project));
 
       if (p == null) return;
 
@@ -163,12 +163,12 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
       packageName = p.getPackageName();
       templateName = p.getTemplateName();
       targetDirectory = p.getTargetDirectory();
-      superClass = CreateClassOrInterfaceFix.calcClass(p.getSuperclassFqn(), element);
+      superClass = ActionScriptCreateClassOrInterfaceFix.calcClass(p.getSuperclassFqn(), element);
       interfaces = p.getInterfacesFqns();
       templateAttributes = new HashMap<>(p.getTemplateAttributes());
     }
 
-    JSClass createdClass = CreateClassOrInterfaceFix
+    JSClass createdClass = ActionScriptCreateClassOrInterfaceFix
       .createClass(templateName, className, packageName, superClass, interfaces, targetDirectory,
                    getTitle(jsClass),
                    true, templateAttributes, aClass -> {

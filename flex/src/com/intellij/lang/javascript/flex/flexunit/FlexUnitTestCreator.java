@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.refactoring.util.JSMemberInfo;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
+import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
@@ -94,11 +94,12 @@ public class FlexUnitTestCreator implements TestCreator {
       createdClass.navigate(true);
     };
 
-    CommandProcessor.getInstance().executeCommand(project, () -> CreateClassOrInterfaceFix.createClass(CreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, testClassName,
-                                                                                                       packageName, superClass, Collections.emptyList(), targetDirectory,
-                                                                                                       CodeInsightBundle.message("intention.create.test"), true,
-                                                                                                       Collections.emptyMap(),
-                                                                                                       postProcessRunnable), CodeInsightBundle.message("intention.create.test"), null);
+    CommandProcessor.getInstance().executeCommand(project, () -> ActionScriptCreateClassOrInterfaceFix
+      .createClass(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, testClassName,
+                   packageName, superClass, Collections.emptyList(), targetDirectory,
+                   CodeInsightBundle.message("intention.create.test"), true,
+                   Collections.emptyMap(),
+                   postProcessRunnable), CodeInsightBundle.message("intention.create.test"), null);
   }
 
   private static String getMethodsText(final JSClass createdClass,

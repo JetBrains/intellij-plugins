@@ -11,16 +11,14 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.ui.newclass.MainStep;
 import com.intellij.lang.javascript.ui.newclass.WizardModel;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
+import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.util.ClassLoaderUtil;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import org.apache.velocity.runtime.parser.ParseException;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Properties;
 
 public class FlexMainStep extends MainStep {
@@ -68,7 +66,7 @@ public class FlexMainStep extends MainStep {
     final FileTemplate template;
     try {
       template = ClassLoaderUtil
-        .runWithClassLoader(CreateClassOrInterfaceFix.class.getClassLoader(),
+        .runWithClassLoader(ActionScriptCreateClassOrInterfaceFix.class.getClassLoader(),
                             new ThrowableComputable<FileTemplate, IOException>() {
                               @Override
                               public FileTemplate compute() throws IOException {
@@ -76,7 +74,7 @@ public class FlexMainStep extends MainStep {
                               }
                             });
       String[] attributes = FileTemplateUtil.calculateAttributes(template.getText(), new Properties(), true, myProject);
-      if (ArrayUtil.contains(CreateClassOrInterfaceFix.SUPERCLASS, attributes)) {
+      if (ArrayUtil.contains(ActionScriptCreateClassOrInterfaceFix.SUPERCLASS, attributes)) {
         myModel.setSuperclassFqn(getSuperclassFqn());
       }
     }

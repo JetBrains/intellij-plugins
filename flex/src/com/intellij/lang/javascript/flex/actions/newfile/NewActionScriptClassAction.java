@@ -3,7 +3,7 @@ package com.intellij.lang.javascript.flex.actions.newfile;
 import com.intellij.ide.IdeView;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
+import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.module.Module;
@@ -71,7 +71,7 @@ public class NewActionScriptClassAction extends AnAction {
     return JSBundle.message("new.actionscript.class.command.name");
   }
 
-  protected CreateClassOrInterfaceFix createAction(final PsiDirectory dir) {
-    return new CreateClassOrInterfaceFix(dir);
+  protected ActionScriptCreateClassOrInterfaceFix createAction(final PsiDirectory dir) {
+    return new ActionScriptCreateClassOrInterfaceFix(dir);
   }
 }

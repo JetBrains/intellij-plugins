@@ -15,7 +15,7 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeNameValuePairImpl;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
+import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -237,7 +237,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
           }
         }
 
-        final CreateClassOrInterfaceFix fix = new CreateClassOrInterfaceFix(fqn, baseClass, myElement);
+        final ActionScriptCreateClassOrInterfaceFix fix = new ActionScriptCreateClassOrInterfaceFix(fqn, baseClass, myElement);
         fix.setCreatedClassFqnConsumer(fqn1 -> {
           if (myElement.isValid()) {
             if (!fqn1.equals(StringUtil.stripQuotesAroundValue(myElement.getValueNode().getText()))) {

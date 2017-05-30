@@ -36,7 +36,7 @@ public class CreateFlexMobileViewIntentionAndFix extends CreateMxmlFileIntention
 
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       targetDirectory =
-        WriteAction.compute(() -> CreateClassOrInterfaceFix.findOrCreateDirectory("foo", myElement));
+        WriteAction.compute(() -> ActionScriptCreateClassOrInterfaceFix.findOrCreateDirectory("foo", myElement));
     }
     else {
       final ChoosePackageDialog dialog = new ChoosePackageDialog(module, getText(), myPackageName, myElement.getContainingFile());

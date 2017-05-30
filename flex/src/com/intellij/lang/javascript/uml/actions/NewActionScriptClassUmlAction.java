@@ -1,25 +1,20 @@
 package com.intellij.lang.javascript.uml.actions;
 
 import com.intellij.diagram.DiagramDataModel;
-import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSIconProvider;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
+import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.lang.javascript.validation.fixes.CreateClassParameters;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.util.Consumer;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class NewActionScriptClassUmlAction extends NewJSClassUmlActionBase {
 
@@ -36,10 +31,10 @@ public class NewActionScriptClassUmlAction extends NewJSClassUmlActionBase {
   @Nullable
   @Override
   protected CreateClassParameters showDialog(final Project project, Pair<PsiDirectory, String> dirAndPackage) {
-    return CreateClassOrInterfaceFix
+    return ActionScriptCreateClassOrInterfaceFix
       .createAndShow(null, dirAndPackage.first, null, true, dirAndPackage.second, null, JSBundle.message("new.actionscript.class.dialog.title"),
-                     () -> CreateClassOrInterfaceFix
-                       .getApplicableTemplates(CreateClassOrInterfaceFix.ACTIONSCRIPT_TEMPLATES_EXTENSIONS, project));
+                     () -> ActionScriptCreateClassOrInterfaceFix
+                       .getApplicableTemplates(ActionScriptCreateClassOrInterfaceFix.ACTIONSCRIPT_TEMPLATES_EXTENSIONS, project));
   }
 
   @Nullable
@@ -50,7 +45,7 @@ public class NewActionScriptClassUmlAction extends NewJSClassUmlActionBase {
     final Ref<JSClass> clazz = new Ref<>();
     CommandProcessor.getInstance().executeCommand(params.getTargetDirectory().getProject(), () -> {
       try {
-        CreateClassOrInterfaceFix
+        ActionScriptCreateClassOrInterfaceFix
           .createClass(params.getTemplateName(), params.getClassName(), params.getPackageName(), getSuperClass(params),
                        params.getInterfacesFqns(), params.getTargetDirectory(), getActionName(), true,
                        new HashMap<>(params.getTemplateAttributes()),

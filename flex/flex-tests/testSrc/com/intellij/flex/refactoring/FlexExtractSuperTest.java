@@ -12,7 +12,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBu
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractSuperProcessor;
 import com.intellij.lang.javascript.refactoring.util.JSMemberInfo;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
+import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -118,7 +118,8 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
       final PsiElement finalSourceClass = sourceClass;
       PsiDirectory dir =
         WriteCommandAction.runWriteCommandAction(null,
-                                                 (Computable<PsiDirectory>)() -> CreateClassOrInterfaceFix.findOrCreateDirectory(StringUtil.getPackageName(extractedSuperName), finalSourceClass));
+                                                 (Computable<PsiDirectory>)() -> ActionScriptCreateClassOrInterfaceFix
+                                                   .findOrCreateDirectory(StringUtil.getPackageName(extractedSuperName), finalSourceClass));
       new JSExtractSuperProcessor(sourceClass, infosArray, StringUtil.getShortName(extractedSuperName),
                                   StringUtil.getPackageName(extractedSuperName), docCommentPolicy, mode, classNotInterface, dir).run();
       assertEquals("Conflicts expected:\n" + StringUtil.join(conflicts, "\n"), 0, conflicts.length);
