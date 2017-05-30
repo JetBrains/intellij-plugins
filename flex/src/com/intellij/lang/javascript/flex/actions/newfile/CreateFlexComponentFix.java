@@ -51,8 +51,8 @@ public class CreateFlexComponentFix extends ActionScriptCreateClassOrInterfaceFi
   }
 
   @Override
-  public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {
-    if (!super.isAvailable(project, editor, file)) {
+  public boolean isAvailable(@NotNull final Project project, PsiElement element, final Editor editor, final PsiFile file) {
+    if (!super.isAvailable(project, element, editor, file)) {
       return false;
     }
 
