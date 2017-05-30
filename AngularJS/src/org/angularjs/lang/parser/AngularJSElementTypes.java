@@ -2,14 +2,17 @@ package org.angularjs.lang.parser;
 
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.types.JSEmbeddedContentElementType;
+import com.intellij.lang.javascript.types.JSFileElementType;
 import com.intellij.lexer.Lexer;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.IFileElementType;
 import org.angularjs.lang.AngularJSLanguage;
 
 /**
  * @author Dennis.Ushakov
  */
 public interface AngularJSElementTypes {
+  IFileElementType FILE = JSFileElementType.create(AngularJSLanguage.INSTANCE);
   IElementType REPEAT_EXPRESSION = new IElementType("REPEAT_EXPRESSION", AngularJSLanguage.INSTANCE);
   IElementType FOR_EXPRESSION = new IElementType("REPEAT_EXPRESSION", AngularJSLanguage.INSTANCE);
   IElementType FILTER_EXPRESSION = new IElementType("FILTER_EXPRESSION", AngularJSLanguage.INSTANCE);
