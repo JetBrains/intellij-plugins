@@ -3,9 +3,11 @@ package org.angularjs.lang.parser;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.types.JSEmbeddedContentElementType;
+import com.intellij.lang.javascript.types.JSFileElementType;
 import com.intellij.lexer.Lexer;
 import com.intellij.psi.tree.ICompositeElementType;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.IFileElementType;
 import org.angularjs.lang.AngularJSLanguage;
 import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
@@ -17,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Dennis.Ushakov
  */
 public interface AngularJSElementTypes {
+  IFileElementType FILE = JSFileElementType.create(AngularJSLanguage.INSTANCE);
   IElementType REPEAT_EXPRESSION = new AngularJSElementType("REPEAT_EXPRESSION") {
     @NotNull
     @Override
