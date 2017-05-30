@@ -3,13 +3,11 @@ package org.angularjs.lang.parser;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiParser;
 import com.intellij.lang.javascript.JavascriptParserDefinition;
-import com.intellij.lang.javascript.types.JSFileElementType;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
-import org.angularjs.lang.AngularJSLanguage;
 import org.angularjs.lang.lexer.AngularJSLexer;
 import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
@@ -21,8 +19,6 @@ import org.jetbrains.annotations.NotNull;
  * @author Dennis.Ushakov
  */
 public class AngularJSParserDefinition extends JavascriptParserDefinition {
-  private static final IFileElementType FILE = JSFileElementType.create(AngularJSLanguage.INSTANCE);
-
   @NotNull
   @Override
   public Lexer createLexer(Project project) {
@@ -53,6 +49,6 @@ public class AngularJSParserDefinition extends JavascriptParserDefinition {
 
   @Override
   public IFileElementType getFileNodeType() {
-    return FILE;
+    return AngularJSElementTypes.FILE;
   }
 }
