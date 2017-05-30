@@ -19,11 +19,9 @@ import org.jetbrains.annotations.NotNull;
  * @author Konstantin.Ulitin
  */
 public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChecker {
-  private final JSAnnotatorProblemReporter myReporter;
 
-  public ActionScriptFunctionSignatureChecker(JSTypeChecker typeChecker, JSAnnotatorProblemReporter reporter) {
+  public ActionScriptFunctionSignatureChecker(JSTypeChecker typeChecker) {
     super(typeChecker);
-    myReporter = reporter;
   }
 
   @Override
@@ -44,9 +42,7 @@ public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChe
 
           registerProblem(node, JSBundle.message("javascript.invalid.number.of.parameters", "0"),
                           fix != null ? new LocalQuickFix[]{fix} : LocalQuickFix.EMPTY_ARRAY);
-          return;
         }
-        checkCallParameters(node, null);
       }
       else {
         reportProblemIfNotExpectedCountOfParameters(node, 1, "one");
