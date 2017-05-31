@@ -8,7 +8,7 @@ public enum KarmaScopeKind {
     @NotNull
     @Override
     public KarmaScopeView createView(@NotNull Project project) {
-      return new KarmaAllScopeView();
+      return new KarmaAllTestsScopeView();
     }
   },
 

@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class KarmaAllScopeView extends KarmaScopeView {
+public class KarmaAllTestsScopeView extends KarmaScopeView {
 
   @NotNull
   @Override
