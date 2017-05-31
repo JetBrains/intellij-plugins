@@ -2,9 +2,8 @@ package com.intellij.lang.javascript.linter.tslint.editor
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonParser
-import com.intellij.ide.util.PropertiesComponent
 import com.intellij.lang.javascript.JavaScriptSupportLoader
-import com.intellij.lang.javascript.linter.LinterCodeStyleImportSource
+import com.intellij.lang.javascript.linter.LinterCodeStyleImportSourceTracker
 import com.intellij.lang.javascript.linter.tslint.TsLintBundle
 import com.intellij.lang.javascript.linter.tslint.config.style.rules.TsLintConfigWrapper
 import com.intellij.lang.javascript.linter.tslint.config.style.rules.TsLintRule
@@ -27,13 +26,12 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 
 private val KEY = Key.create<EditorNotificationPanel>("TsLint.Import.Code.Style.Notification")
-private val DISMISS_KEY = "tslint.code.style.apply.dismiss"
 
 val RULES_CACHE_KEY = Key.create<ParameterizedCachedValue<TsLintConfigWrapper, PsiFile>>("tslint.cache.key.config.json")
 
 class TsLintCodeStyleEditorNotificationProvider(project: Project) : EditorNotifications.Provider<EditorNotificationPanel>() {
-  private val mySource: LinterCodeStyleImportSource = LinterCodeStyleImportSource(project, DISMISS_KEY,
-                                                                                  { it.fileType == TsLintConfigFileType.INSTANCE })
+  private val mySourceTracker: LinterCodeStyleImportSourceTracker = LinterCodeStyleImportSourceTracker(
+    project, "tslint", { it.fileType == TsLintConfigFileType.INSTANCE })
   private val RULES_TO_APPLY: ParameterizedCachedValueProvider<TsLintConfigWrapper, PsiFile> = ParameterizedCachedValueProvider {
     if (it == null || PsiTreeUtil.hasErrorElements(it)) {
       return@ParameterizedCachedValueProvider CachedValueProvider.Result.create(null, it)
@@ -62,7 +60,7 @@ class TsLintCodeStyleEditorNotificationProvider(project: Project) : EditorNotifi
 
     val project = fileEditor.editor.project ?: return null
 
-    if (mySource.shouldDismiss(file)) return null
+    if (mySourceTracker.shouldDismiss(file)) return null
 
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
 
@@ -88,12 +86,7 @@ class TsLintCodeStyleEditorNotificationProvider(project: Project) : EditorNotifi
           runWriteActionAndUpdateNotifications(project, wrapper, rules)
         }
         createActionLabel(TsLintBundle.message("tslint.code.style.apply.text"), okAction)
-
-        val dismissAction: Runnable = Runnable {
-          PropertiesComponent.getInstance(project).setValue(DISMISS_KEY, true)
-          EditorNotifications.getInstance(project).updateAllNotifications()
-        }
-        createActionLabel(TsLintBundle.message("tslint.code.style.dismiss.text"), dismissAction)
+        createActionLabel(TsLintBundle.message("tslint.code.style.dismiss.text"), mySourceTracker.getDismissAction())
       }
     }
   }
