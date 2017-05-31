@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSSuperExpression;
 import com.intellij.lang.javascript.psi.types.primitives.JSObjectType;
-import com.intellij.lang.javascript.validation.JSAnnotatorProblemReporter;
 import com.intellij.lang.javascript.validation.JSFunctionSignatureChecker;
 import com.intellij.lang.javascript.validation.JSTypeChecker;
 import com.intellij.lang.javascript.validation.ValidateTypesUtil;
@@ -31,22 +30,19 @@ public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChe
   }
 
   @Override
-  public void checkFunction(@NotNull JSCallExpression node, @NotNull PsiElement element) {
-    super.checkFunction(node, element);
-    if (element instanceof JSClass) {
-      if (node instanceof JSNewExpression || node.getMethodExpression() instanceof JSSuperExpression) {
-        final JSArgumentList argumentList = node.getArgumentList();
-        final JSExpression[] expressions = argumentList != null ? argumentList.getArguments() : JSExpression.EMPTY_ARRAY;
-        if (expressions.length > 0) {
-          final CreateConstructorFix fix = CreateConstructorFix.createIfApplicable(node);
+  public void checkConstructorCall(@NotNull JSCallExpression node, @NotNull JSClass target) {
+    if (node instanceof JSNewExpression || node.getMethodExpression() instanceof JSSuperExpression) {
+      final JSArgumentList argumentList = node.getArgumentList();
+      final JSExpression[] expressions = argumentList != null ? argumentList.getArguments() : JSExpression.EMPTY_ARRAY;
+      if (expressions.length > 0) {
+        final CreateConstructorFix fix = CreateConstructorFix.createIfApplicable(node);
 
-          registerProblem(node, JSBundle.message("javascript.invalid.number.of.parameters", "0"),
-                          fix != null ? new LocalQuickFix[]{fix} : LocalQuickFix.EMPTY_ARRAY);
-        }
+        registerProblem(node, JSBundle.message("javascript.invalid.number.of.parameters", "0"),
+                        fix != null ? new LocalQuickFix[]{fix} : LocalQuickFix.EMPTY_ARRAY);
       }
-      else {
-        reportProblemIfNotExpectedCountOfParameters(node, 1, "one");
-      }
+    }
+    else {
+      reportProblemIfNotExpectedCountOfParameters(node, 1, "one");
     }
   }
 

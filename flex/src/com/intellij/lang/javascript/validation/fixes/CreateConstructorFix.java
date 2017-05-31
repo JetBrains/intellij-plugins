@@ -195,7 +195,7 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
   @NotNull
   @Override
   public String getName() {
-    return JSBundle.message("javascript.create.constructor.intention.name", myClass.getName());
+    return JSBundle.message("actionscript.create.constructor.intention.name", myClass.getName());
   }
 
   private class MyDialog extends JSChangeSignatureDialog {
