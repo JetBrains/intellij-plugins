@@ -3,7 +3,7 @@ package org.jetbrains.plugins.ruby.motion;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.cidr.CocoaDocumentationManager;
+import com.jetbrains.cidr.CocoaDocumentationManagerImpl;
 import com.jetbrains.cidr.DocSet;
 import com.jetbrains.cidr.xcode.Xcode;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +14,7 @@ import java.io.File;
 /**
  * @author Dennis.Ushakov
  */
-public class MotionDocumentationManager extends CocoaDocumentationManager {
+public class MotionDocumentationManager extends CocoaDocumentationManagerImpl {
 
   private DocSet myCachedDocSet;
   private String myCachedSdkVersion;
