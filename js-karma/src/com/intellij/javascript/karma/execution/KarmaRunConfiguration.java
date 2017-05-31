@@ -133,16 +133,20 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolve(getProject());
     NodeJsLocalInterpreter.checkForRunConfiguration(interpreter);
     karmaPackage.validateForRunConfiguration(KarmaUtil.NODE_PACKAGE_NAME);
-    String configPath = myRunSettings.getConfigPath();
-    if (configPath.trim().isEmpty()) {
-      throw new RuntimeConfigurationError("Please specify config file path");
+    validatePath("configuration file", myRunSettings.getConfigPath());
+    if (myRunSettings.getScopeKind() == KarmaScopeKind.TEST_FILE) {
+      validatePath("test file", myRunSettings.getTestFileSystemDependentPath());
     }
-    File configFile = new File(configPath);
-    if (!configFile.exists()) {
-      throw new RuntimeConfigurationError("Configuration file does not exist");
+  }
+
+  private static void validatePath(@NotNull String pathLabelName,
+                                   @Nullable String path) throws RuntimeConfigurationException {
+    if (StringUtil.isEmptyOrSpaces(path)) {
+      throw new RuntimeConfigurationError("Unspecified " + pathLabelName);
     }
-    if (!configFile.isFile()) {
-      throw new RuntimeConfigurationError("Please specify config file path correctly");
+    File file = new File(path);
+    if (!file.isAbsolute() || !file.isFile()) {
+      throw new RuntimeConfigurationError("No such " + pathLabelName);
     }
   }
 
@@ -178,7 +182,10 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     KarmaRunSettings settings = myRunSettings;
     KarmaScopeKind scopeKind = settings.getScopeKind();
     if (scopeKind == KarmaScopeKind.ALL) {
-      return PathUtil.getFileName(settings.getConfigSystemIndependentPath());
+      return PathUtil.getFileName(settings.getConfigPath());
+    }
+    if (scopeKind == KarmaScopeKind.TEST_FILE) {
+      return PathUtil.getFileName(settings.getTestFileSystemDependentPath());
     }
     if (scopeKind == KarmaScopeKind.SUITE || scopeKind == KarmaScopeKind.TEST) {
       return JsTestFqn.getPresentableName(settings.getTestNames());

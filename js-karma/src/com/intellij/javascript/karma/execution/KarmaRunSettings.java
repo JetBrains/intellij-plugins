@@ -6,6 +6,7 @@ import com.intellij.javascript.karma.scope.KarmaScopeKind;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +22,7 @@ public class KarmaRunSettings {
   private final NodeJsInterpreterRef myInterpreterRef;
   private final EnvironmentVariablesData myEnvData;
   private final KarmaScopeKind myScopeKind;
+  private final String myTestFilePath;
   private final List<String> myTestNames;
 
   public KarmaRunSettings(@NotNull Builder builder) {
@@ -30,6 +32,7 @@ public class KarmaRunSettings {
     myInterpreterRef = builder.myInterpreterRef;
     myEnvData = builder.myEnvData;
     myScopeKind = builder.myScopeKind;
+    myTestFilePath = FileUtil.toSystemDependentName(builder.myTestFilePath);
     myTestNames = ImmutableList.copyOf(builder.myTestNames);
   }
 
@@ -69,6 +72,16 @@ public class KarmaRunSettings {
   }
 
   @NotNull
+  public String getTestFileSystemDependentPath() {
+    return myTestFilePath;
+  }
+
+  @NotNull
+  public String getTestFileSystemIndependentPath() {
+    return FileUtil.toSystemIndependentName(myTestFilePath);
+  }
+
+  @NotNull
   public List<String> getTestNames() {
     return myTestNames;
   }
@@ -86,6 +99,7 @@ public class KarmaRunSettings {
           myInterpreterRef.getReferenceName().equals(that.myInterpreterRef.getReferenceName()) &&
           myEnvData.equals(that.myEnvData) &&
           myScopeKind.equals(that.myScopeKind) &&
+          myTestFilePath.equals(that.myTestFilePath) &&
           myTestNames.equals(that.myTestNames);
   }
 
@@ -97,6 +111,7 @@ public class KarmaRunSettings {
     result = 31 * result + myInterpreterRef.getReferenceName().hashCode();
     result = 31 * result + myEnvData.hashCode();
     result = 31 * result + myScopeKind.hashCode();
+    result = 31 * result + myTestFilePath.hashCode();
     result = 31 * result + myTestNames.hashCode();
     return result;
   }
@@ -114,6 +129,7 @@ public class KarmaRunSettings {
     private NodeJsInterpreterRef myInterpreterRef = NodeJsInterpreterRef.createProjectRef();
     private EnvironmentVariablesData myEnvData = EnvironmentVariablesData.DEFAULT;
     private KarmaScopeKind myScopeKind = KarmaScopeKind.ALL;
+    private String myTestFilePath = "";
     private List<String> myTestNames = Collections.emptyList();
 
     public Builder() {}
@@ -125,12 +141,13 @@ public class KarmaRunSettings {
       myInterpreterRef = settings.getInterpreterRef();
       myEnvData = settings.myEnvData;
       myScopeKind = settings.myScopeKind;
+      myTestFilePath = settings.myTestFilePath;
       myTestNames = settings.myTestNames;
     }
 
     @NotNull
-    public Builder setConfigPath(@NotNull String configPath) {
-      myConfigPath = configPath;
+    public Builder setConfigPath(@Nullable String configPath) {
+      myConfigPath = StringUtil.notNullize(configPath);
       return this;
     }
 
@@ -141,8 +158,8 @@ public class KarmaRunSettings {
     }
 
     @NotNull
-    public Builder setBrowsers(@NotNull String browsers) {
-      myBrowsers = browsers;
+    public Builder setBrowsers(@Nullable String browsers) {
+      myBrowsers = StringUtil.notNullize(browsers);
       return this;
     }
 
@@ -161,6 +178,12 @@ public class KarmaRunSettings {
     @NotNull
     public Builder setScopeKind(@NotNull KarmaScopeKind scopeKind) {
       myScopeKind = scopeKind;
+      return this;
+    }
+
+    @NotNull
+    public Builder setTestFilePath(@Nullable String testFilePath) {
+      myTestFilePath = StringUtil.notNullize(testFilePath);
       return this;
     }
 

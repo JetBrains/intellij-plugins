@@ -59,22 +59,28 @@ public class KarmaRunConfigurationProducer extends JsTestRunConfigurationProduce
 
   @Nullable
   private static Pair<KarmaRunSettings, PsiElement> setup(@Nullable PsiElement element,
-                                                          @NotNull KarmaRunSettings templateRunSettings) {
+                                                          @NotNull KarmaRunSettings templateSettings) {
     JSFile file = ObjectUtils.tryCast(element != null ? element.getContainingFile() : null, JSFile.class);
     VirtualFile virtualFile = PsiUtilCore.getVirtualFile(file);
     if (virtualFile == null) {
       return null;
     }
     if (!(element instanceof PsiFileSystemItem)) {
-      Pair<KarmaRunSettings, PsiElement> suiteOrTestConfiguration = setupAsSuiteOrTest(file, virtualFile, element, templateRunSettings);
+      Pair<KarmaRunSettings, PsiElement> suiteOrTestConfiguration = setupAsSuiteOrTest(file, virtualFile, element, templateSettings);
       if (suiteOrTestConfiguration != null) {
         return suiteOrTestConfiguration;
       }
     }
     if (KarmaUtil.isKarmaConfigFile(virtualFile.getNameSequence(), false)) {
-      return Pair.create(templateRunSettings.toBuilder()
+      return Pair.create(templateSettings.toBuilder()
                            .setScopeKind(KarmaScopeKind.ALL)
                            .setConfigPath(virtualFile.getPath()).build(), file);
+    }
+    if (file.getTestFileType() != null) {
+      KarmaRunSettings settings = guessConfigFileIfNeeded(templateSettings, virtualFile, element.getProject());
+      return Pair.create(settings.toBuilder()
+                           .setScopeKind(KarmaScopeKind.TEST_FILE)
+                           .setTestFilePath(virtualFile.getPath()).build(), file);
     }
     return null;
   }

@@ -12,6 +12,14 @@ public enum KarmaScopeKind {
     }
   },
 
+  TEST_FILE("Test &file") {
+    @NotNull
+    @Override
+    public KarmaScopeView createView(@NotNull Project project) {
+      return new KarmaTestFileScopeView(project);
+    }
+  },
+
   SUITE("&Suite") {
     @NotNull
     @Override

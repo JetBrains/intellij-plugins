@@ -16,18 +16,32 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
 import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
+import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
+import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
+import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
+import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
+import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.io.LocalFileFinder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class KarmaExecutionSession {
 
+  private static final Logger LOG = Logger.getInstance(KarmaExecutionSession.class);
   private static final String FRAMEWORK_NAME = "KarmaJavaScriptTestRunner";
 
   private final Project myProject;
@@ -118,7 +132,7 @@ public class KarmaExecutionSession {
   private GeneralCommandLine createCommandLine(@NotNull NodeJsLocalInterpreter interpreter,
                                                int serverPort,
                                                @Nullable KarmaConfig config,
-                                               @NotNull File clientAppFile) {
+                                               @NotNull File clientAppFile) throws ExecutionException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     File configFile = new File(myRunSettings.getConfigPath());
     // looks like it should work with any working directory
@@ -135,10 +149,42 @@ public class KarmaExecutionSession {
     if (isDebug()) {
       commandLine.addParameter("--debug=true");
     }
-    if (myRunSettings.getScopeKind() == KarmaScopeKind.SUITE || myRunSettings.getScopeKind() == KarmaScopeKind.TEST) {
+    if (myRunSettings.getScopeKind() == KarmaScopeKind.TEST_FILE) {
+      List<String> topNames = findTopLevelSuiteNames(myProject, myRunSettings.getTestFileSystemIndependentPath());
+      if (topNames.size() > 1) {
+        throw new ExecutionException("Cannot run test file with several top level suites");
+      }
+      topNames = ContainerUtil.map(topNames, s -> s + " ");
+      commandLine.addParameter("--testName=" + StringUtil.join(topNames, "|"));
+    }
+    else if (myRunSettings.getScopeKind() == KarmaScopeKind.SUITE || myRunSettings.getScopeKind() == KarmaScopeKind.TEST) {
       commandLine.addParameter("--testName=" + StringUtil.join(myRunSettings.getTestNames(), " "));
     }
     return commandLine;
+  }
+
+  private static List<String> findTopLevelSuiteNames(@NotNull Project project, @NotNull String testFilePath) throws ExecutionException {
+    VirtualFile file = LocalFileFinder.findFile(testFilePath);
+    if (file == null) {
+      throw new ExecutionException("Cannot find test file by " + testFilePath);
+    }
+    PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+    JSFile jsFile = ObjectUtils.tryCast(psiFile, JSFile.class);
+    if (jsFile == null) {
+      LOG.info("Not a JavaScript file " + testFilePath + ", " + (psiFile == null ? "null" : psiFile.getClass()));
+      throw new ExecutionException("Not a JavaScript file: " + testFilePath);
+    }
+    JasmineFileStructure jasmine = JasmineFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
+    List<String> elements = jasmine.getTopLevelElements();
+    if (!elements.isEmpty()) {
+      return elements;
+    }
+    QUnitFileStructure qunit = QUnitFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
+    elements = qunit.getTopLevelElements();
+    if (!elements.isEmpty()) {
+      return elements;
+    }
+    throw new ExecutionException("No tests found in " + testFilePath);
   }
 
   @NotNull
