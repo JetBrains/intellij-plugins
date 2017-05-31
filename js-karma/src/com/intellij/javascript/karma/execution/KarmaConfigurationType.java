@@ -33,12 +33,16 @@ public class KarmaConfigurationType extends ConfigurationTypeBase {
 
   @NotNull
   public static KarmaConfigurationType getInstance() {
-    return ConfigurationTypeUtil.findConfigurationType(KarmaConfigurationType.class);
+    return Holder.INSTANCE;
   }
 
   @NotNull
   public static ConfigurationFactory getFactory() {
     KarmaConfigurationType type = getInstance();
     return type.getConfigurationFactories()[0];
+  }
+
+  private static class Holder {
+    private static final KarmaConfigurationType INSTANCE = ConfigurationTypeUtil.findConfigurationType(KarmaConfigurationType.class);
   }
 }

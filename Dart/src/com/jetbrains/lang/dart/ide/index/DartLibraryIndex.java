@@ -91,7 +91,11 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
   @NotNull
   public static BidirectionalMap<String, String> getSdkLibUriToRelativePathMap(@NotNull final Project project,
                                                                                @NotNull final String sdkHomePath) {
-    final VirtualFile librariesDartFile = LocalFileSystem.getInstance().findFileByPath(sdkHomePath + "/lib/_internal/libraries.dart");
+    VirtualFile librariesDartFile = LocalFileSystem.getInstance().findFileByPath(sdkHomePath + "/lib/_internal/libraries.dart");
+    if (librariesDartFile == null) {
+      librariesDartFile =
+        LocalFileSystem.getInstance().findFileByPath(sdkHomePath + "/lib/_internal/sdk_library_metadata/lib/libraries.dart");
+    }
     if (librariesDartFile == null) return new BidirectionalMap<>();
 
     final Pair<Long, BidirectionalMap<String, String>> data = librariesDartFile.getUserData(LIBRARIES_TIME_AND_MAP_KEY);
@@ -102,9 +106,10 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
       return data.second;
     }
 
+    final VirtualFile finalLibrariesDartFile = librariesDartFile;
     return ReadAction.compute(() -> {
       try {
-        final String contents = StringUtil.convertLineSeparators(VfsUtilCore.loadText(librariesDartFile));
+        final String contents = StringUtil.convertLineSeparators(VfsUtilCore.loadText(finalLibrariesDartFile));
         final PsiFile psiFile =
           PsiFileFactory.getInstance(project).createFileFromText("libraries.dart", DartLanguage.INSTANCE, contents);
         if (!(psiFile instanceof DartFile)) {
@@ -113,7 +118,7 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
 
         final Pair<Long, BidirectionalMap<String, String>> data1 =
           Pair.create(modificationCount, computeSdkLibUriToRelativePathMap((DartFile)psiFile));
-        librariesDartFile.putUserData(LIBRARIES_TIME_AND_MAP_KEY, data1);
+        finalLibrariesDartFile.putUserData(LIBRARIES_TIME_AND_MAP_KEY, data1);
         return data1.second;
       }
       catch (IOException e) {

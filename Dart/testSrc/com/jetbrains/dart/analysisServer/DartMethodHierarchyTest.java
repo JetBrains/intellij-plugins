@@ -11,8 +11,8 @@ import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestBase;
 import com.jetbrains.lang.dart.ide.hierarchy.method.DartMethodHierarchyTreeStructure;
 import com.jetbrains.lang.dart.ide.index.DartClassIndex;
 import com.jetbrains.lang.dart.psi.DartClass;
+import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
-import com.jetbrains.lang.dart.psi.DartMethodDeclaration;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -72,7 +72,7 @@ public class DartMethodHierarchyTest extends HierarchyViewTestBase {
             assert state != null;
             state.HIDE_CLASSES_WHERE_METHOD_NOT_IMPLEMENTED = true;
           }
-          return new DartMethodHierarchyTreeStructure(project, (DartMethodDeclaration)member);
+          return new DartMethodHierarchyTreeStructure(project, (DartComponent)member);
         }
       }
       return null;

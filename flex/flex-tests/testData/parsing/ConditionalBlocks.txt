@@ -18,7 +18,7 @@ JSFile:ConditionalBlocks.js2
       PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace('\n    ')
     JSVarStatement
-      JSAttributeList
+      ActionScriptAttributeList
         PsiElement(JS:PRIVATE_KEYWORD)('private')
         PsiWhiteSpace(' ')
         PsiElement(JS:STATIC_KEYWORD)('static')
@@ -43,7 +43,7 @@ JSFile:ConditionalBlocks.js2
       PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace('\n\n    ')
     ActionScriptClass
-      JSAttributeList
+      ActionScriptAttributeList
         JSConditionalCompileVariableReference
           JSReferenceExpression
             JSE4XNamespaceReference
@@ -69,7 +69,7 @@ JSFile:ConditionalBlocks.js2
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n        ')
       ActionScriptFunction
-        JSAttributeList
+        ActionScriptAttributeList
           PsiElement(JS:PUBLIC_KEYWORD)('public')
         PsiWhiteSpace(' ')
         PsiElement(JS:FUNCTION_KEYWORD)('function')
@@ -92,7 +92,7 @@ JSFile:ConditionalBlocks.js2
             PsiElement(JS:SEMICOLON)(';')
           PsiWhiteSpace('\n\n            ')
           JSBlockStatement
-            JSAttributeList
+            ActionScriptAttributeList
               JSConditionalCompileVariableReference
                 JSReferenceExpression
                   JSE4XNamespaceReference
@@ -140,7 +140,7 @@ JSFile:ConditionalBlocks.js2
       PsiElement(JS:RBRACE)('}')
     PsiWhiteSpace('\n\n    ')
     ActionScriptClass
-      JSAttributeList
+      ActionScriptAttributeList
         JSConditionalCompileVariableReference
           JSReferenceExpression
             JSE4XNamespaceReference
@@ -166,7 +166,7 @@ JSFile:ConditionalBlocks.js2
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n        ')
       ActionScriptFunction
-        JSAttributeList
+        ActionScriptAttributeList
           PsiElement(JS:PUBLIC_KEYWORD)('public')
         PsiWhiteSpace(' ')
         PsiElement(JS:FUNCTION_KEYWORD)('function')
@@ -210,7 +210,7 @@ JSFile:ConditionalBlocks.js2
     PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n\n')
   JSBlockStatement
-    JSAttributeList
+    ActionScriptAttributeList
       JSConditionalCompileVariableReference
         JSReferenceExpression
           JSE4XNamespaceReference
@@ -244,7 +244,7 @@ JSFile:ConditionalBlocks.js2
       PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace('\n  ')
     JSVarStatement
-      JSAttributeList
+      ActionScriptAttributeList
         <empty list>
       PsiElement(JS:VAR_KEYWORD)('var')
       PsiWhiteSpace(' ')

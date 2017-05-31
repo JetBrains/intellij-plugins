@@ -142,7 +142,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<RunnerSettings> 
         closeTabAction.getTemplatePresentation().setIcon(AllIcons.Actions.Cancel);
         actionGroup.add(closeTabAction);
 
-        ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, actionGroup, false);
+        ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("FlexProfiler", actionGroup, false);
         toolbar.setTargetComponent(toolWindowPanel);
         toolWindowPanel.setToolbar(toolbar.getComponent());
 

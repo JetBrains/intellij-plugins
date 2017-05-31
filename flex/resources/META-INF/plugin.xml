@@ -58,6 +58,7 @@
                                       implementationClass="com.intellij.javascript.flex.compiled.SwfFileViewProviderFactory"/>
     <filetype.decompiler filetype="SWF" implementationClass="com.intellij.javascript.flex.compiled.SwfFileDecompiler"/>
     <filetype.stubBuilder filetype="SWF" implementationClass="com.intellij.javascript.flex.compiled.SwfFileStubBuilder"/>
+    <stubElementTypeHolder class="com.intellij.javascript.flex.compiled.DecompiledSwfElementTypes"/>
     <syntaxHighlighter key="SWF" factoryClass="com.intellij.javascript.flex.compiled.SwfSyntaxHighlighterProvider"/>
     <codeInsight.lineMarkerProvider language="Mxml"
                                     implementationClass="com.intellij.javascript.flex.mxml.XmlBackedClassLineMarkerProvider"/>
@@ -78,10 +79,13 @@
                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptOverrideMethodsHandler"/>
     <codeInsight.implementMethod language="Mxml"
                                  implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandler"/>
+
+    <codeInsight.implementMethod language="JavaScript"
+                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandler"/>
     <codeInsight.delegateMethods language="JavaScript"
-                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptGenerateDelegatesHandler"/>
+                                 implementationClass="com.intellij.lang.javascript.generation.ActionScriptGenerateDelegatesHandler"/>
     <codeInsight.delegateMethods language="Mxml"
-                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptGenerateDelegatesHandler"/>
+                                 implementationClass="com.intellij.lang.javascript.generation.ActionScriptGenerateDelegatesHandler"/>
     <projectImportBuilder implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderImporter"/>
     <projectImportProvider implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderImportProvider"/>
     <projectOpenProcessor id="FlashBuilderOpenProcessor"
@@ -262,6 +266,7 @@
     </intentionAction>
 
     <xml.undefinedElementFixProvider implementation="com.intellij.javascript.flex.mxml.schema.FlexUndefinedElementFixProvider"/>
+    <completion.contributor language="ECMA Script Level 4" id="ActionScriptMethodsCompletionContributor" order="before JSPatternBasedCompletionContributor" implementationClass="com.intellij.lang.javascript.flex.completion.ActionScriptMethodsCompletionContributor"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
@@ -271,7 +276,7 @@
         implementation="com.intellij.lang.javascript.flex.build.JSConditionalCompilationDefinitionsProviderImpl"/>
     <elementScopeProvider language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.flex.ActionScriptResolveScopeProvider"/>
     <xmlBackedClassProvider implementation="com.intellij.javascript.flex.mxml.MxmlJSClassProvider"/>
-    <smartCompletionContributor language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.flex.ActionScriptSmartCompletionContributor"/>
+    <smartCompletionContributor language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.flex.completion.ActionScriptSmartCompletionContributor"/>
     <dialectSpecificHandlersFactory language="ECMA Script Level 4" implementationClass="com.intellij.javascript.flex.ActionScriptSpecificHandlersFactory"/>
     <handlersFactory language="ECMA Script Level 4" implementationClass="com.intellij.javascript.flex.ActionScriptHandlersFactory"/>
     <JSImplicitElementsIndexFileTypeProvider implementation="com.intellij.javascript.flex.MxmlJSImplicitElementsIndexFileTypeProvider"/>

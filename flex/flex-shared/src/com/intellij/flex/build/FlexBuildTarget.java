@@ -87,6 +87,7 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
     return bc == null ? null : new FlexBuildTarget(bc, id);
   }
 
+  @Override
   @NotNull
   public String getId() {
     return myId;
@@ -97,6 +98,7 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
     return myBC;
   }
 
+  @Override
   public Collection<BuildTarget<?>> computeDependencies(BuildTargetRegistry targetRegistry, TargetOutputIndex outputIndex) {
     final ArrayList<BuildTarget<?>> result = new ArrayList<>();
 
@@ -116,6 +118,7 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
     return result;
   }
 
+  @Override
   @NotNull
   public List<BuildRootDescriptor> computeRootDescriptors(final JpsModel model,
                                                           final ModuleExcludeIndex index,
@@ -209,6 +212,7 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
     }
   }
 
+  @Override
   @Nullable
   public BuildRootDescriptor findRootDescriptor(final String rootId, final BuildRootIndex rootIndex) {
     for (BuildRootDescriptor descriptor : rootIndex.getTargetRoots(this, null)) {
@@ -220,27 +224,30 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
     return null;
   }
 
+  @Override
   @NotNull
   public String getPresentableName() {
     return FlexCommonBundle.message("bc.0.module.1", myBC.getName(), myBC.getModule().getName());
   }
 
+  @Override
   @NotNull
   public Collection<File> getOutputRoots(CompileContext context) {
     return Collections.singleton(new File(PathUtilRt.getParentPath(myBC.getActualOutputFilePath())));
   }
 
+  @Override
   public void writeConfiguration(ProjectDescriptor pd, final PrintWriter out) {
     out.println("id: " + myId);
 
-    out.println(JDOMUtil.writeElement(XmlSerializer.serialize(JpsFlexBCState.getState(myBC)), "\n"));
+    out.println(JDOMUtil.writeElement(XmlSerializer.serialize(JpsFlexBCState.getState(myBC))));
 
     final JpsFlexModuleOrProjectCompilerOptions moduleOptions = myBC.getModule().getProperties().getModuleLevelCompilerOptions();
-    out.println(JDOMUtil.writeElement(XmlSerializer.serialize(((JpsFlexCompilerOptionsImpl)moduleOptions).getState()), "\n"));
+    out.println(JDOMUtil.writeElement(XmlSerializer.serialize(((JpsFlexCompilerOptionsImpl)moduleOptions).getState())));
 
     final JpsFlexModuleOrProjectCompilerOptions projectOptions =
       JpsFlexProjectLevelCompilerOptionsExtension.getProjectLevelCompilerOptions(myBC.getModule().getProject());
-    out.println(JDOMUtil.writeElement(XmlSerializer.serialize(((JpsFlexCompilerOptionsImpl)projectOptions).getState()), "\n"));
+    out.println(JDOMUtil.writeElement(XmlSerializer.serialize(((JpsFlexCompilerOptionsImpl)projectOptions).getState())));
   }
 
   public String toString() {

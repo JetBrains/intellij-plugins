@@ -24,13 +24,8 @@
     <typedHandler implementation="org.angularjs.editor.AngularBracesInterpolationTypedHandler"/>
     <lang.braceMatcher language="AngularJS" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
 
-    <applicationService serviceInterface="org.angularjs.settings.AngularJSConfig"
-                        serviceImplementation="org.angularjs.settings.AngularJSConfig"/>
     <projectService serviceInterface="org.angularjs.settings.AngularSettings"
                     serviceImplementation="org.angularjs.settings.AngularSettings"/>
-
-
-    <editorSmartKeysConfigurable instance="org.angularjs.settings.AngularJSConfigurationPage"/>
 
     <stubIndex implementation="org.angularjs.index.AngularDirectivesIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularDirectivesDocIndex"/>

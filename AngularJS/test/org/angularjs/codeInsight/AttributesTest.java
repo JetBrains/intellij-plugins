@@ -462,6 +462,29 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testOneTimeBindingAttributeCompletion2ES6() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("compiled_binding.html", "angular2.js", "object.es6");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(),  "disableRipple", "color");
+      assertDoesntContain(myFixture.getLookupElementStrings(),  "tabIndex");
+    });
+  }
+
+  public void testOneTimeBindingAttributeResolve2ES6() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("compiled_binding.after.html", "angular2.js", "object.es6");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("col<caret>or", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("object.es6", resolve.getContainingFile().getName());
+      assertInstanceOf(resolve, JSImplicitElement.class);
+      assertEquals("'color': [{ type: Input },]", getDirectiveDefinitionText(resolve));
+    });
+  }
+
   public void testBindingAttributeFunctionCompletion2TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("attribute_binding.html", "angular2.js", "object_with_function.ts");

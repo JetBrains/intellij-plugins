@@ -8,6 +8,7 @@ class AAA {
         var ccc;
     }
 }
+
 function yyy() {
 }
 }

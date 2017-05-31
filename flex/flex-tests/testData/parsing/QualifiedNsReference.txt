@@ -1,6 +1,6 @@
 JSFile:QualifiedNsReference.js2
   ActionScriptFunction
-    JSAttributeList
+    ActionScriptAttributeList
       JSReferenceExpression
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('com')
@@ -19,7 +19,7 @@ JSFile:QualifiedNsReference.js2
       PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n')
   ActionScriptClass
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
@@ -29,7 +29,7 @@ JSFile:QualifiedNsReference.js2
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n  ')
     ActionScriptFunction
-      JSAttributeList
+      ActionScriptAttributeList
         PsiElement(JS:STATIC_KEYWORD)('static')
         PsiWhiteSpace(' ')
         JSReferenceExpression
@@ -52,7 +52,7 @@ JSFile:QualifiedNsReference.js2
     PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n\n')
   ActionScriptClass
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
@@ -62,7 +62,7 @@ JSFile:QualifiedNsReference.js2
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n  ')
     ActionScriptFunction
-      JSAttributeList
+      ActionScriptAttributeList
         JSReferenceExpression
           JSReferenceExpression
             JSReferenceExpression

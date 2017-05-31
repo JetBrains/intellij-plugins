@@ -25,6 +25,7 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.util.Consumer;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.net.NetKt;
 import com.jetbrains.lang.dart.DartBundle;
@@ -336,6 +337,18 @@ final class PubServerService extends NetService {
     request.headers().set(HttpHeaderNames.HOST, serverAddress.getAddress().getHostAddress() + ':' + serverAddress.getPort());
     serverChannel.writeAndFlush(request);
   }
+
+  @NotNull
+  Collection<String> getAllPubServeAuthorities() {
+    final Collection<String> result = new SmartList<>();
+    for (ServerInfo serverInfo : servedDirToSocketAddress.values()) {
+      if (serverInfo.address != null) {
+        result.add(serverInfo.address.getHostString() + ":" + serverInfo.address.getPort());
+      }
+    }
+    return result;
+  }
+
 
   @Nullable
   String getPubServeAuthority(@NotNull final VirtualFile dir) {

@@ -59,11 +59,13 @@ import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.assists.DartQuickAssistIntention;
 import com.jetbrains.lang.dart.assists.QuickAssistSet;
+import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartFeedbackBuilder;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
+import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -73,6 +75,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -1397,13 +1400,36 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   private void startServer(@NotNull final DartSdk sdk) {
+    if (DartPubActionBase.isInProgress()) return; // DartPubActionBase will start the server itself when finished
+
     synchronized (myLock) {
       mySdkHome = sdk.getHomePath();
 
-      final String runtimePath = FileUtil.toSystemDependentName(mySdkHome + "/bin/dart");
+      final String runtimePath = FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(sdk));
 
       String analysisServerPath = FileUtil.toSystemDependentName(mySdkHome + "/bin/snapshots/analysis_server.dart.snapshot");
       analysisServerPath = System.getProperty("dart.server.path", analysisServerPath);
+
+      String dasStartupErrorMessage = "";
+      final File runtimePathFile = new File(runtimePath);
+      final File dasSnapshotFile = new File(analysisServerPath);
+      if (!runtimePathFile.exists()) {
+        dasStartupErrorMessage = "the Dart VM file does not exist at location: " + runtimePath;
+      }
+      else if (!dasSnapshotFile.exists()) {
+        dasStartupErrorMessage = "the Dart Analysis Server snapshot file does not exist at location: " + analysisServerPath;
+      }
+      else if (!runtimePathFile.canExecute()) {
+        dasStartupErrorMessage = "the Dart VM file is not executable at location: " + runtimePath;
+      }
+      else if (!dasSnapshotFile.canRead()) {
+        dasStartupErrorMessage = "the Dart Analysis Server snapshot file is not readable at location: " + analysisServerPath;
+      }
+      if (!dasStartupErrorMessage.isEmpty()) {
+        LOG.warn("Failed to start Dart analysis server: " + dasStartupErrorMessage);
+        stopServer();
+        return;
+      }
 
       final DebugPrintStream debugStream = str -> {
         str = str.substring(0, Math.min(str.length(), MAX_DEBUG_LOG_LINE_LENGTH));

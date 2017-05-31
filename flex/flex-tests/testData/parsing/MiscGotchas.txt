@@ -144,7 +144,7 @@ JSFile:MiscGotchas.js2
       PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace('\n  ')
     ActionScriptClass
-      JSAttributeList
+      ActionScriptAttributeList
         <empty list>
       PsiElement(JS:CLASS_KEYWORD)('class')
       PsiWhiteSpace(' ')
@@ -154,7 +154,7 @@ JSFile:MiscGotchas.js2
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n    ')
       JSNamespaceDeclaration
-        JSAttributeList
+        ActionScriptAttributeList
           PsiElement(JS:PRIVATE_KEYWORD)('private')
         PsiWhiteSpace(' ')
         PsiElement(JS:NAMESPACE_KEYWORD)('namespace')
@@ -168,7 +168,7 @@ JSFile:MiscGotchas.js2
         PsiElement(JS:SEMICOLON)(';')
       PsiWhiteSpace('\n    ')
       JSNamespaceDeclaration
-        JSAttributeList
+        ActionScriptAttributeList
           PsiElement(JS:PRIVATE_KEYWORD)('private')
         PsiWhiteSpace(' ')
         PsiElement(JS:NAMESPACE_KEYWORD)('namespace')
@@ -183,7 +183,7 @@ JSFile:MiscGotchas.js2
         PsiElement(JS:SEMICOLON)(';')
       PsiWhiteSpace('\n    ')
       ActionScriptFunction
-        JSAttributeList
+        ActionScriptAttributeList
           <empty list>
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
@@ -266,7 +266,7 @@ JSFile:MiscGotchas.js2
     PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       JSAttribute
         PsiElement(JS:LBRACKET)('[')
         PsiElement(JS:IDENTIFIER)('Bindable')
@@ -292,7 +292,7 @@ JSFile:MiscGotchas.js2
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n\n')
   ActionScriptClass
-    JSAttributeList
+    ActionScriptAttributeList
       JSAttribute
         PsiElement(JS:LBRACKET)('[')
         PsiElement(JS:NATIVE_KEYWORD)('native')
@@ -313,7 +313,7 @@ JSFile:MiscGotchas.js2
     PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n\n')
   ActionScriptFunction
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')

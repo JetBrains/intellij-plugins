@@ -14,6 +14,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.ExpectedHighlightingData;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
@@ -67,6 +68,7 @@ public class ActionScriptHighlightingInTextFieldTest extends JSDaemonAnalyzerTes
     }
     finally {
       editorTextField.removeNotify();
+      UIUtil.dispatchAllInvocationEvents();
     }
   }
 

@@ -1,6 +1,6 @@
 JSFile:KeywordsAsClassAndFunctionName.js2
   ActionScriptClass
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
@@ -17,7 +17,7 @@ JSFile:KeywordsAsClassAndFunctionName.js2
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n  ')
     ActionScriptFunction
-      JSAttributeList
+      ActionScriptAttributeList
         <empty list>
       PsiElement(JS:FUNCTION_KEYWORD)('function')
       PsiWhiteSpace(' ')
@@ -33,7 +33,7 @@ JSFile:KeywordsAsClassAndFunctionName.js2
     PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n\n')
   ActionScriptClass
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
@@ -50,7 +50,7 @@ JSFile:KeywordsAsClassAndFunctionName.js2
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n  ')
     ActionScriptFunction
-      JSAttributeList
+      ActionScriptAttributeList
         <empty list>
       PsiElement(JS:FUNCTION_KEYWORD)('function')
       PsiWhiteSpace(' ')
@@ -66,7 +66,7 @@ JSFile:KeywordsAsClassAndFunctionName.js2
     PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       PsiElement(JS:NATIVE_KEYWORD)('native')
     PsiWhiteSpace(' ')
     PsiElement(JS:CONST_KEYWORD)('const')
@@ -79,7 +79,7 @@ JSFile:KeywordsAsClassAndFunctionName.js2
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')
@@ -94,7 +94,7 @@ JSFile:KeywordsAsClassAndFunctionName.js2
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')
@@ -109,7 +109,7 @@ JSFile:KeywordsAsClassAndFunctionName.js2
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')

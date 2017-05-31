@@ -1,8 +1,8 @@
 package org.angularjs.editor;
 
 import com.intellij.ide.highlighter.HtmlFileType;
+import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
-import org.angularjs.settings.AngularJSConfig;
 
 /**
  * @author Dennis.Ushakov
@@ -39,15 +39,16 @@ public class AngularTypedHandlerTest extends LightPlatformCodeInsightFixtureTest
   }
 
   public void testInsertWhitespace() {
-    boolean oldWhitespace = AngularJSConfig.getInstance().INSERT_WHITESPACE;
+    myFixture.configureByText(HtmlFileType.INSTANCE, "{<caret>");
+    JSCodeStyleSettings settings = JSCodeStyleSettings.getSettings(myFixture.getFile());
+    boolean oldWhitespace = settings.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS;
     try {
-      AngularJSConfig.getInstance().INSERT_WHITESPACE = true;
-      myFixture.configureByText(HtmlFileType.INSTANCE, "{<caret>");
+      settings.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS = true;
       myFixture.type("{");
       myFixture.checkResult("{{ <caret> }}");
     }
     finally {
-      AngularJSConfig.getInstance().INSERT_WHITESPACE = oldWhitespace;
+      settings.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS = oldWhitespace;
     }
   }
 }

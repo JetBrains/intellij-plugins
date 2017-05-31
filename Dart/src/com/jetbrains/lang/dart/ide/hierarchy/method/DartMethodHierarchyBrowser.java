@@ -11,8 +11,9 @@ import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.PopupHandler;
-import com.jetbrains.lang.dart.psi.DartMethodDeclaration;
+import com.jetbrains.lang.dart.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,7 +56,10 @@ public class DartMethodHierarchyBrowser extends MethodHierarchyBrowserBase {
 
   @Override
   protected boolean isApplicableElement(@NotNull PsiElement element) {
-    return element instanceof DartMethodDeclaration;
+    return (element instanceof DartMethodDeclaration ||
+            element instanceof DartGetterDeclaration ||
+            element instanceof DartSetterDeclaration) &&
+           PsiTreeUtil.getParentOfType(element, DartClass.class) != null;
   }
 
   @Nullable
@@ -65,7 +69,7 @@ public class DartMethodHierarchyBrowser extends MethodHierarchyBrowserBase {
       LOG.error("unexpected type: " + type);
       return null;
     }
-    return new DartMethodHierarchyTreeStructure(myProject, (DartMethodDeclaration)psiElement);
+    return new DartMethodHierarchyTreeStructure(myProject, (DartComponent)psiElement);
   }
 
   @Nullable

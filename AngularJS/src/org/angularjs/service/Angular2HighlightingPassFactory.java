@@ -33,7 +33,7 @@ public class Angular2HighlightingPassFactory extends JSLanguageServiceHighlighti
 
   @Nullable
   @Override
-  protected JSLanguageService getService() {
+  protected JSLanguageService getService(@NotNull PsiFile file) {
     return myProvider != null ? myProvider.getService() : null;
   }
 

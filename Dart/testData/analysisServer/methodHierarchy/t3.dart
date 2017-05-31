@@ -2,11 +2,11 @@ import "t1.dart";
 import "t2.dart";
 
 class M1 {
-  int m() => 1;
+  int get m() => 1;
 }
 
 class X extends C1a with M1 {
-  int m() => 5;
+  int get m() => 5;
 }
 
 class Y extends C2a {

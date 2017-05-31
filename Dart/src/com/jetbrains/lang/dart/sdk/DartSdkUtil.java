@@ -80,17 +80,28 @@ public class DartSdkUtil {
                                                    final @NotNull Computable<Boolean> isResettingControlsComputable) {
     dartSdkPathComponent.getComboBox().setEditable(true);
     addKnownPathsToCombo(dartSdkPathComponent.getComboBox(), DART_SDK_KNOWN_PATHS, DartSdkUtil::isDartSdkHome);
+    if (SystemInfo.isMac && getItemFromCombo(dartSdkPathComponent.getComboBox()).isEmpty()) {
+      // no need to check folder presence here; even if it doesn't exist - that's the best we can suggest
+      dartSdkPathComponent.getComboBox().getEditor().setItem("/usr/local/opt/dart/libexec");
+    }
 
     dartiumPathComponent.getComboBox().setEditable(true);
     addKnownPathsToCombo(dartiumPathComponent.getComboBox(), DARTIUM_KNOWN_PATHS, path -> !path.isEmpty() && new File(path).exists());
 
-    final String sdkHomePath = dartSdkPathComponent.getComboBox().getEditor().getItem().toString().trim();
+    if (SystemInfo.isMac && getItemFromCombo(dartiumPathComponent.getComboBox()).isEmpty()) {
+      // Dartium path is optional, so set it only if valid
+      if (new File("/usr/local/opt/dart/Chromium.app").isDirectory()) {
+        dartiumPathComponent.getComboBox().getEditor().setItem("/usr/local/opt/dart/Chromium.app");
+      }
+    }
+
+    final String sdkHomePath = getItemFromCombo(dartSdkPathComponent.getComboBox());
     versionLabel.setText(sdkHomePath.isEmpty() ? "" : getSdkVersion(sdkHomePath));
 
     final TextComponentAccessor<JComboBox> textComponentAccessor = new TextComponentAccessor<JComboBox>() {
       @Override
       public String getText(final JComboBox component) {
-        return component.getEditor().getItem().toString();
+        return getItemFromCombo(component);
       }
 
       @Override
@@ -121,7 +132,7 @@ public class DartSdkUtil {
     editorComponent.getDocument().addDocumentListener(new DocumentAdapter() {
       @Override
       protected void textChanged(final DocumentEvent e) {
-        final String sdkHomePath = dartSdkPathComponent.getComboBox().getEditor().getItem().toString().trim();
+        final String sdkHomePath = getItemFromCombo(dartSdkPathComponent.getComboBox());
         versionLabel.setText(sdkHomePath.isEmpty() ? "" : getSdkVersion(sdkHomePath));
 
         if (!isResettingControlsComputable.compute() && isDartSdkHome(sdkHomePath)) {
@@ -145,6 +156,11 @@ public class DartSdkUtil {
     //});
   }
 
+  @NotNull
+  private static String getItemFromCombo(@NotNull final JComboBox combo) {
+    return combo.getEditor().getItem().toString().trim();
+  }
+
   @Nullable
   public static String getFirstKnownDartSdkPath() {
     final String[] knownPaths = PropertiesComponent.getInstance().getValues(DART_SDK_KNOWN_PATHS);
@@ -159,7 +175,7 @@ public class DartSdkUtil {
                                            @NotNull final BooleanFunction<String> pathChecker) {
     final SmartList<String> validPathsForUI = new SmartList<>();
 
-    final String currentPath = combo.getEditor().getItem().toString().trim();
+    final String currentPath = getItemFromCombo(combo);
     if (!currentPath.isEmpty()) {
       validPathsForUI.add(currentPath);
     }

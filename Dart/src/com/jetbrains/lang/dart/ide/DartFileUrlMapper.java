@@ -5,6 +5,8 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -13,17 +15,19 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.SmartList;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.javascript.debugger.FileUrlMapper;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.pubServer.PubServerManager;
+import com.jetbrains.lang.dart.pubServer.PubServerPathHandlerKt;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
-import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.builtInWebServer.WebServerPathToFileManager;
 import org.jetbrains.ide.BuiltInServerManagerImpl;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,32 +43,53 @@ final class DartFileUrlMapper extends FileUrlMapper {
   public List<Url> getUrls(@NotNull final VirtualFile file, @NotNull final Project project, @Nullable final String currentAuthority) {
     if (currentAuthority == null || file.getFileType() != DartFileType.INSTANCE) return Collections.emptyList();
 
-    final String dartUri = DartUrlResolver.getInstance(project, file).getDartUrlForFile(file);
+    if (Registry.is("dart.redirect.to.pub.server", true) && ProjectFileIndex.getInstance(project).isInContent(file)) {
+      final Pair<VirtualFile, String> servedDirAndPath = PubServerPathHandlerKt.getServedDirAndPathForPubServer(project, file);
+      if (servedDirAndPath != null) {
+        final VirtualFile servedDir = servedDirAndPath.first;
+        final String path = servedDirAndPath.second;
+        final String pubAuthority = BuiltInServerManagerImpl.isOnBuiltInWebServerByAuthority(currentAuthority)
+                                    ? PubServerManager.getInstance(project).getPubServerAuthorityForServedDir(servedDir)
+                                    : currentAuthority;
+        if (pubAuthority != null) {
+          return Collections.singletonList(Urls.newHttpUrl(pubAuthority, path));
+        }
+      }
+    }
+
+    final DartUrlResolver urlResolver = DartUrlResolver.getInstance(project, file);
+    final String dartUri = urlResolver.getDartUrlForFile(file);
     if (!dartUri.startsWith(PACKAGE_PREFIX)) return Collections.emptyList();
 
     if (BuiltInServerManagerImpl.isOnBuiltInWebServerByAuthority(currentAuthority)) {
-      // for built-in server:
-      // package:PackageName/subdir/foo.dart -> http://localhost:63342/ProjectName/MayBeRelPathToDartProject/web/packages/PackageName/subdir/foo.dart
-      final VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(project, file);
-      if (pubspec == null) return Collections.emptyList();
-
-      final VirtualFile dartRoot = pubspec.getParent();
-      final String dartRootUrlPath = WebServerPathToFileManager.getInstance(project).getPath(dartRoot);
-      if (dartRootUrlPath == null) return Collections.emptyList();
-
-      //BuiltInWebBrowserUrlProviderKt.getBuiltInServerUrls(pubspec, project, currentAuthority);
-      final Url dartRootUrl = Urls.newHttpUrl(currentAuthority, "/" + project.getName() + "/" + dartRootUrlPath);
-
-      final String urlPath = StringUtil.trimEnd(dartRootUrl.getPath(), "/") + "/web/packages/" + dartUri.substring(PACKAGE_PREFIX.length());
-
       final List<Url> result = new SmartList<>();
-      result.add(Urls.newHttpUrl(currentAuthority, urlPath));
+      final VirtualFile pubspec = urlResolver.getPubspecYamlFile();
+      final VirtualFile dartRoot = pubspec != null ? pubspec.getParent() : null;
 
       if (Registry.is("dart.redirect.to.pub.server", true)) {
-        for (String pubAuthority : PubServerManager.getInstance(project).getAlivePubServerAuthorities(dartRoot)) {
+        // package:PackageName/subdir/foo.dart -> http://localhost:45455/packages/PackageName/subdir/foo.dart
+        final Collection<String> authorities =
+          dartRoot != null
+          ? PubServerManager.getInstance(project).getAlivePubServerAuthoritiesForDartRoot(pubspec.getParent())
+          : PubServerManager.getInstance(project).getAllAlivePubServerAuthorities();
+        for (String pubAuthority : authorities) {
           final String pubUrlPath = "/packages/" + dartUri.substring(PACKAGE_PREFIX.length());
           result.add(Urls.newHttpUrl(pubAuthority, pubUrlPath));
         }
+      }
+      else if (dartRoot != null) {
+        // for built-in server:
+        // package:PackageName/subdir/foo.dart -> http://localhost:63342/ProjectName/MayBeRelPathToDartProject/web/packages/PackageName/subdir/foo.dart
+        final String dartRootUrlPath = WebServerPathToFileManager.getInstance(project).getPath(dartRoot);
+        if (dartRootUrlPath == null) return Collections.emptyList();
+
+        //BuiltInWebBrowserUrlProviderKt.getBuiltInServerUrls(pubspec, project, currentAuthority);
+        final Url dartRootUrl = Urls.newHttpUrl(currentAuthority, "/" + project.getName() + "/" + dartRootUrlPath);
+
+        final String urlPath =
+          StringUtil.trimEnd(dartRootUrl.getPath(), "/") + "/web/packages/" + dartUri.substring(PACKAGE_PREFIX.length());
+
+        result.add(Urls.newHttpUrl(currentAuthority, urlPath));
       }
 
       return result;
@@ -134,6 +159,12 @@ final class DartFileUrlMapper extends FileUrlMapper {
       if (urlMapper instanceof DartFileUrlMapper) continue;
       final VirtualFile file = urlMapper.getFile(url, project, url);
       if (file != null) return file;
+    }
+
+    final String authority = url.getAuthority();
+    if (authority != null && !BuiltInServerManagerImpl.isOnBuiltInWebServerByAuthority(authority)) {
+      return ReadAction.compute(() -> ContainerUtil
+        .getFirstItem(FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, GlobalSearchScope.projectScope(project))));
     }
 
     return null;

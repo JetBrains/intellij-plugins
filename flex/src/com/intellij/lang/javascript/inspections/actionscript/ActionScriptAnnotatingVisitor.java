@@ -300,15 +300,15 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  protected void checkImplementedMethods(JSClass jsClass, ErrorReportingClient reportingClient) {
+  protected void checkImplementedMethods(@NotNull JSClass jsClass, ErrorReportingClient reportingClient) {
     checkActionScriptImplementedMethods(jsClass, reportingClient);
   }
 
-  public static void checkActionScriptImplementedMethods(final JSClass jsClass, final ErrorReportingClient reportingClient) {
-    final JSCollectMembersToImplementProcessor implementedMethodProcessor = new JSImplementedMethodProcessor(jsClass) {
+  public static void checkActionScriptImplementedMethods(@NotNull final JSClass jsClass, final ErrorReportingClient reportingClient) {
+    final JSCollectMembersToImplementProcessor implementedMethodProcessor = new ActionScriptImplementedMethodProcessor(jsClass) {
       ImplementMethodsFix implementMethodsFix = null;
 
-      protected void addNonimplementedFunction(final JSFunction function) {
+      protected void addNonImplementedFunction(final JSFunction function) {
         final ASTNode node = myJsClass.findNameIdentifier();
         if (node == null) return;
         if (implementMethodsFix == null) implementMethodsFix = new ImplementMethodsFix(myJsClass);
@@ -347,7 +347,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
           if (parent != myJsClass) {
             // some parent incorrectly implements method from our interface
-            addNonimplementedFunction(interfaceFunction);
+            addNonImplementedFunction(interfaceFunction);
             return;
           }
 

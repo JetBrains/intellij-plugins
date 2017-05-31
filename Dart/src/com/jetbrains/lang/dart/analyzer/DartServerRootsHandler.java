@@ -115,7 +115,7 @@ public class DartServerRootsHandler {
       FilenameIndex.getVirtualFilesByName(module.getProject(), PUBSPEC_YAML, module.getModuleContentScope());
 
     for (VirtualFile pubspecYamlFile : pubspecYamlFiles) {
-      result.addAll(DartProjectComponent.collectFolderUrlsToExclude(module, pubspecYamlFile, false));
+      result.addAll(DartProjectComponent.getExcludedPackageSymlinkUrls(module.getProject(), pubspecYamlFile));
     }
 
     return result;

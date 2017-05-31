@@ -1,6 +1,7 @@
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.index.JSNamespaceEvaluationResult;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -33,8 +34,8 @@ import static com.intellij.lang.javascript.psi.JSCommonTypeNames.VECTOR_CLASS_NA
 public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   private static final String REPEATER_CLASS_FQN = "mx.core.Repeater";
 
-  public ActionScriptTypeEvaluator(JSEvaluateContext context, JSTypeProcessor processor, boolean ecma) {
-    super(context, processor, ecma);
+  public ActionScriptTypeEvaluator(JSEvaluateContext context, JSTypeProcessor processor) {
+    super(context, processor);
   }
 
   @Override
@@ -186,5 +187,11 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
       }
     }
     super.addType(_type, source);
+  }
+
+  @Nullable
+  @Override
+  protected JSNamespaceEvaluationResult evaluateNamespaceLocally(@NotNull JSReferenceExpression expression) {
+    return null;
   }
 }

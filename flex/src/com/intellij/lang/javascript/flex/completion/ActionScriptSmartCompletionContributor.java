@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.flex;
+package com.intellij.lang.javascript.flex.completion;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupItem;
@@ -13,6 +13,8 @@ import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
 import com.intellij.lang.javascript.completion.JSSmartCompletionContributor;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
+import com.intellij.lang.javascript.flex.ImportUtils;
+import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.index.JSPackageIndexInfo;
 import com.intellij.lang.javascript.index.JavaScriptIndex;

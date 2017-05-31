@@ -1,6 +1,6 @@
 JSFile:Basic.js2
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')
@@ -18,7 +18,7 @@ JSFile:Basic.js2
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')
@@ -35,7 +35,7 @@ JSFile:Basic.js2
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n')
   ActionScriptFunction
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')
@@ -56,7 +56,7 @@ JSFile:Basic.js2
       PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n')
   ActionScriptFunction
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')
@@ -110,7 +110,7 @@ JSFile:Basic.js2
       PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n')
   ActionScriptFunction
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')
@@ -133,7 +133,7 @@ JSFile:Basic.js2
       PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n\n')
   ActionScriptFunction
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')
@@ -166,7 +166,7 @@ JSFile:Basic.js2
       PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')
@@ -184,7 +184,7 @@ JSFile:Basic.js2
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')
@@ -222,7 +222,7 @@ JSFile:Basic.js2
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n  ')
       ActionScriptFunction
-        JSAttributeList
+        ActionScriptAttributeList
           <empty list>
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
@@ -260,7 +260,7 @@ JSFile:Basic.js2
         PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n\n')
   ActionScriptFunction
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')
@@ -296,7 +296,7 @@ JSFile:Basic.js2
       PsiWhiteSpace('\n ')
       PsiElement(JS:DOC_COMMENT_END)('*/')
     PsiWhiteSpace('\n')
-    JSAttributeList
+    ActionScriptAttributeList
       PsiElement(JS:NATIVE_KEYWORD)('native')
     PsiWhiteSpace(' ')
     PsiElement(JS:FUNCTION_KEYWORD)('function')
@@ -314,7 +314,7 @@ JSFile:Basic.js2
       PsiWhiteSpace(' \n ')
       PsiElement(JS:DOC_COMMENT_END)('*/')
     PsiWhiteSpace('\n')
-    JSAttributeList
+    ActionScriptAttributeList
       PsiElement(JS:NATIVE_KEYWORD)('native')
     PsiWhiteSpace(' ')
     PsiElement(JS:FUNCTION_KEYWORD)('function')
@@ -335,7 +335,7 @@ JSFile:Basic.js2
       PsiWhiteSpace('\n ')
       PsiElement(JS:DOC_COMMENT_END)('*/')
     PsiWhiteSpace('\n')
-    JSAttributeList
+    ActionScriptAttributeList
       PsiElement(JS:NATIVE_KEYWORD)('native')
     PsiWhiteSpace(' ')
     PsiElement(JS:FUNCTION_KEYWORD)('function')

@@ -6,7 +6,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.jsonSchema.extension.JsonSchemaFileProvider;
 import com.jetbrains.jsonSchema.extension.JsonSchemaProviderFactory;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -27,8 +26,9 @@ public final class TsLintJsonSchemaProviderFactory implements JsonSchemaProvider
     myProviders = ContainerUtil.createMaybeSingletonList(provider);
   }
 
+  @NotNull
   @Override
-  public List<JsonSchemaFileProvider> getProviders(@Nullable Project project) {
+  public List<JsonSchemaFileProvider> getProviders(@NotNull final Project project) {
     return myProviders;
   }
 }

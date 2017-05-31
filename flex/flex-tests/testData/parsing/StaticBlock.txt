@@ -5,7 +5,7 @@ JSFile:StaticBlock.js2
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n')
     ActionScriptClass
-      JSAttributeList
+      ActionScriptAttributeList
         PsiElement(JS:PUBLIC_KEYWORD)('public')
       PsiWhiteSpace(' ')
       PsiElement(JS:CLASS_KEYWORD)('class')
@@ -19,7 +19,7 @@ JSFile:StaticBlock.js2
         PsiElement(JS:LBRACE)('{')
         PsiWhiteSpace('\n      ')
         JSVarStatement
-          JSAttributeList
+          ActionScriptAttributeList
             JSAttribute
               PsiElement(JS:LBRACKET)('[')
               PsiElement(JS:IDENTIFIER)('Embed')

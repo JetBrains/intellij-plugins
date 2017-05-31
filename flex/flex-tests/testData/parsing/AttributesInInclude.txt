@@ -7,7 +7,7 @@ JSFile:AttributesInInclude.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:DOC_COMMENT_END)('*/')
   PsiWhiteSpace('\n')
-  JSAttributeList
+  ActionScriptAttributeList
     JSAttribute
       PsiElement(JS:LBRACKET)('[')
       PsiElement(JS:IDENTIFIER)('AccessibilityClass')

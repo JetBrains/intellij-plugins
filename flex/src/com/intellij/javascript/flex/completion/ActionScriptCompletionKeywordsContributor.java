@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSImportStatement;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Konstantin.Ulitin
@@ -60,7 +61,7 @@ public class ActionScriptCompletionKeywordsContributor extends JSCompletionKeywo
   }
 
   @Override
-  public void appendSpecificKeywords(KeywordCompletionConsumer consumer) {
+  public void appendSpecificKeywords(@NotNull KeywordCompletionConsumer consumer) {
     consumer.consume(JSLookupPriority.NON_CONTEXT_KEYWORDS_PRIORITY, true,
                      "is",
                      "as",

@@ -1,6 +1,6 @@
 JSFile:OldAs2Code.js2
   ActionScriptClass
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
@@ -14,7 +14,7 @@ JSFile:OldAs2Code.js2
     PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n')
   ActionScriptFunction
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')
@@ -31,7 +31,7 @@ JSFile:OldAs2Code.js2
       PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n')
   ActionScriptFunction
-    JSAttributeList
+    ActionScriptAttributeList
       PsiElement(JS:NATIVE_KEYWORD)('native')
       PsiWhiteSpace(' ')
       PsiElement(JS:PUBLIC_KEYWORD)('public')

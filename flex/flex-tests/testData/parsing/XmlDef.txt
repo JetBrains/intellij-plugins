@@ -1,6 +1,6 @@
 JSFile:XmlDef.js2
   ActionScriptClass
-    JSAttributeList
+    ActionScriptAttributeList
       PsiElement(JS:PUBLIC_KEYWORD)('public')
       PsiWhiteSpace(' ')
       PsiElement(JS:FINAL_KEYWORD)('final')
@@ -15,7 +15,7 @@ JSFile:XmlDef.js2
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n  ')
     ActionScriptFunction
-      JSAttributeList
+      ActionScriptAttributeList
         PsiElement(JS:PUBLIC_KEYWORD)('public')
         PsiWhiteSpace(' ')
         PsiElement(JS:STATIC_KEYWORD)('static')
@@ -48,7 +48,7 @@ JSFile:XmlDef.js2
         PsiWhiteSpace('\n   ')
         PsiElement(JS:DOC_COMMENT_END)('*/')
       PsiWhiteSpace('\n  ')
-      JSAttributeList
+      ActionScriptAttributeList
         PsiElement(JS:PUBLIC_KEYWORD)('public')
         PsiWhiteSpace(' ')
         PsiElement(JS:STATIC_KEYWORD)('static')
@@ -68,7 +68,7 @@ JSFile:XmlDef.js2
         PsiElement(JS:IDENTIFIER)('Boolean')
     PsiWhiteSpace('\n\n  ')
     ActionScriptFunction
-      JSAttributeList
+      ActionScriptAttributeList
         PsiElement(JS:PUBLIC_KEYWORD)('public')
         PsiWhiteSpace(' ')
         PsiElement(JS:NATIVE_KEYWORD)('native')
@@ -96,7 +96,7 @@ JSFile:XmlDef.js2
     PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')

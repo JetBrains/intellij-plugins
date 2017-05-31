@@ -72,7 +72,7 @@ public class FlexCompilerConfigFileUtilBase {
 
     try {
       final Element otherRootElement = JDOMUtil.load(generatedConfigText);
-      assert FLEX_CONFIG.equals(rootElement.getName()) : JDOMUtil.writeElement(rootElement, "\n");
+      assert FLEX_CONFIG.equals(rootElement.getName()) : JDOMUtil.writeElement(rootElement);
 
       appendDocument(rootElement, otherRootElement);
     }
@@ -80,7 +80,7 @@ public class FlexCompilerConfigFileUtilBase {
       assert false : e.getMessage() + "\n" + generatedConfigText;
     }
 
-    return JDOMUtil.writeElement(rootElement, "\n");
+    return JDOMUtil.writeElement(rootElement);
   }
 
   private static void removeSwcSpecificElementsRecursively(final Element element) {

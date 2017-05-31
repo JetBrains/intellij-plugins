@@ -2,6 +2,7 @@
 function foo():void {
     <caret>
 }
+
 public function name():void {
     foo();
 }

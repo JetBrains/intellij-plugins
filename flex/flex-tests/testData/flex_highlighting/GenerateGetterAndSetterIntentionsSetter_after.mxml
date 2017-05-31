@@ -3,6 +3,7 @@
     <fx:Script><![CDATA[
         private var _foo:int;
         public static const FOO_CHANGED_EVENT:String = "fooChanged";
+
         // TODO fix test data when new line correctly added and comment preserved
         public function set foo(value:int):void {
             if (_foo == value) return;

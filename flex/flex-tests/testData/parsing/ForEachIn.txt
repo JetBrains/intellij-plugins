@@ -2,7 +2,7 @@ JSFile:ForEachIn.js2
   PsiComment(JS:END_OF_LINE_COMMENT)('// For Each ... In, JavaScript 1.6')
   PsiWhiteSpace('\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')
@@ -17,7 +17,7 @@ JSFile:ForEachIn.js2
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n')
   JSVarStatement
-    JSAttributeList
+    ActionScriptAttributeList
       <empty list>
     PsiElement(JS:VAR_KEYWORD)('var')
     PsiWhiteSpace(' ')

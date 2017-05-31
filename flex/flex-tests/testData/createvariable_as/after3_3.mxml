@@ -4,6 +4,7 @@
 var xml:XML = <></>;
 var s:String = "";
 addEventListener("Foo", handleEvent)
+
 private function handleEvent(event:Event):void {
     <caret>
 }

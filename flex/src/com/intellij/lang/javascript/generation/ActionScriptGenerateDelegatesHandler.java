@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
+public class ActionScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
 
   public static final String[] PRIMITIVE_TYPES = JSCommonTypeNames.ALL;
 
@@ -196,10 +196,10 @@ public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
     BaseCreateMethodsFix fix = new BaseCreateMethodsFix<JSNamedElement>(jsClass) {
 
       final JavaScriptGenerateAccessorHandler.MyBaseCreateMethodsFix generateGetterFix =
-        new JavaScriptGenerateAccessorHandler.MyBaseCreateMethodsFix(JavaScriptGenerateAccessorHandler.GenerationMode.Getter, jsClass,
+        new JavaScriptGenerateAccessorHandler.MyBaseCreateMethodsFix(JSGetterSetterGenerationMode.Getter, jsClass,
                                                                      null, false, field.getName());
       final JavaScriptGenerateAccessorHandler.MyBaseCreateMethodsFix generateSetterFix =
-        new JavaScriptGenerateAccessorHandler.MyBaseCreateMethodsFix(JavaScriptGenerateAccessorHandler.GenerationMode.Setter, jsClass,
+        new JavaScriptGenerateAccessorHandler.MyBaseCreateMethodsFix(JSGetterSetterGenerationMode.Setter, jsClass,
                                                                      null, false, field.getName());
 
       @Override

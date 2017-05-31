@@ -69,6 +69,7 @@
     <lang.implementationTextSelectioner language="Dart"
                                         implementationClass="com.jetbrains.lang.dart.ide.DartImplementationTextSelectioner"/>
     <lang.formatter language="Dart" implementationClass="com.jetbrains.lang.dart.ide.formatter.DartFormattingModelBuilder"/>
+    <postFormatProcessor implementation="com.jetbrains.lang.dart.ide.formatter.DartPostFormatProcessor"/>
     <lang.psiStructureViewFactory language="Dart" implementationClass="com.jetbrains.lang.dart.ide.structure.DartStructureViewFactory"/>
     <lang.structureViewExtension implementation="com.jetbrains.lang.dart.ide.structure.DartStructureViewExtension"/>
     <psi.referenceContributor language="HTML" implementation="com.jetbrains.lang.dart.psi.DartPackagePathReferenceContributor"
@@ -88,7 +89,6 @@
                                implementationClass="com.jetbrains.lang.dart.ide.info.DartParameterInfoHandler"/>
 
     <codeStyleSettingsProvider implementation="com.jetbrains.lang.dart.ide.formatter.settings.DartCodeStyleSettingsProvider"/>
-    <codeStyleSettingsProvider implementation="com.jetbrains.lang.dart.ide.application.options.DartGenerationSettingsProvider"/>
 
     <langCodeStyleSettingsProvider implementation="com.jetbrains.lang.dart.ide.formatter.settings.DartLanguageCodeStyleSettingsProvider"/>
     <lang.importOptimizer language="Dart" implementationClass="com.jetbrains.lang.dart.ide.imports.DartImportOptimizer"/>
@@ -175,6 +175,7 @@
     <findUsagesHandlerFactory implementation="com.jetbrains.lang.dart.ide.findUsages.DartServerFindUsagesHandlerFactory"/>
     <fileStructureGroupRuleProvider implementation="com.jetbrains.lang.dart.ide.findUsages.DartUnitMemberGroupRuleProvider"/>
     <fileStructureGroupRuleProvider implementation="com.jetbrains.lang.dart.ide.findUsages.DartClassMemberGroupRuleProvider"/>
+    <elementDescriptionProvider implementation="com.jetbrains.lang.dart.psi.DartElementDescriptionProvider"/>
 
     <intentionAction>
       <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention</className>
@@ -227,7 +228,6 @@
 
   <actions>
     <action id="Dart.stop.pub.server" class="com.jetbrains.lang.dart.pubServer.StopPubServerAction" text="Stop Pub Serve"/>
-
     <action id="Dart.NewDartFile" class="com.jetbrains.lang.dart.ide.actions.CreateDartFileAction"
             text="Dart File" description="Create new Dart file">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
@@ -237,6 +237,9 @@
     </action>
     <action id="Dart.Restart.Analysis.Server" class="com.jetbrains.lang.dart.ide.errorTreeView.RestartDartAnalysisServerAction"
             text="Restart Dart Analysis Server" description="Restart Dart Analysis Server">
+    </action>
+    <action id="Dart.Analyzer.Diagnostics" class="com.jetbrains.lang.dart.ide.errorTreeView.AnalysisServerDiagnosticsAction"
+            text="Dart Analyzer Diagnostics" description="View Dart analyzer diagnostics">
     </action>
     <action id="Dart.DartStyle" class="com.jetbrains.lang.dart.ide.actions.DartStyleAction"
             text="Reformat Code with dartfmt" description="Format your Dart code using dartfmt (the Dart Style formatter)">
