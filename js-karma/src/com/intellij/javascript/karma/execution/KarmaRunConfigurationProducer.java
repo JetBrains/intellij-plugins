@@ -32,12 +32,19 @@ public class KarmaRunConfigurationProducer extends JsTestRunConfigurationProduce
     super(KarmaConfigurationType.getInstance(), Collections.singletonList(KarmaUtil.NODE_PACKAGE_NAME));
   }
 
+  private boolean isTestRunnerPackageAvailableFor(@NotNull PsiElement element, @NotNull ConfigurationContext context) {
+    if (context.getOriginalConfiguration(KarmaConfigurationType.getInstance()) instanceof KarmaRunConfiguration) {
+      return true;
+    }
+    return super.isTestRunnerPackageAvailableFor(element);
+  }
+
   @Override
   protected boolean setupConfigurationFromCompatibleContext(@NotNull KarmaRunConfiguration configuration,
                                                             @NotNull ConfigurationContext context,
                                                             @NotNull Ref<PsiElement> sourceElement) {
     PsiElement element = context.getPsiLocation();
-    if (element == null || !isTestRunnerPackageAvailableFor(element)) {
+    if (element == null || !isTestRunnerPackageAvailableFor(element, context)) {
       return false;
     }
     Pair<KarmaRunSettings, PsiElement> pair = setup(element, configuration.getRunSettings());
