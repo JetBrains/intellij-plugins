@@ -518,4 +518,16 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
            "  B.foo() : <caret expected='file.dart -> A -> foo'>super.<caret expected='file.dart -> A -> foo'>foo();\n" +
            "}");
   }
+
+  public void testRefsInDocComments() throws Exception {
+    doTest(myFixture,
+           "/// [<caret expected='[Dart SDK]/lib/core/object.dart -> Object'>Object] foo\n" +
+           "/// [print<caret expected='[Dart SDK]/lib/core/print.dart -> print'>\n" +
+           "/// [ <caret expected='file.dart -> a'>a ]\n" +
+           "var a;\n" +
+           "/**\n" +
+           " * [Object<caret expected='[Dart SDK]/lib/core/object.dart -> Object'>.<caret expected='[Dart SDK]/lib/core/object.dart -> Object -> =='>==]\n" +
+           " */\n" +
+           "var b;");
+  }
 }
