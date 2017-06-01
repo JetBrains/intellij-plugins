@@ -1291,8 +1291,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
                                             boolean ecma) {
     final PsiElement nodeParent = node.getParent();
     final JSExpression qualifier = node.getQualifier();
-    PsiElement nameIdentifier = node.getReferenceNameElement();
-    final String referencedName = nameIdentifier.getText();
+    final String referencedName = node.getReferenceName();
 
     inTypeContext = super.addCreateFromUsageFixes(node, resolveResults, fixes, inTypeContext, ecma);
     if (!(nodeParent instanceof JSArgumentList) && nodeParent.getParent() instanceof JSCallExpression) {
@@ -1301,23 +1300,18 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
     if (!inTypeContext) {
       boolean getter = !(node.getParent() instanceof JSDefinitionExpression);
-      String invokedName = nameIdentifier.getText();
-      fixes.add(new CreateJSPropertyAccessorIntentionAction(invokedName, getter));
+      fixes.add(new CreateJSPropertyAccessorIntentionAction(referencedName, getter));
     }
     if (qualifier == null) {
       boolean canHaveTypeFix = false;
-      JSClass contextClass = JSResolveUtil.getClassOfContext(node);
 
       if (nodeParent instanceof JSReferenceListMember) {
         canHaveTypeFix = true;
-        fixes.add(new ActionScriptCreateClassOrInterfaceFix(node, contextClass.isInterface() ||
-                                                      nodeParent.getParent().getNode().getElementType() ==
-                                                      JSStubElementTypes.IMPLEMENTS_LIST, null, null));
       }
       else if (!(nodeParent instanceof JSDefinitionExpression) && resolveResults.length == 0) {
         canHaveTypeFix = true;
-        fixes.add(new ActionScriptCreateClassOrInterfaceFix(node, false, null, null));
-        fixes.add(new ActionScriptCreateClassOrInterfaceFix(node, true, null, null));
+        fixes.add(createClassOrInterfaceFix(node, false));
+        fixes.add(createClassOrInterfaceFix(node, true));
       }
 
       if (!inTypeContext && JSReadWriteAccessDetector.ourInstance.getExpressionAccess(node) == ReadWriteAccessDetector.Access.Read) {
