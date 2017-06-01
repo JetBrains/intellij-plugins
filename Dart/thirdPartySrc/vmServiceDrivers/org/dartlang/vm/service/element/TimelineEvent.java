@@ -20,6 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * An {@link TimelineEvent} is an arbitrary map that contains a Trace Event Format event.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class TimelineEvent extends Element {
 
   public TimelineEvent(JsonObject json) {

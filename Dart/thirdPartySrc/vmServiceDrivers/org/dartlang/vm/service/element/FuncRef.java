@@ -20,6 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * An {@link FuncRef} is a reference to a {@link Func}.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class FuncRef extends ObjRef {
 
   public FuncRef(JsonObject json) {

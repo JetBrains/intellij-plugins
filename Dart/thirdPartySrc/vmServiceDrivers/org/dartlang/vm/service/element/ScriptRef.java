@@ -20,6 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * {@link ScriptRef} is a reference to a {@link Script}.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class ScriptRef extends ObjRef {
 
   public ScriptRef(JsonObject json) {

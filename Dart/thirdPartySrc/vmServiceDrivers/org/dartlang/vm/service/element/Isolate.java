@@ -22,6 +22,7 @@ import java.util.List;
 /**
  * An {@link Isolate} object provides information about one isolate in the VM.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class Isolate extends Response {
 
   public Isolate(JsonObject json) {

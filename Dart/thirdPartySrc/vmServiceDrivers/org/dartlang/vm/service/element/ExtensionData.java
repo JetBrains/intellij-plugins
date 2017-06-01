@@ -20,6 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * An {@link ExtensionData} is an arbitrary map that can have any contents.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class ExtensionData extends Element {
 
   public ExtensionData(JsonObject json) {

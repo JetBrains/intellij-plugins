@@ -20,6 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * A {@link Breakpoint} describes a debugger breakpoint.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class Breakpoint extends Obj {
 
   public Breakpoint(JsonObject json) {

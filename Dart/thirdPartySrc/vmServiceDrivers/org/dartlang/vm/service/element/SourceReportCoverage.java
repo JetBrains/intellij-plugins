@@ -22,6 +22,7 @@ import java.util.List;
  * The {@link SourceReportCoverage} class represents coverage information for one
  * SourceReportRange.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class SourceReportCoverage extends Element {
 
   public SourceReportCoverage(JsonObject json) {

@@ -22,6 +22,7 @@ import java.util.List;
  * The {@link SourceReportRange} class represents a range of executable code (function, method,
  * constructor, etc) in the running program. It is part of a SourceReport.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class SourceReportRange extends Element {
 
   public SourceReportRange(JsonObject json) {

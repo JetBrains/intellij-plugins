@@ -21,6 +21,7 @@ import com.google.gson.JsonObject;
 /**
  * A {@link Context} is a data structure which holds the captured variables for some closure.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class Context extends Obj {
 
   public Context(JsonObject json) {

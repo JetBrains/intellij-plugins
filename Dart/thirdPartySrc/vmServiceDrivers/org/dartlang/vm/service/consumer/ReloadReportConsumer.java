@@ -17,6 +17,7 @@ package org.dartlang.vm.service.consumer;
 
 import org.dartlang.vm.service.element.ReloadReport;
 
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public interface ReloadReportConsumer extends Consumer {
 
   public void received(ReloadReport response);
