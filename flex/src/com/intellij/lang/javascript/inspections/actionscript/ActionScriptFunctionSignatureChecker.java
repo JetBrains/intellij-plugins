@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.psi.types.primitives.JSObjectType;
 import com.intellij.lang.javascript.validation.JSFunctionSignatureChecker;
 import com.intellij.lang.javascript.validation.JSTypeChecker;
 import com.intellij.lang.javascript.validation.ValidateTypesUtil;
-import com.intellij.lang.javascript.validation.fixes.CreateConstructorFix;
+import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateConstructorFix;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +35,7 @@ public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChe
       final JSArgumentList argumentList = node.getArgumentList();
       final JSExpression[] expressions = argumentList != null ? argumentList.getArguments() : JSExpression.EMPTY_ARRAY;
       if (expressions.length > 0) {
-        final CreateConstructorFix fix = CreateConstructorFix.createIfApplicable(node);
+        final ActionScriptCreateConstructorFix fix = ActionScriptCreateConstructorFix.createIfApplicable(node);
 
         registerProblem(node, JSBundle.message("javascript.invalid.number.of.parameters", "0"),
                         fix != null ? new LocalQuickFix[]{fix} : LocalQuickFix.EMPTY_ARRAY);
