@@ -5,18 +5,69 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class DartStringLiteralExpressionBase extends DartClassReferenceImpl implements DartStringLiteralExpression {
   private static final Logger LOG = Logger.getInstance(DartStringLiteralExpressionBase.class.getName());
 
   public DartStringLiteralExpressionBase(ASTNode node) {
     super(node);
+  }
+
+  @NotNull
+  @Override
+  public PsiReference[] getReferences() {
+    return filterOutReferencesInTemplatesOrInjected(ReferenceProvidersRegistry.getReferencesFromProviders(this));
+  }
+
+  private PsiReference[] filterOutReferencesInTemplatesOrInjected(@NotNull final PsiReference[] references) {
+    if (references.length == 0) return references;
+    // String literal expression is a complex object that may contain injected HTML and regular Dart code (as a string template).
+    // References in HTML and in Dart code are handled somewhere else, so if they occasionally appeared here we need to filter them out.
+    final List<TextRange> forbiddenRanges = new SmartList<>();
+
+    InjectedLanguageUtil.enumerate(this, (injectedPsi, places) -> {
+      for (PsiLanguageInjectionHost.Shred place : places) {
+        if (place.getHost() == this) {
+          forbiddenRanges.add(place.getRangeInsideHost());
+        }
+      }
+    });
+
+    PsiElement child = getFirstChild();
+    while (child != null) {
+      final IElementType type = child.getNode().getElementType();
+      if (type != DartTokenTypes.OPEN_QUOTE &&
+          type != DartTokenTypes.REGULAR_STRING_PART &&
+          type != DartTokenTypes.CLOSING_QUOTE &&
+          type != DartTokenTypes.RAW_SINGLE_QUOTED_STRING &&
+          type != DartTokenTypes.RAW_TRIPLE_QUOTED_STRING) {
+        forbiddenRanges.add(child.getTextRange().shiftRight(-getTextRange().getStartOffset()));
+      }
+      child = child.getNextSibling();
+    }
+
+    final List<PsiReference> result = new ArrayList<>(references.length);
+    outer:
+    for (PsiReference reference : references) {
+      for (TextRange forbiddenRange : forbiddenRanges) {
+        if (reference.getRangeInElement().intersectsStrict(forbiddenRange)) continue outer;
+      }
+      result.add(reference);
+    }
+
+    return result.toArray(PsiReference.EMPTY_ARRAY);
   }
 
   @Override
