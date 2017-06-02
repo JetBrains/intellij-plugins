@@ -60,7 +60,7 @@ public class JstdServerConsoleTab {
     for (AnAction action : actions) {
       group.add(action);
     }
-    return ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, group, false);
+    return ActionManager.getInstance().createActionToolbar("JstdServerConsoleTab", group, false);
   }
 
   public void attachToServer(@NotNull JstdServer server) {

@@ -71,7 +71,7 @@ public class JstdToolWindowSession {
         settingsUtil.editConfigurable(e.getProject(), new BrowserSettings());
       }
     });
-    return ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, actionGroup, false);
+    return ActionManager.getInstance().createActionToolbar("JstdToolWindowSession", actionGroup, false);
   }
 
   @NotNull
