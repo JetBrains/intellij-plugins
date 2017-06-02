@@ -21,6 +21,7 @@ import com.google.gson.JsonObject;
  * Every non-error response returned by the Service Protocol extends {@link Response}. By using the
  * {@link type} property, the client can determine which type of response has been provided.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class Response extends Element {
 
   public Response(JsonObject json) {

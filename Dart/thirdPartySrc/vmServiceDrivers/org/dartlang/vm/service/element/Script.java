@@ -21,6 +21,7 @@ import java.util.List;
 /**
  * A {@link Script} provides information about a Dart language script.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class Script extends Obj {
 
   public Script(JsonObject json) {

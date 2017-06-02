@@ -17,6 +17,7 @@ package org.dartlang.vm.service.consumer;
 
 import org.dartlang.vm.service.element.FlagList;
 
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public interface FlagListConsumer extends Consumer {
 
   public void received(FlagList response);

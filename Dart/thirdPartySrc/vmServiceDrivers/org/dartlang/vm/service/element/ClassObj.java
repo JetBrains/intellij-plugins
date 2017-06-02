@@ -21,6 +21,7 @@ import com.google.gson.JsonObject;
 /**
  * A {@link ClassObj} provides information about a Dart language class.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class ClassObj extends Obj {
 
   public ClassObj(JsonObject json) {

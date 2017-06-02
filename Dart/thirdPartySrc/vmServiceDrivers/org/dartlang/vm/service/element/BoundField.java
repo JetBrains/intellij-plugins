@@ -21,6 +21,7 @@ import com.google.gson.JsonObject;
 /**
  * A {@link BoundField} represents a field bound to a particular value in an {@link Instance}.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class BoundField extends Element {
 
   public BoundField(JsonObject json) {

@@ -21,6 +21,7 @@ import com.google.gson.JsonObject;
 /**
  * A {@link FlagList} represents the complete set of VM command line flags.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class FlagList extends Response {
 
   public FlagList(JsonObject json) {

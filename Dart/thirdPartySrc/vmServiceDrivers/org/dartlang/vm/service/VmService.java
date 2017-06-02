@@ -15,7 +15,10 @@ package org.dartlang.vm.service;
 
 // This is a generated file.
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import java.util.Map;
 import org.dartlang.vm.service.consumer.*;
 import org.dartlang.vm.service.element.*;
 
@@ -44,6 +47,7 @@ import org.dartlang.vm.service.element.*;
  * More specifically, you should not make any calls to {@link VmService}
  * from within any {@link Consumer} method.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class VmService extends VmServiceBase {
 
   public static final String DEBUG_STREAM_ID = "Debug";
@@ -148,6 +152,20 @@ public class VmService extends VmServiceBase {
   }
 
   /**
+   * The [evaluate] RPC is used to evaluate an expression in the context of some target.
+   *
+   * @param scope This parameter is optional and may be null.
+   */
+  public void evaluate(String isolateId, String targetId, String expression, Map<String, String> scope, EvaluateConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    params.addProperty("targetId", targetId);
+    params.addProperty("expression", expression);
+    if (scope != null) params.add("scope", convertMapToJsonObject(scope));
+    request("evaluate", params, consumer);
+  }
+
+  /**
    * The [evaluateInFrame] RPC is used to evaluate an expression in the context of a particular
    * stack frame. [frameIndex] is the index of the desired Frame, with an index of [0] indicating
    * the top (most recent) frame.
@@ -157,6 +175,22 @@ public class VmService extends VmServiceBase {
     params.addProperty("isolateId", isolateId);
     params.addProperty("frameIndex", frameIndex);
     params.addProperty("expression", expression);
+    request("evaluateInFrame", params, consumer);
+  }
+
+  /**
+   * The [evaluateInFrame] RPC is used to evaluate an expression in the context of a particular
+   * stack frame. [frameIndex] is the index of the desired Frame, with an index of [0] indicating
+   * the top (most recent) frame.
+   *
+   * @param scope This parameter is optional and may be null.
+   */
+  public void evaluateInFrame(String isolateId, int frameIndex, String expression, Map<String, String> scope, EvaluateInFrameConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    params.addProperty("frameIndex", frameIndex);
+    params.addProperty("expression", expression);
+    if (scope != null) params.add("scope", convertMapToJsonObject(scope));
     request("evaluateInFrame", params, consumer);
   }
 
@@ -206,13 +240,11 @@ public class VmService extends VmServiceBase {
   /**
    * The [getSourceReport] RPC is used to generate a set of reports tied to source locations in an
    * isolate.
-   *
-   * TODO: reports parameter should be a List<SourceReportKind>.
    */
-  public void getSourceReport(String isolateId, SourceReportKind reports, SourceReportConsumer consumer) {
+  public void getSourceReport(String isolateId, ElementList<SourceReportKind> reports, SourceReportConsumer consumer) {
     JsonObject params = new JsonObject();
     params.addProperty("isolateId", isolateId);
-    params.addProperty("reports", reports.name());
+    params.add("reports", convertIterableToJsonArray(reports));
     request("getSourceReport", params, consumer);
   }
 
@@ -224,14 +256,11 @@ public class VmService extends VmServiceBase {
    * @param tokenPos This parameter is optional and may be null.
    * @param endTokenPos This parameter is optional and may be null.
    * @param forceCompile This parameter is optional and may be null.
-   *
-   *
-   * TODO: reports parameter should be a List<SourceReportKind>.
    */
-  public void getSourceReport(String isolateId, SourceReportKind reports, String scriptId, Integer tokenPos, Integer endTokenPos, Boolean forceCompile, SourceReportConsumer consumer) {
+  public void getSourceReport(String isolateId, ElementList<SourceReportKind> reports, String scriptId, Integer tokenPos, Integer endTokenPos, Boolean forceCompile, SourceReportConsumer consumer) {
     JsonObject params = new JsonObject();
     params.addProperty("isolateId", isolateId);
-    params.addProperty("reports", reports.name());
+    params.add("reports", convertIterableToJsonArray(reports));
     if (scriptId != null) params.addProperty("scriptId", scriptId);
     if (tokenPos != null) params.addProperty("tokenPos", tokenPos);
     if (endTokenPos != null) params.addProperty("endTokenPos", endTokenPos);
@@ -395,6 +424,22 @@ public class VmService extends VmServiceBase {
     JsonObject params = new JsonObject();
     params.addProperty("streamId", streamId);
     request("streamListen", params, consumer);
+  }
+
+  private JsonArray convertIterableToJsonArray(Iterable list) {
+    JsonArray arr = new JsonArray();
+    for (Object element : list) {
+      arr.add(new JsonPrimitive(element.toString()));
+    }
+    return arr;
+  }
+
+  private JsonObject convertMapToJsonObject(Map<String, String> map) {
+    JsonObject obj = new JsonObject();
+    for (String key : map.keySet()) {
+      obj.addProperty(key, map.get(key));
+    }
+    return obj;
   }
 
   @Override

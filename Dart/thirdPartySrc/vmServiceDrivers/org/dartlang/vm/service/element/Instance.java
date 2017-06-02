@@ -22,6 +22,7 @@ import com.google.gson.JsonObject;
 /**
  * An {@link Instance} represents an instance of the Dart language class {@link Obj}.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class Instance extends Obj {
 
   public Instance(JsonObject json) {

@@ -17,6 +17,7 @@ package org.dartlang.vm.service.consumer;
 
 import org.dartlang.vm.service.element.SourceReport;
 
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public interface SourceReportConsumer extends Consumer {
 
   public void received(SourceReport response);
