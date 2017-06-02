@@ -12,6 +12,7 @@ import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
+import com.jetbrains.lang.dart.psi.DartUriElement;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +29,9 @@ public abstract class DartStringLiteralExpressionBase extends DartClassReference
   @NotNull
   @Override
   public PsiReference[] getReferences() {
+    if (getParent() instanceof DartUriElement) {
+      return super.getReferences(); // DartFileReferences are handled in DartUriElement implementation
+    }
     return filterOutReferencesInTemplatesOrInjected(ReferenceProvidersRegistry.getReferencesFromProviders(this));
   }
 
