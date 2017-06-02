@@ -45,10 +45,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.SearchScope;
-import com.intellij.util.Alarm;
+import com.intellij.util.*;
 import com.intellij.util.Consumer;
-import com.intellij.util.PathUtil;
-import com.intellij.util.Processor;
 import com.intellij.util.concurrency.QueueProcessor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
@@ -163,6 +161,8 @@ public class DartAnalysisServerService implements Disposable {
   private static String getClientVersion() {
     return ApplicationInfo.getInstance().getApiVersion();
   }
+
+  @NotNull private final List<AnalysisServerListener> myAdditionalServerListeners = new SmartList<>();
 
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
@@ -499,6 +499,24 @@ public class DartAnalysisServerService implements Disposable {
     myServerData = new DartServerData(this);
     myUpdateFilesAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, project);
     myShowServerProgressAlarm = new Alarm(project);
+  }
+
+  @SuppressWarnings("unused") // for Flutter plugin
+  public void addAnalysisServerListener(@NotNull final AnalysisServerListener serverListener) {
+    if (!myAdditionalServerListeners.contains(serverListener)) {
+      myAdditionalServerListeners.add(serverListener);
+      if (myServer != null && isServerProcessActive()) {
+        myServer.addAnalysisServerListener(serverListener);
+      }
+    }
+  }
+
+  @SuppressWarnings("unused") // for Flutter plugin
+  public void removeAnalysisServerListener(@NotNull final AnalysisServerListener serverListener) {
+    myAdditionalServerListeners.remove(serverListener);
+    if (myServer != null) {
+      myServer.removeAnalysisServerListener(serverListener);
+    }
   }
 
   private static void setDasLogger() {
@@ -1481,6 +1499,9 @@ public class DartAnalysisServerService implements Disposable {
         }
 
         startedServer.addAnalysisServerListener(myAnalysisServerListener);
+        for (AnalysisServerListener listener : myAdditionalServerListeners) {
+          startedServer.addAnalysisServerListener(listener);
+        }
 
         myHaveShownInitialProgress = false;
         startedServer.addStatusListener(isAlive -> {
@@ -1559,6 +1580,9 @@ public class DartAnalysisServerService implements Disposable {
       if (myServer != null) {
         LOG.debug("stopping server");
         myServer.removeAnalysisServerListener(myAnalysisServerListener);
+        for (AnalysisServerListener listener : myAdditionalServerListeners) {
+          myServer.removeAnalysisServerListener(listener);
+        }
 
         myServer.server_shutdown();
 
