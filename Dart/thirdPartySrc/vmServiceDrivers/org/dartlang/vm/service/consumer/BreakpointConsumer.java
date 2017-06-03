@@ -17,6 +17,7 @@ package org.dartlang.vm.service.consumer;
 
 import org.dartlang.vm.service.element.Breakpoint;
 
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public interface BreakpointConsumer extends Consumer {
 
   public void received(Breakpoint response);

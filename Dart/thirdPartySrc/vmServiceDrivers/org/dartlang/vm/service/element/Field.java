@@ -20,6 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * A {@link Field} provides information about a Dart language field or variable.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class Field extends Obj {
 
   public Field(JsonObject json) {

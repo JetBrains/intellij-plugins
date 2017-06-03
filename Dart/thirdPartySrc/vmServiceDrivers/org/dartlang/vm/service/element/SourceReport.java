@@ -22,6 +22,7 @@ import com.google.gson.JsonObject;
  * The {@link SourceReport} class represents a set of reports tied to source locations in an
  * isolate.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class SourceReport extends Response {
 
   public SourceReport(JsonObject json) {

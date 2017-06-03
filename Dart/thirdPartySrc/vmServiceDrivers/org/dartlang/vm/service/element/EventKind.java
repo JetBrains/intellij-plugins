@@ -19,6 +19,7 @@ package org.dartlang.vm.service.element;
  * Adding new values to {@link EventKind} is considered a backwards compatible change. Clients
  * should ignore unrecognized events.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public enum EventKind {
 
   /**

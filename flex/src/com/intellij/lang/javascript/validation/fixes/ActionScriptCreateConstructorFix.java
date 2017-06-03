@@ -40,13 +40,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
+public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionAction {
 
   @NotNull private final JSClass myClass;
   private final JSReferenceExpression myRefExpr;
   private final JSCallExpression myNode;
 
-  private CreateConstructorFix(@NotNull JSClass clazz, JSReferenceExpression refExpr, JSCallExpression node) {
+  private ActionScriptCreateConstructorFix(@NotNull JSClass clazz, JSReferenceExpression refExpr, JSCallExpression node) {
     super(clazz.getName(), true);
     myClass = clazz;
     myRefExpr = refExpr;
@@ -54,7 +54,7 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
   }
 
   @Nullable
-  public static CreateConstructorFix createIfApplicable(final JSCallExpression node) {
+  public static ActionScriptCreateConstructorFix createIfApplicable(final JSCallExpression node) {
     final JSClass clazz;
     final JSReferenceExpression reference;
     if (node instanceof JSNewExpression) {
@@ -85,7 +85,7 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
       reference = (JSReferenceExpression)clazz.findNameIdentifier().getPsi();
     }
 
-    return new CreateConstructorFix(clazz, reference, node);
+    return new ActionScriptCreateConstructorFix(clazz, reference, node);
   }
 
   @NotNull

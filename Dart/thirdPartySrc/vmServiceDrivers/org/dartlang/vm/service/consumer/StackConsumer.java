@@ -17,6 +17,7 @@ package org.dartlang.vm.service.consumer;
 
 import org.dartlang.vm.service.element.Stack;
 
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public interface StackConsumer extends Consumer {
 
   public void received(Stack response);

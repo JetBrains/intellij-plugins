@@ -177,6 +177,10 @@
                 ]
               }
             }]},
+        "binary-expression-operand-order":{
+          "description": "In a binary expression, a literal should always be on the right-hand side if possible",
+          "type": "boolean"
+        },
         "callable-types":{
           "description": "An interface or literal type with just a call signature can be written as a function type",
           "$ref": "#/definitions/switchable"
@@ -376,7 +380,7 @@
               "items": [
                 {
                   "type": "boolean",
-                  "enum": true
+                  "enum": [true]
                 },
                 {
                   "type": "object",
@@ -536,7 +540,7 @@
               "items": [
                 {
                   "type": "boolean",
-                  "enum": true
+                  "enum": [true]
                 },
                 {
                   "type": "object",
@@ -1057,6 +1061,19 @@
           "description": "Require a default case in all switch statements",
           "type": "boolean"
         },
+        "switch-final-break": {
+          "description": "",
+          "oneOf": [
+            {"type": "boolean"},
+            {
+              "type": "array",
+              "items": [
+                {"type": "boolean"},
+                {"$ref": "#/definitions/alwaysNever"}
+              ],
+              "additionalItems": false
+            }]
+        },
         "trailing-comma": {
           "description": "Requires or disallows trailing commas in array and object literals, destructuring assignments and named imports",
           "oneOf": [
@@ -1084,6 +1101,10 @@
                 "enum": [true, "allow-null-check", "allow-undefined-check"]
               }}
           ]
+        },
+        "type-literal-delimiter": {
+          "description": "Checks that type literal members are separated by semicolons, enforces a trailing semicolon for multiline type literals",
+          "type": "boolean"
         },
         "typedef": {
           "description": "Enforces type definitions to exist",
@@ -1113,7 +1134,7 @@
               "items": [
                 {
                   "type": "boolean",
-                  "enum": true
+                  "enum": [true]
                 },
                 {
                   "$ref": "#/definitions/space-object"
@@ -1131,6 +1152,10 @@
         },
         "unified-signatures": {
           "description": "Warns for any two overloads that could be unified into one by using a union or an optional/rest parameter",
+          "type": "boolean"
+        },
+        "use-default-type-parameter": {
+          "description": "Warns if an explicitly specified type argument is the default for that type parameter",
           "type": "boolean"
         },
         "use-isnan": {
@@ -1187,15 +1212,27 @@
     "extends": {
       "description": "A path(s) to another configuration file which to extend",
       "oneOf": [
-        {"type": "string"},
-        {"type": "array", "items": "string"}
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       ]
     },
     "rulesDirectory": {
       "description": "A path(s) to a directory of custom rules",
       "oneOf": [
         {"type": "string"},
-        {"type": "array", "items": "string"}
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       ]
     }
   }

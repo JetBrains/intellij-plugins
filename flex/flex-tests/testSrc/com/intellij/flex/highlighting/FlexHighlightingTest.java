@@ -1856,7 +1856,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testCreateClassByAttributeValue() throws Exception {
     JSTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
-    doHighlightingWithInvokeFixAndCheckResult("Create class 'Foo'", "mxml");
+    doHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.create.class.intention.name", "Foo"), "mxml");
     final VirtualFile verificationFile =
       LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_Foo.as");
     final VirtualFile createdFile =
@@ -2074,7 +2074,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testCreateClassFromMetadataAttr() throws Exception {
     JSTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
-    findAndInvokeIntentionAction(doTestFor(true, testName + ".as"), "Create class 'Baz'", myEditor, myFile);
+    findAndInvokeIntentionAction(doTestFor(true, testName + ".as"), JSBundle.message("javascript.create.class.intention.name", "Baz"), myEditor, myFile);
     assertEmpty(filterUnwantedInfos(doHighlighting(), this));
     final VirtualFile createdFile = VfsUtilCore.findRelativeFile("foo/Baz.as", myFile.getVirtualFile().getParent());
     myEditor = FileEditorManager.getInstance(myProject).openTextEditor(new OpenFileDescriptor(myProject, createdFile), true);
@@ -2086,7 +2086,8 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testCreateEventClassFromMetadataAttr() throws Exception {
     JSTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
-    findAndInvokeIntentionAction(doTestFor(true, testName + ".as"), "Create class 'MyEvent'", myEditor, myFile);
+    findAndInvokeIntentionAction(doTestFor(true, testName + ".as"),
+                                 JSBundle.message("javascript.create.class.intention.name", "MyEvent"), myEditor, myFile);
     assertEmpty(filterUnwantedInfos(doHighlighting(), this));
     final VirtualFile createdFile = VfsUtilCore.findRelativeFile("foo/MyEvent.as", myFile.getVirtualFile().getParent());
     myEditor = FileEditorManager.getInstance(myProject).openTextEditor(new OpenFileDescriptor(myProject, createdFile), true);
@@ -2331,7 +2332,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     enableInspectionTool(new CssInvalidElementInspection());
     JSTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
-    doHighlightingWithInvokeFixAndCheckResult("Create class 'MyZuperClass'", "mxml");
+    doHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.create.class.intention.name", "MyZuperClass"), "mxml");
 
     final VirtualFile expectedFile =
       LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_2.as");

@@ -1,4 +1,4 @@
-// "Create class 'Foo'" "true"
+// "Create Class 'Foo'" "true"
 class C {
   static function foo() {
     new Fo<caret>o("1","2");

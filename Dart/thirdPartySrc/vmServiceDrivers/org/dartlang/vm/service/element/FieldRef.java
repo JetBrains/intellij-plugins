@@ -20,6 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * An {@link FieldRef} is a reference to a {@link Field}.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class FieldRef extends ObjRef {
 
   public FieldRef(JsonObject json) {

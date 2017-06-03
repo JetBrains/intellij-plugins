@@ -1206,8 +1206,8 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
                                             boolean assertNoErrors)
     throws IOException, IncorrectOperationException {
     final Collection<HighlightInfo> infoCollection = doTestFor(true, getTestName(false) + ".js2");
-    String classIntentionName = "Create class '" + name + "'";
-    String interfaceIntentionName = "Create interface '" + name + "'";
+    String classIntentionName = JSBundle.message("javascript.create.class.intention.name", name);
+    String interfaceIntentionName = JSBundle.message("javascript.create.interface.intention.name", name);
     String actionName = classNotInterface ? classIntentionName : interfaceIntentionName;
     final IntentionAction action = findIntentionAction(infoCollection, actionName, myEditor, myFile);
 
@@ -1216,10 +1216,10 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     String complementaryActionName = classNotInterface ? interfaceIntentionName : classIntentionName;
     IntentionAction complementaryAction = findIntentionAction(infoCollection, complementaryActionName, myEditor, myFile);
     if (complementaryAvailable) {
-      assertNotNull(complementaryActionName, complementaryAction);
+      assertNotNull(String.format("Expected action with name %s but found null", complementaryActionName), complementaryAction);
     }
     else {
-      assertNull(complementaryActionName, complementaryAction);
+      assertNull(String.format("Expected no action with name %s but found one", complementaryActionName), complementaryAction);
     }
 
     WriteCommandAction.runWriteCommandAction(null, () -> action.invoke(myProject, myEditor, myFile));

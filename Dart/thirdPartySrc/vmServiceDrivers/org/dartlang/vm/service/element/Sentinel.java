@@ -20,6 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * A {@link Sentinel} is used to indicate that the normal response is not available.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class Sentinel extends Response {
 
   public Sentinel(JsonObject json) {

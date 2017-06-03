@@ -18,6 +18,7 @@ package org.dartlang.vm.service.consumer;
 import org.dartlang.vm.service.element.ErrorRef;
 import org.dartlang.vm.service.element.InstanceRef;
 
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public interface EvaluateInFrameConsumer extends Consumer {
 
   public void received(ErrorRef response);

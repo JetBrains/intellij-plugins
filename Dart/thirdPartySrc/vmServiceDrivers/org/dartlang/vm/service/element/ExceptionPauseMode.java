@@ -18,6 +18,7 @@ package org.dartlang.vm.service.element;
 /**
  * An {@link ExceptionPauseMode} indicates how the isolate pauses when an exception is thrown.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public enum ExceptionPauseMode {
 
   All,

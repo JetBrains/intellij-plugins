@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.resolve;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -8,6 +9,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.Consumer;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
@@ -57,18 +59,19 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
       }
     }
 
-    if (region != null) {
-      final Project project = reference.getProject();
-      final List<PsiElement> result = new SmartList<>();
-      for (DartNavigationTarget target : region.getTargets()) {
-        final PsiElement targetElement = getElementForNavigationTarget(project, target);
-        if (targetElement != null) {
-          result.add(targetElement);
-        }
+    return region != null ? getTargetElements(reference.getProject(), region) : null;
+  }
+
+  @NotNull
+  public static List<? extends PsiElement> getTargetElements(@NotNull final Project project, @NotNull final DartNavigationRegion region) {
+    final List<PsiElement> result = new SmartList<>();
+    for (DartNavigationTarget target : region.getTargets()) {
+      final PsiElement targetElement = getElementForNavigationTarget(project, target);
+      if (targetElement != null) {
+        result.add(targetElement);
       }
-      return result;
     }
-    return null;
+    return result;
   }
 
   /**
@@ -150,5 +153,52 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
       }
     }
     return null;
+  }
+
+  public static void processRegionsInRange(@NotNull final List<DartServerData.DartNavigationRegion> regions,
+                                           @NotNull final TextRange range,
+                                           @NotNull final Consumer<DartNavigationRegion> processor) {
+    if (regions.isEmpty()) return;
+
+    // first find the first region that has minimal allowed offset
+    int low = 0;
+    int high = regions.size() - 1;
+
+    while (low < high) {
+      int mid = (low + high) >>> 1;
+      DartServerData.DartNavigationRegion midVal = regions.get(mid);
+      int cmp = midVal.getOffset() - range.getStartOffset();
+
+      if (cmp < 0) {
+        low = Math.min(high, mid + 1);
+      }
+      else {
+        high = Math.max(low, mid - 1);
+      }
+    }
+
+    assert low == high : regions.size() + "," + low + "," + high;
+
+    int i = low;
+    DartNavigationRegion region = regions.get(i);
+    if (region.getOffset() < range.getStartOffset()) {
+      i++;
+      if (i < regions.size()) {
+        region = regions.get(i);
+      }
+      else {
+        return;
+      }
+    }
+    while (region.getOffset() + region.getLength() <= range.getEndOffset()) {
+      processor.consume(region);
+      i++;
+      if (i < regions.size()) {
+        region = regions.get(i);
+      }
+      else {
+        return;
+      }
+    }
   }
 }

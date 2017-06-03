@@ -20,6 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * See Versioning.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class Version extends Response {
 
   public Version(JsonObject json) {

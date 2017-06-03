@@ -262,13 +262,14 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     final VirtualFile file = getFile().getVirtualFile();
 
     final List<DartNavigationRegion> regions = service.getNavigation(file);
-    checkRegions(regions, TextRange.create(4, 5), TextRange.create(15, 16), TextRange.create(19, 20));
-    assertEquals(4, regions.get(2).getTargets().get(0).getOffset(getProject(), file));
+    checkRegions(regions, TextRange.create(0, 3), TextRange.create(4, 5), TextRange.create(15, 16), TextRange.create(19, 20));
+    assertEquals(4, regions.get(3).getTargets().get(0).getOffset(getProject(), file));
 
     getEditor().getCaretModel().moveToOffset(0);
     myFixture.type("foo \b");
-    checkRegions(regions, TextRange.create(4 + 3, 5 + 3), TextRange.create(15 + 3, 16 + 3), TextRange.create(19 + 3, 20 + 3));
-    assertEquals(4 + 3, regions.get(2).getTargets().get(0).getOffset(getProject(), file));
+    checkRegions(regions, TextRange.create(0 + 3, 3 + 3), TextRange.create(4 + 3, 5 + 3), TextRange.create(15 + 3, 16 + 3),
+                 TextRange.create(19 + 3, 20 + 3));
+    assertEquals(4 + 3, regions.get(3).getTargets().get(0).getOffset(getProject(), file));
   }
 
   public void testSyntaxHighlighting() throws Exception {

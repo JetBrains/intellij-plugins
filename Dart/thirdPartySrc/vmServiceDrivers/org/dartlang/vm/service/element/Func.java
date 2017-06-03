@@ -20,6 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * A {@link Func} represents a Dart language function.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class Func extends Obj {
 
   public Func(JsonObject json) {

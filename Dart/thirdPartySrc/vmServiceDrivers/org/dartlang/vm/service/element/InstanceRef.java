@@ -21,6 +21,7 @@ import com.google.gson.JsonObject;
 /**
  * {@link InstanceRef} is a reference to an {@link Instance}.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class InstanceRef extends ObjRef {
 
   public InstanceRef(JsonObject json) {

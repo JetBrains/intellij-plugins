@@ -22,6 +22,7 @@ import com.google.gson.JsonObject;
  * A {@link TypeArguments} object represents the type argument vector for some instantiated generic
  * type.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class TypeArguments extends Obj {
 
   public TypeArguments(JsonObject json) {

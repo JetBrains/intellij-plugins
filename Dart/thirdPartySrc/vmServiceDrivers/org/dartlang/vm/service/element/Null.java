@@ -20,6 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * A {@link Null} object represents the Dart language value null.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class Null extends Instance {
 
   public Null(JsonObject json) {

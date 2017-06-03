@@ -20,6 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * {@link IsolateRef} is a reference to an {@link Isolate} object.
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class IsolateRef extends Response {
 
   public IsolateRef(JsonObject json) {

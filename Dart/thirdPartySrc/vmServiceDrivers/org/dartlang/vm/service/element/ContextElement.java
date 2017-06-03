@@ -18,6 +18,7 @@ package org.dartlang.vm.service.element;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
 public class ContextElement extends Element {
 
   public ContextElement(JsonObject json) {
