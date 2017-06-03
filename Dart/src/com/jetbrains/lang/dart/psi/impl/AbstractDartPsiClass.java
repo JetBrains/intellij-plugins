@@ -2,21 +2,30 @@ package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.*;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashMap;
+import org.dartlang.analysis.server.protocol.Element;
+import org.dartlang.analysis.server.protocol.Location;
+import org.dartlang.analysis.server.protocol.TypeHierarchyItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static com.intellij.util.ObjectUtils.assertNotNull;
+import static com.intellij.util.indexing.DebugAssertions.assertTrue;
 
 abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl implements DartClass {
 
@@ -193,5 +202,29 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
   @Override
   public DartComponent findNamedConstructor(final String name) {
     return ContainerUtil.find(getConstructors(), component -> name.equals(component.getName()));
+  }
+
+  @Override
+  public boolean isInheritor(@NotNull DartClass dartClass) {
+    if (isEnum()) {
+      return !("Object".equals(dartClass.getName()) && (dartClass.getSuperClass() == null));
+    }
+    int superclassOffset = dartClass.getTextOffset();
+    String superclassFileName = dartClass.getContainingFile().getVirtualFile().getCanonicalPath();
+    assert superclassFileName != null;
+    List<TypeHierarchyItem> types = DartHierarchyUtil.getTypeHierarchyItems(this);
+    for (TypeHierarchyItem item : types) {
+      Element element = item.getClassElement();
+      Location loc = element.getLocation();
+      int candidateOffset = loc.getOffset();
+      if (candidateOffset != superclassOffset) {
+        continue;
+      }
+      String candidateFileName = loc.getFile();
+      if (superclassFileName.equals(candidateFileName)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
