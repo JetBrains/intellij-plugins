@@ -14,7 +14,7 @@ import org.jetbrains.plugins.ruby.console.config.IrbConsoleBuilder;
 import org.jetbrains.plugins.ruby.console.config.IrbRunConfiguration;
 import org.jetbrains.plugins.ruby.console.config.IrbRunConfigurationType;
 import org.jetbrains.plugins.ruby.motion.RubyMotionUtil;
-import org.jetbrains.plugins.ruby.ruby.run.configuration.RubyRunner;
+import org.jetbrains.plugins.ruby.ruby.run.configuration.RubyProgramRunner;
 import org.jetbrains.plugins.ruby.tasks.rake.runConfigurations.RakeConsoleModifier;
 import org.jetbrains.plugins.ruby.tasks.rake.runConfigurations.RakeRunConfiguration;
 
@@ -55,6 +55,12 @@ public class SimulatorRakeConsoleModifier implements RakeConsoleModifier {
            new MotionProcessHandler(module, cmd.createProcess(), cmd.getCommandLineString(), runnerId, readers);
   }
 
+  @NotNull
+  @Override
+  public String overrideRunnerId(String id) {
+    return RubyProgramRunner.RUBY_RUNNER_ID;
+  }
+
   private static boolean simulator(RakeRunConfiguration config) {
     final Module module = config.getModule();
     assert module != null;
@@ -63,11 +69,5 @@ public class SimulatorRakeConsoleModifier implements RakeConsoleModifier {
 
   private static boolean onDevice(RakeRunConfiguration config) {
     return config.getTaskName().contains("device");
-  }
-
-  @NotNull
-  @Override
-  public String overrideRunnerId(String id) {
-    return RubyRunner.RUBY_RUNNER_ID;
   }
 }
