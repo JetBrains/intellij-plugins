@@ -91,7 +91,7 @@ JSFile:ConditionalBlocks.js2
                 PsiElement(JS:RPAR)(')')
             PsiElement(JS:SEMICOLON)(';')
           PsiWhiteSpace('\n\n            ')
-          JSBlockStatement
+          ActionScriptConditionalCompileBlock
             ActionScriptAttributeList
               JSConditionalCompileVariableReference
                 JSReferenceExpression
@@ -209,7 +209,7 @@ JSFile:ConditionalBlocks.js2
     PsiWhiteSpace('\n')
     PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  JSBlockStatement
+  ActionScriptConditionalCompileBlock
     ActionScriptAttributeList
       JSConditionalCompileVariableReference
         JSReferenceExpression
