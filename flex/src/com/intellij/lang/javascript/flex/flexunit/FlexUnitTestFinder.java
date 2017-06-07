@@ -18,7 +18,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.GlobalSearchScopes;
+import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
@@ -110,7 +110,8 @@ public class FlexUnitTestFinder implements TestFinder {
     }
 
     final GlobalSearchScope scope =
-      GlobalSearchScope.moduleWithDependenciesScope(module).intersectWith(GlobalSearchScopes.projectProductionScope(module.getProject()));
+      GlobalSearchScope.moduleWithDependenciesScope(module)
+        .intersectWith(GlobalSearchScopesCore.projectProductionScope(module.getProject()));
 
     final List<Pair<? extends PsiNamedElement, Integer>> classesWithWeights = new ArrayList<>();
     for (Pair<String, Integer> nameWithWeight : TestFinderHelper.collectPossibleClassNamesWithWeights(className)) {
@@ -128,7 +129,8 @@ public class FlexUnitTestFinder implements TestFinder {
   public boolean isTest(@NotNull final PsiElement element) {
     final JSClass jsClass = findSourceElement(element);
     final Pair<Module, FlexUnitSupport> moduleAndSupport = FlexUnitSupport.getModuleAndSupport(element);
-    final VirtualFile file = element.getContainingFile().getVirtualFile();
+    final PsiFile psiFile = element.getContainingFile();
+    final VirtualFile file = psiFile != null ? psiFile.getVirtualFile() : null;
     return jsClass != null && moduleAndSupport != null &&
            ((file != null && file.getName().contains("Test") &&
              ModuleRootManager.getInstance(moduleAndSupport.first).getFileIndex().isInTestSourceContent(file))
