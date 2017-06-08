@@ -19,6 +19,8 @@ public interface MakefileTypes {
   IElementType EMPTY_COMMAND = new MakefileElementType("EMPTY_COMMAND");
   IElementType EXPORT = new MakefileElementType("EXPORT");
   IElementType FILENAME = new MakefileElementType("FILENAME");
+  IElementType FUNCTION = new MakefileElementType("FUNCTION");
+  IElementType FUNCTION_PARAM = new MakefileElementType("FUNCTION_PARAM");
   IElementType INCLUDE = new MakefileElementType("INCLUDE");
   IElementType NORMAL_PREREQUISITES = new MakefileElementType("NORMAL_PREREQUISITES");
   IElementType ORDER_ONLY_PREREQUISITES = new MakefileElementType("ORDER_ONLY_PREREQUISITES");
@@ -37,6 +39,7 @@ public interface MakefileTypes {
   IElementType UNDEFINE = new MakefileElementType("UNDEFINE");
   IElementType VARIABLE = new MakefileElementType("VARIABLE");
   IElementType VARIABLE_ASSIGNMENT = new MakefileElementType("VARIABLE_ASSIGNMENT");
+  IElementType VARIABLE_USAGE = new MakefileElementType("VARIABLE_USAGE");
   IElementType VARIABLE_VALUE = new MakefileElementType("VARIABLE_VALUE");
   IElementType VPATH = new MakefileElementType("VPATH");
 
@@ -45,6 +48,11 @@ public interface MakefileTypes {
   IElementType CONDITION = new MakefileTokenType("condition");
   IElementType DOUBLECOLON = new MakefileTokenType("::");
   IElementType EOL = new MakefileTokenType("EOL");
+  IElementType FUNCTION_END = new MakefileTokenType(")");
+  IElementType FUNCTION_ERROR = new MakefileTokenType("$(error");
+  IElementType FUNCTION_INFO = new MakefileTokenType("$(info");
+  IElementType FUNCTION_SHELL = new MakefileTokenType("$(shell");
+  IElementType FUNCTION_WARNING = new MakefileTokenType("$(warning");
   IElementType IDENTIFIER = new MakefileTokenType("identifier");
   IElementType KEYWORD_DEFINE = new MakefileTokenType("define");
   IElementType KEYWORD_ELSE = new MakefileTokenType("else");
@@ -103,6 +111,12 @@ public interface MakefileTypes {
       else if (type == FILENAME) {
         return new MakefileFilenameImpl(node);
       }
+      else if (type == FUNCTION) {
+        return new MakefileFunctionImpl(node);
+      }
+      else if (type == FUNCTION_PARAM) {
+        return new MakefileFunctionParamImpl(node);
+      }
       else if (type == INCLUDE) {
         return new MakefileIncludeImpl(node);
       }
@@ -156,6 +170,9 @@ public interface MakefileTypes {
       }
       else if (type == VARIABLE_ASSIGNMENT) {
         return new MakefileVariableAssignmentImpl(node);
+      }
+      else if (type == VARIABLE_USAGE) {
+        return new MakefileVariableUsageImpl(node);
       }
       else if (type == VARIABLE_VALUE) {
         return new MakefileVariableValueImpl(node);

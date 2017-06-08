@@ -32,6 +32,12 @@
     KEYWORD_EXPORT = "export"
     KEYWORD_PRIVATE = "private"
     KEYWORD_VPATH = "vpath"
+
+    FUNCTION_ERROR = "$(error"
+    FUNCTION_WARNING = "$(warning"
+    FUNCTION_INFO = "$(info"
+    FUNCTION_SHELL = "$(shell"
+    FUNCTION_END = ")"
   ]
 
   psiImplUtilClass = "name.kropp.intellij.makefile.psi.MakefilePsiImplUtil"
@@ -39,7 +45,7 @@
 
 makefile ::= any
 
-private any ::= (topconditional|rule|variable-assignment|directive)*
+private any ::= (topconditional|rule|variable-assignment|directive|function)*
 
 private directive ::= define|include|undefine|override|export|privatevar|vpath
 
@@ -65,7 +71,7 @@ private conditional-keyword ::= ('ifeq'|'ifneq'|'ifdef'|'ifndef')
 
 branch ::= (conditional|command|variable-assignment)*
 
-meta variable-assignment ::= variable assignment variable-value? {pin=2 methods=[getAssignment getValue]}
+meta variable-assignment ::= variable assignment (function|variable-value?) {pin=2 methods=[getAssignment getValue]}
 private assignment ::= ('='|':='|'::='|'?='|'!='|'+=')
 variable ::= identifier
 meta variable-value ::= line? (split line)*
@@ -85,6 +91,10 @@ directory ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileF
 
 topconditional ::= conditional-keyword condition block ('else' block)* 'endif' {pin=1}
 block ::= any
+
+function ::= ('$(error'|'$(warning'|'$(info'|'$(shell') function-param* ')'
+meta function-param ::= variable-value-line|variable_usage
+variable_usage ::= identifier
 
 comment ::=
 doc_comment ::=

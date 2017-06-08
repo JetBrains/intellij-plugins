@@ -28,6 +28,10 @@ SPACES=" "+
 BACKSLASHCRLF="\\"(\r|\n|\r\n)
 DOCCOMMENT="##"[^\r\n]*
 COMMENT="#"[^\r\n]*
+ERROR="$(error"
+WARNING="$(warning"
+INFO="$(info"
+SHELL="$(shell"
 VARIABLE_VALUE=[^\r\n]*[^\\\r\n]
 COLON=":"
 DOUBLECOLON="::"
@@ -39,12 +43,23 @@ FILENAME_CHARACTER=[^:=!?#\ \r\n\t]
 VARIABLE_USAGE="$("[^)]*")"
 CONDITION_CHARACTER=[^#\r\n]
 
-%state PREREQUISITES INCLUDES SOURCE DEFINE DEFINEBODY CONDITIONALS
+%state PREREQUISITES INCLUDES SOURCE DEFINE DEFINEBODY CONDITIONALS FUNCTION
 
 %%
 
 {DOCCOMMENT}           { return DOC_COMMENT; }
 {COMMENT}              { return COMMENT; }
+
+{ERROR}                { yybegin(FUNCTION); return FUNCTION_ERROR; }
+{WARNING}              { yybegin(FUNCTION); return FUNCTION_WARNING; }
+{INFO}                 { yybegin(FUNCTION); return FUNCTION_INFO; }
+{SHELL}                { yybegin(FUNCTION); return FUNCTION_SHELL; }
+
+<FUNCTION> {
+  ")"           { yybegin(YYINITIAL); return FUNCTION_END; }
+  [^$)]*        { return VARIABLE_VALUE_LINE; }
+  {VARIABLE_USAGE} { return IDENTIFIER; }
+}
 
 <YYINITIAL> {
     ^\t+               { yybegin(SOURCE); return TAB; }

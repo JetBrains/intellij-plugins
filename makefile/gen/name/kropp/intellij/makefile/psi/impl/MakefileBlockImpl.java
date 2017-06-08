@@ -1,15 +1,14 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile.psi.impl;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import name.kropp.intellij.makefile.psi.*;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class MakefileBlockImpl extends ASTWrapperPsiElement implements MakefileBlock {
 
@@ -36,6 +35,12 @@ public class MakefileBlockImpl extends ASTWrapperPsiElement implements MakefileB
   @NotNull
   public List<MakefileExport> getExportList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileExport.class);
+  }
+
+  @Override
+  @NotNull
+  public List<MakefileFunction> getFunctionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileFunction.class);
   }
 
   @Override

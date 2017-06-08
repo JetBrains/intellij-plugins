@@ -1,9 +1,10 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile.psi;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public interface MakefileBlock extends PsiElement {
 
@@ -12,6 +13,9 @@ public interface MakefileBlock extends PsiElement {
 
   @NotNull
   List<MakefileExport> getExportList();
+
+  @NotNull
+  List<MakefileFunction> getFunctionList();
 
   @NotNull
   List<MakefileInclude> getIncludeList();
