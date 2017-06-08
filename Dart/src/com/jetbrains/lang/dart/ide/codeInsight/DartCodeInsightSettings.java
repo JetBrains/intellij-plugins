@@ -29,6 +29,7 @@ public class DartCodeInsightSettings implements PersistentStateComponent<DartCod
   }
 
   public boolean INSERT_DEFAULT_ARG_VALUES = true;
+  public boolean TRAILING_COMMAS_AFTER_CONS_ARGS = false;
 
   @Override
   public DartCodeInsightSettings getState() {

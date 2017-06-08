@@ -12,6 +12,7 @@ import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -121,4 +122,27 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     selectLookup("package:projectName/libFile.dart", Lookup.REPLACE_SELECT_CHAR);
     myFixture.checkResultByFile(testName + ".after.dart");
   }
+
+  public void testTrailingCommas() throws Throwable {
+    final DartCodeInsightSettings settings = DartCodeInsightSettings.getInstance();
+    final boolean current = settings.TRAILING_COMMAS_AFTER_CONS_ARGS;
+    try {
+      settings.TRAILING_COMMAS_AFTER_CONS_ARGS = true;
+      doTest();
+    } finally {
+      settings.TRAILING_COMMAS_AFTER_CONS_ARGS = current;
+    }
+  }
+
+  public void testTrailingCommas2() throws Throwable {
+    final DartCodeInsightSettings settings = DartCodeInsightSettings.getInstance();
+    final boolean current = settings.TRAILING_COMMAS_AFTER_CONS_ARGS;
+    try {
+      settings.TRAILING_COMMAS_AFTER_CONS_ARGS = true;
+      doTest();
+    } finally {
+      settings.TRAILING_COMMAS_AFTER_CONS_ARGS = current;
+    }
+  }
+
 }
