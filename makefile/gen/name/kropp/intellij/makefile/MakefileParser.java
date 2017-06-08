@@ -201,15 +201,13 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '\t'* line (split line)*
+  // '\t'* (line (split line)* | (split line)+)
   public static boolean command(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "command")) return false;
-    if (!nextTokenIs(b, "<command>", TAB, LINE)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, COMMAND, "<command>");
     r = command_0(b, l + 1);
-    r = r && consumeToken(b, LINE);
-    r = r && command_2(b, l + 1);
+    r = r && command_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -226,21 +224,69 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return true;
   }
 
+  // line (split line)* | (split line)+
+  private static boolean command_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "command_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = command_1_0(b, l + 1);
+    if (!r) r = command_1_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // line (split line)*
+  private static boolean command_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "command_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, LINE);
+    r = r && command_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
   // (split line)*
-  private static boolean command_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "command_2")) return false;
+  private static boolean command_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "command_1_0_1")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!command_2_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "command_2", c)) break;
+      if (!command_1_0_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "command_1_0_1", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
   // split line
-  private static boolean command_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "command_2_0")) return false;
+  private static boolean command_1_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "command_1_0_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, SPLIT, LINE);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (split line)+
+  private static boolean command_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "command_1_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = command_1_1_0(b, l + 1);
+    int c = current_position_(b);
+    while (r) {
+      if (!command_1_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "command_1_1", c)) break;
+      c = current_position_(b);
+    }
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // split line
+  private static boolean command_1_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "command_1_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeTokens(b, 0, SPLIT, LINE);
