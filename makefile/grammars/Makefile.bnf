@@ -51,7 +51,8 @@ private directive ::= define|include|undefine|override|export|privatevar|vpath
 
 rule ::= target_line recipe {methods=[getTargets]}
 recipe ::= (command|conditional|empty_command)* {methods=[isEmpty]}
-command ::= '\t'* (line (split line)* | (split line)+)
+command ::= '\t'* multiline
+private multiline ::= (line (split line?)* | (split line?)+)
 empty_command ::= '\t'+
 
 target_line ::= targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|variable-assignment|prerequisites ';'? EOL?) {pin=2 methods=[getTargetName]}
@@ -74,7 +75,7 @@ branch ::= (conditional|command|variable-assignment)*
 meta variable-assignment ::= variable assignment (function|variable-value?) {pin=2 methods=[getAssignment getValue]}
 private assignment ::= ('='|':='|'::='|'?='|'!='|'+=')
 variable ::= identifier
-meta variable-value ::= line? (split line)*
+meta variable-value ::= multiline
 define ::= 'define' variable assignment? (variable-value-line split?)* 'endef' {pin=1 methods=[getAssignment getValue]}
 undefine ::= 'undefine' variable EOL {pin=1}
 override ::= 'override' variable-assignment {pin=1}

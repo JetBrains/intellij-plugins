@@ -4,9 +4,7 @@ Makefile
       PsiElement(identifier)('FOO')
     PsiWhiteSpace(' ')
     PsiElement(=)(':=')
-    PsiWhiteSpace('\n\n')
-    MakefileVariableValueImpl(VARIABLE_VALUE)
-      <empty list>
+  PsiWhiteSpace('\n\n')
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)
       MakefileTargetsImpl(TARGETS)

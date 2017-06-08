@@ -62,9 +62,7 @@ Makefile
       PsiElement(identifier)('EMPTY')
     PsiWhiteSpace(' ')
     PsiElement(=)('=')
-    PsiWhiteSpace('\n')
-    MakefileVariableValueImpl(VARIABLE_VALUE)
-      <empty list>
+  PsiWhiteSpace('\n')
   MakefileVariableAssignmentImpl(VARIABLE_ASSIGNMENT)
     MakefileVariableImpl(VARIABLE)
       PsiElement(identifier)('GCC')
