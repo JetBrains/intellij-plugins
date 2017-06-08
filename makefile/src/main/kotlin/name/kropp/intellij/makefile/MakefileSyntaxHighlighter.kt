@@ -20,8 +20,11 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
     val PREREQUISITE = createTextAttributesKey("MAKEFILE_PREREQUISITE", DefaultLanguageHighlighterColors.INSTANCE_METHOD)
     val VARIABLE = createTextAttributesKey("MAKEFILE_VARIABLE", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE)
     val VARIABLE_VALUE = createTextAttributesKey("MAKEFILE_VARIABLE_VALUE", DefaultLanguageHighlighterColors.STRING)
+    val VARIABLE_USAGE = createTextAttributesKey("MAKEFILE_VARIABLE_USAGE", DefaultLanguageHighlighterColors.LOCAL_VARIABLE)
     val LINE_SPLIT = createTextAttributesKey("MAKEFILE_LINE_SPLIT", DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE)
     val TAB = createTextAttributesKey("MAKEFILE_TAB", DefaultLanguageHighlighterColors.TEMPLATE_LANGUAGE_COLOR)
+    val FUNCTION = createTextAttributesKey("MAKEFILE_FUNCTION", DefaultLanguageHighlighterColors.FUNCTION_CALL)
+    val FUNCTION_PARAM = createTextAttributesKey("MAKEFILE_FUNCTION_PARAM", DefaultLanguageHighlighterColors.STRING)
     val BAD_CHARACTER = createTextAttributesKey("MAKEFILE_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER)
 
     private val BAD_CHAR_KEYS = arrayOf(BAD_CHARACTER)

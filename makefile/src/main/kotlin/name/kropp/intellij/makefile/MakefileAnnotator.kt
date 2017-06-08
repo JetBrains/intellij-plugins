@@ -60,6 +60,12 @@ class MakefileAnnotator : Annotator {
       element.node.getChildren(lineTokenSet).forEach {
         holder.createInfoAnnotation(it, null).textAttributes = MakefileSyntaxHighlighter.VARIABLE_VALUE
       }
+    } else if (element is MakefileFunction) {
+      holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.FUNCTION
+    } else if (element is MakefileFunctionParam) {
+      holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.FUNCTION_PARAM
+    } else if (element is MakefileVariableUsage) {
+      holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.VARIABLE_USAGE
     }
   }
 
