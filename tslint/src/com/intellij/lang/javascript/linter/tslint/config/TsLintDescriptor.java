@@ -32,6 +32,11 @@ public final class TsLintDescriptor extends JSLinterDescriptor {
   }
 
   @Override
+  public boolean usesLanguageService() {
+    return true;
+  }
+
+  @Override
   public boolean enable(@NotNull Project project) {
     final PackageJsonData packageJson = PackageJsonUtil.getTopLevelPackageJsonData(project);
     // skip if there is tslint-language-service

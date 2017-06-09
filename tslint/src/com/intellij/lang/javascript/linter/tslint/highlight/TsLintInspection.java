@@ -4,6 +4,8 @@ import com.intellij.codeInsight.daemon.HighlightDisplayKey;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.linter.JSLinterInspection;
 import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
+import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +24,11 @@ public final class TsLintInspection extends JSLinterInspection {
 
   public static HighlightDisplayKey getHighlightDisplayKey() {
     return JSLinterInspection.getHighlightDisplayKeyByClass(TsLintInspection.class);
+  }
+
+  @Override
+  protected void ensureServiceStopped(@NotNull Project project) {
+    TsLintLanguageService.getService(project).terminateStartedProcess(false);
   }
 
   @Nls
