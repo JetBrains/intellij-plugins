@@ -39,7 +39,6 @@ public interface MakefileTypes {
   IElementType UNDEFINE = new MakefileElementType("UNDEFINE");
   IElementType VARIABLE = new MakefileElementType("VARIABLE");
   IElementType VARIABLE_ASSIGNMENT = new MakefileElementType("VARIABLE_ASSIGNMENT");
-  IElementType VARIABLE_USAGE = new MakefileElementType("VARIABLE_USAGE");
   IElementType VARIABLE_VALUE = new MakefileElementType("VARIABLE_VALUE");
   IElementType VPATH = new MakefileElementType("VPATH");
 
@@ -51,6 +50,7 @@ public interface MakefileTypes {
   IElementType FUNCTION_END = new MakefileTokenType(")");
   IElementType FUNCTION_ERROR = new MakefileTokenType("$(error");
   IElementType FUNCTION_INFO = new MakefileTokenType("$(info");
+  IElementType FUNCTION_PARAM_TEXT = new MakefileTokenType("function-param-text");
   IElementType FUNCTION_SHELL = new MakefileTokenType("$(shell");
   IElementType FUNCTION_WARNING = new MakefileTokenType("$(warning");
   IElementType IDENTIFIER = new MakefileTokenType("identifier");
@@ -73,6 +73,7 @@ public interface MakefileTypes {
   IElementType SEMICOLON = new MakefileTokenType(";");
   IElementType SPLIT = new MakefileTokenType("split");
   IElementType TAB = new MakefileTokenType("\\t");
+  IElementType VARIABLE_USAGE = new MakefileTokenType("variable_usage");
   IElementType VARIABLE_VALUE_LINE = new MakefileTokenType("variable-value-line");
 
   class Factory {
@@ -170,9 +171,6 @@ public interface MakefileTypes {
       }
       else if (type == VARIABLE_ASSIGNMENT) {
         return new MakefileVariableAssignmentImpl(node);
-      }
-      else if (type == VARIABLE_USAGE) {
-        return new MakefileVariableUsageImpl(node);
       }
       else if (type == VARIABLE_VALUE) {
         return new MakefileVariableValueImpl(node);

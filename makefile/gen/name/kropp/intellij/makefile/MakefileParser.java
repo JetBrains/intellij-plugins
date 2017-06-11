@@ -110,9 +110,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     else if (t == VARIABLE) {
       r = variable(b, 0);
     }
-    else if (t == VARIABLE_USAGE) {
-      r = variable_usage(b, 0);
-    }
     else if (t == VPATH) {
       r = vpath(b, 0);
     }
@@ -495,14 +492,14 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // variable-value-line|variable_usage
+  // function-param-text|variable_usage
   public static boolean function_param(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_param")) return false;
-    if (!nextTokenIs(b, "", IDENTIFIER, VARIABLE_VALUE_LINE)) return false;
+    if (!nextTokenIs(b, "", FUNCTION_PARAM_TEXT, VARIABLE_USAGE)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, VARIABLE_VALUE_LINE);
-    if (!r) r = variable_usage(b, l + 1);
+    r = consumeToken(b, FUNCTION_PARAM_TEXT);
+    if (!r) r = consumeToken(b, VARIABLE_USAGE);
     exit_section_(b, m, FUNCTION_PARAM, r);
     return r;
   }
@@ -788,14 +785,15 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // identifier
+  // identifier|variable_usage
   public static boolean prerequisite(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "prerequisite")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    if (!nextTokenIs(b, "<prerequisite>", IDENTIFIER, VARIABLE_USAGE)) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _NONE_, PREREQUISITE, "<prerequisite>");
     r = consumeToken(b, IDENTIFIER);
-    exit_section_(b, m, PREREQUISITE, r);
+    if (!r) r = consumeToken(b, VARIABLE_USAGE);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -1118,18 +1116,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = multiline(b, l + 1);
     exit_section_(b, m, VARIABLE_VALUE, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // identifier
-  public static boolean variable_usage(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "variable_usage")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, IDENTIFIER);
-    exit_section_(b, m, VARIABLE_USAGE, r);
     return r;
   }
 

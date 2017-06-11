@@ -35,6 +35,8 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
     private val PREREQUISITE_KEYS = arrayOf(PREREQUISITE)
     private val VARIABLE_KEYS = arrayOf(VARIABLE)
     private val VARIABLE_VALUE_KEYS = arrayOf(VARIABLE_VALUE)
+    private val VARIABLE_USAGE_KEYS = arrayOf(VARIABLE_USAGE)
+    private val FUNCTION_PARAM_KEYS = arrayOf(FUNCTION_PARAM)
     private val LINE_SPLIT_KEYS = arrayOf(LINE_SPLIT)
     private val TAB_KEYS = arrayOf(TAB)
     private val COMMENT_KEYS = arrayOf(COMMENT)
@@ -53,6 +55,8 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
     MakefileTypes.VARIABLE_VALUE -> VARIABLE_VALUE_KEYS
     MakefileTypes.SPLIT -> LINE_SPLIT_KEYS
     MakefileTypes.TAB -> TAB_KEYS
+    MakefileTypes.FUNCTION_PARAM_TEXT -> FUNCTION_PARAM_KEYS
+    MakefileTypes.VARIABLE_USAGE -> VARIABLE_USAGE_KEYS
     TokenType.BAD_CHARACTER -> BAD_CHAR_KEYS
     else -> EMPTY_KEYS
   }

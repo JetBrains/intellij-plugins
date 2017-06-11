@@ -135,10 +135,6 @@ public class MakefileVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitVariableUsage(@NotNull MakefileVariableUsage o) {
-    visitPsiElement(o);
-  }
-
   public void visitVpath(@NotNull MakefileVpath o) {
     visitPsiElement(o);
   }

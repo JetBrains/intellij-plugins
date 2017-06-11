@@ -64,7 +64,7 @@ target_pattern ::= identifier
 prerequisites ::= normal_prerequisites ('|' order_only_prerequisites)?
 normal_prerequisites ::= prerequisite* (split prerequisite*)*
 order_only_prerequisites ::= prerequisite* (split prerequisite*)*
-prerequisite ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteMixin" methods=[updateText isPhonyTarget]}
+prerequisite ::= identifier|variable_usage {mixin="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteMixin" methods=[updateText isPhonyTarget]}
 
 conditional ::= conditional-keyword condition branch ('else' branch)* 'endif'
 
@@ -94,8 +94,7 @@ topconditional ::= conditional-keyword condition block ('else' block)* 'endif' {
 block ::= any
 
 function ::= ('$(error'|'$(warning'|'$(info'|'$(shell') function-param* ')'
-meta function-param ::= variable-value-line|variable_usage
-variable_usage ::= identifier
+meta function-param ::= function-param-text|variable_usage
 
 comment ::=
 doc_comment ::=

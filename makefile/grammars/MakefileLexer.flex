@@ -40,7 +40,7 @@ PIPE="|"
 ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 
 FILENAME_CHARACTER=[^:=!?#\ \r\n\t]
-VARIABLE_USAGE="$("[^)]*")"
+VARIABLE_USAGE_EXPR="$("[^)]*")"
 CONDITION_CHARACTER=[^#\r\n]
 
 %state PREREQUISITES INCLUDES SOURCE DEFINE DEFINEBODY CONDITIONALS FUNCTION
@@ -57,8 +57,8 @@ CONDITION_CHARACTER=[^#\r\n]
 
 <FUNCTION> {
   ")"           { yybegin(YYINITIAL); return FUNCTION_END; }
-  [^$)]*        { return VARIABLE_VALUE_LINE; }
-  {VARIABLE_USAGE} { return IDENTIFIER; }
+  [^$)]*        { return FUNCTION_PARAM_TEXT; }
+  {VARIABLE_USAGE_EXPR} { return VARIABLE_USAGE; }
 }
 
 <YYINITIAL> {
@@ -97,7 +97,7 @@ CONDITION_CHARACTER=[^#\r\n]
     {DOUBLECOLON}           { return DOUBLECOLON; }
     {COLON}                 { return COLON; }
     {SEMICOLON}             { yybegin(SOURCE); return SEMICOLON; }
-    {VARIABLE_USAGE}        { return IDENTIFIER; }
+    {VARIABLE_USAGE_EXPR}   { return VARIABLE_USAGE; }
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }
     {EOL}                   { yybegin(YYINITIAL); return EOL; }
     <<EOF>>                 { yypushback(yylength()); yybegin(YYINITIAL); return EOL; }
