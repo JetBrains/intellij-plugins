@@ -39,6 +39,8 @@ It is now possible to set up environment variables for Makefile run configuratio
     <lang.elementManipulator implementationClass="name.kropp.intellij.makefile.psi.MakefilePrerequisiteManipulator"
                              forClass="name.kropp.intellij.makefile.psi.MakefilePrerequisite"/>
     <documentationProvider implementation="name.kropp.intellij.makefile.MakefileDocumentationProvider"/>
+
+    <internalFileTemplate name="Makefile" />
   </extensions>
 
   <actions>
