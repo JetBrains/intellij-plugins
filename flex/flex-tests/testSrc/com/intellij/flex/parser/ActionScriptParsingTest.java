@@ -2,6 +2,7 @@ package com.intellij.flex.parser;
 
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.LanguageASTFactory;
+import com.intellij.lang.javascript.JSParsingTestBase;
 import com.intellij.lang.javascript.JavascriptASTFactory;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.JavascriptParserDefinition;
@@ -10,9 +11,8 @@ import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.lang.xml.XmlASTFactory;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.xml.StartTagEndTokenProvider;
-import com.intellij.testFramework.ParsingTestCase;
 
-public class ActionScriptParsingTest extends ParsingTestCase {
+public class ActionScriptParsingTest extends JSParsingTestBase {
   public ActionScriptParsingTest() {
     super("", "js2", new ECMAL4ParserDefinition(), new JavascriptParserDefinition());
   }
