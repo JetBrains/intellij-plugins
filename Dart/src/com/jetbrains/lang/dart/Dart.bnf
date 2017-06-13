@@ -530,7 +530,7 @@ private assignExpressionWrapper ::= ternaryExpressionWrapper assignExpression*
 left assignExpression ::= assignmentOperator ternaryExpressionWrapper {pin=1} // todo right associate
 
 private ternaryExpressionWrapper ::= ifNullExpressionWrapper ternaryExpression?
-left ternaryExpression ::= '?' expression ':' ternaryExpressionWrapper
+left ternaryExpression ::= '?' expression ':' ternaryExpressionWrapper {pin=1}
 
 private ifNullExpressionWrapper ::= logicOrExpressionWrapper ifNullExpression*
 left ifNullExpression ::= '??' logicOrExpressionWrapper
