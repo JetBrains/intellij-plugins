@@ -105,14 +105,19 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
                             parent instanceof JSCallExpression ?
                             ((JSClass)resolveResult).getQualifiedName():"Class";
     JSTypeSource source = JSTypeSourceFactory.createTypeSource(expression);
-    JSType type = JSNamedType.createType(psiElementType, source, JSContext.UNKNOWN);
-    if (JSTypeUtils.isActionScriptVectorType(type)) {
-      type = JSTypeUtils.createType(JSImportHandlingUtil.resolveTypeName(expression.getText(), expression), source);
-    }
+    JSType namedType = JSNamedType.createType(psiElementType, source, JSContext.UNKNOWN);
+    JSType type = JSTypeUtils.isActionScriptVectorType(namedType) ?
+                  JSTypeUtils.createType(JSImportHandlingUtil.resolveTypeName(expression.getText(), expression), source) :
+                  namedType;
     final JSApplyContextElement peek = myContext.peekJSElementToApply();
-    if (peek instanceof JSApplyCallElement) myContext.popJSElementToApply(); // MyClass(anyVar) is cast to MyClass
-    addType(type, resolveResult);
-    if (peek instanceof JSApplyCallElement) myContext.pushJSElementToApply(peek);
+    if (peek instanceof JSApplyCallElement) {
+      // MyClass(anyVar) is cast to MyClass
+      PsiElement classResolveResult = resolveResult;
+      myContext.processWithoutTopJSElementToApply(() -> addType(type, classResolveResult));
+    }
+    else {
+      addType(type, resolveResult);
+    }
   }
 
   @Override
