@@ -151,7 +151,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   public void testAttrValueWithPropPrefix() throws Throwable {
     addComponentToProject("Count");
     initByComponent();
-    doTestBasicCompletionVariants("prop:strProp.chars", "prop:strProp.bytes");
+    doTestBasicCompletionVariants("prop:strProp.chars", "prop:strProp.bytes", "prop:strProp.empty");
   }
 
   public void testTapestryAttrValue() throws Throwable {
@@ -186,7 +186,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
 
   public void testTelSecondSegmentAfterProp() throws Throwable {
     initByComponent();
-    doTestBasicCompletionVariants("after", "before", "class", "clone", "compareTo", "compareTo", "date", "day", "equals", "getClass",
+    doTestBasicCompletionVariants("after", "before", "class", "clone", "compareTo", "date", "day", "equals", "getClass",
                                   "getDate", "getDay", "getHours", "getMinutes", "getMonth", "getSeconds", "getTime", "getTimezoneOffset",
                                   "getYear", "hashCode", "hours", "minutes", "month", "seconds", "setDate", "setHours", "setMinutes",
                                   "setMonth", "setSeconds", "setTime", "setYear", "time", "timezoneOffset", "toGMTString", "toLocaleString",
