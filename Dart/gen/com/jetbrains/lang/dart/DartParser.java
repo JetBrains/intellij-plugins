@@ -6314,14 +6314,15 @@ public class DartParser implements PsiParser, LightPsiParser {
   public static boolean ternaryExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ternaryExpression")) return false;
     if (!nextTokenIs(b, QUEST)) return false;
-    boolean r;
+    boolean r, p;
     Marker m = enter_section_(b, l, _LEFT_, TERNARY_EXPRESSION, null);
     r = consumeToken(b, QUEST);
-    r = r && expression(b, l + 1);
-    r = r && consumeToken(b, COLON);
-    r = r && ternaryExpressionWrapper(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, expression(b, l + 1));
+    r = p && report_error_(b, consumeToken(b, COLON)) && r;
+    r = p && ternaryExpressionWrapper(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */

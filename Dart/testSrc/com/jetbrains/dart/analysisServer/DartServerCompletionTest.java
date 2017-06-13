@@ -121,4 +121,8 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     selectLookup("package:projectName/libFile.dart", Lookup.REPLACE_SELECT_CHAR);
     myFixture.checkResultByFile(testName + ".after.dart");
   }
+
+  public void testIncompleteTernary() throws Throwable {
+    doTest();
+  }
 }
