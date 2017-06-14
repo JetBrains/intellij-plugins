@@ -912,4 +912,16 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
       }
     }
   }
+
+  @Override
+  protected void appendFunctionInfoDoc(@NotNull JSFunction function, @NotNull StringBuilder builder) {
+    JSType type = JSPsiImplUtils.getTypeFromDeclaration(function);
+
+    if (type != null && !"void".equals(type.getTypeText()) && !function.isGetProperty()) {
+      builder.append("* @return ");
+
+      //builder.append(s);
+      builder.append("\n");
+    }
+  }
 }
