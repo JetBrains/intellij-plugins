@@ -91,6 +91,8 @@ public class DartProjectComponent extends AbstractProjectComponent {
           excludeBuildAndPackagesFolders(module, pubspecYamlFile);
         }
       }
+
+      DartFileListener.scheduleDartPackageRootsUpdate(myProject);
     });
   }
 
