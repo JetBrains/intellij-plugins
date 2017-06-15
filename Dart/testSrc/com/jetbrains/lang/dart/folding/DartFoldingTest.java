@@ -124,4 +124,8 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
   public void testMultilineStrings() throws Exception {
     doTest();
   }
+
+  public void testNewExpression() throws Exception {
+    doTest();
+  }
 }
