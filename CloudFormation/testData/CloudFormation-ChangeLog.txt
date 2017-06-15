@@ -93,7 +93,7 @@ User Guide (API Version 2010-05-15)
                 + Why Use Designer?
                 + Interface Overview
                       # Canvas Pane
-                      # JSON Editor
+                      # JSON and YAML Editor
                 + How to Get Started
           o Walkthroughs
                 + Walkthrough: Use AWS CloudFormation Designer to Create a
@@ -181,6 +181,13 @@ User Guide (API Version 2010-05-15)
                 + AWS::CodeDeploy::DeploymentGroup
                 + AWS::CodePipeline::CustomActionType
                 + AWS::CodePipeline::Pipeline
+                + AWS::Cognito::IdentityPool
+                + AWS::Cognito::IdentityPoolRoleAttachment
+                + AWS::Cognito::UserPool
+                + AWS::Cognito::UserPoolClient
+                + AWS::Cognito::UserPoolGroup
+                + AWS::Cognito::UserPoolUser
+                + AWS::Cognito::UserPoolUserToGroupAttachment
                 + AWS::Config::ConfigRule
                 + AWS::Config::ConfigurationRecorder
                 + AWS::Config::DeliveryChannel
@@ -248,6 +255,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::Elasticsearch::Domain
                 + AWS::EMR::Cluster
                 + AWS::EMR::InstanceGroupConfig
+                + AWS::EMR::SecurityConfiguration
                 + AWS::EMR::Step
                 + AWS::Events::Rule
                 + AWS::GameLift::Alias
@@ -316,6 +324,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::SQS::QueuePolicy
                 + AWS::SSM::Association
                 + AWS::SSM::Document
+                + AWS::SSM::Parameter
                 + AWS::StepFunctions::Activity
                 + AWS::StepFunctions::StateMachine
                 + AWS::WAF::ByteMatchSet
@@ -325,6 +334,14 @@ User Guide (API Version 2010-05-15)
                 + AWS::WAF::SqlInjectionMatchSet
                 + AWS::WAF::WebACL
                 + AWS::WAF::XssMatchSet
+                + AWS::WAFRegional::ByteMatchSet
+                + AWS::WAFRegional::IPSet
+                + AWS::WAFRegional::Rule
+                + AWS::WAFRegional::SizeConstraintSet
+                + AWS::WAFRegional::SqlInjectionMatchSet
+                + AWS::WAFRegional::WebACL
+                + AWS::WAFRegional::WebACLAssociation
+                + AWS::WAFRegional::XssMatchSet
                 + AWS::WorkSpaces::Workspace
           o Resource Property Types
                 + API Gateway ApiKey StageKey
@@ -349,7 +366,7 @@ User Guide (API Version 2010-05-15)
                 + Auto Scaling ScalingPolicy StepAdjustments
                 + Auto Scaling Tags
                 + ACM Certificate DomainValidationOption
-                + CloudFormation Stack Parameters
+                + AWS CloudFormation Stack Parameters
                 + AWS CloudFormation Interface Label
                 + AWS CloudFormation Interface ParameterGroup
                 + AWS CloudFormation Interface ParameterLabel
@@ -398,6 +415,26 @@ User Guide (API Version 2010-05-15)
                 + AWS CodePipeline Pipeline Stages Actions InputArtifacts
                 + AWS CodePipeline Pipeline Stages Actions OutputArtifacts
                 + AWS CodePipeline Pipeline Stages Blockers
+                + Amazon Cognito IdentityPool CognitoStreams
+                + Amazon Cognito IdentityPool PushSync
+                + Amazon Cognito IdentityPoolRoleAttachment RoleMapping
+                + Amazon Cognito IdentityPoolRoleAttachment MappingRule
+                + Amazon Cognito IdentityPool CognitoIdentityProvider
+                + Amazon Cognito IdentityPoolRoleAttachment RoleMapping
+                  RulesConfiguration
+                + Amazon Cognito UserPool AdminCreateUserConfig
+                + Amazon Cognito UserPool DeviceConfiguration
+                + Amazon Cognito UserPool EmailConfiguration
+                + Amazon Cognito UserPool InviteMessageTemplate
+                + Amazon Cognito UserPool LambdaConfig
+                + Amazon Cognito UserPool NumberAttributeConstraints
+                + Amazon Cognito UserPool PasswordPolicy
+                + Amazon Cognito UserPool Policies
+                + Amazon Cognito UserPool SchemaAttribute
+                + Amazon Cognito UserPool SmsConfiguration
+                + Amazon Cognito UserPool StringAttributeConstraints
+                + Amazon Cognito UserPoolUser AttributeType
+                + Amazon Cognito UserPool InviteMessageTemplate
                 + AWS Config ConfigRule Scope
                 + AWS Config ConfigRule Source
                 + AWS Config ConfigRule Source SourceDetails
@@ -450,6 +487,8 @@ User Guide (API Version 2010-05-15)
                 + Amazon EC2 SpotFleet SpotFleetRequestConfigData
                   LaunchSpecifications SecurityGroups
                 + Amazon ECS Service DeploymentConfiguration
+                + Amazon ECS Service PlacementConstraint
+                + Amazon ECS Service PlacementStrategies
                 + Amazon ECS Service LoadBalancers
                 + Amazon ECS TaskDefinition ContainerDefinitions
                 + Amazon ECS TaskDefinition ContainerDefinitions
@@ -464,6 +503,7 @@ User Guide (API Version 2010-05-15)
                 + Amazon ECS TaskDefinition ContainerDefinitions Ulimit
                 + Amazon ECS TaskDefinition ContainerDefinitions
                   VolumesFrom
+                + Amazon ECS Service PlacementConstraint
                 + Amazon ECS TaskDefinition Volumes
                 + Amazon ECS TaskDefinition Volumes Host
                 + Amazon Elastic File System FileSystem FileSystemTags
@@ -502,10 +542,39 @@ User Guide (API Version 2010-05-15)
                   InstanceGroupConfig
                 + Amazon EMR Cluster JobFlowInstancesConfig
                   InstanceGroupConfig
+                + Amazon EMR Cluster JobFlowInstancesConfig
+                  InstanceGroupConfig AutoScalingPolicy
+                + Amazon EMR Cluster JobFlowInstancesConfig
+                  InstanceGroupConfig AutoScalingPolicy
+                + Amazon EMR Cluster JobFlowInstancesConfig
+                  InstanceGroupConfig AutoScalingPolicy Constraints
+                  ScalingRule
+                + Amazon EMR Cluster JobFlowInstancesConfig
+                  InstanceGroupConfig ScalingAction
+                + Amazon EMR Cluster JobFlowInstancesConfig
+                  InstanceGroupConfig ScalingTrigger
+                + Amazon EMR Cluster SimpleScalingPolicyConfiguration
+                + Amazon EMR Cluster JobFlowInstancesConfig
+                  InstanceGroupConfig ScalingTrigger
+                  CloudWatchAlarmDefinition
+                + Amazon EMR Cluster MetricDimension
+                + Amazon EMR Cluster ScalingTrigger
+                + Amazon EMR Cluster ScalingAction
+                + Amazon EMR Cluster SimpleScalingPolicyConfiguration
+                + Amazon EMR Cluster CloudWatchAlarmDefinition
                 + Amazon EMR EbsConfiguration
                 + Amazon EMR EbsConfiguration EbsBlockDeviceConfigs
                 + Amazon EMR EbsConfiguration EbsBlockDeviceConfig
                   VolumeSpecification
+                + Amazon EMR InstanceGroupConfig AutoScalingPolicy
+                + Amazon EMR InstanceGroupConfig CloudWatchAlarmDefinition
+                + Amazon EMR InstanceGroupConfig MetricDimension
+                + Amazon EMR InstanceGroupConfig ScalingAction
+                + Amazon EMR InstanceGroupConfig ScalingConstraints
+                + Amazon EMR InstanceGroupConfig ScalingRule
+                + Amazon EMR InstanceGroupConfig ScalingTrigger
+                + Amazon EMR InstanceGroupConfig
+                  SimpleScalingPolicyConfiguration
                 + Amazon EMR Step HadoopJarStepConfig
                 + Amazon EMR Step HadoopJarStepConfig KeyValue
                 + GameLift Alias RoutingStrategy
@@ -526,28 +595,32 @@ User Guide (API Version 2010-05-15)
                 + AWS IoT Sns Action
                 + AWS IoT Sqs Action
                 + AWS IoT TopicRulePayload
-                + Firehose DeliveryStream Destination
+                + Kinesis Firehose DeliveryStream Destination
                   CloudWatchLoggingOptions
-                + Firehose DeliveryStream
+                + Kinesis Firehose DeliveryStream
                   ElasticsearchDestinationConfiguration
-                + Firehose DeliveryStream
+                + Kinesis Firehose DeliveryStream
                   ElasticsearchDestinationConfiguration BufferingHints
-                + Firehose DeliveryStream
+                + Kinesis Firehose DeliveryStream
                   ElasticsearchDestinationConfiguration RetryOptions
-                + Firehose DeliveryStream RedshiftDestinationConfiguration
-                + Firehose DeliveryStream RedshiftDestinationConfiguration
-                  CopyCommand
-                + Firehose DeliveryStream S3DestinationConfiguration
-                + Firehose DeliveryStream S3DestinationConfiguration
-                  BufferingHints
-                + Firehose DeliveryStream S3DestinationConfiguration
-                  EncryptionConfiguration KMSEncryptionConfig
-                + Firehose DeliveryStream S3DestinationConfiguration
-                  EncryptionConfiguration
+                + Kinesis Firehose DeliveryStream
+                  RedshiftDestinationConfiguration
+                + Kinesis Firehose DeliveryStream
+                  RedshiftDestinationConfiguration CopyCommand
+                + Kinesis Firehose DeliveryStream
+                  S3DestinationConfiguration
+                + Kinesis Firehose DeliveryStream
+                  S3DestinationConfiguration BufferingHints
+                + Kinesis Firehose DeliveryStream
+                  S3DestinationConfiguration EncryptionConfiguration
+                  KMSEncryptionConfig
+                + Kinesis Firehose DeliveryStream
+                  S3DestinationConfiguration EncryptionConfiguration
                 + AWS Lambda Function DeadLetterConfig
                 + AWS Lambda Function Environment
                 + AWS Lambda Function Code
-                + AWS Lambda Function VPCConfig
+                + AWS Lambda Function TracingConfig
+                + AWS Lambda Function VpcConfig
                 + Name Type
                 + DataSource
                 + AWS OpsWorks App Environment
@@ -624,6 +697,22 @@ User Guide (API Version 2010-05-15)
                 + AWS WAF XssMatchSet XssMatchTuple FieldToMatch
                 + AWS WAF WebACL Action
                 + AWS WAF WebACL Rules
+                + AWS WAF Regional ByteMatchSet ByteMatchTuples
+                + AWS WAF Regional ByteMatchSet ByteMatchTuples
+                  FieldToMatch
+                + AWS WAF Regional IPSet IPSetDescriptors
+                + AWS WAF Regional Rule Predicates
+                + AWS WAF Regional SizeConstraintSet SizeConstraint
+                + AWS WAF Regional SizeConstraintSet SizeConstraint
+                  FieldToMatch
+                + AWS WAF Regional SqlInjectionMatchSet
+                  SqlInjectionMatchTuples
+                + AWS WAF Regional SqlInjectionMatchSet
+                  SqlInjectionMatchTuples FieldToMatch
+                + AWS WAF Regional XssMatchSet XssMatchTuple
+                + AWS WAF Regional XssMatchSet XssMatchTuple FieldToMatch
+                + AWS WAF Regional WebACL Action
+                + AWS WAF Regional WebACL Rules
           o Resource Specification
                 + Specification Format
           o Resource Attributes
@@ -725,6 +814,289 @@ The following table describes the important changes to the documentation
 since the preceding release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
+
+New resources
+
+June 6, 2017
+
+AWS::EMR::SecurityConfiguration
+
+    Use the AWS::EMR::SecurityConfiguration resource to create a security
+    configuration, which is stored in the service and can be specified when
+    a cluster is created.
+
+2010-05-15
+
+Updated resources
+
+June 6, 2017
+
+AWS::AutoScaling::LifecycleHook
+
+    The NotificationTargetARN and RoleARN properties are now optional.
+
+AWS::CloudWatch::Alarm
+
+    You can now use the EvaluateLowSampleCountPercentile, 
+    ExtendedStatistic, and TreatMissingData properties when creating 
+    AWS::CloudWatch::Alarm resources.
+
+AWS::EC2::SpotFleet
+
+    AWS CloudFormation supports mutable changes to Spot fleet properties.
+
+    The following properties of the SpotFleetRequestConfigData property
+    support Replacement updates:
+
+        * AllocationStrategy
+
+        * IamFleetRole
+
+        * LaunchSpecifications
+
+        * SpotPrice
+
+        * TerminateInstancesWithExpiration
+
+        * ValidFrom
+
+        * ValidUntil
+
+    The following properties of the SpotFleetRequestConfigData property
+    support No interruption updates:
+
+        * ExcessCapacityTerminationPolicy
+
+        * TargetCapacity
+
+AWS::EMR::InstanceGroupConfig
+
+    AWS CloudFormation now supports Auto Scaling for Amazon EMR task
+    instance groups.
+
+AWS::Events::Rule
+
+    The RoleArn property is deprecated on the Rule resource.
+
+    Use the RoleArn property on the Target data type to specify the IAM
+    role to use for a target.
+
+AWS::Kinesis::Stream
+
+    The ShardCount property now supports No interruption updates.
+
+AWS::Lambda::Function
+
+    Use the TracingConfig property to configure tracing settings for Lambda
+    functions.
+
+AWS::Redshift::Cluster, AWS::Redshift::ClusterParameterGroup, 
+AWS::Redshift::ClusterSecurityGroup, and AWS::Redshift::ClusterSubnetGroup
+
+    Use the Tags property to specify resource tags.
+
+AWS::RDS::DBCluster
+
+    Added the ReadEndpoint.Address attribute to the Fn::GetAtt intrinsic
+    function.
+
+AWS::S3::Bucket
+
+    Added the Arn attribute to the Fn::GetAtt intrinsic function.
+
+2010-05-15
+
+New resources
+
+May 11, 2017
+
+The following new resources support using AWS WAF with Elastic Load 
+Balancing (ELB) Application load balancers.
+
+AWS::WAFRegional::ByteMatchSet
+
+    Use the AWS::WAFRegional::ByteMatchSet resource to identify a part of a
+    web request that you want to inspect.
+
+AWS::WAFRegional::IPSet
+
+    Use the AWS::WAFRegional::IPSet resource to specify which web requests
+    to permit or block based on the IP addresses from which the requests
+    originate.
+
+AWS::WAFRegional::Rule
+
+    Use the AWS::WAFRegional::Rule resource to specify a combination of 
+    IPSet, ByteMatchSet, and SqlInjectionMatchSet objects that identify the
+    web requests to allow, block, or count.
+
+AWS::WAFRegional::SizeConstraintSet
+
+    Use the AWS::WAFRegional::SizeConstraintSet resource to specify a size
+    constraint used to check the size of a web request and which parts of
+    the request to check.
+
+AWS::WAFRegional::SqlInjectionMatchSet
+
+    Use the AWS::WAFRegional::SqlInjectionMatchSet resource to allow,
+    block, or count requests that contain malicious SQL code in a specific
+    part of web requests.
+
+AWS::WAFRegional::WebACL
+
+    Use the AWS::WAFRegional::WebACL resource to identify the web requests
+    that you want to allow, block, or count.
+
+AWS::WAFRegional::WebACLAssociation
+
+    Use the AWS::WAFRegional::WebACLAssociation resource to associate a web
+    access control group (ACL) with a resource.
+
+AWS::WAFRegional::XssMatchSet
+
+    Use the AWS::WAFRegional::XssMatchSet resource to specify the parts of
+    web requests that you want AWS WAF to inspect for cross-site scripting
+    attacks and the name of the header to inspect.
+
+2010-05-15
+
+New resources
+
+April 28, 2017
+
+AWS::Cognito::IdentityPool
+
+    Use the AWS::Cognito::IdentityPool resource to create an Amazon Cognito
+    identity pool.
+
+AWS::Cognito::IdentityPoolRoleAttachment
+
+    Use the AWS::Cognito::IdentityPoolRoleAttachment resource to manage the
+    role configuration for an Amazon Cognito identity pool.
+
+AWS::Cognito::UserPool
+
+    Use the AWS::Cognito::UserPool resource to create an Amazon Cognito
+    user pool.
+
+AWS::Cognito::UserPoolClient
+
+    Use the AWS::Cognito::UserPoolClient resource to create a user pool
+    client.
+
+AWS::Cognito::UserPoolGroup
+
+    Use the AWS::Cognito::UserPoolGroup resource to create a user group in
+    an Amazon Cognito user pool.
+
+AWS::Cognito::UserPoolUser
+
+    Use the AWS::Cognito::UserPoolUser resource to create an Amazon Cognito
+    user pool user.
+
+AWS::Cognito::UserPoolUserToGroupAttachment
+
+    Use the AWS::Cognito::UserPoolUserToGroupAttachment resource to attach
+    a user to an Amazon Cognito user pool group.
+
+2010-05-15
+
+Updated resources
+
+April 28, 2017
+
+AWS Config ConfigRule Source SourceDetails
+
+    Use the MaximumExecutionFrequency subproperty of the 
+    AWS::Config::ConfigRule resource to run evaluations for a custom rule
+    using a periodic trigger.
+
+AWS::EC2::Volume
+
+    We now support Elastic Volumes for Amazon Elastic Block Store (Amazon
+    EBS) in CloudFormation. We now support No interruption updates on three
+    properties: VolumeType, Size, and Iops.
+
+AWS::EC2::SecurityGroup
+
+    Use the GroupName property to specify a name for your Amazon EC2
+    security group.
+
+AWS::ECS::Service
+
+    There are three new properties for AWS::ECS::Service: 
+    PlacementConstraints, PlacementStrategies, and ServiceName.
+
+AWS::ECS::TaskDefinition
+
+    Use the PlacementConstraints property to define placement constraints
+    for tasks in the service.
+
+AWS::ElastiCache::ReplicationGroup
+
+    Added the ConfigurationEndPoint.Address attribute and the 
+    ConfigurationEndPoint.Port attribute to the Fn::GetAtt intrinsic
+    function.
+
+AWS::ElasticLoadBalancingV2::LoadBalancer
+
+    Use the IpAddressType property to specify the type of IP addresses that
+    are used by the load balancer's subnets.
+
+AWS::EMR::Cluster
+
+    AWS CloudFormation now supports Auto Scaling for Amazon EMR clusters.
+
+AWS::IAM::ManagedPolicy
+
+    Use the ManagedPolicyName property to specify a custom name for your
+    IAM managed policy.
+
+AWS::Lambda::Function
+
+    Use the Tags property to add tags to your Lambda function.
+
+AWS::OpsWorks::Instance
+
+    Added the following attributes to the Fn::GetAtt intrinsic function: 
+    AvailabilityZone, PrivateDnsName, PrivateIp, and PublicDnsName.
+
+AWS::OpsWorks::UserProfile
+
+    Use the SshUsername property to specify a user's SSH name.
+
+    Added the SshUsername attribute to the Fn::GetAtt intrinsic function.
+
+AWS::Redshift::Cluster
+
+    Use the IamRoles property to provide a list of one or more AWS Identity
+    and Access Management roles that the Amazon Redshift cluster can use to
+    access other AWS services.
+
+2010-05-15
+
+Edit templates in YAML and JSON using AWS CloudFormation Designer
+
+April 6, 2017
+
+When you create AWS CloudFormation templates using Designer, you can now 
+edit your template in both YAML and JSON in the integrated editor. You can 
+also convert JSON templates to YAML and vice-versa, depending on your 
+preferred template authoring language. For more information, see What Is 
+AWS CloudFormation Designer?.
+
+2010-05-15
+
+New resource
+
+April 6, 2017
+
+AWS::SSM::Parameter
+
+    Use the AWS::SSM::Parameter resource to create an SSM parameter in
+    Parameter Store.
+
+2010-05-15
 
 AWS::Include transform
 
@@ -1892,7 +2264,7 @@ AWS::Lambda::Permission
 AWS::Logs::SubscriptionFilter
 
     Use the subscription filter to define which log events are delivered to
-    your Amazon Kinesis stream.
+    your Kinesis stream.
 
 AWS::RDS::DBCluster and AWS::RDS::DBClusterParameterGroup
 
@@ -2403,7 +2775,7 @@ properties:
     * For cache behaviors, you can specify allowed HTTP methods and
       indicate whether to forward cookies.
 
-For more information, see AWS::CloudFront::Distribution. 	
+For more information, see AWS::CloudFront::Distribution.
 
 2010-05-15
 
@@ -2469,7 +2841,7 @@ AWS CloudFormation supports additional features for updating stacks:
     * You can add or remove Amazon SNS notification topics for an AWS
       CloudFormation stack.
 
-For more information, see AWS CloudFormation Stacks Updates. 	
+For more information, see AWS CloudFormation Stacks Updates.
 
 2010-05-15
 
@@ -2702,7 +3074,7 @@ You can assign names (physical IDs) to the following resources:
 
     * RDS DB instances
 
-For more information, see Name Type. 	
+For more information, see Name Type.
 
 2010-05-15
 
@@ -2747,7 +3119,7 @@ November 8, 2013
 
 Instead of using AWS CloudFormation-generated physical IDs, you can assign 
 names to certain resources. The following AWS CloudFormation resources 
-support naming:
+support naming
 
     * CloudWatch alarms
 
@@ -2761,7 +3133,7 @@ support naming:
 
     * Amazon SQS queues
 
-For more information, see Name Type. 	
+For more information, see Name Type.
 
 2010-05-15
 
@@ -2836,7 +3208,7 @@ Additional VPC support
 September 17, 2013
 
 AWS CloudFormation adds several enhancements to support VPC and VPN 
-functionality:
+functionality
 
     * You can associate a public IP address and multiple private IP
       addresses to Amazon EC2 network interfaces. For more information, see 
@@ -2940,6 +3312,7 @@ to set block device mappings for your EC2 instance.
 With this change, two new types have been added:
 
     * Amazon EC2 Block Device Mapping Property
+
     * Amazon Elastic Block Store Block Device Property
 
 2010-05-15
@@ -2953,6 +3326,7 @@ viewing stacks using the recently redesigned AWS Management Console. You
 can find them here:
 
     * Creating a Stack
+
     * Viewing Stack Data and Resources
 
 2010-05-15
@@ -3031,9 +3405,52 @@ tables, and so forth) using a single AWS CloudFormation template.
 
 Templates that demonstrate new VPC features can be downloaded:
 
+    * Single instance in a single subnet
+      <https://s3.amazonaws.com/cloudformation-templates-us-east-1/vpc_single_instance_in_subnet.template>
+
+    * Multiple subnets with Elastic Load Balancing (ELB) and an Auto
+      Scaling group
+      <https://s3.amazonaws.com/cloudformation-templates-us-east-1/vpc_multiple_subnets.template>
+
 Documentation for the following resource types has been updated:
 
+    * AWS::EC2::SecurityGroup
+
+    * AWS::EC2::SecurityGroupIngress
+
+    * AWS::EC2::SecurityGroupEgress
+
+    * AWS::EC2::Instance
+
+    * AWS::AutoScaling::AutoScalingGroup
+
+    * AWS::EC2::EIP
+
+    * AWS::EC2::EIPAssociation
+
+    * AWS::ElasticLoadBalancing::LoadBalancer
+
 New resource types have been added to the documentation:
+
+    * AWS::EC2::VPC
+
+    * AWS::EC2::InternetGateway
+
+    * AWS::EC2::DHCPOptions
+
+    * AWS::EC2::DHCPOptions
+
+    * AWS::EC2::RouteTable
+
+    * AWS::EC2::NetworkAcl
+
+    * AWS::EC2::NetworkAclEntry
+
+    * AWS::EC2::Subnet
+
+    * AWS::EC2::VPNGateway
+
+    * AWS::EC2::CustomerGateway
 
 2010-05-15
 
@@ -3104,7 +3521,7 @@ stack:
 
     * AWS::Route53::RecordSetGroup
 
-For a complete list of updateable resources and details about what to 
+For a complete list of updatable resources and details about what to 
 consider when updating a stack, see AWS CloudFormation Stacks Updates.
 
 2010-05-15

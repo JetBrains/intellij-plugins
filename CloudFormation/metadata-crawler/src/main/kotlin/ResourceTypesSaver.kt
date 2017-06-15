@@ -54,7 +54,9 @@ object ResourceTypesSaver {
     val fnGetAttrDocUrl = URL("https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html")
     val doc = getDocumentFromUrl(fnGetAttrDocUrl)
 
-    val tableElement = doc.select("div.informaltable").first()!!
+    val attribBlock = doc.getElementById("intrinsic-function-reference-getatt-attrib")!!
+    val tableElement = attribBlock.nextElementSibling().nextElementSibling()
+    assert(tableElement.className() == "table")
 
     val table = parseTable(tableElement)
 
@@ -71,6 +73,12 @@ object ResourceTypesSaver {
 
       if (resourceTypeName == "AWS::CloudFormation::Stack" && attribute == "Outputs.NestedStackOutputName") {
         // Not an attribute name
+        continue
+      }
+
+      if (resourceTypeName == "AWS::Serverless::Function") {
+        // Skip, this is a part of another spec
+        // https://github.com/awslabs/serverless-application-model/tree/master/versions
         continue
       }
 
@@ -133,6 +141,7 @@ object ResourceTypesSaver {
 
     val descriptionElement = doc.select("div").filter { it.attr("id") == "main-col-body" }.single()
     descriptionElement.getElementsByAttributeValueMatching("id", "language-filter").forEach { it.remove() }
+    descriptionElement.getElementsByAttributeValueMatching("summary", "Breadcrumbs").forEach { it.remove() }
     val description = cleanupHtml(descriptionElement.toString())
 
     val vlists = doc.select("div.variablelist")
@@ -213,6 +222,8 @@ object ResourceTypesSaver {
           if (typeValue != null) {
             type = typeValue
           } else if (resourceTypeName == "AWS::Redshift::Cluster" && name == "SnapshotClusterIdentifier") {
+            type = "String"
+          } else if (resourceTypeName == "AWS::Cognito::IdentityPool" && name == "SupportedLoginProviders") {
             type = "String"
           } else {
             // TODO
