@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Based on org.rust.ide.update.UpdateComponent
  */
-class CloudFormationUpdateComponent : ApplicationComponent, Disposable {
+class CloudFormationUpdateComponent : ApplicationComponent.Adapter(), Disposable {
 
   init {
     Disposer.register(ApplicationManager.getApplication(), this)
