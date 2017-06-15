@@ -1,0 +1,112 @@
+{
+  "Description" : "This is a sample template for lambda-backed custom resource. Runtime for Lambda function is python",
+  "Parameters" : {
+    "Base" : {
+      "Type" : "String",
+      "Default" : "10"
+    },
+    "CustomResourceId" : {
+      "Type" : "String",
+      "Default" : "SomeCustomResourceId"
+    }
+  },
+  "Resources":{
+    "TestCustomResource" : {
+      "Type" : "Custom::TestCustomResourceWithLambda",
+      "Properties" : {
+        "ServiceToken" : { "Fn::GetAtt" : ["TestLambdaFunction", "Arn"] },
+        "Base" : { "Ref" : "Base" },
+        "Id" : { "Ref" : "CustomResourceId" }
+      }
+    },
+    "TestLambdaFunction" : {
+      "Type" : "AWS::Lambda::Function",
+      "Properties" : {
+        "Handler" : "index.handler",
+        "Role" : {"Fn::GetAtt" : ["TestLambdaExecutionRole", "Arn"]},
+        "Code" : {
+            "ZipFile" : { "Fn::Join" : ["\n", [
+              "from __future__ import print_function",
+              "import json",
+              "import cfnresponse",
+              "print('Loading function')",
+              "def handler(event, context):",
+              "   base = event['ResourceProperties']['Base']",
+              "   customId = event['ResourceProperties']['Id']",
+              "   outputData = {}",
+              "   isInt = True",
+              "   try:",
+              "      int(base)",
+              "   except ValueError:",
+              "      isInt = False",
+              "   except Exception as e:",
+              "      print(e)",
+              "      cfnresponse.send(event, context, cfnresponse.FAILED, { 'error': str(e) }, customId)",
+              "      return",
+              "   if event['RequestType'] != 'Delete' and isInt:",
+              "      outputData['Result'] = int(base) * 5",
+              "   if event['RequestType'] == 'Delete' or isInt:",
+              "      cfnresponse.send(event, context, cfnresponse.SUCCESS, outputData, customId)",
+              "   else:",
+              "      cfnresponse.send(event, context, cfnresponse.FAILED, outputData, customId)"
+            ]]}
+        },
+        "Timeout" : "10",
+        "MemorySize" : "256",
+        "Runtime" : "python2.7"
+      }
+    },
+    "TestLambdaExecutionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "cwlogs",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": "logs:CreateLogGroup",
+                  "Resource": { "Fn::Join" : [":", ["arn:aws:logs", { "Ref" : "AWS::Region" }, { "Ref" : "AWS::AccountId" }, "*" ]] }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    { "Fn::Join" : [":", ["arn:aws:logs", { "Ref" : "AWS::Region" }, { "Ref" : "AWS::AccountId" }, "log-group", "/aws/lambda/*", "*" ]] }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "Outputs" : {
+    "Result" : {
+      "Value" : { "Fn::GetAtt" : [ "TestCustomResource", "Result" ] }
+    }
+  }
+}
