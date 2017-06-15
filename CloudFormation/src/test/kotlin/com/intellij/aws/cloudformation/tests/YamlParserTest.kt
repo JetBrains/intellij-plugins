@@ -11,6 +11,7 @@ class YamlParserTest : LightPlatformCodeInsightTestCase() {
   fun testCompactSequences() = runTest("compactSequences")
   fun testMappings() = runTest("mappings")
   fun testParameters() = runTest("parameters")
+  fun testNestedFunctions() = runTest("nestedFunctions")
 
   fun runTest(name: String) {
     configureByFile("$name.yaml")

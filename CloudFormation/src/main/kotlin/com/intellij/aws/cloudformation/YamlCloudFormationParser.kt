@@ -308,6 +308,31 @@ class YamlCloudFormationParser private constructor () {
     False
   }
 
+  private fun longFunction(value: YAMLMapping): CfnFunctionNode? {
+    val cfnKeyValue = value.cfnKeyValues()
+
+    if (cfnKeyValue.size != 1 || !CloudFormationIntrinsicFunction.fullNames.containsKey(cfnKeyValue.single().keyText)) {
+      return null
+    }
+
+    val single = cfnKeyValue.single()
+    val nameNode = keyName(single)!!
+    val functionId = CloudFormationIntrinsicFunction.fullNames[single.keyText]!!
+
+    val yamlValueNode = single.value
+    if (yamlValueNode is YAMLSequence) {
+      val items = yamlValueNode.items.mapNotNull {
+        val itemValue = it.value
+        if (itemValue != null) expression(itemValue, AllowFunctions.True) else null
+      }
+      return CfnFunctionNode(nameNode, functionId, items).registerNode(value)
+    } else if (yamlValueNode == null) {
+      return CfnFunctionNode(nameNode, functionId, listOf()).registerNode(value)
+    } else {
+      return CfnFunctionNode(nameNode, functionId, listOf(expression(yamlValueNode, AllowFunctions.True))).registerNode(value)
+    }
+  }
+
   private fun expression(value: YAMLValue, allowFunctions: AllowFunctions): CfnExpressionNode? {
     val tag = value.getFirstTag()
 
@@ -344,8 +369,14 @@ class YamlCloudFormationParser private constructor () {
         }
 
         value is YAMLMapping -> {
-          addProblem(tag, "CloudFormation function expects a scalar value or a sequence")
-          null
+          val nestedLongFunctionCall = longFunction(value)
+          if (nestedLongFunctionCall != null) {
+            // Only exception for having a mapping here
+            CfnFunctionNode(tagNode, functionId, listOf(nestedLongFunctionCall))
+          } else {
+            addProblem(tag, "CloudFormation function expects a scalar value or a sequence")
+            null
+          }
         }
 
         else -> {
@@ -369,29 +400,11 @@ class YamlCloudFormationParser private constructor () {
         CfnArrayValueNode(items).registerNode(value)
       }
       value is YAMLMapping -> {
-        val cfnKeyValue = value.cfnKeyValues()
-
-        if (cfnKeyValue.size == 1 &&
-            allowFunctions == AllowFunctions.True &&
-            CloudFormationIntrinsicFunction.fullNames.containsKey(cfnKeyValue.single().keyText)) {
-          val single = cfnKeyValue.single()
-          val nameNode = keyName(single)!!
-          val functionId = CloudFormationIntrinsicFunction.fullNames[single.keyText]!!
-
-          val yamlValueNode = single.value
-          if (yamlValueNode is YAMLSequence) {
-            val items = yamlValueNode.items.mapNotNull {
-              val itemValue = it.value
-              if (itemValue != null) expression(itemValue, allowFunctions) else null
-            }
-            CfnFunctionNode(nameNode, functionId, items).registerNode(value)
-          } else if (yamlValueNode == null) {
-            CfnFunctionNode(nameNode, functionId, listOf()).registerNode(value)
-          } else {
-            CfnFunctionNode(nameNode, functionId, listOf(expression(yamlValueNode, allowFunctions))).registerNode(value)
-          }
+        val longFunction = if (allowFunctions == AllowFunctions.True) longFunction(value) else null
+        if (longFunction != null) {
+          longFunction
         } else {
-          val properties = cfnKeyValue.map {
+          val properties = value.cfnKeyValues().map {
             val nameNode = keyName(it)
 
             val yamlValueNode = it.value

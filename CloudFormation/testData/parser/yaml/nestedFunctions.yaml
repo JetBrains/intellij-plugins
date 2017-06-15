@@ -1,0 +1,10 @@
+# https://github.com/shalupov/idea-cloudformation/issues/96
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  Subnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select
+        - '0'
+        - !GetAZs
+          Ref: 'AWS::Region'

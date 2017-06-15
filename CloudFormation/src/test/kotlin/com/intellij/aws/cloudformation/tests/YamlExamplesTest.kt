@@ -22,6 +22,7 @@ class YamlExamplesTest : LightPlatformCodeInsightTestCase() {
   fun test11() = runTest("stemflow-vpc.yml")
   fun test12() = runTest("WordPress_Single_Instance.yaml")
   fun test13() = runTest("getatt-nested-stack.yaml")
+  fun test14() = runTest("select.yaml")
 
   fun testParameters1() = runTest("parameters1.yaml")
   fun testParameters2() = runTest("parameters2.yaml")
