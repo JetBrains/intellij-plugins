@@ -38,7 +38,7 @@
   ]]></change-notes>
 
   <!-- IDEA 2017.1 -->
-  <idea-version since-build="171.3566.24" until-build="171.*"/>
+  <idea-version since-build="171.3566.24" until-build="172.*"/>
 
   <depends>com.intellij.modules.lang</depends>
   <depends>org.jetbrains.plugins.yaml</depends>
