@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocReferenceSet;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -883,7 +884,10 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
   }
 
   @Override
-  protected void appendParentInfo(PsiElement parent, StringBuilder builder, PsiNamedElement element) {
+  protected void appendParentInfo(PsiElement parent,
+                                  @NotNull StringBuilder builder,
+                                  @NotNull PsiNamedElement element,
+                                  @NotNull JSTypeSubstitutor substitutor) {
     if (parent instanceof JSClass) {
       builder.append(((JSClass)parent).getQualifiedName()).append("\n");
     }
