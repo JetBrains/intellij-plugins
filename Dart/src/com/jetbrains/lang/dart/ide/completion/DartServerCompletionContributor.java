@@ -77,7 +77,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
                if (file.getFileType() == HtmlFileType.INSTANCE &&
                    PubspecYamlUtil.findPubspecYamlFile(project, file) == null &&
-                   !Registry.is(key: "dart.projects.without.pubspec", defaultValue: false)) {
+                   !Registry.is("dart.projects.without.pubspec", false)) {
                  return;
                }
 
