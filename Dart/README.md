@@ -29,16 +29,15 @@ Prerequisites:
 1. Clone the following 2 repositories to neighbor folders:
      - git clone https://github.com/JetBrains/intellij-plugins,
      - git clone https://github.com/JetBrains/intellij-community,
-   Run intellij-community/getPlugins.sh (getPlugins.bat on Win). If that fails because the
-   repos have already been cloned you can just update both of them using 'get pull'.
+   Run getPlugins.sh (getPlugins.bat on Win) from intellij-community/. If that fails because the
+   repos have already been cloned you can just update both of them using 'git pull'.
 
 2. Start IntelliJ IDEA Ultimate, on Welcome screen click Configure | Project Defaults | Project Structure | SDKs,
    click [+] and add JDK 1.8. Add [JDK]/lib/tools.jar to the SDK Classpath if it is not there. Rename SDK to 'IDEA jdk'.
    Click [+] to add one more JDK and provide path to JDK 1.8 once again . Leave default name "1.8". Make sure it contains [JDK]/lib/tools.jar
 
 3. On Welcome screen click Configure | Settings (Preferences), look for Path Variables and add the following vars there:
-   - IDEA_ULTIMATE_PLUGINS pointing to [IntelliJ IDEA Ultimate Installation]/Contents/plugins
-     (on Windows: [IntelliJ IDEA Ultimate Installation]/plugins)
+   - IDEA_ULTIMATE_PLUGINS pointing to [IntelliJ IDEA Ultimate Installation]/plugins
 
 4. Open intellij-community project, compile it.
    Open File | Project Structure | Modules | [+] | Import Module, select intellij-plugins/Dart/Dart-community.iml.
