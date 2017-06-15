@@ -41,6 +41,7 @@ import org.jetbrains.yaml.psi.YAMLValue
 import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLCompoundValueImpl
 import java.util.ArrayList
+import java.util.Optional
 
 class YamlCloudFormationParser private constructor () {
   private val myProblems = ArrayList<CloudFormationProblem>()
@@ -321,11 +322,17 @@ class YamlCloudFormationParser private constructor () {
 
     val yamlValueNode = single.value
     if (yamlValueNode is YAMLSequence) {
-      val items = yamlValueNode.items.mapNotNull {
-        val itemValue = it.value
-        if (itemValue != null) expression(itemValue, AllowFunctions.True) else null
+      val shortFunctionCall = shortFunction(yamlValueNode) ?: return null
+      if (shortFunctionCall.isPresent) {
+        return CfnFunctionNode(nameNode, functionId, listOf(shortFunctionCall.get())).registerNode(value)
+      } else {
+        val items = yamlValueNode.items.mapNotNull {
+          val itemValue = it.value
+          if (itemValue != null) expression(itemValue, AllowFunctions.True) else null
+        }
+
+        return CfnFunctionNode(nameNode, functionId, items).registerNode(value)
       }
-      return CfnFunctionNode(nameNode, functionId, items).registerNode(value)
     } else if (yamlValueNode == null) {
       return CfnFunctionNode(nameNode, functionId, listOf()).registerNode(value)
     } else {
@@ -333,57 +340,62 @@ class YamlCloudFormationParser private constructor () {
     }
   }
 
-  private fun expression(value: YAMLValue, allowFunctions: AllowFunctions): CfnExpressionNode? {
-    val tag = value.getFirstTag()
+  private fun shortFunction(value: YAMLValue): Optional<CfnFunctionNode>? {
+    val tag = value.getFirstTag() ?: return Optional.empty()
 
-    if (tag != null && allowFunctions == AllowFunctions.True) {
-      val functionName = tag.text.trimStart('!')
-      val functionId = CloudFormationIntrinsicFunction.shortNames[functionName]
+    val functionName = tag.text.trimStart('!')
+    val functionId = CloudFormationIntrinsicFunction.shortNames[functionName]
 
-      if (functionId == null) {
-        addProblem(tag, "Unknown CloudFormation function: $functionName")
-        return null
+    if (functionId == null) {
+      addProblem(tag, "Unknown CloudFormation function: $functionName")
+      return null
+    }
+
+    val tagNode = CfnScalarValueNode(functionName).registerNode(tag)
+
+    return when {
+      value is YAMLScalar -> {
+        val parameterNode = CfnScalarValueNode(value.textValue).registerNode(value)
+        return CfnFunctionNode(tagNode, functionId, listOf(parameterNode)).registerNode(value).toOptionalValue()
       }
 
-      val tagNode = CfnScalarValueNode(functionName).registerNode(tag)
+      value.javaClass == YAMLCompoundValueImpl::class.java -> {
+        addProblem(value, "Too many values")
 
-      return when {
-        value is YAMLScalar -> {
-          val parameterNode = CfnScalarValueNode(value.textValue).registerNode(value)
-          CfnFunctionNode(tagNode, functionId, listOf(parameterNode)).registerNode(value)
+        val parameterNode = CfnScalarValueNode((value as YAMLCompoundValueImpl).textValue).registerNode(value)
+        return CfnFunctionNode(tagNode, functionId, listOf(parameterNode)).registerNode(value).toOptionalValue()
+      }
+
+      value is YAMLSequence -> {
+        val items = value.items.mapNotNull {
+          val itemValue = it.value
+          if (itemValue != null) expression(itemValue, AllowFunctions.True) else null
         }
+        return CfnFunctionNode(tagNode, functionId, items).registerNode(value).toOptionalValue()
+      }
 
-        value.javaClass == YAMLCompoundValueImpl::class.java -> {
-          addProblem(value, "Too many values")
-
-          val parameterNode = CfnScalarValueNode((value as YAMLCompoundValueImpl).textValue).registerNode(value)
-          CfnFunctionNode(tagNode, functionId, listOf(parameterNode)).registerNode(value)
-        }
-
-        value is YAMLSequence -> {
-          val items = value.items.mapNotNull {
-            val itemValue = it.value
-            if (itemValue != null) expression(itemValue, allowFunctions) else null
-          }
-          CfnFunctionNode(tagNode, functionId, items).registerNode(value)
-        }
-
-        value is YAMLMapping -> {
-          val nestedLongFunctionCall = longFunction(value)
-          if (nestedLongFunctionCall != null) {
-            // Only exception for having a mapping here
-            CfnFunctionNode(tagNode, functionId, listOf(nestedLongFunctionCall))
-          } else {
-            addProblem(tag, "CloudFormation function expects a scalar value or a sequence")
-            null
-          }
-        }
-
-        else -> {
-          addProblem(value, CloudFormationBundle.getString("format.unknown.value", value.javaClass.simpleName))
+      value is YAMLMapping -> {
+        val nestedLongFunctionCall = longFunction(value)
+        if (nestedLongFunctionCall != null) {
+          // Only exception for having a mapping here
+          return CfnFunctionNode(tagNode, functionId, listOf(nestedLongFunctionCall)).toOptionalValue()
+        } else {
+          addProblem(tag, "CloudFormation function expects a scalar value or a sequence")
           null
         }
       }
+
+      else -> {
+        addProblem(value, CloudFormationBundle.getString("format.unknown.value", value.javaClass.simpleName))
+        null
+      }
+    }
+  }
+
+  private fun expression(value: YAMLValue, allowFunctions: AllowFunctions): CfnExpressionNode? {
+    val shortFunctionCall = (if (allowFunctions == AllowFunctions.True) shortFunction(value) else Optional.empty()) ?: return null
+    if (shortFunctionCall.isPresent) {
+      return shortFunctionCall.get()
     }
 
     return when {

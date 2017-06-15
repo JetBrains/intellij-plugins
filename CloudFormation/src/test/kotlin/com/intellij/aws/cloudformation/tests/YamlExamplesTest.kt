@@ -23,6 +23,7 @@ class YamlExamplesTest : LightPlatformCodeInsightTestCase() {
   fun test12() = runTest("WordPress_Single_Instance.yaml")
   fun test13() = runTest("getatt-nested-stack.yaml")
   fun test14() = runTest("select.yaml")
+  fun test15() = runTest("nested-sub-function.yaml")
 
   fun testParameters1() = runTest("parameters1.yaml")
   fun testParameters2() = runTest("parameters2.yaml")
