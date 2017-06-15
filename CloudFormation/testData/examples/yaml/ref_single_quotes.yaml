@@ -5,8 +5,8 @@ Parameters:
     Description: Name of an existing ECS Cluster.
 Resources:
   service:
-    Type: AWS::ECS::Service
+    Type: AWS::EC2::Host
     Properties:
-      Cluster: !Ref '<caret>
-      DesiredCount: '1'
-      TaskDefinition: AA
+      AvailabilityZone: !Ref '<caret>
+      InstanceType: '1'
+      Xxx: AA
