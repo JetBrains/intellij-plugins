@@ -13,7 +13,7 @@ class CfnConditionsNode(name: CfnScalarValueNode?, val conditions: List<CfnCondi
 class CfnParameterNode(name: CfnScalarValueNode?, val properties: List<CfnNameValueNode>) : CfnNamedNode(name)
 class CfnParametersNode(name: CfnScalarValueNode?, val parameters: List<CfnParameterNode>) : CfnNamedNode(name)
 
-class CfnMappingValue(name: CfnScalarValueNode?, value: CfnScalarValueNode?) : CfnNameValueNode(name, value)
+class CfnMappingValue(name: CfnScalarValueNode?, value: CfnExpressionNode?) : CfnNameValueNode(name, value)
 class CfnSecondLevelMappingNode(name: CfnScalarValueNode?, val secondLevelMapping: List<CfnMappingValue>) : CfnNamedNode(name)
 class CfnFirstLevelMappingNode(name: CfnScalarValueNode?, val firstLevelMapping: List<CfnSecondLevelMappingNode>) : CfnNamedNode(name)
 class CfnMappingsNode(name: CfnScalarValueNode?, val mappings: List<CfnFirstLevelMappingNode>) : CfnNamedNode(name)

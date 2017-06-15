@@ -40,8 +40,15 @@ CfnRootNode{
                 }
               },
               CfnMappingValue{
-                value=CfnScalarValueNode{
-                  value=ami-cfc7978a
+                value=CfnArrayValueNode{
+                  items=[
+                    CfnScalarValueNode{
+                      value=1
+                    },
+                    CfnScalarValueNode{
+                      value=2
+                    }
+                  ]
                 }
                 name=CfnScalarValueNode{
                   value=64

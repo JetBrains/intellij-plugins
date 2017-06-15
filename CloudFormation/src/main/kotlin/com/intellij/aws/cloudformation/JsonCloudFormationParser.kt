@@ -176,7 +176,7 @@ class JsonCloudFormationParser private constructor () {
 
   private fun secondLevelMapping(mapping: JsonProperty): CfnSecondLevelMappingNode = parseNameValues(
       mapping,
-      { node -> CfnMappingValue(keyName(node), checkAndGetStringElement(node.value)).registerNode(node) },
+      { node -> CfnMappingValue(keyName(node), node.value?.let { expression(it, AllowFunctions.False) }).registerNode(node) },
       { nameNode, list -> CfnSecondLevelMappingNode(nameNode, list) }
   )
 

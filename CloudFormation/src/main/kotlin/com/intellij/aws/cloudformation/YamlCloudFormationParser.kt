@@ -185,7 +185,7 @@ class YamlCloudFormationParser private constructor () {
 
   private fun secondLevelMapping(mapping: CfnKeyValue): CfnSecondLevelMappingNode = parseNameValues(
       mapping,
-      { node -> CfnMappingValue(keyName(node), checkAndGetStringElement(node.value)).registerNode(node.owner) },
+      { node -> CfnMappingValue(keyName(node), node.value?.let { expression(it, AllowFunctions.False) }).registerNode(node.owner) },
       { nameNode, list -> CfnSecondLevelMappingNode(nameNode, list) }
   )
 
