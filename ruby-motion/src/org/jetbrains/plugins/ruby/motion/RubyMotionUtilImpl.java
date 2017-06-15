@@ -37,8 +37,9 @@ import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
-import com.jetbrains.cidr.CocoaDocumentationManagerImpl;
 import com.jetbrains.cidr.CocoaDocumentationManager;
+import com.jetbrains.cidr.CocoaDocumentationManagerImpl;
+import com.jetbrains.cidr.doc.XcodeDocumentationCandidateInfo;
 import com.jetbrains.cidr.execution.ProcessHandlerWithPID;
 import com.jetbrains.cidr.execution.RunParameters;
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess;
@@ -106,7 +107,7 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
     final String parentName = parent != null ? parent.getName() : null;
     final CocoaDocumentationManagerImpl.DocumentationBean info =
       manager.getTokenInfo(targetElement, motionSymbol.getInfoName(),
-                           Collections.singletonList(Pair.create(parentName, type)));
+                           Collections.singletonList(XcodeDocumentationCandidateInfo.create(parentName, type)));
     descriptionText = info != null ? patchObjCDoc(info.html, motionSymbol) : null;
     return descriptionText;
   }
