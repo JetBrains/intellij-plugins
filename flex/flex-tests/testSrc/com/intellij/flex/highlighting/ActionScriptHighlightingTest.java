@@ -55,6 +55,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -1227,7 +1228,8 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     JSTestUtils.initJSIndexes(getProject());
 
     if (assertNoErrors) {
-      assertEquals(0, JSDaemonAnalyzerTestCase.filterUnwantedInfos(doHighlighting(), this).size());
+      List<HighlightInfo> infos = JSDaemonAnalyzerTestCase.filterUnwantedInfos(doHighlighting(), this);
+      assertEquals(String.format("Expected no highlights, but was [%s]", StringUtil.join(infos, ", ")), 0, infos.size());
     }
   }
 
