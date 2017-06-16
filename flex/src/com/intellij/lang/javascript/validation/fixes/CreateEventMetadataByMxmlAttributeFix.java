@@ -8,7 +8,6 @@ import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
@@ -23,7 +22,10 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.NotNull;
 
-public class CreateEventMetadataByMxmlAttributeFix extends BaseCreateFix {
+import static com.intellij.lang.javascript.validation.fixes.BaseCreateFix.getEditor;
+import static com.intellij.lang.javascript.validation.fixes.BaseCreateFix.navigate;
+
+public class CreateEventMetadataByMxmlAttributeFix extends FixAndIntentionAction {
   private final String myEventName;
 
   public CreateEventMetadataByMxmlAttributeFix(final String eventName) {
@@ -67,7 +69,7 @@ public class CreateEventMetadataByMxmlAttributeFix extends BaseCreateFix {
       template.addTextSegment("\n");
     }
     template.addTextSegment("[Event(name=\"" + myEventName + "\", type=\"");
-    template.addVariable(new MyExpression(FlexCommonTypeNames.FLASH_EVENT_FQN), true);
+    template.addVariable(new BaseCreateFix.MyExpression(FlexCommonTypeNames.FLASH_EVENT_FQN), true);
     template.addTextSegment("\")]");
     if (!addingToMxml) {
       template.addTextSegment("\n");
@@ -84,14 +86,6 @@ public class CreateEventMetadataByMxmlAttributeFix extends BaseCreateFix {
 
     navigate(project, editor, offset, file.getVirtualFile());
     templateManager.startTemplate(editor, template);
-  }
-
-  protected void buildTemplate(final Template template,
-                               final JSReferenceExpression referenceExpression,
-                               final boolean staticContext,
-                               final PsiFile file,
-                               final PsiElement anchorParent) {
-    assert false; // not used
   }
 
   private static XmlTag createOrGetMetadataTag(final XmlFile xmlFile) throws IncorrectOperationException {
