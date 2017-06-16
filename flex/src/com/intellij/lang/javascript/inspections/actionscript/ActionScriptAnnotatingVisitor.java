@@ -1328,10 +1328,10 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  protected void addCreateFromUsageFixesForCall(JSCallExpression node,
-                                                JSReferenceExpression referenceExpression,
-                                                ResolveResult[] resolveResults,
-                                                List<LocalQuickFix> quickFixes) {
+  protected void addCreateFromUsageFixesForCall(@NotNull JSCallExpression node,
+                                                @NotNull JSReferenceExpression referenceExpression,
+                                                @NotNull ResolveResult[] resolveResults,
+                                                @NotNull List<LocalQuickFix> quickFixes) {
     if (canHaveImportTo(resolveResults)) {
       quickFixes.add(new AddImportECMAScriptClassOrFunctionAction(null, referenceExpression));
     }
