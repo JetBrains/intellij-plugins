@@ -30,10 +30,10 @@ public class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory 
   public JSAnnotatingVisitor createAnnotatingVisitor(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
     return new JavaScriptAnnotatingVisitor(psiElement, holder) {
       @Override
-      protected void addCreateFromUsageFixesForCall(JSCallExpression node,
-                                                    JSReferenceExpression referenceExpression,
-                                                    ResolveResult[] resolveResults,
-                                                    List<LocalQuickFix> quickFixes) {
+      protected void addCreateFromUsageFixesForCall(@NotNull JSCallExpression node,
+                                                    @NotNull JSReferenceExpression referenceExpression,
+                                                    @NotNull ResolveResult[] resolveResults,
+                                                    @NotNull List<LocalQuickFix> quickFixes) {
         if (referenceExpression.getQualifier() != null) return;
 
         JSClass directive = AngularJS2IndexingHandler.findDirectiveClass(node);
