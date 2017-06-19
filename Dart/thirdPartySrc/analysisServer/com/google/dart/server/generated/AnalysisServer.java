@@ -386,6 +386,22 @@ public interface AnalysisServer {
    */
   public void edit_getRefactoring(String kind, String file, int offset, int length, boolean validateOnly, RefactoringOptions options, GetRefactoringConsumer consumer);
 
+  public void edit_isPostfixCompletionApplicable(String path, int offset, String key, EditIsPostfixCompletionApplicableConsumer consumer);
+
+  public void edit_listPostfixCompletionTemplates(ListPostfixCompletionTemplatesConsumer consumer);
+
+  /**
+   * {@code edit.getPostfixCompletion}
+   * <p>
+   * Get the changes required to expand the postfix completion identified by the given key, at the given location.
+   * If the specified completion is not valid then null will be returned.
+   *
+   * @param file   The file containing the postfix completion template to be expanded.
+   * @param offset The offset used to identify the location of the text to be modified.
+   * @param key    The unique identifier of the postfix completion template
+   */
+  public void edit_getPostfixCompletion(String file, int offset, String key, GetPostfixCompletionConsumer consumer);
+
   /**
    * {@code edit.getStatementCompletion}
    *
