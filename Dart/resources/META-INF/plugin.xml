@@ -151,6 +151,8 @@
     <liveTemplateContext implementation="com.jetbrains.lang.dart.ide.template.DartTemplateContextType$Generic"/>
     <liveTemplateContext implementation="com.jetbrains.lang.dart.ide.template.DartTemplateContextType$Statement"/>
     <defaultLiveTemplatesProvider implementation="com.jetbrains.lang.dart.ide.template.DartLiveTemplatesProvider"/>
+    <codeInsight.template.postfixTemplateProvider language="Dart"
+       implementationClass="com.jetbrains.lang.dart.ide.template.postfix.DartPostfixTemplateProvider"/>
 
     <lang.surroundDescriptor language="Dart"
                              implementationClass="com.jetbrains.lang.dart.ide.surroundWith.DartExpressionSurroundDescriptor"/>

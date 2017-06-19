@@ -287,6 +287,21 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     sendRequestToServer(id, RequestUtilities.generateEditGetFixes(id, file, offset), consumer);
   }
 
+  public void edit_isPostfixCompletionApplicable(String path, int offset, String key, EditIsPostfixCompletionApplicableConsumer consumer) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateIsPostfixCompletionApplicable(id, path, offset, key), consumer);
+  }
+
+  public void edit_listPostfixCompletionTemplates(ListPostfixCompletionTemplatesConsumer consumer) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateListPostfixCompletionTeamplates(id), consumer);
+  }
+
+  public void edit_getPostfixCompletion(String file, int offset, String key, GetPostfixCompletionConsumer consumer) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateEditPostfixCompletion(id, file, offset, key), consumer);
+  }
+
   @Override
   public void edit_getRefactoring(String kindId,
                                   String file,
@@ -601,6 +616,15 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     }
     else if (consumer instanceof GetStatementCompletionConsumer) {
       new StatementCompletionProcessor((GetStatementCompletionConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof GetPostfixCompletionConsumer) {
+      new PostfixCompletionProcessor((GetPostfixCompletionConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof EditIsPostfixCompletionApplicableConsumer) {
+      new EditIsPostfixCompletionApplicableProcessor((EditIsPostfixCompletionApplicableConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof ListPostfixCompletionTemplatesConsumer) {
+      new ListPostfixCompletionTemplatesProcessor((ListPostfixCompletionTemplatesConsumer)consumer).process(resultObject, requestError);
     }
     else if (consumer instanceof GetLibraryDependenciesConsumer) {
       new LibraryDependenciesProcessor((GetLibraryDependenciesConsumer)consumer).process(resultObject, requestError);
