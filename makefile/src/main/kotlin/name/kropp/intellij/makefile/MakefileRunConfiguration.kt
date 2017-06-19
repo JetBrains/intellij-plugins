@@ -10,6 +10,7 @@ import com.intellij.execution.process.ColoredProcessHandler
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.process.ProcessTerminatedListener
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.openapi.application.PathMacros
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.util.getOrCreate
@@ -19,12 +20,14 @@ import java.io.File
 class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurationFactory, name: String) : LocatableConfigurationBase(project, factory, name) {
   var filename = ""
   var target = ""
+  var workingDirectory = ""
   var environmentVariables = EnvironmentVariablesData.DEFAULT
 
   private companion object {
     const val MAKEFILE = "makefile"
     const val FILENAME = "filename"
     const val TARGET = "target"
+    const val WORKING_DIRECTORY = "workingDirectory"
   }
 
   override fun checkConfiguration() {
@@ -37,6 +40,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
     val child = element!!.getOrCreate(MAKEFILE)
     child.setAttribute(FILENAME, filename)
     child.setAttribute(TARGET, target)
+    child.setAttribute(WORKING_DIRECTORY, workingDirectory)
     environmentVariables.writeExternal(child)
   }
 
@@ -46,6 +50,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
     if (child != null) {
       filename = child.getAttributeValue(FILENAME) ?: ""
       target = child.getAttributeValue(TARGET) ?: ""
+      workingDirectory = child.getAttributeValue(WORKING_DIRECTORY) ?: ""
       environmentVariables = EnvironmentVariablesData.readExternal(child)
     }
   }
@@ -58,9 +63,10 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
         if (!target.isNullOrEmpty()) {
           args += target
         }
+        val workDirectory = if (workingDirectory.isNotEmpty()) resolveMacros(workingDirectory) else File(filename).parent
         val cmd = GeneralCommandLine()
             .withExePath(makePath)
-            .withWorkDirectory(File(filename).parent)
+            .withWorkDirectory(workDirectory)
             .withEnvironment(environmentVariables.envs)
             .withParentEnvironmentType(if (environmentVariables.isPassParentEnvs) GeneralCommandLine.ParentEnvironmentType.CONSOLE else GeneralCommandLine.ParentEnvironmentType.NONE)
             .withParameters(args)
@@ -69,5 +75,14 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
         return processHandler
       }
     }
+  }
+
+  private fun resolveMacros(str: String): String {
+    val macrosRegex = Regex("""\$([^\\$]*)\$""")
+    val match = macrosRegex.matchEntire(str)
+    if (match != null) {
+      return PathMacros.getInstance().getValue(match.groupValues[1])
+    }
+    return str
   }
 }
