@@ -21,6 +21,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
@@ -74,7 +75,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
                final Project project = parameters.getOriginalFile().getProject();
 
-               if (file.getFileType() == HtmlFileType.INSTANCE && PubspecYamlUtil.findPubspecYamlFile(project, file) == null) {
+               if (file.getFileType() == HtmlFileType.INSTANCE &&
+                   PubspecYamlUtil.findPubspecYamlFile(project, file) == null &&
+                   !Registry.is("dart.projects.without.pubspec", false)) {
                  return;
                }
 

@@ -175,7 +175,10 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     final TextFieldWithHistory textFieldWithHistory = textFieldWithHistoryWithBrowseButton.getChildComponent();
     textFieldWithHistory.setHistorySize(-1);
     textFieldWithHistory.setMinimumAndPreferredWidth(0);
+    // add a fake empty element as 'Down' key doesn't show popup if the combobox model is empty
+    textFieldWithHistory.setHistory(Collections.singletonList(""));
     SwingHelper.addHistoryOnExpansion(textFieldWithHistory, () -> {
+      textFieldWithHistory.setHistory(Collections.emptyList());
       List<VirtualFile> newFiles = KarmaUtil.listPossibleConfigFilesInProject(project);
       List<String> newFilePaths = ContainerUtil.map(newFiles, file -> FileUtil.toSystemDependentName(file.getPath()));
       Collections.sort(newFilePaths);

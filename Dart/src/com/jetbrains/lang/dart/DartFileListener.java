@@ -168,13 +168,11 @@ public class DartFileListener implements VirtualFileListener {
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
 
     for (VirtualFile pubspecFile : pubspecYamlFiles) {
-      final VirtualFile dotPackagesFile = pubspecFile.getParent().findChild(DotPackagesFileUtil.DOT_PACKAGES);
-      final Module module = dotPackagesFile == null ? null : fileIndex.getModuleForFile(dotPackagesFile);
+      final Module module = fileIndex.getModuleForFile(pubspecFile);
+      if (module == null || !DartSdkLibUtil.isDartSdkEnabled(module)) continue;
 
-      if (dotPackagesFile != null &&
-          !dotPackagesFile.isDirectory() &&
-          module != null &&
-          DartSdkLibUtil.isDartSdkEnabled(module)) {
+      final VirtualFile dotPackagesFile = findDotPackagesFile(pubspecFile.getParent());
+      if (dotPackagesFile != null) {
         final Map<String, String> packagesMap = DotPackagesFileUtil.getPackagesMap(dotPackagesFile);
         if (packagesMap != null) {
           for (Map.Entry<String, String> entry : packagesMap.entrySet()) {
@@ -189,6 +187,18 @@ public class DartFileListener implements VirtualFileListener {
     }
 
     return libInfo;
+  }
+
+  @Nullable
+  private static VirtualFile findDotPackagesFile(@Nullable VirtualFile dir) {
+    while (dir != null) {
+      final VirtualFile file = dir.findChild(DotPackagesFileUtil.DOT_PACKAGES);
+      if (file != null && !file.isDirectory()) {
+        return file;
+      }
+      dir = dir.getParent();
+    }
+    return null;
   }
 
   @NotNull
