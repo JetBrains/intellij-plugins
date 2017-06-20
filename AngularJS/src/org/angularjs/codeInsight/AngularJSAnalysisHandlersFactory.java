@@ -43,7 +43,7 @@ public class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory 
             protected void applyFix(Project project, PsiElement psiElement, PsiFile file, Editor editor) {
               JSClass directive = AngularJS2IndexingHandler.findDirectiveClass(psiElement);
               assert directive != null;
-              doApplyFix(project, directive, directive.getContainingFile(), null, null);
+              doApplyFix(project, directive, directive.getContainingFile(), null);
             }
 
             @NotNull
@@ -79,7 +79,7 @@ public class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory 
             protected void applyFix(Project project, PsiElement psiElement, PsiFile file, Editor editor) {
               JSClass directive = AngularJS2IndexingHandler.findDirectiveClass(psiElement);
               assert directive != null;
-              doApplyFix(project, directive, directive.getContainingFile(), null, null);
+              doApplyFix(project, directive, directive.getContainingFile(), null);
             }
 
             @NotNull
