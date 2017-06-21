@@ -1,11 +1,13 @@
 package com.intellij.lang.javascript.linter.tslint;
 
 import com.intellij.codeInspection.InspectionProfileEntry;
+import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.linter.LinterHighlightingTest;
-import com.intellij.lang.javascript.linter.eslint.EslintUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
+import com.intellij.lang.javascript.service.JSLanguageServiceQueueImpl;
+import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -71,6 +73,22 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   public void testLineSeparatorsWin() throws Exception {
     if (!SystemInfo.isWindows) return;
     doTest("lineSeparators", "lineSeparators/data.ts", true, true, LineSeparator.CRLF);
+  }
+
+  public void testTimeout() throws Exception {
+    JSLanguageServiceUtil.TEST_TIMEOUT_MILLIS = 1;
+    try {
+      myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: " + JSLanguageServiceQueueImpl.LANGUAGE_SERVICE_EXECUTION_TIMEOUT, true, false);
+      doTest("clean", "clean/clean.ts", true, true, null);
+    } finally {
+      JSLanguageServiceUtil.TEST_TIMEOUT_MILLIS = JSLanguageServiceUtil.TIMEOUT_MILLS;
+    }
+  }
+
+  public void testFix() throws Exception {
+    doTest("fix", "fix/fix.ts", true, true, null);
+    myFixture.launchAction(JSTestUtils.getSingleQuickFix(myFixture, "TSLint: Fix current file"));
+    myFixture.checkResultByFile("fix/fix_after.ts");
   }
 
   public void testAllRulesAreInConfig() throws Exception {
