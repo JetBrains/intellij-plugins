@@ -5,7 +5,6 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.JSAnalysisHandlersFactory;
 import com.intellij.lang.javascript.psi.JSCallExpression;
-import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
@@ -89,12 +88,11 @@ public class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory 
             }
 
             @Override
-            protected JSExpression addAccessModifier(Template template,
-                                                     JSReferenceExpression referenceExpression,
-                                                     PsiFile file,
-                                                     boolean staticContext,
-                                                     JSClass contextClass) {
-              return referenceExpression.getQualifier();
+            protected void addAccessModifier(Template template,
+                                             JSReferenceExpression referenceExpression,
+                                             PsiFile file,
+                                             boolean staticContext,
+                                             JSClass contextClass) {
             }
           });
         }
