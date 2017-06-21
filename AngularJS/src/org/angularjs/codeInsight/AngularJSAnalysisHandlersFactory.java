@@ -59,6 +59,14 @@ public class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory 
                                                 JSReferenceExpression referenceExpression) {
               template.addTextSegment(JSClassUtils.createClassFunctionName(createdMethodName, file));
             }
+            
+            @Override
+            protected void addAccessModifier(Template template,
+                                             JSReferenceExpression referenceExpression,
+                                             PsiFile file,
+                                             boolean staticContext,
+                                             JSClass contextClass) {
+            }
           });
         }
       }
