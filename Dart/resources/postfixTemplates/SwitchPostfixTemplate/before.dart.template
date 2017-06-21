@@ -1,0 +1,3 @@
+f(expr) {
+  <spot>expr</spot>.switch
+}
