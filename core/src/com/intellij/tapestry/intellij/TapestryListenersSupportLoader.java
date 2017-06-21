@@ -113,10 +113,6 @@ public class TapestryListenersSupportLoader implements ProjectComponent {
     });
   }
 
-  @Override
-  public void projectClosed() {
-  }
-
   @Nullable
   private static Module getModuleFromEvent(PsiTreeChangeEvent event) {
     PsiElement parent = event.getParent();
