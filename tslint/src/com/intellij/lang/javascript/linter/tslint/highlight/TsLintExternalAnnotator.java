@@ -18,7 +18,6 @@ import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
 import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.util.JSUtils;
-import com.intellij.lang.javascript.service.JSLanguageServiceQueueImpl;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
@@ -31,6 +30,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.ResultWithError;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -116,32 +116,25 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
     TsLintLanguageService service = TsLintLanguageService.getService(collectedInfo.getProject());
     VirtualFile config = collectedInfo.getConfig();
 
-    Future<List<TsLinterError>> highlight =
-      service.highlight(collectedInfo.getVirtualFile(), config, collectedInfo.getFileContent());
-    List<TsLinterError> annotationErrors = JSLanguageServiceUtil.awaitFuture(highlight);
-    if (annotationErrors == null) {
-      if (!service.isServiceCreated() || service.getServiceCreationError() != null) {
-        String error = service.getServiceCreationError();
-        error = error == null ? JSLanguageServiceQueueImpl.CANNOT_START_LANGUAGE_SERVICE_PROCESS : error;
-        return JSLinterAnnotationResult.create(collectedInfo, new JSLinterFileLevelAnnotation(error), config);
-      }
-      return null;
-    }
-    if (!annotationErrors.isEmpty()) {
-      final Optional<TsLinterError> globalError = annotationErrors.stream().filter(error -> error.isGlobal()).findFirst();
-      if (globalError.isPresent()) {
-        final JSLinterAnnotationResult<TsLintState> annotation =
-          createGlobalErrorMessage(collectedInfo, config, globalError.get().getDescription());
-        if (annotation != null) return annotation;
-      }
+    final Future<List<TsLinterError>> future = service.highlight(collectedInfo.getVirtualFile(), config, collectedInfo.getFileContent());
+    final ResultWithError<List<TsLinterError>, String> result = JSLanguageServiceUtil.awaitLanguageService(future, service);
+    if (result.getError() != null) {
+      return JSLinterAnnotationResult.create(collectedInfo, new JSLinterFileLevelAnnotation(result.getError()), config);
     }
 
-    List<JSLinterError> result = filterResultByFile(collectedInfo, annotationErrors);
+    final List<TsLinterError> annotationErrors = result.getResult();
+    if (annotationErrors == null || annotationErrors.isEmpty()) return null;
 
-    return JSLinterAnnotationResult.createLinterResult(collectedInfo, result, config);
+    final Optional<TsLinterError> globalError = annotationErrors.stream().filter(error -> error.isGlobal()).findFirst();
+    if (globalError.isPresent() && !StringUtil.isEmptyOrSpaces(globalError.get().getDescription())) {
+      return createGlobalErrorMessage(collectedInfo, config, globalError.get().getDescription());
+    }
+
+    final List<JSLinterError> filtered = filterResultByFile(collectedInfo, annotationErrors);
+    return JSLinterAnnotationResult.createLinterResult(collectedInfo, filtered, config);
   }
 
-  public List<JSLinterError> filterResultByFile(@NotNull TsLinterInput collectedInfo, List<TsLinterError> annotationErrors) {
+  public List<JSLinterError> filterResultByFile(@NotNull TsLinterInput collectedInfo, @NotNull List<TsLinterError> annotationErrors) {
     final String filePath = collectedInfo.getVirtualFile().getPath();
     final String fileName = collectedInfo.getPsiFile().getName();
 
@@ -156,19 +149,16 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
     return annotationErrors.stream().filter(el -> filteredPaths.contains(el.getAbsoluteFilePath())).collect(Collectors.toList());
   }
 
-  @Nullable
+  @NotNull
   private static JSLinterAnnotationResult<TsLintState> createGlobalErrorMessage(@NotNull TsLinterInput collectedInfo,
                                                                                 @Nullable VirtualFile config,
-                                                                                @Nullable String error) {
-    if (!StringUtil.isEmptyOrSpaces(error)) {
-      final ProcessOutput output = new ProcessOutput();
-      output.appendStderr(error);
-      final IntentionAction detailsAction = JSLinterUtil.createDetailsAction(collectedInfo.getProject(), collectedInfo.getVirtualFile(),
-                                                                             null, output, null);
-      final JSLinterFileLevelAnnotation annotation = new JSLinterFileLevelAnnotation(error, detailsAction);
-      return JSLinterAnnotationResult.create(collectedInfo, annotation, config);
-    }
-    return null;
+                                                                                @NotNull String error) {
+    final ProcessOutput output = new ProcessOutput();
+    output.appendStderr(error);
+    final IntentionAction detailsAction = JSLinterUtil.createDetailsAction(collectedInfo.getProject(), collectedInfo.getVirtualFile(),
+                                                                           null, output, null);
+    final JSLinterFileLevelAnnotation annotation = new JSLinterFileLevelAnnotation(error, detailsAction);
+    return JSLinterAnnotationResult.create(collectedInfo, annotation, config);
   }
 
   protected void cleanNotification(@NotNull TsLinterInput collectedInfo) {
