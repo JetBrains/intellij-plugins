@@ -1,0 +1,3 @@
+m(bool b) {
+  assert(b);
+}

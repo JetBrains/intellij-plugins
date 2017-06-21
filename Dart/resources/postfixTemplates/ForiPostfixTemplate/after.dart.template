@@ -1,0 +1,6 @@
+main() {
+  var limit = 100;
+  for (int i = 0; i < limit; i++) {
+    <spot></spot>
+  }
+}

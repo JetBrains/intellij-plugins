@@ -39,7 +39,7 @@ public class DartPostfixTemplateProvider implements PostfixTemplateProvider {
     if (templates != null) {
       try {
         for (PostfixCompletionTemplate template : templates) {
-          set.add(new DartRemotePostfixTemplate(template.getName(), template.getKey(), template.getExample()));
+          set.add(DartRemotePostfixTemplate.createTemplate(template));
         }
         templateCache.put(version, set);
         return true;
