@@ -1,0 +1,3 @@
+f() {
+  <spot>"result"</spot>.return
+}

@@ -1,0 +1,3 @@
+f(bool expr) {
+  <spot>expr</spot>.while
+}
