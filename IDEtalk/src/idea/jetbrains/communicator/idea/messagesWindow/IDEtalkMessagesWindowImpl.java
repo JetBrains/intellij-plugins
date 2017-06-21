@@ -145,10 +145,6 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
   }
 
   @Override
-  public void initComponent() {
-  }
-
-  @Override
   public void projectClosed() {
     if (myIconBlinker != null) {
       myIconBlinker.stop();
@@ -274,11 +270,6 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
     return tab;
   }
 
-
-  @Override
-  public void expandToolWindow() {
-    super.expandToolWindow();
-  }
 
   @Override
   public void removeToolWindow() {
