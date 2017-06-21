@@ -1335,6 +1335,10 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     if (canHaveImportTo(resolveResults)) {
       quickFixes.add(new AddImportECMAScriptClassOrFunctionAction(null, referenceExpression));
     }
+    if (!(node instanceof JSNewExpression)) {
+      //foo() -> AS methods are callable without this -> method
+      quickFixes.add(JSFixFactory.getInstance().createJSFunctionIntentionAction(referenceExpression.getReferenceName(), true));
+    }
 
     super.addCreateFromUsageFixesForCall(node, referenceExpression, resolveResults, quickFixes);
   }
