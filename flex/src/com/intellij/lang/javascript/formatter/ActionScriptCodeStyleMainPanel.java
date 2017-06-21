@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.formatter;
 
-import com.intellij.application.options.TabbedLanguageCodeStylePanel;
 import com.intellij.lang.javascript.ActionScriptFileType;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.formatter.punctuation.JSCodeStylePunctuationPanel;
@@ -11,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Rustam Vishnyakov
  */
-public class ActionScriptCodeStyleMainPanel extends TabbedLanguageCodeStylePanel {
+public class ActionScriptCodeStyleMainPanel extends JSDerivedLanguageCodeStyleMainPanel {
 
   protected ActionScriptCodeStyleMainPanel(CodeStyleSettings currentSettings, CodeStyleSettings settings) {
     super(JavaScriptSupportLoader.ECMA_SCRIPT_L4, currentSettings, settings);
