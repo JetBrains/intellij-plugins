@@ -1,13 +1,13 @@
 package com.google.dart.server.internal.remote.processor;
 
-import com.google.dart.server.EditIsPostfixCompletionApplicableConsumer;
+import com.google.dart.server.IsPostfixCompletionApplicableConsumer;
 import com.google.gson.JsonObject;
 import org.dartlang.analysis.server.protocol.RequestError;
 
-public class EditIsPostfixCompletionApplicableProcessor {
-  private final EditIsPostfixCompletionApplicableConsumer consumer;
+public class IsPostfixCompletionApplicableProcessor {
+  private final IsPostfixCompletionApplicableConsumer consumer;
 
-  public EditIsPostfixCompletionApplicableProcessor(EditIsPostfixCompletionApplicableConsumer consumer) {
+  public IsPostfixCompletionApplicableProcessor(IsPostfixCompletionApplicableConsumer consumer) {
     this.consumer = consumer;
   }
 

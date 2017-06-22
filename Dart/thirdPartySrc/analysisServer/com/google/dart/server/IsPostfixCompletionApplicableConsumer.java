@@ -1,6 +1,6 @@
 package com.google.dart.server;
 
-public interface EditIsPostfixCompletionApplicableConsumer extends Consumer {
+public interface IsPostfixCompletionApplicableConsumer extends Consumer {
 
   void isPostfixCompletionApplicable(Boolean value);
 

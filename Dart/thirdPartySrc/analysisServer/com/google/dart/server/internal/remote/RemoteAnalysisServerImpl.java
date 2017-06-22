@@ -287,7 +287,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     sendRequestToServer(id, RequestUtilities.generateEditGetFixes(id, file, offset), consumer);
   }
 
-  public void edit_isPostfixCompletionApplicable(String path, int offset, String key, EditIsPostfixCompletionApplicableConsumer consumer) {
+  public void edit_isPostfixCompletionApplicable(String path, String key, int offset, IsPostfixCompletionApplicableConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateIsPostfixCompletionApplicable(id, path, offset, key), consumer);
   }
@@ -297,7 +297,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     sendRequestToServer(id, RequestUtilities.generateListPostfixCompletionTeamplates(id), consumer);
   }
 
-  public void edit_getPostfixCompletion(String file, int offset, String key, GetPostfixCompletionConsumer consumer) {
+  public void edit_getPostfixCompletion(String file, String key, int offset, GetPostfixCompletionConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateEditPostfixCompletion(id, file, offset, key), consumer);
   }
@@ -620,8 +620,8 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     else if (consumer instanceof GetPostfixCompletionConsumer) {
       new PostfixCompletionProcessor((GetPostfixCompletionConsumer)consumer).process(resultObject, requestError);
     }
-    else if (consumer instanceof EditIsPostfixCompletionApplicableConsumer) {
-      new EditIsPostfixCompletionApplicableProcessor((EditIsPostfixCompletionApplicableConsumer)consumer).process(resultObject, requestError);
+    else if (consumer instanceof IsPostfixCompletionApplicableConsumer) {
+      new IsPostfixCompletionApplicableProcessor((IsPostfixCompletionApplicableConsumer)consumer).process(resultObject, requestError);
     }
     else if (consumer instanceof ListPostfixCompletionTemplatesConsumer) {
       new ListPostfixCompletionTemplatesProcessor((ListPostfixCompletionTemplatesConsumer)consumer).process(resultObject, requestError);
