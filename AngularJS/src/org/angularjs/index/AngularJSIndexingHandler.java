@@ -620,7 +620,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       arrayExpression = (JSExpression)last;
     }
     if (last != null && arrayExpression != null) {
-      return evaluator.evalComponentTypeFromArrayExpression(resolveParent, arrayExpression) != null;
+      return evaluator.addComponentTypeFromArrayExpression(resolveParent, arrayExpression) != null;
     }
     return false;
   }
