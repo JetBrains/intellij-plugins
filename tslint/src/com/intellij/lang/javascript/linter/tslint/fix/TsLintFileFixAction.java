@@ -54,7 +54,7 @@ public class TsLintFileFixAction extends JSLinterFixAction {
         for (VirtualFile file : filesToProcess) {
           indicator.setText("Processing file " + file.getCanonicalPath());
           final Future<List<TsLinterError>> future = ReadAction.compute(() -> service.highlightAndFix(file, state));
-          final ResultWithError<List<TsLinterError>, String> result = JSLanguageServiceUtil.awaitLanguageService(future, service);
+          final ResultWithError<List<TsLinterError>> result = JSLanguageServiceUtil.awaitLanguageService(future, service);
           if (result.getError() != null) {
             JSLinterGuesser.NOTIFICATION_GROUP.createNotification("TSLint: " + result.getError(), MessageType.ERROR).notify(project);
           }
