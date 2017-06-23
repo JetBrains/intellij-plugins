@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.intellij.idea.RareLogger;
-import com.intellij.lang.javascript.linter.JSLinterUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLintConfigFileSearcher;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLintOutputJsonParser;
@@ -53,33 +52,32 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     return "TSLint";
   }
 
-  @NotNull
-  @Override
-  protected JSLanguageServiceQueue.ServiceInfoReporter createDefaultReporter() {
-    return new NotificationLanguageServiceReporter(JSLinterUtil.NOTIFICATION_GROUP, super.createDefaultReporter());
-  }
-
   public final Future<List<TsLinterError>> highlight(@Nullable VirtualFile virtualFile,
                                                      @Nullable VirtualFile config,
                                                      @Nullable String content) {
     final JSLanguageServiceQueue process = getProcess();
+    if (process == null) {
+      return new FixedFuture<>(Collections.singletonList(new TsLinterError(JSLanguageServiceUtil.getLanguageServiceCreationError(this))));
+    }
     final MyParameters parameters = MyParameters.checkParameters(virtualFile, config, process);
     if (parameters.getErrors() != null) return new FixedFuture<>(parameters.getErrors());
     TsLintGetErrorsCommand command = new TsLintGetErrorsCommand(parameters.getPath(), parameters.getConfigPath(),
                                                                 StringUtil.notNullize(content));
-    assert process != null;
     return process.execute(command, createHighlightProcessor(parameters.getPath()));
   }
 
   public final Future<List<TsLinterError>> highlightAndFix(@Nullable VirtualFile virtualFile, @NotNull TsLintState state) {
-    VirtualFile config = virtualFile == null ? null : myConfigFileSearcher.getConfig(state, virtualFile);
     final JSLanguageServiceQueue process = getProcess();
+    if (process == null) {
+      return new FixedFuture<>(Collections.singletonList(new TsLinterError(JSLanguageServiceUtil.getLanguageServiceCreationError(this))));
+    }
+
+    VirtualFile config = virtualFile == null ? null : myConfigFileSearcher.getConfig(state, virtualFile);
     final MyParameters parameters = MyParameters.checkParameters(virtualFile, config, process);
     if (parameters.getErrors() != null) return new FixedFuture<>(parameters.getErrors());
 
     //doesn't pass content (file should be saved before)
     TsLintFixErrorsCommand command = new TsLintFixErrorsCommand(parameters.getPath(), parameters.getConfigPath());
-    assert process != null;
     return process.execute(command, createHighlightProcessor(parameters.getPath()));
   }
 
