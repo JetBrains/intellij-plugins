@@ -7,6 +7,7 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.linter.*;
+import com.intellij.lang.javascript.linter.eslint.EslintUtil;
 import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
@@ -113,8 +114,12 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
   @Nullable
   @Override
   public JSLinterAnnotationResult<TsLintState> annotate(@NotNull TsLinterInput collectedInfo) {
-    TsLintLanguageService service = TsLintLanguageService.getService(collectedInfo.getProject());
     VirtualFile config = collectedInfo.getConfig();
+    final JSLinterFileLevelAnnotation interpreterAndPackageError =
+      JSLinterUtil.validateInterpreterAndPackage(collectedInfo.getProject(), EslintUtil.PACKAGE_NAME, collectedInfo.getState());
+    if (interpreterAndPackageError != null) return JSLinterAnnotationResult.create(collectedInfo, interpreterAndPackageError, config);
+
+    TsLintLanguageService service = TsLintLanguageService.getService(collectedInfo.getProject());
 
     final Future<List<TsLinterError>> future = service.highlight(collectedInfo.getVirtualFile(), config, collectedInfo.getFileContent());
     final ResultWithError<List<TsLinterError>> result = JSLanguageServiceUtil.awaitLanguageService(future, service);
