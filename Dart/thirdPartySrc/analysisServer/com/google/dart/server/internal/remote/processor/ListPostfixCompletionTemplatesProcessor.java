@@ -9,6 +9,7 @@ import org.dartlang.analysis.server.protocol.RequestError;
 import org.jetbrains.io.JsonUtil;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 public class ListPostfixCompletionTemplatesProcessor extends ResultProcessor {
   private final ListPostfixCompletionTemplatesConsumer consumer;
@@ -20,10 +21,13 @@ public class ListPostfixCompletionTemplatesProcessor extends ResultProcessor {
   public void process(JsonObject resultObject, RequestError requestError) {
     if (resultObject != null) {
       try {
-        String jsonString = resultObject.get("templates").getAsJsonPrimitive().getAsString();
-        String[][] stringArray = new Gson().fromJson(jsonString, (Type)String[][].class);
-        PostfixCompletionTemplate[] templates = PostfixCompletionTemplate.fromStringArray(stringArray);
-        consumer.postfixCompletionTemplates(templates);
+        JsonArray items = resultObject.get("templates").getAsJsonArray();
+        ArrayList<PostfixCompletionTemplate> templates = new ArrayList<>();
+        items.forEach(item -> {
+          JsonObject temp = item.getAsJsonObject();
+          templates.add(PostfixCompletionTemplate.fromJson(temp));
+        });
+        consumer.postfixCompletionTemplates(templates.toArray(new PostfixCompletionTemplate[items.size()]));
       }
       catch (Exception exception) {
         // catch any exceptions in the formatting of this response
