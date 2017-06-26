@@ -45,13 +45,15 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
         DartTypeArguments.class,
         PsiComment.class,
         DartStringLiteralExpression.class,
-        DartMapLiteralExpression.class});
+        DartMapLiteralExpression.class,
+        DartNewExpression.class});
     foldComments(descriptors, psiElements, fileHeaderRange);                           // 4. Comments and comment sequences
     foldClassBodies(descriptors, dartFile);                                            // 5. Class body
     foldFunctionBodies(descriptors, psiElements);                                      // 6. Function body
     foldTypeArguments(descriptors, psiElements);                                       // 7. Type arguments
     foldMultilineStrings(descriptors, psiElements);                                    // 8. Multi-line strings
     foldMapLiterals(descriptors, psiElements);                                         // 9. Map literals
+    foldNewDartExpressions(descriptors, psiElements);                                  // 10. Constructor invocations
   }
 
   protected String getLanguagePlaceholderText(@NotNull final ASTNode node, @NotNull final TextRange range) {
@@ -74,6 +76,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       return multilineStringPlaceholder(node);                                       // 8.   Multi-line strings
     }
     if (psiElement instanceof DartMapLiteralExpression) return "{...}";              // 9.   Map literals
+    if (psiElement instanceof DartArguments) return "(...)";                         // 10. Constructor invocations
 
     return "...";
   }
@@ -280,6 +283,22 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
         if (type == DartTokenTypes.RAW_TRIPLE_QUOTED_STRING || (type == DartTokenTypes.OPEN_QUOTE && child.getTextLength() == 3)) {
           descriptors.add(new FoldingDescriptor(dartString, dartString.getTextRange()));
         }
+      }
+    }
+  }
+
+  private static void foldNewDartExpressions(@NotNull final List<FoldingDescriptor> descriptors,
+                                             @NotNull final Collection<PsiElement> psiElements) {
+    for (PsiElement psiElement : psiElements) {
+      if (psiElement instanceof DartNewExpression) {
+        DartNewExpression dartNewExpression = (DartNewExpression)psiElement;
+        DartArguments dartArguments = dartNewExpression.getArguments();
+        if (dartArguments == null || dartArguments.getArgumentList() == null) continue;
+
+        DartArgumentList dartArgumentList = dartArguments.getArgumentList();
+        if (dartArgumentList.getExpressionList().isEmpty() && dartArgumentList.getNamedArgumentList().isEmpty()) continue;
+
+        descriptors.add(new FoldingDescriptor(dartArguments, dartArguments.getTextRange()));
       }
     }
   }
