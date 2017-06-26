@@ -1,0 +1,5 @@
+f() {
+  <spot>m()</spot>.try
+}
+
+m() throws Exception() {}

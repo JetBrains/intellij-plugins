@@ -1,0 +1,6 @@
+main() {
+  var values = [1, 2, 3];
+  for (var value in values) {
+    <spot></spot>
+  }
+}

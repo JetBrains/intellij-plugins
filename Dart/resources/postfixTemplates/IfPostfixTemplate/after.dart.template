@@ -1,0 +1,5 @@
+f(bool b) {
+  if (b) {
+    <spot></spot>
+  }
+}
