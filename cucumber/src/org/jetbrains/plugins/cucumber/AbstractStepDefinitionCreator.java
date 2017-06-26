@@ -16,7 +16,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.StringBuilderSpinAllocator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
@@ -46,17 +45,12 @@ public abstract class AbstractStepDefinitionCreator implements StepDefinitionCre
       dirsReversed.add(name);
       parent = parent.getParent();
     }
-    final StringBuilder buf = StringBuilderSpinAllocator.alloc();
-    try {
-      for (int i = dirsReversed.size() - 1; i >= 0; i--) {
-        buf.append(dirsReversed.get(i)).append(File.separatorChar);
-      }
-      buf.append(file.getName());
-      return buf.toString();
+    final StringBuilder buf = new StringBuilder();
+    for (int i = dirsReversed.size() - 1; i >= 0; i--) {
+      buf.append(dirsReversed.get(i)).append(File.separatorChar);
     }
-    finally {
-      StringBuilderSpinAllocator.dispose(buf);
-    }
+    buf.append(file.getName());
+    return buf.toString();
   }
 
   @NotNull

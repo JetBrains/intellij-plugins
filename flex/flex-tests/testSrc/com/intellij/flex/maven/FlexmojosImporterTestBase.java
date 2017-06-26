@@ -18,7 +18,6 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.util.PathUtil;
-import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FilteringIterator;
 import org.jetbrains.annotations.Nullable;
@@ -120,22 +119,17 @@ public abstract class FlexmojosImporterTestBase extends MavenImportingTestCase {
   }
 
   protected String plugins(@Nullable String configuration, @Nullable String otherPlugins) {
-    StringBuilder stringBuilder = StringBuilderSpinAllocator.alloc();
-    try {
-      stringBuilder.append("<build><sourceDirectory>").append(SOURCE_DIR).append("</sourceDirectory><plugins><plugin>")
-        .append(flexmojosPlugin());
-      if (configuration != null) {
-        stringBuilder.append("<configuration>").append(configuration).append("</configuration>");
-      }
-      stringBuilder.append("</plugin>");
-      if (otherPlugins != null) {
-        stringBuilder.append(otherPlugins);
-      }
-      return stringBuilder.append("</plugins></build>").toString();
+    StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append("<build><sourceDirectory>").append(SOURCE_DIR).append("</sourceDirectory><plugins><plugin>")
+      .append(flexmojosPlugin());
+    if (configuration != null) {
+      stringBuilder.append("<configuration>").append(configuration).append("</configuration>");
     }
-    finally {
-      StringBuilderSpinAllocator.dispose(stringBuilder);
+    stringBuilder.append("</plugin>");
+    if (otherPlugins != null) {
+      stringBuilder.append(otherPlugins);
     }
+    return stringBuilder.append("</plugins></build>").toString();
   }
 
   protected static String parent() {
