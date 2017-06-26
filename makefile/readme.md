@@ -12,12 +12,13 @@ Provides:
  * keywords & target names completion
  * run configurations
  * gutter marks & context actions to run targets
+ * quick-doc for ## comments on target line
  * find usages and Go To Symbol navigation for targets
  * prerequisites resolution
  * rules, variables and conditionals folding
  * quick fixes to create new rule from unresolved prerequisite and remove empty rule
 
-<img src="https://victor.kropp.name/projects/makefile/makefile-example.png" width="600">
+![](https://victor.kropp.name/projects/makefile/makefile-example.png)
 
 ### Development
 

@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>name.kropp.intellij.makefile</id>
   <name>Makefile support</name>
-  <version>0.10</version>
+  <version>1.2</version>
   <vendor email="victor.kropp@gmail.com" url="https://victor.kropp.name/projects/makefile/">Victor Kropp</vendor>
 
   <description><![CDATA[
@@ -9,11 +9,12 @@
     ]]></description>
 
   <change-notes><![CDATA[
-It is now possible to set up environment variables for Makefile run configuration.
+Plugin now supports self-describing Makefiles, ## comments on targets are treated as doc-comments.
+It is now possible to set up working directory for Makefile run configuration.
     ]]>
   </change-notes>
 
-  <idea-version since-build="163.0" until-build="172.*"/>
+  <idea-version since-build="163.0"/>
 
   <depends>com.intellij.modules.lang</depends>
 
