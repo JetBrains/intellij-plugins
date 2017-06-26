@@ -1799,7 +1799,10 @@ public class DartAnalysisServerService implements Disposable {
   private void registerPostfixCompletionTemplates() {
     ApplicationManager.getApplication().invokeLater(() -> {
       // There must be a better way to initialize postfix templates!
-      while (!DartPostfixTemplateProvider.initializeTemplates(this)) {
+      for (int n = 20; n > 0; n--) {
+        if (DartPostfixTemplateProvider.initializeTemplates(this)) {
+          return;
+        }
         try {
           //noinspection BusyWait
           Thread.sleep(POSTFIX_COMPLETION_TIMEOUT);

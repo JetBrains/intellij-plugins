@@ -35,6 +35,9 @@ public class DartRemotePostfixTemplate extends PostfixTemplate {
     // TODO Automatically generate documentation subclasses from server data during build.
     try {
       String prefix = StringUtil.capitalize(template.getName());
+      if (prefix.equals("!")) {
+        prefix = "Bang";
+      }
       Class <?> templateClass = Class.forName("com.jetbrains.lang.dart.ide.template.postfix." + prefix + "PostfixTemplate");
       Constructor<?> constructor = ((Class<?>)templateClass).getDeclaredConstructor(PostfixCompletionTemplate.class);
       return (DartRemotePostfixTemplate)constructor.newInstance(template);
@@ -90,6 +93,18 @@ public class DartRemotePostfixTemplate extends PostfixTemplate {
         CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), CommonBundle.getErrorTitle(), null);
       }
     }
+  }
+}
+
+class AssertPostfixTemplate extends DartRemotePostfixTemplate {
+  AssertPostfixTemplate(PostfixCompletionTemplate template) {
+    super(template);
+  }
+}
+
+class BangPostfixTemplate extends DartRemotePostfixTemplate {
+  BangPostfixTemplate(PostfixCompletionTemplate template) {
+    super(template);
   }
 }
 
