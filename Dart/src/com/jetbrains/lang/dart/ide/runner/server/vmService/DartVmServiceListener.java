@@ -7,12 +7,14 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.xdebugger.XExpression;
 import com.intellij.xdebugger.XSourcePosition;
+import com.intellij.xdebugger.breakpoints.XBreakpoint;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XSuspendContext;
 import com.intellij.xdebugger.frame.XValue;
+import com.jetbrains.lang.dart.ide.runner.DartExceptionBreakpointProperties;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceSuspendContext;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceValue;
 import org.dartlang.vm.service.VmServiceListener;
@@ -136,6 +138,14 @@ public class DartVmServiceListener implements VmServiceListener {
       if (latestStep == StepOption.Over && equalSourcePositions(myLatestSourcePosition, sourcePosition)) {
         // continue stepping to change current line
         myDebugProcess.getVmServiceWrapper().resumeIsolate(isolateRef.getId(), latestStep);
+      }
+      else if (exception != null) {
+        final XBreakpoint<DartExceptionBreakpointProperties> breakpoint =
+          DartExceptionBreakpointHandler.getDefaultExceptionBreakpoint(myDebugProcess.getSession().getProject());
+        final boolean suspend = myDebugProcess.getSession().breakpointReached(breakpoint, null, suspendContext);
+        if (!suspend) {
+          myDebugProcess.getVmServiceWrapper().resumeIsolate(isolateRef.getId(), null);
+        }
       }
       else {
         myLatestSourcePosition = sourcePosition;
