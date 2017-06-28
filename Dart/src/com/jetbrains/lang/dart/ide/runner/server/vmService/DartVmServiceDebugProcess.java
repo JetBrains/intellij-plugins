@@ -7,7 +7,6 @@ import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
@@ -105,8 +104,11 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     myCurrentWorkingDirectory = currentWorkingDirectory;
 
     myIsolatesInfo = new IsolatesInfo();
-    final DartVmServiceBreakpointHandler breakpointHandler = new DartVmServiceBreakpointHandler(this);
-    myBreakpointHandlers = new XBreakpointHandler[]{breakpointHandler};
+
+    myBreakpointHandlers = new XBreakpointHandler[]{
+      new DartVmServiceBreakpointHandler(this),
+      new DartExceptionBreakpointHandler(this)
+    };
 
     setLogger();
 
@@ -359,12 +361,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       }
 
       Disposer.dispose(myVmServiceWrapper);
-
-      for (XBreakpointHandler handler : myBreakpointHandlers) {
-        if (handler instanceof Disposable) {
-          Disposer.dispose((Disposable)handler);
-        }
-      }
     }
   }
 
@@ -420,15 +416,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
     if (isolateRef.getId().equals(myLatestCurrentIsolateId)) {
       resume(getSession().getSuspendContext()); // otherwise no way no resume them from UI
-    }
-  }
-
-  /**
-   * Set the exception pause mode for all current isolates.
-   */
-  public void setExceptionPauseMode(ExceptionPauseMode mode) {
-    for (IsolatesInfo.IsolateInfo isolateInfo : myIsolatesInfo.getIsolateInfos()) {
-      myVmServiceWrapper.setExceptionPauseMode(isolateInfo.getIsolateId(), mode);
     }
   }
 

@@ -1,17 +1,12 @@
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.Computable;
-import com.intellij.xdebugger.XDebuggerManager;
-import com.intellij.xdebugger.breakpoints.*;
-import com.jetbrains.lang.dart.ide.runner.DartExceptionBreakpointProperties;
-import com.jetbrains.lang.dart.ide.runner.DartExceptionBreakpointType;
+import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
+import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
+import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.jetbrains.lang.dart.ide.runner.DartLineBreakpointType;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.dartlang.vm.service.element.Breakpoint;
-import org.dartlang.vm.service.element.ExceptionPauseMode;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -19,37 +14,16 @@ import java.util.*;
 import static com.intellij.icons.AllIcons.Debugger.Db_invalid_breakpoint;
 import static com.intellij.icons.AllIcons.Debugger.Db_verified_breakpoint;
 
-public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>> implements Disposable {
+public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>> {
+
   private final DartVmServiceDebugProcess myDebugProcess;
   private final Set<XLineBreakpoint<XBreakpointProperties>> myXBreakpoints = new THashSet<>();
   private final Map<String, IsolateBreakpointInfo> myIsolateInfo = new THashMap<>();
   private final Map<String, XLineBreakpoint<XBreakpointProperties>> myVmBreakpointIdToXBreakpointMap = new THashMap<>();
-  private ExceptionPauseMode myExceptionPauseMode;
 
   public DartVmServiceBreakpointHandler(@NotNull final DartVmServiceDebugProcess debugProcess) {
     super(DartLineBreakpointType.class);
     myDebugProcess = debugProcess;
-
-    getDebuggerManager().getBreakpointManager().addBreakpointListener(
-      DartExceptionBreakpointType.INSTANCE,
-      new XBreakpointListener<XBreakpoint<DartExceptionBreakpointProperties>>() {
-        @Override
-        public void breakpointAdded(@NotNull XBreakpoint<DartExceptionBreakpointProperties> breakpoint) {
-          fireOnExceptionModeChange();
-        }
-
-        @Override
-        public void breakpointChanged(@NotNull XBreakpoint<DartExceptionBreakpointProperties> breakpoint) {
-          fireOnExceptionModeChange();
-        }
-
-        @Override
-        public void breakpointRemoved(@NotNull XBreakpoint<DartExceptionBreakpointProperties> breakpoint) {
-          fireOnExceptionModeChange();
-        }
-      }, this);
-
-    myExceptionPauseMode = getBreakOnExceptionsMode();
   }
 
   @Override
@@ -112,10 +86,6 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
     return info;
   }
 
-  private XDebuggerManager getDebuggerManager() {
-    return XDebuggerManager.getInstance(myDebugProcess.getSession().getProject());
-  }
-
   public void breakpointResolved(@NotNull final Breakpoint vmBreakpoint) {
     final XLineBreakpoint<XBreakpointProperties> xBreakpoint = myVmBreakpointIdToXBreakpointMap.get(vmBreakpoint.getId());
 
@@ -132,50 +102,6 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
 
   public XLineBreakpoint<XBreakpointProperties> getXBreakpoint(@NotNull final Breakpoint vmBreakpoint) {
     return myVmBreakpointIdToXBreakpointMap.get(vmBreakpoint.getId());
-  }
-
-  public ExceptionPauseMode getBreakOnExceptionsMode() {
-    XBreakpoint<DartExceptionBreakpointProperties> bp = getExceptionBreakpoint();
-
-    if (bp == null) {
-      // Default to breaking on unhandled exceptions.
-      return ExceptionPauseMode.Unhandled;
-    }
-
-    if (!bp.isEnabled()) {
-      return ExceptionPauseMode.None;
-    }
-    else if (bp.getProperties().breakOnAllExceptions()) {
-      return ExceptionPauseMode.All;
-    }
-    else {
-      return ExceptionPauseMode.Unhandled;
-    }
-  }
-
-  private XBreakpoint<DartExceptionBreakpointProperties> getExceptionBreakpoint() {
-    return ApplicationManager.getApplication().runReadAction((Computable<XBreakpoint<DartExceptionBreakpointProperties>>)() -> {
-      Collection<? extends XBreakpoint<DartExceptionBreakpointProperties>>
-        exceptionBreakpoints =
-        getDebuggerManager().getBreakpointManager().getBreakpoints(DartExceptionBreakpointType.class);
-      return exceptionBreakpoints.isEmpty() ? null : exceptionBreakpoints.iterator().next();
-    });
-  }
-
-  @Override
-  public void dispose() {
-    // This class implements Disposable in order to be able to pass itself into
-    // BreakpointManager.addBreakpointListener() as the parentDisposable.
-  }
-
-  private void fireOnExceptionModeChange() {
-    ExceptionPauseMode newMode = getBreakOnExceptionsMode();
-
-    if (newMode != myExceptionPauseMode) {
-      myExceptionPauseMode = newMode;
-
-      myDebugProcess.setExceptionPauseMode(newMode);
-    }
   }
 }
 

@@ -166,15 +166,16 @@ public class VmServiceWrapper implements Disposable {
 
     // Just to make sure that the main isolate is not handled twice, both from handleDebuggerConnected() and DartVmServiceListener.received(PauseStart)
     if (newIsolate) {
-      addRequest(() -> myVmService.setExceptionPauseMode(
-        isolateRef.getId(),
-        myBreakpointHandler.getBreakOnExceptionsMode(),
-        new VmServiceConsumers.SuccessConsumerWrapper() {
-          @Override
-          public void received(Success response) {
-            setInitialBreakpointsAndResume(isolateRef);
-          }
-        }));
+      final ExceptionPauseMode mode = DartExceptionBreakpointHandler
+        .getBreakOnExceptionMode(DartExceptionBreakpointHandler.getDefaultExceptionBreakpoint(myDebugProcess.getSession().getProject()));
+      addRequest(() -> myVmService.setExceptionPauseMode(isolateRef.getId(),
+                                                         mode,
+                                                         new VmServiceConsumers.SuccessConsumerWrapper() {
+                                                           @Override
+                                                           public void received(Success response) {
+                                                             setInitialBreakpointsAndResume(isolateRef);
+                                                           }
+                                                         }));
     }
     else {
       checkInitialResume(isolateRef);
@@ -330,11 +331,10 @@ public class VmServiceWrapper implements Disposable {
     });
   }
 
-  public void setExceptionPauseMode(@NotNull final String isolateId, @NotNull ExceptionPauseMode mode) {
-    addRequest(() -> myVmService.setExceptionPauseMode(
-      isolateId,
-      mode,
-      VmServiceConsumers.EMPTY_SUCCESS_CONSUMER));
+  public void setExceptionPauseMode(@NotNull final ExceptionPauseMode mode) {
+    for (final IsolatesInfo.IsolateInfo isolateInfo : myIsolatesInfo.getIsolateInfos()) {
+      addRequest(() -> myVmService.setExceptionPauseMode(isolateInfo.getIsolateId(), mode, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER));
+    }
   }
 
   /**
