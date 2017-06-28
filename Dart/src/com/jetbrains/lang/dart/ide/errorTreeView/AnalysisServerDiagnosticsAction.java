@@ -16,6 +16,7 @@
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.google.dart.server.GetServerPortConsumer;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -24,7 +25,6 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import com.jetbrains.lang.dart.ide.runner.server.OpenDartObservatoryUrlAction;
 import org.dartlang.analysis.server.protocol.RequestError;
 
 public class AnalysisServerDiagnosticsAction extends DumbAwareAction {
@@ -47,8 +47,7 @@ public class AnalysisServerDiagnosticsAction extends DumbAwareAction {
       @Override
       public void computedServerPort(int port) {
         // Open a new browser page.
-        final String url = "http://localhost:" + port + "/status";
-        OpenDartObservatoryUrlAction.openUrlInChromeFamilyBrowser(url);
+        BrowserUtil.browse("http://localhost:" + port + "/status");
       }
 
       @Override
