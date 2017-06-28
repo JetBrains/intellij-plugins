@@ -1436,8 +1436,9 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     final boolean doProfiling = false;
     if (doProfiling) ProfilingUtil.startCPUProfiling();
     try {
-      PlatformTestUtil.startPerformanceTest("ActionScript class completion", 300, () -> complete()).usesAllCPUCores()
-        .useLegacyScaling().assertTiming();
+      PlatformTestUtil.startPerformanceTest("ActionScript class completion", 300, () -> complete())
+        .setup(() -> getPsiManager().dropPsiCaches())
+        .assertTiming();
     }
     finally {
       if (doProfiling) ProfilingUtil.captureCPUSnapshot();
