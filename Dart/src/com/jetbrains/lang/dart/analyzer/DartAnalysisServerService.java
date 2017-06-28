@@ -95,6 +95,7 @@ public class DartAnalysisServerService implements Disposable {
   private static final long GET_ASSISTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long POSTFIX_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
+  private static final long POSTFIX_INITIALIZATION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(5000);
   private static final long STATEMENT_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long FIND_ELEMENT_REFERENCES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
@@ -1008,7 +1009,7 @@ public class DartAnalysisServerService implements Disposable {
       }
     });
 
-    awaitForLatchCheckingCanceled(server, latch, POSTFIX_COMPLETION_TIMEOUT);
+    awaitForLatchCheckingCanceled(server, latch, POSTFIX_INITIALIZATION_TIMEOUT);
     return resultRef.get();
   }
 
@@ -1798,19 +1799,20 @@ public class DartAnalysisServerService implements Disposable {
 
   private void registerPostfixCompletionTemplates() {
     ApplicationManager.getApplication().invokeLater(() -> {
+      DartPostfixTemplateProvider.initializeTemplates(this);
       // There must be a better way to initialize postfix templates!
-      for (int n = 20; n > 0; n--) {
-        if (DartPostfixTemplateProvider.initializeTemplates(this)) {
-          return;
-        }
-        try {
-          //noinspection BusyWait
-          Thread.sleep(POSTFIX_COMPLETION_TIMEOUT);
-        }
-        catch (InterruptedException e) {
-          // ignore it
-        }
-      }
+      //for (int n = 20; n > 0; n--) {
+      //  if (DartPostfixTemplateProvider.initializeTemplates(this)) {
+      //    return;
+      //  }
+      //  try {
+      //    //noinspection BusyWait
+      //    Thread.sleep(POSTFIX_COMPLETION_TIMEOUT);
+      //  }
+      //  catch (InterruptedException e) {
+      //    // ignore it
+      //  }
+      //}
     }, ModalityState.NON_MODAL);
   }
 

@@ -54,10 +54,6 @@ public class DartRemotePostfixTemplate extends PostfixTemplate {
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance(project);
     String version = service.getSdkVersion();
     Set<PostfixTemplate> templates = DartPostfixTemplateProvider.getTemplates(version);
-    if (templates == null) {
-      DartPostfixTemplateProvider.initializeTemplates(service);
-      templates = DartPostfixTemplateProvider.getTemplates(version);
-    }
     boolean found = false;
     for (PostfixTemplate temp : templates) {
       if (temp.getKey().equals(getKey())) {
