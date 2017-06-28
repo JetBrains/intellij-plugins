@@ -16,30 +16,27 @@
 package com.jetbrains.lang.dart.ide.runner;
 
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 public class DartExceptionBreakpointProperties extends XBreakpointProperties<DartExceptionBreakpointProperties> {
-  public boolean myBreakOnAllExceptions;
+  private boolean myBreakOnAllExceptions = false;
 
-  public DartExceptionBreakpointProperties() {
-  }
-
-  @Nullable
+  @NotNull
   @Override
   public DartExceptionBreakpointProperties getState() {
     return this;
   }
 
   @Override
-  public void loadState(DartExceptionBreakpointProperties state) {
+  public void loadState(@NotNull final DartExceptionBreakpointProperties state) {
     myBreakOnAllExceptions = state.myBreakOnAllExceptions;
   }
 
-  public void setBreakOnAllExceptions(boolean value) {
+  public void setBreakOnAllExceptions(final boolean value) {
     myBreakOnAllExceptions = value;
   }
 
-  public boolean breakOnAllExceptions() {
+  public boolean isBreakOnAllExceptions() {
     return myBreakOnAllExceptions;
   }
 }
