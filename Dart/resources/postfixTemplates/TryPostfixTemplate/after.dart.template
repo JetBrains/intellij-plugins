@@ -1,0 +1,7 @@
+f() {
+  try {
+    m()<spot></spot>
+  } catch (e, s) {
+    print(s);
+  }
+}
