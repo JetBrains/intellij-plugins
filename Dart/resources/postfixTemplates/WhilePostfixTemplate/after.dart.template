@@ -1,0 +1,5 @@
+f(bool expr) {
+  while (expr) {
+    <spot></spot>
+  }
+}

@@ -279,6 +279,8 @@ public interface AnalysisServer {
    * options that are not valid, they will be silently ignored.
    *
    * @param options The options that are to be used to control analysis.
+   *
+   * @deprecated
    */
   public void analysis_updateOptions(AnalysisOptions options);
 
@@ -365,6 +367,18 @@ public interface AnalysisServer {
   public void edit_getFixes(String file, int offset, GetFixesConsumer consumer);
 
   /**
+   * {@code edit.getPostfixCompletion}
+   *
+   * Get the changes required to convert the postfix template at the given location into the
+   * template's expanded form.
+   *
+   * @param file The file containing the postfix template to be expanded.
+   * @param key The unique name that identifies the template in use.
+   * @param offset The offset used to identify the code to which the template will be applied.
+   */
+  public void edit_getPostfixCompletion(String file, String key, int offset, GetPostfixCompletionConsumer consumer);
+
+  /**
    * {@code edit.getRefactoring}
    *
    * Get the changes required to perform a refactoring.
@@ -399,6 +413,25 @@ public interface AnalysisServer {
    * @param offset The offset used to identify the statement to be completed.
    */
   public void edit_getStatementCompletion(String file, int offset, GetStatementCompletionConsumer consumer);
+
+  /**
+   * {@code edit.isPostfixCompletionApplicable}
+   *
+   * Determine if the request postfix completion template is applicable at the given location in the
+   * given file.
+   *
+   * @param file The file containing the postfix template to be expanded.
+   * @param key The unique name that identifies the template in use.
+   * @param offset The offset used to identify the code to which the template will be applied.
+   */
+  public void edit_isPostfixCompletionApplicable(String file, String key, int offset, IsPostfixCompletionApplicableConsumer consumer);
+
+  /**
+   * {@code edit.listPostfixCompletionTemplates}
+   *
+   * Return a list of all postfix templates currently available.
+   */
+  public void edit_listPostfixCompletionTemplates(ListPostfixCompletionTemplatesConsumer consumer);
 
   /**
    * {@code edit.organizeDirectives}
@@ -491,6 +524,8 @@ public interface AnalysisServer {
    * then the current subscriptions will remain unchanged.
    *
    * @param subscriptions A list of the services being subscribed to.
+   *
+   * @deprecated
    */
   public void execution_setSubscriptions(List<String> subscriptions);
 
@@ -501,7 +536,7 @@ public interface AnalysisServer {
 
   /**
    * Remove the given listener from the list of listeners that will receive notification when new
-     * analysis results become available.
+   * analysis results become available.
    *
    * @param listener the listener to be removed
    */

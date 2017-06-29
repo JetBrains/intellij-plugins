@@ -1,0 +1,3 @@
+f() {
+  <spot>m()</spot>.try
+}

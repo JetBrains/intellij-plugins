@@ -60,6 +60,7 @@ import com.jetbrains.lang.dart.assists.QuickAssistSet;
 import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartFeedbackBuilder;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
+import com.jetbrains.lang.dart.ide.template.postfix.DartPostfixTemplateProvider;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
@@ -93,6 +94,8 @@ public class DartAnalysisServerService implements Disposable {
   private static final long GET_NAVIGATION_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_ASSISTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
+  private static final long POSTFIX_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
+  private static final long POSTFIX_INITIALIZATION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(5000);
   private static final long STATEMENT_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long FIND_ELEMENT_REFERENCES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
@@ -622,6 +625,11 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   @NotNull
+  public String getSdkVersion() {
+    return mySdkVersion;
+  }
+
+  @NotNull
   public Project getProject() {
     return myProject;
   }
@@ -958,6 +966,80 @@ public class DartAnalysisServerService implements Disposable {
 
     awaitForLatchCheckingCanceled(server, latch, GET_ASSISTS_TIMEOUT);
     return results;
+  }
+
+  public boolean edit_isPostfixCompletionApplicable(VirtualFile file, int offset, String key) {
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return false;
+    }
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+    final Ref<Boolean> resultRef = Ref.create();
+    final CountDownLatch latch = new CountDownLatch(1);
+    server.edit_isPostfixCompletionApplicable(filePath, key, offset, new IsPostfixCompletionApplicableConsumer() {
+      @Override
+      public void isPostfixCompletionApplicable(Boolean value) {
+        resultRef.set(value);
+        latch.countDown();
+      }
+    });
+
+    awaitForLatchCheckingCanceled(server, latch, POSTFIX_COMPLETION_TIMEOUT);
+    return resultRef.get();
+  }
+
+  public PostfixCompletionTemplate[] edit_listPostfixCompletionTemplates() {
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return null;
+    }
+    final Ref<PostfixCompletionTemplate[]> resultRef = Ref.create();
+    final CountDownLatch latch = new CountDownLatch(1);
+    server.edit_listPostfixCompletionTemplates(new ListPostfixCompletionTemplatesConsumer() {
+      @Override
+      public void postfixCompletionTemplates(PostfixCompletionTemplate[] templates) {
+        resultRef.set(templates);
+        latch.countDown();
+      }
+
+      @Override
+      public void onError(RequestError error) {
+        logError("edit_listPostfixCompletionTemplates()", null, error);
+        latch.countDown();
+      }
+    });
+
+    awaitForLatchCheckingCanceled(server, latch, POSTFIX_INITIALIZATION_TIMEOUT);
+    return resultRef.get();
+  }
+
+  public SourceChange edit_getPostfixCompletion(@NotNull final VirtualFile file, final int _offset, final String key) {
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return null;
+    }
+
+    final Ref<SourceChange> resultRef = Ref.create();
+    final CountDownLatch latch = new CountDownLatch(1);
+    final int offset = getOriginalOffset(file, _offset);
+    server.edit_getPostfixCompletion(filePath, key, offset, new GetPostfixCompletionConsumer() {
+      @Override
+      public void computedSourceChange(SourceChange sourceChange) {
+        resultRef.set(sourceChange);
+        latch.countDown();
+      }
+
+      @Override
+      public void onError(RequestError error) {
+        logError("edit_getPostfixCompletion()", filePath, error);
+        latch.countDown();
+      }
+    });
+
+    awaitForLatchCheckingCanceled(server, latch, POSTFIX_COMPLETION_TIMEOUT);
+    return resultRef.get();
   }
 
   @Nullable
@@ -1519,6 +1601,8 @@ public class DartAnalysisServerService implements Disposable {
         startedServer.analysis_updateOptions(new AnalysisOptions(true, true, true, true, true, false, true, false));
 
         myServer = startedServer;
+        // This must be done after myServer is set, and should be done each time the server starts.
+        registerPostfixCompletionTemplates();
       }
       catch (Exception e) {
         LOG.warn("Failed to start Dart analysis server", e);
@@ -1711,6 +1795,12 @@ public class DartAnalysisServerService implements Disposable {
         return true;
       }
     }
+  }
+
+  private void registerPostfixCompletionTemplates() {
+    ApplicationManager.getApplication().invokeLater(() -> {
+      DartPostfixTemplateProvider.initializeTemplates(this);
+    }, ModalityState.NON_MODAL);
   }
 
   /**
