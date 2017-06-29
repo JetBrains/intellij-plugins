@@ -968,14 +968,15 @@ public class DartAnalysisServerService implements Disposable {
     return results;
   }
 
-  public boolean edit_isPostfixCompletionApplicable(VirtualFile file, int offset, String key) {
+  public boolean edit_isPostfixCompletionApplicable(VirtualFile file, int _offset, String key) {
     final AnalysisServer server = myServer;
     if (server == null) {
       return false;
     }
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
-    final Ref<Boolean> resultRef = Ref.create();
+    final Ref<Boolean> resultRef = Ref.create(false);
     final CountDownLatch latch = new CountDownLatch(1);
+    final int offset = getOriginalOffset(file, _offset);
     server.edit_isPostfixCompletionApplicable(filePath, key, offset, new IsPostfixCompletionApplicableConsumer() {
       @Override
       public void isPostfixCompletionApplicable(Boolean value) {
@@ -988,6 +989,7 @@ public class DartAnalysisServerService implements Disposable {
     return resultRef.get();
   }
 
+  @Nullable
   public PostfixCompletionTemplate[] edit_listPostfixCompletionTemplates() {
     final AnalysisServer server = myServer;
     if (server == null) {
@@ -1013,6 +1015,7 @@ public class DartAnalysisServerService implements Disposable {
     return resultRef.get();
   }
 
+  @Nullable
   public SourceChange edit_getPostfixCompletion(@NotNull final VirtualFile file, final int _offset, final String key) {
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
 

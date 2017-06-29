@@ -38,7 +38,7 @@ public class DartRemotePostfixTemplate extends PostfixTemplate {
       if (prefix.equals("!")) {
         prefix = "Bang";
       }
-      Class <?> templateClass = Class.forName("com.jetbrains.lang.dart.ide.template.postfix." + prefix + "PostfixTemplate");
+      Class<?> templateClass = Class.forName("com.jetbrains.lang.dart.ide.template.postfix." + prefix + "PostfixTemplate");
       Constructor<?> constructor = ((Class<?>)templateClass).getDeclaredConstructor(PostfixCompletionTemplate.class);
       return (DartRemotePostfixTemplate)constructor.newInstance(template);
     }
@@ -54,6 +54,8 @@ public class DartRemotePostfixTemplate extends PostfixTemplate {
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance(project);
     String version = service.getSdkVersion();
     Set<PostfixTemplate> templates = DartPostfixTemplateProvider.getTemplates(version);
+    if (templates == null) return false;
+
     boolean found = false;
     for (PostfixTemplate temp : templates) {
       if (temp.getKey().equals(getKey())) {
@@ -76,7 +78,7 @@ public class DartRemotePostfixTemplate extends PostfixTemplate {
     final int offset = editor.getCaretModel().getOffset();
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance(project);
     service.updateFilesContent();
-    final SourceChange sourceChange = service.edit_getPostfixCompletion(psiFile.getVirtualFile(), offset, this.getKey());
+    final SourceChange sourceChange = service.edit_getPostfixCompletion(psiFile.getVirtualFile(), offset, getKey());
     if (sourceChange != null) {
       try {
         AssistUtils.applySourceChange(project, sourceChange, false);
