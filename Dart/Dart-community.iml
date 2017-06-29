@@ -28,6 +28,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="lang-impl" />
     <orderEntry type="module" module-name="xdebugger-api" />
+    <orderEntry type="module" module-name="xdebugger-impl" />
     <orderEntry type="module" module-name="smRunner" />
     <orderEntry type="module" module-name="xml" />
     <orderEntry type="module" module-name="built-in-server" />
