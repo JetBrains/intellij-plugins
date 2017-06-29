@@ -133,5 +133,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="snakeyaml" level="project" />
+    <orderEntry type="module" module-name="xdebugger-impl" />
   </component>
 </module>
