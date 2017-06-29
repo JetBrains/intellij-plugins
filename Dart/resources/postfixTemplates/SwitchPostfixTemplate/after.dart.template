@@ -1,0 +1,5 @@
+f(bool expr) {
+  switch (expr) {
+    <spot></spot>
+  }
+}

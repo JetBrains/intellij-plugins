@@ -1,0 +1,4 @@
+main() {
+  var values = [1, 2, 3];
+  <spot>values</spot>.for
+}

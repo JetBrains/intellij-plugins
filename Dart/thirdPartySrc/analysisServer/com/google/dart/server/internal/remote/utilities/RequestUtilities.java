@@ -51,6 +51,7 @@ public class RequestUtilities {
   private static final String SUBSCRIPTIONS = "subscriptions";
   private static final String SUPER_ONLY = "superOnly";
   private static final String URI = "uri";
+  private static final String KEY = "key";
 
   // Server domain
   private static final String METHOD_SERVER_GET_VERSION = "server.getVersion";
@@ -75,10 +76,13 @@ public class RequestUtilities {
   private static final String METHOD_EDIT_GET_ASSISTS = "edit.getAssists";
   private static final String METHOD_EDIT_GET_AVAILABLE_REFACTORING = "edit.getAvailableRefactorings";
   private static final String METHOD_EDIT_GET_FIXES = "edit.getFixes";
+  private static final String METHOD_EDIT_GET_POSTFIX_COMPLETION = "edit.getPostfixCompletion";
   private static final String METHOD_EDIT_GET_REFACTORING = "edit.getRefactoring";
   private static final String METHOD_EDIT_GET_STATEMENT_COMPLETION = "edit.getStatementCompletion";
   private static final String METHOD_EDIT_ORGANIZE_DIRECTIVES = "edit.organizeDirectives";
   private static final String METHOD_EDIT_SORT_MEMBERS = "edit.sortMembers";
+  private static final String METHOD_IS_POSTFIX_COMPLETION_APPLICABLE = "edit.isPostfixCompletionApplicable";
+  private static final String METHOD_LIST_POSTFIX_COMPLETION_TEMPLATES = "edit.listPostfixCompletionTemplates";
 
   // Code Completion domain
   private static final String METHOD_COMPLETION_GET_SUGGESTIONS = "completion.getSuggestions";
@@ -497,6 +501,27 @@ public class RequestUtilities {
     params.addProperty(FILE, file);
     params.addProperty(OFFSET, offset);
     return buildJsonObjectRequest(idValue, METHOD_EDIT_GET_FIXES, params);
+  }
+
+  public static JsonObject generateIsPostfixCompletionApplicable(String idValue, String file, int offset, String key) {
+    JsonObject params = new JsonObject();
+    params.addProperty(FILE, file);
+    params.addProperty(OFFSET, offset);
+    params.addProperty(KEY, key);
+    return buildJsonObjectRequest(idValue, METHOD_IS_POSTFIX_COMPLETION_APPLICABLE, params);
+  }
+
+  public static JsonObject generateListPostfixCompletionTeamplates(String idValue) {
+    JsonObject params = new JsonObject();
+    return buildJsonObjectRequest(idValue, METHOD_LIST_POSTFIX_COMPLETION_TEMPLATES);
+  }
+
+  public static JsonObject generateEditPostfixCompletion(String idValue, String file, int offset, String key) {
+    JsonObject params = new JsonObject();
+    params.addProperty(FILE, file);
+    params.addProperty(OFFSET, offset);
+    params.addProperty(KEY, key);
+    return buildJsonObjectRequest(idValue, METHOD_EDIT_GET_POSTFIX_COMPLETION, params);
   }
 
   /**
