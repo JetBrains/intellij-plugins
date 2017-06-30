@@ -37,6 +37,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -59,13 +60,9 @@ public class ValidatorModelValidator extends ValidatorBase {
     final ValidatorManager validatorManager = ValidatorManager.getInstance(project);
 
     // cache S2facet/validation settings per module
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    final FactoryMap<Module, Boolean> enabledForModule = new FactoryMap<Module, Boolean>() {
-      protected Boolean create(final Module module) {
-        return isEnabledForModule(module) &&
-               StrutsFacet.getInstance(module) != null;
-      }
-    };
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") final Map<Module, Boolean> enabledForModule =
+      FactoryMap.createMap(module -> isEnabledForModule(module) &&
+                                     StrutsFacet.getInstance(module) != null);
 
     // collect all validation.xml files located in sources of S2-modules
     final Set<VirtualFile> files = new THashSet<>();

@@ -258,9 +258,7 @@ public class FlexTestUtils {
 
   public static FlexProjectConfigurationEditor createConfigEditor(final Module... modules) {
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") final Map<Module, ModifiableRootModel> models =
-      new FactoryMap<Module, ModifiableRootModel>() {
-        @Override
-        protected ModifiableRootModel create(final Module module) {
+      FactoryMap.createMap(module-> {
           final ModifiableRootModel result = ModuleRootManager.getInstance(module).getModifiableModel();
           Disposer.register(module, new Disposable() {
             @Override
@@ -272,7 +270,7 @@ public class FlexTestUtils {
           });
           return result;
         }
-      };
+      );
 
     return new FlexProjectConfigurationEditor(modules[0].getProject(), new FlexProjectConfigurationEditor.ProjectModifiableModelProvider() {
       @Override

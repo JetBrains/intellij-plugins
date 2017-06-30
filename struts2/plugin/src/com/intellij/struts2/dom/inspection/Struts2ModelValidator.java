@@ -34,6 +34,7 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -53,12 +54,8 @@ public class Struts2ModelValidator extends ValidatorBase {
     final PsiManager psiManager = PsiManager.getInstance(project);
 
     // cache validation settings per module
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    final FactoryMap<Module, Boolean> enabledForModule = new FactoryMap<Module, Boolean>() {
-      protected Boolean create(final Module module) {
-        return isEnabledForModule(module);
-      }
-    };
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") final Map<Module, Boolean> enabledForModule =
+      FactoryMap.createMap(module -> isEnabledForModule(module));
 
     final Set<VirtualFile> files = new THashSet<>();
     for (final VirtualFile file : context.getCompileScope().getFiles(StdFileTypes.XML, false)) {
