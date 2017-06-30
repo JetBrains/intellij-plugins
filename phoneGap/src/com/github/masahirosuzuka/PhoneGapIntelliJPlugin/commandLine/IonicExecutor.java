@@ -14,10 +14,11 @@ public class IonicExecutor extends CordovaBasedExecutor {
   @NotNull
   @Override
   protected String[] getNewProjectCommands(@NotNull String name) {
-    if (isIonic3AndLater()) {
-      return new String[]{myPath, "start", name, "blank", "--skip-link", "--confirm", "--no-interactive"};
+    if (!isIonic3AndLater()) {
+      return new String[]{myPath, "start", name};
     }
-    return new String[]{myPath, "start", name};
+    
+    return new String[]{myPath, "start", name, "blank", "--skip-link", "--confirm", "--no-interactive"};
   }
 
 
@@ -32,6 +33,10 @@ public class IonicExecutor extends CordovaBasedExecutor {
                                          @Nullable String target,
                                          @Nullable String extraArg,
                                          @NotNull String commandToExecute) {
+    if (!isIonic3AndLater()) {
+      return super.getStandardCommands(platform, target, extraArg, commandToExecute);
+    }
+
     String[] command;
     if (!StringUtil.isEmpty(target)) {
       command = new String[]{myPath, "cordova", commandToExecute, "--target=" + target.trim(), platform, "--confirm", "--no-interactive"};
@@ -47,6 +52,9 @@ public class IonicExecutor extends CordovaBasedExecutor {
   public String[] getEmulateCommand(@NotNull String platform,
                                     @Nullable String target,
                                     @Nullable String extraArg) {
+    if (!isIonic3AndLater()) {
+      return super.getEmulateCommand(platform, target, extraArg);
+    }
 
     if (!StringUtil.isEmpty(target)) {
       target = target.trim();
@@ -60,24 +68,40 @@ public class IonicExecutor extends CordovaBasedExecutor {
   @Override
   @NotNull
   public String[] getPlatformAddCommands(@NotNull String platform) {
+    if (!isIonic3AndLater()) {
+      return super.getPlatformAddCommands(platform);
+    }
+
     return new String[]{myPath, "cordova", "platform", "add", platform, "--confirm", "--no-interactive"};
   }
 
   @Override
   @NotNull
   public String[] getPluginAddCommands(@NotNull String fqn) {
+    if (!isIonic3AndLater()) {
+      return super.getPluginAddCommands(fqn);
+    }
+
     return new String[]{myPath, "cordova", "plugin", "add", fqn, "--confirm", "--no-interactive"};
   }
 
   @Override
   @NotNull
   public String[] getPluginRemoveCommands(@NotNull String fqn) {
+    if (!isIonic3AndLater()) {
+      return super.getPluginRemoveCommands(fqn);
+    }
+
     return new String[]{myPath, "cordova", "plugin", "remove", fqn, "--confirm", "--no-interactive"};
   }
 
   @Override
   @NotNull
   public String[] getPluginListCommands() {
+    if (!isIonic3AndLater()) {
+      return super.getPluginListCommands();
+    }
+
     return new String[]{myPath, "cordova", "plugin", "list", "--confirm", "--no-interactive"};
   }
 
