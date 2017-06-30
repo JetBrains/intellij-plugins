@@ -5,7 +5,10 @@ import com.google.gson.JsonElement;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class TsLintFixInfo {
 
@@ -14,7 +17,27 @@ public class TsLintFixInfo {
     if (element == null) return null;
 
     try {
-      return JSLanguageServiceQueue.GSON.fromJson(element, TsLintFixInfo.class);
+      if (element.isJsonArray()) {
+        List<TsLintFixReplacements> replacements =
+          ContainerUtil.mapNotNull(element.getAsJsonArray(), el -> JSLanguageServiceQueue.GSON.fromJson(el, TsLintFixReplacements.class));
+
+        TsLintFixInfo info = new TsLintFixInfo();
+        info.innerReplacements = replacements.toArray(new TsLintFixReplacements[0]);
+        return info;
+      }
+      else {
+        if (element.getAsJsonObject().has("innerReplacements")) {
+          //tslint < 5 compatibility
+          return JSLanguageServiceQueue.GSON.fromJson(element, TsLintFixInfo.class);
+        }
+        else {
+          TsLintFixReplacements replacement = JSLanguageServiceQueue.GSON.fromJson(element, TsLintFixReplacements.class);
+
+          TsLintFixInfo info = new TsLintFixInfo();
+          info.innerReplacements = new TsLintFixReplacements[]{replacement};
+          return info;
+        }
+      }
     }
     catch (Exception e) {
       LOG.debug(e.getMessage(), e);
@@ -31,6 +54,7 @@ public class TsLintFixInfo {
     public String innerText;
   }
 
+  @Nullable
   public String innerRuleName;
   public TsLintFixReplacements[] innerReplacements;
 }
