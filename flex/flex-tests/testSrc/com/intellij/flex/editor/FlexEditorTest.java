@@ -133,13 +133,8 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
   }
 
   public void testReformatInjectedProblem() throws Exception {
-    JSTestUtils.registerScriptTagInjector(myProject, JavaScriptSupportLoader.ECMA_SCRIPT_L4);
-    try {
-      doFormatterTest("mxml");
-    }
-    finally {
-      JSTestUtils.unregisterScriptTagInjector(myProject);
-    }
+    JSTestUtils.registerScriptTagInjector(myProject, JavaScriptSupportLoader.ECMA_SCRIPT_L4, getTestRootDisposable());
+    doFormatterTest("mxml");
   }
 
   public void testReformatInjectedProblem2() throws Exception {
