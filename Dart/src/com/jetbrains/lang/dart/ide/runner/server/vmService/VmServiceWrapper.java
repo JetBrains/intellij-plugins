@@ -374,14 +374,10 @@ public class VmServiceWrapper implements Disposable {
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
           InstanceRef exceptionToAddToFrame = exception;
 
-          // Check to see if the VM passing in awaiter frames; if so, use them. Else check
-          // for async causal frames. Finally, fall back to using regular sync frames.
-          ElementList<Frame> elementList = vmStack.getAwaiterFrames();
+          // Check for async causal frames; fall back to using regular sync frames.
+          ElementList<Frame> elementList = vmStack.getAsyncCausalFrames();
           if (elementList == null) {
-            elementList = vmStack.getAsyncCausalFrames();
-            if (elementList == null) {
-              elementList = vmStack.getFrames();
-            }
+            elementList = vmStack.getFrames();
           }
 
           final List<Frame> vmFrames = Lists.newArrayList(elementList);
