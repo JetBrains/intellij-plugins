@@ -22,6 +22,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -59,14 +60,15 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
                               @NotNull final PhoneGapProjectTemplateGenerator.PhoneGapProjectSettings settings,
                               @NotNull Module module) {
     try {
-
+      Ref<PhoneGapCommandLine> commandLineRef = Ref.create();
       ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
 
         try {
           ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
           indicator.setText("Creating...");
           File tempProject = createTemp();
-          PhoneGapCommandLine commandLine = new PhoneGapCommandLine(settings.getExecutable(), tempProject.getPath(), settings.getOptions());
+          PhoneGapCommandLine commandLine = new PhoneGapCommandLine(settings.getExecutable(), tempProject.getPath());
+          commandLineRef.set(commandLine);
 
           if (!commandLine.isCorrectExecutable()) {
             showErrorMessage("Incorrect path");
@@ -101,7 +103,7 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
           PhoneGapSettings.getInstance().loadState(new PhoneGapSettings.State(settings.executable, state.repositoriesList));
         }
         VfsUtil.markDirty(false, true, baseDir);
-        createRunConfiguration(project, settings);
+        createRunConfiguration(project, settings, commandLineRef.get());
 
         baseDir.refresh(true, true, () -> {
           if (PhoneGapSettings.getInstance().isExcludePlatformFolder()) {
@@ -129,12 +131,17 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
   }
 
   private static void createRunConfiguration(@NotNull Project project,
-                                             @NotNull PhoneGapProjectSettings settings) {
+                                             @NotNull PhoneGapProjectSettings settings,
+                                             @Nullable PhoneGapCommandLine commandLine) {
+    if (commandLine == null) {
+      commandLine = new PhoneGapCommandLine("", null);
+    }
     final RunManager runManager = RunManager.getInstance(project);
     PhoneGapConfigurationType configurationType = ConfigurationTypeUtil.findConfigurationType(PhoneGapConfigurationType.class);
     RunnerAndConfigurationSettings configuration =
-      runManager.createRunConfiguration(PhoneGapBundle.message("phonegap.project.template.create.run.configuration.title"),
-                                        configurationType.getConfigurationFactories()[0]);
+      runManager.createRunConfiguration(
+        PhoneGapBundle.message("phonegap.project.template.create.run.configuration.title", commandLine.getPlatformName()),
+        configurationType.getConfigurationFactories()[0]);
 
     PhoneGapRunConfiguration runConfiguration = (PhoneGapRunConfiguration)configuration.getConfiguration();
     runConfiguration.setExecutable(settings.executable);

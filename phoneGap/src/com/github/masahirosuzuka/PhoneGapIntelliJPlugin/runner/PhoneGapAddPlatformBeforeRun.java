@@ -39,12 +39,12 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
 
   @Override
   public String getName() {
-    return PhoneGapBundle.message("phonegap.before.task.init.title");
+    return PhoneGapBundle.message("phonegap.before.task.init.default.title");
   }
 
   @Override
   public String getDescription(PhoneGapAddPlatformTask task) {
-    return PhoneGapBundle.message("phonegap.before.task.init.title");
+    return PhoneGapBundle.message("phonegap.before.task.init.default.title");
   }
 
   @Override
@@ -97,7 +97,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
       FileDocumentManager.getInstance().saveAllDocuments();
       targetDone.down();
 
-      new Task.Backgroundable(project, PhoneGapBundle.message("phonegap.before.task.init.title"), true) {
+      new Task.Backgroundable(project, PhoneGapBundle.message("phonegap.before.task.init.title", line.getPlatformName()), true) {
 
         public boolean shouldStartInBackground() {
           return true;
@@ -109,7 +109,8 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
             assert platform != null;
             ProcessOutput output = line.platformAdd(platform);
             if (output.getExitCode() != 0) {
-              ExecutionHelper.showOutput(project, output, PhoneGapBundle.message("phonegap.before.task.init.title"), null, true);
+              ExecutionHelper
+                .showOutput(project, output, PhoneGapBundle.message("phonegap.before.task.init.title", line.getPlatformName()), null, true);
               result.set(false);
             }
           }
