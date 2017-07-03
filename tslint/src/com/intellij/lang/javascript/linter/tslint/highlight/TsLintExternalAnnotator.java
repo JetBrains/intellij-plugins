@@ -7,9 +7,9 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.linter.*;
-import com.intellij.lang.javascript.linter.eslint.EslintUtil;
 import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
+import com.intellij.lang.javascript.linter.tslint.config.TsLintDescriptor;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLintConfigFileSearcher;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLinterError;
@@ -116,7 +116,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
   public JSLinterAnnotationResult<TsLintState> annotate(@NotNull TsLinterInput collectedInfo) {
     VirtualFile config = collectedInfo.getConfig();
     final JSLinterFileLevelAnnotation interpreterAndPackageError =
-      JSLinterUtil.validateInterpreterAndPackage(collectedInfo.getProject(), EslintUtil.PACKAGE_NAME, collectedInfo.getState());
+      JSLinterUtil.validateInterpreterAndPackage(collectedInfo.getProject(), TsLintDescriptor.PACKAGE_NAME, collectedInfo.getState());
     if (interpreterAndPackageError != null) return JSLinterAnnotationResult.create(collectedInfo, interpreterAndPackageError, config);
 
     TsLintLanguageService service = TsLintLanguageService.getService(collectedInfo.getProject());
