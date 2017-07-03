@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Irina.Chernushina on 11/24/2016.
  */
 public final class TsLintDescriptor extends JSLinterDescriptor {
+  public static final String PACKAGE_NAME = "tslint";
 
   @NotNull
   @Override
@@ -23,7 +24,7 @@ public final class TsLintDescriptor extends JSLinterDescriptor {
 
   @Override
   public String packageName() {
-    return "tslint";
+    return PACKAGE_NAME;
   }
 
   @Override
