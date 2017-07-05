@@ -19,10 +19,9 @@ import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationGroup;
-import com.intellij.notification.NotificationListener;
-import com.intellij.notification.NotificationType;
+import com.intellij.notification.*;
+import com.intellij.notification.impl.NotificationSettings;
+import com.intellij.notification.impl.NotificationsConfigurationImpl;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
@@ -181,12 +180,12 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   }
 
   @SuppressWarnings("unused")
-  public void showWarningNotification(@NotNull String title, @NotNull String htmlContent, @Nullable Icon icon) {
-    showNotification(NotificationType.WARNING, title, htmlContent, icon);
+  public void showWarningNotification(@NotNull String title, @Nullable String content, @Nullable Icon icon) {
+    showNotification(NotificationType.WARNING, title, content, icon);
   }
 
-  public void showErrorNotification(@NotNull String title, @NotNull String htmlContent, @Nullable Icon icon) {
-    showNotification(NotificationType.ERROR, title, htmlContent, icon);
+  public void showErrorNotification(@NotNull String title, @Nullable String content, @Nullable Icon icon) {
+    showNotification(NotificationType.ERROR, title, content, icon);
   }
 
   public void clearNotifications() {
@@ -196,24 +195,48 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
     }
   }
 
+  private static final String OPEN_DART_ANALYSIS = "open.dart.analysis";
+  private static final String DISABLE_ANALYSIS_NOTIFICATION = "disable.dart.analysis.notification";
+
   private void showNotification(@NotNull NotificationType notificationType,
                                 @NotNull String title,
-                                @NotNull String htmlContent,
+                                @Nullable String content,
                                 @Nullable Icon icon) {
     clearNotifications();
 
-    myNotification = NOTIFICATION_GROUP.createNotification(
-      title, htmlContent + " (<a href='open.dart.analysis'>show</a>)", notificationType, new NotificationListener.Adapter() {
-        @Override
-        protected void hyperlinkActivated(@NotNull final Notification notification, @NotNull final HyperlinkEvent e) {
-          if ("open.dart.analysis".equals(e.getDescription())) {
-            notification.expire();
-            ToolWindowManager.getInstance(myProject).getToolWindow(TOOLWINDOW_ID).activate(null);
-          }
+
+    if (!myToolWindow.isVisible()) {
+      if (content == null) {
+        content = "<a href='" + OPEN_DART_ANALYSIS + "'>open view</a>";
+      }
+      else {
+        content += " <a href='" + OPEN_DART_ANALYSIS + "'>open view</a>";
+      }
+    }
+
+    if (content == null) {
+      content = "<a href='" + DISABLE_ANALYSIS_NOTIFICATION + "'>don't show again</a>";
+    }
+    else {
+      content += " <a href='" + DISABLE_ANALYSIS_NOTIFICATION + "'>don't show again</a>";
+    }
+
+    myNotification = NOTIFICATION_GROUP.createNotification(title, content, notificationType, new NotificationListener.Adapter() {
+      @Override
+      protected void hyperlinkActivated(@NotNull final Notification notification, @NotNull final HyperlinkEvent e) {
+        if (OPEN_DART_ANALYSIS.equals(e.getDescription())) {
+          notification.expire();
+          ToolWindowManager.getInstance(myProject).getToolWindow(TOOLWINDOW_ID).activate(null);
+        }
+        else if (DISABLE_ANALYSIS_NOTIFICATION.equals(e.getDescription())) {
+          notification.expire();
+
+          final NotificationSettings settings = NotificationsConfigurationImpl.getSettings(notification.getGroupId());
+          final NotificationSettings newSettings = settings.withDisplayType(NotificationDisplayType.NONE);
+          NotificationsConfigurationImpl.getInstanceImpl().changeSettings(newSettings);
         }
       }
-    );
-
+    });
     if (icon != null) {
       myNotification.setIcon(icon);
     }
