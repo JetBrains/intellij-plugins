@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart;
 
 import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.PsiBuilderUtil;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.tree.IElementType;
@@ -118,33 +119,7 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
   }
 
   public static boolean lazyParseableBlockImpl(PsiBuilder builder, int level) {
-    if (builder.getTokenType() != LBRACE) return false;
-
-    final PsiBuilder.Marker marker = builder.mark();
-    builder.advanceLexer();
-
-    int braceCount = 1;
-    while (true) {
-      final IElementType tokenType = builder.getTokenType();
-      if (tokenType == null) {
-        break;
-      }
-      if (tokenType == LBRACE) {
-        braceCount++;
-      }
-      else if (tokenType == RBRACE) {
-        braceCount--;
-      }
-
-      builder.advanceLexer();
-
-      if (braceCount == 0) {
-        break;
-      }
-    }
-
-    marker.collapse(LAZY_PARSEABLE_BLOCK);
-    return true;
+    return PsiBuilderUtil.parseBlockLazy(builder, LBRACE, RBRACE, LAZY_PARSEABLE_BLOCK) != null;
   }
 
   public static boolean arrowBodyWrapper(PsiBuilder builder_, int level_) {
