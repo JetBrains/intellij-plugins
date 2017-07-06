@@ -37,7 +37,6 @@ import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import icons.DartIcons;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.handler.codec.http.*;
 import io.netty.util.ReferenceCounted;
 import io.netty.util.internal.PlatformDependent;
@@ -46,7 +45,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.builtInWebServer.ConsoleManager;
 import org.jetbrains.builtInWebServer.NetService;
 import org.jetbrains.concurrency.AsyncPromise;
-import org.jetbrains.ide.PooledThreadExecutor;
 import org.jetbrains.io.*;
 
 import javax.swing.*;
@@ -69,7 +67,7 @@ final class PubServerService extends NetService {
 
   private volatile VirtualFile firstServedDir;
 
-  private final Bootstrap bootstrap = nioClientBootstrap(new NioEventLoopGroup(1, PooledThreadExecutor.INSTANCE));
+  private final Bootstrap bootstrap = nioClientBootstrap();
 
   private final ConcurrentMap<Channel, ClientInfo> serverToClientChannel = ContainerUtil.newConcurrentMap();
   private final ChannelRegistrar serverChannelRegistrar = new ChannelRegistrar();
