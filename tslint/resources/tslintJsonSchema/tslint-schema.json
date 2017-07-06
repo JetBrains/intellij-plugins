@@ -692,6 +692,35 @@
           "description": "Disallows falling through case statements",
           "type": "boolean"
         },
+        "no-this-assignment": {
+          "description": "Disallows unnecessary references to this",
+          "oneOf": [
+            {"type": "boolean"},
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {"type": "boolean", "enum": [true]},
+                  {
+                    "type": "object",
+                    "properties": {
+                      "allowed-names": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "allow-destructuring": {
+                        "type": "boolean"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          ]
+        },
         "no-trailing-whitespace": {
           "description": "Disallows trailing whitespace at the end of a line",
           "oneOf": [
