@@ -15,8 +15,9 @@ import com.intellij.util.containers.ContainerUtil;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Collection;
+
+import static com.intellij.lang.typescript.modules.TypeScriptModuleFileReferenceSet.addParentPathContexts;
 
 /**
  * @author Dennis.Ushakov
@@ -43,9 +44,18 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
         final PsiFile file = element.getContainingFile().getOriginalFile();
         final TypeScriptConfig config = TypeScriptCompilerConfigUtil.getConfigForFile(project, file.getVirtualFile());
         final PsiDirectory directory = config != null ?
-                                       PsiManager.getInstance(project).findDirectory(config.getConfigFile().getParent()) :
+                                       PsiManager.getInstance(project).findDirectory(config.getConfigDirectory()) :
                                        null;
-        return ContainerUtil.skipNulls(Arrays.asList(file.getContainingDirectory(), directory));
+
+        String pathString = getPathString();
+
+        Collection<PsiFileSystemItem> contexts = ContainerUtil.newLinkedHashSet();
+        
+        if (!pathString.startsWith(".") && addParentPathContexts(file, pathString, contexts)) {
+          return contexts;
+        }
+        ContainerUtil.addAllNotNull(contexts, file.getContainingDirectory(), directory);
+        return contexts;
       }
 
       return super.computeDefaultContexts();
