@@ -66,7 +66,7 @@ public class DartExecutionHelper {
 
   public static void displayIssues(@NotNull final Project project,
                                    @NotNull VirtualFile launchFile,
-                                   @NotNull String launchTitle,
+                                   @NotNull String message,
                                    @Nullable Icon icon) {
     clearIssueNotifications(project);
 
@@ -77,7 +77,7 @@ public class DartExecutionHelper {
 
     // Show a notification on the dart analysis tool window.
     final DartProblemsView problemsView = DartProblemsView.getInstance(project);
-    problemsView.showErrorNotification(launchTitle, null, icon);
+    problemsView.showErrorNotification("", message, icon);
   }
 
   public static void clearIssueNotifications(@NotNull final Project project) {

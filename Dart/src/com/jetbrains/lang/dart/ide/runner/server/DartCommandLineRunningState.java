@@ -25,6 +25,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.net.NetUtils;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.coverage.DartCoverageProgramRunner;
+import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartExecutionHelper;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
@@ -32,6 +33,7 @@ import com.jetbrains.lang.dart.ide.runner.base.DartRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -131,9 +133,12 @@ public class DartCommandLineRunningState extends CommandLineState {
     try {
       final DartRunConfiguration dartRunConfiguration = (DartRunConfiguration)getEnvironment().getRunProfile();
       final VirtualFile launchFile = dartRunConfiguration.getRunnerParameters().getDartFileOrDirectory();
-
-      String launchTitle = "Analysis issues with " + dartRunConfiguration.getName();
-      DartExecutionHelper.displayIssues(project, launchFile, launchTitle, dartRunConfiguration.getIcon());
+      final VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(project, launchFile);
+      final String pName = pubspec != null ? PubspecYamlUtil.getDartProjectName(pubspec) : null;
+      final String message = (pName == null ? "Dart project" : "Dart package " + pName) +
+                             " contains <a href='" + DartProblemsView.OPEN_DART_ANALYSIS_LINK + "'>analysis issues</a><br>" +
+                             "that may affect the execution of " + dartRunConfiguration.getName() + ".";
+      DartExecutionHelper.displayIssues(project, launchFile, message, dartRunConfiguration.getIcon());
     }
     catch (RuntimeConfigurationError error) {
       DartExecutionHelper.clearIssueNotifications(project);

@@ -29,6 +29,7 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
@@ -79,6 +80,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
   private int myFilesWithErrorsHash;
   private Notification myNotification;
+  private boolean myDisabledForSession = false;
 
   private final Runnable myUpdateRunnable = new Runnable() {
     @Override
@@ -195,8 +197,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
     }
   }
 
-  private static final String OPEN_DART_ANALYSIS = "open.dart.analysis";
-  private static final String DISABLE_ANALYSIS_NOTIFICATION = "disable.dart.analysis.notification";
+  public static final String OPEN_DART_ANALYSIS_LINK = "open.dart.analysis";
 
   private void showNotification(@NotNull NotificationType notificationType,
                                 @NotNull String title,
@@ -204,39 +205,43 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
                                 @Nullable Icon icon) {
     clearNotifications();
 
+    if (myDisabledForSession) return;
 
-    if (!myToolWindow.isVisible()) {
-      if (content == null) {
-        content = "<a href='" + OPEN_DART_ANALYSIS + "'>open view</a>";
-      }
-      else {
-        content += " <a href='" + OPEN_DART_ANALYSIS + "'>open view</a>";
-      }
-    }
-
-    if (content == null) {
-      content = "<a href='" + DISABLE_ANALYSIS_NOTIFICATION + "'>don't show again</a>";
-    }
-    else {
-      content += " <a href='" + DISABLE_ANALYSIS_NOTIFICATION + "'>don't show again</a>";
-    }
+    content = StringUtil.notNullize(content);
+    if (!content.endsWith("<br>")) content += "<br>";
+    content += "<br><a href='disable.for.session'>Don't show for this session</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+               "<a href='never.show.again'>Never show again</a>";
 
     myNotification = NOTIFICATION_GROUP.createNotification(title, content, notificationType, new NotificationListener.Adapter() {
       @Override
       protected void hyperlinkActivated(@NotNull final Notification notification, @NotNull final HyperlinkEvent e) {
-        if (OPEN_DART_ANALYSIS.equals(e.getDescription())) {
-          notification.expire();
+        notification.expire();
+
+        if (OPEN_DART_ANALYSIS_LINK.equals(e.getDescription())) {
           ToolWindowManager.getInstance(myProject).getToolWindow(TOOLWINDOW_ID).activate(null);
         }
-        else if (DISABLE_ANALYSIS_NOTIFICATION.equals(e.getDescription())) {
-          notification.expire();
+        else if ("disable.for.session".equals(e.getDescription())) {
+          myDisabledForSession = true;
+        }
+        else if ("never.show.again".equals(e.getDescription())) {
+          NOTIFICATION_GROUP.createNotification("Warning disabled.",
+                                                "You can enable it back in the <a href=''>Event Log</a> settings.",
+                                                NotificationType.INFORMATION, new Adapter() {
+              @Override
+              protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
+                notification.expire();
+                final ToolWindow toolWindow = EventLog.getEventLog(myProject);
+                if (toolWindow != null) toolWindow.activate(null);
+              }
+            }).notify(myProject);
 
-          final NotificationSettings settings = NotificationsConfigurationImpl.getSettings(notification.getGroupId());
-          final NotificationSettings newSettings = settings.withDisplayType(NotificationDisplayType.NONE);
-          NotificationsConfigurationImpl.getInstanceImpl().changeSettings(newSettings);
+          final NotificationSettings oldSettings = NotificationsConfigurationImpl.getSettings(notification.getGroupId());
+          NotificationsConfigurationImpl.getInstanceImpl().changeSettings(oldSettings.getGroupId(), NotificationDisplayType.NONE,
+                                                                          oldSettings.isShouldLog(), oldSettings.isShouldReadAloud());
         }
       }
     });
+
     if (icon != null) {
       myNotification.setIcon(icon);
     }
