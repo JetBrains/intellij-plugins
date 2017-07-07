@@ -1,9 +1,0 @@
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
-  <mx:Script>
-      private var created:int;
-      var aaa = created
-
-      public function InitializeInConstructorInMxml() {
-          created = 1 + 1;
-      }</mx:Script>
-</mx:Application>

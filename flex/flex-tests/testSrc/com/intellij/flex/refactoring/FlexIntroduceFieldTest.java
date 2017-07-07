@@ -81,11 +81,6 @@ public class FlexIntroduceFieldTest extends LightCodeInsightTestCase {
     doTest("created", true, JSAttributeList.AccessType.PRIVATE, Constructor, getTestName(false), "js2");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testInitializeInConstructorInMxml() throws Exception {
-    doTest("created", true, JSAttributeList.AccessType.PRIVATE, Constructor, getTestName(false), "mxml");
-  }
-
   public void testInitializeInCurrentMethod() throws Exception {
     introduceFieldInCurrentMethod();
   }
