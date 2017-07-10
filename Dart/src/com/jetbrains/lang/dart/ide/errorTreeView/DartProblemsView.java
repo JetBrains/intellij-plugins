@@ -209,7 +209,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
     content = StringUtil.notNullize(content);
     if (!content.endsWith("<br>")) content += "<br>";
-    content += "<br><a href='disable.for.session'>Don't show for this session</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+    content += "<br><a href='disable.for.session'>Don't show for this session</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
                "<a href='never.show.again'>Never show again</a>";
 
     myNotification = NOTIFICATION_GROUP.createNotification(title, content, notificationType, new NotificationListener.Adapter() {
