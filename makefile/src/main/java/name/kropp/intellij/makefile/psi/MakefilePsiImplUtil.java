@@ -8,6 +8,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import name.kropp.intellij.makefile.MakefileFile;
+import name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteImpl;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -145,9 +146,9 @@ public class MakefilePsiImplUtil {
         return element.getCommandList().isEmpty() && element.getConditionalList().isEmpty();
     }
 
-    public static MakefilePrerequisite updateText(MakefilePrerequisite prerequisite, String newText) {
+    public static MakefilePrerequisiteImpl updateText(MakefilePrerequisite prerequisite, String newText) {
         MakefilePrerequisite replacement = MakefileElementFactory.INSTANCE.createPrerequisite(prerequisite.getProject(), newText);
-        return (MakefilePrerequisite) prerequisite.replace(replacement);
+        return (MakefilePrerequisiteImpl) prerequisite.replace(replacement);
     }
 
     public static boolean isPhonyTarget(MakefilePrerequisite prerequisite) {

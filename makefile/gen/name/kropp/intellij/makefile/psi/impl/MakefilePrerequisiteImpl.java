@@ -23,7 +23,7 @@ public class MakefilePrerequisiteImpl extends MakefilePrerequisiteMixin implemen
     else super.accept(visitor);
   }
 
-  public MakefilePrerequisite updateText(String newText) {
+  public MakefilePrerequisiteImpl updateText(String newText) {
     return MakefilePsiImplUtil.updateText(this, newText);
   }
 

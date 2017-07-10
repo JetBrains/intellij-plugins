@@ -2,10 +2,11 @@
 package name.kropp.intellij.makefile.psi;
 
 import com.intellij.psi.PsiElement;
+import name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteImpl;
 
 public interface MakefilePrerequisite extends PsiElement {
 
-  MakefilePrerequisite updateText(String newText);
+  MakefilePrerequisiteImpl updateText(String newText);
 
   boolean isPhonyTarget();
 
