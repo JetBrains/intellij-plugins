@@ -72,7 +72,7 @@ function runTests() {
   }
   var config = {
     port: serverPort,
-    refresh: false,
+    refresh: true,
     urlRoot: urlRoot
   };
   var testName = cli.getTestName();

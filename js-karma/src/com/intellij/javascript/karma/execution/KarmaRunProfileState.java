@@ -98,7 +98,6 @@ public class KarmaRunProfileState implements RunProfileState {
   @NotNull
   public ExecutionResult executeWithServer(@NotNull Executor executor,
                                            @NotNull KarmaServer server) throws ExecutionException {
-    server.getWatcher().flush();
     KarmaExecutionSession session = new KarmaExecutionSession(myProject,
                                                               myRunConfiguration,
                                                               executor,

@@ -9,7 +9,6 @@ import com.intellij.execution.process.*;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.coverage.KarmaCoveragePeer;
 import com.intellij.javascript.karma.execution.KarmaServerSettings;
-import com.intellij.javascript.karma.server.watch.KarmaWatcher;
 import com.intellij.javascript.karma.util.StreamEventListener;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -38,7 +37,6 @@ public class KarmaServer {
   private final KarmaJsSourcesLocator myKarmaJsSourcesLocator;
   private final KarmaServerState myState;
   private final KarmaCoveragePeer myCoveragePeer;
-  private final KarmaWatcher myWatcher;
 
   private final KarmaServerSettings myServerSettings;
 
@@ -62,7 +60,6 @@ public class KarmaServer {
     File configurationFile = myServerSettings.getConfigurationFile();
     myState = new KarmaServerState(this, configurationFile);
     myProcessOutputManager = new KarmaProcessOutputManager(processHandler, myState::onStandardOutputLineAvailable);
-    myWatcher = new KarmaWatcher(this);
     registerStreamEventHandlers();
     myProcessOutputManager.startNotify();
 
@@ -75,8 +72,6 @@ public class KarmaServer {
     if (myCoveragePeer != null) {
       myCoveragePeer.registerEventHandlers(this);
     }
-
-    registerStreamEventHandler(myWatcher.getEventHandler());
 
     myProcessOutputManager.addStreamEventListener(new StreamEventListener() {
       @Override
@@ -116,11 +111,6 @@ public class KarmaServer {
   @Nullable
   public KarmaCoveragePeer getCoveragePeer() {
     return myCoveragePeer;
-  }
-
-  @NotNull
-  public KarmaWatcher getWatcher() {
-    return myWatcher;
   }
 
   @NotNull
@@ -341,7 +331,6 @@ public class KarmaServer {
         return;
       }
       LOG.info("Disposing Karma server " + myProcessHashCode);
-      myWatcher.stop();
       if (myCoveragePeer != null) {
         FileUtil.asyncDelete(myCoveragePeer.getCoverageTempDir());
       }
