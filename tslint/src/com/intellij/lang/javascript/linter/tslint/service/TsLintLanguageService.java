@@ -103,8 +103,8 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
       } else if (config == null) {
         error = "Config file was not found.";
       } else {
-        final String configPath = JSLanguageServiceUtil.normalizeNameAndPath(config);
-        final String path = JSLanguageServiceUtil.normalizeNameAndPath(virtualFile);
+        final String configPath = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(config);
+        final String path = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(virtualFile);
         if (configPath != null && path != null) {
           return new MyParameters(path, configPath, null);
         }
