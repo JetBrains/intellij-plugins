@@ -207,7 +207,7 @@ public class DartComponentMover extends LineMover {
       if (isCommentSeparator(commentEnd.getNextSibling())) {
         return commentEnd;
       }
-      PsiElement next = PsiTreeUtil.skipSiblingsForward(commentEnd, PsiWhiteSpace.class);
+      PsiElement next = PsiTreeUtil.skipWhitespacesForward(commentEnd);
       return next == null ? element : (isComment(next) ? element : next);
     }
 

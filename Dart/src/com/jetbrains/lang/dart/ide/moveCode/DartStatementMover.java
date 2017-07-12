@@ -437,7 +437,7 @@ public class DartStatementMover extends LineMover {
       PsiElement lBrace = PsiTreeUtil.getChildOfType(body, LeafPsiElement.class);
       if (lBrace != null && lBrace.getText().equals("{")) {
         PsiElement rBrace = PsiTreeUtil.lastChild(body);
-        rBrace = PsiTreeUtil.skipSiblingsBackward(rBrace, PsiWhiteSpace.class, PsiComment.class);
+        rBrace = PsiTreeUtil.skipWhitespacesAndCommentsBackward(rBrace);
         if (rBrace != null && rBrace.getText().equals("}")) {
           inside = new TextRange(lBrace.getTextOffset(), rBrace.getTextOffset());
         }
@@ -568,7 +568,7 @@ public class DartStatementMover extends LineMover {
   @Nullable
   private static PsiElement expressionStatementTeminator(PsiElement element) {
     if (element instanceof DartExpression || element instanceof DartVarDeclarationList) {
-      PsiElement token = PsiTreeUtil.skipSiblingsForward(element, PsiComment.class, PsiWhiteSpace.class);
+      PsiElement token = PsiTreeUtil.skipWhitespacesAndCommentsForward(element);
       if (token != null && token.getNode().getElementType() == DartTokenTypes.SEMICOLON) {
         return token;
       }

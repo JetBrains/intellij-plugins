@@ -53,7 +53,7 @@ public class GherkinSuppressionUtil {
   @Nullable
   private static PsiComment getSuppressionComment(@NotNull String toolId,
                                                   @NotNull PsiElement element) {
-    final PsiElement comment = PsiTreeUtil.skipSiblingsBackward(element, PsiWhiteSpace.class);
+    final PsiElement comment = PsiTreeUtil.skipWhitespacesBackward(element);
     if (comment instanceof PsiComment) {
       String text = comment.getText();
       Matcher matcher = SUPPRESS_IN_LINE_COMMENT_PATTERN.matcher(text);
