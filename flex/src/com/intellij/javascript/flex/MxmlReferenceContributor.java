@@ -154,6 +154,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
             @Override
             protected JSTextReference createTextReference(String s, int offset) {
               return new JSTextReference(this, s, offset) {
+                @NotNull
                 @Override
                 protected ResolveResult[] doResolve() {
                   if ("*".equals(getCanonicalText())) {
