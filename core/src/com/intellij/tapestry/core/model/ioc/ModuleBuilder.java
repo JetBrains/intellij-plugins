@@ -92,7 +92,7 @@ public class ModuleBuilder {
      * Checks if the module builder class file has changed since a given timestamp.
      *
      * @param timestamp the timestamp to check.
-     * @return <code>true</code> if the file was changed since the given timestamp, <code>false</code> otherwise.
+     * @return {@code true} if the file was changed since the given timestamp, {@code false} otherwise.
      */
     private boolean hasChanged(long timestamp) {
         return _moduleBuilderClass.getFile().getFile().lastModified() > timestamp;

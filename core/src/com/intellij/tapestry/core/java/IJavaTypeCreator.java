@@ -12,8 +12,8 @@ public interface IJavaTypeCreator {
      *
      * @param name                           the field name.
      * @param type                           the field type.
-     * @param isPrivate                      <code>true</code> if the type is public, <code>false</false> otherwise.
-     * @param changeNameToReflectIdeSettings <code>true</code> if the IDE coding style should be taken into account and be used to change the field name accordingly.
+     * @param isPrivate                      {@code true} if the type is public, <code>false</false> otherwise.
+     * @param changeNameToReflectIdeSettings {@code true} if the IDE coding style should be taken into account and be used to change the field name accordingly.
      * @return the field.
      */
     IJavaField createField(String name, IJavaClassType type, boolean isPrivate, boolean changeNameToReflectIdeSettings);
@@ -33,7 +33,7 @@ public interface IJavaTypeCreator {
      *
      * @param baseClass the class that should have the import statement.
      * @param type      the class type that has to be imported.
-     * @return <code>true</code> if the import was insured, <code>false</code> otherwise.
+     * @return {@code true} if the import was insured, {@code false} otherwise.
      */
     boolean ensureClassImport(IJavaClassType baseClass, IJavaClassType type);
 }

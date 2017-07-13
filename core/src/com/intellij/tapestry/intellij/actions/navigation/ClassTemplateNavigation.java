@@ -118,7 +118,7 @@ public class ClassTemplateNavigation extends AnAction {
    * Finds the PsiFile on which the event occured.
    *
    * @param event the event.
-   * @return the PsiFile on which the event occured, or <code>null</code> if the file couldn't be determined.
+   * @return the PsiFile on which the event occured, or {@code null} if the file couldn't be determined.
    */
   @Nullable
   public static PsiFile getEventPsiFile(AnActionEvent event) {

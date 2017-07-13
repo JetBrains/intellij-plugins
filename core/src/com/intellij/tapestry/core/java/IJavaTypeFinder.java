@@ -14,7 +14,7 @@ public interface IJavaTypeFinder {
      *
      * @param fullyQualifiedName  the fully qualified name of the type to find.
      * @param includeDependencies if project dependencies should be included in the search.
-     * @return the type with the given fully qualified name, <code>null</code> if none is found.
+     * @return the type with the given fully qualified name, {@code null} if none is found.
      */
     IJavaClassType findType(String fullyQualifiedName, boolean includeDependencies);
 

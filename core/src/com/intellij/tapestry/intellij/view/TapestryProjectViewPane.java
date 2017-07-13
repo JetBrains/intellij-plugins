@@ -308,7 +308,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * Check if a file can be selected.
    *
-   * @return <code>true</code> if the file can be selected, <code>false</code> otherwise.
+   * @return {@code true} if the file can be selected, {@code false} otherwise.
    */
   public boolean canSelect() {
     return !getPathToSelect().isEmpty();

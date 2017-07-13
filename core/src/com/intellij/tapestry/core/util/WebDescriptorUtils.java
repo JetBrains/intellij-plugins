@@ -16,7 +16,7 @@ public final class WebDescriptorUtils {
      * Finds the Tapestry filter name.
      *
      * @param document the document to parse.
-     * @return the defined Tapestry filter name, <code>null</code> if it's not found.
+     * @return the defined Tapestry filter name, {@code null} if it's not found.
      */
     public static String getTapestryFilterName(Document document) {
         NodeList nodeList = document.getElementsByTagName("filter-class");
@@ -36,7 +36,7 @@ public final class WebDescriptorUtils {
      * Finds the defined application root package.
      *
      * @param document the document to parse.
-     * @return the defined application root package, <code>null</code> if it's not found.
+     * @return the defined application root package, {@code null} if it's not found.
      */
     public static String getApplicationPackage(Document document) {
         return getContextParam(document, APPLICATION_PACKAGE_PARAMETER_NAME);
@@ -47,7 +47,7 @@ public final class WebDescriptorUtils {
      *
      * @param document  the documento to parse.
      * @param paramName the context parameter name.
-     * @return the context parameter name value, <code>null</code> if the parameter isn't found.
+     * @return the context parameter name value, {@code null} if the parameter isn't found.
      */
     private static String getContextParam(@Nullable Document document, @NotNull String paramName) {
         if (document == null) return null;

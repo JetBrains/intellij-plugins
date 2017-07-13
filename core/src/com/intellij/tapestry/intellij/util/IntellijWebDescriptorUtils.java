@@ -16,7 +16,7 @@ public class IntellijWebDescriptorUtils {
      * Finds the Tapestry filter name.
      *
      * @param app the web application.
-     * @return the defined Tapestry filter, <code>null</code> if it's not found.
+     * @return the defined Tapestry filter, {@code null} if it's not found.
      */
     public static Filter getTapestryFilter(WebApp app) {
         if (app == null)
@@ -36,7 +36,7 @@ public class IntellijWebDescriptorUtils {
      * Finds the defined application root package.
      *
      * @param app the web application.
-     * @return the defined application root package, <code>null</code> if it's not found.
+     * @return the defined application root package, {@code null} if it's not found.
      */
     public static String getApplicationPackage(WebApp app) {
         if (app == null)

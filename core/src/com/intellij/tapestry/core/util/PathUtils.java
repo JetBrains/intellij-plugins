@@ -35,7 +35,7 @@ public class PathUtils {
     /**
      * Transforms a package name into a valid Tapestry path.<br/>
      * Examples:<br/>
-     * <code>admin.login</code> -> admin/login
+     * {@code admin.login} -> admin/login
      *
      * @param packageName           the package name to transform.
      * @param includeFinalSeparator if a path separator should be included in the end.
@@ -52,7 +52,7 @@ public class PathUtils {
     /**
      * Transforms a path into a package.<br/>
      * Examples:<br/>
-     * <code>admin/login</code> -> admin.login
+     * {@code admin/login} -> admin.login
      *
      * @param path              the path to transform.
      * @param removeLastElement if the last element of the path should be removed from the resulting package.
@@ -81,7 +81,7 @@ public class PathUtils {
     /**
      * Constructs the full package name of a component.<br/>
      * Examples:<br/>
-     * <code>com.myapp.pages</code> | <code>admin/Login</code> -> com.myapp.pages.admin
+     * {@code com.myapp.pages} | {@code admin/Login} -> com.myapp.pages.admin
      *
      * @param basePackage   the base package for the given type of component.
      * @param componentName the component name.
@@ -99,7 +99,7 @@ public class PathUtils {
     /**
      * Computes the last element of a path.<br/>
      * Examples:<br/>
-     * <code>admin/Login</code> -> Login
+     * {@code admin/Login} -> Login
      *
      * @param path the path.
      * @return the last element of the given path.
@@ -119,7 +119,7 @@ public class PathUtils {
     /**
      * Computes the first element of a path.<br/>
      * Examples:<br/>
-     * <code>admin/Login</code> -> admin
+     * {@code admin/Login} -> admin
      *
      * @param path the path.
      * @return the last element of the given path.
@@ -143,7 +143,7 @@ public class PathUtils {
     /**
      * Removes the last path element.<br/>
      * Examples:<br/>
-     * <code>admin/Login</code> -> admin
+     * {@code admin/Login} -> admin
      *
      * @param path                   the path.
      * @param removeIfOnlyOneElement remove the last element even if it's the only element in the path.
@@ -170,7 +170,7 @@ public class PathUtils {
     /**
      * Computes the component file name from the component name.<br/>
      * Examples:<br/>
-     * <code>admin/Login</code> -> Login
+     * {@code admin/Login} -> Login
      *
      * @param componentName the component name.
      * @return the component file name.

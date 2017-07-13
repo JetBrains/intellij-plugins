@@ -187,7 +187,7 @@ public class TapestryProject {
    * Finds a page by name in the Tapestry application.
    *
    * @param pageName the page name to look.
-   * @return the page with the given name, or <code>null</code> if the page isn't found.
+   * @return the page with the given name, or {@code null} if the page isn't found.
    */
   @Nullable
   public Page findPage(String pageName) {
@@ -211,7 +211,7 @@ public class TapestryProject {
    * Finds a page by class in the Tapestry application.
    *
    * @param pageClass the page class to look.
-   * @return the page of the given class, or <code>null</code> if the page isn't found.
+   * @return the page of the given class, or {@code null} if the page isn't found.
    */
   @Nullable
   public Page findPage(@NotNull IJavaClassType pageClass) {
@@ -228,7 +228,7 @@ public class TapestryProject {
    * Finds a component by name in the Tapestry application.
    *
    * @param componentName the component name to look.
-   * @return the component with the given name, or <code>null</code> if the component isn't found.
+   * @return the component with the given name, or {@code null} if the component isn't found.
    */
   @Nullable
   public Component findComponent(@NotNull String componentName) {
@@ -239,7 +239,7 @@ public class TapestryProject {
    * Finds a mixin by name in the Tapestry application.
    *
    * @param mixinName the component name to look.
-   * @return the mixin component with the given name, or <code>null</code> if the mixin isn't found.
+   * @return the mixin component with the given name, or {@code null} if the mixin isn't found.
    */
   @Nullable
   public Mixin findMixin(String mixinName) {
@@ -313,7 +313,7 @@ public class TapestryProject {
    * Finds a Tapestry element, either a component or page can be returned.
    *
    * @param elementClass the element class to find.
-   * @return either the page or component to which the given class belongs to, or <code>null</code> if the element isn't found.
+   * @return either the page or component to which the given class belongs to, or {@code null} if the element isn't found.
    */
   @Nullable
   public PresentationLibraryElement findElement(@NotNull IJavaClassType elementClass) {
@@ -325,7 +325,7 @@ public class TapestryProject {
    * Finds a component by class in the Tapestry application.
    *
    * @param componentClass the component class to look.
-   * @return the component of the given class, or <code>null</code> if the component isn't found.
+   * @return the component of the given class, or {@code null} if the component isn't found.
    */
   @Nullable
   public Component findComponent(@NotNull IJavaClassType componentClass) {

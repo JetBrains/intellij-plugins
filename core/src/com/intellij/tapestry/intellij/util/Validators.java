@@ -14,7 +14,7 @@ public final class Validators {
      * Checks if a string is a valid package name.
      *
      * @param packageName the string to check.
-     * @return <code>true</code> if the given string is a valid package name, <code>false</code> otherwise.
+     * @return {@code true} if the given string is a valid package name, {@code false} otherwise.
      */
     public static boolean isValidPackageName(String packageName) {
         return packageName != null && PACKAGE_NAME_VALIDATOR.value(packageName);
@@ -24,7 +24,7 @@ public final class Validators {
      * Checks if a string is a valid component name.
      *
      * @param componentName the string to check.
-     * @return <code>true</code> if the given string is a valid component name, <code>false</code> otherwise.
+     * @return {@code true} if the given string is a valid component name, {@code false} otherwise.
      */
     public static boolean isValidComponentName(String componentName) {
         return componentName != null && COMPONENT_NAME_VALIDATOR.value(componentName);

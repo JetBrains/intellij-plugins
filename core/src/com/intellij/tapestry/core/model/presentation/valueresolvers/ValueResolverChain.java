@@ -38,7 +38,7 @@ public class ValueResolverChain extends ChainBase {
      * @param contextClass  the class that provides the context for resolving the value.
      * @param value         the value to be resolved.
      * @param defaultPrefix the default prefix of the value to be resolved.
-     * @return the resolved value or <code>null</code> if it wasn't possible to resolve the value.
+     * @return the resolved value or {@code null} if it wasn't possible to resolve the value.
      * @throws Exception if an error occurs resolving the value.
      */
     @Nullable

@@ -33,7 +33,7 @@ public interface XmlTag {
     /**
      * @param name      the local name of the attribute to find.
      * @param namespace the namespace of the attribute to find.
-     * @return the attribute with the given name in the given namespace, <code>null</code> if none is found.
+     * @return the attribute with the given name in the given namespace, {@code null} if none is found.
      */
     XmlAttribute getAttribute(String name, String namespace);
 }

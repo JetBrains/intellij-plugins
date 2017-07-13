@@ -39,7 +39,7 @@ public abstract class AbstractValueResolver implements Command {
      *
      * @param value         the value.
      * @param defaultPrefix the default prefix.
-     * @return the defined prefix in the value, the default prefix if no prefix was defined or <code>null</code> if the given value is invalid.
+     * @return the defined prefix in the value, the default prefix if no prefix was defined or {@code null} if the given value is invalid.
      */
     @Nullable
     protected static String getPrefix(@Nullable String value, @Nullable String defaultPrefix) {

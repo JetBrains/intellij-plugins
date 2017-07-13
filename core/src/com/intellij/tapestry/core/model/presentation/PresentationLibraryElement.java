@@ -119,7 +119,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
   }
 
   /**
-   * @return <code>true</code> if this element allows a template, <code>false</code> otherwise.
+   * @return {@code true} if this element allows a template, {@code false} otherwise.
    */
   public abstract boolean allowsTemplate();
 
@@ -127,7 +127,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
    * Finds the templates associated with this element and returns them.
    * It returns an array because an element can have more than one localized template.
    *
-   * @return the templates in no special order. This never returns <code>null</code>
+   * @return the templates in no special order. This never returns {@code null}
    */
   public abstract IResource[] getTemplate();
 
@@ -144,7 +144,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
    * Finds the message catalogs associated with this element and returns then.
    * It returns an array because an element can have more than one localized message catalog.
    *
-   * @return the catalogs in no special order. This never returns <code>null</code>
+   * @return the catalogs in no special order. This never returns {@code null}
    */
   public IResource[] getMessageCatalog() {
     if (_messageCatalogCache != null && checkAllValidResources(_messageCatalogCache)) {

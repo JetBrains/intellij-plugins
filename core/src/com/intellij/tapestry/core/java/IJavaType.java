@@ -20,8 +20,8 @@ public interface IJavaType {
      * represented by this object.
      *
      * @param type the type object to be checked
-     * @return the <code>boolean</code> value indicating whether objects of the
-     *         type <code>type</code> can be assigned to objects of this class
+     * @return the {@code boolean} value indicating whether objects of the
+     *         type {@code type} can be assigned to objects of this class
      */
     boolean isAssignableFrom(@Nullable IJavaType type);
 

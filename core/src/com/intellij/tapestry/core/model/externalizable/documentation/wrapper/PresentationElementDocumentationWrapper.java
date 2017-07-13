@@ -30,7 +30,7 @@ public class PresentationElementDocumentationWrapper {
     /**
      * Return the element description.
      *
-     * @return the element description. Never returns <code>null</code>
+     * @return the element description. Never returns {@code null}
      */
     public String getDescription() {
         if (_description != null)
@@ -52,7 +52,7 @@ public class PresentationElementDocumentationWrapper {
      * Return a parameter description.
      *
      * @param name the name of the parameter to look for.
-     * @return the parameter description. Never returns <code>null</code>
+     * @return the parameter description. Never returns {@code null}
      */
     public String getParameterDescription(String name) {
         if (_parameterDescriptions.containsKey(name))

@@ -14,7 +14,7 @@ public class ComponentUtils {
    * Checks if a tag in a HTML document is a component tag.
    *
    * @param tag the tag to check.
-   * @return <code>true</code> if the given tag is a opening or closing tag of a Tapestry component, <code>false</code> otherwise.
+   * @return {@code true} if the given tag is a opening or closing tag of a Tapestry component, {@code false} otherwise.
    */
   public static boolean _isComponentTag(XmlTag tag) {
     return TapestryXmlExtension.isTapestryTemplateNamespace(tag.getNamespace())

@@ -43,7 +43,7 @@ public class TapestryUtils {
    * Checks if a module is a Tapestry module.
    *
    * @param module the module to check.
-   * @return <code>true</code> if the module is a Tapestry module, <code>false</code> otherwise.
+   * @return {@code true} if the module is a Tapestry module, {@code false} otherwise.
    */
   public static boolean isTapestryModule(Module module) {
     return module != null && FacetManager.getInstance(module).getFacetsByType(TapestryFacetType.ID).size() > 0;
@@ -103,7 +103,7 @@ public class TapestryUtils {
    * @param paramName    the parameter name to check
    * @param elementClass the class to get the fields
    * @param tag          the component to get the parameters
-   * @return <code>true</code> if the parameter is defined in the class, <code>false</code> otherwise.
+   * @return {@code true} if the parameter is defined in the class, {@code false} otherwise.
    */
   public static boolean parameterDefinedInClass(String paramName, IntellijJavaClassType elementClass, XmlTag tag) {
 
@@ -180,7 +180,7 @@ public class TapestryUtils {
    * @param templateSourceDirectory the source root where to create the page template.
    * @param pageName                the page name.
    * @param replaceExistingFiles    should an existing page file be replaced.
-   * @throws IllegalStateException if the page file already existed and <code>replaceExistingFiles = false</code>
+   * @throws IllegalStateException if the page file already existed and {@code replaceExistingFiles = false}
    */
   public static void createComponent(Module module,
                                      PsiDirectory classSourceDirectory,
@@ -219,7 +219,7 @@ public class TapestryUtils {
    * @param templateSourceDirectory the source root where to create the page template.
    * @param pageName                the page name.
    * @param replaceExistingFiles    should an existing page file be replaced.
-   * @throws IllegalStateException if the page file already existed and <code>replaceExistingFiles = false</code>
+   * @throws IllegalStateException if the page file already existed and {@code replaceExistingFiles = false}
    */
   public static void createPage(Module module,
                                 PsiDirectory classSourceDirectory,
@@ -258,7 +258,7 @@ public class TapestryUtils {
    * @param classSourceDirectory the source root where to create the mixin class.
    * @param mixinName            the mixin name.
    * @param replaceExistingFiles should an existing mixin file be replaced.
-   * @throws IllegalStateException if the mixin file already existed and <code>replaceExistingFiles = false</code>
+   * @throws IllegalStateException if the mixin file already existed and {@code replaceExistingFiles = false}
    */
   public static void createMixin(Module module, PsiDirectory classSourceDirectory, String mixinName, boolean replaceExistingFiles)
     throws IllegalStateException {
@@ -343,7 +343,7 @@ public class TapestryUtils {
    * Finds the Tapestry namespace prefix declared in a template.
    *
    * @param template the template to search for the prefix;
-   * @return the Tapestry namespace prefix declared in the given template or <code>null</code> if none is found.
+   * @return the Tapestry namespace prefix declared in the given template or {@code null} if none is found.
    */
   @Nullable
   public static String getTapestryNamespacePrefix(XmlFile template) {
@@ -368,7 +368,7 @@ public class TapestryUtils {
    * @param pageName             the page name.
    * @param replaceExistingFiles should an existing class be replaced.
    * @param templateName         the name of the template to use for the class.
-   * @throws FileAlreadyExistsException  if the page class already existed and <code>replaceExistingFiles = false</code>
+   * @throws FileAlreadyExistsException  if the page class already existed and {@code replaceExistingFiles = false}
    * @throws IncorrectOperationException if an error occurs creating the class.
    */
   private static void createClass(PsiDirectory sourceDirectory,
@@ -401,7 +401,7 @@ public class TapestryUtils {
    * @param pageName             the page name.
    * @param replaceExistingFiles should an existing page class be replaced.
    * @param template             the template to use.
-   * @throws FileAlreadyExistsException  if the page template already existed and <code>replaceExistingFiles = false</code>
+   * @throws FileAlreadyExistsException  if the page template already existed and {@code replaceExistingFiles = false}
    * @throws IncorrectOperationException if an error occurs creating the template.
    */
   private static void createTemplate(Module module,

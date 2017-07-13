@@ -41,7 +41,7 @@ public class IdeaUtils {
    * Checks if the given event was created from a module node.
    *
    * @param event the event.
-   * @return <code>true</code> if the given event was created from a module node, <code>false</code> otherwise.
+   * @return {@code true} if the given event was created from a module node, {@code false} otherwise.
    */
   public static boolean isModuleNode(AnActionEvent event) {
     final Project project = event.getData(CommonDataKeys.PROJECT);
@@ -106,7 +106,7 @@ public class IdeaUtils {
    *
    * @param module    the module to check the web root.
    * @param directory the directory to check.
-   * @return <code>true</code> if the given directory is a web root in the given module, <code>false</false> otherwise.
+   * @return {@code true} if the given directory is a web root in the given module, <code>false</false> otherwise.
    */
   public static boolean isWebRoot(Module module, VirtualFile directory) {
     WebFacet webFacet = IdeaUtils.getWebFacet(module);
@@ -132,7 +132,7 @@ public class IdeaUtils {
    * Finds the first public class in an array of classes.
    *
    * @param classes the arrays of classes to search.
-   * @return the first public class in the given array of classes, <code>null</code> if none is found.
+   * @return the first public class in the given array of classes, {@code null} if none is found.
    */
   @Nullable
   public static PsiClass findPublicClass(PsiClass[] classes) {
@@ -190,7 +190,7 @@ public class IdeaUtils {
    *
    * @param module the module the type belongs to.
    * @param type   the PsiType instance.
-   * @return the corresponding JavaType instance, or <code>null</code> if type can't be converted into a JavaType.
+   * @return the corresponding JavaType instance, or {@code null} if type can't be converted into a JavaType.
    */
   public static IJavaType createJavaTypeFromPsiType(Module module, PsiType type) {
     if (type instanceof PsiClassType) {
@@ -225,7 +225,7 @@ public class IdeaUtils {
    * Finds the web facet of a module.
    *
    * @param module the module to find the facet in.
-   * @return the web facet of the given module or <code>null</code> if the module doesn't have one.
+   * @return the web facet of the given module or {@code null} if the module doesn't have one.
    */
   @Nullable
   public static WebFacet getWebFacet(@NotNull Module module) {

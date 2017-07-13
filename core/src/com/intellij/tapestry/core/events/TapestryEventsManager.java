@@ -27,7 +27,7 @@ public class TapestryEventsManager implements FileSystemListener, TapestryModelC
      * Removes a Tapestry model listener.
      *
      * @param listener the listener to remove.
-     * @return <code>true</code> if the listener was successfully removed, <code>false</code> otherwise.
+     * @return {@code true} if the listener was successfully removed, {@code false} otherwise.
      */
     public synchronized boolean removeTapestryModelListener(TapestryModelChangeListener listener) {
         return _tapestryModelChangeListeners.remove(listener);
@@ -46,7 +46,7 @@ public class TapestryEventsManager implements FileSystemListener, TapestryModelC
      * Removes a file system listener.
      *
      * @param listener the listener to remove.
-     * @return <code>true</code> if the listener was successfully removed, <code>false</code> otherwise.
+     * @return {@code true} if the listener was successfully removed, {@code false} otherwise.
      */
     public synchronized boolean removeFileSystemListener(FileSystemListener listener) {
         return _fileSystemListeners.remove(listener);

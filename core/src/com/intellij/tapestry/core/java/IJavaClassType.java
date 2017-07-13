@@ -22,17 +22,17 @@ public interface IJavaClassType extends IJavaType {
     String getName();
 
     /**
-     * @return <code>true</code> if the type is an interface, <code>false</false> otherwise.
+     * @return {@code true} if the type is an interface, <code>false</false> otherwise.
      */
     boolean isInterface();
 
     /**
-     * @return <code>true</code> if the type is public, <code>false</false> otherwise.
+     * @return {@code true} if the type is public, <code>false</false> otherwise.
      */
     boolean isPublic();
 
     /**
-     * @return <code>true</code> if the type has the default constructor, <code>false</false> otherwise.
+     * @return {@code true} if the type has the default constructor, <code>false</false> otherwise.
      */
     boolean hasDefaultConstructor();
 
@@ -40,7 +40,7 @@ public interface IJavaClassType extends IJavaType {
     IJavaClassType getSuperClassType();
 
     /**
-     * @return @return <code>true</code> if the type is an Enum, <code>false</false> otherwise.
+     * @return @return {@code true} if the type is an Enum, <code>false</false> otherwise.
      */
     boolean isEnum();
 
