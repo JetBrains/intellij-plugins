@@ -19,10 +19,9 @@ import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationGroup;
-import com.intellij.notification.NotificationListener;
-import com.intellij.notification.NotificationType;
+import com.intellij.notification.*;
+import com.intellij.notification.impl.NotificationSettings;
+import com.intellij.notification.impl.NotificationsConfigurationImpl;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
@@ -30,6 +29,7 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
@@ -80,6 +80,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
   private int myFilesWithErrorsHash;
   private Notification myNotification;
+  private boolean myDisabledForSession = false;
 
   private final Runnable myUpdateRunnable = new Runnable() {
     @Override
@@ -181,12 +182,12 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   }
 
   @SuppressWarnings("unused")
-  public void showWarningNotification(@NotNull String title, @NotNull String htmlContent, @Nullable Icon icon) {
-    showNotification(NotificationType.WARNING, title, htmlContent, icon);
+  public void showWarningNotification(@NotNull String title, @Nullable String content, @Nullable Icon icon) {
+    showNotification(NotificationType.WARNING, title, content, icon);
   }
 
-  public void showErrorNotification(@NotNull String title, @NotNull String htmlContent, @Nullable Icon icon) {
-    showNotification(NotificationType.ERROR, title, htmlContent, icon);
+  public void showErrorNotification(@NotNull String title, @Nullable String content, @Nullable Icon icon) {
+    showNotification(NotificationType.ERROR, title, content, icon);
   }
 
   public void clearNotifications() {
@@ -196,23 +197,50 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
     }
   }
 
+  public static final String OPEN_DART_ANALYSIS_LINK = "open.dart.analysis";
+
   private void showNotification(@NotNull NotificationType notificationType,
                                 @NotNull String title,
-                                @NotNull String htmlContent,
+                                @Nullable String content,
                                 @Nullable Icon icon) {
     clearNotifications();
 
-    myNotification = NOTIFICATION_GROUP.createNotification(
-      title, htmlContent + " (<a href='open.dart.analysis'>show</a>)", notificationType, new NotificationListener.Adapter() {
-        @Override
-        protected void hyperlinkActivated(@NotNull final Notification notification, @NotNull final HyperlinkEvent e) {
-          if ("open.dart.analysis".equals(e.getDescription())) {
-            notification.expire();
-            ToolWindowManager.getInstance(myProject).getToolWindow(TOOLWINDOW_ID).activate(null);
-          }
+    if (myDisabledForSession) return;
+
+    content = StringUtil.notNullize(content);
+    if (!content.endsWith("<br>")) content += "<br>";
+    content += "<br><a href='disable.for.session'>Don't show for this session</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+               "<a href='never.show.again'>Never show again</a>";
+
+    myNotification = NOTIFICATION_GROUP.createNotification(title, content, notificationType, new NotificationListener.Adapter() {
+      @Override
+      protected void hyperlinkActivated(@NotNull final Notification notification, @NotNull final HyperlinkEvent e) {
+        notification.expire();
+
+        if (OPEN_DART_ANALYSIS_LINK.equals(e.getDescription())) {
+          ToolWindowManager.getInstance(myProject).getToolWindow(TOOLWINDOW_ID).activate(null);
+        }
+        else if ("disable.for.session".equals(e.getDescription())) {
+          myDisabledForSession = true;
+        }
+        else if ("never.show.again".equals(e.getDescription())) {
+          NOTIFICATION_GROUP.createNotification("Warning disabled.",
+                                                "You can enable it back in the <a href=''>Event Log</a> settings.",
+                                                NotificationType.INFORMATION, new Adapter() {
+              @Override
+              protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
+                notification.expire();
+                final ToolWindow toolWindow = EventLog.getEventLog(myProject);
+                if (toolWindow != null) toolWindow.activate(null);
+              }
+            }).notify(myProject);
+
+          final NotificationSettings oldSettings = NotificationsConfigurationImpl.getSettings(notification.getGroupId());
+          NotificationsConfigurationImpl.getInstanceImpl().changeSettings(oldSettings.getGroupId(), NotificationDisplayType.NONE,
+                                                                          oldSettings.isShouldLog(), oldSettings.isShouldReadAloud());
         }
       }
-    );
+    });
 
     if (icon != null) {
       myNotification.setIcon(icon);

@@ -25,6 +25,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.net.NetUtils;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.coverage.DartCoverageProgramRunner;
+import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartExecutionHelper;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
@@ -131,9 +132,9 @@ public class DartCommandLineRunningState extends CommandLineState {
     try {
       final DartRunConfiguration dartRunConfiguration = (DartRunConfiguration)getEnvironment().getRunProfile();
       final VirtualFile launchFile = dartRunConfiguration.getRunnerParameters().getDartFileOrDirectory();
-
-      String launchTitle = "Analysis issues with " + dartRunConfiguration.getName();
-      DartExecutionHelper.displayIssues(project, launchFile, launchTitle, dartRunConfiguration.getIcon());
+      final String message = ("<a href='" + DartProblemsView.OPEN_DART_ANALYSIS_LINK + "'>Analysis issues</a> may affect " +
+                              "the execution of '" + dartRunConfiguration.getName() + "'.");
+      DartExecutionHelper.displayIssues(project, launchFile, message, dartRunConfiguration.getIcon());
     }
     catch (RuntimeConfigurationError error) {
       DartExecutionHelper.clearIssueNotifications(project);
