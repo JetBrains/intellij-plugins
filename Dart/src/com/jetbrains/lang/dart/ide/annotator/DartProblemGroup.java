@@ -45,7 +45,7 @@ public class DartProblemGroup implements SuppressableProblemGroup {
     private final boolean myEolComment;
 
     /**
-     * @param eolComment <code>true</code> means that <code>//ignore</code> comment should be placed in the end of the current line, <code>false</code> -> on previous line
+     * @param eolComment {@code true} means that {@code //ignore} comment should be placed in the end of the current line, {@code false} -> on previous line
      */
     public DartSuppressAction(@NotNull final String errorCode, @NotNull final String errorSeverity, boolean eolComment) {
       myErrorCode = errorCode;

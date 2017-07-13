@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Global <code>exception-mapping</code> "result".
+ * Global {@code exception-mapping} "result".
  *
  * @author Yann C&eacute;bron
  */

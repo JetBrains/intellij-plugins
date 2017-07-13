@@ -75,7 +75,7 @@ public class AllowedMethodsConverter extends DelimitedListConverter<String> {
   }
 
   /**
-   * Gets the enclosing <code>action</code>-element for the current context.
+   * Gets the enclosing {@code action}-element for the current context.
    *
    * @param context Current context.
    * @return Action-element.

@@ -37,42 +37,42 @@ public class RefactoringStatus {
   }
 
   /**
-   * Adds a <code>ERROR</code> entry filled with the given message to this status.
+   * Adds a {@code ERROR} entry filled with the given message to this status.
    */
   public void addError(@NotNull String msg) {
     addError(msg, null);
   }
 
   /**
-   * Adds a <code>ERROR</code> entry filled with the given message and status to this status.
+   * Adds a {@code ERROR} entry filled with the given message and status to this status.
    */
   public void addError(@NotNull String msg, @Nullable RefactoringStatusContext context) {
     addEntry(new RefactoringStatusEntry(RefactoringStatusSeverity.ERROR, msg, context));
   }
 
   /**
-   * Adds a <code>FATAL</code> entry filled with the given message to this status.
+   * Adds a {@code FATAL} entry filled with the given message to this status.
    */
   public void addFatalError(@NotNull String msg) {
     addFatalError(msg, null);
   }
 
   /**
-   * Adds a <code>FATAL</code> entry filled with the given message and status to this status.
+   * Adds a {@code FATAL} entry filled with the given message and status to this status.
    */
   public void addFatalError(@NotNull String msg, @Nullable RefactoringStatusContext context) {
     addEntry(new RefactoringStatusEntry(RefactoringStatusSeverity.FATAL, msg, context));
   }
 
   /**
-   * Adds a <code>WARNING</code> entry filled with the given message to this status.
+   * Adds a {@code WARNING} entry filled with the given message to this status.
    */
   public void addWarning(String msg) {
     addWarning(msg, null);
   }
 
   /**
-   * Adds a <code>WARNING</code> entry filled with the given message and status to this status.
+   * Adds a {@code WARNING} entry filled with the given message and status to this status.
    */
   public void addWarning(@NotNull String msg, @Nullable RefactoringStatusContext context) {
     addEntry(new RefactoringStatusEntry(RefactoringStatusSeverity.WARNING, msg, context));
@@ -104,7 +104,7 @@ public class RefactoringStatus {
   }
 
   /**
-   * @return the RefactoringStatusEntry with the highest severity, or <code>null</code> if no
+   * @return the RefactoringStatusEntry with the highest severity, or {@code null} if no
    * entries are present.
    */
   @Nullable
@@ -123,7 +123,7 @@ public class RefactoringStatus {
 
   /**
    * Return the message from the {@link RefactoringStatusEntry} with the highest severity; may be
-   * <code>null</code> if not entries are present.
+   * {@code null} if not entries are present.
    */
   @Nullable
   public String getMessage() {
@@ -143,23 +143,23 @@ public class RefactoringStatus {
   }
 
   /**
-   * @return <code>true</code> if the current severity is <code>
-   * FATAL</code> or <code>ERROR</code>.
+   * @return {@code true} if the current severity is {@code
+   * FATAL} or {@code ERROR}.
    */
   public boolean hasError() {
     return severity == RefactoringStatusSeverity.FATAL || severity == RefactoringStatusSeverity.ERROR;
   }
 
   /**
-   * @return <code>true</code> if the current severity is <code>FATAL</code>.
+   * @return {@code true} if the current severity is {@code FATAL}.
    */
   public boolean hasFatalError() {
     return severity == RefactoringStatusSeverity.FATAL;
   }
 
   /**
-   * @return <code>true</code> if the current severity is <code>
-   * FATAL</code>, <code>ERROR</code>, <code>WARNING</code> or <code>INFO</code>.
+   * @return {@code true} if the current severity is {@code
+   * FATAL}, {@code ERROR}, {@code WARNING} or {@code INFO}.
    */
   public boolean hasInfo() {
     return severity == RefactoringStatusSeverity.FATAL ||
@@ -169,8 +169,8 @@ public class RefactoringStatus {
   }
 
   /**
-   * @return <code>true</code> if the current severity is <code>
-   * FATAL</code>, <code>ERROR</code> or <code>WARNING</code>.
+   * @return {@code true} if the current severity is {@code
+   * FATAL}, {@code ERROR} or {@code WARNING}.
    */
   public boolean hasWarning() {
     return severity == RefactoringStatusSeverity.FATAL ||
@@ -179,7 +179,7 @@ public class RefactoringStatus {
   }
 
   /**
-   * @return <code>true</code> if the severity is <code>OK</code>.
+   * @return {@code true} if the severity is {@code OK}.
    */
   public boolean isOK() {
     return severity == RefactoringStatusSeverity.OK;
@@ -188,7 +188,7 @@ public class RefactoringStatus {
   /**
    * Merges the receiver and the parameter statuses. The resulting list of entries in the receiver
    * will contain entries from both. The resulting severity in the receiver will be the more severe
-   * of its current severity and the parameter's severity. Merging with <code>null</code> is allowed
+   * of its current severity and the parameter's severity. Merging with {@code null} is allowed
    * - it has no effect.
    */
   public void merge(@Nullable RefactoringStatus other) {

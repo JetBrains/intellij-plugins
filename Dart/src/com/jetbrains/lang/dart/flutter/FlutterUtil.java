@@ -13,7 +13,7 @@ public class FlutterUtil {
   private static final boolean FLUTTER_PLUGIN_INSTALLED = PluginManager.isPluginInstalled(PluginId.getId("io.flutter"));
 
   /**
-   * @return the Flutter SDK root relative to the given Dart SDK or <code>null</code>
+   * @return the Flutter SDK root relative to the given Dart SDK or {@code null}
    */
   @Nullable
   public static String getFlutterRoot(@NotNull final String dartSdkPath) {

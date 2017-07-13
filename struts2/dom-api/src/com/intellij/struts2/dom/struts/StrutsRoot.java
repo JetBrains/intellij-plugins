@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * <code>struts</code> root-element for struts.xml-files.
+ * {@code struts} root-element for struts.xml-files.
  *
  * @author Yann C&eacute;bron
  */

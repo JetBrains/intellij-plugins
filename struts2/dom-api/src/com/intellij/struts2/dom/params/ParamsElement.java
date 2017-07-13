@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Base-interface for all tags containing <code>param</code> child-tags.
+ * Base-interface for all tags containing {@code param} child-tags.
  *
  * @author Yann C&eacute;bron
  */

@@ -30,7 +30,7 @@ public class SwcCatalogXmlUtil {
 
   /**
    * <code><b>Pair.first</b></code> is modification stamp of <i>catalog.xml</i> file when this user data was put<br>
-   * <code><b>Pair.second</b></code> is <code>Map&lt;String, TObjectLongHashMap&lt;String&gt;&gt;</code> where:<br>
+   * <code><b>Pair.second</b></code> is {@code Map<String, TObjectLongHashMap<String>>} where:<br>
    * &nbsp;&nbsp;&nbsp;&nbsp;<code><b>key</b></code> is swf file name inside swc file (so far I have seen only <i>library.swf</i> name, but swc format allows any file name, it is mentioned in <i>catalog.xml</i>)<br>
    * &nbsp;&nbsp;&nbsp;&nbsp;<code><b>value</b></code> is map from FQN (of JSQualifiedElement) to its timestamp as written inside <i>catalog.xml</i>.
    */

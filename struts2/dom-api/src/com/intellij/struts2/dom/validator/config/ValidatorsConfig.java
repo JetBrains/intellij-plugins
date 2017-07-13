@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NonNls;
 import java.util.List;
 
 /**
- * <code>validators</code> in validator-config.xml.
+ * {@code validators} in validator-config.xml.
  *
  * @author Yann C&eacute;bron
  */

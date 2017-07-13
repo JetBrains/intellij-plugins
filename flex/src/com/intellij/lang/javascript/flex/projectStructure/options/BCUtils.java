@@ -102,9 +102,9 @@ public class BCUtils {
   }
 
   /**
-   * If <code>LinkageType.Default</code> is returned then use {@link FlexCommonUtils#getDefaultFrameworkLinkage(String, BuildConfigurationNature)} to get real value.
+   * If {@code LinkageType.Default} is returned then use {@link FlexCommonUtils#getDefaultFrameworkLinkage(String, BuildConfigurationNature)} to get real value.
    *
-   * @return <code>null</code> if entry should not be included at all
+   * @return {@code null} if entry should not be included at all
    */
   @Nullable
   public static LinkageType getSdkEntryLinkageType(String swcPath, FlexBuildConfiguration bc) {

@@ -20,7 +20,7 @@ import com.intellij.util.xml.ResolvingConverter;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * <code>field-validator/validator</code> "type".
+ * {@code field-validator/validator} "type".
  *
  * @author Yann C&eacute;bron
  */

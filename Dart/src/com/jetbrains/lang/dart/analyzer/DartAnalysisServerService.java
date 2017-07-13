@@ -1081,8 +1081,8 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   /**
-   * If server responds in less than <code>GET_FIXES_TIMEOUT</code> then this method can be considered synchronous: when exiting this method
-   * <code>consumer</code> is already notified. Otherwise this method is async.
+   * If server responds in less than {@code GET_FIXES_TIMEOUT} then this method can be considered synchronous: when exiting this method
+   * {@code consumer} is already notified. Otherwise this method is async.
    */
   public void askForFixesAndWaitABitIfReceivedQuickly(@NotNull final VirtualFile file,
                                                       final int _offset,

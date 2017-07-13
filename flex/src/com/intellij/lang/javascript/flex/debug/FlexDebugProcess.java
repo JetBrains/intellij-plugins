@@ -744,17 +744,17 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   /**
-   * Looks for file with specified <code>fileName</code> in caches or anywhere in the project in following order:
+   * Looks for file with specified {@code fileName} in caches or anywhere in the project in following order:
    * <ul>
-   * <li>[1] matching <code>id</code>. If the file is not within the project - try to find if its copy exists within the project</li>
-   * <li>[2] in <code>myFileNameToPathsMap</code> matching <code>packageName</code>. If the file is not within the project - try to find if its copy exists within the project</li>
-   * <li>[3] in the whole project with libraries matching <code>packageName</code> (prefer in BC scope)</li>
+   * <li>[1] matching {@code id}. If the file is not within the project - try to find if its copy exists within the project</li>
+   * <li>[2] in {@code myFileNameToPathsMap} matching {@code packageName}. If the file is not within the project - try to find if its copy exists within the project</li>
+   * <li>[3] in the whole project with libraries matching {@code packageName} (prefer in BC scope)</li>
    * <li>[4] in the whole project with libraries (prefer BC scope)</li>
    * </ul>
    *
    * @param fileName
    * @param packageName used as auxiliary information if there are more than one file with the same name.
-   *                    <code>null</code> means that we don't have information about package
+   *                    {@code null} means that we don't have information about package
    * @param id
    */
   @Nullable

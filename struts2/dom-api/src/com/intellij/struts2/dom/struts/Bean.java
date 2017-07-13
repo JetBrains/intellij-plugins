@@ -21,7 +21,7 @@ import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.util.xml.*;
 
 /**
- * <code>bean</code>
+ * {@code bean}
  *
  * @author Yann C&eacute;bron
  */

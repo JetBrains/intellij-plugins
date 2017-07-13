@@ -98,7 +98,7 @@ public class ASC20CompilationTask extends FlexCompilationTask {
   }
 
   /**
-   * @return <code>false</code> if error reported
+   * @return {@code false} if error reported
    */
   private boolean handleCompilerMessage(final FlexCompilationManager compilationManager, final String message) {
     if ("^".equals(message)) {

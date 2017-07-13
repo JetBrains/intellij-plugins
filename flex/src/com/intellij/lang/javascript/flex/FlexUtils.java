@@ -164,14 +164,14 @@ public class FlexUtils {
   }
 
   /**
-   * Looks through input stream containing XML document and finds all entries of XML elements listed in <code>xmlElements</code>.
+   * Looks through input stream containing XML document and finds all entries of XML elements listed in {@code xmlElements}.
    * Content of these elements is put to result map. XML namespaces are not taken into consideration.
    *
    * @param xmlInputStream input stream with xml content to parse
    * @param xmlElements    list of XML elements to look for.
-   *                       Format is: <code>"&lt;root_element&gt;&lt;child_element&gt;&lt;subelement_to_look_for&gt;"</code>.
+   *                       Format is: {@code "<root_element><child_element><subelement_to_look_for>"}.
    *                       Listed XML elements SHOULD NOT contain subelements
-   * @return map, keys are XML elements listed in <code>xmlElements</code>,
+   * @return map, keys are XML elements listed in {@code xmlElements},
    *         values are all entries of respective element (may be empty list)
    */
   public static Map<String, List<String>> findXMLElements(@NotNull final InputStream xmlInputStream, final List<String> xmlElements) {
@@ -217,14 +217,14 @@ public class FlexUtils {
   }
 
   /**
-   * Looks through input stream containing XML document and finds first entry of <code>xmlElement</code>.
+   * Looks through input stream containing XML document and finds first entry of {@code xmlElement}.
    * XML namespaces are not taken into consideration.
    *
    * @param xmlInputStream input stream with xml content to parse
    * @param xmlElement     XML element to look for.
-   *                       Format is: <code>"&lt;root_element&gt;&lt;child_element&gt;&lt;subelement_to_look_for&gt;"</code>.
+   *                       Format is: {@code "<root_element><child_element><subelement_to_look_for>"}.
    *                       XML element SHOULD NOT contain subelements
-   * @return first found value of <code>xmlElement</code> tag, or <code>null</code> if non found or any exception occurs.
+   * @return first found value of {@code xmlElement} tag, or {@code null} if non found or any exception occurs.
    */
 
   @Nullable
@@ -281,7 +281,7 @@ public class FlexUtils {
   }
 
   /**
-   * If the first item of ComboBox model is <code>null</code> or not instance of <code>clazz</code> then it will be removed from the model.
+   * If the first item of ComboBox model is {@code null} or not instance of {@code clazz} then it will be removed from the model.
    */
   public static void removeIncorrectItemFromComboBoxIfPresent(final JComboBox comboBox, final Class clazz) {
     final int oldSize = comboBox.getModel().getSize();

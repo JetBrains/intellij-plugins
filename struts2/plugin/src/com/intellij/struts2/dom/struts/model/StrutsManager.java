@@ -42,10 +42,10 @@ public abstract class StrutsManager {
   }
 
   /**
-   * Checks whether the given file is a valid <code>struts.xml</code> file.
+   * Checks whether the given file is a valid {@code struts.xml} file.
    *
    * @param xmlFile File to check.
-   * @return <code>true</code> if yes, <code>false</code> otherwise.
+   * @return {@code true} if yes, {@code false} otherwise.
    */
   public abstract boolean isStruts2ConfigFile(@NotNull XmlFile xmlFile);
 
@@ -53,7 +53,7 @@ public abstract class StrutsManager {
    * Gets the model using the given file.
    *
    * @param file File to resolve context.
-   * @return <code>null</code> if no model available.
+   * @return {@code null} if no model available.
    * @see com.intellij.util.xml.model.impl.DomModelFactory#getModelByConfigFile(XmlFile)
    */
   @Nullable

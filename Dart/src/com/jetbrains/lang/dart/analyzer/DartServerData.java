@@ -51,7 +51,7 @@ public class DartServerData {
   }
 
   /**
-   * @return <code>true</code> if <code>errors</code> were processes, <code>false</code> if ignored;
+   * @return {@code true} if {@code errors} were processes, {@code false} if ignored;
    * errors are ignored if the file has been edited and new contents has not yet been sent to the server.
    */
   boolean computedErrors(@NotNull final String filePath, @NotNull final List<AnalysisError> errors, final boolean restartHighlighting) {
@@ -324,7 +324,7 @@ public class DartServerData {
   }
 
   /**
-   * @return <code>true</code> if at least one region has been deleted, <code>false</code> if updated only or nothing done at all
+   * @return {@code true} if at least one region has been deleted, {@code false} if updated only or nothing done at all
    */
   private static boolean updateRegionsDeletingTouched(@NotNull final String filePath,
                                                       @Nullable final List<? extends DartRegion> regions,

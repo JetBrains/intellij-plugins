@@ -20,7 +20,7 @@ import com.intellij.util.xml.converters.DelimitedListConverter;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * <code>package</code> "extends" attribute.
+ * {@code package} "extends" attribute.
  *
  * @author Yann C&eacute;bron
  * @see StrutsPackage#getExtends()

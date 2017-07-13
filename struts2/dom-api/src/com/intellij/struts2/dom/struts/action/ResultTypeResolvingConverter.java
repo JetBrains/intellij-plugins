@@ -21,7 +21,7 @@ import com.intellij.util.xml.ResolvingConverter;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * <code>result</code> "type"-attribute.
+ * {@code result} "type"-attribute.
  *
  * @author Yann C&eacute;bron
  * @see Result#getType()

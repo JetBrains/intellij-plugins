@@ -188,7 +188,7 @@ public class FlexUnitSupport {
   }
 
   /**
-   * @return [RunWith] metadata default attribute value. Can be <code>null</code>, empty string or whatever.
+   * @return [RunWith] metadata default attribute value. Can be {@code null}, empty string or whatever.
    */
   @Nullable
   public static String getCustomRunner(JSClass clazz) {

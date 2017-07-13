@@ -45,7 +45,7 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
   /**
    * @param project
    * @param filter
-   * @return <code>null</code> if there's no applicable BC configurables according to the filter provided
+   * @return {@code null} if there's no applicable BC configurables according to the filter provided
    */
   @Nullable
   public static ChooseBuildConfigurationDialog createForApplicableBCs(String title,

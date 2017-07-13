@@ -49,7 +49,7 @@ public class StrutsFacet extends Facet<StrutsFacetConfiguration> {
    * Gets the StrutsFacet for the given module.
    *
    * @param module Module to check.
-   * @return Instance or <code>null</code> if none configured.
+   * @return Instance or {@code null} if none configured.
    */
   @Nullable
   public static StrutsFacet getInstance(@NotNull final Module module) {
@@ -60,7 +60,7 @@ public class StrutsFacet extends Facet<StrutsFacetConfiguration> {
    * Gets the StrutsFacet for the module containing the given PsiElement.
    *
    * @param element Element to check.
-   * @return Instance or <code>null</code> if none configured.
+   * @return Instance or {@code null} if none configured.
    */
   @Nullable
   public static StrutsFacet getInstance(@NotNull final PsiElement element) {

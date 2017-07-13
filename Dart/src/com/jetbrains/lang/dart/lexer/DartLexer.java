@@ -26,7 +26,7 @@ public class DartLexer extends MergingLexerAdapterBase {
 
   /**
    * Merges WHITE_SPACE and REGULAR_STRING_PART tokens,
-   * collapses sequence like <code>{MULTI_LINE_(DOC_)COMMENT_START MULTI_LINE_COMMENT_BODY* MULTI_LINE_COMMENT_END}</code> into a single <code>DartTokenTypesSets.MULTI_LINE_(DOC_)COMMENT</code>.
+   * collapses sequence like {@code {MULTI_LINE_(DOC_)COMMENT_START MULTI_LINE_COMMENT_BODY* MULTI_LINE_COMMENT_END}} into a single {@code DartTokenTypesSets.MULTI_LINE_(DOC_)COMMENT}.
    * Doc comment content is lazily parsed separately
    */
   private static final MergeFunction MERGE_FUNCTION = (firstTokenType, originalLexer) -> {

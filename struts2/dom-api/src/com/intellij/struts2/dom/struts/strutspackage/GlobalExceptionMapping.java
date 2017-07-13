@@ -22,7 +22,7 @@ import com.intellij.struts2.Struts2PresentationProvider;
 import com.intellij.util.xml.*;
 
 /**
- * <code>exception-mapping</code>
+ * {@code exception-mapping}
  *
  * @author Yann C&eacute;bron
  */

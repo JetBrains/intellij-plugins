@@ -1414,7 +1414,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   /**
    * Called when {@link CompilerOptionsConfigurable} is initialized and when path to additional config file is changed
    *
-   * @param targetPlayer <code>null</code> means that the value is not overridden in additional config file
+   * @param targetPlayer {@code null} means that the value is not overridden in additional config file
    */
   public void overriddenTargetPlayerChanged(final @Nullable String targetPlayer) {
     myTargetPlayerWarning.setToolTipText(FlexBundle.message("actual.value.from.config.file.0", targetPlayer));

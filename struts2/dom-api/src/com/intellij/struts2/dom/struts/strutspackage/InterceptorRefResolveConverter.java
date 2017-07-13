@@ -20,7 +20,7 @@ import com.intellij.util.xml.ResolvingConverter;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * <code>interceptor-ref</code> "name"
+ * {@code interceptor-ref} "name"
  *
  * @author Yann C&eacute;bron
  */

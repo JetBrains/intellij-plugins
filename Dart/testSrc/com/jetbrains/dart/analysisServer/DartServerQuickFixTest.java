@@ -37,7 +37,7 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
   }
 
   /**
-   * @param fileUpdatedByFix <code>null</code> if quick fix updates the file from which it was invoked
+   * @param fileUpdatedByFix {@code null} if quick fix updates the file from which it was invoked
    */
   private void doQuickFixTest(@NotNull final String intentionStartText,
                               @Nullable final VirtualFile fileUpdatedByFix,

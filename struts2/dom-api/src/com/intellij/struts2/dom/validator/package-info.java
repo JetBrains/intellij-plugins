@@ -14,6 +14,6 @@
  */
 
 /**
- * DOM-Model for <code>validator.xml</code> files.
+ * DOM-Model for {@code validator.xml} files.
  */
 package com.intellij.struts2.dom.validator;

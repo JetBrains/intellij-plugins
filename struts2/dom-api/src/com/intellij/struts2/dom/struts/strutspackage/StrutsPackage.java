@@ -112,7 +112,7 @@ public interface StrutsPackage extends CommonDomModelElement {
   List<Action> getActions();
 
   /**
-   * Searches the <code>default-class-ref</code> element for this package, walking up the hierarchy until one is found.
+   * Searches the {@code default-class-ref} element for this package, walking up the hierarchy until one is found.
    *
    * @return null if none was found.
    */
@@ -120,7 +120,7 @@ public interface StrutsPackage extends CommonDomModelElement {
   DefaultClassRef searchDefaultClassRef();
 
   /**
-   * Searches the default <code>result-type</code> element for this package, walking up the hierarchy until one is found.
+   * Searches the default {@code result-type} element for this package, walking up the hierarchy until one is found.
    *
    * @return null if no default defined.
    */

@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * <code>field</code>.
+ * {@code field}.
  *
  * @author Yann C&eacute;bron
  */

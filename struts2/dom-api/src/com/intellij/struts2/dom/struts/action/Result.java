@@ -25,7 +25,7 @@ import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NonNls;
 
 /**
- * <code>result</code>.
+ * {@code result}.
  *
  * @author Yann C&eacute;bron
  */

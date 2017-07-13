@@ -43,10 +43,10 @@ public abstract class ValidatorManager {
   }
 
   /**
-   * Checks whether the given file is a valid <code>validation.xml</code> file.
+   * Checks whether the given file is a valid {@code validation.xml} file.
    *
    * @param xmlFile File to check.
-   * @return <code>true</code> if yes, <code>false</code> otherwise.
+   * @return {@code true} if yes, {@code false} otherwise.
    */
   public abstract boolean isValidatorsFile(@NotNull XmlFile xmlFile);
 

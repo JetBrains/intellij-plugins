@@ -206,7 +206,7 @@ public class FlexSdkUtils {
    * <b>Caller is responsible to delete temporary files</b> when AIR application terminates.
    *
    * @return the first object is a directory containing AIR Runtime.<br>
-   *         The second object is <code>Boolean.TRUE</code> if this directory is temporary (contains zip file content) and must be deleted when AIR application terminates.
+   *         The second object is {@code Boolean.TRUE} if this directory is temporary (contains zip file content) and must be deleted when AIR application terminates.
    */
   public static Pair<VirtualFile, Boolean> getAirRuntimeDirInfoForFlexmojosSdk(final @NotNull Sdk sdk) throws IOException {
     assert sdk.getSdkType() instanceof FlexmojosSdkType;
@@ -292,8 +292,8 @@ public class FlexSdkUtils {
   }
 
   /**
-   * @param mainClass used in case of Flexmojos SDK, also used for ordinary Flex SDK if <code>jarName</code> is <code>null</code>
-   * @param jarName   if not <code>null</code> - this parameter used in case of Flex SDK; always ignored in case of Flexmojos SDK
+   * @param mainClass used in case of Flexmojos SDK, also used for ordinary Flex SDK if {@code jarName} is {@code null}
+   * @param jarName   if not {@code null} - this parameter used in case of Flex SDK; always ignored in case of Flexmojos SDK
    */
   public static List<String> getCommandLineForSdkTool(final @NotNull Project project,
                                                       final @NotNull Sdk sdk,

@@ -19,7 +19,7 @@ import com.intellij.util.xml.NamedEnum;
 import org.jetbrains.annotations.NonNls;
 
 /**
- * <code>bean</code> "scope" possible values.
+ * {@code bean} "scope" possible values.
  *
  * @author Yann C&eacute;bron
  */

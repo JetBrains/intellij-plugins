@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * <code>global-exception-mappings</code>
+ * {@code global-exception-mappings}
  *
  * @author Yann C&eacute;bron
  */

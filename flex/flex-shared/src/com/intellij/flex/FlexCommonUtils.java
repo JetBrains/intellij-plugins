@@ -149,8 +149,8 @@ public class FlexCommonUtils {
   }
 
   /**
-   * @param forcedDebugStatus <code>true</code> or <code>false</code> means that this bc is compiled for further packaging and we need swf to have corresponding debug status;
-   *                          <code>null</code> means that bc is compiled as is (i.e. as configured) without any modifications
+   * @param forcedDebugStatus {@code true} or {@code false} means that this bc is compiled for further packaging and we need swf to have corresponding debug status;
+   *                          {@code null} means that bc is compiled as is (i.e. as configured) without any modifications
    */
   public static String getBuildTargetId(final String moduleName, final String bcName, final @Nullable Boolean forcedDebugStatus) {
     return MODULE_PREFIX + moduleName + BC_PREFIX + bcName + FORCED_DEBUG_STATUS + forcedDebugStatus;
@@ -172,10 +172,10 @@ public class FlexCommonUtils {
   }
 
   /**
-   * @return <code>Trinity.first</code> - module name<br/>
-   * <code>Trinity.second</code> - BC name<br/>
-   * <code>Trinity.third</code> - forced debug status: <code>true</code> or <code>false</code> means that this bc is compiled for further packaging and we need swf to have corresponding debug status;
-   * <code>null</code> means that bc is compiled as is (i.e. as configured) without any modifications
+   * @return {@code Trinity.first} - module name<br/>
+   * {@code Trinity.second} - BC name<br/>
+   * {@code Trinity.third} - forced debug status: {@code true} or {@code false} means that this bc is compiled for further packaging and we need swf to have corresponding debug status;
+   * {@code null} means that bc is compiled as is (i.e. as configured) without any modifications
    */
   @Nullable
   public static Trinity<String, String, Boolean> getModuleAndBCNameAndForcedDebugStatusByBuildTargetId(final String buildTargetId) {
@@ -409,9 +409,9 @@ public class FlexCommonUtils {
   }
 
   /**
-   * If <code>LinkageType.Default</code> is returned then use {@link #getDefaultFrameworkLinkage(String, BuildConfigurationNature)} to get real value.
+   * If {@code LinkageType.Default} is returned then use {@link #getDefaultFrameworkLinkage(String, BuildConfigurationNature)} to get real value.
    *
-   * @return <code>null</code> if entry should not be included at all
+   * @return {@code null} if entry should not be included at all
    */
   @Nullable
   public static LinkageType getSdkEntryLinkageType(final String swcPath, final JpsFlexBuildConfiguration bc) {
@@ -422,9 +422,9 @@ public class FlexCommonUtils {
   }
 
   /**
-   * If <code>LinkageType.Default</code> is returned then use {@link #getDefaultFrameworkLinkage(String, BuildConfigurationNature)} to get real value.
+   * If {@code LinkageType.Default} is returned then use {@link #getDefaultFrameworkLinkage(String, BuildConfigurationNature)} to get real value.
    *
-   * @return <code>null</code> if entry should not be included at all
+   * @return {@code null} if entry should not be included at all
    */
   @Nullable
   public static LinkageType getSdkEntryLinkageType(final String sdkHome,

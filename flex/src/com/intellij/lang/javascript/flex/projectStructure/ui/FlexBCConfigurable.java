@@ -424,7 +424,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
 
   /**
    * Called when {@link CompilerOptionsConfigurable} is initialized and when path to additional config file is changed
-   * <code>null</code> parameter value means that the value is not overridden in additional config file
+   * {@code null} parameter value means that the value is not overridden in additional config file
    */
   public void overriddenValuesChanged(final @Nullable String mainClass,
                                       final @Nullable String outputFileName,

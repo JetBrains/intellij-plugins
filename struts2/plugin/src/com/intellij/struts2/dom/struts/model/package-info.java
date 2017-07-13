@@ -14,6 +14,6 @@
  */
 
 /**
- * DOM-Model for <code>struts.xml</code> files.
+ * DOM-Model for {@code struts.xml} files.
  */
 package com.intellij.struts2.dom.struts.model;
