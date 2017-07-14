@@ -189,7 +189,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
 
   @Override
   public boolean hasIdType() {
-    return false;
+    return "id".equals(myAttributeName);
   }
 
   @Override

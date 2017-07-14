@@ -17,6 +17,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
+import com.intellij.xml.util.XmlInvalidIdInspection;
 import org.angularjs.AngularTestUtil;
 
 /**
@@ -974,4 +975,13 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("component15.js", resolve.getContainingFile().getName());
     assertEquals("hero: '<'", getDirectiveDefinitionText(resolve));
   }
+
+  public void testId() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.enableInspections(XmlInvalidIdInspection.class);
+      myFixture.configureByFiles("id.html", "angular2.js", "object.ts");
+      myFixture.checkHighlighting();
+    });
+  }
+
 }

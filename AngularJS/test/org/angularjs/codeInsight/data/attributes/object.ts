@@ -6,6 +6,7 @@ class TodoCmp {
     @Input() model: object;
     @Input() oneTime: string;
     @Input() oneTimeList: FloatPlaceholderType;
+    @Input() id: string;
     @Output() complete = new EventEmitter(); // TypeScript supports initializing fields
 
     onCompletedButton() {
