@@ -1,5 +1,4 @@
-var path = require('path')
-  , cli = require('./intellijCli')
+var cli = require('./intellijCli')
   , intellijUtil = require('./intellijUtil')
   , originalConfigPath = cli.getConfigFile()
   , IntellijReporter = require('./intellijReporter')
@@ -23,6 +22,7 @@ function configureDebug(config) {
     if (typeof client === 'undefined') {
       config.client = client = {};
     }
+    require('./karma-intellij-debug').initCustomContextFile(config);
     if (client === Object(client)) {
       var mocha = client.mocha;
       if (typeof mocha === 'undefined') {
@@ -31,6 +31,12 @@ function configureDebug(config) {
       if (mocha === Object(mocha)) {
         mocha.timeout = 0;
       }
+      else {
+        console.error('intellij: config.client.mocha is not an object')
+      }
+    }
+    else {
+      console.error('intellij: config.client is not an object')
     }
   })();
 }
