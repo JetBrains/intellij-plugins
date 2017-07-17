@@ -168,6 +168,7 @@ function filterSuiteNames(suiteNames) {
 }
 
 function IntellijReporter(config, fileList, formatError, globalEmitter, injector) {
+  require('./kjhtml/kjhtml-specFilter-patch').apply(config.files);
   var logManager = new LogManager();
   new FileListUpdater(config, fileList);
   startBrowsersTracking(globalEmitter);
