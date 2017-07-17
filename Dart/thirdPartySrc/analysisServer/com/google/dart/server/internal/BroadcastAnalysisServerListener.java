@@ -17,6 +17,7 @@ package com.google.dart.server.internal;
 import com.google.common.collect.Lists;
 import com.google.dart.server.AnalysisServerListener;
 
+import com.google.dart.server.generated.AnalysisServer;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.dartlang.analysis.server.protocol.AnalysisStatus;
 import org.dartlang.analysis.server.protocol.CompletionSuggestion;
@@ -168,9 +169,9 @@ public class BroadcastAnalysisServerListener implements AnalysisServerListener {
   }
 
   @Override
-  public void serverConnected(String version) {
+  public void serverConnected(AnalysisServer server, String version) {
     for (AnalysisServerListener listener : getListeners()) {
-      listener.serverConnected(version);
+      listener.serverConnected(server, version);
     }
   }
 

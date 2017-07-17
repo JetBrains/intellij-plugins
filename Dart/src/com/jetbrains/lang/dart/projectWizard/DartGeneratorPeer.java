@@ -83,7 +83,7 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
 
 
     // now setup controls
-    DartSdkUtil.initDartSdkAndDartiumControls(null, mySdkPathComboWithBrowse, myVersionLabel, myDartiumPathComboWithBrowse,
+    DartSdkUtil.initDartSdkAndDartiumControls(null, mySdkPathComboWithBrowse, myVersionLabel, null, myDartiumPathComboWithBrowse,
                                               new Computable.PredefinedValueComputable<>(myDartiumSettingsCurrent),
                                               myDartiumSettingsButton,
                                               new Computable.PredefinedValueComputable<>(false));

@@ -13,6 +13,7 @@
  */
 package com.google.dart.server;
 
+import com.google.dart.server.generated.AnalysisServer;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.dartlang.analysis.server.protocol.AnalysisStatus;
 import org.dartlang.analysis.server.protocol.CompletionSuggestion;
@@ -90,7 +91,7 @@ public class AnalysisServerListenerAdapter implements AnalysisServerListener {
   }
 
   @Override
-  public void serverConnected(String version) {
+  public void serverConnected(AnalysisServer server, String version) {
   }
 
   @Override

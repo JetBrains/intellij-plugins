@@ -4,8 +4,8 @@ import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.impl.WebBrowserServiceImpl;
-import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration;
-import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType;
+//import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration;
+//import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
@@ -107,18 +107,18 @@ public abstract class DartProjectTemplate {
       if (url == null) return;
 
       final RunManager runManager = RunManager.getInstance(module.getProject());
-      try {
-        final RunnerAndConfigurationSettings settings =
-          runManager.createRunConfiguration("", JavascriptDebugConfigurationType.getTypeInstance().getFactory());
-
-        ((JavaScriptDebugConfiguration)settings.getConfiguration()).setUri(url.toDecodedForm());
-        ((JavaScriptDebugConfiguration)settings.getConfiguration()).setEngineId(dartium.getId().toString());
-        settings.setName(((JavaScriptDebugConfiguration)settings.getConfiguration()).suggestedName());
-
-        runManager.addConfiguration(settings, false);
-        runManager.setSelectedConfiguration(settings);
-      }
-      catch (Throwable t) {/* ClassNotFound in IDEA Community or if JS Debugger plugin disabled */}
+      //try {
+      //  final RunnerAndConfigurationSettings settings =
+      //    runManager.createRunConfiguration("", JavascriptDebugConfigurationType.getTypeInstance().getFactory());
+      //
+      //  ((JavaScriptDebugConfiguration)settings.getConfiguration()).setUri(url.toDecodedForm());
+      //  ((JavaScriptDebugConfiguration)settings.getConfiguration()).setEngineId(dartium.getId().toString());
+      //  settings.setName(((JavaScriptDebugConfiguration)settings.getConfiguration()).suggestedName());
+      //
+      //  runManager.addConfiguration(settings, false);
+      //  runManager.setSelectedConfiguration(settings);
+      //}
+      //catch (Throwable t) {/* ClassNotFound in IDEA Community or if JS Debugger plugin disabled */}
     }, module);
   }
 

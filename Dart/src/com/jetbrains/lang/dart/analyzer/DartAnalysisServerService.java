@@ -144,6 +144,8 @@ public class DartAnalysisServerService implements Disposable {
 
   private boolean myHaveShownInitialProgress;
   private boolean mySentAnalysisBusy;
+  private boolean shouldReportAnalytics = true;
+  private Boolean userAnalyticsOverride;
 
   // files with red squiggles in Project View. This field is also used as a lock to access these 3 collections
   @NotNull private final Set<String> myFilePathsWithErrors = new THashSet<>();
@@ -270,8 +272,22 @@ public class DartAnalysisServerService implements Disposable {
     }
 
     @Override
-    public void serverConnected(@Nullable String version) {
+    public void serverConnected(AnalysisServer server, @Nullable String version) {
       myServerVersion = version != null ? version : "";
+
+      // Flush any unsaved user setting.
+      if (userAnalyticsOverride != null) {
+        server.analytics_enable(userAnalyticsOverride);
+      }
+
+      // Update the analytics settings.
+      server.analytics_isEnabled(new IsEnabledConsumer() {
+        @Override
+        public void isEnabled(Boolean value) {
+          shouldReportAnalytics = value;
+          userAnalyticsOverride = null;
+        }
+      });
     }
 
     @Override
@@ -391,6 +407,41 @@ public class DartAnalysisServerService implements Disposable {
       lengths[i] = getConvertedOffset(file, _offsets[i] + _lengths[i]) - offsets[i];
     }
     return lengths;
+  }
+
+  public boolean shouldReportAnalytics() {
+    if (userAnalyticsOverride != null) {
+      return userAnalyticsOverride;
+    }
+
+    return shouldReportAnalytics;
+  }
+
+  public void setShouldReportAnalytics(boolean value) {
+    if (shouldReportAnalytics == value) {
+      userAnalyticsOverride = null;
+      return;
+    }
+
+    final AnalysisServer server = myServer;
+
+    if (server != null) {
+      server.analytics_enable(value);
+      shouldReportAnalytics = value;
+      userAnalyticsOverride = null;
+
+      // Update the analytics setting from the server.
+      server.analytics_isEnabled(new IsEnabledConsumer() {
+        @Override
+        public void isEnabled(Boolean value) {
+          shouldReportAnalytics = value;
+          userAnalyticsOverride = null;
+        }
+      });
+    } else {
+      // Send to the server the next time we're connected.
+      userAnalyticsOverride = value;
+    }
   }
 
   public static boolean isDartSdkVersionSufficient(@NotNull final DartSdk sdk) {

@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.sdk;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.actions.ShowSettingsUtilImpl;
+import com.intellij.ide.browsers.BrowserLauncher;
 import com.intellij.ide.browsers.BrowserSpecificSettings;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.chrome.ChromeSettings;
@@ -26,11 +27,13 @@ import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.ui.components.labels.LinkLabel;
 import com.intellij.ui.treeStructure.treetable.TreeColumnInfo;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.flutter.FlutterUtil;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import gnu.trove.THashSet;
@@ -46,6 +49,8 @@ import javax.swing.text.JTextComponent;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.ExpandVetoException;
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 public class DartConfigurable implements SearchableConfigurable, NoScroll {
@@ -59,6 +64,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   private JPanel mySettingsPanel;
   private ComboboxWithBrowseButton mySdkPathComboWithBrowse;
   private JBLabel myVersionLabel;
+  private JCheckBox myReportUsageInformationCheckBox;
   private JBCheckBox myCheckSdkUpdateCheckBox;
   // disabled and unchecked, shown in UI instead of myCheckSdkUpdateCheckBox if selected Dart SDK is a part of a Flutter SDK
   private JBCheckBox myCheckSdkUpdateCheckBoxFake;
@@ -73,6 +79,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   private CheckboxTreeTable myModulesCheckboxTreeTable;
   private JBLabel myErrorLabel;
+  private LinkLabel<String> privacyPolicyLinkLabel;
 
   private final @NotNull Project myProject;
 
@@ -106,8 +113,8 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
     final Computable<Boolean> isResettingControlsComputable = () -> myInReset;
 
-    DartSdkUtil.initDartSdkAndDartiumControls(myProject, mySdkPathComboWithBrowse, myVersionLabel, myDartiumPathComboWithBrowse,
-                                              currentDartiumSettingsRetriever, myDartiumSettingsButton,
+    DartSdkUtil.initDartSdkAndDartiumControls(myProject, mySdkPathComboWithBrowse, myVersionLabel, myReportUsageInformationCheckBox,
+                                              myDartiumPathComboWithBrowse, currentDartiumSettingsRetriever, myDartiumSettingsButton,
                                               isResettingControlsComputable);
 
     final JTextComponent sdkEditor = (JTextComponent)mySdkPathComboWithBrowse.getComboBox().getEditor().getEditorComponent();
@@ -156,6 +163,15 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
       ApplicationManagerEx.getApplicationEx()
         .runProcessWithProgressSynchronously(runnable, DartBundle.message("checking.dart.sdk.update"), true, myProject, myMainPanel);
     });
+
+    privacyPolicyLinkLabel.setIcon(null);
+    privacyPolicyLinkLabel.setListener((label, linkUrl) -> {
+      try {
+        BrowserLauncher.getInstance().browse(new URI(linkUrl));
+      }
+      catch (URISyntaxException ignore) {
+      }
+    }, "https://www.google.com/policies/privacy/");
   }
 
   private void checkSdkUpdate() {
@@ -255,6 +271,12 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
       if (sdkUpdateOption != DartSdkUpdateOption.getDartSdkUpdateOption()) return true;
     }
 
+    if (myReportUsageInformationCheckBox.isEnabled()) {
+      if (myReportUsageInformationCheckBox.isSelected() != DartAnalysisServerService.getInstance(myProject).shouldReportAnalytics()) {
+        return true;
+      }
+    }
+
     final String dartiumPath = getTextFromCombo(myDartiumPathComboWithBrowse);
     final String dartiumPathInitial = myDartiumInitial == null ? null : myDartiumInitial.getPath();
     if (!dartiumPath.isEmpty() && new File(dartiumPath).exists() && !dartiumPath.equals(dartiumPathInitial)) return true;
@@ -315,6 +337,8 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     final DartSdkUpdateOption sdkUpdateOption = DartSdkUpdateOption.getDartSdkUpdateOption();
     myCheckSdkUpdateCheckBox.setSelected(sdkUpdateOption != DartSdkUpdateOption.DoNotCheck);
     mySdkUpdateChannelCombo.setSelectedItem(sdkUpdateOption);
+
+    myReportUsageInformationCheckBox.setSelected(DartAnalysisServerService.getInstance(myProject).shouldReportAnalytics());
 
     final String dartiumInitialPath =
       myDartiumInitial == null ? "" : FileUtilRt.toSystemDependentName(StringUtil.notNullize(myDartiumInitial.getPath()));
@@ -392,6 +416,8 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
         final String dartiumPath = getTextFromCombo(myDartiumPathComboWithBrowse);
         DartiumUtil.applyDartiumSettings(dartiumPath, myDartiumSettingsCurrent);
+
+        DartAnalysisServerService.getInstance(myProject).setShouldReportAnalytics(myReportUsageInformationCheckBox.isSelected());
       }
       else {
         if (myModulesWithDartSdkLibAttachedInitial.size() > 0 && mySdkInitial != null) {

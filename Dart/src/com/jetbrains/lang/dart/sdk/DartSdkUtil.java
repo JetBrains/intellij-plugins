@@ -74,6 +74,7 @@ public class DartSdkUtil {
   public static void initDartSdkAndDartiumControls(final @Nullable Project project,
                                                    final @NotNull ComboboxWithBrowseButton dartSdkPathComponent,
                                                    final @NotNull JBLabel versionLabel,
+                                                   final @Nullable JCheckBox usageCheckBox,
                                                    final @NotNull ComboboxWithBrowseButton dartiumPathComponent,
                                                    final @NotNull Computable<ChromeSettings> currentDartiumSettingsRetriever,
                                                    final @NotNull JButton dartiumSettingsButton,
@@ -96,7 +97,11 @@ public class DartSdkUtil {
     }
 
     final String sdkHomePath = getItemFromCombo(dartSdkPathComponent.getComboBox());
-    versionLabel.setText(sdkHomePath.isEmpty() ? "" : getSdkVersion(sdkHomePath));
+    final String sdkVersion = getSdkVersion(sdkHomePath);
+    versionLabel.setText(sdkHomePath.isEmpty() ? "" : sdkVersion);
+    if (usageCheckBox != null) {
+      usageCheckBox.setEnabled(sdkVersion != null);
+    }
 
     final TextComponentAccessor<JComboBox> textComponentAccessor = new TextComponentAccessor<JComboBox>() {
       @Override
@@ -133,7 +138,11 @@ public class DartSdkUtil {
       @Override
       protected void textChanged(final DocumentEvent e) {
         final String sdkHomePath = getItemFromCombo(dartSdkPathComponent.getComboBox());
-        versionLabel.setText(sdkHomePath.isEmpty() ? "" : getSdkVersion(sdkHomePath));
+        final String sdkVersion = getSdkVersion(sdkHomePath);
+        versionLabel.setText(sdkHomePath.isEmpty() ? "" : sdkVersion);
+        if (usageCheckBox != null) {
+          usageCheckBox.setEnabled(sdkVersion != null);
+        }
 
         if (!isResettingControlsComputable.compute() && isDartSdkHome(sdkHomePath)) {
           final String dartiumPath = DartiumUtil.getDartiumPathForSdk(sdkHomePath);
