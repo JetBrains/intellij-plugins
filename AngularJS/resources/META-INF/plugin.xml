@@ -92,6 +92,7 @@
                                 implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor$AngularJSDirectiveElementDescriptor"/>
 
     <findUsagesHandlerFactory implementation="org.angularjs.findUsages.AngularJSFindUsagesHandlerFactory" order="before JavaScript"/>
+    <implicitUsageProvider implementation="org.angularjs.findUsages.AngularUsageProvider"/>
     <referencesSearch implementation="org.angularjs.findUsages.AngularJSReferenceSearcher"/>
 
     <directoryProjectGenerator implementation="org.angularjs.AngularJSProjectGenerator"/>
