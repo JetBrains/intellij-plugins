@@ -841,8 +841,8 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   private void watch(long millisToRestart) {
-    //    long restartTime = System.currentTimeMillis();
-    //    int restartCount = 0;
+//    long restartTime = System.currentTimeMillis();
+//    int restartCount = 0;
     while (watch) {
       if (isSocketOpen()) {
         sleep(millisToRestart / 2);
@@ -855,34 +855,34 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
         }
         instrumentation.log();
         watch = false;
-        //        try {
-        //          stopServer();
-        //
-        //          // If the analysis server has been restarted several times in a 5 minute period, then give up
-        //          long now = System.currentTimeMillis();
-        //          if (now - restartTime < 5 * 60 * 1000) {
-        //            if (++restartCount > 3) {
-        //              Logging.getLogger().logError(
-        //                  "Restarted analysis server several times in a short period of time. Giving up.");
-        //              instrumentation.metric("restartedAnalysisServer", false);
-        //              break;
-        //            }
-        //          } else {
-        //            restartTime = now;
-        //            restartCount = 0;
-        //          }
-        //
-        //          startServer();
-        //        } catch (Exception e) {
-        //          // Bail out if cannot restart the server
-        //          Logging.getLogger().logError("Failed to restart analysis server", e);
-        //          instrumentation.record(e);
-        //          break;
-        //        } finally {
-        //          instrumentation.log();
-        //        }
-        //        sentRequest = false;
-        //        sleep(millisToRestart);
+//        try {
+//          stopServer();
+//
+//          // If the analysis server has been restarted several times in a 5 minute period, then give up
+//          long now = System.currentTimeMillis();
+//          if (now - restartTime < 5 * 60 * 1000) {
+//            if (++restartCount > 3) {
+//              Logging.getLogger().logError(
+//                  "Restarted analysis server several times in a short period of time. Giving up.");
+//              instrumentation.metric("restartedAnalysisServer", false);
+//              break;
+//            }
+//          } else {
+//            restartTime = now;
+//            restartCount = 0;
+//          }
+//
+//          startServer();
+//        } catch (Exception e) {
+//          // Bail out if cannot restart the server
+//          Logging.getLogger().logError("Failed to restart analysis server", e);
+//          instrumentation.record(e);
+//          break;
+//        } finally {
+//          instrumentation.log();
+//        }
+//        sentRequest = false;
+//        sleep(millisToRestart);
       }
     }
   }
