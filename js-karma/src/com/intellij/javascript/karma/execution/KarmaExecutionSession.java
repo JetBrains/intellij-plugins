@@ -226,5 +226,10 @@ public class KarmaExecutionSession {
     public TestProxyFilterProvider getFilterProvider() {
       return myFilterProvider;
     }
+
+    @Override
+    public boolean isViewAssertEqualsDiffActionEnabled() {
+      return true;
+    }
   }
 }
