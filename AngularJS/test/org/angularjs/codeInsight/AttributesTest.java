@@ -463,6 +463,28 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testOneTimeBindingAttributeCompletion2JavaScriptViaProperty() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("compiled_binding.html", "angular2.js", "object.property.js");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(),  "color");
+    });
+  }
+
+  public void testOneTimeBindingAttributeResolve2JavaScriptViaProperty() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("compiled_binding.after.html", "angular2.js", "object.property.js");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("col<caret>or", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("object.property.js", resolve.getContainingFile().getName());
+      assertInstanceOf(resolve, JSImplicitElement.class);
+      assertEquals("inputs: ['disabled', 'color']", getDirectiveDefinitionText(resolve));
+    });
+  }
+
   public void testOneTimeBindingAttributeCompletion2ES6() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("compiled_binding.html", "angular2.js", "object.es6");
