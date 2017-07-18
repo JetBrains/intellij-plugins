@@ -102,6 +102,24 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
         }
       }
     }
+    if (("inputs".equals(name) || "outputs".equals(name)) && property.getValue() instanceof JSArrayLiteralExpression) {
+      JSProperty args = PsiTreeUtil.getParentOfType(object, JSProperty.class);
+      if (args != null && "args".equals(args.getName())) {
+        String decoratorName = StringUtil.capitalize(name.substring(0, name.length() - 1));
+        for (JSExpression expression : ((JSArrayLiteralExpression)property.getValue()).getExpressions()) {
+          if (expression instanceof JSLiteralExpression) {
+            Object fieldName = ((JSLiteralExpression)expression).getValue();
+            if (fieldName instanceof String) {
+              JSImplicitElementImpl.Builder builder =
+                new JSImplicitElementImpl.Builder((String)fieldName, property).setUserString(DECORATORS)
+                  .setTypeString(decoratorName + ";Object");
+              if (outData == null) outData = new JSElementIndexingDataImpl();
+              outData.addImplicitElement(builder.toImplicitElement());
+            }
+          }
+        }
+      }
+    }
     return outData;
   }
 
