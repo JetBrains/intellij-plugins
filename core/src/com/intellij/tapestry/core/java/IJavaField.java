@@ -18,7 +18,7 @@ public interface IJavaField {
     IJavaType getType();
 
     /**
-     * @return {@code true} if the type is public, <code>false</false> otherwise.
+     * @return {@code true} if the type is public, {@code false} otherwise.
      */
     boolean isPrivate();
 
@@ -40,7 +40,7 @@ public interface IJavaField {
     String getStringRepresentation();
 
     /**
-     * @return {@code true} if the field is valid, <code>false</false> otherwise.
+     * @return {@code true} if the field is valid, {@code false} otherwise.
      */
     boolean isValid();
 }

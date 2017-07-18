@@ -68,7 +68,7 @@ public class TapestryParameter implements Comparable {
     /**
      * Checks if the parameter is required.
      *
-     * @return <code>true</true> if the parameter is required, <code>false</true> otherwise.
+     * @return {@code true} if the parameter is required, {@code false} otherwise.
      */
     public boolean isRequired() {
       if (!_parameterField.isValid()) return false;

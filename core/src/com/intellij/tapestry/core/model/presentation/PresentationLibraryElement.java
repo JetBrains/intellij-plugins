@@ -437,7 +437,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
    * Checks if the files in a group of resources are all valid.
    *
    * @param resources the resources to check.
-   * @return <code>true</code if all the resources are valid, <code>false</false> otherwise.
+   * @return {@code true} if all the resources are valid, {@code false} otherwise.
    */
   protected static boolean checkAllValidResources(IResource[] resources) {
     for (IResource resource : resources) {

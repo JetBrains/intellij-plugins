@@ -12,7 +12,7 @@ public interface IJavaTypeCreator {
      *
      * @param name                           the field name.
      * @param type                           the field type.
-     * @param isPrivate                      {@code true} if the type is public, <code>false</false> otherwise.
+     * @param isPrivate                      {@code true} if the type is public, {@code false} otherwise.
      * @param changeNameToReflectIdeSettings {@code true} if the IDE coding style should be taken into account and be used to change the field name accordingly.
      * @return the field.
      */

@@ -106,7 +106,7 @@ public class IdeaUtils {
    *
    * @param module    the module to check the web root.
    * @param directory the directory to check.
-   * @return {@code true} if the given directory is a web root in the given module, <code>false</false> otherwise.
+   * @return {@code true} if the given directory is a web root in the given module, {@code false} otherwise.
    */
   public static boolean isWebRoot(Module module, VirtualFile directory) {
     WebFacet webFacet = IdeaUtils.getWebFacet(module);

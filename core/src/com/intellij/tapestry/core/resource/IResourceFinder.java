@@ -32,7 +32,7 @@ public interface IResourceFinder {
      * Looks up a resource in the web context.
      *
      * @param path the path of the resource to search for.
-     * @return the resource in the given path, <code>null</null> if none is found.
+     * @return the resource in the given path, {@code null} if none is found.
      */
     @Nullable
     IResource findContextResource(String path);
@@ -41,7 +41,7 @@ public interface IResourceFinder {
      * Looks up a localized resource in the web context.
      *
      * @param path the path of the resource to search for.
-     * @return the resource in the given path, <code>null</null> if none is found.
+     * @return the resource in the given path, {@code null} if none is found.
      */
     @NotNull
     Collection<IResource> findLocalizedContextResource(String path);
