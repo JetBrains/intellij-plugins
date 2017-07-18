@@ -32,15 +32,17 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
     }
   }
   override fun getAttributeDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
+    if (context == null || !org.jetbrains.vuejs.index.hasVue(context.project)) return emptyArray()
     val default = DEFAULT.map { VueAttributeDescriptor(it) }.toTypedArray()
-    if ("style" == context?.name && context?.containingFile?.language == VueLanguage.INSTANCE) {
+    if ("style" == context.name && context.containingFile?.language == VueLanguage.INSTANCE) {
       return default.plus(VueAttributeDescriptor("scoped"))
     }
     return default
   }
 
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
-    if ("style" == context?.name && context?.containingFile?.language == VueLanguage.INSTANCE) {
+    if (context == null || !org.jetbrains.vuejs.index.hasVue(context.project)) return null
+    if ("style" == context.name && context.containingFile?.language == VueLanguage.INSTANCE) {
       return VueAttributeDescriptor("scoped")
     }
     return vueAttributeDescriptor(attributeName)
