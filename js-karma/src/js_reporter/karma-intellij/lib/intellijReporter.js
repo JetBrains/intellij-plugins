@@ -1,8 +1,7 @@
 var cli = require("./intellijCli.js")
   , intellijUtil = require('./intellijUtil.js')
   , util = require('util')
-  , Tree = require('./tree.js')
-  , FileListUpdater = require('./fileListUpdater').FileListUpdater;
+  , Tree = require('./tree.js');
 
 function getOrCreateBrowserNode(tree, browser) {
   var configFileNode = tree.configFileNode;
@@ -170,7 +169,6 @@ function filterSuiteNames(suiteNames) {
 function IntellijReporter(config, fileList, formatError, globalEmitter, injector) {
   require('./kjhtml/kjhtml-specFilter-patch').apply(config.files);
   var logManager = new LogManager();
-  new FileListUpdater(config, fileList);
   startBrowsersTracking(globalEmitter);
   this.adapters = [];
   var totalTestCount, uncheckedBrowserCount;
