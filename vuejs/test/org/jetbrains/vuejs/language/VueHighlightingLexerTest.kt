@@ -37,12 +37,13 @@ class VueHighlightingLexerTest : VueLexerTest() {
     val extensionName = syntaxHighlighterEP.name
     if (!area.hasExtensionPoint(extensionName)) {
       area.registerExtensionPoint(extensionName, KeyedFactoryEPBean::class.java.name, ExtensionPoint.Kind.INTERFACE)
+      onTearDown.plus(Runnable(){ area.unregisterExtensionPoint(extensionName) })
     }
     val bean = KeyedFactoryEPBean()
     bean.key = "JavaScript"
     bean.factoryClass = "com.intellij.lang.javascript.highlighting.JSSyntaxHighlighterProvider"
     PlatformTestUtil.registerExtension(area, syntaxHighlighterEP, bean, testRootDisposable)
-    SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(JavascriptLanguage.INSTANCE, JSSyntaxHighlighterFactory())
+    addExplicitExtension(SyntaxHighlighterFactory.LANGUAGE_FACTORY, JavascriptLanguage.INSTANCE, JSSyntaxHighlighterFactory())
   }
 
   private fun registerCodeStyle(instance: MockApplicationEx) {
@@ -52,11 +53,13 @@ class VueHighlightingLexerTest : VueLexerTest() {
     var extensionName = CodeStyleSettingsProvider.EXTENSION_POINT_NAME.name
     if (!area.hasExtensionPoint(extensionName)) {
       area.registerExtensionPoint(extensionName, CodeStyleSettingsProvider::class.java.name, ExtensionPoint.Kind.INTERFACE)
+      onTearDown.plus(Runnable(){ area.unregisterExtensionPoint(extensionName) })
     }
 
     extensionName = LanguageCodeStyleSettingsProvider.EP_NAME.name
     if (!area.hasExtensionPoint(extensionName)) {
       area.registerExtensionPoint(extensionName, LanguageCodeStyleSettingsProvider::class.java.name, ExtensionPoint.Kind.INTERFACE)
+      onTearDown.plus(Runnable(){ area.unregisterExtensionPoint(extensionName) })
     }
 
 
@@ -65,6 +68,7 @@ class VueHighlightingLexerTest : VueLexerTest() {
   }
 
   override fun tearDown() {
+    super.tearDown()
     CodeStyleSettingsManager.getInstance().dropTemporarySettings()
   }
 

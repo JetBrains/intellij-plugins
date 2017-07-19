@@ -53,6 +53,7 @@ open class VueLexerTest : LexerTestCase() {
   }
 
   fun <T, KeyT> addExplicitExtension(collector: KeyedExtensionCollector<T, KeyT>, key : KeyT, t : T) {
+    if (!collector.forKey(key).isEmpty()) return
     collector.addExplicitExtension(key, t)
     onTearDown.plus(Runnable() { collector.removeExplicitExtension(key, t) })
   }
@@ -68,8 +69,10 @@ open class VueLexerTest : LexerTestCase() {
     }
     val extensionPoint = area.getExtensionPoint<EmbeddedTokenTypesProvider>(extensionName)
     val sassTokenTypesProvider = SassTokenTypesProvider()
-    extensionPoint.registerExtension(sassTokenTypesProvider)
-    onTearDown.plus(Runnable() { extensionPoint.unregisterExtension(sassTokenTypesProvider) })
+    if (!extensionPoint.hasAnyExtensions()) {
+      extensionPoint.registerExtension(sassTokenTypesProvider)
+      onTearDown.plus(Runnable() { extensionPoint.unregisterExtension(sassTokenTypesProvider) })
+    }
 
     addExplicitExtension(LanguageParserDefinitions.INSTANCE, SASSLanguage.INSTANCE, SASSParserDefinition())
     addExplicitExtension(LanguageHtmlInlineScriptTokenTypesProvider.INSTANCE, JavascriptLanguage.INSTANCE,
