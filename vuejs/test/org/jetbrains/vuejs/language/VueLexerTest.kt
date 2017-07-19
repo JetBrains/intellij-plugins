@@ -16,6 +16,7 @@ import com.intellij.lexer.Lexer
 import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory
+import com.intellij.openapi.util.KeyedExtensionCollector
 import com.intellij.testFramework.LexerTestCase
 import com.intellij.testFramework.TestDataPath
 import com.jetbrains.plugins.jade.JadeLanguage
@@ -24,9 +25,12 @@ import org.jetbrains.plugins.sass.SASSLanguage
 import org.jetbrains.plugins.sass.SASSParserDefinition
 import org.jetbrains.plugins.sass.SassTokenTypesProvider
 import org.jetbrains.plugins.sass.highlighting.SASSSyntaxHighlighterFactory
+import java.util.*
 
 @TestDataPath("\$CONTENT_ROOT/testData/lexer")
 open class VueLexerTest : LexerTestCase() {
+  val onTearDown : List<Runnable> = ArrayList()
+
   override fun setUp() {
     super.setUp()
     registerMetaLanguage()
@@ -34,38 +38,52 @@ open class VueLexerTest : LexerTestCase() {
     registerScriptTokens()
   }
 
-  companion object {
-    fun registerMetaLanguage() {
-      val extensionName = MetaLanguage.EP_NAME.name
-      val area = Extensions.getRootArea()
-      if (!area.hasExtensionPoint(extensionName)) {
-        area.registerExtensionPoint(extensionName, MetaLanguage::class.java.name, ExtensionPoint.Kind.INTERFACE)
-      }
+  override fun tearDown() {
+    super.tearDown()
+    onTearDown.forEach(Runnable::run)
+  }
+
+  fun registerMetaLanguage() {
+    val extensionName = MetaLanguage.EP_NAME.name
+    val area = Extensions.getRootArea()
+    if (!area.hasExtensionPoint(extensionName)) {
+      area.registerExtensionPoint(extensionName, MetaLanguage::class.java.name, ExtensionPoint.Kind.INTERFACE)
+      onTearDown.plus(Runnable() { area.unregisterExtensionPoint(extensionName) })
     }
+  }
 
-    fun registerEmbeddedTokens() {
-      SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(SASSLanguage.INSTANCE, SASSSyntaxHighlighterFactory())
-      val extensionName = EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME.name
-      val area = Extensions.getRootArea()
-      if (!area.hasExtensionPoint(extensionName)) {
-        area.registerExtensionPoint(extensionName, EmbeddedTokenTypesProvider::class.java.name, ExtensionPoint.Kind.INTERFACE)
-      }
-      val extensionPoint = area.getExtensionPoint<EmbeddedTokenTypesProvider>(extensionName)
-      extensionPoint.registerExtension(SassTokenTypesProvider())
-      LanguageParserDefinitions.INSTANCE.addExplicitExtension(SASSLanguage.INSTANCE, SASSParserDefinition())
+  fun <T, KeyT> addExplicitExtension(collector: KeyedExtensionCollector<T, KeyT>, key : KeyT, t : T) {
+    collector.addExplicitExtension(key, t)
+    onTearDown.plus(Runnable() { collector.removeExplicitExtension(key, t) })
+  }
 
-      LanguageHtmlInlineScriptTokenTypesProvider.INSTANCE.addExplicitExtension(JavascriptLanguage.INSTANCE, HtmlInlineJSScriptTokenTypesProvider())
+  fun registerEmbeddedTokens() {
+    addExplicitExtension(SyntaxHighlighterFactory.LANGUAGE_FACTORY, SASSLanguage.INSTANCE, SASSSyntaxHighlighterFactory())
+
+    val extensionName = EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME.name
+    val area = Extensions.getRootArea()
+    if (!area.hasExtensionPoint(extensionName)) {
+      area.registerExtensionPoint(extensionName, EmbeddedTokenTypesProvider::class.java.name, ExtensionPoint.Kind.INTERFACE)
+      onTearDown.plus(Runnable(){area.unregisterExtensionPoint(extensionName)})
     }
+    val extensionPoint = area.getExtensionPoint<EmbeddedTokenTypesProvider>(extensionName)
+    val sassTokenTypesProvider = SassTokenTypesProvider()
+    extensionPoint.registerExtension(sassTokenTypesProvider)
+    onTearDown.plus(Runnable() { extensionPoint.unregisterExtension(sassTokenTypesProvider) })
 
-    fun registerScriptTokens() {
-      LanguageHtmlScriptContentProvider.INSTANCE.addExplicitExtension(JavaScriptSupportLoader.ECMA_SCRIPT_6, ES6ScriptContentProvider())
-      SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(JavaScriptSupportLoader.ECMA_SCRIPT_6, ECMA6SyntaxHighlighterFactory())
+    addExplicitExtension(LanguageParserDefinitions.INSTANCE, SASSLanguage.INSTANCE, SASSParserDefinition())
+    addExplicitExtension(LanguageHtmlInlineScriptTokenTypesProvider.INSTANCE, JavascriptLanguage.INSTANCE,
+                         HtmlInlineJSScriptTokenTypesProvider())
+  }
 
-      LanguageHtmlScriptContentProvider.INSTANCE.addExplicitExtension(JavaScriptSupportLoader.TYPESCRIPT, TypeScriptContentProvider())
-      SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(JavaScriptSupportLoader.TYPESCRIPT, TypeScriptSyntaxHighlighterFactory())
+  fun registerScriptTokens() {
+    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavaScriptSupportLoader.ECMA_SCRIPT_6, ES6ScriptContentProvider())
+    addExplicitExtension(SyntaxHighlighterFactory.LANGUAGE_FACTORY, JavaScriptSupportLoader.ECMA_SCRIPT_6, ECMA6SyntaxHighlighterFactory())
 
-      LanguageHtmlScriptContentProvider.INSTANCE.addExplicitExtension(JadeLanguage.INSTANCE, JadeScriptContentProvider())
-    }
+    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavaScriptSupportLoader.TYPESCRIPT, TypeScriptContentProvider())
+    addExplicitExtension(SyntaxHighlighterFactory.LANGUAGE_FACTORY, JavaScriptSupportLoader.TYPESCRIPT, TypeScriptSyntaxHighlighterFactory())
+
+    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JadeLanguage.INSTANCE, JadeScriptContentProvider())
   }
 
   fun testScriptEmpty() = doFileTest("vue")
