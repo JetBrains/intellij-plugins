@@ -111,6 +111,7 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
           WebBrowser browser = debuggableWebBrowser.getWebBrowser();
           JavaScriptDebugProcess<? extends VmConnection> debugProcess =
             debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, false);
+          debugProcess.setScriptsCanBeReloaded(true);
           debugProcess.addFirstLineBreakpointPattern("\\.browserify$");
           debugProcess.setElementsInspectorEnabled(false);
           debugProcess.setConsoleMessagesSupportEnabled(false);
