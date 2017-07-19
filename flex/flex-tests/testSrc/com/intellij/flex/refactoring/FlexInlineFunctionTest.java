@@ -3,17 +3,18 @@ package com.intellij.flex.refactoring;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
+import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.refactoring.inlineFunction.JSInlineFunctionTestBase;
+import com.intellij.lang.javascript.refactoring.JSInlineVarOrFunctionTestBase;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
-public class FlexInlineFunctionTest extends JSInlineFunctionTestBase {
+public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
 
   @Override
   protected String getTestDataPath() {
@@ -35,7 +36,7 @@ public class FlexInlineFunctionTest extends JSInlineFunctionTestBase {
   }
 
   private void defaultTest() throws Exception {
-    doTest(getTestName(false), "js2", SUCCESS);
+    doTest(getTestName(false), "js2");
   }
 
   public void testDefaultParams() throws Exception {
@@ -55,7 +56,7 @@ public class FlexInlineFunctionTest extends JSInlineFunctionTestBase {
   }
 
   public void testJustStatements2_4() throws Exception {
-    shouldFail();
+    doTestFailure(getTestName(false), "js2", JSBundle.message("javascript.refactoring.cannot.inline.function.with.multiple.returns"));
   }
 
   public void testJustStatements2_5() throws Exception {
@@ -67,18 +68,18 @@ public class FlexInlineFunctionTest extends JSInlineFunctionTestBase {
   }
 
   public void testJustOneCall() throws Exception {
-    doTest(new String[]{getTestName(false) + ".js2"}, SUCCESS, NO_CONFLICTS, true);
+    doTest(new String[]{getTestName(false) + ".js2"}, true);
   }
 
   public void testJustStatementsInMxml() throws Exception {
-    doTest(getTestName(false), "mxml", SUCCESS);
+    doTest(getTestName(false), "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
   public void testInsideAttribute() throws Exception {
-    doTest(getTestName(false), "mxml", SUCCESS);
-    doTest(getTestName(false) + "_2", "mxml", SUCCESS);
-    doTest(getTestName(false) + "_3", "mxml", SUCCESS);
+    doTest(getTestName(false), "mxml");
+    doTest(getTestName(false) + "_2", "mxml");
+    doTest(getTestName(false) + "_3", "mxml");
   }
 
   public void testReplacingThis() throws Exception {
@@ -99,7 +100,8 @@ public class FlexInlineFunctionTest extends JSInlineFunctionTestBase {
 
 
   public void testHasRestParams() throws Exception {
-    shouldFail();
+    doTestFailure(getTestName(false), "js2", 
+                  JSBundle.message("javascript.refactoring.cannot.inline.function.referencing.rest.parameter"));
   }
 
   public void testConstructor() throws Exception {
@@ -110,25 +112,21 @@ public class FlexInlineFunctionTest extends JSInlineFunctionTestBase {
     shouldFail("Can not inline constructor");
   }
 
-  private void shouldFail() throws Exception {
-    doTest(getTestName(false), "js2", FAIL_ANY_REASON);
-  }
-
   private void shouldFail(String reason) throws Exception {
-    doTest(getTestName(false), "js2", reason);
+    doTestFailure(getTestName(false), "js2", reason);
   }
 
   public void testMethodInHierarchy() throws Exception {
     String reason = "Can not inline method that participates in hierarchy";
-    doTest(getTestName(false) + 1, "js2", reason);
-    doTest(getTestName(false) + 2, "js2", reason);
-    doTest(getTestName(false) + 3, "js2", reason);
+    doTestFailure(getTestName(false) + 1, "js2", reason);
+    doTestFailure(getTestName(false) + 2, "js2", reason);
+    doTestFailure(getTestName(false) + 3, "js2", reason);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testMethodInHierarchyMxml() throws Exception {
-    doTest(new String[]{getTestName(false) + ".mxml", getTestName(false) + ".js2"}, "Can not inline method that participates in hierarchy",
-           NO_CONFLICTS);
+    doTestFailure(new String[]{getTestName(false) + ".mxml", getTestName(false) + ".js2"}, 
+                  "Can not inline method that participates in hierarchy");
   }
 
   public void testInterfaceMethod() throws Exception {
