@@ -18,11 +18,12 @@ import javax.swing.Icon
 class VueAttributesProvider : XmlAttributeDescriptorsProvider{
   companion object {
     val DEFAULT_BINDABLE = arrayOf("key", "is")
-    val DEFAULT = arrayOf("v-text", "v-html", "v-show", "v-if", "v-else", "v-else-if", "v-for",
+    val DEFAULT = setOf("v-text", "v-html", "v-show", "v-if", "v-else", "v-else-if", "v-for",
                           "v-on", "v-bind", "v-model", "v-pre", "v-cloak","v-once",
                           "slot", "ref").
                   plus(DEFAULT_BINDABLE.map { "v-bind:" + it }).
                   plus(DEFAULT_BINDABLE.map { ":" + it })
+    val HAVE_NO_PARAMS = setOf("v-else", "v-once", "v-pre", "v-cloak", "scoped")
 
     fun vueAttributeDescriptor(attributeName: String?): VueAttributeDescriptor? {
       if (DEFAULT.contains(attributeName!!)) return VueAttributeDescriptor(attributeName)
@@ -34,7 +35,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
   override fun getAttributeDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
     if (context == null || !org.jetbrains.vuejs.index.hasVue(context.project)) return emptyArray()
     val default = DEFAULT.map { VueAttributeDescriptor(it) }.toTypedArray()
-    if ("style" == context.name && context.containingFile?.language == VueLanguage.INSTANCE) {
+    if (insideStyle(context)) {
       return default.plus(VueAttributeDescriptor("scoped"))
     }
     return default
@@ -42,11 +43,13 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
 
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
     if (context == null || !org.jetbrains.vuejs.index.hasVue(context.project)) return null
-    if ("style" == context.name && context.containingFile?.language == VueLanguage.INSTANCE) {
+    if (insideStyle(context)) {
       return VueAttributeDescriptor("scoped")
     }
     return vueAttributeDescriptor(attributeName)
   }
+
+  private fun insideStyle(context: XmlTag) = "style" == context.name && context.containingFile?.language == VueLanguage.INSTANCE
 }
 
 class VueAttributeDescriptor(private val name:String,
@@ -59,7 +62,7 @@ class VueAttributeDescriptor(private val name:String,
   override fun hasIdType() = false
   override fun getDependences(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY
   override fun getEnumeratedValueDeclaration(xmlElement: XmlElement?, value: String?): PsiElement? {
-    return if ("v-else" == name || "scoped" == name) xmlElement else super.getEnumeratedValueDeclaration(xmlElement, value)
+    return if (VueAttributesProvider.HAVE_NO_PARAMS.contains(name)) xmlElement else super.getEnumeratedValueDeclaration(xmlElement, value)
   }
 
   override fun hasIdRefType() = false
