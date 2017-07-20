@@ -38,6 +38,8 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapStartupActivity.EXCLUDED_WWW_DIRECTORY;
+
 public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGapProjectTemplateGenerator.PhoneGapProjectSettings> {
 
   private static final Logger LOG = Logger.getInstance(PhoneGapProjectTemplateGenerator.class);
@@ -113,10 +115,10 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
               PhoneGapStartupActivity.excludeFolder(project, platformsFolder);
             }
 
-            VirtualFile ionicConfig = baseDir.findChild(PhoneGapUtil.IONIC_CONFIG);
-            if (ionicConfig != null) {
-              VirtualFile wwwFolder = baseDir.findChild(PhoneGapUtil.FOLDER_WWW);
-              if (wwwFolder != null) {
+            VirtualFile wwwFolder = baseDir.findChild(PhoneGapUtil.FOLDER_WWW);
+            if (wwwFolder != null) {
+              if (PhoneGapStartupActivity.isIonic2WwwDirectory(wwwFolder, baseDir)) {
+                PropertiesComponent.getInstance(project).setValue(EXCLUDED_WWW_DIRECTORY, true);
                 PhoneGapStartupActivity.excludeFolder(project, wwwFolder);
               }
             }
