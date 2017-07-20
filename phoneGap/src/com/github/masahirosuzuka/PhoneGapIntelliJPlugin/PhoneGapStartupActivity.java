@@ -2,6 +2,7 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector.PhoneGapExecutableChecker;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -22,18 +23,18 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Set;
 
-import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil.FOLDER_PLATFORMS;
-import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil.FOLDER_WWW;
-import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil.IONIC_CONFIG;
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil.*;
 import static com.intellij.openapi.roots.ModuleRootModificationUtil.updateExcludedFolders;
 
 public class PhoneGapStartupActivity implements StartupActivity {
 
 
+  public static final String EXCLUDED_WWW_DIRECTORY = "excluded.www.directory";
+
   @Override
   public void runActivity(@NotNull Project project) {
     StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> {
-      if (PhoneGapUtil.isPhoneGapProject(project)) {
+      if (isPhoneGapProject(project)) {
         if (PhoneGapSettings.getInstance().isExcludePlatformFolder()) {
           excludeWorkingDirectories(project);
         }
@@ -62,7 +63,7 @@ public class PhoneGapStartupActivity implements StartupActivity {
 
       private boolean isProcess(@NotNull VirtualFileEvent event) {
         return shouldExcludeDirectory(event) &&
-               PhoneGapUtil.isPhoneGapProject(project) &&
+               isPhoneGapProject(project) &&
                PhoneGapSettings.getInstance().isExcludePlatformFolder();
       }
     }, project);
@@ -83,8 +84,13 @@ public class PhoneGapStartupActivity implements StartupActivity {
     VirtualFile candidateParent = file.getParent();
     if (candidateParent == null || !candidateParent.isValid()) return false;
 
-    return candidateParent.findChild(IONIC_CONFIG) != null;
+    return isIonic2WwwDirectory(file, candidateParent);
   }
+
+  public static boolean isIonic2WwwDirectory(@NotNull VirtualFile directory, @NotNull VirtualFile parent) {
+    return parent.findChild(IONIC_CONFIG) != null && parent.findChild("tsconfig.json") != null;
+  }
+
 
   private static Set<String> getExcludedFolderNames(@NotNull VirtualFileEvent event) {
     return ContainerUtil.newHashSet(event.getFile().getUrl());
@@ -121,8 +127,12 @@ public class PhoneGapStartupActivity implements StartupActivity {
                                                                                        GlobalSearchScope.projectScope(project));
 
     for (VirtualFile directory : wwwDirectories) {
-      if (shouldExcludeDirectory(directory.getName(), directory)) {
-        excludeFolder(project, directory);
+      PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
+      if (!propertiesComponent.getBoolean(EXCLUDED_WWW_DIRECTORY, false)) {
+        if (shouldExcludeDirectory(directory.getName(), directory)) {
+          propertiesComponent.setValue(EXCLUDED_WWW_DIRECTORY, true);
+          excludeFolder(project, directory);
+        }
       }
     }
   }
