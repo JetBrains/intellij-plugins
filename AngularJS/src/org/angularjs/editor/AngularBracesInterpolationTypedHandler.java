@@ -3,6 +3,7 @@ package org.angularjs.editor;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
 import com.intellij.ide.highlighter.HtmlFileType;
+import com.intellij.lang.javascript.JSInjectionBracesUtil;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -10,6 +11,7 @@ import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.MultiplePsiFilesPerDocumentFileViewProvider;
 import com.intellij.psi.PsiFile;
 
@@ -24,12 +26,13 @@ public class AngularBracesInterpolationTypedHandler extends TypedHandlerDelegate
 
     if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) return Result.DEFAULT;
 
-    // we should use AngularJSBracesUtil here
     if (file.getFileType() == HtmlFileType.INSTANCE) {
       final Document document = editor.getDocument();
       if (c == '{') {
-        if (!AngularJSBracesUtil.DEFAULT_START.equals(AngularJSBracesUtil.getInjectionStart(project)) ||
-            !AngularJSBracesUtil.DEFAULT_END.equals(AngularJSBracesUtil.getInjectionEnd(project))) return Result.CONTINUE;
+        final Pair<String, String> braces = AngularJSInjector.BRACES_FACTORY.fun(file);
+        if (braces == null ||
+            !JSInjectionBracesUtil.DEFAULT_START.equals(braces.getFirst()) ||
+            !JSInjectionBracesUtil.DEFAULT_END.equals(braces.getSecond())) return Result.CONTINUE;
         JSCodeStyleSettings jsSettings = JSCodeStyleSettings.getSettings(file);
         boolean addWhiteSpaceBetweenBraces = jsSettings.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS;
         int offset = editor.getCaretModel().getOffset();
@@ -53,7 +56,8 @@ public class AngularBracesInterpolationTypedHandler extends TypedHandlerDelegate
         }
       }
       if (c == '}') {
-        if (!AngularJSBracesUtil.DEFAULT_END.equals(AngularJSBracesUtil.getInjectionEnd(project))) return Result.CONTINUE;
+        final Pair<String, String> braces = AngularJSInjector.BRACES_FACTORY.fun(file);
+        if (braces == null || !JSInjectionBracesUtil.DEFAULT_END.equals(braces.getSecond())) return Result.CONTINUE;
 
         final int offset = editor.getCaretModel().getOffset();
 
