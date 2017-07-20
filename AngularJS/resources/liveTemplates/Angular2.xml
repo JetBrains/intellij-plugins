@@ -91,16 +91,14 @@
       <option name="HTML" value="true" />
     </context>
   </template>
-  <template name="a-preja" value="&lt;pre&gt;{{$1$ | async | json}}&lt;/pre&gt;$2$" description="Angular pre debug | async | json" toReformat="true" toShortenFQNames="true">
-    <variable name="1" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true" />
-    <variable name="2" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true" />
+  <template name="a-preja" value="&lt;pre&gt;{{$model$ | async | json}}&lt;/pre&gt;$END$" description="Angular pre debug | async | json" toReformat="true" toShortenFQNames="true">
+    <variable name="model" expression="" defaultValue="&quot;model&quot;" alwaysStopAt="true" />
     <context>
       <option name="HTML" value="true" />
     </context>
   </template>
-  <template name="a-prej" value="&lt;pre&gt;{{$1$ | json}}&lt;/pre&gt;$2$" description="Angular pre debug | json" toReformat="true" toShortenFQNames="true">
-    <variable name="1" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true" />
-    <variable name="2" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true" />
+  <template name="a-prej" value="&lt;pre&gt;{{$1$ | json}}&lt;/pre&gt;$END$" description="Angular pre debug | json" toReformat="true" toShortenFQNames="true">
+    <variable name="1" expression="" defaultValue="&quot;1&quot;" alwaysStopAt="true" />
     <context>
       <option name="HTML" value="true" />
     </context>
@@ -115,13 +113,6 @@
   </template>
   <template name="a-route-path-404" value="{ path: &apos;**&apos;, pathMatch: &apos;full&apos;, component: $PathNotFoundComponent$ }$END$" description="Angular 404 route path" toReformat="true" toShortenFQNames="true">
     <variable name="PathNotFoundComponent" expression="" defaultValue="&quot;PathNotFoundComponent&quot;" alwaysStopAt="true" />
-    <context>
-      <option name="TypeScript" value="true" />
-    </context>
-  </template>
-  <template name="a-bootstrap" value="import { platformBrowserDynamic } from &apos;@angular/platform-browser-dynamic&apos;;&#10;//import { enableProdMode } from &apos;@angular/core&apos;;&#10;&#10;//enableProdMode(); // Uncomment for production&#10;import { $App$Module } from &apos;./$app$.module&apos;;&#10;&#10;platformBrowserDynamic().bootstrapModule($App$Module);&#10;$END$" description="Angular bootstrap" toReformat="true" toShortenFQNames="true">
-    <variable name="App" expression="" defaultValue="&quot;App&quot;" alwaysStopAt="true" />
-    <variable name="app" expression="lowercaseAndDash(App)" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
     </context>
@@ -152,7 +143,7 @@
       <option name="TypeScript" value="true" />
     </context>
   </template>
-  <template name="a-component" value="import { Component, OnInit } from &apos;@angular/core&apos;;&#10;&#10;@Component({&#10;	moduleId: module.id,&#10;	selector: &apos;$selector_name$&apos;,&#10;	templateUrl: &apos;$name$.component.html&apos;&#10;})&#10;&#10;export class $Name$Component implements OnInit {&#10;	constructor() { }&#10;&#10;	ngOnInit() { }$END$&#10;}" description="Angular component" toReformat="true" toShortenFQNames="true">
+  <template name="a-component" value="import { Component, OnInit } from &apos;@angular/core&apos;;&#10;&#10;@Component({&#10;	selector: &apos;$selector_name$&apos;,&#10;	templateUrl: &apos;$name$.component.html&apos;&#10;})&#10;&#10;export class $Name$Component implements OnInit {&#10;	constructor() { }&#10;&#10;	ngOnInit() { }$END$&#10;}" description="Angular component" toReformat="true" toShortenFQNames="true">
     <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
     <variable name="name" expression="lowercaseAndDash(Name)" defaultValue="" alwaysStopAt="true" />
     <variable name="selector_name" expression="lowercaseAndDash(Name)" defaultValue="" alwaysStopAt="true" />
@@ -160,8 +151,8 @@
       <option name="TypeScript" value="true" />
     </context>
   </template>
-  <template name="a-route-path-default" value="{ path: &apos;&apos;, pathMatch: &apos;full&apos;, redirectTo: &apos;$dashboard$&apos; }$END$" description="Angular default route path" toReformat="true" toShortenFQNames="true">
-    <variable name="dashboard" expression="" defaultValue="&quot;dashboard&quot;" alwaysStopAt="true" />
+  <template name="a-route-path-default" value="{ path: &apos;&apos;, pathMatch: &apos;full&apos;, redirectTo: &apos;$path$&apos; }$END$" description="Angular default route path" toReformat="true" toShortenFQNames="true">
+    <variable name="path" expression="" defaultValue="&quot;path&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
     </context>
@@ -181,6 +172,12 @@
     </context>
   </template>
   <template name="a-service-http" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { Http, Response } from &apos;@angular/http&apos;;&#10;import { Observable } from &apos;rxjs/Observable&apos;;&#10;import &apos;rxjs/add/operator/map&apos;;&#10;import &apos;rxjs/add/operator/catch&apos;;&#10;&#10;@Injectable()&#10;export class $ServiceName$Service {&#10;	constructor(private http: Http) { }&#10;	$END$&#10;}" description="Angular service with Http" toReformat="true" toShortenFQNames="true">
+    <variable name="ServiceName" expression="" defaultValue="&quot;ServiceName&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-service-httpclient" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { Http, Response } from &apos;@angular/common/http&apos;;&#10;&#10;@Injectable()&#10;export class $ServiceName$Service {&#10;	constructor(private httpClient: HttpClient) { }&#10;	$END$&#10;}" description="Angular service with HttpClient" toReformat="true" toShortenFQNames="true">
     <variable name="ServiceName" expression="" defaultValue="&quot;ServiceName&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
@@ -214,7 +211,7 @@
       <option name="TypeScript" value="true" />
     </context>
   </template>
-  <template name="a-component-root" value="import { Component } from &apos;@angular/core&apos;;&#10;&#10;@Component({&#10;	moduleId: module.id,&#10;	selector: &apos;$prefix_app$&apos;,&#10;	template: `&#10;		&lt;router-outlet&gt;&lt;/router-outlet&gt;&#10;		`&#10;})&#10;export class $App$Component { }&#10;$END$" description="Angular App root component" toReformat="true" toShortenFQNames="true">
+  <template name="a-component-root" value="import { Component } from &apos;@angular/core&apos;;&#10;&#10;@Component({&#10;	selector: &apos;$prefix_app$&apos;,&#10;	template: `&#10;		&lt;router-outlet&gt;&lt;/router-outlet&gt;&#10;		`&#10;})&#10;export class $App$Component { }&#10;$END$" description="Angular App root component" toReformat="true" toShortenFQNames="true">
     <variable name="prefix_app" expression="" defaultValue="&quot;prefix-app&quot;" alwaysStopAt="true" />
     <variable name="App" expression="" defaultValue="&quot;App&quot;" alwaysStopAt="true" />
     <context>
@@ -242,15 +239,53 @@
       <option name="TypeScript" value="true" />
     </context>
   </template>
-  <template name="a-http-get" value="return this.http.get(&apos;$url$&apos;)&#10;	.map((response: Response) =&gt; response.json()$END$);" description="Angular Http.get" toReformat="true" toShortenFQNames="true">
+  <template name="a-http-get" value="return this.http.get(&apos;$url$&apos;)&#10;	.map((response: Response) =&gt; response.json());$END$" description="Angular Http.get" toReformat="true" toShortenFQNames="true">
     <variable name="url" expression="" defaultValue="&quot;url&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
     </context>
   </template>
-  <template name="a-output-event" value="@Output() $eventName$: EventEmitter&lt;$eventType$&gt; = new EventEmitter&lt;$eventType$&gt;();" description="Angular @Output event and emitter" toReformat="true" toShortenFQNames="true">
+  <template name="a-httpclient-get" value="return this.httpClient.get(&apos;$url$&apos;);$END$" description="Angular HttpClient.get" toReformat="true" toShortenFQNames="true">
+    <variable name="url" expression="" defaultValue="&quot;url&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-output-event" value="@Output() $eventName$ = new EventEmitter&lt;$eventType$&gt;();" description="Angular @Output event and emitter" toReformat="true" toShortenFQNames="true">
     <variable name="eventName" expression="" defaultValue="&quot;eventName&quot;" alwaysStopAt="true" />
     <variable name="eventType" expression="" defaultValue="&quot;eventType&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="rx-add-observable" value="import &apos;rxjs/add/observable/$of$&apos;;&#10;$END$" description="RxJS Add Observable import" toReformat="true" toShortenFQNames="true">
+    <variable name="of" expression="" defaultValue="&quot;of&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="rx-add-operator" value="import &apos;rxjs/add/operator/$map$&apos;;&#10;$END$" description="RxJS Add Operator import" toReformat="true" toShortenFQNames="true">
+    <variable name="map" expression="" defaultValue="&quot;map&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="rx-behavior-subject" value="import { BehaviorSubject } from &apos;rxjs/BehaviorSubject&apos;;&#10;$END$" description="RxJS BehaviorSubject import" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="rx-observable" value="import { Observable } from &apos;rxjs/Observable&apos;;&#10;$END$" description="RxJS Observable import" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="rx-replay-subject" value="import { ReplaySubject } from &apos;rxjs/ReplaySubject&apos;;&#10;$END$" description="RxJS ReplaySubject import" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="rx-subject" value="import { Subject } from &apos;rxjs/Subject&apos;;&#10;$END$" description="RxJS Subject import" toReformat="true" toShortenFQNames="true">
     <context>
       <option name="TypeScript" value="true" />
     </context>
