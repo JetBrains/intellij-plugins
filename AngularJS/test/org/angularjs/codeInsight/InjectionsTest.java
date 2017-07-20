@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
@@ -18,7 +19,10 @@ import com.intellij.util.ThrowableRunnable;
 import com.sixrr.inspectjs.confusing.CommaExpressionJSInspection;
 import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
 import org.angularjs.AngularTestUtil;
+import org.angularjs.editor.AngularJSInjector;
 import org.angularjs.lang.AngularJSLanguage;
+import org.jetbrains.annotations.NotNull;
+import org.junit.Assert;
 
 import java.util.List;
 
@@ -144,19 +148,43 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.configureByFiles("comment.html", "angular.js");
   }
 
+  public void testCustomStartDelimiterEmptyWhenTyping() {
+    final String name = getTestName(true);
+    myFixture.configureByFiles(name + ".html", "angular.js", name + ".js");
+    assertEquals(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
+    assertBraces("{{", "]]");
+  }
+
+  private void assertBraces(@NotNull String expectedStart, @NotNull String expectedEnd) {
+    final Pair<String, String> braces = AngularJSInjector.BRACES_FACTORY.fun(myFixture.getFile());
+    Assert.assertNotNull(braces);
+    Assert.assertEquals(expectedStart, braces.getFirst());
+    Assert.assertEquals(expectedEnd, braces.getSecond());
+  }
+
+  public void testCustomEndDelimiterEmptyWhenTyping() {
+    final String name = getTestName(true);
+    myFixture.configureByFiles(name + ".html", "angular.js", name + ".js");
+    assertEquals(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
+    assertBraces("[[", "}}");
+  }
+
   public void testCustomDelimiters() {
     myFixture.configureByFiles("customDelimiters.html", "angular.js", "customDelimiters.js");
     assertEquals(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
+    assertBraces("[[", "]]");
   }
 
   public void testCustomDelimitersInline() {
     myFixture.configureByFiles("customDelimitersInline.html", "angular.js", "customDelimitersInline.js");
     assertEquals(HTMLLanguage.INSTANCE, myFixture.getFile().getLanguage());
+    assertBraces("[[", "]]");
   }
 
   public void testCustomDelimitersDefaultIgnored() {
     myFixture.configureByFiles("customDelimitersDefaultIgnored.html", "angular.js", "customDelimitersDefaultIgnored.js");
     assertNotSame(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
+    assertBraces("{{", "}}");
   }
 
   public void testDefaultDelimitersInJSX() throws Exception {
@@ -169,6 +197,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testCustomDelimitersSameStartEnd() {
     myFixture.configureByFiles("customDelimitersSameStartEnd.html", "angular.js", "customDelimitersSameStartEnd.js");
     assertEquals(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
+    assertBraces("**", "**");
   }
 
   public void testNoQuotes() {
