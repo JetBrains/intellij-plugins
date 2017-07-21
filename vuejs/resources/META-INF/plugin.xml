@@ -12,6 +12,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <fileTypeFactory implementation="org.jetbrains.vuejs.VueFileTypeFactory" />
     <lang.parserDefinition language="Vue" implementationClass="org.jetbrains.vuejs.language.VueParserDefinition" />
+    <lang.parserDefinition language="VueJS" implementationClass="org.jetbrains.vuejs.language.VueJSParserDefinition" />
     <lang.syntaxHighlighterFactory language="Vue" implementationClass="org.jetbrains.vuejs.language.VueSyntaxHighlighterFactory" />
     <resolveScopeProvider implementation="org.jetbrains.vuejs.VueTypeScriptResolveScopeProvider" />
     <xml.attributeDescriptorsProvider implementation="org.jetbrains.vuejs.codeInsight.VueAttributesProvider" />
@@ -20,6 +21,7 @@
     <xml.elementDescriptorProvider implementation="org.jetbrains.vuejs.codeInsight.VueTagProvider" />
 
     <stubIndex implementation="org.jetbrains.vuejs.index.VueComponentsIndex" />
+    <stubIndex implementation="org.jetbrains.vuejs.index.VueOptionsIndex" />
     <stubElementTypeHolder class="org.jetbrains.vuejs.language.VueElementTypes" />
     <!--<directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.VueCliProjectGeneraator"/>-->
     <!--<projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueTemplateFactory"/>-->
@@ -30,6 +32,7 @@
     <localInspection language="Vue" groupName="Vue" displayName="Duplicate template/script tag" shortName="VueDuplicateTag"
                      enabledByDefault="true" level="WARNING"
                      implementationClass="org.jetbrains.vuejs.inspections.DuplicateTagInspection"/>
+    <multiHostInjector implementation="org.jetbrains.vuejs.language.VueInjector" id="vue"/>
   </extensions>
   <extensions defaultExtensionNs="JavaScript">
     <frameworkIndexingHandler implementation="org.jetbrains.vuejs.codeInsight.VueFrameworkHandler"/>

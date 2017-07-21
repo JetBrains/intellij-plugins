@@ -22,8 +22,12 @@ import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.VueLanguage
 import org.jetbrains.vuejs.index.INDICES
 import org.jetbrains.vuejs.index.VueComponentsIndex
+import org.jetbrains.vuejs.index.VueOptionsIndex
 
+val DELIMITERS = "delimiters"
 class VueFrameworkHandler : FrameworkIndexingHandler() {
+  private val OPTIONS = setOf(DELIMITERS)
+
   init {
     INDICES.values.forEach { JSImplicitElementImpl.ourUserStringsRegistry.registerUserString(it) }
   }
@@ -47,16 +51,25 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   override fun processAnyProperty(property: JSProperty, outData: JSElementIndexingData?): JSElementIndexingData? {
-    if ("name" == property.name) {
-      val obj = property.parent as JSObjectLiteralExpression
-      val name = (property.value as? JSLiteralExpression)?.value as? String ?: return outData
+    val obj = property.parent as JSObjectLiteralExpression
 
+    if ("name" == property.name) {
+      val name = (property.value as? JSLiteralExpression)?.value as? String ?: return outData
       property.parent.parent as? JSExportAssignment ?: return outData
       obj.findProperty("template") ?: obj.findProperty("render") ?: property.containingFile.language as? VueLanguage ?: return outData
 
       val out = outData ?: JSElementIndexingDataImpl()
       out.addImplicitElement(JSImplicitElementImpl.Builder(name, property).setUserString(VueComponentsIndex.JS_KEY).toImplicitElement())
       return out
+    } else {
+      val name = property.name ?: return outData
+      if (OPTIONS.contains(name) && ((obj.parent as? JSProperty) == null)) {
+        val out = outData ?: JSElementIndexingDataImpl()
+        out.addImplicitElement(JSImplicitElementImpl.Builder(name, property)
+                                 .setUserString(VueOptionsIndex.JS_KEY)
+                                 .toImplicitElement())
+        return out
+      }
     }
     return outData
   }

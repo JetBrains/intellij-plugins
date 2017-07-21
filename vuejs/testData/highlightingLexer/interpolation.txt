@@ -1,7 +1,0 @@
-XML_START_TAG_START ('<')
-XML_TAG_NAME ('template')
-XML_TAG_END ('>')
-XML_DATA_CHARACTERS ('{{interpolation}}')
-XML_END_TAG_START ('</')
-XML_TAG_NAME ('template')
-XML_TAG_END ('>')
