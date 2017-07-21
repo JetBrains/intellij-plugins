@@ -44,7 +44,6 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
                                   urlToPath(convertFromUrl(FlexSchemaHandler.class.getResource("z.xsd"))),
                                   urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
     super.setUp();
-    TemplateManagerImpl.setTemplateTesting(getProject(), getTestRootDisposable());
   }
 
   @Override
@@ -61,12 +60,6 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
     runTemplateTest(getTestName(false), "mxml", "jsClassName()");
     runTemplateTest(getTestName(false), "as", "jsClassName()");
     runTemplateTest(getTestName(false) + "2", "as", "jsQualifiedClassName()");
-  }
-
-  protected void doTest(final String templateName, final String extension, final String group) throws Exception {
-    final Template template = TemplateSettings.getInstance().getTemplate(templateName, group);
-    //noinspection unchecked
-    doTest(template, Consumer.EMPTY_CONSUMER, getBasePath() + getTestName(false) + "." + extension);
   }
 
   protected void doTest(final String templateName, final String extension) throws Exception {
