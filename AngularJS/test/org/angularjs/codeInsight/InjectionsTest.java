@@ -148,6 +148,11 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.configureByFiles("comment.html", "angular.js");
   }
 
+  public void testCommentWithFollowingInterpolation() {
+    myFixture.configureByFiles(getTestName(true) + ".html", "angular.js");
+    assertEquals(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
+  }
+
   public void testCustomStartDelimiterEmptyWhenTyping() {
     final String name = getTestName(true);
     myFixture.configureByFiles(name + ".html", "angular.js", name + ".js");
@@ -167,6 +172,11 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.configureByFiles(name + ".html", "angular.js", name + ".js");
     assertEquals(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
     assertBraces("[[", "}}");
+  }
+
+  public void testAngularInterpolationCrossesCommentArea() {
+    myFixture.configureByFiles(getTestName(true) + ".html", "angular.js");
+    assertEquals(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
   }
 
   public void testCustomDelimiters() {
