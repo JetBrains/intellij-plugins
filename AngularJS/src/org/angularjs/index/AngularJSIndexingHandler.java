@@ -220,7 +220,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
                   VirtualFile virtualFile = provider.getVirtualFile();
                   virtualFile = virtualFile instanceof LightVirtualFile ? ((LightVirtualFile)virtualFile).getOriginalFile() : virtualFile;
 
-                  if (JSLibraryUtil.isProbableLibraryFile(virtualFile)) return;
+                  if (virtualFile != null && JSLibraryUtil.isProbableLibraryFile(virtualFile)) return;
                   addImplicitElements(argument, null, AngularInjectionDelimiterIndex.KEY, command, interpolation, outIndexingData);
                 }
               }
