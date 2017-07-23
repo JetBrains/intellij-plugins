@@ -3,6 +3,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 class MakefileHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
   fun testUnresolved() = doTest()
   fun testRedundant() = doTest(true)
+  fun testTargetspecificvars() = doTest()
 
   fun doTest(checkInfos: Boolean = false) { myFixture.testHighlighting(true, checkInfos, true, "$testDataPath/$basePath/${getTestName(true)}.mk") }
 

@@ -69,6 +69,8 @@ class MakefileAnnotator : Annotator {
     if (!recipe.isEmpty) return false
     if (targetLine.targets.targetList.any { it.isSpecialTarget || it.isPatternTarget }) return false
     if (targetLine.prerequisites?.normalPrerequisites?.prerequisiteList?.any() == true) return false
+    if (targetLine.variableAssignment != null) return false
+    if (targetLine.privatevar != null) return false
     return true
   }
 }
