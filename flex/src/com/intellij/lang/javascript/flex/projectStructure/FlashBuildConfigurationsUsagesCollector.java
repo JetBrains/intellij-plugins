@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
-import com.intellij.internal.statistic.AbstractApplicationUsagesCollector;
+import com.intellij.internal.statistic.AbstractProjectsUsagesCollector;
 import com.intellij.internal.statistic.CollectUsagesException;
 import com.intellij.internal.statistic.beans.GroupDescriptor;
 import com.intellij.internal.statistic.beans.UsageDescriptor;
@@ -11,14 +11,13 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class FlashBuildConfigurationsUsagesCollector extends AbstractApplicationUsagesCollector {
+public class FlashBuildConfigurationsUsagesCollector extends AbstractProjectsUsagesCollector {
 
   private static final String GROUP_ID = "Flash build configurations";
 
