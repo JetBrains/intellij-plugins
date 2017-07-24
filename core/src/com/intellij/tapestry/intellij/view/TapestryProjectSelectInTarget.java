@@ -29,13 +29,6 @@ public class TapestryProjectSelectInTarget extends ProjectViewSelectInTarget {
     /**
      * {@inheritDoc}
      */
-    protected boolean canWorkWithCustomObjects() {
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public String getMinorViewId() {
         return TapestryProjectViewPane.getInstance(myProject).getId();
     }
