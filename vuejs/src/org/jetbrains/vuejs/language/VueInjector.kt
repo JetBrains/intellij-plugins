@@ -2,6 +2,8 @@ package org.jetbrains.vuejs.language
 
 import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.lang.injection.MultiHostRegistrar
+import com.intellij.lang.javascript.JSInjectionBracesUtil
+import com.intellij.lang.javascript.JSInjectionBracesUtil.injectInXmlTextByDelimiters
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSLiteralExpression
