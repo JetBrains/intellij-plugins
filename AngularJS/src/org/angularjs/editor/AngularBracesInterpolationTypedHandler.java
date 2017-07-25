@@ -1,92 +1,24 @@
 package org.angularjs.editor;
 
-import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
-import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.lang.javascript.JSInjectionBracesUtil;
-import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
-import com.intellij.psi.MultiplePsiFilesPerDocumentFileViewProvider;
 import com.intellij.psi.PsiFile;
 
 /**
  * @author Dennis.Ushakov
  */
 public class AngularBracesInterpolationTypedHandler extends TypedHandlerDelegate {
-  @Override
-  public Result beforeCharTyped(char c, Project project, Editor editor, PsiFile file, FileType fileType) {
-    if (file.getViewProvider() instanceof MultiplePsiFilesPerDocumentFileViewProvider ||
-        DumbService.isDumb(project)) return Result.CONTINUE;
+  private final JSInjectionBracesUtil.InterpolationBracesCompleter myBracesCompleter;
 
-    if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) return Result.DEFAULT;
-
-    if (file.getFileType() == HtmlFileType.INSTANCE) {
-      final Document document = editor.getDocument();
-      if (c == '{') {
-        final Pair<String, String> braces = AngularJSInjector.BRACES_FACTORY.fun(file);
-        if (braces == null ||
-            !JSInjectionBracesUtil.DEFAULT_START.equals(braces.getFirst()) ||
-            !JSInjectionBracesUtil.DEFAULT_END.equals(braces.getSecond())) return Result.CONTINUE;
-        JSCodeStyleSettings jsSettings = JSCodeStyleSettings.getSettings(file);
-        boolean addWhiteSpaceBetweenBraces = jsSettings.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS;
-        int offset = editor.getCaretModel().getOffset();
-        String chars = document.getText();
-        if (offset > 0 && (chars.charAt(offset - 1)) == '{') {
-          if (offset < 2 || (chars.charAt(offset - 2)) != '{') {
-            if (alreadyHasEnding(chars, offset)) {
-              return Result.CONTINUE;
-            }
-            else {
-              String interpolation = addWhiteSpaceBetweenBraces ? "{  }" : "{}";
-
-              if (offset == chars.length() || (offset < chars.length() && chars.charAt(offset) != '}')) {
-                interpolation += "}";
-              }
-
-              EditorModificationUtil.insertStringAtCaret(editor, interpolation, true, addWhiteSpaceBetweenBraces ? 2 : 1);
-              return Result.STOP;
-            }
-          }
-        }
-      }
-      if (c == '}') {
-        final Pair<String, String> braces = AngularJSInjector.BRACES_FACTORY.fun(file);
-        if (braces == null || !JSInjectionBracesUtil.DEFAULT_END.equals(braces.getSecond())) return Result.CONTINUE;
-
-        final int offset = editor.getCaretModel().getOffset();
-
-        final char charAt;
-        if (offset < document.getTextLength()) {
-          charAt = document.getCharsSequence().charAt(offset);
-          if (charAt == '}') {
-            editor.getCaretModel().moveCaretRelatively(1, 0, false, false, true);
-            return Result.STOP;
-          }
-        }
-        else if (offset > 0) {
-          charAt = document.getCharsSequence().charAt(offset - 1);
-          if (charAt != '}') {
-            EditorModificationUtil.insertStringAtCaret(editor, "}}", true, 2);
-            return Result.STOP;
-          }
-        }
-      }
-    }
-
-    return Result.CONTINUE;
+  public AngularBracesInterpolationTypedHandler() {
+    myBracesCompleter = new JSInjectionBracesUtil.InterpolationBracesCompleter(AngularJSInjector.BRACES_FACTORY);
   }
 
-  private static boolean alreadyHasEnding(String chars, int offset) {
-    int i = offset;
-    while (i < chars.length() && (chars.charAt(i) != '{' && chars.charAt(i) != '}' && chars.charAt(i) != '\n')) {
-      i++;
-    }
-    return i + 1 < chars.length() && chars.charAt(i) == '}' && chars.charAt(i + 1) == '}';
+  @Override
+  public Result beforeCharTyped(char c, Project project, Editor editor, PsiFile file, FileType fileType) {
+    return myBracesCompleter.beforeCharTyped(c, project, editor, file);
   }
 }
