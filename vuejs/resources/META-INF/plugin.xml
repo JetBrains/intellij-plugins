@@ -13,6 +13,9 @@
     <fileTypeFactory implementation="org.jetbrains.vuejs.VueFileTypeFactory" />
     <lang.parserDefinition language="Vue" implementationClass="org.jetbrains.vuejs.language.VueParserDefinition" />
     <lang.parserDefinition language="VueJS" implementationClass="org.jetbrains.vuejs.language.VueJSParserDefinition" />
+    <typedHandler implementation="org.jetbrains.vuejs.language.VueJSBracesInterpolationTypedHandler"/>
+    <lang.braceMatcher language="VueJS" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
+
     <lang.syntaxHighlighterFactory language="Vue" implementationClass="org.jetbrains.vuejs.language.VueSyntaxHighlighterFactory" />
     <resolveScopeProvider implementation="org.jetbrains.vuejs.VueTypeScriptResolveScopeProvider" />
     <xml.attributeDescriptorsProvider implementation="org.jetbrains.vuejs.codeInsight.VueAttributesProvider" />
