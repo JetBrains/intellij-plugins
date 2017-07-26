@@ -41,11 +41,9 @@ public class AngularJSParserTest extends LightPlatformCodeInsightTestCase implem
 
     invokeTestRunnable(() -> {
       try {
-        System.setProperty("angular.js.parse.message.format", "true");
         doSingleTest(myFileSuffix, myTestDataPath);
       }
       catch (Throwable e) {
-        System.clearProperty("angular.js.parse.message.format");
         throwables[0] = e;
       }
     });
@@ -55,7 +53,7 @@ public class AngularJSParserTest extends LightPlatformCodeInsightTestCase implem
     }
   }
 
-  private void doSingleTest(String suffix, String path) throws Throwable{
+  private static void doSingleTest(String suffix, String path) throws Throwable{
     final String text = FileUtil.loadFile(new File(path, suffix), true);
     final StringBuilder result = new StringBuilder();
     for (String line : StringUtil.splitByLines(text)) {

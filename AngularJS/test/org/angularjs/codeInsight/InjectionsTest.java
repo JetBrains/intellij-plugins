@@ -258,13 +258,8 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testMessageFormat() {
-    System.setProperty("angular.js.parse.message.format", "true");
-    try {
-      myFixture.configureByFiles("messageFormat.html", "messageFormatController.js", "angular.js");
-      myFixture.checkHighlighting();
-    } finally {
-      System.clearProperty("angular.js.parse.message.format");
-    }
+    myFixture.configureByFiles("messageFormat.html", "messageFormatController.js", "angular.js");
+    myFixture.checkHighlighting();
   }
 
   public void testStyles2() throws Exception {
