@@ -78,12 +78,12 @@ new Vue({
   </head>
   <body>
     <div>
-      * 1 + <caret>2 *
+      $ 1 + <caret>2 $
     </div>
   </body>
 <script>
 new Vue({
-  delimiters: ['*', '*']
+  delimiters: ['$', '$']
 })
 </script>
 </html>""")
@@ -115,13 +115,13 @@ new Vue({
   </head>
   <body>
     <div>
-      * 1 + 2 *
+      $ 1 + 2 $
       {{<caret>1 + 2}}
     </div>
   </body>
 <script>
 new Vue({
-  delimiters: ['*', '*']
+  delimiters: ['$', '$']
 })
 </script>
 </html>""")
