@@ -24,4 +24,34 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
                               "<template><div <warning descr=\"Wrong attribute value\">v-if</warning>></div></template>")
     myFixture.checkHighlighting()
   }
+
+  fun testArrowFunctionsAndExpressionsInTemplate() {
+    myFixture.configureByText("ArrowFunctionsAndExpressionsInTemplate.vue", """
+<template>
+<p>Completed Tasks: {{ ((todo) => todo.done === true)({done: 111}) }}</p>
+<p>Pending Tasks: {{ todos.filter((todo) => {return todo.done === false}).length }}</p>
+<div class="map" v-bind:class="{ 'map--loading': 'test', aaa: 118 }">Additional...</div>
+{{todos}}
+</template>
+<script>
+    let todos = 1;
+</script>
+""")
+    myFixture.checkHighlighting()
+  }
+
+  fun testShorthandArrowFunctionInTemplate() {
+    myFixture.configureByText("ArrowFunctionsAndExpressionsInTemplate.vue", """
+<template>
+    <div id="app">
+        <div @event="val => bar = val"></div>
+        {{bar}}
+    </div>
+</template>
+<script>
+    let bar = {};
+</script>
+""")
+    myFixture.checkHighlighting()
+  }
 }
