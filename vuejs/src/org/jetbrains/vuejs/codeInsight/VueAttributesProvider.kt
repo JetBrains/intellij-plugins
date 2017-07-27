@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.meta.PsiPresentableMetaData
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
@@ -53,7 +52,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
 }
 
 class VueAttributeDescriptor(private val name:String,
-                             private val element:PsiNamedElement? = null) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
+                             private val element:PsiElement? = null) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
   override fun getName() = name
   override fun getDeclaration() = element
   override fun init(element: PsiElement?) {}

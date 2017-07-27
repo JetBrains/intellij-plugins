@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.html.HtmlFileImpl
@@ -19,6 +20,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ArrayUtil
+import com.intellij.util.ObjectUtils
 import com.intellij.xml.XmlAttributeDescriptor
 import com.intellij.xml.XmlElementDescriptor
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
@@ -112,21 +114,35 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
   }
 
   override fun getAttributesDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
-    var props:Collection<XmlAttributeDescriptor> = emptyList()
+    var props:List<XmlAttributeDescriptor> = emptyList()
     if (declaration.parent is JSProperty) {
       val obj = declaration.parent.context as JSObjectLiteralExpression
       val propsProperty = findProperty(obj, "props")
+      var propsArray = ObjectUtils.tryCast(propsProperty?.value, JSArrayLiteralExpression::class.java)
       var propsObject = propsProperty?.objectLiteralExpressionInitializer
-      if (propsObject == null) {
+      if (propsArray == null && propsObject == null) {
         val initializerReference = propsProperty?.initializerReference
         if (initializerReference != null) {
           val local = JSStubBasedPsiTreeUtil.resolveLocally(initializerReference, propsProperty!!)
-          propsObject = ((local as? JSVariable)?.initializerOrStub ?:
-                         (local as? JSDefinitionExpression)?.initializerOrStub) as? JSObjectLiteralExpression
+          val initializer = (local as? JSVariable)?.initializerOrStub
+          if (initializer != null) {
+            propsObject = initializer as? JSObjectLiteralExpression
+            propsArray = initializer as? JSArrayLiteralExpression
+          }
         }
       }
-      if (propsObject != null) {
+      if (propsArray != null) {
+        props = propsArray.expressions.filter { it is JSLiteralExpression && it.isQuotedLiteral }
+          .map { VueAttributeDescriptor(StringUtil.unquoteString(it.text), it) }
+      } else if (propsObject != null) {
         props = propsObject.properties.map { VueAttributeDescriptor(it.name!!, it) }
+      }
+
+      if (props is MutableList) {
+        props.addAll(props.map {
+          val newName = org.jetbrains.vuejs.codeInsight.fromAsset(it.name)
+          if (it.name != newName) VueAttributeDescriptor(newName, it.declaration) else null
+        }.filterNotNull())
       }
     }
     return HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context)!!.plus(props)
