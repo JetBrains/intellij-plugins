@@ -62,8 +62,8 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     myFixture.checkHighlighting()
   }
 
-  fun testLocalPropsInArrayResolvedAndWithKebabCaseAlso() {
-    myFixture.configureByText("LocalPropsInArrayResolvedAndWithKebabCaseAlso.vue",
+  fun testLocalPropsInArrayInCompAttrsAndWithKebabCaseAlso() {
+    myFixture.configureByText("LocalPropsInArrayInCompAttrsAndWithKebabCaseAlso.vue",
                               """
 <template>
     <div id="app">
@@ -81,8 +81,8 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     myFixture.checkHighlighting()
   }
 
-  fun testLocalPropsInObjectResolvedAndWithKebabCaseAlso() {
-    myFixture.configureByText("LocalPropsInObjectResolvedAndWithKebabCaseAlso.vue",
+  fun testLocalPropsInObjectInCompAttrsAndWithKebabCaseAlso() {
+    myFixture.configureByText("LocalPropsInObjectInCompAttrsAndWithKebabCaseAlso.vue",
                               """
 <template>
     <div id="app">
@@ -102,7 +102,7 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     myFixture.checkHighlighting()
   }
 
-  fun testImportedComponentPropsAsArray() {
+  fun testImportedComponentPropsInCompAttrsAsArray() {
     myFixture.configureByText("compUI.vue", """
 <script>
     export default {
@@ -125,7 +125,7 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     myFixture.checkHighlighting()
   }
 
-  fun testImportedComponentPropsAsObject() {
+  fun testImportedComponentPropsInCompAttrsAsObject() {
     myFixture.configureByText("compUI.vue", """
 <script>
     export default {
@@ -145,6 +145,50 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     import CompUI from 'compUI.vue'
+</script>
+""")
+    myFixture.checkHighlighting()
+  }
+
+  fun testImportedComponentPropsInCompAttrsObjectRef() {
+    myFixture.configureByText("compUI.vue", """
+<script>
+const props = {seeMe: {}}
+    export default {
+        name: 'compUI',
+        props: props
+    }
+</script>
+""")
+    myFixture.configureByText("ImportedComponentPropsAsObjectRef.vue", """
+<template>
+    <div id="app">
+        <comp-u-i see-me="12345" <warning descr="Attribute butNotThis is not allowed here">butNotThis</warning>="112"></comp-u-i>
+        <comp-u-i seeMe="12345" <warning descr="Attribute butNotThis is not allowed here">butNotThis</warning>="112"></comp-u-i>
+    </div>
+</template>
+<script>
+    import CompUI from 'compUI.vue'
+</script>
+""")
+    myFixture.checkHighlighting()
+  }
+
+  fun testLocalPropsInArrayInCompAttrsRef() {
+    myFixture.configureByText("LocalPropsInArrayInCompAttrsRef.vue",
+                              """
+<template>
+    <div id="app">
+        <camelCase one-two="test" <warning descr="Attribute three-four is not allowed here">three-four</warning>=1></camelCase>
+        <camelCase oneTwo="test" <warning descr="Attribute three-four is not allowed here">three-four</warning>=1></camelCase>
+    </div>
+</template>
+<script>
+const props = ['oneTwo']
+    export default {
+      name: 'camelCase',
+      props: props
+    }
 </script>
 """)
     myFixture.checkHighlighting()
