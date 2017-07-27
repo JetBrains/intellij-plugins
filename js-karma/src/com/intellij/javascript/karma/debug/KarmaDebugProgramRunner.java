@@ -13,7 +13,10 @@ import com.intellij.execution.runners.AsyncProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.ide.browsers.BrowserFamily;
+import com.intellij.ide.browsers.BrowserLauncher;
 import com.intellij.ide.browsers.WebBrowser;
+import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.javascript.debugger.DebuggableFileFinder;
 import com.intellij.javascript.debugger.JavaScriptDebugEngine;
 import com.intellij.javascript.debugger.JavaScriptDebugProcess;
@@ -24,6 +27,7 @@ import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.lang.javascript.modules.NodeModuleUtil;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.Disposer;
@@ -88,7 +92,24 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
     }
     else {
       RunContentDescriptor descriptor = KarmaUtil.createDefaultDescriptor(executionResult, environment);
-      karmaServer.onBrowsersReady(() -> ExecutionUtil.restartIfActive(descriptor));
+      karmaServer.onPortBound(() -> {
+        if (Disposer.isDisposed(environment)) {
+          return;
+        }
+        Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, environment);
+        alarm.addRequest(() -> {
+          if (karmaServer.isTerminated()) {
+            return;
+          }
+          WebBrowser browser = WebBrowserManager.getInstance().getFirstBrowserOrNull(BrowserFamily.CHROME);
+          BrowserLauncher.getInstance().browse(karmaServer.formatUrl("/"), browser, environment.getProject());
+          Disposer.dispose(alarm);
+        }, 2000, ModalityState.NON_MODAL);
+        karmaServer.onBrowsersReady(() -> {
+          Disposer.dispose(alarm);
+          ExecutionUtil.restartIfActive(descriptor);
+        });
+      });
       return Promises.resolvedPromise(descriptor);
     }
   }
