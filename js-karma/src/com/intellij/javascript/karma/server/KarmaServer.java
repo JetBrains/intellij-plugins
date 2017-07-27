@@ -253,6 +253,11 @@ public class KarmaServer {
     });
   }
 
+  public boolean isTerminated() {
+    ApplicationManager.getApplication().assertIsDispatchThread();
+    return myExitCode != null;
+  }
+
   /**
    * Executes {@code terminationCallback} in EDT when the server is shut down.
    */
@@ -334,12 +339,14 @@ public class KarmaServer {
       if (myCoveragePeer != null) {
         FileUtil.asyncDelete(myCoveragePeer.getCoverageTempDir());
       }
-      if (myOnPortBoundCallbacks != null) {
-        myOnPortBoundCallbacks.clear();
-      }
-      if (myOnBrowsersReadyCallbacks != null) {
-        myOnBrowsersReadyCallbacks.clear();
-      }
+      UIUtil.invokeLaterIfNeeded(() -> {
+        if (myOnPortBoundCallbacks != null) {
+          myOnPortBoundCallbacks.clear();
+        }
+        if (myOnBrowsersReadyCallbacks != null) {
+          myOnBrowsersReadyCallbacks.clear();
+        }
+      });
       shutdown();
     }
   }
