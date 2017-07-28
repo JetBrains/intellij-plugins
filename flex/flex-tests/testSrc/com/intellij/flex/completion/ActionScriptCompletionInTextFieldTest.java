@@ -58,8 +58,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testChangeSignatureParameterTypeCell() throws Exception {
     configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
-    JSExpressionCodeFragment fragment = JSParameterTableModel.createParameterTypeCellFragment("", myProject,
-                                                                                              JavaScriptSupportLoader.ECMA_SCRIPT_L4);
+    JSExpressionCodeFragment fragment = JSParameterTableModel.createParameterTypeCellFragment("", null);
     String[] included = new String[]{"Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher", "void", "*"};
     String[] excluded = ArrayUtil.mergeArrays(DEFALUT_VALUES, "public", "function", "while");
     checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", BASE_PATH + getTestName(false) + ".txt");
@@ -68,8 +67,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testChangeSignatureDefaultValueCell() throws Exception {
     configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
-    JSExpressionCodeFragment fragment = JSParameterTableModel.createDefaultValueCellFragment("", createFakeClass(),
-                                                                                             JavaScriptSupportLoader.ECMA_SCRIPT_L4);
+    JSExpressionCodeFragment fragment = JSParameterTableModel.createDefaultValueCellFragment("", createFakeClass());
     String[] included = DEFALUT_VALUES;
     // TODO classes should be removed from completion list
     included = ArrayUtil.mergeArrays(included, "Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher");
@@ -80,8 +78,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testChangeSignatureInitializerCell() throws Exception {
     configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
-    JSExpressionCodeFragment fragment = JSParameterTableModel.createInitializerCellFragment("", createFakeClass(),
-                                                                                            JavaScriptSupportLoader.ECMA_SCRIPT_L4);
+    JSExpressionCodeFragment fragment = JSParameterTableModel.createInitializerCellFragment("", createFakeClass());
     String[] included = DEFALUT_VALUES;
     // TODO classes should be removed from completion list
     included = ArrayUtil.mergeArrays(included, "Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher");
@@ -206,7 +203,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     PsiFile fragment =
       JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.moduleScope(myModule), null, filter, "").getPsiFile();
 
-    doTestForEditorTextField((JSExpressionCodeFragment)fragment, "", "js2", BASE_PATH + filename + ".txt");
+    doTestTextFieldFromFile((JSExpressionCodeFragment)fragment, BASE_PATH + filename + ".txt");
     if (numberOfVariants == 0) {
       assertNull(myItems);
     }
