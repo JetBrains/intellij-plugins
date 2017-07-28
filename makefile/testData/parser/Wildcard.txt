@@ -10,7 +10,7 @@ Makefile
       MakefilePrerequisitesImpl(PREREQUISITES)
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           MakefilePrerequisiteImpl(PREREQUISITE)
-            PsiElement(identifier)('$(wildcard js/*)')
+            PsiElement(variable_usage)('$(wildcard js/*)')
           PsiWhiteSpace(' ')
           MakefilePrerequisiteImpl(PREREQUISITE)
             PsiElement(identifier)('FORCE')

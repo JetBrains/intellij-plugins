@@ -17,7 +17,7 @@ Makefile
       MakefilePrerequisitesImpl(PREREQUISITES)
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           MakefilePrerequisiteImpl(PREREQUISITE)
-            PsiElement(identifier)('$(objects)')
+            PsiElement(variable_usage)('$(objects)')
       PsiElement(EOL)('\n\n')
     MakefileRecipeImpl(RECIPE)
       <empty list>
