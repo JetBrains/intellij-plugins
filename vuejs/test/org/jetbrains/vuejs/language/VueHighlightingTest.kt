@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.language
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeInspectionBase
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
+import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 
 /**
@@ -14,6 +15,7 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     myFixture.enableInspections(HtmlUnknownBooleanAttributeInspectionBase())
     myFixture.enableInspections(HtmlUnknownAttributeInspection())
     myFixture.enableInspections(HtmlUnknownTagInspection())
+    myFixture.enableInspections(RequiredAttributesInspection())
   }
 
   fun testDirectivesWithoutParameters() {
@@ -191,6 +193,31 @@ const props = ['oneTwo']
     }
 </script>
 """)
+    myFixture.checkHighlighting()
+  }
+
+  fun testCompRequiredAttributesTest() {
+    myFixture.configureByText("CompRequiredAttributesTest.vue", """
+<template>
+    <div id="app">
+        <<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute withCamelCase">camelCase</warning></warning></warning></warning>></<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute withCamelCase">camelCase</warning></warning></warning></warning>>
+        <<warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute withCamelCase">camelCase</warning></warning></warning> :one="5"></<warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute withCamelCase">camelCase</warning></warning></warning>>
+        <camelCase one="test" two="2" three=3 with-camel-case="1" <warning descr="Attribute four is not allowed here">four</warning>=1></camelCase>
+        <camelCase one="test" v-bind:two="2" :three=3 withCamelCase="1"></camelCase>
+        <<warning descr="Element camelCase doesn't have required attribute withCamelCase">camelCase</warning> one="test" v-bind:two="2" :three=3></<warning descr="Element camelCase doesn't have required attribute withCamelCase">camelCase</warning>>
+    </div>
+</template>
+<script>
+    export default {
+      name: 'camelCase',
+      props: {
+        one: {required:true},
+        two: {required:true},
+        three: {required:true},
+        withCamelCase: {required:true},
+      }
+    }
+</script>""")
     myFixture.checkHighlighting()
   }
 }

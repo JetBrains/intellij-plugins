@@ -114,7 +114,7 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
   }
 
   override fun getAttributesDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
-    var props:List<XmlAttributeDescriptor> = emptyList()
+    var props:List<VueAttributeDescriptor> = emptyList()
     if (declaration.parent is JSProperty) {
       val obj = declaration.parent.context as JSObjectLiteralExpression
       val propsProperty = findProperty(obj, "props")
@@ -137,15 +137,9 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
       } else if (propsObject != null) {
         props = propsObject.properties.map { VueAttributeDescriptor(it.name!!, it) }
       }
-
-      if (props is MutableList) {
-        props.addAll(props.map {
-          val newName = org.jetbrains.vuejs.codeInsight.fromAsset(it.name)
-          if (it.name != newName) VueAttributeDescriptor(newName, it.declaration) else null
-        }.filterNotNull())
-      }
     }
     return HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context)!!.plus(props)
+      .plus(props.map { it.createKebabCaseIfDifferent() }.filterNotNull())
   }
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?) = getAttributesDescriptors(context).find { it.name == attributeName } ?:
                                                                                   VueAttributesProvider.vueAttributeDescriptor(attributeName)
