@@ -7,5 +7,5 @@ class CfnResourceNode(name: CfnScalarValueNode?,
                       val dependsOn: CfnResourceDependsOnNode?,
                       val allTopLevelProperties: Map<String, CfnNamedNode>) : CfnNamedNode(name) {
   val typeName: String?
-    get() = (type?.value as? CfnScalarValueNode)?.value
+    get() = type?.value?.value
 }

@@ -179,7 +179,7 @@ class YamlCloudFormationParser private constructor () {
 
   private fun firstLevelMapping(mapping: CfnKeyValue): CfnFirstLevelMappingNode = parseNameValues(
       mapping,
-      { mapping -> secondLevelMapping(mapping) },
+      { secondLevel -> secondLevelMapping(secondLevel) },
       { nameNode, list -> CfnFirstLevelMappingNode(nameNode, list) }
   )
 

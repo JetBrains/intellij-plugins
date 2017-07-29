@@ -170,7 +170,7 @@ class JsonCloudFormationParser private constructor () {
 
   private fun firstLevelMapping(mapping: JsonProperty): CfnFirstLevelMappingNode = parseNameValues(
       mapping,
-      { mapping -> secondLevelMapping(mapping) },
+      { secondLevel -> secondLevelMapping(secondLevel) },
       { nameNode, list -> CfnFirstLevelMappingNode(nameNode, list) }
   )
 
