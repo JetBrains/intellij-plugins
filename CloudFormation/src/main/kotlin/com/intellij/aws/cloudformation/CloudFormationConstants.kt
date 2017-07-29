@@ -8,6 +8,7 @@ object CloudFormationConstants {
 
   // from https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html
   val ParameterDescriptionLimit = 4000
+  val ParameterTypePropertyName = "Type"
 
   val CloudFormationInterfaceType = "AWS::CloudFormation::Interface"
   val CloudFormationInterfaceParameterLabels = "ParameterLabels"

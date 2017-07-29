@@ -36,6 +36,7 @@ class YamlCompletionTests : LightCodeInsightFixtureTestCase() {
   fun testParameterType2() = checkBasicCompletion("parameter_type_2.yaml",
       *(CloudFormationParameterType.allIds +
           CloudFormationConstants.AwsSpecificParameterTypes.sorted()).toTypedArray())
+  fun testParameterType3() = checkBasicCompletion("parameter_type_3.yaml")
 
   private fun checkBasicCompletion(fileName: String, vararg expectedElements: String) {
     myFixture.configureByFiles(fileName)

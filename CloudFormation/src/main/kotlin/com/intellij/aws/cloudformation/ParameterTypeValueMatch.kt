@@ -13,7 +13,9 @@ class ParameterTypeValueMatch private constructor(
       val valueNode = parsed.getCfnNodes(position).ofType<CfnScalarValueNode>().singleOrNull() ?: return null
 
       val parameterTypeNode = valueNode.parent(parsed)
-      if (parameterTypeNode !is CfnNameValueNode || parameterTypeNode.value != valueNode) {
+      if (parameterTypeNode !is CfnNameValueNode ||
+          parameterTypeNode.value != valueNode ||
+          parameterTypeNode.name?.value != CloudFormationConstants.ParameterTypePropertyName) {
         return null
       }
 
