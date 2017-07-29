@@ -1,8 +1,6 @@
 Menu
 Amazon Web Services <https://aws.amazon.com>
-Sign In to the Console <https://console.aws.amazon.com/console/home> Try 
-AWS for Free
-<https://portal.aws.amazon.com/gp/aws/developer/registration/index.html>
+Sign In to the Console <https://console.aws.amazon.com/console/home>
 <http://www.amazon.com/dp/B007S28IUW>
 AWS CloudFormation
 User Guide (API Version 2010-05-15)
@@ -44,6 +42,7 @@ User Guide (API Version 2010-05-15)
                 + Creating an EC2 Key Pair
                 + Estimating the Cost of Your Stack
                 + Viewing Stack Data and Resources
+                + Creating Quick-Create Links for Stacks
                 + Deleting a Stack
                 + Viewing Deleted Stacks
           o Using the AWS CLI
@@ -113,6 +112,7 @@ User Guide (API Version 2010-05-15)
                 + CloudFront
                 + CloudWatch
                 + CloudWatch Logs
+                + DynamoDB
                 + Amazon EC2
                 + Amazon ECS
                 + Amazon EFS
@@ -141,6 +141,19 @@ User Guide (API Version 2010-05-15)
                             * Update
           o Using Regular Expressions
           o Using CloudFormer to Create Templates
+    * Working with AWS CloudFormation StackSets
+          o StackSets Concepts
+          o Prerequisites
+          o Getting Started
+                + Create a New Stack Set
+                + Update Your Stack Set
+                + Delete Stack Instances
+                + Delete Stack Sets
+          o Target account gates
+          o Best Practices
+          o Limitations of StackSets
+          o Sample Templates
+          o Troubleshooting
     * Template Reference
           o AWS Resource Types
                 + AWS::ApiGateway::Account
@@ -149,6 +162,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::ApiGateway::BasePathMapping
                 + AWS::ApiGateway::ClientCertificate
                 + AWS::ApiGateway::Deployment
+                + AWS::ApiGateway::DomainName
                 + AWS::ApiGateway::Method
                 + AWS::ApiGateway::Model
                 + AWS::ApiGateway::Resource
@@ -174,6 +188,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::CloudFront::Distribution
                 + AWS::CloudTrail::Trail
                 + AWS::CloudWatch::Alarm
+                + AWS::CloudWatch::Dashboard
                 + AWS::CodeBuild::Project
                 + AWS::CodeCommit::Repository
                 + AWS::CodeDeploy::Application
@@ -194,9 +209,16 @@ User Guide (API Version 2010-05-15)
                 + AWS::DataPipeline::Pipeline
                 + AWS::DirectoryService::MicrosoftAD
                 + AWS::DirectoryService::SimpleAD
+                + AWS::DMS::Certificate
+                + AWS::DMS::Endpoint
+                + AWS::DMS::EventSubscription
+                + AWS::DMS::ReplicationInstance
+                + AWS::DMS::ReplicationSubnetGroup
+                + AWS::DMS::ReplicationTask
                 + AWS::DynamoDB::Table
                 + AWS::EC2::CustomerGateway
                 + AWS::EC2::DHCPOptions
+                + AWS::EC2::EgressOnlyInternetGateway
                 + AWS::EC2::EIP
                 + AWS::EC2::EIPAssociation
                 + AWS::EC2::FlowLog
@@ -254,6 +276,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::ElasticLoadBalancingV2::TargetGroup
                 + AWS::Elasticsearch::Domain
                 + AWS::EMR::Cluster
+                + AWS::EMR::InstanceFleetConfig
                 + AWS::EMR::InstanceGroupConfig
                 + AWS::EMR::SecurityConfiguration
                 + AWS::EMR::Step
@@ -276,6 +299,9 @@ User Guide (API Version 2010-05-15)
                 + AWS::IoT::ThingPrincipalAttachment
                 + AWS::IoT::TopicRule
                 + AWS::Kinesis::Stream
+                + AWS::KinesisAnalytics::Application
+                + AWS::KinesisAnalytics::ApplicationOutput
+                + AWS::KinesisAnalytics::ApplicationReferenceDataSource
                 + AWS::KinesisFirehose::DeliveryStream
                 + AWS::KMS::Alias
                 + AWS::KMS::Key
@@ -359,6 +385,13 @@ User Guide (API Version 2010-05-15)
                   StepScalingPolicyConfiguration
                 + Application Auto Scaling ScalingPolicy
                   StepScalingPolicyConfiguration StepAdjustment
+                + Application Auto Scaling ScalingPolicy
+                  CustomizedMetricSpecification
+                + Application Auto Scaling ScalingPolicy MetricDimension
+                + Application Auto Scaling ScalingPolicy
+                  PredefinedMetricSpecification
+                + Application Auto Scaling ScalingPolicy
+                  TargetTrackingScalingPolicyConfiguration
                 + AutoScaling Block Device Mapping
                 + AutoScaling EBS Block Device
                 + Auto Scaling MetricsCollection
@@ -394,6 +427,8 @@ User Guide (API Version 2010-05-15)
                 + AWS CodeBuild Project Source
                 + AWS CodeCommit Repository Trigger
                 + AWS CodeDeploy DeploymentConfig MinimumHealthyHosts
+                + AWS CodeDeploy DeploymentGroup Alarm
+                + AWS CodeDeploy DeploymentGroup AlarmConfiguration
                 + AWS CodeDeploy DeploymentGroup Deployment
                 + AWS CodeDeploy DeploymentGroup Deployment Revision
                 + AWS CodeDeploy DeploymentGroup Deployment Revision
@@ -403,6 +438,7 @@ User Guide (API Version 2010-05-15)
                 + AWS CodeDeploy DeploymentGroup Ec2TagFilters
                 + AWS CodeDeploy DeploymentGroup
                   OnPremisesInstanceTagFilters
+                + AWS CodeDeploy DeploymentGroup TriggerConfig
                 + AWS CodePipeline CustomActionType ArtifactDetails
                 + AWS CodePipeline CustomActionType ConfigurationProperties
                 + AWS CodePipeline CustomActionType Settings
@@ -447,6 +483,9 @@ User Guide (API Version 2010-05-15)
                 + AWS Data Pipeline PipelineObjects
                 + AWS Data Pipeline Data Pipeline Object Fields
                 + AWS Data Pipeline Pipeline PipelineTags
+                + AWS DMS Endpoint DynamoDBSettings
+                + AWS DMS Endpoint MongoDbSettings
+                + AWS DMS Endpoint S3Settings
                 + AWS Directory Service MicrosoftAD VpcSettings
                 + AWS Directory Service SimpleAD VpcSettings
                 + DynamoDB Attribute Definitions
@@ -456,6 +495,7 @@ User Guide (API Version 2010-05-15)
                 + DynamoDB Projection Object
                 + DynamoDB Provisioned Throughput
                 + DynamoDB Table StreamSpecification
+                + DynamoDB Table TimeToLiveSpecification
                 + Amazon EC2 Block Device Mapping Property
                 + Amazon Elastic Block Store Block Device Property
                 + Amazon EC2 Instance SsmAssociations
@@ -533,39 +573,38 @@ User Guide (API Version 2010-05-15)
                 + Amazon ES Domain ElasticsearchClusterConfig
                 + Amazon ES Domain SnapshotOptions
                 + Amazon EMR Cluster Application
+                + Amazon EMR Cluster AutoScalingPolicy
                 + Amazon EMR Cluster BootstrapActionConfig
-                + Amazon EMR Cluster BootstrapActionConfig
-                  ScriptBootstrapActionConfig
-                + Amazon EMR Cluster Configuration
-                + Amazon EMR Cluster JobFlowInstancesConfig
-                + Amazon EMR Cluster JobFlowInstancesConfig
-                  InstanceGroupConfig
-                + Amazon EMR Cluster JobFlowInstancesConfig
-                  InstanceGroupConfig
-                + Amazon EMR Cluster JobFlowInstancesConfig
-                  InstanceGroupConfig AutoScalingPolicy
-                + Amazon EMR Cluster JobFlowInstancesConfig
-                  InstanceGroupConfig AutoScalingPolicy
-                + Amazon EMR Cluster JobFlowInstancesConfig
-                  InstanceGroupConfig AutoScalingPolicy Constraints
-                  ScalingRule
-                + Amazon EMR Cluster JobFlowInstancesConfig
-                  InstanceGroupConfig ScalingAction
-                + Amazon EMR Cluster JobFlowInstancesConfig
-                  InstanceGroupConfig ScalingTrigger
-                + Amazon EMR Cluster SimpleScalingPolicyConfiguration
-                + Amazon EMR Cluster JobFlowInstancesConfig
-                  InstanceGroupConfig ScalingTrigger
-                  CloudWatchAlarmDefinition
-                + Amazon EMR Cluster MetricDimension
-                + Amazon EMR Cluster ScalingTrigger
-                + Amazon EMR Cluster ScalingAction
-                + Amazon EMR Cluster SimpleScalingPolicyConfiguration
                 + Amazon EMR Cluster CloudWatchAlarmDefinition
+                + Amazon EMR Cluster Configuration
+                + Amazon EMR Cluster InstanceFleetConfig
+                + Amazon EMR Cluster
+                  InstanceFleetProvisioningSpecifications
+                + Amazon EMR Cluster InstanceGroupConfig
+                + Amazon EMR Cluster InstanceTypeConfig
+                + Amazon EMR Cluster JobFlowInstancesConfig
+                + Amazon EMR Cluster MetricDimension
+                + Amazon EMR Cluster PlacementType
+                + Amazon EMR Cluster ScalingAction
+                + Amazon EMR Cluster ScalingConstraints
+                + Amazon EMR Cluster ScalingRule
+                + Amazon EMR Cluster ScalingTrigger
+                + Amazon EMR Cluster ScriptBootstrapActionConfig
+                + Amazon EMR Cluster SimpleScalingPolicyConfiguration
+                + Amazon EMR Cluster SpotProvisioningSpecification
                 + Amazon EMR EbsConfiguration
                 + Amazon EMR EbsConfiguration EbsBlockDeviceConfigs
                 + Amazon EMR EbsConfiguration EbsBlockDeviceConfig
                   VolumeSpecification
+                + Amazon EMR InstanceFleetConfig Configuration
+                + Amazon EMR InstanceFleetConfig EbsBlockDeviceConfig
+                + Amazon EMR InstanceFleetConfig EbsConfiguration
+                + Amazon EMR InstanceFleetConfig
+                  InstanceFleetProvisioningSpecifications
+                + Amazon EMR InstanceFleetConfig InstanceTypeConfig
+                + Amazon EMR InstanceFleetConfig
+                  SpotProvisioningSpecification
+                + Amazon EMR InstanceFleetConfig VolumeSpecification
                 + Amazon EMR InstanceGroupConfig AutoScalingPolicy
                 + Amazon EMR InstanceGroupConfig CloudWatchAlarmDefinition
                 + Amazon EMR InstanceGroupConfig MetricDimension
@@ -576,7 +615,7 @@ User Guide (API Version 2010-05-15)
                 + Amazon EMR InstanceGroupConfig
                   SimpleScalingPolicyConfiguration
                 + Amazon EMR Step HadoopJarStepConfig
-                + Amazon EMR Step HadoopJarStepConfig KeyValue
+                + Amazon EMR Step KeyValue
                 + GameLift Alias RoutingStrategy
                 + GameLift Build StorageLocation
                 + GameLift Fleet EC2InboundPermission
@@ -594,7 +633,38 @@ User Guide (API Version 2010-05-15)
                 + AWS IoT S3 Action
                 + AWS IoT Sns Action
                 + AWS IoT Sqs Action
+                + AWS IoT Thing AttributePayload
                 + AWS IoT TopicRulePayload
+                + Kinesis Analytics Application CSVMappingParameters
+                + Kinesis Analytics Application Input
+                + Kinesis Analytics Application InputParallelism
+                + Kinesis Analytics Application InputSchema
+                + Kinesis Analytics Application JSONMappingParameters
+                + Kinesis Analytics Application KinesisFirehoseInput
+                + Kinesis Analytics Application KinesisStreamsInput
+                + Kinesis Analytics Application MappingParameters
+                + Kinesis Analytics Application RecordColumn
+                + Kinesis Analytics Application RecordFormat
+                + Kinesis Analytics ApplicationOutput DestinationSchema
+                + Kinesis Analytics ApplicationOutput KinesisFirehoseOutput
+                + Kinesis Analytics ApplicationOutput KinesisStreamsOutput
+                + Kinesis Analytics ApplicationOutput Output
+                + Kinesis Analytics ApplicationReferenceDataSource
+                  CSVMappingParameters
+                + Kinesis Analytics ApplicationReferenceDataSource
+                  JSONMappingParameters
+                + Kinesis Analytics ApplicationReferenceDataSource
+                  MappingParameters
+                + Kinesis Analytics ApplicationReferenceDataSource
+                  RecordColumn
+                + Kinesis Analytics ApplicationReferenceDataSource
+                  RecordFormat
+                + Kinesis Analytics ApplicationReferenceDataSource
+                  ReferenceDataSource
+                + Kinesis Analytics ApplicationReferenceDataSource
+                  ReferenceSchema
+                + Kinesis Analytics ApplicationReferenceDataSource
+                  S3ReferenceDataSource
                 + Kinesis Firehose DeliveryStream Destination
                   CloudWatchLoggingOptions
                 + Kinesis Firehose DeliveryStream
@@ -641,6 +711,7 @@ User Guide (API Version 2010-05-15)
                 + AWS OpsWorks TimeBasedAutoScaling Type
                 + AWS OpsWorks VolumeConfiguration Type
                 + Amazon Redshift Parameter Type
+                + Amazon Redshift Cluster LoggingProperties
                 + AWS CloudFormation Resource Tags
                 + Amazon RDS OptionGroup OptionConfigurations
                 + Amazon RDS OptionGroup OptionConfigurations
@@ -815,6 +886,196 @@ since the preceding release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
 
+New resources for Amazon Kinesis Analytics support
+
+July 28, 2017
+
+AWS::KinesisAnalytics::Application
+
+    Use the AWS CloudFormation AWS::KinesisAnalytics::Application resource
+    to create an Amazon Kinesis Analytics application.
+
+AWS::KinesisAnalytics::ApplicationOutput
+
+    Use the AWS CloudFormation AWS::KinesisAnalytics::ApplicationOutput 
+    resource to add an external destination to your Amazon Kinesis
+    Analytics application.
+
+AWS::KinesisAnalytics::ApplicationReferenceDataSource
+
+    Use the AWS CloudFormation 
+    AWS::KinesisAnalytics::ApplicationReferenceDataSource resource to add a
+    reference data source to an existing Amazon Kinesis Analytics
+    application.
+
+2010-05-15
+
+Use StackSets to centrally manage stacks across accounts and regions.
+
+July 25, 2017
+
+StackSets enables you to create, update, or delete stacks across multiple 
+accounts and regions in a single operation. Using an administrator account, 
+you define and manage an AWS CloudFormation template, and use the template 
+as the basis for provisioning stacks into selected target accounts across 
+specified regions. For more information about StackSets, see Working with 
+AWS CloudFormation StackSets.
+
+2010-05-15
+
+View stack events by client request token
+
+July 14, 2017
+
+In the console, stack operations display the client request token on the 
+Events tab. All events triggered by a given stack operation are assigned 
+the same client request token, which you can use to track operations. For 
+more information, see Viewing Stack Data and Resources and StackEvent
+<http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_StackEvent.html> 
+in the AWS CloudFormation API Reference.
+
+2010-05-15
+
+Use stack quick-create links
+
+July 14, 2017
+
+Use quick-create links to get stacks up and running quickly. You can 
+specify the template URL, stack name, and template parameters to 
+prepopulate a single Create Stack Wizard page. For more information, see 
+Creating Quick-Create Links for Stacks.
+
+New resources for AWS Database Migration Service support
+
+July 12, 2017
+
+AWS::DMS::Certificate
+
+    Use the AWS::DMS::Certificate resource to create an SSL certificate
+    that encrypts connections between AWS DMS endpoints and the replication
+    instance.
+
+AWS::DMS::Endpoint
+
+    Use the AWS::DMS::Endpoint resource to create an AWS DMS endpoint.
+
+AWS::DMS::EventSubscription
+
+    Use the AWS::DMS::EventSubscription resource to get notifications for
+    AWS DMS events through the Amazon Simple Notification Service.
+
+AWS::DMS::ReplicationInstance
+
+    Use the AWS::DMS::ReplicationInstance resource to create an AWS DMS
+    replication instance.
+
+AWS::DMS::ReplicationSubnetGroup
+
+    Use the AWS::DMS::ReplicationSubnetGroup resource to create an AWS DMS
+    replication subnet group.
+
+AWS::DMS::ReplicationTask
+
+    Use the AWS::DMS::ReplicationTask resource to create an AWS DMS
+    replication task.
+
+2010-05-15
+
+New resources
+
+July 5, 2017
+
+AWS::CloudWatch::Dashboard
+
+    Use the AWS::CloudWatch::Dashboard resource to specify a custom
+    CloudWatch dashboard for your CloudWatch console.
+
+AWS::ApiGateway::DomainName
+
+    Use the AWS::ApiGateway::DomainName resource to specify a custom,
+    friendly URL for your API that's deployed to Amazon API Gateway.
+
+AWS::EC2::EgressOnlyInternetGateway
+
+    Use the AWS::EC2::EgressOnlyInternetGateway resource to create an
+    egress-only internet gateway for your VPC.
+
+AWS::EMR::InstanceFleetConfig
+
+    Use the InstanceFleetConfig resource to configure a Spot Instance fleet
+    for an Amazon EMR cluster.
+
+2010-05-15
+
+Updated resources
+
+July 5, 2017
+
+AWS::ApiGateway::RestApi
+
+    Use the BinaryMediaTypes property to specify supported binary media
+    types.
+
+AWS::ApplicationAutoScaling::ScalingPolicy
+
+    Use the TargetTrackingScalingPolicyConfiguration property to specify a
+    a target tracking scaling policy configuration.
+
+AWS::CloudTrail::Trail
+
+    Use the TrailName property to specify a custom name for an AWS
+    CloudTrail resource.
+
+    Use the Tags property to specify resource tags.
+
+AWS::CodeDeploy::DeploymentGroup
+
+    Use the AlarmConfiguration property to configure alarms for the
+    deployment group.
+
+    Use the TriggerConfigurations property to configure notification
+    triggers for the deployment group.
+
+AWS::EMR::Cluster
+
+    Use the CoreInstanceFleet property and the MasterInstanceFleet 
+    property in the Amazon EMR Cluster JobFlowInstancesConfig property type
+    to configure the Spot Instance fleet for an Amazon EMR cluster.
+
+AWS::DynamoDB::Table
+
+    Use the TimeToLiveSpecification property to specify the Time to Live
+    (TTL) settings for an Amazon DynamoDB table.
+
+    Use the Tags property to specify resource tags for a DynamoDB table.
+
+AWS::EC2::Instance
+
+    The IamInstanceProfile property now supports No interruption updates.
+
+AWS::EC2::Route
+
+    Use the EgressOnlyInternetGatewayId property to specify an egress-only
+    Internet gateway for an EC2 route.
+
+AWS::Kinesis::Stream
+
+    Use the RetentionPeriodHours property to specify the number of hours
+    that data records stored in shards remain accessible.
+
+AWS::RDS::DBCluster
+
+    Use the ReplicationSourceIdentifier property to create a DB cluster as
+    a Read Replica of another DB cluster or an Amazon RDS MySQL DB
+    instance.
+
+AWS::Redshift::Cluster
+
+    Use the LoggingProperties property to create audit log files and store
+    them in Amazon S3.
+
+2010-05-15
+
 New resources
 
 June 6, 2017
@@ -878,7 +1139,7 @@ AWS::Events::Rule
 
     The RoleArn property is deprecated on the Rule resource.
 
-    Use the RoleArn property on the Target data type to specify the IAM
+    Use the RoleArn property on the Target property type to specify the IAM
     role to use for a target.
 
 AWS::Kinesis::Stream

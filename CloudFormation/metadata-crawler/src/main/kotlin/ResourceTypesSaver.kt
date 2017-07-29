@@ -90,9 +90,9 @@ object ResourceTypesSaver {
         resourceTypeName = "AWS::Config::ConfigRule"
       }
 
-      fun addAttribute(resourceTypeName: String, attribute: String, description: String) {
-        val attributesList = result.getOrPut(resourceTypeName, { mutableMapOf() })
-        attributesList[attribute] = Pair(CloudFormationResourceAttribute(attribute), description)
+      fun addAttribute(_resourceTypeName: String, _attribute: String, _description: String) {
+        val attributesList = result.getOrPut(_resourceTypeName, { mutableMapOf() })
+        attributesList[_attribute] = Pair(CloudFormationResourceAttribute(_attribute), _description)
       }
 
       if (resourceTypeName == "AWS::DirectoryService::MicrosoftAD and AWS::DirectoryService::SimpleAD") {
@@ -225,6 +225,8 @@ object ResourceTypesSaver {
             type = "String"
           } else if (resourceTypeName == "AWS::Cognito::IdentityPool" && name == "SupportedLoginProviders") {
             type = "String"
+          } else if (resourceTypeName == "AWS::SNS::TopicPolicy" && name == "PolicyDocument") {
+            type = "JSON or YAML"
           } else {
             // TODO
             if (resourceTypeName != "AWS::Route53::RecordSet" && !(name == "ScheduleExpression" && resourceTypeName == "AWS::Events::Rule")) {
