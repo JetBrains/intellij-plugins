@@ -62,11 +62,7 @@
     <documentationProvider implementation="com.intellij.aws.cloudformation.CloudFormationDocumentationProvider"/>
     <fileTypeFactory implementation="com.intellij.aws.cloudformation.CloudFormationFileTypeFactory"/>
 
-    <lang.findUsagesProvider language="yaml" implementationClass="com.intellij.aws.cloudformation.YamlFindUsagesProvider"/>
-
     <psi.referenceContributor implementation="com.intellij.aws.cloudformation.CloudFormationReferenceContributor"/>
-
-    <fileTypeDetector implementation="com.intellij.aws.cloudformation.CloudFormationFileTypeDetector"/>
 
     <localInspection language="JSON" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
                      key="aws.cloudformation.inspections.formatViolation"
