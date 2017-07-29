@@ -37,8 +37,8 @@
     <p>Parameters section: 'param' live template, verify Parameters section, provide completion on parameter properties and type</p>
   ]]></change-notes>
 
-  <!-- IDEA 2017.1 -->
-  <idea-version since-build="171.3566.24" until-build="172.*"/>
+  <!-- from IDEA 2017.1 to IDEA 2017.3 -->
+  <idea-version since-build="171.3566.24" until-build="173.*"/>
 
   <depends>com.intellij.modules.lang</depends>
   <depends>org.jetbrains.plugins.yaml</depends>
@@ -62,7 +62,11 @@
     <documentationProvider implementation="com.intellij.aws.cloudformation.CloudFormationDocumentationProvider"/>
     <fileTypeFactory implementation="com.intellij.aws.cloudformation.CloudFormationFileTypeFactory"/>
 
+    <lang.findUsagesProvider language="yaml" implementationClass="com.intellij.aws.cloudformation.YamlFindUsagesProvider"/>
+
     <psi.referenceContributor implementation="com.intellij.aws.cloudformation.CloudFormationReferenceContributor"/>
+
+    <fileTypeDetector implementation="com.intellij.aws.cloudformation.CloudFormationFileTypeDetector"/>
 
     <localInspection language="JSON" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
                      key="aws.cloudformation.inspections.formatViolation"
