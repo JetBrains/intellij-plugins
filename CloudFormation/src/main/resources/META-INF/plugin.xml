@@ -53,7 +53,10 @@
   </project-components>
 
   <actions>
-    <action id="NewAwsCloudFormationFile" class="com.intellij.aws.cloudformation.CreateAWSTemplateFileAction">
+    <action id="NewJsonCloudFormationFile" class="com.intellij.aws.cloudformation.CreateJsonTemplateFileAction">
+      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
+    </action>
+    <action id="NewYamlCloudFormationFile" class="com.intellij.aws.cloudformation.CreateYamlTemplateFileAction">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
     </action>
   </actions>
@@ -85,7 +88,8 @@
     <completion.contributor language="JSON" order="first" implementationClass="com.intellij.aws.cloudformation.JsonCloudFormationCompletionContributor"/>
     <completion.contributor language="yaml" order="first" implementationClass="com.intellij.aws.cloudformation.YamlCloudFormationCompletionContributor"/>
 
-    <internalFileTemplate name="AWS CloudFormation Template" />
+    <internalFileTemplate name="AWS CloudFormation Template (JSON)" />
+    <internalFileTemplate name="AWS CloudFormation Template (YAML)" />
 
     <liveTemplateContext implementation="com.intellij.aws.cloudformation.JsonCloudFormationCodeContextType"/>
     <liveTemplateContext implementation="com.intellij.aws.cloudformation.YamlCloudFormationCodeContextType"/>
