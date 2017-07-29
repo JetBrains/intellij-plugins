@@ -2,6 +2,7 @@ package com.intellij.aws.cloudformation
 
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.json.JsonFileType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PermanentInstallationID
@@ -17,11 +18,15 @@ import com.intellij.openapi.editor.ex.FocusChangeListener
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiManager
 import com.intellij.util.io.HttpRequests
 import org.jdom.JDOMException
+import org.jetbrains.yaml.YAMLFileType
 import java.io.IOException
 import java.net.URLEncoder
 import java.net.UnknownHostException
@@ -65,10 +70,25 @@ class CloudFormationUpdateComponent : ApplicationComponent.Adapter(), Disposable
   }
 
   private class EditorListener(val parentDisposable: Disposable) : EditorFactoryAdapter() {
+    private fun checkPsi(project: Project, file: VirtualFile): Boolean {
+      if (file.fileType === YamlCloudFormationFileType.INSTANCE ||
+          file.fileType === JsonCloudFormationFileType.INSTANCE)
+        return true
+
+      try {
+        val psiFile = PsiManager.getInstance(project).findFile(file)
+        return psiFile != null && CloudFormationPsiUtils.isCloudFormationFile(psiFile)
+      } catch (t: Throwable) {
+        LOG.debug("Unable to detect whether file ${file.path} is CloudFormation file")
+        return false
+      }
+    }
+
     override fun editorCreated(event: EditorFactoryEvent) {
       val document = event.editor.document
       val file = FileDocumentManager.getInstance().getFile(document)
-      if (file != null && file.fileType in FILE_TYPES) {
+      val project = event.editor.project
+      if (project != null && file != null && file.fileType in FILE_TYPES && checkPsi(project, file)) {
         updateOnPooledThread()
 
         (event.editor as? EditorEx)?.addFocusListener(object : FocusChangeListener {
@@ -89,6 +109,8 @@ class CloudFormationUpdateComponent : ApplicationComponent.Adapter(), Disposable
     private val LAST_VERSION: String = "$PLUGIN_ID.LAST_VERSION"
 
     private val FILE_TYPES: Set<FileType> = setOf(
+        YAMLFileType.YML,
+        JsonFileType.INSTANCE,
         JsonCloudFormationFileType.INSTANCE,
         YamlCloudFormationFileType.INSTANCE
     )
