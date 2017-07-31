@@ -42,5 +42,26 @@ class VueCompletionTest : LightPlatformCodeInsightFixtureTestCase() {
     myFixture.completeBasic()
     UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "v-bind", "v-else")
   }
+
+  fun testCompleteImportedComponent() {
+    myFixture.configureByText("compUI.vue", """
+<template>{{ strangeCase }}</template>
+<script>
+  export default {
+    props: ['strangeCase']
+  }
+</script>
+""")
+    myFixture.configureByText("CompleteImportedComponent.vue", """
+<template>
+<co<caret>
+</template>
+<script>
+import compUI from 'compUI.vue'
+</script>
+""")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "comp-u-i")
+  }
 }
 
