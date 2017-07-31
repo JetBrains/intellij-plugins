@@ -4,9 +4,9 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.xml.XmlAttributeDescriptor;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularControllerIndex;
-import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularModuleIndex;
 import org.jetbrains.annotations.NotNull;
@@ -30,9 +30,10 @@ public class AngularAttributesRegistry {
 
   public static boolean isAngularExpressionAttribute(XmlAttribute parent) {
     final String attributeName = DirectiveUtil.normalizeAttributeName(parent.getName());
-    final JSImplicitElement directive = AngularIndexUtil.resolve(parent.getProject(), AngularDirectivesDocIndex.KEY, attributeName);
-    if (directive != null) {
-      final String restrict = directive.getTypeString();
+    XmlAttributeDescriptor descriptor = AngularJSAttributeDescriptorsProvider.getDescriptor(attributeName, parent.getParent());
+    final PsiElement directive = descriptor != null ? descriptor.getDeclaration() : null;
+    if (directive instanceof JSImplicitElement) {
+      final String restrict = ((JSImplicitElement)directive).getTypeString();
       final String param = restrict != null ? restrict.split(";", -1)[2] : "";
       return param.endsWith("expression") || param.startsWith("string");
     }
@@ -44,9 +45,10 @@ public class AngularAttributesRegistry {
     if (value == null || !value.startsWith("{")) return false;
 
     final String attributeName = DirectiveUtil.normalizeAttributeName(parent.getName());
-    final JSImplicitElement directive = AngularIndexUtil.resolve(parent.getProject(), AngularDirectivesDocIndex.KEY, attributeName);
-    if (directive != null) {
-      final String restrict = directive.getTypeString();
+    XmlAttributeDescriptor descriptor = AngularJSAttributeDescriptorsProvider.getDescriptor(attributeName, parent.getParent());
+    final PsiElement directive = descriptor != null ? descriptor.getDeclaration() : null;
+    if (directive instanceof JSImplicitElement) {
+      final String restrict = ((JSImplicitElement)directive).getTypeString();
       final String type = restrict != null ? restrict.split(";", -1)[2] : "";
       return type.contains("object literal") || type.equals("mixed");
     }
