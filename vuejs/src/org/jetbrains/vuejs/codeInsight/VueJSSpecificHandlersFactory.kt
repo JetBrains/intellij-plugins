@@ -19,6 +19,8 @@ class VueJSSpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
                                                  ignorePerformanceLimits: Boolean): ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> {
     return VueJSReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits)
   }
+
+
 }
 
 class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressionImpl?,

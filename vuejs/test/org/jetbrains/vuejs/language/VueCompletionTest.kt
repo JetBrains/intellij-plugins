@@ -84,4 +84,19 @@ import compUI from 'compUI.vue'
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "strangeCase", "StrangeCase", "strange-case")
   }
+
+  fun testCompletePropsInInterpolation() {
+    myFixture.configureByText("CompletePropsInInterpolation.vue", """
+<template>
+{{<caret>}}
+</template>
+<script>
+export default {
+  name: 'childComp',
+  props: {'myMessage': {}}
+}
+</script>""")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "myMessage", "my-message", "MyMessage")
+  }
 }
