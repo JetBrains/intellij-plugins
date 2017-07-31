@@ -290,4 +290,8 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
                                         () -> myFixture.testCompletion("$event.ts", "$event.after.ts", "angular2.js"));
   }
 
+  public void testElementOnly() throws Exception {
+    myFixture.configureByFiles("select.html", "angular.js");
+    assertNotSame(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
+  }
 }
