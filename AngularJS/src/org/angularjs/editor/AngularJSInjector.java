@@ -3,6 +3,7 @@ package org.angularjs.editor;
 import com.intellij.json.JsonLanguage;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
+import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -32,6 +33,7 @@ public class AngularJSInjector implements MultiHostInjector {
 
   @Override
   public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
+    if (context.getLanguage() == XMLLanguage.INSTANCE) return;
     // check that we have angular directives indexed before injecting
     final Project project = context.getProject();
     if (!AngularIndexUtil.hasAngularJS(project)) return;
