@@ -53,12 +53,12 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
 
 class VueAttributeDescriptor(private val name:String,
                              private val element:PsiElement? = null) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
-  private var suppressRequire = false
+  private var suppressRequired = false
   override fun getName() = name
   override fun getDeclaration() = element
   override fun init(element: PsiElement?) {}
-  override fun isRequired() = !suppressRequire && element is JSProperty && findProperty(element.objectLiteralExpressionInitializer,
-                                                                                        "required") != null
+  override fun isRequired() = !suppressRequired && element is JSProperty && findProperty(element.objectLiteralExpressionInitializer,
+                                                                                         "required") != null
   override fun isFixed() = false
   override fun hasIdType() = false
   override fun getDependences(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY
@@ -73,14 +73,10 @@ class VueAttributeDescriptor(private val name:String,
   override fun getTypeName() = null
   override fun getIcon(): Icon = VuejsIcons.Vue
 
-  fun createKebabCaseIfDifferent() : VueAttributeDescriptor? {
-    val newName = org.jetbrains.vuejs.codeInsight.fromAsset(name)
-    if (name != newName) {
-      val descriptor = VueAttributeDescriptor(newName, element)
-      descriptor.suppressRequire = true
-      return descriptor
-    }
-    return null
+  fun createNameVariant(newName: String) : VueAttributeDescriptor {
+    val descriptor = VueAttributeDescriptor(newName, element)
+    descriptor.suppressRequired = true
+    return descriptor
   }
 }
 

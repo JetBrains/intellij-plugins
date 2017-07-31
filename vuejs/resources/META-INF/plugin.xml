@@ -42,7 +42,7 @@
     <intentionAndInspectionFilter language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueInspectionFilter"/>
     <inheritedLanguagesConfigurableProvider language="VueJS"
                                             implementationClass="org.jetbrains.vuejs.codeInsight.VueJSLanguageConfigurableProvider"/>
-
+    <dialectSpecificHandlersFactory language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory"/>
   </extensions>
   <extensions defaultExtensionNs="com.jetbrains">
     <javaScriptDebugAware implementation="org.jetbrains.vuejs.run.VueDebugAware"/>

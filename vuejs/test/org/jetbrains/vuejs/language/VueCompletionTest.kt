@@ -63,5 +63,25 @@ import compUI from 'compUI.vue'
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "comp-u-i")
   }
-}
 
+  fun testCompleteAttributesFromProps() {
+    myFixture.configureByText("compUI.vue", """
+<template>{{ strangeCase }}</template>
+<script>
+  export default {
+    props: ['strangeCase']
+  }
+</script>
+""")
+    myFixture.configureByText("CompleteAttributesFromProps.vue", """
+<template>
+<compUI <caret>></compUI>
+</template>
+<script>
+import compUI from 'compUI.vue'
+</script>
+""")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "strangeCase", "StrangeCase", "strange-case")
+  }
+}

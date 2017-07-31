@@ -5,10 +5,15 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -20,7 +25,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ArrayUtil
-import com.intellij.util.ObjectUtils
+import com.intellij.util.Processor
 import com.intellij.xml.XmlAttributeDescriptor
 import com.intellij.xml.XmlElementDescriptor
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
@@ -94,6 +99,14 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       withIcon(VuejsIcons.Vue)
 }
 
+fun tagDescriptorFromObjectLiteral(obj : JSObjectLiteralExpression) : VueElementDescriptor? {
+  val nameProperty = obj.findProperty("name")
+  val refProp = nameProperty ?: if (obj.properties.isNotEmpty()) obj.properties[0] else return null
+  val name = if (nameProperty != null && nameProperty.value != null) StringUtil.unquoteString(nameProperty.value!!.text)
+  else FileUtil.getNameWithoutExtension(refProp.containingFile.name)
+  return VueElementDescriptor(JSImplicitElementImpl(name, refProp))
+}
+
 class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescriptor {
   override fun getDeclaration() = element
   override fun getName(context: PsiElement?):String = (context as? XmlTag)?.name ?: name
@@ -114,35 +127,79 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
   }
 
   override fun getAttributesDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
-    var props:List<VueAttributeDescriptor> = emptyList()
-    if (declaration.parent is JSProperty) {
-      val obj = declaration.parent.context as JSObjectLiteralExpression
-      val propsProperty = findProperty(obj, "props")
-      var propsArray = ObjectUtils.tryCast(propsProperty?.value, JSArrayLiteralExpression::class.java)
-      var propsObject = propsProperty?.objectLiteralExpressionInitializer
-      if (propsArray == null && propsObject == null) {
-        val initializerReference = propsProperty?.initializerReference
-        if (initializerReference != null) {
-          val local = JSStubBasedPsiTreeUtil.resolveLocally(initializerReference, propsProperty!!)
-          val initializer = (local as? JSVariable)?.initializerOrStub
-          if (initializer != null) {
-            propsObject = initializer as? JSObjectLiteralExpression
-            propsArray = initializer as? JSArrayLiteralExpression
+    val base = HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context)
+
+    val propsProperty = getPropsProperty()
+    if (propsProperty != null) {
+      @Suppress("UNCHECKED_CAST")
+      val props = readProps(propsProperty, Processor.TRUE as Processor<String>)
+      val alternatives : MutableSet<VueAttributeDescriptor> = mutableSetOf()
+      props.forEach {
+        val attr = it
+        getAllNameVariants(it.name).minus(it.name).forEach { alternatives.add(attr.createNameVariant(it)) }
+      }
+      return base!!.plus(props).plus(alternatives)
+    }
+    return base
+  }
+
+  private fun getPropsProperty() : JSProperty? {
+    val obj = (declaration.parent as? JSProperty)?.context as? JSObjectLiteralExpression
+    return if (obj != null) findProperty(obj, "props") else null
+  }
+
+  private fun readProps(propsProperty : JSProperty, filter : Processor<String>): List<VueAttributeDescriptor> {
+    var propsObject = propsProperty.objectLiteralExpressionInitializer
+    if (propsObject == null) {
+      if (propsProperty.initializerReference != null) {
+        val resolved = JSStubBasedPsiTreeUtil.resolveLocally(propsProperty.initializerReference!!, propsProperty)
+        if (resolved != null) {
+          propsObject = JSStubBasedPsiTreeUtil
+            .findDescendants(resolved, JSStubElementTypes.OBJECT_LITERAL_EXPRESSION).find { it.context == resolved }
+          if (propsObject == null) {
+            return readPropsFromArray(resolved, filter)
           }
         }
       }
-      if (propsArray != null) {
-        props = propsArray.expressions.filter { it is JSLiteralExpression && it.isQuotedLiteral }
-          .map { VueAttributeDescriptor(StringUtil.unquoteString(it.text), it) }
-      } else if (propsObject != null) {
-        props = propsObject.properties.map { VueAttributeDescriptor(it.name!!, it) }
-      }
     }
-    return HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context)!!.plus(props)
-      .plus(props.map { it.createKebabCaseIfDifferent() }.filterNotNull())
+    if (propsObject != null) {
+      return propsObject.properties.filter { filter.process(it.name!!) }.map { VueAttributeDescriptor(it.name!!, it) }
+    }
+    return readPropsFromArray(propsProperty, filter)
   }
-  override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?) = getAttributesDescriptors(context).find { it.name == attributeName } ?:
-                                                                                  VueAttributesProvider.vueAttributeDescriptor(attributeName)
+
+  private fun readPropsFromArray(holder: PsiElement, filter: Processor<String>): List<VueAttributeDescriptor> {
+    return JSStubBasedPsiTreeUtil.findDescendants(holder, JSStubElementTypes.LITERAL_EXPRESSION)
+      .filter {
+        var result = it.isQuotedLiteral && filter.process(StringUtil.unquoteString(it.text))
+        if (result) {
+          val context = it.context
+          result = (context is JSArrayLiteralExpression) && (context.parent == holder) || context == holder
+        }
+        result
+      }.map { VueAttributeDescriptor(StringUtil.unquoteString(it.text), it) }
+  }
+
+  companion object {
+    private val BIND_VARIANTS = setOf(":", "@", "v-bind:", "v-on:")
+  }
+
+  override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
+    if (attributeName == null) return null
+    val prefix = BIND_VARIANTS.find { attributeName.startsWith(it) }
+    val normalizedName = if (prefix != null) attributeName.substring(prefix.length) else attributeName
+
+    val nameVariants = getAllNameVariants(normalizedName)
+
+    val propsProperty = getPropsProperty()
+    if (propsProperty != null) {
+      val descriptor = readProps(propsProperty, Processor { it in nameVariants }).firstOrNull()
+      return if (descriptor?.name != attributeName) descriptor?.createNameVariant(attributeName) else descriptor
+    }
+
+    return null
+  }
+
   override fun getAttributeDescriptor(attribute: XmlAttribute?) = getAttributeDescriptor(attribute?.name, attribute?.parent)
 
   override fun getNSDescriptor() = null
