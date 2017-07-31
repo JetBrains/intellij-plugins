@@ -4,7 +4,6 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.EnumComboBoxModel;
 import com.intellij.ui.components.JBCheckBox;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelProvider;
 import org.intellij.plugins.markdown.ui.split.SplitFileEditor;
@@ -69,7 +68,7 @@ public class MarkdownPreviewSettingsForm implements MarkdownPreviewSettings.Hold
 
   private void updateUseGrayscaleEnabled() {
     final MarkdownHtmlPanelProvider.ProviderInfo selected = myPreviewPanelModel.getSelected();
-    myUseGrayscaleRenderingForJBCheckBox.setEnabled(selected != null && selected.getClassName().contains("JavaFxHtmlPanelProvider"));
+    myUseGrayscaleRenderingForJBCheckBox.setVisible(selected != null && selected.getClassName().contains("JavaFxHtmlPanelProvider"));
   }
 
   @Override
