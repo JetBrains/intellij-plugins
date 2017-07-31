@@ -9,12 +9,12 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.PlatformIcons;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.concurrency.Promise;
 
@@ -34,7 +34,7 @@ public class JstdToolWindowSession {
     myProject = project;
     myToolbar = createActionToolbar();
     myTabs = new TabbedPaneWrapper(myProject);
-    myTabs.getComponent().setBorder(IdeBorderFactory.createEmptyBorder(0, 2, 0, 0));
+    myTabs.getComponent().setBorder(JBUI.Borders.empty(0, 2, 0, 0));
 
     mySettingsTab = new JstdServerSettingsTab(myProject);
     addTab(mySettingsTab.getTabInfo());
