@@ -157,6 +157,10 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   @Nullable
   @Override
   public XmlAttributeDescriptor getAttributeDescriptor(final String attrName, XmlTag xmlTag) {
+    return getDescriptor(attrName, xmlTag);
+  }
+
+  static XmlAttributeDescriptor getDescriptor(String attrName, XmlTag xmlTag) {
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
       final String attributeName = DirectiveUtil.normalizeAttributeName(attrName);
