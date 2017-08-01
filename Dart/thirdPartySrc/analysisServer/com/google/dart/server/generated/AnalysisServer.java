@@ -568,7 +568,7 @@ public interface AnalysisServer {
 
   /**
    * Remove the given listener from the list of listeners that will receive notification when new
-     * analysis results become available.
+   * analysis results become available.
    *
    * @param listener the listener to be removed
    */
