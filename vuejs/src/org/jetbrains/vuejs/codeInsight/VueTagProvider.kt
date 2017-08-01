@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.openapi.util.NullableFactory
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -31,8 +32,6 @@ import icons.VuejsIcons
 import org.jetbrains.vuejs.index.VueComponentsIndex
 import org.jetbrains.vuejs.index.getAllKeys
 
-private val PROPS = "props"
-private val COMPUTED = "computed"
 class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
     if (tag != null) {
@@ -97,29 +96,52 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       withIcon(VuejsIcons.Vue)
 }
 
-private val FUNCTION_FILTER = PairProcessor<String, PsiElement> { name, element -> element is JSProperty && element.value is JSFunction }
+private val PROPS = "props"
+private val COMPUTED = "computed"
+private val METHODS = "methods"
+private val FUNCTION_FILTER = PairProcessor<String, PsiElement> { name, element ->
+  element is JSFunctionProperty || element is JSProperty && element.value is JSFunction }
 
 fun findComponentInnerDetailInObjectLiteral(obj : JSObjectLiteralExpression, attributeName: String) : Pair<String, PsiElement>? {
   val filter = VueElementDescriptor.Companion.nameVariantsFilter(attributeName)
 
-  var descriptor: VueAttributeDescriptor? = null
-  val propsProperty = findProperty(obj, PROPS)
-  if (propsProperty != null) {
-    descriptor = readProps(propsProperty, true, filter).firstOrNull()
-  }
-  if (descriptor == null) {
-    val computedProperty = findProperty(obj, COMPUTED)
-    if (computedProperty != null) {
-      descriptor = readProps(computedProperty, true, PairProcessor { name, element -> filter.process(name, element) &&
-                                                                                      FUNCTION_FILTER.process(name, element)
-      }).firstOrNull()
-    }
-  }
-
+  var descriptor = findInnerDetailDescriptor(obj, filter)
   if (descriptor?.name != attributeName) {
     descriptor = descriptor?.createNameVariant(attributeName)
   }
   return if(descriptor == null) null else Pair(descriptor.name, descriptor.declaration!!)
+}
+
+private fun findInnerDetailDescriptor(obj: JSObjectLiteralExpression,
+                                      filter: PairProcessor<String, PsiElement>): VueAttributeDescriptor? {
+  val namedFunctionFilter = PairProcessor<String, PsiElement> { name, element ->
+    filter.process(name, element) &&
+    FUNCTION_FILTER.process(name, element)
+  }
+  val searchers : List<NullableFactory<VueAttributeDescriptor>> = listOf(
+    NullableFactory {
+      val propsProperty = findProperty(obj, PROPS)
+      if (propsProperty != null) {
+        readProps(propsProperty, true, filter).firstOrNull()
+      }
+      else null
+    },
+    NullableFactory {
+      val computedProperty = findProperty(obj, COMPUTED)
+      if (computedProperty != null) {
+        readProps(computedProperty, true, namedFunctionFilter).firstOrNull()
+      }
+      else null
+    },
+    NullableFactory {
+      val methodsProperty = findProperty(obj, METHODS)
+      if (methodsProperty != null) {
+        readProps(methodsProperty, true, namedFunctionFilter).firstOrNull()
+      }
+      else null
+    }
+  )
+  return searchers.map { it.create() }.filterNotNull().firstOrNull()
 }
 
 fun getComponentInnerDetailsFromObjectLiteral(obj : JSObjectLiteralExpression) : List<Pair<String, PsiElement>> {
@@ -133,6 +155,11 @@ fun getComponentInnerDetailsFromObjectLiteral(obj : JSObjectLiteralExpression) :
   if (computedProperty != null) {
     @Suppress("UNCHECKED_CAST")
     result.addAll(withNameVariants(readProps(computedProperty, true, FUNCTION_FILTER), false))
+  }
+  val methodsProperty = findProperty(obj, METHODS)
+  if (methodsProperty != null) {
+    @Suppress("UNCHECKED_CAST")
+    result.addAll(withNameVariants(readProps(methodsProperty, true, FUNCTION_FILTER), false))
   }
   return result.map { Pair(it.name, it.declaration!!) }
 }

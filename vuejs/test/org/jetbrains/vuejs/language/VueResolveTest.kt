@@ -114,4 +114,65 @@ export default {
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertEquals("testRight", (property as JSProperty).name)
   }
+
+  fun testResolveIntoComputedES6FunctionProperty() {
+    myFixture.configureByText("ResolveIntoComputedES6FunctionProperty.vue", """
+<template>
+{{<caret>TestRight}}
+</template>
+<script>
+export default {
+  name: 'childComp',
+  props: {'myMessage': {}},
+  computed: {
+    testWrong: 111,
+    testRight() {}
+  }
+}
+</script>""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val property = reference!!.resolve()
+    TestCase.assertTrue(property is JSProperty)
+    TestCase.assertEquals("testRight", (property as JSProperty).name)
+  }
+
+  fun testResolveIntoMethodsFromBoundAttributes() {
+    myFixture.configureByText("child.vue", """
+<template>
+</template>
+<script>
+export default {
+  name: 'childComp',
+  props: {'myMessage': {}},
+  methods: {
+    reverseMessage() {
+      return this.myMessage.reverse()
+    }
+  }
+}
+</script>""")
+    myFixture.configureByText("ResolveIntoMethodsFromBoundAttributes.vue", """
+<template>
+    <child-comp v-bind:my-message="me215t<caret>hod"></child-comp>
+</template>
+<script>
+import ChildComp from 'child.vue'
+export default {
+  components: {ChildComp},
+  name: 'parent',
+  methods: {
+    me215thod: function () {
+      return 'something!'
+    }
+  }
+}
+</script>""")
+    myFixture.completeBasic()
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val property = reference!!.resolve()
+    TestCase.assertTrue(property is JSProperty)
+    TestCase.assertEquals("me215thod", (property as JSProperty).name)
+  }
 }

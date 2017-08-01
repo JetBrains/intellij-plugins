@@ -119,4 +119,39 @@ export default {
     UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "myMessage", "MyMessage", "testRight", "TestRight")
     UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "testWrong")
   }
+
+  fun testCompleteMethodsInBoundAttributes() {
+    myFixture.configureByText("child.vue", """
+<template>
+</template>
+<script>
+export default {
+  name: 'childComp',
+  props: {'myMessage': {}},
+  methods: {
+    reverseMessage() {
+      return this.myMessage.reverse()
+    }
+  }
+}
+</script>""")
+    myFixture.configureByText("CompleteMethodsInBoundAttributes.vue", """
+<template>
+    <child-comp v-bind:my-message="m<caret>"></child-comp>
+</template>
+<script>
+import ChildComp from 'child.vue'
+export default {
+  components: {ChildComp},
+  name: 'parent',
+  methods: {
+    me215thod: function () {
+      return 'something!'
+    }
+  }
+}
+</script>""")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "me215thod")
+  }
 }
