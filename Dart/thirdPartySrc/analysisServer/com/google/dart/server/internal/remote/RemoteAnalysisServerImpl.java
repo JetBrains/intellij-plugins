@@ -29,6 +29,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.dartlang.analysis.server.protocol.AnalysisOptions;
+import org.dartlang.analysis.server.protocol.ImportedElements;
 import org.dartlang.analysis.server.protocol.RefactoringOptions;
 import org.dartlang.analysis.server.protocol.RequestError;
 import org.osgi.framework.Version;
@@ -168,6 +169,12 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   public void analysis_getHover(String file, int offset, GetHoverConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateAnalysisGetHover(id, file, offset), consumer);
+  }
+
+  @Override
+  public void analysis_getImportedElements(String file, int offset, int length, GetImportedElementsConsumer consumer) {
+    // TODO: implement
+
   }
 
   @Override
@@ -319,6 +326,12 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   public void edit_getStatementCompletion(String file, int offset, GetStatementCompletionConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateEditStatementCompletion(id, file, offset), consumer);
+  }
+
+  @Override
+  public void edit_importElements(String file, List<ImportedElements> elements, ImportElementsConsumer consumer) {
+    // TODO: implement
+
   }
 
   @Override
