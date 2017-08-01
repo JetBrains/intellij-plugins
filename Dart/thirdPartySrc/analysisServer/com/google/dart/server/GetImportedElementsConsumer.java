@@ -13,7 +13,13 @@
  */
 package com.google.dart.server;
 
-public interface GetImportedElementsConsumer extends Consumer {
-  // TODO: implement
+import org.dartlang.analysis.server.protocol.ImportedElements;
+import org.dartlang.analysis.server.protocol.RequestError;
 
+import java.util.List;
+
+public interface GetImportedElementsConsumer extends Consumer {
+  public void computedImportedElements(List<ImportedElements> importedElements);
+
+  public void onError(RequestError requestError);
 }

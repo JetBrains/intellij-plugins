@@ -13,7 +13,13 @@
  */
 package com.google.dart.server;
 
-public interface ImportElementsConsumer extends Consumer {
-  // TODO: implement
+import org.dartlang.analysis.server.protocol.RequestError;
+import org.dartlang.analysis.server.protocol.SourceEdit;
 
+import java.util.List;
+
+public interface ImportElementsConsumer extends Consumer {
+  public void computedImportedElements(List<SourceEdit> edits);
+
+  public void onError(RequestError requestError);
 }

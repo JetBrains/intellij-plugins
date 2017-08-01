@@ -173,8 +173,8 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
 
   @Override
   public void analysis_getImportedElements(String file, int offset, int length, GetImportedElementsConsumer consumer) {
-    // TODO: implement
-
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateAnalysisGetImportedElements(id), consumer);
   }
 
   @Override
@@ -330,8 +330,8 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
 
   @Override
   public void edit_importElements(String file, List<ImportedElements> elements, ImportElementsConsumer consumer) {
-    // TODO: implement
-
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateEditImportElements(id, file, elements), consumer);
   }
 
   @Override
@@ -639,6 +639,9 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     else if (consumer instanceof ListPostfixCompletionTemplatesConsumer) {
       new ListPostfixCompletionTemplatesProcessor((ListPostfixCompletionTemplatesConsumer)consumer).process(resultObject, requestError);
     }
+    else if (consumer instanceof GetImportedElementsConsumer) {
+      new GetImportedElementsProcessor((GetImportedElementsConsumer)consumer).process(resultObject, requestError);
+    }
     else if (consumer instanceof GetLibraryDependenciesConsumer) {
       new LibraryDependenciesProcessor((GetLibraryDependenciesConsumer)consumer).process(resultObject, requestError);
     }
@@ -650,6 +653,9 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     }
     else if (consumer instanceof GetErrorsConsumer) {
       new AnalysisErrorsProcessor((GetErrorsConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof ImportElementsConsumer) {
+      new ImportElementsProcessor((ImportElementsConsumer)consumer).process(resultObject, requestError);
     }
     else if (consumer instanceof OrganizeDirectivesConsumer) {
       new OrganizeDirectivesProcessor((OrganizeDirectivesConsumer)consumer).process(resultObject, requestError);
