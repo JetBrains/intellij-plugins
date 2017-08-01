@@ -37,7 +37,7 @@ JSFile:StaticBlock.js2
           PsiWhiteSpace(' ')
           PsiElement(JS:CONST_KEYWORD)('const')
           PsiWhiteSpace(' ')
-          ActionScriptVariable
+          JSLocalVariable
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('a')
             PsiElement(JS:COLON)(':')

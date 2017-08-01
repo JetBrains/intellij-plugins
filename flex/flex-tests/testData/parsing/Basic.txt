@@ -222,8 +222,6 @@ JSFile:Basic.js2
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n  ')
       ActionScriptFunction
-        ActionScriptAttributeList
-          <empty list>
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
         PsiElement(JS:IDENTIFIER)('bbb')
