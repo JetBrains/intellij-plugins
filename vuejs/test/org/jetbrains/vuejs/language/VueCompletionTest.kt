@@ -97,6 +97,26 @@ export default {
 }
 </script>""")
     myFixture.completeBasic()
-    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "myMessage", "my-message", "MyMessage")
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "myMessage", "MyMessage")
+  }
+
+  fun testCompleteComputedPropsInInterpolation() {
+    myFixture.configureByText("CompleteComputedPropsInInterpolation.vue", """
+<template>
+{{<caret>}}
+</template>
+<script>
+export default {
+  name: 'childComp',
+  props: {'myMessage': {}},
+  computed: {
+    testWrong: 111,
+    testRight: function() {}
+  }
+}
+</script>""")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "myMessage", "MyMessage", "testRight", "TestRight")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "testWrong")
   }
 }

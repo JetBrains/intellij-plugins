@@ -18,8 +18,8 @@ fun toAsset(name: String): String {
   return StringUtil.join(*words)
 }
 
-fun getAllNameVariants(name: String): Set<String> {
+fun getNameVariants(name: String, withKebab: Boolean): Set<String> {
   val camelCaseName = toAsset(name).decapitalize()
-  val nameVariants = setOf(camelCaseName, fromAsset(name), camelCaseName.capitalize())
-  return nameVariants
+  if (withKebab) return setOf(camelCaseName, camelCaseName.capitalize(), fromAsset(name))
+  return setOf(camelCaseName, camelCaseName.capitalize())
 }

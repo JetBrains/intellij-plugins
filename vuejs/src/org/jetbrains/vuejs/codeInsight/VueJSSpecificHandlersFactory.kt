@@ -40,10 +40,10 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
     val embeddedScriptContents = org.jetbrains.vuejs.codeInsight.findModule(xmlFile) ?: return null
     val defaultExport = com.intellij.lang.ecmascript6.resolve.ES6PsiUtil.findDefaultExport(embeddedScriptContents)
     if (defaultExport is ES6ExportDefaultAssignment && defaultExport.stubSafeExpression is JSObjectLiteralExpression) {
-      val refName = ref.canonicalText
-      val tagDescriptor = tagDescriptorFromObjectLiteral(defaultExport.stubSafeExpression as JSObjectLiteralExpression)
-      val attributeDescriptor = tagDescriptor?.getAttributeDescriptor(refName, null)
-      if (attributeDescriptor != null) return arrayOf(PsiElementResolveResult(attributeDescriptor.declaration))
+      val pair = findComponentInnerDetailInObjectLiteral(defaultExport.stubSafeExpression as JSObjectLiteralExpression, ref.canonicalText)
+      if (pair != null) {
+        return arrayOf(PsiElementResolveResult(pair.second))
+      }
     }
     return null
   }

@@ -92,4 +92,26 @@ class VueResolveTest : LightPlatformCodeInsightFixtureTestCase() {
     TestCase.assertTrue(literal!!.parent is JSArrayLiteralExpression)
     TestCase.assertEquals("'pascalCase'", literal.text)
   }
+
+  fun testResolveIntoComputedProperty() {
+    myFixture.configureByText("ResolveIntoComputedProperty.vue", """
+<template>
+{{<caret>TestRight}}
+</template>
+<script>
+export default {
+  name: 'childComp',
+  props: {'myMessage': {}},
+  computed: {
+    testWrong: 111,
+    testRight: function() {}
+  }
+}
+</script>""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val property = reference!!.resolve()
+    TestCase.assertTrue(property is JSProperty)
+    TestCase.assertEquals("testRight", (property as JSProperty).name)
+  }
 }
