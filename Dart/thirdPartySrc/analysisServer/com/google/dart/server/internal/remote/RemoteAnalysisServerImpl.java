@@ -248,6 +248,30 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
+  public void analytics_enable(boolean value) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateAnalyticsEnable(id, value));
+  }
+
+  @Override
+  public void analytics_isEnabled(IsEnabledConsumer consumer) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateAnalyticsIsEnabled(id), consumer);
+  }
+
+  @Override
+  public void analytics_sendEvent(String action) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateAnalyticsSendEvent(id, action));
+  }
+
+  @Override
+  public void analytics_sendTiming(String event, int millis) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateAnalyticsSendTiming(id, event, millis));
+  }
+
+  @Override
   public void completion_getSuggestions(String file, int offset, GetSuggestionsConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateCompletionGetSuggestions(id, file, offset), consumer);
@@ -530,7 +554,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     }
     else if (event.equals(SERVER_NOTIFICATION_CONNECTED)) {
       // server.connected
-      new NotificationServerConnectedProcessor(listener).process(response);
+      new NotificationServerConnectedProcessor(this, listener).process(response);
     }
     else if (event.equals(LAUNCH_DATA_NOTIFICATION_RESULTS)) {
       new NotificationExecutionLaunchDataProcessor(listener).process(response);
@@ -570,6 +594,12 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     //
     if (consumer instanceof UpdateContentConsumer) {
       ((UpdateContentConsumer)consumer).onResponse();
+    }
+    //
+    // Analytics Domain
+    //
+    if (consumer instanceof IsEnabledConsumer) {
+      new IsEnabledProcessor((IsEnabledConsumer)consumer).process(resultObject, requestError);
     }
     //
     // Completion Domain

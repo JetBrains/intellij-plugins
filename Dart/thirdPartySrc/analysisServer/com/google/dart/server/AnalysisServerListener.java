@@ -179,7 +179,7 @@ public interface AnalysisServerListener {
    * 
    * @param version the version of the server that is running
    */
-  public void serverConnected(String version);
+  public void serverConnected(AnalysisServer server, String version);
 
   /**
    * An error happened in the {@link AnalysisServer}.

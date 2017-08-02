@@ -14,6 +14,7 @@
 package com.google.dart.server.internal.remote.processor;
 
 import com.google.dart.server.AnalysisServerListener;
+import com.google.dart.server.generated.AnalysisServer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -23,14 +24,17 @@ import com.google.gson.JsonObject;
  * @coverage dart.server.remote
  */
 public class NotificationServerConnectedProcessor extends NotificationProcessor {
+  private AnalysisServer myServer;
 
-  public NotificationServerConnectedProcessor(AnalysisServerListener listener) {
+  public NotificationServerConnectedProcessor(AnalysisServer server, AnalysisServerListener listener) {
     super(listener);
+
+    this.myServer = server;
   }
 
   @Override
   public void process(JsonObject response) throws Exception {
-    getListener().serverConnected(getVersion(response));
+    getListener().serverConnected(myServer, getVersion(response));
   }
 
   private String getVersion(JsonObject response) {
