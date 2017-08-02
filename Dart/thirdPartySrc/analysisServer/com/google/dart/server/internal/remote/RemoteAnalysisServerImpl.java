@@ -29,6 +29,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.dartlang.analysis.server.protocol.AnalysisOptions;
+import org.dartlang.analysis.server.protocol.ImportedElements;
 import org.dartlang.analysis.server.protocol.RefactoringOptions;
 import org.dartlang.analysis.server.protocol.RequestError;
 import org.osgi.framework.Version;
@@ -168,6 +169,12 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   public void analysis_getHover(String file, int offset, GetHoverConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateAnalysisGetHover(id, file, offset), consumer);
+  }
+
+  @Override
+  public void analysis_getImportedElements(String file, int offset, int length, GetImportedElementsConsumer consumer) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateAnalysisGetImportedElements(id), consumer);
   }
 
   @Override
@@ -319,6 +326,12 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   public void edit_getStatementCompletion(String file, int offset, GetStatementCompletionConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateEditStatementCompletion(id, file, offset), consumer);
+  }
+
+  @Override
+  public void edit_importElements(String file, List<ImportedElements> elements, ImportElementsConsumer consumer) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateEditImportElements(id, file, elements), consumer);
   }
 
   @Override
@@ -626,6 +639,9 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     else if (consumer instanceof ListPostfixCompletionTemplatesConsumer) {
       new ListPostfixCompletionTemplatesProcessor((ListPostfixCompletionTemplatesConsumer)consumer).process(resultObject, requestError);
     }
+    else if (consumer instanceof GetImportedElementsConsumer) {
+      new GetImportedElementsProcessor((GetImportedElementsConsumer)consumer).process(resultObject, requestError);
+    }
     else if (consumer instanceof GetLibraryDependenciesConsumer) {
       new LibraryDependenciesProcessor((GetLibraryDependenciesConsumer)consumer).process(resultObject, requestError);
     }
@@ -637,6 +653,9 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     }
     else if (consumer instanceof GetErrorsConsumer) {
       new AnalysisErrorsProcessor((GetErrorsConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof ImportElementsConsumer) {
+      new ImportElementsProcessor((ImportElementsConsumer)consumer).process(resultObject, requestError);
     }
     else if (consumer instanceof OrganizeDirectivesConsumer) {
       new OrganizeDirectivesProcessor((OrganizeDirectivesConsumer)consumer).process(resultObject, requestError);
