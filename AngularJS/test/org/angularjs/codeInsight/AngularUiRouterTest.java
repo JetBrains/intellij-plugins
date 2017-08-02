@@ -1,7 +1,5 @@
 package org.angularjs.codeInsight;
 
-import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase;
@@ -177,25 +175,6 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     checkNavigation(files[0], "two", null, "appStateWithNameInObject.js");
     checkNavigation(files[0], "two.words", null, "appStateWithNameInObject.js");
     checkNavigation(files[0], ".words", "two.words", "appStateWithNameInObject.js");
-  }
-
-  public void testGenericStatesAsArrayOfReferences() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      final PsiFile[] files = myFixture.configureByFiles("genericStateReferences.navigation.html", "appStatesGeneric.js",
-                                                         "homeState.js", "loginState.js", "angular.js");
-      myFixture.doHighlighting();
-      checkNavigation(files[0], "home", null, "homeState.js");
-      checkNavigation(files[0], "login", null, "loginState.js");
-    });
-  }
-
-  public void testGenericStatesByVar() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      final PsiFile[] files = myFixture.configureByFiles("genericStateReferences.navigation.html", "appStatesGenericVar.js", "angular.js");
-      myFixture.doHighlighting();
-      checkNavigation(files[0], "home", null, "appStatesGenericVar.js");
-      checkNavigation(files[0], "login", null, "appStatesGenericVar.js");
-    });
   }
 
   private void checkNavigation(PsiFile file, String state, String referencedTextExpected, String appStatesFileName) {

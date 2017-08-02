@@ -1,11 +1,13 @@
 package org.angularjs.codeInsight.router;
 
+import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.modules.NodeModuleUtil;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
@@ -15,6 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.include.FileIncludeManager;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.ObjectUtils;
@@ -98,32 +101,23 @@ public class AngularUiRouterDiagramBuilder {
   }
 
   private void addGenericStates() {
-    final List<JSObjectLiteralExpression> freeStates = new AngularRouterStateLoader(myProject).loadFreelyDefinedStates();
-    for (JSObjectLiteralExpression state : freeStates) {
-      final JSProperty name = state.findProperty("name");
-      if (name != null && name.getValue() instanceof JSLiteralExpression && ((JSLiteralExpression)name.getValue()).isQuotedLiteral()) {
-        final UiRouterState uiState = new UiRouterState(StringUtil.unquoteString(name.getValue().getText()),
-                                                        name.getContainingFile().getVirtualFile());
-        uiState.setGeneric(true);
-        uiState.setPointer(mySmartPointerManager.createSmartPsiElementPointer(name));
-        fillStateParameters(uiState, state);
-        if (!myStates.contains(uiState)) myStates.add(uiState);
-      }
+    final List<JSProperty> freeStates = new AngularRouterStateLoader(myProject).loadFreelyDefinedStates();
+    for (JSProperty property : freeStates) {
+      if (property.getValue() == null || !(property.getParent() instanceof JSObjectLiteralExpression)) continue;
+      final String name = StringUtil.unquoteString(property.getValue().getText());
+      final UiRouterState uiState = new UiRouterState(name, property.getContainingFile().getViewProvider().getVirtualFile());
+      uiState.setGeneric(true);
+      uiState.setPointer(mySmartPointerManager.createSmartPsiElementPointer(property));
+      fillStateParameters(uiState, (JSObjectLiteralExpression)property.getParent());
+      if (!myStates.contains(uiState)) myStates.add(uiState);
     }
   }
 
   @Nullable
   public static JSCallExpression findWrappingCallExpression(JSImplicitElement element) {
     if (element.getNavigationElement() instanceof JSCallExpression) return (JSCallExpression)element.getNavigationElement();
-    JSCallExpression call = PsiTreeUtil.getParentOfType(element.getNavigationElement(), JSCallExpression.class);
-    if (call == null) {
-      final PsiElement elementAt =
-        element.getContainingFile().findElementAt(element.getNavigationElement().getTextRange().getEndOffset() - 1);
-      if (elementAt != null) {
-        call = PsiTreeUtil.getParentOfType(elementAt, JSCallExpression.class);
-      }
-    }
-    return call;
+    return ObjectUtils.tryCast(JSStubBasedPsiTreeUtil.getParentOfType(element, TokenSet.create(JSStubElementTypes.CALL_EXPRESSION), true),
+                               JSCallExpression.class);
   }
 
   private void groupStates() {
