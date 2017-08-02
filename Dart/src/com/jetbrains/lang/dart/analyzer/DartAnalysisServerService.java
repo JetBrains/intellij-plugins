@@ -569,8 +569,7 @@ public class DartAnalysisServerService implements Disposable {
     myProject.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
       @Override
       public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-        if (!Registry.is("dart.projects.without.pubspec", false) &&
-            (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) || file.getFileType() == DartFileType.INSTANCE)) {
+        if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) || file.getFileType() == DartFileType.INSTANCE) {
           DartSdkUpdateChecker.mayBeCheckForSdkUpdate(source.getProject());
         }
 

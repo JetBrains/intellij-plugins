@@ -16,7 +16,6 @@ import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.SimpleModificationTracker;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -54,10 +53,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
       @Override
       public void rootsChanged(ModuleRootEvent event) {
         myProjectRootsModificationTracker.incModificationCount();
-
-        if (!Registry.is("dart.projects.without.pubspec", false)) {
-          DartFileListener.scheduleDartPackageRootsUpdate(myProject);
-        }
+        DartFileListener.scheduleDartPackageRootsUpdate(myProject);
       }
     });
   }
