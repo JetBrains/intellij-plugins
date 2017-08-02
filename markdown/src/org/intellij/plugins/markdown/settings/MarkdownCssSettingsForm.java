@@ -11,9 +11,13 @@ import com.intellij.openapi.editor.EditorSettings;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.UnknownFileType;
+import com.intellij.openapi.ui.TextBrowseFolderListener;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.components.JBCheckBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +31,7 @@ public class MarkdownCssSettingsForm implements MarkdownCssSettings.Holder,
                                                 Disposable {
   private JPanel myMainPanel;
   private JBCheckBox myCssFromURIEnabled;
-  private JTextField myCssURI;
+  private TextFieldWithBrowseButton myCssURI;
   private JBCheckBox myApplyCustomCssText;
   private JPanel myEditorPanel;
 
@@ -49,6 +53,13 @@ public class MarkdownCssSettingsForm implements MarkdownCssSettings.Holder,
     };
     myCssFromURIEnabled.addActionListener(myUpdateListener);
     myApplyCustomCssText.addActionListener(myUpdateListener);
+    myCssURI.addBrowseFolderListener(new TextBrowseFolderListener(FileChooserDescriptorFactory.createSingleFileDescriptor("css")) {
+      @NotNull
+      @Override
+      protected String chosenFileToResultingText(@NotNull VirtualFile chosenFile) {
+        return chosenFile.getUrl();
+      }
+    });
   }
 
   public JComponent getComponent() {
