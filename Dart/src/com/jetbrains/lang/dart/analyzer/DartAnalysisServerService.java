@@ -324,10 +324,10 @@ public class DartAnalysisServerService implements Disposable {
     return properties.getBoolean(ENABLE_ANALYZED_FILES_SUBSCRIPTION_KEY, false);
   }
 
-  // Third-party access
+  @SuppressWarnings("unused") // Third-party access
   public static void setEnableAnalyzedFilesSubscription(final boolean value) {
     PropertiesComponent properties = PropertiesComponent.getInstance();
-    properties.setValue(ENABLE_ANALYZED_FILES_SUBSCRIPTION_KEY, value);
+    properties.setValue(ENABLE_ANALYZED_FILES_SUBSCRIPTION_KEY, value, false);
   }
 
   private static int ensureNotZero(int i) {
