@@ -118,7 +118,7 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
                            "}";
     final String after = "\n\n \n\n \n\n" +
                          "class A{\n" +
-                         "  List<caret> bar(int i, bool arg1, String s) {}\n" +
+                         "  List<caret> bar(int i, bool param1, String s) {}\n" +
                          "}\n" +
                          "foo() {\n" +
                          "  List a = new A().bar(1, true, '');\n" +
@@ -138,7 +138,7 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
                          "  List a = new A().bar(1, true, '');\n" +
                          "}\n" +
                          "class A{\n" +
-                         "  List<caret> bar(int i, bool arg1, String s) {}\n" +
+                         "  List<caret> bar(int i, bool param1, String s) {}\n" +
                          "}";
     doCrLfAwareTest(content, "Create method", after);
   }
