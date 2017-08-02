@@ -10,6 +10,7 @@ import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
 import com.google.dart.server.utilities.logging.Logging;
 import com.intellij.codeInsight.intention.IntentionManager;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
@@ -167,6 +168,9 @@ public class DartAnalysisServerService implements Disposable {
 
   @NotNull private final List<AnalysisServerListener> myAdditionalServerListeners = new SmartList<>();
 
+  private static final String ENABLE_ANALYZED_FILES_SUBSCRIPTION_KEY =
+    "com.jetbrains.lang.dart.analyzer.DartAnalysisServerService.enableAnalyzedFilesSubscription";
+
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
     @Override
@@ -314,6 +318,17 @@ public class DartAnalysisServerService implements Disposable {
       }
     }
   };
+
+  public static boolean isAnalyzedFilesSubscriptionEnabled() {
+    PropertiesComponent properties = PropertiesComponent.getInstance();
+    return properties.getBoolean(ENABLE_ANALYZED_FILES_SUBSCRIPTION_KEY, false);
+  }
+
+  // Third-party access
+  public static void setEnableAnalyzedFilesSubscription(final boolean value) {
+    PropertiesComponent properties = PropertiesComponent.getInstance();
+    properties.setValue(ENABLE_ANALYZED_FILES_SUBSCRIPTION_KEY, value);
+  }
 
   private static int ensureNotZero(int i) {
     return i == 0 ? Integer.MAX_VALUE : i;
@@ -1570,7 +1585,7 @@ public class DartAnalysisServerService implements Disposable {
       try {
         startedServer.start();
         startedServer.server_setSubscriptions(Collections.singletonList(ServerService.STATUS));
-        if (Registry.is("dart.projects.without.pubspec", false)) {
+        if (Registry.is("dart.projects.without.pubspec", false) && isAnalyzedFilesSubscriptionEnabled()) {
           startedServer.analysis_setGeneralSubscriptions(Collections.singletonList(GeneralAnalysisService.ANALYZED_FILES));
         }
 
