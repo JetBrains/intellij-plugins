@@ -4,6 +4,7 @@ import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import icons.PhoneGapIcons;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +16,7 @@ import javax.swing.*;
  * <p/>
  * Created by Masahiro Suzuka on 2014/04/04.
  */
-public class PhoneGapConfigurationType implements ConfigurationType {
+public class PhoneGapConfigurationType implements ConfigurationType, DumbAware {
   public static final String RUN_CONFIGURATION_ID = "PhoneGap";
 
   public PhoneGapConfigurationFactory myConfigurationFactory;
