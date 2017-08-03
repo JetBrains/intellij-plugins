@@ -4,8 +4,10 @@ import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JavaScriptSpecificHandlersFactory
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.impl.source.resolve.ResolveCache
@@ -27,24 +29,25 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
                                        ignorePerformanceLimits: Boolean) :
     JSReferenceExpressionResolver(referenceExpression!!, ignorePerformanceLimits) {
   override fun resolve(ref: JSReferenceExpressionImpl, incompleteCode: Boolean): Array<ResolveResult> {
-    val xmlFile = if (ref.containingFile is XmlFile) ref.containingFile else
-      InjectedLanguageManager.getInstance(myContainingFile.project).getInjectionHost(ref)?.containingFile
-    if (xmlFile != null) {
-      val resolvedInProps = tryResolveInProps(xmlFile as XmlFile, ref)
-      if (resolvedInProps != null) return resolvedInProps
-    }
-    return super.resolve(ref, incompleteCode)
+    return resolveInLocalScript(ref) ?: super.resolve(ref, incompleteCode)
   }
 
-  private fun tryResolveInProps(xmlFile: XmlFile, ref: JSReferenceExpressionImpl): Array<ResolveResult>? {
-    val embeddedScriptContents = org.jetbrains.vuejs.codeInsight.findModule(xmlFile) ?: return null
-    val defaultExport = com.intellij.lang.ecmascript6.resolve.ES6PsiUtil.findDefaultExport(embeddedScriptContents)
-    if (defaultExport is ES6ExportDefaultAssignment && defaultExport.stubSafeExpression is JSObjectLiteralExpression) {
-      val pair = findComponentInnerDetailInObjectLiteral(defaultExport.stubSafeExpression as JSObjectLiteralExpression, ref.canonicalText)
-      if (pair != null) {
-        return arrayOf(PsiElementResolveResult(pair.second))
-      }
-    }
-    return null
+  fun resolveInLocalScript(ref: JSReferenceExpression): Array<ResolveResult>? {
+    ref.referenceName ?: return null
+    val scriptWithExport = findScriptWithExport(ref) ?: return null
+    val obj = scriptWithExport.second.stubSafeExpression as JSObjectLiteralExpression
+    val pair = findComponentInnerDetailInObjectLiteral(obj, ref.referenceName!!) ?: return null
+    return arrayOf(PsiElementResolveResult(pair.second))
   }
+}
+
+fun findScriptWithExport(element : JSReferenceExpression) : Pair<PsiElement, ES6ExportDefaultAssignment>? {
+  val xmlFile = (if (element.containingFile is XmlFile) element.containingFile else
+    InjectedLanguageManager.getInstance(element.project).getInjectionHost(element)?.containingFile) ?: return null
+  val module = org.jetbrains.vuejs.codeInsight.findModule(xmlFile) ?: return null
+  val defaultExport = com.intellij.lang.ecmascript6.resolve.ES6PsiUtil.findDefaultExport(module) ?: return null
+  if (defaultExport is ES6ExportDefaultAssignment && defaultExport.stubSafeExpression is JSObjectLiteralExpression) {
+    return Pair(module, defaultExport)
+  }
+  return null
 }

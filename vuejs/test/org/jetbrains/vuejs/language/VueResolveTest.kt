@@ -168,11 +168,179 @@ export default {
   }
 }
 </script>""")
-    myFixture.completeBasic()
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
     val property = reference!!.resolve()
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertEquals("me215thod", (property as JSProperty).name)
+  }
+
+  fun testResolveLocallyInsideComponentPropsArray() {
+    myFixture.configureByText("ResolveLocallyInsideComponentPropsArray.vue", """
+<script>
+export default {
+  name: 'parent',
+  props: ['parentMsg', 'parentSize'],
+  computed: {
+    normalizedSize: function () {
+      return this.<caret>parentMsg.trim().toLowerCase()
+    }
+  }
+}</script>""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val literal = reference!!.resolve()
+    TestCase.assertTrue(literal is JSLiteralExpression)
+    TestCase.assertTrue((literal as JSLiteralExpression).isQuotedLiteral)
+    TestCase.assertEquals("'parentMsg'", literal.text)
+  }
+
+  fun testResolveLocallyInsideComponentPropsArrayRefVariant() {
+    myFixture.configureByText("ResolveLocallyInsideComponentPropsArrayRefVariant.vue", """
+<script>
+let props = ['parentMsg', 'parentSize'];
+export default {
+  name: 'parent',
+  props: props,
+  computed: {
+    normalizedSize: function () {
+      return this.<caret>parentMsg.trim().toLowerCase()
+    }
+  }
+}</script>""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val literal = reference!!.resolve()
+    TestCase.assertTrue(literal is JSLiteralExpression)
+    TestCase.assertTrue((literal as JSLiteralExpression).isQuotedLiteral)
+    TestCase.assertEquals("'parentMsg'", literal.text)
+  }
+
+  fun testResolveLocallyInsideComponentArrayFunctionInsideExport() {
+    myFixture.configureByText("ResolveLocallyInsideComponentArrayFunctionInsideExport.vue", """
+<script>
+let props = ['parentMsg'];
+
+export default {
+  name: 'parent',
+  props: props,
+  methods: {
+    oneMethod: () => {
+      return this.<caret>parentMsg * 3;
+    }
+  }
+}</script>""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val literal = reference!!.resolve()
+    TestCase.assertTrue(literal is JSLiteralExpression)
+    TestCase.assertTrue((literal as JSLiteralExpression).isQuotedLiteral)
+    TestCase.assertEquals("'parentMsg'", literal.text)
+  }
+
+  fun testResolveLocallyInsideComponent() {
+
+    doTestResolveLocallyInsideComponent("""
+<script>
+export default {
+  name: 'parent',
+  props: {parentMsg: {}, parentSize: {}},
+  computed: {
+    normalizedSize: function () {
+      return this.<caret>parentMsg.trim().toLowerCase()
+    }
+  }
+}</script>
+""", "parentMsg")
+
+    doTestResolveLocallyInsideComponent("""
+<script>
+let props = {parentMsg: {}, parentSize: {}};
+export default {
+  name: 'parent',
+  props: props,
+  computed: {
+    normalizedSize: function () {
+      return this.<caret>parentMsg.trim().toLowerCase()
+    }
+  }
+}</script>
+""", "parentMsg")
+
+    doTestResolveLocallyInsideComponent("""
+<script>
+let props = {parentMsg: {}, parentSize: {}};
+export default {
+  name: 'parent',
+  props: props,
+  methods: {
+    normalizedSize() {
+      return this.<caret>parentMsg.trim().toLowerCase()
+    }
+  }
+}</script>
+""", "parentMsg")
+
+    doTestResolveLocallyInsideComponent("""
+<script>
+let props = {parentMsg: {}, parentSize: {}};
+let methods = {
+    wise() {
+      return this.<caret>normalizedSize() / 2;
+    }
+  };
+let computedProps = {
+    normalizedSize() {
+      return this.parentMsg.trim().toLowerCase()
+    }
+  };
+export default {
+  name: 'parent',
+  props: props,
+  computedProps: computedProps,
+  methods: methods
+}</script>
+""", "normalizedSize")
+
+    doTestResolveLocallyInsideComponent("""
+<script>
+let props = {parentMsg: {}, parentSize: {}};
+
+function wouldBeUsedLater() {
+  return this.<caret>parentMsg * 3;
+}
+
+export default {
+  name: 'parent',
+  props: props,
+}</script>
+""", "parentMsg")
+
+    doTestResolveLocallyInsideComponent("""
+<script>
+let props = ['parentMsg'];
+
+let wouldBeUsedLater = () => {
+  return this.<caret>parentMsg * 3;
+}
+
+export default {
+  name: 'parent',
+  props: props,
+}</script>
+""", null)
+  }
+
+  fun doTestResolveLocallyInsideComponent(text: String, expectedPropertyName: String?) {
+    myFixture.configureByText("ResolveLocallyInsideComponent.vue", text)
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val property = reference!!.resolve()
+    if (expectedPropertyName == null) {
+      TestCase.assertNull(property)
+    } else {
+      TestCase.assertTrue(property is JSProperty)
+      TestCase.assertEquals(expectedPropertyName, (property as JSProperty).name)
+    }
   }
 }
