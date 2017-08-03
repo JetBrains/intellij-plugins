@@ -19,7 +19,7 @@ public class DartStyleLenientTest extends DartStyleTest {
   }
 
   /**
-   * Run a test defined in "*.unit" or "*.stmt" file inside directory <code>dirName</code>.
+   * Run a test defined in "*.unit" or "*.stmt" file inside directory {@code dirName}.
    */
   protected void runTestInDirectory(String dirName) throws Exception {
     Set<String> fail = new THashSet<>();

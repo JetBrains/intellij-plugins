@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * <code>action</code>
+ * {@code action}
  *
  * @author Yann C&eacute;bron
  */

@@ -26,14 +26,19 @@
 <idea-plugin>
   <id>Osmorc</id>
   <name>Osmorc</name>
-  <version>1.4.9</version>
+  <version>1.4.10</version>
   <description>This plugin adds support for the development of OSGi-based applications to IDEA</description>
   <category>Framework integration</category>
   <vendor>JetBrains</vendor>
-  <idea-version since-build="163.0"/>
+  <idea-version since-build="172.0"/>
 
   <change-notes>
     <![CDATA[
+      <b>Version 1.4.10</b>
+      <ul>
+        <li>Bug fixes</li>
+      </ul>
+
       <b>Version 1.4.9</b>
       <ul>
         <li>Bndlib 3.3.0</li>

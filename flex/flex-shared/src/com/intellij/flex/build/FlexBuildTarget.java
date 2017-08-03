@@ -50,8 +50,8 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
   }
 
   /**
-   * @param forcedDebugStatus <code>true</code> or <code>false</code> means that this bc is compiled for further packaging and we need swf to have corresponding debug status;
-   *                          <code>null</code> means that bc is compiled as is (i.e. as configured) without any modifications
+   * @param forcedDebugStatus {@code true} or {@code false} means that this bc is compiled for further packaging and we need swf to have corresponding debug status;
+   *                          {@code null} means that bc is compiled as is (i.e. as configured) without any modifications
    */
   @NotNull
   public static FlexBuildTarget create(final @NotNull JpsFlexBuildConfiguration bc, final @Nullable Boolean forcedDebugStatus) {

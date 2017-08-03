@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * <code>result-types</code>
+ * {@code result-types}
  *
  * @author Yann C&eacute;bron
  */

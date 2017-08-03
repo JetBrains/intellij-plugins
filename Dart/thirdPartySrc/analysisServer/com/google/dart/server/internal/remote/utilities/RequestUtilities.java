@@ -18,14 +18,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-
-import org.dartlang.analysis.server.protocol.AddContentOverlay;
-import org.dartlang.analysis.server.protocol.AnalysisError;
-import org.dartlang.analysis.server.protocol.AnalysisOptions;
-import org.dartlang.analysis.server.protocol.ChangeContentOverlay;
-import org.dartlang.analysis.server.protocol.Location;
-import org.dartlang.analysis.server.protocol.RefactoringOptions;
-import org.dartlang.analysis.server.protocol.RemoveContentOverlay;
+import org.dartlang.analysis.server.protocol.*;
 
 import java.util.List;
 import java.util.Map;
@@ -33,7 +26,7 @@ import java.util.Map.Entry;
 
 /**
  * A utilities class for generating the {@link String} analysis server json requests.
- * 
+ *
  * @coverage dart.server.remote
  */
 public class RequestUtilities {
@@ -52,6 +45,7 @@ public class RequestUtilities {
   private static final String SUPER_ONLY = "superOnly";
   private static final String URI = "uri";
   private static final String KEY = "key";
+  private static final String ELEMENTS = "elements";
 
   // Server domain
   private static final String METHOD_SERVER_GET_VERSION = "server.getVersion";
@@ -61,6 +55,7 @@ public class RequestUtilities {
   // Analysis domain
   private static final String METHOD_ANALYSIS_GET_ERRORS = "analysis.getErrors";
   private static final String METHOD_ANALYSIS_GET_HOVER = "analysis.getHover";
+  private static final String METHOD_ANALYSIS_GET_IMPORTED_ELEMENTS = "analysis.getImportedElements";
   private static final String METHOD_ANALYSIS_GET_LIBRARY_DEPENDENCIES = "analysis.getLibraryDependencies";
   private static final String METHOD_ANALYSIS_GET_NAVIGATION = "analysis.getNavigation";
   private static final String METHOD_ANALYSIS_REANALYZE = "analysis.reanalyze";
@@ -79,6 +74,7 @@ public class RequestUtilities {
   private static final String METHOD_EDIT_GET_POSTFIX_COMPLETION = "edit.getPostfixCompletion";
   private static final String METHOD_EDIT_GET_REFACTORING = "edit.getRefactoring";
   private static final String METHOD_EDIT_GET_STATEMENT_COMPLETION = "edit.getStatementCompletion";
+  private static final String METHOD_EDIT_IMPORT_ELEMENTS = "edit.importElements";
   private static final String METHOD_EDIT_ORGANIZE_DIRECTIVES = "edit.organizeDirectives";
   private static final String METHOD_EDIT_SORT_MEMBERS = "edit.sortMembers";
   private static final String METHOD_IS_POSTFIX_COMPLETION_APPLICABLE = "edit.isPostfixCompletionApplicable";
@@ -111,29 +107,34 @@ public class RequestUtilities {
   @VisibleForTesting
   public static JsonElement buildJsonElement(Object object) {
     if (object instanceof Boolean) {
-      return new JsonPrimitive((Boolean) object);
-    } else if (object instanceof Number) {
-      return new JsonPrimitive((Number) object);
-    } else if (object instanceof String) {
-      return new JsonPrimitive((String) object);
-    } else if (object instanceof List<?>) {
-      List<?> list = (List<?>) object;
+      return new JsonPrimitive((Boolean)object);
+    }
+    else if (object instanceof Number) {
+      return new JsonPrimitive((Number)object);
+    }
+    else if (object instanceof String) {
+      return new JsonPrimitive((String)object);
+    }
+    else if (object instanceof List<?>) {
+      List<?> list = (List<?>)object;
       JsonArray jsonArray = new JsonArray();
       for (Object item : list) {
         JsonElement jsonItem = buildJsonElement(item);
         jsonArray.add(jsonItem);
       }
       return jsonArray;
-    } else if (object instanceof Map<?, ?>) {
-      Map<?, ?> map = (Map<?, ?>) object;
+    }
+    else if (object instanceof Map<?, ?>) {
+      Map<?, ?> map = (Map<?, ?>)object;
       JsonObject jsonObject = new JsonObject();
       for (Entry<?, ?> entry : map.entrySet()) {
         Object key = entry.getKey();
         // prepare string key
         String keyString;
         if (key instanceof String) {
-          keyString = (String) key;
-        } else {
+          keyString = (String)key;
+        }
+        else {
           throw new IllegalArgumentException("Unable to convert to string: " + getClassName(key));
         }
         // prepare JsonElement value
@@ -145,25 +146,33 @@ public class RequestUtilities {
         }
       }
       return jsonObject;
-    } else if (object instanceof AnalysisError) {
-      return buildJsonObjectAnalysisError((AnalysisError) object);
-    } else if (object instanceof AddContentOverlay) {
-      return ((AddContentOverlay) object).toJson();
-    } else if (object instanceof ChangeContentOverlay) {
-      return ((ChangeContentOverlay) object).toJson();
-    } else if (object instanceof RemoveContentOverlay) {
-      return ((RemoveContentOverlay) object).toJson();
-    } else if (object instanceof AnalysisOptions) {
-      return ((AnalysisOptions) object).toJson();
-    } else if (object instanceof Location) {
-      return buildJsonObjectLocation((Location) object);
+    }
+    else if (object instanceof AnalysisError) {
+      return buildJsonObjectAnalysisError((AnalysisError)object);
+    }
+    else if (object instanceof AddContentOverlay) {
+      return ((AddContentOverlay)object).toJson();
+    }
+    else if (object instanceof ChangeContentOverlay) {
+      return ((ChangeContentOverlay)object).toJson();
+    }
+    else if (object instanceof RemoveContentOverlay) {
+      return ((RemoveContentOverlay)object).toJson();
+    }
+    else if (object instanceof AnalysisOptions) {
+      return ((AnalysisOptions)object).toJson();
+    }
+    else if (object instanceof Location) {
+      return buildJsonObjectLocation((Location)object);
+    } else if (object instanceof ImportedElements) {
+      return ((ImportedElements)object).toJson();
     }
     throw new IllegalArgumentException("Unable to convert to JSON: " + object);
   }
 
   /**
    * Generate and return a {@value #METHOD_ANALYSIS_GET_ERRORS} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -182,7 +191,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_ANALYSIS_GET_HOVER} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -201,9 +210,13 @@ public class RequestUtilities {
     return buildJsonObjectRequest(idValue, METHOD_ANALYSIS_GET_HOVER, params);
   }
 
+  public static JsonObject generateAnalysisGetImportedElements(String id) {
+    return buildJsonObjectRequest(id, METHOD_ANALYSIS_GET_IMPORTED_ELEMENTS);
+  }
+
   /**
    * Generate and return a {@value #METHOD_ANALYSIS_GET_LIBRARY_DEPENDENCIES} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -217,7 +230,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_ANALYSIS_GET_NAVIGATION} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -231,7 +244,7 @@ public class RequestUtilities {
    * </pre>
    */
   public static JsonObject generateAnalysisGetNavigation(String idValue, String file, int offset,
-      int length) {
+                                                         int length) {
     JsonObject params = new JsonObject();
     params.addProperty(FILE, file);
     params.addProperty(OFFSET, offset);
@@ -241,7 +254,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_ANALYSIS_REANALYZE} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -257,14 +270,15 @@ public class RequestUtilities {
       JsonObject params = new JsonObject();
       params.add("roots", buildJsonElement(roots));
       return buildJsonObjectRequest(id, METHOD_ANALYSIS_REANALYZE, params);
-    } else {
+    }
+    else {
       return buildJsonObjectRequest(id, METHOD_ANALYSIS_REANALYZE);
     }
   }
 
   /**
    * Generate and return a {@value #METHOD_ANALYSIS_SET_ROOTS} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -278,7 +292,7 @@ public class RequestUtilities {
    * </pre>
    */
   public static JsonObject generateAnalysisSetAnalysisRoots(String id, List<String> included,
-      List<String> excluded, Map<String, String> packageRoots) {
+                                                            List<String> excluded, Map<String, String> packageRoots) {
     JsonObject params = new JsonObject();
     params.add("included", buildJsonElement(included));
     params.add("excluded", buildJsonElement(excluded));
@@ -290,7 +304,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_ANALYSIS_SET_GENERAL_SUBSCRIPTIONS} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -302,7 +316,7 @@ public class RequestUtilities {
    * </pre>
    */
   public static JsonObject generateAnalysisSetGeneralSubscriptions(String idValue,
-      List<String> subscriptions) {
+                                                                   List<String> subscriptions) {
     JsonObject params = new JsonObject();
     params.add(SUBSCRIPTIONS, buildJsonElement(subscriptions));
     return buildJsonObjectRequest(idValue, METHOD_ANALYSIS_SET_GENERAL_SUBSCRIPTIONS, params);
@@ -310,7 +324,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_ANALYSIS_SET_PRIORITY_FILES} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -329,7 +343,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_ANALYSIS_SET_SUBSCRIPTIONS} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -341,7 +355,7 @@ public class RequestUtilities {
    * </pre>
    */
   public static JsonObject generateAnalysisSetSubscriptions(String id,
-      Map<String, List<String>> subscriptions) {
+                                                            Map<String, List<String>> subscriptions) {
     JsonObject params = new JsonObject();
     params.add(SUBSCRIPTIONS, buildJsonElement(subscriptions));
     return buildJsonObjectRequest(id, METHOD_ANALYSIS_SET_SUBSCRIPTIONS, params);
@@ -349,7 +363,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_ANALYSIS_UPDATE_CONTENT} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -368,7 +382,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_ANALYSIS_UPDATE_OPTIONS} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -387,7 +401,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_COMPLETION_GET_SUGGESTIONS} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -408,7 +422,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_EDIT_FORMAT} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -423,7 +437,7 @@ public class RequestUtilities {
    * </pre>
    */
   public static JsonObject generateEditFormat(String idValue, String file, int offset, int length,
-      int lineLength) {
+                                              int lineLength) {
     JsonObject params = new JsonObject();
     params.addProperty(FILE, file);
     params.addProperty(SELECTION_OFFSET, offset);
@@ -436,7 +450,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_EDIT_GET_ASSISTS} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -450,7 +464,7 @@ public class RequestUtilities {
    * </pre>
    */
   public static JsonObject generateEditGetAssists(String idValue, String file, int offset,
-      int length) {
+                                                  int length) {
     JsonObject params = new JsonObject();
     params.addProperty(FILE, file);
     params.addProperty(OFFSET, offset);
@@ -460,7 +474,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_EDIT_GET_AVAILABLE_REFACTORING} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -474,7 +488,7 @@ public class RequestUtilities {
    * </pre>
    */
   public static JsonObject generateEditGetAvaliableRefactorings(String idValue, String file,
-      int offset, int length) {
+                                                                int offset, int length) {
     JsonObject params = new JsonObject();
     params.addProperty(FILE, file);
     params.addProperty(OFFSET, offset);
@@ -484,7 +498,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_EDIT_GET_FIXES} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -526,7 +540,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_REFACTORING} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -543,7 +557,7 @@ public class RequestUtilities {
    * </pre>
    */
   public static JsonObject generateEditGetRefactoring(String idValue, String kind, String file,
-      int offset, int length, boolean validateOnly, RefactoringOptions options) {
+                                                      int offset, int length, boolean validateOnly, RefactoringOptions options) {
     JsonObject params = new JsonObject();
     params.addProperty("kind", kind);
     params.addProperty(FILE, file);
@@ -563,9 +577,16 @@ public class RequestUtilities {
     return buildJsonObjectRequest(idValue, METHOD_EDIT_GET_STATEMENT_COMPLETION, params);
   }
 
+  public static JsonObject generateEditImportElements(String id, String file, List<ImportedElements> elements) {
+    JsonObject params = new JsonObject();
+    params.addProperty(FILE, file);
+    params.add(ELEMENTS, buildJsonElement(elements));
+    return buildJsonObjectRequest(id, METHOD_EDIT_IMPORT_ELEMENTS, params);
+  }
+
   /**
    * Generate and return a {@value #METHOD_EDIT_ORGANIZE_DIRECTIVES} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -584,7 +605,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_EDIT_SORT_MEMBERS} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -603,7 +624,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_EXECUTION_CREATE_CONTEXT} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -622,7 +643,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_EXECUTION_DELETE_CONTEXT} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -641,7 +662,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_EXECUTION_MAP_URI} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -655,7 +676,7 @@ public class RequestUtilities {
    * </pre>
    */
   public static JsonObject generateExecutionMapUri(String idValue, String contextId, String file,
-      String uri) {
+                                                   String uri) {
     JsonObject params = new JsonObject();
     params.addProperty(ID, contextId);
     if (file == null) {
@@ -663,7 +684,8 @@ public class RequestUtilities {
         throw new IllegalArgumentException("Exactly one of 'file' and 'uri' must be non-null");
       }
       params.addProperty(URI, uri);
-    } else {
+    }
+    else {
       if (uri != null) {
         throw new IllegalArgumentException("Exactly one of 'file' and 'uri' must be non-null");
       }
@@ -674,7 +696,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_EXECUTION_SET_SUBSCRIPTIONS} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -686,7 +708,7 @@ public class RequestUtilities {
    * </pre>
    */
   public static JsonObject generateExecutionSetSubscriptions(String idValue,
-      List<String> subscriptions) {
+                                                             List<String> subscriptions) {
     JsonObject params = new JsonObject();
     params.add(SUBSCRIPTIONS, buildJsonElement(subscriptions));
     return buildJsonObjectRequest(idValue, METHOD_EXECUTION_SET_SUBSCRIPTIONS, params);
@@ -694,7 +716,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_SEARCH_FIND_ELEMENT_REFERENCES} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -708,7 +730,7 @@ public class RequestUtilities {
    * </pre>
    */
   public static JsonObject generateSearchFindElementReferences(String idValue, String file,
-      int offset, boolean includePotential) {
+                                                               int offset, boolean includePotential) {
     JsonObject params = new JsonObject();
     params.addProperty(FILE, file);
     params.addProperty(OFFSET, offset);
@@ -718,7 +740,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_SEARCH_FIND_MEMBER_DECLARATIONS} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -737,7 +759,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_SEARCH_FIND_MEMBER_REFERENCES} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -756,7 +778,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_SEARCH_FIND_TOP_LEVEL_DECLARATIONS} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -775,7 +797,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_SEARCH_GET_TYPE_HIERARCHY} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -789,7 +811,7 @@ public class RequestUtilities {
    * </pre>
    */
   public static JsonObject generateSearchGetTypeHierarchy(String id, String file, int offset,
-      boolean superOnly) {
+                                                          boolean superOnly) {
     JsonObject params = new JsonObject();
     params.addProperty(FILE, file);
     params.addProperty(OFFSET, offset);
@@ -799,7 +821,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_SERVER_GET_VERSION} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -813,7 +835,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_SERVER_SET_SUBSCRIPTIONS} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -832,7 +854,7 @@ public class RequestUtilities {
 
   /**
    * Generate and return a {@value #METHOD_SERVER_SHUTDOWN} request.
-   * 
+   * <p>
    * <pre>
    * request: {
    *   "id": String
@@ -898,7 +920,7 @@ public class RequestUtilities {
   }
 
   private static JsonObject buildJsonObjectRequest(String idValue, String methodValue,
-      JsonObject params) {
+                                                   JsonObject params) {
     JsonObject jsonObject = new JsonObject();
     jsonObject.addProperty(ID, idValue);
     jsonObject.addProperty(METHOD, methodValue);

@@ -77,7 +77,7 @@ public abstract class BeanPropertyPathConverterBase extends Converter<List<BeanP
    * Gets the enclosing Tag-DomElement.
    *
    * @param context Current context.
-   * @return Parent element or <code>null</code> if none found (should not happen in valid XML).
+   * @return Parent element or {@code null} if none found (should not happen in valid XML).
    */
   @Nullable
   protected static DomElement findEnclosingTag(final ConvertContext context) {

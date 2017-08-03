@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * <code>global-results</code>
+ * {@code global-results}
  *
  * @author Yann C&eacute;bron
  */

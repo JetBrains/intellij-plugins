@@ -18,8 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Resolves path in <code>&lt;script src="packages/browser/dart.js"/&gt;</code> to base Dart <code>packages</code> folder because relative symlinked <code>packages</code> folder is excluded.<br/>
- * Another example: <code>&lt;link rel="import" href="packages/click_counter/click_counter.html"&gt;</code> is resolved to ./lib/click_counter.html if 'click_counter' is a Dart project name in pubspec.yaml
+ * Resolves path in {@code <script src="packages/browser/dart.js"/>} to base Dart {@code packages} folder because relative symlinked {@code packages} folder is excluded.<br/>
+ * Another example: {@code <link rel="import" href="packages/click_counter/click_counter.html">} is resolved to ./lib/click_counter.html if 'click_counter' is a Dart project name in pubspec.yaml
  */
 public class DartPackagePathReferenceProvider extends PsiReferenceProvider {
 

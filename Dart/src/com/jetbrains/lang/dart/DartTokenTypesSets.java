@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart;
 
 import com.intellij.lang.*;
-import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiFile;
@@ -232,22 +231,7 @@ public interface DartTokenTypesSets {
 
     @Override
     public boolean isParsable(@NotNull final CharSequence buffer, @NotNull final Language fileLanguage, @NotNull final Project project) {
-      final Lexer lexer = new DartLexer();
-      lexer.start(buffer);
-      if (lexer.getTokenType() != LBRACE) return false;
-      int balance = 1;
-      lexer.advance();
-
-      while (true) {
-        final IElementType type = lexer.getTokenType();
-        if (type == null) break;
-        if (balance == 0) return false;
-        if (type == LBRACE) balance++;
-        if (type == RBRACE) balance--;
-        lexer.advance();
-      }
-
-      return balance == 0;
+      return PsiBuilderUtil.hasProperBraceBalance(buffer, new DartLexer(), LBRACE, RBRACE);
     }
 
     @Nullable

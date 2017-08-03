@@ -67,11 +67,6 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     doHighlightingTest();
   }
 
-  public void testErrorAtZeroOffset() {
-    myFixture.addFileToProject("bar.dart", "part of x;");
-    doHighlightingTest();
-  }
-
   private void initServerDataTest() {
     myFixture.configureByText(DartFileType.INSTANCE, "import 'dart:core';\n" +
                                                      "import 'dart:core';\n" +

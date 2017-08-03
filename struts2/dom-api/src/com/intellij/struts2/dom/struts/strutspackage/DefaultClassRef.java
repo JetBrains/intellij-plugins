@@ -22,7 +22,7 @@ import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.util.xml.*;
 
 /**
- * <code>default-class-ref</code>
+ * {@code default-class-ref}
  *
  * @author Yann C&eacute;bron
  */

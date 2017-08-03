@@ -161,7 +161,7 @@ public class FlexCompilationUtils {
   }
 
   /**
-   * returns <code>false</code> if compilation error found in output
+   * returns {@code false} if compilation error found in output
    */
   static boolean handleCompilerOutput(final FlexCompilationManager compilationManager,
                                       final FlexCompilationTask task,

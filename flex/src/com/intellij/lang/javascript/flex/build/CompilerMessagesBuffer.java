@@ -38,7 +38,7 @@ public class CompilerMessagesBuffer {
   private static final String OUT_OF_MEMORY = "java.lang.OutOfMemoryError";
 
   /**
-   * @param bufferingEnabled is <code>false</code> then this buffer doen't buffer anything but just passes all messages to CompilerContext
+   * @param bufferingEnabled is {@code false} then this buffer doen't buffer anything but just passes all messages to CompilerContext
    */
   public CompilerMessagesBuffer(final @Nullable CompileContext compileContext, final boolean bufferingEnabled) {
     this.compileContext = compileContext;

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Service for accessing <code>struts.xml</code> files.
+ * Service for accessing {@code struts.xml} files.
  *
  * @author Yann C&eacute;bron
  */

@@ -43,7 +43,7 @@ public final class ConverterUtil {
    * Gets the StrutsModel for the current context (=file).
    *
    * @param context Invoking context.
-   * @return <code>null</code> if no StrutsModel found by current file (e.g. not in any fileset).
+   * @return {@code null} if no StrutsModel found by current file (e.g. not in any fileset).
    */
   @Nullable
   public static StrutsModel getStrutsModel(final ConvertContext context) {
@@ -55,7 +55,7 @@ public final class ConverterUtil {
    * Gets the StrutsModel for the current context (=file) or combined model for current module.
    *
    * @param context Invoking context.
-   * @return <code>null</code> if no StrutsModel found in current file/module.
+   * @return {@code null} if no StrutsModel found in current file/module.
    */
   @Nullable
   public static StrutsModel getStrutsModelOrCombined(final ConvertContext context) {

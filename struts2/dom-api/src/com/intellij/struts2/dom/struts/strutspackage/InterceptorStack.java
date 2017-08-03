@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * <code>interceptor-stack</code>
+ * {@code interceptor-stack}
  *
  * @author Yann C&eacute;bron
  */

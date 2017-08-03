@@ -24,7 +24,7 @@ import com.intellij.util.xml.Required;
 import com.intellij.util.xml.Scope;
 
 /**
- * <code>default-action-ref</code>
+ * {@code default-action-ref}
  *
  * @author Yann C&eacute;bron
  */

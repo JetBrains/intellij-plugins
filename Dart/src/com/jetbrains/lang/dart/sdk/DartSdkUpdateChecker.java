@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.updateSettings.impl.UpdateChecker;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Couple;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.io.HttpRequests;
 import com.jetbrains.lang.dart.DartBundle;
@@ -36,6 +37,8 @@ public class DartSdkUpdateChecker {
   private static final Pattern SEMANTIC_VERSION_PATTERN = Pattern.compile("(\\d+\\.\\d+\\.\\d+)([0-9A-Za-z\\-\\+\\.]*)");
 
   public static void mayBeCheckForSdkUpdate(@NotNull final Project project) {
+    if (Registry.is("dart.projects.without.pubspec", false)) return;
+
     final DartSdkUpdateOption option = DartSdkUpdateOption.getDartSdkUpdateOption();
     if (option == DartSdkUpdateOption.DoNotCheck) return;
 

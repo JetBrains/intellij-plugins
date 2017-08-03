@@ -3,10 +3,7 @@ package com.jetbrains.lang.dart.ide.runner.test;
 import com.google.gson.JsonSyntaxException;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.testframework.TestConsoleProperties;
-import com.intellij.execution.testframework.sm.runner.BaseSMTRunnerTestCase;
-import com.intellij.execution.testframework.sm.runner.GeneralTestEventsProcessor;
-import com.intellij.execution.testframework.sm.runner.SMTestLocator;
-import com.intellij.execution.testframework.sm.runner.TestProxyPrinterProvider;
+import com.intellij.execution.testframework.sm.runner.*;
 import com.intellij.execution.testframework.sm.runner.events.*;
 import com.intellij.execution.testframework.sm.runner.ui.MockPrinter;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
@@ -431,7 +428,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     List<String> signals = new ArrayList<>();
 
     public DartTestEventsProcessor(Project project, @NotNull String testFrameworkName) {
-      super(project, testFrameworkName);
+      super(project, testFrameworkName, new SMTestProxy.SMRootTestProxy());
     }
 
     @Override

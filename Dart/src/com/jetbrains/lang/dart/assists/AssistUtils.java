@@ -48,7 +48,7 @@ import java.util.*;
 
 public class AssistUtils {
   /**
-   * @return <code>true</code> if file contents changed, <code>false</code> otherwise
+   * @return {@code true} if file contents changed, {@code false} otherwise
    */
   public static boolean applyFileEdit(@NotNull final Project project, @NotNull final SourceFileEdit fileEdit) {
     final VirtualFile file = findVirtualFile(fileEdit);

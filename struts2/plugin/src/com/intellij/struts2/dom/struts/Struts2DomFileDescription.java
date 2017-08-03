@@ -24,7 +24,7 @@ import com.intellij.util.xml.DomFileDescription;
 import javax.swing.*;
 
 /**
- * <code>struts.xml</code> DOM-Model files.
+ * {@code struts.xml} DOM-Model files.
  *
  * @author Yann C&eacute;bron
  */

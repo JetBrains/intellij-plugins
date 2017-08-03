@@ -284,7 +284,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   public void testQuickNavigateInfo_11() throws Exception {
     doNavigateTest(getTestName(false), "js2",
                    "QuickNavigateInfo_11.js2\n" +
-                   "internal function foo():Vector.&lt;int&gt;");
+                   "function foo():Vector.&lt;int&gt;");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})

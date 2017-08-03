@@ -75,8 +75,8 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
   }
 
   /**
-   * When parameter information is requested for <code>items.insert(^)</code>,
-   * we are given <code>items.insert</code>, but we cannot resolve it, we need just <code>insert</code>.
+   * When parameter information is requested for {@code items.insert(^)},
+   * we are given {@code items.insert}, but we cannot resolve it, we need just {@code insert}.
    */
   @NotNull
   private static DartReference replaceQualifiedReferenceWithLast(@NotNull DartReference reference) {

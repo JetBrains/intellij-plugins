@@ -18,7 +18,7 @@ package com.intellij.struts2.dom.struts.constant;
 import com.intellij.util.xml.ResolvingConverter;
 
 /**
- * Provides the predefined <code>constant</code> "name" values as completion variants.
+ * Provides the predefined {@code constant} "name" values as completion variants.
  *
  * @author Yann C&eacute;bron
  */

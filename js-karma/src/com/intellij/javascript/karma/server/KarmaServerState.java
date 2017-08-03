@@ -32,7 +32,6 @@ public class KarmaServerState {
 
   private static final String[][] FAILED_TO_START_BROWSER_PATTERNS = new String[][] {
     {"ERROR [launcher]: No binary for ", " browser on your platform.\n"},
-    {"WARN [launcher]: Can not load \"", "\", it is not registered!\n"},
     {"ERROR [launcher]: Cannot start ", "\n"}
   };
 
@@ -49,6 +48,7 @@ public class KarmaServerState {
     myOverriddenBrowsers = parseBrowsers(server.getServerSettings().getBrowsers());
     myServer.registerStreamEventHandler(new BrowserEventHandler(BROWSER_CONNECTED_EVENT_TYPE));
     myServer.registerStreamEventHandler(new BrowserEventHandler(BROWSER_DISCONNECTED_EVENT_TYPE));
+    myServer.registerStreamEventHandler(new BrowserCapturingFailedEventHandler());
     myServer.registerStreamEventHandler(new ConfigHandler(configurationFile));
   }
 
@@ -138,12 +138,16 @@ public class KarmaServerState {
     if (!myBrowsersReady.get()) {
       String failedToStartBrowser = parseFailedToStartBrowser(line);
       if (failedToStartBrowser != null) {
-        LOG.info("Browser " + failedToStartBrowser + " failed to start: " + line);
-        myFailedToStartBrowsers.add(failedToStartBrowser);
-        if (canSetBrowsersReady()) {
-          setBrowsersReady();
-        }
+        onBrowserCapturingFailed(failedToStartBrowser);
       }
+    }
+  }
+
+  private void onBrowserCapturingFailed(@NotNull String notCapturedBrowser) {
+    LOG.info("Browser " + notCapturedBrowser + " failed to be captured");
+    myFailedToStartBrowsers.add(notCapturedBrowser);
+    if (canSetBrowsersReady()) {
+      setBrowsersReady();
     }
   }
 
@@ -231,4 +235,26 @@ public class KarmaServerState {
     }
   }
 
+  private class BrowserCapturingFailedEventHandler implements StreamEventHandler {
+    @NotNull
+    @Override
+    public String getEventType() {
+      return "browserCapturingFailed";
+    }
+
+    @Override
+    public void handle(@NotNull JsonElement eventBody) {
+      if (!eventBody.isJsonObject()) {
+        LOG.warn("Not an object");
+        return;
+      }
+      String name = JsonUtil.getChildAsString(eventBody.getAsJsonObject(), "browserLauncherName");
+      if (name != null) {
+        onBrowserCapturingFailed(name);
+      }
+      else {
+        LOG.warn("Unspecified name");
+      }
+    }
+  }
 }

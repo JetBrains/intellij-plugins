@@ -101,7 +101,7 @@ public class DartFileListener implements VirtualFileListener {
   }
 
   /**
-   * Make sure to set it to <code>false</code> in the corresponding <code>finally</code> block
+   * Make sure to set it to {@code false} in the corresponding {@code finally} block
    */
   public static void setDartPackageRootUpdateScheduledOrInProgress(@NotNull final Project project, final boolean scheduledOrInProgress) {
     if (scheduledOrInProgress) {

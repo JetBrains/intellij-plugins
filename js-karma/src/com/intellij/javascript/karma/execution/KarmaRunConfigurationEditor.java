@@ -18,7 +18,6 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.ui.components.JBTextField;
@@ -87,7 +86,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   @NotNull
   private JPanel createScopeKindRadioButtonPanel() {
     JPanel testKindPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, JBUI.scale(40), 0));
-    testKindPanel.setBorder(IdeBorderFactory.createEmptyBorder(0, 10, 0, 0));
+    testKindPanel.setBorder(JBUI.Borders.empty(0, 10, 0, 0));
     ButtonGroup buttonGroup = new ButtonGroup();
     for (KarmaScopeKind scopeKind : KarmaScopeKind.values()) {
       JRadioButton radioButton = new JRadioButton(UIUtil.removeMnemonic(scopeKind.getName()));

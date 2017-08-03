@@ -144,7 +144,7 @@ JSFile:AttributesListErrors.js2
   PsiWhiteSpace('\n')
   ActionScriptAttributeList
     PsiElement(JS:PUBLIC_KEYWORD)('public')
-    PsiErrorElement:Declaration expected
+    PsiErrorElement:declaration expected
       <empty list>
   PsiWhiteSpace(' ')
   JSExpressionStatement

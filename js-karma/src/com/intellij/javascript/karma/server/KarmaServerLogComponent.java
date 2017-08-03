@@ -125,7 +125,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
       public void onOutputAvailable(@NotNull String text, Key outputType, boolean archived) {
         ConsoleViewContentType contentType = ConsoleViewContentType.getConsoleViewType(outputType);
         console.print(text, contentType);
-        if (!archived && text.startsWith("ERROR ")) {
+        if (!archived && (startsWithMessage(text, ":ERROR ") || startsWithMessage(text, ":WARN [launcher]"))) {
           ApplicationManager.getApplication().invokeLater(() -> content.fireAlert(), ModalityState.any());
         }
       }
@@ -139,5 +139,19 @@ public class KarmaServerLogComponent implements ComponentWithActions {
         server.getProcessOutputManager().removeOutputListener(outputListener);
       }
     });
+  }
+
+  private static boolean startsWithMessage(@NotNull String line, @NotNull String message) {
+    int ind = line.indexOf(message);
+    if (ind == -1) {
+      return false;
+    }
+    for (int i = 0; i < ind; i++) {
+      char ch = line.charAt(i);
+      if (!Character.isDigit(ch) && " :.".indexOf(ch) == -1) {
+        return false;
+      }
+    }
+    return true;
   }
 }

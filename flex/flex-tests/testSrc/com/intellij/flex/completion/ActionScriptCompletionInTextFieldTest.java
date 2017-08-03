@@ -58,7 +58,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testChangeSignatureParameterTypeCell() throws Exception {
     configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
-    JSExpressionCodeFragment fragment = JSParameterTableModel.createParameterTypeCellFragment("", myProject);
+    JSExpressionCodeFragment fragment = JSParameterTableModel.createParameterTypeCellFragment("", createFakeFunction());
     String[] included = new String[]{"Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher", "void", "*"};
     String[] excluded = ArrayUtil.mergeArrays(DEFALUT_VALUES, "public", "function", "while");
     checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", BASE_PATH + getTestName(false) + ".txt");
@@ -203,7 +203,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     PsiFile fragment =
       JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.moduleScope(myModule), null, filter, "").getPsiFile();
 
-    doTestForEditorTextField((JSExpressionCodeFragment)fragment, "", "js2", BASE_PATH + filename + ".txt");
+    doTestTextFieldFromFile((JSExpressionCodeFragment)fragment, BASE_PATH + filename + ".txt");
     if (numberOfVariants == 0) {
       assertNull(myItems);
     }

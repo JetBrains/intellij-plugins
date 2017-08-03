@@ -1606,13 +1606,13 @@ public abstract class DartStyleTest extends FormatterTestCase {
   }
 
   /**
-   * Run a test defined in "*.unit" or "*.stmt" file inside directory <code>dirName</code>.
+   * Run a test defined in "*.unit" or "*.stmt" file inside directory {@code dirName}.
    */
   protected abstract void runTestInDirectory(String dirName) throws Exception;
 
   /**
-   * Run a test defined in "*.unit" or "*.stmt" file inside directory <code>dirName</code>.
-   * Only signal failures for tests that fail and are not listed in <code>knownFailures.</code>
+   * Run a test defined in "*.unit" or "*.stmt" file inside directory {@code dirName}.
+   * Only signal failures for tests that fail and are not listed in {@code knownFailures.}
    */
   protected void runTestInDirectory(String dirName, Set knownFailures) throws Exception {
     Pattern indentPattern = Pattern.compile("^.*\\s\\(indent (\\d+)\\)\\s*");

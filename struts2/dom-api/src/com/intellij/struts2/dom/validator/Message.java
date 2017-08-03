@@ -24,7 +24,7 @@ import com.intellij.util.xml.Namespace;
 import com.intellij.util.xml.TagValue;
 
 /**
- * <code>message</code>.
+ * {@code message}.
  *
  * @author Yann C&eacute;bron
  */

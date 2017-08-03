@@ -21,7 +21,7 @@ import com.intellij.util.xml.SubTagList;
 import java.util.List;
 
 /**
- * <code>unknown-handler-stack</code>.
+ * {@code unknown-handler-stack}.
  *
  * @author Yann C&eacute;bron
  */

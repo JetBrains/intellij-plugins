@@ -17,6 +17,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
+import com.intellij.xml.util.XmlInvalidIdInspection;
 import org.angularjs.AngularTestUtil;
 
 /**
@@ -459,6 +460,28 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       assertEquals("object.umd.js", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, JSImplicitElement.class);
       assertEquals("\"color\"", getDirectiveDefinitionText(resolve));
+    });
+  }
+
+  public void testOneTimeBindingAttributeCompletion2JavaScriptViaProperty() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("compiled_binding.html", "angular2.js", "object.property.js");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(),  "color");
+    });
+  }
+
+  public void testOneTimeBindingAttributeResolve2JavaScriptViaProperty() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("compiled_binding.after.html", "angular2.js", "object.property.js");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("col<caret>or", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("object.property.js", resolve.getContainingFile().getName());
+      assertInstanceOf(resolve, JSImplicitElement.class);
+      assertEquals("inputs: ['disabled', 'color']", getDirectiveDefinitionText(resolve));
     });
   }
 
@@ -974,4 +997,13 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("component15.js", resolve.getContainingFile().getName());
     assertEquals("hero: '<'", getDirectiveDefinitionText(resolve));
   }
+
+  public void testId() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.enableInspections(XmlInvalidIdInspection.class);
+      myFixture.configureByFiles("id.html", "angular2.js", "object.ts");
+      myFixture.checkHighlighting();
+    });
+  }
+
 }

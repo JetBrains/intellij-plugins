@@ -1,1 +1,0 @@
-<error descr="Libraries that have parts must have a library directive"></error>part 'bar.dart';

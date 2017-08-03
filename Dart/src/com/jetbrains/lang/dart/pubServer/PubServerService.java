@@ -276,8 +276,12 @@ final class PubServerService extends NetService {
       // We can't use 301 (MOVED_PERMANENTLY) response status because Pub Serve port will change after restart, but browser will remember outdated redirection URL
       final HttpResponse response = Responses.response(HttpResponseStatus.FOUND, clientRequest, null);
       //assert serverInstanceInfo != null;
+
+      final int queryIndex = clientRequest.uri().indexOf('?');
+      final String queryString = queryIndex == -1 ? "" : clientRequest.uri().substring(queryIndex);
+
       response.headers().add(HttpHeaderNames.LOCATION,
-                             "http://" + address.getHostString() + ":" + address.getPort() + pathToPubServe);
+                             "http://" + address.getHostString() + ":" + address.getPort() + pathToPubServe + queryString);
       Responses.send(response, clientChannel, clientRequest, extraHeaders);
       return;
     }

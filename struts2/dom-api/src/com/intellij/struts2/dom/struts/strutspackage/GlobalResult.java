@@ -25,7 +25,7 @@ import com.intellij.struts2.dom.struts.action.StrutsPathReferenceConverter;
 import com.intellij.util.xml.*;
 
 /**
- * Global <code>result</code>.
+ * Global {@code result}.
  *
  * @author Yann C&eacute;bron
  */

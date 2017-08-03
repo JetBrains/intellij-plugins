@@ -21,7 +21,7 @@ import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.Required;
 
 /**
- * <code>unknown-handler-ref</code>.
+ * {@code unknown-handler-ref}.
  *
  * @author Yann C&eacute;bron
  */

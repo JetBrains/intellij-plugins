@@ -8,10 +8,10 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStr
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.navigation.History;
 import com.intellij.ui.navigation.Place;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,7 +75,7 @@ public class CompositeConfigurable extends ProjectStructureElementConfigurable<M
 
   private void addTab(final NamedConfigurable child) {
     JPanel p = new JPanel(new BorderLayout());
-    p.setBorder(IdeBorderFactory.createEmptyBorder(5));
+    p.setBorder(JBUI.Borders.empty(5));
     p.add(child.createComponent(), BorderLayout.CENTER);
     String tabName = child instanceof Item ? ((Item)child).getTabTitle() : child.getDisplayName();
     myTabs.addTab(tabName, p);

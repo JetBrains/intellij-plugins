@@ -22,7 +22,7 @@ import com.intellij.struts2.dom.validator.config.ValidatorConfigResolveConverter
 import com.intellij.util.xml.*;
 
 /**
- * <code>validator</code>.
+ * {@code validator}.
  *
  * @author Yann C&eacute;bron
  */

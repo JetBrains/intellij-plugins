@@ -24,7 +24,7 @@ import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.Required;
 
 /**
- * <code>include</code>
+ * {@code include}
  *
  * @author Yann C&eacute;bron
  */

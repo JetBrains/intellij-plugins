@@ -52,7 +52,7 @@ public abstract class DartUrlResolver {
                                                                          @Nullable final String pathAfterPackageName);
 
   /**
-   * Dart url has <code>dart:</code>, <code>package:</code> or <code>file:</code> scheme
+   * Dart url has {@code dart:}, {@code package:} or {@code file:} scheme
    */
   @Nullable
   public abstract VirtualFile findFileByDartUrl(@NotNull String url);

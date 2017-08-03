@@ -24,7 +24,7 @@ import com.intellij.struts2.dom.validator.config.ValidatorConfigResolveConverter
 import com.intellij.util.xml.*;
 
 /**
- * <code>field-validator</code>.
+ * {@code field-validator}.
  *
  * @author Yann C&eacute;bron
  */

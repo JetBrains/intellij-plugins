@@ -188,7 +188,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   }
 
   /**
-   * If <code>selectedProblem</code> was removed and similar one added again then this method returns the added one,
+   * If {@code selectedProblem} was removed and similar one added again then this method returns the added one,
    * so that the caller could update selected row in the table
    */
   @Nullable

@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * <code>validators</code>
+ * {@code validators}
  *
  * @author Yann C&eacute;bron
  */

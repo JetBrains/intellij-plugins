@@ -21,7 +21,7 @@ import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.util.xml.*;
 
 /**
- * <code>validator</code> in validator-config.xml.
+ * {@code validator} in validator-config.xml.
  *
  * @author Yann C&eacute;bron
  */

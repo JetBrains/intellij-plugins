@@ -753,14 +753,14 @@ class FlexValue extends XValue {
   }
 
   /**
-   * Examples of type (<code>getTypeAndAdditionalInfo().first</code>) :
+   * Examples of type ({@code getTypeAndAdditionalInfo().first}) :
    * <ul>
-   * <li><code>null</code></li>
-   * <li><code>flash.events::MouseEvent</code></li>
-   * <li><code>Main$/staticFunction</code></li>
-   * <li><code>XML</code></li>
-   * <li><code>pack.SomeClass$</code></li>
-   * <li><code>Vector.&lt;String&gt;</String></code></li>
+   * <li>{@code null}</li>
+   * <li>{@code flash.events::MouseEvent}</li>
+   * <li>{@code Main$/staticFunction}</li>
+   * <li>{@code XML}</li>
+   * <li>{@code pack.SomeClass$}</li>
+   * <li>{@code Vector.<String></String>}</li>
    * </ul>
    */
   private static Pair<String, String> getTypeAndAdditionalInfo(final @Nullable String fdbText) {
@@ -803,8 +803,8 @@ class FlexValue extends XValue {
   }
 
   /**
-   * Returned result can contain extra <b>$</b> after real class FQN in case of static context. For example <code>pack.Main$</code>
-   * Also it may contain vector type, e.g. <code>Vector.&lt;int&gt;</code>
+   * Returned result can contain extra <b>$</b> after real class FQN in case of static context. For example {@code pack.Main$}
+   * Also it may contain vector type, e.g. {@code Vector.<int>}
    */
   @Nullable
   private static String getType(final String typeFromFlexValueResult) {

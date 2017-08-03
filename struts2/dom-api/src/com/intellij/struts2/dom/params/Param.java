@@ -22,7 +22,7 @@ import com.intellij.util.xml.*;
 import java.util.List;
 
 /**
- * <code>param</code>
+ * {@code param}
  *
  * @author Yann C&eacute;bron
  */

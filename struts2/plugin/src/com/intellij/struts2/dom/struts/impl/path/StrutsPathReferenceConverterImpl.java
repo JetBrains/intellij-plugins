@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Converter for <code>result</code> location (tag body value).
+ * Converter for {@code result} location (tag body value).
  *
  * @author Yann C&eacute;bron
  * @see StrutsResultContributor

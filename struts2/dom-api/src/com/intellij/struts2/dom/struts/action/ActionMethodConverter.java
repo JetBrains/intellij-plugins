@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 
 /**
- * <code>action</code> "method"
+ * {@code action} "method"
  *
  * @author Yann C&eacute;bron
  */
@@ -67,7 +67,7 @@ public class ActionMethodConverter extends ResolvingConverter<PsiMethod> {
   }
 
   /**
-   * Gets the enclosing <code>action</code>-element for the current context.
+   * Gets the enclosing {@code action}-element for the current context.
    *
    * @param context Current context.
    * @return Action-element.

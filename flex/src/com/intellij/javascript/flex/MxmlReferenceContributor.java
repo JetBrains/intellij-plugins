@@ -152,14 +152,15 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
         if (CodeContext.isPackageBackedNamespace(trimmedText)) {
           final JSReferenceSet referenceSet = new JSReferenceSet(element, trimmedText, 1, false, false) {
             @Override
-            protected JSTextReference createTextReference(String s, int offset, boolean methodRef) {
-              return new JSTextReference(this, s, offset, methodRef) {
+            protected JSTextReference createTextReference(String s, int offset) {
+              return new JSTextReference(this, s, offset) {
+                @NotNull
                 @Override
-                protected ResolveResult[] doResolve(@NotNull PsiFile psiFile) {
+                protected ResolveResult[] doResolve() {
                   if ("*".equals(getCanonicalText())) {
                     return new ResolveResult[]{new JSResolveResult(mySet.getElement())};
                   }
-                  return super.doResolve(psiFile);
+                  return super.doResolve();
                 }
 
                 @Override
@@ -484,8 +485,8 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
         final JSReferenceSet jsReferenceSet =
           new JSReferenceSet(element, trimmedValueAndRange.first, trimmedValueAndRange.second.getStartOffset(), false, true) {
             @Override
-            protected JSTextReference createTextReference(String s, int offset, boolean methodRef) {
-              return new MyJSTextReference(this, s, offset, methodRef, quickFixProvider);
+            protected JSTextReference createTextReference(String s, int offset) {
+              return new MyJSTextReference(this, s, offset, quickFixProvider);
             }
           };
         if (SKIN_CLASS_ATTR_NAME.equals(name)) {
@@ -502,9 +503,8 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
     MyJSTextReference(JSReferenceSet set,
                       String s,
                       int offset,
-                      boolean methodRef,
                       Function<PsiReference, LocalQuickFix[]> quickFixProvider) {
-      super(set, s, offset, methodRef);
+      super(set, s, offset);
       myQuickFixProvider = quickFixProvider;
     }
 

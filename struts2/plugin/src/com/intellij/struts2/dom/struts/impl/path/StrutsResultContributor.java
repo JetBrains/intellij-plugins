@@ -39,7 +39,7 @@ import java.util.ArrayList;
  * Provides references for {@code <result>/<global-result>}.
  * <p/>
  * Third party plugins can provide additional result types by providing a suitable subclass registered via extension
- * in their <code>plugin.xml</code>:
+ * in their {@code plugin.xml}:
  * <p/>
  * <pre>
  *   &lt;extensions defaultExtensionNs="com.intellij">

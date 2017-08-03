@@ -7,6 +7,7 @@ import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.javascript.inject.JSFormattableInjectionUtil;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSLiteralExpressionImpl;
+import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.ElementManipulators;
@@ -34,6 +35,7 @@ import java.util.List;
 public class Angular2Injector implements MultiHostInjector {
   @Override
   public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
+    if (context.getLanguage() == XMLLanguage.INSTANCE) return;
     final Project project = context.getProject();
     if (!AngularIndexUtil.hasAngularJS2(project)) return;
 

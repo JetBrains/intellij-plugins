@@ -20,7 +20,10 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.ui.*
+import com.intellij.ui.DoubleClickListener
+import com.intellij.ui.EditorTextField
+import com.intellij.ui.ScrollPaneFactory
+import com.intellij.ui.TextFieldWithAutoCompletion
 import com.intellij.ui.components.JBList
 import com.intellij.ui.speedSearch.ListWithFilter
 import com.intellij.util.gist.GistManager
@@ -84,7 +87,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     toolbarComponent.isOpaque = false
 
     val scroll = ScrollPaneFactory.createScrollPane(list)
-    scroll.border = IdeBorderFactory.createEmptyBorder()
+    scroll.border = JBUI.Borders.empty()
     val pane = ListWithFilter.wrap(list, scroll, StringUtil.createToStringFunction(Blueprint::class.java))
 
     val builder = JBPopupFactory.getInstance().createComponentPopupBuilder(pane, list).

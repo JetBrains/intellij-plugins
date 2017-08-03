@@ -14,7 +14,6 @@ import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.UnknownFileType;
-import com.intellij.ui.ColorUtil;
 import com.intellij.ui.components.JBCheckBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,21 +44,7 @@ public class MarkdownCssSettingsForm implements MarkdownCssSettings.Holder,
       @Override
       public void actionPerformed(ActionEvent e) {
         myCssURI.setEnabled(myCssFromURIEnabled.isSelected());
-        if (myEditor != null && !myEditor.isDisposed()) {
-          final boolean canEditCss = myApplyCustomCssText.isSelected();
-
-          myEditor.getDocument().setReadOnly(!canEditCss);
-          myEditor.getSettings().setCaretRowShown(canEditCss);
-
-          Color baseColor = myEditor.getColorsScheme().getDefaultBackground();
-          if (canEditCss) {
-            ((EditorEx)myEditor).setBackgroundColor(baseColor);
-          }
-          else {
-            ((EditorEx)myEditor).setBackgroundColor(ColorUtil.isDark(baseColor) ?
-                                                    ColorUtil.brighter(baseColor, 1) : ColorUtil.darker(baseColor, 1));
-          }
-        }
+        myEditorPanel.setVisible(myApplyCustomCssText.isSelected());
       }
     };
     myCssFromURIEnabled.addActionListener(myUpdateListener);

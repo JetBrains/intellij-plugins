@@ -158,9 +158,9 @@ public class FlexProjectConfigurationEditor implements Disposable {
   }
 
   /**
-   * Clients are responsible to commit or dispose returned <code>FlexProjectConfigurationEditor</code> as well as passed <code>projectLibrariesModel</code> and <code>globalLibrariesModel</code>.<br><br>
-   * If <code>null</code> is given as <code>projectLibrariesModel</code> or <code>globalLibrariesModel</code> then the client must not set dependency on libraries of respective level.<br><br>
-   * Removing of modules and build configurations is not allowed while returned <code>FlexProjectConfigurationEditor</code> exists.
+   * Clients are responsible to commit or dispose returned {@code FlexProjectConfigurationEditor} as well as passed {@code projectLibrariesModel} and {@code globalLibrariesModel}.<br><br>
+   * If {@code null} is given as {@code projectLibrariesModel} or {@code globalLibrariesModel} then the client must not set dependency on libraries of respective level.<br><br>
+   * Removing of modules and build configurations is not allowed while returned {@code FlexProjectConfigurationEditor} exists.
    */
   public static FlexProjectConfigurationEditor createEditor(final Project project,
                                                             final Map<Module, ModifiableRootModel> moduleToModifiableModel,
