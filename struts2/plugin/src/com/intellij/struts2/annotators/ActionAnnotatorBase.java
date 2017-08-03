@@ -96,7 +96,7 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
 
   @Override
   protected void collectNavigationMarkers(final @NotNull PsiElement element,
-                                          final Collection<? super RelatedItemLineMarkerInfo> lineMarkerInfos) {
+                                          @NotNull final Collection<? super RelatedItemLineMarkerInfo> lineMarkerInfos) {
     if (!(element instanceof PsiIdentifier)) return;
     final PsiClass clazz = getActionPsiClass(element.getParent());
     if (clazz == null || clazz.getNameIdentifier() != element) {
