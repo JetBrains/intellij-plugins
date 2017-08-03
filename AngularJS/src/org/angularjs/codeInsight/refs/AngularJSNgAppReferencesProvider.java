@@ -1,6 +1,7 @@
 package org.angularjs.codeInsight.refs;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
+import com.intellij.lang.javascript.psi.resolve.CachingPolyReferenceBase;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
@@ -28,7 +29,7 @@ public class AngularJSNgAppReferencesProvider extends PsiReferenceProvider {
     return new PsiReference[]{new AngularJSNgAppReference(((XmlAttributeValue)element))};
   }
 
-  private static class AngularJSNgAppReference extends AngularPolyReferenceBase<XmlAttributeValue> {
+  private static class AngularJSNgAppReference extends CachingPolyReferenceBase<XmlAttributeValue> {
     public AngularJSNgAppReference(XmlAttributeValue element) {
       super(element, ElementManipulators.getValueTextRange(element));
     }

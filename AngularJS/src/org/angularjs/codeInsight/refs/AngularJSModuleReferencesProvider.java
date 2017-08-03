@@ -3,6 +3,7 @@ package org.angularjs.codeInsight.refs;
 import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.resolve.CachingPolyReferenceBase;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.refactoring.JSDefaultRenameProcessor;
@@ -42,7 +43,7 @@ public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
     return new PsiReference[] {new AngularJSModuleReference((JSLiteralExpression)element)};
   }
 
-  private static class AngularJSModuleReference extends AngularPolyReferenceBase<JSLiteralExpression> {
+  private static class AngularJSModuleReference extends CachingPolyReferenceBase<JSLiteralExpression> {
     public AngularJSModuleReference(JSLiteralExpression element) {
       super(element, ElementManipulators.getValueTextRange(element));
     }

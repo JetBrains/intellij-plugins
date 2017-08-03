@@ -3,6 +3,7 @@ package org.angularjs.codeInsight.refs;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
+import com.intellij.lang.javascript.psi.resolve.CachingPolyReferenceBase;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -24,7 +25,7 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
     return new PsiReference[] {new AngularJSUiRouterViewReference(identifier)};
   }
 
-  private static class AngularJSUiRouterViewReference extends AngularPolyReferenceBase<PsiElement> {
+  private static class AngularJSUiRouterViewReference extends CachingPolyReferenceBase<PsiElement> {
     public AngularJSUiRouterViewReference(PsiElement element) {
       super(element, ElementManipulators.getValueTextRange(element));
     }

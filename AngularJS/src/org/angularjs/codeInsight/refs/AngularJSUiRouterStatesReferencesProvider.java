@@ -1,5 +1,8 @@
 package org.angularjs.codeInsight.refs;
 
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
+import com.intellij.lang.javascript.psi.JSProperty;
+import com.intellij.lang.javascript.psi.resolve.CachingPolyReferenceBase;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
@@ -23,7 +26,7 @@ public class AngularJSUiRouterStatesReferencesProvider extends PsiReferenceProvi
     return new PsiReference[] {new AngularJSUiRouterStateReference(((XmlAttributeValue)element))};
   }
 
-  private static class AngularJSUiRouterStateReference extends AngularPolyReferenceBase<XmlAttributeValue> {
+  private static class AngularJSUiRouterStateReference extends CachingPolyReferenceBase<XmlAttributeValue> {
     public AngularJSUiRouterStateReference(XmlAttributeValue element) {
       super(element, ElementManipulators.getValueTextRange(element));
     }
