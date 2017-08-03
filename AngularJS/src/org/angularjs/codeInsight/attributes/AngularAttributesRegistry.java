@@ -29,30 +29,29 @@ public class AngularAttributesRegistry {
   }
 
   public static boolean isAngularExpressionAttribute(XmlAttribute parent) {
-    final String attributeName = DirectiveUtil.normalizeAttributeName(parent.getName());
-    XmlAttributeDescriptor descriptor = AngularJSAttributeDescriptorsProvider.getDescriptor(attributeName, parent.getParent());
-    final PsiElement directive = descriptor != null ? descriptor.getDeclaration() : null;
-    if (directive instanceof JSImplicitElement) {
-      final String restrict = ((JSImplicitElement)directive).getTypeString();
-      final String param = restrict != null ? restrict.split(";", -1)[2] : "";
-      return param.endsWith("expression") || param.startsWith("string");
-    }
-    return false;
+    final String type = getType(parent);
+    return type.endsWith("expression") || type.startsWith("string");
   }
 
   public static boolean isJSONAttribute(XmlAttribute parent) {
     final String value = parent.getValue();
     if (value == null || !value.startsWith("{")) return false;
 
+    final String type = getType(parent);
+    return type.contains("object literal") || type.equals("mixed");
+  }
+
+  @NotNull
+  private static String getType(XmlAttribute parent) {
     final String attributeName = DirectiveUtil.normalizeAttributeName(parent.getName());
     XmlAttributeDescriptor descriptor = AngularJSAttributeDescriptorsProvider.getDescriptor(attributeName, parent.getParent());
     final PsiElement directive = descriptor != null ? descriptor.getDeclaration() : null;
     if (directive instanceof JSImplicitElement) {
       final String restrict = ((JSImplicitElement)directive).getTypeString();
-      final String type = restrict != null ? restrict.split(";", -1)[2] : "";
-      return type.contains("object literal") || type.equals("mixed");
+      final String [] args = restrict != null ? restrict.split(";", -1) : null;
+      return args != null && args.length > 2 ? args[2] : "";
     }
-    return false;
+    return "";
   }
 
   public static boolean isEventAttribute(String name, Project project) {
