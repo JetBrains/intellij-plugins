@@ -65,7 +65,7 @@
     <lang.parserDefinition language="Decompiled SWF"
                            implementationClass="com.intellij.javascript.flex.compiled.DecompiledSwfParserDefinition"/>
     <lang.documentationProvider language="ECMA Script Level 4" implementationClass="com.intellij.javascript.flex.FlexDocumentationProvider"/>
-    <lang.rearranger language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.arrangement.ActionScriptRearranger"/>
+    <lang.rearranger language="ECMA Script Level 4" implementationClass="com.intellij.lang.actionscript.arrangement.ActionScriptRearranger"/>
     <structureViewBuilder key="SWF" factoryClass="com.intellij.javascript.flex.compiled.SwfStructureViewBuilderProvider"/>
 
     <psi.referenceContributor language="XML" implementation="com.intellij.javascript.flex.FlexConfigXmlReferenceContributor"/>

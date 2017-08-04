@@ -1,7 +1,10 @@
-package com.intellij.lang.javascript.arrangement;
+package com.intellij.lang.actionscript.arrangement;
 
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.arrangement.JSArrangementEntry;
+import com.intellij.lang.javascript.arrangement.JSElementArrangementEntry;
+import com.intellij.lang.javascript.arrangement.JSRearrangerBase;
 import com.intellij.lang.javascript.generation.ActionScriptGenerateEventHandler;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSParameter;
