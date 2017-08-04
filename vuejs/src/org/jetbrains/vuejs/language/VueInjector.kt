@@ -31,7 +31,7 @@ class VueInjector : MultiHostInjector {
         val element = org.jetbrains.vuejs.index.resolve(DELIMITERS, GlobalSearchScope.projectScope(project), VueOptionsIndex.KEY)
                       ?: return@delimitersFactory null
         val property = PsiTreeUtil.getParentOfType(element, JSProperty::class.java) ?: return@delimitersFactory null
-        val arr = property.value as JSArrayLiteralExpression
+        val arr = property.value as? JSArrayLiteralExpression ?: return@delimitersFactory null
         if (arr.expressions.size != 2) return@delimitersFactory null
         val delimiter = parseStringLiteral(
           arr.expressions[if (JSInjectionBracesUtil.START_SYMBOL_KEY == key) 0 else 1]) ?: return@delimitersFactory null
