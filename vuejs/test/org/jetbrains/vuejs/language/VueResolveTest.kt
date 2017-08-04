@@ -329,7 +329,89 @@ export default {
   props: props,
 }</script>
 """, null)
+
+    doTestResolveLocallyInsideComponent("""
+<template>{{<caret>groceryList}}</template>
+<script>
+let props = ['parentMsg'];
+
+export default {
+  name: 'parent',
+  props: props,
+  data: {
+    groceryList: {}
   }
+}</script>
+""", "groceryList")
+
+    doTestResolveLocallyInsideComponent("""
+<script>
+let props = ['parentMsg'];
+
+export default {
+  name: 'parent',
+  props: props,
+  methods: {
+    callMum() {
+      return this.<caret>groceryList;
+    }
+  }
+  data: {
+    groceryList: {}
+  }
+}</script>
+""", "groceryList")
+
+    doTestResolveLocallyInsideComponent("""
+<template>{{<caret>groceryList}}</template>
+<script>
+let props = ['parentMsg'];
+
+export default {
+  name: 'parent',
+  props: props,
+  data: () => ({
+    groceryList: {}
+  })
+}</script>
+""", "groceryList")
+
+    doTestResolveLocallyInsideComponent("""
+<template>{{<caret>groceryList}}</template>
+<script>
+let props = ['parentMsg'];
+
+export default {
+  name: 'parent',
+  props: props,
+  data:
+    () => {
+            return {
+              groceryList: {}
+            }
+          }
+}</script>
+""", "groceryList")
+
+    doTestResolveLocallyInsideComponent("""
+<template>{{groceryList.<caret>carrot}}</template>
+<script>
+let props = ['parentMsg'];
+
+export default {
+  name: 'parent',
+  props: props,
+  data:
+    function () {
+            return {
+              groceryList: {
+                carrot: {}
+              }
+            }
+          }
+}</script>
+""", "carrot")
+}
 
   fun doTestResolveLocallyInsideComponent(text: String, expectedPropertyName: String?) {
     myFixture.configureByText("ResolveLocallyInsideComponent.vue", text)

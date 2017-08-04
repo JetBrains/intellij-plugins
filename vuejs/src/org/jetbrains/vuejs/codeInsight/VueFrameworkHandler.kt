@@ -24,10 +24,7 @@ import org.jetbrains.vuejs.index.INDICES
 import org.jetbrains.vuejs.index.VueComponentsIndex
 import org.jetbrains.vuejs.index.VueOptionsIndex
 
-val DELIMITERS = "delimiters"
 class VueFrameworkHandler : FrameworkIndexingHandler() {
-  private val OPTIONS = setOf(DELIMITERS)
-
   init {
     INDICES.values.forEach { JSImplicitElementImpl.ourUserStringsRegistry.registerUserString(it) }
   }
@@ -41,7 +38,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
     if (obj.parent !is JSProperty && obj.properties[0] == property)  {
       if (obj.parent is JSExportAssignment && obj.containingFile.fileType == VueFileType.INSTANCE) {
-        return tryProcessComponentInVue(property, outData)
+        return tryProcessComponentInVue(obj, property, outData)
       }
       else {
         val componentName = tryGetNameFromComponentDefinition(obj)
@@ -54,15 +51,26 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       }
     }
 
-    val name = property.name ?: return outData
-    if (OPTIONS.contains(name) && ((obj.parent as? JSProperty) == null)) {
+    if (obj.properties[0] == property && ((obj.parent as? JSProperty) == null) && isDescriptorOfLinkedInstanceDefinition(obj)) {
       val out = outData ?: JSElementIndexingDataImpl()
-      out.addImplicitElement(JSImplicitElementImpl.Builder(name, property)
+      val binding = (obj.findProperty("el")?.value as? JSLiteralExpression)?.value as? String
+      out.addImplicitElement(JSImplicitElementImpl.Builder(binding ?: "", property)
                                .setUserString(VueOptionsIndex.JS_KEY)
                                .toImplicitElement())
       return out
     }
     return outData
+  }
+
+  private fun isDescriptorOfLinkedInstanceDefinition(obj: JSObjectLiteralExpression): Boolean {
+    val argumentList = obj.parent as? JSArgumentList ?: return false
+    if (argumentList.arguments[0] == obj) {
+      return JSSymbolUtil.isAccurateReferenceExpressionName(
+          (argumentList.parent as? JSNewExpression)?.methodExpression as? JSReferenceExpression, "Vue") ||
+        JSSymbolUtil.isAccurateReferenceExpressionName(
+          (argumentList.parent as? JSCallExpression)?.methodExpression as? JSReferenceExpression, "Vue", "extends")
+    }
+    return false
   }
 
   override fun shouldCreateStubForLiteral(node: ASTNode?): Boolean {
@@ -79,14 +87,10 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     return false
   }
 
-  private fun tryProcessComponentInVue(property: JSProperty,
+  private fun tryProcessComponentInVue(obj: JSObjectLiteralExpression, property: JSProperty,
                                        outData: JSElementIndexingData?): JSElementIndexingData? {
-    val compName : String
-    if ("name" == property.name) {
-      compName = (property.value as? JSLiteralExpression)?.value as? String ?: return outData
-    } else {
-      compName = FileUtil.getNameWithoutExtension(property.containingFile.name)
-    }
+    val compName = (obj.findProperty("name")?.value as? JSLiteralExpression)?.value as? String
+                   ?: FileUtil.getNameWithoutExtension(obj.containingFile.name)
     val out = outData ?: JSElementIndexingDataImpl()
     out.addImplicitElement(JSImplicitElementImpl.Builder(compName, property).setUserString(VueComponentsIndex.JS_KEY).toImplicitElement())
 

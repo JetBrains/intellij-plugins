@@ -154,4 +154,39 @@ export default {
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "me215thod")
   }
+
+  fun testCompleteElementsFromLocalData() {
+    myFixture.configureByText("CompleteElementsFromLocalData.vue", """
+<template>{{<caret>}}</template>
+<script>
+let props = ['parentMsg'];
+
+export default {
+  name: 'parent',
+  props: props,
+  data: {
+    groceryList: {}
+  }
+}</script>""")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "groceryList")
+
+    myFixture.configureByText("CompleteElementsFromLocalData.vue", """
+<template>{{<caret>}}</template>
+<script>
+let props = ['parentMsg'];
+
+export default {
+  name: 'parent',
+  props: props,
+  data:
+    () => {
+            return {
+              groceryList: {}
+            }
+          }
+}</script>""")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "groceryList")
+  }
 }

@@ -18,6 +18,7 @@ import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
 import com.intellij.psi.impl.source.xml.XmlDocumentImpl
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider
+import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
@@ -139,9 +140,31 @@ private fun findInnerDetailDescriptor(obj: JSObjectLiteralExpression,
         readProps(methodsProperty, true, namedFunctionFilter).firstOrNull()
       }
       else null
+    },
+    NullableFactory {
+      val dataProperty = findProperty(obj, "data")
+      if (dataProperty != null) {
+        readDataProps(dataProperty, filter).firstOrNull()
+      }
+      else null
     }
   )
   return searchers.map { it.create() }.filterNotNull().firstOrNull()
+}
+
+fun readDataProps(dataProps: JSProperty, filter : PairProcessor<String, PsiElement>?) : List<VueAttributeDescriptor> {
+  var dataObject = dataProps.objectLiteralExpressionInitializer
+  if (dataObject == null) {
+    val function = dataProps.tryGetFunctionInitializer() ?: return emptyList()
+    dataObject = JSStubBasedPsiTreeUtil.findDescendants<JSObjectLiteralExpression>(function, TokenSet.create(
+      JSStubElementTypes.OBJECT_LITERAL_EXPRESSION))
+      .find {
+        it.context == function ||
+        it.context is JSParenthesizedExpression && it.context?.context == function ||
+        it.context is JSReturnStatement
+      } ?: return emptyList()
+  }
+  return filteredObjectProperties(dataObject, filter)
 }
 
 fun getComponentInnerDetailsFromObjectLiteral(obj : JSObjectLiteralExpression) : List<Pair<String, PsiElement>> {
@@ -161,6 +184,11 @@ fun getComponentInnerDetailsFromObjectLiteral(obj : JSObjectLiteralExpression) :
     @Suppress("UNCHECKED_CAST")
     result.addAll(withNameVariants(readProps(methodsProperty, true, FUNCTION_FILTER), false))
   }
+  val dataProperty = findProperty(obj, "data")
+  if (dataProperty != null) {
+    @Suppress("UNCHECKED_CAST")
+    result.addAll(withNameVariants(readDataProps(dataProperty, null), false))
+  }
   return result.map { Pair(it.name, it.declaration!!) }
 }
 
@@ -179,10 +207,13 @@ private fun readProps(propsProperty : JSProperty, checkForArray: Boolean, filter
     }
   }
   if (propsObject != null) {
-    return propsObject.properties.filter { filter == null || filter.process(it.name!!, it) }.map { VueAttributeDescriptor(it.name!!, it) }
+    return filteredObjectProperties(propsObject, filter)
   }
   return if (checkForArray) readPropsFromArray(propsProperty, filter) else return emptyList()
 }
+
+private fun filteredObjectProperties(propsObject: JSObjectLiteralExpression, filter: PairProcessor<String, PsiElement>?) =
+  propsObject.properties.filter { filter == null || filter.process(it.name!!, it) }.map { VueAttributeDescriptor(it.name!!, it) }
 
 private fun readPropsFromArray(holder: PsiElement, filter: PairProcessor<String, PsiElement>?): List<VueAttributeDescriptor> {
   return JSStubBasedPsiTreeUtil.findDescendants(holder, JSStubElementTypes.LITERAL_EXPRESSION)

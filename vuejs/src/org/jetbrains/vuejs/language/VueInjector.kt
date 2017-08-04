@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.JSInjectionBracesUtil.injectInXmlTextByDelim
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -17,7 +17,7 @@ import com.intellij.psi.impl.source.xml.XmlTextImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.NullableFunction
-import org.jetbrains.vuejs.codeInsight.DELIMITERS
+import org.jetbrains.vuejs.codeInsight.findProperty
 import org.jetbrains.vuejs.index.VueOptionsIndex
 import java.util.*
 
@@ -28,9 +28,10 @@ class VueInjector : MultiHostInjector {
   companion object {
     val BRACES_FACTORY: NullableFunction<PsiElement, Pair<String, String>> = JSInjectionBracesUtil
       .delimitersFactory(VueJSLanguage.INSTANCE.displayName) { project, key ->
-        val element = org.jetbrains.vuejs.index.resolve(DELIMITERS, GlobalSearchScope.projectScope(project), VueOptionsIndex.KEY)
+        val element = org.jetbrains.vuejs.index.resolve("", GlobalSearchScope.projectScope(project), VueOptionsIndex.KEY)
                       ?: return@delimitersFactory null
-        val property = PsiTreeUtil.getParentOfType(element, JSProperty::class.java) ?: return@delimitersFactory null
+        val obj = PsiTreeUtil.getParentOfType(element, JSObjectLiteralExpression::class.java) ?: return@delimitersFactory null
+        val property = findProperty(obj, "delimiters") ?: return@delimitersFactory null
         val arr = property.value as? JSArrayLiteralExpression ?: return@delimitersFactory null
         if (arr.expressions.size != 2) return@delimitersFactory null
         val delimiter = parseStringLiteral(
