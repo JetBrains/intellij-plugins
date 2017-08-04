@@ -42,6 +42,7 @@ import io.netty.util.ReferenceCounted;
 import io.netty.util.internal.PlatformDependent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.builtInWebServer.BuiltInWebServerKt;
 import org.jetbrains.builtInWebServer.ConsoleManager;
 import org.jetbrains.builtInWebServer.NetService;
 import org.jetbrains.concurrency.AsyncPromise;
@@ -51,9 +52,7 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.Locale;
+import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -277,11 +276,18 @@ final class PubServerService extends NetService {
       final HttpResponse response = Responses.response(HttpResponseStatus.FOUND, clientRequest, null);
       //assert serverInstanceInfo != null;
 
-      final int queryIndex = clientRequest.uri().indexOf('?');
-      final String queryString = queryIndex == -1 ? "" : clientRequest.uri().substring(queryIndex);
+      final Map<String, List<String>> parameters = new QueryStringDecoder(clientRequest.uri()).parameters();
+      parameters.remove(BuiltInWebServerKt.TOKEN_PARAM_NAME);
 
-      response.headers().add(HttpHeaderNames.LOCATION,
-                             "http://" + address.getHostString() + ":" + address.getPort() + pathToPubServe + queryString);
+      final QueryStringEncoder encoder =
+        new QueryStringEncoder("http://" + address.getHostString() + ":" + address.getPort() + pathToPubServe);
+      for (Map.Entry<String, List<String>> entry : parameters.entrySet()) {
+        for (String value : entry.getValue()) {
+          encoder.addParam(entry.getKey(), value);
+        }
+      }
+
+      response.headers().add(HttpHeaderNames.LOCATION, encoder.toString());
       Responses.send(response, clientChannel, clientRequest, extraHeaders);
       return;
     }

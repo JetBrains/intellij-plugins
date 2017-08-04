@@ -474,7 +474,7 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
     }
 
     @Override
-    protected void collectAdditionalElementsToRename(List<Pair<PsiElement, TextRange>> stringUsages) {
+    protected void collectAdditionalElementsToRename(@NotNull List<Pair<PsiElement, TextRange>> stringUsages) {
       for (PsiElement expression : getOccurrences()) {
         LOG.assertTrue(expression.isValid(), expression.getText());
         stringUsages.add(Pair.create(expression, new TextRange(0, expression.getTextLength())));

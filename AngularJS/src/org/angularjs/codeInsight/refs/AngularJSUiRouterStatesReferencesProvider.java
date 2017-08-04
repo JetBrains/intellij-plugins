@@ -1,14 +1,11 @@
 package org.angularjs.codeInsight.refs;
 
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
-import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
-import org.angularjs.codeInsight.router.AngularRouterStateLoader;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularUiRouterStatesIndex;
 import org.jetbrains.annotations.NotNull;
@@ -52,14 +49,6 @@ public class AngularJSUiRouterStatesReferencesProvider extends PsiReferenceProvi
                                       list.add(new JSResolveResult(element));
                                       return true;
                                     });
-      if (list.isEmpty()) {
-        final List<JSObjectLiteralExpression> expressions =
-          new AngularRouterStateLoader(myElement.getProject()).setStateName(id).loadFreelyDefinedStates();
-        for (JSObjectLiteralExpression expression : expressions) {
-          final JSProperty name = expression.findProperty("name");
-          list.add(new JSResolveResult(name == null ? expression : name.getValue()));
-        }
-      }
       return list.toArray(new ResolveResult[list.size()]);
     }
 

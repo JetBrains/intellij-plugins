@@ -3,9 +3,8 @@ package com.intellij.flex.refactoring;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
-import com.intellij.lang.javascript.JSChangeSignatureTestBase;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
+import com.intellij.lang.javascript.*;
+import com.intellij.lang.javascript.dialects.ECMAL4LanguageDialect;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterInfo;
@@ -75,7 +74,7 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
            new JSParameterInfo("p1", "int", "", "100", -1),
            new JSParameterInfo("p2", "String", "abc", "\"def\"", -1),
            new JSParameterInfo("p3", "Boolean", "false", "", -1),
-           new JSParameterInfo("p4", "...", "", "", -1));
+           new JSParameterInfo("p4", "...", "", "", -1, false, ECMAL4LanguageDialect.DIALECT_OPTION_HOLDER));
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
@@ -89,7 +88,7 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
            new JSParameterInfo("i2", "Number", "", "", 1),
            new JSParameterInfo("sss", "String", "\"abc\"", "", 0),
            new JSParameterInfo("o", "flash.events.EventDispatcher", "FOO", "", 2),
-           new JSParameterInfo("rest2", "...", "", "", 3));
+           new JSParameterInfo("rest2", "...", "", "", 3, false, ECMAL4LanguageDialect.DIALECT_OPTION_HOLDER));
   }
 
 
@@ -174,7 +173,7 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
     doTest("foo", JSAttributeList.AccessType.PACKAGE_LOCAL, "void",
            new String[]{"zzz"},
            new JSParameterInfo("p", "String", "", "\"abc\"", -1),
-           new JSParameterInfo("args", "...", "", "", 0));
+           new JSParameterInfo("args", "...", "", "", 0, false, ECMAL4LanguageDialect.DIALECT_OPTION_HOLDER));
   }
 
   public void testNested() throws Exception {
@@ -209,7 +208,7 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
     doTest("doSmth", JSAttributeList.AccessType.PACKAGE_LOCAL, "",
            new String[]{"A", "B"},
            new JSParameterInfo("s", "String", "", "\"abc\"", -1),
-           new JSParameterInfo("args", "...", "", "", 0));
+           new JSParameterInfo("args", "...", "", "", 0, false, ECMAL4LanguageDialect.DIALECT_OPTION_HOLDER));
   }
 
   public void testAddParam7() throws Exception {
