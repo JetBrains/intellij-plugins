@@ -339,7 +339,6 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
              ? cssSettings.getStylesheetUri()
              : MarkdownCssSettings.getDefaultCssSettings(UIUtil.isUnderDarcula()).getStylesheetUri();
 
-    //todo convert java resource
     panel.setCSS(inlineCss, customCssURI);
 
     panel.render();

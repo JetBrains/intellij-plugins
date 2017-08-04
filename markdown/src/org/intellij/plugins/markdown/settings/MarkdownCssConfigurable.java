@@ -53,7 +53,10 @@ public class MarkdownCssConfigurable implements SearchableConfigurable {
 
   @Override
   public void apply() throws ConfigurationException {
-    myMarkdownApplicationSettings.setMarkdownCssSettings(getForm().getMarkdownCssSettings());
+    final MarkdownCssSettingsForm form = getForm();
+
+    form.validate();
+    myMarkdownApplicationSettings.setMarkdownCssSettings(form.getMarkdownCssSettings());
   }
 
   @Override

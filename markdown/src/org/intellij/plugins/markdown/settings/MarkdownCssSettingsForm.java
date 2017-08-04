@@ -15,10 +15,12 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.UnknownFileType;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.TextBrowseFolderListener;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.components.JBCheckBox;
+import org.intellij.plugins.markdown.MarkdownBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +28,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class MarkdownCssSettingsForm implements MarkdownCssSettings.Holder,
                                                 Disposable {
@@ -71,6 +76,18 @@ public class MarkdownCssSettingsForm implements MarkdownCssSettings.Holder,
 
     myEditor = createEditor();
     myEditorPanel.add(myEditor.getComponent(), BorderLayout.CENTER);
+  }
+
+  public void validate() throws ConfigurationException {
+    if (!myCssFromURIEnabled.isSelected()) return;
+
+    try {
+      new URL(myCssURI.getText()).toURI();
+    }
+    catch (URISyntaxException | MalformedURLException e) {
+      throw new ConfigurationException(
+        "'" + MarkdownBundle.message("settings.markdown.css.enable.uri") + "' reports the error: " + e.getMessage());
+    }
   }
 
   @NotNull
