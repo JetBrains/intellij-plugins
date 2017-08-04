@@ -187,7 +187,8 @@ private fun readProps(propsProperty : JSProperty, checkForArray: Boolean, filter
 private fun readPropsFromArray(holder: PsiElement, filter: PairProcessor<String, PsiElement>?): List<VueAttributeDescriptor> {
   return JSStubBasedPsiTreeUtil.findDescendants(holder, JSStubElementTypes.LITERAL_EXPRESSION)
     .filter {
-      var result = it.isQuotedLiteral && (filter == null || filter.process(StringUtil.unquoteString(it.text), it))
+      var result = it.isQuotedLiteral && it.significantValue != null &&
+                   (filter == null || filter.process(StringUtil.unquoteString(it.significantValue!!), it))
       if (result) {
         val context = it.context
         result = (context is JSArrayLiteralExpression) && (context.parent == holder) || context == holder

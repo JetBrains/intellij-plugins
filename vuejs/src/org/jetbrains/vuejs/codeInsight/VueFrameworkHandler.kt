@@ -1,5 +1,6 @@
 package org.jetbrains.vuejs.codeInsight
 
+import com.intellij.lang.ASTNode
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.index.JSSymbolUtil
@@ -62,6 +63,20 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       return out
     }
     return outData
+  }
+
+  override fun shouldCreateStubForLiteral(node: ASTNode?): Boolean {
+    if (node?.psi is JSLiteralExpression) {
+      return hasSignificantValue(node!!.psi as JSLiteralExpression)
+    }
+    return super.shouldCreateStubForLiteral(node)
+  }
+
+  override fun hasSignificantValue(expression: JSLiteralExpression): Boolean {
+    if (expression.containingFile.fileType == VueFileType.INSTANCE) {
+      return PsiTreeUtil.getParentOfType(expression, JSArrayLiteralExpression::class.java) != null
+    }
+    return false
   }
 
   private fun tryProcessComponentInVue(property: JSProperty,
