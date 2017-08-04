@@ -3,7 +3,7 @@ package com.intellij.flex.codeInsight
 import com.intellij.flex.util.FlexTestUtils
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor
 import com.intellij.lang.javascript.*
-import com.intellij.lang.javascript.arrangement.ActionScriptRearranger
+import com.intellij.lang.actionscript.arrangement.ActionScriptRearranger
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.projectRoots.ProjectJdkTable
