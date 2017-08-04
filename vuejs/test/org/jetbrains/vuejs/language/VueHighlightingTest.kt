@@ -204,6 +204,7 @@ const props = ['oneTwo']
         <<warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute withCamelCase">camelCase</warning></warning></warning> :one="5"></<warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute withCamelCase">camelCase</warning></warning></warning>>
         <camelCase one="test" two="2" three=3 with-camel-case="1" <warning descr="Attribute four is not allowed here">four</warning>=1></camelCase>
         <camelCase one="test" v-bind:two="2" :three=3 withCamelCase="1"></camelCase>
+        <camelCase one="test" v-bind:two="2" :three=3 withCamelCase="1" not-required=11></camelCase>
         <<warning descr="Element camelCase doesn't have required attribute withCamelCase">camelCase</warning> one="test" v-bind:two="2" :three=3></<warning descr="Element camelCase doesn't have required attribute withCamelCase">camelCase</warning>>
     </div>
 </template>
@@ -215,6 +216,7 @@ const props = ['oneTwo']
         two: {required:true},
         three: {required:true},
         withCamelCase: {required:true},
+        notRequired: {required:false}
       }
     }
 </script>""")

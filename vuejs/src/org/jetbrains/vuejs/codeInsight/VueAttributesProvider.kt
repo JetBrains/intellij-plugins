@@ -57,8 +57,12 @@ class VueAttributeDescriptor(private val name:String,
   override fun getName() = name
   override fun getDeclaration() = element
   override fun init(element: PsiElement?) {}
-  override fun isRequired() = !suppressRequired && element is JSProperty && findProperty(element.objectLiteralExpressionInitializer,
-                                                                                         "required") != null
+  override fun isRequired(): Boolean {
+    if (suppressRequired) return false
+    val initializer = (element as? JSProperty)?.objectLiteralExpressionInitializer ?: return false
+    val literal = findProperty(initializer, "required")?.literalExpressionInitializer
+    return literal != null && literal.isBooleanLiteral && "true" == literal.significantValue
+  }
   override fun isFixed() = false
   override fun hasIdType() = false
   override fun getDependences(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY

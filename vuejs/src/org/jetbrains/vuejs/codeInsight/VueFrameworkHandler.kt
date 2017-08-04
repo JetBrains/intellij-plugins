@@ -82,7 +82,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   override fun hasSignificantValue(expression: JSLiteralExpression): Boolean {
     if (expression.containingFile.fileType == VueFileType.INSTANCE) {
-      return PsiTreeUtil.getParentOfType(expression, JSArrayLiteralExpression::class.java) != null
+      return PsiTreeUtil.getParentOfType(expression, JSArrayLiteralExpression::class.java) != null ||
+             "required" == (expression.parent as? JSProperty)?.name
     }
     return false
   }
