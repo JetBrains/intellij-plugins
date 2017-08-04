@@ -1,6 +1,5 @@
 package org.intellij.plugins.markdown.settings;
 
-import com.intellij.ide.ui.LafManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +27,7 @@ public final class MarkdownCssSettings {
   }
 
   private MarkdownCssSettings(boolean isDarcula) {
-    this(true, getPredefinedCssURI(isDarcula), false, "");
+    this(false, getPredefinedCssURI(isDarcula), false, "");
   }
 
   public MarkdownCssSettings(boolean uriEnabled, @NotNull String stylesheetUri, boolean textEnabled, @NotNull String stylesheetText) {

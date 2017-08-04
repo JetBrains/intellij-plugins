@@ -12,6 +12,9 @@ import com.intellij.util.xmlb.annotations.Property;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static org.intellij.plugins.markdown.settings.MarkdownCssSettings.DARCULA;
+import static org.intellij.plugins.markdown.settings.MarkdownCssSettings.DEFAULT;
+
 @State(
   name = "MarkdownApplicationSettings",
   storages = @Storage("markdown.xml")
@@ -56,6 +59,14 @@ public class MarkdownApplicationSettings implements PersistentStateComponent<Mar
   @NotNull
   @Override
   public MarkdownCssSettings getMarkdownCssSettings() {
+    if (DARCULA.getStylesheetUri().equals(myState.myCssSettings.getStylesheetUri())
+        || DEFAULT.getStylesheetUri().equals(myState.myCssSettings.getStylesheetUri())) {
+      return new MarkdownCssSettings(false,
+                                     "",
+                                     myState.myCssSettings.isTextEnabled(),
+                                     myState.myCssSettings.getStylesheetText());
+    }
+
     return myState.myCssSettings;
   }
 

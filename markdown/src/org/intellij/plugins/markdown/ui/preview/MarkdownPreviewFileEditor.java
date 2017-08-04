@@ -19,6 +19,7 @@ import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Alarm;
 import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.util.ui.UIUtil;
 import org.intellij.markdown.IElementType;
 import org.intellij.markdown.ast.ASTNode;
 import org.intellij.markdown.html.GeneratingProvider;
@@ -334,12 +335,13 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     ApplicationManager.getApplication().assertIsDispatchThread();
 
     final String inlineCss = cssSettings.isTextEnabled() ? cssSettings.getStylesheetText() : null;
-    if (cssSettings.isUriEnabled()) {
-      panel.setCSS(inlineCss, cssSettings.getStylesheetUri());
-    }
-    else {
-      panel.setCSS(inlineCss);
-    }
+    final String customCssURI = cssSettings.isUriEnabled()
+             ? cssSettings.getStylesheetUri()
+             : MarkdownCssSettings.getDefaultCssSettings(UIUtil.isUnderDarcula()).getStylesheetUri();
+
+    //todo convert java resource
+    panel.setCSS(inlineCss, customCssURI);
+
     panel.render();
   }
 

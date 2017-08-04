@@ -2,6 +2,7 @@ package org.intellij.plugins.markdown.settings;
 
 import com.intellij.ide.ui.LafManager;
 import com.intellij.ide.ui.LafManagerListener;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -23,9 +24,13 @@ class MarkdownLAFListener implements LafManagerListener {
 
   public void updateCssSettingsForced(boolean isDarcula) {
     final MarkdownCssSettings currentCssSettings = MarkdownApplicationSettings.getInstance().getMarkdownCssSettings();
+    final String stylesheetUri = StringUtil.isEmpty(currentCssSettings.getStylesheetUri())
+                       ? MarkdownCssSettings.getDefaultCssSettings(isDarcula).getStylesheetUri()
+                       : currentCssSettings.getStylesheetUri();
+
     MarkdownApplicationSettings.getInstance().setMarkdownCssSettings(new MarkdownCssSettings(
       currentCssSettings.isUriEnabled(),
-      MarkdownCssSettings.getDefaultCssSettings(isDarcula).getStylesheetUri(),
+      stylesheetUri,
       currentCssSettings.isTextEnabled(),
       currentCssSettings.getStylesheetText()
     ));
