@@ -169,7 +169,7 @@ export default {
   }
 }</script>""")
     myFixture.completeBasic()
-    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "groceryList")
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
 
     myFixture.configureByText("CompleteElementsFromLocalData.vue", """
 <template>{{<caret>}}</template>
@@ -187,6 +187,6 @@ export default {
           }
 }</script>""")
     myFixture.completeBasic()
-    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "groceryList")
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
   }
 }
