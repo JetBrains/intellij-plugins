@@ -4,6 +4,7 @@ import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSType;
@@ -35,8 +36,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
-import static com.intellij.lang.javascript.psi.JSCommonTypeNames.OBJECT_CLASS_NAME;
-
 /**
  * @author yole
  */
@@ -44,11 +43,11 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
   @NonNls public static final String XML_TAG_NAME = "XML";
   @NonNls public static final String XMLLIST_TAG_NAME = "XMLList";
   @NonNls public static final String PRIVATE_TAG_NAME = MxmlLanguageInjector.PRIVATE_TAG_NAME;
-  public static final @NonNls String MXML_URI4 = "library://ns.adobe.com/flex/spark";
-  public static final @NonNls String MXML_URI5 = "library://ns.adobe.com/flex/halo";
-  public static final @NonNls String MXML_URI6 = "library://ns.adobe.com/flex/mx";
-  public static final @NonNls String[] MXML_URIS = {JavaScriptSupportLoader.MXML_URI, JavaScriptSupportLoader.MXML_URI3, MXML_URI4, MXML_URI5, MXML_URI6};
-  public static final @NonNls String[] FLEX_4_NAMESPACES = {JavaScriptSupportLoader.MXML_URI3, MXML_URI4, MXML_URI5, MXML_URI6};
+  @NonNls public static final String MXML_URI4 = "library://ns.adobe.com/flex/spark";
+  @NonNls public static final String MXML_URI5 = "library://ns.adobe.com/flex/halo";
+  @NonNls public static final String MXML_URI6 = "library://ns.adobe.com/flex/mx";
+  @NonNls public static final String[] MXML_URIS = {JavaScriptSupportLoader.MXML_URI, JavaScriptSupportLoader.MXML_URI3, MXML_URI4, MXML_URI5, MXML_URI6};
+  @NonNls public static final String[] FLEX_4_NAMESPACES = {JavaScriptSupportLoader.MXML_URI3, MXML_URI4, MXML_URI5, MXML_URI6};
   private static final String OPERATION_TAG_NAME = "operation";
   private static final String HTTP_SERVICE_TAG_NAME = "HTTPService";
   private static final String WEB_SERVICE_TAG_NAME = "WebService";
@@ -61,8 +60,9 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
 
   private static final Logger LOG = Logger.getInstance(MxmlJSClass.class);
 
-  private static Key<CachedValue<List<JSField>>> ourSkinComponentPredefinedFieldsKey = Key.create("ourskinComponentPredefinedVarsKey");
-  private static MxmlResolveUtil.ImplicitFieldProvider skinComponentPredefinedFields = new MxmlResolveUtil.ImplicitFieldProvider() {
+  private static final Key<CachedValue<List<JSField>>> ourSkinComponentPredefinedFieldsKey = Key.create("ourskinComponentPredefinedVarsKey");
+  private static final MxmlResolveUtil.ImplicitFieldProvider skinComponentPredefinedFields = new MxmlResolveUtil.ImplicitFieldProvider() {
+    @Override
     protected void doComputeVars(final List<JSField> vars, final XmlFile xmlFile) {
       for (XmlTag t : xmlFile.getDocument().getRootTag().findSubTags(FlexPredefinedTagNames.METADATA, JavaScriptSupportLoader.MXML_URI3)) {
         JSResolveUtil.processInjectedFileForTag(t, new JSResolveUtil.JSInjectedFilesVisitor() {
@@ -72,13 +72,13 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
               if (elt instanceof JSAttributeList) {
                 JSAttribute[] hostAnnotation = ((JSAttributeList)elt).getAttributesByName("HostComponent");
 
-                if (hostAnnotation.length == 1 && vars.size() == 0) {
+                if (hostAnnotation.length == 1 && vars.isEmpty()) {
                   JSAttributeNameValuePair valuePair = hostAnnotation[0].getValueByName(null);
 
                   vars.add(
                     new ImplicitJSFieldImpl(
                       "hostComponent",
-                      valuePair != null ? valuePair.getSimpleValue() : OBJECT_CLASS_NAME,
+                      valuePair != null ? valuePair.getSimpleValue() : JSCommonTypeNames.OBJECT_CLASS_NAME,
                       JSAttributeList.AccessType.PUBLIC,
                       xmlFile
                     )
@@ -93,7 +93,8 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
     }
   };
 
-  private static MxmlResolveUtil.ImplicitFieldProvider inlineComponentRenderPredefinedVars = new MxmlResolveUtil.ImplicitFieldProvider() {
+  private static final MxmlResolveUtil.ImplicitFieldProvider inlineComponentRenderPredefinedVars = new MxmlResolveUtil.ImplicitFieldProvider() {
+    @Override
     protected void doComputeVars(List<JSField> vars, XmlFile xmlFile) {
       JSClass cls = XmlBackedJSClassFactory.getXmlBackedClass(xmlFile);
       final JSType type = JSNamedType.createType(cls.getQualifiedName(), JSTypeSourceFactory.createTypeSource(cls, true), JSContext.INSTANCE);
@@ -101,7 +102,7 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
     }
   };
 
-  private static Key<CachedValue<List<JSField>>> ourInlineComponentRenderPredefinedVarsKey = Key.create("ourInlineComponentRenderPredefinedVarsKey");
+  private static final Key<CachedValue<List<JSField>>> ourInlineComponentRenderPredefinedVarsKey = Key.create("ourInlineComponentRenderPredefinedVarsKey");
 
   private volatile JSReferenceList myImplementsList;
   private final boolean isFxgBackedClass;
@@ -121,7 +122,7 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
   }
 
   @NotNull
-  public static String getLanguageNamespace(final XmlTag rootTag) {
+  private static String getLanguageNamespace(final XmlTag rootTag) {
     assert JavaScriptSupportLoader.isFlexMxmFile(rootTag.getContainingFile()) : rootTag.getContainingFile();
     return rootTag.getPrefixByNamespace(JavaScriptSupportLoader.MXML_URI3) != null
            ? JavaScriptSupportLoader.MXML_URI3
@@ -206,7 +207,7 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
     myExtendsList = null;
   }
 
-  public static void setBaseComponent(XmlTag rootTag, String qName, String prefix, String namespace) {
+  private static void setBaseComponent(XmlTag rootTag, String qName, String prefix, String namespace) {
     Map<String, String> existingPrefix2Namespace = rootTag.getLocalNamespaceDeclarations();
     for (Map.Entry<String, String> entry : existingPrefix2Namespace.entrySet()) {
       if (entry.getValue().equals(namespace)) {
@@ -258,7 +259,7 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
     return MxmlImplicitImports.resolveTypeNameUsingImplicitImports(processor, this);
   }
 
-  public static boolean canBeReferencedById(XmlTag tag) {
+  static boolean canBeReferencedById(XmlTag tag) {
     return !isInsideTagThatAllowsAnyXmlContent(tag) && !isOperationTag(tag);
   }
 
@@ -267,7 +268,7 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
   }
 
   public static boolean isInsideTagThatAllowsAnyXmlContent(final XmlTag tag) {
-    return isInsideTag(tag, parentTag -> isTagThatAllowsAnyXmlContent(parentTag));
+    return isInsideTag(tag, MxmlJSClass::isTagThatAllowsAnyXmlContent);
   }
 
   public static boolean isTagThatAllowsAnyXmlContent(final XmlTag tag) {
@@ -301,6 +302,7 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
   }
 
 
+  @Override
   public JSFile createScriptTag() throws IncorrectOperationException {
     final XmlTag rootTag = getParent();
 
