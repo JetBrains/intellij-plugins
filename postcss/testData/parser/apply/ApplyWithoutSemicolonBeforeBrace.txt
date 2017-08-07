@@ -13,7 +13,7 @@ PostCSS File:ApplyWithoutSemicolonBeforeBrace.pcss
           PsiElement(CSS_DECLARATION_BLOCK)
             PsiElement(CSS_LBRACE)('{')
             PsiWhiteSpace('\n  ')
-            PsiElement(POST_CSS_APPLY_RULE)
+            PsiElement(CSS_APPLY)
               PsiElement(CSS_APPLY_SYM)('@apply')
               PsiWhiteSpace(' ')
               PsiElement(CSS_IDENT)('--my')

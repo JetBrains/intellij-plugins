@@ -2,9 +2,11 @@ PostCSS File:ApplyWithoutIdent.pcss
   PsiElement(POST_CSS_LAZY_STYLESHEET)
     PsiElement(POST_CSS_STYLESHEET)
       PsiElement(CSS_RULESET_LIST)
-        PsiElement(POST_CSS_APPLY_RULE)
+        PsiElement(CSS_APPLY)
           PsiElement(CSS_APPLY_SYM)('@apply')
           PsiErrorElement:an identifier expected
             <empty list>
-          PsiWhiteSpace(' ')
-          PsiElement(CSS_SEMICOLON)(';')
+        PsiErrorElement:unexpected token
+          <empty list>
+        PsiWhiteSpace(' ')
+        PsiElement(CSS_SEMICOLON)(';')

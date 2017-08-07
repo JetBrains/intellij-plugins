@@ -52,7 +52,7 @@ public class PostCssParser extends CssParser2 {
 
   @Override
   protected boolean parseStylesheetItem() {
-    return parseCustomSelectorAtRule() || parseCustomMediaAtRule() || parseAtRuleNesting() || parseApplyAtRule()
+    return parseCustomSelectorAtRule() || parseCustomMediaAtRule() || parseAtRuleNesting()
            || super.parseStylesheetItem();
   }
 
@@ -83,25 +83,12 @@ public class PostCssParser extends CssParser2 {
         parseCustomSelectorAtRule() ||
         parseCustomMediaAtRule() ||
         parseAtRuleNesting() ||
-        parseApplyAtRule() ||
         parseBadAtRule(false) ||
         tryToParseRuleset()) {
       myRulesetSeen = true;
       return true;
     }
     return super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType);
-  }
-
-  private boolean parseApplyAtRule() {
-    if (getTokenType() != CssElementTypes.CSS_APPLY_SYM || lookAhead(1) == CssElementTypes.CSS_LPAREN) return false;
-    PsiBuilder.Marker applyAtRule = createCompositeElement();
-    addSingleToken();
-    addIdentOrError();
-    if (getTokenType() != CssElementTypes.CSS_RBRACE){
-      addSemicolonOrError();
-    }
-    applyAtRule.done(PostCssElementTypes.POST_CSS_APPLY_RULE);
-    return true;
   }
 
   private boolean parseCustomMediaAtRule() {
@@ -370,7 +357,7 @@ public class PostCssParser extends CssParser2 {
       }
     }
     ident.collapse(toCollapse != null ? toCollapse :
-                   (myAdditionalIdent != null && lastIsAdditionalType)? myAdditionalIdent : CssElementTypes.CSS_IDENT);
+                   (myAdditionalIdent != null && lastIsAdditionalType) ? myAdditionalIdent : CssElementTypes.CSS_IDENT);
     myAdditionalIdent = null;
     return true;
   }

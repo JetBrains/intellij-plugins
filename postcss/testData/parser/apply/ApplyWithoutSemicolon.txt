@@ -2,9 +2,7 @@ PostCSS File:ApplyWithoutSemicolon.pcss
   PsiElement(POST_CSS_LAZY_STYLESHEET)
     PsiElement(POST_CSS_STYLESHEET)
       PsiElement(CSS_RULESET_LIST)
-        PsiElement(POST_CSS_APPLY_RULE)
+        PsiElement(CSS_APPLY)
           PsiElement(CSS_APPLY_SYM)('@apply')
           PsiWhiteSpace(' ')
           PsiElement(CSS_IDENT)('--my')
-          PsiErrorElement:';' expected
-            <empty list>

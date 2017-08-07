@@ -6,13 +6,11 @@ import com.intellij.psi.css.CssMediaFeature;
 import com.intellij.psi.css.CssPseudoClass;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.CssTokenImpl;
-import com.intellij.psi.css.resolve.CssCustomMixinReference;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
-import org.intellij.plugins.postcss.psi.PostCssApplyAtRule;
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,9 +40,6 @@ public class PostCssReferenceContributor extends PsiReferenceContributor {
             && element.getText().startsWith("--")
             && ObjectUtils.notNull(PsiTreeUtil.getChildrenOfType(parent, CssTokenImpl.class)).length == 1) {
           return new PsiReference[]{new PostCssCustomMediaReference(element)};
-        }
-        if (parent instanceof PostCssApplyAtRule && element.getText().startsWith("--")) {
-          return new PsiReference[]{new CssCustomMixinReference(element)};
         }
       }
       return PsiReference.EMPTY_ARRAY;

@@ -18,7 +18,6 @@ public interface PostCssElementTypes {
   IElementType POST_CSS_NEST = new PostCssElementType("POST_CSS_NEST");
   IElementType POST_CSS_CUSTOM_SELECTOR_RULE = new PostCssElementType("POST_CSS_CUSTOM_SELECTOR_RULE");
   IElementType POST_CSS_CUSTOM_MEDIA_RULE = new PostCssElementType("POST_CSS_CUSTOM_MEDIA_RULE");
-  IElementType POST_CSS_APPLY_RULE = new PostCssElementType("POST_CSS_APPLY_RULE");
   CssStylesheetLazyElementType POST_CSS_LAZY_STYLESHEET = new CssStylesheetLazyElementType("POST_CSS_LAZY_STYLESHEET", PostCssLanguage.INSTANCE);
   CssStylesheetStubElementType POST_CSS_STYLESHEET = new CssStylesheetStubElementType("POST_CSS_STYLESHEET", PostCssLanguage.INSTANCE);
 }
