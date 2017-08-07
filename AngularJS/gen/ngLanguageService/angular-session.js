@@ -1,9 +1,15 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+exports.__esModule = true;
 var path = require('path');
 function createAngularSessionClass(ts_impl, sessionClass) {
     ts_impl.server.CommandNames.IDEGetHtmlErrors = "IDEGetHtmlErrors";
@@ -15,7 +21,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
     var AngularSession = (function (_super) {
         __extends(AngularSession, _super);
         function AngularSession() {
-            return _super.apply(this, arguments) || this;
+            return _super !== null && _super.apply(this, arguments) || this;
         }
         AngularSession.prototype.executeCommand = function (request) {
             var command = request.command;
@@ -217,10 +223,12 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             }
         };
         AngularSession.prototype.getNgLanguageService = function (languageService) {
-            return languageService["ngService"];
+            var ngService = languageService["ngService"];
+            return ngService ? ngService() : null;
         };
         AngularSession.prototype.getNgHost = function (languageService) {
-            return languageService["ngHost"];
+            var ngHost = languageService["ngHost"];
+            return ngHost ? ngHost() : ngHost;
         };
         AngularSession.prototype.appendPluginDiagnostics = function (project, diags, normalizedFileName) {
             var result = this.getNgDiagnostics(project, normalizedFileName, null);

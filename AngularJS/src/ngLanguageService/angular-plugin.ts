@@ -60,8 +60,8 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
                     let ngService: LanguageService = ng.createLanguageService(ngHost);
                     ngHost.setSite(ngService);
 
-                    languageService["ngService"] = ngService;
-                    languageService["ngHost"] = ngHost;
+                    languageService["ngService"] = () => ngService;
+                    languageService["ngHost"] = () => ngHost;
 
                     return languageService;
 

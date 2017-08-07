@@ -1,5 +1,5 @@
 import {IDETypeScriptSession} from "./typings/typescript/util";
-import {LanguageService, Completions} from "./typings/types";
+import {Completions, LanguageService} from "./typings/types";
 import LanguageServiceHost = ts.LanguageServiceHost;
 
 let path = require('path');
@@ -225,11 +225,13 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
         }
 
         getNgLanguageService(languageService: ts.LanguageService): LanguageService {
-            return languageService["ngService"];
+            let ngService = languageService["ngService"];
+            return ngService ? ngService() : null;
         }
 
         getNgHost(languageService: ts.LanguageService): LanguageServiceHost {
-            return languageService["ngHost"];
+            let ngHost = languageService["ngHost"];
+            return ngHost ? ngHost() : ngHost;
         }
 
         appendPluginDiagnostics(project: ts.server.Project, diags: ts.Diagnostic[], normalizedFileName: string): ts.Diagnostic[] {
