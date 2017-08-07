@@ -10,20 +10,20 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class MarkdownCssConfigurable implements SearchableConfigurable {
+public class MarkdownSettingsConfigurable implements SearchableConfigurable {
   @Nullable
-  private MarkdownCssSettingsForm myForm = null;
+  private MarkdownSettingsForm myForm = null;
   @NotNull
   private MarkdownApplicationSettings myMarkdownApplicationSettings;
 
-  public MarkdownCssConfigurable(@NotNull MarkdownApplicationSettings markdownApplicationSettings) {
+  public MarkdownSettingsConfigurable(@NotNull MarkdownApplicationSettings markdownApplicationSettings) {
     myMarkdownApplicationSettings = markdownApplicationSettings;
   }
 
   @NotNull
   @Override
   public String getId() {
-    return "Settings.Markdown.Css";
+    return "Settings.Markdown";
   }
 
   @Nls
@@ -39,29 +39,32 @@ public class MarkdownCssConfigurable implements SearchableConfigurable {
   }
 
   @NotNull
-  public MarkdownCssSettingsForm getForm() {
+  public MarkdownSettingsForm getForm() {
     if (myForm == null) {
-      myForm = new MarkdownCssSettingsForm();
+      myForm = new MarkdownSettingsForm();
     }
     return myForm;
   }
 
   @Override
   public boolean isModified() {
-    return !getForm().getMarkdownCssSettings().equals(myMarkdownApplicationSettings.getMarkdownCssSettings());
+    return !getForm().getMarkdownCssSettings().equals(myMarkdownApplicationSettings.getMarkdownCssSettings()) ||
+           !getForm().getMarkdownPreviewSettings().equals(myMarkdownApplicationSettings.getMarkdownPreviewSettings());
   }
 
   @Override
   public void apply() throws ConfigurationException {
-    final MarkdownCssSettingsForm form = getForm();
+    final MarkdownSettingsForm form = getForm();
 
     form.validate();
     myMarkdownApplicationSettings.setMarkdownCssSettings(form.getMarkdownCssSettings());
+    myMarkdownApplicationSettings.setMarkdownPreviewSettings(form.getMarkdownPreviewSettings());
   }
 
   @Override
   public void reset() {
     getForm().setMarkdownCssSettings(myMarkdownApplicationSettings.getMarkdownCssSettings());
+    getForm().setMarkdownPreviewSettings(myMarkdownApplicationSettings.getMarkdownPreviewSettings());
   }
 
   @Override

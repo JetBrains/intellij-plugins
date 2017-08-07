@@ -60,11 +60,7 @@
                              groupId="language"
                              nonDefaultProject="true"
                              key="settings.markdown.css.name"
-                             instance="org.intellij.plugins.markdown.settings.MarkdownCssConfigurable">
-      <configurable id="Settings.Markdown.Preview"
-                    bundle="org.intellij.plugins.markdown.bundle.MarkdownBundle"
-                    key="settings.markdown.preview.name"
-                    instance="org.intellij.plugins.markdown.settings.MarkdownPreviewConfigurable"/>
+                             instance="org.intellij.plugins.markdown.settings.MarkdownSettingsConfigurable">
     </applicationConfigurable>
     <applicationService serviceImplementation="org.intellij.plugins.markdown.settings.MarkdownApplicationSettings"/>
     <editorNotificationProvider implementation="org.intellij.plugins.markdown.ui.preview.javafx.JavaFxCouldBeEnabledNotificationProvider"/>
