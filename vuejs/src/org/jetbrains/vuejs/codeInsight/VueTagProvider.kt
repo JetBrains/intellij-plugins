@@ -215,17 +215,20 @@ private fun readProps(propsProperty : JSProperty, checkForArray: Boolean, filter
 private fun filteredObjectProperties(propsObject: JSObjectLiteralExpression, filter: PairProcessor<String, PsiElement>?) =
   propsObject.properties.filter { filter == null || filter.process(it.name!!, it) }.map { VueAttributeDescriptor(it.name!!, it) }
 
-private fun readPropsFromArray(holder: PsiElement, filter: PairProcessor<String, PsiElement>?): List<VueAttributeDescriptor> {
+private fun readPropsFromArray(holder: PsiElement, filter: PairProcessor<String, PsiElement>?): List<VueAttributeDescriptor> =
+  getStringLiteralsFromInitializerArray(holder, filter).map { VueAttributeDescriptor(StringUtil.unquoteString(it.text), it) }
+
+fun getStringLiteralsFromInitializerArray(holder: PsiElement, filter: PairProcessor<String, PsiElement>?): List<JSLiteralExpression> {
   return JSStubBasedPsiTreeUtil.findDescendants(holder, JSStubElementTypes.LITERAL_EXPRESSION)
-    .filter {
-      var result = it.isQuotedLiteral && it.significantValue != null &&
-                   (filter == null || filter.process(StringUtil.unquoteString(it.significantValue!!), it))
-      if (result) {
-        val context = it.context
-        result = (context is JSArrayLiteralExpression) && (context.parent == holder) || context == holder
-      }
-      result
-    }.map { VueAttributeDescriptor(StringUtil.unquoteString(it.text), it) }
+    .filter({
+              var result = it.significantValue != null &&
+                           (filter == null || filter.process(StringUtil.unquoteString(it.significantValue!!), it))
+              if (result) {
+                val context = it.context
+                result = (context is JSArrayLiteralExpression) && (context.parent == holder) || context == holder
+              }
+              result
+            })
 }
 
 private fun withNameVariants(props: List<VueAttributeDescriptor>, withKebab: Boolean) : List<VueAttributeDescriptor> {

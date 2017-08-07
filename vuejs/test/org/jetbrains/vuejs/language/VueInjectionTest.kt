@@ -54,6 +54,21 @@ new Vue({
     TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
   }
 
+  fun testCustomDelimitersInterpolationInVueVariant() {
+    myFixture.configureByText("CustomDelimitersInterpolationInVue.vue", """<template>
+    <div>
+      <% 1 + <caret>2 %>
+    </div>
+</template>
+<script>
+new Vue({
+  delimiters: ['<%', '%>']
+})
+</script>
+""")
+    TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
+  }
+
   fun testNoCommentDelimitersInterpolationInVue() {
     myFixture.configureByText("CustomDelimitersInterpolationInVue.vue", """<template>
     <div>
@@ -160,5 +175,15 @@ another""", "two")
     com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil.enumerate(host,
                                                                               { injectedPsi, places -> expected.remove(injectedPsi.text) })
     TestCase.assertEquals(emptySet<String>(), expected)
+  }
+
+  fun testInjectionByConfigDelimitersAssignment() {
+    myFixture.configureByText("InjectionByConfigDelimitersAssignment.vue", """
+<template><% <caret> %></template>
+<script>
+Vue.config.delimiters = ['<%', '%>']
+</script>
+""")
+    TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
   }
 }

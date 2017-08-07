@@ -81,11 +81,17 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   override fun hasSignificantValue(expression: JSLiteralExpression): Boolean {
-    if (expression.containingFile.fileType == VueFileType.INSTANCE) {
+    if (expression.containingFile.fileType == VueFileType.INSTANCE || insideVueDescriptor(expression)) {
       return PsiTreeUtil.getParentOfType(expression, JSArrayLiteralExpression::class.java) != null ||
              "required" == (expression.parent as? JSProperty)?.name
     }
     return false
+  }
+
+  // limit building stub in other file types like js/html to Vue-descriptor-like members
+  private fun insideVueDescriptor(expression: JSLiteralExpression): Boolean {
+    val statement = PsiTreeUtil.getParentOfType(expression, JSSourceElement::class.java) ?: return false
+    return PsiTreeUtil.findChildrenOfType(statement, JSReferenceExpression::class.java).firstOrNull { "Vue" == it.referenceName } != null
   }
 
   private fun tryProcessComponentInVue(obj: JSObjectLiteralExpression, property: JSProperty,
