@@ -14,13 +14,13 @@ import org.jetbrains.annotations.NotNull;
  * @author yole
  */
 public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
-  public ActionScriptExpectedTypeEvaluator(JSExpression parent) {
-    super(parent);
+  public ActionScriptExpectedTypeEvaluator(JSExpression parent, JSExpectedTypeKind expectedTypeKind) {
+    super(parent, expectedTypeKind);
   }
 
   @Override
-  protected ActionScriptExpectedTypeEvaluator newExpectedTypeEvaluator(JSExpression parent) {
-    return new ActionScriptExpectedTypeEvaluator(parent);
+  protected ActionScriptExpectedTypeEvaluator newExpectedTypeEvaluator(JSExpression parent, JSExpectedTypeKind expectedTypeKind) {
+    return new ActionScriptExpectedTypeEvaluator(parent, expectedTypeKind);
   }
 
   @Override

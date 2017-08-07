@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.flex.ActionScriptExpectedTypeEvaluator;
 import com.intellij.lang.javascript.index.JSCustomIndexer;
 import com.intellij.lang.javascript.index.JSIndexContentBuilder;
 import com.intellij.lang.javascript.psi.ExpectedTypeEvaluator;
+import com.intellij.lang.javascript.psi.JSExpectedTypeKind;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
@@ -38,8 +39,9 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
 
   @NotNull
   @Override
-  public ExpectedTypeEvaluator newExpectedTypeEvaluator(JSExpression parent) {
-    return new ActionScriptExpectedTypeEvaluator(parent);
+  public ExpectedTypeEvaluator newExpectedTypeEvaluator(JSExpression parent,
+                                                        JSExpectedTypeKind expectedTypeKind) {
+    return new ActionScriptExpectedTypeEvaluator(parent, expectedTypeKind);
   }
 
   @Nullable
