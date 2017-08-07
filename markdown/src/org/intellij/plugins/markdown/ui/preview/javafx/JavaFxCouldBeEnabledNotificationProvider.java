@@ -8,6 +8,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
+import org.intellij.plugins.markdown.MarkdownBundle;
 import org.intellij.plugins.markdown.lang.MarkdownFileType;
 import org.intellij.plugins.markdown.settings.MarkdownApplicationSettings;
 import org.intellij.plugins.markdown.settings.MarkdownPreviewSettings;
@@ -46,8 +47,8 @@ public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotification
     }
 
     final EditorNotificationPanel panel = new EditorNotificationPanel();
-    panel.setText("JavaFX WebKit-based preview renderer is available.");
-    panel.createActionLabel("Change preview browser to JavaFX", () -> {
+    panel.setText(MarkdownBundle.message("markdown.javafx.inspection.description"));
+    panel.createActionLabel(MarkdownBundle.message("markdown.javafx.inspection.description.yes"), () -> {
       final boolean isSuccess = availabilityInfo.checkAvailability(panel);
       if (isSuccess) {
         markdownApplicationSettings.setMarkdownPreviewSettings(new MarkdownPreviewSettings(
