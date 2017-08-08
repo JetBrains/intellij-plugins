@@ -1,6 +1,7 @@
 package org.intellij.plugins.markdown.settings;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.util.ui.UIUtil;
 import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +24,7 @@ public final class MarkdownCssSettings {
   private String myStylesheetText;
 
   private MarkdownCssSettings() {
-    this(MarkdownLAFListener.isDarcula());
+    this(UIUtil.isUnderDarcula());
   }
 
   private MarkdownCssSettings(boolean isDarcula) {

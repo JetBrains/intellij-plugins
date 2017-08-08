@@ -7,6 +7,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.messages.Topic;
+import com.intellij.util.ui.UIUtil;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Property;
 import org.jetbrains.annotations.NotNull;
@@ -29,8 +30,7 @@ public class MarkdownApplicationSettings implements PersistentStateComponent<Mar
     final MarkdownLAFListener lafListener = new MarkdownLAFListener();
     LafManager.getInstance().addLafManagerListener(lafListener);
     // Let's init proper CSS scheme
-    ApplicationManager.getApplication().invokeLater(
-      () -> lafListener.updateCssSettingsForced(MarkdownLAFListener.isDarcula()));
+    ApplicationManager.getApplication().invokeLater(() -> lafListener.updateCssSettingsForced(UIUtil.isUnderDarcula()));
   }
 
   @NotNull

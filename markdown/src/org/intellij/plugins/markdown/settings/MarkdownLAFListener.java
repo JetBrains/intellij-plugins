@@ -3,12 +3,13 @@ package org.intellij.plugins.markdown.settings;
 import com.intellij.ide.ui.LafManager;
 import com.intellij.ide.ui.LafManagerListener;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
 class MarkdownLAFListener implements LafManagerListener {
-  private boolean isLastLAFWasDarcula = isDarcula();
+  private boolean isLastLAFWasDarcula = UIUtil.isUnderDarcula();
 
   @Override
   public void lookAndFeelChanged(LafManager source) {
@@ -42,13 +43,5 @@ class MarkdownLAFListener implements LafManagerListener {
       return false;
     }
     return laf.getName().contains("Darcula");
-  }
-
-  public static boolean isDarcula() {
-    final LafManager lafManager = LafManager.getInstance();
-    if (lafManager == null) {
-      return false;
-    }
-    return isDarcula(lafManager.getCurrentLookAndFeel());
   }
 }
