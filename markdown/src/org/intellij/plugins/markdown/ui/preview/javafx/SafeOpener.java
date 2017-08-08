@@ -1,6 +1,7 @@
 package org.intellij.plugins.markdown.ui.preview.javafx;
 
 import com.intellij.ide.BrowserUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -78,8 +79,10 @@ class SafeOpener {
     if (file == null) return false;
 
     WindowSystemPlaybackCall.findProject().doWhenDone((Consumer<Project>)project -> {
-      new OpenFileDescriptor(project, file).navigate(true);
-      focusProjectWindow(project, true);
+      ApplicationManager.getApplication().invokeLater(() -> {
+        new OpenFileDescriptor(project, file).navigate(true);
+        focusProjectWindow(project, true);
+      });
     });
 
     return true;
