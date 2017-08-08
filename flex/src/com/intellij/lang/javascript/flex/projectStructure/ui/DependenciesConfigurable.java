@@ -1120,7 +1120,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
           if (selectedValue.hasSubStep()) {
             return selectedValue.createSubStep();
           }
-          return doFinalStep(() -> selectedValue.run());
+          return doFinalStep(selectedValue);
         }
 
         @NotNull
