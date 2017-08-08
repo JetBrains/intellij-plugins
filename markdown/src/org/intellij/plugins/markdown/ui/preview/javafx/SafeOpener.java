@@ -6,10 +6,10 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.playback.util.WindowSystemPlaybackCall;
+import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.NettyKt;
 import org.jetbrains.annotations.NotNull;
@@ -75,17 +75,28 @@ class SafeOpener {
       return false;
     }
 
-    VirtualFile file = ReadAction.compute(() -> VirtualFileManager.getInstance().findFileByUrl(uri.toString()));
-    if (file == null) return false;
-
-    WindowSystemPlaybackCall.findProject().doWhenDone((Consumer<Project>)project -> {
-      ApplicationManager.getApplication().invokeLater(() -> {
-        new OpenFileDescriptor(project, file).navigate(true);
-        focusProjectWindow(project, true);
-      });
+    Pair<Project, VirtualFile> result = ReadAction.compute(() -> {
+      final VirtualFile virtualFile = VirtualFileManager.getInstance().findFileByUrl(uri.toString());
+      if (virtualFile == null) {
+        return null;
+      }
+      Project project = ProjectUtil.guessProjectForContentFile(virtualFile);
+      if (project != null) {
+        return Pair.create(project, virtualFile);
+      }
+      else {
+        return null;
+      }
     });
 
-    return true;
+    if (result != null) {
+      ApplicationManager.getApplication().invokeLater(() -> {
+        new OpenFileDescriptor(result.first, result.second).navigate(true);
+        focusProjectWindow(result.first, true);
+      });
+    }
+
+    return result != null;
   }
 
   private static boolean isHttpScheme(@Nullable String scheme) {
