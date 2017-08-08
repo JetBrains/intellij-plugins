@@ -75,12 +75,14 @@ class SafeOpener {
     }
 
     VirtualFile file = ReadAction.compute(() -> VirtualFileManager.getInstance().findFileByUrl(uri.toString()));
+    if (file == null) return false;
+
     WindowSystemPlaybackCall.findProject().doWhenDone((Consumer<Project>)project -> {
       new OpenFileDescriptor(project, file).navigate(true);
       focusProjectWindow(project, true);
     });
 
-    return file != null;
+    return true;
   }
 
   private static boolean isHttpScheme(@Nullable String scheme) {
