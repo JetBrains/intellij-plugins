@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.PatternSyntaxException;
 
 public class JavaStepDefinition extends AbstractStepDefinition {
   public JavaStepDefinition(PsiElement stepDef) {
@@ -70,9 +71,13 @@ public class JavaStepDefinition extends AbstractStepDefinition {
     Pattern perlPattern = getPattern();
 
     if (perlPattern != null) {
-      final java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(perlPattern.getPattern());
-      Matcher m = pattern.matcher(stepName);
-      return m.matches();
+      try {
+        final java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(perlPattern.getPattern());
+        Matcher m = pattern.matcher(stepName);
+        return m.matches();
+      }
+      catch (PatternSyntaxException ignored) {
+      }
     }
     return false;
   }
