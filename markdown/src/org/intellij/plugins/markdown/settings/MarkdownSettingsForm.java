@@ -106,9 +106,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
       new URL(myCssURI.getText()).toURI();
     }
     catch (URISyntaxException | MalformedURLException e) {
-      throw new ConfigurationException(
-        "'" + MarkdownBundle.message("settings.markdown.css.enable.uri") + "=" +
-        myCssURI.getText() + "' reports the error: " + e.getMessage());
+      throw new ConfigurationException("URI '" + myCssURI.getText() + "' parsing reports the error: " + e.getMessage());
     }
   }
 
