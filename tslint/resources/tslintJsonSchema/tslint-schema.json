@@ -489,6 +489,10 @@
           "description": "Disallows default exports in ES6-style modules",
           "type": "boolean"
         },
+        "no-duplicate-imports": {
+          "description": "Disallows multiple import statements from the same module",
+          "type": "boolean"
+        },
         "no-duplicate-super": {
           "description": "Warns if ‘super()’ appears twice in a constructor",
           "type": "boolean"
@@ -687,6 +691,21 @@
         "no-string-throw": {
           "description": "Flags throwing plain strings or concatenations of strings because only Errors produce proper stack traces",
           "type": "boolean"
+        },
+        "no-submodule-imports": {
+          "description": "Disallows importing any submodule",
+          "oneOf": [
+            {"type": "boolean"},
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {"type": "boolean", "enum": [true]},
+                  {"type": "string"}
+                ]
+              }
+            }
+          ]
         },
         "no-switch-case-fall-through": {
           "description": "Disallows falling through case statements",
@@ -1063,6 +1082,19 @@
                   "method": {"$ref": "#/definitions/alwaysNever"},
                   "named": {"$ref": "#/definitions/alwaysNever"}
                 }}
+              ], "additionalItems": false
+            }
+          ]
+        },
+        "space-within-parens": {
+          "description": "Enforces spaces within parentheses or disallow them",
+          "oneOf": [
+            {"type": "boolean"},
+            {
+              "type": "array",
+              "items": [
+                {"type": "boolean"},
+                {"type": "integer"}
               ], "additionalItems": false
             }
           ]
