@@ -55,11 +55,11 @@
     <spellchecker.support language="Markdown"
                           implementationClass="org.intellij.plugins.markdown.spellchecking.MarkdownSpellcheckingStrategy"/>
 
-    <applicationConfigurable id="Settings.Markdown.Css"
+    <applicationConfigurable id="Settings.Markdown"
                              bundle="org.intellij.plugins.markdown.bundle.MarkdownBundle"
                              groupId="language"
                              nonDefaultProject="true"
-                             key="settings.markdown.css.name"
+                             key="settings.markdown.name"
                              instance="org.intellij.plugins.markdown.settings.MarkdownSettingsConfigurable">
     </applicationConfigurable>
     <applicationService serviceImplementation="org.intellij.plugins.markdown.settings.MarkdownApplicationSettings"/>

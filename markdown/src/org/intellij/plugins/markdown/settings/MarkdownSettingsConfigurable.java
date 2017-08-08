@@ -29,7 +29,7 @@ public class MarkdownSettingsConfigurable implements SearchableConfigurable {
   @Nls
   @Override
   public String getDisplayName() {
-    return MarkdownBundle.message("settings.markdown.css.name");
+    return MarkdownBundle.message("settings.markdown.name");
   }
 
   @NotNull
