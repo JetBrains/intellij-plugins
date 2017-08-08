@@ -2,6 +2,13 @@ package com.intellij.lang.javascript.linter.tslint.config.style.rules
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import com.intellij.lang.javascript.JavaScriptSupportLoader
+import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.project.Project
+import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 
 private val TO_PROCESS = arrayOf("rules", "jsRules")
 
@@ -25,6 +32,52 @@ class TsLintConfigWrapper(config: JsonObject) {
   }
 
   fun getOption(name: String): TsLintConfigOption? = options[name]
+
+  fun getRulesToApply(project: Project): Collection<TsLintSimpleRule<*>> {
+    ApplicationManager.getApplication().assertReadAccessAllowed()
+    val settings = current(project)
+    val languageSettings = language(settings) ?: return emptyList()
+    val jsCodeStyleSettings = custom(settings) ?: return emptyList()
+
+    return TslintRulesSet.filter { it.isAvailable(project, languageSettings, jsCodeStyleSettings, this) }
+  }
+
+  private fun current(project: Project) = CodeStyleSettingsManager.getInstance(project).currentSettings
+  private fun language(settings: CodeStyleSettings) = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT)
+  private fun custom(settings: CodeStyleSettings) = settings.getCustomSettings(TypeScriptCodeStyleSettings::class.java)
+
+  fun getCurrentSettings(project: Project, rules: Collection<TsLintSimpleRule<*>>): Map<TsLintSimpleRule<*>, Any?> {
+    ApplicationManager.getApplication().assertReadAccessAllowed()
+    val settings = current(project)
+    val languageSettings = language(settings) ?: return emptyMap()
+    val jsCodeStyleSettings = custom(settings) ?: return emptyMap()
+
+    return rules.associate { Pair(it, it.getSettingsValue(languageSettings, jsCodeStyleSettings)) }
+  }
+
+  fun applyValues(project: Project, values: Map<TsLintSimpleRule<*>, *>) {
+    val settings = current(project)
+    val languageSettings = language(settings) ?: return
+    val jsCodeStyleSettings = custom(settings) ?: return
+    WriteAction.run<RuntimeException> {
+      values.forEach { key, value -> key.setDirectValue(languageSettings, jsCodeStyleSettings, value) }
+    }
+  }
+
+  fun applyRules(project: Project, rules: Collection<TsLintSimpleRule<*>>) {
+    WriteAction.run<RuntimeException> {
+      val settingsManager = CodeStyleSettingsManager.getInstance(project)
+      if (!settingsManager.USE_PER_PROJECT_SETTINGS) {
+        settingsManager.PER_PROJECT_SETTINGS = settingsManager.currentSettings.clone()
+        settingsManager.USE_PER_PROJECT_SETTINGS = true
+      }
+      val newSettings = settingsManager.currentSettings
+      val newLanguageSettings = language(newSettings)
+      val newJsCodeStyleSettings = custom(newSettings)
+      rules.forEach { rule -> rule.apply(project, newLanguageSettings, newJsCodeStyleSettings, this) }
+    }
+
+  }
 }
 
 class TsLintConfigOption(val element: JsonElement) {
@@ -62,7 +115,7 @@ class TsLintConfigOption(val element: JsonElement) {
   }
 
 
-  fun getSecondNumberValue():Int? {
+  fun getSecondNumberValue(): Int? {
     if (element.isJsonArray) {
       val jsonArray = element.asJsonArray
       if (jsonArray.count() < 2) {

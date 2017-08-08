@@ -32,6 +32,11 @@ abstract class TsLintSimpleRule<T>(val optionId: String) : TsLintRule {
   abstract fun getSettingsValue(languageSettings: CommonCodeStyleSettings,
                                 codeStyleSettings: JSCodeStyleSettings): T
 
+  @Suppress("UNCHECKED_CAST")
+  fun setDirectValue(languageSettings: CommonCodeStyleSettings,
+                     codeStyleSettings: JSCodeStyleSettings, value: Any?) {
+    setValue(languageSettings, codeStyleSettings, value as T)
+  }
   abstract fun setValue(languageSettings: CommonCodeStyleSettings,
                         codeStyleSettings: JSCodeStyleSettings, value: T)
 }

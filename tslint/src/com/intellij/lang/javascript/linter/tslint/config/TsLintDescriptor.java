@@ -3,12 +3,24 @@ package com.intellij.lang.javascript.linter.tslint.config;
 import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
-import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
-import com.intellij.lang.javascript.linter.JSLinterConfiguration;
-import com.intellij.lang.javascript.linter.JSLinterDescriptor;
+import com.intellij.lang.javascript.linter.*;
+import com.intellij.lang.javascript.linter.tslint.config.style.rules.TsLintConfigWrapper;
+import com.intellij.lang.javascript.linter.tslint.config.style.rules.TsLintSimpleRule;
 import com.intellij.lang.javascript.linter.tslint.ide.TsLintConfigFileType;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.intellij.lang.javascript.linter.JSLinterConfigFileUtil.findDistinctConfigInContentRoots;
 
 /**
  * @author Irina.Chernushina on 11/24/2016.
@@ -43,6 +55,29 @@ public final class TsLintDescriptor extends JSLinterDescriptor {
     // skip if there is tslint-language-service
     if (packageJson != null && packageJson.getAllDependencies().contains("tslint-language-service")) return false;
     return super.enable(project);
+  }
+
+  @Override
+  public void postEnable(@NotNull Project project, @NotNull JSLinterGuesser.EnableCase enableCase) {
+    ApplicationManager.getApplication().assertIsDispatchThread();
+    VirtualFile config = findDistinctConfigInContentRoots(project, Collections.singleton(TsLintConfiguration.TSLINT_JSON));
+    if (config == null) return;
+
+    PsiFile file = PsiManager.getInstance(project).findFile(config);
+    TsLintConfigWrapperCache service = TsLintConfigWrapperCache.Companion.getService(project);
+    TsLintConfigWrapper wrapper = service.getWrapper(file);
+    if (wrapper == null) return;
+    Collection<TsLintSimpleRule<?>> rules = wrapper.getRulesToApply(project);
+    if (rules.isEmpty()) return;
+
+    Map<TsLintSimpleRule<?>, Object> oldValues = wrapper.getCurrentSettings(project, rules);
+
+    wrapper.applyRules(project, rules);
+    Set<String> appliedRules = rules.stream().map(el -> el.getOptionId()).collect(Collectors.toSet());
+    String message = JSBundle.message("settings.javascript.linters.tslint.configurable.name");
+    JSLinterUtil.reportCodeStyleSettingsImported(project, message, config, appliedRules, () -> {
+      wrapper.applyValues(project, oldValues);
+    });
   }
 
   @NotNull
