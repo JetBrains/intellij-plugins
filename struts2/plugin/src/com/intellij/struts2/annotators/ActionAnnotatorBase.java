@@ -56,6 +56,7 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
 
   private static final DomElementListCellRenderer ACTION_RENDERER =
       new DomElementListCellRenderer<Action>(StrutsBundle.message("annotators.action.no.name")) {
+        @Override
         @NotNull
         @NonNls
         public String getAdditionalLocation(final Action action) {
@@ -95,7 +96,7 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
   protected abstract PsiClass getActionPsiClass(@NotNull final PsiElement psiElement);
 
   @Override
-  protected void collectNavigationMarkers(final @NotNull PsiElement element,
+  protected void collectNavigationMarkers(@NotNull final PsiElement element,
                                           @NotNull final Collection<? super RelatedItemLineMarkerInfo> lineMarkerInfos) {
     if (!(element instanceof PsiIdentifier)) return;
     final PsiClass clazz = getActionPsiClass(element.getParent());
@@ -198,7 +199,11 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
                                      .setTargets(entries.getValue())
                                      .setTooltipTitle(StrutsBundle.message("annotators.action.goto.result.tooltip"));
 
-      lineMarkerInfos.add(gutterIconBuilder.createLineMarkerInfo(entries.getKey()));
+      PsiMethod method = entries.getKey();
+      PsiIdentifier identifier = method.getNameIdentifier();
+      if (identifier != null) {
+        lineMarkerInfos.add(gutterIconBuilder.createLineMarkerInfo(identifier));
+      }
     }
   }
 

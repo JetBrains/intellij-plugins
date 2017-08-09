@@ -8,10 +8,11 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.psi.xml.XmlToken;
 import com.intellij.util.PlatformIcons;
+import com.intellij.xml.util.XmlTagUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,15 +29,11 @@ public class FlashUIDesignerLineMarkerProvider implements LineMarkerProvider {
       return null;
     }
 
-    //holder.createInfoAnnotation(textRange, null).setGutterIconRenderer(new MyRenderer());
-    return new LineMarkerInfo<>(element, element.getTextRange(), PlatformIcons.UI_FORM_ICON, Pass.LINE_MARKERS,
-                                element1 -> FlashUIDesignerBundle.message("gutter.open"),
-                                new GutterIconNavigationHandler<PsiElement>() {
-                                  @Override
-                                  public void navigate(MouseEvent e, PsiElement elt) {
-                                    DesignerApplicationManager.getInstance().openDocument(psiFile, false);
-                                  }
-                                }, GutterIconRenderer.Alignment.LEFT
+    XmlToken anchor = XmlTagUtil.getStartTagNameElement(tag);
+    return anchor == null ? null :
+           new LineMarkerInfo<>(anchor, anchor.getTextRange(), PlatformIcons.UI_FORM_ICON, Pass.LINE_MARKERS,
+                                __ -> FlashUIDesignerBundle.message("gutter.open"),
+                                (GutterIconNavigationHandler<PsiElement>)(e, __) -> DesignerApplicationManager.getInstance().openDocument(psiFile, false), GutterIconRenderer.Alignment.LEFT
     );
   }
 

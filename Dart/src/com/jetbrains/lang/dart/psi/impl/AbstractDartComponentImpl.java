@@ -45,7 +45,10 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
   @Nullable
   @Override
   public PsiElement getNameIdentifier() {
-    return getComponentName();
+    // getComponentName returns composite of composite WTF?
+    DartComponentName name = getComponentName();
+    PsiElement id = name == null ? null : name.getFirstChild();
+    return id == null ? null : id.getFirstChild();
   }
 
   @Override

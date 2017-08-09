@@ -31,7 +31,7 @@ public class DartMethodSeparatorsTest extends DaemonAnalyzerTestCase {
       // methods
       configureByText(DartFileType.INSTANCE, "abstract class A {\n" +
                                              "  firstMethod(){}\n" + // no line marker
-                                             "  <lineMarker>bar(){}</lineMarker>\n" +
+                                             "  <lineMarker>bar</lineMarker>(){}\n" +
                                              "   \n" +
                                              "  <lineMarker>//comment</lineMarker>\n" +
                                              "   \n" +
@@ -39,39 +39,39 @@ public class DartMethodSeparatorsTest extends DaemonAnalyzerTestCase {
                                              "   \n" +
                                              "  baz(){}\n" +
                                              "\n" +
-                                             "  <lineMarker>abstract abs();</lineMarker>\n" +
+                                             "  abstract <lineMarker>abs</lineMarker>();\n" +
                                              "}");
       doDoTest(false, false);
 
       // getters and setters
       configureByText(DartFileType.INSTANCE, "class A {\n" +
                                              "  firstMethod(){}\n" + // no line marker
-                                             "  <lineMarker>get v => 1;</lineMarker>\n" +
-                                             "  <lineMarker>set v(i) {}</lineMarker>\n" +
-                                             "  <lineMarker>int get i => 1;</lineMarker>\n" +
+                                             "  get <lineMarker>v</lineMarker> => 1;\n" +
+                                             "  set <lineMarker>v</lineMarker>(i) {}\n" +
+                                             "  int get <lineMarker>i</lineMarker> => 1;\n" +
                                              "}");
       doDoTest(false, false);
 
       // constructors
       configureByText(DartFileType.INSTANCE, "class A {\n" +
                                              "  firstMethod(){}\n" + // no line marker
-                                             "  <lineMarker>A() {}</lineMarker>\n" +
-                                             "  <lineMarker>A.b() {}</lineMarker>\n" +
+                                             "  <lineMarker>A</lineMarker>() {}\n" +
+                                             "  A.<lineMarker>b</lineMarker>() {}\n" +
                                              "}");
       doDoTest(false, false);
 
       // globals
       configureByText(DartFileType.INSTANCE, "  firstFunction(){}\n" + // no line marker
-                                             "  <lineMarker>func(){}</lineMarker>\n" +
-                                             "  <lineMarker>get v => 1;</lineMarker>\n" +
-                                             "  <lineMarker>set v(i) {}</lineMarker>\n" +
-                                             "  <lineMarker>int get i => 1;</lineMarker>");
+                                             "  <lineMarker>func</lineMarker>(){}\n" +
+                                             "  get <lineMarker>v</lineMarker> => 1;\n" +
+                                             "  set <lineMarker>v</lineMarker>(i) {}\n" +
+                                             "  int get <lineMarker>i</lineMarker> => 1;");
       doDoTest(false, false);
 
       // any preceding sibling implies that the method will be marked
       configureByText(DartFileType.INSTANCE, "class A {\n" +
                                              "  var b;\n" + // no line marker
-                                             "  <lineMarker>bar(){}</lineMarker>\n" +
+                                             "  <lineMarker>bar</lineMarker>(){}\n" +
                                              "}");
       doDoTest(false, false);
 

@@ -17,7 +17,6 @@ package com.jetbrains.lang.dart.ide.marker;
 
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.DaemonBundle;
-import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
@@ -27,6 +26,7 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
 import com.jetbrains.lang.dart.ide.actions.DartInheritorsSearcher;
@@ -88,9 +88,10 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
   private static LineMarkerInfo createMarkerClass(@NotNull final DartComponentName name) {
     final VirtualFile file = name.getContainingFile().getVirtualFile();
     final int nameOffset = name.getTextRange().getStartOffset();
-    return new LineMarkerInfo<>(name, name.getTextRange(), AllIcons.Gutter.OverridenMethod, Pass.LINE_MARKERS,
+    PsiElement anchor = PsiTreeUtil.getDeepestFirst(name);
+    return new LineMarkerInfo<>(anchor, anchor.getTextRange(), AllIcons.Gutter.OverridenMethod, Pass.LINE_MARKERS,
                                 element -> DaemonBundle.message("class.is.subclassed.too.many"),
-                                (GutterIconNavigationHandler<PsiElement>)(e, elt) -> {
+                                (e, __) -> {
                                   final List<TypeHierarchyItem> items = DartAnalysisServerService.getInstance(name.getProject())
                                     .search_getTypeHierarchy(file, nameOffset, false);
                                   if (items.isEmpty()) {
@@ -112,9 +113,10 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
   private static LineMarkerInfo createMarkerMember(@NotNull final DartComponentName name) {
     final VirtualFile file = name.getContainingFile().getVirtualFile();
     final int nameOffset = name.getTextRange().getStartOffset();
-    return new LineMarkerInfo<>(name, name.getTextRange(), AllIcons.Gutter.OverridenMethod, Pass.LINE_MARKERS,
+    PsiElement anchor = PsiTreeUtil.getDeepestFirst(name);
+    return new LineMarkerInfo<>(anchor, anchor.getTextRange(), AllIcons.Gutter.OverridenMethod, Pass.LINE_MARKERS,
                                 element -> DaemonBundle.message("method.is.overridden.too.many"),
-                                (GutterIconNavigationHandler<PsiElement>)(e, elt) -> {
+                                (e, __) -> {
                                   final List<TypeHierarchyItem> items = DartAnalysisServerService.getInstance(name.getProject())
                                     .search_getTypeHierarchy(file, nameOffset, false);
                                   if (items.isEmpty()) {

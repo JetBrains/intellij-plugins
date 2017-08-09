@@ -5,7 +5,6 @@ import com.google.jstestdriver.idea.debug.JstdDebugProgramRunner;
 import com.google.jstestdriver.idea.execution.JstdRunConfigurationProducer;
 import com.google.jstestdriver.idea.execution.JstdSettingsUtil;
 import com.intellij.codeHighlighting.Pass;
-import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.execution.*;
@@ -30,6 +29,7 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBList;
@@ -108,18 +108,16 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
 
   private static LineMarkerInfo createLineMarkerFromElement(@NotNull PsiElement testElement,
                                                             @NotNull final String displayName) {
+    PsiElement anchor = PsiTreeUtil.getDeepestFirst(testElement);
     return new LineMarkerInfo<>(
-      testElement,
-      testElement.getTextRange(),
+      anchor,
+      anchor.getTextRange(),
       AllIcons.Vcs.Arrow_right,
       Pass.LINE_MARKERS,
       element -> "Execute '" + displayName + "'",
-      new GutterIconNavigationHandler<PsiElement>() {
-        @Override
-        public void navigate(MouseEvent e, PsiElement elt) {
-          if (elt.isValid()) {
-            showPopup(e, elt, displayName);
-          }
+      (e, elt) -> {
+        if (elt.isValid()) {
+          showPopup(e, elt, displayName);
         }
       },
       GutterIconRenderer.Alignment.RIGHT

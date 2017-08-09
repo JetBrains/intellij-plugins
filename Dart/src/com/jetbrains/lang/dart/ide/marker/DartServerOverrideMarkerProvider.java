@@ -18,7 +18,6 @@ package com.jetbrains.lang.dart.ide.marker;
 import com.google.common.collect.Lists;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.DaemonBundle;
-import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
@@ -117,8 +116,10 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
       superComponent = interfaceComponents.iterator().next();
     }
     final Icon icon = overrides ? AllIcons.Gutter.OverridingMethod : AllIcons.Gutter.ImplementingMethod;
-    return new LineMarkerInfo<>(componentName, componentName.getTextRange(), icon, Pass.LINE_MARKERS,
-                                element -> {
+    PsiElement anchor = PsiTreeUtil.getDeepestFirst(componentName);
+
+    return new LineMarkerInfo<>(anchor, anchor.getTextRange(), icon, Pass.LINE_MARKERS,
+                                __ -> {
                                   final DartClass superClass = PsiTreeUtil.getParentOfType(superComponent, DartClass.class);
                                   if (superClass == null) return "null";
                                   if (overrides) {
@@ -128,7 +129,7 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
                                                               superClass.getName());
                                   }
                                   return DartBundle.message("implements.method.in", name, superClass.getName());
-                                }, (GutterIconNavigationHandler<PsiElement>)(e, elt) -> {
+                                }, (e, __) -> {
       List<DartComponent> superComponents = Lists.newArrayList();
       if (superclassComponent != null) {
         superComponents.add(superclassComponent);

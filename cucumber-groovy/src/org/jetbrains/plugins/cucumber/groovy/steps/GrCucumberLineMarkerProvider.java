@@ -3,8 +3,9 @@ package org.jetbrains.plugins.cucumber.groovy.steps;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
+import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.Function;
+import com.intellij.psi.util.PsiTreeUtil;
 import icons.CucumberIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,19 +20,19 @@ import java.util.List;
  */
 public class GrCucumberLineMarkerProvider implements LineMarkerProvider {
 
-  private static final Function<GrMethodCall, String> TOOLTIP_PROVIDER = stepDef -> stepDef.getPresentation().getPresentableText();
-
   @Nullable
   @Override
   public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
     if (GrCucumberUtil.isStepDefinition(element)) {
+      PsiElement anchor = PsiTreeUtil.getDeepestFirst(element);
+
       return new LineMarkerInfo<>(
-        ((GrMethodCall)element),
-        element.getTextRange().getStartOffset(),
+        anchor,
+        anchor.getTextRange(),
         CucumberIcons.Cucumber,
         Pass.LINE_MARKERS,
-        TOOLTIP_PROVIDER,
-        null
+        __ -> ((GrMethodCall)element).getPresentation().getPresentableText(),
+        null, GutterIconRenderer.Alignment.RIGHT
       );
     }
     else {

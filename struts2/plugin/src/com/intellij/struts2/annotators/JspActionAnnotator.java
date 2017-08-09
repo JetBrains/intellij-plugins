@@ -26,6 +26,7 @@ import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.psi.xml.XmlToken;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.StrutsIcons;
@@ -33,8 +34,8 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.facet.StrutsFacet;
-import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.xml.util.XmlTagUtil;
 import icons.Struts2Icons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -56,9 +57,7 @@ public class JspActionAnnotator extends LineMarkerProviderDescriptor {
   private static final String ACTION_ATTRIBUTE_NAME = "action";
 
   @NonNls
-  private static final String[] TAGS_WITH_ACTION_ATTRIBUTE = new String[]{"action", "form", "reset", "submit", "url"};
-
-  private static final NullableFunction<Action, PsiMethod> ACTION_METHOD_FUNCTION = action -> action.searchActionMethod();
+  private static final String[] TAGS_WITH_ACTION_ATTRIBUTE = {"action", "form", "reset", "submit", "url"};
 
   @Override
   public String getId() {
@@ -148,13 +147,16 @@ public class JspActionAnnotator extends LineMarkerProviderDescriptor {
             setTooltipText(StrutsBundle.message("annotators.jsp.goto.action.method")).
             setEmptyPopupText(StrutsBundle.message("annotators.jsp.goto.action.method.not.found")).
             setTargets(new NotNullLazyValue<Collection<? extends PsiElement>>() {
+              @Override
               @NotNull
               protected Collection<PsiMethod> compute() {
-                return ContainerUtil.mapNotNull(actions, ACTION_METHOD_FUNCTION);
+                return ContainerUtil.mapNotNull(actions, Action::searchActionMethod);
               }
             });
 
-    lineMarkerInfos.add(gutterIconBuilder.createLineMarkerInfo(xmlTag));
+    XmlToken identifier = XmlTagUtil.getStartTagNameElement(xmlTag);
+    if (identifier != null) {
+      lineMarkerInfos.add(gutterIconBuilder.createLineMarkerInfo(identifier));
+    }
   }
-
 }

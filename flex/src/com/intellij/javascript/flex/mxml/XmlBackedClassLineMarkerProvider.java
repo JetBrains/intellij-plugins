@@ -25,23 +25,27 @@ import java.util.List;
 
 public class XmlBackedClassLineMarkerProvider implements LineMarkerProvider {
 
+  @Override
   public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
     return null;
   }
 
+  @Override
   public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
     for (PsiElement element : elements) {
       ProgressManager.checkCanceled();
+      PsiElement parent = element.getParent();
 
-      if (element instanceof XmlTag &&
-          element.getParent() instanceof XmlDocument &&
-          element.getContainingFile() != null &&
-          JavaScriptSupportLoader.isFlexMxmFile(element.getContainingFile())) {
-        final XmlBackedJSClass clazz = XmlBackedJSClassFactory.getInstance().getXmlBackedClass((XmlTag)element);
+      if (parent instanceof XmlTag &&
+          XmlTagUtil.getStartTagNameElement((XmlTag)parent) == element &&
+          parent.getParent() instanceof XmlDocument &&
+          parent.getContainingFile() != null &&
+          JavaScriptSupportLoader.isFlexMxmFile(parent.getContainingFile())) {
+        final XmlBackedJSClass clazz = XmlBackedJSClassFactory.getInstance().getXmlBackedClass((XmlTag)parent);
         Query<JSClass> classQuery = JSClassSearch.searchClassInheritors(clazz, true);
-        XmlToken nameElement = XmlTagUtil.getStartTagNameElement((XmlTag)element);
+        XmlToken nameElement = XmlTagUtil.getStartTagNameElement((XmlTag)parent);
         if (classQuery.findFirst() != null && nameElement != null) {
-          result.add(new LineMarkerInfo<>(clazz, nameElement.getTextRange(), AllIcons.Gutter.OverridenMethod,
+          result.add(new LineMarkerInfo<>(element, nameElement.getTextRange(), AllIcons.Gutter.OverridenMethod,
                                           Pass.LINE_MARKERS,
                                           JavaScriptLineMarkerProvider.ourClassInheritorsTooltipProvider,
                                           JavaScriptLineMarkerProvider.ourClassInheritorsNavHandler, GutterIconRenderer.Alignment.RIGHT));
