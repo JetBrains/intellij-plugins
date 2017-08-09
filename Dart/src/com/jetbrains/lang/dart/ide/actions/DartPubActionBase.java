@@ -198,7 +198,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
         processHandler.addProcessListener(new ProcessAdapter() {
           @Override
-          public void processTerminated(final ProcessEvent event) {
+          public void processTerminated(@NotNull final ProcessEvent event) {
             ourInProgress.set(false);
 
             ApplicationManager.getApplication().invokeLater(() -> {
@@ -268,7 +268,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
-      public void processTerminated(final ProcessEvent event) {
+      public void processTerminated(@NotNull final ProcessEvent event) {
         console.print(IdeBundle.message("finished.with.exit.code.text.message", event.getExitCode()), ConsoleViewContentType.SYSTEM_OUTPUT);
       }
     });

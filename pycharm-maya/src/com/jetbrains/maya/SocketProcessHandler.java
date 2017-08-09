@@ -37,7 +37,7 @@ class SocketProcessHandler extends ProcessHandler {
 
     addProcessListener(new ProcessAdapter() {
       @Override
-      public void startNotified(final ProcessEvent event) {
+      public void startNotified(@NotNull final ProcessEvent event) {
         try {
           myOutputReader = new SocketOutputReader(mySocket.getInputStream());
         }

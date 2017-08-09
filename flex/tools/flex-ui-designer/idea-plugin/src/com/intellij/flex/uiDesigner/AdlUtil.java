@@ -27,6 +27,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -206,7 +207,7 @@ final class AdlUtil {
     }
 
     @Override
-    public void notifyTextAvailable(String text, Key outputType) {
+    public void notifyTextAvailable(@NotNull String text, @NotNull Key outputType) {
       LOG.debug("[adl output/error stream]: " + text);
     }
 

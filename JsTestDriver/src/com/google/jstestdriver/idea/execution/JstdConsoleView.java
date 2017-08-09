@@ -73,7 +73,7 @@ public class JstdConsoleView extends SMTRunnerConsoleView {
     if (processHandler instanceof NopProcessHandler) {
       processHandler.addProcessListener(new ProcessAdapter() {
         @Override
-        public void processTerminated(ProcessEvent event) {
+        public void processTerminated(@NotNull ProcessEvent event) {
           if (myFormatter != null) {
             myFormatter.onTestRunProcessTerminated();
           }

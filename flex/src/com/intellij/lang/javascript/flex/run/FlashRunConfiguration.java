@@ -218,7 +218,7 @@ public class FlashRunConfiguration extends LocatableConfigurationBase
       if (needToRemoveAirRuntimeDir && airRuntimeDirForFlexmojosSdk != null) {
         processHandler.addProcessListener(new ProcessAdapter() {
           @Override
-          public void processTerminated(final ProcessEvent event) {
+          public void processTerminated(@NotNull final ProcessEvent event) {
             FlexUtils.removeFileLater(airRuntimeDirForFlexmojosSdk);
           }
         });

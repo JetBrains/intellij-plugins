@@ -29,7 +29,7 @@ public class JstdServerOutputProcessor {
   public JstdServerOutputProcessor(@NotNull ProcessHandler processHandler) {
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
-      public void onTextAvailable(ProcessEvent event, Key outputType) {
+      public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
         String text = event.getText();
         if (outputType != ProcessOutputTypes.SYSTEM && outputType != ProcessOutputTypes.STDERR) {
           if (handleLineAsEvent(text)) {

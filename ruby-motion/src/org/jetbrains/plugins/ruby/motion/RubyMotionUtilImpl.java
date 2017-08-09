@@ -424,7 +424,7 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
     final File generatedApp = new File(tempDirectory, module.getName());
     final Filter[] filters = null;
     final ProcessAdapter processListener = new ProcessAdapter() {
-      public void processTerminated(ProcessEvent event) {
+      public void processTerminated(@NotNull ProcessEvent event) {
         FileUtil.moveDirWithContent(generatedApp, VfsUtilCore.virtualToIoFile(dir));
         tempDirectory.delete();
 

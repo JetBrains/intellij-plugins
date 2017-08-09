@@ -158,7 +158,7 @@ public class KarmaServer {
 
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
-      public void processTerminated(final ProcessEvent event) {
+      public void processTerminated(@NotNull final ProcessEvent event) {
         LOG.info("Karma server " + processHashCode + " terminated with exit code " + event.getExitCode());
         Disposer.dispose(myDisposable);
         fireOnTerminated(event.getExitCode());

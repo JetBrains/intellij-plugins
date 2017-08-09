@@ -51,7 +51,7 @@ public class KarmaServerRestarter {
     myActiveRunners.incrementAndGet();
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
-      public void processTerminated(ProcessEvent event) {
+      public void processTerminated(@NotNull ProcessEvent event) {
         myActiveRunners.decrementAndGet();
         processHandler.removeProcessListener(this);
       }

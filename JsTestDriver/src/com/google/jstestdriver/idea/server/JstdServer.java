@@ -51,7 +51,7 @@ public class JstdServer {
     myDisposable = new MyDisposable();
     myProcessHandler.addProcessListener(new ProcessAdapter() {
       @Override
-      public void processTerminated(ProcessEvent event) {
+      public void processTerminated(@NotNull ProcessEvent event) {
         LOG.info(myName + " terminated with exit code " + event.getExitCode());
         myLifeCycleManager.onTerminated(event.getExitCode());
         Disposer.dispose(myDisposable);

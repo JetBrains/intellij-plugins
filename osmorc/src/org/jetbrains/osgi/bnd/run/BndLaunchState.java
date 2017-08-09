@@ -120,7 +120,7 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
 
     handler.addProcessListener(new ProcessAdapter() {
       @Override
-      public void processTerminated(ProcessEvent event) {
+      public void processTerminated(@NotNull ProcessEvent event) {
         connection.disconnect();
         hotSwapManager.removeListener(BndLaunchState.this);
         myLauncher.cleanup();

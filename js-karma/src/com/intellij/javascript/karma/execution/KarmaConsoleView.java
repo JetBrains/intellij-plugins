@@ -84,7 +84,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     }
     final ProcessAdapter listener = new ProcessAdapter() {
       @Override
-      public void processTerminated(ProcessEvent event) {
+      public void processTerminated(@NotNull ProcessEvent event) {
         if (myServer.getProcessHandler().isProcessTerminated()) {
           rootFormatter.onServerProcessTerminated();
           printServerFinishedInfo();

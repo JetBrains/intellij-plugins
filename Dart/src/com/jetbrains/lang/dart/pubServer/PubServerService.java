@@ -415,7 +415,7 @@ final class PubServerService extends NetService {
     }
 
     @Override
-    public void onTextAvailable(final ProcessEvent event, final Key outputType) {
+    public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
       if (outputType == ProcessOutputTypes.STDERR) {
         final boolean error = event.getText().toLowerCase(Locale.US).contains("error");
 

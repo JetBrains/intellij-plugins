@@ -38,17 +38,19 @@ public class FlexCompilerProcessHandler extends BaseOSProcessHandler {
       super(context, asc20, compilerName);
     }
 
-    public void startNotified(final ProcessEvent event) {
+    @Override
+    public void startNotified(@NotNull final ProcessEvent event) {
     }
 
-    public void onTextAvailable(final ProcessEvent event, final Key outputType) {
+    public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
       handleText(event.getText());
     }
 
-    public void processWillTerminate(final ProcessEvent event, final boolean willBeDestroyed) {
+    @Override
+    public void processWillTerminate(@NotNull final ProcessEvent event, final boolean willBeDestroyed) {
     }
 
-    public void processTerminated(final ProcessEvent event) {
+    public void processTerminated(@NotNull final ProcessEvent event) {
       registerCompilationFinished();
     }
 

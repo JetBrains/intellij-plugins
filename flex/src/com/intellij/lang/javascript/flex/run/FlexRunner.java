@@ -200,12 +200,12 @@ public class FlexRunner extends FlexBaseRunner {
     flexUnitConnection.addListener(new FlexUnitListener(executionResult.getProcessHandler()));
     executionResult.getProcessHandler().addProcessListener(new ProcessAdapter() {
       @Override
-      public void processWillTerminate(ProcessEvent event, boolean willBeDestroyed) {
+      public void processWillTerminate(@NotNull ProcessEvent event, boolean willBeDestroyed) {
         flexUnitConnection.write("Finish");
       }
 
       @Override
-      public void processTerminated(ProcessEvent event) {
+      public void processTerminated(@NotNull ProcessEvent event) {
         flexUnitConnection.close();
         policyFileConnection.close();
       }

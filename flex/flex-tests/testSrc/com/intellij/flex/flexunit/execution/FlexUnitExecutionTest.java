@@ -298,21 +298,21 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
 
     final ProcessListener listener = new ProcessListener() {
       @Override
-      public void startNotified(ProcessEvent event) {
+      public void startNotified(@NotNull ProcessEvent event) {
         startup.up();
       }
 
       @Override
-      public void processTerminated(ProcessEvent event) {
+      public void processTerminated(@NotNull ProcessEvent event) {
         execution.up();
       }
 
       @Override
-      public void processWillTerminate(ProcessEvent event, boolean willBeDestroyed) {
+      public void processWillTerminate(@NotNull ProcessEvent event, boolean willBeDestroyed) {
       }
 
       @Override
-      public void onTextAvailable(ProcessEvent event, Key outputType) {
+      public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
         System.out.println("FlexUnit: " + event.getText());
       }
     };

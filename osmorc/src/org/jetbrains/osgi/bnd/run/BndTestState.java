@@ -141,7 +141,7 @@ public class BndTestState extends JavaCommandLineState {
     OSProcessHandler processHandler = super.startProcess();
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
-      public void processTerminated(ProcessEvent event) {
+      public void processTerminated(@NotNull ProcessEvent event) {
         cleanup();
       }
     });

@@ -346,7 +346,7 @@ public class PhoneGapCommandLine {
     final ProcessOutput output = new ProcessOutput();
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
-      public void onTextAvailable(ProcessEvent event, Key outputType) {
+      public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
         if (indicator != null) {
           String s = StringUtil.trim(event.getText());
           if (!StringUtil.isEmpty(s)) {

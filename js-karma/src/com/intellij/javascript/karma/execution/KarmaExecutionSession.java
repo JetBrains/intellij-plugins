@@ -110,7 +110,7 @@ public class KarmaExecutionSession {
     server.onTerminated(terminationCallback);
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
-      public void processTerminated(ProcessEvent event) {
+      public void processTerminated(@NotNull ProcessEvent event) {
         server.removeTerminatedListener(terminationCallback);
       }
     });

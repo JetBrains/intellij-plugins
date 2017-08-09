@@ -931,7 +931,7 @@ public class FlexCommonUtils {
       final BaseOSProcessHandler handler = new BaseOSProcessHandler(process, StringUtil.join(cmdarray, " "), Charset.defaultCharset());
 
       handler.addProcessListener(new ProcessAdapter() {
-        public void onTextAvailable(ProcessEvent event, Key outputType) {
+        public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
           if (outputType != ProcessOutputTypes.SYSTEM) {
             parseAirVersionFromAdtOutput(event.getText().trim(), versionRef);
           }

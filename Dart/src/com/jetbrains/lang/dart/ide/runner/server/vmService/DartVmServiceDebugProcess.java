@@ -135,7 +135,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     else {
       getProcessHandler().addProcessListener(new ProcessAdapter() {
         @Override
-        public void onTextAvailable(final ProcessEvent event, final Key outputType) {
+        public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
           final String prefix = DartConsoleFilter.OBSERVATORY_LISTENING_ON + "http://";
           if (event.getText().startsWith(prefix)) {
             getProcessHandler().removeProcessListener(this);
