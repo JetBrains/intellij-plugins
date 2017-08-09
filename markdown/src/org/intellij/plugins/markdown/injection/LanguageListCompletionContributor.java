@@ -8,6 +8,7 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.DeferredIconImpl;
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes;
@@ -23,7 +24,8 @@ public class LanguageListCompletionContributor extends CompletionContributor {
 
   @Override
   public void beforeCompletion(@NotNull CompletionInitializationContext context) {
-    if (context.getFile() instanceof MarkdownFile) {
+    final PsiReference reference = context.getFile().findReferenceAt(context.getStartOffset());
+    if (reference == null && context.getFile() instanceof MarkdownFile) {
       context.setDummyIdentifier(CompletionInitializationContext.DUMMY_IDENTIFIER + "\n");
     }
   }
