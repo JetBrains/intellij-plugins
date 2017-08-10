@@ -1,5 +1,6 @@
 package org.jetbrains.vuejs.language
 
+import com.intellij.idea.Bombed
 import com.intellij.javascript.HtmlInlineJSScriptTokenTypesProvider
 import com.intellij.lang.LanguageHtmlInlineScriptTokenTypesProvider
 import com.intellij.lang.LanguageHtmlScriptContentProvider
@@ -92,6 +93,7 @@ open class VueLexerTest : LexerTestCase() {
   fun testScriptEmpty() = doFileTest("vue")
   fun testScriptTS() = doFileTest("vue")
 
+  @Bombed(year = 2017, month = 9, day = 20, user = "Irina.Chernushina", description = "todo: stick to some exact css dialect")
   fun testStyleEmpty() = doFileTest("vue")
   fun testStyleSass() = doFileTest("vue")
   fun testStyleSassAfterTemplate() = doFileTest("vue")
