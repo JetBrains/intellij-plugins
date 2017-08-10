@@ -88,9 +88,9 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   // limit building stub in other file types like js/html to Vue-descriptor-like members
   private fun insideVueDescriptor(expression: JSLiteralExpression): Boolean {
-    val statement = PsiTreeUtil.getParentOfType(expression, JSSourceElement::class.java) ?: return false
-    return statement is JSExpressionStatement &&
-           PsiTreeUtil.findChildrenOfType(statement, JSReferenceExpression::class.java).firstOrNull { "Vue" == it.referenceName } != null
+    val statement = PsiTreeUtil.getParentOfType(expression, JSCallExpression::class.java) ?: return false
+    val ref = statement.methodExpression as? JSReferenceExpression ?: return false
+    return ("Vue" == ref.referenceName || "Vue" == ref.qualifier?.name)
   }
 
   private fun tryProcessComponentInVue(obj: JSObjectLiteralExpression, property: JSProperty,
