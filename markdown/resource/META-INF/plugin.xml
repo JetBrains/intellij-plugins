@@ -69,6 +69,11 @@
     <psi.referenceContributor implementation="org.intellij.plugins.markdown.lang.references.MarkdownReferenceProvider"/>
     <stripTrailingSpacesFilterFactory implementation="org.intellij.plugins.markdown.editor.MarkdownStripTrailingSpacesFilterFactory"/>
     <httpRequestHandler implementation="org.intellij.plugins.markdown.ui.preview.PreviewStaticServer"/>
+
+    <localInspection shortName="MarkdownUnresolvedFileReference" bundle="org.intellij.plugins.markdown.bundle.MarkdownBundle"
+                     key="markdown.unresolved.file.inspection.name" groupKey="markdown.inspection.group.ruby.name"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="org.intellij.plugins.markdown.lang.references.MarkdownUnresolvedFileReferenceInspection"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.intellij.markdown">

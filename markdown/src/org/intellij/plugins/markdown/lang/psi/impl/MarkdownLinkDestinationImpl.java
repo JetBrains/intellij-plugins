@@ -5,10 +5,12 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.AbstractElementManipulator;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.util.IncorrectOperationException;
+import org.intellij.plugins.markdown.lang.psi.MarkdownElementVisitor;
 import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElement;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,6 +20,16 @@ import java.util.List;
 public class MarkdownLinkDestinationImpl extends ASTWrapperPsiElement implements MarkdownPsiElement {
   public MarkdownLinkDestinationImpl(@NotNull ASTNode node) {
     super(node);
+  }
+
+  @Override
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof MarkdownElementVisitor) {
+      ((MarkdownElementVisitor)visitor).visitLinkDestination(this);
+      return;
+    }
+
+    super.accept(visitor);
   }
 
   @NotNull
