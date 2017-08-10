@@ -22,7 +22,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,6 +33,7 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Type;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Symbol;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.RubyElementFactory;
 import org.jetbrains.plugins.ruby.ruby.sdk.LanguageLevel;
+import org.jetbrains.plugins.ruby.settings.RubyCodeStyleSettings;
 
 import java.util.List;
 
@@ -62,7 +62,7 @@ public class RubyMotionOverriddenMethodGenerator extends OverriddenMethodGenerat
     text.append(MotionSymbolUtil.getSelectorNames(function).get(0));
     final List<Pair<String,String>> arguments = function.getArguments();
     if (arguments.size() > 0) {
-      final CodeStyleSettings settings = CodeStyleSettingsManager.getSettings(project);
+      final RubyCodeStyleSettings settings = CodeStyleSettingsManager.getSettings(project).getCustomSettings(RubyCodeStyleSettings.class);
       final boolean generateParenthesesAroundArguments = settings.PARENTHESES_AROUND_METHOD_ARGUMENTS;
       text.append(generateParenthesesAroundArguments ? "(" : " ");
       text.append(arguments.get(0).first);

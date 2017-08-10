@@ -40,6 +40,7 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Symbol;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.RType;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.RPsiElement;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.methodCall.RCall;
+import org.jetbrains.plugins.ruby.settings.RubyCodeStyleSettings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +95,8 @@ public class RubyMotionCompletionProvider extends RubyCompletionProvider {
       document.insertString(offset, split[0]);
       offset += split[0].length();
 
-      final boolean insertParentheses = CodeStyleSettingsManager.getSettings(context.getProject()).PARENTHESES_AROUND_METHOD_ARGUMENTS;
+      final boolean insertParentheses = CodeStyleSettingsManager.getSettings(context.getProject())
+        .getCustomSettings(RubyCodeStyleSettings.class).PARENTHESES_AROUND_METHOD_ARGUMENTS;
       final List<TextRange> argRanges = new ArrayList<>(split.length);
       document.insertString(offset, insertParentheses ? "(" : " ");
       offset++;
