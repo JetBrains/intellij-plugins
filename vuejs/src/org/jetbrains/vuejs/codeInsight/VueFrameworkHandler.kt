@@ -29,9 +29,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     INDICES.values.forEach { JSImplicitElementImpl.ourUserStringsRegistry.registerUserString(it) }
   }
 
-  override fun findModule(result: PsiElement): PsiElement? {
-    return org.jetbrains.vuejs.codeInsight.findModule(result)
-  }
+  override fun findModule(result: PsiElement): PsiElement? = org.jetbrains.vuejs.codeInsight.findModule(result)
 
   override fun processAnyProperty(property: JSProperty, outData: JSElementIndexingData?): JSElementIndexingData? {
     val obj = property.parent as JSObjectLiteralExpression
@@ -75,7 +73,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   override fun shouldCreateStubForLiteral(node: ASTNode?): Boolean {
     if (node?.psi is JSLiteralExpression) {
-      return hasSignificantValue(node!!.psi as JSLiteralExpression)
+      return hasSignificantValue(node.psi as JSLiteralExpression)
     }
     return super.shouldCreateStubForLiteral(node)
   }
@@ -91,7 +89,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   // limit building stub in other file types like js/html to Vue-descriptor-like members
   private fun insideVueDescriptor(expression: JSLiteralExpression): Boolean {
     val statement = PsiTreeUtil.getParentOfType(expression, JSSourceElement::class.java) ?: return false
-    return PsiTreeUtil.findChildrenOfType(statement, JSReferenceExpression::class.java).firstOrNull { "Vue" == it.referenceName } != null
+    return statement is JSExpressionStatement &&
+           PsiTreeUtil.findChildrenOfType(statement, JSReferenceExpression::class.java).firstOrNull { "Vue" == it.referenceName } != null
   }
 
   private fun tryProcessComponentInVue(obj: JSObjectLiteralExpression, property: JSProperty,
