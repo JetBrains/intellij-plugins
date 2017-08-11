@@ -795,7 +795,11 @@
                   {"type": "boolean", "enum": [true]},
                   {
                     "type": "string",
-                    "enum": ["allow-fast-null-checks"]
+                    "enum": [
+                      "allow-fast-null-checks",
+                      "allow-new",
+                      "allow-tagged-template"
+                    ]
                   }
                 ]
               }
