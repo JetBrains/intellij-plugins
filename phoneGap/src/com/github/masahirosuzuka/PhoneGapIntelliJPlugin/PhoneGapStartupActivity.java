@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.startup.StartupActivity;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileListener;
@@ -33,14 +32,12 @@ public class PhoneGapStartupActivity implements StartupActivity {
 
   @Override
   public void runActivity(@NotNull Project project) {
-    StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> {
-      if (isPhoneGapProject(project)) {
-        if (PhoneGapSettings.getInstance().isExcludePlatformFolder()) {
-          excludeWorkingDirectories(project);
-        }
-        PhoneGapExecutableChecker.check(project);
+    if (isPhoneGapProject(project)) {
+      if (PhoneGapSettings.getInstance().isExcludePlatformFolder()) {
+        excludeWorkingDirectories(project);
       }
-    });
+      PhoneGapExecutableChecker.check(project);
+    }
 
     VirtualFileManager.getInstance().addVirtualFileListener(new VirtualFileListener() {
       @Override
