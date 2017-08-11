@@ -18,8 +18,10 @@ package org.intellij.plugins.markdown.lang.psi.impl;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiElementVisitor;
 import org.intellij.plugins.markdown.lang.MarkdownFileType;
 import org.intellij.plugins.markdown.lang.MarkdownLanguage;
+import org.intellij.plugins.markdown.lang.psi.MarkdownElementVisitor;
 import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElement;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,6 +31,16 @@ import java.util.List;
 public class MarkdownFile extends PsiFileBase implements MarkdownPsiElement {
   public MarkdownFile(FileViewProvider viewProvider) {
     super(viewProvider, MarkdownLanguage.INSTANCE);
+  }
+
+  @Override
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof MarkdownElementVisitor) {
+      ((MarkdownElementVisitor)visitor).visitMarkdownFile(this);
+      return;
+    }
+
+    visitor.visitFile(this);
   }
 
   @NotNull

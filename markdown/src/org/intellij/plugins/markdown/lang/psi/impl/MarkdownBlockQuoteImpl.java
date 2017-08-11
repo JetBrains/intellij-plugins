@@ -3,11 +3,23 @@ package org.intellij.plugins.markdown.lang.psi.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.DelegatingItemPresentation;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.psi.PsiElementVisitor;
+import org.intellij.plugins.markdown.lang.psi.MarkdownElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
 public class MarkdownBlockQuoteImpl extends MarkdownCompositePsiElementBase {
   public MarkdownBlockQuoteImpl(@NotNull ASTNode node) {
     super(node);
+  }
+
+  @Override
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof MarkdownElementVisitor) {
+      ((MarkdownElementVisitor)visitor).visitBlockQuote(this);
+      return;
+    }
+
+    super.accept(visitor);
   }
 
   @Override
