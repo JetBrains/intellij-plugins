@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex;
 
+import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixProvider;
 import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
@@ -287,6 +288,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
       for (CreateClassIntentionWithCallback intention : intentions) {
         intention.setCreatedClassFqnConsumer(fqn -> {
           if (!element.isValid()) return;
+          if (!FileModificationService.getInstance().preparePsiElementForWrite(element)) return;
 
           if (element instanceof XmlAttributeValue) {
             ((XmlAttribute)element.getParent()).setValue(fqn);

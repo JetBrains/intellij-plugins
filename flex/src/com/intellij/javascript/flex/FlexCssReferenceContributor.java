@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex;
 
+import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixProvider;
 import com.intellij.javascript.flex.css.CssClassValueReference;
@@ -76,7 +77,11 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
                 new CreateFlexComponentFix(value, element)
               };
               for (ActionScriptCreateClassOrInterfaceFix fix : fixes) {
-                fix.setCreatedClassFqnConsumer(newFqn -> ElementManipulators.getManipulator(element).handleContentChange(element, newFqn));
+                fix.setCreatedClassFqnConsumer(newFqn -> {
+                  if (FileModificationService.getInstance().preparePsiElementForWrite(element)){
+                    ElementManipulators.getManipulator(element).handleContentChange(element, newFqn);
+                  }
+                });
               }
               return fixes;
             }

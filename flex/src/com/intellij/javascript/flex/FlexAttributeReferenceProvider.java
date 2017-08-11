@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex;
 
+import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.daemon.XmlErrorMessages;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -241,6 +242,8 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
         fix.setCreatedClassFqnConsumer(fqn1 -> {
           if (myElement.isValid()) {
             if (!fqn1.equals(StringUtil.stripQuotesAroundValue(myElement.getValueNode().getText()))) {
+              if (!FileModificationService.getInstance().preparePsiElementForWrite(myElement)) return;
+
               final ASTNode oldValueNode = myElement.getValueNode();
               final String oldText = oldValueNode.getText();
               char quoteChar = oldText.length() > 0 ? oldText.charAt(0) : '"';
