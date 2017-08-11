@@ -15,6 +15,7 @@ import org.intellij.plugins.markdown.lang.psi.MarkdownElementVisitor;
 import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElement;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownBlockQuoteImpl;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownListImpl;
+import org.intellij.plugins.markdown.lang.psi.impl.MarkdownTableImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -29,6 +30,7 @@ public class MarkdownFoldingBuilder extends CustomFoldingBuilder implements Dumb
     TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.ORDERED_LIST, MarkdownBundle.message("markdown.folding.ordered.list.name"));
     TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.UNORDERED_LIST, MarkdownBundle.message("markdown.folding.unordered.list.name"));
     TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.BLOCK_QUOTE, MarkdownBundle.message("markdown.folding.block.quote.name"));
+    TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.TABLE, MarkdownBundle.message("markdown.folding.table.name"));
   }
 
   @Override
@@ -47,6 +49,12 @@ public class MarkdownFoldingBuilder extends CustomFoldingBuilder implements Dumb
       public void visitList(@NotNull MarkdownListImpl list) {
         addDescriptors(list);
         super.visitList(list);
+      }
+
+      @Override
+      public void visitTable(@NotNull MarkdownTableImpl table) {
+        addDescriptors(table);
+        super.visitTable(table);
       }
 
       @Override

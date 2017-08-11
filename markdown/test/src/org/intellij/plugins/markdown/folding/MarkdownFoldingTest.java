@@ -32,6 +32,10 @@ public class MarkdownFoldingTest extends LightPlatformCodeInsightFixtureTestCase
     doTest();
   }
 
+  public void testTable() {
+    doTest();
+  }
+
   public void testBlockQuote() {
     doTest();
   }
