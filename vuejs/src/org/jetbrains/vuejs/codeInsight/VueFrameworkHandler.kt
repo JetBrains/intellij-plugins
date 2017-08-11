@@ -2,6 +2,9 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
+import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
@@ -14,7 +17,9 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.XmlRecursiveElementWalkingVisitor
+import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
@@ -79,18 +84,21 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   override fun hasSignificantValue(expression: JSLiteralExpression): Boolean {
-    if (expression.containingFile.fileType == VueFileType.INSTANCE || insideVueDescriptor(expression)) {
-      return PsiTreeUtil.getParentOfType(expression, JSArrayLiteralExpression::class.java) != null ||
-             "required" == (expression.parent as? JSProperty)?.name
+    val parentType = expression.node.treeParent?.elementType ?: return false
+    if (JSElementTypes.ARRAY_LITERAL_EXPRESSION == parentType ||
+        JSElementTypes.PROPERTY == parentType && "required" == expression.node.treeParent.findChildByType(JSTokenTypes.IDENTIFIER)?.text) {
+      return VueFileType.INSTANCE == expression.containingFile.fileType || insideVueDescriptor(expression)
     }
     return false
   }
 
   // limit building stub in other file types like js/html to Vue-descriptor-like members
   private fun insideVueDescriptor(expression: JSLiteralExpression): Boolean {
-    val statement = PsiTreeUtil.getParentOfType(expression, JSCallExpression::class.java) ?: return false
-    val ref = statement.methodExpression as? JSReferenceExpression ?: return false
-    return ("Vue" == ref.referenceName || "Vue" == ref.qualifier?.name)
+    val statement = TreeUtil.findParent(expression.node,
+                                        TokenSet.create(JSStubElementTypes.CALL_EXPRESSION, JSStubElementTypes.NEW_EXPRESSION),
+                                        TokenSet.create(JSElementTypes.EXPRESSION_STATEMENT)) ?: return false
+    val ref = statement.findChildByType(JSElementTypes.REFERENCE_EXPRESSION) ?: return false
+    return ref.getChildren(TokenSet.create(JSTokenTypes.IDENTIFIER)).filter { "Vue" == it.text }.any()
   }
 
   private fun tryProcessComponentInVue(obj: JSObjectLiteralExpression, property: JSProperty,
