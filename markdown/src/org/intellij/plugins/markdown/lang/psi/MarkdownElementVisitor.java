@@ -28,4 +28,8 @@ public class MarkdownElementVisitor extends PsiElementVisitor {
   public void visitBlockQuote(@NotNull MarkdownBlockQuoteImpl blockQuote) {
     visitElement(blockQuote);
   }
+
+  public void visitCodeFence(@NotNull MarkdownCodeFenceImpl codeFence) {
+    visitElement(codeFence);
+  }
 }

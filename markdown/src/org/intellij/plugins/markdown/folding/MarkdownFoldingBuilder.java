@@ -14,6 +14,7 @@ import org.intellij.plugins.markdown.lang.MarkdownElementTypes;
 import org.intellij.plugins.markdown.lang.psi.MarkdownElementVisitor;
 import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElement;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownBlockQuoteImpl;
+import org.intellij.plugins.markdown.lang.psi.impl.MarkdownCodeFenceImpl;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownListImpl;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownTableImpl;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +32,7 @@ public class MarkdownFoldingBuilder extends CustomFoldingBuilder implements Dumb
     TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.UNORDERED_LIST, MarkdownBundle.message("markdown.folding.unordered.list.name"));
     TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.BLOCK_QUOTE, MarkdownBundle.message("markdown.folding.block.quote.name"));
     TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.TABLE, MarkdownBundle.message("markdown.folding.table.name"));
+    TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.CODE_FENCE, MarkdownBundle.message("markdown.folding.code.fence.name"));
   }
 
   @Override
@@ -61,6 +63,12 @@ public class MarkdownFoldingBuilder extends CustomFoldingBuilder implements Dumb
       public void visitBlockQuote(@NotNull MarkdownBlockQuoteImpl blockQuote) {
         addDescriptors(blockQuote);
         super.visitBlockQuote(blockQuote);
+      }
+
+      @Override
+      public void visitCodeFence(@NotNull MarkdownCodeFenceImpl codeFence) {
+        addDescriptors(codeFence);
+        super.visitCodeFence(codeFence);
       }
 
       private void addDescriptors(@NotNull MarkdownPsiElement element) {

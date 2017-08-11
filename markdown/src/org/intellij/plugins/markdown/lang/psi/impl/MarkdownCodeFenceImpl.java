@@ -8,6 +8,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypes;
+import org.intellij.plugins.markdown.lang.psi.MarkdownElementVisitor;
 import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElement;
 import org.intellij.plugins.markdown.structureView.MarkdownBasePresentation;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +21,17 @@ public class MarkdownCodeFenceImpl extends CompositePsiElement implements PsiLan
   public MarkdownCodeFenceImpl(IElementType type) {
     super(type);
   }
+
+  @Override
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof MarkdownElementVisitor) {
+      ((MarkdownElementVisitor)visitor).visitCodeFence(this);
+      return;
+    }
+
+    super.accept(visitor);
+  }
+
 
   @Nullable
   public String getFenceLanguage() {
