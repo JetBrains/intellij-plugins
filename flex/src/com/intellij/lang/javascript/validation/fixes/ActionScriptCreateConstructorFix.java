@@ -29,7 +29,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.refactoring.changeSignature.CallerChooserBase;
-import com.intellij.refactoring.changeSignature.MethodNodeBase;
+import com.intellij.refactoring.changeSignature.MemberNodeBase;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Consumer;
@@ -229,7 +229,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
     }
 
     @Override
-    protected MethodNodeBase<JSFunction> createTreeNode(JSFunction method,
+    protected MemberNodeBase<JSFunction> createTreeNode(JSFunction method,
                                                         HashSet<JSFunction> called,
                                                         Runnable cancelCallback) {
       return new MyMethodNode(method, called, cancelCallback);
