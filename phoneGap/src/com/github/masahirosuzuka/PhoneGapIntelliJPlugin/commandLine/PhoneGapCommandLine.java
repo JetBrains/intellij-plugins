@@ -84,7 +84,7 @@ public class PhoneGapCommandLine {
       String version = isIonicPath(path) == ThreeState.YES ?
                        getInnerVersion(myPath, "--version", "--no-interactive") :
                        getInnerVersion(myPath, "--version");
-      
+
       myVersion = version.replace("\"", "").trim();
     }
     catch (Exception e) {
@@ -98,17 +98,11 @@ public class PhoneGapCommandLine {
     this(path, dir, true, ContainerUtil.newHashMap());
   }
 
-  public ProcessOutput platformAdd(@NotNull String platform) throws ExecutionException {
+  @NotNull
+  public CapturingProcessHandler platformAdd(@NotNull String platform) throws ExecutionException {
     platform = platform.trim();
     String[] command = getExecutor().getPlatformAddCommands(platform);
-    ProcessOutput output = executeAndGetOut(command);
-
-    String message = "Platform " + platform + " already added";
-    if (output.getExitCode() != 0 && (contains(output.getStderr(), message) || contains(output.getStdout(), message))) {
-      return new ProcessOutput(0);
-    }
-
-    return output;
+    return createCapturingProcessHandler(command);
   }
 
   private CordovaBasedExecutor getExecutor() {
@@ -200,7 +194,7 @@ public class PhoneGapCommandLine {
     Boolean isPhoneGapByName = isPhoneGapExecutableByPath(myPath);
     if (isPhoneGapByName != null) return isPhoneGapByName;
 
-    String s = executeAndReturnResult(myPath);
+    String s = executeAndReturnResult(PROCESS_VERSION_TIMEOUT, myPath);
 
     return s.contains(PLATFORM_PHONEGAP);
   }
@@ -230,7 +224,7 @@ public class PhoneGapCommandLine {
     }
 
     if (myWorkDir != null) {
-      String s = executeAndReturnResult(myPath);
+      String s = executeAndReturnResult(PROCESS_VERSION_TIMEOUT, myPath);
       return s.contains(PLATFORM_IONIC);
     }
 
@@ -268,7 +262,7 @@ public class PhoneGapCommandLine {
       .map(StringUtil.TRIMMER::fun)
       .filter(el -> el.length() > 0 && AsciiUtil.isLetter(el.charAt(0)))
       .collect(Collectors.toList());
-    
+
     String item = ContainerUtil.getFirstItem(plugins);
     if (item != null && item.contains(INFO_PHONEGAP)) {
       plugins = plugins.subList(1, plugins.size());
@@ -316,9 +310,9 @@ public class PhoneGapCommandLine {
     }
   }
 
-  private String executeAndReturnResult(String... command) {
+  private String executeAndReturnResult(long timeout, String... command) {
     try {
-      final ProcessOutput output = executeAndGetOut(command);
+      final ProcessOutput output = executeAndGetOut(timeout, null, command);
 
       if (output.getExitCode() > 0) {
         throw new RuntimeException("Command error: " + output.getStderr());
@@ -329,6 +323,10 @@ public class PhoneGapCommandLine {
     catch (Exception e) {
       throw new RuntimeException(e.getMessage(), e);
     }
+  }
+
+  private String executeAndReturnResult(String... command) {
+    return executeAndReturnResult(PROCESS_TIMEOUT, command);
   }
 
   private ProcessOutput executeAndGetOut(String[] command) throws ExecutionException {
@@ -377,6 +375,12 @@ public class PhoneGapCommandLine {
     GeneralCommandLine commandLine = new GeneralCommandLine(commands);
     commandLine.withWorkDirectory(myWorkDir);
     return new KillableColoredProcessHandler(commandLine, true);
+  }
+
+  private CapturingProcessHandler createCapturingProcessHandler(String... commands) throws ExecutionException {
+    GeneralCommandLine commandLine = new GeneralCommandLine(commands);
+    commandLine.withWorkDirectory(myWorkDir);
+    return new CapturingProcessHandler(commandLine);
   }
 
   public static List<String> parseArgs(String paramList) {
