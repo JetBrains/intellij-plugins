@@ -3,9 +3,9 @@ package org.angularjs.editor;
 import com.intellij.json.JsonLanguage;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
-import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.lang.javascript.JSInjectionBracesUtil;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -14,6 +14,7 @@ import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl;
 import com.intellij.psi.impl.source.xml.XmlTextImpl;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.NullableFunction;
 import org.angularjs.codeInsight.attributes.AngularAttributesRegistry;
 import org.angularjs.index.AngularIndexUtil;
@@ -62,13 +63,19 @@ public class AngularJSInjector implements MultiHostInjector {
       }
     }
 
-    if (context instanceof XmlTextImpl || context instanceof XmlAttributeValueImpl) {
+    if (context instanceof XmlTextImpl && !nonBindable((XmlTextImpl)context) || context instanceof XmlAttributeValueImpl) {
       final Pair<String, String> braces = BRACES_FACTORY.fun(context);
       if (braces == null) return;
 
       JSInjectionBracesUtil
         .injectInXmlTextByDelimiters(registrar, context, AngularJSLanguage.INSTANCE, braces.getFirst(), braces.getSecond());
     }
+  }
+
+  @SuppressWarnings("SpellCheckingInspection")
+  private static boolean nonBindable(@NotNull final XmlTextImpl xmlText) {
+    final XmlTag parentTag = xmlText.getParentTag();
+    return parentTag != null && (parentTag.getAttribute("ngNonBindable") != null || parentTag.getAttribute("ng-non-bindable") != null);
   }
 
   @NotNull

@@ -210,6 +210,11 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     assertBraces("**", "**");
   }
 
+  public void testNgNonBindable() throws Exception {
+    myFixture.configureByFiles(getTestName(true) + ".html", "angular.js");
+    assertNotSame(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
+  }
+
   public void testNoQuotes() {
     myFixture.configureByFiles("noQuotes.html", "angular.js");
   }
