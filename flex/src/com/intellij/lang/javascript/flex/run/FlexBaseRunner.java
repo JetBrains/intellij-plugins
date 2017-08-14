@@ -644,11 +644,9 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   }
 
   private static void checkMakeBeforeRunEnabled(final Project project, final RunProfile runProfile) {
-    final RunManager runManager = RunManagerEx.getInstance(project);
-    int count =
-      RunManagerEx.getTasksCount(project, (RunConfiguration)runProfile, CompileStepBeforeRun.ID, CompileStepBeforeRunNoErrorCheck.ID);
+    int count = RunManagerEx.getTasksCount(project, (RunConfiguration)runProfile, CompileStepBeforeRun.ID, CompileStepBeforeRunNoErrorCheck.ID);
     if (count == 0) {
-      for (RunnerAndConfigurationSettings settings : runManager.getConfigurationSettingsList(((RunConfiguration)runProfile).getType())) {
+      for (RunnerAndConfigurationSettings settings : RunManager.getInstance(project).getConfigurationSettingsList(((RunConfiguration)runProfile).getType())) {
         if (settings.getConfiguration() == runProfile) {
           showMakeBeforeRunTurnedOffWarning(project, settings);
           break;
