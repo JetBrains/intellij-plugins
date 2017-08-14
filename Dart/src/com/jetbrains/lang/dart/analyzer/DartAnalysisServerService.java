@@ -95,6 +95,7 @@ public class DartAnalysisServerService implements Disposable {
   private static final long GET_NAVIGATION_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_ASSISTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
+  private static final long IMPORTED_ELEMENTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long POSTFIX_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long POSTFIX_INITIALIZATION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(5000);
   private static final long STATEMENT_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
@@ -1283,6 +1284,80 @@ public class DartAnalysisServerService implements Disposable {
 
     if (latch.getCount() > 0) {
       LOG.info("edit_format() took too long for file " + filePath);
+    }
+
+    return resultRef.get();
+  }
+
+  @Nullable
+  public List<ImportedElements> analysis_getImportedElements(@NotNull final VirtualFile file,
+                                                             final int _selectionOffset,
+                                                             final int _selectionLength) {
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+    final Ref<List<ImportedElements>> resultRef = new Ref<>();
+
+    final AnalysisServer server = myServer;
+    if (server == null || StringUtil.compareVersionNumbers(mySdkVersion, "1.25") < 0) return null;
+
+    final CountDownLatch latch = new CountDownLatch(1);
+    final int selectionOffset = getOriginalOffset(file, _selectionOffset);
+    final int selectionLength = getOriginalOffset(file, _selectionOffset + _selectionLength) - selectionOffset;
+    server.analysis_getImportedElements(filePath, selectionOffset, selectionLength, new GetImportedElementsConsumer() {
+      @Override
+      public void computedImportedElements(final List<ImportedElements> importedElements) {
+        resultRef.set(importedElements);
+        latch.countDown();
+      }
+
+      @Override
+      public void onError(final RequestError error) {
+        if (!"GET_IMPORTED_ELEMENTS_INVALID_FILE".equals(error.getCode())) {
+          logError("analysis_getImportedElements()", filePath, error);
+        }
+
+        latch.countDown();
+      }
+    });
+
+    awaitForLatchCheckingCanceled(server, latch, IMPORTED_ELEMENTS_TIMEOUT);
+
+    if (latch.getCount() > 0) {
+      LOG.info("analysis_getImportedElements() took too long for file " + filePath);
+    }
+
+    return resultRef.get();
+  }
+
+  @Nullable
+  public List<SourceEdit> edit_importElements(@NotNull final VirtualFile file, @NotNull final List<ImportedElements> importedElements) {
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+    final Ref<List<SourceEdit>> resultRef = new Ref<>();
+
+    final AnalysisServer server = myServer;
+    if (server == null || StringUtil.compareVersionNumbers(mySdkVersion, "1.25") < 0) return null;
+
+    final CountDownLatch latch = new CountDownLatch(1);
+    server.edit_importElements(filePath, importedElements, new ImportElementsConsumer() {
+      @Override
+      public void computedImportedElements(final List<SourceEdit> sourceEdits) {
+        resultRef.set(sourceEdits);
+        latch.countDown();
+      }
+
+      @Override
+      public void onError(final RequestError error) {
+        if (!"IMPORT_ELEMENTS_INVALID_FILE".equals(error.getCode())) {
+          logError("edit_importElements()", filePath, error);
+        }
+
+        latch.countDown();
+      }
+    });
+
+    awaitForLatchCheckingCanceled(server, latch, IMPORTED_ELEMENTS_TIMEOUT);
+
+    if (latch.getCount() > 0) {
+      LOG.info("edit_importElements() took too long for file " + filePath);
     }
 
     return resultRef.get();
