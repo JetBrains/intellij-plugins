@@ -9,15 +9,18 @@ import org.junit.Assert;
  */
 public class AngularJSInjectorMatchingEndFinderTest extends TestCase {
   public void test() throws Exception {
-    defaultTest("{{recipients.length, plural, =0 {something}}}", "recipients.length, plural, =0 {something}");
-    defaultTest("{{recipients.length, plural, offset:1, =0 {You ({{sender.name}}) gave no gifts} =1 { {{recipients[0].gender, select, male {You ({{sender.name}}) gave him ({{recipients[0].name}}) a gift.} female {You ({{sender.name}}) gave her ({{recipients[0].name}}) a gift.} other {You ({{sender.name}}) gave them ({{recipients[0].name}}) a gift.!}}}} other {OUTER MESSAGE}}}",
-                "recipients.length, plural, offset:1, =0 {You ({{sender.name}}) gave no gifts} =1 { {{recipients[0].gender, select, male {You ({{sender.name}}) gave him ({{recipients[0].name}}) a gift.} female {You ({{sender.name}}) gave her ({{recipients[0].name}}) a gift.} other {You ({{sender.name}}) gave them ({{recipients[0].name}}) a gift.!}}}} other {OUTER MESSAGE}");
-    defaultTest("{{recipients.length, plural, offset:1, =0 {You ({{sender.name}}) gave no gifts} =1 { {{recipients[0].gender, select, male {You ({{sender.name}}) gave him ({{recipients[0].name}}) a gift.} female {You ({{sender.name}}) gave her ({{recipients[0].name}}) a gift.} other {You ({{sender.name}}) gave them ({{recipients[0].name}}) a gift.!}}} } other {OUTER MESSAGE}}}",
-                "recipients.length, plural, offset:1, =0 {You ({{sender.name}}) gave no gifts} =1 { {{recipients[0].gender, select, male {You ({{sender.name}}) gave him ({{recipients[0].name}}) a gift.} female {You ({{sender.name}}) gave her ({{recipients[0].name}}) a gift.} other {You ({{sender.name}}) gave them ({{recipients[0].name}}) a gift.!}}} } other {OUTER MESSAGE}");
-    defaultTest("{{recipients.length, plural, offset:1, =0 {You ({{sender.name}}) gave no gifts} =1 { {{recipients[0].gender, select, male {You ({{sender.name}}) gave him ({{recipients[0].name}}) a gift.} female {You ({{sender.name}}) gave her ({{recipients[0].name}}) a gift.} other {You ({{sender.name}}) gave them ({{recipients[0].name}}) a gift.!} }}} other {OUTER MESSAGE}}}",
-                "recipients.length, plural, offset:1, =0 {You ({{sender.name}}) gave no gifts} =1 { {{recipients[0].gender, select, male {You ({{sender.name}}) gave him ({{recipients[0].name}}) a gift.} female {You ({{sender.name}}) gave her ({{recipients[0].name}}) a gift.} other {You ({{sender.name}}) gave them ({{recipients[0].name}}) a gift.!} }}} other {OUTER MESSAGE}");
-    defaultTest("{{recipients.length, plural, offset:1, =0 {You ({{sender.name}}) gave no gifts} =1 { {{recipients[0].gender, select, male {You ({{sender.name}}) gave him ({{recipients[0].name}}) a gift.} female {You ({{sender.name}}) gave her ({{recipients[0].name}}) a gift.} other {You ({{sender.name}}) gave them ({{recipients[0].name}}) a gift.!} }} } other {OUTER MESSAGE}}}",
-                "recipients.length, plural, offset:1, =0 {You ({{sender.name}}) gave no gifts} =1 { {{recipients[0].gender, select, male {You ({{sender.name}}) gave him ({{recipients[0].name}}) a gift.} female {You ({{sender.name}}) gave her ({{recipients[0].name}}) a gift.} other {You ({{sender.name}}) gave them ({{recipients[0].name}}) a gift.!} }} } other {OUTER MESSAGE}");
+    defaultTest("{{recipients.length, plural, =0 {something} }}", "recipients.length, plural, =0 {something} ");
+    defaultTest("{ {{recipients.length, plural, =0 {something} }} }", "recipients.length, plural, =0 {something} ");
+    defaultTest("{{recipients.length, plural, offset:1, =0 {You ({{sender.name}}) gave no gifts} =1 { {{recipients[0].gender, select, male {You ({{sender.name}}) gave him ({{recipients[0].name}}) a gift.} female {You ({{sender.name}}) gave her ({{recipients[0].name}}) a gift.} other {You ({{sender.name}}) gave them ({{recipients[0].name}}) a gift.!} }} } other {OUTER MESSAGE} }}",
+                "recipients.length, plural, offset:1, =0 {You ({{sender.name}}) gave no gifts} =1 { {{recipients[0].gender, select, male {You ({{sender.name}}) gave him ({{recipients[0].name}}) a gift.} female {You ({{sender.name}}) gave her ({{recipients[0].name}}) a gift.} other {You ({{sender.name}}) gave them ({{recipients[0].name}}) a gift.!} }} } other {OUTER MESSAGE} ");
+  }
+
+  public void testWithLBrace() throws Exception {
+    defaultTest("{{data.title + '{'}}", "data.title + '{'");
+  }
+
+  public void testWithRBrace() throws Exception {
+    defaultTest("{{data.title + '}'}}", "data.title + '}'");
   }
 
   private static void defaultTest(String text, String check) {
@@ -27,6 +30,5 @@ public class AngularJSInjectorMatchingEndFinderTest extends TestCase {
     Assert.assertTrue(afterStart > 0);
     Assert.assertTrue(end > 0);
     Assert.assertEquals(check, text.substring(afterStart, end));
-    System.out.println("*");
   }
 }
