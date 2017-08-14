@@ -11,6 +11,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -104,10 +105,27 @@ public class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCopyPaste
     if (edits != null && !edits.isEmpty()) {
       final String message = DartBundle.message("dialog.paste.on.import.text");
       final String title = DartBundle.message("dialog.paste.on.import.title");
+
+      final DialogWrapper.DoNotAskOption doNotAskOption = new DialogWrapper.DoNotAskOption.Adapter() {
+        @NotNull
+        @Override
+        public String getDoNotShowMessage() {
+          return DartBundle.message("always.update.imports.do.not.ask.again");
+        }
+
+        @Override
+        public void rememberChoice(boolean isSelected, int exitCode) {
+          if (isSelected && exitCode == DialogWrapper.OK_EXIT_CODE) {
+            DartCodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE = CodeInsightSettings.YES;
+          }
+        }
+      };
+
       if (DartCodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE == CodeInsightSettings.ASK &&
-          Messages.showYesNoDialog(project, message, title, Messages.getQuestionIcon()) != Messages.YES) {
+          Messages.showYesNoDialog(project, message, title, Messages.getQuestionIcon(), doNotAskOption) != Messages.YES) {
         return;
       }
+
       WriteAction.run(() -> AssistUtils.applySourceEdits(project, file, editor.getDocument(), edits, Collections.emptySet()));
     }
   }
