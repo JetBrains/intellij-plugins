@@ -19,13 +19,16 @@ import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.util.containers.ContainerUtil;
 import org.intellij.plugins.markdown.lang.MarkdownFileType;
 import org.intellij.plugins.markdown.lang.MarkdownLanguage;
 import org.intellij.plugins.markdown.lang.psi.MarkdownElementVisitor;
 import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElement;
+import org.intellij.plugins.markdown.lang.psi.MarkdownRecursiveElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class MarkdownFile extends PsiFileBase implements MarkdownPsiElement {
@@ -52,5 +55,18 @@ public class MarkdownFile extends PsiFileBase implements MarkdownPsiElement {
   @Override
   public List<MarkdownPsiElement> getCompositeChildren() {
     return Arrays.asList(findChildrenByClass(MarkdownPsiElement.class));
+  }
+
+  @NotNull
+  public Collection<MarkdownHeaderImpl> getHeaders() {
+    final Collection<MarkdownHeaderImpl> list = ContainerUtil.newArrayList();
+    accept(new MarkdownRecursiveElementVisitor() {
+      @Override
+      public void visitHeader(@NotNull MarkdownHeaderImpl header) {
+        list.add(header);
+      }
+    });
+
+    return list;
   }
 }

@@ -5,14 +5,26 @@ import com.intellij.navigation.DelegatingItemPresentation;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes;
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypeSets;
+import org.intellij.plugins.markdown.lang.psi.MarkdownRecursiveElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
 public class MarkdownHeaderImpl extends MarkdownCompositePsiElementBase {
   public MarkdownHeaderImpl(@NotNull ASTNode node) {
     super(node);
+  }
+
+  @Override
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof MarkdownRecursiveElementVisitor) {
+      ((MarkdownRecursiveElementVisitor)visitor).visitHeader(this);
+      return;
+    }
+
+    super.accept(visitor);
   }
 
   @NotNull
