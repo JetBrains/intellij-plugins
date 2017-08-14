@@ -174,7 +174,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   @Override
   public void analysis_getImportedElements(String file, int offset, int length, GetImportedElementsConsumer consumer) {
     String id = generateUniqueId();
-    sendRequestToServer(id, RequestUtilities.generateAnalysisGetImportedElements(id), consumer);
+    sendRequestToServer(id, RequestUtilities.generateAnalysisGetImportedElements(id, file, offset, length), consumer);
   }
 
   @Override

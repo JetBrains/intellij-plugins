@@ -210,8 +210,12 @@ public class RequestUtilities {
     return buildJsonObjectRequest(idValue, METHOD_ANALYSIS_GET_HOVER, params);
   }
 
-  public static JsonObject generateAnalysisGetImportedElements(String id) {
-    return buildJsonObjectRequest(id, METHOD_ANALYSIS_GET_IMPORTED_ELEMENTS);
+  public static JsonObject generateAnalysisGetImportedElements(String id, String file, int offset, int length) {
+    JsonObject params = new JsonObject();
+    params.addProperty(FILE, file);
+    params.addProperty(OFFSET, offset);
+    params.addProperty(LENGTH, length);
+    return buildJsonObjectRequest(id, METHOD_ANALYSIS_GET_IMPORTED_ELEMENTS, params);
   }
 
   /**
