@@ -37,7 +37,6 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.SoftHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
@@ -69,7 +68,7 @@ public class BundleManifestCache {
     myProject = project;
     myIndex = index;
     myManager = manager;
-    myCache = Collections.synchronizedMap(new SoftHashMap<Object, CachedValue<BundleManifest>>());
+    myCache = Collections.synchronizedMap(ContainerUtil.createSoftMap());
   }
 
   @Nullable
