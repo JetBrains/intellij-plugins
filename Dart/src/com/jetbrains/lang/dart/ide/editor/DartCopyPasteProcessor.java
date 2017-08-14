@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.ide.editor;
 
+import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor;
 import com.intellij.codeInsight.editorActions.TextBlockTransferableData;
 import com.intellij.openapi.application.WriteAction;
@@ -10,14 +11,17 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
+import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -45,6 +49,7 @@ public class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCopyPaste
     final Project project = psiFile.getProject();
     final VirtualFile vFile = DartResolveUtil.getRealVirtualFile(psiFile);
     if (!DartAnalysisServerService.isLocalAnalyzableFile(vFile)) return Collections.emptyList();
+    if (DartCodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE == CodeInsightSettings.NO) return Collections.emptyList();
     final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
     if (module == null || !DartSdkLibUtil.isDartSdkEnabled(module)) return Collections.emptyList();
     if (!ProjectFileIndex.getInstance(project).isInContent(vFile)) return Collections.emptyList();
@@ -93,8 +98,16 @@ public class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCopyPaste
     final VirtualFile file = FileDocumentManager.getInstance().getFile(editor.getDocument());
     if (file == null || file.getFileType() != DartFileType.INSTANCE || !DartAnalysisServerService.isLocalAnalyzableFile(file)) return;
 
+    if (DartCodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE == CodeInsightSettings.NO) return;
+
     final List<SourceEdit> edits = DartAnalysisServerService.getInstance(project).edit_importElements(file, data.getImportedElements());
-    if (edits != null) {
+    if (edits != null && !edits.isEmpty()) {
+      final String message = DartBundle.message("dialog.paste.on.import.text");
+      final String title = DartBundle.message("dialog.paste.on.import.title");
+      if (DartCodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE == CodeInsightSettings.ASK &&
+          Messages.showYesNoDialog(project, message, title, Messages.getQuestionIcon()) != Messages.YES) {
+        return;
+      }
       WriteAction.run(() -> AssistUtils.applySourceEdits(project, file, editor.getDocument(), edits, Collections.emptySet()));
     }
   }
