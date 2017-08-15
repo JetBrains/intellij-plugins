@@ -13,10 +13,9 @@ import org.intellij.plugins.markdown.MarkdownBundle;
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes;
 import org.intellij.plugins.markdown.lang.psi.MarkdownElementVisitor;
 import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElement;
-import org.intellij.plugins.markdown.lang.psi.impl.MarkdownBlockQuoteImpl;
-import org.intellij.plugins.markdown.lang.psi.impl.MarkdownCodeFenceImpl;
-import org.intellij.plugins.markdown.lang.psi.impl.MarkdownListImpl;
-import org.intellij.plugins.markdown.lang.psi.impl.MarkdownTableImpl;
+import org.intellij.plugins.markdown.lang.psi.MarkdownRecursiveElementVisitor;
+import org.intellij.plugins.markdown.lang.psi.impl.*;
+import org.intellij.plugins.markdown.util.MarkdownPsiUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -28,6 +27,12 @@ public class MarkdownFoldingBuilder extends CustomFoldingBuilder implements Dumb
 
   static {
     TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.PARAGRAPH, MarkdownBundle.message("markdown.folding.paragraph.name"));
+    TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.ATX_1, MarkdownBundle.message("markdown.folding.atx.1.name"));
+    TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.ATX_2, MarkdownBundle.message("markdown.folding.atx.2.name"));
+    TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.ATX_3, MarkdownBundle.message("markdown.folding.atx.3.name"));
+    TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.ATX_4, MarkdownBundle.message("markdown.folding.atx.4.name"));
+    TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.ATX_5, MarkdownBundle.message("markdown.folding.atx.5.name"));
+    TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.ATX_6, MarkdownBundle.message("markdown.folding.atx.6.name"));
     TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.ORDERED_LIST, MarkdownBundle.message("markdown.folding.ordered.list.name"));
     TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.UNORDERED_LIST, MarkdownBundle.message("markdown.folding.unordered.list.name"));
     TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.BLOCK_QUOTE, MarkdownBundle.message("markdown.folding.block.quote.name"));
@@ -73,16 +78,10 @@ public class MarkdownFoldingBuilder extends CustomFoldingBuilder implements Dumb
 
       private void addDescriptors(@NotNull MarkdownPsiElement element) {
         if (!isOneLiner(element)) {
-          TextRange textRange = element.getTextRange();
-          if (textRange.getLength() > 1) {
-            descriptors.add(createDescriptor(element, textRange));
+          if (element.getTextRange().getLength() > 1) {
+            descriptors.add(new FoldingDescriptor(element, element.getTextRange()));
           }
         }
-      }
-
-      private FoldingDescriptor createDescriptor(PsiElement element, TextRange textRange) {
-        final TextRange range = TextRange.create(textRange.getStartOffset(), textRange.getEndOffset());
-        return new FoldingDescriptor(element, range);
       }
 
       private boolean isOneLiner(PsiElement element) {
@@ -90,6 +89,25 @@ public class MarkdownFoldingBuilder extends CustomFoldingBuilder implements Dumb
         int startLine = document.getLineNumber(textRange.getStartOffset());
         int endLine = document.getLineNumber(textRange.getEndOffset() - 1);
         return startLine == endLine;
+      }
+    });
+
+    root.accept(new MarkdownRecursiveElementVisitor() {
+      @Override
+      public void visitMarkdownFile(@NotNull MarkdownFile markdownFile) {
+        processHeaders(markdownFile);
+        super.visitMarkdownFile(markdownFile);
+      }
+
+      @Override
+      public void visitHeader(@NotNull MarkdownHeaderImpl header) {
+        processHeaders(header);
+        super.visitHeader(header);
+      }
+
+      private void processHeaders(@NotNull MarkdownPsiElement container) {
+        MarkdownPsiUtil
+          .processContainer(container, element -> descriptors.add(new FoldingDescriptor(element, element.getTextRange())));
       }
     });
   }

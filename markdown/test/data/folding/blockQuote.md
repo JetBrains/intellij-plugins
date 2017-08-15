@@ -1,4 +1,4 @@
-<fold text='block quote'>> We're living the future so
+<fold text='block quote: > We are living the fu...past.'>> We are living the future so
 > the present is our past.
 > the present is our past.
 > the present is our past.

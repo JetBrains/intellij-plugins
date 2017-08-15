@@ -44,6 +44,18 @@ public class MarkdownFoldingTest extends LightPlatformCodeInsightFixtureTestCase
     doTest();
   }
 
+  public void testSingleHeader() {
+    doTest();
+  }
+
+  public void testLongHeader() {
+    doTest();
+  }
+
+  public void testMultipleHeaders() {
+    doTest();
+  }
+
   private void doTest() {
     myFixture.testFolding(getTestDataPath() + "/" + getTestName(true) + ".md");
   }
