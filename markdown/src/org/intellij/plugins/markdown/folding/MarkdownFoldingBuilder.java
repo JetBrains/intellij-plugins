@@ -6,6 +6,7 @@ import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiUtilCore;
@@ -116,7 +117,9 @@ public class MarkdownFoldingBuilder extends CustomFoldingBuilder implements Dumb
   protected String getLanguagePlaceholderText(@NotNull ASTNode node, @NotNull TextRange range) {
     IElementType elementType = PsiUtilCore.getElementType(node);
     String explicitName = TYPES_PRESENTATION_MAP.get(elementType);
-    return explicitName == null ? "..." : explicitName;
+    final String prefix = explicitName != null ? explicitName + ": " : "";
+
+    return prefix + StringUtil.shortenTextWithEllipsis(node.getText(), 30, 5);
   }
 
   @Override
