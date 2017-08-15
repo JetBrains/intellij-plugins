@@ -27,7 +27,6 @@ public class MarkdownFoldingBuilder extends CustomFoldingBuilder implements Dumb
   public static final Map<IElementType, String> TYPES_PRESENTATION_MAP = new HashMap<>();
 
   static {
-    TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.PARAGRAPH, MarkdownBundle.message("markdown.folding.paragraph.name"));
     TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.ATX_1, MarkdownBundle.message("markdown.folding.atx.1.name"));
     TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.ATX_2, MarkdownBundle.message("markdown.folding.atx.2.name"));
     TYPES_PRESENTATION_MAP.put(MarkdownElementTypes.ATX_3, MarkdownBundle.message("markdown.folding.atx.3.name"));
@@ -57,6 +56,14 @@ public class MarkdownFoldingBuilder extends CustomFoldingBuilder implements Dumb
       public void visitList(@NotNull MarkdownListImpl list) {
         addDescriptors(list);
         super.visitList(list);
+      }
+
+      @Override
+      public void visitParagraph(@NotNull MarkdownParagraphImpl paragraph) {
+        if (paragraph.getParent() instanceof MarkdownBlockQuoteImpl) return;
+
+        addDescriptors(paragraph);
+        super.visitParagraph(paragraph);
       }
 
       @Override
