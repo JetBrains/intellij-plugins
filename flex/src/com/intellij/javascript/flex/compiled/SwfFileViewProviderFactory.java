@@ -49,11 +49,6 @@ public class SwfFileViewProviderFactory implements FileViewProviderFactory {
     }
 
     @Override
-    public boolean isWritable() {
-      return true;
-    }
-
-    @Override
     public PsiFile getDecompiledPsiFile() {
       return this;
     }
