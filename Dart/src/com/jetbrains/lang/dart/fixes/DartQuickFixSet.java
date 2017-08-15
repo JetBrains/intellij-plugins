@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.fixes;
 
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.Consumer;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
@@ -24,6 +25,7 @@ public class DartQuickFixSet {
 
   @NotNull private final List<DartQuickFix> myQuickFixes = new ArrayList<>(MAX_QUICK_FIXES);
   private volatile long myPsiModCountWhenRequestSent;
+  private volatile long myVfsModCountWhenRequestSent;
 
   public DartQuickFixSet(@NotNull final PsiManager psiManager,
                          @NotNull final VirtualFile file,
@@ -47,20 +49,23 @@ public class DartQuickFixSet {
   }
 
   synchronized void ensureInitialized() {
-    final long modCount = myPsiManager.getModificationTracker().getModificationCount();
-    if (myPsiModCountWhenRequestSent == modCount) {
+    final long psiModCount = myPsiManager.getModificationTracker().getModificationCount();
+    final long vfsModCount = VirtualFileManager.getInstance().getModificationCount();
+    if (myPsiModCountWhenRequestSent == psiModCount && myVfsModCountWhenRequestSent == vfsModCount) {
       return;
     }
 
-    myPsiModCountWhenRequestSent = modCount;
+    myPsiModCountWhenRequestSent = psiModCount;
+    myVfsModCountWhenRequestSent = vfsModCount;
 
     for (DartQuickFix fix : myQuickFixes) {
       fix.setSourceChange(null);
     }
 
     final Consumer<List<AnalysisErrorFixes>> consumer = fixes -> {
-      final long modCountWhenReceivedFixes = myPsiManager.getModificationTracker().getModificationCount();
-      if (myPsiModCountWhenRequestSent != modCountWhenReceivedFixes) {
+      final long psiModCountWhenReceivedFixes = myPsiManager.getModificationTracker().getModificationCount();
+      final long vfsModCountWhenReceivedFixes = VirtualFileManager.getInstance().getModificationCount();
+      if (myPsiModCountWhenRequestSent != psiModCountWhenReceivedFixes || myVfsModCountWhenRequestSent != vfsModCountWhenReceivedFixes) {
         return;
       }
 
