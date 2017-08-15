@@ -39,7 +39,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
     val content = findScriptContent(file) ?: return
 
     val defaultExport = ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment ?: return
-    val obj = defaultExport.expression as? JSObjectLiteralExpression ?: return
+    val obj = defaultExport.stubSafeElement as? JSObjectLiteralExpression ?: return
     val name = toAsset(item.lookupString)
     val components = componentProperty(obj).value as? JSObjectLiteralExpression ?: return
     val capitalizedName = name.capitalize()

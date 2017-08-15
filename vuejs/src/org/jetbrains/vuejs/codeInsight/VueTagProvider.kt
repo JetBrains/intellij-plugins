@@ -58,7 +58,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   private fun processLocalComponents(tag: XmlTag, processor: (JSProperty, JSImplicitElement) -> Boolean): Boolean {
     val content = findScriptContent(tag.containingFile as? HtmlFileImpl) ?: return true
     val defaultExport = ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment ?: return true
-    val component = defaultExport.expression as? JSObjectLiteralExpression ?: return true
+    val component = defaultExport.stubSafeElement as? JSObjectLiteralExpression ?: return true
     val components = component.findProperty("components")?.objectLiteralExpressionInitializer ?: return true
     for (property in components.properties) {
       val obj = JSStubBasedPsiTreeUtil.calculateMeaningfulElement(property) as? JSObjectLiteralExpression

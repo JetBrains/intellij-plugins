@@ -19,8 +19,8 @@ class VueJSCompletionContributor : CompletionContributor() {
 
     val embeddedScriptContents = org.jetbrains.vuejs.codeInsight.findModule(xmlFile) ?: return
     val defaultExport = com.intellij.lang.ecmascript6.resolve.ES6PsiUtil.findDefaultExport(embeddedScriptContents)
-    if (defaultExport is ES6ExportDefaultAssignment && defaultExport.stubSafeExpression is JSObjectLiteralExpression) {
-      getComponentInnerDetailsFromObjectLiteral(defaultExport.stubSafeExpression as JSObjectLiteralExpression)
+    if (defaultExport is ES6ExportDefaultAssignment && defaultExport.stubSafeElement is JSObjectLiteralExpression) {
+      getComponentInnerDetailsFromObjectLiteral(defaultExport.stubSafeElement as JSObjectLiteralExpression)
         .forEach { result.addElement(LookupElementBuilder.create(it.first)) }
     }
 
