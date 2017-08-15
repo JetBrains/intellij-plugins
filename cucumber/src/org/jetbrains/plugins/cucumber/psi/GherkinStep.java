@@ -51,10 +51,6 @@ public interface GherkinStep extends GherkinPsiElement, GherkinSuppressionHolder
   @Nullable
   String getSubstitutedName();
 
-  @NotNull
-  Set<String> getSubstitutedNameList();
-
-
   /**
    * @return all step definitions (may be heavy). Works just like {@link org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference#resolveToDefinition()}
    * @see org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference#resolveToDefinition()

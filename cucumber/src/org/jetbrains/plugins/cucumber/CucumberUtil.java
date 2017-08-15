@@ -1,6 +1,6 @@
 package org.jetbrains.plugins.cucumber;
 
-import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -13,6 +13,10 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.steps.search.CucumberStepSearchUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class CucumberUtil {
   @NonNls public static final String STEP_DEFINITIONS_DIR_NAME = "step_definitions";
@@ -235,5 +239,56 @@ public class CucumberUtil {
       }
       return true;
     }
+  }
+
+  /**
+   * Substitutes scenario outline parameters into step. For example step from
+   * Scenario Outline
+   *   Given project with <count> participants
+   * Example
+   *   | count |
+   *   | 10    |
+   *
+   * will be transformed to
+   *   Given project with 10 participants
+   *
+   * @param stepName
+   * @param outlineTableMap mapping from header to the first data row
+   * @return OutlineStepSubstitution that contains result step name and can calculate offsets
+   */
+  @NotNull
+  public static OutlineStepSubstitution substituteTableReferences(String stepName, Map<String, String> outlineTableMap) {
+    List<Pair<Integer, Integer>> offsets = new ArrayList<>();
+    StringBuilder result = new StringBuilder();
+
+    int currentOffset = 0;
+    while (true) {
+      int start = stepName.indexOf('<', currentOffset);
+      if (start < 0) {
+        break;
+      }
+
+      int end = stepName.indexOf('>', start);
+      if (end < 0) {
+        break;
+      }
+
+      String columnName = stepName.substring(start + 1, end);
+      String value = outlineTableMap.get(columnName);
+      if (value == null) {
+        return new OutlineStepSubstitution(stepName);
+      }
+      result.append(stepName.subSequence(currentOffset, start));
+      int replaceOffset = result.length();
+      result.append(value);
+
+      int outlineParameterLength = end - start + 1;
+      int valueLength = value.length();
+      offsets.add(new Pair<>(replaceOffset, outlineParameterLength - valueLength));
+
+      currentOffset = end + 1;
+    }
+    result.append(stepName.subSequence(currentOffset, stepName.length()));
+    return new OutlineStepSubstitution(result.toString(), offsets);
   }
 }

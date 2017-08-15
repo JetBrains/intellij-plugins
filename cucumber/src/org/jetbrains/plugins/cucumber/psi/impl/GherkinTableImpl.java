@@ -18,7 +18,6 @@ import java.util.List;
  */
 public class GherkinTableImpl extends GherkinPsiElementBase implements GherkinTable {
   private static final TokenSet HEADER_ROW_TOKEN_SET = TokenSet.create(GherkinElementTypes.TABLE_HEADER_ROW);
-  private static final TokenSet ROW_TOKEN_SET = TokenSet.create(GherkinElementTypes.TABLE_ROW);
 
   public GherkinTableImpl(@NotNull final ASTNode node) {
     super(node);
@@ -37,6 +36,7 @@ public class GherkinTableImpl extends GherkinPsiElementBase implements GherkinTa
     return tableNode == null ? null : (GherkinTableRow)tableNode.getPsi();
   }
 
+  @NotNull
   public List<GherkinTableRow> getDataRows() {
     List<GherkinTableRow> result = new ArrayList<>();
     final GherkinTableRow[] rows = PsiTreeUtil.getChildrenOfType(this, GherkinTableRow.class);

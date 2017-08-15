@@ -10,16 +10,19 @@ import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.psi.*;
 import org.jetbrains.plugins.cucumber.psi.refactoring.GherkinChangeUtil;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -163,53 +166,12 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
 
   @Nullable
   public String getSubstitutedName() {
-    List<String> sustitutedNameList = new ArrayList<>(getSubstitutedNameList(1));
-    return sustitutedNameList.size() > 0 ? sustitutedNameList.get(0) : getStepName();
-  }
-
-  public Set<String> getSubstitutedNameList(int maxCount) {
-    final Set<String> result = new HashSet<>();
     final GherkinStepsHolder holder = getStepHolder();
-    final String stepName = getStepName();
-    if (stepName != null) {
-      if (holder instanceof GherkinScenarioOutline) {
-        final GherkinScenarioOutline outline = (GherkinScenarioOutline)holder;
-        final List<GherkinExamplesBlock> examplesBlocks = outline.getExamplesBlocks();
-        for (GherkinExamplesBlock examplesBlock : examplesBlocks) {
-          final GherkinTable table = examplesBlock.getTable();
-          if (table != null) {
-            final List<GherkinTableRow> rows = table.getDataRows();
-            for (GherkinTableRow row : rows) {
-              result.add(substituteText(stepName, table.getHeaderRow(), row));
-              if (result.size() == maxCount) {
-                return result;
-              }
-            }
-          }
-        }
-      }
+    if (!(holder instanceof GherkinScenarioOutline)) {
+      return getStepName();
     }
-    if (result.size() == 0 && stepName != null) {
-      result.add(stepName);
-    }
-    return result;
-  }
-
-  @NotNull
-  public Set<String> getSubstitutedNameList() {
-    return getSubstitutedNameList(Integer.MAX_VALUE);
-  }
-
-  private static String substituteText(String stepName, GherkinTableRow headerRow, GherkinTableRow row) {
-    final List<GherkinTableCell> headerCells = headerRow.getPsiCells();
-    final List<GherkinTableCell> dataCells = row.getPsiCells();
-    for (int i = 0, headerCellsNumber = headerCells.size(), dataCellsNumber = dataCells.size();
-         i < headerCellsNumber && i < dataCellsNumber;
-         i++) {
-      final String cellText = headerCells.get(i).getText().trim();
-      stepName = stepName.replace("<" + cellText + ">", dataCells.get(i).getText().trim());
-    }
-    return stepName;
+    final GherkinScenarioOutline outline = (GherkinScenarioOutline)holder;
+    return CucumberUtil.substituteTableReferences(getStepName(), outline.getOutlineTableMap()).getSubstitution();
   }
 
   @Override

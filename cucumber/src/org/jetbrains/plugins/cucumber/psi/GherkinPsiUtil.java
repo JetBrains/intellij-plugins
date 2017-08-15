@@ -8,11 +8,14 @@ import org.apache.oro.text.regex.Pattern;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.CucumberUtil;
+import org.jetbrains.plugins.cucumber.OutlineStepSubstitution;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinFileImpl;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Roman.Chernyatchik
@@ -24,7 +27,7 @@ public class GherkinPsiUtil {
 
   @Nullable
   public static GherkinFileImpl getGherkinFile(@NotNull final PsiElement element) {
-    if (!element.isValid()){
+    if (!element.isValid()) {
       return null;
     }
     final PsiFile containingFile = element.getContainingFile();
@@ -35,18 +38,24 @@ public class GherkinPsiUtil {
   public static List<TextRange> buildParameterRanges(@NotNull GherkinStep step,
                                                      @NotNull AbstractStepDefinition definition,
                                                      final int shiftOffset) {
+
+    OutlineStepSubstitution substitution = convertOutlineStepName(step);
+
     final List<TextRange> parameterRanges = new ArrayList<>();
     final Pattern pattern = definition.getPattern();
     if (pattern == null) return null;
     final Perl5Matcher matcher = new Perl5Matcher();
-    if (matcher.contains(step.getStepName(), pattern)) {
+
+    if (matcher.contains(substitution.getSubstitution(), pattern)) {
       final MatchResult match = matcher.getMatch();
       final int groupCount = match.groups();
       for (int i = 1; i < groupCount; i++) {
         final int start = match.beginOffset(i);
         final int end = match.endOffset(i);
         if (start >= 0 && end >= 0) {
-          parameterRanges.add(new TextRange(start, end).shiftRight(shiftOffset));
+          int rangeStart = substitution.getOffsetInOutlineStep(start);
+          int rangeEnd = substitution.getOffsetInOutlineStep(end);
+          parameterRanges.add(new TextRange(rangeStart, rangeEnd).shiftRight(shiftOffset));
         }
       }
     }
@@ -70,10 +79,17 @@ public class GherkinPsiUtil {
         }
         i++;
       }
-
     }
 
-
     return parameterRanges;
+  }
+
+  public static OutlineStepSubstitution convertOutlineStepName(@NotNull GherkinStep step) {
+    if (!(step.getStepHolder() instanceof GherkinScenarioOutline)) {
+      return new OutlineStepSubstitution(step.getName());
+    }
+
+    Map<String, String> outlineTableMap = ((GherkinScenarioOutline)step.getStepHolder()).getOutlineTableMap();
+    return CucumberUtil.substituteTableReferences(step.getStepName(), outlineTableMap);
   }
 }
