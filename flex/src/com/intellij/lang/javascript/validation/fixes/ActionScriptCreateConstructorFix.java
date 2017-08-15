@@ -229,9 +229,9 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
     }
 
     @Override
-    protected MemberNodeBase<JSFunction> createTreeNode(JSFunction method,
-                                                        HashSet<JSFunction> called,
-                                                        Runnable cancelCallback) {
+    protected MemberNodeBase<JSFunction> createTreeNodeFor(JSFunction method,
+                                                           HashSet<JSFunction> called,
+                                                           Runnable cancelCallback) {
       return new MyMethodNode(method, called, cancelCallback);
     }
   }
