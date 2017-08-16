@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-import static com.intellij.lang.javascript.JSTestOption.SelectFirstItem;
 import static com.intellij.lang.javascript.JSTestOption.WithFlexSdk;
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
@@ -62,12 +61,12 @@ public class FlexUnitCompletionTest extends BaseJSCompletionTestCase implements 
   }
 
 
-  @JSTestOptions({WithFlexSdk, SelectFirstItem})
+  @JSTestOptions(value = {WithFlexSdk}, selectLookupItem = 0)
   public void testMeta1() throws Exception {
     doTest("", "as");
   }
 
-  @JSTestOptions({WithFlexSdk, SelectFirstItem})
+  @JSTestOptions(value = {WithFlexSdk}, selectLookupItem = 0)
   public void testMeta2() throws Exception {
     doTest("", "as");
   }
@@ -101,7 +100,7 @@ public class FlexUnitCompletionTest extends BaseJSCompletionTestCase implements 
     doTest("", "as");
   }
 
-  @JSTestOptions({WithFlexSdk, SelectFirstItem})
+  @JSTestOptions(value = {WithFlexSdk}, selectLookupItem = 0)
   public void testFieldMeta1() throws Exception {
     doTest("", "as");
   }
