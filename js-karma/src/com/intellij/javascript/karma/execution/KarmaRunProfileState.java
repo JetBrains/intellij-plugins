@@ -80,7 +80,7 @@ public class KarmaRunProfileState implements RunProfileState {
           public void consume(KarmaServer server) {
             RunnerAndConfigurationSettings configuration = myEnvironment.getRunnerAndConfigurationSettings();
             if (configuration != null) {
-              ProgramRunnerUtil.executeConfiguration(myProject, configuration, executor);
+              ProgramRunnerUtil.executeConfiguration(configuration, executor);
             }
           }
 
