@@ -466,6 +466,11 @@ public class VmServiceWrapper implements Disposable {
       }
 
       @Override
+      public void received(Sentinel sentinel) {
+        callback.errorOccurred(sentinel.getValueAsString());
+      }
+
+      @Override
       public void received(ErrorRef errorRef) {
         callback.errorOccurred(DartVmServiceEvaluator.getPresentableError(errorRef.getMessage()));
       }

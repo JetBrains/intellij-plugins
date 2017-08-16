@@ -18,9 +18,10 @@ package org.dartlang.vm.service;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import java.util.Map;
 import org.dartlang.vm.service.consumer.*;
 import org.dartlang.vm.service.element.*;
+
+import java.util.Map;
 
 /**
  * {@link VmService} allows control of and access to information in a running
@@ -479,6 +480,10 @@ public class VmService extends VmServiceBase {
       }
       if (responseType.equals("@Null")) {
         ((EvaluateInFrameConsumer) consumer).received(new NullRef(json));
+        return;
+      }
+      if (responseType.equals("Sentinel")) {
+        ((EvaluateInFrameConsumer) consumer).received(new Sentinel(json));
         return;
       }
     }
