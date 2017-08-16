@@ -23,6 +23,7 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.html.HtmlFileImpl;
 import com.intellij.psi.util.CachedValueProvider;
@@ -53,7 +54,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
       public CachedValueProvider.Result<VirtualFile> compute(Project project) {
         VirtualFile result = findServiceDirectoryImpl(project);
 
-        return CachedValueProvider.Result.create(result, JSProjectUtil.FILE_SYSTEM_STRUCTURE_MODIFICATION_TRACKER);
+        return CachedValueProvider.Result.create(result, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS);
       }
     };
 
