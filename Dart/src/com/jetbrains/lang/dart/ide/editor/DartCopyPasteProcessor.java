@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.editor;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor;
 import com.intellij.codeInsight.editorActions.TextBlockTransferableData;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.RangeMarker;
@@ -27,7 +28,7 @@ import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.dartlang.analysis.server.protocol.ImportedElements;
-import org.dartlang.analysis.server.protocol.SourceEdit;
+import org.dartlang.analysis.server.protocol.SourceFileEdit;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.datatransfer.DataFlavor;
@@ -101,32 +102,35 @@ public class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCopyPaste
 
     if (DartCodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE == CodeInsightSettings.NO) return;
 
-    final List<SourceEdit> edits = DartAnalysisServerService.getInstance(project).edit_importElements(file, data.getImportedElements());
-    if (edits != null && !edits.isEmpty()) {
-      final String message = DartBundle.message("dialog.paste.on.import.text");
-      final String title = DartBundle.message("dialog.paste.on.import.title");
+    final SourceFileEdit edit = DartAnalysisServerService.getInstance(project).edit_importElements(file, data.getImportedElements());
 
-      final DialogWrapper.DoNotAskOption doNotAskOption = new DialogWrapper.DoNotAskOption.Adapter() {
-        @NotNull
-        @Override
-        public String getDoNotShowMessage() {
-          return DartBundle.message("always.update.imports.do.not.ask.again");
-        }
-
-        @Override
-        public void rememberChoice(boolean isSelected, int exitCode) {
-          if (isSelected && exitCode == DialogWrapper.OK_EXIT_CODE) {
-            DartCodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE = CodeInsightSettings.YES;
-          }
-        }
-      };
-
+    if (edit != null && edit.getEdits() != null && !edit.getEdits().isEmpty()) {
       if (DartCodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE == CodeInsightSettings.ASK &&
-          Messages.showYesNoDialog(project, message, title, Messages.getQuestionIcon(), doNotAskOption) != Messages.YES) {
-        return;
+          !ApplicationManager.getApplication().isUnitTestMode()) {
+        final String message = DartBundle.message("dialog.paste.on.import.text");
+        final String title = DartBundle.message("dialog.paste.on.import.title");
+
+        final DialogWrapper.DoNotAskOption doNotAskOption = new DialogWrapper.DoNotAskOption.Adapter() {
+          @NotNull
+          @Override
+          public String getDoNotShowMessage() {
+            return DartBundle.message("always.update.imports.do.not.ask.again");
+          }
+
+          @Override
+          public void rememberChoice(boolean isSelected, int exitCode) {
+            if (isSelected && exitCode == DialogWrapper.OK_EXIT_CODE) {
+              DartCodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE = CodeInsightSettings.YES;
+            }
+          }
+        };
+
+        if (Messages.showYesNoDialog(project, message, title, Messages.getQuestionIcon(), doNotAskOption) != Messages.YES) {
+          return;
+        }
       }
 
-      WriteAction.run(() -> AssistUtils.applySourceEdits(project, file, editor.getDocument(), edits, Collections.emptySet()));
+      WriteAction.run(() -> AssistUtils.applyFileEdit(project, edit));
     }
   }
 

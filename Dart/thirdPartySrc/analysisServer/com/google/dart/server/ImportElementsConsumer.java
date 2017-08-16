@@ -15,11 +15,12 @@ package com.google.dart.server;
 
 import org.dartlang.analysis.server.protocol.RequestError;
 import org.dartlang.analysis.server.protocol.SourceEdit;
+import org.dartlang.analysis.server.protocol.SourceFileEdit;
 
 import java.util.List;
 
 public interface ImportElementsConsumer extends Consumer {
-  public void computedImportedElements(List<SourceEdit> edits);
+  public void computedImportedElements(SourceFileEdit edit);
 
   public void onError(RequestError requestError);
 }

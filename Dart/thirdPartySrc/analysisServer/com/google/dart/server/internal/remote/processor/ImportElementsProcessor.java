@@ -1,11 +1,10 @@
 package com.google.dart.server.internal.remote.processor;
 
 import com.google.dart.server.ImportElementsConsumer;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.dartlang.analysis.server.protocol.RequestError;
-import org.dartlang.analysis.server.protocol.SourceEdit;
-
-import java.util.List;
+import org.dartlang.analysis.server.protocol.SourceFileEdit;
 
 public class ImportElementsProcessor extends ResultProcessor {
   private final ImportElementsConsumer consumer;
@@ -17,10 +16,10 @@ public class ImportElementsProcessor extends ResultProcessor {
   public void process(JsonObject resultObject, RequestError requestError) {
     if (resultObject != null) {
       try {
-        List<SourceEdit> edits = SourceEdit.fromJsonArray(resultObject.getAsJsonArray("edits"));
-
-        // notify consumer
-        consumer.computedImportedElements(edits);
+        final JsonElement element = resultObject.get("edit");
+        JsonObject editObject = element == null ? null : element.getAsJsonObject();
+        SourceFileEdit fileEdit = editObject == null ? null : SourceFileEdit.fromJson(editObject);
+        consumer.computedImportedElements(fileEdit);
       }
       catch (Exception exception) {
         // catch any exceptions in the formatting of this response

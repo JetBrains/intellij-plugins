@@ -1329,9 +1329,9 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   @Nullable
-  public List<SourceEdit> edit_importElements(@NotNull final VirtualFile file, @NotNull final List<ImportedElements> importedElements) {
+  public SourceFileEdit edit_importElements(@NotNull final VirtualFile file, @NotNull final List<ImportedElements> importedElements) {
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
-    final Ref<List<SourceEdit>> resultRef = new Ref<>();
+    final Ref<SourceFileEdit> resultRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null || StringUtil.compareVersionNumbers(mySdkVersion, "1.25") < 0) return null;
@@ -1339,8 +1339,8 @@ public class DartAnalysisServerService implements Disposable {
     final CountDownLatch latch = new CountDownLatch(1);
     server.edit_importElements(filePath, importedElements, new ImportElementsConsumer() {
       @Override
-      public void computedImportedElements(final List<SourceEdit> sourceEdits) {
-        resultRef.set(sourceEdits);
+      public void computedImportedElements(final SourceFileEdit edit) {
+        resultRef.set(edit);
         latch.countDown();
       }
 
