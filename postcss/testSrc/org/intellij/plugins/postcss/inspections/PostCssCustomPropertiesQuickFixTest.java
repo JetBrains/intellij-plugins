@@ -10,24 +10,24 @@ public class PostCssCustomPropertiesQuickFixTest extends PostCssQuickFixTest {
     myFixture.enableInspections(PostCssCustomPropertiesInspection.class, CssUnresolvedCustomPropertySetInspection.class);
   }
 
-  public void testAddPrefixEmpty() throws Throwable {
+  public void testAddPrefixEmpty() {
     doTestAddDashes();
   }
 
-  public void testAddPrefixDash() throws Throwable {
+  public void testAddPrefixDash() {
     doTestAddDashes();
   }
 
-  public void testAddPrefixBeforeBrace() throws Throwable {
+  public void testAddPrefixBeforeBrace() {
     doTestAddDashes();
     myFixture.testHighlighting(false, false, false, myFixture.getFile().getVirtualFile());
   }
 
-  public void testWrapWithRootRule() throws Throwable {
+  public void testWrapWithRootRule() {
     doTestWrapWithRoot();
   }
 
-  public void testWrapWithRootRuleSemicolon() throws Throwable {
+  public void testWrapWithRootRuleSemicolon() {
     doTestWrapWithRoot();
   }
 

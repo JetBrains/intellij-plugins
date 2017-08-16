@@ -4,11 +4,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class PostCssHighlightingTest extends PostCssQuickFixTest {
 
-  public void testKeywords() throws Throwable {
+  public void testKeywords() {
     doTest();
   }
 
-  public void testTags() throws Throwable {
+  public void testTags() {
     doTest();
   }
 

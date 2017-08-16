@@ -9,15 +9,15 @@ public class PostCssCustomSelectorQuickFixTest extends PostCssQuickFixTest {
     myFixture.enableInspections(PostCssCustomSelectorInspection.class);
   }
 
-  public void testAddCustomSelectorPrefixEmpty() throws Throwable {
+  public void testAddCustomSelectorPrefixEmpty() {
     doTestAddDashes();
   }
 
-  public void testAddCustomSelectorPrefixColon() throws Throwable {
+  public void testAddCustomSelectorPrefixColon() {
     doTestAddDashes();
   }
 
-  public void testAddCustomSelectorPrefixColonDash() throws Throwable {
+  public void testAddCustomSelectorPrefixColonDash() {
     doTestAddDashes();
   }
 

@@ -9,43 +9,43 @@ public class PostCssNestingQuickFixTest extends PostCssQuickFixTest {
     myFixture.enableInspections(PostCssNestingInspection.class);
   }
 
-  public void testDeleteAmpersand() throws Throwable {
+  public void testDeleteAmpersand() {
     doTestDeleteAmpersand();
   }
 
-  public void testDeleteAmpersandFromClass() throws Throwable {
+  public void testDeleteAmpersandFromClass() {
     doTestDeleteAmpersand();
   }
 
-  public void testDeleteAmpersandFromId() throws Throwable {
+  public void testDeleteAmpersandFromId() {
     doTestDeleteAmpersand();
   }
 
-  public void testDeleteAmpersandFromSimpleSelector() throws Throwable {
+  public void testDeleteAmpersandFromSimpleSelector() {
     doTestDeleteAmpersand();
   }
 
-  public void testDeleteAmpersandFromPseudoClass() throws Throwable {
+  public void testDeleteAmpersandFromPseudoClass() {
     doTestDeleteAmpersand();
   }
 
-  public void testDeleteAmpersandFromPseudoFunction() throws Throwable {
+  public void testDeleteAmpersandFromPseudoFunction() {
     doTestDeleteAmpersand();
   }
 
-  public void testDeleteAmpersandFromAttribute() throws Throwable {
+  public void testDeleteAmpersandFromAttribute() {
     doTestDeleteAmpersand();
   }
 
-  public void testDeleteNest() throws Throwable {
+  public void testDeleteNest() {
     doTest("Delete '@nest'");
   }
 
-  public void testAddAmpersand() throws Throwable {
+  public void testAddAmpersand() {
     doTest("Add '&' to selector");
   }
 
-  public void testAddNest() throws Throwable {
+  public void testAddNest() {
     doTest("Add '@nest' to selector");
   }
 

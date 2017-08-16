@@ -6,24 +6,24 @@ import org.jetbrains.annotations.NotNull;
 @TestDataPath("$CONTENT_ROOT/testData/resolve/customPropertySet")
 public class PostCssCustomPropertySetResolveTest extends PostCssResolveTest {
 
-  public void testResolve() throws Throwable {
+  public void testResolve() {
     doTest();
   }
 
-  public void testResolveInCustomPropertySet() throws Throwable {
+  public void testResolveInCustomPropertySet() {
     doTest();
   }
 
-  public void testResolveMulti() throws Throwable {
+  public void testResolveMulti() {
     doTest(2);
   }
 
-  public void testResolveMultiInDifferentFiles() throws Throwable {
+  public void testResolveMultiInDifferentFiles() {
     myFixture.configureByFile("definition.pcss");
     doTest(2);
   }
 
-  public void testInline() throws Throwable {
+  public void testInline() {
     doTest(1, "html");
   }
 

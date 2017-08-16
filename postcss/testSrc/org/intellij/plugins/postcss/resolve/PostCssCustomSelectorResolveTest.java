@@ -6,34 +6,34 @@ import org.jetbrains.annotations.NotNull;
 @TestDataPath("$CONTENT_ROOT/testData/resolve/customSelectors")
 public class PostCssCustomSelectorResolveTest extends PostCssResolveTest {
 
-  public void testResolve() throws Throwable {
+  public void testResolve() {
     doTest();
   }
 
-  public void testResolveInCustomSelectorAtRule() throws Throwable {
+  public void testResolveInCustomSelectorAtRule() {
     doTest();
   }
 
-  public void testResolveWithImport() throws Throwable {
+  public void testResolveWithImport() {
     myFixture.configureByFile("definition.pcss");
     doTest();
   }
 
-  public void testResolveWithoutImport() throws Throwable {
+  public void testResolveWithoutImport() {
     myFixture.configureByFile("definition.pcss");
     doTest();
   }
 
-  public void testResolveMulti() throws Throwable {
+  public void testResolveMulti() {
     doTest(2);
   }
 
-  public void testResolveMultiInDifferentFiles() throws Throwable {
+  public void testResolveMultiInDifferentFiles() {
     myFixture.configureByFile("definition.pcss");
     doTest(2);
   }
 
-  public void testInline() throws Throwable {
+  public void testInline() {
     doTest(1, "html");
   }
 

@@ -9,11 +9,11 @@ public class PostCssCustomMediaQuickFixTest extends PostCssQuickFixTest {
     myFixture.enableInspections(PostCssCustomMediaInspection.class);
   }
 
-  public void testAddCustomMediaPrefixEmpty() throws Throwable {
+  public void testAddCustomMediaPrefixEmpty() {
     doTestAddDashes();
   }
 
-  public void testAddCustomMediaPrefixDash() throws Throwable {
+  public void testAddCustomMediaPrefixDash() {
     doTestAddDashes();
   }
 
