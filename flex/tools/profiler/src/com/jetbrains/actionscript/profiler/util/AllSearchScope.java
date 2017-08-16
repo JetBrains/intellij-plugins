@@ -6,7 +6,7 @@ import com.jetbrains.actionscript.profiler.ProfilerBundle;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author: Fedor.Korotkov
+ * @author Fedor.Korotkov
  */
 public class AllSearchScope extends EverythingGlobalScope {
   public AllSearchScope(Project project) {

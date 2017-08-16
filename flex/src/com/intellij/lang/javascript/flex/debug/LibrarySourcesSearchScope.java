@@ -29,10 +29,12 @@ public class LibrarySourcesSearchScope extends GlobalSearchScope {
     return 0;
   }
 
+  @Override
   public boolean isSearchInModuleContent(@NotNull final Module aModule) {
     return false;
   }
 
+  @Override
   public boolean isSearchInLibraries() {
     return true;
   }
