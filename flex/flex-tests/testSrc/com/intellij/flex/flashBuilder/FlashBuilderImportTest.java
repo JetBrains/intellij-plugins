@@ -58,14 +58,14 @@ public class FlashBuilderImportTest extends IdeaTestCase {
 
     ApplicationManager.getApplication().runWriteAction(new ThrowableComputable<Object, IOException>() {
       @Override
-      public Object compute() throws IOException {
+      public Object compute() {
         myFlashBuilderProjectDir = prepareFlashBuilderProjectDir();
         return null;
       }
     });
   }
 
-  private VirtualFile prepareFlashBuilderProjectDir() throws IOException {
+  private VirtualFile prepareFlashBuilderProjectDir() {
     final VirtualFile baseDir = myProject.getBaseDir();
     assert baseDir != null;
     final VirtualFile tempDataDir = baseDir.findChild(FB_PROJECT_DIR_NAME);
@@ -372,7 +372,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
     assertSameElements(bc.getCompilerOptions().getFilesToIncludeInSWC(), myFlashBuilderProjectDir.getPath() + "/src/foo/a.txt");
   }
 
-  public void testWebASLib() throws Exception {
+  public void testWebASLib() {
     final String flexLibPropertiesFileContent = "<flexLibProperties useMultiPlatformConfig='false'/>";
     final String actionScriptPropertiesFileContent = "<actionScriptProperties mainApplicationPath='does not matter'>\n" +
                                                      "  <compiler outputFolderPath='bin' useFlashSDK='true' useApolloConfig='false'/>\n" +
@@ -382,7 +382,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
     commonASLibTest(flexLibPropertiesFileContent, actionScriptPropertiesFileContent, expectedTargetPlatform);
   }
 
-  public void testDesktopASLib() throws Exception {
+  public void testDesktopASLib() {
     final String flexLibPropertiesFileContent = "<flexLibProperties useMultiPlatformConfig='false'/>";
     final String actionScriptPropertiesFileContent = "<actionScriptProperties mainApplicationPath='does not matter'>\n" +
                                                      "  <compiler outputFolderPath='bin' useFlashSDK='true' useApolloConfig='true'/>\n" +
@@ -393,7 +393,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
   }
 
   // not sure that mobile AS libs are supported by FB, but if they are - should be like this
-  public void testMobileASLib() throws Exception {
+  public void testMobileASLib() {
     final String flexLibPropertiesFileContent = "<flexLibProperties useMultiPlatformConfig='true'/>";
     final String actionScriptPropertiesFileContent = "<actionScriptProperties mainApplicationPath='does not matter'>\n" +
                                                      "  <compiler outputFolderPath='bin' useFlashSDK='true' useApolloConfig='true'/>\n" +
@@ -405,7 +405,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
 
   private void commonASLibTest(final String flexLibPropertiesFileContent,
                                final String actionScriptPropertiesFileContent,
-                               final TargetPlatform expectedTargetPlatform) throws IOException, ConfigurationException {
+                               final TargetPlatform expectedTargetPlatform) {
     ApplicationManager.getApplication().runWriteAction(() -> {
       try {
         addFileWithContent(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES, flexLibPropertiesFileContent, myFlashBuilderProjectDir);

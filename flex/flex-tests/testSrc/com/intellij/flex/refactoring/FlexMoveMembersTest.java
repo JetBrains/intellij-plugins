@@ -70,13 +70,11 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
 
-  private void doTest(final String sourceClassName, final String targetClassName, final String visibility, final String memberName)
-    throws Exception {
+  private void doTest(final String sourceClassName, final String targetClassName, final String visibility, final String memberName) {
     doTest(sourceClassName, targetClassName, visibility, new String[]{memberName});
   }
 
-  private void doTest(final String sourceClassName, final String targetClassName, final String visibility, final String[] memberNames)
-    throws Exception {
+  private void doTest(final String sourceClassName, final String targetClassName, final String visibility, final String[] memberNames) {
     try {
       doTestImpl(sourceClassName, targetClassName, visibility, memberNames);
     }
@@ -85,11 +83,10 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
     }
   }
 
-  private void doTestImpl(final String sourceClassName, final String targetClassName, final String visibility, final String[] memberNames)
-    throws Exception {
+  private void doTestImpl(final String sourceClassName, final String targetClassName, final String visibility, final String[] memberNames) {
     doTest(new PerformAction() {
       @Override
-      public void performAction(VirtualFile rootDir, VirtualFile rootAfter) throws Exception {
+      public void performAction(VirtualFile rootDir, VirtualFile rootAfter) {
         FlexMoveMembersTest.this.performAction(sourceClassName, targetClassName, visibility, memberNames);
       }
     });
@@ -103,8 +100,7 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
     foo();
   }
 
-  private void performAction(String sourceClassName, final String targetClassName, final String visibility, final String[] memberNames)
-    throws Exception {
+  private void performAction(String sourceClassName, final String targetClassName, final String visibility, final String[] memberNames) {
     final JSClassResolver resolver =
       JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver();
     final JSClass sourceClass = (JSClass)resolver.findClassByQName(sourceClassName, ActionScriptMoveMembersDialog.getScope(myProject));
@@ -156,7 +152,7 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
                                final String targetClassName,
                                final String visibility,
                                final String[] memberNames,
-                               String[] expectedConflicts) throws Exception {
+                               String[] expectedConflicts) {
     try {
       doTestImpl(sourceClassName, targetClassName, visibility, memberNames);
       fail("conflicts expected");
@@ -182,14 +178,14 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
     doTest("From", "To", VISIBILITY_AS_IS, "var2");
   }
 
-  public void test2Vars() throws Exception {
+  public void test2Vars() {
     doTest("From", "To", VISIBILITY_AS_IS, new String[]{"var1", "var2"});
   }
 
-  public void testBackAndForth() throws Exception {
+  public void testBackAndForth() {
     doTest(new PerformAction() {
       @Override
-      public void performAction(VirtualFile rootDir, VirtualFile rootAfter) throws Exception {
+      public void performAction(VirtualFile rootDir, VirtualFile rootAfter) {
         FlexMoveMembersTest.this.performAction("From", "To", VISIBILITY_AS_IS, new String[]{"foo"});
         FlexMoveMembersTest.this.performAction("To", "From", VISIBILITY_AS_IS, new String[]{"foo"});
       }
@@ -200,44 +196,44 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
     doTest("a.From", "b.To", VISIBILITY_AS_IS, "foo");
   }
 
-  public void testMultiple() throws Exception {
+  public void testMultiple() {
     doTest("a.From", "b.To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
 
-  public void testEscalateVisibility1() throws Exception {
+  public void testEscalateVisibility1() {
     doTest("a.From", "b.To", JSVisibilityUtil.ESCALATE_VISIBILITY, ALL_MEMBERS);
   }
 
-  public void testEscalateVisibility2() throws Exception {
+  public void testEscalateVisibility2() {
     doTest("From", "To", JSVisibilityUtil.ESCALATE_VISIBILITY, ALL_MEMBERS);
   }
 
-  public void testEscalateVisibility3() throws Exception {
+  public void testEscalateVisibility3() {
     doTest("From", "To", JSVisibilityUtil.ESCALATE_VISIBILITY, ALL_MEMBERS);
   }
 
-  public void testEscalateVisibility4() throws Exception {
+  public void testEscalateVisibility4() {
     doTest("a.From", "b.To", JSVisibilityUtil.ESCALATE_VISIBILITY, ALL_MEMBERS);
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testFromMxml1() throws Exception {
+  public void testFromMxml1() {
     doTest("From", "foo.To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
 
-  public void testImports2() throws Exception {
+  public void testImports2() {
     doTest("a.From", "a.To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
 
-  public void testImports3() throws Exception {
+  public void testImports3() {
     doTest("a.From", "b.To", VISIBILITY_AS_IS, new String[]{"foo", "bar"});
   }
 
-  public void testImports4() throws Exception {
+  public void testImports4() {
     doTest("a.From", "b.To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
 
-  public void testConflicts1() throws Exception {
+  public void testConflicts1() {
     String[] conflicts = new String[]{"Field From.foo with private visibility won't be accessible from method move1()",
       "Method move1() with private visibility in the target class is not accessible from field From.foo",
       "Constant move2 with protected visibility in the target class is not accessible from field From.bar",
@@ -248,102 +244,102 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
     doTestConflicts("a.From", "b.To", VISIBILITY_AS_IS, new String[]{"move1", "move2", "move3"}, conflicts);
   }
 
-  public void testConflicts2() throws Exception {
+  public void testConflicts2() {
     String[] conflicts = new String[]{"Class To already contains a field bar", "Class To already contains a method foo()"};
     doTestConflicts("From", "To", VISIBILITY_AS_IS, new String[]{"foo", "bar", "zz"}, conflicts);
   }
 
-  public void testConflicts3() throws Exception {
+  public void testConflicts3() {
     String[] conflicts = new String[]{"Method From.move2() with protected visibility won't be accessible from method move()"};
     doTestConflicts("From", "a.To", VISIBILITY_AS_IS, new String[]{"move"}, conflicts);
   }
 
-  public void testConflicts4() throws Exception {
+  public void testConflicts4() {
     String[] conflicts =
       new String[]{"Method move() with protected visibility in the target class is not accessible from method From.move2()",
         "Class Class1 with internal visibility won't be accessible from method move()"};
     doTestConflicts("From", "a.To", VISIBILITY_AS_IS, new String[]{"move"}, conflicts);
   }
 
-  public void testConflicts5() throws Exception {
+  public void testConflicts5() {
     String[] conflicts = new String[]{"Field a with internal visibility in the target class is not accessible from method From.foo()"};
     doTestConflicts("foo.From", "bar.To", VISIBILITY_AS_IS, ALL_MEMBERS, conflicts);
   }
 
-  public void testProperty() throws Exception {
+  public void testProperty() {
     doTest("From", "To", VISIBILITY_AS_IS, new String[]{"readwrite", "read", "write"});
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testImportInMxml() throws Exception {
+  public void testImportInMxml() {
     doTest("From", "foo.To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testImportInMxml2() throws Exception {
+  public void testImportInMxml2() {
     doTest("bar.From", "bar.To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testImports5() throws Exception {
+  public void testImports5() {
     doTest("From", "To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testImportInMxml3() throws Exception {
+  public void testImportInMxml3() {
     doTest("foo.From", "bar.To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
 
-  public void testSimple() throws Exception {
+  public void testSimple() {
     doTest("From", "com.To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
 
-  public void testDequalify() throws Exception {
+  public void testDequalify() {
     doTest("From", "To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
 
-  public void testReferenceToAS3() throws Exception {
+  public void testReferenceToAS3() {
     doTest("From", "To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
 
-  public void testConstructorCall() throws Exception {
+  public void testConstructorCall() {
     doTest("foo.From", "To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
 
-  public void testNamespaces() throws Exception {
+  public void testNamespaces() {
     doTest("foo.From", "bar.To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
 
-  public void testNamespaces2() throws Exception {
+  public void testNamespaces2() {
     doTest("foo.From", "bar.To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
 
-  public void testConflictsNs() throws Exception {
+  public void testConflictsNs() {
     String[] conflicts = new String[]{"Namespace MyNs with internal visibility won't be accessible from field v",
       "Namespace MyNs with internal visibility won't be accessible from method foo()",
       "Namespace MyNs2 with internal visibility won't be accessible from method foo()"};
     doTestConflicts("foo.From", "bar.To", VISIBILITY_AS_IS, ALL_MEMBERS, conflicts);
   }
 
-  public void testNamespaces3() throws Exception {
+  public void testNamespaces3() {
     doTest("foo.From", "bar.To", VISIBILITY_AS_IS, new String[]{"foo", "bar"});
   }
 
-  public void testNamespaces4() throws Exception {
+  public void testNamespaces4() {
     doTest("From", "To", JSAttributeList.AccessType.PUBLIC.name(), new String[]{"foo", "bar", "ZZ"});
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testVector() throws Exception {
+  public void testVector() {
     doTest("foo.From", "To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testEmbeddedImage() throws Exception {
+  public void testEmbeddedImage() {
     doTest("From", "To", JSVisibilityUtil.ESCALATE_VISIBILITY, ALL_MEMBERS);
   }
 
-  public void testToInnerClass() throws Exception {
+  public void testToInnerClass() {
     doTest("C", "Ggg", JSVisibilityUtil.ESCALATE_VISIBILITY, ALL_MEMBERS);
   }
 }

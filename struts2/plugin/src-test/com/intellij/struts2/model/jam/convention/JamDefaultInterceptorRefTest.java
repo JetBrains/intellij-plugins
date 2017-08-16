@@ -39,7 +39,7 @@ public class JamDefaultInterceptorRefTest extends JamConventionLightTestCase {
   }
 */
 
-  public void testResolve() throws Exception {
+  public void testResolve() {
     createStrutsFileSet(STRUTS_XML);
     myFixture.copyFileToProject("jam/package-info.java");
 

@@ -15,11 +15,11 @@ public class GherkinStepParameterSelectionerTest extends CucumberCodeInsightTest
     myFixture.configureByFile("MyStepdefs.java");
   }
 
-  public void testStepWithQuotedString() throws Exception {
+  public void testStepWithQuotedString() {
     doTest();
   }
 
-  public void testScenarioStepWithTag() throws Exception {
+  public void testScenarioStepWithTag() {
     doTest();
   }
   

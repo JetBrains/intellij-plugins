@@ -1439,7 +1439,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testResourceBundleInSdkSources() throws Exception {
+  public void testResourceBundleInSdkSources() {
     final String testName = getTestName(false);
 
     final VirtualFile file =

@@ -52,7 +52,7 @@ public class HbStructureViewTest extends LightPlatformCodeInsightFixtureTestCase
     }
   }
 
-  public void testNestedBlocks() throws Exception {
+  public void testNestedBlocks() {
     doStructureViewTest(
 
       "{{#foo}}\n" +
@@ -68,7 +68,7 @@ public class HbStructureViewTest extends LightPlatformCodeInsightFixtureTestCase
     );
   }
 
-  public void testUnclosedBlocks() throws Exception {
+  public void testUnclosedBlocks() {
     doStructureViewTest(
 
       "{{#foo}}\n" +
@@ -80,7 +80,7 @@ public class HbStructureViewTest extends LightPlatformCodeInsightFixtureTestCase
     );
   }
 
-  public void testAllConstructs() throws Exception {
+  public void testAllConstructs() {
     doStructureViewTest(
 
       "{{#block}}\n" +

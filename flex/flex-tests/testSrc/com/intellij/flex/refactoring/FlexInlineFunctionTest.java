@@ -55,7 +55,7 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
     defaultTest();
   }
 
-  public void testJustStatements2_4() throws Exception {
+  public void testJustStatements2_4() {
     doTestFailure(getTestName(false), "js2", JSBundle.message("javascript.refactoring.cannot.inline.function.with.multiple.returns"));
   }
 
@@ -99,24 +99,24 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
   }
 
 
-  public void testHasRestParams() throws Exception {
+  public void testHasRestParams() {
     doTestFailure(getTestName(false), "js2", 
                   JSBundle.message("javascript.refactoring.cannot.inline.function.referencing.rest.parameter"));
   }
 
-  public void testConstructor() throws Exception {
+  public void testConstructor() {
     shouldFail("Can not inline constructor");
   }
 
-  public void testConstructor2() throws Exception {
+  public void testConstructor2() {
     shouldFail("Can not inline constructor");
   }
 
-  private void shouldFail(String reason) throws Exception {
+  private void shouldFail(String reason) {
     doTestFailure(getTestName(false), "js2", reason);
   }
 
-  public void testMethodInHierarchy() throws Exception {
+  public void testMethodInHierarchy() {
     String reason = "Can not inline method that participates in hierarchy";
     doTestFailure(getTestName(false) + 1, "js2", reason);
     doTestFailure(getTestName(false) + 2, "js2", reason);
@@ -124,27 +124,27 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testMethodInHierarchyMxml() throws Exception {
+  public void testMethodInHierarchyMxml() {
     doTestFailure(new String[]{getTestName(false) + ".mxml", getTestName(false) + ".js2"}, 
                   "Can not inline method that participates in hierarchy");
   }
 
-  public void testInterfaceMethod() throws Exception {
+  public void testInterfaceMethod() {
     shouldFail("Can not inline interface method");
   }
 
-  public void testMethodFromExternalLibrary() throws Exception {
+  public void testMethodFromExternalLibrary() {
     myAfterCommitRunnable =
       () -> FlexTestUtils.addLibrary(myModule, "library", getTestDataPath(), "ExternalLib.swc", "ExternalLib.zip", null);
 
     shouldFail("Can not inline function defined in external library");
   }
 
-  public void testNonCallUsage() throws Exception {
+  public void testNonCallUsage() {
     shouldFail("Can not inline non call usage");
   }
 
-  public void testConflicts1() throws Exception {
+  public void testConflicts1() {
     String[] conflicts = new String[]{
       "Field Foo.inter with internal visibility won't be accessible from method OtherPackage.otherPackageFunc()",
       "Field Foo.inter with internal visibility won't be accessible from method SubClass.subclassFunc()",
@@ -164,7 +164,7 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
     doTestConflicts(getTestName(false), "js2", conflicts);
   }
 
-  public void testConflicts2() throws Exception {
+  public void testConflicts2() {
     String[] conflicts = new String[]{
       "Field Foo.u with protected visibility won't be accessible from inner class Bar",
       "Field Foo.u with protected visibility won't be accessible from method Bar.ff()",
@@ -174,7 +174,7 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
     doTestConflicts(getTestName(false), "js2", conflicts);
   }
 
-  public void testConflicts3() throws Exception {
+  public void testConflicts3() {
     String[] conflicts = new String[]{
       "Field Conflicts3_2.t with private visibility won't be accessible from constructor Foo.Foo(int)",
       "Method Conflicts3_2.fff() with private visibility won't be accessible from constructor Foo.Foo(int)"
@@ -183,7 +183,7 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testConflicts4() throws Exception {
+  public void testConflicts4() {
     String[] conflicts = new String[]{
       "Field Foo.abc with private visibility won't be accessible from function &lt;anonymous&gt;(*) in class Conflicts4",
       "Method Foo.zz() with protected visibility won't be accessible from function &lt;anonymous&gt;(*) in class Conflicts4"
@@ -191,7 +191,7 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
     doTestConflicts(new String[]{getTestName(false) + ".mxml", getTestName(false) + "_2.js2"}, conflicts);
   }
 
-  public void testConflicts5() throws Exception {
+  public void testConflicts5() {
     String[] conflicts = new String[]{
       "Field Conflicts5.p with private visibility won't be accessible from file Conflicts5.js2",
       "Field Conflicts5.p with private visibility won't be accessible from file Conflicts5_2.js2"};

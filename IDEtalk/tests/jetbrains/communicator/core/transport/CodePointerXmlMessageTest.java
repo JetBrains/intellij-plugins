@@ -15,11 +15,11 @@
  */
 package jetbrains.communicator.core.transport;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
 import jetbrains.communicator.core.vfs.CodePointer;
 import jetbrains.communicator.core.vfs.VFile;
 import jetbrains.communicator.mock.MockTransport;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 import org.jdom.Element;
 
 /**
@@ -35,11 +35,11 @@ public class CodePointerXmlMessageTest extends TestCase {
     assertEquals("Bad sourcePath", file1.getSourcePath(), file2.getSourcePath());
   }
 
-  public void testSimplest() throws Throwable {
+  public void testSimplest() {
     _test("", VFile.create("some/path"), new CodePointer(1,2,3,4));
   }
 
-  public void testComplexVFile() throws Throwable {
+  public void testComplexVFile() {
     VFile expected = VFile.create("foo/bar", "bar", false);
     expected.setContents("#$@#@#$\u0447\u0442\u043e-\u0442\u043e \u0442\u0430\u043a\u043e\u0435");
     expected.setProjectName("project");

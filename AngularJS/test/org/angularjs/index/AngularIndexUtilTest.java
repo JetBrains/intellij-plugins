@@ -11,7 +11,7 @@ public class AngularIndexUtilTest extends LightPlatformCodeInsightFixtureTestCas
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "injections";
   }
 
-  public void testHasAngularJS2() throws Exception {
+  public void testHasAngularJS2() {
     myFixture.configureByText("ng_for.js", "NgFor.decorators = [\n" +
                                            "    { type: core_1.Directive, args: [{ selector: '[ngFor][ngForOf]', inputs: ['ngForTrackBy', 'ngForOf', 'ngForTemplate'] },] },\n" +
                                            "];");

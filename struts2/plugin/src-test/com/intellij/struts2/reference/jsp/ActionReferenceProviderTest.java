@@ -38,14 +38,14 @@ public class ActionReferenceProviderTest extends BasicLightHighlightingTestCase 
     return createWebDescriptor();
   }
 
-  public void testActionHighlighting() throws Throwable {
+  public void testActionHighlighting() {
     createStrutsFileSet("struts-action.xml");
     myFixture.copyFileToProject("ActionMethods.java");
 
     myFixture.testHighlighting(true, false, false, "/jsp/action-highlighting.jsp");
   }
 
-  public void testActionCompletionVariants() throws Throwable {
+  public void testActionCompletionVariants() {
     createStrutsFileSet("struts-action.xml");
     myFixture.copyFileToProject("ActionMethods.java");
 
@@ -53,7 +53,7 @@ public class ActionReferenceProviderTest extends BasicLightHighlightingTestCase 
                                      "bangAction", "namespace1Action", "namespace2Action", "myWildCard*");
   }
 
-  public void testActionCompletionVariantsBang() throws Throwable {
+  public void testActionCompletionVariantsBang() {
     createStrutsFileSet("struts-action.xml");
     myFixture.copyFileToProject("ActionMethods.java");
 
@@ -61,7 +61,7 @@ public class ActionReferenceProviderTest extends BasicLightHighlightingTestCase 
                                      "methodA", "methodB");
   }
 
-  public void testActionCompletionVariantsNamespace() throws Throwable {
+  public void testActionCompletionVariantsNamespace() {
     createStrutsFileSet("struts-action.xml");
     myFixture.copyFileToProject("ActionMethods.java");
 
@@ -69,7 +69,7 @@ public class ActionReferenceProviderTest extends BasicLightHighlightingTestCase 
                                      "myWildCard*");
   }
 
-  public void testActionCompletionVariantsMethod() throws Throwable {
+  public void testActionCompletionVariantsMethod() {
     createStrutsFileSet("struts-action.xml");
     myFixture.copyFileToProject("ActionMethods.java");
 

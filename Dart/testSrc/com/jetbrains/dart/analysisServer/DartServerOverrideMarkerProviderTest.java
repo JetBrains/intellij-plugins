@@ -46,15 +46,15 @@ public class DartServerOverrideMarkerProviderTest extends CodeInsightFixtureTest
     fail("Not found gutter mark: " + expectedText + "  " + expectedIcon + "\nin\n" + StringUtil.join(textList, "\n"));
   }
 
-  public void testImplementMarker() throws Throwable {
+  public void testImplementMarker() {
     doTest("Implements method 'm' in 'A'", AllIcons.Gutter.ImplementingMethod);
   }
 
-  public void testOverrideMarker() throws Throwable {
+  public void testOverrideMarker() {
     doTest("Overrides method 'm' in 'A'", AllIcons.Gutter.OverridingMethod);
   }
 
-  public void testOverriddenOperator() throws Throwable {
+  public void testOverriddenOperator() {
     doTest("Overrides operator '==' in 'Object'", AllIcons.Gutter.OverridingMethod);
   }
 }

@@ -46,21 +46,21 @@ public class UserActivityMonitorTest extends BaseTestCase {
     myThread = new Thread(myMonitor, "UserActivityMonitorTest-" + getName());
   }
 
-  public void testOfflineTransport() throws Exception {
+  public void testOfflineTransport() {
     myTransport.setOnline(false);
     startThread();
 
     assertNull(myTransport.getPresence());
   }
 
-  public void testNotAvailable() throws Exception {
+  public void testNotAvailable() {
     startThread();
 
     assertNotNull(myTransport.getPresence());
     assertEquals(PresenceMode.EXTENDED_AWAY, myTransport.getPresence().getPresenceMode());
   }
 
-  public void testAvailable() throws Exception {
+  public void testAvailable() {
     myMonitor.activity();
     startThread();
 

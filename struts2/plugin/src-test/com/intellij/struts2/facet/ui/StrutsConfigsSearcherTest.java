@@ -36,7 +36,7 @@ public class StrutsConfigsSearcherTest extends BasicLightHighlightingTestCase {
     return "configsSearcher";
   }
 
-  public void testSearch() throws Exception {
+  public void testSearch() {
     myFixture.copyFileToProject("struts.xml");
 
     final StrutsConfigsSearcher configsSearcher = new StrutsConfigsSearcher(myModule);

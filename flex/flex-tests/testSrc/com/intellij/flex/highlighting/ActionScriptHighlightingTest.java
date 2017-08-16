@@ -1342,7 +1342,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     defaultTest();
   }
 
-  public void testOverrideInInterfaceFix() throws Exception {
+  public void testOverrideInInterfaceFix() {
     configureByFiles(null, BASE_PATH + getTestName(false) + ".js2");
     JSTestUtils.checkThatActionDisabled("OverrideMethods");
     JSTestUtils.checkThatActionDisabled("ImplementMethods");
@@ -1830,7 +1830,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     findAndInvokeActionWithExpectedCheck("Remove parameter default value", "as", infoCollection);
   }
 
-  public void testDelegateMethodsDisabled() throws Exception {
+  public void testDelegateMethodsDisabled() {
     configureByFiles(null, BASE_PATH + getTestName(false) + ".js2");
     JSTestUtils.checkThatActionDisabled("DelegateMethods");
   }
@@ -2351,7 +2351,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doTestFor(true, getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
 
-  public void testCorrectScopeForSuperclassCheck7() throws Exception {
+  public void testCorrectScopeForSuperclassCheck7() {
     // same FQNs in different modules
     final Module module2 = doCreateRealModuleIn("module2", myProject, FlexModuleType.getInstance());
 

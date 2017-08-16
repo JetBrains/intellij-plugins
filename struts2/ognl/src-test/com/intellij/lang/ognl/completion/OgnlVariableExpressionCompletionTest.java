@@ -20,7 +20,7 @@ package com.intellij.lang.ognl.completion;
  */
 public class OgnlVariableExpressionCompletionTest extends OgnlCompletionTestCase {
 
-  public void testPlainAfterHash() throws Throwable {
+  public void testPlainAfterHash() {
     doTest("#<caret>",
            "context", "root", "this");
   }

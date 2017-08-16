@@ -15,15 +15,15 @@
  */
 package jetbrains.communicator.p2p.commands;
 
-import junit.framework.TestCase;
 import jetbrains.communicator.p2p.MockXmlMessage;
+import junit.framework.TestCase;
 import org.jdom.Element;
 
 /**
  * @author Kir
  */
 public class P2PNetworkXmlMessageTest extends TestCase {
-  public void testProcessResponse() throws Throwable {
+  public void testProcessResponse() {
 
     final boolean[] processed = new boolean[1];
     MockXmlMessage xmlMessage = new MockXmlMessage(){
@@ -49,7 +49,7 @@ public class P2PNetworkXmlMessageTest extends TestCase {
     assertFalse("Xml Response should not be processed", processed[0]);
   }
 
-  public void testNullXmlMessage() throws Throwable {
+  public void testNullXmlMessage() {
     P2PNetworkXmlMessage p2PNetworkXmlMessage = new P2PNetworkXmlMessage("str", null);
     p2PNetworkXmlMessage.processResponse();
   }

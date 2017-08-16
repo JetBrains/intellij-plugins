@@ -27,7 +27,6 @@ import jetbrains.communicator.util.WaitFor;
 import org.jmock.Mock;
 import org.jmock.core.constraint.IsGreaterThan;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
@@ -61,7 +60,7 @@ public class UserMonitorThreadTest extends BaseTestCase {
       }
 
       @Override
-      public void sendMulticastPingRequest() throws IOException {
+      public void sendMulticastPingRequest() {
         started[0] = true;
       }
     };
@@ -93,7 +92,7 @@ public class UserMonitorThreadTest extends BaseTestCase {
     myUserMonitorThread.triggerFindNow();
   }
 
-  public void testFlushOnlineUsers_NoUsers() throws Exception {
+  public void testFlushOnlineUsers_NoUsers() {
     assert myUserMonitorThread.isFinding();
     myUserMonitorClientMock.expects(once()).method("setOnlineUsers").with(eq(Collections.emptySet()));
     myUserMonitorThread.flushOnlineUsers();
@@ -160,7 +159,7 @@ public class UserMonitorThreadTest extends BaseTestCase {
   }
 
 
-  public void testAddRemoteUser_LoopbackAddress() throws Exception {
+  public void testAddRemoteUser_LoopbackAddress() {
     Pico.setUnitTest(false);
     try {
       myUserMonitorClientMock.expects(once()).method("setOnlineUsers") .with(eq(new HashSet()));

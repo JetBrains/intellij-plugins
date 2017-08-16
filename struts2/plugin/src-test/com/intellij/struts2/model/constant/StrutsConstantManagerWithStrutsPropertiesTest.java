@@ -38,7 +38,7 @@ public class StrutsConstantManagerWithStrutsPropertiesTest extends StrutsConstan
   /**
    * Must override {@code "bar"} from struts.xml.
    */
-  public void testStrutsProperties() throws Throwable {
+  public void testStrutsProperties() {
     myFixture.copyFileToProject("struts.properties");
     createStrutsFileSet(STRUTS_XML);
 

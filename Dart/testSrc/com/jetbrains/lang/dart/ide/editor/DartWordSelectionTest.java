@@ -23,31 +23,31 @@ public class DartWordSelectionTest extends DartCodeInsightFixtureTestCase {
     CodeInsightTestUtil.doWordSelectionTest(myFixture, testName + ".dart", testName + "_after.dart");
   }
 
-  public void testLineDocWord1() throws Exception {
+  public void testLineDocWord1() {
     doTest();
   }
 
-  public void testLineDocWord2() throws Exception {
+  public void testLineDocWord2() {
     doTest();
   }
 
-  public void testLineDocWord3() throws Exception {
+  public void testLineDocWord3() {
     doTest();
   }
 
-  public void testLineWord1() throws Exception {
+  public void testLineWord1() {
     doTest();
   }
 
-  public void testBlockDocWord1() throws Exception {
+  public void testBlockDocWord1() {
     doTest();
   }
 
-  public void testBlockDocWord2() throws Exception {
+  public void testBlockDocWord2() {
     doTest();
   }
 
-  public void testBlockWord1() throws Exception {
+  public void testBlockWord1() {
     doTest();
   }
 }

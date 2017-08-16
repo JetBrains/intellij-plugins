@@ -38,57 +38,57 @@ public class FlexColorAnnotatorTest extends CodeInsightFixtureTestCase<FlexModul
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testHighlighting() throws Exception {
+  public void testHighlighting() {
     myFixture.configureByFile(getTestName(false) + ".mxml");
     myFixture.checkHighlighting();
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testGutter1() throws Exception {
+  public void testGutter1() {
     FlexMxmlColorAnnotator.MyRenderer renderer = findAppropriateRenderer("mxml");
     assertInstanceOf(renderer.getIcon(), ColorIconCache.ColorIcon.class);
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testGutter2() throws Exception {
+  public void testGutter2() {
     FlexMxmlColorAnnotator.MyRenderer renderer = findAppropriateRenderer("mxml");
     assertInstanceOf(renderer.getIcon(), ColorIconCache.ColorIcon.class);
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testGutter3() throws Exception {
+  public void testGutter3() {
     FlexMxmlColorAnnotator.MyRenderer renderer = findAppropriateRenderer("mxml");
     assertInstanceOf(renderer.getIcon(), EmptyIcon.class);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithCssSupportLoader})
-  public void testGutter4() throws Exception {
+  public void testGutter4() {
     GutterMark r = myFixture.findGutter(getTestName(false) + '.' + "css");
     assertNotNull(r);
     assertInstanceOf(r.getIcon(), ColorIconCache.ColorIcon.class);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithCssSupportLoader})
-  public void testGutter5() throws Exception {
+  public void testGutter5() {
     GutterMark r = myFixture.findGutter(getTestName(false) + '.' + "css");
     assertNotNull(r);
     assertInstanceOf(r.getIcon(), ColorIconCache.ColorIcon.class);
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testGutter6() throws Exception {
+  public void testGutter6() {
     FlexMxmlColorAnnotator.MyRenderer renderer = findAppropriateRenderer("mxml");
     assertInstanceOf(renderer.getIcon(), ColorIconCache.ColorIcon.class);
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testIdea94474() throws Exception {
+  public void testIdea94474() {
     GutterMark r = myFixture.findGutter(getTestName(false) + '.' + "css");
     assertNull(r);
   }
 
   @NotNull
-  private FlexMxmlColorAnnotator.MyRenderer findAppropriateRenderer(String extension) throws Exception {
+  private FlexMxmlColorAnnotator.MyRenderer findAppropriateRenderer(String extension) {
     GutterMark r = myFixture.findGutter(getTestName(false) + '.' + extension);
     assertNotNull(r);
     assertInstanceOf(r, FlexMxmlColorAnnotator.MyRenderer.class);

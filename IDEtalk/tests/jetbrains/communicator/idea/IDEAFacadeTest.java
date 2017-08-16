@@ -15,8 +15,8 @@
  */
 package jetbrains.communicator.idea;
 
-import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.dispatcher.LocalMessage;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.users.UserImpl;
 import jetbrains.communicator.core.transport.EventFactory;
 import jetbrains.communicator.core.transport.TransportEvent;
@@ -50,18 +50,18 @@ public class IDEAFacadeTest extends BaseTestCase {
     myUser = UserImpl.create("user", myTransport.getName());
   }
 
-  public void testCreateLocalMessage_OutgoingMessage() throws Exception {
+  public void testCreateLocalMessage_OutgoingMessage() {
     LocalMessage outgoingEvent = myFacade.createLocalMessageForOutgoingEvent(new SendMessageEvent("message", myUser));
     assertTrue(outgoingEvent instanceof OutgoingLocalMessage);
   }
 
-  public void testCreateLocalMessage_OutgoingCodePointer() throws Exception {
+  public void testCreateLocalMessage_OutgoingCodePointer() {
     SendCodePointerEvent event = new SendCodePointerEvent("message", VFile.create("a path"), new CodePointer(3,4), myUser);
     LocalMessage outgoingEvent = myFacade.createLocalMessageForOutgoingEvent(event);
     assertTrue(outgoingEvent instanceof OutgoingCodePointerLocalMessage);
   }
 
-  public void testCreateLocalMessage_IncomingMessage() throws Exception {
+  public void testCreateLocalMessage_IncomingMessage() {
     TransportEvent event =
         EventFactory.createMessageEvent(myTransport, "user", "comment123");
     Date when = new Date();
@@ -74,7 +74,7 @@ public class IDEAFacadeTest extends BaseTestCase {
     assertEquals(when, localMessage.getWhen());
   }
 
-  public void testCreateLocalMessage_Stacktrace() throws Exception {
+  public void testCreateLocalMessage_Stacktrace() {
     TransportEvent event =
         EventFactory.createStacktraceEvent(myTransport, "user", "stacktrace", "comment123");
     LocalMessage localMessage = myFacade.createLocalMessageForIncomingEvent(event);
@@ -84,7 +84,7 @@ public class IDEAFacadeTest extends BaseTestCase {
     assertEquals("comment123", ((BaseLocalMessage) localMessage).getComment());
   }
 
-  public void testCreateLocalMessage_CodeInterval() throws Exception {
+  public void testCreateLocalMessage_CodeInterval() {
     TransportEvent event =
         EventFactory.createCodePointerEvent(myTransport, "user22", VFile.create("a path"), 0, 0, 1, 2, "some comment1");
     LocalMessage localMessage = myFacade.createLocalMessageForIncomingEvent(event);

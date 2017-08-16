@@ -25,7 +25,7 @@ public class DartInlineLocalRefactoringTest extends CodeInsightFixtureTestCase {
     return "/analysisServer/refactoring/inline/local";
   }
 
-  public void testTest() throws Throwable {
+  public void testTest() {
     final String testName = getTestName(false);
     doTest(testName + ".dart");
   }

@@ -31,159 +31,159 @@ public class ActionScriptParsingTest extends JSParsingTestBase {
     return FlexTestUtils.getTestDataPath("parsing");
   }
 
-  public void testBasic() throws Exception {
+  public void testBasic() {
     doTest(true);
   }
 
-  public void testClassesPackagesNamespaces() throws Exception {
+  public void testClassesPackagesNamespaces() {
     doTest(true);
   }
 
-  public void testQualifiedNsReference() throws Exception {
+  public void testQualifiedNsReference() {
     doTest(true);
   }
 
-  public void testAttributesInInclude() throws Exception {
+  public void testAttributesInInclude() {
     doTest(true);
   }
 
-  public void testExpressions() throws Exception {
+  public void testExpressions() {
     doTest(true);
   }
 
-  public void testE4X() throws Exception {
+  public void testE4X() {
     doTest(true);
   }
 
-  public void testE4X2() throws Exception {
+  public void testE4X2() {
     doTest(true);
   }
 
-  public void testForEachIn() throws Exception {
+  public void testForEachIn() {
     doTest(true);
   }
 
-  public void testXmlDef() throws Exception {
+  public void testXmlDef() {
     doTest(true);
   }
 
-  public void testXmlDef2() throws Exception {
+  public void testXmlDef2() {
     doTest(true);
   }
 
-  public void testObjectLiteral() throws Exception {
+  public void testObjectLiteral() {
     doTest(true);
   }
 
-  public void testAttributesListErrors() throws Exception {
+  public void testAttributesListErrors() {
     doTest(true);
   }
 
-  public void testSeveralCatchesInTry() throws Exception {
+  public void testSeveralCatchesInTry() {
     doTest(true);
   }
 
-  public void testIncompleteCode() throws Exception {
+  public void testIncompleteCode() {
     doTest(true);
   }
 
-  public void testIncompleteCode2() throws Exception {
+  public void testIncompleteCode2() {
     doTest(true);
   }
 
-  public void testIncompleteNewJS2() throws Exception {
+  public void testIncompleteNewJS2() {
     doTest(true);
   }
 
-  public void testOldAs2Code() throws Exception {
+  public void testOldAs2Code() {
     doTest(true);
   }
 
-  public void testXmlAttributeSelectionInWithStatement() throws Exception {
+  public void testXmlAttributeSelectionInWithStatement() {
     doTest(true);
   }
 
-  public void testKeywordsAsClassAndFunctionName() throws Exception {
+  public void testKeywordsAsClassAndFunctionName() {
     doTest(true);
   }
 
-  public void testArrayLiterals() throws Exception {
+  public void testArrayLiterals() {
     doTest(true);
   }
 
-  public void testKeywordNsReference() throws Exception {
+  public void testKeywordNsReference() {
     doTest(true);
   }
 
-  public void testKeywordsInE4X() throws Exception {
+  public void testKeywordsInE4X() {
     doTest(true);
   }
 
-  public void testConditionalBlocks() throws Exception {
+  public void testConditionalBlocks() {
     doTest(true);
   }
 
-  public void testActionScriptSpecific_() throws Exception {
+  public void testActionScriptSpecific_() {
     doTest(true);
   }
 
-  public void testVectorInitializers() throws Exception {
+  public void testVectorInitializers() {
     doTest(true);
   }
 
-  public void testGenerics() throws Exception {
+  public void testGenerics() {
     doTest(true);
   }
 
-  public void testGenerics2() throws Exception {
+  public void testGenerics2() {
     doTest(true);
   }
 
-  public void testIncorrectGenerics() throws Exception {
+  public void testIncorrectGenerics() {
     doTest(true);
   }
 
-  public void testComplex() throws Exception {
+  public void testComplex() {
     doTest(true);
   }
 
-  public void testE4X3() throws Exception {
+  public void testE4X3() {
     doTest(true);
   }
 
-  public void testMiscGotchas() throws Exception {
+  public void testMiscGotchas() {
     doTest(true);
   }
 
-  public void testNoTypeRefInExtends() throws Exception {
+  public void testNoTypeRefInExtends() {
     doTest(true);
   }
 
-  public void testStaticBlock() throws Exception {
+  public void testStaticBlock() {
     doTest(true);
   }
 
-  public void testNoReferenceBeforeQuotedAttributeValue() throws Exception {
+  public void testNoReferenceBeforeQuotedAttributeValue() {
     doTest(true);
   }
 
-  public void testConstInFor() throws Exception {
+  public void testConstInFor() {
     doTest(true);
   }
 
-  public void testASDoc() throws Exception {
+  public void testASDoc() {
     doTest(true);
   }
 
-  public void testUseNsInAttrList() throws Exception {
+  public void testUseNsInAttrList() {
     doTest(true);
   }
 
-  public void testLiteralWithExpressionProperties() throws Exception {
+  public void testLiteralWithExpressionProperties() {
     doTest(true);
   }
 
-  public void testGoto() throws Exception {
+  public void testGoto() {
     doTest(true);
   }
 }

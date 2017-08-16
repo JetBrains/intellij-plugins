@@ -46,15 +46,15 @@ public class StrutsResultTilesResolvingDefaultTest extends StrutsLightHighlighti
   }
 
   @Override
-  protected void performSetUp() throws Exception {
+  protected void performSetUp() {
     myFixture.copyDirectoryToProject("WEB-INF", "WEB-INF");
   }
 
-  public void testHighlighting() throws Throwable {
+  public void testHighlighting() {
     performHighlightingTest("struts-tiles.xml");
   }
 
-  public void testCompletion() throws Throwable {
+  public void testCompletion() {
     createStrutsFileSet("struts-tiles-completion.xml");
     myFixture.testCompletionVariants("struts-tiles-completion.xml",
                                      "definition1",

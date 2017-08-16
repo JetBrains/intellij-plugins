@@ -23,7 +23,6 @@ import jetbrains.communicator.ide.UserListComponent;
 import jetbrains.communicator.mock.MockUser;
 import org.jmock.Mock;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,21 +55,21 @@ public class DeleteCommandTest extends BaseTestCase {
     };
   }
 
-  public void testIsEnabled_NoSelection() throws Exception {
+  public void testIsEnabled_NoSelection() {
     myUserListComponentMock.stubs().method("getSelectedNodes").will(returnValue(ArrayUtil.EMPTY_OBJECT_ARRAY));
     assertFalse("No selection - action should be disabled", myCommand.isEnabled());
   }
 
-  public void testIsEnabled_WithSelection() throws Exception {
+  public void testIsEnabled_WithSelection() {
     myUserListComponentMock.stubs().method("getSelectedNodes").will(returnValue(new Object[]{"grp"}));
     assertTrue("Action should be enabled", myCommand.isEnabled());
   }
 
-  public void testDeleteGroup_Commit() throws Exception {
+  public void testDeleteGroup_Commit() {
     _testDeleteGroup(true, 0);
   }
 
-  public void testDeleteGroup_WithUsers() throws Exception {
+  public void testDeleteGroup_WithUsers() {
     myUserModel.addUser(new MockUser("user", GROUP_NAME));
 
     myUserListComponentMock.stubs().method("getSelectedNodes").will(returnValue(new Object[]{GROUP_NAME}));
@@ -84,7 +83,7 @@ public class DeleteCommandTest extends BaseTestCase {
     assertEquals(0, myUserModel.getGroups().length);
   }
 
-  public void testDeleteGroup_WithUsers_DeleteAll() throws Exception {
+  public void testDeleteGroup_WithUsers_DeleteAll() {
     myUserModel.addGroup(GROUP_NAME);
     MockUser user = new MockUser("user", GROUP_NAME);
     myUserModel.addUser(user);
@@ -101,11 +100,11 @@ public class DeleteCommandTest extends BaseTestCase {
     assertEquals(0, myUserModel.getGroups().length);
   }
 
-  public void testDeleteGroup_CancelOperation() throws Exception {
+  public void testDeleteGroup_CancelOperation() {
     _testDeleteGroup(false, 1);
   }
 
-  public void testDeleteUser() throws Exception {
+  public void testDeleteUser() {
     MockUser user = new MockUser();
     myUserModel.addUser(user);
     myUserListComponentMock.expects(once()).method("getSelectedNodes").will(returnValue(new Object[]{user}));
@@ -126,7 +125,7 @@ public class DeleteCommandTest extends BaseTestCase {
     assertEquals(remainingGroups, myUserModel.getGroups().length);
   }
 
-  public void testMessages_NoUsersInGroups() throws Exception {
+  public void testMessages_NoUsersInGroups() {
     assertMessage("user User 0", 1, 0);
     assertMessage("users User 0 and User 1", 2, 0);
     assertMessage("users User 0, User 1, and User 2", 3, 0);
@@ -140,7 +139,7 @@ public class DeleteCommandTest extends BaseTestCase {
     assertMessage("groups \"group0\", \"group1\" \nand \nusers User 0, User 1 \nfrom other groups", 2, 2);
   }
 
-  public void testMessages_WithUsersInDeletedGroups() throws Exception {
+  public void testMessages_WithUsersInDeletedGroups() {
     myUserModel.addUser(new MockUser("userName", "aGroup"));
     assertMessage("group \"aGroup\" with its 1 user", new Object[]{"aGroup"});
     assertMessage("groups \"aGroup\"(1 user) and \"group2\"", new Object[]{"aGroup", "group2"});
@@ -153,13 +152,13 @@ public class DeleteCommandTest extends BaseTestCase {
         new Object[]{"aGroup", new MockUser("Some Another User", null)});
   }
 
-  public void testMessageIgnoresUserFromDeletedGroup() throws Exception {
+  public void testMessageIgnoresUserFromDeletedGroup() {
     MockUser user = new MockUser("userName", "aGroup");
     myUserModel.addUser(user);
     assertMessage("group \"aGroup\" with its 1 user", new Object[]{"aGroup", user});
   }
 
-  private void assertMessage(String msg, int users, int emptyGroups) throws UnknownHostException {
+  private void assertMessage(String msg, int users, int emptyGroups) {
     List nodes = new ArrayList();
     for (int i = 0; i < users; i ++){
       MockUser u = new MockUser("user" + i, "");

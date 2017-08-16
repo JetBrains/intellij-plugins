@@ -43,7 +43,7 @@ public class GlobalFlexHighlightingTest extends InspectionTestCase {
     return super.getTestProjectSdk();
   }
 
-  public void testAvailability() throws Exception {
+  public void testAvailability() {
     boolean foundSyntaxCheckInspection = false;
     boolean foundAnnotatorInspection = false;
 
@@ -58,28 +58,28 @@ public class GlobalFlexHighlightingTest extends InspectionTestCase {
     assertTrue("Should have global annotator inspection provided", foundAnnotatorInspection);
   }
 
-  public void testReportingSyntaxProblemsInMxml() throws Exception {
+  public void testReportingSyntaxProblemsInMxml() {
     doSyntaxErrorsTest();
   }
 
-  public void testReportingSyntaxProblemsInActionScript() throws Exception {
+  public void testReportingSyntaxProblemsInActionScript() {
     doSyntaxErrorsTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testReportingAnnotatorProblemsInMxml() throws Exception {
+  public void testReportingAnnotatorProblemsInMxml() {
     doAnnotatorTest();
   }
 
-  public void testReportingAnnotatorProblemsInActionScript() throws Exception {
+  public void testReportingAnnotatorProblemsInActionScript() {
     doAnnotatorTest();
   }
 
-  private void doSyntaxErrorsTest() throws Exception {
+  private void doSyntaxErrorsTest() {
     doTest(getTestName(false), new DefaultHighlightVisitorBasedInspection.SyntaxErrorInspection());
   }
 
-  private void doAnnotatorTest() throws Exception {
+  private void doAnnotatorTest() {
     final InspectionProfileImpl profile = InspectionProjectProfileManager.getInstance(myProject).getCurrentProfile();
     InspectionsKt.runInInitMode(() -> {
       profile.enableTool(JSUnresolvedVariableInspection.SHORT_NAME, myProject);

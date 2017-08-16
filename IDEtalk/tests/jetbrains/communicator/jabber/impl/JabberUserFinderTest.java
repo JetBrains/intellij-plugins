@@ -64,7 +64,7 @@ public class JabberUserFinderTest extends BaseTestCase {
 
   }
 
-  public void testAskForRegister_AnswerYes() throws Exception {
+  public void testAskForRegister_AnswerYes() {
     Mock facadeMock = mock(IDEFacade.class);
 
     final String[] params = new String[2];
@@ -98,7 +98,7 @@ public class JabberUserFinderTest extends BaseTestCase {
     assertEquals("Another project, expect question", "kir@fff1", params[0]);
   }
 
-  public void testAskForRegister_AnswerNo() throws Exception {
+  public void testAskForRegister_AnswerNo() {
     Mock facadeMock = mock(IDEFacade.class);
 
     final String[] params = new String[2];

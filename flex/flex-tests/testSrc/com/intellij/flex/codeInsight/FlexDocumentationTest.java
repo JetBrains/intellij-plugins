@@ -193,14 +193,14 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testFlexMetadataStyle() throws Exception {
+  public void testFlexMetadataStyle() {
     String testName = getTestName(false);
     String s = BASE_PATH + testName;
     doTest(new String[]{s + ".css", s + ".mxml"}, testName, false, Check.Content);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testFlexMetadataStyleMultidoc() throws Exception {
+  public void testFlexMetadataStyleMultidoc() {
     String testName = getTestName(false);
     String s = BASE_PATH + testName;
     doTest(new String[]{s + ".css", s + "1.mxml", s + "2.mxml"}, testName, false, Check.Content);
@@ -307,7 +307,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testWithAsDoc1() throws Exception {
+  public void testWithAsDoc1() {
     myAfterCommitRunnable = () -> FlexTestUtils
       .addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "LibWithAsdoc.swc", null, "LibWithAsdoc_docs.zip");
 
@@ -315,45 +315,45 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testWithAsDoc2() throws Exception {
+  public void testWithAsDoc2() {
     myAfterCommitRunnable = () -> FlexTestUtils
       .addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "LibWithAsdoc.swc", null, "LibWithAsdoc_docs.zip");
     doTest(getTestName(false), "mxml", "WithAsDoc", true, Check.Content);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testMxml1() throws Exception {
+  public void testMxml1() {
     doTest(getTestName(false), "mxml", getTestName(false), true, Check.Null);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testPackageWrapper() throws Exception {
+  public void testPackageWrapper() {
     doTest(getTestName(false), "mxml", getTestName(false), true, Check.Null);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testSeeClassInSamePackage() throws Exception {
+  public void testSeeClassInSamePackage() {
     String fullName = BASE_PATH + getTestName(false);
     final String[] files = {fullName + ".as", fullName + "_2.as", fullName + "_3.as"};
     doTest(files, getTestName(false), false, Check.Content);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testSeeTopLevelClass() throws Exception {
+  public void testSeeTopLevelClass() {
     String fullName = BASE_PATH + getTestName(false);
     final String[] files = {fullName + ".as", fullName + "_2.as", fullName + "_3.as"};
     doTest(files, getTestName(false), false, Check.Content);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testSeeTopLevelClassFromDefaultPackage() throws Exception {
+  public void testSeeTopLevelClassFromDefaultPackage() {
     String fullName = BASE_PATH + getTestName(false);
     final String[] files = {fullName + ".as", fullName + "_2.as"};
     doTest(files, getTestName(false), false, Check.Content);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testExternalDoc1() throws Exception {
+  public void testExternalDoc1() {
     String fullName = BASE_PATH + getTestName(false);
     final String[] files = {fullName + ".mxml"};
 
@@ -406,7 +406,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testDocsInsideClass() throws Exception {
+  public void testDocsInsideClass() {
     String testName = getTestName(false);
     doTest(testName, "as", testName, false, Check.Null);
   }
@@ -417,43 +417,43 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testClassInheritDoc2() throws Exception {
+  public void testClassInheritDoc2() {
     String testName = getTestName(false);
     doTest(new String[]{testName, testName + "_2", testName + "_3"}, "as", testName);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testClassInheritDoc3() throws Exception {
+  public void testClassInheritDoc3() {
     String testName = getTestName(false);
     doTest(new String[]{testName, testName + "_2"}, "as", testName);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testClassInheritDoc4() throws Exception {
+  public void testClassInheritDoc4() {
     String testName = getTestName(false);
     doTest(new String[]{testName, testName + "_2"}, "as", testName);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testClassInheritDoc5() throws Exception {
+  public void testClassInheritDoc5() {
     String testName = getTestName(false);
     doTest(new String[]{testName, testName + "_2", testName + "_3"}, "as", testName);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testMethodInheritDoc1() throws Exception {
+  public void testMethodInheritDoc1() {
     String testName = getTestName(false);
     doTest(new String[]{testName, testName + "_2", testName + "_3", testName + "_4"}, "as", testName);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testMethodInheritDoc2() throws Exception {
+  public void testMethodInheritDoc2() {
     String testName = getTestName(false);
     doTest(new String[]{testName, testName + "_2", testName + "_3"}, "as", testName);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testMethodInheritDoc3() throws Exception {
+  public void testMethodInheritDoc3() {
     String testName = getTestName(false);
     doTest(new String[]{testName, testName + "_2"}, "as", testName);
   }
@@ -466,14 +466,14 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testGenericType() throws Exception {
+  public void testGenericType() {
     final String testName = getTestName(false);
     FlexTestUtils.addASDocToSdk(getModule(), getClass(), testName);
     doTest(new String[]{testName}, "as", testName);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testEndOfLineComment() throws Exception {
+  public void testEndOfLineComment() {
     String testName = getTestName(false);
     doTest(new String[]{testName}, "as", testName);
   }

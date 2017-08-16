@@ -50,7 +50,7 @@ public class ActivatorRenameTest extends LightOsgiFixtureTestCase {
     myActivator = ((PsiJavaFile)activatorFile).getClasses()[0];
   }
 
-  public void testRenameForManuallyEditedManifest() throws Exception {
+  public void testRenameForManuallyEditedManifest() {
     PsiFile manifestFile = setupManualManifest();
     renameClass();
     assertThat(manifestFile.getText(), endsWith("Bundle-Activator: t1.RenamedActivator\n"));

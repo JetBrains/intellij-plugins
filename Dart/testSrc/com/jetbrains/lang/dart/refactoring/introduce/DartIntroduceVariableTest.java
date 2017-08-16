@@ -25,19 +25,19 @@ public class DartIntroduceVariableTest extends DartIntroduceTestBase {
     return new DartIntroduceVariableHandler();
   }
 
-  public void testAfterStatement() throws Throwable {
+  public void testAfterStatement() {
     doTest();
   }
 
-  public void testAlone() throws Throwable {
+  public void testAlone() {
     doTest();
   }
 
-  public void testIntroduceWEB6426() throws Throwable {
+  public void testIntroduceWEB6426() {
     doTestInplace(null);
   }
 
-  public void testIntroduceWEB6458() throws Throwable {
+  public void testIntroduceWEB6458() {
     try {
       doTest();
     }
@@ -50,7 +50,7 @@ public class DartIntroduceVariableTest extends DartIntroduceTestBase {
     fail("Expected: Can't find place for the result");
   }
 
-  public void testIntroduceWEB6479() throws Throwable {
+  public void testIntroduceWEB6479() {
     try {
       doTest();
     }
@@ -63,31 +63,31 @@ public class DartIntroduceVariableTest extends DartIntroduceTestBase {
     fail("Expected: Can't find place for the result");
   }
 
-  public void testReplaceAll1() throws Throwable {
+  public void testReplaceAll1() {
     doTest();
   }
 
-  public void testReplaceAll2() throws Throwable {
+  public void testReplaceAll2() {
     doTest();
   }
 
-  public void testReplaceAll3() throws Throwable {
+  public void testReplaceAll3() {
     doTestInplace(null);
   }
 
-  public void testReplaceOne1() throws Throwable {
+  public void testReplaceOne1() {
     doTest(null, false);
   }
 
-  public void testSuggestName1() throws Throwable {
+  public void testSuggestName1() {
     doTestSuggestions(DartCallExpression.class, "test");
   }
 
-  public void testSuggestName2() throws Throwable {
+  public void testSuggestName2() {
     doTestSuggestions(DartCallExpression.class, "test1");
   }
 
-  public void testSuggestName3() throws Throwable {
+  public void testSuggestName3() {
     doTestSuggestions(DartCallExpression.class, "width", "canvasWidth");
   }
 }

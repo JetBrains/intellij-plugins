@@ -22,7 +22,7 @@ import junit.framework.TestCase;
  */
 public class WaitForTest extends TestCase {
 
-  public void testWaitFor() throws Exception {
+  public void testWaitFor() {
     final long l = System.currentTimeMillis();
 
     new WaitFor() {
@@ -37,7 +37,7 @@ public class WaitForTest extends TestCase {
         l + 200d, now, 50d);
   }
 
-  public void testWaitForTimeout() throws Exception {
+  public void testWaitForTimeout() {
     final long l = System.currentTimeMillis();
 
     new WaitFor(500) {

@@ -16,10 +16,8 @@
 package com.intellij.struts2.annotators;
 
 import com.intellij.codeInsight.daemon.GutterMark;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.struts2.BasicLightHighlightingTestCase;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,7 +47,7 @@ public class JspActionAnnotatorTest extends BasicLightHighlightingTestCase {
     AnnotatorTestUtils.checkGutterTargets(gutterIconRenderer, psiElement -> ((PsiMethod)psiElement).getName(), expectedActionNames);
   }
 
-  public void testGutterActionAttribute() throws Throwable {
+  public void testGutterActionAttribute() {
     createStrutsFileSet("struts-actionClass.xml");
     myFixture.copyFileToProject("MyAction.java");
 
@@ -57,7 +55,7 @@ public class JspActionAnnotatorTest extends BasicLightHighlightingTestCase {
                                           "validActionMethod");
   }
 
-  public void testGutterNameAttribute() throws Throwable {
+  public void testGutterNameAttribute() {
     createStrutsFileSet("struts-actionClass.xml");
     myFixture.copyFileToProject("MyAction.java");
 

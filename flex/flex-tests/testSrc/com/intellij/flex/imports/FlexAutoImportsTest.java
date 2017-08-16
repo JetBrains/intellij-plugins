@@ -53,88 +53,88 @@ public class FlexAutoImportsTest extends CodeInsightFixtureTestCase<FlexModuleFi
     myFixture.setTestDataPath(FlexTestUtils.getTestDataPath("imports/auto"));
   }
 
-  public void testVarStatement() throws Throwable {
+  public void testVarStatement() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.test.Foo");
     launchImportIntention(AS_FILE_EXTENSION, "com.test.Foo");
   }
 
-  public void testVarStatementInPackage() throws Throwable {
+  public void testVarStatementInPackage() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.test.Foo");
     launchImportIntention(AS_FILE_EXTENSION, "com.test.Foo");
   }
 
-  public void testVarStatementInPackageWithComments() throws Throwable {
+  public void testVarStatementInPackageWithComments() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.test.Foo");
     launchImportIntention(AS_FILE_EXTENSION, "com.test.Foo");
   }
 
-  public void testVarStatementInClass() throws Throwable {
+  public void testVarStatementInClass() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.test.Foo");
     launchImportIntention(AS_FILE_EXTENSION, "com.test.Foo");
   }
 
-  public void testVarStatementInClassWithComments() throws Throwable {
+  public void testVarStatementInClassWithComments() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.test.Foo");
     launchImportIntention(AS_FILE_EXTENSION, "com.test.Foo");
   }
 
-  public void testVarStatementInPackageInClass() throws Throwable {
+  public void testVarStatementInPackageInClass() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.test.Foo");
     launchImportIntention(AS_FILE_EXTENSION, "com.test.Foo");
   }
 
-  public void testVarStatementInPackageInClassWithComments() throws Throwable {
+  public void testVarStatementInPackageInClassWithComments() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.test.Foo");
     launchImportIntention(AS_FILE_EXTENSION, "com.test.Foo");
   }
 
-  public void testOtherImportsPresent() throws Throwable {
+  public void testOtherImportsPresent() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.test.Foo");
     launchImportIntention(AS_FILE_EXTENSION, "com.test.Foo");
   }
 
-  public void testOtherImportsPresentNoPackage() throws Throwable {
+  public void testOtherImportsPresentNoPackage() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.test.Foo");
     launchImportIntention(AS_FILE_EXTENSION, "com.test.Foo");
   }
 
-  public void testOtherImportsPresentNoClass() throws Throwable {
+  public void testOtherImportsPresentNoClass() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.test.Foo");
     launchImportIntention(AS_FILE_EXTENSION, "com.test.Foo");
   }
 
-  public void testOtherImportsOnIncorrectPlace() throws Throwable {
+  public void testOtherImportsOnIncorrectPlace() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.test.Foo");
     launchImportIntention(AS_FILE_EXTENSION, "com.test.Foo");
   }
 
-  public void testCdataSeveralSections() throws Throwable {
+  public void testCdataSeveralSections() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.test.Foo");
     launchImportIntention(MXML_FILE_EXTENSION, "com.test.Foo");
   }
 
-  public void testCdataOtherImportsPresent() throws Throwable {
+  public void testCdataOtherImportsPresent() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.test.Foo");
     launchImportIntention(MXML_FILE_EXTENSION, "com.test.Foo");
   }
 
-  public void testCdataOtherImportsOnIncorrectPlace() throws Throwable {
+  public void testCdataOtherImportsOnIncorrectPlace() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.test.Foo");
     launchImportIntention(MXML_FILE_EXTENSION, "com.test.Foo");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testAnonymousHandler1() throws Throwable {
+  public void testAnonymousHandler1() {
     launchImportIntention(MXML_FILE_EXTENSION, "mx.utils.Base64Decoder");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testBeforePackage() throws Throwable {
+  public void testBeforePackage() {
     launchImportIntention(AS_FILE_EXTENSION, "mx.utils.Base64Decoder");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testWrapImportStatement() throws Throwable {
+  public void testWrapImportStatement() {
     CodeStyleSettings currentSettings = CodeStyleSettingsManager.getSettings(myFixture.getProject());
     int m = currentSettings.getDefaultRightMargin();
     currentSettings.setDefaultRightMargin(20);
@@ -179,7 +179,7 @@ public class FlexAutoImportsTest extends CodeInsightFixtureTestCase<FlexModuleFi
     return getInputDataFileName(getTestName(true), fileExtension);
   }
 
-  private void launchImportIntention(final String fileExtension, String className) throws Throwable {
+  private void launchImportIntention(final String fileExtension, String className) {
     String hint = className + "?";
     List<IntentionAction> list = getIntentions(getThisTestInputFileName(fileExtension), hint);
     myFixture.launchAction(assertOneElement(list));
@@ -187,7 +187,7 @@ public class FlexAutoImportsTest extends CodeInsightFixtureTestCase<FlexModuleFi
   }
 
 
-  private List<IntentionAction> getIntentions(final String fileName, final String hint) throws Throwable {
+  private List<IntentionAction> getIntentions(final String fileName, final String hint) {
 
     List<IntentionAction> list = ContainerUtil.findAll(myFixture.getAvailableIntentions(fileName),
                                                        intentionAction -> intentionAction.getText().startsWith(hint));

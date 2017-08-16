@@ -60,16 +60,16 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
     myFixture.checkResultByFile(updatedFileName + ".after.dart");
   }
 
-  public void testCreateMethodInAnotherFile() throws Throwable {
+  public void testCreateMethodInAnotherFile() {
     final VirtualFile partFile = myFixture.copyFileToProject(getTestName(false) + "_part.dart");
     doQuickFixTest("Create method 'doSomething'", partFile);
   }
 
-  public void testCreateClass() throws Throwable {
+  public void testCreateClass() {
     doQuickFixTest("Create class 'A'");
   }
 
-  public void testCreatePartFile() throws Throwable {
+  public void testCreatePartFile() {
     myFixture.configureByFile(getTestName(false) + ".dart");
 
     final IntentionAction quickFix = myFixture.findSingleIntention("Create file 'CreatePartFile_part.dart'");
@@ -85,7 +85,7 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
     //myFixture.checkResultByFile("CreatePartFile_part.after.dart");
   }
 
-  public void testUseEqEqNull() throws Throwable {
+  public void testUseEqEqNull() {
     doQuickFixTest("Use == null instead of 'is Null'");
   }
 
@@ -109,7 +109,7 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
     myFixture.checkResult(after);
   }
 
-  public void testHandleCrlf1() throws Throwable {
+  public void testHandleCrlf1() {
     final String content = "\r\n\r\n \r\r \n\n" +
                            "class A{\r\n" +
                            "}\r\n" +
@@ -126,7 +126,7 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
     doCrLfAwareTest(content, "Create method", after);
   }
 
-  public void testHandleCrlf2() throws Throwable {
+  public void testHandleCrlf2() {
     final String content = "\r\n\r\n \r\r \n\n" +
                            "foo() {\r\n" +
                            "  List a = new A().<caret>bar(1, true, '');\r\n" +
@@ -143,7 +143,7 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
     doCrLfAwareTest(content, "Create method", after);
   }
 
-  public void testQuickFixOrder() throws Throwable {
+  public void testQuickFixOrder() {
     myFixture.configureByText("foo.dart", "<caret>Future f;\nclass Futures{}");
     final List<String> intentions = ContainerUtil.map(myFixture.getAvailableIntentions(), intention -> intention.getText());
     assertOrderedEquals(intentions,

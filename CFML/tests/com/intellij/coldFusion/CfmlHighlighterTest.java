@@ -18,19 +18,17 @@ package com.intellij.coldFusion;
 import com.intellij.coldFusion.UI.inspections.CfmlReferenceInspection;
 import com.intellij.coldFusion.model.CfmlLanguage;
 
-import java.util.concurrent.Callable;
-
 public class CfmlHighlighterTest extends CfmlCodeInsightFixtureTestCase {
 
-  protected void doTest() throws Exception {
+  protected void doTest() {
     myFixture.testHighlighting(true, false, true, Util.getInputDataFileName(getTestName(true)));
   }
 
-  public void testHighlightCfmlMixedWithJavascript() throws Exception {
+  public void testHighlightCfmlMixedWithJavascript() {
     doTest();
   }
 
-  public void testHighlightCfml10Tags() throws Exception {
+  public void testHighlightCfml10Tags() {
     myFixture.enableInspections(new CfmlReferenceInspection());
     doTest();
   }
@@ -43,17 +41,17 @@ public class CfmlHighlighterTest extends CfmlCodeInsightFixtureTestCase {
     }, CfmlLanguage.CF11, getProject());
   }
 
-  public void testSyntaxError() throws Exception {
+  public void testSyntaxError() {
     myFixture.enableInspections(new CfmlReferenceInspection());
     doTest();
   }
 
-  public void testAssertion() throws Exception {
+  public void testAssertion() {
     myFixture.enableInspections(new CfmlReferenceInspection());
     doTest();
   }
 
-  public void testAssertion2() throws Exception {
+  public void testAssertion2() {
     myFixture.enableInspections(new CfmlReferenceInspection());
     doTest();
   }

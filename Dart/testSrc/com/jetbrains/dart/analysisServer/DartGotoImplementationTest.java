@@ -28,7 +28,7 @@ public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
     return FileUtil.toSystemDependentName("/analysisServer/gotoImplementation");
   }
 
-  protected void doTest(int expectedLength) throws Throwable {
+  protected void doTest(int expectedLength) {
     myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.doHighlighting();
     doTestInner(expectedLength);
@@ -40,27 +40,27 @@ public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
     assertEquals(expectedLength, data.targets.length);
   }
 
-  public void testGti1() throws Throwable {
+  public void testGti1() {
     doTest(2);
   }
 
-  public void testGti2() throws Throwable {
+  public void testGti2() {
     doTest(1);
   }
 
-  public void testGti3() throws Throwable {
+  public void testGti3() {
     doTest(2);
   }
 
-  public void testGti4() throws Throwable {
+  public void testGti4() {
     doTest(1);
   }
 
-  public void testMixin1() throws Throwable {
+  public void testMixin1() {
     doTest(1);
   }
 
-  public void testOperator() throws Throwable {
+  public void testOperator() {
     doTest(3);
   }
 

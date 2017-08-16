@@ -55,7 +55,7 @@ public class FlexConvertToLocalTest extends BaseJSIntentionTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testAll() throws Exception {
+  public void testAll() {
     doTestAll();
   }
 }

@@ -16,10 +16,10 @@
 package jetbrains.communicator.core.transport;
 
 import com.intellij.openapi.util.io.FileUtil;
+import jetbrains.communicator.mock.MockTransport;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import jetbrains.communicator.mock.MockTransport;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +58,7 @@ public class EventFactoryTest {
     }
 
     @Override
-    protected void runTest() throws Throwable {
+    protected void runTest() {
       MessageEvent event = EventFactory.createMessageEvent(new MockTransport(), "user", myData[0]);
       assertEquals("Wrong message extracted", myData[1], event.getMessage());
 

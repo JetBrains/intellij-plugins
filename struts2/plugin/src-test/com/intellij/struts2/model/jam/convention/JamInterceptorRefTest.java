@@ -31,13 +31,13 @@ public class JamInterceptorRefTest extends JamConventionLightTestCase {
     return "interceptorRef";
   }
 
-  public void testCompletionActionSingle() throws Exception {
+  public void testCompletionActionSingle() {
     createStrutsFileSet(STRUTS_XML);
     myFixture.testCompletionVariants("/completion/ActionSingle.java",
                                      "myCustomInterceptor", "myInterceptorStack");
   }
 
-  public void testResolveActionSingle() throws Exception {
+  public void testResolveActionSingle() {
     createStrutsFileSet(STRUTS_XML);
     myFixture.copyFileToProject("jam/ActionSingle.java");
 

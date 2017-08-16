@@ -65,7 +65,7 @@ public class UIUtilTest extends BaseTestCase {
     assertTrue("should have been run", wasRun[0]);
   }
 
-  public void testCancelProcess() throws Exception {
+  public void testCancelProcess() {
     Runnable runnable = () -> {
       myIndicator.setCancelled();
       try {

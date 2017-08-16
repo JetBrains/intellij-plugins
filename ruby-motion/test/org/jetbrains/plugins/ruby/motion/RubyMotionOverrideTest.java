@@ -37,21 +37,21 @@ public class RubyMotionOverrideTest extends RubyMotionLightFixtureTestCase {
     return "testApp";
   }
 
-  public void testNoParams() throws Exception {
+  public void testNoParams() {
     myFixture.configureByFiles("app/test_controller.rb", "app/app_delegate.rb", "Rakefile");
     doTest("viewDidLoad", "def viewDidLoad\n" +
                           "  super\n" +
                           "end");
   }
 
-  public void testOneParam() throws Exception {
+  public void testOneParam() {
     myFixture.configureByFiles("app/test_controller.rb", "app/app_delegate.rb", "Rakefile");
     doTest("addChildViewController:", "def addChildViewController(childController)\n" +
                                       "  super\n" +
                                       "end");
   }
 
-  public void testNamedParam() throws Exception {
+  public void testNamedParam() {
     myFixture.configureByFiles("app/test_controller.rb", "app/app_delegate.rb", "Rakefile");
     doTest("setToolbarItems:animated:", "def setToolbarItems(toolbarItems, animated:animated)\n" +
                                         "  super\n" +
@@ -59,7 +59,7 @@ public class RubyMotionOverrideTest extends RubyMotionLightFixtureTestCase {
   }
 
 
-  private void doTest(@NotNull final String name, @NotNull final String result) throws Exception {
+  private void doTest(@NotNull final String name, @NotNull final String result) {
     final Symbol controller = SymbolUtil.findSymbol(getProject(), Type.CLASS, "TestController", null);
     assertNotNull(controller);
     final List<ClassMember> list = RubyOverrideHandler.createOverrideMembers(controller, myFixture.getFile());

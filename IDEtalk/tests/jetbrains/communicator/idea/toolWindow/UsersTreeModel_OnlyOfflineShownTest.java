@@ -17,9 +17,9 @@ package jetbrains.communicator.idea.toolWindow;
 
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ui.tree.TreeUtil;
-import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.OptionFlag;
 import jetbrains.communicator.core.TestFactory;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.dispatcher.LocalMessageDispatcherImpl;
 import jetbrains.communicator.core.transport.EventFactory;
 import jetbrains.communicator.core.users.SettingsChanged;
@@ -57,7 +57,7 @@ public class UsersTreeModel_OnlyOfflineShownTest extends BaseTestCase {
     getBroadcaster().fireEvent(new SettingsChanged());
   }
 
-  public void testHideOfflineUsers() throws Exception {
+  public void testHideOfflineUsers() {
     myTree.expandRow(2);
     myTree.expandRow(1);
 
@@ -71,7 +71,7 @@ public class UsersTreeModel_OnlyOfflineShownTest extends BaseTestCase {
     assertEquals(7 + 1, myTree.getRowCount());
   }
 
-  public void testOfflineUserWithMessage() throws Exception {
+  public void testOfflineUserWithMessage() {
     myTree.expandRow(2);
     myTree.expandRow(1);
 

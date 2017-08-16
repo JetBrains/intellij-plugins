@@ -31,13 +31,13 @@ public class ActionPropertyReferenceProviderTest extends BasicLightHighlightingT
     return "reference/jsp/actionproperty";
   }
 
-  public void testActionPropertyParamHighlighting() throws Throwable {
+  public void testActionPropertyParamHighlighting() {
     myFixture.copyFileToProject("MyAction.java");
     createStrutsFileSet("struts-actionproperty.xml");
     myFixture.testHighlighting(true, false, false, "/jsp/actionproperty-param-highlighting.jsp");
   }
 
-  public void testActionPropertyFormInputHighlighting() throws Throwable {
+  public void testActionPropertyFormInputHighlighting() {
     myFixture.copyFileToProject("MyAction.java");
     createStrutsFileSet("struts-actionproperty.xml");
     myFixture.testHighlighting(true, false, false, "/jsp/actionproperty-forminput-highlighting.jsp");

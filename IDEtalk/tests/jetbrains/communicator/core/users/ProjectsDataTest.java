@@ -15,9 +15,9 @@
  */
 package jetbrains.communicator.core.users;
 
-import junit.framework.TestCase;
 import jetbrains.communicator.core.vfs.ProjectsData;
 import jetbrains.communicator.core.vfs.VFile;
+import junit.framework.TestCase;
 
 /**
  * @author kir
@@ -31,7 +31,7 @@ public class ProjectsDataTest extends TestCase {
     myProjectsData = new ProjectsData();
   }
 
-  public void testProjectFiles() throws Exception {
+  public void testProjectFiles() {
 
     myProjectsData.setProjectFiles("project1", new VFile[] {
               VFile.create("path/to/file", true),
@@ -55,7 +55,7 @@ public class ProjectsDataTest extends TestCase {
 
   }
 
-  public void testSerializeDeserialize() throws Exception {
+  public void testSerializeDeserialize() {
     myProjectsData.setProjectFiles("project1", new VFile[]{
               VFile.create("a path")
     });
@@ -67,7 +67,7 @@ public class ProjectsDataTest extends TestCase {
     assertEquals(1, userStatus1.getProjectFiles("project1").length);
   }
 
-  public void testNonProjectFile() throws Exception {
+  public void testNonProjectFile() {
     myProjectsData.addNonProjectFile(VFile.create("a path"));
     myProjectsData.addNonProjectFile(VFile.create("a path2"));
 
@@ -77,7 +77,7 @@ public class ProjectsDataTest extends TestCase {
     assertEquals("a path2", myProjectsData.getNonProjectFiles()[1].getContentPath());
   }
 
-  public void testProjectNameInFileInfo() throws Exception {
+  public void testProjectNameInFileInfo() {
 
     VFile fileInfo = VFile.create("Path");
     myProjectsData.setProjectFiles(VFile.PROJECT_NAME_ATTR, new VFile[]{fileInfo});

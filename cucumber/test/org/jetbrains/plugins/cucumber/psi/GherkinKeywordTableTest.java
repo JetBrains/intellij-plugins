@@ -9,12 +9,12 @@ public class GherkinKeywordTableTest {
   private final GherkinKeywordTable keywordTable = new GherkinKeywordTable();
 
   @Test
-  public void initiallyTheTableDoesNotContainAKeyword() throws Exception {
+  public void initiallyTheTableDoesNotContainAKeyword() {
     assertThat(keywordTable.tableContainsKeyword(GherkinTokenTypes.FEATURE_KEYWORD, "keyword"), is(false));
   }
 
   @Test
-  public void giveInformationAboutContainedKeys() throws Exception {
+  public void giveInformationAboutContainedKeys() {
     keywordTable.put(GherkinTokenTypes.FEATURE_KEYWORD, "keyword");
     assertThat(keywordTable.tableContainsKeyword(GherkinTokenTypes.FEATURE_KEYWORD, "keyword"), is(true));
   }

@@ -11,7 +11,7 @@ public class MarkdownRtlTest extends AbstractRtlTest {
                                             "* |~RRR~|\n" +
                                             "|RRRRRR";
 
-  public void testBasicCase() throws Exception {
+  public void testBasicCase() {
     checkBidiRunBoundaries(SAMPLE_TEXT, "md");
   }
 }

@@ -20,15 +20,15 @@ public class DartGenerateActionInHtmlTest extends DartGenerateActionTestBase {
     configureByFile(getTestName(false) + ".html");
   }
 
-  public void testImplement3() throws Throwable {
+  public void testImplement3() {
     doImplementTest();
   }
 
-  public void testOverride3() throws Throwable {
+  public void testOverride3() {
     doOverrideTest();
   }
 
-  public void testGetterSetter3() throws Throwable {
+  public void testGetterSetter3() {
     doGetterSetterTest(CreateGetterSetterFix.Strategy.GETTERSETTER);
   }
 }

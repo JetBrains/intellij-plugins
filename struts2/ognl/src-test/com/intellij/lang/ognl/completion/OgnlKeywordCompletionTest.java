@@ -24,12 +24,12 @@ import static com.intellij.lang.ognl.psi.OgnlKeyword.*;
  */
 public class OgnlKeywordCompletionTest extends OgnlCompletionTestCase {
 
-  public void testEmptyExpression() throws  Throwable{
+  public void testEmptyExpression() {
     doTest("<caret>",
            NEW);
   }
 
-  public void testAfterPlainReference() throws Throwable {
+  public void testAfterPlainReference() {
     doTest("reference <caret> ",
            SHL, SHR, USHR,
            AND, BAND, OR, BOR, XOR,
@@ -38,7 +38,7 @@ public class OgnlKeywordCompletionTest extends OgnlCompletionTestCase {
            INSTANCEOF);
   }
 
-  public void testAfterSimpleExpression() throws Throwable {
+  public void testAfterSimpleExpression() {
     doTest("1 + 2 <caret> ",
            SHL, SHR, USHR,
            AND, BAND, OR, BOR, XOR,
@@ -46,31 +46,31 @@ public class OgnlKeywordCompletionTest extends OgnlCompletionTestCase {
            IN, NOT_IN);
   }
 
-  public void testAfterQuestion() throws Throwable {
+  public void testAfterQuestion() {
     doTest("reference ? <caret> ",
            FALSE, TRUE, NULL, NEW);
   }
 
-  public void testAfterColon() throws Throwable {
+  public void testAfterColon() {
     doTest("reference ? 1 : <caret> ",
            FALSE, TRUE, NULL, NEW);
   }
 
-  public void testAfterEquals() throws Throwable {
+  public void testAfterEquals() {
     doTest("reference == <caret> ",
            FALSE, TRUE, NULL);
   }
 
-  public void testAfterAnd() throws Throwable {
+  public void testAfterAnd() {
     doTest("reference && <caret> ",
            FALSE, TRUE, NULL);
   }
 
-  public void testAfterNewNoKeywords() throws Throwable {
+  public void testAfterNewNoKeywords() {
     doTest("new <caret>");
   }
 
-  public void testAfterVariableAssignment() throws Throwable {
+  public void testAfterVariableAssignment() {
     doTest("#var = <caret>",
            FALSE, TRUE, NULL, NEW);
   }

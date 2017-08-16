@@ -26,7 +26,6 @@ import jetbrains.communicator.ide.ProgressIndicator;
 import jetbrains.communicator.util.WaitFor;
 import org.jmock.Mock;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
@@ -57,7 +56,7 @@ public class UserMonitorThread_WaitingForNextSearch_Test extends BaseTestCase {
       }
 
       @Override
-      public void sendMulticastPingRequest() throws IOException {
+      public void sendMulticastPingRequest() {
         started[0] = true;
       }
     };

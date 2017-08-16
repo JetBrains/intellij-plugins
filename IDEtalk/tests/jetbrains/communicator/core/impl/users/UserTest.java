@@ -15,8 +15,8 @@
  */
 package jetbrains.communicator.core.impl.users;
 
-import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.Pico;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserEvent;
 import jetbrains.communicator.core.users.UserModel;
@@ -40,19 +40,19 @@ public class UserTest extends BaseTestCase {
     myUserModel = createUserModel();
   }
 
-  public void testGroup() throws Exception {
+  public void testGroup() {
     assertGroup(UserModel.DEFAULT_GROUP, null);
     assertGroup(UserModel.DEFAULT_GROUP, "");
     assertGroup(UserModel.DEFAULT_GROUP, "  ");
     assertGroup("foo", " foo  ");
   }
 
-  public void testNoTransport() throws Exception {
+  public void testNoTransport() {
     User user = UserImpl.create("user", "ddd");
     assertFalse(user.isOnline());
   }
 
-  public void testIsOnline() throws Exception {
+  public void testIsOnline() {
 
     assertFalse(myUser.isOnline());
 
@@ -74,7 +74,7 @@ public class UserTest extends BaseTestCase {
     assertEquals(expectedGroup, myUser.getGroup());
   }
 
-  public void testSetGroupWithUserModel() throws Throwable {
+  public void testSetGroupWithUserModel() {
     assertEquals(UserModel.DEFAULT_GROUP, myUser.getGroup());
 
     addEventListener();
@@ -92,7 +92,7 @@ public class UserTest extends BaseTestCase {
     verifyUpdateEvent("group", "anotherGroup", "alexandria");
   }
 
-  public void testSetDisplayNameWithUserModel() throws Throwable {
+  public void testSetDisplayNameWithUserModel() {
     addEventListener();
     myUser.setDisplayName("anotherName", myUserModel);
     assertEquals("No events expected when user is not in model", 0, myEvents.size());
@@ -114,7 +114,7 @@ public class UserTest extends BaseTestCase {
     return userModel;
   }
 
-  public void testSetEmptyDisplayName() throws Throwable {
+  public void testSetEmptyDisplayName() {
     myUserModel.addUser(myUser);
 
     addEventListener();
@@ -128,7 +128,7 @@ public class UserTest extends BaseTestCase {
     assertEquals("Empty name - not changed", "someUser", myUser.getDisplayName());
   }
 
-  public void testSetCanAccess_AnotherUser() throws Throwable {
+  public void testSetCanAccess_AnotherUser() {
     User sameUser = UserImpl.create(myUser.getName(), myUser.getTransportCode());
 
     sameUser.setCanAccessMyFiles(true, myUserModel);
@@ -140,7 +140,7 @@ public class UserTest extends BaseTestCase {
     assertTrue("Change expected for user in model", myUser.canAccessMyFiles());
   }
 
-  public void testSetCanAccess() throws Throwable {
+  public void testSetCanAccess() {
 
     assertFalse("Should not be able to access my files",
         myUser.canAccessMyFiles());
@@ -160,7 +160,7 @@ public class UserTest extends BaseTestCase {
     verifyUpdateEvent("canAccessMyFiles", Boolean.TRUE, Boolean.FALSE);
   }
 
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(myUser, UserImpl.create(myUser.getName(), myUser.getTransportCode()));
   }
 

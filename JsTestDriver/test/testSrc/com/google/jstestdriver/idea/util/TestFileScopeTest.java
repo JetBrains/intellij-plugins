@@ -14,7 +14,7 @@ import java.util.Set;
 public class TestFileScopeTest {
 
   @Test
-  public void testSerialization() throws Exception {
+  public void testSerialization() {
     String testCaseName = "Difference";
     String testMethodName = "test One value on left and other value on right, gives empty object";
     Map<String, Set<String>> methodByCaseMap = Collections.singletonMap(testCaseName,

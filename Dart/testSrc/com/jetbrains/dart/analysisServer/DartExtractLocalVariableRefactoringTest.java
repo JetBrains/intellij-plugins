@@ -30,12 +30,12 @@ public class DartExtractLocalVariableRefactoringTest extends CodeInsightFixtureT
     return "/analysisServer/refactoring/extract/localVariable";
   }
 
-  public void testExpressionAll() throws Throwable {
+  public void testExpressionAll() {
     final String testName = getTestName(false);
     doTest(testName + ".dart", true);
   }
 
-  public void testExpressionSingle() throws Throwable {
+  public void testExpressionSingle() {
     final String testName = getTestName(false);
     doTest(testName + ".dart", false);
   }

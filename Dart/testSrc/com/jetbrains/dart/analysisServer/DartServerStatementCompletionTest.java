@@ -24,7 +24,7 @@ public class DartServerStatementCompletionTest extends CodeInsightFixtureTestCas
     myFixture.checkResult(after);
   }
 
-  public void testIfBlock() throws Exception {
+  public void testIfBlock() {
     doTest(
       "main() {\n" +
       "  if (true)<caret>\n" +
@@ -37,7 +37,7 @@ public class DartServerStatementCompletionTest extends CodeInsightFixtureTestCas
     );
   }
 
-  public void testWhileBlock() throws Exception {
+  public void testWhileBlock() {
     doTest(
       "main() {\n" +
       "  while (true)<caret>\n" +

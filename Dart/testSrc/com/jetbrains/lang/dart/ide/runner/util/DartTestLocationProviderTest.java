@@ -33,27 +33,27 @@ public class DartTestLocationProviderTest extends DartCodeInsightFixtureTestCase
     assertEquals(targetId, foundId);
   }
 
-  public void testSingleTest() throws Exception {
+  public void testSingleTest() {
     doTest("[foo]", "main() {\n" +
                     "  <caret>test('foo', () => expect(true, true));\n" +
                     "}");
   }
 
-  public void testMultipleTests() throws Exception {
+  public void testMultipleTests() {
     doTest("[bar]", "main() {\n" +
                     "  test('foo', () => expect(true, true));\n" +
                     "  <caret>test('bar', () => expect(true, true));\n" +
                     "}");
   }
 
-  public void testMultipleTests2() throws Exception {
+  public void testMultipleTests2() {
     doTest("[foo]", "main() {\n" +
                     "  <caret>test('foo', () => expect(true, true));\n" +
                     "  test('bar', () => expect(true, true));\n" +
                     "}");
   }
 
-  public void testGroupedTest() throws Exception {
+  public void testGroupedTest() {
     doTest("[foo,bar]", "main() {\n" +
                         "  group('foo', () {\n" +
                         "    <caret>test('bar', () => expect(true, true));\n" +
@@ -61,7 +61,7 @@ public class DartTestLocationProviderTest extends DartCodeInsightFixtureTestCase
                         "}");
   }
 
-  public void testGroupedTest2() throws Exception {
+  public void testGroupedTest2() {
     doTest("[foo,bar]", "main() {\n" +
                         "  group('foo', () {\n" +
                         "    <caret>test('bar', () => expect(true, true));\n" +
@@ -72,7 +72,7 @@ public class DartTestLocationProviderTest extends DartCodeInsightFixtureTestCase
                         "}");
   }
 
-  public void testGroupedTest3() throws Exception {
+  public void testGroupedTest3() {
     doTest("[baz,bar]", "main() {\n" +
                         "  group('foo', () {\n" +
                         "    test('bar', () => expect(true, true));\n" +
@@ -83,7 +83,7 @@ public class DartTestLocationProviderTest extends DartCodeInsightFixtureTestCase
                         "}");
   }
 
-  public void testGroupedTest4() throws Exception {
+  public void testGroupedTest4() {
     doTest("[foo,bar]", "main() {\n" +
                         "  group('foo', () {\n" +
                         "    <caret>test('bar', () => expect(true, true));\n" +
@@ -92,7 +92,7 @@ public class DartTestLocationProviderTest extends DartCodeInsightFixtureTestCase
                         "}");
   }
 
-  public void testGroupedTest5() throws Exception {
+  public void testGroupedTest5() {
     doTest("[foo,bar,baz]", "main() {\n" +
                             "  group('foo', () {\n" +
                             "    group('bar', () {\n" +
@@ -102,7 +102,7 @@ public class DartTestLocationProviderTest extends DartCodeInsightFixtureTestCase
                             "}");
   }
 
-  public void testGroup() throws Exception {
+  public void testGroup() {
     doTest("[foo]", "main() {\n" +
                     "  <caret>group('foo', () {\n" +
                     "    test('bar', () => expect(true, true));\n" +

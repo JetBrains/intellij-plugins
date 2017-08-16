@@ -31,18 +31,18 @@ public class CfmlFoldingTest extends CfmlCodeInsightFixtureTestCase {
     myFixture.testFolding(getTestDataPath() + "/" + getTestName(false) + ".test.cfml");
   }
 
-  public void testComments() throws Throwable {
+  public void testComments() {
     doTest();
   }
 
-  public void testMethods() throws Throwable {
+  public void testMethods() {
     boolean oldValue = CodeFoldingSettings.getInstance().COLLAPSE_METHODS;
     CodeFoldingSettings.getInstance().COLLAPSE_METHODS = true;
     myFixture.testFoldingWithCollapseStatus(getTestDataPath() + "/" + getTestName(false) + ".test.cfml");
     CodeFoldingSettings.getInstance().COLLAPSE_METHODS = oldValue;
   }
 
-  public void testIfSwitchLoop() throws Throwable {
+  public void testIfSwitchLoop() {
     myFixture.testFoldingWithCollapseStatus(getTestDataPath() + "/" + getTestName(false) + ".test.cfml");
   }
 }

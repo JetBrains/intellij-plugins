@@ -58,49 +58,49 @@ public class AngularTypedHandlerTest extends LightPlatformCodeInsightFixtureTest
     }
   }
 
-  public void testOneSymbolDelimiterStartCompletes() throws Exception {
+  public void testOneSymbolDelimiterStartCompletes() {
     myFixture.configureByText(HtmlFileType.INSTANCE, "<caret>");
     doInterpolationBracesCompleterTest("$", "#", '$', true);
     myFixture.checkResult("$ <caret> #");
   }
 
-  public void testMixedDelimitersAlreadyHasEnding() throws Exception {
+  public void testMixedDelimitersAlreadyHasEnding() {
     myFixture.configureByText(HtmlFileType.INSTANCE, "$<caret>#");
     doInterpolationBracesCompleterTest("$$", "#", '$', false);
     myFixture.checkResult("$$<caret>#");
   }
 
-  public void testMixedDelimitersCompletionNoStartTypeOver() throws Exception {
+  public void testMixedDelimitersCompletionNoStartTypeOver() {
     myFixture.configureByText(HtmlFileType.INSTANCE, "$<caret>$");
     doInterpolationBracesCompleterTest("$$", "#", '$', false);
     myFixture.checkResult("$$<caret>#$");
   }
 
-  public void testOneSymbolDelimiterEndAdded() throws Exception {
+  public void testOneSymbolDelimiterEndAdded() {
     myFixture.configureByText(HtmlFileType.INSTANCE, "$<caret>");
     doInterpolationBracesCompleterTest("$", "$", '$', false);
     myFixture.checkResult("$$<caret>");
   }
 
-  public void testOneSymbolDelimiterTypeOver() throws Exception {
+  public void testOneSymbolDelimiterTypeOver() {
     myFixture.configureByText(HtmlFileType.INSTANCE, "$<caret>$");
     doInterpolationBracesCompleterTest("$", "$", '$', false);
     myFixture.checkResult("$$<caret>");
   }
 
-  public void testOneSymbolDelimiterTypeOverOneSymbol() throws Exception {
+  public void testOneSymbolDelimiterTypeOverOneSymbol() {
     myFixture.configureByText(HtmlFileType.INSTANCE, "<caret>$");
     doInterpolationBracesCompleterTest("#", "$", '$', false);
     myFixture.checkResult("$<caret>");
   }
 
-  public void testThreeSymbolDelimiters() throws Exception {
+  public void testThreeSymbolDelimiters() {
     myFixture.configureByText(HtmlFileType.INSTANCE, "{{<caret>");
     doInterpolationBracesCompleterTest("{{{", "}}}", '{', false);
     myFixture.checkResult("{{{<caret>}}}");
   }
 
-  public void testThreeSymbolDelimitersEndTypeOver() throws Exception {
+  public void testThreeSymbolDelimitersEndTypeOver() {
     myFixture.configureByText(HtmlFileType.INSTANCE, "{{{text}}<caret>}");
     doInterpolationBracesCompleterTest("{{{", "}}}", '}', false);
     myFixture.checkResult("{{{text}}}<caret>");

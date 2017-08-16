@@ -13,7 +13,6 @@ import com.intellij.execution.lineMarker.ExecutorAction;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -41,14 +40,14 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
     index2Cfm = createCfmPsiFile("index2.cfm");
   }
 
-  public void testDefaultRunConfiguration() throws IOException {
+  public void testDefaultRunConfiguration() {
     final CfmlRunConfiguration configuration = getDefaultCfmlRunConfiguration();
     final String url = configuration.getRunnerParameters().getUrl();
     TestCase.assertEquals(true, StringUtil.startsWith(url, "http://localhost:8500/"));
     TestCase.assertEquals(false, StringUtil.startsWith(url, "http://localhost:8500//"));
   }
 
-  public CfmlRunConfiguration getDefaultCfmlRunConfiguration() throws IOException {
+  public CfmlRunConfiguration getDefaultCfmlRunConfiguration() {
     final Project project = myFixture.getProject();
     final Editor editor = openCfmFileInEditor(indexCfm);
     final Presentation presentation = getPresentationForRunAction(editor);
@@ -73,7 +72,7 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
     return (CfmlRunConfiguration)configuration;
   }
 
-  public void generateNonDefaultRunConfiguration() throws IOException, ConfigurationException {
+  public void generateNonDefaultRunConfiguration() {
     final CfmlRunConfiguration defaultCfmlRunConfiguration = getDefaultCfmlRunConfiguration();
     final CfmlRunConfiguration clonedConfiguration = (CfmlRunConfiguration) defaultCfmlRunConfiguration.clone();
     clonedConfiguration.getRunnerParameters().setUrl("http://4.4.4.4/src/index.cfm");
@@ -100,7 +99,7 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
     return (CfmlRunConfiguration)configuration.getConfiguration();
   }
 
-  public void testNonDefaultRunConfiguration() throws IOException, ConfigurationException {
+  public void testNonDefaultRunConfiguration() throws IOException {
     generateNonDefaultRunConfiguration();
     final Editor editor = myFixture.getEditor();
     final CfmlRunConfiguration cfmlConfig = getContextRunConfiguration(editor);
@@ -110,7 +109,7 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
   }
 
 
-  public void testCreateContextRunConfiguration() throws IOException, ConfigurationException {
+  public void testCreateContextRunConfiguration() throws IOException {
     generateNonDefaultRunConfiguration();
     final Editor editor = openCfmFileInEditor(index2Cfm);
     final CfmlRunConfiguration configuration = getContextRunConfiguration(editor);
@@ -135,7 +134,7 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   @Nullable
-  public Editor openCfmFileInEditor(PsiFile cfmFile) throws IOException {
+  public Editor openCfmFileInEditor(PsiFile cfmFile) {
     myFixture.openFileInEditor(cfmFile.getVirtualFile());
     final Editor editor = myFixture.getEditor();
     myFixture.openFileInEditor(cfmFile.getVirtualFile());

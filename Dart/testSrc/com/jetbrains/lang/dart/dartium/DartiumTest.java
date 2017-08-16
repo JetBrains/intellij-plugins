@@ -22,7 +22,7 @@ public class DartiumTest extends TestCase {
     assertEquals(expectedDartFlagsAfter, envVars.get("DART_FLAGS"));
   }
 
-  public void testCheckedMode() throws Exception {
+  public void testCheckedMode() {
     doTest(null, false, null);
     doTest("foo bar", false, "foo bar");
     doTest("--checked", false, null);

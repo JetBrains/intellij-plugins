@@ -47,23 +47,23 @@ public class DartServerImplementationsMarkerProviderTest extends CodeInsightFixt
     return false;
   }
 
-  public void testClassExtended() throws Throwable {
+  public void testClassExtended() {
     checkHasGutterAtCaret("Has subclasses", AllIcons.Gutter.OverridenMethod);
   }
 
-  public void testClassImplemented() throws Throwable {
+  public void testClassImplemented() {
     checkHasGutterAtCaret("Has subclasses", AllIcons.Gutter.OverridenMethod);
   }
 
-  public void testMethodExtended() throws Throwable {
+  public void testMethodExtended() {
     checkHasGutterAtCaret("Is overridden in subclasses", AllIcons.Gutter.OverridenMethod);
   }
 
-  public void testMethodImplemented() throws Throwable {
+  public void testMethodImplemented() {
     checkHasGutterAtCaret("Is overridden in subclasses", AllIcons.Gutter.OverridenMethod);
   }
 
-  public void testOperatorOverridden() throws Throwable {
+  public void testOperatorOverridden() {
     checkHasGutterAtCaret("Is overridden in subclasses", AllIcons.Gutter.OverridenMethod);
   }
 }

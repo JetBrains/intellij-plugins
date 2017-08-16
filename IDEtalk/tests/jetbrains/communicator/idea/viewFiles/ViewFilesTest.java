@@ -15,8 +15,8 @@
  */
 package jetbrains.communicator.idea.viewFiles;
 
-import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.Pico;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.vfs.ProjectsData;
 import jetbrains.communicator.core.vfs.VFile;
 import jetbrains.communicator.ide.IDEFacade;
@@ -42,7 +42,7 @@ public class ViewFilesTest extends BaseTestCase {
     myUser = new MockUser();
   }
 
-  public void testTree_OneFileInProject() throws Exception {
+  public void testTree_OneFileInProject() {
     ProjectsData projectsData = new ProjectsData();
     projectsData.setProjectFiles("ideTalk",
         new VFile[]{
@@ -56,7 +56,7 @@ public class ViewFilesTest extends BaseTestCase {
     });
   }
 
-  public void testTree_FileNotInProject() throws Exception {
+  public void testTree_FileNotInProject() {
     ProjectsData projectsData = new ProjectsData();
     projectsData.addNonProjectFile(VFile.create("log4j.xml"));
 
@@ -67,7 +67,7 @@ public class ViewFilesTest extends BaseTestCase {
     });
   }
 
-  public void testTree_ProjectAndNonProjectFiles() throws Exception {
+  public void testTree_ProjectAndNonProjectFiles() {
     ProjectsData projectsData = new ProjectsData();
     projectsData.addNonProjectFile(VFile.create("log4j.xml"));
     projectsData.setProjectFiles("ideTalk",
@@ -85,7 +85,7 @@ public class ViewFilesTest extends BaseTestCase {
     });
   }
 
-  public void testTree_SortProjects() throws Exception {
+  public void testTree_SortProjects() {
     ProjectsData projectsData = new ProjectsData();
     projectsData.setProjectFiles("aaa", new VFile[0]);
     projectsData.setProjectFiles("ccc", new VFile[0]);
@@ -99,7 +99,7 @@ public class ViewFilesTest extends BaseTestCase {
     });
   }
 
-  public void testTree_SortFilesInProject() throws Exception {
+  public void testTree_SortFilesInProject() {
     ProjectsData projectsData = new ProjectsData();
     projectsData.setProjectFiles("ideTalk", new VFile[]{
               VFile.create("aaa"),
@@ -116,7 +116,7 @@ public class ViewFilesTest extends BaseTestCase {
     });
   }
 
-  public void testHideReadOnly() throws Exception {
+  public void testHideReadOnly() {
 
     myViewFilesPanel.showReadOnly(true);
 
@@ -143,7 +143,7 @@ public class ViewFilesTest extends BaseTestCase {
     });
   }
 
-  public void testHideReadOnly_FromPrefs() throws Exception {
+  public void testHideReadOnly_FromPrefs() {
 
     boolean roState = myOptions.isSet(ViewFilesPanel.SHOW_READ_ONLY_KEY, true);
     assertEquals(roState, myViewFilesPanel.isReadOnlyShown());

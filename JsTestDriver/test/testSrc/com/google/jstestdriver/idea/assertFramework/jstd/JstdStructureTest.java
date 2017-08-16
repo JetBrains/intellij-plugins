@@ -2,7 +2,6 @@ package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.google.jstestdriver.idea.JstdTestRoot;
 import com.intellij.javascript.testFramework.AbstractJsPsiTestCase;
-import com.intellij.javascript.testFramework.JsTestCommonTestUtil;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.psi.PsiElement;
@@ -60,7 +59,7 @@ public class JstdStructureTest extends AbstractJsPsiTestCase {
   }
 
   @Override
-  protected void validateJsFile(JSFile jsFile, String fileText) throws Exception {
+  protected void validateJsFile(JSFile jsFile, String fileText) {
     JstdTestFileStructure jsTestFileStructure = buildJsTestFileStructureByJsFile(jsFile);
     MarkedJsTestFileStructure markedJsTestFileStructure = MarkedJstdTestStructureUtils.buildMarkedJsTestFileStructureByFileText(
       fileText, jsFile
@@ -69,7 +68,7 @@ public class JstdStructureTest extends AbstractJsPsiTestCase {
   }
 
   @NotNull
-  private static JstdTestFileStructure buildJsTestFileStructureByJsFile(@NotNull JSFile jsFile) throws Exception {
+  private static JstdTestFileStructure buildJsTestFileStructureByJsFile(@NotNull JSFile jsFile) {
     JstdTestFileStructure jsTestFileStructure = JstdTestFileStructureBuilder.getInstance().buildTestFileStructure(jsFile);
     Assert.assertTrue(jsTestFileStructure.getJsFile() == jsFile);
     return jsTestFileStructure;

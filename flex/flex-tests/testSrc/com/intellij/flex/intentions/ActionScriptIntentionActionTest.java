@@ -20,7 +20,7 @@ public class ActionScriptIntentionActionTest extends LightCodeInsightFixtureTest
     return super.getBasePath();
   }
 
-  public void testSplitDeclarationAndInitialization() throws Throwable {
+  public void testSplitDeclarationAndInitialization() {
     final String dirName = "splitDeclarationAndInitialization";
 
     final String intentionActionName = JSIntentionBundle.message("initialization.split-declaration-and-initialization.display-name");
@@ -31,7 +31,7 @@ public class ActionScriptIntentionActionTest extends LightCodeInsightFixtureTest
     doIntentionTest(dirName, "4", intentionActionName);
   }
 
-  public void testMergeDeclarationAndInitialization() throws Throwable {
+  public void testMergeDeclarationAndInitialization() {
     final String dirName = "mergeDeclarationAndInitialization/";
 
     final String intentionActionName = JSIntentionBundle.message("initialization.merge-declaration-and-initialization.display-name");
@@ -39,7 +39,7 @@ public class ActionScriptIntentionActionTest extends LightCodeInsightFixtureTest
     doIntentionTest(dirName, "", intentionActionName);
   }
 
-  public void testJoinConcatenatedStringLiterals() throws Throwable {
+  public void testJoinConcatenatedStringLiterals() {
     String actionName = JSIntentionBundle.message("string.join-concatenated-string-literals.display-name");
     String directory = "JoinConcatenatedStringLiterals/";
     doIntentionTest(directory, "", actionName);

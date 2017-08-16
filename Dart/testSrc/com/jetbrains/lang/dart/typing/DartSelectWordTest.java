@@ -18,14 +18,14 @@ public class DartSelectWordTest extends LightPlatformCodeInsightFixtureTestCase 
     }
   }
 
-  public void testLineDocComment() throws Exception {
+  public void testLineDocComment() {
     doTest("/// foo bar<caret> baz",
            "/// foo <selection>bar</selection><caret> baz",
            "/// <selection>foo bar<caret> baz</selection>",
            "<selection>/// foo bar<caret> baz</selection>");
   }
 
-  public void testExpressionAndSemicolon() throws Exception {
+  public void testExpressionAndSemicolon() {
     doTest("main() {\n  pri<caret>nt  \n  (1);  \n}",
            "main() {\n  <selection>pri<caret>nt</selection>  \n  (1);  \n}",
            "main() {\n<selection>  pri<caret>nt  \n</selection>  (1);  \n}",

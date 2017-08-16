@@ -28,7 +28,7 @@ public class VFileTest extends TestCase {
     super.setUp();
   }
 
-  public void testSerializeDeserialize() throws Exception {
+  public void testSerializeDeserialize() {
     doSerializeTest("a path", "project",
                     "\u0441\u043e\u0434\u0435\u0440\u0436\u0430\u043d\u0438\u0435 \u043f\u0440\u0435\u0434\u044b\u0434\u0443\u0449\u0438\u0445 \u0441\u0435\u0440\u0438\u0439", false, null);
     doSerializeTest("a path", null,
@@ -39,7 +39,7 @@ public class VFileTest extends TestCase {
     doSerializeTest("a path", "project", null, true, "some/path");
   }
 
-  public void testNullContentPath() throws Exception {
+  public void testNullContentPath() {
     VFile file = VFile.create("path", true);
     file.setContentPath(null);
 
@@ -47,7 +47,7 @@ public class VFileTest extends TestCase {
     assertNull("Wrong path", res.getContentPath());
   }
 
-  public void testFQName() throws Exception {
+  public void testFQName() {
     VFile file = VFile.create("path", true);
     file.setFQName("a.b.x");
 

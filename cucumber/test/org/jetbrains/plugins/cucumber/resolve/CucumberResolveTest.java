@@ -33,14 +33,14 @@ public abstract class CucumberResolveTest extends CucumberCodeInsightTestCase {
     assertTrue(ok);
   }
 
-  public void doTest(@NotNull final String folder, @NotNull final String step, @Nullable final String stepDefinitionName) throws Exception {
+  public void doTest(@NotNull final String folder, @NotNull final String step, @Nullable final String stepDefinitionName) {
     init(folder);
 
     checkReference(step, stepDefinitionName);
   }
 
   public void doTest(@NotNull final String folder, @NotNull final String fileName, @NotNull final String step,
-                     @Nullable final String stepDefinitionName) throws Exception {
+                     @Nullable final String stepDefinitionName) {
     init(folder, fileName);
 
     checkReference(step, stepDefinitionName);

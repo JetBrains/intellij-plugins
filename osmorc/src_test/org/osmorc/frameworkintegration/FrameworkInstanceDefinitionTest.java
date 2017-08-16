@@ -9,7 +9,7 @@ import static org.junit.Assert.assertFalse;
 
 public class FrameworkInstanceDefinitionTest {
   @Test
-  public void comparison() throws Exception {
+  public void comparison() {
     assertEquals(define("Equinox", null), define("Equinox", null));
     assertEquals(define("Equinox", "3.6"), define("Equinox", null));
     assertFalse(define("Equinox", null).equals(define("Felix", null)));

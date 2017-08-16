@@ -172,17 +172,17 @@ public class FlexMoveTest extends JSMoveTestBase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testMoveClasses1() throws Exception {
+  public void testMoveClasses1() {
     doTest(new String[]{"a.MyClass", "a.MyFunc", "a.MyNs", "a.MyVar", "a.MyConst"}, "b", ArrayUtil.EMPTY_STRING_ARRAY);
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testImportForConstuctorUsage() throws Exception {
+  public void testImportForConstuctorUsage() {
     doTest(new String[]{"from.Test"}, "to", ArrayUtil.EMPTY_STRING_ARRAY);
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testConflicts1() throws Exception {
+  public void testConflicts1() {
     String[] conflicts = new String[]{
       "Class Subj1 with internal visibility won't be accessible from class Usage1",
       "Class Subj1 with internal visibility won't be accessible from field Usage1.f",
@@ -197,18 +197,18 @@ public class FlexMoveTest extends JSMoveTestBase {
     doTest(new String[]{"a.Subj1", "a.Subj2"}, "b", conflicts);
   }
 
-  public void testStarImport() throws Exception {
+  public void testStarImport() {
     doTest(new String[]{"from.Foo"}, "to", ArrayUtil.EMPTY_STRING_ARRAY);
   }
 
-  public void testNoWhitespaceForPackage() throws Exception {
+  public void testNoWhitespaceForPackage() {
     doTest(new String[]{"Test", "Test2"}, "com", ArrayUtil.EMPTY_STRING_ARRAY);
   }
 
-  private void doTestDirectoryWithClasses(final String[] toMove, final String target, final boolean justRename) throws Exception {
+  private void doTestDirectoryWithClasses(final String[] toMove, final String target, final boolean justRename) {
     doTest(new PerformAction() {
       @Override
-      public void performAction(VirtualFile rootDir, VirtualFile rootAfter) throws Exception {
+      public void performAction(VirtualFile rootDir, VirtualFile rootAfter) {
         Collection<PsiDirectory> dirsToMove = new ArrayList<>();
         for (String s : toMove) {
           final VirtualFile child = VfsUtilCore.findRelativeFile(s, rootDir);
@@ -251,7 +251,7 @@ public class FlexMoveTest extends JSMoveTestBase {
     });
   }
 
-  public void testRenameDirWithClasses() throws Exception {
+  public void testRenameDirWithClasses() {
     doTestDirectoryWithClasses(new String[]{"foo"}, "bar", true);
   }
 }

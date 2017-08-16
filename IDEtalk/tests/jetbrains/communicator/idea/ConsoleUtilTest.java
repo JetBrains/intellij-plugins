@@ -39,23 +39,23 @@ public class ConsoleUtilTest extends BaseTestCase {
     return (ConsoleView) myConsoleMock.proxy();
   }
 
-  public void testGetColor() throws Exception {
+  public void testGetColor() {
     Color color = ConsoleUtil.getColor("Alexey.Pegov");
     System.out.println("" + color);
   }
 
-  public void testPrintEmptyMessage() throws Exception {
+  public void testPrintEmptyMessage() {
     ConsoleUtil.printMessageIfExists(console(), "  ", null);
   }
 
-  public void testPrintNormalMessage() throws Exception {
+  public void testPrintNormalMessage() {
     myConsoleMock.expects(once()).method("print").with(eq("message"), eq(ConsoleViewContentType.USER_INPUT));
     myConsoleMock.expects(once()).method("print").with(eq("\n"), eq(ConsoleViewContentType.USER_INPUT));
 
     ConsoleUtil.printMessageIfExists(console(), "message", ConsoleViewContentType.USER_INPUT);
   }
 
-  public void testPrintMessageWithUrl() throws Exception {
+  public void testPrintMessageWithUrl() {
 
     myConsoleMock.expects(once()).method("print").with(eq("1 "), eq(null));
     myConsoleMock.expects(once()).method("printHyperlink").with(eq("httP://ww-_w.ru:81"), NOT_NULL);
@@ -68,7 +68,7 @@ public class ConsoleUtilTest extends BaseTestCase {
         "1 httP://ww-_w.ru:81. 2 ftp://dd/a.html#?we=32, 3", null);
   }
 
-  public void testPrintMessageWithUrl1() throws Exception {
+  public void testPrintMessageWithUrl1() {
 
     myConsoleMock.expects(once()).method("printHyperlink").with(eq("httP://ww-_w.ru"), NOT_NULL);
     myConsoleMock.expects(once()).method("print").with(eq("\n"), eq(null));
@@ -77,7 +77,7 @@ public class ConsoleUtilTest extends BaseTestCase {
         "httP://ww-_w.ru", null);
   }
 
-  public void testPrintMessageWithUrl2() throws Exception {
+  public void testPrintMessageWithUrl2() {
 
     myConsoleMock.expects(once()).method("printHyperlink").with(eq("http://www.livejournal.com/community/ideabook/19930.html?nc=4&style=mine"), NOT_NULL);
     myConsoleMock.expects(once()).method("print").with(eq("\n"), eq(null));

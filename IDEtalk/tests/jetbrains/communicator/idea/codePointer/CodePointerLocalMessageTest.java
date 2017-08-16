@@ -25,7 +25,7 @@ import jetbrains.communicator.mock.MockTransport;
  * @author kir
  */
 public class CodePointerLocalMessageTest extends BaseTestCase {
-  public void testGetLinkText() throws Exception {
+  public void testGetLinkText() {
     testLinkText("a file (2..4)", "a file", 1, 3);
 
     testLinkText("file (2..4)", "a path/file", 1, 3);

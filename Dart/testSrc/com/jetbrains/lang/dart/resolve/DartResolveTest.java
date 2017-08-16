@@ -18,7 +18,7 @@ import static com.jetbrains.dart.analysisServer.DartServerResolverTest.doTest;
 
 public class DartResolveTest extends DartCodeInsightFixtureTestCase {
 
-  public void testResolveAndUseScope() throws Exception {
+  public void testResolveAndUseScope() {
     try {
       final VirtualFile inSdk1 = DartLibraryIndex.getSdkLibByUri(getProject(), "dart:collection");
       final VirtualFile inSdk2 = DartLibraryIndex.getSdkLibByUri(getProject(), "dart:math");
@@ -212,7 +212,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
     });
   }
 
-  public void testPackageReferencesInHtml() throws Exception {
+  public void testPackageReferencesInHtml() {
     myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n" +
                                                "dependencies:\n" +
                                                "  PathPackage:\n" +

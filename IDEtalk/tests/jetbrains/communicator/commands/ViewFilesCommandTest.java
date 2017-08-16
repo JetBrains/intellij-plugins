@@ -42,7 +42,7 @@ public class ViewFilesCommandTest extends BaseTestCase {
         (IDEFacade) myFacadeMock.proxy());
   }
 
-  public void testIsEnabled() throws Exception {
+  public void testIsEnabled() {
     assertFalse(myCommand.isEnabled());
 
     myMockUserListComponent.setSelectedNodes(new Object[]{"group"});
@@ -65,7 +65,7 @@ public class ViewFilesCommandTest extends BaseTestCase {
     assertFalse("Two users are selected", myCommand.isEnabled());
   }
 
-  public void testExecute_NoInformation() throws Exception {
+  public void testExecute_NoInformation() {
     final ProjectsData projectsData = new ProjectsData();
     MockUser mockUser = new MockUser("user", null) {
       @Override
@@ -81,7 +81,7 @@ public class ViewFilesCommandTest extends BaseTestCase {
     myCommand.execute();
   }
 
-  public void testExecute_WithInformation() throws Exception {
+  public void testExecute_WithInformation() {
     final ProjectsData projectsData = new ProjectsData();
 
     projectsData.addNonProjectFile(VFile.create("a path"));

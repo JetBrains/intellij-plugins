@@ -166,7 +166,7 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
                           "import 'package:ProjectName/libFile.dart';");
   }
 
-  public void testUriInPartOf() throws Exception {
+  public void testUriInPartOf() {
     final PsiFile libFile = myFixture.addFileToProject("foo/bar/libFile.dart", "library libName;");
     final PsiFile part1File = myFixture.addFileToProject("part1.dart", "part of 'part1.dart'"); // self reference
     final PsiFile part2File = myFixture.addFileToProject("part2.dart", "part of 'foo/bar/wrong.dart'"); // wrong reference

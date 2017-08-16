@@ -128,7 +128,7 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
     assertTrue("dart comment at caret", handler.isRenaming(new DataContextForTest(getEditor(), dartVirtualFile, dartPsiFile, dartElement)));
   }
 
-  public void testCheckFinalConditionsNameFatalError() throws Throwable {
+  public void testCheckFinalConditionsNameFatalError() {
     final ServerRenameRefactoring refactoring = createRenameRefactoring();
     // initial status OK
     final RefactoringStatus initialConditions = refactoring.checkInitialConditions();
@@ -141,26 +141,26 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
     assertTrue(finalConditions.hasFatalError());
   }
 
-  public void testCheckInitialConditionsCannotCreate() throws Throwable {
+  public void testCheckInitialConditionsCannotCreate() {
     final ServerRenameRefactoring refactoring = createRenameRefactoring();
     final RefactoringStatus initialConditions = refactoring.checkInitialConditions();
     assertNotNull(initialConditions);
     assertTrue(initialConditions.hasFatalError());
   }
 
-  public void testClass() throws Throwable {
+  public void testClass() {
     doTest("NewName");
   }
 
-  public void testConstructorDefaultToNamed() throws Throwable {
+  public void testConstructorDefaultToNamed() {
     doTest("newName");
   }
 
-  public void testIgnorePotential() throws Throwable {
+  public void testIgnorePotential() {
     doTest("newName");
   }
 
-  public void testTypeAndImmediatelyRenameLocalVar() throws Throwable {
+  public void testTypeAndImmediatelyRenameLocalVar() {
     myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.doHighlighting(); // warm up
     myFixture.type('\n');
@@ -170,7 +170,7 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
     doTest(refactoring, "newName");
   }
 
-  public void testMethod() throws Throwable {
+  public void testMethod() {
     doTest("newName");
   }
 

@@ -20,23 +20,23 @@ public class DartServerGotoSuperHandlerTest extends CodeInsightFixtureTestCase {
     return "/analysisServer/gotoSuper";
   }
 
-  public void testSuperClass() throws Throwable {
+  public void testSuperClass() {
     doTest();
   }
 
-  public void testSuperClassMethod() throws Throwable {
+  public void testSuperClassMethod() {
     doTest();
   }
 
-  public void testSuperInterface() throws Throwable {
+  public void testSuperInterface() {
     doTest();
   }
 
-  public void testSuperOperator() throws Throwable {
+  public void testSuperOperator() {
     doTest();
   }
 
-  private void doTest() throws Throwable {
+  private void doTest() {
     myFixture.configureByFile(getTestName(false) + ".dart");
     initServer();
     final CodeInsightActionHandler handler = CodeInsightActions.GOTO_SUPER.forLanguage(DartLanguage.INSTANCE);

@@ -59,7 +59,7 @@ public class MessagesTabTest extends BaseTestCase {
     disposeOnTearDown(myMessagesTab);
   }
 
-  public void testSendMessage() throws Exception {
+  public void testSendMessage() {
 
     expectSendMessage();
     myMessagesTab.getSendButton().doClick();
@@ -73,7 +73,7 @@ public class MessagesTabTest extends BaseTestCase {
     myMessagesTab.append("some text");
   }
 
-  public void testEnableDisableButtons() throws Exception {
+  public void testEnableDisableButtons() {
     assertFalse(myMessagesTab.getSendButton().isEnabled());
 
     myMessagesTab.append(" ");
@@ -83,7 +83,7 @@ public class MessagesTabTest extends BaseTestCase {
     assertTrue(myMessagesTab.getSendButton().isEnabled());
   }
 
-  public void testContent() throws Exception {
+  public void testContent() {
     Content content = new ContentImpl(new JLabel(), "text", true);
     myMessagesTab.attachTo(content);
     assertSame(myMessagesTab, MessagesTab.getTab(content));

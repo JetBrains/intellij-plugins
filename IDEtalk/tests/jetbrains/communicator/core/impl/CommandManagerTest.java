@@ -15,8 +15,8 @@
  */
 package jetbrains.communicator.core.impl;
 
-import jetbrains.communicator.core.commands.UserCommand;
 import jetbrains.communicator.core.Pico;
+import jetbrains.communicator.core.commands.UserCommand;
 import org.picocontainer.MutablePicoContainer;
 
 /**
@@ -35,7 +35,7 @@ public class CommandManagerTest extends BaseTestCase {
     myContainer = Pico.getInstance().makeChildContainer();
   }
 
-  public void testGetCommand() throws Exception {
+  public void testGetCommand() {
     UserCommand command = myCommandManager.getCommand(MyTestCommand.class, myContainer);
     assertNotNull(command);
     assertSame(MyTestCommand.class, command.getClass());
@@ -43,7 +43,7 @@ public class CommandManagerTest extends BaseTestCase {
     assertNotNull(myContainer.getComponentInstanceOfType(MyTestCommand.class));
   }
 
-  public void testGetCommandTwice() throws Exception {
+  public void testGetCommandTwice() {
     UserCommand command = myCommandManager.getCommand(MyTestCommand.class, myContainer);
     UserCommand command1 = myCommandManager.getCommand(MyTestCommand.class, myContainer);
     assertSame(command, command1);

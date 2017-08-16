@@ -162,12 +162,12 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
         LOCALHOST, myFacade.getMyAccount().getPort(), false);
   }
 
-  public void testSendProjectIdOnConnect() throws Throwable {
+  public void testSendProjectIdOnConnect() {
     assertEquals("Should invoke registerForProject", "registerForProject" + myUser + "@" + LOCALHOST,
         myUserFinder.getLog());
   }
 
-  public void testAddUser_NotIdeTalk() throws Throwable {
+  public void testAddUser_NotIdeTalk() {
     addEventListener();
     addUserFred();
 
@@ -267,7 +267,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     assertEquals("aaasss", updated.getNewValue());
   }
 
-  public void testUserInRosterChangedName() throws Throwable {
+  public void testUserInRosterChangedName() {
     addEventListener();
     addUserFred();
     myEvents.clear();
@@ -283,7 +283,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     assertEquals("Some New Fred Name", updated.getNewValue());
   }
 
-  public void testLocalChanges_UpdateRoster() throws Throwable {
+  public void testLocalChanges_UpdateRoster() {
     addEventListener();
     addUserFred();
 
@@ -472,7 +472,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     assertEquals("Should add bob as a contact too", RosterPacket.ItemType.BOTH, getBobEntry(bobUserName).getType());
   }
 
-  public void testSyncronizeWithRosterWhileWaitingForSubscription() throws Throwable {
+  public void testSyncronizeWithRosterWhileWaitingForSubscription() {
     User bob = myUserModel.createUser("bob@localhost", JabberTransport.CODE);
     myUserModel.addUser(bob);
 
@@ -486,7 +486,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     return myFacade.getConnection().getRoster().getEntry(bobUserName);
   }
 
-  public void testIsSelf() throws Throwable {
+  public void testIsSelf() {
     assertFalse(myTransport.isSelf(UserImpl.create("some@localhost", myTransport.getName())));
     assertTrue(myTransport.isSelf(UserImpl.create(selfJabberId(), myTransport.getName())));
   }
@@ -522,7 +522,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     return JabberTransport.getSimpleId(bob.getUser());
   }
 
-  public void testSendMessage2NonExistingUser() throws Throwable {
+  public void testSendMessage2NonExistingUser() {
     myFacade.addUsers("grp", Arrays.asList(new String[]{"some@fake.user"}));
     new WaitFor(TIMEOUT) {
       @Override
@@ -542,7 +542,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     assertEquals("No events expected:" + myEvents, 0, myEvents.size());
   }
 
-  public void testSendMessageWhenOffline() throws Throwable {
+  public void testSendMessageWhenOffline() {
     myFacade.disconnect();
 
     // This should work fine. Connection should be reestablished
@@ -583,7 +583,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     assertEquals("Should ignore message (ignore list exists):" + myEvents, 0, myEvents.size());
   }
 
-  public void testSimpleJabberMessage() throws Throwable {
+  public void testSimpleJabberMessage() {
     Message message = new Message(mySelf.getName(), Message.Type.NORMAL);
     String body = "some \u0442\u0435\u043a\u0441\u0442 <>#$%^";
     message.setThread("someThreadId");
@@ -614,7 +614,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     assertEquals("No events expected: " + myEvents, 0, myEvents.size());
   }
 
-  public void testSendCustomMessage_WithoutProvider() throws Exception {
+  public void testSendCustomMessage_WithoutProvider() {
 
     addEventListener();
 
@@ -637,7 +637,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     assertEquals("Expect message text", "some text", ((MessageEvent) event).getMessage());
   }
 
-  public void testTimeIsSetInSimpleMessage() throws Throwable {
+  public void testTimeIsSetInSimpleMessage() {
     Message baseMessage = myTransport.createBaseMessage(mySelf, "some text");
     myTransport.getFacade().getConnection().sendPacket(baseMessage);
 
@@ -652,12 +652,12 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     assertTrue("Time should be set for simple Jabber messages: " + diff, Math.abs(diff) < 150);
   }
 
-  public void testSyncronizeRosterOnConnect() throws Throwable {
+  public void testSyncronizeRosterOnConnect() {
     myTransport.authenticated();
     assertTrue("No Jabber users in UserModel - should sync with roster", myUsersSynchronized);
   }
 
-  public void testSyncronizeRosterOnConnect_HasJabberContacts() throws Throwable {
+  public void testSyncronizeRosterOnConnect_HasJabberContacts() {
     myUserModel.addUser(UserImpl.create("fff@ddd.cc", JabberTransport.CODE));
     myTransport.authenticated();
     assertFalse("Already has Jabber users in UserModel - no sync with roster", myUsersSynchronized);
@@ -771,7 +771,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     return myUserModel.createUser(getUser(bob), myTransport.getName());
   }
 
-  private XMPPConnection createLocalConnectionWithJabberUser(String userName, String resource) throws XMPPException, InterruptedException {
+  private XMPPConnection createLocalConnectionWithJabberUser(String userName, String resource) throws XMPPException {
     final XMPPConnection conn = new XMPPConnection("localhost");
     conn.getAccountManager().createAccount(userName, "123456");
     if (resource == null) {

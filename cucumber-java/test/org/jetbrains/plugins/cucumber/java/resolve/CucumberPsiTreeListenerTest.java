@@ -8,14 +8,12 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
-import java.io.IOException;
-
 public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
-  public void testCreationOfStepDefinition() throws Exception {
+  public void testCreationOfStepDefinition() {
     doTestCreation("treeListener", "I p<caret>ay 25", "@cucumber.api.java.en.When(\"^I pay (\\\\d+)$\")\npublic void i_pay(int amount) {}");
   }
 
-  public void testDeletionOfStepDefinition() throws Exception {
+  public void testDeletionOfStepDefinition() {
     doTestDeletion("treeListener", "my change sh<caret>ould be 4", "my_change_should_be_");
   }
 
@@ -36,7 +34,7 @@ public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
 
     new WriteCommandAction(getProject(), psiFile) {
       @Override
-      protected void run(@NotNull final Result result) throws Throwable {
+      protected void run(@NotNull final Result result) {
         final PsiElementFactory factory = JavaPsiFacade.getInstance(getProject()).getElementFactory();
         final PsiMethod method = factory.createMethodFromText(stepDef, psiClass);
         psiClass.add(method);
@@ -53,7 +51,7 @@ public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
 
     new WriteCommandAction(getProject(), psiFile) {
       @Override
-      protected void run(@NotNull Result result) throws Throwable {
+      protected void run(@NotNull Result result) {
 
         for (PsiMethod method : psiClass.getAllMethods()) {
           if (method.getName().equals(stepDefName)) {
@@ -65,8 +63,7 @@ public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
     }.execute();
   }
 
-  private void doTestCreation(@NotNull final String folder, @NotNull final String step, @NotNull final String stepDefinitionContent)
-    throws Exception {
+  private void doTestCreation(@NotNull final String folder, @NotNull final String step, @NotNull final String stepDefinitionContent) {
     init(folder);
 
     checkReference(step, null);
@@ -75,8 +72,7 @@ public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
     checkReference(step, stepDefinitionName);
   }
 
-  private void doTestDeletion(@NotNull final String folder, @NotNull final String step, @NotNull final String stepDefinitionName)
-    throws IOException {
+  private void doTestDeletion(@NotNull final String folder, @NotNull final String step, @NotNull final String stepDefinitionName) {
     init(folder);
 
     checkReference(step, stepDefinitionName);

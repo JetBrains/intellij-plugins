@@ -30,15 +30,15 @@ public class DartIntroduceVariableInHtmlTest extends DartIntroduceTestBase {
     return ".html";
   }
 
-  public void testReplaceAll1() throws Throwable {
+  public void testReplaceAll1() {
     doTest();
   }
 
-  public void testReplaceOne1() throws Throwable {
+  public void testReplaceOne1() {
     doTest(null, false);
   }
 
-  public void testSuggestName1() throws Throwable {
+  public void testSuggestName1() {
     doTestSuggestions(DartCallExpression.class, "test");
   }
 }

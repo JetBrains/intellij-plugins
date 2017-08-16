@@ -126,7 +126,7 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     assertTrue(JSStructureViewModel.shouldEnterElementStatic(element));
   }
 
-  public void testGroupByClass3() throws Exception {
+  public void testGroupByClass3() {
     configureByFiles(null, BASE_PATH + "15_2.js2", BASE_PATH + "15_3.js2");
     final Object[] items = getTopLevelItems();
     assertEquals(1, items.length);
@@ -148,7 +148,7 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     checkIfCurrentEditorElementIsValid(treeNodes.get(2), JSFunction.class);
   }
 
-  public void testBug3() throws Exception {
+  public void testBug3() {
     configureByFiles(null, BASE_PATH + "22.js2", BASE_PATH + "22_2.js2");
     final Object[] items = getTopLevelItems();
     assertEquals(2, items.length);
@@ -187,7 +187,7 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     assertEquals(JSAttributeList.AccessType.PRIVATE, getAccessType(treeNodes.get(0))); // EE
   }
 
-  public void testIncludedMembers() throws Exception {
+  public void testIncludedMembers() {
     configureByFiles(null, BASE_PATH + "IncludedMembers.js2", BASE_PATH + "IncludedMembers_2.js2");
 
     final Object[] items = getTopLevelItems();

@@ -28,7 +28,7 @@ public class ValidationFieldCompletionTest extends ValidationLightHighlightingTe
     return "validationXml/completion/field";
   }
 
-  public void testFieldCompletion() throws Throwable {
+  public void testFieldCompletion() {
     myFixture.copyFileToProject("com/MyAction.java");
     performCompletionVariantTest("com/MyAction-validation.xml",
                                  "myBooleanField", "myField");

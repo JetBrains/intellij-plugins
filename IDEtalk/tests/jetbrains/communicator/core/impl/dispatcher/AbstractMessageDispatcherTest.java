@@ -15,8 +15,8 @@
  */
 package jetbrains.communicator.core.impl.dispatcher;
 
-import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.dispatcher.Message;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.users.UserEvent;
 import jetbrains.communicator.mock.MockIDEFacade;
 import jetbrains.communicator.mock.MockMessage;
@@ -61,7 +61,7 @@ public class AbstractMessageDispatcherTest extends BaseTestCase {
     super.tearDown();
   }
 
-  public void testSendMessageToOnlineUser() throws Exception {
+  public void testSendMessageToOnlineUser() {
 
     MockMessage message = new MockMessage(true);
     myDispatcher.performDispatch(myUser, message);
@@ -69,7 +69,7 @@ public class AbstractMessageDispatcherTest extends BaseTestCase {
         "sent to "+myUser+":success", message.getLog());
   }
 
-  public void testMessagesQueue() throws Exception {
+  public void testMessagesQueue() {
 
     assertEquals("No pending messages", 0, myDispatcher.getPendingMessages(myUser).length);
 
@@ -85,7 +85,7 @@ public class AbstractMessageDispatcherTest extends BaseTestCase {
     assertSame(failedMessage, myDispatcher.getPendingMessages(myUser)[0]);
   }
 
-  public void testSendSameMessageTwice() throws Exception {
+  public void testSendSameMessageTwice() {
     MockMessage failedMessage = new MockMessage(false);
     myDispatcher.performDispatch(myUser, failedMessage);
     myDispatcher.performDispatch(myUser, failedMessage);
@@ -93,7 +93,7 @@ public class AbstractMessageDispatcherTest extends BaseTestCase {
         myDispatcher.getPendingMessages(myUser).length);
   }
 
-  public void testUserDeleted() throws Exception {
+  public void testUserDeleted() {
     MockMessage failedMessage = new MockMessage(false);
     myDispatcher.performDispatch(myUser, failedMessage);
 
@@ -102,7 +102,7 @@ public class AbstractMessageDispatcherTest extends BaseTestCase {
         myDispatcher.getPendingMessages(myUser).length);
   }
 
-  public void testSuccessfulSendingOfPendingEvent() throws Exception {
+  public void testSuccessfulSendingOfPendingEvent() {
     myUser.setOnline(true);
     MockMessage failedMessage = new MockMessage(false);
     myDispatcher.performDispatch(myUser, failedMessage);
@@ -114,7 +114,7 @@ public class AbstractMessageDispatcherTest extends BaseTestCase {
         myDispatcher.getPendingMessages(myUser).length);
   }
 
-  public void testRemoveMessageFromQueue() throws Exception {
+  public void testRemoveMessageFromQueue() {
     MockMessage message1 = new MockMessage();
     MockMessage message2 = new MockMessage();
     MockMessage message3 = new MockMessage();
@@ -131,7 +131,7 @@ public class AbstractMessageDispatcherTest extends BaseTestCase {
     assertEquals(1, myDispatcher.getPendingMessages(myUser).length);
   }
 
-  public void testPersistency() throws Exception {
+  public void testPersistency() {
     Message failedMessage = new P2PNetworkMessage("foo", "foo2", new String[]{"test"});
     myDispatcher.performDispatch(myUser, failedMessage);
     myDispatcher.save();

@@ -27,7 +27,7 @@ public class DartOptimizeImportsTest extends CodeInsightFixtureTestCase {
     myFixture.checkResultByFile(getTestName(false) + ".after.dart");
   }
 
-  public void testOptimizeImports() throws Throwable {
+  public void testOptimizeImports() {
     final String testName = getTestName(false);
     doTest(testName + ".dart", testName + "_other1.dart", testName + "_other2.dart");
   }

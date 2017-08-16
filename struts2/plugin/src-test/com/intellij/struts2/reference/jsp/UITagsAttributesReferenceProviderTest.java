@@ -48,16 +48,16 @@ public class UITagsAttributesReferenceProviderTest extends BasicLightHighlightin
     return createWebDescriptor();
   }
 
-  public void testPathAttributes() throws Throwable {
+  public void testPathAttributes() {
     myFixture.testHighlighting(true, false, false, "/jsp/paths.jsp");
   }
 
-  public void testCommonAttributes() throws Throwable {
+  public void testCommonAttributes() {
     myFixture.testHighlighting(true, false, false, "/jsp/common.jsp",
                                "MyBundle.properties");
   }
 
-  public void testSpecificAttributes() throws Throwable {
+  public void testSpecificAttributes() {
     myFixture.testHighlighting(true, false, false, "/jsp/specific.jsp");
   }
 }

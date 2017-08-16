@@ -34,32 +34,32 @@ public class RubyMotionCodeInsightTest extends RubyMotionLightFixtureTestCase {
     return "testApp";
   }
 
-  public void testClassNameResolve() throws Throwable {
+  public void testClassNameResolve() {
     defaultConfigure();
     checkResolveToObjC("UI<caret>View", "UIView");
   }
 
-  public void testFunctionResolve() throws Throwable {
+  public void testFunctionResolve() {
     defaultConfigure();
     checkResolveToObjC("CGAffineTransformFrom<caret>String", "CGAffineTransformFromString");
   }
 
-  public void testSelectorResolve() throws Throwable {
+  public void testSelectorResolve() {
     defaultConfigure();
     checkResolveToObjC("UIView.al<caret>loc", "NSObject.alloc");
   }
 
-  public void testSelectorChainResolve() throws Throwable {
+  public void testSelectorChainResolve() {
     defaultConfigure();
     checkResolveToObjC("UIView.alloc.initWith<caret>Frame", "UIView.initWithFrame");
   }
 
-  public void testFunctionType() throws Throwable {
+  public void testFunctionType() {
     defaultConfigure();
     assertTypeBirthClass(findReferenceBySignature("tra<caret>nsform"), "CGAffineTransform");
   }
 
-  public void testStructType() throws Throwable {
+  public void testStructType() {
     defaultConfigure();
     final RType type = RubyTestUtil.getCoveringIdentifierType(findPsiBySignature("tra<caret>nsform"));
     assertInstanceOf(type, RSymbolType.class);
@@ -67,14 +67,14 @@ public class RubyMotionCodeInsightTest extends RubyMotionLightFixtureTestCase {
     assertNotNull(type.getMemberForName("tx=", SymbolFilterFactory.EMPTY_FILTER, null));
   }
 
-  public void testSelectorType() throws Throwable {
+  public void testSelectorType() {
     defaultConfigure();
     final RType type = RubyTestUtil.getCoveringReferenceType(findPsiBySignature("UIView.al<caret>loc"));
     assertInstanceOf(type, RSymbolType.class);
     assertEquals("UIView", ((RSymbolType)type).getSymbol().getName());
   }
 
-  public void testSelectorChainType() throws Throwable {
+  public void testSelectorChainType() {
     defaultConfigure();
     final RType type = RubyTestUtil.getCoveringReferenceType(findPsiBySignature("UIView.alloc.initWith<caret>Frame"));
     assertInstanceOf(type, RSymbolType.class);
@@ -97,12 +97,12 @@ public class RubyMotionCodeInsightTest extends RubyMotionLightFixtureTestCase {
     assertNotInCompletionList(").<caret>test", "imageNamed");
   }
 
-  public void testParameterType() throws Throwable {
+  public void testParameterType() {
     myFixture.configureByFiles("app/inheritance_arg.rb", "Rakefile");
     checkResolveToObjC("dequeueReusable<caret>CellWithIdentifier", "UITableView.dequeueReusableCellWithIdentifier");
   }
 
-  public void testSelectorShorthands() throws Throwable {
+  public void testSelectorShorthands() {
     final List<String> names = new ArrayList<>();
     final List<Trinity<String, String, Integer>> examples = new ArrayList<>();
     examples.add(Trinity.create("foo?", "isFoo", 0));

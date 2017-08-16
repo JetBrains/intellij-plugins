@@ -15,8 +15,8 @@
  */
 package jetbrains.communicator.idea.toolWindow;
 
-import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.EventBroadcaster;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.dispatcher.LocalMessageDispatcherImpl;
 import jetbrains.communicator.core.impl.users.UserImpl;
 import jetbrains.communicator.core.impl.users.UserModelImpl;
@@ -56,7 +56,7 @@ public class UserListComponentTest extends BaseTestCase {
     getTree().updateUI(); // Emulate the UI change
   }
 
-  public void testGetSelectedNodes() throws Exception {
+  public void testGetSelectedNodes() {
     myUserModel.addGroup("a group");
     MockUser user = new MockUser("user", "group");
     myUserModel.addUser(user);
@@ -72,7 +72,7 @@ public class UserListComponentTest extends BaseTestCase {
     assertEquals(user, selectedNodes[2]);
   }
 
-  public void testGetSelectedNodes_WhenEditing() throws Exception {
+  public void testGetSelectedNodes_WhenEditing() {
     myUserModel.addGroup("a group");
 
     JTree jTree = getTree();
@@ -87,14 +87,14 @@ public class UserListComponentTest extends BaseTestCase {
     return myUserListComponent.getTree();
   }
 
-  public void testExpandGroupNodeOnUserAdd() throws Exception {
+  public void testExpandGroupNodeOnUserAdd() {
     myUserModel.addGroup("a group");
     myUserModel.addUser(new MockUser("user", "a group"));
 
     assertEquals("User group should be expanded", 2, getTree().getRowCount());
   }
 
-  public void testExpandGroupMessageReceived() throws Exception {
+  public void testExpandGroupMessageReceived() {
     MockTransport transport = new MockTransport();
     User user = UserImpl.create("nick", transport.getName());
     user.setGroup("some non-default group", myUserModel);
@@ -107,7 +107,7 @@ public class UserListComponentTest extends BaseTestCase {
         2, getTree().getRowCount());
   }
 
-  public void testSaveLoadTreeState() throws Exception {
+  public void testSaveLoadTreeState() {
     myUserModel.addUser(new MockUser("user1", "group"));
     myUserModel.addUser(new MockUser("user2", "group"));
     myUserModel.addGroup("daaa");

@@ -24,7 +24,7 @@ public class DartIntroduceConstantTest extends DartIntroduceTestBase {
     return new DartIntroduceFinalVariableHandler();
   }
 
-  public void testReplaceAll1() throws Throwable {
+  public void testReplaceAll1() {
     doTest();
   }
 }

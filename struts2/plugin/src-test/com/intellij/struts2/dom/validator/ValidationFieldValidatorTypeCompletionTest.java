@@ -28,7 +28,7 @@ public class ValidationFieldValidatorTypeCompletionTest extends ValidationLightH
     return "validationXml/completion/fieldValidatorType";
   }
 
-  public void testFieldValidatorTypeCompletion() throws Throwable {
+  public void testFieldValidatorTypeCompletion() {
     performCompletionVariantTest("src/com/MyAction-validation.xml",
                                  "conditionalvisitor", "conversion", "date", "double", "email", "expression",
                                  "fieldexpression", "int", "long", "regex", "required", "requiredstring", "short",

@@ -28,13 +28,13 @@ import java.util.List;
  * @author Kir
  */
 public class FoundUsersModelTest extends BaseTestCase {
-  public void testNoUsers() throws Exception {
+  public void testNoUsers() {
     FoundUsersModel model = createModel(new ArrayList<>());
     assertNull("Root node - no parent", getRoot(model).getParent());
     assertEquals("No children expected", 0, getRoot(model).getChildCount());
   }
 
-  public void testUserInProject() throws Exception {
+  public void testUserInProject() {
     MockUser bob = new MockUser("BobName", null);
     bob.setProjects(new String[]{"bobProject"});
 
@@ -47,7 +47,7 @@ public class FoundUsersModelTest extends BaseTestCase {
     assertEquals("Invalid user node", bob.getName(), projectNode.getChildAt(0).toString());
   }
 
-  public void test2Users2Projects() throws Exception {
+  public void test2Users2Projects() {
     MockUser bob = new MockUser("bob", null);
     MockUser alice = new MockUser("alice", null);
 
@@ -59,7 +59,7 @@ public class FoundUsersModelTest extends BaseTestCase {
     assertEquals("One user per project expected", 1, getRoot(model).getChildAt(1).getChildCount());
   }
 
-  public void testUserWithoutProject() throws Exception {
+  public void testUserWithoutProject() {
     MockUser bob = new MockUser("BobName", null);
 
     FoundUsersModel model = createModel(Arrays.asList(new User[]{bob}));
@@ -71,7 +71,7 @@ public class FoundUsersModelTest extends BaseTestCase {
     assertEquals("Invalid user node", bob.getName(), projectNode.getChildAt(0).toString());
   }
 
-  public void testUserIn2Groups() throws Exception {
+  public void testUserIn2Groups() {
     MockUser bob = new MockUser("BobName", null);
     bob.setProjects(new String[]{"bobProject", "anotherBobProject"});
 
@@ -86,7 +86,7 @@ public class FoundUsersModelTest extends BaseTestCase {
     assertEquals("One user in group expected", 1, projectNode2.getChildCount());
   }
 
-  public void test2UsersInSameGroup() throws Exception {
+  public void test2UsersInSameGroup() {
     MockUser bob = new MockUser("bob", null);
     MockUser alice = new MockUser("alice", null);
 

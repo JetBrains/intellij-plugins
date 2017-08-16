@@ -6,7 +6,7 @@ import org.junit.Test;
 
 public class KarmaUtilTest {
   @Test
-  public void testMatchAllKarmaFilenames() throws Exception {
+  public void testMatchAllKarmaFilenames() {
     assertKarmaConfig("karma.conf.js", false);
     assertKarmaConfig("karma-conf.js", false);
     assertKarmaConfig("karma.spec.js", false);
@@ -23,7 +23,7 @@ public class KarmaUtilTest {
   }
 
   @Test
-  public void testMatchMostRelevantNamesOnly() throws Exception {
+  public void testMatchMostRelevantNamesOnly() {
     assertKarmaConfig("karma.conf.js", true);
     assertKarmaConfig("karma-conf.js", true);
     assertKarmaConfig("karma-conf.coffee", true);

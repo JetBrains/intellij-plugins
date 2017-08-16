@@ -289,7 +289,7 @@ public class FlexTestUtils {
       }
 
       @Override
-      public void commitModifiableModels() throws ConfigurationException {
+      public void commitModifiableModels() {
         ApplicationManager.getApplication().runWriteAction(() -> {
           for (ModifiableRootModel model : models.values()) {
             if (model.isChanged()) {
@@ -494,7 +494,7 @@ public class FlexTestUtils {
                                     @Nullable String classesPath,
                                     @Nullable String sourcesPath,
                                     @Nullable String asdocPath,
-                                    final LinkageType linkageType) throws IOException {
+                                    final LinkageType linkageType) {
     addFlexLibrary(isProjectLibrary, module, libraryName, overwrite, libraryRoot, classesPath, sourcesPath, asdocPath, linkageType, null);
   }
 
@@ -504,7 +504,7 @@ public class FlexTestUtils {
 
   public static void addFlexModuleDependency(final Module dependent, final Module dependency) {
     new WriteCommandAction.Simple(null) {
-      public void run() throws ConfigurationException {
+      public void run() {
         modifyConfigs(dependency.getProject(), editor -> {
           final ModifiableFlexBuildConfiguration dependentBc = editor.getConfigurations(dependent)[0];
           final ModifiableFlexBuildConfiguration dependencyBc = editor.getConfigurations(dependency)[0];

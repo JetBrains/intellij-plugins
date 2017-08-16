@@ -29,7 +29,6 @@ import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +37,7 @@ import java.util.Map;
  * Date: 17.02.2009
  */
 public class CfscriptResolveTest extends JavaCodeInsightFixtureTestCase {
-  static PsiClass addJavaClassTo(JavaCodeInsightTestFixture fixture) throws IOException {
+  static PsiClass addJavaClassTo(JavaCodeInsightTestFixture fixture) {
      return fixture.addClass("import java.util.Collection;\n" +
                               "import java.util.Collections;\n" +
                               "import java.util.LinkedList;\n" +
@@ -57,7 +56,7 @@ public class CfscriptResolveTest extends JavaCodeInsightFixtureTestCase {
                               "}");
   }
 
-  static PsiFile addComponentsTo(JavaCodeInsightTestFixture fixture) throws IOException {
+  static PsiFile addComponentsTo(JavaCodeInsightTestFixture fixture) {
     fixture.addFileToProject("ComponentWithConstructor.cfc",
                                     "<cfcomponent>\n" +
                                       "<cffunction name=\"init\">\n" +
@@ -94,7 +93,7 @@ public class CfscriptResolveTest extends JavaCodeInsightFixtureTestCase {
 
   }
 
-  static PsiFile addScriptComponentsTo(JavaCodeInsightTestFixture fixture) throws IOException {
+  static PsiFile addScriptComponentsTo(JavaCodeInsightTestFixture fixture) {
     return fixture.addFileToProject("folder/subfolder/ComponentName.cfc",
                                     "component {\n" +
                                     "    function func1(){}\n" +
@@ -104,7 +103,7 @@ public class CfscriptResolveTest extends JavaCodeInsightFixtureTestCase {
 
   }
 
-  protected PsiElement resolveReferenceAtCaret() throws Throwable {
+  protected PsiElement resolveReferenceAtCaret() {
     return myFixture.getReferenceAtCaretPositionWithAssertion(Util.getInputDataFileName(getTestName(true))).resolve();
   }
 
@@ -137,28 +136,28 @@ public class CfscriptResolveTest extends JavaCodeInsightFixtureTestCase {
       moduleBuilder.setMockJdkLevel(JavaModuleFixtureBuilder.MockJdkLevel.jdk15);
   }
 
-    public void testInvokeResolveToTagFromTag() throws Throwable {
+    public void testInvokeResolveToTagFromTag() {
         doTest("fName");
     }
 
-    public void testInvokeResolveToScriptFromTag() throws Throwable {
+    public void testInvokeResolveToScriptFromTag() {
         doTest("fName");
     }
 
-    public void testInvokeResolveToTagFromScript() throws Throwable {
+    public void testInvokeResolveToTagFromScript() {
         doTest("fName");
     }
 
-    public void testInvokeResolveToScriptFromScript() throws Throwable {
+    public void testInvokeResolveToScriptFromScript() {
         doTest("fName");
     }
 
-    public void testResolveImplicitConstructor() throws Throwable {
+    public void testResolveImplicitConstructor() {
         addJavaClassTo(myFixture);
         doTest("MyClass");
     }
 
-    private PsiElement doTest(String resolveName) throws Throwable {
+    private PsiElement doTest(String resolveName) {
       PsiElement element = resolveReferenceAtCaret();
       PsiNamedElement var = assertInstanceOf(element, PsiNamedElement.class);
 
@@ -178,66 +177,66 @@ public class CfscriptResolveTest extends JavaCodeInsightFixtureTestCase {
         return "/resolve";
     }
 
-  public void testJavaClassInComments() throws Throwable {
+  public void testJavaClassInComments() {
       addJavaClassTo(myFixture);
       assertEquals("MyClass", assertInstanceOf(resolveReferenceAtCaret(), PsiClass.class).getName());
   }
 
-  public void testJavaClassInCreateObject() throws Throwable {
+  public void testJavaClassInCreateObject() {
     addJavaClassTo(myFixture);
     assertEquals("MyClass", assertInstanceOf(resolveReferenceAtCaret(), PsiClass.class).getName());
   }
 
-  public void testJavaMethodResolve() throws Throwable {
+  public void testJavaMethodResolve() {
     addJavaClassTo(myFixture);
     final PsiElement element = resolveReferenceAtCaret();
     assertEquals("add", assertInstanceOf(element, PsiMethod.class).getName());
   }
 
-  public void testJavaMethodResolveCreatedFromComments() throws Throwable {
+  public void testJavaMethodResolveCreatedFromComments() {
     addJavaClassTo(myFixture);
     final PsiElement element = resolveReferenceAtCaret();
     assertEquals("add", assertInstanceOf(element, PsiMethod.class).getName());
   }
 
-  public void testDeeperJavaMethodsCall() throws Throwable {
+  public void testDeeperJavaMethodsCall() {
     addJavaClassTo(myFixture);
     final PsiElement element = resolveReferenceAtCaret();
     assertEquals("iterator", assertInstanceOf(element, PsiMethod.class).getName());
   }
 
-  public void testEa39634() throws Throwable {
+  public void testEa39634() {
     addJavaClassTo(myFixture);
     assertNull(resolveReferenceAtCaret());
   }
 
-  public void testScriptFunctionParametersResolev() throws Throwable {
+  public void testScriptFunctionParametersResolev() {
     final PsiElement element = doTest("parameter");
     assertInstanceOf(element, CfmlFunctionParameterImpl.class);
   }
 
-  public void testTagFunctionParametersResolev() throws Throwable {
+  public void testTagFunctionParametersResolev() {
     final PsiElement element = doTest("arg");
     assertInstanceOf(element, CfmlTagFunctionParameterImpl.class);
   }
 
-  public void testScopedParameterResolve() throws Throwable {
+  public void testScopedParameterResolve() {
     final PsiElement element = doTest("arg");
     assertInstanceOf(element, CfmlTagFunctionParameterImpl.class);
   }
 
-  public void testScopedParameterResolve2() throws Throwable {
+  public void testScopedParameterResolve2() {
     final PsiElement element = doTest("arg");
     assertInstanceOf(element, CfmlTagFunctionParameterImpl.class);
   }
 
-  public void testScopedNamesDistinguishing() throws Throwable {
+  public void testScopedNamesDistinguishing() {
     final PsiElement element = doTest("name");
     assertAssignmentVariable(element);
     assertInstanceOf(element, CfmlVariable.class);
   }
 
-  public void testResolveScopedVariablesInScript() throws Throwable {
+  public void testResolveScopedVariablesInScript() {
     final PsiElement element = doTest("atest4");
     assertAssignmentVariable(element);
     assertInstanceOf(element, CfmlVariable.class);
@@ -245,12 +244,12 @@ public class CfscriptResolveTest extends JavaCodeInsightFixtureTestCase {
     assertTrue(CfmlUtil.isSearchedScope(((CfmlReferenceExpression)element.getParent()).getScope().getText()));
   }
 
-  public void testResolveFromReturn() throws Throwable {
+  public void testResolveFromReturn() {
     final PsiElement element = doTest("param");
     assertInstanceOf(element, CfmlTagFunctionParameterImpl.class);
   }
 
-  public void testResolveToDefinitionWithVar() throws Throwable {
+  public void testResolveToDefinitionWithVar() {
     final PsiElement element = doTest("variable");
     assertInstanceOf(element, CfmlVariable.class);
     assertAssignmentVariable(element);
@@ -258,7 +257,7 @@ public class CfscriptResolveTest extends JavaCodeInsightFixtureTestCase {
                  "var variable = 10");
   }
 
-  public void testResolveToFirstOccurence() throws Throwable {
+  public void testResolveToFirstOccurence() {
     final PsiElement element = doTest("variable");
     assertInstanceOf(element, CfmlVariable.class);
     assertAssignmentVariable(element);
@@ -266,252 +265,252 @@ public class CfscriptResolveTest extends JavaCodeInsightFixtureTestCase {
                  CfmlElementTypes.INTEGER_LITERAL);
   }
 
-  public void testResolveToScriptFunctionParameter() throws Throwable {
+  public void testResolveToScriptFunctionParameter() {
     final PsiElement element = doTest("var2");
     assertInstanceOf(element, CfmlFunctionParameterImpl.class);
   }
 
-  public void testRecursiveScriptFunctionResolve() throws Throwable {
+  public void testRecursiveScriptFunctionResolve() {
     final PsiElement element = doTest("myFunction");
     assertInstanceOf(element, CfmlFunctionImpl.class);
   }
 
-  public void testResolveJavaLoaderToComment() throws Throwable {
+  public void testResolveJavaLoaderToComment() {
     final PsiElement element = doTest("myLoader");
     assertInstanceOf(element, CfmlImplicitVariable.class);
     assertInstanceOf(element.getParent(), PsiComment.class);
   }
 
-  public void testResolveClassFromJavaLoaderCreateMethod() throws Throwable {
+  public void testResolveClassFromJavaLoaderCreateMethod() {
     addJavaClassTo(myFixture);
     assertEquals("MyClass", assertInstanceOf(resolveReferenceAtCaret(), PsiClass.class).getName());
   }
 
-  public void testResolveAssignment() throws Throwable {
+  public void testResolveAssignment() {
     // EA-36015
     addJavaClassTo(myFixture);
     assertNull(resolveReferenceAtCaret());
   }
 
-  public void testResolveToNewFunctionSyntax() throws Throwable {
+  public void testResolveToNewFunctionSyntax() {
     assertEquals("someFunction", assertInstanceOf(resolveReferenceAtCaret(), CfmlFunctionImpl.class).getName());
   }
 
-  public void testResolveParameterToNewFunctionSyntax() throws Throwable {
+  public void testResolveParameterToNewFunctionSyntax() {
     assertEquals("param", assertInstanceOf(resolveReferenceAtCaret(), CfmlFunctionParameterImpl.class).getName());
   }
 
-  public void testResolveScopedVariableToComment() throws Throwable {
+  public void testResolveScopedVariableToComment() {
     assertInstanceOf(assertInstanceOf(resolveReferenceAtCaret(), CfmlImplicitVariable.class).getParent(), PsiComment.class);
   }
 
-  public void testResolveToNearestAssignment() throws Throwable {
+  public void testResolveToNearestAssignment() {
     PsiElement parent = assertInstanceOf(assertInstanceOf(resolveReferenceAtCaret(), CfmlVariable.class).getParent(), CfmlReferenceExpression.class).getParent();
     assertInstanceOf(parent, CfmlAssignmentExpression.class);
     assertEquals(parent.getText(), "obj = 1");
   }
 
-  public void testResolveComponentByImportAndPrefix() throws Throwable {
+  public void testResolveComponentByImportAndPrefix() {
     myFixture.configureByFiles("mydir/MyComponentTest.cfc");
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlComponent.class).getName(), "MyComponentTest");
   }
 
-  public void testResolveComponentInCreateObject() throws Throwable {
+  public void testResolveComponentInCreateObject() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlComponent.class).getName(), "ComponentName");
   }
 
-  public void testResolveComponentInCreateObjectWithoutFirstParameter() throws Throwable {
+  public void testResolveComponentInCreateObjectWithoutFirstParameter() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlComponent.class).getName(), "ComponentName");
   }
 
-  public void testResolveMultipleFunctionCall() throws Throwable {
+  public void testResolveMultipleFunctionCall() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlFunction.class).getName(), "foo");
   }
 
-  public void testResolveFunctionCallAfterConstructorCall() throws Throwable {
+  public void testResolveFunctionCallAfterConstructorCall() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlFunction.class).getName(), "foo");
   }
 
 
-  public void testResolveScriptComponentInCreateObjectWithoutFirstParameter() throws Throwable {
+  public void testResolveScriptComponentInCreateObjectWithoutFirstParameter() {
     addScriptComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlComponent.class).getName(), "ComponentName");
   }
 
-  public void testResolveFunctionDefinedLaterFromScript() throws Throwable {
+  public void testResolveFunctionDefinedLaterFromScript() {
     final PsiElement element = doTest("func2");
     assertEquals(assertInstanceOf(element, CfmlFunction.class).getName(), "func2");
   }
 
-  public void testResolveFunctionDefinedLaterFromInvokeTag() throws Throwable {
+  public void testResolveFunctionDefinedLaterFromInvokeTag() {
     final PsiElement element = doTest("func2");
     assertEquals(assertInstanceOf(element, CfmlFunction.class).getName(), "func2");
   }
 
-  public void testResolutionArgumentsNamesFromTag() throws Throwable {
+  public void testResolutionArgumentsNamesFromTag() {
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlParameter.class).getName(), "argument1");
   }
 
-  public void testResolutionArgumentsNamesFromScriptFunction() throws Throwable {
+  public void testResolutionArgumentsNamesFromScriptFunction() {
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlParameter.class).getName(), "argument2");
   }
 
-  public void testResolutionArgumentsNamesWithReferenceFromTag() throws Throwable {
+  public void testResolutionArgumentsNamesWithReferenceFromTag() {
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlParameter.class).getName(), "argument1");
   }
 
-  public void testResolutionArgumentsNamesWithReferenceFromScriptFunction() throws Throwable {
+  public void testResolutionArgumentsNamesWithReferenceFromScriptFunction() {
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlParameter.class).getName(), "argument2");
   }
 
-  public void testResolveArgumentFromScript() throws Throwable {
+  public void testResolveArgumentFromScript() {
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlParameter.class).getName(), "arg");
   }
 
-  public void testResolveToCfsilent() throws Throwable {
+  public void testResolveToCfsilent() {
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlVariable.class).getName(), "variable");
   }
 
-  public void testResolveSuperMethod() throws Throwable {
+  public void testResolveSuperMethod() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlFunction.class).getName(), "func1");
   }
 
-  public void testThisToComponent() throws Throwable {
+  public void testThisToComponent() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlFunctionImpl.class).getName(), "MyFunction");
   }
 
-  public void testThisFunction() throws Throwable {
+  public void testThisFunction() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlFunction.class).getName(), "MyFunction");
   }
 
-  public void testResolveToPropertyTag() throws Throwable {
+  public void testResolveToPropertyTag() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlProperty.class).getName(), "MyProperty");
   }
 
-  public void testResolveToPropertyFromScopedVariable() throws Throwable {
-    addComponentsTo(myFixture);
-    assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlProperty.class).getName(), "myProperty");
-  }
-
-  public void testResolveToProperty() throws Throwable {
+  public void testResolveToPropertyFromScopedVariable() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlProperty.class).getName(), "myProperty");
   }
 
-  public void testResolveImplicitlyDefinedSetter() throws Throwable {
+  public void testResolveToProperty() {
+    addComponentsTo(myFixture);
+    assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlProperty.class).getName(), "myProperty");
+  }
+
+  public void testResolveImplicitlyDefinedSetter() {
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlProperty.class).getName(), "MyProperty");
   }
 
-  public void testResolveImplicitlyDefinedGetter() throws Throwable {
+  public void testResolveImplicitlyDefinedGetter() {
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlProperty.class).getName(), "MyProperty");
   }
 
-  public void testResolveImplicitGetterToSuper() throws Throwable {
+  public void testResolveImplicitGetterToSuper() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlProperty.class).getName(), "MyProperty");
   }
 
-  public void testResolveToForIn() throws Throwable {
+  public void testResolveToForIn() {
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlForImpl.Variable.class).getName(), "item");
   }
 
-  public void testResovlePropertyToNameAttribute() throws Throwable {
+  public void testResovlePropertyToNameAttribute() {
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlProperty.class).getName(), "prop");
   }
 
-  public void testResolveSimpleNew() throws Throwable {
+  public void testResolveSimpleNew() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlComponent.class).getName(), "MyComponentName");
   }
 
-  public void testResolveCompoundNew() throws Throwable {
+  public void testResolveCompoundNew() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlComponent.class).getName(), "ComponentName");
   }
 
-  public void testResolveStringedNew() throws Throwable {
+  public void testResolveStringedNew() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlComponent.class).getName(), "MyComponentName");
   }
 
-  public void testResolveScriptImport() throws Throwable {
+  public void testResolveScriptImport() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlComponent.class).getName(), "ComponentName");
   }
 
-  public void testResolveTagImport() throws Throwable {
+  public void testResolveTagImport() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlComponent.class).getName(), "ComponentName");
   }
 
-  public void testResolveNewWithImport() throws Throwable {
+  public void testResolveNewWithImport() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlComponent.class).getName(), "ComponentName");
   }
 
-  public void testResolveNewWithMappings() throws Throwable {
+  public void testResolveNewWithMappings() {
     addComponentsTo(myFixture);
     setDefaultState();
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlComponent.class).getName(), "ComponentName");
     restoreDefaultState();
   }
 
-  public void testResolveNewWithImportWithMappings() throws Throwable {
+  public void testResolveNewWithImportWithMappings() {
     addComponentsTo(myFixture);
     setDefaultState();
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlComponent.class).getName(), "ComponentName");
     restoreDefaultState();
   }
 
-  public void testResolveNewArgumentToConstructorArgumentIfPresent() throws Throwable {
+  public void testResolveNewArgumentToConstructorArgumentIfPresent() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlParameter.class).getName(), "arg1");
   }
 
-  public void testResolveStringedNewArgumentToConstructorArgumentIfPresent() throws Throwable {
+  public void testResolveStringedNewArgumentToConstructorArgumentIfPresent() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlParameter.class).getName(), "arg1");
   }
 
-  public void testResolveMethodAfterAssignmentWithNew() throws Throwable {
+  public void testResolveMethodAfterAssignmentWithNew() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlFunction.class).getName(), "func");
   }
 
-  public void testResolveToTrulyDefinitionRatherThanToAssignment() throws Throwable {
+  public void testResolveToTrulyDefinitionRatherThanToAssignment() {
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlProperty.class).getName(), "var1");
   }
 
-  public void testResolveToInterface() throws Throwable {
+  public void testResolveToInterface() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlComponent.class).getName(), "MyInterfaceName");
   }
 
-  public void testResolveForVariable() throws Throwable {
+  public void testResolveForVariable() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlTagLoopImpl.Variable.class).getName(), "index1");
   }
 
-  public void testResolveFunctionFromCreateObject() throws Throwable {
+  public void testResolveFunctionFromCreateObject() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlFunction.class).getName(), "func2");
   }
 
-  public void testResolveFunctionFromFunctionReturnType() throws Throwable {
+  public void testResolveFunctionFromFunctionReturnType() {
     addComponentsTo(myFixture);
     assertEquals(assertInstanceOf(resolveReferenceAtCaret(), CfmlFunction.class).getName(), "func");
   }
 
-  public void testMethodResolveInComponentAfterSuper() throws Throwable {
+  public void testMethodResolveInComponentAfterSuper() {
     addComponentsTo(myFixture);
     PsiElement element = resolveReferenceAtCaret();
     assertInstanceOf(element, CfmlFunction.class);

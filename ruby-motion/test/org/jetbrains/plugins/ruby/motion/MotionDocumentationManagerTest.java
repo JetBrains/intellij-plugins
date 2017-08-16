@@ -20,7 +20,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.jetbrains.cidr.DocSet;
 
 public class MotionDocumentationManagerTest extends RubyMotionLightFixtureTestCase {
-  public void testDocSetCaching() throws Exception {
+  public void testDocSetCaching() {
     if (!SystemInfo.isMac) return;
 
     Project project = getProject();

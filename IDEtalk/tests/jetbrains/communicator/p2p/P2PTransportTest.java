@@ -15,8 +15,8 @@
  */
 package jetbrains.communicator.p2p;
 
-import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.Pico;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.dispatcher.AsyncMessageDispatcherImpl;
 import jetbrains.communicator.core.impl.users.UserImpl;
 import jetbrains.communicator.core.impl.users.UserModelImpl;
@@ -89,7 +89,7 @@ public class P2PTransportTest extends BaseTestCase {
     super.tearDown();
   }
 
-  public void testFindUsers() throws Exception {
+  public void testFindUsers() {
     User[] users = myTransport.findUsers(new NullProgressIndicator());
     assertTrue("At least self should be found", users.length >= 1);
     User self = null;
@@ -106,7 +106,7 @@ public class P2PTransportTest extends BaseTestCase {
     assertEquals("Projects should be set", PROJECT_NAME, self.getProjects()[0]);
   }
 
-  public void testSetOwnPresence() throws Exception {
+  public void testSetOwnPresence() {
 
     registerResponseProviders(myUserModel, myIdeFacade);
 
@@ -181,7 +181,7 @@ public class P2PTransportTest extends BaseTestCase {
     assertEquals("No groups should be added", 0, myUserModel.getGroups().length);
   }
 
-  public void testCanAddUsers() throws Throwable {
+  public void testCanAddUsers() {
     myUserModel.addGroup("Fabrique");
 
     assertFalse("No users", myTransport.canAddUsers("project", new HashSet<>()));
@@ -214,7 +214,7 @@ public class P2PTransportTest extends BaseTestCase {
     assertTrue(UserImpl.create("mock", P2PTransport.CODE).isOnline());
   }
 
-  public void testGetAddress() throws Exception {
+  public void testGetAddress() {
 
     User mockUser = UserImpl.create("mock", P2PTransport.CODE);
     assertNull("Sanity check", myTransport.getAddress(mockUser));
@@ -231,7 +231,7 @@ public class P2PTransportTest extends BaseTestCase {
   }
 
 
-  public void testGetProjects() throws Exception {
+  public void testGetProjects() {
     User mockUser = UserImpl.create("mock", P2PTransport.CODE);
     assertEquals("Sanity check", 0, myTransport.getProjects(mockUser).length);
 
@@ -247,7 +247,7 @@ public class P2PTransportTest extends BaseTestCase {
     assertEquals("Projects should be reset", 0, myTransport.getProjects(mockUser).length);
   }
 
-  public void testGetPort() throws Exception {
+  public void testGetPort() {
 
     User mockUser = UserImpl.create("mock", P2PTransport.CODE);
     assertEquals("Sanity check", -1, myTransport.getPort(mockUser));
@@ -263,7 +263,7 @@ public class P2PTransportTest extends BaseTestCase {
     assertEquals("Port should be reset", -1, myTransport.getPort(mockUser));
   }
 
-  public void testGetUserPresence() throws Exception {
+  public void testGetUserPresence() {
     User mockUser = UserImpl.create("mock", P2PTransport.CODE);
     assertEquals("Sanity check", PresenceMode.UNAVAILABLE, myTransport.getUserPresence(mockUser).getPresenceMode());
 
@@ -278,21 +278,21 @@ public class P2PTransportTest extends BaseTestCase {
     assertEquals("Presence should be reset", PresenceMode.UNAVAILABLE, myTransport.getUserPresence(mockUser).getPresenceMode());
   }
 
-  public void testOnUserAdd() throws Exception {
+  public void testOnUserAdd() {
     User mockUser = UserImpl.create("user", myTransport.getName());
     getBroadcaster().fireEvent(new UserEvent.Added(mockUser));
 
     assertEquals("Should send notification", "sendUserAddedCallback" + mockUser, myLog);
   }
 
-  public void testOnUserAdd_AnotherTransport() throws Exception {
+  public void testOnUserAdd_AnotherTransport() {
     User mockUser = UserImpl.create("user", MockTransport.NAME);
     getBroadcaster().fireEvent(new UserEvent.Added(mockUser));
 
     assertEquals("Should not send notification for another transport:" + myLog, "", myLog);
   }
 
-  public void testSetOnlineUsers_UpdateEvent() throws Exception {
+  public void testSetOnlineUsers_UpdateEvent() {
     myTransport.setOnlineUsers(new HashSet<>());
 
     User user = myTransport.createUser("someUser", new OnlineUserInfo(null, 0, null, new UserPresence(PresenceMode.AWAY)));

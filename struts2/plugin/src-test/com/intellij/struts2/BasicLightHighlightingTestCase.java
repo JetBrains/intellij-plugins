@@ -96,7 +96,7 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
    *
    * @throws Exception On errors.
    */
-  protected void performSetUp() throws Exception {
+  protected void performSetUp() {
   }
 
   @Override
@@ -120,7 +120,7 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
    *
    * @throws Exception On errors.
    */
-  protected void performTearDown() throws Exception {
+  protected void performTearDown() {
   }
 
   private static final String LIBRARY_PATH =

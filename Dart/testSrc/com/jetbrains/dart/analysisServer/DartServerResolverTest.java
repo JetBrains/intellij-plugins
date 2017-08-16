@@ -98,7 +98,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
     return buf.toString();
   }
 
-  public void testNoRecursiveImports() throws Exception {
+  public void testNoRecursiveImports() {
     myFixture.addFileToProject("file2.dart", "inFile2(){}");
     myFixture.addFileToProject("file1.dart", "import 'file2.dart'\n inFile1(){}");
     myFixture.addFileToProject("file.dart", "library fileLib;\n" +
@@ -120,7 +120,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
     doTest(myFixture);
   }
 
-  public void testResolveWithExports() throws Exception {
+  public void testResolveWithExports() {
     myFixture.addFileToProject("file1.dart", "inFile1(){}\n" +
                                              "inFile1HiddenLater(){}");
     myFixture.addFileToProject("file2.dart", "inFile2(){}");
@@ -161,7 +161,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
     doTest(myFixture);
   }
 
-  public void testFileReferencesInImports() throws Exception {
+  public void testFileReferencesInImports() {
     myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n" +
                                                "dependencies:\n" +
                                                "  PathPackage:\n" +
@@ -222,7 +222,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
     doTest(myFixture);
   }
 
-  public void testShowHideInImports() throws Exception {
+  public void testShowHideInImports() {
     myFixture.addFileToProject("file1.dart", "foo1(){}\n" +
                                              "foo2(){}\n" +
                                              "foo3(){}\n" +
@@ -240,7 +240,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
            "}");
   }
 
-  public void testTransitiveShowHide() throws Exception {
+  public void testTransitiveShowHide() {
     myFixture.addFileToProject("file1part.dart", "part of file1lib;\n" +
                                                  "var foo1, foo2, foo3, foo4, foo5, foo6, foo7, foo8, foo9;");
     myFixture.addFileToProject("file1.dart", "library file1lib;\n" +
@@ -269,7 +269,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
     doTest(myFixture);
   }
 
-  public void testMixinApplication() throws Exception {
+  public void testMixinApplication() {
     doTest(myFixture,
            "class Super  { inSuper(){}   }\n" +
            "class Mixin1 { inMixin1(){}  }\n" +
@@ -287,7 +287,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
            "}");
   }
 
-  public void testExceptionParameters() throws Exception {
+  public void testExceptionParameters() {
     doTest(myFixture,
            "main(){\n" +
            "  try{} on Error catch (e1){<caret expected='file.dart -> main -> e1'>e1;}\n" +
@@ -297,7 +297,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
            "}");
   }
 
-  public void testObjectMembers() throws Exception {
+  public void testObjectMembers() {
     doTest(myFixture,
            "class Bar{}\n" +
            "class Foo extends Bar{\n" +
@@ -310,7 +310,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
            "}");
   }
 
-  public void testCommentsInsideCallExpression() throws Exception {
+  public void testCommentsInsideCallExpression() {
     doTest(myFixture,
            "main(){\n" +
            "  '1 2 3 4'.<caret expected='[Dart SDK]/lib/core/string.dart -> String -> split'>split(' ')  // comment\n" +
@@ -318,7 +318,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
            "}");
   }
 
-  public void testEnum() throws Exception {
+  public void testEnum() {
     doTest(myFixture,
            "enum Foo {FooA, FooB, }\n" +
            "main() {\n" +
@@ -326,7 +326,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
            "}");
   }
 
-  public void testPartViaPackageUrl() throws Exception {
+  public void testPartViaPackageUrl() {
     myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n");
     myFixture.addFileToProject(".packages", "ProjectName:lib/");
     myFixture.addFileToProject("lib/lib.dart", "part 'package:ProjectName/part.dart';");
@@ -338,7 +338,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
            "}");
   }
 
-  public void testNamedParameter_constructorDefaultInvocation() throws Exception {
+  public void testNamedParameter_constructorDefaultInvocation() {
     doTest(myFixture,
            "class A {\n" +
            "  A({test});\n" +
@@ -348,7 +348,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
            "}");
   }
 
-  public void testNamedParameter_constructorNamedInvocation() throws Exception {
+  public void testNamedParameter_constructorNamedInvocation() {
     doTest(myFixture,
            "class A {\n" +
            "  A.named({test});\n" +
@@ -358,7 +358,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
            "}");
   }
 
-  public void testNamedParameter_functionInvocation() throws Exception {
+  public void testNamedParameter_functionInvocation() {
     doTest(myFixture,
            "f({test}) {}\n" +
            "main() {\n" +
@@ -366,7 +366,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
            "}");
   }
 
-  public void testFromPartToPartViaPackageUrl() throws Exception {
+  public void testFromPartToPartViaPackageUrl() {
     myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n");
     myFixture.addFileToProject(".packages", "ProjectName:lib/\n");
     myFixture.addFileToProject("lib/lib.dart", "library libName;\n" +
@@ -380,14 +380,14 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
     doTest(myFixture);
   }
 
-  public void testDartInternalLibrary() throws Exception {
+  public void testDartInternalLibrary() {
     doTest(myFixture,
            "import 'dart:_internal';\n" +
            "class A extends <caret expected='[Dart SDK]/lib/internal/list.dart -> UnmodifiableListBase'>UnmodifiableListBase<E>{}"
     );
   }
 
-  public void testPartOfResolution() throws Exception {
+  public void testPartOfResolution() {
     myFixture.addFileToProject("main1.dart", "library lib.name;\npart 'part1.dart';");
     myFixture.addFileToProject("main2.dart", "library lib.name;\npart 'part2.dart';");
     final PsiFile file = myFixture.addFileToProject("part1.dart",
@@ -396,7 +396,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
     doTest(myFixture);
   }
 
-  public void testDuplicatedImportPrefix() throws Exception {
+  public void testDuplicatedImportPrefix() {
     myFixture.addFileToProject("file1.dart", "var inFile1;");
     myFixture.addFileToProject("file2.dart", "var inFile2;");
     doTest(myFixture,
@@ -408,7 +408,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
            "var c = prefix.inFile2<caret expected='file2.dart -> inFile2'>;");
   }
 
-  public void testCoreLibImported() throws Exception {
+  public void testCoreLibImported() {
     doTest(myFixture, "var a = String<caret expected='[Dart SDK]/lib/core/string.dart -> String'>;");
     doTest(myFixture, "import 'dart:core'; var a = String<caret expected='[Dart SDK]/lib/core/string.dart -> String'>;");
     doTest(myFixture, "import 'dart:core' as prefix; var a = String<caret expected=''>;");
@@ -471,7 +471,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
     doTest(myFixture);
   }
 
-  public void testElvisRes() throws Exception {
+  public void testElvisRes() {
     doTest(myFixture,
            "class Bar{}\n" +
            "class Foo extends Bar{\n" +
@@ -483,7 +483,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
            "}");
   }
 
-  public void testConstructors() throws Exception {
+  public void testConstructors() {
     doTest(myFixture,
            "var a = new <caret expected='file.dart -> Foo -> Foo'>Foo<caret expected='file.dart -> Foo -> Foo'>();\n" +
            "var b = new <caret expected='file.dart -> Foo -> named'>Foo<caret expected='file.dart -> Foo -> named'>.<caret expected='file.dart -> Foo -> named'>named<caret expected='file.dart -> Foo -> named'>();\n" +
@@ -498,7 +498,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
            "}");
   }
 
-  public void testRedirectingConstructorInvocation() throws Exception {
+  public void testRedirectingConstructorInvocation() {
     doTest(myFixture,
            "class A {\n" +
            "  A() {}\n" +
@@ -507,7 +507,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
            "}");
   }
 
-  public void testSuperConstructorInvocation() throws Exception {
+  public void testSuperConstructorInvocation() {
     doTest(myFixture,
            "class A {\n" +
            "  A() {}\n" +
@@ -519,7 +519,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
            "}");
   }
 
-  public void testRefsInDocComments() throws Exception {
+  public void testRefsInDocComments() {
     doTest(myFixture,
            "/// [<caret expected='[Dart SDK]/lib/core/object.dart -> Object'>Object] foo\n" +
            "/// [print<caret expected='[Dart SDK]/lib/core/print.dart -> print'>\n" +

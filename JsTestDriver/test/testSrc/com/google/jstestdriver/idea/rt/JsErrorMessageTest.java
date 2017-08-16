@@ -15,7 +15,7 @@ public class JsErrorMessageTest extends TestCase {
     myBasePath = JstdTestRoot.getTestDataDir();
   }
 
-  public void testReferenceErrorParsing() throws Exception {
+  public void testReferenceErrorParsing() {
     String text = "error loading file: /test/assertFramework/jstd/structure/emptyTestCase.js:2: Uncaught ReferenceError: gg is not defined";
     JsErrorMessage errorMessage = JsErrorMessage.parseFromText(text, myBasePath);
     assertNotNull(errorMessage);
@@ -25,7 +25,7 @@ public class JsErrorMessageTest extends TestCase {
     assertEquals("Uncaught ReferenceError", errorMessage.getErrorName());
   }
 
-  public void testStrangeErrorName() throws Exception {
+  public void testStrangeErrorName() {
     String text = "error loading file: /test/assertFramework/jstd/structure/emptyTestCase.js:1: Uncaught #<Object>";
     JsErrorMessage errorMessage = JsErrorMessage.parseFromText(text, myBasePath);
     assertNotNull(errorMessage);
@@ -35,7 +35,7 @@ public class JsErrorMessageTest extends TestCase {
     assertEquals("Uncaught Error", errorMessage.getErrorName());
   }
 
-  public void testColumnNumber() throws Exception {
+  public void testColumnNumber() {
     String text = "error loading file: /test/assertFramework/jstd/structure/emptyTestCase.js:1:10: Uncaught ReferenceError";
     JsErrorMessage errorMessage = JsErrorMessage.parseFromText(text, myBasePath);
     assertNotNull(errorMessage);
@@ -45,7 +45,7 @@ public class JsErrorMessageTest extends TestCase {
     assertEquals("Uncaught ReferenceError", errorMessage.getErrorName());
   }
 
-  public void testOperaError() throws Exception {
+  public void testOperaError() {
     String text = "error loading file: /test/assertFramework/jstd/structure/emptyTestCase.js:1: Uncaught exception: ReferenceError: Undefined variable: gg";
     JsErrorMessage errorMessage = JsErrorMessage.parseFromText(text, myBasePath);
     assertNotNull(errorMessage);
@@ -55,7 +55,7 @@ public class JsErrorMessageTest extends TestCase {
     assertEquals("Uncaught ReferenceError", errorMessage.getErrorName());
   }
 
-  public void testName() throws Exception {
+  public void testName() {
     String text = "error loading file: /test/assertFramework/jstd/structure/emptyTestCase.js:1: ReferenceError: s is not defined";
     JsErrorMessage errorMessage = JsErrorMessage.parseFromText(text, myBasePath);
     assertNotNull(errorMessage);
@@ -65,7 +65,7 @@ public class JsErrorMessageTest extends TestCase {
     assertEquals("ReferenceError", errorMessage.getErrorName());
   }
 
-  public void testUncaughtError() throws Exception {
+  public void testUncaughtError() {
     String text = "error loading file: /test/assertFramework/jstd/structure/emptyTestCase.js:301: Uncaught Error: xhrFailed";
     JsErrorMessage errorMessage = JsErrorMessage.parseFromText(text, myBasePath);
     assertNotNull(errorMessage);

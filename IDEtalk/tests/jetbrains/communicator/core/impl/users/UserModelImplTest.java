@@ -15,10 +15,10 @@
  */
 package jetbrains.communicator.core.impl.users;
 
-import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.IDEtalkEvent;
 import jetbrains.communicator.core.IDEtalkListener;
 import jetbrains.communicator.core.TestFactory;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.transport.EventFactory;
 import jetbrains.communicator.core.users.GroupEvent;
 import jetbrains.communicator.core.users.User;
@@ -55,7 +55,7 @@ public class UserModelImplTest extends BaseTestCase {
     super.tearDown();
   }
 
-  public void testAllUsers() throws Exception {
+  public void testAllUsers() {
     User[] all = myUserModel.getAllUsers();
     assertUser("group1", "aaa", all[0]);
     assertUser("group1", "ccc", all[1]);
@@ -82,7 +82,7 @@ public class UserModelImplTest extends BaseTestCase {
   }
 
 
-  public void testReordering() throws Exception {
+  public void testReordering() {
     User[] all = myUserModel.getAllUsers();
     all[0].setDisplayName("zzz", myUserModel);
 
@@ -91,13 +91,13 @@ public class UserModelImplTest extends BaseTestCase {
     assertUser("group1", "zzz", all[1]);
   }
 
-  public void testGrouping() throws Exception {
+  public void testGrouping() {
     String[] groups = myUserModel.getGroups();
     assertEquals("Wrong groups", Arrays.asList(new Object[]{"group1", "group2"}),
         Arrays.asList(groups));
   }
 
-  public void testAddGroupExplicitly() throws Exception {
+  public void testAddGroupExplicitly() {
     myUserModel.addGroup(null);
     myUserModel.addGroup("");
     myUserModel.addGroup(" group15  ");
@@ -114,7 +114,7 @@ public class UserModelImplTest extends BaseTestCase {
         Arrays.asList(groups));
   }
 
-  public void testRemoveGroups() throws Exception {
+  public void testRemoveGroups() {
     assertFalse(myUserModel.removeGroup("group"));
 
     myUserModel.addGroup("added1");
@@ -130,7 +130,7 @@ public class UserModelImplTest extends BaseTestCase {
         Arrays.asList(myUserModel.getGroups()));
   }
 
-  public void testRemoveUserFromImplicitGroup() throws Exception {
+  public void testRemoveUserFromImplicitGroup() {
     User[] users = myUserModel.getUsers("group1");
     for (int i = 0; i < users.length; i++) {
       myUserModel.removeUser(users[i]);
@@ -140,7 +140,7 @@ public class UserModelImplTest extends BaseTestCase {
         Arrays.asList(myUserModel.getGroups()));
   }
 
-  public void testRemoveGroups_Event() throws Exception {
+  public void testRemoveGroups_Event() {
     myUserModel.addGroup("AGroup");
     myListener.clear();
 
@@ -153,7 +153,7 @@ public class UserModelImplTest extends BaseTestCase {
     myListener.assertLog("Not in model - no event expected", "");
   }
 
-  public void testGroupMembers() throws Exception {
+  public void testGroupMembers() {
     assertEquals(0, myUserModel.getUsers("dfasdff").length);
 
     User[] group1 = myUserModel.getUsers("group1");
@@ -168,7 +168,7 @@ public class UserModelImplTest extends BaseTestCase {
     assertEquals("bbb", group2[2].getName());
   }
 
-  public void testRenameGroup() throws Exception {
+  public void testRenameGroup() {
     myUserModel.renameGroup("group1", "new group");
 
     assertTrue(myListener.getEvents()[0] instanceof GroupEvent.Updated);
@@ -176,7 +176,7 @@ public class UserModelImplTest extends BaseTestCase {
     myListener.assertLog("1 event expected", "BeforeAfter");
   }
 
-  public void testRenameGroup_ExplicitlyAdded() throws Exception {
+  public void testRenameGroup_ExplicitlyAdded() {
     myUserModel.addGroup("new group");
     myUserModel.renameGroup("new group", "new group1");
 
@@ -185,7 +185,7 @@ public class UserModelImplTest extends BaseTestCase {
         Arrays.asList(myUserModel.getGroups()));
   }
 
-  public void testStacktrace() throws Exception {
+  public void testStacktrace() {
     int hadUsers = myUserModel.getAllUsers().length;
 
     getBroadcaster().fireEvent(EventFactory.createStacktraceEvent(new MockTransport(), "aaaaaa", "statcktrace", "comment"));
@@ -196,7 +196,7 @@ public class UserModelImplTest extends BaseTestCase {
     assertEquals("aaaaaa", addedUser.getName());
   }
 
-  public void testAddUser() throws Exception {
+  public void testAddUser() {
     MockUser user = new MockUser("user", null);
     myUserModel.addUser(user);
 
@@ -207,7 +207,7 @@ public class UserModelImplTest extends BaseTestCase {
     myListener.assertLog("Expect no messages when already in model", "");
   }
 
-  public void testRemoveUser() throws Exception {
+  public void testRemoveUser() {
     MockUser user = new MockUser("user", null);
     myUserModel.addUser(user);
     myListener.clear();
@@ -224,7 +224,7 @@ public class UserModelImplTest extends BaseTestCase {
     assertEquals(name, user.getDisplayName());
   }
 
-  public void testDeleteUserFromList() throws Exception {
+  public void testDeleteUserFromList() {
     for (int i = 5; i > 0; i --) {
       assertEquals(i, myUserModel.getAllUsers().length);
       myUserModel.removeUser(myUserModel.getAllUsers()[0]);

@@ -6,7 +6,10 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectio
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSField;
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.resolve.JSSimpleTypeProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
@@ -679,7 +682,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testIfCompletion4JavascriptEs6InEs5() throws Exception {
+  public void testIfCompletion4JavascriptEs6InEs5() {
     myFixture.configureByFiles("if4.html", "angular4_compiled.es6.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("*<caret>", myFixture.getFile());
     myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
@@ -830,7 +833,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       assertNull(ref.resolve());
     });
   }
-  public void testTemplate20JavaScript() throws Exception {
+  public void testTemplate20JavaScript() {
     myFixture.configureByFiles("template.html", "angular2_compiled.js", "template.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("*myHover<caret>List", myFixture.getFile());
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
@@ -844,7 +847,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     assertNull(ref.resolve());
   }
 
-  public void testNoTemplate20JavaScript() throws Exception {
+  public void testNoTemplate20JavaScript() {
     myFixture.configureByFiles("noTemplate.html", "angular2_compiled.js", "noTemplate.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("myHover<caret>List", myFixture.getFile());
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);

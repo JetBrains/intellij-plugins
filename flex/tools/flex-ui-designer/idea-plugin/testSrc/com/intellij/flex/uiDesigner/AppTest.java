@@ -18,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.SocketException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -64,14 +63,14 @@ public class AppTest extends AppTestBase {
     }
   }
   
-  private void callClientAssert(String methodName) throws IOException, InterruptedException {
+  private void callClientAssert(String methodName) throws InterruptedException {
     semaphore.down();
     client.test(methodName.equals("close") ? null : myModule, methodName, APP_TEST_CLASS_ID);
     await();
     fail.set(false);
   }
 
-  private void callClientAssert(VirtualFile file) throws IOException, InterruptedException {
+  private void callClientAssert(VirtualFile file) throws InterruptedException {
     semaphore.down();
     ActionCallback callback = client.test(null, DocumentFactoryManager.getInstance().getId(file), getTestName(false), APP_TEST_CLASS_ID);
     callback.doWhenProcessed(() -> semaphore.up());
@@ -121,7 +120,7 @@ public class AppTest extends AppTestBase {
     await();
   }
 
-  private void openAndWait(VirtualFile file, @Nullable String relativePath) throws InterruptedException, IOException {
+  private void openAndWait(VirtualFile file, @Nullable String relativePath) throws InterruptedException {
     semaphore.down();
 
     DesignerApplicationManager.getInstance().renderDocument(myModule, Tests.virtualToPsi(myProject, file));
@@ -152,7 +151,7 @@ public class AppTest extends AppTestBase {
     }
 
     @Override
-    protected void processCommand(int command) throws IOException {
+    protected void processCommand(int command) {
       boolean result = true;
       try {
         super.processCommand(command);

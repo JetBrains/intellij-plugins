@@ -55,7 +55,7 @@ public class ActionScriptHighlightingInTextFieldTest extends JSDaemonAnalyzerTes
     return "js2";
   }
 
-  private void doTestForEditorTextField(JSExpressionCodeFragment fragment) throws Exception {
+  private void doTestForEditorTextField(JSExpressionCodeFragment fragment) {
     myFile = fragment;
 
     Document document = PsiDocumentManager.getInstance(myProject).getDocument(fragment);
@@ -72,14 +72,14 @@ public class ActionScriptHighlightingInTextFieldTest extends JSDaemonAnalyzerTes
     }
   }
 
-  public void testPackageNameCombo() throws Exception {
+  public void testPackageNameCombo() {
     configureByFiles(BASE_PATH + getTestName(false), BASE_PATH + getTestName(false) + "/foo/dummy.txt");
     PsiFile fragment =
       JSReferenceEditor.forPackageName("foo", myProject, "", GlobalSearchScope.projectScope(myProject), "").getPsiFile();
     doTestForEditorTextField((JSExpressionCodeFragment)fragment);
   }
 
-  public void testPackageNameCombo2() throws Exception {
+  public void testPackageNameCombo2() {
     configureByFiles(BASE_PATH + getTestName(false), BASE_PATH + getTestName(false) + "/foo/dummy.txt");
     PsiFile fragment =
       JSReferenceEditor.forPackageName("<error>foo2</error>", myProject, "", GlobalSearchScope.projectScope(myProject), "").getPsiFile();

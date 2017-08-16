@@ -34,7 +34,7 @@ public class GoToSymbolProviderTest extends BasicLightHighlightingTestCase {
     return "";
   }
 
-  public void testGotoAction() throws Exception {
+  public void testGotoAction() {
     runGotoTest("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
                 "\n" +
                 "<!DOCTYPE struts PUBLIC\n" +
@@ -53,7 +53,7 @@ public class GoToSymbolProviderTest extends BasicLightHighlightingTestCase {
                 "test1", "test2", "test3");
   }
 
-  public void testGotoPackage() throws Exception {
+  public void testGotoPackage() {
     runGotoTest("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
                 "\n" +
                 "<!DOCTYPE struts PUBLIC\n" +

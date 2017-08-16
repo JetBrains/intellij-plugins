@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartUrlResolver;
 
 public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
 
-  public void testPackagesFolderExclusion() throws Exception {
+  public void testPackagesFolderExclusion() {
     try {
       final String rootUrl = ModuleRootManager.getInstance(myModule).getContentEntries()[0].getUrl();
 
@@ -101,7 +101,7 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
     }
   }
 
-  public void testDartUrlResolver() throws Exception {
+  public void testDartUrlResolver() {
     final String rootPath = ModuleRootManager.getInstance(myModule).getContentRoots()[0].getPath();
     final String rootUrl = "file:///" + StringUtil.trimLeading(rootPath, '/');
 

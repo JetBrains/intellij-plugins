@@ -26,22 +26,22 @@ public class DartExtractMethodRefactoringTest extends CodeInsightFixtureTestCase
     return "/analysisServer/refactoring/extract/method";
   }
 
-  public void testFunctionAll() throws Throwable {
+  public void testFunctionAll() {
     final String testName = getTestName(false);
     doTest(testName + ".dart", true, false);
   }
 
-  public void testMethodAll() throws Throwable {
+  public void testMethodAll() {
     final String testName = getTestName(false);
     doTest(testName + ".dart", true, false);
   }
 
-  public void testMethodGetter() throws Throwable {
+  public void testMethodGetter() {
     final String testName = getTestName(false);
     doTest(testName + ".dart", true, true);
   }
 
-  public void testMethodSingle() throws Throwable {
+  public void testMethodSingle() {
     final String testName = getTestName(false);
     doTest(testName + ".dart", false, false);
   }

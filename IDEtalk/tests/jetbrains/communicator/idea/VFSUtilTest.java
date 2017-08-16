@@ -81,7 +81,7 @@ public class VFSUtilTest extends PlatformTestCase {
   }
 
   @Override
-  protected void runTest() throws Throwable {
+  protected void runTest() {
     ApplicationManager.getApplication().runWriteAction(() -> {
       try {
         super.runTest();

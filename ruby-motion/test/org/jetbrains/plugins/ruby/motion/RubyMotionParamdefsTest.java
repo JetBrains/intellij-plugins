@@ -24,7 +24,7 @@ public class RubyMotionParamdefsTest extends RubyMotionLightFixtureTestCase {
     return "testApp";
   }
 
-  public void testFirstArg() throws Throwable {
+  public void testFirstArg() {
     assertResolveToMethod("Paramdefs.foo", "app/paramdefs.rb", "'f<caret>oo'", "app/paramdefs.rb", "app/app_delegate.rb", "Rakefile");
   }
 
@@ -33,7 +33,7 @@ public class RubyMotionParamdefsTest extends RubyMotionLightFixtureTestCase {
     assertInCompletionList("<caret>test", "withObject:", "onThread:");
   }
 
-  public void testSecondArgResolve() throws Throwable {
+  public void testSecondArgResolve() {
     assertResolveToMethod("Paramdefs.foo", "app/paramdefs.rb", "action: 'f<caret>oo'", "app/paramdefs.rb", "app/app_delegate.rb", "Rakefile");
   }
 

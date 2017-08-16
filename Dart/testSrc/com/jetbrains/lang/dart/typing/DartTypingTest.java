@@ -19,7 +19,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     return "/typing";
   }
 
-  protected void doTest(char charToType) throws Throwable {
+  protected void doTest(char charToType) {
     myFixture.configureByFiles(getTestName(false) + ".dart");
     myFixture.type(charToType);
     myFixture.checkResultByFile(getTestName(false) + "_after.dart");
@@ -44,63 +44,63 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     myFixture.checkResult(textAfter);
   }
 
-  public void testDocComment() throws Throwable {
+  public void testDocComment() {
     doTest('\n');
   }
 
-  public void testDocComment2() throws Throwable {
+  public void testDocComment2() {
     doTest('\n');
   }
 
-  public void testDocComment3() throws Throwable {
+  public void testDocComment3() {
     doTest('\n');
   }
 
-  public void testGenericBraceWithMultiCaret() throws Throwable {
+  public void testGenericBraceWithMultiCaret() {
     doTest('<');
   }
 
-  public void testGenericBraceWithMultiCaretInDifferentContexts() throws Throwable {
+  public void testGenericBraceWithMultiCaretInDifferentContexts() {
     doTest('<');
   }
 
-  public void testGenericBrace1() throws Throwable {
+  public void testGenericBrace1() {
     doTest('<');
   }
 
-  public void testGenericBrace2() throws Throwable {
+  public void testGenericBrace2() {
     doTest('<');
   }
 
-  public void testGenericBrace3() throws Throwable {
+  public void testGenericBrace3() {
     doTest('<');
   }
 
-  public void testLess() throws Throwable {
+  public void testLess() {
     doTest('<');
   }
 
-  public void testStringWithMultiCaret() throws Throwable {
+  public void testStringWithMultiCaret() {
     doTest('{');
   }
 
-  public void testStringWithMultiCaretInDifferentContexts() throws Throwable {
+  public void testStringWithMultiCaretInDifferentContexts() {
     doTest('{');
   }
 
-  public void testString1() throws Throwable {
+  public void testString1() {
     doTest('{');
   }
 
-  public void testString2() throws Throwable {
+  public void testString2() {
     doTest('{');
   }
 
-  public void testString3() throws Throwable {
+  public void testString3() {
     doTest('{');
   }
 
-  public void testQuote() throws Throwable {
+  public void testQuote() {
     doTypingTest('\'', "var foo = <caret>", "var foo = '<caret>'");
     doTypingTest('"', "var foo = <caret>", "var foo = \"<caret>\"");
     doTypingTest('"', "var foo = '<caret>'", "var foo = '\"<caret>'");
@@ -125,7 +125,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTypingTest('\'', "var foo = r'<caret>'\"", "var foo = r''<caret>\"");
   }
 
-  public void testBackspace() throws Throwable {
+  public void testBackspace() {
     doBackspaceTest("var foo = \"<caret> \"", "var foo = <caret> \"");
     doBackspaceTest("var foo = \"<caret>\"", "var foo = <caret>");
     doBackspaceTest("var foo = '<caret>a'", "var foo = <caret>a'");
@@ -135,7 +135,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doBackspaceTest("var foo = '\"<caret>\"'", "var foo = '<caret>\"'");
   }
 
-  public void testWEB_8315() throws Throwable {
+  public void testWEB_8315() {
     doTypingTest('\n',
                  "class X {\n" +
                  "  num x;<caret>\n" +
@@ -146,7 +146,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "}");
   }
 
-  public void testCaseAlignAfterColon1() throws Throwable {
+  public void testCaseAlignAfterColon1() {
     doTypingTest(':',
                  "class X {\n" +
                  "  void doit(x) {\n" +
@@ -164,7 +164,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "}");
   }
 
-  public void testCaseAlignAfterColon2() throws Throwable {
+  public void testCaseAlignAfterColon2() {
     doTypingTest(':',
                  "class X {\n" +
                  "  void doit(x) {\n" +
@@ -184,7 +184,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "}");
   }
 
-  public void testDefaultAlignAfterColon() throws Throwable {
+  public void testDefaultAlignAfterColon() {
     doTypingTest(':',
                  "class X {\n" +
                  "  void doit(x) {\n" +
@@ -204,7 +204,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "}");
   }
 
-  public void testCaseStringAlignAfterColon() throws Throwable {
+  public void testCaseStringAlignAfterColon() {
     doTypingTest(':',
                  "class X {\n" +
                  "  void doit(x) {\n" +
@@ -224,7 +224,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "}");
   }
 
-  public void testEnterInSwitch() throws Throwable {
+  public void testEnterInSwitch() {
     doTypingTest('\n',
                  "void bar() {\n" +
                  "  switch (1) {<caret>\n" +
@@ -236,7 +236,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "}");
   }
 
-  public void testEnterAfterCase() throws Throwable {
+  public void testEnterAfterCase() {
     doTypingTest('\n',
                  "void bar() {\n" +
                  "  switch (1) {\n" +
@@ -255,7 +255,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "}");
   }
 
-  public void testEnterAfterDefault() throws Throwable {
+  public void testEnterAfterDefault() {
     doTypingTest('\n',
                  "void bar() {\n" +
                  "  switch (1) {\n" +
@@ -272,7 +272,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "}");
   }
 
-  public void testEnterAfterBreakInCase() throws Throwable {
+  public void testEnterAfterBreakInCase() {
     final String textBefore = "void bar() {\n" +
                               "  switch (1) {\n" +
                               "    case 1:\n" +
@@ -295,7 +295,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  StringUtil.replace(textAfter, "break;\n      <caret>", "foo;\n      <caret>"));
   }
 
-  public void testEnterInMapLiteral() throws Throwable {
+  public void testEnterInMapLiteral() {
     doTypingTest('\n', "var data = {<caret>};", "var data = {\n" +
                                                 "  <caret>\n" +
                                                 "};");
@@ -309,7 +309,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "};");
   }
 
-  public void testEnterInListLiteral() throws Throwable {
+  public void testEnterInListLiteral() {
     doTypingTest('\n',
                  "var data = [<caret>\n" +
                  "];",
@@ -713,7 +713,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTypingTest('\n', "g() {\n  var a = [<caret>]", "g() {\n  var a = [\n    <caret>\n  ]");
   }
 
-  public void testTrailingSpaces() throws Exception {
+  public void testTrailingSpaces() {
     myFixture.configureByText("foo.dart",
                               "var a = r'''   \n" +
                               "trailing spaces     \n" +

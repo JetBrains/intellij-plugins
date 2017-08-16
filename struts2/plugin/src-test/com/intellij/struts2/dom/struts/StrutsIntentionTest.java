@@ -38,7 +38,7 @@ public class StrutsIntentionTest extends StrutsLightHighlightingTestCase {
    *
    * @throws Throwable Any exceptions.
    */
-  public void testCreateActionMethodIntention() throws Throwable {
+  public void testCreateActionMethodIntention() {
     createStrutsFileSet("struts-action-method.xml");
     final List<IntentionAction> list = myFixture.getAllQuickFixes("struts-action-method.xml");
 

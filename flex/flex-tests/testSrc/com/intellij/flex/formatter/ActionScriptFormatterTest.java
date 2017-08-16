@@ -29,7 +29,7 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     return CodeStyleSettingsManager.getSettings(getProject()).getCommonSettings(JavaScriptSupportLoader.ECMA_SCRIPT_L4);
   }
 
-  public void testWrapLongLinesInFlex() throws Exception {
+  public void testWrapLongLinesInFlex() {
     final CommonCodeStyleSettings settings = getCommonJSSettings();
     boolean wrap = settings.WRAP_LONG_LINES;
     int rMargin = settings.RIGHT_MARGIN;
@@ -43,7 +43,7 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     settings.IF_BRACE_FORCE = braceForce;
   }
 
-  public void testActionScriptClass() throws Exception {
+  public void testActionScriptClass() {
     CommonCodeStyleSettings settings = getEcma4Settings();
     settings.METHOD_BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE;
     settings.CLASS_BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE;
@@ -59,32 +59,32 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
                                                             "}", "js2");
   }
 
-  public void testReformatIf2() throws Exception {
+  public void testReformatIf2() {
     doTestFromFile("js2");
   }
 
-  public void testReformatIf2_2() throws Exception {
+  public void testReformatIf2_2() {
     doTestFromFile("js2");
   }
 
-  public void testKeepPropertyMembersClose() throws Exception {
+  public void testKeepPropertyMembersClose() {
     doTestFromFile("js2");
   }
 
-  public void test2NewlinesAfterFunction() throws Exception {
+  public void test2NewlinesAfterFunction() {
     doTestFromFile("js2");
     doTestFromFile("mxml");
   }
 
-  public void testDocCommentInsideTag() throws Exception {
+  public void testDocCommentInsideTag() {
     doTestFromFile("mxml");
   }
 
-  public void testTopLevelDocComment() throws Exception {
+  public void testTopLevelDocComment() {
     doTestFromFile("mxml");
   }
 
-  public void testCdataDamaged() throws Exception {
+  public void testCdataDamaged() {
     final CodeStyleSettings styleSettings = CodeStyleSettingsManager.getSettings(getProject());
     final XmlCodeStyleSettings xmlSettings = styleSettings.getCustomSettings(XmlCodeStyleSettings.class);
     int before = styleSettings.getTabSize(StdFileTypes.XML);
@@ -103,40 +103,40 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     }
   }
 
-  public void testECMAScript3() throws Exception {
+  public void testECMAScript3() {
     doTest("private namespace yweather = \"http://xml.weather.yahoo.com/ns/rss/1.0\";",
            "private namespace yweather = \"http://xml.weather.yahoo.com/ns/rss/1.0\";",
            "as"
     );
   }
 
-  public void testECMAScript4() throws Exception {
+  public void testECMAScript4() {
     doTest("import xxx.*;import yyy.*;class A { var X; function xxx() {} }",
            "import xxx.*;\n\nimport yyy.*;\n\nclass A {\n" + "    var X;\n\n" + "    function xxx() {\n" + "    }\n" + "}",
            "as"
     );
   }
 
-  public void testReformatXml() throws Exception {
+  public void testReformatXml() {
     doTestFromFile("js2");
   }
 
-  public void testReformatXml2() throws Exception {
+  public void testReformatXml2() {
     doTestFromFile("js2");
   }
 
-  public void testBlankLineBetweenVarAndFunAsdoc() throws Exception {
+  public void testBlankLineBetweenVarAndFunAsdoc() {
     doTestFromFile("js2");
   }
 
-  public void testReformatSwitch() throws Exception {
+  public void testReformatSwitch() {
     final CommonCodeStyleSettings styleSettings = getEcma4Settings();
     styleSettings.BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE;
     doTestFromFile("js2");
   }
 
 
-  public void testMxml() throws Exception {
+  public void testMxml() {
     doTest("<?xml version=\"1.0\" ?>\n" +
            "<mx:Application xmlns:mx=\"http://www.adobe.com/2006/mxml\">\n" +
            "    <mx:Script>\n" +
@@ -155,7 +155,7 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     );
   }
 
-  public void testMxml2() throws Exception {
+  public void testMxml2() {
     try {
       myUseReformatText = true;
       doTest("<mx:Application xmlns:mx=\"http://www.adobe.com/2006/mxml\">\n" +
@@ -177,7 +177,7 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
   }
 
 
-  public void testBlankLinesAfterPackage() throws Exception {
+  public void testBlankLinesAfterPackage() {
     final CommonCodeStyleSettings settings = getEcma4Settings();
     int blankLines = settings.BLANK_LINES_AFTER_PACKAGE;
     settings.BLANK_LINES_AFTER_PACKAGE = 2;
@@ -201,7 +201,7 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     settings.BLANK_LINES_AFTER_PACKAGE = blankLines;
   }
 
-  public void testActionScriptRestParameter() throws Exception {
+  public void testActionScriptRestParameter() {
     final CodeStyleSettings settings = CodeStyleSettingsManager.getInstance(getProject()).getCurrentSettings();
     final JSCodeStyleSettings jsSettings = settings.getCustomSettings(ECMA4CodeStyleSettings.class);
     jsSettings.SPACE_AFTER_DOTS_IN_REST_PARAMETER = false;
@@ -228,11 +228,11 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
       ".as");
   }
 
-  public void testParameterList1() throws Exception {
+  public void testParameterList1() {
     doTestFromFile("js2");
   }
 
-  public void testParameterList2() throws Exception {
+  public void testParameterList2() {
     CommonCodeStyleSettings settings = getEcma4Settings();
     int wrap = settings.METHOD_PARAMETERS_WRAP = CommonCodeStyleSettings.WRAP_ALWAYS;
     doTestFromFile("js2");
@@ -240,7 +240,7 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
   }
 
 
-  public void testNamespace() throws Exception {
+  public void testNamespace() {
     doTest(
       "package foo {\n" +
       "\n" +
@@ -255,7 +255,7 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
       ".as");
   }
 
-  public void testIfBraceEnforcer() throws Exception {
+  public void testIfBraceEnforcer() {
     CommonCodeStyleSettings settings = getEcma4Settings();
     settings.IF_BRACE_FORCE = CommonCodeStyleSettings.FORCE_BRACES_ALWAYS;
     doTest(
@@ -285,7 +285,7 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     );
   }
 
-  public void testSpaceBeforeTypeColon() throws Exception {
+  public void testSpaceBeforeTypeColon() {
     final CodeStyleSettings settings = CodeStyleSettingsManager.getInstance(getProject()).getCurrentSettings();
     final JSCodeStyleSettings jsSettings = settings.getCustomSettings(ECMA4CodeStyleSettings.class);
     boolean spaceBeforeTypeColon = jsSettings.SPACE_BEFORE_TYPE_COLON;
@@ -320,7 +320,7 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     jsSettings.SPACE_AFTER_TYPE_COLON = spaceAfterTypeColon;
   }
 
-  public void testImportStatement() throws Exception {
+  public void testImportStatement() {
     final CommonCodeStyleSettings settings = getCommonJSSettings();
     int wrapping = settings.METHOD_CALL_CHAIN_WRAP;
     int rightMargin = settings.RIGHT_MARGIN;
@@ -331,13 +331,13 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     settings.METHOD_CALL_CHAIN_WRAP = wrapping;
   }
 
-  public void testMxmlForceBraces() throws Exception {
+  public void testMxmlForceBraces() {
     CommonCodeStyleSettings settings = getEcma4Settings();
     settings.IF_BRACE_FORCE = CommonCodeStyleSettings.FORCE_BRACES_ALWAYS;
     doTestFromFile("mxml");
   }
 
-  public void testCDATAFormattingOptions1() throws Exception {
+  public void testCDATAFormattingOptions1() {
     final CodeStyleSettings settings = CodeStyleSettingsManager.getInstance(getProject()).getCurrentSettings();
     final XmlCodeStyleSettings xmlSettings = settings.getCustomSettings(XmlCodeStyleSettings.class);
     int currCDATAWhitespace = xmlSettings.XML_WHITE_SPACE_AROUND_CDATA;
@@ -346,7 +346,7 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     xmlSettings.XML_WHITE_SPACE_AROUND_CDATA = currCDATAWhitespace;
   }
 
-  public void testCDATAFormattingOptions2() throws Exception {
+  public void testCDATAFormattingOptions2() {
     final CodeStyleSettings settings = CodeStyleSettingsManager.getInstance(getProject()).getCurrentSettings();
     final XmlCodeStyleSettings xmlSettings = settings.getCustomSettings(XmlCodeStyleSettings.class);
     int currCDATAWhitespace = xmlSettings.XML_WHITE_SPACE_AROUND_CDATA;
@@ -355,7 +355,7 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     xmlSettings.XML_WHITE_SPACE_AROUND_CDATA = currCDATAWhitespace;
   }
 
-  public void testAlignOperations() throws Exception {
+  public void testAlignOperations() {
     final CommonCodeStyleSettings styleSettings = getEcma4Settings();
     styleSettings.ALIGN_MULTILINE_EXTENDS_LIST = true;
     doTest("class _X extends X, \n Y implements Z,\n T {}", "class _X extends X,\n" +
@@ -365,7 +365,7 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
   }
 
 
-  public void testMxml3() throws Exception {
+  public void testMxml3() {
     try {
       myUseReformatText = true;
       doFileTest("", "mxml");
@@ -375,19 +375,19 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     }
   }
 
-  public void testLBraceInClass() throws Exception {
+  public void testLBraceInClass() {
     doTest("class A    {\n}", "class A {\n}", "as");
   }
 
-  public void testLBraceInClass2() throws Exception {
+  public void testLBraceInClass2() {
     doTest("class A implements Foo   {\n}", "class A implements Foo {\n}", "as");
   }
 
-  public void testCompoundStatement() throws Exception {
+  public void testCompoundStatement() {
     doFileTest("");
   }
 
-  public void testSpaceNearType() throws Exception {
+  public void testSpaceNearType() {
     doFileTest("");
 
     JSCodeStyleSettings styleSettings = CodeStyleSettingsManager.getSettings(getProject()).getCustomSettings(ECMA4CodeStyleSettings.class);
@@ -406,24 +406,24 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     }
   }
 
-  public void testSpaceAfterAccessModifier() throws Exception {
+  public void testSpaceAfterAccessModifier() {
     doFileTest("");
   }
 
 
-  public void testSemicolonAfterVarStatement() throws Exception {
+  public void testSemicolonAfterVarStatement() {
     doFileTest("");
   }
 
-  public void testECMAScript() throws Exception {
+  public void testECMAScript() {
     doFileTest("");
   }
 
-  private void doFileTest(String ext) throws Exception {
+  private void doFileTest(String ext) {
     doFileTest(ext, "js2");
   }
 
-  private void doFileTest(String ext, String fileExt) throws Exception {
+  private void doFileTest(String ext, String fileExt) {
     doTestFromFile(getTestName(false) + ext, fileExt);
     configureByFile(BASE_PATH + getTestName(false) + ext + "." + fileExt);
     ApplicationManager.getApplication().runWriteAction(() -> {
@@ -433,7 +433,7 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     checkResultByFile(BASE_PATH + getTestName(false) + ext + "_after." + fileExt);
   }
 
-  public void testJSON() throws Exception {
+  public void testJSON() {
     doTest("var jsonObj:Object = JSON.decode(rawData) as Object\n" +
            "if (jsonObj is Object) return;",
            "var jsonObj:Object = JSON.decode(rawData) as Object\n" +
@@ -442,7 +442,7 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     );
   }
 
-  public void testECMAScript2() throws Exception {
+  public void testECMAScript2() {
     doFileTest("");
     doFileTest("_2");
 
@@ -452,11 +452,11 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     doFileTest("_3");
   }
 
-  public void testECMAScript5() throws Exception {
+  public void testECMAScript5() {
     doFileTest("");
   }
 
-  public void testClassHeader() throws Exception {
+  public void testClassHeader() {
     doFileTest("");
   }
 
@@ -465,7 +465,7 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     doTest("var x: number = 1", "var x:number = 1;", "as");
   }
 
-  public void testIdea124868() throws Exception {
+  public void testIdea124868() {
     CodeStyleSettings settings = getCommonJSSettings().getRootSettings();
     boolean tagsEnabled = settings.FORMATTER_TAGS_ENABLED;
     settings.FORMATTER_TAGS_ENABLED = true;
@@ -477,7 +477,7 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     }
   }
 
-  public void testImportStatement2() throws Exception {
+  public void testImportStatement2() {
     doTestFromFile("js2");
   }
 }

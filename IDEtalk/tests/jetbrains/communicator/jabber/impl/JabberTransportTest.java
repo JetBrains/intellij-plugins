@@ -15,9 +15,9 @@
  */
 package jetbrains.communicator.jabber.impl;
 
-import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.dispatcher.AsyncMessageDispatcher;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.users.UserImpl;
 import jetbrains.communicator.core.impl.users.UserModelImpl;
 import jetbrains.communicator.core.users.User;
@@ -58,7 +58,7 @@ public class JabberTransportTest extends BaseTestCase {
     myProjectContainer = Pico.getInstance().makeChildContainer();
   }
 
-  public void testIsOnlineNotConnected() throws Throwable {
+  public void testIsOnlineNotConnected() {
     assertFalse("Not online - return false", UserImpl.create("fake", myTransport.getName()).isOnline());
     assertEquals("Not online - offline icon expected", "/ideTalk/offline.png", myTransport.getIcon(
       myTransport.getUserPresence(new MockUser())));
@@ -82,13 +82,13 @@ public class JabberTransportTest extends BaseTestCase {
     Thread.sleep(200);
   }
 
-  public void testInitialize_NotConnected_SkipConnection() throws Exception {
+  public void testInitialize_NotConnected_SkipConnection() {
     myUIMock.expects(once()).method("initPerProject");
     myFacade.setConnected(false);
     myTransport.initializeProject(null, myProjectContainer);
   }
 
-  public void testThreadIdPreserving() throws Exception {
+  public void testThreadIdPreserving() {
     final User kir = createUser("kir");
     final String threadId = myTransport.getThreadId(kir);
     assertEquals(threadId, myTransport.getThreadId(kir));

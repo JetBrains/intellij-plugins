@@ -21,7 +21,7 @@ import junit.framework.TestCase;
  * @author Kir
  */
 public class IdProviderTest extends TestCase {
-  public void testGenerateUniqueId() throws Exception {
+  public void testGenerateUniqueId() {
     IdProvider idProvider = new IdProvider(null);
     String id = idProvider.getId();
     assertNotNull(id);

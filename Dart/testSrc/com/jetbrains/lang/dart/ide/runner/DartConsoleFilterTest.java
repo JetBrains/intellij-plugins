@@ -86,7 +86,7 @@ public class DartConsoleFilterTest extends TestCase {
                    "foo.dart/bar.dart_baz.dart.more.dart", -1, -1);
   }
 
-  public void testRelativePathsConsoleFilter() throws Exception {
+  public void testRelativePathsConsoleFilter() {
     doNegativeRelativePathsFilterTest("");
     doNegativeRelativePathsFilterTest("foo.dart");
     doNegativeRelativePathsFilterTest("foo.dart ");

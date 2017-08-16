@@ -65,7 +65,7 @@ public class PersistentUserModelImplTest extends BaseTestCase {
         fileText);
   }
 
-  public void testPersistUser() throws Exception {
+  public void testPersistUser() {
     myUserModel.addUser(new MockUser("user", "group"));
 
     PersistentUserModelImpl modelInstance = createModelInstance();
@@ -75,7 +75,7 @@ public class PersistentUserModelImplTest extends BaseTestCase {
     assertEquals("group", users[0].getGroup());
   }
 
-  public void testAddAndChangeUser() throws Exception {
+  public void testAddAndChangeUser() {
     myUserModel.addUser(new MockUser("user", "group"));
     checkSaved(true);
     User user = myUserModel.getAllUsers()[0];
@@ -100,7 +100,7 @@ public class PersistentUserModelImplTest extends BaseTestCase {
     mySaved = false;
   }
 
-  public void testPersistGroup() throws Exception {
+  public void testPersistGroup() {
     myUserModel.addGroup("a group");
 
     PersistentUserModelImpl modelInstance = createModelInstance();
@@ -109,7 +109,7 @@ public class PersistentUserModelImplTest extends BaseTestCase {
     assertEquals("a group", groups[0]);
   }
 
-  public void testConcurrentModifications() throws Exception {
+  public void testConcurrentModifications() {
     Runnable createUserCommand = () -> {
       User user = myUserModel.createUser("bob" + System.nanoTime(), MockTransport.NAME);
       myUserModel.addUser(user);

@@ -16,8 +16,8 @@
 package jetbrains.communicator.idea.toolWindow;
 
 import com.intellij.ui.treeStructure.Tree;
-import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.TestFactory;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.dispatcher.LocalMessageDispatcherImpl;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserEvent;
@@ -52,7 +52,7 @@ public class UsersTreeModelTest extends BaseTestCase {
     myTree.setModel(myUsersTreeModel);
   }
 
-  public void testUserDeleted() throws Exception {
+  public void testUserDeleted() {
     myUserModel.removeGroup("group2");
     assertEquals(0, myTree.getSelectionRows()[0]);
 
@@ -60,7 +60,7 @@ public class UsersTreeModelTest extends BaseTestCase {
     assertEquals(0, myTree.getSelectionRows()[0]);
   }
 
-  public void testUserNameChanged() throws Exception {
+  public void testUserNameChanged() {
 
     final User user = myUserModel.getAllUsers()[0];
     assertEquals("aaa", user.getName());
@@ -71,7 +71,7 @@ public class UsersTreeModelTest extends BaseTestCase {
     assertEquals("new name", user.getDisplayName());
   }
 
-  public void testGroupNameChanged() throws Exception {
+  public void testGroupNameChanged() {
     TreePath path = new TreePath(new DefaultMutableTreeNode("group1"));
 
     myUsersTreeModel.valueForPathChanged(path, "new name");
@@ -83,7 +83,7 @@ public class UsersTreeModelTest extends BaseTestCase {
         ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject());
   }
 
-  public void testGroupNameChanged_EmptyGroup() throws Exception {
+  public void testGroupNameChanged_EmptyGroup() {
     TreePath path = new TreePath(new DefaultMutableTreeNode("group1"));
 
     myUsersTreeModel.valueForPathChanged(path, "");
@@ -95,7 +95,7 @@ public class UsersTreeModelTest extends BaseTestCase {
         ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject());
   }
 
-  public void testRebuildTreeOnUserNameChange() throws Exception {
+  public void testRebuildTreeOnUserNameChange() {
     myTree.expandRow(2);
     myTree.expandRow(1);
 
@@ -110,7 +110,7 @@ public class UsersTreeModelTest extends BaseTestCase {
     assertEquals("Tree rebuild expected", "xxxx", getUserForRow(myTree, 3).getDisplayName());
   }
 
-  public void testRebuildTreeOnOnlineStatusChange() throws Exception {
+  public void testRebuildTreeOnOnlineStatusChange() {
     myTree.expandRow(2);
     myTree.expandRow(1);
 
@@ -126,7 +126,7 @@ public class UsersTreeModelTest extends BaseTestCase {
     assertEquals("Online user should go to the top", "ccc", getUserForRow(myTree, 2).getDisplayName());
   }
 
-  public void testRebuildTreeOnGroupChange() throws Exception {
+  public void testRebuildTreeOnGroupChange() {
     myTree.expandRow(2);
     myTree.expandRow(1);
 
@@ -140,7 +140,7 @@ public class UsersTreeModelTest extends BaseTestCase {
         "zzz", getUserForRow(myTree, 2).getDisplayName());
   }
 
-  public void testExplicitGroup() throws Exception {
+  public void testExplicitGroup() {
     myUserModel.addGroup("aaaaaaaa");
 
     assertEquals("aaaaaaaa", TreeUtils.getUserObject(myTree.getPathForRow(1)));

@@ -25,7 +25,7 @@ public class DartMethodSeparatorsTest extends DaemonAnalyzerTestCase {
     return true;
   }
 
-  public void testMethodSeparators() throws Exception {
+  public void testMethodSeparators() {
     DaemonCodeAnalyzerSettings.getInstance().SHOW_METHOD_SEPARATORS = true;
     try {
       // methods

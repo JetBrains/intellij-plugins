@@ -31,19 +31,19 @@ public class JamParentPackageTest extends JamConventionLightTestCase {
     return "parentPackage";
   }
 
-  public void testCompletionAction() throws Exception {
+  public void testCompletionAction() {
     createStrutsFileSet(STRUTS_XML);
     myFixture.testCompletionVariants("/testcompletion/Action.java",
                                      "myPackage", "myPackage2");
   }
 
-  public void testCompletionPackageInfo() throws Exception {
+  public void testCompletionPackageInfo() {
     createStrutsFileSet(STRUTS_XML);
     myFixture.testCompletionVariants("/testcompletion/package-info.java",
                                      "myPackage", "myPackage2");
   }
 
-  public void testResolveAction() throws Exception {
+  public void testResolveAction() {
     createStrutsFileSet(STRUTS_XML);
     myFixture.copyFileToProject("jam/Action.java");
 
@@ -51,7 +51,7 @@ public class JamParentPackageTest extends JamConventionLightTestCase {
     checkResolve(jamParentPackage);
   }
 
-  public void testResolveJamPackageInfo() throws Exception {
+  public void testResolveJamPackageInfo() {
     createStrutsFileSet(STRUTS_XML);
 
     myFixture.copyFileToProject("jam/package-info.java");

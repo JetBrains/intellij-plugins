@@ -37,7 +37,7 @@ public class CreateGroupCommandTest extends MockObjectTestCase {
     myCommand = new CreateGroupCommand((UserModel)myUserListMock.proxy(), (IDEFacade)myIDEFacade.proxy());
   }
 
-  public void testCreateGroup() throws Exception {
+  public void testCreateGroup() {
     myIDEFacade.expects(once()).method("getMessageLine").will(returnValue("group name"));
     myUserListMock.expects(once()).method("addGroup").with(eq("group name"));
 

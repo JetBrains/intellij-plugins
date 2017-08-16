@@ -1,7 +1,6 @@
 package org.angularjs.service;
 
 
-import com.intellij.execution.ExecutionException;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings;
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil;
 import com.intellij.openapi.Disposable;
@@ -11,7 +10,6 @@ import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 
 import java.io.File;
-import java.io.IOException;
 
 public class Angular2ServiceTest extends CodeInsightFixtureTestCase {
 
@@ -42,7 +40,7 @@ public class Angular2ServiceTest extends CodeInsightFixtureTestCase {
   }
 
 
-  public void enableService(Project project, Disposable disposable) throws ExecutionException {
+  public void enableService(Project project, Disposable disposable) {
     Disposer.register(disposable, () -> TypeScriptLanguageServiceUtil.setUseService(false));
     TypeScriptLanguageServiceUtil.setUseService(true);
     registerRestoreForSettings(TypeScriptCompilerSettings.getSettings(project), disposable);
@@ -75,7 +73,7 @@ public class Angular2ServiceTest extends CodeInsightFixtureTestCase {
   }
 
 
-  private void defaultTest(String extension) throws IOException {
+  private void defaultTest(String extension) {
     if (skipTests) {
       return;
     }
@@ -84,7 +82,7 @@ public class Angular2ServiceTest extends CodeInsightFixtureTestCase {
   }
 
 
-  protected void doTestFor(String file) throws IOException {
+  protected void doTestFor(String file) {
     myFixture.configureFromTempProjectFile(file);
 
     if (skipTests) {
@@ -94,11 +92,11 @@ public class Angular2ServiceTest extends CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
   }
 
-  public void testSimpleHighlight() throws IOException {
+  public void testSimpleHighlight() {
     defaultTest(".ts");
   }
 
-  public void testSimpleHighlightHtml() throws IOException {
+  public void testSimpleHighlightHtml() {
     defaultTest(".html");
   }
 }

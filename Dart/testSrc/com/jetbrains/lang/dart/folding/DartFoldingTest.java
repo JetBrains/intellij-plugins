@@ -57,75 +57,75 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
     }
   }
 
-  public void testOnlyFileHeaderInFile() throws Exception {
+  public void testOnlyFileHeaderInFile() {
     doTest();
   }
 
-  public void testSingleLineFileHeader() throws Exception {
+  public void testSingleLineFileHeader() {
     doTest();
   }
 
-  public void testFileHeaderBeforeSingleImport() throws Exception {
+  public void testFileHeaderBeforeSingleImport() {
     doTest();
   }
 
-  public void testCompositeFileHeaderAndExpandedImports() throws Exception {
+  public void testCompositeFileHeaderAndExpandedImports() {
     doTestWithSpecificSettings(settings -> settings.COLLAPSE_IMPORTS = false);
   }
 
-  public void testExpandedFileHeaderAndFoldedImports() throws Exception {
+  public void testExpandedFileHeaderAndFoldedImports() {
     doTestWithSpecificSettings(settings -> settings.COLLAPSE_FILE_HEADER = false);
   }
 
-  public void testFileHeaderBeforePartOf() throws Exception {
+  public void testFileHeaderBeforePartOf() {
     doTest();
   }
 
-  public void testClassDocNoFileHeader() throws Exception {
+  public void testClassDocNoFileHeader() {
     doTest();
   }
 
-  public void testCommentsFolding() throws Exception {
+  public void testCommentsFolding() {
     doTest();
   }
 
-  public void testDocCommentsCollapsed() throws Exception {
+  public void testDocCommentsCollapsed() {
     doTestWithSpecificSettings(settings -> settings.COLLAPSE_DOC_COMMENTS = true);
   }
 
-  public void testFunctionBody() throws Exception {
+  public void testFunctionBody() {
     doTest();
   }
 
-  public void testFunctionBodyCollapsedByDefault() throws Exception {
+  public void testFunctionBodyCollapsedByDefault() {
     doTestWithSpecificSettings(settings -> settings.COLLAPSE_METHODS = true);
   }
 
-  public void testCustomRegionsOverlappingWithCommentFoldings() throws Exception {
+  public void testCustomRegionsOverlappingWithCommentFoldings() {
     doTest();
   }
 
-  public void testTypeArguments() throws Exception {
+  public void testTypeArguments() {
     doTest();
   }
 
-  public void testTypeArgumentsByDefault() throws Exception {
+  public void testTypeArgumentsByDefault() {
     doTestWithSpecificSettings(null, settings -> settings.setCollapseGenericParameters(true));
   }
 
-  public void testParts() throws Exception {
+  public void testParts() {
     doTestWithSpecificSettings(null, settings -> settings.setCollapseParts(false));
   }
 
-  public void testPartsByDefault() throws Exception {
+  public void testPartsByDefault() {
     doTest();
   }
 
-  public void testMultilineStrings() throws Exception {
+  public void testMultilineStrings() {
     doTest();
   }
 
-  public void testNewExpression() throws Exception {
+  public void testNewExpression() {
     doTest();
   }
 }

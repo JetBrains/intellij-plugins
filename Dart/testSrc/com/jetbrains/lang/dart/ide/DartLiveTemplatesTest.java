@@ -39,11 +39,11 @@ public class DartLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCa
     }
   }
 
-  private void doTest() throws Exception {
+  private void doTest() {
     doTest(getTestName(false) + ".dart");
   }
 
-  private void doTest(String... files) throws Exception {
+  private void doTest(String... files) {
     myFixture.configureByFiles(files);
     expandTemplate(myFixture.getEditor());
     WriteCommandAction.runWriteCommandAction(null, () -> {
@@ -53,27 +53,27 @@ public class DartLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCa
     myFixture.checkResultByFile(getTestName(false) + ".after.dart");
   }
 
-  public void testItar1() throws Throwable {
+  public void testItar1() {
     doTest();
   }
 
-  public void testItar2() throws Throwable {
+  public void testItar2() {
     doTest();
   }
 
-  public void testIter() throws Throwable {
+  public void testIter() {
     doTest();
   }
 
-  public void testSout() throws Throwable {
+  public void testSout() {
     doTest();
   }
 
-  public void testSoutm() throws Throwable {
+  public void testSoutm() {
     doTest();
   }
 
-  public void testSoutm2() throws Throwable {
+  public void testSoutm2() {
     doTest();
   }
 }

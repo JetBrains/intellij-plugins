@@ -51,7 +51,7 @@ public class StrutsConstantManagerWithStrutsPluginXmlTest extends StrutsConstant
     return SPRING;
   }
 
-  public void testSpringPluginXml() throws Throwable {
+  public void testSpringPluginXml() {
     createStrutsFileSet(STRUTS_XML,
                         "lib/" + SPRING_JAR + "!/struts-plugin.xml");
 

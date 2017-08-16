@@ -485,7 +485,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testRunConfigUpdatedOnBcRename() throws Exception {
+  public void testRunConfigUpdatedOnBcRename() {
     final RunManager runManager = RunManager.getInstance(myProject);
     FlexTestUtils.createFlexUnitRunConfig(runManager, "SomeTest.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "",
                                           "SomeTest", "testSomething",

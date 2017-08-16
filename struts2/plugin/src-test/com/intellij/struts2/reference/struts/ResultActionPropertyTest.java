@@ -29,7 +29,7 @@ public class ResultActionPropertyTest extends StrutsLightHighlightingTestCase {
     return "strutsXml/resultActionProperty";
   }
 
-  public void testSimpleActionProperty() throws Throwable {
+  public void testSimpleActionProperty() {
     performHighlightingTest("struts-resultActionProperty.xml",
                             "ActionClass.java");
   }

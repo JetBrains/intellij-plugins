@@ -40,7 +40,7 @@ public class DartSdkConfigurationTest extends CodeInsightFixtureTestCase {
     assertOrderedEquals(actualRoots, expectedRoots);
   }
 
-  public void testSdkRoots() throws Exception {
+  public void testSdkRoots() {
     final DartSdk sdk = DartSdk.getDartSdk(getProject());
     assertNotNull(sdk);
     final String[] actualRoots =
@@ -48,14 +48,14 @@ public class DartSdkConfigurationTest extends CodeInsightFixtureTestCase {
     checkSdkRoots(sdk.getHomePath(), actualRoots);
   }
 
-  public void testSdkRootsFromLibrariesFile() throws Exception {
+  public void testSdkRootsFromLibrariesFile() {
     final DartSdk sdk = DartSdk.getDartSdk(getProject());
     assertNotNull(sdk);
     final String[] actualRoots = ArrayUtil.toStringArray(DartSdkLibUtil.getRootUrlsFromLibrariesFile(getProject(), sdk.getHomePath()));
     checkSdkRoots(sdk.getHomePath(), actualRoots);
   }
 
-  public void testSdkRootsUsingBlacklist() throws Exception {
+  public void testSdkRootsUsingBlacklist() {
     final DartSdk sdk = DartSdk.getDartSdk(getProject());
     assertNotNull(sdk);
     final String[] actualRoots = ArrayUtil.toStringArray(DartSdkLibUtil.getRootUrlsFailover(sdk.getHomePath()));

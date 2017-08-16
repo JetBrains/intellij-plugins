@@ -17,7 +17,6 @@ package com.intellij.struts2.dom.struts;
 
 import com.intellij.struts2.model.constant.StrutsConstant;
 import com.intellij.struts2.model.constant.contributor.StrutsCoreConstantContributor;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,22 +33,22 @@ public class StrutsCompletionTest extends StrutsLightHighlightingTestCase {
     return "strutsXml/completion";
   }
 
-  public void testCompletionVariantsResultName() throws Throwable {
+  public void testCompletionVariantsResultName() {
     performCompletionVariantTest("struts-completionvariants-result_name.xml",
                                  "error", "input", "login", "success");
   }
 
-  public void testCompletionVariantsResultType() throws Throwable {
+  public void testCompletionVariantsResultType() {
     performCompletionVariantTest("struts-completionvariants-result_type.xml",
                                  "chain", "dispatcher", "freemarker", "httpheader");
   }
 
-  public void testCompletionVariantsResultTypeExtendingPackage() throws Throwable {
+  public void testCompletionVariantsResultTypeExtendingPackage() {
     performCompletionVariantTest("struts-completionvariants-result_type-extending.xml",
                                  "chain", "chain2", "dispatcher", "freemarker", "httpheader", "velocity");
   }
 
-  public void testCompletionVariantsPackageExtends() throws Throwable {
+  public void testCompletionVariantsPackageExtends() {
     performCompletionVariantTest("struts-completionvariants-package_extends.xml",
                                  "extendTest", "extendTest2");
   }
@@ -59,12 +58,12 @@ public class StrutsCompletionTest extends StrutsLightHighlightingTestCase {
    *
    * @throws Throwable On any errors.
    */
-  public void testCompletionVariantsInterceptorRef() throws Throwable {
+  public void testCompletionVariantsInterceptorRef() {
     performCompletionVariantTest("struts-completionvariants-interceptor-ref.xml",
                                  "alias", "autowiring", "chain", "testInterceptorRefStack");
   }
 
-  public void testCompletionVariantsInterceptorRefExtendsPackage() throws Throwable {
+  public void testCompletionVariantsInterceptorRefExtendsPackage() {
     performCompletionVariantTest("struts-completionvariants-interceptor-ref-extends.xml",
                                  "alias", "autowiring", "testInterceptorRefStack");
   }
@@ -74,7 +73,7 @@ public class StrutsCompletionTest extends StrutsLightHighlightingTestCase {
    *
    * @throws Throwable On any errors.
    */
-  public void testCompletionVariantsActionMethod() throws Throwable {
+  public void testCompletionVariantsActionMethod() {
     myFixture.copyFileToProject("ActionClass.java");
     performCompletionVariantTest("struts-completionvariants-action_method.xml",
                                  "validActionMethod",
@@ -86,7 +85,7 @@ public class StrutsCompletionTest extends StrutsLightHighlightingTestCase {
   /**
    * Verify all core constants are present.
    */
-  public void testCompletionVariantsConstantName() throws Throwable {
+  public void testCompletionVariantsConstantName() {
     final StrutsCoreConstantContributor coreConstantContributor = new StrutsCoreConstantContributor();
     final List<StrutsConstant> constants = coreConstantContributor.getStrutsConstantDefinitions(myModule);
     final String[] variants = ContainerUtil.map2Array(constants, String.class, strutsConstant -> strutsConstant.getName());

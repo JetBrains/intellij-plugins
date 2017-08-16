@@ -30,54 +30,54 @@ public class StrutsHighlightingTest extends StrutsLightHighlightingTestCase {
     return "strutsXml/highlighting";
   }
 
-  public void testSimpleStruts() throws Throwable {
+  public void testSimpleStruts() {
     performHighlightingTest("struts-simple.xml",
                             "MyAbstractClass.java", "MyClass.java",
                             "MyInterface.java", "MyInterfaceImpl.java");
   }
 
-  public void testParam() throws Throwable {
+  public void testParam() {
     performHighlightingTest("struts-param.xml",
                             "MyClass.java", "MyNestedClass.java");
   }
 
-  public void testConstants() throws Throwable {
+  public void testConstants() {
     performHighlightingTest("struts-constants.xml");
   }
 
-  public void testExceptionMapping() throws Throwable {
+  public void testExceptionMapping() {
     performHighlightingTest("struts-exceptionmapping.xml",
                             "MyException.java", "MyInterface.java");
   }
 
-  public void testInterceptorRef() throws Throwable {
+  public void testInterceptorRef() {
     performHighlightingTest("struts-interceptor-ref.xml");
   }
 
-  public void testStrutsDefault() throws Throwable {
+  public void testStrutsDefault() {
     performHighlightingTest("struts-default.xml");
   }
 
-  public void testStrutsDefault218() throws Throwable {
+  public void testStrutsDefault218() {
     performHighlightingTest("struts-default-2_1_8.xml");
   }
 
-  public void testStrutsDefault231() throws Throwable {
+  public void testStrutsDefault231() {
     performHighlightingTest("struts-default-2_3_1.xml",
                             "MyClass.java");
   }
 
-  public void testUnknownHandlerStack() throws Throwable {
+  public void testUnknownHandlerStack() {
     performHighlightingTest("struts-unknownhandlerstack.xml",
                             "MyClass.java");
   }
 
-  public void testActionAllowedMethods() throws Throwable {
+  public void testActionAllowedMethods() {
     performHighlightingTest("struts-action-allowedMethods.xml",
                             "MyClass.java");
   }
 
-  public void testStrutsWithErrorsNotInFilesetNoHighlighting() throws Throwable {
+  public void testStrutsWithErrorsNotInFilesetNoHighlighting() {
     createStrutsFileSet("struts-default.xml");
     myFixture.testHighlighting(false, false, false, "struts-errors.xml");
   }

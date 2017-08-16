@@ -19,7 +19,7 @@ public class ResolveExternalInlineStyleSourceActionTest extends FlashUIDesignerB
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk, JSTestOption.WithFlexFacet})
-  public void testFindInnerComponentInDeclarations() throws Exception {
+  public void testFindInnerComponentInDeclarations() {
     Map<String, String> styles = new THashMap<>();
     styles.put("skinClass", "spark.skins.spark.ButtonBarMiddleButtonSkin");
     ResolveExternalInlineStyleSourceAction action = new ResolveExternalInlineStyleSourceAction("innerComponentInDeclarations", "spark.components.ButtonBarButton", "skinClass", styles, myModule);
@@ -29,7 +29,7 @@ public class ResolveExternalInlineStyleSourceActionTest extends FlashUIDesignerB
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithJsSupportLoader, JSTestOption.WithGumboSdk, JSTestOption.WithFlexFacet})
-  public void testFindInnerComponentInDeclarationsAsTag() throws Exception {
+  public void testFindInnerComponentInDeclarationsAsTag() {
     Map<String, String> styles = new THashMap<>();
     styles.put("skinClass", "spark.skins.spark.ButtonBarLastButtonSkin");
     ResolveExternalInlineStyleSourceAction action = new ResolveExternalInlineStyleSourceAction("innerComponentInDeclarations", "spark.components.ButtonBarButton", "skinClass", styles, myModule);
@@ -39,7 +39,7 @@ public class ResolveExternalInlineStyleSourceActionTest extends FlashUIDesignerB
   }
   
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithJsSupportLoader, JSTestOption.WithGumboSdk, JSTestOption.WithFlexFacet})
-  public void testFindComponent() throws Exception {
+  public void testFindComponent() {
     Map<String, String> styles = new THashMap<>();
     styles.put("left", "10");
     styles.put("right", "10");
@@ -50,7 +50,7 @@ public class ResolveExternalInlineStyleSourceActionTest extends FlashUIDesignerB
   }
   
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithJsSupportLoader, JSTestOption.WithGumboSdk, JSTestOption.WithFlexFacet})
-  public void testFindComponent2() throws Exception {
+  public void testFindComponent2() {
     Map<String, String> styles = new THashMap<>();
     styles.put("left", "10");
     styles.put("right", "10");

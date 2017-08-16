@@ -70,10 +70,10 @@ public class FlexMoveInnerClassTest extends MultiFileTestCase {
                       final String targetPackage,
                       final boolean searchInStringsAndComments,
                       final boolean searchTextOccurences,
-                      final String[] conflicts) throws Exception {
+                      final String[] conflicts) {
     doTest(new PerformAction() {
       @Override
-      public void performAction(VirtualFile rootDir, VirtualFile rootAfter) throws Exception {
+      public void performAction(VirtualFile rootDir, VirtualFile rootAfter) {
         FlexMoveInnerClassTest.this
           .performAction(rootDir, fromFilePath, className, targetPackage, searchInStringsAndComments, searchTextOccurences, conflicts);
       }
@@ -134,7 +134,7 @@ public class FlexMoveInnerClassTest extends MultiFileTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testClass() throws Exception {
+  public void testClass() {
     doTest("/From.as", "Foo2", "com.foo", true, false, ArrayUtil.EMPTY_STRING_ARRAY);
   }
 
@@ -143,40 +143,40 @@ public class FlexMoveInnerClassTest extends MultiFileTestCase {
   //  doTest("/From.as", "bar", "com.foo", true, true, ArrayUtil.EMPTY_STRING_ARRAY);
   //}
 
-  public void testFunction() throws Exception {
+  public void testFunction() {
     doTest("/a/From.as", "bar", "a", false, false, ArrayUtil.EMPTY_STRING_ARRAY);
   }
 
-  public void testVariable() throws Exception {
+  public void testVariable() {
     doTest("/a/From.as", "myVar", "a", false, false, ArrayUtil.EMPTY_STRING_ARRAY);
   }
 
-  public void testFunction2() throws Exception {
+  public void testFunction2() {
     doTest("/a/From.as", "bar", "b", false, false, ArrayUtil.EMPTY_STRING_ARRAY);
   }
 
-  public void testConflicts1() throws Exception {
+  public void testConflicts1() {
     String[] conflicts = new String[]{
       "Inner function bar() won't be accessible from inner function foo()"
     };
     doTest("/From.as", "foo", "", false, false, conflicts);
   }
 
-  public void testClass2() throws Exception {
+  public void testClass2() {
     doTest("/A.as", "B", "", true, false, ArrayUtil.EMPTY_STRING_ARRAY);
   }
 
-  public void testNoPackageStatement() throws Exception {
+  public void testNoPackageStatement() {
     doTest("/A.as", "my", "foo", true, false, ArrayUtil.EMPTY_STRING_ARRAY);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testGenericVectorCreation() throws Exception {
+  public void testGenericVectorCreation() {
     doTest("/Z1.as", "Cell", "", true, false, ArrayUtil.EMPTY_STRING_ARRAY);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testClassFromDefaultPackageConstructorCall() throws Exception {
+  public void testClassFromDefaultPackageConstructorCall() {
     doTest("/Z1.as", "Foo", "", true, false, ArrayUtil.EMPTY_STRING_ARRAY);
   }
 }

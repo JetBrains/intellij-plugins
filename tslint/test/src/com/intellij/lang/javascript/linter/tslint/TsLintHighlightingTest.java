@@ -20,7 +20,6 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -51,31 +50,31 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
     return "tslint";
   }
 
-  public void testOne() throws Exception {
+  public void testOne() {
     doTest("one", "one/one.ts", true, true, null);
   }
 
-  public void testNoAdditionalDirectory() throws Exception {
+  public void testNoAdditionalDirectory() {
     doTest("noAdditionalDirectory", "noAdditionalDirectory/data.ts", true, true, null);
     myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("Could not find custom rule directory:", false, true);
   }
 
-  public void testNoConfig() throws Exception {
+  public void testNoConfig() {
     doTest("noConfig", "noConfig/data.ts", false, true, null);
     myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: Config file was not found.", false, true);
   }
 
-  public void testBadConfig() throws Exception {
+  public void testBadConfig() {
     doTest("badConfig", "badConfig/data.ts", false, true, null);
     myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: Config file was not found.", false, true);
   }
 
-  public void testLineSeparatorsWin() throws Exception {
+  public void testLineSeparatorsWin() {
     if (!SystemInfo.isWindows) return;
     doTest("lineSeparators", "lineSeparators/data.ts", true, true, LineSeparator.CRLF);
   }
 
-  public void testTimeout() throws Exception {
+  public void testTimeout() {
     JSLanguageServiceUtil.TEST_TIMEOUT_MILLIS = 1;
     try {
       myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: " + JSLanguageServiceQueueImpl.LANGUAGE_SERVICE_EXECUTION_TIMEOUT, true, false);
@@ -85,7 +84,7 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
     }
   }
 
-  public void testFix() throws Exception {
+  public void testFix() {
     doTest("fix", "fix/fix.ts", true, true, null);
     myFixture.launchAction(JSTestUtils.getSingleQuickFix(myFixture, "TSLint: Fix current file"));
     myFixture.checkResultByFile("fix/fix_after.ts");
@@ -121,7 +120,7 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   }
 
   private void doTest(@NotNull String directoryToCopy, @NotNull String filePathToTest, boolean copyConfig,
-                      @SuppressWarnings("SameParameterValue") boolean useConfig, LineSeparator lineSeparator) throws IOException {
+                      @SuppressWarnings("SameParameterValue") boolean useConfig, LineSeparator lineSeparator) {
     runTest(copyConfig, useConfig, lineSeparator, filePathToTest, directoryToCopy + "/tslint.json");
   }
 

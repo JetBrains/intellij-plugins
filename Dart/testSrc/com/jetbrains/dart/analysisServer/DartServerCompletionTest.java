@@ -61,51 +61,51 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     myFixture.finishLookup(completionChar);
   }
 
-  public void testFunctionWithArgsInvocation() throws Throwable {
+  public void testFunctionWithArgsInvocation() {
     doTest("identical");
   }
 
-  public void testKeepOldArgsOnTab() throws Throwable {
+  public void testKeepOldArgsOnTab() {
     doTest("identical", Lookup.REPLACE_SELECT_CHAR);
   }
 
-  public void testArgsPlaceholderOnTab() throws Throwable {
+  public void testArgsPlaceholderOnTab() {
     doTest("identical", Lookup.REPLACE_SELECT_CHAR);
   }
 
-  public void testEatTailOnTab() throws Throwable {
+  public void testEatTailOnTab() {
     doTest("hashCode", Lookup.REPLACE_SELECT_CHAR);
   }
 
-  public void testDoNotEatParenOnTab() throws Throwable {
+  public void testDoNotEatParenOnTab() {
     doTest("hashCode", Lookup.REPLACE_SELECT_CHAR);
   }
 
-  public void testDoNotEatParenOnTab2() throws Throwable {
+  public void testDoNotEatParenOnTab2() {
     doTest("hashCode", Lookup.REPLACE_SELECT_CHAR);
   }
 
-  public void testFunctionNoArgsInvocation() throws Throwable {
+  public void testFunctionNoArgsInvocation() {
     doTest();
   }
 
-  public void testFunctionAfterShow() throws Throwable {
+  public void testFunctionAfterShow() {
     doTest();
   }
 
-  public void testFunctionAsArgument() throws Throwable {
+  public void testFunctionAsArgument() {
     doTest();
   }
 
-  public void testCaretPlacementInFor() throws Throwable {
+  public void testCaretPlacementInFor() {
     doTest("for");
   }
 
-  public void testWithImportPrefix() throws Throwable {
+  public void testWithImportPrefix() {
     doTest();
   }
 
-  public void testUriCompletionByTab() throws Throwable {
+  public void testUriCompletionByTab() {
     final String testName = getTestName(false);
     myFixture.copyDirectoryToProject(testName, testName);
 
@@ -122,7 +122,7 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     myFixture.checkResultByFile(testName + ".after.dart");
   }
 
-  public void testIncompleteTernary() throws Throwable {
+  public void testIncompleteTernary() {
     doTest();
   }
 }

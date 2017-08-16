@@ -49,7 +49,7 @@ public class JamResultPathTest extends JamConventionLightTestCase {
   /**
    * "property" variants from struts.properties.
    */
-  public void testCompletionActionProperty() throws Exception {
+  public void testCompletionActionProperty() {
     myFixture.copyFileToProject("struts.properties");
 
     myFixture.testCompletionVariants("/testcompletion/ActionProperty.java",
@@ -59,7 +59,7 @@ public class JamResultPathTest extends JamConventionLightTestCase {
   /**
    * "property" resolving to key in struts.properties.
    */
-  public void testResolveActionProperty() throws Exception {
+  public void testResolveActionProperty() {
     myFixture.copyFileToProject("jam/ActionProperty.java");
     myFixture.copyFileToProject("struts.properties");
 
@@ -72,7 +72,7 @@ public class JamResultPathTest extends JamConventionLightTestCase {
   /**
    * "value" resolving to web-dir.
    */
-  public void testResolveActionValue() throws Exception {
+  public void testResolveActionValue() {
     myFixture.copyFileToProject("/WEB-INF/customContent/test.jsp");
     myFixture.copyFileToProject("jam/ActionValue.java");
 

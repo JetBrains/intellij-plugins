@@ -44,19 +44,19 @@ public class DartDocumentationProviderTest extends DartCodeInsightFixtureTestCas
     assertSameElements(myProvider.getUrlFor(element, element), Collections.singletonList(expectedUrl));
   }
 
-  public void testFieldRef() throws Exception {
+  public void testFieldRef() {
     doTestQuickNavigateInfo("int <b>x</b>", "class A { int <caret>x; foo() => x; }");
   }
 
-  public void testFunctionRef() throws Exception {
+  public void testFunctionRef() {
     doTestQuickNavigateInfo("<b>f</b>() " + RIGHT_ARROW + " dynamic", "<caret>f(); g() => f();");
   }
 
-  public void testEnumRef() throws Exception {
+  public void testEnumRef() {
     doTestQuickNavigateInfo("E <b>E1</b>", "enum E { <caret>E1 } var e = E.E1;");
   }
 
-  public void testDocUrls() throws Exception {
+  public void testDocUrls() {
     doTestDocUrl("https://api.dartlang.org/stable/dart-core/int-class.html",
                  "core/int.dart",
                  "abstract class int extends num {");

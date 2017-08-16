@@ -37,97 +37,97 @@ import static com.intellij.testFramework.EditorTestUtil.getAllTokens;
  */
 public class CfmlTypedHandlerTest extends CfmlCodeInsightFixtureTestCase {
 
-  public void testSimpleTagGTCompletion() throws Throwable { doTest('>'); }
-  public void testSimpleTagGTCompletion2() throws Throwable { doTest('>'); }
+  public void testSimpleTagGTCompletion() { doTest('>'); }
+  public void testSimpleTagGTCompletion2() { doTest('>'); }
 
-    public void testInnerTagGTCompletion() throws Throwable {
+    public void testInnerTagGTCompletion() {
         doTest('>');
     }
 
-    public void testOuterTagGTCompletion1() throws Throwable {
+    public void testOuterTagGTCompletion1() {
         doTest('>');
     }
 
-    public void testOuterTagGTCompletion2() throws Throwable {
+    public void testOuterTagGTCompletion2() {
         doTest('>');
     }
 
-    public void testSimpleTagGTNoCompletion() throws Throwable {
+    public void testSimpleTagGTNoCompletion() {
         doTest('>');
     }
 
-    public void testInnerTagGTNoCompletion() throws Throwable {
+    public void testInnerTagGTNoCompletion() {
         doTest('>');
     }
 
-    public void testOuterTagGTNoCompletion1() throws Throwable {
+    public void testOuterTagGTNoCompletion1() {
         doTest('>');
     }
 
-    public void testOuterTagGTNoCompletion2() throws Throwable {
+    public void testOuterTagGTNoCompletion2() {
         doTest('>');
     }
 
-    public void testSeveralTagsGTCompletion() throws Throwable {
+    public void testSeveralTagsGTCompletion() {
         doTest('>');
     }
 
-    public void testInvokeClosingNotInsertion() throws Throwable {
+    public void testInvokeClosingNotInsertion() {
         doTest('>');
     }
 
-    public void testModuleClosingNotInsertion() throws Throwable {
+    public void testModuleClosingNotInsertion() {
         doTest('>');
     }
 
-    public void testQuoteCompletion() throws Throwable {
+    public void testQuoteCompletion() {
         doTest('\"');
     }
 
-    public void testQuoteDeletion() throws Throwable {
+    public void testQuoteDeletion() {
         doTest('\b');
     }
 
-    public void testEnterHandler() throws Throwable {
+    public void testEnterHandler() {
         doTest('\n');
     }
 
-  public void testNpeEnterHandler() throws Throwable {
+  public void testNpeEnterHandler() {
     doTest('\n');
   }
 
-  public void testEnterHandlerInsideCfFunction() throws Throwable {
+  public void testEnterHandlerInsideCfFunction() {
     doTest('\n');
   }
 
-  public void testEnterHandlerAfterTemplateText() throws Throwable {
+  public void testEnterHandlerAfterTemplateText() {
     doTest('\n');
   }
 
-  public void testEnterHandlerInsideHtmlBlock() throws Throwable {
+  public void testEnterHandlerInsideHtmlBlock() {
     doTest('\n');
   }
 
   // public void testLiveTemplate() throws Throwable { doTest('\t'); }
 
   // IDEA-148357, until we calculate properly where we should insert double pounds
-  public void testSharpCompletion() throws Throwable {
+  public void testSharpCompletion() {
       doTest('#');
   }
 
-  public void testInnerSharpCompletion() throws Throwable {
+  public void testInnerSharpCompletion() {
       doTest('#');
   }
 
-  public void testRightBracketInQuotes() throws Throwable {
+  public void testRightBracketInQuotes() {
     doTest(')');
   }
 
-  public void testNoInsertionRCurlyBracketIfIncorrect() throws Throwable {
+  public void testNoInsertionRCurlyBracketIfIncorrect() {
     doTest('\n');
   }
 
-  public void testEditing() throws Throwable {
+  public void testEditing() {
     @NonNls final String s1 = "<table bgcolor=\"#FFFFFF\"><cfoutput>\n" +
                               "  <div id=\"#bColumn2";
     String s2 = "\" />\n" +
@@ -151,29 +151,29 @@ public class CfmlTypedHandlerTest extends CfmlCodeInsightFixtureTestCase {
     }
   }
 
-  public void testRightBracketInsertion() throws Throwable { doTest('('); }
+  public void testRightBracketInsertion() { doTest('('); }
 
-  public void testRightSquareBracketInsertion() throws Throwable {
+  public void testRightSquareBracketInsertion() {
     doTest('[');
   }
 
-  public void testRightCurlyBracketInsertion() throws Throwable {
+  public void testRightCurlyBracketInsertion() {
     doTest('{');
   }
 
-  public void testLeftBracketDeletion() throws Throwable {
+  public void testLeftBracketDeletion() {
     doTest('\b');
   }
 
-  public void testLeftSquareBracketDeletion() throws Throwable {
+  public void testLeftSquareBracketDeletion() {
     doTest('\b');
   }
 
-  public void testLeftCurlyBracketDeletion() throws Throwable {
+  public void testLeftCurlyBracketDeletion() {
     doTest('\b');
   }
 
-  private void doTest(final char typed) throws Throwable {
+  private void doTest(final char typed) {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
     myFixture.type(typed);
     myFixture.checkResultByFile(Util.getExpectedDataFileName(getTestName(true)));

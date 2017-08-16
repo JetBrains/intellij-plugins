@@ -15,8 +15,8 @@
  */
 package jetbrains.communicator.commands;
 
-import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.EventBroadcaster;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.users.UserImpl;
 import jetbrains.communicator.core.impl.users.UserModelImpl;
 import jetbrains.communicator.core.users.User;
@@ -26,8 +26,6 @@ import jetbrains.communicator.mock.MockTransport;
 import jetbrains.communicator.mock.MockUser;
 import jetbrains.communicator.mock.MockUserListComponent;
 import org.jmock.Mock;
-
-import java.net.UnknownHostException;
 
 /**
  * @author kir
@@ -51,7 +49,7 @@ public class SendMessageCommandTest extends BaseTestCase {
     myCommand = new SendMessageCommand(myUserModel, myMockUserListComponent, (IDEFacade) myFacadeMock.proxy());
   }
 
-  public void testInvokeDialog() throws Exception {
+  public void testInvokeDialog() {
     MockUser user1 = new MockUser("user1", null);
     MockUser user2 = new MockUser("user2", null);
     MockUser user3 = new MockUser("user3", null);
@@ -70,7 +68,7 @@ public class SendMessageCommandTest extends BaseTestCase {
     myCommand.execute();
   }
 
-  public void testInvokeDialogWithExplicitUser() throws Exception {
+  public void testInvokeDialogWithExplicitUser() {
     MockUser user1 = new MockUser();
     myUserModel.addUser(user1);
     myCommand.setUser(user1);
@@ -84,7 +82,7 @@ public class SendMessageCommandTest extends BaseTestCase {
     myCommand.execute();
   }
 
-  public void testSendMessage() throws Exception {
+  public void testSendMessage() {
     addEventListener();
 
     final User user = UserImpl.create("user", MockTransport.NAME);
@@ -103,19 +101,19 @@ public class SendMessageCommandTest extends BaseTestCase {
     return user;
   }
 
-  public void testSendNothingWhenNoMessage() throws Exception {
+  public void testSendNothingWhenNoMessage() {
     final User user = createUser();
     doTest("   \n", new User[]{user});
     assertEquals("Nothing to send", "", myLog);
   }
 
-  public void testSendNothingWhenNoUsers() throws Exception {
+  public void testSendNothingWhenNoUsers() {
     addEventListener();
     doTest("message", new User[0]);
     assertEquals("Nothing to send", 0, myEvents.size());
   }
 
-  private void doTest(final String message, final User[] users) throws UnknownHostException {
+  private void doTest(final String message, final User[] users) {
 
     MockIDEFacade ideFacade = new MockIDEFacade() {
       @Override

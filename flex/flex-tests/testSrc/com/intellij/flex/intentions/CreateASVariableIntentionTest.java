@@ -53,7 +53,7 @@ public class CreateASVariableIntentionTest extends BaseJSIntentionTestCase {
   }
 
   @JSTestOptions(JSTestOption.WithFlexFacet)
-  public void testAll() throws Exception {
+  public void testAll() {
     doTestAll();
   }
 }

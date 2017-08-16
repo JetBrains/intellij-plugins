@@ -25,7 +25,7 @@ public class DartCodeGenerationTest extends CodeInsightFixtureTestCase {
     myFixture.checkResult(after);
   }
 
-  public void testEqualsAndHashcodeNoSuper() throws Exception {
+  public void testEqualsAndHashcodeNoSuper() {
     doEqualsAndHashcodeTest("class Interface {\n" +
                             "  bool operator ==(Object other) => super == other;\n" +
                             "  int get hashCode => super.hashCode;\n" +
@@ -52,7 +52,7 @@ public class DartCodeGenerationTest extends CodeInsightFixtureTestCase {
                             "}\n");
   }
 
-  public void testEqualsAndHashcodeWithSuper() throws Exception {
+  public void testEqualsAndHashcodeWithSuper() {
     doEqualsAndHashcodeTest("class Bar extends Baz {}\n" +
                             "class Baz {\n" +
                             "  bool operator ==(Object other) => super == other;\n" +
@@ -79,7 +79,7 @@ public class DartCodeGenerationTest extends CodeInsightFixtureTestCase {
                             "}");
   }
 
-  public void testEqualsAndHashcodeWithFieldsNoSuper() throws Exception {
+  public void testEqualsAndHashcodeWithFieldsNoSuper() {
     doEqualsAndHashcodeTest("class Interface {\n" +
                             "  bool operator ==(Object other) => super == other;\n" +
                             "  int get hashCode => super.hashCode;\n" +
@@ -113,7 +113,7 @@ public class DartCodeGenerationTest extends CodeInsightFixtureTestCase {
                             "}");
   }
 
-  public void testEqualsAndHashcodeWithFieldsAndSuper() throws Exception {
+  public void testEqualsAndHashcodeWithFieldsAndSuper() {
     doEqualsAndHashcodeTest("class Bar extends Baz {var qwe;}\n" +
                             "class Baz {\n" +
                             "  bool operator ==(Object other) => super == other;\n" +

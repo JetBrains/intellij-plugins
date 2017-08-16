@@ -15,9 +15,9 @@
  */
 package jetbrains.communicator.jabber;
 
-import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.commands.NamedUserCommand;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.ide.StatusToolbar;
 import org.picocontainer.MutablePicoContainer;
 
@@ -29,7 +29,7 @@ import java.awt.*;
 public class JabberIdeaUITest extends BaseTestCase implements StatusToolbar {
   private StringBuffer myLog;
 
-  public void testInitialize() throws Exception {
+  public void testInitialize() {
 
     myLog = new StringBuffer();
 

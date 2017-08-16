@@ -25,22 +25,22 @@ public class DartInlineMethodRefactoringTest extends CodeInsightFixtureTestCase 
     return "/analysisServer/refactoring/inline/method";
   }
 
-  public void testFunctionSingle() throws Throwable {
+  public void testFunctionSingle() {
     final String testName = getTestName(false);
     doTest(testName + ".dart", false);
   }
 
-  public void testFunctionAll() throws Throwable {
+  public void testFunctionAll() {
     final String testName = getTestName(false);
     doTest(testName + ".dart", true);
   }
 
-  public void testMethod() throws Throwable {
+  public void testMethod() {
     final String testName = getTestName(false);
     doTest(testName + ".dart", true);
   }
 
-  public void testSetter() throws Throwable {
+  public void testSetter() {
     final String testName = getTestName(false);
     doTest(testName + ".dart", true);
   }

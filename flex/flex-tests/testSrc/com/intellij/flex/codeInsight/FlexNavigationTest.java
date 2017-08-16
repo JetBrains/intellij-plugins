@@ -257,7 +257,7 @@ public class FlexNavigationTest extends CodeInsightTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testIncludes() throws Exception {
+  public void testIncludes() {
     VirtualFile vFile = configureByFiles(null, BASE_PATH + "Includes.css", BASE_PATH + "Includes.as", BASE_PATH + "Includes1.as");
     VirtualFile file = vFile.getParent().findChild("Includes1.as");
     doTest(file, file, null);
@@ -357,7 +357,7 @@ public class FlexNavigationTest extends CodeInsightTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testMonkeyPatching() throws Exception {
+  public void testMonkeyPatching() {
     final String testName = getTestName(false);
 
     myAfterCommitRunnable = () -> {
@@ -380,7 +380,7 @@ public class FlexNavigationTest extends CodeInsightTestCase {
     doCheck(candidates.iterator().next(), expectedFile, expectedFile, null);
   }
 
-  public void testClassWithNoExplicitConstructor() throws Exception {
+  public void testClassWithNoExplicitConstructor() {
     final String testName = getTestName(false);
 
     myAfterCommitRunnable =

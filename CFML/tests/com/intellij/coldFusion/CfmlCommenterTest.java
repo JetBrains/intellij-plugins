@@ -24,44 +24,44 @@ import com.intellij.openapi.actionSystem.IdeActions;
  * Date: 30.01.2009
  */
 public class CfmlCommenterTest extends CfmlCodeInsightFixtureTestCase {
-    public void testBetweenComments() throws Throwable {
+    public void testBetweenComments() {
       doTest(IdeActions.ACTION_COMMENT_BLOCK);
     }
-    public void testMultiLineBlockCommenter() throws Throwable {
+    public void testMultiLineBlockCommenter() {
         doTest(IdeActions.ACTION_COMMENT_BLOCK);
     }
-    public void testMultiLineBlockCommenter2() throws Throwable {
+    public void testMultiLineBlockCommenter2() {
         doTest(IdeActions.ACTION_COMMENT_BLOCK); //
     }
-    public void testMultiLineByLineCommenter() throws Throwable {
+    public void testMultiLineByLineCommenter() {
         doTest(IdeActions.ACTION_COMMENT_LINE);
     }
 
-    public void testOneLineByLineCommenter() throws Throwable {
+    public void testOneLineByLineCommenter() {
         doTest(IdeActions.ACTION_COMMENT_LINE);
     }
 
-    public void testOneLineByLineCommenter_2() throws Throwable {
+    public void testOneLineByLineCommenter_2() {
         doTest(IdeActions.ACTION_COMMENT_LINE);
     }
 
-    public void testOneLineBlockCommenter() throws Throwable {
+    public void testOneLineBlockCommenter() {
         doTest(IdeActions.ACTION_COMMENT_BLOCK);
     }
 
-    public void testCommentInFullyScriptedCfc() throws Throwable {
+    public void testCommentInFullyScriptedCfc() {
         doTest(IdeActions.ACTION_COMMENT_BLOCK);
     }
 
-    public void testCommentInFullyScriptedCfc2() throws Throwable {
+    public void testCommentInFullyScriptedCfc2() {
         doTest(IdeActions.ACTION_COMMENT_BLOCK);
     }
 
-    public void testCommentInFullyScriptedCfc3() throws Throwable {
+    public void testCommentInFullyScriptedCfc3() {
         doTest(IdeActions.ACTION_COMMENT_BLOCK);
     }
 
-    private void doTest(final String actionId) throws Throwable {
+    private void doTest(final String actionId) {
         myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
         MultiCaretCodeInsightAction action = (MultiCaretCodeInsightAction) ActionManager.getInstance().getAction(actionId);
         action.actionPerformedImpl(myModule.getProject(), myFixture.getEditor());

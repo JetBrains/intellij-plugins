@@ -23,63 +23,63 @@ public class GherkinParserTest extends ParsingTestCase {
     return CucumberTestUtil.getTestDataPath() + "/parsing";
   }
 
-  public void testSimple() throws Exception {
+  public void testSimple() {
     doTest(true);
   }
 
-  public void testMultiline_feature_description() throws Exception {
+  public void testMultiline_feature_description() {
     doTest(true);
   }
 
-  public void testBackground() throws Exception {
+  public void testBackground() {
     doTest(true);
   }
 
-  public void testMultiline_scenario_name() throws Exception {
+  public void testMultiline_scenario_name() {
     doTest(true);
   }
 
-  public void testScenario_outline() throws Exception {
+  public void testScenario_outline() {
     doTest(true);
   }
 
-  public void testScenario_outline_table() throws Exception {
+  public void testScenario_outline_table() {
     doTest(true);
   }
 
-  public void testScenario_outline_table_with_tags() throws Exception {
+  public void testScenario_outline_table_with_tags() {
     doTest(true);
   }
 
-  public void testNot_a_step() throws Exception {
+  public void testNot_a_step() {
     doTest(true);
   }
 
-  public void testMultiline_args() throws Exception {
+  public void testMultiline_args() {
     doTest(true);
   }
 
-  public void testNo_steps() throws Exception {
+  public void testNo_steps() {
     doTest(true);
   }
 
-  public void testTags() throws Exception {
+  public void testTags() {
     doTest(true);
   }
 
-  public void testPystring() throws Exception {
+  public void testPystring() {
     doTest(true);
   }
 
-  public void testWithout_feature_keyword() throws Exception {
+  public void testWithout_feature_keyword() {
     doTest(true);
   }
 
-  public void testStep_param() throws Exception {
+  public void testStep_param() {
     doTest(true);
   }
 
-  public void testRuby8793() throws Exception {
+  public void testRuby8793() {
     doTest(true);
   }
 

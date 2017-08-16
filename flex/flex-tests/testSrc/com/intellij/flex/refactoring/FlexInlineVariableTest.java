@@ -62,7 +62,7 @@ public class FlexInlineVariableTest extends JSInlineVarOrFunctionTestBase {
     doTest(new String[]{getTestName(false) + ".js2"}, true);
   }
 
-  public void testReportAccessibilityProblems() throws Exception {
+  public void testReportAccessibilityProblems() {
     doTestConflicts(getTestName(false), "js2", new String[]{
       "Method Test.foo() with private visibility won't be accessible from file ReportAccessibilityProblems.js2"});
   }

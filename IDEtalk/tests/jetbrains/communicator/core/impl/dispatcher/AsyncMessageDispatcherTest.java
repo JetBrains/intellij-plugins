@@ -64,11 +64,11 @@ public class AsyncMessageDispatcherTest extends BaseTestCase {
     super.tearDown();
   }
 
-  public void testDispose() throws Exception {
+  public void testDispose() {
     
   }
 
-  public void testAsyncDispatch_Success() throws Exception {
+  public void testAsyncDispatch_Success() {
 
     NotifyableMessage mockMessage = new NotifyableMessage(true, myLog);
 
@@ -94,7 +94,7 @@ public class AsyncMessageDispatcherTest extends BaseTestCase {
     };
   }
 
-  public void testAsyncDispatch_Failure() throws Exception {
+  public void testAsyncDispatch_Failure() {
 
     NotifyableMessage mockMessage = new NotifyableMessage(false, myLog);
 
@@ -110,7 +110,7 @@ public class AsyncMessageDispatcherTest extends BaseTestCase {
         myDispatcher.getUsersWithMessages().length);
   }
 
-  public void testAddMessagesWhileDispatching() throws Exception {
+  public void testAddMessagesWhileDispatching() {
 
     NotifyableMessage mockMessage = new NotifyableMessage(true, myLog);
     MockUser user1 = new MockUser("user1", null);

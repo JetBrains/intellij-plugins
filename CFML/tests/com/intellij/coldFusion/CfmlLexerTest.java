@@ -21,31 +21,29 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.testFramework.LexerTestCase;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-
 public class CfmlLexerTest extends LexerTestCase {
 
-  public void testCloseOpenTag() throws Throwable {
+  public void testCloseOpenTag() {
     doTest();
   }
 
-  public void testAttributes() throws Throwable {
+  public void testAttributes() {
     doTest();
   }
 
-  public void testColddocSupportInAttributes() throws Throwable {
+  public void testColddocSupportInAttributes() {
     doTest();
   }
 
-  public void testTemplateText() throws Throwable {
+  public void testTemplateText() {
     doTest();
   }
 
-  public void testTagComment() throws Throwable {
+  public void testTagComment() {
     doTest();
   }
 
-  public void testCommentBalance() throws Throwable {
+  public void testCommentBalance() {
     Lexer lexer = createLexer();
 
     String testText1 = loadTestDataFile("1.test.cfml");
@@ -55,35 +53,35 @@ public class CfmlLexerTest extends LexerTestCase {
     doTest(testText2, loadTestDataFile("2.test.expected"), lexer);
   }
 
-  public void testSharpedAttributeValue() throws Throwable {
+  public void testSharpedAttributeValue() {
     doTest();
   }
 
-  public void testSharpsInScript() throws Throwable {
+  public void testSharpsInScript() {
     doTest();
   }
 
-  public void testCfTagNamesWithPrefix() throws Throwable {
+  public void testCfTagNamesWithPrefix() {
     doTest();
   }
 
-  public void testCfCloseTagWithPrefix() throws Throwable {
+  public void testCfCloseTagWithPrefix() {
     doTest();
   }
 
-  public void testVarVariableName() throws Throwable {
+  public void testVarVariableName() {
     doTest();
   }
 
-  public void testVarKeyword() throws Throwable {
+  public void testVarKeyword() {
     doTest();
   }
 
-  public void testSharpInNestedCfOutput() throws Throwable {
+  public void testSharpInNestedCfOutput() {
     doTest();
   }
 
-  public void testSqlWithInclude() throws Throwable {
+  public void testSqlWithInclude() {
     doTest();
   }
 
@@ -114,7 +112,7 @@ public class CfmlLexerTest extends LexerTestCase {
     return ".test.expected";
   }
 
-  private void doTest() throws IOException {
+  private void doTest() {
     doFileTest("test.cfml");
   }
 }

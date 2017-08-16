@@ -22,7 +22,7 @@ public class DartSimpleTest extends TestCase {
     assertEquals(expected, DartVmServiceEvaluator.getPresentableError(rawErrorText));
   }
 
-  public void testUnquoteDartString() throws Exception {
+  public void testUnquoteDartString() {
     doTestUnquoteDartString("", "", 0, 0); // not valid string
     doTestUnquoteDartString("r", "r", 0, 1); // not valid string
     doTestUnquoteDartString("rr'", "rr'", 0, 3); // not valid string
@@ -64,7 +64,7 @@ public class DartSimpleTest extends TestCase {
     doTestUnquoteDartString("\"abc\"", "abc", 1, 4);
   }
 
-  public void testDebuggerErrorText() throws Exception {
+  public void testDebuggerErrorText() {
     doTestDebuggerErrorText("", "Cannot evaluate");
     doTestDebuggerErrorText("Error:", "Cannot evaluate");
     doTestDebuggerErrorText("a\nb\nc", "Cannot evaluate");

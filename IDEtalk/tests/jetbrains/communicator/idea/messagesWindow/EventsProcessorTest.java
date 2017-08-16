@@ -50,7 +50,7 @@ public class EventsProcessorTest extends BaseTestCase {
     disposeOnTearDown(processor);
   }
 
-  public void testIncomingMessage_No_Tab_WithExpand() throws Exception {
+  public void testIncomingMessage_No_Tab_WithExpand() {
     MessageEvent event = EventFactory.createMessageEvent(new MockTransport(), "bob", "text");
 
     myMock.expects(once()).method("expandToolWindow");
@@ -60,7 +60,7 @@ public class EventsProcessorTest extends BaseTestCase {
     getBroadcaster().fireEvent(event);
   }
 
-  public void testIncomingMessage_No_Tab_WithoutExpand() throws Exception {
+  public void testIncomingMessage_No_Tab_WithoutExpand() {
     IdeaFlags.EXPAND_ON_MESSAGE.change(false);
 
     MessageEvent event = EventFactory.createMessageEvent(new MockTransport(), "bob", "text");

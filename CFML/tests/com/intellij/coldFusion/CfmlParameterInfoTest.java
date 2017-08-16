@@ -17,37 +17,29 @@ package com.intellij.coldFusion;
 
 import com.intellij.coldFusion.UI.editorActions.CfmlParameterInfoHandler;
 import com.intellij.coldFusion.model.info.CfmlFunctionDescription;
-import com.intellij.lang.parameterInfo.UpdateParameterInfoContext;
-import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.testFramework.LightCodeInsightTestCase;
 import com.intellij.testFramework.utils.parameterInfo.MockCreateParameterInfoContext;
 import com.intellij.testFramework.utils.parameterInfo.MockParameterInfoUIContext;
 import com.intellij.testFramework.utils.parameterInfo.MockUpdateParameterInfoContext;
-import com.intellij.util.ArrayUtil;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author vnikolaenko
  */
 public class CfmlParameterInfoTest extends CfmlCodeInsightFixtureTestCase {
 
-  public void testScriptFunction() throws Exception {
+  public void testScriptFunction() {
     defaultTest("a : int, [b]");
   }
 
-  public void testTagFunction() throws Exception {
+  public void testTagFunction() {
     defaultTest("[arg1 : string], arg2 : int");
   }
 
-  public void testStandardFunction() throws Exception {
+  public void testStandardFunction() {
     defaultTest("array : Array, object : Any");
   }
 
-  private void defaultTest(String s/*, int highlightedParameterIndex*/) throws Exception {
+  private void defaultTest(String s/*, int highlightedParameterIndex*/) {
     myFixture.configureByFile(getTestName(false) + ".cfml");
 
     CfmlParameterInfoHandler parameterInfoHandler = new CfmlParameterInfoHandler();

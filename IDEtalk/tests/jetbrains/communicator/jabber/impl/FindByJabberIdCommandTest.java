@@ -47,12 +47,12 @@ public class FindByJabberIdCommandTest extends BaseTestCase {
     assertTrue(myCommand.isEnabled());
   }
 
-  public void testNotConnected() throws Throwable {
+  public void testNotConnected() {
     setupConnection(false);
     myCommand.execute();
   }
 
-  public void testNotEnteredId() throws Exception {
+  public void testNotEnteredId() {
     //noinspection SSBasedInspection
     myJabberUI.expects(once()).method("getFindByIdData").with(eq(Arrays.asList(new String[0])))
         .will(returnValue("someGroup:  "));
@@ -61,7 +61,7 @@ public class FindByJabberIdCommandTest extends BaseTestCase {
     myCommand.execute();
   }
 
-  public void testWithAddress() throws Exception {
+  public void testWithAddress() {
     myUserModel.addGroup("bbb");
     myUserModel.addGroup("aaa");
 

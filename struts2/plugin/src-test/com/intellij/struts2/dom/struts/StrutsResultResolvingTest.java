@@ -47,7 +47,7 @@ public class StrutsResultResolvingTest extends StrutsLightHighlightingTestCase {
   }
 
   @Override
-  protected void performSetUp() throws Exception {
+  protected void performSetUp() {
     final WebFacet webFacet = ContainerUtil.getFirstItem(WebFacet.getInstances(myModule));
     assert webFacet != null;
     webFacet.addWebRoot(VfsUtilCore.pathToUrl(getTestDataPath() + "/jsp"), "/");
@@ -58,7 +58,7 @@ public class StrutsResultResolvingTest extends StrutsLightHighlightingTestCase {
    * @throws Throwable On errors.
    * @see com.intellij.struts2.dom.struts.impl.path.DispatchPathResultContributor
    */
-  public void testPathDispatcher() throws Throwable {
+  public void testPathDispatcher() {
     performHighlightingTest("struts-path-dispatcher.xml");
   }
 
@@ -66,7 +66,7 @@ public class StrutsResultResolvingTest extends StrutsLightHighlightingTestCase {
    * @throws Throwable On errors.
    * @see com.intellij.struts2.dom.struts.impl.path.ActionPathResultContributor
    */
-  public void testActionPath() throws Throwable {
+  public void testActionPath() {
     performHighlightingTest("struts-actionpath.xml");
   }
 
@@ -74,7 +74,7 @@ public class StrutsResultResolvingTest extends StrutsLightHighlightingTestCase {
    * @throws Throwable On errors.
    * @see com.intellij.struts2.reference.jsp.ActionLinkReferenceProvider
    */
-  public void testActionPathFQ() throws Throwable {
+  public void testActionPathFQ() {
     performHighlightingTest("struts-actionpath-fq.xml");
   }
 
@@ -83,7 +83,7 @@ public class StrutsResultResolvingTest extends StrutsLightHighlightingTestCase {
    *
    * @throws Throwable On errors.
    */
-  public void testActionChain() throws Throwable {
+  public void testActionChain() {
     performHighlightingTest("struts-actionchain.xml");
   }
 
@@ -91,15 +91,15 @@ public class StrutsResultResolvingTest extends StrutsLightHighlightingTestCase {
    * @throws Throwable On errors.
    * @see com.intellij.struts2.dom.struts.impl.path.ActionChainOrRedirectResultContributor
    */
-  public void testActionRedirect() throws Throwable {
+  public void testActionRedirect() {
     performHighlightingTest("struts-actionRedirect.xml");
   }
 
-  public void testUnknownResultTypes() throws Throwable {
+  public void testUnknownResultTypes() {
     performHighlightingTest("struts-unknownResultType.xml");
   }
 
-  public void testCompletionVariantsDispatcherActionPath() throws Throwable {
+  public void testCompletionVariantsDispatcherActionPath() {
     performCompletionVariantTest("struts-completionvariants.xml",
                                  "/anotherActionPathTest/anotherActionPath1.action",
                                  "2ndWebRoot",
@@ -109,7 +109,7 @@ public class StrutsResultResolvingTest extends StrutsLightHighlightingTestCase {
                                  "struts-completionvariants.xml");
   }
 
-  public void testCompletionVariantsChain() throws Throwable {
+  public void testCompletionVariantsChain() {
     performCompletionVariantTest("struts-completionvariants-chain.xml",
                                  "/anotherActionPathTest/anotherActionPath1",
                                  "actionPath1");

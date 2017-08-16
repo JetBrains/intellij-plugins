@@ -24,135 +24,135 @@ public class DartParsingTest extends ParsingTestCase {
     doTest(true);
   }
 
-  public void testCascades() throws Throwable {
+  public void testCascades() {
     doTest();
   }
 
-  public void testClass1() throws Throwable {
+  public void testClass1() {
     doTest();
   }
 
-  public void testClass2() throws Throwable {
+  public void testClass2() {
     doTest();
   }
 
-  public void testConstructors() throws Throwable {
+  public void testConstructors() {
     doTest();
   }
 
-  public void testEnum() throws Throwable {
+  public void testEnum() {
     doTest();
   }
 
-  public void testErrors() throws Throwable {
+  public void testErrors() {
     doTest();
   }
 
-  public void testFormalParameterSyntax() throws Throwable {
+  public void testFormalParameterSyntax() {
     doTest();
   }
 
-  public void testFunctionTypeSyntax() throws Throwable {
+  public void testFunctionTypeSyntax() {
     doTest();
   }
 
-  public void testGeneric() throws Throwable {
+  public void testGeneric() {
     doTest();
   }
 
-  public void testLiterals() throws Throwable {
+  public void testLiterals() {
     doTest();
   }
 
-  public void testMethodSignatureSyntax() throws Throwable {
+  public void testMethodSignatureSyntax() {
     doTest();
   }
 
-  public void testMilestone1() throws Throwable {
+  public void testMilestone1() {
     doTest();
   }
 
-  public void testMilestone2() throws Throwable {
+  public void testMilestone2() {
     doTest();
   }
 
-  public void testMilestone3() throws Throwable {
+  public void testMilestone3() {
     doTest();
   }
 
-  public void testNullAwareInvalid() throws Throwable {
+  public void testNullAwareInvalid() {
     doTest();
   }
 
-  public void testNullAwareOperators() throws Throwable {
+  public void testNullAwareOperators() {
     doTest();
   }
 
-  public void testOperators() throws Throwable {
+  public void testOperators() {
     doTest();
   }
 
-  public void testOther() throws Throwable {
+  public void testOther() {
     doTest();
   }
 
-  public void testParametersAndArguments() throws Throwable {
+  public void testParametersAndArguments() {
     doTest();
   }
 
-  public void testStrings() throws Throwable {
+  public void testStrings() {
     doTest();
   }
 
-  public void testSuperCallSyntax() throws Throwable {
+  public void testSuperCallSyntax() {
     doTest();
   }
 
-  public void testTopLevel() throws Throwable {
+  public void testTopLevel() {
     doTest();
   }
 
-  public void testTypedef() throws Throwable {
+  public void testTypedef() {
     doTest();
   }
 
-  public void testLibrary() throws Throwable {
+  public void testLibrary() {
     doTest();
   }
 
-  public void testHardCases1() throws Throwable {
+  public void testHardCases1() {
     doTest();
   }
 
-  public void testHardCases2() throws Throwable {
+  public void testHardCases2() {
     doTest();
   }
 
-  public void testHardCases3() throws Throwable {
+  public void testHardCases3() {
     doTest();
   }
 
-  public void testNotClosedComment1() throws Throwable {
+  public void testNotClosedComment1() {
     doTest();
   }
 
-  public void testNotClosedComment2() throws Throwable {
+  public void testNotClosedComment2() {
     doTest();
   }
 
-  public void testNotClosedComment3() throws Throwable {
+  public void testNotClosedComment3() {
     doTest();
   }
 
-  public void testNotClosedComment4() throws Throwable {
+  public void testNotClosedComment4() {
     doTest();
   }
 
-  public void testThrowExpression() throws Throwable {
+  public void testThrowExpression() {
     doTest();
   }
 
-  public void testFunctionType() throws Throwable {
+  public void testFunctionType() {
     doTest();
   }
 }

@@ -82,7 +82,7 @@ public class JabberFacade_ConnectionTest extends BaseTestCase {
     super.tearDown();
   }
 
-  public void testConnectAndCreateUser() throws Throwable {
+  public void testConnectAndCreateUser() {
 
     assertFalse("No connection yet", myFacade.isConnectedAndAuthenticated());
     String message = createGoodAccount(myUser, myFacade);
@@ -96,7 +96,7 @@ public class JabberFacade_ConnectionTest extends BaseTestCase {
         user.startsWith(myUser) && user.endsWith(JabberFacade.IDETALK_RESOURCE));
   }
 
-  public void testPasswordWithAmpersand() throws Throwable {
+  public void testPasswordWithAmpersand() {
     String connect = myFacade.createAccountAndConnect(myUser, "&&AA", LOCALHOST, myFacade.getMyAccount().getPort(), false);
     assertNull(connect);
   }
@@ -106,7 +106,7 @@ public class JabberFacade_ConnectionTest extends BaseTestCase {
         LOCALHOST, facade.getMyAccount().getPort(), false);
   }
 
-  public void testConnect() throws Throwable {
+  public void testConnect() {
 
     assertNotNull("Expect error - no such user yet",
         myFacade.connect(myUser, PASSWORD, LOCALHOST, myFacade.getMyAccount().getPort(), false));
@@ -128,7 +128,7 @@ public class JabberFacade_ConnectionTest extends BaseTestCase {
         myFacade.connect("ddd", "aaa", LOCALHOST, myFacade.getMyAccount().getPort(), false));
   }
 
-  public void testConnect_SSL() throws Exception {
+  public void testConnect_SSL() {
     if (isPortBusy(5223)) {
       createGoodAccount(myUser, myFacade);
       myFacade.disconnect();
@@ -166,7 +166,7 @@ public class JabberFacade_ConnectionTest extends BaseTestCase {
     }
   }
 
-  public void testConnectListener() throws Throwable {
+  public void testConnectListener() {
     final boolean[] connected = new boolean[1];
     final boolean[] disconnected = new boolean[1];
     final boolean[] authenticated = new boolean[1];
@@ -197,7 +197,7 @@ public class JabberFacade_ConnectionTest extends BaseTestCase {
     assertTrue(disconnected[0]);
   }
 
-  public void testFailConnect() throws Throwable {
+  public void testFailConnect() {
     String message = myFacade.createAccountAndConnect(myUser, PASSWORD,
         "777", myFacade.getMyAccount().getPort(), false);
 
@@ -222,7 +222,7 @@ public class JabberFacade_ConnectionTest extends BaseTestCase {
     assertEquals("Should obtain VCard for self - lastname", "Maximov", vCard.getLastname());
   }
 
-  public void testAddUsers() throws Exception {
+  public void testAddUsers() {
     createGoodAccount(myUser, myFacade);
     final String bob = "bob@jabber.org";
     String self = myFacade.getConnection().getUser();
@@ -248,7 +248,7 @@ public class JabberFacade_ConnectionTest extends BaseTestCase {
     assertEquals("Bad Group", "someGroup", roster.getEntry(bob).getGroups().iterator().next().getName());
   }
 
-  public void testPresenceAfterConnection() throws Throwable {
+  public void testPresenceAfterConnection() {
     createGoodAccount(myUser, myFacade);
     final String me = myFacade.getConnection().getUser();
 

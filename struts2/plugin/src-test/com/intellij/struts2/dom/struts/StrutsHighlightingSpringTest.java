@@ -56,20 +56,20 @@ public class StrutsHighlightingSpringTest extends StrutsLightHighlightingTestCas
   }
 
   @Override
-  protected void performTearDown() throws Exception {
+  protected void performTearDown() {
     final SpringFacet springFacet = SpringFacet.getInstance(myModule);
     if (springFacet != null) {
       springFacet.removeFileSets();
     }
   }
 
-  public void testStrutsSpringHighlighting() throws Throwable {
+  public void testStrutsSpringHighlighting() {
     createSpringFileSet(SPRING_XML);
 
     performHighlightingTest("struts-spring.xml");
   }
 
-  public void testStrutsSpringCompletionVariantsNoSpringFacet() throws Throwable {
+  public void testStrutsSpringCompletionVariantsNoSpringFacet() {
     myFixture.copyFileToProject("MyClass.java");
 
     @NonNls final String strutsXml = "struts-completionvariants-spring.xml";
@@ -80,7 +80,7 @@ public class StrutsHighlightingSpringTest extends StrutsLightHighlightingTestCas
     assertTrue(toString(variants), variants.contains("MyClass"));
   }
 
-  public void testStrutsSpringCompletionVariants() throws Throwable {
+  public void testStrutsSpringCompletionVariants() {
     @NonNls final String strutsXml = "struts-completionvariants-spring.xml";
     createStrutsFileSet(strutsXml);
 
@@ -98,7 +98,7 @@ public class StrutsHighlightingSpringTest extends StrutsLightHighlightingTestCas
     assertFalse(ContainerUtil.intersects(variants, Arrays.asList("abstractBean")));
   }
 
-  public void testStrutsSpringCompletionVariantsSubclass() throws Throwable {
+  public void testStrutsSpringCompletionVariantsSubclass() {
     @NonNls final String strutsXml = "struts-completionvariants-subclass-spring.xml";
     createStrutsFileSet(strutsXml);
 
@@ -138,7 +138,7 @@ public class StrutsHighlightingSpringTest extends StrutsLightHighlightingTestCas
 
     return new WriteCommandAction<SpringFacet>(myFixture.getProject()) {
       @Override
-      protected void run(@NotNull final Result<SpringFacet> result) throws Throwable {
+      protected void run(@NotNull final Result<SpringFacet> result) {
         final SpringFacet facet = FacetManager.getInstance(myModule)
           .addFacet(SpringFacet.getSpringFacetType(), "spring", null);
         result.setResult(facet);

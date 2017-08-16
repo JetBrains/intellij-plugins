@@ -62,11 +62,10 @@ public class FlexPushDownTest extends MultiFileTestCase {
     FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass());
   }
 
-  private void doTestPushDown(final String from, final int docCommentPolicy, final boolean makeAbstract, final String... toPushDown)
-    throws Exception {
+  private void doTestPushDown(final String from, final int docCommentPolicy, final boolean makeAbstract, final String... toPushDown) {
     doTest(new PerformAction() {
       @Override
-      public void performAction(VirtualFile rootDir, VirtualFile rootAfter) throws Exception {
+      public void performAction(VirtualFile rootDir, VirtualFile rootAfter) {
         FlexPushDownTest.this.performAction(from, docCommentPolicy, makeAbstract, toPushDown);
       }
     }, false);
@@ -98,7 +97,7 @@ public class FlexPushDownTest extends MultiFileTestCase {
     FileDocumentManager.getInstance().saveAllDocuments();
   }
 
-  private void doTestConflicts(final String from, String[] expectedConflicts, final String... toPushDown) throws Exception {
+  private void doTestConflicts(final String from, String[] expectedConflicts, final String... toPushDown) {
     try {
       doTestPushDown(from, DocCommentPolicy.MOVE, false, toPushDown);
       fail("conflicts expected : " + StringUtil.join(expectedConflicts, ";"));
@@ -109,35 +108,35 @@ public class FlexPushDownTest extends MultiFileTestCase {
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testClass() throws Exception {
+  public void testClass() {
     doTestPushDown("Super", DocCommentPolicy.MOVE, false, "foo", "bar", "t", "uu", "v");
   }
 
-  public void testSuperMethodCall() throws Exception {
+  public void testSuperMethodCall() {
     doTestPushDown("Super", DocCommentPolicy.MOVE, false, "foo");
   }
 
-  public void testImplements() throws Exception {
+  public void testImplements() {
     doTestPushDown("Super", DocCommentPolicy.MOVE, false, "IFoo");
   }
 
-  public void testInterface() throws Exception {
+  public void testInterface() {
     doTestPushDown("ISuper", DocCommentPolicy.MOVE, false, "foo");
   }
 
-  public void testAbstractize1() throws Exception {
+  public void testAbstractize1() {
     doTestPushDown("ISuper", DocCommentPolicy.ASIS, true, "foo");
   }
 
-  public void testAbstractize2() throws Exception {
+  public void testAbstractize2() {
     doTestPushDown("ISuper", DocCommentPolicy.COPY, true, "foo");
   }
 
-  public void testFromMxml() throws Exception {
+  public void testFromMxml() {
     doTestPushDown("Super", DocCommentPolicy.COPY, false, "foo", "IFoo", "v1", "v3", "v4", "instance");
   }
 
-  public void testConflicts1() throws Exception {
+  public void testConflicts1() {
     String[] conflicts =
       new String[]{"Property prop uses field v, which is pushed down", "Constructor Super() uses method foo(), which is pushed down",
         "Method Super.i() with internal visibility won't be accessible from method foo()",
@@ -147,28 +146,28 @@ public class FlexPushDownTest extends MultiFileTestCase {
     doTestConflicts("Super", conflicts, "foo", "v");
   }
 
-  public void testProperty() throws Exception {
+  public void testProperty() {
     doTestPushDown("Super", DocCommentPolicy.ASIS, false, "opacity", "_opacity");
   }
 
-  public void testConflicts2() throws Exception {
+  public void testConflicts2() {
     String[] conflicts =
       new String[]{"Method Interface1.foo() is already overridden in class Impl. Method will not be pushed down to that class."};
     doTestConflicts("Interface1", conflicts, "foo");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testVector() throws Exception {
+  public void testVector() {
     doTestPushDown("foo.From", DocCommentPolicy.ASIS, false, "foo");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testVector2() throws Exception {
+  public void testVector2() {
     doTestPushDown("IFoo", DocCommentPolicy.ASIS, false, "abc");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testVector3() throws Exception {
+  public void testVector3() {
     doTestPushDown("IFoo", DocCommentPolicy.ASIS, false, "abc");
   }
 }

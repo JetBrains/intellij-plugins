@@ -46,7 +46,7 @@ public class ClearHistoryCommandTest extends LightTestCase {
         (IDEFacade)myIdeMock.proxy());
   }
 
-  public void testEnabled() throws Exception {
+  public void testEnabled() {
     myDispatcherMock.expects(once()).method("isHistoryEmpty").will(returnValue(true));
     assertFalse(myCommand.isEnabled());
 
@@ -54,14 +54,14 @@ public class ClearHistoryCommandTest extends LightTestCase {
     assertTrue(myCommand.isEnabled());
   }
 
-  public void testClearHistory() throws Exception {
+  public void testClearHistory() {
     myIdeMock.expects(once()).method("askQuestion").with(
         eq(StringUtil.getMsg("ClearHistoryCommand.title")),
         eq(StringUtil.getMsg("ClearHistoryCommand.text"))
     ).will(returnValue(true));
     myIdeMock.expects(once()).method("runLongProcess").will(new CustomStub("runner") {
       @Override
-      public Object invoke(Invocation invocation) throws Throwable {
+      public Object invoke(Invocation invocation) {
         ((IDEFacade.Process) invocation.parameterValues.get(1)).run(new NullProgressIndicator());
         return null;
       }
@@ -69,7 +69,7 @@ public class ClearHistoryCommandTest extends LightTestCase {
 
     myIdeMock.expects(once()).method("runOnPooledThread").will(new CustomStub("foo"){
       @Override
-      public Object invoke(Invocation invocation) throws Throwable {
+      public Object invoke(Invocation invocation) {
         final FutureTask task = new FutureTask((Runnable) invocation.parameterValues.get(0), null);
         task.run();
         return task;

@@ -18,13 +18,13 @@ public class DartSurroundWithInHtmlTest extends LightPlatformCodeInsightTestCase
     return DartTestUtils.BASE_TEST_DATA_PATH + FileUtil.toSystemDependentName("/surroundWith/html/");
   }
 
-  private void doTest(final Surrounder handler) throws Exception {
+  private void doTest(final Surrounder handler) {
     configureByFile(getTestName(false) + ".html");
     SurroundWithHandler.invoke(getProject(), getEditor(), getFile(), handler);
     checkResultByFile(getTestName(false) + ".after.html");
   }
 
-  public void testIfElse1() throws Throwable {
+  public void testIfElse1() {
     doTest(new DartWithIfElseSurrounder());
   }
 }

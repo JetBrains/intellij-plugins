@@ -58,7 +58,7 @@ public class AddFacetTest extends JavaCodeInsightFixtureTestCase {
 
     new WriteAction() {
       @Override
-      protected void run(@NotNull Result result) throws Throwable {
+      protected void run(@NotNull Result result) {
         ModifiableFacetModel model = FacetManager.getInstance(myModule).createModifiableModel();
         OsmorcFacet facet = new OsmorcFacet(myModule);
         facet.getConfiguration().setManifestGenerationMode(ManifestGenerationMode.Manually);

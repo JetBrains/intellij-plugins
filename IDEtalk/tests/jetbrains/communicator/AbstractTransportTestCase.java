@@ -27,7 +27,6 @@ import jetbrains.communicator.mock.MockIDEFacade;
 import jetbrains.communicator.util.WaitFor;
 import jetbrains.communicator.util.WatchDog;
 
-import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 
@@ -58,24 +57,24 @@ public abstract class AbstractTransportTestCase extends BaseTestCase {
     mySelf = createSelf();
   }
 
-  protected abstract Transport createTransport() throws IOException;
+  protected abstract Transport createTransport();
   protected abstract User createSelf() throws UnknownHostException;
   protected abstract User createAnotherOnlineUser() throws Exception;
 
 
-  public void testSendMessage_Functional() throws Exception {
+  public void testSendMessage_Functional() {
     TestUtil.testSendMessage_Functional(this, mySelf);
   }
 
-  public void testSendCodePointer_Functional() throws Exception {
+  public void testSendCodePointer_Functional() {
     TestUtil.testSendCodePointer_Functional(this, mySelf);
   }
 
-  public void testSendXmlMessage_NoResponse() throws Throwable {
+  public void testSendXmlMessage_NoResponse() {
     TestUtil.testSendXmlMessage_Functional(this, mySelf, false);
   }
 
-  public void testSendXmlMessage_WithResponse() throws Throwable {
+  public void testSendXmlMessage_WithResponse() {
     TestUtil.testSendXmlMessage_Functional(this, mySelf, true);
   }
 
@@ -100,7 +99,7 @@ public abstract class AbstractTransportTestCase extends BaseTestCase {
     assertEquals("Wrong project returned", "project1", status.getProjects()[0]);
   }
 
-  public void testGetUserStatus_Disabled() throws Exception {
+  public void testGetUserStatus_Disabled() {
     myUserModel.addUser(mySelf);
     myIdeFacade.setReturnedProjects(new String[]{"project1"});
 
@@ -110,7 +109,7 @@ public abstract class AbstractTransportTestCase extends BaseTestCase {
         0, selfStatus.getProjects().length);
   }
 
-  public void testGetUserStatus_NotAllowedByUser() throws Exception {
+  public void testGetUserStatus_NotAllowedByUser() {
     myUserModel.addUser(mySelf);
     myIdeFacade.setReturnedProjects(new String[]{"project1"});
     myIdeFacade.setReturnedAnswer(false);
@@ -123,7 +122,7 @@ public abstract class AbstractTransportTestCase extends BaseTestCase {
   }
 
 
-  public void testGetFileContent_Success() throws Exception {
+  public void testGetFileContent_Success() {
     VFile vFile = VFile.create("a path");
     myUserModel.addUser(mySelf);
     mySelf.setCanAccessMyFiles(true, myUserModel);
@@ -136,7 +135,7 @@ public abstract class AbstractTransportTestCase extends BaseTestCase {
     assertEquals("Should put result to vFile", "some tex&&&<<>t" + '\u0000', vFile.getContents());
   }
 
-  public void testGetFileContent_BigFile() throws Exception {
+  public void testGetFileContent_BigFile() {
     VFile vFile = VFile.create("a path");
     myUserModel.addUser(mySelf);
     mySelf.setCanAccessMyFiles(true, myUserModel);
@@ -152,7 +151,7 @@ public abstract class AbstractTransportTestCase extends BaseTestCase {
     assertEquals("Should successfully return file text", new String(buf), vFile.getContents() );
   }
 
-  public void testGetFileContent_NoRights() throws Exception {
+  public void testGetFileContent_NoRights() {
     VFile vFile = VFile.create("a path");
     myUserModel.addUser(mySelf);
     myIdeFacade.setReturnedFileText(vFile, "some text");
@@ -165,7 +164,7 @@ public abstract class AbstractTransportTestCase extends BaseTestCase {
     assertNull("Should not put result to vFile", vFile.getContents());
   }
 
-  public void testGetFileContent_NoRights_AllowedByUser() throws Exception {
+  public void testGetFileContent_NoRights_AllowedByUser() {
     VFile vFile = VFile.create("a path");
     myUserModel.addUser(mySelf);
     myIdeFacade.setReturnedFileText(vFile, "some text");
@@ -177,7 +176,7 @@ public abstract class AbstractTransportTestCase extends BaseTestCase {
     assertEquals("Should successfully return file text", "some text", text );
   }
 
-  public void testGetFileContent_NoSuchFile() throws Exception {
+  public void testGetFileContent_NoSuchFile() {
     VFile vFile = VFile.create("a path");
 
     String text = mySelf.getVFile(vFile, myIdeFacade);
@@ -185,7 +184,7 @@ public abstract class AbstractTransportTestCase extends BaseTestCase {
     assertNull("No file - no text", text);
   }
 
-  public void testSetOwnPresence_OnlineOffline() throws Exception {
+  public void testSetOwnPresence_OnlineOffline() {
     assertTrue("Should be online by default", myTransport.isOnline());
 
     myTransport.setOwnPresence(new UserPresence(false));

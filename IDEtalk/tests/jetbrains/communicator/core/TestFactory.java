@@ -16,8 +16,8 @@
 package jetbrains.communicator.core;
 
 import com.intellij.openapi.util.io.FileUtil;
-import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.commands.CommandManager;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.CommandManagerImpl;
 import jetbrains.communicator.core.impl.EventBroadcasterImpl;
 import jetbrains.communicator.core.impl.users.UserModelImpl;
@@ -26,7 +26,6 @@ import jetbrains.communicator.mock.MockUser;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,7 +38,7 @@ public class TestFactory {
   private TestFactory() {
   }
 
-  public static UserModel createUserListWithUsers(BaseTestCase test) throws UnknownHostException {
+  public static UserModel createUserListWithUsers(BaseTestCase test) {
 
     UserModelImpl result = new UserModelImpl(test.getBroadcaster());
     test.disposeOnTearDown(result);
@@ -78,7 +77,7 @@ public class TestFactory {
     ourFiles.add(dir);
   }
 
-  public static void deleteFiles() throws InterruptedException {
+  public static void deleteFiles() {
     for (final File fileToDelete : ourFiles) {
       boolean deleted = FileUtil.delete(fileToDelete);
       assert deleted : "Can't delete "+fileToDelete;

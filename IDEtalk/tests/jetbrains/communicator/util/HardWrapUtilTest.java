@@ -37,7 +37,7 @@ public class HardWrapUtilTest extends TestCase {
     myWrapper = new HardWrapUtil(myTextArea);
   }
 
-  public void testInit() throws Exception {
+  public void testInit() {
     assertTrue("initPerProject wrapping", myTextArea.getWrapStyleWord());
     assertTrue("initPerProject wrapping", myTextArea.getLineWrap());
 
@@ -48,7 +48,7 @@ public class HardWrapUtilTest extends TestCase {
     assertEquals("wrong char width", fontMetrics.charWidth('m'), myWrapper.getCharWidth());
   }
 
-  public void testGetWrappedText() throws Exception {
+  public void testGetWrappedText() {
     _testWrapping(5, "abc", "abc");
     _testWrapping(5, "abc de", "abc \nde");
     _testWrapping(1, "aaa", "aaa");
@@ -67,7 +67,7 @@ public class HardWrapUtilTest extends TestCase {
   }
 
 
-  public void testExceptionsAreNotWrapped() throws Exception {
+  public void testExceptionsAreNotWrapped() {
     StringWriter out = new StringWriter();
     new Throwable().printStackTrace(new PrintWriter(out));
     String text = out.toString().replaceAll("\t", "  ").replaceAll("\r\n", "\n").trim();

@@ -13,7 +13,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProject
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
@@ -53,7 +52,7 @@ public class FlexProjectConfigTest extends ModuleTestCase {
     return FlexModuleType.getInstance();
   }
 
-  public void testModuleLibrary() throws ConfigurationException {
+  public void testModuleLibrary() {
     assertEquals(1, FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations().length);
 
     final String libraryId = createModuleLibrary();
@@ -69,7 +68,7 @@ public class FlexProjectConfigTest extends ModuleTestCase {
     assertNull(libraryEntry);
   }
 
-  public void testModuleLibrary2() throws ConfigurationException {
+  public void testModuleLibrary2() {
     assertEquals(1, FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations().length);
 
     final String libraryId = createModuleLibrary();
@@ -86,7 +85,7 @@ public class FlexProjectConfigTest extends ModuleTestCase {
     assertNotNull(libraryEntry);
   }
 
-  public void testBcDependency() throws ConfigurationException {
+  public void testBcDependency() {
     final Module module2 = createModule("module2");
     assertFalse(doesDepend(myModule, module2));
     assertFalse(doesDepend(module2, myModule));

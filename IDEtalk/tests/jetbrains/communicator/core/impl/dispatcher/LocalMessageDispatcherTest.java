@@ -15,9 +15,9 @@
  */
 package jetbrains.communicator.core.impl.dispatcher;
 
-import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.dispatcher.LocalMessage;
 import jetbrains.communicator.core.dispatcher.Message;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.users.UserImpl;
 import jetbrains.communicator.core.impl.users.UserModelImpl;
 import jetbrains.communicator.core.transport.TransportEvent;
@@ -63,7 +63,7 @@ public class LocalMessageDispatcherTest extends BaseTestCase {
     super.tearDown();
   }
 
-  public void testIconBlinkingStatus() throws Exception {
+  public void testIconBlinkingStatus() {
     assertFalse(hasMessagesWhichRequireIconBlinking());
 
     MockMessage message = new MockMessage();
@@ -82,7 +82,7 @@ public class LocalMessageDispatcherTest extends BaseTestCase {
     return myDispatcher.getBlinkingIcon() != null;
   }
 
-  public void testAddPendingMessage() throws Exception {
+  public void testAddPendingMessage() {
     MockMessage message = new MockMessage();
     myDispatcher.addPendingMessage(myUser, message);
 
@@ -97,7 +97,7 @@ public class LocalMessageDispatcherTest extends BaseTestCase {
     assertEquals("Should have no problems with nulls", 1, myDispatcher.getPendingMessages(myUser).length);
   }
 
-  public void testTransportEvent() throws Exception {
+  public void testTransportEvent() {
 
     MockTransport mockTransport = new MockTransport();
 
@@ -117,7 +117,7 @@ public class LocalMessageDispatcherTest extends BaseTestCase {
     assertEquals("", localMessage.getLog());
   }
 
-  public void testSendMessageEvent() throws Exception {
+  public void testSendMessageEvent() {
     MockTransport mockTransport = new MockTransport();
 
     MockMessage localMessage = new MockMessage();
@@ -135,7 +135,7 @@ public class LocalMessageDispatcherTest extends BaseTestCase {
     assertSame(localMessage1, history[1]);
   }
 
-  public void testPersistency() throws Exception {
+  public void testPersistency() {
     myDispatcher.addPendingMessage(myUser, new MockMessage());
     assertEquals("Should have no problems with nulls", 1, myDispatcher.getPendingMessages(myUser).length);
 
@@ -152,7 +152,7 @@ public class LocalMessageDispatcherTest extends BaseTestCase {
     assertEquals(0, localMessageDispatcher.getPendingMessages(myUser).length);
   }
 
-  public void testHistory() throws Exception {
+  public void testHistory() {
     assertEquals(0, myDispatcher.getHistory(myUser, null).length);
 
     MockMessage message = new MockMessage();
@@ -188,7 +188,7 @@ public class LocalMessageDispatcherTest extends BaseTestCase {
     return new Date(System.currentTimeMillis() - 5100);
   }
 
-  public void testClearHistory() throws Exception {
+  public void testClearHistory() {
     assertTrue(myDispatcher.isHistoryEmpty());
 
     MockMessage message = new MockMessage();

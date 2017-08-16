@@ -29,43 +29,43 @@ import java.util.List;
 public class CfmlSurroundWithTest extends CfmlCodeInsightFixtureTestCase {
 
 
-  public void testSurroundSelectionWithSharps() throws Exception {
+  public void testSurroundSelectionWithSharps() {
     doTest(new CfmlSharpSurrounder());
   }
 
-  public void testSurroundSelectionWithSharpsOfCompositeElement() throws Exception {
+  public void testSurroundSelectionWithSharpsOfCompositeElement() {
     doTest(new CfmlSharpSurrounder());
   }
 
-  public void testSurroundSelectionWithSharpsInStringText() throws Exception {
+  public void testSurroundSelectionWithSharpsInStringText() {
     doTest(new CfmlSharpSurrounder());
   }
 
-  public void testSurroundSelectionWithSharpsNoSurround() throws Exception {
+  public void testSurroundSelectionWithSharpsNoSurround() {
     doTestNoSurround();
   }
 
-  public void testSurroundSelectionWithSharpsNoSurround2() throws Exception {
+  public void testSurroundSelectionWithSharpsNoSurround2() {
     doTestNoSurround();
   }
 
-  public void testSurroundSelectionWithSharpsOfFunctionArgument() throws Exception {
+  public void testSurroundSelectionWithSharpsOfFunctionArgument() {
     doTest(new CfmlSharpSurrounder());
   }
 
-  public void testSurroundSelectionWithSharpsOfFunctionCall() throws Exception {
+  public void testSurroundSelectionWithSharpsOfFunctionCall() {
     doTest(new CfmlSharpSurrounder());
   }
 
-  public void testSurroundSelectionWithSharpsInHtmlTag() throws Exception {
+  public void testSurroundSelectionWithSharpsInHtmlTag() {
     doTest(new CfmlSharpSurrounder());
   }
 
-  public void testSurroundSelectionWithSharpsInCfoutput() throws Exception {
+  public void testSurroundSelectionWithSharpsInCfoutput() {
     doTest(new CfmlSharpSurrounder());
   }
 
-  private void doTest(final Surrounder surrounder) throws Exception {
+  private void doTest(final Surrounder surrounder) {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
     SurroundWithHandler.invoke(getProject(), myFixture.getEditor(), myFixture.getFile(), surrounder);
     myFixture.checkResultByFile(Util.getExpectedDataFileName(getTestName(true)));

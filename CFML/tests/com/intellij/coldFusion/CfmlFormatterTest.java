@@ -25,8 +25,6 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import junit.framework.Assert;
 
-import java.util.concurrent.Callable;
-
 public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
   protected CommonCodeStyleSettings myTestStyleSettings;
 
@@ -36,19 +34,19 @@ public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
     setTestStyleSettings();
   }
 
-  public void testIndent() throws Throwable {
+  public void testIndent() {
     doTest();
   }
 
-  public void testActionIndention() throws Throwable {
+  public void testActionIndention() {
     doTest();
   }
 
-  public void testSytheticBlockIndention() throws Throwable {
+  public void testSytheticBlockIndention() {
     doTest();
   }
 
-  public void testSpaceBeforeParentheses() throws Exception {
+  public void testSpaceBeforeParentheses() {
     myTestStyleSettings.SPACE_BEFORE_METHOD_CALL_PARENTHESES = true;
     myTestStyleSettings.SPACE_BEFORE_METHOD_PARENTHESES = true;
     myTestStyleSettings.SPACE_BEFORE_IF_PARENTHESES = false;
@@ -59,7 +57,7 @@ public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
     doTest();
   }
 
-  public void testSpaceAroundOperators() throws Exception {
+  public void testSpaceAroundOperators() {
     myTestStyleSettings.SPACE_AROUND_ASSIGNMENT_OPERATORS = false;
     myTestStyleSettings.SPACE_AROUND_LOGICAL_OPERATORS = false;
     myTestStyleSettings.SPACE_AROUND_EQUALITY_OPERATORS = false;
@@ -69,7 +67,7 @@ public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
     doTest();
   }
 
-  public void testSpaceLeftBraces() throws Exception {
+  public void testSpaceLeftBraces() {
     myTestStyleSettings.SPACE_BEFORE_METHOD_LBRACE = false;
     myTestStyleSettings.SPACE_BEFORE_IF_LBRACE = false;
     myTestStyleSettings.SPACE_BEFORE_ELSE_LBRACE = false;
@@ -81,7 +79,7 @@ public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
     doTest();
   }
 
-  public void testSpaceWithin() throws Exception {
+  public void testSpaceWithin() {
     myTestStyleSettings.SPACE_WITHIN_METHOD_CALL_PARENTHESES = true;
     myTestStyleSettings.SPACE_WITHIN_METHOD_PARENTHESES = true;
     myTestStyleSettings.SPACE_WITHIN_IF_PARENTHESES = true;
@@ -92,7 +90,7 @@ public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
     doTest();
   }
 
-  public void testSpaceOthers() throws Exception {
+  public void testSpaceOthers() {
     myTestStyleSettings.SPACE_BEFORE_WHILE_KEYWORD = false;
     myTestStyleSettings.SPACE_BEFORE_CATCH_KEYWORD = false;
     myTestStyleSettings.SPACE_BEFORE_ELSE_KEYWORD = false;
@@ -107,7 +105,7 @@ public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
     doTest();
   }
 
-  public void testWrappingMeth() throws Exception {
+  public void testWrappingMeth() {
     myTestStyleSettings.METHOD_ANNOTATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
     myTestStyleSettings.METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE = true;
     myTestStyleSettings.METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE = true;
@@ -133,7 +131,7 @@ public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
     doTest();
   }
 
-  public void testAlignment() throws Exception {
+  public void testAlignment() {
     myTestStyleSettings.ALIGN_MULTILINE_PARAMETERS = true;
     myTestStyleSettings.ALIGN_MULTILINE_FOR = false;
     myTestStyleSettings.ALIGN_MULTILINE_TERNARY_OPERATION = true;
@@ -141,7 +139,7 @@ public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
     doTest();
   }
 
-  public void testAlignment2() throws Exception {
+  public void testAlignment2() {
     doTest();
   }
 
@@ -152,32 +150,32 @@ public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
     }, CfmlLanguage.RAILO, getProject());
   }
 
-  public void testBracePlacement1() throws Exception {
+  public void testBracePlacement1() {
     myTestStyleSettings.BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE_SHIFTED2;
     myTestStyleSettings.METHOD_BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE;
     doTest();
   }
 
-  public void testBracePlacement2() throws Exception {
+  public void testBracePlacement2() {
     myTestStyleSettings.BRACE_STYLE = CommonCodeStyleSettings.END_OF_LINE;
     myTestStyleSettings.METHOD_BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE_SHIFTED;
     doTest();
   }
 
-  public void testSpacingInCfSetTagIfWrap() throws Exception {
+  public void testSpacingInCfSetTagIfWrap() {
     myTestStyleSettings.ASSIGNMENT_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
     myTestStyleSettings.SPACE_AROUND_ASSIGNMENT_OPERATORS = false;
     doTest();
   }
 
-  public void testElseIfSpecialStatementIndention() throws Exception {
+  public void testElseIfSpecialStatementIndention() {
     myTestStyleSettings.SPECIAL_ELSE_IF_TREATMENT = true;
     myTestStyleSettings.SPACE_AROUND_ADDITIVE_OPERATORS = false;
     doTest();
   }
   
   
-  public void testIndentOptions() throws Exception {
+  public void testIndentOptions() {
     CommonCodeStyleSettings.IndentOptions indentOptions = myTestStyleSettings.getIndentOptions();
     assertNotNull(indentOptions);
     indentOptions.INDENT_SIZE = 2;
@@ -208,7 +206,7 @@ public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
   }
 
 
-  private void doTest() throws Exception {
+  private void doTest() {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
     WriteCommandAction.runWriteCommandAction(null, () -> {
       CodeStyleManager.getInstance(myFixture.getProject()).reformat(myFixture.getFile());

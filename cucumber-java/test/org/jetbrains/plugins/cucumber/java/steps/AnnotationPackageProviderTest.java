@@ -30,27 +30,27 @@ import static org.junit.Assert.assertThat;
 public class AnnotationPackageProviderTest {
 
   @Test
-  public void returnProperPackageForEnglishFeatureFileBeforeVersion_1_1() throws Exception {
+  public void returnProperPackageForEnglishFeatureFileBeforeVersion_1_1() {
     assertThat(annotationPackageFor(cucumber_1_0(), "en"), is("cucumber.annotation.en"));
   }
 
   @Test
-  public void returnProperPackageForEnglishFeatureFileAfterVersion_1_1() throws Exception {
+  public void returnProperPackageForEnglishFeatureFileAfterVersion_1_1() {
     assertThat(annotationPackageFor(cucumber_1_1(), "en"), is("cucumber.api.java.en"));
   }
 
   @Test
-  public void returnProperPackageForGermanFeatureFileBeforeVersion_1_1() throws Exception {
+  public void returnProperPackageForGermanFeatureFileBeforeVersion_1_1() {
     assertThat(annotationPackageFor(cucumber_1_0(), "de"), is("cucumber.annotation.de"));
   }
 
   @Test
-  public void returnProperPackageForGermanFeatureFileAfterVersion_1_1() throws Exception {
+  public void returnProperPackageForGermanFeatureFileAfterVersion_1_1() {
     assertThat(annotationPackageFor(cucumber_1_1(), "de"), is("cucumber.api.java.de"));
   }
 
   @Test
-  public void escapeConvertDashInLocaleStringToAnUnderscore() throws Exception {
+  public void escapeConvertDashInLocaleStringToAnUnderscore() {
     assertThat(annotationPackageFor(cucumber_1_0(), "en-pirate"), is("cucumber.annotation.en_pirate"));
   }
 

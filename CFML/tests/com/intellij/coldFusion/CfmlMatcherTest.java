@@ -37,7 +37,7 @@ public class CfmlMatcherTest extends CfmlCodeInsightFixtureTestCase {
     return "/matcher/";
   }
 
-  private void doTest() throws Throwable {
+  private void doTest() {
     final int pairOffset = configureByTestFile(getTestName(false));
     int offset = myFixture.getEditor().getCaretModel().getOffset();
     EditorHighlighter editorHighlighter = ((EditorEx)myFixture.getEditor()).getHighlighter();
@@ -50,7 +50,7 @@ public class CfmlMatcherTest extends CfmlCodeInsightFixtureTestCase {
     assertEquals(pairOffset, iterator.getStart());
   }
 
-  private int configureByTestFile(String testName) throws Throwable {
+  private int configureByTestFile(String testName) {
     myFixture.configureByFile(testName + ".cfml");
 
     String pairMarker = PAIR_MARKER;
@@ -66,7 +66,7 @@ public class CfmlMatcherTest extends CfmlCodeInsightFixtureTestCase {
     return pairOffset;
   }
 
-  private void doTestGoingTo(int direction) throws Throwable {
+  private void doTestGoingTo(int direction) {
     final int pairOffset = configureByTestFile(getTestName(false));
     if (direction == BEGIN) {
       CodeBlockUtil.moveCaretToCodeBlockStart(getProject(), myFixture.getEditor(), false);
@@ -77,39 +77,39 @@ public class CfmlMatcherTest extends CfmlCodeInsightFixtureTestCase {
     assertEquals(pairOffset, myFixture.getEditor().getCaretModel().getOffset());
   }
 
-  public void testPairedTagsMatching() throws Throwable {
+  public void testPairedTagsMatching() {
     doTest();
   }
 
-  public void testPairedSeparatedTagsMatching() throws Throwable {
+  public void testPairedSeparatedTagsMatching() {
     doTest();
   }
 
-  public void testPairedCurlyBracesMatching() throws Throwable {
+  public void testPairedCurlyBracesMatching() {
     doTest();
   }
 
-  public void testPairedBracesMatchingInExpression() throws Throwable {
+  public void testPairedBracesMatchingInExpression() {
     doTest();
   }
 
-  public void testCfmoduleMatching() throws Throwable {
+  public void testCfmoduleMatching() {
     doTest();
   }
 
-  public void testCfmoduleMatching2() throws Throwable {
+  public void testCfmoduleMatching2() {
     doTest();
   }
 
-  public void testGoToOpeningTag() throws Throwable {
+  public void testGoToOpeningTag() {
     doTestGoingTo(BEGIN);
   }
 
-  public void testGoToClosingTag() throws Throwable {
+  public void testGoToClosingTag() {
     doTestGoingTo(END);
   }
 
-  public void testGoToOpeningCurlyBrace() throws Throwable {
+  public void testGoToOpeningCurlyBrace() {
     doTestGoingTo(BEGIN);
   }
 }

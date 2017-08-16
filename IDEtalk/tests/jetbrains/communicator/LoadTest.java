@@ -28,7 +28,7 @@ import junit.framework.TestCase;
  * @author Kir
  */
 public class LoadTest extends TestCase {
-  public void testInitAll() throws Throwable {
+  public void testInitAll() {
     Pico.disposeInstance();
     Pico.setUnitTest(false);
     checkInstance(JabberFacade.class);

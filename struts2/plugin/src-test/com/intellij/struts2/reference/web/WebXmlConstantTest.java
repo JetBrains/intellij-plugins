@@ -21,7 +21,6 @@ import com.intellij.j2ee.web.highlighting.WebXmlInspection;
 import com.intellij.struts2.BasicLightHighlightingTestCase;
 import com.intellij.struts2.model.constant.StrutsConstant;
 import com.intellij.struts2.model.constant.contributor.StrutsCoreConstantContributor;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,14 +44,14 @@ public class WebXmlConstantTest extends BasicLightHighlightingTestCase {
     return "/reference/web/constant/";
   }
 
-  public void testHighlighting() throws Throwable {
+  public void testHighlighting() {
     myFixture.testHighlighting(true, false, false, "/WEB-INF/web.xml");
   }
 
   /**
    * Completion for {@code <param-name>}.
    */
-  public void testNameCompletion() throws Throwable {
+  public void testNameCompletion() {
     final StrutsCoreConstantContributor coreConstantContributor = new StrutsCoreConstantContributor();
     final List<StrutsConstant> constants = coreConstantContributor.getStrutsConstantDefinitions(myModule);
     final String[] variants = ContainerUtil.map2Array(constants, String.class, strutsConstant -> strutsConstant.getName());
@@ -62,7 +61,7 @@ public class WebXmlConstantTest extends BasicLightHighlightingTestCase {
   /**
    * Completion for {@code <param-value>}.
    */
-  public void testValueCompletion() throws Throwable {
+  public void testValueCompletion() {
     myFixture.testCompletionVariants("/WEB-INF/web_value_completion.xml",
                                      "none", "get", "all");
   }
@@ -70,7 +69,7 @@ public class WebXmlConstantTest extends BasicLightHighlightingTestCase {
   /**
    * Completion for {@code <param-value>} with some additional variants.
    */
-  public void testValueCompletion2() throws Throwable {
+  public void testValueCompletion2() {
     myFixture.testCompletionVariants("/WEB-INF/web_value_completion_2.xml",
                                      "com.opensymphony.xwork2.ObjectFactory",
                                      "com.opensymphony.xwork2.spring.SpringObjectFactory",

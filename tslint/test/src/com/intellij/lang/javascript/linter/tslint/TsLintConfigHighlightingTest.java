@@ -16,7 +16,7 @@ public class TsLintConfigHighlightingTest extends LightPlatformCodeInsightFixtur
     return TsLintTestUtil.BASE_TEST_DATA_PATH + getBasePath();
   }
 
-  public void testDisabled() throws Exception {
+  public void testDisabled() {
     doTest();
   }
 
@@ -24,35 +24,35 @@ public class TsLintConfigHighlightingTest extends LightPlatformCodeInsightFixtur
     return myFixture.testHighlighting(getTestName(true) + "/tslint.json");
   }
 
-  public void testAlignParameters() throws Exception {
+  public void testAlignParameters() {
     doTest();
   }
 
-  public void testOneLine() throws Exception {
+  public void testOneLine() {
     doTest();
   }
 
-  public void testTypedefWhitespace() throws Exception {
+  public void testTypedefWhitespace() {
     doTest();
   }
 
-  public void testWhitespace() throws Exception {
+  public void testWhitespace() {
     doTest();
   }
 
-  public void testWrong() throws Exception {
+  public void testWrong() {
     doTest();
   }
 
-  public void testAlignWrongParameters() throws Exception {
+  public void testAlignWrongParameters() {
     doTest();
   }
 
-  public void testCompletedDocs() throws Exception {
+  public void testCompletedDocs() {
     doTest();
   }
 
-  public void testPreferSwitchPreferTemplate() throws Exception {
+  public void testPreferSwitchPreferTemplate() {
     doTest();
   }
 }

@@ -15,16 +15,15 @@
  */
 package com.intellij.coldFusion;
 
-import com.intellij.openapi.command.WriteCommandAction;
 import org.jetbrains.annotations.NonNls;
 
 public class CfmlFileReferenceTest extends CfmlCodeInsightFixtureTestCase {
 
-  public void testRename() throws Throwable {
+  public void testRename() {
     doRenameFileTest("newName.test.cfml", "<cfinclude template=\"rename.test.cfml\">");
   }
 
-  public void testRenameInScript() throws Throwable {
+  public void testRenameInScript() {
     doRenameFileTest("newName.test.cfml", "<cfscript>\n" +
                                           "    include \"renameInScript.test.cfml\";\n" +
                                           "\n" +
@@ -42,26 +41,26 @@ public class CfmlFileReferenceTest extends CfmlCodeInsightFixtureTestCase {
                               "</cfscript>");
   }
 
-  public void testFileReferencesWithErrors() throws Throwable {
+  public void testFileReferencesWithErrors() {
     doHighlighting();
   }
 
-  public void testFileReferencesWithErrorsInScript() throws Throwable {
+  public void testFileReferencesWithErrorsInScript() {
     doHighlighting();
   }
 
-  private void doRenameFileTest(final String newName, String fileTextWithReference) throws Exception {
+  private void doRenameFileTest(final String newName, String fileTextWithReference) {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
     myFixture.addFileToProject("fileWithReference.test.cfml", fileTextWithReference);
     myFixture.renameElement(myFixture.getFile(), newName);
     myFixture.checkResultByFile("fileWithReference.test.cfml", Util.getExpectedDataFileName(getTestName(true)), false);
   }
 
-  public void testFileNameAttributeCompletion() throws Throwable {
+  public void testFileNameAttributeCompletion() {
     doTestCompletionVariants("rename.test.cfml", "moveOldFile.test.cfml", "fileNameAttributeCompletion.test.cfml");
   }
 
-  public void testFilePathInScriptCompletion() throws Throwable {
+  public void testFilePathInScriptCompletion() {
     doTestCompletionVariants("rename.test.cfml", "moveOldFile.test.cfml", "filePathInScriptCompletion.test.cfml");
   }
 
@@ -74,14 +73,14 @@ public class CfmlFileReferenceTest extends CfmlCodeInsightFixtureTestCase {
     myFixture.checkResultByFile("fileWithMoveReference.test.cfml", Util.getExpectedDataFileName(getTestName(true)), false);
   }
 
-  private void doTestCompletionVariants(@NonNls String... items) throws Throwable {
+  private void doTestCompletionVariants(@NonNls String... items) {
     String inputDataFileName = Util.getInputDataFileName(getTestName(true));
     myFixture.addFileToProject("rename.test.cfml", "");
     myFixture.addFileToProject("moveOldFile.test.cfml", "");
     myFixture.testCompletionVariants(inputDataFileName, items);
   }
 
-  private void doHighlighting() throws Throwable {
+  private void doHighlighting() {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
     myFixture.addFileToProject("rename.test.cfml", "");
     myFixture.addFileToProject("moveOldFile.test.cfml", "");

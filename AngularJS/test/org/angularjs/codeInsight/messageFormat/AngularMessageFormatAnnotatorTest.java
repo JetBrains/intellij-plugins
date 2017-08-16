@@ -15,39 +15,39 @@ public class AngularMessageFormatAnnotatorTest extends LightPlatformCodeInsightF
     return AngularTestUtil.getBaseTestDataPath(AngularMessageFormatAnnotatorTest.class);
   }
 
-  public void testCase1() throws Exception {
+  public void testCase1() {
     doTest("case1.html");
   }
 
-  public void testCase2() throws Exception {
+  public void testCase2() {
     doTest("case2.html");
   }
 
-  public void testCase3() throws Exception {
+  public void testCase3() {
     doTest("case3.html");
   }
 
-  public void testCase4() throws Exception {
+  public void testCase4() {
     doTest("case4.html");
   }
 
-  public void testCase5() throws Exception {
+  public void testCase5() {
     doTest("case5.html");
   }
 
-  public void testCompletion1() throws Exception {
+  public void testCompletion1() {
     doCompletionTest("completion1.html", PLURAL);
   }
 
-  public void testCompletion2() throws Exception {
+  public void testCompletion2() {
     doCompletionTest("completion2.html", "one", "many");
   }
 
-  public void testCompletion3() throws Exception {
+  public void testCompletion3() {
     myFixture.testCompletionTyping("completion3_before.html", "3\n", "completion3_after.html", "controller.js", "angular.js");
   }
 
-  public void testCompletion4() throws Exception {
+  public void testCompletion4() {
     myFixture.testCompletionTyping("completion4_before.html", "3\n", "completion4_after.html", "controller.js", "angular.js");
   }
 
@@ -57,7 +57,7 @@ public class AngularMessageFormatAnnotatorTest extends LightPlatformCodeInsightF
     myFixture.assertPreferredCompletionItems(0, variants);
   }
 
-  public void doTest(@NotNull final String fileName) throws Exception {
+  public void doTest(@NotNull final String fileName) {
     myFixture.configureByFiles(fileName, "controller.js", "angular.js");
     myFixture.checkHighlighting();
   }

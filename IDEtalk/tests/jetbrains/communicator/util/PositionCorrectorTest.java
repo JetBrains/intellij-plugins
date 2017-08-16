@@ -15,39 +15,39 @@
  */
 package jetbrains.communicator.util;
 
-import junit.framework.TestCase;
 import jetbrains.communicator.mock.MockIDEFacade;
+import junit.framework.TestCase;
 
 /**
  * @author kir
  */
 public class PositionCorrectorTest extends TestCase {
 
-  public void testNoContents() throws Exception {
+  public void testNoContents() {
     assertPositionCorrection(null, null, 5, 5);
     assertPositionCorrection("adfadsf", null, 5, 5);
     assertPositionCorrection(null, "ssss", 5, 5);
   }
 
-  public void testOutsideBoundary() throws Exception {
+  public void testOutsideBoundary() {
     assertPositionCorrection("aaa", "ssss", -1, 0);
     assertPositionCorrection("aaa", "ssss", 5, 0);
   }
 
-  public void testLinesChanges() throws Exception {
+  public void testLinesChanges() {
     assertPositionCorrection("aaa", "ssss", 0, 0);
     assertPositionCorrection("aaa\nddd", "bbb\nddd", 0, 0);
     assertPositionCorrection("aaa\nddd", "bbb\nddd", 1, 1);
   }
 
-  public void testLineAdded() throws Exception {
+  public void testLineAdded() {
     assertPositionCorrection("aaa", "aaa\nbbb", 0, 0);
     assertPositionCorrection("aaa", "bbb\naaa", 0, 1);
     assertPositionCorrection("aaa\rbbb", "ccc\naaa\nbbb\naaa", 1, 2);
     assertPositionCorrection("aaa\rbbb", "ccc\naaa\nqqqq\nbbb", 1, 3);
   }
 
-  public void testLineDeleted() throws Exception {
+  public void testLineDeleted() {
     assertPositionCorrection("aaa\nbbb", "aaa", 0, 0);
     assertPositionCorrection("aaa\nbbb", "aaa", 1, 0);
 
@@ -64,12 +64,12 @@ public class PositionCorrectorTest extends TestCase {
     assertPositionCorrection("ccc\naaa\nbbb\nzzz", "zzz\naaa", 3, 0);
   }
 
-  public void testChange() throws Exception {
+  public void testChange() {
     assertPositionCorrection("aaa\nbbb", "ccc\nbbb", 0, 0);
     assertPositionCorrection("aaa\nbbb", "ccc\nbbb", 1, 1);
   }
 
-  public void testDeleteAndInsert() throws Exception {
+  public void testDeleteAndInsert() {
     String src =
       "aaa\n" +
       "bbb\n" +

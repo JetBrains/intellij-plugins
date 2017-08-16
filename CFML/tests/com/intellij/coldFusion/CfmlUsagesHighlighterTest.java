@@ -63,14 +63,14 @@ public class CfmlUsagesHighlighterTest extends CfmlCodeInsightFixtureTestCase {
     assertEquals(3, getUsages().length);
   }
 
-  public void testIncorrectAttributeName() throws Throwable {
+  public void testIncorrectAttributeName() {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
     myFixture.checkHighlighting();
     TargetElementUtil.getInstance()
       .findTargetElement(myFixture.getEditor(), TargetElementUtil.ELEMENT_NAME_ACCEPTED, myFixture.getCaretOffset());
   }
 
-  public void testIncorrectAttributeNameInArgumentTag() throws Throwable {
+  public void testIncorrectAttributeNameInArgumentTag() {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
     myFixture.checkHighlighting();
     TargetElementUtil.getInstance()

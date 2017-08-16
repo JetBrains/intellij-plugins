@@ -38,7 +38,7 @@ public class ShowDiffCommandTest extends BaseTestCase {
     myCommand = new ShowDiffCommand((IDEFacade) myFacadeMock.proxy());
   }
 
-  public void testEnabled() throws Exception {
+  public void testEnabled() {
     assertFalse(myCommand.isEnabled());
 
     myCommand.setUser(new MockUser());
@@ -54,7 +54,7 @@ public class ShowDiffCommandTest extends BaseTestCase {
     assertTrue(myCommand.isEnabled());
   }
 
-  public void testExecute() throws Exception {
+  public void testExecute() {
     final VFile vFile = VFile.create("a file");
     MockUser user = new MockUser() {
       @Override
@@ -72,7 +72,7 @@ public class ShowDiffCommandTest extends BaseTestCase {
     myCommand.execute();
   }
 
-  public void testExecute_NoContent() throws Exception {
+  public void testExecute_NoContent() {
     final VFile vFile = VFile.create("a file");
     MockUser user = new MockUser() {
       @Override

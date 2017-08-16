@@ -30,11 +30,11 @@ public class DartServerIntentionsTest extends CodeInsightFixtureTestCase {
     myFixture.checkResultByFile(getTestName(false) + ".after.dart");
   }
 
-  public void testIntroduceVariableNoSelection() throws Throwable {
+  public void testIntroduceVariableNoSelection() {
     doTest("Assign value to new local variable");
   }
 
-  public void testSurroundWithTryCatch() throws Throwable {
+  public void testSurroundWithTryCatch() {
     // TODO selection in the 'after' file is incorrect
     doTest("Surround with 'try-catch'");
   }

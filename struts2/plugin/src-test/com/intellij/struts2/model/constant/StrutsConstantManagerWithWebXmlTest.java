@@ -42,7 +42,7 @@ public class StrutsConstantManagerWithWebXmlTest extends StrutsConstantManagerTe
     return createWebDescriptor();
   }
 
-  public void testWebXml() throws Throwable {
+  public void testWebXml() {
     createStrutsFileSet(STRUTS_XML);
 
     final VirtualFile strutsXmlFile = myFixture.findFileInTempDir(STRUTS_XML);

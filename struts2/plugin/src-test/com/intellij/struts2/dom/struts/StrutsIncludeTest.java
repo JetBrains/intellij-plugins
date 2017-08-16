@@ -29,14 +29,14 @@ public class StrutsIncludeTest extends StrutsLightHighlightingTestCase {
     return "strutsXml/include";
   }
 
-  public void testInclude() throws Throwable {
+  public void testInclude() {
     performHighlightingTest(STRUTS_XML,
                             "struts-include.xml",
 
                             "com/test/struts-sub.xml");
   }
 
-  public void testIncludeNotInFileset() throws Throwable {
+  public void testIncludeNotInFileset() {
     performHighlightingTest("struts-notinfileset.xml",
                             "com/test/struts-sub.xml");
   }

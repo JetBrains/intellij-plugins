@@ -40,7 +40,7 @@ public class JabberFacadeTest extends BaseTestCase {
     myFacade.getMyAccount().setRememberPassword(true);
   }
 
-  public void testGoogleTalk() throws Exception {
+  public void testGoogleTalk() {
     try {
       assertNull(myFacade.connect("maxkir1", "123123123", "talk.google.com", 5222, false));
       assertTrue(myFacade.isConnectedAndAuthenticated());
@@ -55,7 +55,7 @@ public class JabberFacadeTest extends BaseTestCase {
     }
   }
 
-  public void testPersist_Settings() throws Exception {
+  public void testPersist_Settings() {
     myFacade.getMyAccount().setUsername("user");
     myFacade.getMyAccount().setPassword("\u043f\u0440\u0438\u0432\u0435\u0442 \u0442\u0435\u0431\u0435");
     myFacade.getMyAccount().setServer("jabber.ru");
@@ -84,7 +84,7 @@ public class JabberFacadeTest extends BaseTestCase {
     assertEquals("Settings file should not contain plain password: " + fileText, -1, fileText.indexOf("pwd822"));
   }
 
-  public void testDoNotRememberPassword() throws Exception {
+  public void testDoNotRememberPassword() {
     myFacade.getMyAccount().setPassword("pwd822");
     myFacade.getMyAccount().setRememberPassword(false);
 
@@ -94,7 +94,7 @@ public class JabberFacadeTest extends BaseTestCase {
     assertEquals("Should not remember password", "", loaded.getMyAccount().getPassword());
   }
 
-  public void testGetServers() throws Exception {
+  public void testGetServers() {
     List<String> list = Arrays.asList(myFacade.getServers());
     assertTrue("List of servers should be taken from file:" + list, list.size() > 20);
     assertTrue("List should contain jabber.org:" + list,  list.contains("jabber.org"));
@@ -104,7 +104,7 @@ public class JabberFacadeTest extends BaseTestCase {
     }
   }
 
-  public void testSkipConnect_WhenDisabled() throws Exception {
+  public void testSkipConnect_WhenDisabled() {
     myFacade.getMyAccount().setLoginAllowed(false);
     myFacade.connect();
     assertNull("Should not try to connect", myFacade.getConnection());

@@ -46,7 +46,7 @@ public class SelectionProcessorTest extends BaseTestCase {
         new String[]{"developers", "bosses"});
   }
 
-  public void testGroupSelectorInitialization() throws Exception {
+  public void testGroupSelectorInitialization() {
     assertEquals("Should add 'auto' item", UserModel.AUTO_GROUP,
         myGroupSelector.getModel().getElementAt(0));
     assertEquals("bosses", myGroupSelector.getModel().getElementAt(1));
@@ -54,30 +54,30 @@ public class SelectionProcessorTest extends BaseTestCase {
     assertEquals(3, myGroupSelector.getModel().getSize());
   }
 
-  public void testGetSelectedUsers_UserSelected() throws Exception {
+  public void testGetSelectedUsers_UserSelected() {
     setUsers(new User[]{user("bob", "Fabrique")});
     myTree.setSelectionRow(1);
     assertSelectedUsers(new String[]{"bob"});
   }
 
-  public void testGetSelectedUsers_GroupSelected() throws Exception {
+  public void testGetSelectedUsers_GroupSelected() {
     setUsers(new User[]{user("bob", "Fabrique"), user("alice", "Fabrique")});
     myTree.setSelectionRow(0);
     assertSelectedUsers(new String[]{"bob", "alice"});
   }
 
-  public void testGetSelectedUsers_UsersAndGroupSelected() throws Exception {
+  public void testGetSelectedUsers_UsersAndGroupSelected() {
     setUsers(new User[]{user("bob", "Fabrique"), user("alice", "Idea")});
     myTree.setSelectionRow(0);
     myTree.addSelectionRow(3);
     assertSelectedUsers(new String[]{"bob", "alice"});
   }
 
-  public void testDefaultUserSelection() throws Exception {
+  public void testDefaultUserSelection() {
     assertEquals("Default selection expected", 0, myTree.getSelectionRows()[0]);
   }
 
-  public void testSelectUserWhenHisGroupSelected() throws Throwable {
+  public void testSelectUserWhenHisGroupSelected() {
     setUsers(new User[]{user("bob", "Idea")});
     myTree.setSelectionRow(0);
     myTree.addSelectionRow(1);
@@ -88,34 +88,34 @@ public class SelectionProcessorTest extends BaseTestCase {
     return Arrays.asList(myTree.getSelectionPaths()).toString();
   }
 
-  public void testSelectGroupWhenUserSelected() throws Throwable {
+  public void testSelectGroupWhenUserSelected() {
     setUsers(new User[]{user("bob", "Idea")});
     myTree.setSelectionRow(1);
     myTree.addSelectionRow(0);
     assertEquals("Only group should be selected: " + selection(), 0, myTree.getSelectionRows()[0]);
   }
 
-  public void testSelectGroupAndUser_AtOnce() throws Throwable {
+  public void testSelectGroupAndUser_AtOnce() {
     setUsers(new User[]{user("bob", "Idea")});
     myTree.setSelectionInterval(0, 100);
     assertEquals("Only group should be selected: " + selection(), 0, myTree.getSelectionRows()[0]);
   }
 
-  public void testSelectUser_FromUnnamedProject() throws Throwable {
+  public void testSelectUser_FromUnnamedProject() {
     setUsers(new User[]{user("bob", null)});
     myTree.setSelectionRow(1);
 
     assertEquals("Expect general group name", UserModel.DEFAULT_GROUP, myGroupSelector.getSelectedItem());
   }
 
-  public void testSelectUser_FromNamedProject() throws Throwable {
+  public void testSelectUser_FromNamedProject() {
     setUsers(new User[]{user("bob", "Irida")});
     myTree.setSelectionRow(1);
 
     assertEquals("Expect project group name", "Irida", myGroupSelector.getSelectedItem());
   }
 
-  public void testSelectUsers_FromDifferentProjects() throws Throwable {
+  public void testSelectUsers_FromDifferentProjects() {
     setUsers(new User[]{user("bob", "Irida"), user("anton", "IDEtalk")});
     myTree.setSelectionRows(new int[]{1,2});
 

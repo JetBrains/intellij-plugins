@@ -125,7 +125,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
   }
 
   @Override
-  protected void setUp() throws Exception {
+  protected void setUp() {
     UIUtil.invokeAndWaitIfNeeded((Runnable)() -> {
       try {
         FlexUnitExecutionTest.super.setUp();
@@ -203,7 +203,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
   }
 
   @Override
-  protected VirtualFile configureByFiles(final File projectRoot, @NotNull final VirtualFile[] vFiles) throws IOException {
+  protected VirtualFile configureByFiles(final File projectRoot, @NotNull final VirtualFile[] vFiles) {
     final Ref<VirtualFile> result = new Ref<>();
     UIUtil.invokeAndWaitIfNeeded((Runnable)() -> {
       try {
@@ -474,7 +474,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
   }
 
   @Override
-  protected void tearDown() throws Exception {
+  protected void tearDown() {
     FlexCompilerProjectConfiguration c = FlexCompilerProjectConfiguration.getInstance(myProject);
     c.USE_MXMLC_COMPC = myUseMxmlcCompc;
     c.USE_FCSH = myUseFcsh;

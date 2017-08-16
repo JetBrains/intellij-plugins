@@ -30,11 +30,11 @@ public class ValidatorConfigHighlightingTest extends ValidationLightHighlighting
     return "validationXml/config";
   }
 
-  public void testSimple() throws Throwable {
+  public void testSimple() {
     performHighlightingTest("validator-config-simple.xml");
   }
 
-  public void testDefault() throws Throwable {
+  public void testDefault() {
     performHighlightingTest("validator-config-default.xml");
   }
 }

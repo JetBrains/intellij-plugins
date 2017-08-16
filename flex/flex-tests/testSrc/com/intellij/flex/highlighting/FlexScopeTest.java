@@ -206,7 +206,7 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     };
   }
 
-  public void testGotoClass() throws Exception {
+  public void testGotoClass() {
     prepareTwoSdks();
     GotoClassModel2 model = new GotoClassModel2(myProject);
     Object[] elements = model.getElementsByName("Application", true, "");

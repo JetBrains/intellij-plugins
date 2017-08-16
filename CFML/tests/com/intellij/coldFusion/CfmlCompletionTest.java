@@ -31,7 +31,6 @@ import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture;
 import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NonNls;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -49,14 +48,14 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
     CamelHumpMatcher.forceStartMatching(myFixture.getTestRootDisposable());
   }
 
-  static void addJavaClassToSubPackage(JavaCodeInsightTestFixture fixture) throws IOException {
+  static void addJavaClassToSubPackage(JavaCodeInsightTestFixture fixture) {
     fixture.addFileToProject("subPackage/MyClass.java", "package subPackage;\n" +
                                                         "\n" +
                                                         "public class MyClass {\n" +
                                                         "}");
   }
 
-  static PsiClass addJavaClassTo(JavaCodeInsightTestFixture fixture) throws IOException {
+  static PsiClass addJavaClassTo(JavaCodeInsightTestFixture fixture) {
     return fixture.addClass("import java.util.Collection;\n" +
                             "import java.util.Collections;\n" +
                             "import java.util.LinkedList;\n" +
@@ -76,7 +75,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
                             "}");
   }
 
-  static PsiFile addOneComponentWithConstructorTo(JavaCodeInsightTestFixture fixture) throws IOException {
+  static PsiFile addOneComponentWithConstructorTo(JavaCodeInsightTestFixture fixture) {
     return fixture.addFileToProject("ComponentWithConstructor.cfc",
                                     "<cfcomponent>\n" +
                                     "<cffunction name=\"init\">\n" +
@@ -86,7 +85,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
                                     "</cfcomponent>");
   }
 
-  static PsiFile addOneComponentToResolve(JavaCodeInsightTestFixture fixture) throws IOException {
+  static PsiFile addOneComponentToResolve(JavaCodeInsightTestFixture fixture) {
     return fixture.addFileToProject("MyComponentToResolve.cfc", "<cfcomponent>\n" +
                                                                 "<cffunction name=\"init\">\n" +
                                                                 "    <cfreturn this>\n" +
@@ -96,7 +95,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
                                                                 "</cfcomponent>");
   }
 
-  static PsiFile addTwoComponents(JavaCodeInsightTestFixture fixture) throws IOException {
+  static PsiFile addTwoComponents(JavaCodeInsightTestFixture fixture) {
     fixture.addFileToProject("MyComponent2.cfc",
                              "<cfcomponent>\n" +
                              "</cfcomponent>");
@@ -106,7 +105,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
                                     "</cfcomponent>");
   }
 
-  static PsiFile addOneComponentTo(JavaCodeInsightTestFixture fixture) throws IOException {
+  static PsiFile addOneComponentTo(JavaCodeInsightTestFixture fixture) {
     return fixture.addFileToProject("folder/subfolder/ComponentName.cfc",
                                     "<cfcomponent>\n" +
                                     "    <cffunction name=\"func1\">\n" +
@@ -118,7 +117,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
 
   }
 
-  static PsiFile addOneComponentToDir(JavaCodeInsightTestFixture fixture) throws IOException {
+  static PsiFile addOneComponentToDir(JavaCodeInsightTestFixture fixture) {
     return fixture.addFileToProject("subfolder/ComponentName.cfc",
                                     "<cfcomponent>\n" +
                                     "    <cffunction name=\"func1\">\n" +
@@ -129,40 +128,40 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
                                     "</cfcomponent>");
   }
 
-  public void testAttributeCompletionAtFileEnd() throws Throwable {
+  public void testAttributeCompletionAtFileEnd() {
     doTest();
   }
 
-  public void testAttributeCompletionAtFileMiddle() throws Throwable {
+  public void testAttributeCompletionAtFileMiddle() {
     doTest();
   }
 
-  public void testAttributeVariants() throws Throwable {
+  public void testAttributeVariants() {
     doTestCompletionVariants("returntype", "returnformat", "roles");
   }
 
-  public void testAccessorsCompletion() throws Throwable {
+  public void testAccessorsCompletion() {
     myFixture.addFileToProject("MyPropertyTagComponent.cfc", "<cfcomponent accessors=\"true\">\n" +
                                                              "\t<cfproperty name=\"Foo\" type=\"STRING\">\n" +
                                                              "</cfcomponent>");
     doTestCompletionVariants("getFoo()", "setFoo()", "Foo");
   }
 
-  public void testPropertyGetterCompletion() throws Throwable {
+  public void testPropertyGetterCompletion() {
     myFixture.addFileToProject("MyPropertyTagComponent.cfc", "<cfcomponent>\n" +
                                                              "\t<cfproperty name=\"Foo\" getter=\"true\" type=\"STRING\">\n" +
                                                              "</cfcomponent>");
     doTestCompletionVariants("getFoo()", "Foo");
   }
 
-  public void testPropertySetterCompletion() throws Throwable {
+  public void testPropertySetterCompletion() {
     myFixture.addFileToProject("MyPropertyTagComponent.cfc", "<cfcomponent>\n" +
                                                              "\t<cfproperty name=\"Foo\" setter=\"true\" type=\"STRING\">\n" +
                                                              "</cfcomponent>");
     doTestCompletionVariants("setFoo()", "Foo");
   }
 
-  public void testPropertyAccessorCompletionForPersistentComponent() throws Throwable {
+  public void testPropertyAccessorCompletionForPersistentComponent() {
     myFixture.addFileToProject("MyPropertyTagComponent.cfc", "<cfcomponent persistent=\"true\">\n" +
                                                              "\t<cfproperty name=\"foo\" type=\"STRING\">\n" +
                                                              "</cfcomponent>");
@@ -170,41 +169,41 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
   }
 
 
-  public void testMappedSuperClassCompletionInComponentTag() throws Throwable {
+  public void testMappedSuperClassCompletionInComponentTag() {
     doTest();
   }
 
-  public void testMappedSuperClassCompletionInScriptComponent() throws Throwable {
+  public void testMappedSuperClassCompletionInScriptComponent() {
     doTest();
   }
 
-  public void testAttributeVariantsInPropertyTag() throws Throwable {
+  public void testAttributeVariantsInPropertyTag() {
     doTest();
   }
 
-  public void testAttributeVariantsInStartProperty() throws Throwable {
+  public void testAttributeVariantsInStartProperty() {
     doTestCompletionContainsVariants("name", "notnull");
   }
 
-  public void testAttributeOrmTypeInProperty() throws Throwable {
+  public void testAttributeOrmTypeInProperty() {
     doTest();
   }
 
-  public void testReturnTypeCompletion() throws Throwable {
+  public void testReturnTypeCompletion() {
     addOneComponentTo(myFixture);
     doTestCompletionContainsVariants("func1", "func2");
   }
 
-  public void testReturnTypeCompletionInScriptFunctionDefinition() throws Throwable {
+  public void testReturnTypeCompletionInScriptFunctionDefinition() {
     doTestCompletionContainsVariants("String", "void", "Numeric");
   }
 
-  public void testTagCompletionAtFileEnd() throws Throwable {
+  public void testTagCompletionAtFileEnd() {
     doTestCompletionVariants("cffunction", "cffeed", "cffileupload", "cffinally", "cffile", "cfflush", "cfform", "cfformgroup",
                              "cfformitem", "cfftp");
   }
 
-  public void testTagCompletionAfterAngleBracket() throws Throwable {
+  public void testTagCompletionAfterAngleBracket() {
     final ExternalResourceManagerEx manager = ExternalResourceManagerEx.getInstanceEx();
     final String doctype = manager.getDefaultHtmlDoctype(getProject());
     manager.setDefaultHtmlDoctype(XmlUtil.XHTML_URI, getProject());
@@ -216,7 +215,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
     }
   }
 
-  public void testTagCompletionAfterC() throws Throwable {
+  public void testTagCompletionAfterC() {
     final ExternalResourceManagerEx manager = ExternalResourceManagerEx.getInstanceEx();
     final String doctype = manager.getDefaultHtmlDoctype(getProject());
     manager.setDefaultHtmlDoctype(XmlUtil.XHTML_URI, getProject());
@@ -228,74 +227,74 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
     }
   }
 
-  public void testTagCompletionAfterCf() throws Throwable {
+  public void testTagCompletionAfterCf() {
     doTestCompletionContainsVariants("cffunction", "cfset");
   }
 
-  public void testPropertyWordCompletionInScriptComponent() throws Throwable {
+  public void testPropertyWordCompletionInScriptComponent() {
     doTest();
   }
 
-  public void testSecondPropertyWordCompletionInScriptComponent() throws Throwable {
+  public void testSecondPropertyWordCompletionInScriptComponent() {
     doTestCompletionContainsVariants("property");
   }
 
-  public void testNoPropertyWordCompletionInScriptComponent() throws Throwable {
+  public void testNoPropertyWordCompletionInScriptComponent() {
     doTest();
   }
 
-  public void testFunctionNamesCompletion() throws Throwable {
+  public void testFunctionNamesCompletion() {
     doTestCompletionVariants("mid", "min", "mineFunc", "minute");
   }
 
-  public void testVariableNamesCompletion() throws Throwable {
+  public void testVariableNamesCompletion() {
     doTestCompletionVariants("mid", "min", "mineVariable", "minute");
   }
 
-  public void testVariableAndFunctionNamesCompletion() throws Throwable {
+  public void testVariableAndFunctionNamesCompletion() {
     doTestCompletionVariants("mineFunction", "mineVariable", "mid", "min", "minute");
   }
 
-  public void testFunctionNameWithBracketsCompletion() throws Throwable {
+  public void testFunctionNameWithBracketsCompletion() {
     doTest();
   }
 
-  public void testClassInstanceCompletion() throws Throwable {
+  public void testClassInstanceCompletion() {
     addJavaClassTo(myFixture);
     doTestCompletionVariants("VERSION", "init", "init");
   }
 
-  public void testClassInstanceCompletionFromCreator() throws Throwable {
+  public void testClassInstanceCompletionFromCreator() {
     addJavaClassTo(myFixture);
     doTestCompletionVariants("VERSION", "init", "init");
   }
 
-  public void testClassInstanceCompletionAfterInit() throws Throwable {
+  public void testClassInstanceCompletionAfterInit() {
     addJavaClassTo(myFixture);
     doTestCompletionVariants("VERSION", "add", "equals", "get", "getClass", "hashCode", "notify", "notifyAll", "toString", "wait", "wait",
                              "wait");
   }
 
-  public void testClassInstanceCompletionAfterInitFromCreator() throws Throwable {
+  public void testClassInstanceCompletionAfterInitFromCreator() {
     addJavaClassTo(myFixture);
     doTestCompletionVariants("VERSION", "add", "equals", "get", "getClass", "hashCode", "notify", "notifyAll", "toString", "wait", "wait",
                              "wait");
   }
 
-  public void testVariableFromCommentCompletion() throws Throwable {
+  public void testVariableFromCommentCompletion() {
     doTest();
     // doTestCompletionVariants("user");
   }
 
-  public void testVariableFromCommentWithScopeCompletion() throws Throwable {
+  public void testVariableFromCommentWithScopeCompletion() {
     doTest();
   }
 
-  public void testScopedVariableCompletion() throws Throwable {
+  public void testScopedVariableCompletion() {
     doTestCompletionVariants("removeCachedQuery", "request.user", "request.some", "reque");
   }
 
-  public void testAttributeValuesCompletion() throws Throwable {
+  public void testAttributeValuesCompletion() {
     doTestCompletionVariants("cf_sql_bigint", "cf_sql_bit", "cf_sql_char", "cf_sql_blob", "cf_sql_clob", "cf_sql_date", "cf_sql_decimal",
                              "cf_sql_double", "cf_sql_float", "cf_sql_idstamp", "cf_sql_integer", "cf_sql_longvarchar", "cf_sql_money",
                              "cf_sql_money4", "cf_sql_numeric", "cf_sql_real", "cf_sql_refcursor", "cf_sql_smallint", "cf_sql_time",
@@ -303,7 +302,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
   }
 
 
-  public void testAttributeValuesForCustomTagCompletion() throws Throwable {
+  public void testAttributeValuesForCustomTagCompletion() {
     doTest();
   }
 
@@ -314,34 +313,34 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
     }, CfmlLanguage.CF8, getProject());
   }
 
-  public void testAttributeCompletionWhenTagUppercased() throws Throwable {
+  public void testAttributeCompletionWhenTagUppercased() {
     doTest();
   }
 
-  public void testTagFunctionArgumentsCompletion() throws Throwable {
+  public void testTagFunctionArgumentsCompletion() {
     doTestCompletionVariants("arguments.some1", "arguments.some2");
   }
 
-  public void testScriptComponentAttributesCompletion() throws Throwable {
+  public void testScriptComponentAttributesCompletion() {
     doTestCompletionVariants("extends", "embedded", "entityname");
   }
 
-  public void testAutocompletePathToExpandPath() throws Throwable {
+  public void testAutocompletePathToExpandPath() {
     addTwoComponents(myFixture);
     doTestCompletionVariants("MyComponent2.cfc", "MyComponent1.cfc", "autocompletePathToExpandPath.test.cfml");
   }
 
-  public void testAutocompletePathToExpandPathInScript() throws Throwable {
+  public void testAutocompletePathToExpandPathInScript() {
     addTwoComponents(myFixture);
     doTestCompletionVariants("MyComponent2.cfc", "MyComponent1.cfc", "autocompletePathToExpandPathInScript.test.cfml");
   }
 
-  public void testAutocompletePathToComponent() throws Throwable {
+  public void testAutocompletePathToComponent() {
     addOneComponentTo(myFixture);
     doTest();
   }
 
-  public void testAutocompletePathToComponentInPresentOfMapping() throws Throwable {
+  public void testAutocompletePathToComponentInPresentOfMapping() {
     addOneComponentTo(myFixture);
 
     Map<String, String> mappings = new HashMap<>();
@@ -363,7 +362,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
     }
   }
 
-  public void testAutocompletePathToIncludeTagInPresentOfMapping() throws Throwable {
+  public void testAutocompletePathToIncludeTagInPresentOfMapping() {
     addOneComponentTo(myFixture);
 
     Map<String, String> mappings = new HashMap<>();
@@ -386,12 +385,12 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
     }
   }
 
-  public void testAutocompletePathToModuleTag() throws Throwable {
+  public void testAutocompletePathToModuleTag() {
     addTwoComponents(myFixture);
     doTestCompletionContainsVariants("MyComponent1.cfc","MyComponent2.cfc");
   }
 
-  public void testNoCompletionToIncludeTagInPresentOfMapping() throws Throwable {
+  public void testNoCompletionToIncludeTagInPresentOfMapping() {
     addOneComponentTo(myFixture);
 
     Map<String, String> mappings = new HashMap<>();
@@ -415,7 +414,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
     }
   }
 
-  public void testAutocompletePathToScriptIncludeInPresentOfMappingWithEnteredPath() throws Throwable {
+  public void testAutocompletePathToScriptIncludeInPresentOfMappingWithEnteredPath() {
     addOneComponentToDir(myFixture);
 
     Map<String, String> mappings = new HashMap<>();
@@ -440,7 +439,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
     }
   }
 
-  public void testAutocompletePathToIncludeTagInPresentOfMappingWithFile() throws Throwable {
+  public void testAutocompletePathToIncludeTagInPresentOfMappingWithFile() {
     addOneComponentToDir(myFixture);
 
     Map<String, String> mappings = new HashMap<>();
@@ -464,7 +463,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
   }
 
 
-  public void testAutocompletePathToScriptIncludeInPresentOfMapping() throws Throwable {
+  public void testAutocompletePathToScriptIncludeInPresentOfMapping() {
     addOneComponentTo(myFixture);
 
     Map<String, String> mappings = new HashMap<>();
@@ -487,7 +486,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
     }
   }
 
-  public void testAutocompletePathToScriptIncludeInPresentOfMappingWithFile() throws Throwable {
+  public void testAutocompletePathToScriptIncludeInPresentOfMappingWithFile() {
     addOneComponentToDir(myFixture);
 
     Map<String, String> mappings = new HashMap<>();
@@ -510,178 +509,178 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
     }
   }
 
-  public void testCompleteChainFunctionsCall() throws Throwable {
+  public void testCompleteChainFunctionsCall() {
     addOneComponentToResolve(myFixture);
     doTestCompletionVariants("init", "foo");
   }
 
-  public void testCompleteChainFunctionsCallAfterConstructorCall() throws Throwable {
+  public void testCompleteChainFunctionsCallAfterConstructorCall() {
     addOneComponentToResolve(myFixture);
     doTestCompletionVariants("init", "foo");
   }
 
-  public void testCompleteSuperFunctionsInTagDefinedComponent() throws Throwable {
+  public void testCompleteSuperFunctionsInTagDefinedComponent() {
     addOneComponentTo(myFixture);
     doTestCompletionVariants("func1", "func2");
   }
 
-  public void testCompleteSuperFunctionsInScriptDefinedComponent() throws Throwable {
+  public void testCompleteSuperFunctionsInScriptDefinedComponent() {
     addOneComponentTo(myFixture);
     doTestCompletionVariants("this.func1", "this.func2");
   }
 
-  public void testFunctionsNamesCompletionFromFollowingDeclarations() throws Throwable {
+  public void testFunctionsNamesCompletionFromFollowingDeclarations() {
     doTestCompletionVariants("func1", "func2", "func3", "func4", "func5");
   }
 
-  public void testCompletionArgumentsNames() throws Throwable {
+  public void testCompletionArgumentsNames() {
     doTestCompletionVariants("argument1", "argument2", "argumentCollection");
   }
 
-  public void testCompletionArgumentsNamesFromScriptFunction() throws Throwable {
+  public void testCompletionArgumentsNamesFromScriptFunction() {
     doTestCompletionVariants("argument1", "argument2", "argumentCollection");
   }
 
-  public void testDoNotOfferDeclaredAttributes() throws Throwable {
+  public void testDoNotOfferDeclaredAttributes() {
     doTestCompletionVariants("hint", "default", "required", "type");
   }
 
-  public void testCompleteAfterElvis() throws Throwable {
+  public void testCompleteAfterElvis() {
     doTest();
   }
 
-  public void testArgumentCompletionAtCreateObject() throws Throwable {
+  public void testArgumentCompletionAtCreateObject() {
     doTestCompletionContainsVariants("com", "component", "java", "corba", "webservice");
   }
 
-  public void testArgumentCompletionAtCompleteCreateObject() throws Throwable {
+  public void testArgumentCompletionAtCompleteCreateObject() {
     doTestCompletionContainsVariants("com", "component", "java", "corba", "webservice");
   }
 
-  public void testTagArgumentCompletionAtCreateObject() throws Throwable {
+  public void testTagArgumentCompletionAtCreateObject() {
     doTestCompletionContainsVariants("com", "component", "java", "corba", "webservice");
   }
 
-  public void testComponentArgumentCompletionAtCreateObject() throws Throwable {
+  public void testComponentArgumentCompletionAtCreateObject() {
     addOneComponentTo(myFixture);
     doTest();
   }
 
-  public void testComponentArgumentCompletionAtArgument() throws Throwable {
+  public void testComponentArgumentCompletionAtArgument() {
     addOneComponentTo(myFixture);
     doTest();
   }
 
-  public void testComponentArgumentCompletionAtReturnType() throws Throwable {
+  public void testComponentArgumentCompletionAtReturnType() {
     addOneComponentTo(myFixture);
     doTest();
   }
 
-  public void testNoFunctionCompletionAtReturnType() throws Throwable {
+  public void testNoFunctionCompletionAtReturnType() {
     doTest();
   }
 
-  public void testComponentArgumentCompletionAtReturnTypeInScript() throws Throwable {
+  public void testComponentArgumentCompletionAtReturnTypeInScript() {
     addOneComponentTo(myFixture);
     doTest();
   }
 
-  public void testComponentArgumentCompletionAtArgumentInScript() throws Throwable {
+  public void testComponentArgumentCompletionAtArgumentInScript() {
     addOneComponentTo(myFixture);
     doTest();
   }
 
-  public void testPredefinedVariablesForTagCompletion() throws Throwable {
+  public void testPredefinedVariablesForTagCompletion() {
     doTestCompletionContainsVariants("recordcount", "columnlist", "currentrow");
   }
 
-  public void testPredefinedVariablesCompletion() throws Throwable {
+  public void testPredefinedVariablesCompletion() {
     doTestCompletionContainsVariants("server.coldfusion.productversion", "server.coldfusion.rootdir");
   }
 
-  public void testInsertPackageName() throws Throwable {
+  public void testInsertPackageName() {
     addJavaClassToSubPackage(myFixture);
     doTest();
   }
 
-  public void testVariableFromLocalScope() throws Throwable {
+  public void testVariableFromLocalScope() {
     doTest();
   }
 
-  public void testArgumentCollection() throws Throwable {
+  public void testArgumentCollection() {
     doTest();
   }
 
-  public void testArgumentCollection2() throws Throwable {
+  public void testArgumentCollection2() {
     doTestCompletionVariants("argumentCollection", "argumentCollectionFoo");
   }
 
-  public void testTagPropertyCompletion() throws Throwable {
+  public void testTagPropertyCompletion() {
     doTestCompletionVariants("prop1", "prop2");
   }
 
-  public void testScopedPropertyCompletion() throws Throwable {
+  public void testScopedPropertyCompletion() {
     doTestCompletionVariants("variables.prop1", "variables.prop2");
   }
 
 
-  public void testThisScopedVariableCompletion() throws Throwable {
+  public void testThisScopedVariableCompletion() {
     doTest();
   }
 
 
-  public void testPropertyCompletion() throws Throwable {
+  public void testPropertyCompletion() {
     doTestCompletionVariants("prop1", "prop2");
   }
 
-  public void testStandardFunctionArgumentName() throws Throwable {
+  public void testStandardFunctionArgumentName() {
     doTestCompletionVariants("number1", "number2", "numberFormat");
   }
 
-  public void testStandardFunctionArgumentName2() throws Throwable {
+  public void testStandardFunctionArgumentName2() {
     doTest();
   }
 
-  public void testCfml183() throws Throwable {
+  public void testCfml183() {
     doTest();
   }
 
-  public void testCompleteNewArguments() throws Throwable {
+  public void testCompleteNewArguments() {
     addOneComponentWithConstructorTo(myFixture);
     doTestCompletionVariants("arg1", "arg2", "argumentCollection");
   }
 
-  public void testCompleteNew() throws Throwable {
+  public void testCompleteNew() {
     addTwoComponents(myFixture);
     doTestCompletionVariants("MyComponent1", "MyComponent2");
   }
 
-  public void testCompleteStringedNew() throws Throwable {
+  public void testCompleteStringedNew() {
     addTwoComponents(myFixture);
     doTestCompletionVariants("MyComponent1", "MyComponent2");
   }
 
-  public void testOneVariantForVariables() throws Throwable {
+  public void testOneVariantForVariables() {
     doTestCompletionVariants("variables.var1", "variables.var2");
   }
 
-  public void testNoIntelliJIdeaRulezzSuggestion() throws Throwable {
+  public void testNoIntelliJIdeaRulezzSuggestion() {
     doTestCompletionVariants("fu1", "fu2");
   }
 
-  public void testCompleteCfloopIndices() throws Throwable {
+  public void testCompleteCfloopIndices() {
     doTestCompletionVariants("index1", "index2");
   }
 
-  public void testGlobalVariablesCompletionInCfmlTagComponent() throws Throwable {
+  public void testGlobalVariablesCompletionInCfmlTagComponent() {
     doTest();
   }
 
-  public void testGlobalVariablesCompletionInScriptComponent() throws Throwable {
+  public void testGlobalVariablesCompletionInScriptComponent() {
     doTest("\n");
   }
 
-  public void testScopedGlobalVariablesCompletionInCfmlTagComponent() throws Throwable {
+  public void testScopedGlobalVariablesCompletionInCfmlTagComponent() {
     doTestCompletionContainsVariants("variables.injector");
   }
 
@@ -691,16 +690,16 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
     assertTrue(variants.containsAll(Arrays.asList(items)));
   }
 
-  private void doTestCompletionVariants(@NonNls String... items) throws Throwable {
+  private void doTestCompletionVariants(@NonNls String... items) {
     String inputDataFileName = Util.getInputDataFileName(getTestName(true));
     myFixture.testCompletionVariants(inputDataFileName, items);
   }
 
-  private void doTest() throws Exception {
+  private void doTest() {
     doTest("");
   }
 
-  private void doTest(final String type) throws Exception {
+  private void doTest(final String type) {
     String inputDataFileName = Util.getInputDataFileName(getTestName(true));
     String expectedResultFileName = Util.getExpectedDataFileName(getTestName(true));
     String[] input = {inputDataFileName};
@@ -717,7 +716,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
     return "/completion";
   }
 
-  protected PsiElement resolveReferenceAtCaret() throws Throwable {
+  protected PsiElement resolveReferenceAtCaret() {
     return myFixture.getReferenceAtCaretPositionWithAssertion(Util.getInputDataFileName(getTestName(true))).resolve();
   }
 }

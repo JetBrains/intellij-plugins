@@ -10,7 +10,7 @@ public class DartRenameTest extends DartCodeInsightFixtureTestCase {
     return FileUtil.toSystemDependentName("/rename/");
   }
 
-  public void testReferencedHtmlInPackage() throws Throwable {
+  public void testReferencedHtmlInPackage() {
     myFixture.addFileToProject("pubspec.yaml", "name: ThisProject\n");
     myFixture.configureByFile(getTestName(false) + ".html");
     final PsiFile htmlFile = myFixture.addFileToProject("lib/sub/foo.html", "");

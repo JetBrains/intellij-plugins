@@ -10,7 +10,7 @@ import java.util.List;
 public class EscapeUtilsTest {
 
   @Test
-  public void testJoinSplit() throws Exception {
+  public void testJoinSplit() {
     List<String> strs = Arrays.asList("a", "", "aba", "abacaba", "_", "q", "\\1\\2\n");
     String encoded = EscapeUtils.join(strs, 'a');
     List<String> decoded = EscapeUtils.split(encoded, 'a');
@@ -18,7 +18,7 @@ public class EscapeUtilsTest {
   }
 
   @Test
-  public void testPath() throws Exception {
+  public void testPath() {
     List<String> strs = Arrays.asList("C:\\dir\\file1", "C:\\dir\\file2");
     String encoded = EscapeUtils.join(strs, ',');
     List<String> decoded = EscapeUtils.split(encoded, ',');
@@ -26,7 +26,7 @@ public class EscapeUtilsTest {
   }
 
   @Test
-  public void testTrailingEmptyString() throws Exception {
+  public void testTrailingEmptyString() {
     List<String> list = Arrays.asList("hello", "");
     String encoded = EscapeUtils.join(list, ',');
     Assert.assertEquals("hello,", encoded);
@@ -35,7 +35,7 @@ public class EscapeUtilsTest {
   }
 
   @Test
-  public void testEmptyStrings() throws Exception {
+  public void testEmptyStrings() {
     List<String> list = Arrays.asList("", "", "");
     String encoded = EscapeUtils.join(list, '.');
     Assert.assertEquals("..", encoded);
@@ -44,7 +44,7 @@ public class EscapeUtilsTest {
   }
 
   @Test
-  public void testSeparatorStrings() throws Exception {
+  public void testSeparatorStrings() {
     List<String> list = Arrays.asList(".", "..", "...");
     String encoded = EscapeUtils.join(list, '.');
     Assert.assertEquals("\\..\\.\\..\\.\\.\\.", encoded);

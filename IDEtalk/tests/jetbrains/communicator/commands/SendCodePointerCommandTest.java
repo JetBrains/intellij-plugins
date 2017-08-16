@@ -15,8 +15,8 @@
  */
 package jetbrains.communicator.commands;
 
-import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.EventBroadcaster;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.users.UserImpl;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.vfs.CodePointer;
@@ -42,7 +42,7 @@ public class SendCodePointerCommandTest extends BaseTestCase {
     myCommand = new SendCodePointerCommand((IDEFacade) myFacadeMock.proxy(), getBroadcaster());
   }
 
-  public void testEnabled() throws Exception {
+  public void testEnabled() {
     assertFalse(myCommand.isEnabled());
 
     myCommand.setCodePointer(new CodePointer(0,0));
@@ -55,7 +55,7 @@ public class SendCodePointerCommandTest extends BaseTestCase {
     assertTrue("Now codePointer, file, user are selected - ready to send", myCommand.isEnabled());
   }
 
-  public void testExecute_WithMessage() throws Exception {
+  public void testExecute_WithMessage() {
     final CodePointer codePointerToSend = new CodePointer(0, 0);
     final VFile fileToSend = VFile.create("a path");
 
@@ -81,7 +81,7 @@ public class SendCodePointerCommandTest extends BaseTestCase {
     assertTrue("Should call sendCodeIntervalPointer", sent[0]);
   }
 
-  public void testExecute_LocalMessage() throws Exception {
+  public void testExecute_LocalMessage() {
     addEventListener();
 
     final CodePointer codePointerToSend = new CodePointer(0, 0);
@@ -103,7 +103,7 @@ public class SendCodePointerCommandTest extends BaseTestCase {
     assertSame(codePointerToSend, ((SendCodePointerEvent) myEvents.get(0)).getCodePointer());
   }
 
-  public void testExecute_Cancel() throws Exception {
+  public void testExecute_Cancel() {
 
     final boolean [] sent = new boolean[1];
     MockUser user = new MockUser() {

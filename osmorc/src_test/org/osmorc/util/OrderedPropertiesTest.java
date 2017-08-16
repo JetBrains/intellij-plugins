@@ -37,7 +37,7 @@ public class OrderedPropertiesTest {
   }
 
   @Test
-  public void testPopulate() throws Exception {
+  public void testPopulate() {
     OrderedProperties props = new OrderedProperties();
     props.setProperty("key1", "value1");
     props.setProperty("key3", "value3");

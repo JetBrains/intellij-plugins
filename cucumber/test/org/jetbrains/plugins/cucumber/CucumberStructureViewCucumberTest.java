@@ -16,7 +16,7 @@ public class CucumberStructureViewCucumberTest extends CodeInsightFixtureTestCas
 
   private VirtualFile myFile;
 
-  public void testStructureView() throws Exception {
+  public void testStructureView() {
     final Object[] objects = doSimpleTest();
     assertEquals(3, objects.length);
 
@@ -30,7 +30,7 @@ public class CucumberStructureViewCucumberTest extends CodeInsightFixtureTestCas
     assertEquals(4, scenarioTwo.getChildren().length);
   }
 
-  protected Object[] doSimpleTest() throws Exception {
+  protected Object[] doSimpleTest() {
     final String relatedPath = BASE_PATH + getTestName(true) + ".feature";
     myFile =  LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + relatedPath.replace(File.separatorChar, '/'));
     myFixture.copyFileToProject(relatedPath);

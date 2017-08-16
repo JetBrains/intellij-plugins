@@ -25,7 +25,7 @@ class MarkedJstdTestStructureUtils {
 
   private MarkedJstdTestStructureUtils() {}
 
-  public static MarkedJsTestFileStructure buildMarkedJsTestFileStructureByFileText(@NotNull String fileText, @NotNull JSFile jsFile) throws Exception {
+  public static MarkedJsTestFileStructure buildMarkedJsTestFileStructureByFileText(@NotNull String fileText, @NotNull JSFile jsFile) {
     MarkedJsTestFileStructure markedJsTestFileStructure = new MarkedJsTestFileStructure();
     handleBeginOfMarkedTestCase(markedJsTestFileStructure, fileText);
     handleEndOfMarkedTestCase(markedJsTestFileStructure, fileText, jsFile);

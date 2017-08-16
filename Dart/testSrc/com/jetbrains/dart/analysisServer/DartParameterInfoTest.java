@@ -59,99 +59,99 @@ public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
     doTest(infoText, highlightedParameterIndex, -1 /* ignored */, -1 /* ignored */);
   }
 
-  public void testParamInfo1() throws Throwable {
+  public void testParamInfo1() {
     doTest("int p1, p2, Node p3", 0, 0, 6);
   }
 
-  public void testParamInfo2() throws Throwable {
+  public void testParamInfo2() {
     doTest("int p1, p2, Node p3", 2);
   }
 
-  public void testParamInfo3() throws Throwable {
+  public void testParamInfo3() {
     doTest("int x, int y", 0);
   }
 
-  public void testParamInfo4() throws Throwable {
+  public void testParamInfo4() {
     doTest("int x, int y", 0);
   }
 
-  public void testParamInfo5() throws Throwable {
+  public void testParamInfo5() {
     doTest("int x, int y", 1);
   }
 
-  public void _testParamInfo6() throws Throwable {
+  public void _testParamInfo6() {
     doTest("int x, int y = 239", 1);
   }
 
-  public void _testParamInfo7() throws Throwable {
+  public void _testParamInfo7() {
     doTest("int x, int y = 239", 0);
   }
 
-  public void testParamInfo8() throws Throwable {
+  public void testParamInfo8() {
     doTest("String one, [String two, String three]", 0, 0, 10);
   }
 
-  public void testParamInfo9() throws Throwable {
+  public void testParamInfo9() {
     doTest("String one, [String two, String three]", 1);
   }
 
-  public void testParamInfo10() throws Throwable {
+  public void testParamInfo10() {
     doTest("String one, [String two, String three]", 1);
   }
 
-  public void testParamInfo11() throws Throwable {
+  public void testParamInfo11() {
     doTest("String one, [String two, String three]", 1);
   }
 
-  public void testParamInfo13() throws Throwable {
+  public void testParamInfo13() {
     doTest("Foo<Foo, Foo> param", 0);
   }
 
-  public void testParamInfo14() throws Throwable {
+  public void testParamInfo14() {
     doTest("<no parameters>", 0);
   }
 
-  public void testParamInfo15() throws Throwable {
+  public void testParamInfo15() {
     doTest("[String s]", 0);
   }
 
-  public void testParamInfo16() throws Throwable {
+  public void testParamInfo16() {
     doTest("{String s}", 0, 1, 9);
   }
 
-  public void testParamInfo17() throws Throwable {
+  public void testParamInfo17() {
     doTest("{String s: 'foo'}", 0, 1, 16);
   }
 
-  public void testParamInfo18() throws Throwable {
+  public void testParamInfo18() {
     doTest("[String s = 'foo']", 0, 1, 17);
   }
 
-  public void testParamInfo_call_localVariable() throws Throwable {
+  public void testParamInfo_call_localVariable() {
     doTest("int a, double b", 0);
   }
 
-  public void testParamInfo_call_newExpression() throws Throwable {
+  public void testParamInfo_call_newExpression() {
     doTest("int a, double b", 0);
   }
 
-  public void testParamInfo_call_functionInvocation() throws Throwable {
+  public void testParamInfo_call_functionInvocation() {
     doTest("int a, double b", 0);
   }
 
-  public void testParamInfo_call_getterInvocation() throws Throwable {
+  public void testParamInfo_call_getterInvocation() {
     doTest("int a, double b", 0);
   }
 
-  public void testParamInfo_fieldFormal_normal() throws Throwable {
+  public void testParamInfo_fieldFormal_normal() {
     doTest("int a, double b", 0);
   }
 
-  public void testParamInfo_fieldFormal_named() throws Throwable {
+  public void testParamInfo_fieldFormal_named() {
     doTest("int a, {double b}", 0);
   }
 
-  public void testAnnotation() throws Throwable {
+  public void testAnnotation() {
     doTest("String itemA, int itemB", 0);
   }
 }

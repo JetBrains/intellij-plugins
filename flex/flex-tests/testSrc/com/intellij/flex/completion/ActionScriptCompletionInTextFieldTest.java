@@ -171,7 +171,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
                              BASE_PATH + getTestName(false) + ".txt");
   }
 
-  private void doTestCustomScope(String activeBcName, String selectedBcName, int numberOfVariants) throws Exception {
+  private void doTestCustomScope(String activeBcName, String selectedBcName, int numberOfVariants) {
     String filename = getTestName(false).replaceAll("\\d+", "");
     configureByFiles(null, BASE_PATH + filename + "_2.mxml", BASE_PATH + filename + "_3.mxml");
 
@@ -213,22 +213,22 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
   }
 
   @JSTestOptions(JSTestOption.WithGumboSdk)
-  public void testCustomScope1() throws Exception {
+  public void testCustomScope1() {
     doTestCustomScope("Flex", "Flex", 0);
   }
 
   @JSTestOptions(JSTestOption.WithGumboSdk)
-  public void testCustomScope2() throws Exception {
+  public void testCustomScope2() {
     doTestCustomScope("Flex", "AIR", 2);
   }
 
   @JSTestOptions(JSTestOption.WithGumboSdk)
-  public void testCustomScope3() throws Exception {
+  public void testCustomScope3() {
     doTestCustomScope("AIR", "Flex", 0);
   }
 
   @JSTestOptions(JSTestOption.WithGumboSdk)
-  public void testCustomScope4() throws Exception {
+  public void testCustomScope4() {
     doTestCustomScope("AIR", "AIR", 2);
   }
 }

@@ -187,7 +187,7 @@ public class FlexUnitHighlightingTest extends ActionScriptDaemonAnalyzerTestCase
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
-  public void testMethodInSuite() throws Exception {
+  public void testMethodInSuite() {
     configureByFiles(null, getBasePath() + getTestName(false) + ".as", getBasePath() + getTestName(false) + "_2.as");
     doDoTest(true, false, true);
   }
@@ -209,31 +209,31 @@ public class FlexUnitHighlightingTest extends ActionScriptDaemonAnalyzerTestCase
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
-  public void testEmptySuite() throws Exception {
+  public void testEmptySuite() {
     configureByFiles(null, getBasePath() + getTestName(false) + ".as", getBasePath() + getTestName(false) + "_2.as");
     doDoTest(true, false, true);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
-  public void testSuiteWithNoRunner1() throws Exception {
+  public void testSuiteWithNoRunner1() {
     configureByFiles(null, getBasePath() + getTestName(false) + ".as", getBasePath() + getTestName(false) + "_2.as");
     doDoTest(true, false, true);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
-  public void testSuiteWithNoRunner2() throws Exception {
+  public void testSuiteWithNoRunner2() {
     configureByFiles(null, getBasePath() + getTestName(false) + ".as", getBasePath() + getTestName(false) + "_2.as");
     doDoTest(true, false, true);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
-  public void testSuiteWithNoRunner3() throws Exception {
+  public void testSuiteWithNoRunner3() {
     configureByFiles(null, getBasePath() + getTestName(false) + ".as", getBasePath() + getTestName(false) + "_2.as");
     doDoTest(true, false, true);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
-  public void testSuiteWithWrongCustomRunner() throws Exception {
+  public void testSuiteWithWrongCustomRunner() {
     configureByFiles(null, getBasePath() + getTestName(false) + ".as", getBasePath() + "WrongCustomRunner.as");
     doDoTest(true, false, true);
   }

@@ -9,7 +9,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.idea.maven.server.MavenServerManager;
-import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
 import org.jetbrains.idea.maven.utils.MavenUtil;
 
 import java.io.File;
@@ -105,7 +104,7 @@ public class Flexmojos4ImporterTest extends FlexmojosImporterTestBase {
             ".idea/flexmojos/project-com.intellij.flex.maven.test-Module2FinalName.xml");
   }
 
-  public void testTransitiveDepsOnPartialProjectImport() throws IOException, MavenProcessCanceledException {
+  public void testTransitiveDepsOnPartialProjectImport() throws IOException {
     final File mavenHome = MavenUtil.resolveMavenHomeDirectory(myProjectsManager.getGeneralSettings().getMavenHome());
     if (mavenHome == null || !MavenUtil.isValidMavenHome(mavenHome)) {
       return;
@@ -201,7 +200,7 @@ public class Flexmojos4ImporterTest extends FlexmojosImporterTestBase {
                       "\t\t</external-library-path>", 0);
   }
 
-  public void testAdditionalCompileSourceRoots() throws IOException, MavenProcessCanceledException {
+  public void testAdditionalCompileSourceRoots() throws IOException {
     final File mavenHome = MavenUtil.resolveMavenHomeDirectory(myProjectsManager.getGeneralSettings().getMavenHome());
     if (mavenHome == null || !MavenUtil.isValidMavenHome(mavenHome)) {
       return;

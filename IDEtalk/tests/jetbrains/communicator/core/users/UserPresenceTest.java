@@ -21,7 +21,7 @@ import junit.framework.TestCase;
  * @author Kir
  */
 public class UserPresenceTest extends TestCase {
-  public void testVectorConversion() throws Exception {
+  public void testVectorConversion() {
     assertVectorConversion(new UserPresence(true));
     assertVectorConversion(new UserPresence(false));
     assertVectorConversion(new UserPresence(PresenceMode.EXTENDED_AWAY));
@@ -34,7 +34,7 @@ public class UserPresenceTest extends TestCase {
     assertEquals("Should be equal", presence, result);
   }
 
-  public void testDisplayText() throws Exception {
+  public void testDisplayText() {
     assertDisplayText("(online)", new UserPresence(true));
     assertDisplayText("", new UserPresence(false));
 

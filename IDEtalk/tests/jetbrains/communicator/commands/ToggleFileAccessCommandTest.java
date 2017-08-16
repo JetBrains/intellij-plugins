@@ -16,9 +16,9 @@
 package jetbrains.communicator.commands;
 
 import com.intellij.util.ArrayUtil;
-import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.OptionFlag;
 import jetbrains.communicator.core.Pico;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.users.UserModelImpl;
 import jetbrains.communicator.core.transport.Transport;
 import jetbrains.communicator.core.users.User;
@@ -51,7 +51,7 @@ public class ToggleFileAccessCommandTest extends BaseTestCase {
     };
   }
 
-  public void testEnabled() throws Exception {
+  public void testEnabled() {
     myUserListComponent.expects(once()).method("getSelectedNodes")
         .will(returnValue(ArrayUtil.EMPTY_OBJECT_ARRAY));
     assertFalse(myCommand.isEnabled());
@@ -61,7 +61,7 @@ public class ToggleFileAccessCommandTest extends BaseTestCase {
     assertTrue(myCommand.isEnabled());
   }
 
-  public void testGetText() throws Exception {
+  public void testGetText() {
     myUserListComponent.expects(once()).method("getSelectedNodes")
         .will(returnValue(ArrayUtil.EMPTY_OBJECT_ARRAY));
     assertNotNull(myCommand.getText());
@@ -71,7 +71,7 @@ public class ToggleFileAccessCommandTest extends BaseTestCase {
     assertNotNull(myCommand.getText());
   }
   
-  public void testEnableAccessToUser() throws Exception {
+  public void testEnableAccessToUser() {
     MockUser user = new MockUser();
 
     myUserListComponent.stubs().method("getSelectedNodes")
@@ -85,7 +85,7 @@ public class ToggleFileAccessCommandTest extends BaseTestCase {
     assertTrue("Should change access again", user.canAccessMyFiles());
   }
 
-  public void testEnableAccessToGroup() throws Exception {
+  public void testEnableAccessToGroup() {
     MockUser enabled = new MockUser("enabled", "group");
     enabled.setCanAccessMyFiles(true, myUserModel);
     MockUser disabled = new MockUser("disabled", "group");
@@ -102,7 +102,7 @@ public class ToggleFileAccessCommandTest extends BaseTestCase {
     assertFalse("Should change access to enabled", enabled.canAccessMyFiles());
   }
 
-  public void testMultipleSelection_NoGroups() throws Exception {
+  public void testMultipleSelection_NoGroups() {
     MockUser user1 = new MockUser("User1", "a");
     MockUser user2 = new MockUser("User2", "a");
 
@@ -113,7 +113,7 @@ public class ToggleFileAccessCommandTest extends BaseTestCase {
     testCommandStateChanges(user1, user2);
   }
 
-  public void testMultipleSelection_WithGroup() throws Exception {
+  public void testMultipleSelection_WithGroup() {
     User user1 = myUserModel.createUser("user1", MockTransport.NAME);
     User user2 = myUserModel.createUser("user2", MockTransport.NAME);
     myUserModel.addUser(user1);
@@ -140,7 +140,7 @@ public class ToggleFileAccessCommandTest extends BaseTestCase {
     assertFalse(user2.canAccessMyFiles());
   }
 
-  public void testMultipleSelection_OfflineUsersHidden() throws Exception {
+  public void testMultipleSelection_OfflineUsersHidden() {
     final User user1 = myUserModel.createUser("user1", MockTransport.NAME);
     final User user2 = myUserModel.createUser("user2", MockTransport.NAME);
 

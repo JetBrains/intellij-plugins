@@ -30,7 +30,7 @@ public class ValidationHighlightingTest extends ValidationLightHighlightingTestC
     return "validationXml/highlighting";
   }
 
-  public void testValidationSimple() throws Throwable {
+  public void testValidationSimple() {
     myFixture.copyFileToProject("com/MyAction.java");
     performHighlightingTest("com/MyAction-validation.xml");
   }

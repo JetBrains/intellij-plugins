@@ -21,7 +21,6 @@ import jetbrains.communicator.core.transport.Transport;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.util.StringUtil;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
@@ -44,7 +43,7 @@ public class P2PTransport_SelfOnline_Test extends AbstractTransportTestCase {
   }
 
   @Override
-  protected Transport createTransport() throws IOException {
+  protected Transport createTransport() {
     myTransport = new P2PTransport(myDispatcher, myUserModel);
     Pico.getInstance().registerComponentInstance(myTransport);
     return myTransport;

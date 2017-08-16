@@ -38,12 +38,12 @@ public class NamespaceReferenceProviderTest extends BasicLightHighlightingTestCa
     return createWebDescriptor();
   }
 
-  public void testNamespaceHighlighting() throws Throwable {
+  public void testNamespaceHighlighting() {
     createStrutsFileSet("struts-namespace.xml");
     myFixture.testHighlighting(true, false, false, "/jsp/namespace-highlighting.jsp");
   }
 
-  public void testNamespaceCompletionVariants() throws Throwable {
+  public void testNamespaceCompletionVariants() {
     createStrutsFileSet("struts-namespace.xml");
     myFixture.testCompletionVariants("/jsp/namespace-completionvariants.jsp",
                                      "/namespace1", "/namespace2");

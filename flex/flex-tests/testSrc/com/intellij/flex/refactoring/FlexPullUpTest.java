@@ -75,10 +75,10 @@ public class FlexPullUpTest extends MultiFileTestCase {
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
 
-  private void doTestPullUp(final String from, final String to, final int docCommentPolicy, final String... toPullUp) throws Exception {
+  private void doTestPullUp(final String from, final String to, final int docCommentPolicy, final String... toPullUp) {
     doTest(new PerformAction() {
       @Override
-      public void performAction(VirtualFile rootDir, VirtualFile rootAfter) throws Exception {
+      public void performAction(VirtualFile rootDir, VirtualFile rootAfter) {
         FlexPullUpTest.this.performAction(from, to, docCommentPolicy, ArrayUtil.EMPTY_STRING_ARRAY, toPullUp);
       }
     }, false);
@@ -155,55 +155,55 @@ public class FlexPullUpTest extends MultiFileTestCase {
     return memberInfos;
   }
 
-  public void testMethod() throws Exception {
+  public void testMethod() {
     doTestPullUp("foo.Sub", "bar.Base", DocCommentPolicy.ASIS, "zz", "bar", "st2", "st3");
   }
 
-  public void testImplements1() throws Exception {
+  public void testImplements1() {
     doTestPullUp("Sub", "Base", DocCommentPolicy.ASIS, "IFoo");
   }
 
-  public void testImplements2() throws Exception {
+  public void testImplements2() {
     doTestPullUp("Sub", "Base", DocCommentPolicy.ASIS, "IFoo");
   }
 
-  public void testImplements3() throws Exception {
+  public void testImplements3() {
     doTestPullUp("Sub", "Base", DocCommentPolicy.ASIS, "IFoo");
   }
 
-  public void testImplements4() throws Exception {
+  public void testImplements4() {
     doTestPullUp("Sub", "Base", DocCommentPolicy.ASIS, "abc", "IFoo");
   }
 
-  public void testImplements5() throws Exception {
+  public void testImplements5() {
     doTestPullUp("Sub", "Base", DocCommentPolicy.ASIS, "abc", "IFoo");
   }
 
-  public void testAbstractize() throws Exception {
+  public void testAbstractize() {
     doTestPullUp("Sub", "IFoo", DocCommentPolicy.ASIS, "foo");
   }
 
-  public void testAbstractize2() throws Exception {
+  public void testAbstractize2() {
     doTestPullUp("Sub", "IFoo", DocCommentPolicy.COPY, "foo");
   }
 
-  public void testAbstractize3() throws Exception {
+  public void testAbstractize3() {
     doTestPullUp("Sub", "IFoo", DocCommentPolicy.MOVE, "foo");
   }
 
-  public void testInterfaceMethod() throws Exception {
+  public void testInterfaceMethod() {
     doTestPullUp("ISub", "IBase", DocCommentPolicy.ASIS, "foo");
   }
 
-  public void testProperty() throws Exception {
+  public void testProperty() {
     doTestPullUp("Sub", "Super", DocCommentPolicy.ASIS, "prop", "func");
   }
 
-  public void testField() throws Exception {
+  public void testField() {
     doTestPullUp("bar.Sub", "foo.Super", DocCommentPolicy.ASIS, "p", "d", "e");
   }
 
-  public void testStaticField() throws Exception {
+  public void testStaticField() {
     doTestPullUp("Sub", "Super", DocCommentPolicy.ASIS, "foo", "bar", "zzz");
   }
 
@@ -232,12 +232,12 @@ public class FlexPullUpTest extends MultiFileTestCase {
     doTestConflicts("Sub", "ISuper", DocCommentPolicy.ASIS, conflicts, "foo");
   }
 
-  public void testEscalate() throws Exception {
+  public void testEscalate() {
     doTestPullUp("bar.Sub", "foo.Super", DocCommentPolicy.ASIS, "priv", "prot", "intern", "pub", "priv2", "prot2", "intern2", "pub2", "bar",
                  "zzz");
   }
 
-  public void testSuperMethodCall() throws Exception {
+  public void testSuperMethodCall() {
     doTestPullUp("Sub", "Super", DocCommentPolicy.ASIS, "foo", "abc");
   }
 
@@ -251,32 +251,32 @@ public class FlexPullUpTest extends MultiFileTestCase {
     doTestConflicts("foo.Sub", "bar.Super", DocCommentPolicy.ASIS, conflict, "IFoo");
   }
 
-  public void testImplements6() throws Exception {
+  public void testImplements6() {
     doTestPullUp("foo.Sub", "bar.Super", DocCommentPolicy.ASIS, "InterfFoo", "InterfRoot");
   }
 
-  public void testNamespaces1() throws Exception {
+  public void testNamespaces1() {
     doTestPullUp("bar.Sub", "foo.Super", DocCommentPolicy.ASIS, "foo", "bar");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testVector() throws Exception {
+  public void testVector() {
     doTestPullUp("foo.From", "To", DocCommentPolicy.ASIS, "foo");
   }
 
-  public void testOverrideToInterface() throws Exception {
+  public void testOverrideToInterface() {
     doTestPullUp("From", "ITo", DocCommentPolicy.ASIS, "foo");
   }
 
-  public void testNoQualifyToInterface() throws Exception {
+  public void testNoQualifyToInterface() {
     doTestPullUp("From", "ITo", DocCommentPolicy.ASIS, "abc");
   }
 
-  public void testNoQualifyToInterface2() throws Exception {
+  public void testNoQualifyToInterface2() {
     doTestPullUp("From", "ITo", DocCommentPolicy.ASIS, "abc");
   }
 
-  public void testAmbiguousImplements() throws Exception {
+  public void testAmbiguousImplements() {
     doTestPullUp("Sub", "Base", DocCommentPolicy.ASIS, "ff", "SomeType");
   }
 
@@ -291,15 +291,15 @@ public class FlexPullUpTest extends MultiFileTestCase {
     doTestConflicts("bar.Sub", "foo.ISuper", DocCommentPolicy.ASIS, conflicts, "foo", "foo2", "foo3", "foo4", "foo5");
   }
 
-  public void testOrdering1() throws Exception {
+  public void testOrdering1() {
     doTestPullUp("From", "To", DocCommentPolicy.ASIS, "foo", "v");
   }
 
-  public void testOrdering2() throws Exception {
+  public void testOrdering2() {
     doTestPullUp("From", "To", DocCommentPolicy.ASIS, "foo", "v", "v2");
   }
 
-  public void testUsages1() throws Exception {
+  public void testUsages1() {
     doTestPullUp("Sub", "Super", DocCommentPolicy.ASIS, "foo", "foo2", "foo3", "foo4");
   }
 }

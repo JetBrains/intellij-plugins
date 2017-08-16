@@ -18,7 +18,7 @@ class TestClient extends Client {
   private static final int STYLE_TEST_CLASS_ID = 4;
 
   // MxmlTest on idea side splitted as MxmlTest, StatesTest and InjectedAsTest on client side.
-  public ActionCallback test(int documentId, String method, String parentFilename) throws IOException {
+  public ActionCallback test(int documentId, String method, String parentFilename) {
     return test(null, documentId, method, charToTestId(parentFilename.charAt(0), parentFilename.length()));
   }
   
@@ -48,11 +48,11 @@ class TestClient extends Client {
     flush();
   }
 
-  public void test(@Nullable Module module, String method, int classId) throws IOException {
+  public void test(@Nullable Module module, String method, int classId) {
     test(module, -1, method, classId);
   }
   
-  public ActionCallback test(@Nullable Module module, int documentId, String method, int classId) throws IOException {
+  public ActionCallback test(@Nullable Module module, int documentId, String method, int classId) {
     // method called only and only after openDocument and shouldn't be any calls between
     // in non-tests the same agreement, except must be flush after openDocument always
     //blockOut.end();

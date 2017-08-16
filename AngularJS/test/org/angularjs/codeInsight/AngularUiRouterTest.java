@@ -25,24 +25,24 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
   }
 
 
-  public void testSimpleViewCompletion() throws Exception {
+  public void testSimpleViewCompletion() {
     final List<String> variants = myFixture.getCompletionVariants("simpleView.completion.js", "one.html", "two.html", "angular.js");
     Assert.assertEquals("menuTip", variants.get(0));
   }
 
-  public void testPartialTypedViewCompletion() throws Exception {
+  public void testPartialTypedViewCompletion() {
     final List<String> variants = myFixture.getCompletionVariants("partialTypedView.completion.js", "one.html", "two.html", "angular.js");
     Assert.assertEquals("menuTip", variants.get(0));
   }
 
-  public void testPartialTypedViewNavigation() throws Exception {
+  public void testPartialTypedViewNavigation() {
     final PsiFile[] files = myFixture.configureByFiles("partialTypedView.navigation.js", "one.html", "two.html", "angular.js");
     myFixture.doHighlighting();
 
     testNavigationToMenuTip(files[0]);
   }
 
-  public void testNoNavigationFromViews() throws Exception {
+  public void testNoNavigationFromViews() {
     //when there is not a views definition
     final PsiFile[] files = myFixture.configureByFiles("noNavigationFromViews.js", "angular.js");
     myFixture.doHighlighting();
@@ -66,18 +66,18 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     Assert.assertEquals(StringUtil.unquoteString(str), ((JSPsiNamedElementBase) resolve).getName());
   }
 
-  public void testInnerPropertyControllerAs() throws Exception {
+  public void testInnerPropertyControllerAs() {
     final List<String> variants = myFixture.getCompletionVariants("innerPropertyControllerAs.completion.js", "one.html", "two.html", "angular.js");
     Assert.assertEquals("testMe", variants.get(0));
   }
 
-  public void testControllerRedefinitionSyntaxOutside() throws Exception {
+  public void testControllerRedefinitionSyntaxOutside() {
     final List<String> variants = myFixture.getCompletionVariants("controllerRedefinitionSyntaxOutside.completion.js", "one.html", "two.html", "angular.js");
     Assert.assertTrue(variants.contains("testMe"));
     Assert.assertTrue(variants.contains("something"));
   }
 
-  public void testControllerRedefinitionSyntaxNavigation() throws Exception {
+  public void testControllerRedefinitionSyntaxNavigation() {
     final String mainFile = "controllerRedefinitionSyntax.navigation.js";
     final PsiFile[] files = myFixture.configureByFiles(mainFile, "one.html", "two.html", "angular.js");
     myFixture.doHighlighting();
@@ -97,7 +97,7 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     Assert.assertEquals("testMe", ((JSPsiNamedElementBase) resolve).getName());
   }
 
-  public void testNavigationToNamedView() throws Exception {
+  public void testNavigationToNamedView() {
     final PsiFile[] files = myFixture.configureByFiles("appWithViews.navigation.js", "one.html", "two.html", "angular.js");
     myFixture.doHighlighting();
 
@@ -122,7 +122,7 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     return element;
   }
 
-  public void testNavigationToDefaultView() throws Exception {
+  public void testNavigationToDefaultView() {
     final PsiFile[] files = myFixture.configureByFiles("appWithViews.navigation.js", "one.html", "two.html", "angular.js");
     myFixture.doHighlighting();
 
@@ -152,14 +152,14 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
   }
 
   // states
-  public void testStatesCompletion() throws Exception {
+  public void testStatesCompletion() {
     final List<String> variants = myFixture.getCompletionVariants("stateReferences.completion.html", "appStates.js", "angular.js");
     Assert.assertTrue(variants.contains("one"));
     Assert.assertTrue(variants.contains("two"));
     Assert.assertTrue(variants.contains("two.words"));
   }
 
-  public void testStatesNavigation() throws Exception {
+  public void testStatesNavigation() {
     final PsiFile[] files = myFixture.configureByFiles("stateReferences.navigation.html", "appStates.js", "angular.js");
     myFixture.doHighlighting();
     checkNavigation(files[0], "one", null, "appStates.js");
@@ -168,7 +168,7 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     checkNavigation(files[0], ".words", "two.words", "appStates.js");
   }
 
-  public void testStatesNavigationForStatesWithNameInObject() throws Exception {
+  public void testStatesNavigationForStatesWithNameInObject() {
     final PsiFile[] files = myFixture.configureByFiles("stateReferences.navigation.html", "appStateWithNameInObject.js", "angular.js");
     myFixture.doHighlighting();
     checkNavigation(files[0], "one", null, "appStateWithNameInObject.js");

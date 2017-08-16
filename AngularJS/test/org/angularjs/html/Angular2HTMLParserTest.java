@@ -47,43 +47,43 @@ public class Angular2HTMLParserTest extends ParsingTestCase {
     registerExtension(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, new CssRulesetBlockEmbeddedTokenTypesProvider());
   }
 
-  public void testBinding() throws Exception {
+  public void testBinding() {
     doTest(true);
   }
 
-  public void testEvent() throws Exception {
+  public void testEvent() {
     doTest(true);
   }
 
-  public void testXmlText() throws Exception {
+  public void testXmlText() {
     doTest(true);
   }
 
-  public void testXmlAttribute() throws Exception {
+  public void testXmlAttribute() {
     doTest(true);
   }
 
-  public void testBindingAttribute() throws Exception {
+  public void testBindingAttribute() {
     doTest(true);
   }
 
-  public void testElvis() throws Exception {
+  public void testElvis() {
     doTest(true);
   }
 
-  public void testCss() throws Exception {
+  public void testCss() {
     doTest(true);
   }
 
-  public void testWeb20713() throws Exception {
+  public void testWeb20713() {
     doTest(true);
   }
 
-  public void testWeb24804() throws Exception {
+  public void testWeb24804() {
     doTest(true);
   }
 
-  public void testEntity() throws Exception {
+  public void testEntity() {
     doTest(true);
   }
 }

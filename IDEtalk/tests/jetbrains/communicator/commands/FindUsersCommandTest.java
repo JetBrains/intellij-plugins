@@ -24,7 +24,6 @@ import jetbrains.communicator.mock.MockIDEFacade;
 import jetbrains.communicator.mock.MockUser;
 import org.jmock.Mock;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +58,7 @@ public class FindUsersCommandTest extends BaseTestCase {
     assertNotNull(myCommand.getName());
   }
 
-  public void testNoUsersFound() throws Exception {
+  public void testNoUsersFound() {
     myTransportMock.expects(once()).method("findUsers").will(returnValue(new User[0]));
     myTransportMock1.expects(once()).method("findUsers").will(returnValue(new User[0]));
 
@@ -67,7 +66,7 @@ public class FindUsersCommandTest extends BaseTestCase {
     assertTrue(myIDEFacade.getAndClearLog().startsWith("showMessage"));
   }
 
-  public void testOnlySelfFound() throws Exception {
+  public void testOnlySelfFound() {
 
     final BaseUserImpl self = new MockUser();
 
@@ -79,7 +78,7 @@ public class FindUsersCommandTest extends BaseTestCase {
     assertTrue(myIDEFacade.getAndClearLog().startsWith("showMessage"));
   }
 
-  public void testOnlyExistingUserFound() throws Exception {
+  public void testOnlyExistingUserFound() {
 
     final BaseUserImpl foundUser = setTeddyUserIsFound();
 
@@ -90,7 +89,7 @@ public class FindUsersCommandTest extends BaseTestCase {
     assertTrue(myIDEFacade.getAndClearLog().startsWith("showMessage"));
   }
 
-  public void testUsersFromDifferentTransportsFound() throws Exception {
+  public void testUsersFromDifferentTransportsFound() {
     final BaseUserImpl teddy = new MockUser("teddy", "");
     final BaseUserImpl sashka = new MockUser("sashka", "");
 
@@ -104,7 +103,7 @@ public class FindUsersCommandTest extends BaseTestCase {
     myCommand.execute();
   }
 
-  public void testNewUserFound_AddNoOne() throws Exception {
+  public void testNewUserFound_AddNoOne() {
     final BaseUserImpl teddy = setTeddyUserIsFound();
     myUserModelMock.expects(once()).method("hasUser").with(eq(teddy)).will(returnValue(false));
     myUserModelMock.expects(once()).method("getGroups").will(returnValue(null));
@@ -115,7 +114,7 @@ public class FindUsersCommandTest extends BaseTestCase {
     assertEquals("chooseUsersToBeAdded", myIDEFacade.getAndClearLog());
   }
 
-  public void testSetGroupBasingOnSelection() throws Exception {
+  public void testSetGroupBasingOnSelection() {
     final MockUser teddy = setTeddyUserIsFound();
 
     myUserModelMock.expects(once()).method("hasUser").with(eq(teddy)).will(returnValue(false));
@@ -132,7 +131,7 @@ public class FindUsersCommandTest extends BaseTestCase {
     assertEquals("Group should be set from project name", "projectForTeddy", teddy.getGroup());
   }
 
-  public void testNewUserFound_AddThisUserToModel() throws Exception {
+  public void testNewUserFound_AddThisUserToModel() {
     final BaseUserImpl teddy = setTeddyUserIsFound();
     myUserModelMock.expects(once()).method("hasUser").with(eq(teddy)).will(returnValue(false));
     myUserModelMock.expects(once()).method("getGroups").will(returnValue(null));
@@ -152,7 +151,7 @@ public class FindUsersCommandTest extends BaseTestCase {
   }
 
 
-  private MockUser setTeddyUserIsFound() throws UnknownHostException {
+  private MockUser setTeddyUserIsFound() {
     final MockUser teddy = new MockUser("teddy", "");
 
     myTransportMock.expects(once()).method("findUsers").will(returnValue(new User[]{teddy}));

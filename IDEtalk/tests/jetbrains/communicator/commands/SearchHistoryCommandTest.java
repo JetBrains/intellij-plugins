@@ -55,7 +55,7 @@ public class SearchHistoryCommandTest extends LightTestCase {
     myCommand.setUser(myUser);
   }
 
-  public void testEnabled() throws Exception {
+  public void testEnabled() {
     myDispatcherMock.expects(once()).method("isHistoryEmpty").will(returnValue(true));
     assertFalse(myCommand.isEnabled());
 
@@ -66,13 +66,13 @@ public class SearchHistoryCommandTest extends LightTestCase {
     assertFalse("No user set - should disable", myCommand.isEnabled());
   }
 
-  public void testSearchHistory_Empty() throws Exception {
+  public void testSearchHistory_Empty() {
     query(null);
 
     myCommand.execute();
   }
 
-  public void testSearchHistory_NoResults() throws Exception {
+  public void testSearchHistory_NoResults() {
     query("");
 
     myDispatcherMock.expects(once()).method("getHistory").with(eq(myUser), eq(null)).will(returnValue(new LocalMessage[0]));
@@ -85,7 +85,7 @@ public class SearchHistoryCommandTest extends LightTestCase {
     myCommand.execute();
   }
 
-  public void testSearchHistory_WithResult() throws Exception {
+  public void testSearchHistory_WithResult() {
     MockMessage m1 = new MockMessage(new Date(), "some text1");
     MockMessage m2 = new MockMessage(new Date(), "some text2");
     MockMessage m3 = new MockMessage(new Date(), "some text2 ataing");

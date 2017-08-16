@@ -31,7 +31,7 @@ public class StrutsVersionDetectorTest extends BasicLightHighlightingTestCase {
     return "";
   }
 
-  public void testDetectStrutsVersion() throws Exception {
+  public void testDetectStrutsVersion() {
     final String version = StrutsVersionDetector.detectStrutsVersion(myModule);
     assertEquals(STRUTS2_VERSION, version);
   }

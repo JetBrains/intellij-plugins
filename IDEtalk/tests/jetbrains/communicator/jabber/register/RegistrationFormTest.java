@@ -48,7 +48,7 @@ public class RegistrationFormTest extends BaseTestCase {
     myForm = new RegistrationForm(myFacade, myIdeFacade, myTextAcceptor);
   }
 
-  public void testInit() throws Exception {
+  public void testInit() {
 
 
     assertEquals("Bad Default username", StringUtil.getMyUsername(), myFacade.getMyAccount().getUsername());
@@ -82,7 +82,7 @@ public class RegistrationFormTest extends BaseTestCase {
     assertTrue("Bad Remember password", myForm.shouldRememberPassword());
   }
 
-  public void testSaveMode() throws Throwable {
+  public void testSaveMode() {
     myForm.setUseExisingAccount(false);
     myForm = new RegistrationForm(myFacade, myIdeFacade, myTextAcceptor);
     assertFalse("should remember state", myForm.useExistingAccount());
@@ -92,26 +92,26 @@ public class RegistrationFormTest extends BaseTestCase {
     assertTrue("should remember state", myForm.useExistingAccount());
   }
 
-  public void testCommit_RememberPassword() throws Exception {
+  public void testCommit_RememberPassword() {
     myForm.setRememberPassword(true);
     myForm.commit();
     assertTrue(myFacade.getMyAccount().shouldRememberPassword());
   }
 
-  public void testCommit_SkipPassword() throws Exception {
+  public void testCommit_SkipPassword() {
     myForm.setRememberPassword(false);
     myForm.commit();
     assertFalse(myFacade.getMyAccount().shouldRememberPassword());
   }
 
-  public void testCommit_ExistingAccount_OK() throws Exception {
+  public void testCommit_ExistingAccount_OK() {
     _test(true, true);
 
     assertEquals("Should call connect and saveSettings", "foo:password@some.server:1234:falsesaveSettings", myFacade.getLog());
     assertNull("No error expected", myErrorText);
   }
 
-  public void testCommit_SSL_ExistingAccount_OK() throws Exception {
+  public void testCommit_SSL_ExistingAccount_OK() {
     myForm.setForceSSL(true);
     _test(true, true);
 
@@ -119,13 +119,13 @@ public class RegistrationFormTest extends BaseTestCase {
     assertNull("No error expected", myErrorText);
   }
 
-  public void testCommit() throws Exception {
+  public void testCommit() {
     myFacade.getMyAccount().setLoginAllowed(false);
     myForm.commit();
     assertTrue(myFacade.getMyAccount().isLoginAllowed());
   }
 
-  public void testCancel() throws Exception {
+  public void testCancel() {
     myFacade.getMyAccount().setLoginAllowed(true);
     myForm.cancel();
     assertFalse(myFacade.getMyAccount().isLoginAllowed());
@@ -145,14 +145,14 @@ public class RegistrationFormTest extends BaseTestCase {
     myForm.commit();
   }
 
-  public void testCommit_ExistingAccount_Error() throws Exception {
+  public void testCommit_ExistingAccount_Error() {
     _test(true, false);
 
     assertEquals("Should call connect only", "foo:password@some.server:1234:false", myFacade.getLog());
     assertEquals("Error expected", "Error: " + MockJabberFacade.ERROR_LINE, myErrorText);
   }
 
-  public void testResetErrorLabel() throws Exception {
+  public void testResetErrorLabel() {
     myForm.commit();
     assertNotNull("Sanity check", myErrorText);
 
@@ -165,7 +165,7 @@ public class RegistrationFormTest extends BaseTestCase {
     assertNull("Should be cleared on combobox change", myErrorText);
   }
 
-  public void testCommit_NewAccount_OK() throws Exception {
+  public void testCommit_NewAccount_OK() {
     myForm.setPasswordAgain("password");
     myForm.setNickame("fff");
     myForm.setFirstName("Kirill");
@@ -177,7 +177,7 @@ public class RegistrationFormTest extends BaseTestCase {
     assertNull("No error expected", myErrorText);
   }
 
-  public void testCommit_SSL_NewAccount_OK() throws Exception {
+  public void testCommit_SSL_NewAccount_OK() {
     myForm.setForceSSL(true);
     myForm.setPasswordAgain("password");
     myForm.setNickame("fff");
@@ -190,7 +190,7 @@ public class RegistrationFormTest extends BaseTestCase {
     assertNull("No error expected", myErrorText);
   }
 
-  public void testCommit_NewAccount_Error() throws Exception {
+  public void testCommit_NewAccount_Error() {
     myForm.setPasswordAgain("password");
     myForm.setNickame("fff");
     myForm.setFirstName("Kirill");
@@ -202,7 +202,7 @@ public class RegistrationFormTest extends BaseTestCase {
     assertEquals("Error expected", "Error: " + MockJabberFacade.ERROR_LINE, myErrorText);
   }
 
-  public void testCommit_NewAccount_PasswordProblems() throws Exception {
+  public void testCommit_NewAccount_PasswordProblems() {
     myForm.setPasswordAgain("nonMatchPwd");
     myForm.setPassword("password");
     myForm.setUsername("user");

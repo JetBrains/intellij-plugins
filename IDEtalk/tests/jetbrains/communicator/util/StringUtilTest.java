@@ -23,12 +23,12 @@ import junit.framework.TestCase;
 public class StringUtilTest extends TestCase {
   public static final int BUFLENGTH = 100000;
 
-  public void testTwoDirection() throws Exception {
+  public void testTwoDirection() {
     assertEquals("Expect valid >< conversion",
                  "\u0416a\u0416c\u0416", StringUtil.fromXMLSafeString(StringUtil.toXMLSafeString("\u0416a\u0416c\u0416")));
   }
 
-  public void testBigConversion() throws Exception {
+  public void testBigConversion() {
 
     WatchDog watchDog = new WatchDog("Xml String Convert");
     StringBuffer sb = new StringBuffer(BUFLENGTH);
@@ -48,12 +48,12 @@ public class StringUtilTest extends TestCase {
     assertEquals("Sanity check", s, back);
   }
 
-  public void testGetMsg() throws Exception {
+  public void testGetMsg() {
     assertEquals("Should get resource from ResourceBundle",
         "some result", StringUtil.getMsg("test.line"));
   }
 
-  public void testGetMsg2() throws Throwable {
+  public void testGetMsg2() {
     String msg = StringUtil.getMsg("ViewFilesCommand.fail", "userName", "");
     assertEquals(msg, -1, msg.indexOf('{'));
     System.out.println(msg);

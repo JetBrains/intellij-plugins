@@ -41,7 +41,7 @@ public class ActionLinkReferenceProviderTest extends BasicLightHighlightingTestC
     return createWebDescriptor();
   }
 
-  public void testActionLinkHighlightingJsp() throws Throwable {
+  public void testActionLinkHighlightingJsp() {
     myFixture.enableInspections(new HtmlUnknownTargetInspection());
     createStrutsFileSet("struts-actionLink.xml");
 
@@ -62,14 +62,14 @@ public class ActionLinkReferenceProviderTest extends BasicLightHighlightingTestC
   }
 */
 
-  public void testActionLinkCompletionVariantsNamespaceGiven() throws Throwable {
+  public void testActionLinkCompletionVariantsNamespaceGiven() {
     createStrutsFileSet("struts-actionLink.xml");
     myFixture.testCompletionVariants("/jsp/actionLink-completionvariants-namespace_given.jsp",
                                      "actionLink1.action",
                                      "actionLink2.action");
   }
 
-  public void testActionLinkCompletionVariantsNoNamespace() throws Throwable {
+  public void testActionLinkCompletionVariantsNoNamespace() {
     createStrutsFileSet("struts-actionLink.xml");
     myFixture.testCompletionVariants("/jsp/actionLink-completionvariants-no-namespace.jsp",
                                      "jsp",
@@ -78,7 +78,7 @@ public class ActionLinkReferenceProviderTest extends BasicLightHighlightingTestC
     );
   }
 
-  public void testActionLinkReferences() throws Throwable {
+  public void testActionLinkReferences() {
     createStrutsFileSet("struts-actionLink.xml");
     checkActionReference("/jsp/actionLink-reference_1.jsp", "actionLink1");
     checkActionReference("/jsp/actionLink-reference_2.jsp", "rootActionLink");

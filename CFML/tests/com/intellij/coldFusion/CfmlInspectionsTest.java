@@ -27,7 +27,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,14 +41,14 @@ public class CfmlInspectionsTest extends CfmlCodeInsightFixtureTestCase {
     return "/inspections";
   }
 
-  private void doInspectionTest(boolean infos, Class<? extends LocalInspectionTool>... inspectionClasses) throws Exception {
+  private void doInspectionTest(boolean infos, Class<? extends LocalInspectionTool>... inspectionClasses) {
     String inputDataFileName = Util.getInputDataFileName(getTestName(true));
     myFixture.configureByFiles(inputDataFileName);
     myFixture.enableInspections(inspectionClasses);
     myFixture.testHighlighting(true, infos, true);
   }
 
-  static PsiFile addScriptComponentsTo(CodeInsightTestFixture fixture) throws IOException {
+  static PsiFile addScriptComponentsTo(CodeInsightTestFixture fixture) {
     return fixture.addFileToProject("folder/subfolder/ComponentName.cfc",
                                     "component {\n" +
                                     "    function func1(){}\n" +
@@ -58,11 +57,11 @@ public class CfmlInspectionsTest extends CfmlCodeInsightFixtureTestCase {
                                     "}");
   }
 
-  public void testSpellCheck() throws Throwable {
+  public void testSpellCheck() {
     doInspectionTest(false, SpellCheckingInspection.class);
   }
 
-  public void testUnResolveIncludeWithMappings() throws Throwable {
+  public void testUnResolveIncludeWithMappings() {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
     addScriptComponentsTo(myFixture);
     Map<String, String> mappings = new HashMap<>();
@@ -87,7 +86,7 @@ public class CfmlInspectionsTest extends CfmlCodeInsightFixtureTestCase {
   }
 
 
-  public void testResolveIncludeWithBaclSlashMappings() throws Throwable {
+  public void testResolveIncludeWithBaclSlashMappings() {
     myFixture.configureByFile(getTestName(true) + ".test.cfml");
     addScriptComponentsTo(myFixture);
     Map<String, String> mappings = new HashMap<>();
@@ -110,25 +109,25 @@ public class CfmlInspectionsTest extends CfmlCodeInsightFixtureTestCase {
     }
   }
 
-  public void testUnresolvedScopeVariable() throws Throwable {
+  public void testUnresolvedScopeVariable() {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
     myFixture.enableInspections(CfmlReferenceInspection.class);
     myFixture.testHighlighting(true, false, true);
   }
 
-  public void testComponentSpellCheck() throws Throwable {
+  public void testComponentSpellCheck() {
     doInspectionTest(false, SpellCheckingInspection.class);
   }
 
-  public void testArgumentsStandartVariable() throws Throwable {
+  public void testArgumentsStandartVariable() {
     doInspectionTest(false, CfmlReferenceInspection.class);
   }
 
-  public void testArgumentNamesOfStandardFunction() throws Throwable {
+  public void testArgumentNamesOfStandardFunction() {
     doInspectionTest(false, CfmlReferenceInspection.class);
   }
 
-  public void testPredefinedFunctionsNoInspection() throws Throwable {
+  public void testPredefinedFunctionsNoInspection() {
     doInspectionTest(false, CfmlReferenceInspection.class);
   }
 }

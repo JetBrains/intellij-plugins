@@ -34,14 +34,14 @@ public class OsgiPsiUtilTest extends LightOsgiFixtureTestCase {
       true);
   }
 
-  public void testAppendToEmptyHeader() throws Exception {
+  public void testAppendToEmptyHeader() {
     doTest(
       "TestHeader: \n",
       "TestHeader: TestValue\n",
       false);
   }
 
-  public void testAppendToNonEmptyHeader() throws Exception {
+  public void testAppendToNonEmptyHeader() {
     doTest(
       "TestHeader: \n" +
       " OldValue1,\n" +

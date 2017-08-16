@@ -1293,7 +1293,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     mxmlTest();
   }
 
-  public final void testMxmlIdValueSuggestion2() throws Exception {
+  public final void testMxmlIdValueSuggestion2() {
     checkIdValueSuggestions("", "Button", "button");
     checkIdValueSuggestions("", "A", "a");
     checkIdValueSuggestions("my", "A", "myA");

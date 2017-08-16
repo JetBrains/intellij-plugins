@@ -115,7 +115,7 @@ public class SwfHighlightingTest extends JSDaemonAnalyzerTestCase {
     checkHighlighting(new ExpectedHighlightingData(new DocumentImpl(verificationText), false, false, true, myFile));
   }
 
-  public void testProtectSwf() throws Exception {
+  public void testProtectSwf() {
     configureByFiles((String)null);
     VirtualFile vFile =
       LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + getTestName(false) + ".swf");

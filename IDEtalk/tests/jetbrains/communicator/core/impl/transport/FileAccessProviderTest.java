@@ -48,7 +48,7 @@ public class FileAccessProviderTest extends BaseTestCase {
     myProvider = new MyProvider(myIdeFacade, myUserModel);
   }
 
-  public void testGoodUser() throws Exception {
+  public void testGoodUser() {
     myUserModel.addUser(myUser);
     myUser.setCanAccessMyFiles(true, myUserModel);
 
@@ -61,13 +61,13 @@ public class FileAccessProviderTest extends BaseTestCase {
     myProvider.processAndFillResponse(new Element("a"), new Element("a"), new MockTransport(), myUser.getName());
   }
 
-  public void testNotFromModel() throws Exception {
+  public void testNotFromModel() {
     processRequest();
 
     assertFalse("User not from model", myProcessed);
   }
 
-  public void testUserWithoutRights() throws Exception {
+  public void testUserWithoutRights() {
     myUserModel.addUser(myUser);
     myUser.setCanAccessMyFiles(false, myUserModel);
     myMock.expects(once()).method("askQuestion").will(returnValue(false));
@@ -77,7 +77,7 @@ public class FileAccessProviderTest extends BaseTestCase {
     assertFalse(myUser.canAccessMyFiles());
   }
 
-  public void testUserWithoutRights_Allow() throws Exception {
+  public void testUserWithoutRights_Allow() {
     myUserModel.addUser(myUser);
     myUser.setCanAccessMyFiles(false, myUserModel);
     myMock.expects(once()).method("askQuestion").will(returnValue(true));

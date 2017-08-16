@@ -59,7 +59,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     checkServerDataInitialState(file);
   }
 
-  public void testErrorsHighlighting() throws Exception {
+  public void testErrorsHighlighting() {
     doHighlightingTest();
   }
 
@@ -267,12 +267,12 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     assertEquals(4 + 3, regions.get(3).getTargets().get(0).getOffset(getProject(), file));
   }
 
-  public void testSyntaxHighlighting() throws Exception {
+  public void testSyntaxHighlighting() {
     myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.checkHighlighting(true, true, true);
   }
 
-  public void testServerDataLifecycle() throws Exception {
+  public void testServerDataLifecycle() {
     myFixture.configureByText("firstFile.dart", "class Foo { toString(){ return super.toString(); } }");
     final VirtualFile firstFile = getFile().getVirtualFile();
     final VirtualFile secondFile =
@@ -325,7 +325,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     assertNotEmpty(service.getOverrideMembers(secondFile));
   }
 
-  public void testRespectErrorLocationFile() throws Exception {
+  public void testRespectErrorLocationFile() {
     // test workaround for https://github.com/dart-lang/sdk/issues/25034
     myFixture.addFileToProject("main_part.dart", "class A{}");
     myFixture.configureByText("main.dart",
@@ -335,7 +335,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
   }
 
-  public void _testAnalysisOptionsFile() throws Exception {
+  public void _testAnalysisOptionsFile() {
     // do nt use configureByText(), because that method creates file with different name (___.analysis_options)
     final PsiFile file = myFixture.addFileToProject(".analysis_options",
                                                     "analyzer:\n" +
@@ -345,7 +345,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
   }
 
-  public void testErrorsUpdatedOnTypingAndUndo() throws Exception {
+  public void testErrorsUpdatedOnTypingAndUndo() {
     myFixture.configureByText("foo.dart", "main(){\n" +
                                           "  <warning>Ra<caret>ndom</warning> <warning>r</warning> = new <warning>Random</warning>();\n" +
                                           "}");
@@ -358,7 +358,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     assertSameElements(highlighting, myFixture.doHighlighting(HighlightSeverity.WARNING));
   }
 
-  public void testErrorsRemoved() throws Exception {
+  public void testErrorsRemoved() {
     myFixture.configureByText("foo.dart", "<caret>import <warning>'dart:math'</warning>;");
     myFixture.checkHighlighting();
     myFixture.type("//");

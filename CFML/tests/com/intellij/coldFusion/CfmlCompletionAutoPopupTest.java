@@ -20,7 +20,7 @@ package com.intellij.coldFusion;
  */
 class CfmlCompletionAutoPopupTest extends CfmlCodeInsightFixtureTestCase {
 
-  public void testAutopopupBasics() throws Throwable {
+  public void testAutopopupBasics() {
     myFixture.configureByText("a.cfml", "<cfinclude template=\"folder<caret>\">");
 
     myFixture.addFileToProject("folder/subfolder/b.cfml", "");

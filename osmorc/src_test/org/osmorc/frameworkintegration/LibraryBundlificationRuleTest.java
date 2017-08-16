@@ -3,13 +3,11 @@ package org.osmorc.frameworkintegration;
 import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class LibraryBundlificationRuleTest {
   @Test
-  public void testEqual() throws Exception {
+  public void testEqual() {
     LibraryBundlificationRule rule1 = new LibraryBundlificationRule();
     LibraryBundlificationRule rule2 = new LibraryBundlificationRule();
     assertTrue(rule1.equals(rule2));
@@ -20,7 +18,7 @@ public class LibraryBundlificationRuleTest {
   }
 
   @Test
-  public void testValidation() throws Exception {
+  public void testValidation() {
     LibraryBundlificationRule rule = new LibraryBundlificationRule();
     rule.validate();
 

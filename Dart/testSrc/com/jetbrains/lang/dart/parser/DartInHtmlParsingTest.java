@@ -32,7 +32,7 @@ public class DartInHtmlParsingTest extends ParsingTestCase {
     return DartTestUtils.BASE_TEST_DATA_PATH;
   }
 
-  public void testHtml1() throws Throwable {
+  public void testHtml1() {
     doTest(true);
   }
 }

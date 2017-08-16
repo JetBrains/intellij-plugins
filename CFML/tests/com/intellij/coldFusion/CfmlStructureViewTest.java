@@ -36,7 +36,7 @@ import junit.framework.Assert;
  * @author vnikolaenko
  */
 public class CfmlStructureViewTest extends CfmlCodeInsightFixtureTestCase {
-  public void testScriptAndTagFunctions() throws Exception {
+  public void testScriptAndTagFunctions() {
     myFixture.configureByFile(getTestName(true) + ".test.cfc");
     final Object[] topLevelObjects = getTopLevelItems();
     assertEquals(topLevelObjects.length, 2);
@@ -44,7 +44,7 @@ public class CfmlStructureViewTest extends CfmlCodeInsightFixtureTestCase {
     assertEquals("someFunction2()", getText(topLevelObjects[1]));
   }
 
-  public void testScriptFunctions() throws Exception {
+  public void testScriptFunctions() {
     myFixture.configureByFile(getTestName(true) + ".test.cfml");
     final Object[] topLevelObjects = getTopLevelItems();
     assertEquals(topLevelObjects.length, 3);
@@ -53,7 +53,7 @@ public class CfmlStructureViewTest extends CfmlCodeInsightFixtureTestCase {
     assertEquals("someFunction3()", getText(topLevelObjects[2]));
   }
 
-  public void testTagFunctions() throws Exception {
+  public void testTagFunctions() {
     myFixture.configureByFile(getTestName(true) + ".test.cfml");
     final Object[] topLevelObjects = getTopLevelItems();
     assertEquals(topLevelObjects.length, 2);
@@ -61,7 +61,7 @@ public class CfmlStructureViewTest extends CfmlCodeInsightFixtureTestCase {
     assertEquals("someFunction2()", getText(topLevelObjects[1]));
   }
 
-  public void testMixedFunctionsTypes() throws Exception {
+  public void testMixedFunctionsTypes() {
     myFixture.configureByFile(getTestName(true) + ".test.cfml");
     final Object[] topLevelObjects = getTopLevelItems();
     assertEquals(topLevelObjects.length, 2);
@@ -69,14 +69,14 @@ public class CfmlStructureViewTest extends CfmlCodeInsightFixtureTestCase {
     assertEquals("someFunction2(arg1, arg2)", getText(topLevelObjects[1]));
   }
 
-  public void testNewFunctionSyntax() throws Exception {
+  public void testNewFunctionSyntax() {
     myFixture.configureByFile(getTestName(true) + ".test.cfml");
     final Object[] topLevelObjects = getTopLevelItems();
     assertEquals(topLevelObjects.length, 1);
     assertEquals("someFunction(arg1 : string, [arg2 : int]) : void", getText(topLevelObjects[0]));
   }
 
-  public void testDeeperFunctionLocation() throws Exception {
+  public void testDeeperFunctionLocation() {
     myFixture.configureByFile(getTestName(true) + ".test.cfml");
     final Object[] topLevelObjects = getTopLevelItems();
     assertEquals(topLevelObjects.length, 3);

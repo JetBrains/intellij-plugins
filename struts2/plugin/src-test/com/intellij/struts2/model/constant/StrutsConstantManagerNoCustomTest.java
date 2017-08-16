@@ -37,7 +37,7 @@ public class StrutsConstantManagerNoCustomTest extends StrutsConstantManagerTest
   /**
    * Context = struts.xml
    */
-  public void testNoCustomConfiguration() throws Throwable {
+  public void testNoCustomConfiguration() {
     createStrutsFileSet(STRUTS_XML);
 
     final VirtualFile strutsXmlFile = myFixture.findFileInTempDir(STRUTS_XML);
@@ -47,7 +47,7 @@ public class StrutsConstantManagerNoCustomTest extends StrutsConstantManagerTest
   /**
    * Context = dummy.xml
    */
-  public void testNoCustomConfigurationFromDummyXml() throws Throwable {
+  public void testNoCustomConfigurationFromDummyXml() {
     createStrutsFileSet(STRUTS_XML);
 
     final VirtualFile dummyFile = myFixture.copyFileToProject("dummy.xml");
@@ -57,7 +57,7 @@ public class StrutsConstantManagerNoCustomTest extends StrutsConstantManagerTest
   /**
    * Non-existent configuration property.
    */
-  public void testNoCustomNonExistentConfiguration() throws Throwable {
+  public void testNoCustomNonExistentConfiguration() {
     createStrutsFileSet(STRUTS_XML);
 
     final VirtualFile strutsXmlFile = myFixture.findFileInTempDir(STRUTS_XML);

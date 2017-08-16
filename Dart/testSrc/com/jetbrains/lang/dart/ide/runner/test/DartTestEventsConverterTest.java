@@ -212,15 +212,15 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
   private MockPrinter myMockResettablePrinter;
   private Map<String, DefaultMutableTreeNode> myNodes;
 
-  public void testSample1() throws Exception {
+  public void testSample1() {
     runTest(Sample1Events, Sample1Signals, Sample1Parents);
   }
 
-  public void testSample2() throws Exception {
+  public void testSample2() {
     runTest(Sample2Events, Sample2Signals, new int[]{});
   }
 
-  public void testLoadFailure() throws Exception {
+  public void testLoadFailure() {
     String[] events = {
       "{'test':{'id':0,'name':'loading test/formatter_test.dart','groupIDs':[],'metadata':{'skip':false,'skipReason':null}},'type':'testStart','time':0}\n",
       "{'testID':0,'error':'Failed to load \\\"test/formatter_test.dart\\\":\\nline 117 pos 69','stackTrace':'','isFailure':false,'type':'error','time':497}\n",
@@ -249,7 +249,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     runTest(events, signals, new int[]{});
   }
 
-  public void testSetUpAllFailure() throws Exception {
+  public void testSetUpAllFailure() {
     String[] events = {
       "{'count':1,'type':'allSuites','time':0}\n",
       "{'suite':{'id':0,'platform':'vm','path':'test/next_test.dart'},'type':'suite','time':0}\n",
@@ -273,7 +273,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     runTest(events, signals, new int[]{});
   }
 
-  public void testGroupsDone() throws Exception {
+  public void testGroupsDone() {
     String[] events = {
       "{'protocolVersion':'0.1.0','runnerVersion':'0.12.10','type':'start','time':0}\n",
       "{'count':1,'type':'allSuites','time':0}\n",

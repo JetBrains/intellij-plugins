@@ -31,7 +31,7 @@ public class FlexHighlightingPerformanceTest extends ActionScriptDaemonAnalyzerT
   }
 
   @JSTestOptions({JSTestOption.WithLoadingAndSavingCaches, JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testPerformance() throws Exception {
+  public void testPerformance() {
     final boolean doProfiling = false;
     if (doProfiling) ProfilingUtil.startCPUProfiling();
     try {
