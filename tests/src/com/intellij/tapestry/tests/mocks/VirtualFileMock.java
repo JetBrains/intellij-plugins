@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -76,13 +75,13 @@ public class VirtualFileMock extends VirtualFile {
 
     @Override
     @NotNull
-    public OutputStream getOutputStream(Object requestor, long newModificationStamp, long newTimeStamp) throws IOException {
+    public OutputStream getOutputStream(Object requestor, long newModificationStamp, long newTimeStamp) {
       throw new UnsupportedOperationException();
     }
 
     @Override
     @NotNull
-    public byte[] contentsToByteArray() throws IOException {
+    public byte[] contentsToByteArray() {
         return new byte[0];
     }
 
@@ -101,7 +100,7 @@ public class VirtualFileMock extends VirtualFile {
     }
 
     @Override
-    public InputStream getInputStream() throws IOException {
+    public InputStream getInputStream() {
         return null;
     }
 }

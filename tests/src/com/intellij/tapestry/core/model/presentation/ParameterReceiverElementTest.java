@@ -1,7 +1,6 @@
 package com.intellij.tapestry.core.model.presentation;
 
 import com.intellij.tapestry.core.TapestryProject;
-import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.core.mocks.JavaAnnotationMock;
 import com.intellij.tapestry.core.mocks.JavaClassTypeMock;
 import com.intellij.tapestry.core.mocks.JavaFieldMock;
@@ -25,7 +24,7 @@ public class ParameterReceiverElementTest {
     private TapestryProject _tapestryProjectMock;
 
     @BeforeMethod
-    public void initMocks() throws NotFoundException {
+    public void initMocks() {
         File builderClassFileMock = org.easymock.EasyMock.createMock(File.class);
         org.easymock.EasyMock.expect(builderClassFileMock.lastModified()).andReturn(Long.MAX_VALUE).anyTimes();
         org.easymock.EasyMock.replay(builderClassFileMock);

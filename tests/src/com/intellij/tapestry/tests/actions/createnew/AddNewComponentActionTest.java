@@ -6,7 +6,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiPackage;
 import com.intellij.tapestry.core.TapestryProject;
-import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.intellij.actions.createnew.AddNewComponentAction;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.view.TapestryProjectViewPane;
@@ -38,7 +37,7 @@ public class AddNewComponentActionTest extends BaseTestCase {
     }
 
     @Test(dataProvider = EMPTY_FIXTURE_PROVIDER)
-    public void update_from_project_view_not_inside_components_package(IdeaProjectTestFixture fixture) throws NotFoundException {
+    public void update_from_project_view_not_inside_components_package(IdeaProjectTestFixture fixture) {
         ActionMockHelper actionMockHelper = new ActionMockHelper();
         actionMockHelper.setModuleAsTapestryModule();
         Project projectMock = actionMockHelper.getProjectMock();
@@ -75,7 +74,7 @@ public class AddNewComponentActionTest extends BaseTestCase {
     }
 
     @Test(dataProvider = EMPTY_FIXTURE_PROVIDER)
-    public void update_from_project_view_inside_components_package(IdeaProjectTestFixture fixture) throws NotFoundException {
+    public void update_from_project_view_inside_components_package(IdeaProjectTestFixture fixture) {
         ActionMockHelper actionMockHelper = new ActionMockHelper();
         actionMockHelper.setModuleAsTapestryModule();
         Project projectMock = actionMockHelper.getProjectMock();

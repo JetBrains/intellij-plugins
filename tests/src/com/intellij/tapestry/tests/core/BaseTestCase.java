@@ -1,13 +1,13 @@
 package com.intellij.tapestry.tests.core;
 
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.tapestry.tests.Util;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
-import com.intellij.tapestry.tests.Util;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.search.GlobalSearchScope;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.DataProvider;
 
@@ -61,7 +61,7 @@ public class BaseTestCase {
     }
 
     @AfterSuite
-    public void releaseFixture() throws Exception {
+    public void releaseFixture() {
         releaseFixture(_emptyFixture);
         _emptyFixture = null;
 
@@ -72,7 +72,7 @@ public class BaseTestCase {
         _webModuleFixture = null;
     }
 
-    private static void releaseFixture(IdeaTestFixture fixture) throws Exception {
+    private static void releaseFixture(IdeaTestFixture fixture) {
         if (fixture != null) {
           try {
             fixture.tearDown();

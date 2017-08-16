@@ -14,7 +14,7 @@ public class PathUtilsTest {
     }
 
     @Test
-    public void packageIntoPath_empty() throws Exception {
+    public void packageIntoPath_empty() {
         assert PathUtils.packageIntoPath(null, true).equals("");
         assert PathUtils.packageIntoPath(null, false).equals("");
 
@@ -23,7 +23,7 @@ public class PathUtilsTest {
     }
 
     @Test
-    public void packageIntoPath_various() throws Exception {
+    public void packageIntoPath_various() {
         assert PathUtils.packageIntoPath("a.b", true).equals("a/b/");
         assert PathUtils.packageIntoPath("a.b", false).equals("a/b");
 
@@ -32,7 +32,7 @@ public class PathUtilsTest {
     }
 
     @Test
-    public void pathIntoPackage_empty() throws Exception {
+    public void pathIntoPackage_empty() {
         assert PathUtils.pathIntoPackage(null, true).equals("");
         assert PathUtils.pathIntoPackage(null, false).equals("");
 
@@ -41,7 +41,7 @@ public class PathUtilsTest {
     }
 
     @Test
-    public void pathIntoPackage_various() throws Exception {
+    public void pathIntoPackage_various() {
         assert PathUtils.pathIntoPackage("a/b", true).equals("a");
         assert PathUtils.pathIntoPackage("a/b", false).equals("a.b");
         assert PathUtils.pathIntoPackage("a/b/", true).equals("a");
@@ -58,7 +58,7 @@ public class PathUtilsTest {
     }
 
     @Test
-    public void getFullComponentPackage_empty() throws Exception {
+    public void getFullComponentPackage_empty() {
         assert PathUtils.getFullComponentPackage(null, null).equals("");
         assert PathUtils.getFullComponentPackage("", "").equals("");
         assert PathUtils.getFullComponentPackage(null, "").equals("");
@@ -66,31 +66,31 @@ public class PathUtilsTest {
     }
 
     @Test
-    public void getFullComponentPackage_various() throws Exception {
+    public void getFullComponentPackage_various() {
         assert PathUtils.getFullComponentPackage("com.myapp.pages", "admin/Login").equals("com.myapp.pages.admin");
         assert PathUtils.getFullComponentPackage("com.myapp.pages", "Login").equals("com.myapp.pages");
     }
 
     @Test
-    public void getLastPathElement_empty() throws Exception {
+    public void getLastPathElement_empty() {
         assert PathUtils.getLastPathElement(null).equals("");
         assert PathUtils.getLastPathElement("").equals("");
     }
 
     @Test
-    public void getLastPathElement_various() throws Exception {
+    public void getLastPathElement_various() {
         assert PathUtils.getLastPathElement("admin/Login").equals("Login");
         assert PathUtils.getLastPathElement("Login").equals("Login");
     }
 
     @Test
-    public void getFirstPathElement_empty() throws Exception {
+    public void getFirstPathElement_empty() {
         assert PathUtils.getFirstPathElement(null).equals("");
         assert PathUtils.getFirstPathElement("").equals("");
     }
 
     @Test
-    public void getFirstPathElement_various() throws Exception {
+    public void getFirstPathElement_various() {
         assert PathUtils.getFirstPathElement("admin/Login").equals("admin");
         assert PathUtils.getFirstPathElement("/admin/Login").equals("admin");
         assert PathUtils.getFirstPathElement("Login").equals("Login");
@@ -118,13 +118,13 @@ public class PathUtilsTest {
     }
 
     @Test
-    public void getComponentFileName_empty() throws Exception {
+    public void getComponentFileName_empty() {
         assert PathUtils.getComponentFileName(null).equals("");
         assert PathUtils.getComponentFileName("").equals("");
     }
 
     @Test
-    public void getComponentFileName_various() throws Exception {
+    public void getComponentFileName_various() {
         assert PathUtils.getComponentFileName("admin/Login").equals("Login");
         assert PathUtils.getComponentFileName("Login").equals("Login");
     }

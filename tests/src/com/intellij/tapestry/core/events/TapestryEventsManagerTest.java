@@ -1,7 +1,6 @@
 package com.intellij.tapestry.core.events;
 
 import com.intellij.tapestry.core.TapestryProject;
-import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.core.model.Library;
 import com.intellij.tapestry.core.resource.TestableResource;
 import org.testng.annotations.BeforeMethod;
@@ -19,7 +18,7 @@ public class TapestryEventsManagerTest {
     private TapestryEventsManager _eventsManager;
 
     @BeforeMethod
-    public void initMocks() throws NotFoundException {
+    public void initMocks() {
         Library applicationLibraryMock = org.easymock.EasyMock.createMock(Library.class);
         org.easymock.EasyMock.expect(applicationLibraryMock.getBasePackage()).andReturn("com.app").anyTimes();
         org.easymock.EasyMock.replay(applicationLibraryMock);

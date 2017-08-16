@@ -88,7 +88,7 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
   protected TapestryFacet createFacet() {
     final RunResult<TapestryFacet> runResult = new WriteCommandAction<TapestryFacet>(myFixture.getProject()) {
       @Override
-      protected void run(@NotNull final Result<TapestryFacet> result) throws Throwable {
+      protected void run(@NotNull final Result<TapestryFacet> result) {
         final TapestryFacetType facetType = TapestryFacetType.getInstance();
         final FacetManager facetManager = FacetManager.getInstance(myModule);
         final TapestryFacet facet = facetManager.addFacet(facetType, facetType.getPresentableName(), null);
@@ -109,7 +109,7 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     return runResult.getResultObject();
   }
 
-  protected void configureModule(JavaModuleFixtureBuilder moduleBuilder) throws Exception {
+  protected void configureModule(JavaModuleFixtureBuilder moduleBuilder) {
     moduleBuilder.addContentRoot(myFixture.getTempDirPath());
     moduleBuilder.addSourceRoot("");
     moduleBuilder.setMockJdkLevel(JavaModuleFixtureBuilder.MockJdkLevel.jdk15);
@@ -159,7 +159,7 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
   }
 
   @NotNull
-  protected VirtualFile initByComponent(boolean configureByTmlNotJava) throws IOException {
+  protected VirtualFile initByComponent(boolean configureByTmlNotJava) {
     VirtualFile javaFile = copyOrCreateComponentClassFile();
     final String tmlName = getElementTemplateFileName();
 
@@ -171,7 +171,7 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
   }
 
 
-  protected void checkResultByFile() throws Exception {
+  protected void checkResultByFile() {
     String afterFileName = getElementName() + Util.AFTER + getTemplateExtension();
     myFixture.checkResultByFile(afterFileName);
   }
@@ -180,7 +180,7 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     return new File(myFixture.getTestDataPath() + "/" + filePath);
   }
 
-  protected VirtualFile copyOrCreateComponentClassFile() throws IOException {
+  protected VirtualFile copyOrCreateComponentClassFile() {
     String existingComponentClassFile = getExistingComponentClassFileName();
     String targetPath = COMPONENTS_PACKAGE_PATH + getElementClassFileName();
     final VirtualFile destFile;
@@ -208,24 +208,24 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     return getFileByPath(fileName).exists() ? fileName : null;
   }
 
-  protected void addComponentToProject(String className) throws IOException {
+  protected void addComponentToProject(String className) {
     addElementToProject(COMPONENTS_PACKAGE_PATH, className, getAuxClassExtension());
   }
 
-  protected void addAbstractComponentToProject(String className) throws IOException {
+  protected void addAbstractComponentToProject(String className) {
     addElementToProject(ABSTRACT_COMPONENTS_PACKAGE_PATH, className, getAuxClassExtension());
   }
 
-  protected void addMixinToProject(String className) throws IOException {
+  protected void addMixinToProject(String className) {
     addElementToProject(MIXINS_PACKAGE_PATH, className, getAuxClassExtension());
   }
 
-  protected VirtualFile addPageToProject(String className) throws IOException {
+  protected VirtualFile addPageToProject(String className) {
     addElementToProject(PAGES_PACKAGE_PATH, className, getAuxClassExtension());
     return addElementToProject(PAGES_PACKAGE_PATH, className, getTemplateExtension());
   }
 
-  protected VirtualFile addElementToProject(String relativePath, String className, String ext) throws IOException {
+  protected VirtualFile addElementToProject(String relativePath, String className, String ext) {
     final int afterDotIndex = className.lastIndexOf('.');
     String fileText;
     if (afterDotIndex != -1) { // we want the element to be placed in the subpackage
@@ -244,7 +244,7 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     return addFileAndAllowTreeAccess(relativePath + className + ext, fileText);
   }
 
-  private VirtualFile addFileAndAllowTreeAccess(String targetPath, String fileText) throws IOException {
+  private VirtualFile addFileAndAllowTreeAccess(String targetPath, String fileText) {
     final PsiFile file = myFixture.addFileToProject(targetPath, fileText);
     Assert.assertNotNull(file);
     final VirtualFile virtualFile = file.getVirtualFile();

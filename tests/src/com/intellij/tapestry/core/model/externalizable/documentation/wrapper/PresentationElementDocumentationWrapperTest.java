@@ -40,7 +40,7 @@ public class PresentationElementDocumentationWrapperTest {
     }
 
     @Test
-    public void no_resource() throws Exception {
+    public void no_resource() {
         PresentationElementDocumentationWrapper wrapper = new PresentationElementDocumentationWrapper();
 
         // check description

@@ -6,8 +6,6 @@ import com.intellij.tapestry.psi.TmlHighlightingLexer;
 import com.intellij.tapestry.psi.TmlLexer;
 import com.intellij.testFramework.UsefulTestCase;
 
-import java.io.IOException;
-
 /**
  * @author Alexey Chmutov
  *         Date: 29.07.2009
@@ -36,15 +34,15 @@ public class TapestryLexerTest extends UsefulTestCase {
   }
 
 
-  private void doTest() throws IOException {
+  private void doTest() {
     doTest(new TmlLexer());
   }
 
-  private void doHighlightingTest() throws IOException {
+  private void doHighlightingTest() {
     doTest(new TmlHighlightingLexer());
   }
 
-  private void doTest(Lexer lexer) throws IOException {
+  private void doTest(Lexer lexer) {
     doTest(lexer, getTestInput(), getExpectedTextFilePath());
   }
 
@@ -56,7 +54,7 @@ public class TapestryLexerTest extends UsefulTestCase {
     return getDataSubpath() + getTestName(false) + Util.DOT_EXPECTED;
   }
 
-  private void doTest(Lexer lexer, String testText, String expectedTextFileName) throws IOException {
+  private void doTest(Lexer lexer, String testText, String expectedTextFileName) {
     lexer.start(testText);
     String result = "";
     for (; ;) {

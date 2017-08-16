@@ -38,7 +38,7 @@ public class Util {
   }
 
   @NotNull
-  protected static String getCommonTestDataFileText(@NotNull String fileName) throws IOException {
+  protected static String getCommonTestDataFileText(@NotNull String fileName) {
     return getFileText(getCommonTestDataPath() + "/" + fileName);
   }
 

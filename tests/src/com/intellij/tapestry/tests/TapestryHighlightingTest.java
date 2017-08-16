@@ -128,7 +128,7 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
     doTest(true);
   }
 
-  public void testPropertyReferences() throws Throwable {
+  public void testPropertyReferences() {
     myFixture.enableInspections(new UnusedPropertyInspection());
     myFixture.testHighlighting(true, true, true, getTestName(false) + ".properties", getTestName(false) + ".tml");
   }

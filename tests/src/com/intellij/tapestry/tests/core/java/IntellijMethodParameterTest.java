@@ -15,7 +15,7 @@ import org.testng.annotations.Test;
 public class IntellijMethodParameterTest extends BaseTestCase {
 
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
-    public void test_class_type(IdeaProjectTestFixture fixture) throws Exception {
+    public void test_class_type(IdeaProjectTestFixture fixture) {
 
 
         PsiParameter parameter = getJavaFacade(fixture).findClass("com.app.util.Class1", GlobalSearchScope.allScope(fixture.getProject())).findMethodsByName("method1", false)[0].getParameterList()
@@ -30,7 +30,7 @@ public class IntellijMethodParameterTest extends BaseTestCase {
     }
 
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
-    public void test_primitive_type(IdeaProjectTestFixture fixture) throws Exception {
+    public void test_primitive_type(IdeaProjectTestFixture fixture) {
 
 
         PsiParameter parameter = getJavaFacade(fixture).findClass("com.app.util.Class1", GlobalSearchScope.allScope(fixture.getProject())).findMethodsByName("method1", false)[0].getParameterList()
@@ -45,7 +45,7 @@ public class IntellijMethodParameterTest extends BaseTestCase {
     }
 
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
-    public void test_other_type(IdeaProjectTestFixture fixture) throws Exception {
+    public void test_other_type(IdeaProjectTestFixture fixture) {
 
 
         PsiParameter parameter = getJavaFacade(fixture).findClass("com.app.util.Class1", GlobalSearchScope.allScope(fixture.getProject())).findMethodsByName("method1", false)[0].getParameterList()

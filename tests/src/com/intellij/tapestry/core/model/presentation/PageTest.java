@@ -1,7 +1,6 @@
 package com.intellij.tapestry.core.model.presentation;
 
 import com.intellij.tapestry.core.TapestryProject;
-import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.core.mocks.JavaClassTypeMock;
 import com.intellij.tapestry.core.model.Library;
 import com.intellij.tapestry.core.resource.IResource;
@@ -26,7 +25,7 @@ public class PageTest {
     private Library _libraryMock;
 
     @BeforeMethod
-    public void initMocks() throws NotFoundException {
+    public void initMocks() {
         _classInRootPagesPackageMock = new JavaClassTypeMock("com.app.pages.SomeClass").setPublic(true).setDefaultConstructor(true);
 
         _resourceFinderMock = createMock(IResourceFinder.class);

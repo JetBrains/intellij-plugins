@@ -1,7 +1,6 @@
 package com.intellij.tapestry.core.model.presentation;
 
 import com.intellij.tapestry.core.TapestryProject;
-import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.mocks.JavaAnnotationMock;
@@ -40,7 +39,7 @@ public class PresentationLibraryElementTest {
     private Library _libraryNoRootPackageMock;
 
     @BeforeMethod
-    public void initMocks() throws NotFoundException {
+    public void initMocks() {
         File builderClassFileMock = org.easymock.EasyMock.createMock(File.class);
         org.easymock.EasyMock.expect(builderClassFileMock.lastModified()).andReturn(Long.MAX_VALUE).anyTimes();
         org.easymock.EasyMock.replay(builderClassFileMock);

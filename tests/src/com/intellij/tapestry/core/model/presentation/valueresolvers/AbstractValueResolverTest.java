@@ -5,19 +5,19 @@ import org.testng.annotations.Test;
 public class AbstractValueResolverTest {
 
     @Test
-    public void getPrefix_null() throws Exception {
+    public void getPrefix_null() {
         assert AbstractValueResolver.getPrefix(null, null) == null;
     }
 
     @Test
-    public void getPrefix_defined_prefix() throws Exception {
+    public void getPrefix_defined_prefix() {
         assert AbstractValueResolver.getPrefix("prefix:", "default").equals("prefix");
 
         assert AbstractValueResolver.getPrefix("prefix:value", "default").equals("prefix");
     }
 
     @Test
-    public void getPrefix_no_defined_prefix() throws Exception {
+    public void getPrefix_no_defined_prefix() {
         assert AbstractValueResolver.getPrefix(":", "default") == null;
 
         assert AbstractValueResolver.getPrefix(":value", "default") == null;
@@ -26,7 +26,7 @@ public class AbstractValueResolverTest {
     }
 
     @Test
-    public void getCleanValue_defined_prefix() throws Exception {
+    public void getCleanValue_defined_prefix() {
         assert AbstractValueResolver.getCleanValue("prefix:").equals("");
 
         assert AbstractValueResolver.getCleanValue("prefix: value ").equals("value");
@@ -39,7 +39,7 @@ public class AbstractValueResolverTest {
     }
 
     @Test
-    public void getCleanValue_no_defined_prefix() throws Exception {
+    public void getCleanValue_no_defined_prefix() {
         assert AbstractValueResolver.getCleanValue(":") == null;
 
         assert AbstractValueResolver.getCleanValue(": value ") == null;

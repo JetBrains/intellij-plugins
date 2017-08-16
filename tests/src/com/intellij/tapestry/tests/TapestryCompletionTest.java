@@ -212,15 +212,15 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     checkResultByFile();
   }
 
-  void doTestBasicCompletionVariants(@NonNls String... expectedItems) throws Throwable {
+  void doTestBasicCompletionVariants(@NonNls String... expectedItems) {
     doTestBasicCompletionVariants(false, expectedItems);
   }
 
-  void doTestBasicCompletionVariants(boolean contains, @NonNls String... expectedItems) throws Throwable {
+  void doTestBasicCompletionVariants(boolean contains, @NonNls String... expectedItems) {
     doTestCompletionVariants(CompletionType.BASIC, contains, expectedItems);
   }
 
-  void doTestCompletionVariants(final CompletionType type, boolean contains, @NonNls String... expectedItems) throws Throwable {
+  void doTestCompletionVariants(final CompletionType type, boolean contains, @NonNls String... expectedItems) {
     final LookupElement[] items = myFixture.complete(type);
     Assert.assertNotNull("No lookup was shown, probably there was only one lookup element that was inserted automatically", items);
     if (!contains) {

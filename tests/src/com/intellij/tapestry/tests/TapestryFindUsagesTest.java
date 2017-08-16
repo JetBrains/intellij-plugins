@@ -39,7 +39,7 @@ public class TapestryFindUsagesTest extends TapestryBaseTestCase {
     assertEquals(message, refsExpected, refs.length);
   }
 
-  private PsiReference[] findUsagesOfElementAtCaret() throws IOException {
+  private PsiReference[] findUsagesOfElementAtCaret() {
 
     FindUsagesProvider handler = LanguageFindUsages.INSTANCE.forLanguage(myFixture.getFile().getLanguage());
     PsiElement referenceTo = resolveReferenceAtCaretPosition();
