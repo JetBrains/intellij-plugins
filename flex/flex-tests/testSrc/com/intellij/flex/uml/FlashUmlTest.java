@@ -22,6 +22,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.uml.FlashUmlDataModel;
 import com.intellij.lang.javascript.uml.FlashUmlDependenciesSettingsOption;
 import com.intellij.lang.javascript.uml.FlashUmlProvider;
+import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -42,6 +43,7 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.SkipInHeadlessEnvironment;
 import com.intellij.uml.UmlGraphBuilderFactory;
+import com.intellij.uml.core.actions.ShowDiagramBase;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.JDOMCompare;
 import com.intellij.util.JdomKt;
@@ -132,22 +134,21 @@ public class FlashUmlTest extends CodeInsightTestCase {
     final LinkedHashMap<Integer, String> markers = JSTestUtils.extractPositionMarkers(getProject(), getEditor().getDocument());
     assertFalse(markers.isEmpty());
     DiagramBuilder builder = null;
-    int i = 1;
     for (Map.Entry<Integer, String> marker : markers.entrySet()) {
       getEditor().getCaretModel().moveToOffset(marker.getKey());
-      i++;
       String expectedPrefix = StringUtil.isNotEmpty(marker.getValue()) ? marker.getValue() : expectedFileNamePrefix;
 
-      final DataContext dataContext = DataManager.getInstance().getDataContext();
-      final DiagramProvider[] providers = DiagramProvider.findProviders(dataContext, "unknown");
+      DataContext dataContext = DataManager.getInstance().getDataContext(null);
+      AnActionEvent event = AnActionEvent.createFromDataContext(ActionPlaces.UNKNOWN, null, dataContext);
+      List<DiagramProvider> providers = ShowDiagramBase.findProviders(event).toList();
 
-      final FlashUmlProvider provider = ContainerUtil.findInstance(providers, FlashUmlProvider.class);
+      FlashUmlProvider provider = ContainerUtil.findInstance(providers, FlashUmlProvider.class);
       assertNotNull("Flash UML provider not found", provider);
 
-      final String actualOriginFqn =
-        provider.getVfsResolver().getQualifiedName(provider.getElementManager().findInDataContext(dataContext));
+      String actualOriginFqn = provider.getVfsResolver().getQualifiedName(
+        provider.getElementManager().findInDataContext(event.getDataContext()));
 
-      final Object actualOrigin = provider.getVfsResolver().resolveElementByFQN(actualOriginFqn, getProject());
+      Object actualOrigin = provider.getVfsResolver().resolveElementByFQN(actualOriginFqn, getProject());
       builder = UmlGraphBuilderFactory.create(myProject, provider, actualOrigin, null);
       Disposer.register(getTestRootDisposable(), builder);
       final DiagramDataModel<Object> model = builder.getDataModel();
