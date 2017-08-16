@@ -127,7 +127,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     checkWeHaveInCompletion(elements, "return", "function", "if");
   }
 
-  @JSTestOptions(value = JSTestOption.SelectFirstItem)
+  @JSTestOptions(selectLookupItem = 0)
   public final void testKeywordsInContext() throws Exception {
     VirtualFile files[] = new VirtualFile[]{
       getVirtualFile(BASE_PATH + getTestName(false) + ".js2"),
@@ -421,7 +421,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     assertNotNull(myItems);
   }
 
-  @JSTestOptions(value = JSTestOption.SelectFirstItem)
+  @JSTestOptions(selectLookupItem = 0)
   public final void testCompletePackage() throws Exception {
     doTest("");
   }
@@ -611,7 +611,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     doTest("");
   }
 
-  @JSTestOptions(value = JSTestOption.SelectFirstItem)
+  @JSTestOptions(selectLookupItem = 0)
   public void testCompleteOverriddenName() throws Exception {
     final LookupElement[] elements = doTest("");
     assertEquals(2, elements.length);
@@ -676,7 +676,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     doTestForFiles(files);
   }
 
-  @JSTestOptions({JSTestOption.SelectFirstItem})
+  @JSTestOptions(selectLookupItem = 0)
   public final void testSOE() throws Exception {
     defaultTest();
   }

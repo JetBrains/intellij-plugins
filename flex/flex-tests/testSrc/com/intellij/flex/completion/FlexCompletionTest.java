@@ -246,8 +246,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     assertTrue(elements != null && elements.length > 0);
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.SelectFirstItem})
+  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet}, selectLookupItem = 0)
   public final void testCompletionInMxml4() throws Exception {
     defaultTest();
   }
@@ -301,7 +300,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.SelectFirstItem})
+  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk}, selectLookupItem = 0)
   public void testMxmlColorAttributeValueCompletion1() throws Exception {
     defaultTest();
   }
@@ -324,8 +323,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.SelectFirstItem})
+  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk}, selectLookupItem = 0)
   public void testMxmlColorAttributeValueCompletion5() throws Exception {
     defaultTest();
   }
@@ -469,8 +467,8 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     doTestForFiles(vFiles, "", "as");
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.ClassNameCompletion, JSTestOption.SelectFirstItem})
+  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.ClassNameCompletion},
+    selectLookupItem = 0)
   public final void testCustomComponentCompletionInMxml3() throws Exception {
     final VirtualFile[] vFiles = new VirtualFile[]{getVirtualFile(getBasePath() + getTestName(false) + ".mxml")};
     doTestForFiles(vFiles, "", MXML_EXTENSION);
@@ -526,7 +524,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     doTestForFiles(files);
   }
 
-  @JSTestOptions({JSTestOption.SelectFirstItem})
+  @JSTestOptions(selectLookupItem = 0)
   public final void testAs2Completion4() throws Exception {
     VirtualFile[] files = new VirtualFile[]{getVirtualFile(BASE_PATH + getTestName(false) + ".as")};
     doTestForFiles(files);
@@ -595,7 +593,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     doTestForFiles(files, "", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.SelectFirstItem})
+  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk}, selectLookupItem = 0)
   public final void testSuggestOnlyDescendants() throws Exception {
     final String testName = getTestName(false);
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(true);
@@ -779,7 +777,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     doTest("", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.SelectFirstItem})
+  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk}, selectLookupItem = 0)
   public void testNamedInlineComponent2() throws Exception {
     doTest("", "mxml");
     LookupElement[] elements = doTest("", "mxml");
@@ -1010,7 +1008,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.SelectFirstItem})
+  @JSTestOptions(value = {JSTestOption.WithFlexFacet}, selectLookupItem = 0)
   public void testInFlex3RootTag() throws Exception {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(false);
     mxmlTest();
@@ -1076,7 +1074,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     doTestForFiles(vFiles, "", "mxml");
   }
 
-  @JSTestOptions(value = JSTestOption.SelectFirstItem)
+  @JSTestOptions(selectLookupItem = 0)
   public void testCompletionDoesNotCorruptCode() throws Exception {
     doTest("", "mxml");
   }
