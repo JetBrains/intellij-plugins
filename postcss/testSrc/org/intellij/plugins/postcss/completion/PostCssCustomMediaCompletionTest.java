@@ -47,7 +47,7 @@ public class PostCssCustomMediaCompletionTest extends PostCssCompletionTest {
 
   public void testCustomMediaPriorityWithImport() {
     myFixture.configureByFile("definition.pcss");
-    doTestPreferred(Pair.create("test", "definition.pcss:1"), Pair.create("z-in-file", "customMediaPriorityWithImport.pcss:3"));
+    doTestPreferred(Pair.create("z-in-file", "customMediaPriorityWithImport.pcss:3"), Pair.create("test", "definition.pcss:1"));
   }
 
   public void testCustomMediaPriorityWithoutImport() {
