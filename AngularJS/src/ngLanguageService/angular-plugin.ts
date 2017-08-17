@@ -1,6 +1,6 @@
 import {IDETypeScriptSession} from "./typings/typescript/util";
 import {TypeScriptLanguagePlugin} from "./typings/typescript/ts-plugin";
-import {createAngularSessionClass} from "./angular-session";
+import {createAngularSessionClass, getServiceDiags} from "./angular-session";
 import {LanguageService} from "./typings/types";
 
 class AngularLanguagePluginFactory implements LanguagePluginFactory {
@@ -59,6 +59,16 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
                     let ngHost = new ng.TypeScriptServiceHost(host, languageService);
                     let ngService: LanguageService = ng.createLanguageService(ngHost);
                     ngHost.setSite(ngService);
+
+                    extendEx(languageService, "getSemanticDiagnostics", (getSemanticDiagnosticsOld, args) => {
+                        let diags = getSemanticDiagnosticsOld.apply(ngService, args);
+                        if (diags == null) {
+                            diags = [];
+                        }
+                        let name = args[0];
+
+                        return diags.concat(getServiceDiags(ts_impl, ngService, ngHost, name, null, languageService));
+                    });
 
                     languageService["ngService"] = () => ngService;
                     languageService["ngHost"] = () => ngHost;

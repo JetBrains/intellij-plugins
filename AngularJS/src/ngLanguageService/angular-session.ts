@@ -14,6 +14,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
     let skipAngular = ts_impl["skipNg"];
     let refreshErrorCount = 0;
     let globalError = skipAngular ? skipAngular : null;
+
     abstract class AngularSession extends sessionClass {
 
         executeCommand(request: ts.server.protocol.Request): { response?: any; responseRequired?: boolean } {
@@ -176,7 +177,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
         }
 
         private appendHtmlDiagnostics(project: ts.server.Project
-                                          | null, fileNames: string[], result: ts.server.protocol.DiagnosticEventBody[]) {
+            | null, fileNames: string[], result: ts.server.protocol.DiagnosticEventBody[]) {
             for (let fileName of fileNames) {
                 fileName = ts_impl.normalizePath(fileName);
                 project = project == null ? this.getForceProject(fileName) : project;
@@ -233,19 +234,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
             let ngHost = languageService["ngHost"];
             return ngHost ? ngHost() : ngHost;
         }
-
-        appendPluginDiagnostics(project: ts.server.Project, diags: ts.Diagnostic[], normalizedFileName: string): ts.Diagnostic[] {
-            let result = this.getNgDiagnostics(project, normalizedFileName, null);
-            if (!result || result.length == 0) {
-                return diags;
-            }
-
-            if (!diags) {
-                diags = [];
-            }
-            return diags.concat(result);
-        }
-
+        
         private getNgDiagnostics(project: ts.server.Project, normalizedFileName: string, sourceFile: ts.SourceFile): ts.Diagnostic[] {
 
             let languageService = project != null && this.getProjectConfigPathEx(project) ? this.getLanguageService(project, false) : null;
@@ -261,40 +250,12 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
                 return [];
             }
 
-            let diags = [];
-            try {
-                let errors = ngLanguageService.getDiagnostics(normalizedFileName);
-                if (errors && errors.length) {
-                    let file = sourceFile != null ? sourceFile : (this.getNgHost(languageService) as any).getSourceFile(normalizedFileName);
-                    for (const error of errors) {
-                        diags.push({
-                            file,
-                            start: error.span.start,
-                            length: error.span.end - error.span.start,
-                            messageText: "Angular: " + error.message,
-                            category: ts_impl.DiagnosticCategory.Error,
-                            code: 0
-                        });
-                    }
-                }
-            } catch (err) {
-                this.logError(err, "ng diagnostics");
-                diags.push({
-                    file: null,
-                    code: -1,
-                    messageText: "Angular Language Service internal globalError: " + err.message,
-                    start: 0,
-                    length: 0,
-                    category: ts_impl.DiagnosticCategory.Warning
-                })
-            }
-
-            return diags;
+            return getServiceDiags(ts_impl, ngLanguageService, this.getNgHost(languageService), normalizedFileName, sourceFile, languageService);
         }
 
 
         appendPluginProjectDiagnostics(project: ts.server.Project, program: ts.Program, diags: ts.server.protocol.DiagnosticEventBody[]
-                                           | null): ts.server.protocol.DiagnosticEventBody[] | null {
+            | null): ts.server.protocol.DiagnosticEventBody[] | null {
             let result = super.appendPluginProjectDiagnostics(project, program, diags);
 
             if (!project || !program || this.tsVersion() == "2.0.0") {
@@ -421,4 +382,34 @@ export function extendEx(ObjectToExtend: typeof ts.server.Project, name: string,
     proto[name] = function (this: ts.server.Project) {
         return func.apply(this, [oldFunction, arguments]);
     }
+}
+
+export function getServiceDiags(ts_impl, ngLanguageService: LanguageService, ngHost: LanguageServiceHost, normalizedFileName: string, sourceFile: ts.SourceFile | null, languageService: ts.LanguageService) {
+    let diags = [];
+    try {
+        let errors = ngLanguageService.getDiagnostics(normalizedFileName);
+        if (errors && errors.length) {
+            let file = sourceFile != null ? sourceFile : (ngHost as any).getSourceFile(normalizedFileName);
+            for (const error of errors) {
+                diags.push({
+                    file,
+                    start: error.span.start,
+                    length: error.span.end - error.span.start,
+                    messageText: "Angular: " + error.message,
+                    category: ts_impl.DiagnosticCategory.Error,
+                    code: 0
+                });
+            }
+        }
+    } catch (err) {
+        diags.push({
+            file: null,
+            code: -1,
+            messageText: "Angular Language Service internal globalError: " + err.message,
+            start: 0,
+            length: 0,
+            category: ts_impl.DiagnosticCategory.Warning
+        })
+    }
+    return diags;
 }

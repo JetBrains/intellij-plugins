@@ -55,6 +55,14 @@ function createPluginClass(state) {
                     var ngHost = new ng_1.TypeScriptServiceHost(host, languageService);
                     var ngService = ng_1.createLanguageService(ngHost);
                     ngHost.setSite(ngService);
+                    extendEx(languageService, "getSemanticDiagnostics", function (getSemanticDiagnosticsOld, args) {
+                        var diags = getSemanticDiagnosticsOld.apply(ngService, args);
+                        if (diags == null) {
+                            diags = [];
+                        }
+                        var name = args[0];
+                        return diags.concat(angular_session_1.getServiceDiags(ts_impl, ngService, ngHost, name, null, languageService));
+                    });
                     languageService["ngService"] = function () { return ngService; };
                     languageService["ngHost"] = function () { return ngHost; };
                     return languageService;
