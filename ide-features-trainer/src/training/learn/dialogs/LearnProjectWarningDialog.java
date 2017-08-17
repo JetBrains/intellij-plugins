@@ -1,5 +1,6 @@
 package training.learn.dialogs;
 
+import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.StateRestoringCheckBox;
@@ -21,7 +22,7 @@ public class LearnProjectWarningDialog extends DialogWrapper {
     public LearnProjectWarningDialog(Project project) {
         super(project, true);
         myProject = project;
-        setTitle(LearnBundle.message("dialog.learnProjectWarning.title"));
+        setTitle(LearnBundle.INSTANCE.message("dialog.learnProjectWarning.title"));
         init();
     }
 
@@ -37,7 +38,7 @@ public class LearnProjectWarningDialog extends DialogWrapper {
         final JPanel panel = new JPanel(new GridBagLayout());
         final GridBagConstraints gbc = new GridBagConstraints();
 
-        final String warningMessage = LearnBundle.message("dialog.learnProjectWarning.message");
+        final String warningMessage = LearnBundle.INSTANCE.message("dialog.learnProjectWarning.message", ApplicationNamesInfo.getInstance().getFullProductName());
 
         gbc.insets = new Insets(4, 8, 4, 8);
         gbc.weighty = 1;

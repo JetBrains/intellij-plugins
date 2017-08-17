@@ -26,7 +26,7 @@ public class SdkProjectProblemDialog extends DialogWrapper {
         super(project, true);
         myProject = project;
         necessarySdkVersion = sdkVersion;
-        setTitle(LearnBundle.message("dialog.invalidSdk.title"));
+        setTitle(LearnBundle.INSTANCE.message("dialog.invalidSdk.title"));
         init();
     }
 
@@ -42,7 +42,7 @@ public class SdkProjectProblemDialog extends DialogWrapper {
         final JPanel panel = new JPanel(new GridBagLayout());
         final GridBagConstraints gbc = new GridBagConstraints();
 
-        final String warningMessage = LearnBundle.message("dialog.invalidSdk.message", necessarySdkVersion);
+        final String warningMessage = LearnBundle.INSTANCE.message("dialog.invalidSdk.message", necessarySdkVersion);
 
         gbc.insets = new Insets(4, 8, 4, 8);
         gbc.weighty = 1;
@@ -59,7 +59,7 @@ public class SdkProjectProblemDialog extends DialogWrapper {
         gbc.weightx = 0.0;
         gbc.gridwidth = 1;
         myCbOpenProjectSdkPreferences = new StateRestoringCheckBox();
-        myCbOpenProjectSdkPreferences.setText(LearnBundle.message("dialog.invalidSdk.checkbox"));
+        myCbOpenProjectSdkPreferences.setText(LearnBundle.INSTANCE.message("dialog.invalidSdk.checkbox"));
         panel.add(myCbOpenProjectSdkPreferences, gbc);
 
 

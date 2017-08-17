@@ -12,21 +12,20 @@ import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.openapi.wm.ex.IdeFrameEx
 import com.intellij.openapi.wm.impl.IdeFrameImpl
+import training.lang.LangManager
 import training.lang.LangSupport
 import training.learn.dialogs.LearnProjectWarningDialog
 import java.io.File
-import java.io.IOException
 
 /**
  * Created by karashevich on 24/09/15.
  */
 object NewLearnProjectUtil {
 
-    @Throws(IOException::class)
     fun createLearnProject(projectName: String, projectToClose: Project?, langSupport: LangSupport): Project? {
         val projectManager = ProjectManagerEx.getInstanceEx()
         val allProjectsDir = ProjectUtil.getBaseDir()
-        val moduleBuilder : ModuleBuilder = langSupport.getModuleBuilder()
+        val moduleBuilder: ModuleBuilder? = langSupport.getModuleBuilder()
 
         try {
             val projectFilePath = allProjectsDir + File.separator + projectName //Project dir
@@ -36,19 +35,15 @@ object NewLearnProjectUtil {
             val ideaDir = File(projectFilePath, Project.DIRECTORY_STORE_FOLDER)
             FileUtil.ensureExists(ideaDir)
 
-            val newProject: Project? =
-                    if (!moduleBuilder.isUpdate) moduleBuilder.createProject(projectName, projectFilePath)
-                    else projectToClose
-
-            if (newProject == null) return projectToClose!!
+            val newProject: Project =
+              LangManager.getInstance().getLangSupport().createProject(projectName, projectToClose) ?: return projectToClose!!
 
             langSupport.applyProjectSdk(newProject)
 
-            if (!ApplicationManager.getApplication().isUnitTestMode) {
+            if (!ApplicationManager.getApplication().isUnitTestMode)
                 newProject.save()
-            }
 
-            if (!moduleBuilder.validate(projectToClose, newProject)) {
+            if (!moduleBuilder?.validate(projectToClose, newProject)!!) {
                 return projectToClose
             }
 
@@ -56,7 +51,7 @@ object NewLearnProjectUtil {
             if (newProject !== projectToClose && !ApplicationManager.getApplication().isUnitTestMode && projectToClose != null)
                 NewProjectUtil.closePreviousProject(projectToClose)
 
-            moduleBuilder.commit(newProject, null, ModulesProvider.EMPTY_MODULES_PROVIDER)
+            moduleBuilder!!.commit(newProject, null, ModulesProvider.EMPTY_MODULES_PROVIDER)
 
             if (newProject !== projectToClose) {
                 ProjectUtil.updateLastProjectLocation(projectFilePath)
@@ -81,7 +76,7 @@ object NewLearnProjectUtil {
             return newProject
 
         } finally {
-            moduleBuilder.cleanup()
+            moduleBuilder?.cleanup()
         }
     }
 
