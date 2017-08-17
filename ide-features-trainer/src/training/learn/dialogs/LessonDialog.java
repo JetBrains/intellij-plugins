@@ -28,7 +28,7 @@ public class LessonDialog extends DialogWrapper {
 
     private void initialize() {
         setModal(false);
-        setTitle(LearnBundle.message("dialog.lessonDialog.title"));
+        setTitle(LearnBundle.INSTANCE.message("dialog.lessonDialog.title"));
         setCancelButtonText("&Ok");
         myLessonDialogPanel = new LessonDialogPanel();
         setHorizontalStretch(1.33f);

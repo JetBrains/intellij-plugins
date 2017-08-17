@@ -4,11 +4,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
-import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.util.PsiTreeUtil;
-
-import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Created by karashevich on 21/08/15.

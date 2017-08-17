@@ -21,7 +21,7 @@ import java.util.*
 /**
  * @author Sergey Karashevich
  */
-class JavaLangSupport : LangSupport {
+class JavaLangSupport : AbstractLangSupport() {
 
     private val acceptableLanguages = setOf("java", "kt", "html")
     override fun acceptLang(ext: String) = acceptableLanguages.contains(ext.toLowerCase())
@@ -40,7 +40,6 @@ class JavaLangSupport : LangSupport {
         //Set language level for LearnProject
         LanguageLevelProjectExtensionImpl.getInstanceImpl(newProject).currentLevel = LanguageLevel.JDK_1_6
     }
-
 
     override fun getModuleBuilder(): ModuleBuilder = JavaModuleBuilder()
 

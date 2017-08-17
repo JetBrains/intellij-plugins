@@ -14,48 +14,52 @@ import training.ui.LearnToolWindowFactory
  * @author Sergey Karashevich
  */
 
-@State(name = "TrainingLangManager", storages = arrayOf(Storage("trainingPlugin.xml")))
-class LangManager: PersistentStateComponent<LangManager.State> {
+@State(name = "LangManager", storages = arrayOf(Storage(value = "ide-features-trainer.xml")))
+class LangManager : PersistentStateComponent<LangManager.State> {
 
-    var supportedLanguagesExtensions: List<LanguageExtensionPoint<LangSupport>> = ExtensionPointName<LanguageExtensionPoint<LangSupport>>(LangSupport.EP_NAME).extensions.toList()
-    val myState = State()
+  var supportedLanguagesExtensions: List<LanguageExtensionPoint<LangSupport>> = ExtensionPointName<LanguageExtensionPoint<LangSupport>>(LangSupport.EP_NAME).extensions.toList()
+  var myState = State(null)
 
-    private var myLangSupport: LangSupport? = null
+  private var myLangSupport: LangSupport? = null
 
-    init {
-        if (supportedLanguagesExtensions.size == 1) {
-            val first = supportedLanguagesExtensions.first()
-            myLangSupport = first.instance
-            myState.languageName = first.language
-        }
+  init {
+    if (supportedLanguagesExtensions.size == 1) {
+      val first = supportedLanguagesExtensions.first()
+      myLangSupport = first.instance
+      myState.languageName = first.language
     }
+  }
 
-    companion object { fun getInstance(): LangManager = ServiceManager.getService(LangManager::class.java) }
+  companion object {
+    fun getInstance(): LangManager = ServiceManager.getService(LangManager::class.java)
+  }
 
-    fun isLangUndefined() = (myLangSupport == null)
+  fun isLangUndefined() = (myLangSupport == null)
 
-    //do not call this if LearnToolWindow with modules or learn views due to reinitViews
-    fun updateLangSupport(langSupport: LangSupport) {
-        myLangSupport = langSupport
-        CourseManager.getInstance().updateModules()
-        (LearnToolWindowFactory.getMyLearnToolWindow() ?: return).reinitViews()
-    }
+  //do not call this if LearnToolWindow with modules or learn views due to reinitViews
+  fun updateLangSupport(langSupport: LangSupport) {
+    myLangSupport = langSupport
+    myState.languageName  = supportedLanguagesExtensions.find { it.instance == langSupport }?.language ?: throw Exception("Unable to get language.")
+    CourseManager.getInstance().updateModules()
+    (LearnToolWindowFactory.myLearnToolWindow ?: return).reinitViews()
+  }
 
-    fun getLangSupport() = myLangSupport
+  fun getLangSupport(): LangSupport {
+    return myLangSupport ?: throw Exception("Lang support is not defined.")
+  }
 
-    override fun loadState(state: State?) {
-        if (state == null) return
-        myLangSupport = supportedLanguagesExtensions.find { langExt -> langExt.language == state.languageName }!!.instance
-    }
-    override fun getState() = myState
+  override fun loadState(state: State?) {
+    if (state == null) return
+    myLangSupport = supportedLanguagesExtensions.find { langExt -> langExt.language == state.languageName }!!.instance
+    myState.languageName = state.languageName
+  }
 
-    class State {
-        var languageName: String? = null
-    }
+  override fun getState() = myState
 
-    fun getLanguageDisplayName(): String? {
-        if (myState.languageName == null) return null
-        return (Language.findLanguageByID(myState.languageName) ?: return null).displayName
-    }
+  fun getLanguageDisplayName(): String {
+    if (myState.languageName == null) return "default"
+    return (Language.findLanguageByID(myState.languageName) ?: return "default").displayName
+  }
 
+  data class State(var languageName: String?)
 }

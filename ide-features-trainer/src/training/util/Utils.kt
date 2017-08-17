@@ -1,7 +1,6 @@
 package training.util
 
 import com.intellij.openapi.components.ServiceManager
-import training.ui.FeedbackManager
 import java.io.File
 import java.io.FileFilter
 
