@@ -40,6 +40,9 @@ import org.angularjs.settings.AngularSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import static com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorCheckerProvider.checkServiceIsAvailable;
 
 public class Angular2LanguageService extends TypeScriptServerServiceImpl {
@@ -111,9 +114,9 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
 
   @NotNull
   @Override
-  protected JSLanguageServiceCacheableCommand[] createGetErrCommand(@NotNull VirtualFile file, @NotNull String path) {
+  protected Collection<JSLanguageServiceCacheableCommand> createGetErrCommand(@NotNull VirtualFile file, @NotNull String path) {
     if (file.getFileType() == HtmlFileType.INSTANCE) {
-      return new JSLanguageServiceCacheableCommand[]{new Angular2GetHtmlErrorCommand(path)};
+      return Collections.singletonList(new Angular2GetHtmlErrorCommand(path));
     }
     return super.createGetErrCommand(file, path);
   }
