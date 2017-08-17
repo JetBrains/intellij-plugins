@@ -11,41 +11,6 @@ import java.io.IOException
 import javax.swing.SwingUtilities
 
 
-/**
- * This code is taken from *intellij-stats-collector SenderComponent.kt (author Yaroslav.Lepenkin)
- */
-
-//class SenderComponent(val sender: StatisticSender) : ApplicationComponent.Adapter() {
-//    private val LOG = Logger.getInstance(SenderComponent::class.java)
-//    private val disposable = Disposer.newDisposable()
-//    private val alarm = Alarm(Alarm.ThreadToUse.POOLED_THREAD, disposable)
-//    private val sendInterval = 5 * Time.MINUTE
-//
-//    private fun send() {
-//        if (!ApplicationManager.getApplication().isUnitTestMode) {
-//            try {
-//                sender.sendStatsData()
-//            }
-//            catch (e: Exception) {
-//                LOG.error(e.message)
-//            }
-//            finally {
-//                alarm.addRequest({ send() }, sendInterval)
-//            }
-//        }
-//    }
-//
-//    override fun disposeComponent() {
-//        Disposer.dispose(disposable)
-//    }
-//
-//    override fun initComponent() {
-//        ApplicationManager.getApplication().executeOnPooledThread {
-//            send()
-//        }
-//    }
-//}
-
 class FeedbackSender(val urlProvider: UrlProvider,
                      val requestService: RequestService) {
     

@@ -3,11 +3,10 @@ package training.check;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
-import com.intellij.psi.impl.source.tree.java.PsiForStatementImpl;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiForStatement;
 import com.intellij.psi.util.PsiTreeUtil;
-
-import java.util.Collection;
 
 /**
  * Created by karashevich on 21/08/15.

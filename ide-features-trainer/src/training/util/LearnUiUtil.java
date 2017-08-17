@@ -26,144 +26,144 @@ import java.util.ArrayList;
  */
 public class LearnUiUtil {
 
-    public enum IdeComponent {
-        EDITOR,
-        PROJECT_TREE,
-        STATUS_BAR,
-        NAVIGATION_BAR,
-        TOOLBAR
+  public enum IdeComponent {
+    EDITOR,
+    PROJECT_TREE,
+    STATUS_BAR,
+    NAVIGATION_BAR,
+    TOOLBAR
+  }
+
+  public static final LearnUiUtil INSTANCE = new LearnUiUtil();
+
+  LearnUiUtil() {
+
+  }
+
+  public static LearnUiUtil getInstance() {
+    return INSTANCE;
+  }
+
+  public void drawIcon(Project project, Editor editor) throws IOException {
+    final IdeFrameImpl frame = WindowManagerEx.getInstanceEx().getFrame(project);
+    final IdeRootPane ideRootPane = (IdeRootPane) frame.getRootPane();
+    final JComponent glassPane = (JComponent) ideRootPane.getGlassPane();
+
+    java.util.List<Component> allComponents = getAllComponents(ideRootPane);
+
+    JBLayeredPane jblp = null;
+    for (Component cmp : allComponents) {
+      if (cmp instanceof JBLayeredPane) {
+        jblp = (JBLayeredPane) cmp;
+        break;
+      }
     }
 
-    public static final LearnUiUtil INSTANCE = new LearnUiUtil();
-
-    LearnUiUtil(){
-
-    }
-
-    public static LearnUiUtil getInstance(){
-        return INSTANCE;
-    }
-
-    public void drawIcon(Project project, Editor editor) throws IOException {
-        final IdeFrameImpl frame = WindowManagerEx.getInstanceEx().getFrame(project);
-        final IdeRootPane ideRootPane = (IdeRootPane)frame.getRootPane();
-        final JComponent glassPane = (JComponent) ideRootPane.getGlassPane();
-
-        java.util.List<Component> allComponents = getAllComponents(ideRootPane);
-
-        JBLayeredPane jblp = null;
-        for (Component cmp : allComponents) {
-            if(cmp instanceof JBLayeredPane) {
-                jblp = (JBLayeredPane) cmp;
-                break;
-            }
-        }
-
-        final BufferedImage image = MyClassLoader.getInstance().getImageResourceAsStream("secure25.png");
+    final BufferedImage image = DataLoader.INSTANCE.getBufferedImage("secure25.png");
 //        final Icon icon = IconLoader.getIcon("/img/secure25.png");
 
-        JComponent imageComp = new JComponent(){
-            @Override
-            public void paintComponent(Graphics g) {
-                Graphics2D g2d = (Graphics2D) g;
-                AlphaComposite ac = java.awt.AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5F);
-                g2d.setComposite(ac);
-                g2d.drawImage(image, null, 0, 0);
+    JComponent imageComp = new JComponent() {
+      @Override
+      public void paintComponent(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5F);
+        g2d.setComposite(ac);
+        g2d.drawImage(image, null, 0, 0);
 //                icon.paintIcon(this, g2d, 0, 0);
-            }
-        };
-        final double x0 = editor.getComponent().getVisibleRect().getX() + editor.getComponent().getBounds().getWidth() - 50;
-        final double y0 = editor.getComponent().getVisibleRect().getY() + editor.getComponent().getBounds().getHeight() - 55;
+      }
+    };
+    final double x0 = editor.getComponent().getVisibleRect().getX() + editor.getComponent().getBounds().getWidth() - 50;
+    final double y0 = editor.getComponent().getVisibleRect().getY() + editor.getComponent().getBounds().getHeight() - 55;
 
 //        final double x0 = editor.getComponent().getVisibleRect().getX() + editor.getComponent().getBounds().getWidth() - icon.getIconWidth() - 15;
 //        final double y0 = editor.getComponent().getVisibleRect().getY() + editor.getComponent().getBounds().getHeight() - icon.getIconHeight() - 15;
 
 //        imageComp.setBounds((int) x0, (int) y0, icon.getIconWidth(), icon.getIconHeight());
-        imageComp.setBounds((int) x0, (int) y0, image.getWidth(), image.getHeight());
+    imageComp.setBounds((int) x0, (int) y0, image.getWidth(), image.getHeight());
 
-        assert jblp != null;
-        jblp.add(imageComp, 0);
-        jblp.revalidate();
-        jblp.repaint();
-    }
-
-
-    public void highlightIdeComponent(IdeComponent ic, Project project){
-
-        JBColor color = new JBColor(new Color(39, 52, 126), new Color(39, 52, 126));
-        highlightIdeComponent(ic, project, color);
-    }
+    assert jblp != null;
+    jblp.add(imageComp, 0);
+    jblp.revalidate();
+    jblp.repaint();
+  }
 
 
-    public void highlightIdeComponent(IdeComponent ic, Project project, JBColor color){
+  public void highlightIdeComponent(IdeComponent ic, Project project) {
 
-        Component myComponent = null;
-        String componentName = null;
+    JBColor color = new JBColor(new Color(39, 52, 126), new Color(39, 52, 126));
+    highlightIdeComponent(ic, project, color);
+  }
 
-        final IdeFrameImpl frame = WindowManagerEx.getInstanceEx().getFrame(project);
-        final IdeRootPane ideRootPane = (IdeRootPane)frame.getRootPane();
-        final JComponent glassPane = (JComponent) ideRootPane.getGlassPane();
 
-        java.util.List<Component> allComponents = getAllComponents(ideRootPane);
+  public void highlightIdeComponent(IdeComponent ic, Project project, JBColor color) {
 
-        switch (ic){
-            case EDITOR:
-                for (Component cmp : allComponents) {
-                    if (cmp instanceof EditorsSplitters) {
-                        myComponent = (JComponent) cmp;
-                        componentName = "Editor Area";
-                        break;
-                    }
+    Component myComponent = null;
+    String componentName = null;
 
-                }
+    final IdeFrameImpl frame = WindowManagerEx.getInstanceEx().getFrame(project);
+    final IdeRootPane ideRootPane = (IdeRootPane) frame.getRootPane();
+    final JComponent glassPane = (JComponent) ideRootPane.getGlassPane();
 
-                if (myComponent != null) {
-                    highlightComponent(myComponent, componentName, ideRootPane, glassPane, color, true, true);
-                }
-                break;
-            case NAVIGATION_BAR:
-                for (Component cmp : allComponents) {
-                    if (cmp instanceof NavBarRootPaneExtension.NavBarWrapperPanel) {
-                        myComponent = (JComponent) cmp;
-                        componentName = "Navigation Bar";
-                        break;
-                    }
+    java.util.List<Component> allComponents = getAllComponents(ideRootPane);
 
-                }
-                break;
-            case PROJECT_TREE:
+    switch (ic) {
+      case EDITOR:
+        for (Component cmp : allComponents) {
+          if (cmp instanceof EditorsSplitters) {
+            myComponent = (JComponent) cmp;
+            componentName = "Editor Area";
+            break;
+          }
 
-                for (Component cmp : allComponents) {
-                    if (cmp instanceof ProjectViewTree) {
-                        myComponent = (JComponent) cmp;
-                        componentName = "Project Tree Area";
-                        break;
-                    }
-
-                }
-
-                if (myComponent != null){
-                    highlightComponent(myComponent, componentName, ideRootPane, glassPane, color, true, true);
-                }
-                break;
-
-            case STATUS_BAR:
-                for (Component cmp : allComponents) {
-                    if (cmp instanceof IdeStatusBarImpl) {
-                        myComponent = (JComponent) cmp;
-                        componentName = "Status Bar";
-                        break;
-                    }
-                }
-
-                if (myComponent != null) {
-                    final Component finalMyComponent = myComponent;
-                    HighlightComponent highlightComponent = highlightComponent(finalMyComponent, null, ideRootPane, glassPane, new JBColor(new Color(9, 103, 202, 123), new Color(9, 103, 202, 123)), false, true);
-//                    drawArrowFrom(glassPane, finalMyComponent, highlightComponent);
-                }
-
-                break;
         }
+
+        if (myComponent != null) {
+          highlightComponent(myComponent, componentName, ideRootPane, glassPane, color, true, true);
+        }
+        break;
+      case NAVIGATION_BAR:
+        for (Component cmp : allComponents) {
+          if (cmp instanceof NavBarRootPaneExtension.NavBarWrapperPanel) {
+            myComponent = (JComponent) cmp;
+            componentName = "Navigation Bar";
+            break;
+          }
+
+        }
+        break;
+      case PROJECT_TREE:
+
+        for (Component cmp : allComponents) {
+          if (cmp instanceof ProjectViewTree) {
+            myComponent = (JComponent) cmp;
+            componentName = "Project Tree Area";
+            break;
+          }
+
+        }
+
+        if (myComponent != null) {
+          highlightComponent(myComponent, componentName, ideRootPane, glassPane, color, true, true);
+        }
+        break;
+
+      case STATUS_BAR:
+        for (Component cmp : allComponents) {
+          if (cmp instanceof IdeStatusBarImpl) {
+            myComponent = (JComponent) cmp;
+            componentName = "Status Bar";
+            break;
+          }
+        }
+
+        if (myComponent != null) {
+          final Component finalMyComponent = myComponent;
+          HighlightComponent highlightComponent = highlightComponent(finalMyComponent, null, ideRootPane, glassPane, new JBColor(new Color(9, 103, 202, 123), new Color(9, 103, 202, 123)), false, true);
+//                    drawArrowFrom(glassPane, finalMyComponent, highlightComponent);
+        }
+
+        break;
+    }
 
 //        final HighlightComponent highlightComponent = new HighlightComponent(color, componentName);
 //
@@ -209,60 +209,60 @@ public class LearnUiUtil {
 //                glassPane.repaint();
 //            }
 //        });
-    }
+  }
 
-    public static HighlightComponent highlightComponent(Component myComponent, String componentName, final IdeRootPane ideRootPane, final JComponent glassPane, JBColor color, final boolean showCloseButton, boolean showNameOfComponent) {
-        final HighlightComponent hc = new HighlightComponent(color, componentName, null, myComponent.getWidth(), showCloseButton, showNameOfComponent);
-        hc.setCloseButtonAction(new Runnable() {
-            @Override
-            public void run() {
-                glassPane.remove(hc);
-                glassPane.revalidate();
-                glassPane.repaint();
-            }
-        });
-        glassPane.setVisible(true);
-
-        final Point pt = SwingUtilities.convertPoint(myComponent, new Point(0, 0), ideRootPane);
-        hc.setBounds(pt.x, pt.y, myComponent.getWidth(), myComponent.getHeight());
-        glassPane.add(hc);
+  public static HighlightComponent highlightComponent(Component myComponent, String componentName, final IdeRootPane ideRootPane, final JComponent glassPane, JBColor color, final boolean showCloseButton, boolean showNameOfComponent) {
+    final HighlightComponent hc = new HighlightComponent(color, componentName, null, myComponent.getWidth(), showCloseButton, showNameOfComponent);
+    hc.setCloseButtonAction(new Runnable() {
+      @Override
+      public void run() {
+        glassPane.remove(hc);
         glassPane.revalidate();
         glassPane.repaint();
+      }
+    });
+    glassPane.setVisible(true);
 
-        final Component finalMyComponent1 = myComponent;
-        myComponent.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentHidden(ComponentEvent componentEvent) {
-                glassPane.removeAll();
-            }
+    final Point pt = SwingUtilities.convertPoint(myComponent, new Point(0, 0), ideRootPane);
+    hc.setBounds(pt.x, pt.y, myComponent.getWidth(), myComponent.getHeight());
+    glassPane.add(hc);
+    glassPane.revalidate();
+    glassPane.repaint();
 
-            @Override
-            public void componentMoved(ComponentEvent componentEvent) {
-                final Point pt = SwingUtilities.convertPoint(finalMyComponent1, new Point(0, 0), ideRootPane);
-                hc.setBounds(pt.x, pt.y, finalMyComponent1.getWidth(), finalMyComponent1.getHeight());
-                glassPane.revalidate();
-                glassPane.repaint();
-            }
+    final Component finalMyComponent1 = myComponent;
+    myComponent.addComponentListener(new ComponentAdapter() {
+      @Override
+      public void componentHidden(ComponentEvent componentEvent) {
+        glassPane.removeAll();
+      }
 
-            @Override
-            public void componentResized(ComponentEvent componentEvent) {
-                final Point pt = SwingUtilities.convertPoint(finalMyComponent1, new Point(0, 0), ideRootPane);
-                hc.setBounds(pt.x, pt.y, finalMyComponent1.getWidth(), finalMyComponent1.getHeight());
-                glassPane.revalidate();
-                glassPane.repaint();
-            }
+      @Override
+      public void componentMoved(ComponentEvent componentEvent) {
+        final Point pt = SwingUtilities.convertPoint(finalMyComponent1, new Point(0, 0), ideRootPane);
+        hc.setBounds(pt.x, pt.y, finalMyComponent1.getWidth(), finalMyComponent1.getHeight());
+        glassPane.revalidate();
+        glassPane.repaint();
+      }
 
-            @Override
-            public void componentShown(ComponentEvent componentEvent) {
-                final Point pt = SwingUtilities.convertPoint(finalMyComponent1, new Point(0, 0), ideRootPane);
-                hc.setBounds(pt.x, pt.y, finalMyComponent1.getWidth(), finalMyComponent1.getHeight());
-                glassPane.revalidate();
-                glassPane.repaint();
-            }
-        });
+      @Override
+      public void componentResized(ComponentEvent componentEvent) {
+        final Point pt = SwingUtilities.convertPoint(finalMyComponent1, new Point(0, 0), ideRootPane);
+        hc.setBounds(pt.x, pt.y, finalMyComponent1.getWidth(), finalMyComponent1.getHeight());
+        glassPane.revalidate();
+        glassPane.repaint();
+      }
 
-        return hc;
-    }
+      @Override
+      public void componentShown(ComponentEvent componentEvent) {
+        final Point pt = SwingUtilities.convertPoint(finalMyComponent1, new Point(0, 0), ideRootPane);
+        hc.setBounds(pt.x, pt.y, finalMyComponent1.getWidth(), finalMyComponent1.getHeight());
+        glassPane.revalidate();
+        glassPane.repaint();
+      }
+    });
+
+    return hc;
+  }
 
 //    private void drawArrowFrom(final JComponent glassPane, final Component finalMyComponent, @Nullable final HighlightComponent highlightComponent) {
 //        final Point2D p1 = new Point2D.Double(finalMyComponent.getLocation().getX() + 30.0d, finalMyComponent.getLocation().getY());
@@ -385,43 +385,42 @@ public class LearnUiUtil {
 //    }
 
 
-    public void getEditorWindow(final Project project){
+  public void getEditorWindow(final Project project) {
 //        WindowManager.getInstance().getIdeFrame(project).getComponent().setBackground(Color.PINK);
 //        EditorWindow currentWindow = FileEditorManagerImpl.getInstanceEx(project).getSplitters().getCurrentWindow();
-        final IdeFrameImpl frame = WindowManagerEx.getInstanceEx().getFrame(project);
-        final IdeRootPane ideRootPane = (IdeRootPane)frame.getRootPane();
+    final IdeFrameImpl frame = WindowManagerEx.getInstanceEx().getFrame(project);
+    final IdeRootPane ideRootPane = (IdeRootPane) frame.getRootPane();
 
-        JComponent editorAreaComponent = null;
-        final HighlightComponent myHighlightComponent = new HighlightComponent(new Color(19, 36, 75), "Editor Area", "Layout managers have different strengths and weaknesses. This section discusses some common layout scenarios and which layout managers might work for each scenario. However, once again, it is strongly recommended that you use a builder tool to create your layout managers, such as the NetBeans IDE Matisse GUI builder, rather than coding managers by hand. The scenarios listed below are given for information purposes, in case you are curious about which type of manager is used in different situations, or in case you absolutely must code your manager manually.\n" +
-                "\n" +
-                "If none of the layout managers we discuss is right for your situation and you cannot use a builder tool, feel free to use other layout managers that you may write or find. Also keep in mind that flexible layout managers such as GridBagLayout and SpringLayout can fulfill many layout needs.\n" +
-                "\n", null, false, true);
+    JComponent editorAreaComponent = null;
+    final HighlightComponent myHighlightComponent = new HighlightComponent(new Color(19, 36, 75), "Editor Area", "Layout managers have different strengths and weaknesses. This section discusses some common layout scenarios and which layout managers might work for each scenario. However, once again, it is strongly recommended that you use a builder tool to create your layout managers, such as the NetBeans IDE Matisse GUI builder, rather than coding managers by hand. The scenarios listed below are given for information purposes, in case you are curious about which type of manager is used in different situations, or in case you absolutely must code your manager manually.\n" +
+            "\n" +
+            "If none of the layout managers we discuss is right for your situation and you cannot use a builder tool, feel free to use other layout managers that you may write or find. Also keep in mind that flexible layout managers such as GridBagLayout and SpringLayout can fulfill many layout needs.\n" +
+            "\n", null, false, true);
 
 //        final JRootPane rootPane = SwingUtilities.getRootPane(components);
-        final JComponent glassPane = (JComponent) ideRootPane.getGlassPane();
+    final JComponent glassPane = (JComponent) ideRootPane.getGlassPane();
 
 
-        final HighlightComponent myHighlightComponent2 = new HighlightComponent(new Color(38, 66, 147), "Project Tree Area", "Here is the description of the components", null, false, true);
-        JComponent componentProjectWindow = null;
+    final HighlightComponent myHighlightComponent2 = new HighlightComponent(new Color(38, 66, 147), "Project Tree Area", "Here is the description of the components", null, false, true);
+    JComponent componentProjectWindow = null;
 
-        java.util.List<Component> allComponents = getAllComponents(ideRootPane);
-        for (Component cmp : allComponents) {
-            if (cmp instanceof ProjectViewTree) {
-                componentProjectWindow = (JComponent) cmp;
-            } else if (cmp instanceof EditorsSplitters) {
-                editorAreaComponent = (JComponent) cmp;
-            }
-        }
+    java.util.List<Component> allComponents = getAllComponents(ideRootPane);
+    for (Component cmp : allComponents) {
+      if (cmp instanceof ProjectViewTree) {
+        componentProjectWindow = (JComponent) cmp;
+      } else if (cmp instanceof EditorsSplitters) {
+        editorAreaComponent = (JComponent) cmp;
+      }
+    }
 
-        if(componentProjectWindow != null) {
-            final Point pt = SwingUtilities.convertPoint(componentProjectWindow, new Point(0, 0), ideRootPane);
-            myHighlightComponent2.setBounds(pt.x, pt.y, componentProjectWindow.getWidth(), componentProjectWindow.getHeight());
-            glassPane.add(myHighlightComponent2);
+    if (componentProjectWindow != null) {
+      final Point pt = SwingUtilities.convertPoint(componentProjectWindow, new Point(0, 0), ideRootPane);
+      myHighlightComponent2.setBounds(pt.x, pt.y, componentProjectWindow.getWidth(), componentProjectWindow.getHeight());
+      glassPane.add(myHighlightComponent2);
 
-            glassPane.revalidate();
-            glassPane.repaint();
-        }
-
+      glassPane.revalidate();
+      glassPane.repaint();
+    }
 
 
 //        IdeEventQueue.getInstance().addDispatcher(new IdeEventQueue.EventDispatcher() {
@@ -440,34 +439,34 @@ public class LearnUiUtil {
 //            }
 //        }, project);
 
-        glassPane.requestFocus(false);
-        MouseListener mouseListener = new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent mouseEvent) {
-                if (myHighlightComponent.getBounds().contains(mouseEvent.getPoint())) {
-                    mouseEvent.consume();
-                }
-            }
+    glassPane.requestFocus(false);
+    MouseListener mouseListener = new MouseAdapter() {
+      @Override
+      public void mousePressed(MouseEvent mouseEvent) {
+        if (myHighlightComponent.getBounds().contains(mouseEvent.getPoint())) {
+          mouseEvent.consume();
+        }
+      }
 
-            @Override
-            public void mouseReleased(MouseEvent mouseEvent) {
-                if (myHighlightComponent.getBounds().contains(mouseEvent.getPoint())) {
-                    mouseEvent.consume();
-                }
-            }
+      @Override
+      public void mouseReleased(MouseEvent mouseEvent) {
+        if (myHighlightComponent.getBounds().contains(mouseEvent.getPoint())) {
+          mouseEvent.consume();
+        }
+      }
 
-            @Override
-            public void mouseClicked(MouseEvent mouseEvent) {
-                if (myHighlightComponent.getBounds().contains(mouseEvent.getPoint())) {
-                    mouseEvent.consume();
-                } else {
-                    Point glassPanePoint = mouseEvent.getPoint();
-                    Container container = ideRootPane.getContentPane();
-                    JLayeredPane layeredPane = ideRootPane.getLayeredPane();
-                    Point containerPoint = SwingUtilities.convertPoint(
-                            glassPane,
-                            glassPanePoint,
-                            container);
+      @Override
+      public void mouseClicked(MouseEvent mouseEvent) {
+        if (myHighlightComponent.getBounds().contains(mouseEvent.getPoint())) {
+          mouseEvent.consume();
+        } else {
+          Point glassPanePoint = mouseEvent.getPoint();
+          Container container = ideRootPane.getContentPane();
+          JLayeredPane layeredPane = ideRootPane.getLayeredPane();
+          Point containerPoint = SwingUtilities.convertPoint(
+                  glassPane,
+                  glassPanePoint,
+                  container);
 
 //                    Component component2 =
 //                            SwingUtilities.getDeepestComponentAt(
@@ -476,82 +475,81 @@ public class LearnUiUtil {
 //                                    containerPoint.y);
 
 
-                    Point componentPoint = SwingUtilities.convertPoint(glassPane, mouseEvent.getPoint(), layeredPane);
+          Point componentPoint = SwingUtilities.convertPoint(glassPane, mouseEvent.getPoint(), layeredPane);
 //                    layeredPane.dispatchEvent(new MouseEvent(layeredPane,
-                    MouseEvent me = new MouseEvent(layeredPane.getComponentAt(componentPoint),
-                            mouseEvent.getID(),
-                            mouseEvent.getWhen(),
-                            mouseEvent.getModifiers(),
-                            componentPoint.x,
-                            componentPoint.y,
-                            mouseEvent.getClickCount(),
-                            mouseEvent.isPopupTrigger());
+          MouseEvent me = new MouseEvent(layeredPane.getComponentAt(componentPoint),
+                  mouseEvent.getID(),
+                  mouseEvent.getWhen(),
+                  mouseEvent.getModifiers(),
+                  componentPoint.x,
+                  componentPoint.y,
+                  mouseEvent.getClickCount(),
+                  mouseEvent.isPopupTrigger());
 
-                    IdeFocusManager.findInstance().getFocusOwner();
-                    layeredPane.getComponentAt(componentPoint).dispatchEvent(me);
-                }
+          IdeFocusManager.findInstance().getFocusOwner();
+          layeredPane.getComponentAt(componentPoint).dispatchEvent(me);
+        }
 
 
-            }
+      }
 
-        };
+    };
 //        glassPane.addMouseListener(mouseListener);
-        ((IdeGlassPaneImpl) glassPane).addMousePreprocessor(mouseListener, project);
+    ((IdeGlassPaneImpl) glassPane).addMousePreprocessor(mouseListener, project);
 
-        if (editorAreaComponent != null) {
-            final Point pt = SwingUtilities.convertPoint(editorAreaComponent, new Point(0, 0), ideRootPane);
-            myHighlightComponent.setBounds(pt.x, pt.y, editorAreaComponent.getWidth(), editorAreaComponent.getHeight());
-            glassPane.add(myHighlightComponent);
+    if (editorAreaComponent != null) {
+      final Point pt = SwingUtilities.convertPoint(editorAreaComponent, new Point(0, 0), ideRootPane);
+      myHighlightComponent.setBounds(pt.x, pt.y, editorAreaComponent.getWidth(), editorAreaComponent.getHeight());
+      glassPane.add(myHighlightComponent);
 
-            glassPane.revalidate();
-            glassPane.repaint();
+      glassPane.revalidate();
+      glassPane.repaint();
 
-            final JComponent finalEditorAreaComponent = editorAreaComponent;
-            editorAreaComponent.addComponentListener(new ComponentAdapter() {
-                @Override
-                public void componentHidden(ComponentEvent componentEvent) {
-                    glassPane.removeAll();
-                }
-
-                @Override
-                public void componentMoved(ComponentEvent componentEvent) {
-                    final Point pt = SwingUtilities.convertPoint(finalEditorAreaComponent, new Point(0, 0), ideRootPane);
-                    myHighlightComponent.setBounds(pt.x, pt.y, finalEditorAreaComponent.getWidth(), finalEditorAreaComponent.getHeight());
-                    glassPane.revalidate();
-                    glassPane.repaint();
-                }
-
-                @Override
-                public void componentResized(ComponentEvent componentEvent) {
-                    final Point pt = SwingUtilities.convertPoint(finalEditorAreaComponent, new Point(0, 0), ideRootPane);
-                    myHighlightComponent.setBounds(pt.x, pt.y, finalEditorAreaComponent.getWidth(), finalEditorAreaComponent.getHeight());
-                    glassPane.revalidate();
-                    glassPane.repaint();
-                }
-
-                @Override
-                public void componentShown(ComponentEvent componentEvent) {
-                    final Point pt = SwingUtilities.convertPoint(finalEditorAreaComponent, new Point(0, 0), ideRootPane);
-                    myHighlightComponent.setBounds(pt.x, pt.y, finalEditorAreaComponent.getWidth(), finalEditorAreaComponent.getHeight());
-                    glassPane.revalidate();
-                    glassPane.repaint();
-                }
-            });
+      final JComponent finalEditorAreaComponent = editorAreaComponent;
+      editorAreaComponent.addComponentListener(new ComponentAdapter() {
+        @Override
+        public void componentHidden(ComponentEvent componentEvent) {
+          glassPane.removeAll();
         }
 
-    }
-
-
-
-    public static java.util.List<Component> getAllComponents(final Container c) {
-        Component[] comps = c.getComponents();
-        java.util.List<Component> compList = new ArrayList<Component>();
-        for (Component comp : comps) {
-            compList.add(comp);
-            if (comp instanceof Container) {
-                compList.addAll(getAllComponents((Container) comp));
-            }
+        @Override
+        public void componentMoved(ComponentEvent componentEvent) {
+          final Point pt = SwingUtilities.convertPoint(finalEditorAreaComponent, new Point(0, 0), ideRootPane);
+          myHighlightComponent.setBounds(pt.x, pt.y, finalEditorAreaComponent.getWidth(), finalEditorAreaComponent.getHeight());
+          glassPane.revalidate();
+          glassPane.repaint();
         }
-        return compList;
+
+        @Override
+        public void componentResized(ComponentEvent componentEvent) {
+          final Point pt = SwingUtilities.convertPoint(finalEditorAreaComponent, new Point(0, 0), ideRootPane);
+          myHighlightComponent.setBounds(pt.x, pt.y, finalEditorAreaComponent.getWidth(), finalEditorAreaComponent.getHeight());
+          glassPane.revalidate();
+          glassPane.repaint();
+        }
+
+        @Override
+        public void componentShown(ComponentEvent componentEvent) {
+          final Point pt = SwingUtilities.convertPoint(finalEditorAreaComponent, new Point(0, 0), ideRootPane);
+          myHighlightComponent.setBounds(pt.x, pt.y, finalEditorAreaComponent.getWidth(), finalEditorAreaComponent.getHeight());
+          glassPane.revalidate();
+          glassPane.repaint();
+        }
+      });
     }
+
+  }
+
+
+  public static java.util.List<Component> getAllComponents(final Container c) {
+    Component[] comps = c.getComponents();
+    java.util.List<Component> compList = new ArrayList<Component>();
+    for (Component comp : comps) {
+      compList.add(comp);
+      if (comp instanceof Container) {
+        compList.addAll(getAllComponents((Container) comp));
+      }
+    }
+    return compList;
+  }
 }

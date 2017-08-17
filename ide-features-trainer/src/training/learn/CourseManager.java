@@ -7,7 +7,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTypeId;
@@ -26,11 +26,10 @@ import training.actions.OpenLessonAction;
 import training.lang.LangManager;
 import training.lang.LangSupport;
 import training.learn.exceptons.*;
+import training.learn.lesson.Lesson;
 import training.learn.log.GlobalLessonLog;
-import training.ui.FeedbackManager;
 import training.ui.LearnToolWindow;
 import training.ui.LearnToolWindowFactory;
-import training.ui.views.FeedbackFormPanel;
 import training.ui.views.LearnPanel;
 import training.ui.views.ModulesPanel;
 import training.util.GenModuleXml;
@@ -43,18 +42,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * @author Sergey Karashevich
- */
-@State(
-        name = "TrainingPluginModules",
-        storages = {
-                @Storage(
-                        file = StoragePathMacros.APP_CONFIG + "/trainingPlugin.xml"
-                )
-        }
-)
-public class CourseManager implements PersistentStateComponent<CourseManager.State> {
+import static training.util.GenModuleXml.MODULE_MODULES_PATH;
+
+public class CourseManager {
 
     private Project learnProject;
     private LearnPanel myLearnPanel;
@@ -63,7 +53,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     public static final String NOTIFICATION_ID = "Training plugin";
 
     CourseManager() {
-        if (myState.modules == null || myState.modules.size() == 0) try {
+        try {
             initModules();
             learnProject = null;
         } catch (Exception e) {
@@ -79,11 +69,11 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
     private void initModules() throws JDOMException, IOException, URISyntaxException, BadModuleException, BadLessonException {
-        Element modulesRoot = Module.getRootFromPath(GenModuleXml.MODULE_ALLMODULE_FILENAME);
+        Element modulesRoot = Module.Companion.getRootFromPath(GenModuleXml.MODULE_ALLMODULE_FILENAME);
         for (Element element : modulesRoot.getChildren()) {
             if (element.getName().equals(GenModuleXml.MODULE_TYPE_ATTR)) {
                 String moduleFilename = element.getAttribute(GenModuleXml.MODULE_NAME_ATTR).getValue();
-                final Module module = Module.initModule(moduleFilename);
+                final Module module = Module.Companion.initModule(moduleFilename, MODULE_MODULES_PATH);
                 addModule(module);
             }
         }
@@ -147,7 +137,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
     @Nullable
-    Project getCurrentProject() {
+    public Project getCurrentProject() {
         final IdeFrame lastFocusedFrame = IdeFocusManager.getGlobalInstance().getLastFocusedFrame();
         if (lastFocusedFrame == null) return null;
         return lastFocusedFrame.getProject();
@@ -162,12 +152,13 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
      * @throws InvalidSdkException - if project SDK is not suitable for module
      */
     public void checkEnvironment(@NotNull Project project) throws OldJdkException, InvalidSdkException, NoSdkException, NoJavaModuleException {
-
         final Sdk sdk = ProjectRootManager.getInstance(project).getProjectSdk();
-        if (sdk == null) throw new NoSdkException();
-        final SdkTypeId sdkType = sdk.getSdkType();
-        //noinspection ConstantConditions
-        LangManager.Companion.getInstance().getLangSupport().checkSdkCompatibility(sdk, sdkType);
+        if (LangManager.Companion.getInstance().getLangSupport().needToCheckSDK()) {
+            if (sdk == null) throw new NoSdkException();
+            final SdkTypeId sdkType = sdk.getSdkType();
+            //noinspection ConstantConditions
+            LangManager.Companion.getInstance().getLangSupport().checkSdkCompatibility(sdk, sdkType);
+        }
     }
 
 
@@ -201,8 +192,8 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         return modulesPanel;
     }
 
-    void updateToolWindowScrollPane() {
-        final LearnToolWindow myLearnToolWindow = LearnToolWindowFactory.getMyLearnToolWindow();
+    public void updateToolWindowScrollPane() {
+        final LearnToolWindow myLearnToolWindow = LearnToolWindowFactory.Companion.getMyLearnToolWindow();
         if (myLearnToolWindow == null) return;
         final JBScrollPane scrollPane = myLearnToolWindow.getScrollPane();
         scrollPane.getViewport().revalidate();
@@ -249,7 +240,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         return myState.modules.toArray(new Module[myState.modules.size()]);
     }
 
-    GlobalLessonLog getGlobalLessonLog() {
+    public GlobalLessonLog getGlobalLessonLog() {
         return myState.globalLessonLog;
     }
 
@@ -261,12 +252,10 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         myState.lastActivityTime = time;
     }
 
-    @Override
-    public State getState() {
-        return myState;
-    }
+//    public State getState() {
+//        return myState;
+//    }
 
-    @Override
     public void loadState(State state) {
         myState.learnProjectPath = null;
         myState.globalLessonLog = state.globalLessonLog;
@@ -299,7 +288,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
     public void updateToolWindow(@NotNull final Project project) {
         final ToolWindowManager windowManager = ToolWindowManager.getInstance(project);
-        String learnToolWindow = LearnToolWindowFactory.LEARN_TOOL_WINDOW;
+        String learnToolWindow = LearnToolWindowFactory.Companion.getLEARN_TOOL_WINDOW();
         windowManager.getToolWindow(learnToolWindow).getContentManager().removeAllContents(false);
 
         LearnToolWindowFactory factory = new LearnToolWindowFactory();
@@ -307,8 +296,10 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
     public void setLessonView() {
-        final LearnToolWindow myLearnToolWindow = LearnToolWindowFactory.getMyLearnToolWindow();
+        final LearnToolWindow myLearnToolWindow = LearnToolWindowFactory.Companion.getMyLearnToolWindow();
+        assert myLearnToolWindow != null;
         final JBScrollPane scrollPane = myLearnToolWindow.getScrollPane();
+        assert scrollPane != null;
         scrollPane.setViewportView(getLearnPanel());
         scrollPane.revalidate();
         scrollPane.repaint();
@@ -317,23 +308,14 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     public void setModulesView() {
         ModulesPanel modulesPanel = getModulesPanel();
         modulesPanel.updateMainPanel();
-        final LearnToolWindow myLearnToolWindow = LearnToolWindowFactory.getMyLearnToolWindow();
+        final LearnToolWindow myLearnToolWindow = LearnToolWindowFactory.Companion.getMyLearnToolWindow();
+        assert myLearnToolWindow != null;
         final JBScrollPane scrollPane = myLearnToolWindow.getScrollPane();
+        assert scrollPane != null;
         scrollPane.setViewportView(modulesPanel);
         scrollPane.revalidate();
         scrollPane.repaint();
     }
-
-    public void setFeedbackView() {
-        FeedbackFormPanel feedbackFormPanel = FeedbackManager.getInstance().getFeedbackFormPanel();
-        final LearnToolWindow myLearnToolWindow = LearnToolWindowFactory.getMyLearnToolWindow();
-
-        final JBScrollPane scrollPane = myLearnToolWindow.getScrollPane();
-        scrollPane.setViewportView(feedbackFormPanel);
-        scrollPane.revalidate();
-        scrollPane.repaint();
-    }
-
 
     public int calcUnpassedLessons() {
         int result = 0;
@@ -361,7 +343,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
      * @return null if lesson has no module or it is only one lesson in module
      */
     @Nullable
-    Lesson giveNextLesson(Lesson currentLesson) {
+    public Lesson giveNextLesson(Lesson currentLesson) {
         Module module = currentLesson.getModule();
         assert module != null;
         assert module.getLessons() != null;
@@ -379,7 +361,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
     @Nullable
-    Module giveNextModule(Lesson currentLesson) {
+    public Module giveNextModule(Lesson currentLesson) {
         Module nextModule = null;
         Module module = currentLesson.getModule();
         Module[] modules = CourseManager.getInstance().getModules();

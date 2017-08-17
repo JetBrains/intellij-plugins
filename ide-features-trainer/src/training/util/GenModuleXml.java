@@ -1,6 +1,7 @@
 package training.util;
 
-import org.jdom.*;
+import org.jdom.Document;
+import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import training.learn.Module;
@@ -17,7 +18,7 @@ public class GenModuleXml {
 
     private final static String MODULE_ALLMODULE_ATTR = "modules";
     public final static String MODULE_ALLMODULE_FILENAME = "modules.xml";
-    public final static String MODULE_MODULES_PATH = "modules";
+    public final static String MODULE_MODULES_PATH = "modules/";
     public final static String MODULE_TYPE_ATTR = "module";
 
     public final static String MODULE_NAME_ATTR = "name";
@@ -104,6 +105,7 @@ public class GenModuleXml {
     }
 
     public static Module.ModuleSdkType getSdkTypeFromString(String string) {
+        if (string == null) return null;
         for (Module.ModuleSdkType moduleSdkType : Module.ModuleSdkType.values()) {
             if(moduleSdkType.toString().equals(string)) return moduleSdkType;
         }

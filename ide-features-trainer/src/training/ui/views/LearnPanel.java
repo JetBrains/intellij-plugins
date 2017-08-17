@@ -10,8 +10,8 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 import training.learn.CourseManager;
 import training.learn.LearnBundle;
-import training.learn.Lesson;
 import training.learn.Module;
+import training.learn.lesson.Lesson;
 import training.ui.LearnIcons;
 import training.ui.LearnUIManager;
 import training.ui.LessonMessagePane;
@@ -87,7 +87,7 @@ public class LearnPanel extends JPanel {
         moduleNameLabel.setFocusable(false);
         moduleNameLabel.setBorder(LearnUIManager.getInstance().getCheckmarkShiftBorder());
 
-        allTopicsLabel = new LinkLabel(LearnBundle.message("learn.ui.alltopics"), null);
+        allTopicsLabel = new LinkLabel(LearnBundle.INSTANCE.message("learn.ui.alltopics"), null);
         allTopicsLabel.setListener((aSource, aLinkData) -> {
             Project guessCurrentProject = ProjectUtil.guessCurrentProject(lessonPanel);
             CourseManager.getInstance().setModulesView();
@@ -109,7 +109,7 @@ public class LearnPanel extends JPanel {
 
 
         //Set Next Button UI
-        button = new JButton(LearnBundle.message("learn.ui.button.skip"));
+        button = new JButton(LearnBundle.INSTANCE.message("learn.ui.button.skip"));
         button.setMargin(new Insets(0, 0, 0, 0));
         button.setFocusable(false);
         button.setVisible(true);
@@ -158,7 +158,7 @@ public class LearnPanel extends JPanel {
         lessonMessagePane.addMessage(text);
     }
 
-    public void addMessage(Message[] messages) {
+    public void addMessages(Message[] messages) {
 
         for (final Message message : messages) {
             if (message.getType() == Message.MessageType.LINK) {
@@ -242,21 +242,6 @@ public class LearnPanel extends JPanel {
         this.repaint();
     }
 
-    public void setButtonSuggestSubmitFeedback(){
-        Action buttonAction = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                CourseManager.getInstance().setFeedbackView();
-            }
-        };
-        buttonAction.putValue(Action.NAME, "Next");
-        buttonAction.setEnabled(true);
-        button.setAction(buttonAction);
-        button.setSelected(true);
-        button.setText(LearnBundle.message("learn.ui.button.submit.feedback"));
-        getRootPane().setDefaultButton(button);
-    }
-
     public void setButtonNextAction(final Runnable runnable, Lesson notPassedLesson) {
         setButtonNextAction(runnable, notPassedLesson, null);
     }
@@ -276,10 +261,10 @@ public class LearnPanel extends JPanel {
             if (text != null) {
                 button.setText(text);
             } else {
-                button.setText(LearnBundle.message("learn.ui.button.next.lesson") + ": " + notPassedLesson.getName());
+                button.setText(LearnBundle.INSTANCE.message("learn.ui.button.next.lesson") + ": " + notPassedLesson.getName());
             }
         } else {
-            button.setText(LearnBundle.message("learn.ui.button.next.lesson"));
+            button.setText(LearnBundle.INSTANCE.message("learn.ui.button.next.lesson"));
         }
         button.setSelected(true);
         getRootPane().setDefaultButton(button);
@@ -298,8 +283,8 @@ public class LearnPanel extends JPanel {
 
         buttonAction.setEnabled(true);
         button.setAction(buttonAction);
-        if (text == null || text.isEmpty()) button.setText(LearnBundle.message("learn.ui.button.skip"));
-        else button.setText(LearnBundle.message("learn.ui.button.skip.module") + " "+ text);
+        if (text == null || text.isEmpty()) button.setText(LearnBundle.INSTANCE.message("learn.ui.button.skip"));
+        else button.setText(LearnBundle.INSTANCE.message("learn.ui.button.skip.module") + " " + text);
         button.setSelected(true);
         button.setVisible(visible);
     }
@@ -429,9 +414,9 @@ public class LearnPanel extends JPanel {
                     JLabel jLabel = lessonLabelMap.get(lesson);
                     Point point = jLabel.getLocation();
                     if (!SystemInfo.isMac) {
-                        LearnIcons.CheckmarkGray.paintIcon(this, g, point.x, point.y + 1);
+                        LearnIcons.INSTANCE.getCheckMarkGray().paintIcon(this, g, point.x, point.y + 1);
                     } else {
-                        LearnIcons.CheckmarkGray.paintIcon(this, g, point.x, point.y + 2);
+                        LearnIcons.INSTANCE.getCheckMarkGray().paintIcon(this, g, point.x, point.y + 2);
                     }
                 }
             }
@@ -462,7 +447,7 @@ public class LearnPanel extends JPanel {
     }
 
     public void clickButton(){
-        if (button != null) button.doClick();
+        if (button != null && button.isEnabled() && button.isVisible()) button.doClick();
     }
 
     @Override

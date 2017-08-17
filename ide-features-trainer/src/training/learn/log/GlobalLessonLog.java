@@ -2,7 +2,7 @@ package training.learn.log;
 
 import com.intellij.util.SmartList;
 import com.intellij.util.xmlb.annotations.Tag;
-import training.learn.Lesson;
+import training.learn.lesson.Lesson;
 
 import java.util.HashMap;
 

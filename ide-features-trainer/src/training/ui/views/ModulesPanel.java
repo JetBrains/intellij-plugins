@@ -11,9 +11,8 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.learn.CourseManager;
-import training.learn.LearnBundle;
-import training.learn.Lesson;
 import training.learn.Module;
+import training.learn.lesson.Lesson;
 import training.ui.LearnIcons;
 import training.ui.LearnUIManager;
 
@@ -34,8 +33,6 @@ public class ModulesPanel extends JPanel {
     private static SimpleAttributeSet PARAGRAPH_STYLE = new SimpleAttributeSet();
 
     private JPanel lessonPanel;
-    private JPanel submitFeedbackPanel;
-    private LinkLabel submitFeedback;
 
     private BidirectionalMap<Module, LinkLabel> module2linklabel;
 
@@ -52,7 +49,6 @@ public class ModulesPanel extends JPanel {
         initMainPanel();
         add(lessonPanel);
         add(Box.createVerticalGlue());
-        add(submitFeedbackPanel);
 
         //set LearnPanel UI
         this.setPreferredSize(new Dimension(LearnUIManager.getInstance().getWidth(), 100));
@@ -85,17 +81,6 @@ public class ModulesPanel extends JPanel {
         lessonPanel.setOpaque(false);
         lessonPanel.setFocusable(false);
         initModulesPanel();
-        submitFeedbackPanel = new JPanel();
-        submitFeedbackPanel.setLayout(new BoxLayout(submitFeedbackPanel, BoxLayout.LINE_AXIS));
-        submitFeedbackPanel.setOpaque(false);
-        submitFeedbackPanel.setAlignmentX(LEFT_ALIGNMENT);
-        submitFeedback = new LinkLabel(LearnBundle.message("learn.ui.mainpanel.submit.feedback"), null);
-        submitFeedback.setListener((linkLabel, o) -> {
-            //switch to feedback form view
-            CourseManager.getInstance().setFeedbackView();
-        }, null);
-        submitFeedbackPanel.add(submitFeedback);
-        submitFeedbackPanel.setBorder(LearnUIManager.getInstance().getCheckmarkShiftBorder());
     }
 
     private void initModulesPanel() {
@@ -251,19 +236,15 @@ public class ModulesPanel extends JPanel {
                     final Point basePoint = this.getLocationOnScreen();
                     int y = point.y + 1 - basePoint.y;
                     if (!SystemInfo.isMac) {
-                        LearnIcons.CheckmarkGray.paintIcon(this, g, LearnUIManager.getInstance().getWestInset(), y + 4);
+                        LearnIcons.INSTANCE.getCheckMarkGray().paintIcon(this, g, LearnUIManager.getInstance().getWestInset(), y + 4);
                     } else {
-                        LearnIcons.CheckmarkGray.paintIcon(this, g, LearnUIManager.getInstance().getWestInset(), y + 2);
+                        LearnIcons.INSTANCE.getCheckMarkGray().paintIcon(this, g, LearnUIManager.getInstance().getWestInset(), y + 2);
                     }
                 }
             }
         }
     }
 
-    public Point getSendFeedbackPosition(){
-        Point locationOnScreen = submitFeedback.getLocationOnScreen();
-        return new Point(locationOnScreen.x + submitFeedback.getWidth() / 2, locationOnScreen.y);
-    }
 
     @Override
     public Color getBackground() {

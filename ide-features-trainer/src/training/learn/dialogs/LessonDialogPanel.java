@@ -17,12 +17,11 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.learn.LearnBundle;
-import training.util.MyClassLoader;
+import training.util.DataLoader;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
@@ -47,7 +46,7 @@ class LessonDialogPanel extends JPanel{
 //        mute tip icon
 //        JLabel jlabel = new JLabel(AllIcons.General.Tip);
 //        jlabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
-        JLabel label1 = new JLabel(LearnBundle.message("dialog.lessonDialog.title"));
+        JLabel label1 = new JLabel(LearnBundle.INSTANCE.message("dialog.lessonDialog.title"));
         Font font = label1.getFont();
         label1.setFont(font.deriveFont(Font.PLAIN, font.getSize() + 4));
         JPanel jpanel = new JPanel();
@@ -118,14 +117,7 @@ class LessonDialogPanel extends JPanel{
         if (messageFileName == null) return;
         try {
 
-            final URL url = MyClassLoader.getInstance().getDialogURL(messageFileName);
-//            URL url = MyClassLoader.getInstance().getResourceAsStream(messageFileName);
-
-            if (url == null) {
-                //setCantReadText(browser, tip);
-                return;
-            }
-
+            final URL url = DataLoader.INSTANCE.getDialogURL(messageFileName);
             StringBuffer text = new StringBuffer(ResourceUtil.loadText(url));
             updateShortcuts(text);
             updateImages(text);
@@ -177,7 +169,7 @@ class LessonDialogPanel extends JPanel{
                 if (!path.endsWith("_dark") && !path.endsWith("@2x")) {
                     path += suffix + ".png";
 //                    URL url = ResourceUtil.getResource(tipLoader, "/tips/", path);
-                    URL url = MyClassLoader.getInstance().getDialogURL(path);
+                    URL url = DataLoader.INSTANCE.getDialogURL(path);
 
                     if (url != null) {
                         String newImgTag = "<img src=\"" + path + "\" ";
