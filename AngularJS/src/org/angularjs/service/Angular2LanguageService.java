@@ -3,7 +3,7 @@ package org.angularjs.service;
 
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.ide.highlighter.XmlLikeFileType;
-import com.intellij.lang.javascript.psi.util.JSProjectUtil;
+import com.intellij.lang.javascript.service.JSLanguageServiceCacheableCommand;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceCommand;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol;
@@ -12,7 +12,6 @@ import com.intellij.lang.typescript.compiler.TypeScriptCompilerService;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings;
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl;
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptCompletionsRequestArgs;
-import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptGetErrCommand;
 import com.intellij.lang.typescript.compiler.ui.TypeScriptServerServiceSettings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.TransactionGuard;
@@ -112,9 +111,9 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
 
   @NotNull
   @Override
-  protected TypeScriptGetErrCommand createGetErrCommand(@NotNull VirtualFile file, @NotNull String path) {
+  protected JSLanguageServiceCacheableCommand[] createGetErrCommand(@NotNull VirtualFile file, @NotNull String path) {
     if (file.getFileType() == HtmlFileType.INSTANCE) {
-      return new Angular2GetHtmlErrorCommand(path);
+      return new JSLanguageServiceCacheableCommand[]{new Angular2GetHtmlErrorCommand(path)};
     }
     return super.createGetErrCommand(file, path);
   }
@@ -165,7 +164,6 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
       JSLanguageServiceQueue.LOGGER.info("Dispose default service by " + getProcessName());
       //dispose old service
       TransactionGuard.submitTransaction(this, () -> defaultService.terminateStartedProcess(false));
-
     }
 
     return super.createLanguageServiceQueue();
