@@ -18,10 +18,13 @@ import org.intellij.plugins.markdown.lang.psi.MarkdownRecursiveElementVisitor;
 import org.intellij.plugins.markdown.lang.psi.impl.*;
 import org.intellij.plugins.markdown.util.MarkdownPsiUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.intellij.plugins.markdown.lang.MarkdownTokenTypes.EOL;
 
 public class MarkdownFoldingBuilder extends CustomFoldingBuilder implements DumbAware {
   public static final Map<IElementType, String> TYPES_PRESENTATION_MAP = new HashMap<>();
@@ -85,39 +88,55 @@ public class MarkdownFoldingBuilder extends CustomFoldingBuilder implements Dumb
       }
 
       private void addDescriptors(@NotNull MarkdownPsiElement element) {
-        if (!isOneLiner(element)) {
-          if (element.getTextRange().getLength() > 1) {
-            descriptors.add(new FoldingDescriptor(element, element.getTextRange()));
-          }
-        }
-      }
-
-      private boolean isOneLiner(PsiElement element) {
-        final TextRange textRange = element.getTextRange();
-        int startLine = document.getLineNumber(textRange.getStartOffset());
-        int endLine = document.getLineNumber(textRange.getEndOffset() - 1);
-        return startLine == endLine;
+        MarkdownFoldingBuilder.addDescriptors(element, element.getTextRange(), descriptors, document);
       }
     });
 
     root.accept(new MarkdownRecursiveElementVisitor() {
       @Override
-      public void visitMarkdownFile(@NotNull MarkdownFile markdownFile) {
-        processHeaders(markdownFile);
-        super.visitMarkdownFile(markdownFile);
-      }
-
-      @Override
       public void visitHeader(@NotNull MarkdownHeaderImpl header) {
-        processHeaders(header);
+        MarkdownPsiUtil.processContainer(header, endHeader -> {
+        }, endHeader -> {
+          PsiElement lastFileChild = header.getContainingFile().getLastChild().getLastChild();
+
+          PsiElement prevEndFolding;
+          if (endHeader == null) {
+            prevEndFolding =
+              PsiUtilCore.getElementType(lastFileChild) == EOL ? skipNewLinesBackward(lastFileChild) : lastFileChild;
+          }
+          else {
+            prevEndFolding = skipNewLinesBackward(endHeader);
+          }
+
+          if (prevEndFolding == null) return;
+
+          final TextRange range =
+            TextRange.create(header.getTextRange().getStartOffset(), prevEndFolding.getTextRange().getEndOffset());
+
+          addDescriptors(header, range, descriptors, document);
+        });
+
         super.visitHeader(header);
       }
-
-      private void processHeaders(@NotNull MarkdownPsiElement container) {
-        MarkdownPsiUtil
-          .processContainer(container, element -> descriptors.add(new FoldingDescriptor(element, element.getTextRange())));
-      }
     });
+  }
+
+  public static void addDescriptors(@NotNull MarkdownPsiElement element,
+                                     @NotNull TextRange range,
+                                     @NotNull List<FoldingDescriptor> descriptors,
+                                     @NotNull Document document) {
+    if (document.getLineNumber(range.getStartOffset()) != document.getLineNumber(range.getEndOffset() - 1)) {
+      descriptors.add(new FoldingDescriptor(element, range));
+    }
+  }
+
+  @Nullable
+  public static PsiElement skipNewLinesBackward(@Nullable PsiElement element) {
+    if (element == null) return null;
+    for (PsiElement e = element.getPrevSibling(); e != null; e = e.getPrevSibling()) {
+      if (e.getNode().getElementType() != EOL) return e;
+    }
+    return null;
   }
 
   @Override

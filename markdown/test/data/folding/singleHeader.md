@@ -1,1 +1,1 @@
-<fold text='h1: # Simage Plugins'># Simage Plugins</fold>
+# Simage Plugins

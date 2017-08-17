@@ -7,6 +7,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.Consumer;
+import com.intellij.util.NullableConsumer;
 import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElement;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownFile;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownHeaderImpl;
@@ -36,7 +37,12 @@ public class MarkdownPsiUtil {
     HEADER_LEVEL_5_SET,
     HEADER_LEVEL_6_SET);
 
-  public static void processContainer(@Nullable PsiElement myElement, @NotNull Consumer<PsiElement> consumer) {
+  /*
+   * nextHeaderConsumer 'null' means reaching EOF
+   */
+  public static void processContainer(@Nullable PsiElement myElement,
+                                      @NotNull Consumer<PsiElement> consumer,
+                                      @NotNull NullableConsumer<PsiElement> nextHeaderConsumer) {
     if (myElement == null) return;
 
     final PsiElement structureContainer = myElement instanceof MarkdownFile ? myElement.getFirstChild()
@@ -44,21 +50,23 @@ public class MarkdownPsiUtil {
     if (structureContainer == null) return;
 
     final MarkdownPsiElement currentHeader = myElement instanceof MarkdownHeaderImpl ? ((MarkdownHeaderImpl)myElement) : null;
-    processContainer(structureContainer, currentHeader, currentHeader, consumer);
+    processContainer(structureContainer, currentHeader, currentHeader, consumer, nextHeaderConsumer);
   }
 
   private static void processContainer(@NotNull PsiElement container,
-                                      @Nullable PsiElement sameLevelRestriction,
-                                      @Nullable MarkdownPsiElement from,
-                                      @NotNull Consumer<? super PsiElement> resultConsumer) {
+                                       @Nullable PsiElement sameLevelRestriction,
+                                       @Nullable MarkdownPsiElement from,
+                                       @NotNull Consumer<? super PsiElement> resultConsumer,
+                                       @NotNull NullableConsumer<PsiElement> nextHeaderConsumer) {
     PsiElement nextSibling = from == null ? container.getFirstChild() : from.getNextSibling();
     PsiElement maxContentLevel = null;
     while (nextSibling != null) {
       if (TRANSPARENT_CONTAINERS.contains(PsiUtilCore.getElementType(nextSibling)) && maxContentLevel == null) {
-        processContainer(nextSibling, null, null, resultConsumer);
+        processContainer(nextSibling, null, null, resultConsumer, nextHeaderConsumer);
       }
       else if (nextSibling instanceof MarkdownHeaderImpl) {
         if (sameLevelRestriction != null && isSameLevelOrHigher(nextSibling, sameLevelRestriction)) {
+          nextHeaderConsumer.consume(nextSibling);
           break;
         }
 
@@ -73,6 +81,7 @@ public class MarkdownPsiUtil {
       }
 
       nextSibling = nextSibling.getNextSibling();
+      if (nextSibling == null) nextHeaderConsumer.consume(null);
     }
   }
 

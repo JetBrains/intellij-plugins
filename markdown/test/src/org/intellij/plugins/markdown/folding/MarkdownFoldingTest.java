@@ -64,6 +64,18 @@ public class MarkdownFoldingTest extends LightPlatformCodeInsightFixtureTestCase
     doTest();
   }
 
+  public void testSimpleHeadersStructure() {
+    doTest();
+  }
+
+  public void testHeadersTree() {
+    doTest();
+  }
+
+  public void testIrregularHeadersStructure() {
+    doTest();
+  }
+
   public void testMultiLineParagraph() {
     doTest();
   }
