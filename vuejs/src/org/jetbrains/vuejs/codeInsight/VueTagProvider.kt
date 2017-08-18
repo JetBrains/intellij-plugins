@@ -32,10 +32,11 @@ import com.intellij.xml.util.HtmlUtil
 import icons.VuejsIcons
 import org.jetbrains.vuejs.index.VueComponentsIndex
 import org.jetbrains.vuejs.index.getAllKeys
+import org.jetbrains.vuejs.index.hasVue
 
 class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
-    if (tag != null) {
+    if (tag != null && hasVue(tag.project)) {
       var localComponent:JSImplicitElement? = null
       processLocalComponents(tag, { property, element ->
         if (property.name == tag.name || property.name == toAsset(tag.name) || property.name == toAsset(tag.name).capitalize()) {
