@@ -2,9 +2,7 @@
 
 
 <idea-plugin>
-
     <extensions defaultExtensionNs="training">
         <TrainingLangExtension language="JAVA" implementationClass="training.lang.JavaLangSupport"/>
     </extensions>
-
 </idea-plugin>

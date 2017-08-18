@@ -20,11 +20,15 @@ interface LangSupport {
     fun acceptLang(ext: String): Boolean
     fun applyProjectSdk(project: Project): Unit
     fun applyToProjectAfterConfigure(): (Project) -> Unit
-    fun getModuleBuilder(): ModuleBuilder?
 
     fun checkSdkCompatibility(sdk: Sdk, sdkTypeId: SdkTypeId)
     fun needToCheckSDK(): Boolean
-    fun createProject(projectName: String, projectToClose: Project?): Project?
     fun getProjectFilePath(projectName: String): String
     fun getToolWindowAnchor(): ToolWindowAnchor
+
+    //let's replace with importOrOpenLearnProject()
+    fun importLearnProject(): Project?
+
+    fun createProject(projectName: String, projectToClose: Project?): Project?
+    fun getModuleBuilder(): ModuleBuilder?
 }
