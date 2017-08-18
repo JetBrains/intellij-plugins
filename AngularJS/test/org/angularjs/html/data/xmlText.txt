@@ -21,8 +21,7 @@ HtmlFile:xmlText.html
       XmlToken:XML_END_TAG_START('</')
       XmlToken:XML_NAME('div')
       XmlToken:XML_TAG_END('>')
-    XmlToken:XML_DATA_CHARACTERS(' ')
-    PsiWhiteSpace('\n')
+    PsiWhiteSpace(' \n')
     HtmlTag:div
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('div')
@@ -38,8 +37,7 @@ HtmlFile:xmlText.html
       XmlToken:XML_END_TAG_START('</')
       XmlToken:XML_NAME('div')
       XmlToken:XML_TAG_END('>')
-    XmlToken:XML_DATA_CHARACTERS(' ')
-    PsiWhiteSpace('\n')
+    PsiWhiteSpace(' \n')
     HtmlTag:div
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('div')
@@ -61,8 +59,7 @@ HtmlFile:xmlText.html
       XmlToken:XML_END_TAG_START('</')
       XmlToken:XML_NAME('div')
       XmlToken:XML_TAG_END('>')
-    PsiWhiteSpace('\n')
-    XmlToken:XML_DATA_CHARACTERS(' ')
+    PsiWhiteSpace('\n ')
     HtmlTag:div
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('div')
