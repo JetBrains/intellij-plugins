@@ -21,6 +21,7 @@ import com.intellij.openapi.wm.ToolWindowAnchor
 import java.io.File
 
 abstract class AbstractLangSupport : LangSupport {
+
   override fun needToCheckSDK(): Boolean {
     return true
   }
@@ -40,4 +41,6 @@ abstract class AbstractLangSupport : LangSupport {
   override fun getToolWindowAnchor(): ToolWindowAnchor {
     return ToolWindowAnchor.LEFT
   }
+
+
 }
