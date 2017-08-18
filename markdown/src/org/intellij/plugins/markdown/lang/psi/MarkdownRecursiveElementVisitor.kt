@@ -1,11 +1,11 @@
 package org.intellij.plugins.markdown.lang.psi
 
-import com.intellij.psi.PsiRecursiveElementVisitor
-import org.intellij.plugins.markdown.lang.psi.impl.MarkdownFile
-import org.intellij.plugins.markdown.lang.psi.impl.MarkdownHeaderImpl
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.psi.PsiElement
 
-open class MarkdownRecursiveElementVisitor : PsiRecursiveElementVisitor() {
-  open fun visitHeader(header: MarkdownHeaderImpl) = visitElement(header)
-
-  open fun visitMarkdownFile(markdownFile: MarkdownFile) = visitFile(markdownFile)
+open class MarkdownRecursiveElementVisitor : MarkdownElementVisitor() {
+  override fun visitElement(element: PsiElement) {
+    ProgressManager.checkCanceled()
+    element.acceptChildren(this)
+  }
 }

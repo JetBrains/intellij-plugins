@@ -43,11 +43,6 @@ public class MarkdownFile extends PsiFileBase implements MarkdownPsiElement {
       return;
     }
 
-    if (visitor instanceof MarkdownRecursiveElementVisitor) {
-      ((MarkdownRecursiveElementVisitor)visitor).visitMarkdownFile(this);
-      return;
-    }
-
     visitor.visitFile(this);
   }
 
