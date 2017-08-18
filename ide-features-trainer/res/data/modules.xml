@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<modules version="0.3">
+<?xml encoding="UTF-8"?>
+<modules>
     <module name="modules/EditorBasics.xml"/>
     <module name="modules/Completions.xml"/>
     <module name="modules/Refactorings.xml"/>
