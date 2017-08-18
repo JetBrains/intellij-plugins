@@ -72,8 +72,11 @@ class VueAttributeDescriptor(private val name:String,
 
   override fun hasIdRefType() = false
   override fun getDefaultValue() = null
-  override fun isEnumerated() = false
-  override fun getEnumeratedValues(): Array<out String> = ArrayUtil.EMPTY_STRING_ARRAY
+  override fun isEnumerated() = VueAttributesProvider.HAVE_NO_PARAMS.contains(name)
+  override fun getEnumeratedValues(): Array<out String> {
+    if (VueAttributesProvider.HAVE_NO_PARAMS.contains(name)) return arrayOf(name)
+    return ArrayUtil.EMPTY_STRING_ARRAY
+  }
   override fun getTypeName() = null
   override fun getIcon(): Icon = VuejsIcons.Vue
 

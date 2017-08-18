@@ -1,7 +1,9 @@
 package org.jetbrains.vuejs.language
 
+import com.intellij.codeInsight.CodeInsightSettings
+import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
-import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.application.WriteAction.run
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
@@ -16,7 +18,7 @@ class VueCompletionTest : LightPlatformCodeInsightFixtureTestCase() {
 
   fun testCompleteAttributesWithVueInPackageJson() {
     try {
-      WriteAction.run<Throwable> {
+      run<Throwable> {
         val packageJson = myFixture.project.baseDir.createChildData(this, PackageJsonUtil.FILE_NAME)
         VfsUtil.saveText(packageJson, "{\"name\": \"id\", \"version\": \"1.0.0\", \"dependencies\": {\"vue\": \"2.4.1\"}}")
       }
@@ -25,7 +27,7 @@ class VueCompletionTest : LightPlatformCodeInsightFixtureTestCase() {
       UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "v-bind", "v-else")
     } finally {
       val packageJson = myFixture.project.baseDir.findChild(PackageJsonUtil.FILE_NAME)
-      WriteAction.run<Throwable> { packageJson?.delete(this) }
+      run<Throwable> { packageJson?.delete(this) }
     }
   }
 
@@ -188,5 +190,36 @@ export default {
 }</script>""")
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
+  }
+
+  fun testInsertAttributeWithoutValue() {
+    noAutoComplete(Runnable {
+      myFixture.configureByText("InsertAttributeWithoutValue.vue", "<template v-onc<caret>></template>")
+      myFixture.completeBasic()
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "v-once")
+      myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+      myFixture.checkResult("<template v-once<caret>></template>")
+    })
+  }
+
+  fun testInsertAttributeWithValue() {
+    noAutoComplete(Runnable {
+      myFixture.configureByText("InsertAttributeWithValue.vue", "<template v-tex<caret>></template>")
+      myFixture.completeBasic()
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "v-text")
+      myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+      myFixture.checkResult("<template v-text=\"<caret>\"></template>")
+    })
+  }
+
+  private fun noAutoComplete(callback: Runnable) {
+    val old = CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION
+    CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = false
+    try {
+      callback.run()
+    }
+    finally {
+      CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = old
+    }
   }
 }
