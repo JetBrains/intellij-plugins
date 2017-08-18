@@ -82,7 +82,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     CamelHumpMatcher.forceStartMatching(myFixture.getTestRootDisposable());
     initByComponent();
     addComponentToProject("Count");
-    doTestBasicCompletionVariants("class", "content", "contenteditable", "contextmenu");
+    doTestBasicCompletionVariants("class", "content", "contenteditable");
   }
 
   public void testRootTagName() throws Throwable {
