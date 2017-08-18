@@ -38,6 +38,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   override fun processAnyProperty(property: JSProperty, outData: JSElementIndexingData?): JSElementIndexingData? {
     val obj = property.parent as JSObjectLiteralExpression
+    if (obj.properties.isEmpty()) return outData
 
     if (obj.parent !is JSProperty && obj.properties[0] == property)  {
       if (obj.parent is JSExportAssignment && obj.containingFile.fileType == VueFileType.INSTANCE) {
