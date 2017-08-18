@@ -29,7 +29,6 @@ public abstract class AbstractCucumberExtension implements CucumberJvmExtensionP
     for (final AbstractStepDefinition stepDefinition : stepDefinitions) {
       if (stepDefinition.matches(stepVariant) && stepDefinition.supportsStep(element)) {
         result.add(stepDefinition.getElement());
-        break;
       }
     }
 
