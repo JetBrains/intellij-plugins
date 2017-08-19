@@ -5,6 +5,8 @@ import com.intellij.facet.ui.FacetBasedFrameworkSupportProvider;
 import com.intellij.ide.util.frameworkSupport.FrameworkRole;
 import com.intellij.ide.util.frameworkSupport.FrameworkVersion;
 import com.intellij.javaee.framework.JavaeeProjectCategory;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -19,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class TapestryFrameworkSupportProvider extends FacetBasedFrameworkSupportProvider<TapestryFacet> {
 
@@ -32,7 +35,7 @@ public class TapestryFrameworkSupportProvider extends FacetBasedFrameworkSupport
 
   protected static void setupConfiguration(TapestryFacetConfiguration conf, Module module, final TapestryVersion version) {
     conf.setVersion(version);
-    if(StringUtil.isEmpty(conf.getFilterName())) conf.setFilterName(module.getName().toLowerCase());
+    if(StringUtil.isEmpty(conf.getFilterName())) conf.setFilterName(module.getName().toLowerCase(Locale.US));
     if(StringUtil.isEmpty(conf.getApplicationPackage())) conf.setApplicationPackage("com.app");
   }
 
@@ -57,33 +60,40 @@ public class TapestryFrameworkSupportProvider extends FacetBasedFrameworkSupport
   protected void onFacetCreated(final TapestryFacet facet, final ModifiableRootModel rootModel, final FrameworkVersion version) {
     final Project project = facet.getModule().getProject();
     StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> {
-      final TapestryFacetConfiguration configuration = facet.getConfiguration();
+      Runnable action = () -> {
+        final TapestryFacetConfiguration configuration = facet.getConfiguration();
 
-      final NewFacetDialog newFacetDialog = new NewFacetDialog(configuration);
-      final DialogBuilder builder = new DialogBuilder(project);
+        final NewFacetDialog newFacetDialog = new NewFacetDialog(configuration);
+        final DialogBuilder builder = new DialogBuilder(project);
 
-      builder.removeAllActions();
-      builder.addOkAction();
-      builder.setCenterPanel(newFacetDialog.getMainPanel());
-      builder.setTitle("New Tapestry Support");
-      builder.setButtonsAlignment(SwingConstants.CENTER);
-      builder.setOkOperation(() -> {
-        facet.getConfiguration();
-        if (!Validators.isValidPackageName(newFacetDialog.getApplicationPackage())) {
-          Messages.showErrorDialog("Invalid package!", CommonBundle.getErrorTitle());
-          return;
-        }
-        configuration.setFilterName(newFacetDialog.getFilterName());
-        configuration.setApplicationPackage(newFacetDialog.getApplicationPackage());
+        builder.removeAllActions();
+        builder.addOkAction();
+        builder.setCenterPanel(newFacetDialog.getMainPanel());
+        builder.setTitle("New Tapestry Support");
+        builder.setButtonsAlignment(SwingConstants.CENTER);
+        
+        builder.setOkOperation(() -> {
+          if (!Validators.isValidPackageName(newFacetDialog.getApplicationPackage())) {
+            Messages.showErrorDialog("Invalid package!", CommonBundle.getErrorTitle());
+            return;
+          }
+          configuration.setFilterName(newFacetDialog.getFilterName());
+          configuration.setApplicationPackage(newFacetDialog.getApplicationPackage());
+  
+          builder.getWindow().dispose();
+        });
+        builder.showModal(true);
 
-        builder.getWindow().dispose();
-      });
-      builder.showModal(true);
-
-
-      AddTapestrySupportUtil.addSupportInWriteCommandAction(rootModel.getModule(), configuration,
-                                                            newFacetDialog.shouldGenerateStartupApplication(),
-                                                            newFacetDialog.shouldGeneratePom());
+        AddTapestrySupportUtil.addSupportInWriteCommandAction(rootModel.getModule(), configuration,
+                                                              newFacetDialog.shouldGenerateStartupApplication(),
+                                                              newFacetDialog.shouldGeneratePom());
+      };
+      
+      if (ApplicationManager.getApplication().isWriteAccessAllowed()) {
+        ApplicationManager.getApplication().invokeLater(action, ModalityState.NON_MODAL);
+      } else {
+        action.run();
+      }
     });
   }
 
