@@ -94,12 +94,14 @@ class VueLexer(private val languageLevel: JSLanguageLevel) : HtmlLexer(), VueHan
       seenScript = false
     }
     val type = super.getTokenType()
-    if (seenAttribute && type == JSElementTypes.EMBEDDED_CONTENT) return VueElementTypes.EMBEDDED_JS
+    if (seenAttribute && type == JSElementTypes.EMBEDDED_CONTENT) {
+      return VueElementTypes.EMBEDDED_JS
+    }
 //    if (interpolationLexer != null) return interpolationLexer!!.tokenType
     return type
   }
 
-//  override fun getTokenStart(): Int {
+  //  override fun getTokenStart(): Int {
 //    if (interpolationLexer != null) {
 //      return interpolationStart + interpolationLexer!!.tokenStart
 //    }
