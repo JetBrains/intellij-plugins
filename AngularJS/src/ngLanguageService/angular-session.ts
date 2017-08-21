@@ -29,15 +29,24 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
                 return this.getNgCompletion(args);
             }
 
-            if (command == ts_impl.server.CommandNames.IDEGetProjectHtmlErr) {
+            if (command == ts_impl.server.CommandNames.IDEGetProjectHtmlErr || command == "geterrForProject") {
                 let args: ts.server.protocol.FileRequestArgs = request.arguments;
                 let fileName = args.file;
                 let project = this.getProjectForFileEx(fileName);
-                if (project == null || !this.getProjectConfigPathEx(project)) {
-                    return {response: {infos: []}, responseRequired: true}
+                if (project != null && this.getProjectConfigPathEx(project)) {
+                    try {
+                        let pluginProjectDiagnostics = this.getPluginProjectDiagnostics(project);
+                        pluginProjectDiagnostics.forEach(el => {
+                            this.event(el, 'semanticDiag')
+                        })
+                    } catch (e) {
+                        this.logError(e, "Internal angular service error");
+                    }
                 }
 
-                return {response: {infos: this.getProjectDiagnosticsEx(project)}, responseRequired: true}
+                return command == ts_impl.server.CommandNames.IDEGetProjectHtmlErr ?
+                    (<any>this).processOldProjectErrors(request) :
+                    super.executeCommand(request)
             }
 
             if (skipAngular) {
@@ -234,7 +243,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
             let ngHost = languageService["ngHost"];
             return ngHost ? ngHost() : ngHost;
         }
-        
+
         private getNgDiagnostics(project: ts.server.Project, normalizedFileName: string, sourceFile: ts.SourceFile): ts.Diagnostic[] {
 
             let languageService = project != null && this.getProjectConfigPathEx(project) ? this.getLanguageService(project, false) : null;
@@ -254,18 +263,15 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
         }
 
 
-        appendPluginProjectDiagnostics(project: ts.server.Project, program: ts.Program, diags: ts.server.protocol.DiagnosticEventBody[]
-            | null): ts.server.protocol.DiagnosticEventBody[] | null {
-            let result = super.appendPluginProjectDiagnostics(project, program, diags);
+        getPluginProjectDiagnostics(project: ts.server.Project): ts.server.protocol.DiagnosticEventBody[] | null {
+            let program: ts.Program = this.getLanguageService(project).getProgram();
+
 
             if (!project || !program || this.tsVersion() == "2.0.0") {
-                return result;
+                return [];
             }
 
-            if (result == null) {
-                result = [];
-            }
-
+            let result = []
 
             for (let file of program.getSourceFiles()) {
                 let fileName = file.fileName;

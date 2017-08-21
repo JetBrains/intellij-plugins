@@ -24,6 +24,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             return _super !== null && _super.apply(this, arguments) || this;
         }
         AngularSession.prototype.executeCommand = function (request) {
+            var _this = this;
             var command = request.command;
             if (command == ts_impl.server.CommandNames.IDEGetHtmlErrors) {
                 var args = request.arguments;
@@ -33,14 +34,24 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                 var args = request.arguments;
                 return this.getNgCompletion(args);
             }
-            if (command == ts_impl.server.CommandNames.IDEGetProjectHtmlErr) {
+            if (command == ts_impl.server.CommandNames.IDEGetProjectHtmlErr || command == "geterrForProject") {
                 var args = request.arguments;
                 var fileName = args.file;
                 var project = this.getProjectForFileEx(fileName);
-                if (project == null || !this.getProjectConfigPathEx(project)) {
-                    return { response: { infos: [] }, responseRequired: true };
+                if (project != null && this.getProjectConfigPathEx(project)) {
+                    try {
+                        var pluginProjectDiagnostics = this.getPluginProjectDiagnostics(project);
+                        pluginProjectDiagnostics.forEach(function (el) {
+                            _this.event(el, 'semanticDiag');
+                        });
+                    }
+                    catch (e) {
+                        this.logError(e, "Internal angular service error");
+                    }
                 }
-                return { response: { infos: this.getProjectDiagnosticsEx(project) }, responseRequired: true };
+                return command == ts_impl.server.CommandNames.IDEGetProjectHtmlErr ?
+                    this.processOldProjectErrors(request) :
+                    _super.prototype.executeCommand.call(this, request);
             }
             if (skipAngular) {
                 return _super.prototype.executeCommand.call(this, request);
@@ -242,15 +253,13 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             }
             return getServiceDiags(ts_impl, ngLanguageService, this.getNgHost(languageService), normalizedFileName, sourceFile, languageService);
         };
-        AngularSession.prototype.appendPluginProjectDiagnostics = function (project, program, diags) {
+        AngularSession.prototype.getPluginProjectDiagnostics = function (project) {
             var _this = this;
-            var result = _super.prototype.appendPluginProjectDiagnostics.call(this, project, program, diags);
+            var program = this.getLanguageService(project).getProgram();
             if (!project || !program || this.tsVersion() == "2.0.0") {
-                return result;
+                return [];
             }
-            if (result == null) {
-                result = [];
-            }
+            var result = [];
             var _loop_2 = function (file) {
                 var fileName = file.fileName;
                 var ngDiagnostics = this_2.getNgDiagnostics(project, fileName, file);
