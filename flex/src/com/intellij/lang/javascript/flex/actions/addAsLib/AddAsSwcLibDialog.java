@@ -80,7 +80,7 @@ public class AddAsSwcLibDialog extends DialogWrapper {
           component.setIcon(AllIcons.Nodes.JarDirectory);
         }
         else {
-          final VirtualFile localFile = JarFileSystem.getInstance().getLocalVirtualFileFor(file);
+          final VirtualFile localFile = JarFileSystem.getInstance().getLocalByEntry(file);
           if (localFile != null) {
             component.setText(FileUtil.toSystemDependentName(localFile.getPath()));
             component.setIcon(IconUtil.getIcon(localFile, 0, null));

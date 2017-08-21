@@ -35,8 +35,7 @@ import java.util.Properties;
  * @author Yann C&eacute;bron
  */
 public class StrutsVersionDetector {
-  private StrutsVersionDetector() {
-  }
+  private StrutsVersionDetector() { }
 
   @Nullable
   public static String detectStrutsVersion(@NotNull final Module module) {
@@ -67,35 +66,20 @@ public class StrutsVersionDetector {
   }
 
   @Nullable
-  private static VirtualFile getStrutsJarRoot(final Module module) {
-    final GlobalSearchScope scope = GlobalSearchScope.moduleRuntimeScope(module, false);
-    final JavaPsiFacade psiManager = JavaPsiFacade.getInstance(module.getProject());
-
-    final VirtualFile virtualFile = getStrutsClass(scope, psiManager);
-    if (virtualFile == null || !(virtualFile.getFileSystem() instanceof JarFileSystem)) {
-      return null;
+  private static VirtualFile getStrutsJarRoot(Module module) {
+    GlobalSearchScope scope = GlobalSearchScope.moduleRuntimeScope(module, false);
+    JavaPsiFacade facade = JavaPsiFacade.getInstance(module.getProject());
+    PsiClass psiClass = facade.findClass(Struts2LibraryType.STRUTS_VERSION_CLASS, scope);
+    if (psiClass != null) {
+      PsiFile psiFile = psiClass.getContainingFile();
+      if (psiFile != null) {
+        VirtualFile classFile = psiFile.getVirtualFile();
+        if (classFile != null && classFile.getFileSystem() instanceof JarFileSystem) {
+          return JarFileSystem.getInstance().getRootByEntry(classFile);
+        }
+      }
     }
 
-    final VirtualFile jarFile = JarFileSystem.getInstance().getLocalVirtualFileFor(virtualFile);
-    if (jarFile == null) {
-      return null;
-    }
-
-    return JarFileSystem.getInstance().getJarRootForLocalFile(jarFile);
-  }
-
-  @Nullable
-  private static VirtualFile getStrutsClass(final GlobalSearchScope scope, final JavaPsiFacade psiManager) {
-    final PsiClass psiClass = psiManager.findClass(Struts2LibraryType.STRUTS_VERSION_CLASS, scope);
-    if (psiClass == null) {
-      return null;
-    }
-
-    final PsiFile psiFile = psiClass.getContainingFile();
-    if (psiFile == null) {
-      return null;
-    }
-
-    return psiFile.getVirtualFile();
+    return null;
   }
 }

@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
@@ -30,7 +29,7 @@ public class AddAsSwcLibAction extends AnAction {
     if (!roots.isEmpty()) {
       VirtualFile file = roots.get(0);
       if (!file.isInLocalFileSystem()) {
-        file = JarFileSystem.getInstance().getLocalVirtualFileFor(file);
+        file = JarFileSystem.getInstance().getLocalByEntry(file);
       }
       final Module module = file == null ? null : ModuleUtilCore.findModuleForFile(file, project);
       new AddAsSwcLibDialog(project, module, roots).show();
