@@ -79,7 +79,7 @@ function runTests() {
   if (typeof testName !== 'undefined') {
     config.clientArgs = ['--grep=' + testName];
   }
-  else {
+  else if (cli.isLastTestRunWithTestNameFilter()) {
     // reset jasmine.getEnv().specFilter function
     // otherwise, last specified specFilter will be used
     config.clientArgs = ['--grep='];

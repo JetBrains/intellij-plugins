@@ -50,6 +50,7 @@ public class KarmaServer {
   private final MyDisposable myDisposable;
   private final KarmaServerRestarter myRestarter;
   private final int myProcessHashCode;
+  private boolean myLastTestRunWithTestNameFilter;
 
   public KarmaServer(@NotNull Project project, @NotNull KarmaServerSettings serverSettings) throws IOException {
     myServerSettings = serverSettings;
@@ -324,6 +325,14 @@ public class KarmaServer {
   @NotNull
   public ProcessHandler getProcessHandler() {
     return myProcessOutputManager.getProcessHandler();
+  }
+
+  public void setLastTestRunWithTestNameFilter(boolean lastTestRunWithTestNameFilter) {
+    myLastTestRunWithTestNameFilter = lastTestRunWithTestNameFilter;
+  }
+
+  public boolean isLastTestRunWithTestNameFilter() {
+    return myLastTestRunWithTestNameFilter;
   }
 
   private class MyDisposable implements Disposable {

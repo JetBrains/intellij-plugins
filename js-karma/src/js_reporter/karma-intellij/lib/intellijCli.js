@@ -96,6 +96,10 @@ function getTestName() {
   return options[TEST_NAME];
 }
 
+function isLastTestRunWithTestNameFilter() {
+  return options['lastTestRunWithTestNameFilter'] === 'true';
+}
+
 exports.getKarmaFilePath = getKarmaFilePath;
 exports.requireKarmaModule = requireKarmaModule;
 exports.getConfigFile = getConfigFile;
@@ -106,3 +110,4 @@ exports.getBrowsers = getBrowsers;
 exports.getCoverageTempDirPath = getCoverageTempDirPath;
 exports.isWithCoverage = isWithCoverage;
 exports.getTestName = getTestName;
+exports.isLastTestRunWithTestNameFilter = isLastTestRunWithTestNameFilter;

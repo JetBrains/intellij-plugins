@@ -149,6 +149,9 @@ public class KarmaExecutionSession {
     if (isDebug()) {
       commandLine.addParameter("--debug=true");
     }
+    if (myKarmaServer.isLastTestRunWithTestNameFilter()) {
+      commandLine.addParameter("--lastTestRunWithTestNameFilter=true");
+    }
     if (myRunSettings.getScopeKind() == KarmaScopeKind.TEST_FILE) {
       List<String> topNames = findTopLevelSuiteNames(myProject, myRunSettings.getTestFileSystemIndependentPath());
       if (topNames.size() > 1) {
@@ -156,9 +159,14 @@ public class KarmaExecutionSession {
       }
       topNames = ContainerUtil.map(topNames, s -> s + " ");
       commandLine.addParameter("--testName=" + StringUtil.join(topNames, "|"));
+      myKarmaServer.setLastTestRunWithTestNameFilter(true);
     }
     else if (myRunSettings.getScopeKind() == KarmaScopeKind.SUITE || myRunSettings.getScopeKind() == KarmaScopeKind.TEST) {
       commandLine.addParameter("--testName=" + StringUtil.join(myRunSettings.getTestNames(), " "));
+      myKarmaServer.setLastTestRunWithTestNameFilter(true);
+    }
+    else {
+      myKarmaServer.setLastTestRunWithTestNameFilter(false);
     }
     return commandLine;
   }
