@@ -9,6 +9,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import org.intellij.plugins.markdown.MarkdownBundle;
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes;
@@ -63,7 +64,10 @@ public class MarkdownFoldingBuilder extends CustomFoldingBuilder implements Dumb
 
       @Override
       public void visitParagraph(@NotNull MarkdownParagraphImpl paragraph) {
-        if (paragraph.getParent() instanceof MarkdownBlockQuoteImpl) return;
+        PsiElement parent = paragraph.getParent();
+        if (parent instanceof MarkdownBlockQuoteImpl && PsiTreeUtil.findChildrenOfType(parent, MarkdownParagraphImpl.class).size() <= 1) {
+          return;
+        }
 
         addDescriptors(paragraph);
         super.visitParagraph(paragraph);
@@ -122,9 +126,9 @@ public class MarkdownFoldingBuilder extends CustomFoldingBuilder implements Dumb
   }
 
   public static void addDescriptors(@NotNull MarkdownPsiElement element,
-                                     @NotNull TextRange range,
-                                     @NotNull List<FoldingDescriptor> descriptors,
-                                     @NotNull Document document) {
+                                    @NotNull TextRange range,
+                                    @NotNull List<FoldingDescriptor> descriptors,
+                                    @NotNull Document document) {
     if (document.getLineNumber(range.getStartOffset()) != document.getLineNumber(range.getEndOffset() - 1)) {
       descriptors.add(new FoldingDescriptor(element, range));
     }
