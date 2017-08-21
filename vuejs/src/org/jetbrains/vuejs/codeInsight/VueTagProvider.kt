@@ -293,7 +293,9 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
     val propsProperty = obj.findProperty(PROPS)
     if (propsProperty != null) {
       val descriptor = readProps(propsProperty, true, nameVariantsFilter(attributeName)).firstOrNull()
-      return if (descriptor?.name != attributeName) descriptor?.createNameVariant(attributeName) else descriptor
+      if (descriptor != null) {
+        return if (descriptor.name != attributeName) descriptor.createNameVariant(attributeName) else descriptor
+      }
     }
 
     if (VueAttributesProvider.DEFAULT.contains(attributeName)) return VueAttributeDescriptor(attributeName)
