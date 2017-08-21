@@ -11,7 +11,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.hash.HashSet;
@@ -77,7 +77,7 @@ public class FlexCompositeSdkProjectViewStructureProvider implements TreeStructu
     @NotNull
     private final Module myModule;
 
-    private IndividualSdkOrderEntry(final Sdk sdk, final Module module) {
+    private IndividualSdkOrderEntry(@NotNull final Sdk sdk, @NotNull final Module module) {
       mySdk = sdk;
       myModule = module;
     }
@@ -96,8 +96,8 @@ public class FlexCompositeSdkProjectViewStructureProvider implements TreeStructu
     @Override
     public VirtualFile[] getRootFiles(@NotNull final OrderRootType type) {
       List<VirtualFile> directories =
-        ContainerUtil.filter(mySdk.getRootProvider().getFiles(type), virtualFile -> virtualFile.isDirectory());
-      return VfsUtil.toVirtualFileArray(directories);
+        ContainerUtil.filter(mySdk.getRootProvider().getFiles(type), VirtualFile::isDirectory);
+      return VfsUtilCore.toVirtualFileArray(directories);
     }
 
     @NotNull
@@ -108,13 +108,13 @@ public class FlexCompositeSdkProjectViewStructureProvider implements TreeStructu
 
     @NotNull
     @Override
-    public VirtualFile[] getFiles(final OrderRootType type) {
+    public VirtualFile[] getFiles(@NotNull final OrderRootType type) {
       return mySdk.getRootProvider().getFiles(type);
     }
 
     @NotNull
     @Override
-    public String[] getUrls(final OrderRootType rootType) {
+    public String[] getUrls(@NotNull final OrderRootType rootType) {
       return getRootUrls(rootType);
     }
 
@@ -136,12 +136,12 @@ public class FlexCompositeSdkProjectViewStructureProvider implements TreeStructu
     }
 
     @Override
-    public <R> R accept(final RootPolicy<R> policy, @Nullable final R initialValue) {
+    public <R> R accept(@NotNull final RootPolicy<R> policy, @Nullable final R initialValue) {
       return policy.visitModuleJdkOrderEntry(this, initialValue);
     }
 
     @Override
-    public int compareTo(final OrderEntry o) {
+    public int compareTo(@NotNull final OrderEntry o) {
       return 0;
     }
 
