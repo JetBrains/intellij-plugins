@@ -64,6 +64,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   private final Condition<VirtualFile> myFileFilter;
 
   public Angular2LanguageService(@NotNull Project project,
+                                 
                                  @NotNull TypeScriptCompilerSettings settings) {
     super(project, settings, "Angular Console");
 
@@ -84,7 +85,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
     if (path == null) {
       return null;
     }
-    return new Angular2LanguageServiceProtocol(myProject, path, mySettings, readyConsumer, getEventConsumer());
+    return new Angular2LanguageServiceProtocol(myProject, path, mySettings, readyConsumer, createEventConsumer());
   }
 
   public static VirtualFile getServiceDirectory(Project project) {
