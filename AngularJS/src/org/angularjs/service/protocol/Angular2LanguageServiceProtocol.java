@@ -3,6 +3,7 @@ package org.angularjs.service.protocol;
 
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceAnswer;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings;
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptServiceStandardOutputProtocol;
 import com.intellij.openapi.project.Project;
@@ -20,8 +21,9 @@ public class Angular2LanguageServiceProtocol extends TypeScriptServiceStandardOu
   public Angular2LanguageServiceProtocol(@NotNull Project project,
                                          @NotNull String ngServicePath,
                                          @NotNull TypeScriptCompilerSettings settings,
-                                         @NotNull Consumer<?> readyConsumer) {
-    super(project, settings, readyConsumer);
+                                         @NotNull Consumer<?> readyConsumer,
+                                         @NotNull Consumer<JSLanguageServiceAnswer> eventConsumer) {
+    super(project, settings, readyConsumer, eventConsumer);
     myNgServicePath = ngServicePath;
   }
 

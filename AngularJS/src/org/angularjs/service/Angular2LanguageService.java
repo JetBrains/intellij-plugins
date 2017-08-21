@@ -84,7 +84,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
     if (path == null) {
       return null;
     }
-    return new Angular2LanguageServiceProtocol(myProject, path, mySettings, readyConsumer);
+    return new Angular2LanguageServiceProtocol(myProject, path, mySettings, readyConsumer, getEventConsumer());
   }
 
   public static VirtualFile getServiceDirectory(Project project) {
