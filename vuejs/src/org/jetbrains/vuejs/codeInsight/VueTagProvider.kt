@@ -262,7 +262,7 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
   }
 
   override fun getAttributesDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
-    var result = HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context)
+    var result = HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context).plus(VueAttributesProvider.getDefaultVueAttributes())
 
     val obj = (declaration.parent as? JSProperty)?.context as? JSObjectLiteralExpression
     if (obj != null) {
@@ -296,6 +296,7 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
       return if (descriptor?.name != attributeName) descriptor?.createNameVariant(attributeName) else descriptor
     }
 
+    if (VueAttributesProvider.DEFAULT.contains(attributeName)) return VueAttributeDescriptor(attributeName)
     return null
   }
 

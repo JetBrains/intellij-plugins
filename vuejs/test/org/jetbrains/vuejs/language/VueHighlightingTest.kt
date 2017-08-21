@@ -222,4 +222,23 @@ const props = ['oneTwo']
 </script>""")
     myFixture.checkHighlighting()
   }
+
+  fun testVueAttributeInCustomTag() {
+    myFixture.configureByText("VueAttributeInCustomTag.vue", """
+<template>
+  <custom v-for="item in items">
+    Hello!
+  </custom>
+</template>
+<script>
+export default {
+  name: 'custom',
+  data: function() {
+    return {items:[]};
+  }
+}
+</script>
+""")
+    myFixture.checkHighlighting()
+  }
 }

@@ -30,10 +30,13 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
       if (attributeName.startsWith("@") || attributeName.startsWith("v-on:")) return VueAttributeDescriptor(attributeName)
       return null
     }
+
+    fun getDefaultVueAttributes() = DEFAULT.map { VueAttributeDescriptor(it) }.toTypedArray()
   }
+
   override fun getAttributeDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
     if (context == null || !org.jetbrains.vuejs.index.hasVue(context.project)) return emptyArray()
-    val default = DEFAULT.map { VueAttributeDescriptor(it) }.toTypedArray()
+    val default = getDefaultVueAttributes()
     if (insideStyle(context)) {
       return default.plus(VueAttributeDescriptor("scoped"))
     }
