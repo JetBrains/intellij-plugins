@@ -599,30 +599,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   private static boolean calculateRepeatParameterType(JSTypeEvaluator evaluator, AngularJSRepeatExpression resolveParent) {
-    final PsiElement last = findReferenceExpression(resolveParent);
-    JSExpression arrayExpression = null;
-    if (last instanceof JSReferenceExpression) {
-      PsiElement resolve = ((JSReferenceExpression)last).resolve();
-      if (resolve != null) {
-        if (resolve instanceof JSTypeDeclarationOwner) {
-          JSType type = ((JSTypeDeclarationOwner)resolve).getType();
-          if (type != null) {
-            return evaluator.addComponentTypeFromProcessor((JSExpression)last, type) != null;
-          }
-        }
-        resolve = JSPsiImplUtils.getAssignedExpression(resolve);
-        if (resolve != null) {
-          arrayExpression = (JSExpression)resolve;
-        }
-      }
-    }
-    else if (last instanceof JSExpression) {
-      arrayExpression = (JSExpression)last;
-    }
-    if (last != null && arrayExpression != null) {
-      return evaluator.addComponentTypeFromArrayExpression(resolveParent, arrayExpression) != null;
-    }
-    return false;
+    return JSPsiImplUtils.calculateTypeOfVariableForIteratedExpression(evaluator, findReferenceExpression(resolveParent), resolveParent);
   }
 
   private static PsiElement findReferenceExpression(AngularJSRepeatExpression parent) {
