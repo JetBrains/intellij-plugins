@@ -6,18 +6,24 @@ import com.intellij.lang.javascript.JSInjectionBracesUtil
 import com.intellij.lang.javascript.JSInjectionBracesUtil.injectInXmlTextByDelimiters
 import com.intellij.lang.javascript.index.JavaScriptIndex
 import com.intellij.lang.javascript.psi.JSDefinitionExpression
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.impl.JSLiteralExpressionImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiLanguageInjectionHost
 import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl
 import com.intellij.psi.impl.source.xml.XmlElementImpl
 import com.intellij.psi.impl.source.xml.XmlTextImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.NullableFunction
+import org.jetbrains.vuejs.codeInsight.VueAttributesProvider
 import org.jetbrains.vuejs.codeInsight.findProperty
 import org.jetbrains.vuejs.index.VueOptionsIndex
 import org.jetbrains.vuejs.index.resolve
@@ -68,10 +74,31 @@ class VueInjector : MultiHostInjector {
     val project = context.project
     if (!org.jetbrains.vuejs.index.hasVue(project)) return
 
+    // this supposed to work in <template lang="jade"> attribute values
+    if (context is XmlAttributeValueImpl && context.parent is XmlAttribute
+        && VueAttributesProvider.DEFAULT.contains((context.parent as XmlAttribute).name)) {
+      val embedded = PsiTreeUtil.getChildOfType(context, JSEmbeddedContent::class.java)
+      if (embedded != null) {
+        val literal = PsiTreeUtil.getChildOfType(embedded, JSLiteralExpressionImpl::class.java)
+        if (literal != null) {
+          injectInElement(literal, registrar)
+          return
+        }
+      }
+    }
+
     if (context is XmlTextImpl || context is XmlAttributeValueImpl) {
       val braces = BRACES_FACTORY.`fun`(context) ?: return
       injectInXmlTextByDelimiters(registrar, context, VueJSLanguage.INSTANCE, braces.getFirst(), braces.getSecond())
     }
+  }
+
+  private fun injectInElement(host: PsiLanguageInjectionHost, registrar: MultiHostRegistrar) {
+    val value = host.text
+    val start = if (value.startsWith("'") || value.startsWith("\"")) 1 else 0
+    val end = if (value.endsWith("'") || value.endsWith("\"")) 1 else 0
+    val length = value.length
+    registrar.startInjecting(VueJSLanguage.INSTANCE).addPlace(null, null, host, TextRange(start, length - end)).doneInjecting()
   }
 
   override fun elementsToInjectIn(): MutableList<out Class<out PsiElement>> {
