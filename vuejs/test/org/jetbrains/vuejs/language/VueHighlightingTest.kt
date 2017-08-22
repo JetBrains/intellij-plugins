@@ -4,7 +4,9 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectio
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeInspectionBase
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection
+import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.util.ThrowableRunnable
 
 /**
  * @author Irina.Chernushina on 7/19/2017.
@@ -35,7 +37,8 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
   }
 
   fun testArrowFunctionsAndExpressionsInTemplate() {
-    myFixture.configureByText("ArrowFunctionsAndExpressionsInTemplate.vue", """
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("ArrowFunctionsAndExpressionsInTemplate.vue", """
 <template>
 <p>Completed Tasks: {{ ((todo) => todo.done === true)({done: 111}) }}</p>
 <p>Pending Tasks: {{ todos.filter((todo) => {return todo.done === false}).length }}</p>
@@ -46,11 +49,13 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     let todos = 1;
 </script>
 """)
-    myFixture.checkHighlighting()
+      myFixture.checkHighlighting()
+    })
   }
 
   fun testShorthandArrowFunctionInTemplate() {
-    myFixture.configureByText("ShorthandArrowFunctionInTemplate.vue", """
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("ShorthandArrowFunctionInTemplate.vue", """
 <template>
     <div id="app">
         <div @event="val => bar = val"></div>
@@ -58,7 +63,27 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     </div>
 </template>
 <script>
-    let bar = {};
+    export default {
+      data: () => ({bar: 'abc'})
+    }
+</script>
+""")
+      myFixture.checkHighlighting()
+    })
+  }
+
+  fun testShorthandArrowFunctionNotParsedInECMAScript5InTemplate() {
+    myFixture.configureByText("ShorthandArrowFunctionInTemplate.vue", """
+<template>
+    <div id="app">
+        <div @event="val =<error descr="expression expected">></error> bar = val"></div>
+        {{bar}}
+    </div>
+</template>
+<script>
+    export default {
+      data: () => ({bar: 'abc'})
+    }
 </script>
 """)
     myFixture.checkHighlighting()

@@ -1,9 +1,9 @@
 package org.jetbrains.vuejs.language
 
 import com.intellij.lang.PsiParser
-import com.intellij.lang.javascript.DialectOptionHolder
 import com.intellij.lang.javascript.JSFlexAdapter
 import com.intellij.lang.javascript.JavascriptParserDefinition
+import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IFileElementType
@@ -20,7 +20,7 @@ class VueJSParserDefinition : JavascriptParserDefinition() {
   }
 
   override fun createLexer(project: Project?): Lexer {
-    return JSFlexAdapter(DialectOptionHolder.ECMA_6)
+    return JSFlexAdapter(JSRootConfiguration.getInstance(project).languageLevel.dialect.optionHolder)
   }
 
   override fun getFileNodeType(): IFileElementType {
