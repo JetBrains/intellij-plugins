@@ -23,7 +23,6 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
 
     const TypeScriptLanguagePluginImpl: typeof TypeScriptLanguagePlugin = require(fixedPath + "ts-plugin.js").TypeScriptLanguagePlugin
     const instantiateSession = require(fixedPath + "ts-session-provider.js").instantiateSession;
-    const createSessionClass = require(fixedPath + "ts-session.js").createSessionClass;
     const util = require(fixedPath + "util.js");
 
     class AngularLanguagePlugin extends TypeScriptLanguagePluginImpl {

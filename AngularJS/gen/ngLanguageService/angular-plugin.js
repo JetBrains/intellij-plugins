@@ -28,7 +28,6 @@ function createPluginClass(state) {
     var fixedPath = state.typescriptPluginPath;
     var TypeScriptLanguagePluginImpl = require(fixedPath + "ts-plugin.js").TypeScriptLanguagePlugin;
     var instantiateSession = require(fixedPath + "ts-session-provider.js").instantiateSession;
-    var createSessionClass = require(fixedPath + "ts-session.js").createSessionClass;
     var util = require(fixedPath + "util.js");
     var AngularLanguagePlugin = (function (_super) {
         __extends(AngularLanguagePlugin, _super);
