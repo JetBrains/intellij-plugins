@@ -19,6 +19,7 @@ public class DartPackagesLibraryType extends LibraryType<DartPackagesLibraryProp
 
   public static final PersistentLibraryKind<DartPackagesLibraryProperties> LIBRARY_KIND =
     new PersistentLibraryKind<DartPackagesLibraryProperties>("DartPackagesLibraryType") {
+      @Override
       @NotNull
       public DartPackagesLibraryProperties createDefaultProperties() {
         return new DartPackagesLibraryProperties();
@@ -29,11 +30,13 @@ public class DartPackagesLibraryType extends LibraryType<DartPackagesLibraryProp
     super(LIBRARY_KIND);
   }
 
+  @Override
   @Nullable
   public String getCreateActionName() {
     return null;
   }
 
+  @Override
   @Nullable
   public NewLibraryConfiguration createNewLibrary(@NotNull final JComponent parentComponent,
                                                   @Nullable final VirtualFile contextDirectory,
@@ -41,11 +44,13 @@ public class DartPackagesLibraryType extends LibraryType<DartPackagesLibraryProp
     return null;
   }
 
+  @Override
   @Nullable
   public LibraryPropertiesEditor createPropertiesEditor(@NotNull final LibraryEditorComponent<DartPackagesLibraryProperties> editorComponent) {
     return null;
   }
 
+  @Override
   @Nullable
   public Icon getIcon() {
     return DartIcons.Dart_16;
