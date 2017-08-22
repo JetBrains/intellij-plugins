@@ -40,7 +40,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                 var project = this.getProjectForFileEx(fileName);
                 if (project != null && this.getProjectConfigPathEx(project)) {
                     try {
-                        var pluginProjectDiagnostics = this.getPluginProjectDiagnostics(project);
+                        var pluginProjectDiagnostics = this.getAngularProjectDiagnostics(project);
                         pluginProjectDiagnostics.forEach(function (el) {
                             _this.event(el, 'semanticDiag');
                         });
@@ -253,7 +253,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             }
             return getServiceDiags(ts_impl, ngLanguageService, this.getNgHost(languageService), normalizedFileName, sourceFile, languageService);
         };
-        AngularSession.prototype.getPluginProjectDiagnostics = function (project) {
+        AngularSession.prototype.getAngularProjectDiagnostics = function (project) {
             var _this = this;
             var program = this.getLanguageService(project).getProgram();
             if (!project || !program || this.tsVersion() == "2.0.0") {

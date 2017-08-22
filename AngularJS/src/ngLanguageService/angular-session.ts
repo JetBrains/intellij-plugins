@@ -36,7 +36,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
                 let project = this.getProjectForFileEx(fileName);
                 if (project != null && this.getProjectConfigPathEx(project)) {
                     try {
-                        let pluginProjectDiagnostics = this.getPluginProjectDiagnostics(project);
+                        let pluginProjectDiagnostics = this.getAngularProjectDiagnostics(project);
                         pluginProjectDiagnostics.forEach(el => {
                             this.event(el, 'semanticDiag')
                         })
@@ -44,6 +44,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
                         this.logError(e, "Internal angular service error");
                     }
                 }
+                
 
                 return command == ts_impl.server.CommandNames.IDEGetProjectHtmlErr ?
                     (<any>this).processOldProjectErrors(request) :
@@ -264,7 +265,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
         }
 
 
-        getPluginProjectDiagnostics(project: ts.server.Project): ts.server.protocol.DiagnosticEventBody[] | null {
+        getAngularProjectDiagnostics(project: ts.server.Project): ts.server.protocol.DiagnosticEventBody[] | null {
             let program: ts.Program = this.getLanguageService(project).getProgram();
 
 

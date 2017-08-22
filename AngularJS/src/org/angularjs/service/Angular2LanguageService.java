@@ -8,12 +8,17 @@ import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceCommand;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand;
+import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerService;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings;
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl;
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptCompletionsRequestArgs;
 import com.intellij.lang.typescript.compiler.ui.TypeScriptServerServiceSettings;
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfig;
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService;
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
@@ -64,7 +69,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   private final Condition<VirtualFile> myFileFilter;
 
   public Angular2LanguageService(@NotNull Project project,
-                                 
+
                                  @NotNull TypeScriptCompilerSettings settings) {
     super(project, settings, "Angular Console");
 
@@ -173,6 +178,19 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
     return super.createLanguageServiceQueue();
   }
 
+  @Nullable
+  @Override
+  protected String getConfigForFile(@NotNull VirtualFile file) {
+    if (file.getFileType() instanceof XmlLikeFileType) {
+      return ReadAction.compute(() -> {
+        Collection<TypeScriptConfig> allConfigs = TypeScriptConfigService.Provider.getConfigFiles(myProject);
+        TypeScriptConfig config = TypeScriptConfigUtil.getNearestParentConfig(file, allConfigs);
+        return config == null ? null : TypeScriptCompilerConfigUtil.normalizeNameAndPath(config.getConfigFile());
+      });
+    }
+
+    return super.getConfigForFile(file);
+  }
 
   public static boolean isEnabledAngularService(Project project) {
     return AngularSettings.get(project).isUseService() &&

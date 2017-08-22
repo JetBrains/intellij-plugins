@@ -76,7 +76,6 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
                     "Please specify 'typescript' node_modules package.";
             }
 
-
             return createAngularSessionClass(ts_impl, <any>sessionClass);
         }
 
