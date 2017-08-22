@@ -1,6 +1,5 @@
-import { PathProcessor } from "./out-path-process";
-import { HolderContainer } from "./compile-info-holder";
-import { DefaultOptionsHolder } from "./ts-default-options";
+import {DefaultOptionsHolder} from "./ts-default-options";
+
 export declare class TypeScriptLanguagePlugin implements LanguagePlugin {
     private _session;
     readyMessage: {
@@ -15,7 +14,9 @@ export declare class TypeScriptLanguagePlugin implements LanguagePlugin {
      */
     private getDefaultCommandLineOptions(state, ts_impl);
     overrideSysDefaults(ts_impl: typeof ts, state: TypeScriptPluginState, serverFile: string): void;
-    protected getSession(ts_impl: typeof ts, loggerImpl: any, commonDefaultOptions: DefaultOptionsHolder, pathProcessor: PathProcessor, mainFile: string, projectEmittedWithAllFiles: HolderContainer): ts.server.Session;
+    protected getSession(ts_impl: typeof ts, loggerImpl: any, defaultOptionsHolder: DefaultOptionsHolder): ts.server.Session;
+    private instantiateSession(ts_impl, loggerImpl, defaultOptionsHolder, sessionClass);
+    protected createSessionClass(ts_impl: typeof ts, defaultOptionsHolder: DefaultOptionsHolder): any;
     onMessage(p: string, writer: MessageWriter): void;
 }
 export declare class TypeScriptLanguagePluginFactory implements LanguagePluginFactory {

@@ -1,6 +1,9 @@
 export declare function reload15(session: ts.server.Session, ts_impl: any): any;
 export declare function close15(session: ts.server.Session, request: any): void;
-export declare function onMessage15(session: ts.server.Session, message: string): void;
+export declare function onMessage15(session: ts.server.Session, message: string): {
+    response?: any;
+    responseRequired?: boolean;
+};
 export declare function openClientFileConfig15(service: ts.server.ProjectService, fileName: string, fileContent: string, ts_impl: any): {
     configFileName?: string;
     configFileErrors?: ts.Diagnostic[];

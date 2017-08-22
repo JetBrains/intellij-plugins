@@ -2,6 +2,7 @@ import {IDETypeScriptSession} from "./typings/typescript/util";
 import {TypeScriptLanguagePlugin} from "./typings/typescript/ts-plugin";
 import {createAngularSessionClass, getServiceDiags} from "./angular-session";
 import {LanguageService} from "./typings/types";
+import {DefaultOptionsHolder} from "./typings/typescript/ts-default-options";
 
 class AngularLanguagePluginFactory implements LanguagePluginFactory {
     create(state: AngularTypeScriptPluginState): { languagePlugin: LanguagePlugin, readyMessage?: any } {
@@ -31,10 +32,8 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
             super(state);
         }
 
-        protected getSession(ts_impl: typeof ts,
-                             loggerImpl: any,
-                             defaultOptionHolder: any): any {
-            let sessionClass: { new(state): IDETypeScriptSession } = createSessionClass(ts_impl, defaultOptionHolder)
+        protected createSessionClass(ts_impl, defaultOptionsHolder: DefaultOptionsHolder): any {
+            let sessionClass: { new(state): IDETypeScriptSession } = super.createSessionClass(ts_impl, defaultOptionsHolder);
 
             if (ts_impl["ide_processed"]) {
                 let requiredObject = require(state.ngServicePath);
@@ -79,10 +78,9 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
             }
 
 
-            let angularSession = createAngularSessionClass(ts_impl, sessionClass);
-
-            return instantiateSession(ts_impl, loggerImpl, defaultOptionHolder, angularSession);
+            return createAngularSessionClass(ts_impl, sessionClass);
         }
+
 
         overrideSysDefaults(ts_impl: typeof ts, state: TypeScriptPluginState, serverFile: string) {
             const path = require('path');

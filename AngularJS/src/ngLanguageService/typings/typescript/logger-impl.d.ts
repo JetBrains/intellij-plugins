@@ -12,8 +12,10 @@ export declare class LoggerImpl implements ts.server.Logger {
     constructor(logFilename: string, level: string, ts_impl: typeof ts);
     static padStringRight(str: string, padding: string): string;
     close(): void;
+    group(logGroupEntries: (log: (msg: string) => void) => void): void;
     perftrc(s: string): void;
     info(s: string): void;
+    err(s: string): void;
     startGroup(): void;
     endGroup(): void;
     loggingEnabled(): boolean;

@@ -35,9 +35,9 @@ function createPluginClass(state) {
         function AngularLanguagePlugin(state) {
             return _super.call(this, state) || this;
         }
-        AngularLanguagePlugin.prototype.getSession = function (ts_impl, loggerImpl, defaultOptionHolder) {
+        AngularLanguagePlugin.prototype.createSessionClass = function (ts_impl, defaultOptionsHolder) {
             var _this = this;
-            var sessionClass = createSessionClass(ts_impl, defaultOptionHolder);
+            var sessionClass = _super.prototype.createSessionClass.call(this, ts_impl, defaultOptionsHolder);
             if (ts_impl["ide_processed"]) {
                 var requiredObject = require(state.ngServicePath);
                 var ng_1 = requiredObject;
@@ -72,8 +72,7 @@ function createPluginClass(state) {
                 ts_impl["skipNg"] = "Cannot start Angular Service with the bundled TypeScript. " +
                     "Please specify 'typescript' node_modules package.";
             }
-            var angularSession = angular_session_1.createAngularSessionClass(ts_impl, sessionClass);
-            return instantiateSession(ts_impl, loggerImpl, defaultOptionHolder, angularSession);
+            return angular_session_1.createAngularSessionClass(ts_impl, sessionClass);
         };
         AngularLanguagePlugin.prototype.overrideSysDefaults = function (ts_impl, state, serverFile) {
             var path = require('path');
