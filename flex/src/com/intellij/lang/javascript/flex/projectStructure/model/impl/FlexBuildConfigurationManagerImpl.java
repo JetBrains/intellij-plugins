@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.ProjectTopics;
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -214,7 +213,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
     return configList.toArray(new FlexBuildConfigurationImpl[configList.size()]);
   }
 
-  public static List<String> generateUniqueNames(List<String> names) {
+  private static List<String> generateUniqueNames(List<String> names) {
     List<String> result = new ArrayList<>(names.size());
     Set<String> namesBefore = new HashSet<>();
     for (int i = 0; i < names.size(); i++) {

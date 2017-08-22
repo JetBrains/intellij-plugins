@@ -153,8 +153,6 @@
     <sdkFinder implementation="com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdk$SdkFinderImpl"/>
 
     <projectStructureValidator implementation="com.intellij.lang.javascript.flex.projectStructure.ui.FlexProjectStructureValidator"/>
-    <project.converterProvider
-        implementation="com.intellij.lang.javascript.flex.projectStructure.conversion.FlexBuildConfigurationsConverterProvider"/>
 
     <moduleRendererFactory implementation="com.intellij.lang.javascript.flex.FlexModuleRendererFactory"/>
     <treeStructureProvider

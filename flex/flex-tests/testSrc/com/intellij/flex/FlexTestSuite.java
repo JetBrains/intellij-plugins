@@ -1,7 +1,6 @@
 package com.intellij.flex;
 
 import com.intellij.flex.bc.FlexCompilerConfigTest;
-import com.intellij.flex.bc.FlexConversionTest;
 import com.intellij.flex.bc.FlexProjectConfigTest;
 import com.intellij.flex.codeInsight.*;
 import com.intellij.flex.completion.*;
@@ -40,7 +39,6 @@ public class FlexTestSuite extends TestCase {
 
     // com.intellij.flex.bc.*
     testSuite.addTestSuite(FlexCompilerConfigTest.class);
-    testSuite.addTestSuite(FlexConversionTest.class);
     testSuite.addTestSuite(FlexProjectConfigTest.class);
 
     // com.intellij.flex.codeInsight.*

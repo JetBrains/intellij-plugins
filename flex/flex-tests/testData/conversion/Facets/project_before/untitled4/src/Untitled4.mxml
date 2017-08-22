@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
-    <mx:Script><![CDATA[
-        import mx.controls.Alert;
-        ]]></mx:Script>
-    <mx:Button click="Alert.show('Hello, world')" label="Say Hello"/>
-</mx:Application>
