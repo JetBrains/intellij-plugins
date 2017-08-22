@@ -27,7 +27,7 @@ var AngularLanguagePluginFactory = (function () {
 function createPluginClass(state) {
     var fixedPath = state.typescriptPluginPath;
     var TypeScriptLanguagePluginImpl = require(fixedPath + "ts-plugin.js").TypeScriptLanguagePlugin;
-    var getSession = require(fixedPath + "ts-session-provider.js").getSession;
+    var instantiateSession = require(fixedPath + "ts-session-provider.js").instantiateSession;
     var createSessionClass = require(fixedPath + "ts-session.js").createSessionClass;
     var util = require(fixedPath + "util.js");
     var AngularLanguagePlugin = (function (_super) {
@@ -37,7 +37,7 @@ function createPluginClass(state) {
         }
         AngularLanguagePlugin.prototype.getSession = function (ts_impl, loggerImpl, defaultOptionHolder) {
             var _this = this;
-            var sessionClass = createSessionClass(ts_impl, loggerImpl, defaultOptionHolder);
+            var sessionClass = createSessionClass(ts_impl, defaultOptionHolder);
             if (ts_impl["ide_processed"]) {
                 var requiredObject = require(state.ngServicePath);
                 var ng_1 = requiredObject;
@@ -73,7 +73,7 @@ function createPluginClass(state) {
                     "Please specify 'typescript' node_modules package.";
             }
             var angularSession = angular_session_1.createAngularSessionClass(ts_impl, sessionClass);
-            return getSession(ts_impl, loggerImpl, defaultOptionHolder, angularSession);
+            return instantiateSession(ts_impl, loggerImpl, defaultOptionHolder, angularSession);
         };
         AngularLanguagePlugin.prototype.overrideSysDefaults = function (ts_impl, state, serverFile) {
             var path = require('path');

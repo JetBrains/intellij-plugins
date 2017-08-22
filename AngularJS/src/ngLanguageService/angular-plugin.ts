@@ -21,7 +21,7 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
     let fixedPath = state.typescriptPluginPath;
 
     const TypeScriptLanguagePluginImpl: typeof TypeScriptLanguagePlugin = require(fixedPath + "ts-plugin.js").TypeScriptLanguagePlugin
-    const getSession = require(fixedPath + "ts-session-provider.js").getSession;
+    const instantiateSession = require(fixedPath + "ts-session-provider.js").instantiateSession;
     const createSessionClass = require(fixedPath + "ts-session.js").createSessionClass;
     const util = require(fixedPath + "util.js");
 
@@ -34,7 +34,7 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
         protected getSession(ts_impl: typeof ts,
                              loggerImpl: any,
                              defaultOptionHolder: any): any {
-            let sessionClass: { new(state): IDETypeScriptSession } = createSessionClass(ts_impl, loggerImpl, defaultOptionHolder)
+            let sessionClass: { new(state): IDETypeScriptSession } = createSessionClass(ts_impl, defaultOptionHolder)
 
             if (ts_impl["ide_processed"]) {
                 let requiredObject = require(state.ngServicePath);
@@ -81,7 +81,7 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
 
             let angularSession = createAngularSessionClass(ts_impl, sessionClass);
 
-            return getSession(ts_impl, loggerImpl, defaultOptionHolder, angularSession);
+            return instantiateSession(ts_impl, loggerImpl, defaultOptionHolder, angularSession);
         }
 
         overrideSysDefaults(ts_impl: typeof ts, state: TypeScriptPluginState, serverFile: string) {
