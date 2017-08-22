@@ -33,6 +33,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
   private static final String NAME_DELIM = "\t";
 
   public static class SdkFinderImpl extends SdkFinder {
+    @Override
     public Sdk findSdk(final String name, final String sdkType) {
       if (TYPE.getName().equals(sdkType)) {
         final List<String> sdksNames = StringUtil.split(name, NAME_DELIM);
@@ -79,11 +80,13 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
     });
   }
 
+  @Override
   @NotNull
   public SdkType getSdkType() {
     return TYPE;
   }
 
+  @Override
   @NotNull
   public String getName() {
     return getCompositeName(myNames);
@@ -93,21 +96,26 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
     return StringUtil.join(names, NAME_DELIM);
   }
 
+  @Override
   public String getVersionString() {
     return null;
   }
 
+  @Override
   public String getHomePath() {
     return null;
   }
 
+  @Override
   public VirtualFile getHomeDirectory() {
     return null;
   }
 
+  @Override
   @NotNull
   public RootProvider getRootProvider() {
     return new RootProvider() {
+      @Override
       @NotNull
       public String[] getUrls(@NotNull final OrderRootType rootType) {
         final Collection<String> result = new HashSet<>();
@@ -118,6 +126,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
         return ArrayUtil.toStringArray(result);
       }
 
+      @Override
       @NotNull
       public VirtualFile[] getFiles(@NotNull final OrderRootType rootType) {
         final Collection<VirtualFile> result = new HashSet<>();
@@ -198,21 +207,24 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
     mySdks = null;
   }
 
+  @Override
   @NotNull
   public SdkModificator getSdkModificator() {
     throw new UnsupportedOperationException();
   }
 
+  @Override
   public SdkAdditionalData getSdkAdditionalData() {
     return null;
   }
 
+  @Override
   @NotNull
   public Object clone() {
     throw new UnsupportedOperationException();
   }
 
-  private static final OrderRootType[] RELEVANT_ROOT_TYPES = new OrderRootType[]{OrderRootType.CLASSES, OrderRootType.SOURCES};
+  private static final OrderRootType[] RELEVANT_ROOT_TYPES = {OrderRootType.CLASSES, OrderRootType.SOURCES};
 
   @Override
   public VirtualFile[] getFiles(final OrderRootType rootType, final VirtualFile hint) {
@@ -240,6 +252,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
     return false;
   }
 
+  @Override
   public String getName(final VirtualFile hint) {
     Sdk[] sdks = getSdks();
     if (sdks.length >= 2) {
@@ -259,26 +272,33 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
   public static final String TYPE_ID = "__CompositeFlexSdk__";
 
   private static final SdkType TYPE = new SdkType(TYPE_ID) {
+    @Override
     public String suggestHomePath() {
       return null;
     }
 
+    @Override
     public boolean isValidSdkHome(final String path) {
       return false;
     }
 
+    @Override
     public String suggestSdkName(final String currentSdkName, final String sdkHome) {
       return currentSdkName;
     }
 
+    @Override
     @Nullable
     public AdditionalDataConfigurable createAdditionalDataConfigurable(@NotNull final SdkModel sdkModel, @NotNull final SdkModificator sdkModificator) {
       return null;
     }
 
+    @Override
     public void saveAdditionalData(@NotNull final SdkAdditionalData additionalData, @NotNull final Element additional) {
     }
 
+    @Override
+    @NotNull
     public String getPresentableName() {
       return getName();
     }

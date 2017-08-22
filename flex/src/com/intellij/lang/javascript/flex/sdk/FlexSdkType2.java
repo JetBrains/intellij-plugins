@@ -30,6 +30,7 @@ public class FlexSdkType2 extends SdkType {
     super(NAME);
   }
 
+  @Override
   @Nullable
   public String suggestHomePath() {
     final String path = PropertiesComponent.getInstance().getValue(LAST_SELECTED_FLEX_SDK_HOME_KEY);
@@ -39,6 +40,7 @@ public class FlexSdkType2 extends SdkType {
     return fbInstallation == null ? null : fbInstallation + "/" + FlashBuilderSdkFinder.SDKS_FOLDER;
   }
 
+  @Override
   public boolean isValidSdkHome(final String path) {
     if (path == null) {
       return false;
@@ -52,23 +54,28 @@ public class FlexSdkType2 extends SdkType {
     return FlexSdkUtils.doReadFlexSdkVersion(sdkHome) != null || FlexSdkUtils.doReadAirSdkVersion(sdkHome) != null;
   }
 
+  @Override
   public String suggestSdkName(final String currentSdkName, final String sdkHome) {
     return PathUtil.getFileName(sdkHome);
   }
 
+  @Override
   public AdditionalDataConfigurable createAdditionalDataConfigurable(@NotNull final SdkModel sdkModel, @NotNull final SdkModificator sdkModificator) {
     return null;
   }
 
+  @Override
   public void saveAdditionalData(@NotNull final SdkAdditionalData additionalData, @NotNull final Element additional) {
 
   }
 
+  @Override
   @NotNull
   public String getPresentableName() {
     return FlexBundle.message("flex.sdk.presentable.name");
   }
 
+  @Override
   @NotNull
   public Icon getIconForAddAction() {
     return getIcon();
@@ -79,12 +86,14 @@ public class FlexSdkType2 extends SdkType {
     return SdkType.findInstance(FlexSdkType2.class);
   }
 
+  @Override
   public void setupSdkPaths(@NotNull final Sdk sdk) {
     SdkModificator modificator = sdk.getSdkModificator();
     setupSdkPaths(sdk.getHomeDirectory(), modificator);
     modificator.commitChanges();
   }
 
+  @Override
   @NotNull
   public Icon getIcon() {
     return FlexIcons.Flex.Sdk.Flex_sdk;
@@ -96,14 +105,17 @@ public class FlexSdkType2 extends SdkType {
     return "reference.project.structure.sdk.flex";
   }
 
+  @Override
   public boolean isRootTypeApplicable(@NotNull final OrderRootType type) {
     return type == OrderRootType.CLASSES || type == OrderRootType.SOURCES || type == JavadocOrderRootType.getInstance();
   }
 
-  public String getDefaultDocumentationUrl(final @NotNull Sdk sdk) {
+  @Override
+  public String getDefaultDocumentationUrl(@NotNull final Sdk sdk) {
     return "http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/";
   }
 
+  @Override
   public String getVersionString(final String sdkHome) {
     final VirtualFile sdkRoot = LocalFileSystem.getInstance().findFileByPath(sdkHome);
     final String flexVersion = FlexSdkUtils.doReadFlexSdkVersion(sdkRoot);
@@ -145,7 +157,7 @@ public class FlexSdkType2 extends SdkType {
       addFlexSdkSwcRoots(sdkModificator, baseDir);
     }
 
-    final VirtualFile projectsDir = VfsUtil.findRelativeFile("frameworks/projects", sdkRoot);
+    final VirtualFile projectsDir = VfsUtilCore.findRelativeFile("frameworks/projects", sdkRoot);
     if (projectsDir != null && projectsDir.isDirectory()) {
       findSourceRoots(projectsDir, sdkModificator);
     }
@@ -193,7 +205,7 @@ public class FlexSdkType2 extends SdkType {
     }
   }
 
-  private static void addSwcRoot(final @NotNull SdkModificator sdkModificator, final @NotNull VirtualFile swcFile) {
+  private static void addSwcRoot(@NotNull final SdkModificator sdkModificator, @NotNull final VirtualFile swcFile) {
     final VirtualFile jarRoot = JarFileSystem.getInstance().getJarRootForLocalFile(swcFile);
     if (jarRoot != null) {
       sdkModificator.addRoot(jarRoot, OrderRootType.CLASSES);

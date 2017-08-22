@@ -25,18 +25,22 @@ public class FlexmojosSdkType extends SdkType {
     return SdkType.findInstance(FlexmojosSdkType.class);
   }
 
+  @Override
   public String suggestHomePath() {
     return null;
   }
 
+  @Override
   public boolean isValidSdkHome(final String _path) {
     final String path = FileUtil.toSystemIndependentName(_path);
     return path.matches(COMPILER_POM_PATTERN_1) || path.matches(COMPILER_POM_PATTERN_2);
   }
 
+  @Override
   @NotNull
   public FileChooserDescriptor getHomeChooserDescriptor() {
     final FileChooserDescriptor descriptor = new FileChooserDescriptor(false, false, false, false, false, false) {
+      @Override
       public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
         return false;
       }
@@ -45,38 +49,46 @@ public class FlexmojosSdkType extends SdkType {
     return descriptor;
   }
 
+  @Override
   public String suggestSdkName(final String currentSdkName, final String sdkHome) {
     return "Flexmojos SDK " + getVersionString(sdkHome);
   }
 
+  @Override
   public AdditionalDataConfigurable createAdditionalDataConfigurable(@NotNull final SdkModel sdkModel, @NotNull final SdkModificator sdkModificator) {
     return new FlexmojosSdkDataConfigurable();
   }
 
+  @Override
   public SdkAdditionalData loadAdditionalData(final Element element) {
     final FlexmojosSdkAdditionalData additionalData = new FlexmojosSdkAdditionalData();
     additionalData.load(element);
     return additionalData;
   }
 
+  @Override
   public void saveAdditionalData(@NotNull final SdkAdditionalData additionalData, @NotNull final Element element) {
     ((FlexmojosSdkAdditionalData)additionalData).save(element);
   }
 
+  @Override
   @NotNull
   public String getPresentableName() {
     return "Flexmojos SDK";
   }
 
+  @Override
   @NotNull
   public String getHomeFieldLabel() {
     return "Flex Compiler POM:";
   }
 
+  @Override
   public boolean isRootTypeApplicable(@NotNull final OrderRootType type) {
     return false;
   }
 
+  @Override
   public Icon getIcon() {
     return FlexIcons.Flex.Sdk.MavenFlex;
   }
@@ -87,11 +99,13 @@ public class FlexmojosSdkType extends SdkType {
     return "reference.project.structure.sdk.flexmojos";
   }
 
+  @Override
   @NotNull
   public Icon getIconForAddAction() {
     return getIcon();
   }
 
+  @Override
   public void setupSdkPaths(@NotNull final Sdk sdk) {
     final VirtualFile sdkRoot = sdk.getHomeDirectory();
     if (sdkRoot == null || !sdkRoot.isValid() || sdkRoot.isDirectory()) {
@@ -111,6 +125,7 @@ public class FlexmojosSdkType extends SdkType {
     modificator.commitChanges();
   }
 
+  @Override
   public String getVersionString(final String sdkHome) {
     // C:/Users/xxx/.m2/repository/com/adobe/flex/compiler/4.10.0-SNAPSHOT/compiler-4.10.0-SNAPSHOT.pom
     final int index1 = sdkHome.lastIndexOf("compiler-");
