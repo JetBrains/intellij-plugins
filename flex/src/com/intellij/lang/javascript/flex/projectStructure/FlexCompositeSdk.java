@@ -128,6 +128,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
         return result.toArray(new VirtualFile[result.size()]);
       }
 
+      @Override
       public void addRootSetChangedListener(@NotNull final RootSetChangedListener listener) {
         forAllSdks(sdk -> {
           final RootProvider rootProvider = sdk.getRootProvider();
@@ -137,6 +138,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
         });
       }
 
+      @Override
       public void addRootSetChangedListener(@NotNull final RootSetChangedListener listener, @NotNull final Disposable parentDisposable) {
         forAllSdks(sdk -> {
           sdk.getRootProvider().addRootSetChangedListener(listener, parentDisposable);
@@ -144,6 +146,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
         });
       }
 
+      @Override
       public void removeRootSetChangedListener(@NotNull final RootSetChangedListener listener) {
         forAllSdks(sdk -> {
           sdk.getRootProvider().removeRootSetChangedListener(listener);
