@@ -1,10 +1,11 @@
 import {IDETypeScriptSession} from "./typings/typescript/util";
 import {Completions, LanguageService} from "./typings/types";
+import {SessionClass} from "./typings/typescript/ts-session-provider";
 import LanguageServiceHost = ts.LanguageServiceHost;
 
 let path = require('path');
 
-export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { new(state: TypeScriptPluginState): IDETypeScriptSession }) {
+export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { new (...args: any[]): IDETypeScriptSession }): SessionClass {
 
     (ts_impl.server.CommandNames as any).IDEGetHtmlErrors = "IDEGetHtmlErrors";
     (ts_impl.server.CommandNames as any).IDENgCompletions = "IDENgCompletions";
@@ -376,7 +377,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
         }
     }
 
-    return AngularSession;
+    return <any>AngularSession;
 }
 
 

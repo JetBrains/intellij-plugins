@@ -1,3 +1,4 @@
+import {SessionClass} from "./ts-session-provider";
 import {DefaultOptionsHolder} from "./ts-default-options";
 
 export declare class TypeScriptLanguagePlugin implements LanguagePlugin {
@@ -16,7 +17,7 @@ export declare class TypeScriptLanguagePlugin implements LanguagePlugin {
     overrideSysDefaults(ts_impl: typeof ts, state: TypeScriptPluginState, serverFile: string): void;
     protected getSession(ts_impl: typeof ts, loggerImpl: any, defaultOptionsHolder: DefaultOptionsHolder): ts.server.Session;
     private instantiateSession(ts_impl, loggerImpl, defaultOptionsHolder, sessionClass);
-    protected createSessionClass(ts_impl: typeof ts, defaultOptionsHolder: DefaultOptionsHolder): any;
+    protected createSessionClass(ts_impl: typeof ts, defaultOptionsHolder: DefaultOptionsHolder): SessionClass;
     onMessage(p: string, writer: MessageWriter): void;
 }
 export declare class TypeScriptLanguagePluginFactory implements LanguagePluginFactory {
