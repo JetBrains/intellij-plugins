@@ -1,5 +1,6 @@
 import {SessionClass} from "./ts-session-provider";
 import {DefaultOptionsHolder} from "./ts-default-options";
+import * as ts from '../typings/tsserverlibrary';
 
 export declare class TypeScriptLanguagePlugin implements LanguagePlugin {
     private _session;

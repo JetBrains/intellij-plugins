@@ -1,12 +1,12 @@
-/**
- * Extensions for typescript server protocol
- * Provides new messages / fields
- */
-declare namespace ts {
+
+
+
+declare module './tsserverlibrary' {
+
     /**
      * expose core api
      */
-    export function normalizePath(path: string): string;
+    export function normalizePath(path: string): server.NormalizedPath;
 
     export function getDirectoryPath(path: string): string;
 
@@ -16,120 +16,97 @@ declare namespace ts {
 
     export function getNormalizedAbsolutePath(p: string, dir: any): string;
 
-    export function sortAndDeduplicateDiagnostics(p:any):any;
+    export function sortAndDeduplicateDiagnostics(p: any): any;
 
-    export namespace server {
-        export enum LogLevel {
-            terse,
-            normal,
-            requestTime,
-            verbose
-        }
-    }
-
-}
-
-/**
- * see TypeScriptServiceInitialStateObject
- */
-interface TypeScriptPluginState extends PluginState {
-    serverFolderPath: string;
-
-    //deprecated parameters but we need it for back-compatibility
-    hasManualParams: boolean;
-    outPath?: string;
-    projectPath?: string;
-    commandLineArguments?: string[];
-    mainFilePath?: string;
-    isUseSingleInferredProject?: boolean;
-}
-
-declare namespace ts.server.CommandNames {
-    export let IDEChangeFiles: string;
-    export let IDECompile: string;
-    export let IDEGetErrors: string;
-    export let IDEGetAllErrors: string;
-    export let IDEGetMainFileErrors: string;
-    export let IDEGetProjectErrors: string;
-    export let IDECompletions: string;
-}
-
-declare namespace ts.server.protocol {
 
     /**
-     *  Extend request by adding config file relates to the file
+     * Extensions for typescript server protocol
+     * Provides new messages / fields
      */
-    export interface OpenRequestArgs extends FileRequestWithConfigArgs {
 
+
+    export namespace server.CommandNames {
+        export let IDEChangeFiles: string;
+        export let IDECompile: string;
+        export let IDEGetErrors: string;
+        export let IDEGetAllErrors: string;
+        export let IDEGetMainFileErrors: string;
+        export let IDEGetProjectErrors: string;
+        export let IDECompletions: string;
+        export let IDEComposite: string;
+        export let IDEEmpty: string;
     }
 
-    export interface FileRequestWithConfigArgs extends FileRequestArgs {
-        projectFileName?: string;
-    }
+    export namespace server.protocol {
 
-    export interface IDEUpdateFilesRequest extends Request {
-        arguments: IDEUpdateFilesContentArgs;
-    }
-
-    export interface IDEUpdateFilesContentArgs {
-        /**
-         * map filepath -> new content
-         */
-        files: {
-            [name: string]: string;
+        export interface IDEUpdateFilesRequest extends Request {
+            arguments: IDEUpdateFilesContentArgs;
         }
 
-        filesToReloadContentFromDisk: string[];
+        export interface IDEUpdateFilesContentArgs {
+            /**
+             * map filepath -> new content
+             */
+            files: {
+                [name: string]: string;
+            }
+
+            filesToReloadContentFromDisk: string[];
+        }
+
+        export interface IDECompileFileRequest extends Request {
+
+            /**
+             * path to typescript file or ts config
+             */
+            arguments: IDECompileFileRequestArgs;
+        }
+
+        export interface IDECompositeRequest extends Request {
+            arguments: { nestedRequests: Request[] }
+        }
+
+
+        export interface IDECompileFileRequestArgs extends server.protocol.FileRequestArgs {
+            includeErrors: boolean;
+            force?: boolean
+
+            //deprecated parameters but we need it for back-compatibility
+            contentRootForMacro?: string;
+            sourceRootForMacro?: string;
+        }
+
+        export type IDEBodyDiagnostics = {
+            generatedFiles?: string[],
+            processedFiles?: string[],
+            infos?: server.protocol.DiagnosticEventBody[]
+        }
+
+        export interface IDECompileResponse extends server.protocol.Response {
+            body: IDEBodyDiagnostics
+        }
+        
+        export interface IDEGetErrorRequest extends server.protocol.Request {
+            arguments: server.protocol.GeterrRequestArgs;
+        }
+
+        
+
+        export interface IDECompletionsRequest extends server.protocol.FileLocationRequest {
+            arguments: server.protocol.CompletionsRequestArgs;
+        }
+
+        export interface IDECompletionResponse extends Response {
+            body?: server.protocol.CompletionEntryDetails[];
+        }
     }
 
-    export interface IDECompileFileRequest extends Request {
 
-        /**
-         * path to typescript file or ts config
-         */
-        arguments: IDECompileFileRequestArgs;
-    }
-
-
-    export interface IDECompileFileRequestArgs extends FileRequestWithConfigArgs {
-        includeErrors: boolean;
-        force?: boolean
-
-        //deprecated parameters but we need it for back-compatibility
-        contentRootForMacro?: string;
-        sourceRootForMacro?: string;
-    }
-
-    export type IDEBodyDiagnostics = {
-        generatedFiles: string[],
-        infos: DiagnosticEventBody[]
-    }
-
-    export interface IDECompileResponse extends Response {
-        body: IDEBodyDiagnostics
-    }
-
-    export interface Diagnostic {
-        category?: string
-    }
-
-    export interface IDEGetErrorRequest extends Request {
-        arguments: GeterrRequestArgs;
-    }
-
-
-    export interface IDECompletionsRequest extends FileLocationRequest {
-        arguments: CompletionsRequestArgs;
-    }
-
-    export interface IDECompletionResponse extends Response {
-        body?: CompletionEntryDetails[];
+    export namespace server {
+        interface ProjectOptions {
+            compileOnSave?: boolean
+        }
     }
 }
 
-
-declare namespace ts.server {
-    interface ProjectOptions {
-        compileOnSave?: boolean
-    }
-}
+export {}

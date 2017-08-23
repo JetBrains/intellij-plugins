@@ -1,19 +1,24 @@
-export declare function initCommandNames(TypeScriptCommandNames: typeof ts.server.CommandNames): void;
-export declare abstract class IDETypeScriptSession extends ts.server.Session {
+import {DefaultOptionsHolder} from "./ts-default-options";
+import * as protocol from '../typings/protocol';
+import * as ts from '../typings/tsserverlibrary';
+import ProjectService = ts.server.ProjectService;
+export declare function initCommandNames(TypeScriptCommandNames: any): void;
+export declare const sessionClasstemp: typeof ts.server.Session;
+export declare abstract class IDETypeScriptSession extends sessionClasstemp implements ts.server.Session {
     getChangeSeq(): number;
-    processOldProjectErrors(request: ts.server.protocol.Request): {
+    processOldProjectErrors(request: protocol.Request): {
         responseRequired: boolean;
     };
     updateProjectStructureEx(): void;
     refreshStructureEx(): void;
     logMessage(text: string, force?: boolean): void;
     abstract closeClientFileEx(normalizedFileName: string): void;
-    updateFilesEx(args: ts.server.protocol.IDEUpdateFilesContentArgs): Response;
+    updateFilesEx(args: any): Response;
     abstract changeFileEx(fileName: string, content: string, tsconfig?: string): void;
     getTime(): number;
     abstract getProjectForFileEx(fileName: string, projectFile?: string): ts.server.Project;
-    compileFileEx(req: ts.server.protocol.IDECompileFileRequestArgs): Response;
-    getCompletionEx(request: ts.server.protocol.Request): {
+    compileFileEx(req: any): Response;
+    getCompletionEx(request: protocol.Request): {
         response: any;
         responseRequired: boolean;
     };
@@ -32,7 +37,7 @@ export declare abstract class IDETypeScriptSession extends ts.server.Session {
     abstract afterCompileProcess(project: ts.server.Project, requestedFile: string, wasOpened: boolean | undefined): void;
     abstract needRecompile(project: ts.server.Project): boolean;
     abstract reloadFileFromDisk(info: ts.server.ScriptInfo): void;
-    abstract getProjectForCompileRequest(req: ts.server.protocol.IDECompileFileRequestArgs, normalizedRequestedFile: string): {
+    abstract getProjectForCompileRequest(req: any, normalizedRequestedFile: string): {
         project: ts.server.Project;
         wasOpened?: boolean;
     };
@@ -44,8 +49,6 @@ export declare abstract class IDETypeScriptSession extends ts.server.Session {
     appendGlobalErrors(result: ts.server.protocol.DiagnosticEventBody[], processedProjects: {
         [p: string]: ts.server.Project;
     }, empty: boolean): ts.server.protocol.DiagnosticEventBody[];
-    appendPluginProjectDiagnostics(project: ts.server.Project, program: ts.Program, diags: ts.server.protocol.DiagnosticEventBody[] | null): ts.server.protocol.DiagnosticEventBody[] | null;
-    appendPluginDiagnostics(project: ts.server.Project, diags: ts.Diagnostic[], normalizedFileName: string): ts.Diagnostic[] | null;
 }
 export declare const DETAILED_COMPLETION_COUNT: number;
 export declare const DETAILED_MAX_TIME: number;
@@ -68,8 +71,32 @@ export declare class DiagnosticsContainer {
     };
     reset(): void;
 }
+export declare function updateInferredProjectSettings(ts_impl: typeof ts, defaultOptionsHolder: DefaultOptionsHolder, projectService: ProjectService): void;
+export declare function setDefaultOptions(serviceDefaults: any, defaultOptionsHolder: DefaultOptionsHolder, projectService: ProjectService): void;
 export declare function copyPropertiesInto(fromObject: any, toObject: any): void;
 export declare function extendEx(ObjectToExtend: typeof ts.server.ProjectService, name: string, func: (oldFunction: any, args: any) => any): void;
 export declare function parseNumbersInVersion(version: string): number[];
 export declare function isVersionMoreOrEqual(version: number[], ...expected: number[]): boolean;
 export declare function isFunctionKind(kind: string): boolean;
+export declare function getDefaultSessionClass(ts_impl: typeof ts, host: any, defaultOptionsHolder: DefaultOptionsHolder): DefaultSessionClass;
+export interface DefaultSession extends ts.server.Session {
+    beforeFirstMessage(): void;
+    getFileWrite(projectFilename: string, outFiles: string[], realWriteFile: any, contentRoot?: string, sourceRoot?: string): (fileName: string, data?: any, writeByteOrderMark?: any, onError?: any, sourceFiles?: any[]) => void;
+    getCompileInfo(req: ts.server.protocol.IDECompileFileRequestArgs): CompileInfo;
+    compileFileEx(req: ts.server.protocol.IDECompileFileRequestArgs): Response;
+}
+export declare type DefaultSessionClass = {
+    new (...args: any[]): DefaultSession;
+};
+export interface CompileInfo {
+    project?: ts.server.Project | null;
+    projectName?: string;
+    projectPath?: string;
+    isCompilingRequired?: boolean;
+    projectUsesOutFile?: boolean;
+    getSourceFiles?(): ts.SourceFile[];
+    emit?(file?: ts.SourceFile): ts.server.protocol.DiagnosticEventBody[] | null;
+    getDiagnostics?(): ts.server.protocol.DiagnosticEventBody[];
+    postProcess?(): void;
+    getOutFiles?(): string[];
+}

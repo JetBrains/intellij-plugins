@@ -1,4 +1,6 @@
 export declare const isLogEnabled: any;
+import * as ts from '../typings/tsserverlibrary';
+
 export declare class LoggerImpl implements ts.server.Logger {
     logFilename: string;
     level: string;

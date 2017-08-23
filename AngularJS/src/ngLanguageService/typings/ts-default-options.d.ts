@@ -1,4 +1,5 @@
 import {PathProcessor} from "./out-path-process";
+import * as ts from '../typings/tsserverlibrary';
 
 export declare class DefaultOptionsHolder {
     pluginState: TypeScriptPluginState;

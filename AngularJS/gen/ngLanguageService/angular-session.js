@@ -12,9 +12,9 @@ var __extends = (this && this.__extends) || (function () {
 exports.__esModule = true;
 var path = require('path');
 function createAngularSessionClass(ts_impl, sessionClass) {
-    ts_impl.server.CommandNames.IDEGetHtmlErrors = "IDEGetHtmlErrors";
-    ts_impl.server.CommandNames.IDENgCompletions = "IDENgCompletions";
-    ts_impl.server.CommandNames.IDEGetProjectHtmlErr = "IDEGetProjectHtmlErr";
+    var IDEGetHtmlErrors = "IDEGetHtmlErrors";
+    var IDENgCompletions = "IDENgCompletions";
+    var IDEGetProjectHtmlErr = "IDEGetProjectHtmlErr";
     var skipAngular = ts_impl["skipNg"];
     var refreshErrorCount = 0;
     var globalError = skipAngular ? skipAngular : null;
@@ -26,15 +26,15 @@ function createAngularSessionClass(ts_impl, sessionClass) {
         AngularSession.prototype.executeCommand = function (request) {
             var _this = this;
             var command = request.command;
-            if (command == ts_impl.server.CommandNames.IDEGetHtmlErrors) {
+            if (command == IDEGetHtmlErrors) {
                 var args = request.arguments;
                 return { response: { infos: this.getHtmlDiagnosticsEx(args.files) }, responseRequired: true };
             }
-            if (command == ts_impl.server.CommandNames.IDENgCompletions) {
+            if (command == IDENgCompletions) {
                 var args = request.arguments;
                 return this.getNgCompletion(args);
             }
-            if (command == ts_impl.server.CommandNames.IDEGetProjectHtmlErr || command == "geterrForProject") {
+            if (command == IDEGetProjectHtmlErr || command == "geterrForProject") {
                 var args = request.arguments;
                 var fileName = args.file;
                 var project = this.getProjectForFileEx(fileName);
@@ -49,7 +49,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                         this.logError(e, "Internal angular service error");
                     }
                 }
-                return command == ts_impl.server.CommandNames.IDEGetProjectHtmlErr ?
+                return command == IDEGetProjectHtmlErr ?
                     this.processOldProjectErrors(request) :
                     _super.prototype.executeCommand.call(this, request);
             }

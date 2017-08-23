@@ -1,8 +1,10 @@
-import {TypeScriptLanguagePlugin} from "./typings/typescript/ts-plugin";
+import {TypeScriptLanguagePlugin} from "./typings/ts-plugin";
 import {createAngularSessionClass, getServiceDiags} from "./angular-session";
 import {LanguageService} from "./typings/types";
-import {DefaultOptionsHolder} from "./typings/typescript/ts-default-options";
-import {SessionClass} from "./typings/typescript/ts-session-provider";
+import {DefaultOptionsHolder} from "./typings/ts-default-options";
+import {SessionClass} from "./typings/ts-session-provider";
+import * as ts from './typings/tsserverlibrary'
+
 
 class AngularLanguagePluginFactory implements LanguagePluginFactory {
     create(state: AngularTypeScriptPluginState): { languagePlugin: LanguagePlugin, readyMessage?: any } {

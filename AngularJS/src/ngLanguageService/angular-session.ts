@@ -1,15 +1,15 @@
-import {IDETypeScriptSession} from "./typings/typescript/util";
+import {IDETypeScriptSession} from "./typings/util";
 import {Completions, LanguageService} from "./typings/types";
-import {SessionClass} from "./typings/typescript/ts-session-provider";
-import LanguageServiceHost = ts.LanguageServiceHost;
+import {SessionClass} from "./typings/ts-session-provider";
+import * as ts from './typings/tsserverlibrary';
 
 let path = require('path');
 
 export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { new (...args: any[]): IDETypeScriptSession }): SessionClass {
 
-    (ts_impl.server.CommandNames as any).IDEGetHtmlErrors = "IDEGetHtmlErrors";
-    (ts_impl.server.CommandNames as any).IDENgCompletions = "IDENgCompletions";
-    (ts_impl.server.CommandNames as any).IDEGetProjectHtmlErr = "IDEGetProjectHtmlErr";
+    let IDEGetHtmlErrors = "IDEGetHtmlErrors";
+    let IDENgCompletions = "IDENgCompletions";
+    let IDEGetProjectHtmlErr = "IDEGetProjectHtmlErr";
 
 
     let skipAngular = ts_impl["skipNg"];
@@ -20,17 +20,17 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
 
         executeCommand(request: ts.server.protocol.Request): { response?: any; responseRequired?: boolean } {
             let command = request.command;
-            if (command == ts_impl.server.CommandNames.IDEGetHtmlErrors) {
+            if (command == IDEGetHtmlErrors) {
                 let args = request.arguments;
                 return {response: {infos: this.getHtmlDiagnosticsEx(args.files)}, responseRequired: true};
             }
-            if (command == ts_impl.server.CommandNames.IDENgCompletions) {
+            if (command == IDENgCompletions) {
                 const args = <ts.server.protocol.CompletionsRequestArgs>request.arguments;
 
                 return this.getNgCompletion(args);
             }
 
-            if (command == ts_impl.server.CommandNames.IDEGetProjectHtmlErr || command == "geterrForProject") {
+            if (command == IDEGetProjectHtmlErr || command == "geterrForProject") {
                 let args: ts.server.protocol.FileRequestArgs = request.arguments;
                 let fileName = args.file;
                 let project = this.getProjectForFileEx(fileName);
@@ -46,7 +46,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
                 }
                 
 
-                return command == ts_impl.server.CommandNames.IDEGetProjectHtmlErr ?
+                return command == IDEGetProjectHtmlErr ?
                     (<any>this).processOldProjectErrors(request) :
                     super.executeCommand(request)
             }
@@ -241,7 +241,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
             return ngService ? ngService() : null;
         }
 
-        getNgHost(languageService: ts.LanguageService): LanguageServiceHost {
+        getNgHost(languageService: ts.LanguageService): ts.LanguageServiceHost {
             let ngHost = languageService["ngHost"];
             return ngHost ? ngHost() : ngHost;
         }
@@ -392,7 +392,7 @@ export function extendEx(ObjectToExtend: typeof ts.server.Project, name: string,
     }
 }
 
-export function getServiceDiags(ts_impl, ngLanguageService: LanguageService, ngHost: LanguageServiceHost, normalizedFileName: string, sourceFile: ts.SourceFile | null, languageService: ts.LanguageService) {
+export function getServiceDiags(ts_impl, ngLanguageService: LanguageService, ngHost: ts.LanguageServiceHost, normalizedFileName: string, sourceFile: ts.SourceFile | null, languageService: ts.LanguageService) {
     let diags = [];
     try {
         let errors = ngLanguageService.getDiagnostics(normalizedFileName);
