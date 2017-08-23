@@ -19,6 +19,7 @@ import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import icons.JsTestDriverIcons;
 
@@ -27,7 +28,7 @@ import icons.JsTestDriverIcons;
  * Provides a new type of Run Configuration which launches the JSTestDriver server.
  * @author alexeagle@google.com (Alex Eagle)
  */
-public class JstdConfigurationType extends ConfigurationTypeBase {
+public class JstdConfigurationType extends ConfigurationTypeBase implements DumbAware {
 
   private static final String NAME = "JsTestDriver";
   public static final String ID = "JsTestDriver-test-runner";

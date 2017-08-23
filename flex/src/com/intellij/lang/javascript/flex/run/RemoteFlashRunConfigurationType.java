@@ -6,13 +6,14 @@ import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import icons.FlexIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class RemoteFlashRunConfigurationType implements ConfigurationType {
+public class RemoteFlashRunConfigurationType implements ConfigurationType, DumbAware {
 
   public static final String TYPE = "RemoteFlashRunConfigurationType";
   public static final String DISPLAY_NAME = "Flash Remote Debug";
