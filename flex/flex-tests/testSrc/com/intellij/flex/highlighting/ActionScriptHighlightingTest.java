@@ -64,6 +64,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
+import com.intellij.spellchecker.quickfixes.RenameTo;
 import com.intellij.testFramework.ExpectedHighlightingData;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.PsiTestUtil;
@@ -251,7 +252,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testSpellChecker() throws Exception {
     enableInspectionTool(new SpellCheckingInspection());
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Typo: Rename to...");
+    doSimpleHighlightingWithInvokeFixAndCheckResult(RenameTo.FIX_NAME);
   }
 
   public void testSpellChecker_2() throws Exception {
@@ -262,7 +263,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     TemplateManagerImpl.setTemplateTesting(getProject(), getTestRootDisposable());
     enableInspectionTool(new SpellCheckingInspection());
 
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Typo: Rename to...");
+    doSimpleHighlightingWithInvokeFixAndCheckResult(RenameTo.FIX_NAME);
 
     final LookupEx lookup = LookupManager.getActiveLookup(myEditor);
     assertNotNull(lookup);

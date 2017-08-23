@@ -98,6 +98,7 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.refactoring.rename.RenameProcessor;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
+import com.intellij.spellchecker.quickfixes.RenameTo;
 import com.intellij.testFramework.ExpectedHighlightingData;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
@@ -1132,7 +1133,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     ExpectedHighlightingData expectedHighlightingData = new ExpectedHighlightingData(myEditor.getDocument(), true, true, false, myFile);
     Collection<HighlightInfo> infoCollection = checkHighlighting(expectedHighlightingData);
     assertEquals(1, countNonInformationHighlights(infoCollection));
-    findAndInvokeActionWithExpectedCheck("Typo: Rename to...", "mxml", infoCollection);
+    findAndInvokeActionWithExpectedCheck(RenameTo.FIX_NAME, "mxml", infoCollection);
   }
 
   @NeedsJavaModule
