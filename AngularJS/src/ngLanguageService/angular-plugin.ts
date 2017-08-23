@@ -1,10 +1,10 @@
 import {TypeScriptLanguagePlugin} from "./typings/ts-plugin";
-import {createAngularSessionClass, getServiceDiags} from "./angular-session";
-import {LanguageService} from "./typings/types";
+import {createAngularSessionClassTs20} from "./angular-session-20";
 import {DefaultOptionsHolder} from "./typings/ts-default-options";
 import {SessionClass} from "./typings/ts-session-provider";
 import * as ts from './typings/tsserverlibrary'
-
+import * as utilObj from './typings/util';
+import {createAngularSessionClass} from "./angular-session-latest";
 
 class AngularLanguagePluginFactory implements LanguagePluginFactory {
     create(state: AngularTypeScriptPluginState): { languagePlugin: LanguagePlugin, readyMessage?: any } {
@@ -25,7 +25,7 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
 
     const TypeScriptLanguagePluginImpl: typeof TypeScriptLanguagePlugin = require(fixedPath + "ts-plugin.js").TypeScriptLanguagePlugin
     const instantiateSession = require(fixedPath + "ts-session-provider.js").instantiateSession;
-    const util = require(fixedPath + "util.js");
+    const util: typeof utilObj = require(fixedPath + "util.js");
 
     class AngularLanguagePlugin extends TypeScriptLanguagePluginImpl {
 
@@ -45,40 +45,22 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
                     ng = requiredObject(obj);
                 }
 
+                ts_impl["ng_service"] = ng;
+
 
                 if (!isVersionCompatible(ng, util, ts_impl)) {
                     ts_impl["ngIncompatible"] = true;
                 }
-                extendEx(ts_impl, "createLanguageService", (oldFunction, args) => {
-                    let languageService = oldFunction.apply(this, args);
-                    let host = args[0];
-
-                    let ngHost = new ng.TypeScriptServiceHost(host, languageService);
-                    let ngService: LanguageService = ng.createLanguageService(ngHost);
-                    ngHost.setSite(ngService);
-
-                    extendEx(languageService, "getSemanticDiagnostics", (getSemanticDiagnosticsOld, args) => {
-                        let diags = getSemanticDiagnosticsOld.apply(ngService, args);
-                        if (diags == null) {
-                            diags = [];
-                        }
-                        let name = args[0];
-
-                        return diags.concat(getServiceDiags(ts_impl, ngService, ngHost, name, null, languageService));
-                    });
-
-                    languageService["ngService"] = () => ngService;
-                    languageService["ngHost"] = () => ngHost;
-
-                    return languageService;
-
-                });
             } else {
                 ts_impl["skipNg"] = "Cannot start Angular Service with the bundled TypeScript. " +
                     "Please specify 'typescript' node_modules package.";
             }
 
-            return createAngularSessionClass(ts_impl, <any>sessionClass);
+            let version = ts_impl.version;
+
+            let versionNumbers = util.parseNumbersInVersion(version);
+
+            return util.isVersionMoreOrEqual(versionNumbers, 2, 3, 0) ? createAngularSessionClass(ts_impl, sessionClass) : createAngularSessionClassTs20(ts_impl, <any>sessionClass);
         }
 
 

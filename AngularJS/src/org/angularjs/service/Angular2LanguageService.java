@@ -36,10 +36,11 @@ import com.intellij.psi.util.ParameterizedCachedValue;
 import com.intellij.psi.util.ParameterizedCachedValueProvider;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
+import com.intellij.util.containers.ContainerUtil;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.service.protocol.Angular2LanguageServiceProtocol;
 import org.angularjs.service.protocol.command.Angular2CompletionsCommand;
-import org.angularjs.service.protocol.command.Angular2GetHtmlErrorCommand;
+import org.angularjs.service.protocol.command.Angular2GetHtmlErrCommand;
 import org.angularjs.service.protocol.command.Angular2GetProjectHtmlErrCommand;
 import org.angularjs.settings.AngularSettings;
 import org.jetbrains.annotations.NotNull;
@@ -122,7 +123,11 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   @Override
   protected Collection<JSLanguageServiceCacheableCommand> createGetErrCommand(@NotNull VirtualFile file, @NotNull String path) {
     if (file.getFileType() == HtmlFileType.INSTANCE) {
-      return Collections.singletonList(new Angular2GetHtmlErrorCommand(path));
+      String configFile = getConfigForFile(file);
+      if (configFile == null) return ContainerUtil.emptyList();
+      Angular2GetHtmlErrCommand error = new Angular2GetHtmlErrCommand(path);
+      error.arguments.projectFileName = configFile;
+      return Collections.singletonList(error);
     }
     return super.createGetErrCommand(file, path);
   }

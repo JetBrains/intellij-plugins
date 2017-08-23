@@ -2,10 +2,43 @@ import {IDETypeScriptSession} from "./typings/util";
 import {Completions, LanguageService} from "./typings/types";
 import {SessionClass} from "./typings/ts-session-provider";
 import * as ts from './typings/tsserverlibrary';
+import {getServiceDiags} from "./ngutil";
 
 let path = require('path');
 
-export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { new (...args: any[]): IDETypeScriptSession }): SessionClass {
+export function createAngularSessionClassTs20(ts_impl: typeof ts, sessionClass: { new (...args: any[]): IDETypeScriptSession }): SessionClass {
+
+    let ng = ts_impl["ng_service"];
+
+    if (!ng) {
+        return sessionClass;
+    }
+
+    extendEx(ts_impl, "createLanguageService", (oldFunction, args) => {
+        let languageService = oldFunction.apply(this, args);
+        let host = args[0];
+
+        let ngHost = new ng.TypeScriptServiceHost(host, languageService);
+        let ngService: LanguageService = ng.createLanguageService(ngHost);
+        ngHost.setSite(ngService);
+
+        extendEx(languageService, "getSemanticDiagnostics", (getSemanticDiagnosticsOld, args) => {
+            let diags = getSemanticDiagnosticsOld.apply(ngService, args);
+            if (diags == null) {
+                diags = [];
+            }
+            let name = args[0];
+
+            return diags.concat(getServiceDiags(ts_impl, ngService, ngHost, name, null, languageService));
+        });
+
+        languageService["ngService"] = () => ngService;
+        languageService["ngHost"] = () => ngHost;
+
+        return languageService;
+
+    });
+
 
     let IDEGetHtmlErrors = "IDEGetHtmlErrors";
     let IDENgCompletions = "IDENgCompletions";
@@ -22,7 +55,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
             let command = request.command;
             if (command == IDEGetHtmlErrors) {
                 let args = request.arguments;
-                return {response: {infos: this.getHtmlDiagnosticsEx(args.files)}, responseRequired: true};
+                return {response: {infos: this.getHtmlDiagnosticsEx([args.file])}, responseRequired: true};
             }
             if (command == IDENgCompletions) {
                 const args = <ts.server.protocol.CompletionsRequestArgs>request.arguments;
@@ -44,7 +77,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
                         this.logError(e, "Internal angular service error");
                     }
                 }
-                
+
 
                 return command == IDEGetProjectHtmlErr ?
                     (<any>this).processOldProjectErrors(request) :
@@ -382,7 +415,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
 }
 
 
-export function extendEx(ObjectToExtend: typeof ts.server.Project, name: string, func: (oldFunction: any, args: any) => any) {
+export function extendEx(ObjectToExtend: any, name: string, func: (oldFunction: any, args: any) => any) {
     let proto: any = ObjectToExtend.prototype;
 
     let oldFunction = proto[name];
@@ -392,32 +425,3 @@ export function extendEx(ObjectToExtend: typeof ts.server.Project, name: string,
     }
 }
 
-export function getServiceDiags(ts_impl, ngLanguageService: LanguageService, ngHost: ts.LanguageServiceHost, normalizedFileName: string, sourceFile: ts.SourceFile | null, languageService: ts.LanguageService) {
-    let diags = [];
-    try {
-        let errors = ngLanguageService.getDiagnostics(normalizedFileName);
-        if (errors && errors.length) {
-            let file = sourceFile != null ? sourceFile : (ngHost as any).getSourceFile(normalizedFileName);
-            for (const error of errors) {
-                diags.push({
-                    file,
-                    start: error.span.start,
-                    length: error.span.end - error.span.start,
-                    messageText: "Angular: " + error.message,
-                    category: ts_impl.DiagnosticCategory.Error,
-                    code: 0
-                });
-            }
-        }
-    } catch (err) {
-        diags.push({
-            file: null,
-            code: -1,
-            messageText: "Angular Language Service internal globalError: " + err.message,
-            start: 0,
-            length: 0,
-            category: ts_impl.DiagnosticCategory.Warning
-        })
-    }
-    return diags;
-}

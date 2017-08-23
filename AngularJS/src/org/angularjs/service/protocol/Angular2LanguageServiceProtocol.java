@@ -8,6 +8,7 @@ import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings;
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptServiceStandardOutputProtocol;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import org.angularjs.lang.AngularJSLanguage;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,7 @@ import java.io.File;
 
 public class Angular2LanguageServiceProtocol extends TypeScriptServiceStandardOutputProtocol {
   public static final String NG_LANGUAGE_SERVICE = "ngLanguageService";
+  public static final String NG_PLUGIN_NAME = "ngPluginIDE";
   private final String myNgServicePath;
 
   public Angular2LanguageServiceProtocol(@NotNull Project project,
@@ -35,6 +37,15 @@ public class Angular2LanguageServiceProtocol extends TypeScriptServiceStandardOu
     File directory = JSLanguageServiceUtil.getPluginDirectory(AngularJSLanguage.class, NG_LANGUAGE_SERVICE);
     state.typescriptPluginPath =
       TypeScriptUtil.getTypeScriptCompilerFolderFile().getAbsolutePath() + File.separator + "typescript" + File.separator;
+
+
+    state.pluginProbeLocations = state.pluginProbeLocations == null
+                                 ? new String[]{directory.getAbsolutePath()}
+                                 : ArrayUtil.mergeArrays(state.pluginProbeLocations, directory.getAbsolutePath());
+
+    state.globalPlugins = state.globalPlugins == null
+                          ? new String[]{NG_PLUGIN_NAME}
+                          : ArrayUtil.mergeArrays(state.globalPlugins, NG_PLUGIN_NAME);
 
     //override plugin path
     state.pluginPath = new File(directory, "angular-plugin.js").getAbsolutePath();

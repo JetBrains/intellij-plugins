@@ -10,6 +10,9 @@ interface TypeScriptPluginState extends PluginState {
     projectPath?: string;
     commandLineArguments?: string[];
     mainFilePath?: string;
+
+
     isUseSingleInferredProject?: boolean;
     pluginProbeLocations?:string[];
+    globalPlugins?: string[];
 }

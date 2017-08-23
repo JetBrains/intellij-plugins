@@ -10,7 +10,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
-var angular_session_1 = require("./angular-session");
+var angular_session_20_1 = require("./angular-session-20");
+var angular_session_latest_1 = require("./angular-session-latest");
 var AngularLanguagePluginFactory = (function () {
     function AngularLanguagePluginFactory() {
     }
@@ -35,43 +36,27 @@ function createPluginClass(state) {
             return _super.call(this, state) || this;
         }
         AngularLanguagePlugin.prototype.createSessionClass = function (ts_impl, defaultOptionsHolder) {
-            var _this = this;
             var sessionClass = _super.prototype.createSessionClass.call(this, ts_impl, defaultOptionsHolder);
             if (ts_impl["ide_processed"]) {
                 var requiredObject = require(state.ngServicePath);
-                var ng_1 = requiredObject;
+                var ng = requiredObject;
                 if (typeof requiredObject == "function") {
                     var obj = {};
                     obj.typescript = ts_impl;
-                    ng_1 = requiredObject(obj);
+                    ng = requiredObject(obj);
                 }
-                if (!isVersionCompatible(ng_1, util, ts_impl)) {
+                ts_impl["ng_service"] = ng;
+                if (!isVersionCompatible(ng, util, ts_impl)) {
                     ts_impl["ngIncompatible"] = true;
                 }
-                extendEx(ts_impl, "createLanguageService", function (oldFunction, args) {
-                    var languageService = oldFunction.apply(_this, args);
-                    var host = args[0];
-                    var ngHost = new ng_1.TypeScriptServiceHost(host, languageService);
-                    var ngService = ng_1.createLanguageService(ngHost);
-                    ngHost.setSite(ngService);
-                    extendEx(languageService, "getSemanticDiagnostics", function (getSemanticDiagnosticsOld, args) {
-                        var diags = getSemanticDiagnosticsOld.apply(ngService, args);
-                        if (diags == null) {
-                            diags = [];
-                        }
-                        var name = args[0];
-                        return diags.concat(angular_session_1.getServiceDiags(ts_impl, ngService, ngHost, name, null, languageService));
-                    });
-                    languageService["ngService"] = function () { return ngService; };
-                    languageService["ngHost"] = function () { return ngHost; };
-                    return languageService;
-                });
             }
             else {
                 ts_impl["skipNg"] = "Cannot start Angular Service with the bundled TypeScript. " +
                     "Please specify 'typescript' node_modules package.";
             }
-            return angular_session_1.createAngularSessionClass(ts_impl, sessionClass);
+            var version = ts_impl.version;
+            var versionNumbers = util.parseNumbersInVersion(version);
+            return util.isVersionMoreOrEqual(versionNumbers, 2, 3, 0) ? angular_session_latest_1.createAngularSessionClass(ts_impl, sessionClass) : angular_session_20_1.createAngularSessionClassTs20(ts_impl, sessionClass);
         };
         AngularLanguagePlugin.prototype.overrideSysDefaults = function (ts_impl, state, serverFile) {
             var path = require('path');
@@ -85,8 +70,8 @@ function createPluginClass(state) {
                 }
                 ts_impl["ide_processed"] = true;
                 //clean resources
-                var name_1 = require.resolve(tsPath);
-                delete require.cache[name_1];
+                var name = require.resolve(tsPath);
+                delete require.cache[name];
             }
             catch (err) {
                 //do nothing
