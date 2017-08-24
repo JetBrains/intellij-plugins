@@ -119,6 +119,21 @@ public class Angular2ServiceTest extends CodeInsightFixtureTestCase {
     assertNotEmpty(errors);
     assertSize(2, errors);
   }
+  
+  
+  public void testSimpleHighlightHtmlNotAngular() {
+    if (skipTests) {
+      return;
+    }
+    defaultTest(".html");
+  }
+
+  public void testSimpleHighlightHtmlNotAngularUnderConfig() {
+    if (skipTests) {
+      return;
+    }
+    defaultTest(".html");
+  }
 
   @NotNull
   public Ref<List<JSAnnotationError>> getReporter(boolean projectErrors) {
