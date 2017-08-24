@@ -34,6 +34,15 @@ $ ./gradlew buildPlugin
 Plugin zip file will be created in `build/distributions`
 
 To test plugin in IDE run `./gradlew runIdea`
+
+#### Grammar modifications
+
+The plugin uses [Grammar-Kit](https://github.com/jetbrains/grammar-kit) to generate parser and lexer. Please install [Grammar-Kit plugin](https://plugins.jetbrains.com/plugin/6606-grammar-kit) and refer to the documentation if you want to modify grammar.
+
+To regenerate parser, open Makefile.bnf and press Ctrl+Shift+G (Cmd+Shift+G on Mac)
+To regenerate lexer, open Makefile.flex and press Ctrl+Shift+G (Cmd+Shift+G on Mac)
+
+Please make sure to add test to MakefileParserTest.kt for any parser modifications.
  
 ### Contribution
 
