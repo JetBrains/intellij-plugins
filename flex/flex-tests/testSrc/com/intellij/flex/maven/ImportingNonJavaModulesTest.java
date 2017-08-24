@@ -10,7 +10,7 @@ import org.jetbrains.idea.maven.MavenImportingTestCase;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ImportingNonJavaModulesTest extends MavenImportingTestCase {
-  public void testRecreatingNonJavaModules() throws Exception {
+  public void testRecreatingNonJavaModules() {
     Module m = createModule("flex-module", FlexModuleType.getInstance());
 
     VirtualFile file = createModulePom("flex-module",
@@ -28,7 +28,7 @@ public class ImportingNonJavaModulesTest extends MavenImportingTestCase {
     assertEquals(StdModuleTypes.JAVA, ModuleType.get(getModule("flex-project")));
   }
 
-  public void testChangeJavaModuleToFlexModule() throws Exception {
+  public void testChangeJavaModuleToFlexModule() {
     Module m = createModule("flex-module", StdModuleTypes.JAVA);
 
     VirtualFile file = createModulePom("flex-module",
@@ -58,7 +58,7 @@ public class ImportingNonJavaModulesTest extends MavenImportingTestCase {
     assertEquals(FlexModuleType.getInstance(), ModuleType.get(getModule("flex-project")));
   }
 
-  public void testDoNotRecreateNonJavaModulesIfUserDoNotWantTo() throws Exception {
+  public void testDoNotRecreateNonJavaModulesIfUserDoNotWantTo() {
     Module m = createModule("flex-module", FlexModuleType.getInstance());
 
     VirtualFile file = createModulePom("flex-module",
@@ -76,7 +76,7 @@ public class ImportingNonJavaModulesTest extends MavenImportingTestCase {
     assertTrue(myProjectsManager.isIgnored(myProjectsManager.findProject(m)));
   }
 
-  public void testDoNotAskToRecreateNonJavaModulesTwice() throws Exception {
+  public void testDoNotAskToRecreateNonJavaModulesTwice() {
     createModule("flex-module", FlexModuleType.getInstance());
 
     VirtualFile file = createModulePom("flex-module",

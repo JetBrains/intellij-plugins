@@ -240,15 +240,15 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
     }
   }
 
-  public void testAnonymousFunction1() throws Exception {
+  public void testAnonymousFunction1() {
     doTestInaccessible();
   }
 
-  public void testAnonymousFunction2() throws Exception {
+  public void testAnonymousFunction2() {
     doTestInaccessible();
   }
 
-  public void testAnonymousFunction3() throws Exception {
+  public void testAnonymousFunction3() {
     doTestInaccessible();
   }
 
@@ -269,7 +269,7 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
            new JSParameterInfo("i", "int", "", "1000", -1));
   }
 
-  public void testAnonymousFunction6() throws Exception {
+  public void testAnonymousFunction6() {
     myAfterCommitRunnable = () -> WriteAction.run(() -> {
       String root = getTestRoot() + getTestName(false) + "/module2";
       Module module2 = ModuleManager.getInstance(myProject).newModule(getTestDataPath() + root, getModuleType().getId());

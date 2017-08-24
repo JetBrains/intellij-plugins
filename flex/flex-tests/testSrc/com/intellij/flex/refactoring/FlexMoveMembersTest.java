@@ -162,19 +162,19 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
     }
   }
 
-  public void testSamePackage() throws Exception {
+  public void testSamePackage() {
     doTest("foo.From", "foo.To", null, "func");
   }
 
-  public void testVar() throws Exception {
+  public void testVar() {
     doTest("From", "To", VISIBILITY_AS_IS, "aVar");
   }
 
-  public void testVar1Of2() throws Exception {
+  public void testVar1Of2() {
     doTest("From", "To", VISIBILITY_AS_IS, "var1");
   }
 
-  public void testVar2Of2() throws Exception {
+  public void testVar2Of2() {
     doTest("From", "To", VISIBILITY_AS_IS, "var2");
   }
 
@@ -192,7 +192,7 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
     });
   }
 
-  public void testImports() throws Exception {
+  public void testImports() {
     doTest("a.From", "b.To", VISIBILITY_AS_IS, "foo");
   }
 

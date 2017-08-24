@@ -93,63 +93,63 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     return new FlexDocumentationProvider();
   }
 
-  public void testJSDocs6() throws Exception {
+  public void testJSDocs6() {
     defaultTest();
   }
 
-  public void testJSDocs14() throws Exception {
+  public void testJSDocs14() {
     defaultTest();
   }
 
-  public void testJSDocs15() throws Exception {
+  public void testJSDocs15() {
     defaultTest();
   }
 
-  public void testJSDocs25() throws Exception {
+  public void testJSDocs25() {
     defaultTest();
   }
 
-  public void testJSDocs31() throws Exception {
+  public void testJSDocs31() {
     defaultTest();
   }
 
-  public void testJSDocs32() throws Exception {
+  public void testJSDocs32() {
     defaultTest();
   }
 
-  public void testAsSimpleDocs() throws Exception {
+  public void testAsSimpleDocs() {
     doTestWithLinkNavigationCheck("as", 1);
   }
 
-  public void testAsSimpleDocs2() throws Exception {
+  public void testAsSimpleDocs2() {
     doTest(getTestName(false), "as");
   }
 
-  public void testAsSimpleDocs3() throws Exception {
+  public void testAsSimpleDocs3() {
     doTest(getTestName(false), "as");
   }
 
-  public void testAsSimpleDocs4() throws Exception {
+  public void testAsSimpleDocs4() {
     doTest(getTestName(false), "as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testMxmlDoc() throws Exception {
+  public void testMxmlDoc() {
     doTest(getTestName(false), "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testMxmlDoc2() throws Exception {
+  public void testMxmlDoc2() {
     doTest(getTestName(false), "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testMxmlDoc3() throws Exception {
+  public void testMxmlDoc3() {
     doTest(getTestName(false), "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testMxmlDoc4() throws Exception {
+  public void testMxmlDoc4() {
     doTest(getTestName(false), "mxml");
   }
 
@@ -160,12 +160,12 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testMxmlDoc6() throws Exception {
+  public void testMxmlDoc6() {
     doTest(getTestName(false), "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testMxmlDoc7() throws Exception {
+  public void testMxmlDoc7() {
     doTest(getTestName(false), "mxml");
   }
 
@@ -177,7 +177,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testFlexCssSelectorMultiDocumentation() throws Exception {
+  public void testFlexCssSelectorMultiDocumentation() {
     myAfterCommitRunnable =
       () -> FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib1.swc", "MyLib1_src.zip", null);
     doTest(getTestName(false), "css");
@@ -214,7 +214,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testFlexCssPropertyMultiDocumentation() throws Exception {
+  public void testFlexCssPropertyMultiDocumentation() {
     doTest(getTestName(false), "css");
   }
 
@@ -288,19 +288,19 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testSeeAlso() throws Exception {
+  public void testSeeAlso() {
     doTestWithLinkNavigationCheck("as", 6);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testWithLibrary1() throws Exception {
+  public void testWithLibrary1() {
     myAfterCommitRunnable =
       () -> FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", null);
     doTest(getTestName(false), "as");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testWithLibrary2() throws Exception {
+  public void testWithLibrary2() {
     myAfterCommitRunnable =
       () -> FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", null);
     doTest(getTestName(false), "as");
@@ -366,42 +366,42 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testDocsInsideFunction() throws Exception {
+  public void testDocsInsideFunction() {
     doTest(getTestName(false), "as");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testDocsInsideFunction2() throws Exception {
+  public void testDocsInsideFunction2() {
     doTest(getTestName(false), "as");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testDocsBeforeBindable() throws Exception {
+  public void testDocsBeforeBindable() {
     doTest(getTestName(false), "as");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testDocsBeforeBindable2() throws Exception {
+  public void testDocsBeforeBindable2() {
     doTest(getTestName(false), "as");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testDocsBeforeBindable3() throws Exception {
+  public void testDocsBeforeBindable3() {
     doTest(getTestName(false), "as");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testDocsBeforeBindable4() throws Exception {
+  public void testDocsBeforeBindable4() {
     doTest(getTestName(false), "as");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testDocsBeforeBindable5() throws Exception {
+  public void testDocsBeforeBindable5() {
     doTest(getTestName(false), "as");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testDocsBeforeBindable6() throws Exception {
+  public void testDocsBeforeBindable6() {
     doTest(getTestName(false), "as");
   }
 
@@ -412,7 +412,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testClassInheritDoc1() throws Exception {
+  public void testClassInheritDoc1() {
     doTest(getTestName(false), "as");
   }
 

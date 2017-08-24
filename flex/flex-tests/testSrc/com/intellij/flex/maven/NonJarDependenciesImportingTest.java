@@ -5,7 +5,7 @@ import org.jetbrains.idea.maven.MavenImportingTestCase;
 import java.io.File;
 
 public class NonJarDependenciesImportingTest extends MavenImportingTestCase {
-  public void testArtifactTypeProvidedByExtensionPlugin() throws Exception {
+  public void testArtifactTypeProvidedByExtensionPlugin() {
     // This test ensures that we download all necessary extension plugins.
     importProject("<groupId>test</groupId>" +
                   "<artifactId>project</artifactId>" +
@@ -44,7 +44,7 @@ public class NonJarDependenciesImportingTest extends MavenImportingTestCase {
                        "/com/adobe/flex/framework/framework/3.2.0.3958/framework-3.2.0.3958-asdoc.zip!/");
   }
 
-  public void testUpdateRootEntriesWithActualPathForNonJarDependencies() throws Exception {
+  public void testUpdateRootEntriesWithActualPathForNonJarDependencies() {
     importProject("<groupId>test</groupId>" +
                   "<artifactId>project</artifactId>" +
                   "<version>1</version>" +
@@ -101,7 +101,7 @@ public class NonJarDependenciesImportingTest extends MavenImportingTestCase {
                        "/com/adobe/flex/framework/framework/3.2.0.3958/framework-3.2.0.3958-asdoc.zip!/");
   }
 
-  public void testRemovingUnusedNonJARLibrary() throws Exception {
+  public void testRemovingUnusedNonJARLibrary() {
     importProject("<groupId>test</groupId>" +
                   "<artifactId>project</artifactId>" +
                   "<version>1</version>" +

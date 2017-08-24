@@ -29,7 +29,6 @@ import org.jetbrains.idea.maven.server.MavenServerExecutionResult;
 import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,7 +49,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
     return PathUtil.getParentPath(module.getModuleFilePath());
   }
 
-  public void testAppWithModulesAndLib() throws Exception {
+  public void testAppWithModulesAndLib() {
     final String pomContent = mavenProjectDescription("project", "swf") +
                               "<properties>" +
                               "  <my.suffix>zz</my.suffix>" +
@@ -140,7 +139,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
             "en_US", "target/foo-config-report.xml");
   }
 
-  public void testConfiguringResourceBundleDependency() throws Exception {
+  public void testConfiguringResourceBundleDependency() {
     importProject(mavenProjectDescription("project", "swf") +
                   "<dependencies>" +
                   "  <dependency>" +
@@ -167,7 +166,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
                        "/com/adobe/flex/framework/framework/3.2.0.3958/framework-3.2.0.3958-asdoc.zip!/");
   }
 
-  public void testConfiguringResourceBundleRbSwcDependency() throws Exception {
+  public void testConfiguringResourceBundleRbSwcDependency() {
     importProject(mavenProjectDescription("project", "swf") +
                   "<dependencies>" +
                   "  <dependency>" +
@@ -334,7 +333,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
     assertNotNull(findResourceFacet("project", "fr_FR"));
   }
   */
-  public void test2Projects() throws Exception {
+  public void test2Projects() {
     createProjectPom(mavenProjectDescription("project", "pom") +
                      "<modules>" +
                      "  <module>m1</module>" +
@@ -413,7 +412,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
             FlexmojosSdkType.getInstance());*/
   }
 
-  public void testConfiguringCompiledLocalesAsSourceFolders() throws Exception {
+  public void testConfiguringCompiledLocalesAsSourceFolders() {
     createProjectSubDirs("src/main/locales/en_US",
                          "src/main/locales/ru_RU",
                          "src/main/locales/fr_FR");
@@ -439,7 +438,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
             "en_US\nru_RU", "target/project-1.0-config-report.xml");
   }
 
-  public void testConfiguringRuntimeLocalesAsSourceFolders() throws Exception {
+  public void testConfiguringRuntimeLocalesAsSourceFolders() {
     createProjectSubDirs("src/main/locales/pt_BR",
                          "src/main/locales/ru_RU");
     importProject(mavenProjectDescription("project", "swc") +
@@ -463,7 +462,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
             "", "target/project-1.0-config-report.xml");
   }
 
-  public void testConfiguringRuntimeAndCompiledLocalesAsSourceFolders() throws Exception {
+  public void testConfiguringRuntimeAndCompiledLocalesAsSourceFolders() {
     createProjectSubDirs("src/main/locales/pt_BR",
                          "src/main/locales/ru_RU",
                          "src/main/locales/en_GB",
@@ -494,7 +493,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
             "en_GB\nfr_FR", "target/project-1.0-config-report.xml");
   }
 
-  public void testConfiguringCompiledLocalesSpecifiedByOldStyleLocalesOption() throws Exception {
+  public void testConfiguringCompiledLocalesSpecifiedByOldStyleLocalesOption() {
     createProjectSubDirs("src/main/locales/en_US",
                          "src/main/locales/ru_RU");
 
@@ -519,7 +518,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
             "en_US\nru_RU", "target/project-1.0-config-report.xml");
   }
 
-  public void testConfiguringCompiledLocalesSpecifiedBySpecifiedDefaultLocale() throws Exception {
+  public void testConfiguringCompiledLocalesSpecifiedBySpecifiedDefaultLocale() {
     createProjectSubDirs("src/main/locales/ru_RU");
     importProject(mavenProjectDescription("project", "swf") +
                   "<build>" +
@@ -539,7 +538,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
             "ru_RU", "target/project-1.0-config-report.xml");
   }
 
-  public void testConfiguringCompiledLocalesSpecifiedByDefaultLocale() throws Exception {
+  public void testConfiguringCompiledLocalesSpecifiedByDefaultLocale() {
     createProjectSubDirs("src/main/locales/en_US");
     importProject(mavenProjectDescription("project", "swf") +
                   "<build>" +
@@ -554,7 +553,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
             "en_US", "target/project-1.0-config-report.xml");
   }
 
-  public void testConfiguringCompiledLocalesFromCustomDirAsSourceFolders() throws Exception {
+  public void testConfiguringCompiledLocalesFromCustomDirAsSourceFolders() {
     createProjectSubDirs("locales/en_US");
 
     importProject(mavenProjectDescription("project", "swc") +
@@ -587,7 +586,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
     commonTestForRbSwcPlaceholders("ja_JP", "it_IT");
   }
 
-  private void commonTestForRbSwcPlaceholders(String... compiledLocales) throws Exception {
+  private void commonTestForRbSwcPlaceholders(String... compiledLocales) {
     final String LIB_PATH_TEMPLATE =
       "jar://" + getRepositoryPath() + "/com/adobe/flex/framework/framework/3.2.0.3958/framework-3.2.0.3958-{0}.rb.swc!/";
     final List<String> expectedLibPaths = new ArrayList<>();
@@ -630,7 +629,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
     assertModuleLibDep("project", "Maven: com.adobe.flex.framework:framework:rb.swc:3.2.0.3958", expectedLibPaths, null, null);
   }
 
-  public void testAdditionalJarsAddedToFlexmojosSdkClasspath() throws Exception {
+  public void testAdditionalJarsAddedToFlexmojosSdkClasspath() {
     importProject(mavenProjectDescription("project", "swf") +
                   "<build>" +
                   "  <plugins>" +
@@ -729,7 +728,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
     assertSameElements(classpath, expectedPaths);
   }
 
-  public void testTransitiveDepsOnPartialProjectImport() throws IOException, MavenProcessCanceledException {
+  public void testTransitiveDepsOnPartialProjectImport() throws MavenProcessCanceledException {
     createProjectPom(mavenProjectDescription("aggregator", "pom") +
                      "  <modules>\n" +
                      "    <module>app</module>\n" +
@@ -801,7 +800,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
     assertEquals(new MavenId(groupId, "B", version), appSubProjectDeps.get(1).getMavenId());
   }
 
-  public void testDependencyOnJavaIgnored() throws Exception {
+  public void testDependencyOnJavaIgnored() {
     createProjectPom(mavenProjectDescription("aggregator", "pom") +
                      "  <modules>\n" +
                      "    <module>app</module>\n" +
@@ -864,7 +863,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
     checkBCOnBCDependencies("app", "lib1:Merged");
   }
 
-  public void testAppOnRlmDependency() throws Exception {
+  public void testAppOnRlmDependency() {
     createProjectPom(mavenProjectDescription("aggregator", "pom") +
                      "  <modules>\n" +
                      "    <module>app</module>\n" +
@@ -916,7 +915,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
             "target/rlm-1.0-config-report.xml");
   }
 
-  public void testSignAirGoal() throws Exception {
+  public void testSignAirGoal() {
     importProject(mavenProjectDescription("project", "swf") +
                   "<build>" +
                   "  <sourceDirectory>src/main/flex</sourceDirectory>" +
@@ -959,7 +958,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
                  bc.getAirDesktopPackagingOptions().getSigningOptions().getKeystorePath());
   }
 
-  public void testAirPackaging() throws Exception {
+  public void testAirPackaging() {
     importProject(mavenProjectDescription("project", "air") +
                   "<build>" +
                   "  <sourceDirectory>src/main/flex</sourceDirectory>" +

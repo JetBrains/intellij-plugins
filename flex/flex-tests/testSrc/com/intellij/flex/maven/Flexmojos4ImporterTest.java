@@ -41,7 +41,7 @@ public class Flexmojos4ImporterTest extends FlexmojosImporterTestBase {
     return module.getProject().getBaseDir().getPath();
   }
 
-  public void testAppWithModules() throws Exception {
+  public void testAppWithModules() {
     // hacky way to make sure that compiler.pom is downloaded.
     importProject(mavenProjectDescription("fake", "pom") +
                   "  <dependencies>" +

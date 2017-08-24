@@ -99,7 +99,7 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
     return (CfmlRunConfiguration)configuration.getConfiguration();
   }
 
-  public void testNonDefaultRunConfiguration() throws IOException {
+  public void testNonDefaultRunConfiguration() {
     generateNonDefaultRunConfiguration();
     final Editor editor = myFixture.getEditor();
     final CfmlRunConfiguration cfmlConfig = getContextRunConfiguration(editor);
@@ -109,7 +109,7 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
   }
 
 
-  public void testCreateContextRunConfiguration() throws IOException {
+  public void testCreateContextRunConfiguration() {
     generateNonDefaultRunConfiguration();
     final Editor editor = openCfmFileInEditor(index2Cfm);
     final CfmlRunConfiguration configuration = getContextRunConfiguration(editor);
