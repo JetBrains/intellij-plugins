@@ -50,7 +50,7 @@ function createAngularSessionClass(ts_impl, sessionClass, loggerImpl) {
                     var fileName = ts_impl.normalizePath(fileRequestArgs.file);
                     project_1 = this.projectService.getDefaultProjectForFile(fileName, false);
                 }
-                if (!project_1 || project_1.projectKind != ts_impl.server.ProjectKind.Configured) {
+                if (!project_1 || project_1.projectKind == ts_impl.server.ProjectKind.Inferred) {
                     loggerImpl.serverLogger("ngLog: Cannot find project for project ng diagnostics");
                     return;
                 }

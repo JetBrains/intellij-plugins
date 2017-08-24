@@ -46,7 +46,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: Sess
                     project = this.projectService.getDefaultProjectForFile(fileName, false);
                 }
 
-                if (!project || project.projectKind != ts_impl.server.ProjectKind.Configured) {
+                if (!project || project.projectKind == ts_impl.server.ProjectKind.Inferred) {
                     loggerImpl.serverLogger("ngLog: Cannot find project for project ng diagnostics");
                     return;
                 }
