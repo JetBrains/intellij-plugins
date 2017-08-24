@@ -94,11 +94,4 @@ function isVersionCompatible(ng, util, ts_impl) {
     }
     return true;
 }
-function extendEx(ObjectToExtend, name, func) {
-    var oldFunction = ObjectToExtend[name];
-    ObjectToExtend[name] = function () {
-        return func.apply(this, [oldFunction, arguments]);
-    };
-}
-exports.extendEx = extendEx;
 exports.factory = new AngularLanguagePluginFactory();

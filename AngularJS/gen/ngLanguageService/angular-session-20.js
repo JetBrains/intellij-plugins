@@ -99,7 +99,7 @@ function createAngularSessionClassTs20(ts_impl, sessionClass) {
             var version = this.tsVersion();
             if (version == "2.0.0") {
                 sessionThis.logMessage("Override updateFileMap (old)");
-                extendEx(ts_impl.server.Project, "updateFileMap", function (oldFunc, args) {
+                extendExPrototype(ts_impl.server.Project, "updateFileMap", function (oldFunc, args) {
                     oldFunc.apply(this, args);
                     try {
                         var projectPath = sessionThis.getProjectConfigPathEx(this);
@@ -121,7 +121,7 @@ function createAngularSessionClassTs20(ts_impl, sessionClass) {
             }
             else if (version == "2.0.5") {
                 sessionThis.logMessage("Override updateFileMap (new)");
-                extendEx(ts_impl.server.Project, "updateGraph", function (oldFunc, args) {
+                extendExPrototype(ts_impl.server.Project, "updateGraph", function (oldFunc, args) {
                     var result = oldFunc.apply(this, args);
                     try {
                         if (this.getScriptInfoLSHost) {
@@ -144,7 +144,7 @@ function createAngularSessionClassTs20(ts_impl, sessionClass) {
                     }
                     return result;
                 });
-                extendEx(ts_impl.server.ConfiguredProject, "close", function (oldFunc, args) {
+                extendExPrototype(ts_impl.server.ConfiguredProject, "close", function (oldFunc, args) {
                     sessionThis.logMessage("Disconnect templates from project");
                     var projectPath = sessionThis.getProjectConfigPathEx(this);
                     if (projectPath) {
@@ -385,10 +385,17 @@ function createAngularSessionClassTs20(ts_impl, sessionClass) {
     return AngularSession;
 }
 exports.createAngularSessionClassTs20 = createAngularSessionClassTs20;
-function extendEx(ObjectToExtend, name, func) {
+function extendExPrototype(ObjectToExtend, name, func) {
     var proto = ObjectToExtend.prototype;
     var oldFunction = proto[name];
     proto[name] = function () {
+        return func.apply(this, [oldFunction, arguments]);
+    };
+}
+exports.extendExPrototype = extendExPrototype;
+function extendEx(ObjectToExtend, name, func) {
+    var oldFunction = ObjectToExtend[name];
+    ObjectToExtend[name] = function () {
         return func.apply(this, [oldFunction, arguments]);
     };
 }

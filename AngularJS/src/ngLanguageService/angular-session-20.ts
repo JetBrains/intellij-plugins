@@ -8,7 +8,7 @@ let path = require('path');
 
 export function createAngularSessionClassTs20(ts_impl: typeof ts, sessionClass: { new (...args: any[]): IDETypeScriptSession }): SessionClass {
 
-    let ng = ts_impl["ng_service"];
+    const ng = ts_impl["ng_service"];
 
     if (!ng) {
         return sessionClass;
@@ -110,7 +110,7 @@ export function createAngularSessionClassTs20(ts_impl: typeof ts, sessionClass: 
             let version = this.tsVersion();
             if (version == "2.0.0") {
                 sessionThis.logMessage("Override updateFileMap (old)")
-                extendEx(ts_impl.server.Project, "updateFileMap", function (oldFunc, args) {
+                extendExPrototype(ts_impl.server.Project, "updateFileMap", function (oldFunc, args) {
                     oldFunc.apply(this, args);
                     try {
                         let projectPath = sessionThis.getProjectConfigPathEx(this);
@@ -129,7 +129,7 @@ export function createAngularSessionClassTs20(ts_impl: typeof ts, sessionClass: 
                 });
             } else if (version == "2.0.5") {
                 sessionThis.logMessage("Override updateFileMap (new)")
-                extendEx((ts_impl.server as any).Project, "updateGraph", function (this: ts.server.Project, oldFunc, args) {
+                extendExPrototype((ts_impl.server as any).Project, "updateGraph", function (this: ts.server.Project, oldFunc, args) {
                     let result = oldFunc.apply(this, args);
                     try {
                         if ((<any>this).getScriptInfoLSHost) {
@@ -154,7 +154,7 @@ export function createAngularSessionClassTs20(ts_impl: typeof ts, sessionClass: 
                     return result;
                 });
 
-                extendEx((ts_impl.server as any).ConfiguredProject, "close", function (oldFunc, args) {
+                extendExPrototype((ts_impl.server as any).ConfiguredProject, "close", function (oldFunc, args) {
                     sessionThis.logMessage("Disconnect templates from project");
                     let projectPath = sessionThis.getProjectConfigPathEx(this);
                     if (projectPath) {
@@ -415,12 +415,22 @@ export function createAngularSessionClassTs20(ts_impl: typeof ts, sessionClass: 
 }
 
 
-export function extendEx(ObjectToExtend: any, name: string, func: (oldFunction: any, args: any) => any) {
+export function extendExPrototype(ObjectToExtend: typeof ts.server.Project, name: string, func: (oldFunction: any, args: any) => any) {
     let proto: any = ObjectToExtend.prototype;
 
     let oldFunction = proto[name];
 
     proto[name] = function (this: ts.server.Project) {
+        return func.apply(this, [oldFunction, arguments]);
+    }
+}
+
+
+export function extendEx(ObjectToExtend: any, name: string, func: (oldFunction: any, args: any) => any) {
+
+    let oldFunction = ObjectToExtend[name];
+
+    ObjectToExtend[name] = function (this: any) {
         return func.apply(this, [oldFunction, arguments]);
     }
 }
