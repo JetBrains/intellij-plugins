@@ -1,5 +1,4 @@
-import {Component} from '@angular/core';
-import { NgModule } from '@angular/core';
+import {Component, NgModule} from '@angular/core';
 
 @Component({
     selector: 'my-SimpleHighlightHtml',
@@ -9,7 +8,7 @@ export class AppComponent {
     title: number = 1;
 }
 
-let <error>z1111</error>:number = "";
+let z1111:number = "";
 
 
 
