@@ -10,8 +10,6 @@ import com.intellij.psi.search.searches.MethodReferencesSearch;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Query;
 
-import java.io.IOException;
-
 /**
  * @author Alexey Chmutov
  *         Date: Dec 11, 2009
@@ -33,7 +31,7 @@ public class TapestryFindUsagesTest extends TapestryBaseTestCase {
     doTest("References to a method", 3);
   }
 
-  private void doTest(final String message, final int refsExpected) throws IOException {
+  private void doTest(final String message, final int refsExpected) {
     initByComponent();
     PsiReference[] refs = findUsagesOfElementAtCaret();
     assertEquals(message, refsExpected, refs.length);

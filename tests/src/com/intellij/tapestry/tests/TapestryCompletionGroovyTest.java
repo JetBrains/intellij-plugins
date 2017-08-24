@@ -28,7 +28,7 @@ public class TapestryCompletionGroovyTest extends TapestryCompletionTest {
   }
 
   @Override
-  public void testIdAttrValue() throws Throwable {
+  public void testIdAttrValue() {
     addComponentToProject("Count");
     initByComponent();
     doTestBasicCompletionVariants("link2", "link3");
@@ -42,7 +42,7 @@ public class TapestryCompletionGroovyTest extends TapestryCompletionTest {
     }
   }
 
-  public void testCompleteComponentFromLibrary() throws Throwable {
+  public void testCompleteComponentFromLibrary() {
     addComponentToProject("Count3");
     initByComponent();
     doTestBasicCompletionVariants("wf.upload", "addrowlink", "gridrows", "outputraw", "passwordfield", "removerowlink");

@@ -46,14 +46,14 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     super.tearDown();
   }
 
-  public void testHtmlTagName() throws Throwable {
+  public void testHtmlTagName() {
     addComponentToProject("Count");
     initByComponent();
     XmlTag ref = resolveReferenceAtCaretPosition(XmlTag.class);
     assertEquals("xs:element", ref.getName());
   }
 
-  public void testHtml5TagName() throws Throwable {
+  public void testHtml5TagName() {
     final ExternalResourceManagerEx manager = ExternalResourceManagerEx.getInstanceEx();
     final String doctype = manager.getDefaultHtmlDoctype(myFixture.getProject());
     manager.setDefaultHtmlDoctype(Html5SchemaProvider.getHtml5SchemaLocation(), myFixture.getProject());
@@ -69,14 +69,14 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     }
   }
 
-  public void testHtmlAttrName() throws Throwable {
+  public void testHtmlAttrName() {
     addComponentToProject("Count");
     initByComponent();
     XmlTag ref = resolveReferenceAtCaretPosition(XmlTag.class);
     assertEquals("xs:attribute", ref.getName());
   }
 
-  public void testLibTmlTagName() throws Throwable {
+  public void testLibTmlTagName() {
     initByComponent();
     PsiClass ref = resolveReferenceAtCaretPosition(PsiClass.class);
     assertEquals("org.apache.tapestry5.corelib.components.Any", ref.getQualifiedName());
@@ -111,7 +111,7 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     assertNotNull(libraryOfInterest);
   }
 
-  public void testTmlMixin() throws Throwable {
+  public void testTmlMixin() {
     addComponentToProject("Count");
     addMixinToProject("FooMixin");
     initByComponent();
@@ -119,146 +119,146 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     assertEquals("bar", ref.getName());
   }
 
-  public void testTmlParameter() throws Throwable {
+  public void testTmlParameter() {
     addComponentToProject("Count");
     initByComponent();
     PsiField ref = resolveReferenceAtCaretPosition(PsiField.class);
     assertEquals("start", ref.getName());
   }
 
-  public void testTmlTagName() throws Throwable {
+  public void testTmlTagName() {
     addComponentToProject("Count");
     initByComponent();
     PsiClass ref = resolveReferenceAtCaretPosition(PsiClass.class);
     assertEquals(TEST_APPLICATION_PACKAGE + "." + COMPONENTS + ".Count", ref.getQualifiedName());
   }
 
-  public void testTmlTagNameUsingSubpackage() throws Throwable {
+  public void testTmlTagNameUsingSubpackage() {
     addComponentToProject("other.Count");
     initByComponent();
     PsiClass ref = resolveReferenceAtCaretPosition(PsiClass.class);
     assertEquals(TEST_APPLICATION_PACKAGE + "." + COMPONENTS + ".other.Count", ref.getQualifiedName());
   }
 
-  public void testTmlAttrName() throws Throwable {
+  public void testTmlAttrName() {
     addComponentToProject("Count");
     initByComponent();
     PsiField ref = resolveReferenceAtCaretPosition(PsiField.class);
     assertEquals("end", ref.getName());
   }
 
-  public void testTmlAttrNameInHtmlTag() throws Throwable {
+  public void testTmlAttrNameInHtmlTag() {
     initByComponent();
     PsiField ref = resolveReferenceAtCaretPosition(PsiField.class);
     assertEquals("page", ref.getName());
   }
 
-  public void testTmlAttrNameWithoutPrefixInHtmlTag() throws Throwable {
+  public void testTmlAttrNameWithoutPrefixInHtmlTag() {
     initByComponent();
     PsiField ref = resolveReferenceAtCaretPosition(PsiField.class);
     assertEquals("page", ref.getName());
   }
 
-  public void testTmlAttrNameWithPrefix() throws Throwable {
+  public void testTmlAttrNameWithPrefix() {
     addComponentToProject("Count");
     initByComponent();
     PsiField ref = resolveReferenceAtCaretPosition(PsiField.class);
     assertEquals("end", ref.getName());
   }
 
-  public void testAttrNameWithUnknownPrefix() throws Throwable {
+  public void testAttrNameWithUnknownPrefix() {
     addComponentToProject("Count");
     initByComponent();
     checkReferenceAtCaretPositionUnresolved();
   }
 
-  public void testAttrNameWithUnknownPrefixInHtmlTag() throws Throwable {
+  public void testAttrNameWithUnknownPrefixInHtmlTag() {
     addComponentToProject("Count");
     initByComponent();
     checkReferenceAtCaretPositionUnresolved();
   }
 
-  public void testUnknownAttrName() throws Throwable {
+  public void testUnknownAttrName() {
     addComponentToProject("Count");
     initByComponent();
     checkReferenceAtCaretPositionUnresolved();
   }
 
-  public void testHtmlTypeAttrName() throws Throwable {
+  public void testHtmlTypeAttrName() {
     addComponentToProject("Count");
     initByComponent();
     XmlTag ref = resolveReferenceAtCaretPosition(XmlTag.class);
     assertEquals("xs:attribute", ref.getName());
   }
 
-  public void testTypeAttrName() throws Throwable {
+  public void testTypeAttrName() {
     addComponentToProject("Count");
     initByComponent();
     XmlTag ref = resolveReferenceAtCaretPosition(XmlTag.class);
     assertEquals("button", ref.getName());
   }
 
-  public void testTypeAttrValue() throws Throwable {
+  public void testTypeAttrValue() {
     addComponentToProject("Count");
     initByComponent();
     PsiClass ref = resolveReferenceAtCaretPosition(PsiClass.class);
     assertEquals(TEST_APPLICATION_PACKAGE + "." + COMPONENTS + ".Count", ref.getQualifiedName());
   }
 
-  public void testTypeAttrUnknownValue() throws Throwable {
+  public void testTypeAttrUnknownValue() {
     addComponentToProject("Count");
     initByComponent();
     checkReferenceAtCaretPositionUnresolved();
   }
 
-  public void testHtmlIdAttrName() throws Throwable {
+  public void testHtmlIdAttrName() {
     addComponentToProject("Count");
     initByComponent();
     XmlTag ref = resolveReferenceAtCaretPosition(XmlTag.class);
     assertEquals("xs:attribute", ref.getName());
   }
 
-  public void testIdAttrName() throws Throwable {
+  public void testIdAttrName() {
     addComponentToProject("Count");
     initByComponent();
     XmlTag ref = resolveReferenceAtCaretPosition(XmlTag.class);
     assertEquals("a", ref.getName());
   }
 
-  public void testIdAttrValue() throws Throwable {
+  public void testIdAttrValue() {
     addComponentToProject("Count");
     initByComponent();
     PsiField ref = resolveReferenceAtCaretPosition(PsiField.class);
     assertEquals("index55", ref.getName());
   }
 
-  public void testIdAttrValueTypeAttrPresent() throws Throwable {
+  public void testIdAttrValueTypeAttrPresent() {
     addComponentToProject("Count");
     initByComponent();
     XmlAttributeValue ref = resolveReferenceAtCaretPosition(XmlAttributeValue.class);
     assertEquals("t:id", ((XmlAttribute)ref.getParent()).getName());
   }
 
-  public void testIdAttrValueInTmlTag() throws Throwable {
+  public void testIdAttrValueInTmlTag() {
     initByComponent();
     XmlAttributeValue ref = resolveReferenceAtCaretPosition(XmlAttributeValue.class);
     assertEquals("t:id", ((XmlAttribute)ref.getParent()).getName());
   }
 
-  public void testIdAttrValueUnresolved() throws Throwable {
+  public void testIdAttrValueUnresolved() {
     addComponentToProject("Count");
     initByComponent();
     checkReferenceAtCaretPositionUnresolved();
   }
 
-  public void testPageAttrValue() throws Throwable {
+  public void testPageAttrValue() {
     addPageToProject("StartPage");
     initByComponent();
     TmlFile ref = resolveReferenceAtCaretPosition(TmlFile.class);
     assertEquals("StartPage.tml", ref.getName());
   }
 
-  public void testPageAttrValue2() throws Throwable {
+  public void testPageAttrValue2() {
     addElementToProject(PAGES_PACKAGE_PATH, "StartPage2", Util.DOT_GROOVY);
     addElementToProject(PAGES_PACKAGE_PATH, "StartPage2", getTemplateExtension());
     initByComponent();
@@ -266,42 +266,42 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     assertEquals("StartPage2.tml", ref.getName());
   }
 
-  public void testPageAttrValueOfPagelinkTag() throws Throwable {
+  public void testPageAttrValueOfPagelinkTag() {
     addPageToProject("StartPage");
     initByComponent();
     TmlFile ref = resolveReferenceAtCaretPosition(TmlFile.class);
     assertEquals("StartPage.tml", ref.getName());
   }
 
-  public void testPrefixedPageAttrValue() throws Throwable {
+  public void testPrefixedPageAttrValue() {
     addPageToProject("StartPage");
     initByComponent();
     TmlFile ref = resolveReferenceAtCaretPosition(TmlFile.class);
     assertEquals("StartPage.tml", ref.getName());
   }
 
-  public void testPageAttrValueReferencingToSubpackage() throws Throwable {
+  public void testPageAttrValueReferencingToSubpackage() {
     addPageToProject("subpack.StartPage");
     initByComponent();
     TmlFile ref = resolveReferenceAtCaretPosition(TmlFile.class);
     assertEquals("StartPage.tml", ref.getName());
   }
 
-  public void testTapestryAttrValueWithPropPrefix() throws Throwable {
+  public void testTapestryAttrValueWithPropPrefix() {
     addComponentToProject("Count");
     initByComponent();
     PsiMethod ref = resolveReferenceAtCaretPosition(PsiMethod.class);
     assertEquals("getHours", ref.getName());
   }
 
-  public void testTapestryAttrValueReferencingToField() throws Throwable {
+  public void testTapestryAttrValueReferencingToField() {
     addComponentToProject("Count");
     initByComponent();
     PsiField ref = resolveReferenceAtCaretPosition(PsiField.class);
     assertEquals("intFieldProp", ref.getName());
   }
 
-  public void testTelSetterByProperty() throws Throwable {
+  public void testTelSetterByProperty() {
     initByComponent();
     TapestryAccessorMethod ref = resolveReferenceAtCaretPosition(TapestryAccessorMethod.class);
     assertEquals("setSomeProp", ref.getName());
@@ -309,13 +309,13 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     assertEquals("someProp", field.getName());
   }
 
-  public void testTelPropertyByGetter() throws Throwable {
+  public void testTelPropertyByGetter() {
     initByComponent();
     PsiMethod ref = resolveReferenceAtCaretPosition(PsiMethod.class);
     assertEquals("getCurrentTime", ref.getName());
   }
 
-  public void testCssClass() throws Throwable {
+  public void testCssClass() {
     myFixture.copyFileToProject("CssClass.css", COMPONENTS_PACKAGE_PATH + "CssClass.css");
     initByComponent();
     CssClass cssClass = resolveReferenceAtCaretPosition(CssClass.class);

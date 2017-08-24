@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * @author Alexey Chmutov
@@ -154,7 +153,7 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     return getElementName() + getTemplateExtension();
   }
 
-  protected void initByComponent() throws IOException {
+  protected void initByComponent() {
     initByComponent(true);
   }
 

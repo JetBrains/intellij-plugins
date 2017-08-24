@@ -7,7 +7,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.testFramework.utils.parameterInfo.MockCreateParameterInfoContext;
 import com.intellij.testFramework.utils.parameterInfo.MockParameterInfoUIContext;
-import com.intellij.util.Function;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.impl.schema.XmlAttributeDescriptorImpl;
@@ -37,7 +36,7 @@ public class TapestryParamInfoTest extends TapestryBaseTestCase {
     }
   }
 
-  private void doTest(String attrs) throws Exception {
+  private void doTest(String attrs) {
     initByComponent();
 
     XmlParameterInfoHandler handler = new XmlParameterInfoHandler();

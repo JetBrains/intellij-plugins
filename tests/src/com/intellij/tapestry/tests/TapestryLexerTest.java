@@ -13,23 +13,23 @@ import com.intellij.testFramework.UsefulTestCase;
  */
 public class TapestryLexerTest extends UsefulTestCase {
 
-  public void testTemplateNoEL() throws Throwable {
+  public void testTemplateNoEL() {
     doTest();
   }
 
-  public void testSingleELInAttributeValue() throws Throwable {
+  public void testSingleELInAttributeValue() {
     doTest();
   }
 
-  public void testELHighlightingInXmlText() throws Throwable {
+  public void testELHighlightingInXmlText() {
     doHighlightingTest();
   }
 
-  public void testRangeOpHighlighting() throws Throwable {
+  public void testRangeOpHighlighting() {
     doHighlightingTest();
   }
 
-  public void testELHighlightingInAttr() throws Throwable {
+  public void testELHighlightingInAttr() {
     doHighlightingTest();
   }
 

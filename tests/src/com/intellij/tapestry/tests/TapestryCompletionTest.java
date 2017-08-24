@@ -23,12 +23,12 @@ import static com.intellij.util.ArrayUtil.mergeArrays;
  */
 public class TapestryCompletionTest extends TapestryBaseTestCase {
 
-  public void testTagNameInHtmlParent() throws Throwable {
+  public void testTagNameInHtmlParent() {
     initByComponent();
     doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "head", "frameset", "body", getElementTagName()));
   }
 
-  public void testTagNameInTmlParent() throws Throwable {
+  public void testTagNameInTmlParent() {
     CamelHumpMatcher.forceStartMatching(myFixture.getTestRootDisposable());
     initByComponent();
     addComponentToProject("subpackage.Count");
@@ -38,7 +38,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
                   getElementTagName()));
   }
 
-  public void testAttrNameInHtmlParent() throws Throwable {
+  public void testAttrNameInHtmlParent() {
     CamelHumpMatcher.forceStartMatching(myFixture.getTestRootDisposable());
     final ExternalResourceManagerEx manager = ExternalResourceManagerEx.getInstanceEx();
     final String doctype = manager.getDefaultHtmlDoctype(myFixture.getProject());
@@ -55,13 +55,13 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     }
   }
 
-  public void testAttrNameInHtmlParent1() throws Throwable {
+  public void testAttrNameInHtmlParent1() {
     CamelHumpMatcher.forceStartMatching(myFixture.getTestRootDisposable());
     initByComponent();
     doTestBasicCompletionVariants("t:id", "t:type", "tabindex", "target", "title", "translate", "type", "typeof");
   }
 
-  public void testAttrNameInTmlParent() throws Throwable {
+  public void testAttrNameInTmlParent() {
     final ExternalResourceManagerEx manager = ExternalResourceManagerEx.getInstanceEx();
     final String doctype = manager.getDefaultHtmlDoctype(myFixture.getProject());
     manager.setDefaultHtmlDoctype(XmlUtil.XHTML_URI, myFixture.getProject());
@@ -78,14 +78,14 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     }
   }
 
-  public void testAttrNameInTmlParent1() throws Throwable {
+  public void testAttrNameInTmlParent1() {
     CamelHumpMatcher.forceStartMatching(myFixture.getTestRootDisposable());
     initByComponent();
     addComponentToProject("Count");
     doTestBasicCompletionVariants("class", "content", "contenteditable");
   }
 
-  public void testRootTagName() throws Throwable {
+  public void testRootTagName() {
     final ExternalResourceManagerEx manager = ExternalResourceManagerEx.getInstanceEx();
     final String doctype = manager.getDefaultHtmlDoctype(myFixture.getProject());
     manager.setDefaultHtmlDoctype(XmlUtil.XHTML_URI, myFixture.getProject());
@@ -98,7 +98,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     }
   }
 
-  public void testTagNameWithinTmlRootTag() throws Throwable {
+  public void testTagNameWithinTmlRootTag() {
     final ExternalResourceManagerEx manager = ExternalResourceManagerEx.getInstanceEx();
     final String doctype = manager.getDefaultHtmlDoctype(myFixture.getProject());
     manager.setDefaultHtmlDoctype(XmlUtil.XHTML_URI, myFixture.getProject());
@@ -111,7 +111,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     }
   }
 
-  public void testTagNameWithoutHtmlContext() throws Throwable {
+  public void testTagNameWithoutHtmlContext() {
     final ExternalResourceManagerEx manager = ExternalResourceManagerEx.getInstanceEx();
     final String doctype = manager.getDefaultHtmlDoctype(myFixture.getProject());
     manager.setDefaultHtmlDoctype(XmlUtil.XHTML_URI, myFixture.getProject());
@@ -124,67 +124,67 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     }
   }
 
-  public void testInvalidTagName() throws Throwable {
+  public void testInvalidTagName() {
     initByComponent();
     UsefulTestCase.assertEmpty(myFixture.complete(CompletionType.BASIC));
     UsefulTestCase.assertEmpty(myFixture.getLookupElementStrings());
   }
 
-  public void testTypeAttrValue() throws Throwable {
+  public void testTypeAttrValue() {
     initByComponent();
     addComponentToProject("mycomps.Count");
     doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_ELEMENT_NAMES, getLowerCaseElementName(), "mycomps/count"));
   }
 
-  public void testPageAttrValue() throws Throwable {
+  public void testPageAttrValue() {
     addPageToProject("StartPage");
     initByComponent();
     doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_PAGE_NAMES, "startpage"));
   }
 
-  public void testIdAttrValue() throws Throwable {
+  public void testIdAttrValue() {
     addComponentToProject("Count");
     initByComponent();
     doTestBasicCompletionVariants("index", "link2", "link3");
   }
 
-  public void testAttrValueWithPropPrefix() throws Throwable {
+  public void testAttrValueWithPropPrefix() {
     addComponentToProject("Count");
     initByComponent();
     doTestBasicCompletionVariants("prop:strProp.chars", "prop:strProp.bytes", "prop:strProp.empty");
   }
 
-  public void testTapestryAttrValue() throws Throwable {
+  public void testTapestryAttrValue() {
     addComponentToProject("Count");
     initByComponent();
     doTestBasicCompletionVariants("dateProp", "strProp", "intFieldProp");
   }
 
-  public void testTapestryMixinAttr() throws Throwable {
+  public void testTapestryMixinAttr() {
     addComponentToProject("Count");
     addMixinToProject("FooMixin");
     initByComponent();
     doTestBasicCompletionVariants("bar", "end", "mixins", "start", "t:id", "value");
   }
 
-  public void testTapestryMixinTag() throws Throwable {
+  public void testTapestryMixinTag() {
     addComponentToProject("Count");
     addMixinToProject("FooMixin");
     initByComponent();
     doTestBasicCompletionVariants(true, "p:bar");
   }
 
-  public void testTagNameWithDoctypePresent() throws Throwable {
+  public void testTagNameWithDoctypePresent() {
     initByComponent();
     doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "body", "frameset", "head", getElementTagName() ));
   }
 
-  public void testTagNameWithDoctypeAndExplicitHtmlNSPresent() throws Throwable {
+  public void testTagNameWithDoctypeAndExplicitHtmlNSPresent() {
     initByComponent();
     doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "body", "frameset", "head", getElementTagName()));
   }
 
-  public void testTelSecondSegmentAfterProp() throws Throwable {
+  public void testTelSecondSegmentAfterProp() {
     initByComponent();
     doTestBasicCompletionVariants("after", "before", "class", "clone", "compareTo", "date", "day", "equals", "getClass",
                                   "getDate", "getDay", "getHours", "getMinutes", "getMonth", "getSeconds", "getTime", "getTimezoneOffset",
@@ -193,19 +193,19 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
                                   "toString", "year");
   }
 
-  public void testTelFirstSegment() throws Throwable {
+  public void testTelFirstSegment() {
     initByComponent();
     doTestBasicCompletionVariants("class", "currentTime", "equals", "getClass", "getCurrentTime", "getSomeProp", "hashCode", "setSomeProp",
                                   "someProp", "toString");
   }
 
-  public void testTelSetterByProperty() throws Throwable {
+  public void testTelSetterByProperty() {
     initByComponent();
     myFixture.complete(CompletionType.BASIC);
     checkResultByFile();
   }
 
-  public void testTelPropertyByGetter() throws Throwable {
+  public void testTelPropertyByGetter() {
     CamelHumpMatcher.forceStartMatching(myFixture.getTestRootDisposable());
     initByComponent();
     myFixture.complete(CompletionType.BASIC);

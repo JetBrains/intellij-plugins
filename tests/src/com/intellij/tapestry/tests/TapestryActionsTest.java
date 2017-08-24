@@ -19,7 +19,7 @@ public class TapestryActionsTest extends TapestryBaseTestCase {
     return "actions/";
   }
 
-  public void testNavigateToTemplate() throws Throwable {
+  public void testNavigateToTemplate() {
     VirtualFile tmlFile = initByComponent(true);
     final PsiFile psiFile = myFixture.getPsiManager().findFile(tmlFile);
     
@@ -30,7 +30,7 @@ public class TapestryActionsTest extends TapestryBaseTestCase {
     assertEquals(getElementClassFileName(), fileFoundByAction.getName());
   }
 
-  public void testNavigateToClass() throws Throwable {
+  public void testNavigateToClass() {
     VirtualFile javaFile = initByComponent(false);
     final PsiFile psiFile = myFixture.getPsiManager().findFile(javaFile);
 
@@ -41,7 +41,7 @@ public class TapestryActionsTest extends TapestryBaseTestCase {
     assertEquals(getElementTemplateFileName(), fileFoundByAction.getName());
   }
 
-  public void testNavigateToTemplateFromSuper() throws Throwable {
+  public void testNavigateToTemplateFromSuper() {
     VirtualFile pageTemplates = addPageToProject("StartPage");
     VirtualFile javaFile = initByComponent(false);
 
@@ -53,35 +53,35 @@ public class TapestryActionsTest extends TapestryBaseTestCase {
     assertEquals(pageTemplates.getName(), fileFoundByAction.getName());
   }
 
-  public void testCommentBlock() throws Throwable {
+  public void testCommentBlock() {
     doTest(IdeActions.ACTION_COMMENT_BLOCK);
   }
 
-  public void testCommentLine() throws Throwable {
+  public void testCommentLine() {
     doTest(IdeActions.ACTION_COMMENT_LINE);
   }
 
-  public void testUncommentBlock() throws Throwable {
+  public void testUncommentBlock() {
     doTest(IdeActions.ACTION_COMMENT_BLOCK);
   }
 
-  public void testUncommentLine() throws Throwable {
+  public void testUncommentLine() {
     doTest(IdeActions.ACTION_COMMENT_LINE);
   }
   
-  public void testInsertPairingRBrace() throws Throwable {
+  public void testInsertPairingRBrace() {
     initByComponent(true);
     EditorTestUtil.performTypingAction(myFixture.getEditor(), '{');
     checkResultByFile();
   }
   
-  public void testInsertPairingRBrace2() throws Throwable {
+  public void testInsertPairingRBrace2() {
     initByComponent(true);
     EditorTestUtil.performTypingAction(myFixture.getEditor(), '{');
     checkResultByFile();
   }
 
-  private void doTest(final String actionId) throws Throwable {
+  private void doTest(final String actionId) {
     initByComponent(true);
     MultiCaretCodeInsightAction action = (MultiCaretCodeInsightAction)ActionManager.getInstance().getAction(actionId);
     action.actionPerformedImpl(myModule.getProject(), myFixture.getEditor());
