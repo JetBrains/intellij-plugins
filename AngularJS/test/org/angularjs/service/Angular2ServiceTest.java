@@ -83,25 +83,19 @@ public class Angular2ServiceTest extends CodeInsightFixtureTestCase {
 
 
   private void defaultTest(String extension) {
-    if (skipTests) {
-      return;
-    }
-
     doTestFor(getTestName(false) + extension);
   }
 
 
   protected void doTestFor(String file) {
     myFixture.configureFromTempProjectFile(file);
-
-    if (skipTests) {
-      return;
-    }
-
     myFixture.checkHighlighting();
   }
 
   public void testSimpleHighlight() {
+    if (skipTests) {
+      return;
+    }
     Ref<List<JSAnnotationError>> reporter = getReporter(true);
     defaultTest(".ts");
 
@@ -113,6 +107,9 @@ public class Angular2ServiceTest extends CodeInsightFixtureTestCase {
   }
 
   public void testSimpleHighlightHtml() {
+    if (skipTests) {
+      return;
+    }
     Ref<List<JSAnnotationError>> reporter = getReporter(true);
     defaultTest(".html");
 
