@@ -1,4 +1,4 @@
-var cli = require("./intellijCli.js")
+var cli = require('./intellijCli.js')
   , intellijUtil = require('./intellijUtil.js')
   , util = require('util')
   , Tree = require('./tree.js');
@@ -122,7 +122,6 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
   require('./karma-browser-tracker').startBrowserTracking(globalEmitter);
   var logManager = new LogManager();
   this.adapters = [];
-  var totalTestCount, uncheckedBrowserCount;
 
   var that = this;
   var write = function (msg) {
@@ -137,8 +136,6 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
   this.onRunStart = function (browsers) {
     clearOtherAdapters(injector, that);
 
-    totalTestCount = 0;
-    uncheckedBrowserCount = browsers.length;
     beforeRunStart = false;
     tree = new Tree(cli.getConfigFile(), write);
     process.nextTick(function() {
@@ -183,14 +180,6 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
       return;
     }
     var browserNode = getOrCreateBrowserNode(tree, browser);
-    if (typeof browserNode.checkedForTotalTestCount === 'undefined') {
-      browserNode.checkedForTotalTestCount = true;
-      totalTestCount += browser.lastResult.total;
-      uncheckedBrowserCount--;
-      if (uncheckedBrowserCount === 0) {
-        tree.write('##teamcity[testCount count=\'' + totalTestCount + '\']\n');
-      }
-    }
     var suiteNode = getOrCreateLowerSuiteNode(browserNode, suiteNames, write);
     var specNode = createSpecNode(suiteNode, suiteNames, specName);
     var status = result.pending ? 1 : result.success ? 0 : 2;
