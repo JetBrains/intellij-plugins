@@ -1777,6 +1777,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       myLibraryFilter = libraryFilter;
     }
 
+    @NotNull
     @Override
     public Library createLibrary(String name) {
       return myDelegate.createLibrary(name);
@@ -1817,11 +1818,13 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       return myDelegate.isChanged();
     }
 
+    @NotNull
     @Override
     public Library createLibrary(String name, @Nullable PersistentLibraryKind kind) {
       return myDelegate.createLibrary(name, kind);
     }
 
+    @NotNull
     @Override
     public Library createLibrary(String name, @Nullable PersistentLibraryKind type, @Nullable ProjectModelExternalSource externalSource) {
       return myDelegate.createLibrary(name, type, externalSource);
