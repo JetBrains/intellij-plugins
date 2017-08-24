@@ -14,8 +14,6 @@ import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings;
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl;
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptCompletionsRequestArgs;
 import com.intellij.lang.typescript.compiler.ui.TypeScriptServerServiceSettings;
-import com.intellij.lang.typescript.tsconfig.TypeScriptConfig;
-import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService;
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
@@ -75,7 +73,14 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
     super(project, settings, "Angular Console");
 
     myFileFilter = Conditions
-      .or(super.getAcceptableFilesFilter(), (el) -> el != null && el.isInLocalFileSystem() && el.getFileType() == HtmlFileType.INSTANCE);
+      .or(super.getAcceptableFilesFilter(), (el) -> {
+        if (el != null && el.isInLocalFileSystem() && el.getFileType() == HtmlFileType.INSTANCE) {
+          VirtualFile config = TypeScriptConfigUtil.getNearestParentConfig(el);
+          return config != null;
+        }
+
+        return false;
+      });
   }
 
   @Nullable
@@ -188,9 +193,9 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   protected String getConfigForFile(@NotNull VirtualFile file) {
     if (file.getFileType() instanceof XmlLikeFileType) {
       return ReadAction.compute(() -> {
-        Collection<TypeScriptConfig> allConfigs = TypeScriptConfigService.Provider.getConfigFiles(myProject);
-        TypeScriptConfig config = TypeScriptConfigUtil.getNearestParentConfig(file, allConfigs);
-        return config == null ? null : TypeScriptCompilerConfigUtil.normalizeNameAndPath(config.getConfigFile());
+        VirtualFile config = TypeScriptConfigUtil.getNearestParentConfig(file);
+
+        return config == null ? null : TypeScriptCompilerConfigUtil.normalizeNameAndPath(config);
       });
     }
 
