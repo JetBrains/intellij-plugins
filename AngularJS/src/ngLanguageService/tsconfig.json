@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "lib": ["es6", "es5"],
+    "lib": ["es6", "dom"],
     "outDir": "../../gen/ngLanguageService"
   },
   "compileOnSave": false,

@@ -46,6 +46,7 @@ function createPluginClass(state) {
                     ng = requiredObject(obj);
                 }
                 ts_impl["ng_service"] = ng;
+                ts_impl["ideUtil"] = util;
                 if (!isVersionCompatible(ng, util, ts_impl)) {
                     ts_impl["ngIncompatible"] = true;
                 }
@@ -56,7 +57,8 @@ function createPluginClass(state) {
             }
             var version = ts_impl.version;
             var versionNumbers = util.parseNumbersInVersion(version);
-            return util.isVersionMoreOrEqual(versionNumbers, 2, 3, 0) ? angular_session_latest_1.createAngularSessionClass(ts_impl, sessionClass) : angular_session_20_1.createAngularSessionClassTs20(ts_impl, sessionClass);
+            var is240OrMore = util.isVersionMoreOrEqual(versionNumbers, 2, 4, 0);
+            return is240OrMore ? angular_session_latest_1.createAngularSessionClass(ts_impl, sessionClass) : angular_session_20_1.createAngularSessionClassTs20(ts_impl, sessionClass);
         };
         AngularLanguagePlugin.prototype.overrideSysDefaults = function (ts_impl, state, serverFile) {
             var path = require('path');
@@ -70,8 +72,8 @@ function createPluginClass(state) {
                 }
                 ts_impl["ide_processed"] = true;
                 //clean resources
-                var name = require.resolve(tsPath);
-                delete require.cache[name];
+                var name_1 = require.resolve(tsPath);
+                delete require.cache[name_1];
             }
             catch (err) {
                 //do nothing

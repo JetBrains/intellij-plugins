@@ -26,6 +26,7 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
     const TypeScriptLanguagePluginImpl: typeof TypeScriptLanguagePlugin = require(fixedPath + "ts-plugin.js").TypeScriptLanguagePlugin
     const instantiateSession = require(fixedPath + "ts-session-provider.js").instantiateSession;
     const util: typeof utilObj = require(fixedPath + "util.js");
+    
 
     class AngularLanguagePlugin extends TypeScriptLanguagePluginImpl {
 
@@ -46,6 +47,7 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
                 }
 
                 ts_impl["ng_service"] = ng;
+                ts_impl["ideUtil"] = util;
 
 
                 if (!isVersionCompatible(ng, util, ts_impl)) {
@@ -59,8 +61,8 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
             let version = ts_impl.version;
 
             let versionNumbers = util.parseNumbersInVersion(version);
-
-            return util.isVersionMoreOrEqual(versionNumbers, 2, 3, 0) ? createAngularSessionClass(ts_impl, sessionClass) : createAngularSessionClassTs20(ts_impl, <any>sessionClass);
+            let is240OrMore = util.isVersionMoreOrEqual(versionNumbers, 2, 4, 0);
+            return is240OrMore ? createAngularSessionClass(ts_impl, sessionClass) : createAngularSessionClassTs20(ts_impl, <any>sessionClass);
         }
 
 
