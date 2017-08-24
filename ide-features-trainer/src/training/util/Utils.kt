@@ -1,5 +1,6 @@
 package training.util
 
+import com.intellij.lang.Language
 import com.intellij.openapi.components.ServiceManager
 import java.io.File
 import java.io.FileFilter
@@ -91,3 +92,9 @@ open class UniqueFilesProvider(private val baseName: String, private val rootDir
 }
 
 fun isPropertyExists(name: String) = System.getProperty(name) != null
+
+fun findLanguageByID(id: String? ): Language? {
+    val effectiveId = if (id!!.toLowerCase() == "cpp"){ "ObjectiveC" }else { id }
+    val languageByID = Language.findLanguageByID(effectiveId)
+    return languageByID
+}

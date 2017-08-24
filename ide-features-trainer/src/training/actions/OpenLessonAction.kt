@@ -3,7 +3,6 @@ package training.actions
 import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.ide.scratch.ScratchRootType
-import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataKey
@@ -31,6 +30,7 @@ import training.learn.lesson.Lesson
 import training.learn.lesson.LessonListenerAdapter
 import training.learn.lesson.LessonProcessor
 import training.ui.LearnToolWindowFactory
+import training.util.findLanguageByID
 import java.awt.FontFormatException
 import java.io.IOException
 import java.util.concurrent.ExecutionException
@@ -226,7 +226,7 @@ class OpenLessonAction : AnAction() {
     assert(lesson!!.module != null)
     val myLanguage = lesson.lang
 
-    val languageByID = Language.findLanguageByID(myLanguage)
+    val languageByID = findLanguageByID(myLanguage)
     if (CourseManager.getInstance().mapModuleVirtualFile.containsKey(lesson.module)) {
       vf = CourseManager.getInstance().mapModuleVirtualFile[lesson.module]
       ScratchFileService.getInstance().scratchesMapping.setMapping(vf, languageByID)
@@ -271,7 +271,7 @@ class OpenLessonAction : AnAction() {
         val learnProject = CourseManager.getInstance().learnProject!!
         val sourceRootFile = ProjectRootManager.getInstance(learnProject).contentSourceRoots[0]
         val myLanguage = lesson.lang
-        val languageByID = Language.findLanguageByID(myLanguage)
+        val languageByID = findLanguageByID(myLanguage)
         val extensionFile = languageByID!!.associatedFileType!!.defaultExtension
 
         var fileName = "Test." + extensionFile
