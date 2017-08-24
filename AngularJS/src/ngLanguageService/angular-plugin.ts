@@ -5,6 +5,7 @@ import {SessionClass} from "./typings/ts-session-provider";
 import * as ts from './typings/tsserverlibrary'
 import * as utilObj from './typings/util';
 import {createAngularSessionClass} from "./angular-session-latest";
+import * as logger from './typings/logger-impl'
 
 class AngularLanguagePluginFactory implements LanguagePluginFactory {
     create(state: AngularTypeScriptPluginState): { languagePlugin: LanguagePlugin, readyMessage?: any } {
@@ -25,8 +26,9 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
 
     const TypeScriptLanguagePluginImpl: typeof TypeScriptLanguagePlugin = require(fixedPath + "ts-plugin.js").TypeScriptLanguagePlugin
     const instantiateSession = require(fixedPath + "ts-session-provider.js").instantiateSession;
+    const loggerImpl: typeof logger = require(fixedPath + "logger-impl.js");
     const util: typeof utilObj = require(fixedPath + "util.js");
-    
+
 
     class AngularLanguagePlugin extends TypeScriptLanguagePluginImpl {
 
@@ -62,7 +64,7 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
 
             let versionNumbers = util.parseNumbersInVersion(version);
             let is240OrMore = util.isVersionMoreOrEqual(versionNumbers, 2, 4, 0);
-            return is240OrMore ? createAngularSessionClass(ts_impl, sessionClass) : createAngularSessionClassTs20(ts_impl, <any>sessionClass);
+            return is240OrMore ? createAngularSessionClass(ts_impl, sessionClass, loggerImpl) : createAngularSessionClassTs20(ts_impl, <any>sessionClass);
         }
 
 

@@ -29,6 +29,7 @@ function createPluginClass(state) {
     var fixedPath = state.typescriptPluginPath;
     var TypeScriptLanguagePluginImpl = require(fixedPath + "ts-plugin.js").TypeScriptLanguagePlugin;
     var instantiateSession = require(fixedPath + "ts-session-provider.js").instantiateSession;
+    var loggerImpl = require(fixedPath + "logger-impl.js");
     var util = require(fixedPath + "util.js");
     var AngularLanguagePlugin = (function (_super) {
         __extends(AngularLanguagePlugin, _super);
@@ -58,7 +59,7 @@ function createPluginClass(state) {
             var version = ts_impl.version;
             var versionNumbers = util.parseNumbersInVersion(version);
             var is240OrMore = util.isVersionMoreOrEqual(versionNumbers, 2, 4, 0);
-            return is240OrMore ? angular_session_latest_1.createAngularSessionClass(ts_impl, sessionClass) : angular_session_20_1.createAngularSessionClassTs20(ts_impl, sessionClass);
+            return is240OrMore ? angular_session_latest_1.createAngularSessionClass(ts_impl, sessionClass, loggerImpl) : angular_session_20_1.createAngularSessionClassTs20(ts_impl, sessionClass);
         };
         AngularLanguagePlugin.prototype.overrideSysDefaults = function (ts_impl, state, serverFile) {
             var path = require('path');
