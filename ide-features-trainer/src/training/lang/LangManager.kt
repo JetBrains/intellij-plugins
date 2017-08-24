@@ -1,6 +1,5 @@
 package training.lang
 
-import com.intellij.lang.Language
 import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
@@ -9,6 +8,7 @@ import com.intellij.openapi.components.Storage
 import com.intellij.openapi.extensions.ExtensionPointName
 import training.learn.CourseManager
 import training.ui.LearnToolWindowFactory
+import training.util.findLanguageByID
 
 /**
  * @author Sergey Karashevich
@@ -58,7 +58,7 @@ class LangManager : PersistentStateComponent<LangManager.State> {
 
   fun getLanguageDisplayName(): String {
     if (myState.languageName == null) return "default"
-    return (Language.findLanguageByID(myState.languageName) ?: return "default").displayName
+    return (findLanguageByID(myState.languageName) ?: return "default").displayName
   }
 
   data class State(var languageName: String?)

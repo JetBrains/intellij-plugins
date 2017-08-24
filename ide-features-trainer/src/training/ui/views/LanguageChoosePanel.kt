@@ -1,6 +1,5 @@
 package training.ui.views
 
-import com.intellij.lang.Language
 import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -12,6 +11,7 @@ import training.lang.LangSupport
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.ui.LearnUIManager
+import training.util.findLanguageByID
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
@@ -152,7 +152,7 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
         for (langSupportExt in sortedLangSupportExtensions) {
 
             val lessonsCount = CourseManager.getInstance().calcLessonsForLanguage(langSupportExt.instance)
-            val lang = Language.findLanguageByID(langSupportExt.language) ?: continue
+            val lang = findLanguageByID(langSupportExt.language) ?: continue
             val jrb = JRadioButton("${lang!!.displayName} ($lessonsCount lesson${if (lessonsCount != 1) "s" else ""}) ")
             jrb.isOpaque = false
             buttonGroup.add(jrb)
