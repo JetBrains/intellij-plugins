@@ -2,7 +2,7 @@ package {
 import flash.events.EventDispatcher;
 import flash.events.MouseEvent;
 
-  public class Foo extends EventDispatcher {
+public class Foo extends EventDispatcher {
       function ab<caret>c() {}
 
       override public function dispatchEvent(event: Event): Boolean {
