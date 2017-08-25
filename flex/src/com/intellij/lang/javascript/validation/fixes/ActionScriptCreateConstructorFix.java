@@ -270,7 +270,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
                        String methodName,
                        String returnType,
                        JSParameterInfo[] parameters, Set<JSFunction> methodsToPropagateParameters) {
-      super(method, visibility, methodName, returnType, parameters, methodsToPropagateParameters);
+      super(method, visibility, methodName, returnType, parameters, methodsToPropagateParameters, Collections.emptySet());
     }
 
     @NotNull
