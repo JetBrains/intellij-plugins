@@ -48,7 +48,6 @@ public class CourseManager {
 
     private Project learnProject;
     private LearnPanel myLearnPanel;
-    public final static String LEARN_PROJECT_NAME = "LearnProject";
     private ModulesPanel modulesPanel;
     public static final String NOTIFICATION_ID = "Training plugin";
 

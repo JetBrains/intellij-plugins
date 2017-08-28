@@ -12,7 +12,7 @@ import com.intellij.openapi.wm.ToolWindowAnchor
 interface LangSupport {
 
     val FILE_EXTENSION: String
-
+    val defaultProjectName: String
     companion object {
         val EP_NAME = "training.TrainingLangExtension"
     }
