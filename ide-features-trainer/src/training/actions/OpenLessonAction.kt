@@ -17,7 +17,6 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindowManager
-import com.intellij.projectImport.ProjectImportBuilder.getCurrentProject
 import training.lang.LangManager
 import training.learn.CourseManager
 import training.learn.CourseManager.LEARN_PROJECT_NAME
@@ -31,6 +30,7 @@ import training.learn.lesson.LessonListenerAdapter
 import training.learn.lesson.LessonProcessor
 import training.ui.LearnToolWindowFactory
 import training.util.findLanguageByID
+import training.util.getCurrentProject
 import java.awt.FontFormatException
 import java.io.IOException
 import java.util.concurrent.ExecutionException
