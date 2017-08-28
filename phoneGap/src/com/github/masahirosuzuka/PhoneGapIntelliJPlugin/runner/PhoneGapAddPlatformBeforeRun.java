@@ -60,12 +60,6 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
   }
 
   @Override
-  public boolean isConfigurable() {
-    return false;
-  }
-
-
-  @Override
   public Icon getIcon() {
     return PhoneGapIcons.PhonegapIntegration;
   }
@@ -77,12 +71,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
   }
 
   @Override
-  public boolean configureTask(RunConfiguration runConfiguration, PhoneGapAddPlatformTask task) {
-    return false;
-  }
-
-  @Override
-  public boolean canExecuteTask(RunConfiguration configuration, PhoneGapAddPlatformTask task) {
+  public boolean canExecuteTask(@NotNull RunConfiguration configuration, @NotNull PhoneGapAddPlatformTask task) {
     return configuration instanceof PhoneGapRunConfiguration;
   }
 
