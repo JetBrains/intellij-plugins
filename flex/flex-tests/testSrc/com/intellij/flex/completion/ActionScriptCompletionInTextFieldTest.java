@@ -175,7 +175,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     String filename = getTestName(false).replaceAll("\\d+", "");
     configureByFiles(null, BASE_PATH + filename + "_2.mxml", BASE_PATH + filename + "_3.mxml");
 
-    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
+    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, getTestRootDisposable());
 
     FlexTestUtils.modifyConfigs(myProject, e -> {
       {

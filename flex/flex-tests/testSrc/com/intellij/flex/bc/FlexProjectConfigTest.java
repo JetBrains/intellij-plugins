@@ -130,7 +130,8 @@ public class FlexProjectConfigTest extends ModuleTestCase {
   }
 
   public void testSdkListener() {
-    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToMockFlex(getClass(), getTestName(false)), "4.6.0");
+    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToMockFlex(getClass(), getTestName(false)), "4.6.0",
+                                            getTestRootDisposable());
     RootProvider.RootSetChangedListener listener = wrapper -> {
     };
     // See IDEA-140175: if different BCs of the same module have different SDKs then the listener may be first set by FlexCompositeSdk (when

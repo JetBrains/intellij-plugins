@@ -38,7 +38,7 @@ public class GlobalFlexHighlightingTest extends InspectionTestCase {
   protected Sdk getTestProjectSdk() {
     final JSTestUtils.TestDescriptor testDescriptor = new JSTestUtils.TestDescriptor(this);
     if (JSTestUtils.testMethodHasOption(testDescriptor, JSTestOption.WithFlexSdk)) {
-      return FlexTestUtils.getSdk(testDescriptor);
+      return FlexTestUtils.getSdk(testDescriptor, getTestRootDisposable());
     }
     return super.getTestProjectSdk();
   }

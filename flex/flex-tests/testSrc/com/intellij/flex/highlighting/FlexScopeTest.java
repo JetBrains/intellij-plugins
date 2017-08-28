@@ -214,8 +214,8 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
   }
 
   public Pair<Sdk, Sdk> prepareTwoSdks() {
-    final Sdk sdk1 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
-    final Sdk sdk2 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
+    final Sdk sdk1 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, getTestRootDisposable());
+    final Sdk sdk2 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false, getTestRootDisposable());
 
     WriteAction.run(() -> FlexTestUtils.modifyConfigs(myProject, editor -> {
       final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
@@ -230,7 +230,7 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
   }
 
   public void testCircularDependency() throws Exception {
-    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, true);
+    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, true, getTestRootDisposable());
     WriteAction.run(() -> {
       final ModifiableModuleModel m1 = ModuleManager.getInstance(myProject).getModifiableModel();
       final VirtualFile moduleDir = myProject.getBaseDir().createChildDirectory(this, "module2");
@@ -369,7 +369,7 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
   }
 
   public void testMissingSdk() throws Exception {
-    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
+    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, getTestRootDisposable());
     FlexTestUtils.modifyConfigs(myProject, editor -> {
       final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
       bc1.setName("1");
@@ -388,7 +388,7 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
   }
 
   public void testTestScope() throws Exception {
-    final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, true);
+    final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, true, getTestRootDisposable());
     final Module module2 = FlexTestUtils.createModule(myProject, "module2", getVirtualFile(getBasePath() + "m2"));
     final Module module3 = FlexTestUtils.createModule(myProject, "module3", getVirtualFile(getBasePath() + "m3"));
 

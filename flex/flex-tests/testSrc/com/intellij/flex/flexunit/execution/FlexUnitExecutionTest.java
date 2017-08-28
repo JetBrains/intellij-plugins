@@ -198,7 +198,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
 
   @Override
   protected void setUpJdk() {
-    final Sdk sdk = FlexTestUtils.createSdk(FLEX4_SDK_HOME, "4.6.0");
+    final Sdk sdk = FlexTestUtils.createSdk(FLEX4_SDK_HOME, "4.6.0", getTestRootDisposable());
     FlexTestUtils.modifyBuildConfiguration(myModule, configuration -> FlexTestUtils.setSdk(configuration, sdk));
   }
 

@@ -2,13 +2,10 @@ package com.intellij.flex.codeInsight
 
 import com.intellij.flex.util.FlexTestUtils
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor
-import com.intellij.lang.javascript.*
 import com.intellij.lang.actionscript.arrangement.ActionScriptRearranger
-import com.intellij.openapi.Disposable
+import com.intellij.lang.javascript.*
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.codeStyle.arrangement.AbstractRearrangerTest
 import com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens
@@ -32,24 +29,13 @@ class ActionScriptRearrangerTest extends AbstractRearrangerTest {
                                   urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))))
     super.setUp()
 
-    def sdk = FlexTestUtils.getSdk(new JSTestUtils.TestDescriptor(this))
+    def sdk = FlexTestUtils.getSdk(new JSTestUtils.TestDescriptor(this), myModule)
 
     ApplicationManager.application.runWriteAction(new Runnable() {
       void run() {
         def model = ModuleRootManager.getInstance(myModule).getModifiableModel()
         model.setSdk(sdk)
         model.commit()
-      }
-    })
-
-    Disposer.register(myModule, new Disposable() {
-      void dispose() {
-        ApplicationManager.application.runWriteAction(new Runnable() {
-          void run() {
-            ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance()
-            projectJdkTable.removeJdk(sdk)
-          }
-        })
       }
     })
   }

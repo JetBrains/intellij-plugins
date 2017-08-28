@@ -1,11 +1,11 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.Disposable;
@@ -18,12 +18,12 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import junit.framework.AssertionFailedError;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -65,8 +65,9 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     doSetupFlexSdk(myModule, flexSdkRootPath, annotation == null ? TargetPlatform.Desktop : annotation.platform(), flexVersion);
   }
 
+  @NotNull
   protected Disposable getSdkParentDisposable() {
-    return ApplicationManager.getApplication();
+    return getTestRootDisposable();
   }
 
   private void doSetupFlexSdk(final Module module, final String flexSdkRootPath, final TargetPlatform targetPlatform, final String sdkVersion) {
@@ -76,17 +77,7 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
       ApplicationManager.getApplication().runWriteAction(() -> {
         FlexSdkType2 sdkType = FlexSdkType2.getInstance();
         Sdk sdk1 = new ProjectJdkImpl(sdkName, sdkType, flexSdkRootPath, "");
-        ProjectJdkTable.getInstance().addJdk(sdk1);
-
-        Disposer.register(getSdkParentDisposable(), new Disposable() {
-          @Override
-          public void dispose() {
-            ApplicationManager.getApplication().runWriteAction(() -> {
-              ProjectJdkTable sdkTable = ProjectJdkTable.getInstance();
-              sdkTable.removeJdk(sdkTable.findJdk(sdkName));
-            });
-          }
-        });
+        ProjectJdkTable.getInstance().addJdk(sdk1, getSdkParentDisposable());
 
         final SdkModificator modificator = sdk1.getSdkModificator();
         modificator.setVersionString(FlexSdkType2.getInstance().getVersionString(sdk1.getHomePath()));

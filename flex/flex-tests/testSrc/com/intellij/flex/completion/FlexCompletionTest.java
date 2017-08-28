@@ -1409,7 +1409,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   public void testVectorObject() throws Exception {
-    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
+    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, getTestRootDisposable());
     FlexTestUtils.modifyConfigs(myProject, editor -> {
       ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
       FlexTestUtils.setSdk(bc1, sdk45);

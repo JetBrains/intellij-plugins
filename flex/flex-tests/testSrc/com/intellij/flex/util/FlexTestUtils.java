@@ -131,8 +131,8 @@ public class FlexTestUtils {
     }
   }
 
-  public static Sdk getSdk(JSTestUtils.TestDescriptor testDescriptor) {
-    return createSdk(getPathToMockFlex(testDescriptor), getSdkVersion(testDescriptor));
+  public static Sdk getSdk(JSTestUtils.TestDescriptor testDescriptor, @NotNull Disposable parent) {
+    return createSdk(getPathToMockFlex(testDescriptor), getSdkVersion(testDescriptor), parent);
   }
 
   private static String getSdkVersion(JSTestUtils.TestDescriptor testDescriptor) {
@@ -157,12 +157,12 @@ public class FlexTestUtils {
     });
   }
 
-  public static void doSetupFlexSdk(final Module module,
-                                    final String flexSdkRootPath,
-                                    final boolean air,
-                                    final String sdkVersion) {
+  private static void doSetupFlexSdk(@NotNull Module module,
+                                     final String flexSdkRootPath,
+                                     final boolean air,
+                                     final String sdkVersion) {
     WriteAction.run(() -> {
-      final Sdk sdk = createSdk(flexSdkRootPath, sdkVersion);
+      final Sdk sdk = createSdk(flexSdkRootPath, sdkVersion, module);
 
       if (ModuleType.get(module) == FlexModuleType.getInstance()) {
         modifyBuildConfiguration(module, bc -> {
@@ -171,23 +171,17 @@ public class FlexTestUtils {
         });
       }
 
-      Disposer.register(module, new Disposable() {
-        @Override
-        public void dispose() {
-          WriteAction.run(() -> {
-            final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
-            projectJdkTable.removeJdk(sdk);
-          });
-        }
-      });
     });
   }
 
-  public static Sdk createSdk(final String flexSdkRootPath, @Nullable String sdkVersion) {
-    return createSdk(flexSdkRootPath, sdkVersion, true);
+  public static Sdk createSdk(final String flexSdkRootPath, @Nullable String sdkVersion, @NotNull Disposable parent) {
+    return createSdk(flexSdkRootPath, sdkVersion, true, parent);
   }
 
-  public static Sdk createSdk(final String flexSdkRootPath, @Nullable String sdkVersion, final boolean removeExisting) {
+  public static Sdk createSdk(final String flexSdkRootPath,
+                              @Nullable String sdkVersion,
+                              final boolean removeExisting,
+                              @NotNull Disposable parent) {
     Sdk sdk = WriteCommandAction.runWriteCommandAction(null, (Computable<Sdk>)() -> {
       final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
       if (removeExisting) {
@@ -200,7 +194,7 @@ public class FlexTestUtils {
       final FlexSdkType2 sdkType = FlexSdkType2.getInstance();
       final Sdk sdk1 = new ProjectJdkImpl(sdkType.suggestSdkName(null, flexSdkRootPath), sdkType, flexSdkRootPath, "");
       sdkType.setupSdkPaths(sdk1);
-      projectJdkTable.addJdk(sdk1);
+      projectJdkTable.addJdk(sdk1, parent);
       return sdk1;
     });
 

@@ -3,12 +3,8 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
-import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.TripleFunction;
-
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 @Flex(version="4.5")
 public class LibrarySorterTest extends MxmlTestBase {
@@ -17,6 +13,7 @@ public class LibrarySorterTest extends MxmlTestBase {
     return getName();
   }
 
+  @NotNull
   @Override
   protected Disposable getSdkParentDisposable() {
     return myModule;

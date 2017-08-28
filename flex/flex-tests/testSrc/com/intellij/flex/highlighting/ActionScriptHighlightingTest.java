@@ -2145,7 +2145,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     final Ref<Sdk> sdk1 = new Ref<>();
     final Ref<Sdk> sdk2 = new Ref<>();
     myAfterCommitRunnable = () -> {
-      sdk1.set(FlexTestUtils.createSdk(getTestDataPath() + BASE_PATH + "fake_sdk", "4.0.0"));
+      sdk1.set(FlexTestUtils.createSdk(getTestDataPath() + BASE_PATH + "fake_sdk", "4.0.0", getTestRootDisposable()));
       {
         SdkModificator m = sdk1.get().getSdkModificator();
         m.removeAllRoots();
@@ -2153,7 +2153,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
         m.addRoot(sdk1.get().getHomeDirectory().findChild("flex_root"), OrderRootType.CLASSES);
         m.commitChanges();
       }
-      sdk2.set(FlexTestUtils.createSdk(getTestDataPath() + BASE_PATH + "fake_sdk", "4.0.0"));
+      sdk2.set(FlexTestUtils.createSdk(getTestDataPath() + BASE_PATH + "fake_sdk", "4.0.0", getTestRootDisposable()));
       {
         SdkModificator m = sdk2.get().getSdkModificator();
         m.removeAllRoots();
@@ -2217,8 +2217,8 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   public void testSuperclassResolveMixedRoots() throws Exception {
     // we need two SDKs so that flash.net.FileReference from SDK 4.6/playerglobal.swc
     // has more recent timestamp than its brother from SDK 4.5/airglobal.swc
-    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
-    final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
+    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, getTestRootDisposable());
+    final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false, getTestRootDisposable());
     FlexTestUtils.modifyConfigs(myProject, e -> {
       ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
       bc1.setTargetPlatform(TargetPlatform.Desktop);
@@ -2234,8 +2234,8 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testFieldResolveMixedRoots() throws Exception {
     // same as testSuperclassResolveMixedRoots()
-    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
-    final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
+    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, getTestRootDisposable());
+    final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false, getTestRootDisposable());
     FlexTestUtils.modifyConfigs(myProject, e -> {
       ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
       bc1.setTargetPlatform(TargetPlatform.Desktop);
@@ -2276,7 +2276,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testCorrectScopeForSuperclassCheck2() throws Exception { //
-    final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
+    final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false, getTestRootDisposable());
     FlexTestUtils.modifyConfigs(myProject, e -> {
       ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
       bc1.setName("web");
@@ -2294,7 +2294,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testCorrectScopeForSuperclassCheck3() throws Exception { // IDEA-91539
-    final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
+    final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false, getTestRootDisposable());
     FlexTestUtils.modifyConfigs(myProject, e -> {
       ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
       bc1.setTargetPlatform(TargetPlatform.Desktop);
@@ -2306,8 +2306,8 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   public void testCorrectScopeForSuperclassCheck4() throws Exception {
     // two dependent modules, different SDKs
     final Module module2 = doCreateRealModuleIn("module2", myProject, FlexModuleType.getInstance());
-    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, false);
-    final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
+    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, false, getTestRootDisposable());
+    final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false, getTestRootDisposable());
     FlexTestUtils.modifyConfigs(myProject, e -> {
       ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
       FlexTestUtils.setSdk(bc1, sdk46);
@@ -2330,7 +2330,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     // SDK should have no sources attached (otherwise getNavigationElement() for both classes will bring us to the same file)
     // see testData\js2_highlighting\CorrectScopeForSuperclassCheck5_src.zip
 
-    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, false);
+    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, false, getTestRootDisposable());
     FlexTestUtils.addFlexLibrary(false, myModule, "foobar", true, getTestDataPath(), BASE_PATH + getTestName(false) + ".swc", null, null,
                                  LinkageType.Merged);
 
@@ -2343,7 +2343,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testCorrectScopeForSuperclassCheck6() throws Exception {
     // monkey patching SDK class
-    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, false);
+    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, false, getTestRootDisposable());
 
     FlexTestUtils.modifyConfigs(myProject, e -> {
       ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
@@ -2381,7 +2381,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testVectorWithSdk() throws Exception {
-    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
+    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, getTestRootDisposable());
     FlexTestUtils.modifyConfigs(myProject, editor -> {
       ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
       FlexTestUtils.setSdk(bc1, sdk45);

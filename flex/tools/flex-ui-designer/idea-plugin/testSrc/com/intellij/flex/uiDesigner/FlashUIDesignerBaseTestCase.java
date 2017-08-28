@@ -20,7 +20,8 @@ public abstract class FlashUIDesignerBaseTestCase extends ModuleTestCase {
 
   @Override
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), FlexTestUtils.getTestDataPath("MockFlexSdk4"), false);
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), FlexTestUtils.getTestDataPath("MockFlexSdk4"), false
+    );
   }
 
   protected VirtualFile configureByFile(final String filepath) throws Exception {

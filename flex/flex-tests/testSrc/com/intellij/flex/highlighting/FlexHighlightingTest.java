@@ -2270,7 +2270,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   public void testBadResolveOfSuperClass() throws Exception {
-    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
+    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, getTestRootDisposable());
 
     WriteAction.run(() -> FlexTestUtils.modifyConfigs(myProject, editor -> {
       final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
@@ -2321,7 +2321,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   public void testFontFaceProperties() throws Throwable {
-    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
+    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, getTestRootDisposable());
     WriteAction.run(() -> FlexTestUtils.modifyBuildConfiguration(myModule, bc -> FlexTestUtils.setSdk(bc, sdk)));
 
     enableInspectionTool(new CssUnknownPropertyInspection());
