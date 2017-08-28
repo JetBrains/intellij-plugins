@@ -5,8 +5,8 @@
   <vendor>JetBrains</vendor>
 
   <depends>JavaScript</depends>
-  <depends>JavaScriptDebugger</depends>
   <depends>com.intellij.modules.platform</depends>
+  <depends optional="true" config-file="js-debugger.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="css-support.xml">com.intellij.css</depends>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -46,8 +46,5 @@
     <inheritedLanguagesConfigurableProvider language="VueJS"
                                             implementationClass="org.jetbrains.vuejs.codeInsight.VueJSLanguageConfigurableProvider"/>
     <dialectSpecificHandlersFactory language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory"/>
-  </extensions>
-  <extensions defaultExtensionNs="com.jetbrains">
-    <javaScriptDebugAware implementation="org.jetbrains.vuejs.run.VueDebugAware"/>
   </extensions>
 </idea-plugin>
