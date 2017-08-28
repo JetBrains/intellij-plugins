@@ -22,10 +22,12 @@ import java.io.File
  */
 object NewLearnProjectUtil {
 
-    fun createLearnProject(projectName: String, projectToClose: Project?, langSupport: LangSupport): Project? {
+    fun createLearnProject(projectToClose: Project?, langSupport: LangSupport): Project? {
         val projectManager = ProjectManagerEx.getInstanceEx()
         val allProjectsDir = ProjectUtil.getBaseDir()
         val moduleBuilder: ModuleBuilder? = langSupport.getModuleBuilder()
+        val langSupport = LangManager.getInstance().getLangSupport()
+        val projectName = langSupport.defaultProjectName
 
         try {
             val projectFilePath = allProjectsDir + File.separator + projectName //Project dir
@@ -36,7 +38,7 @@ object NewLearnProjectUtil {
             FileUtil.ensureExists(ideaDir)
 
             val newProject: Project =
-              LangManager.getInstance().getLangSupport().createProject(projectName, projectToClose) ?: return projectToClose!!
+                    langSupport.createProject(projectName, projectToClose) ?: return projectToClose!!
 
             langSupport.applyProjectSdk(newProject)
 

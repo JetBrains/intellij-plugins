@@ -21,6 +21,8 @@ import com.intellij.openapi.wm.ToolWindowAnchor
 import java.io.File
 
 abstract class AbstractLangSupport : LangSupport {
+  override val defaultProjectName:String
+    get() = "LearnProject"
 
   override fun needToCheckSDK(): Boolean {
     return true

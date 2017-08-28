@@ -19,7 +19,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindowManager
 import training.lang.LangManager
 import training.learn.CourseManager
-import training.learn.CourseManager.LEARN_PROJECT_NAME
 import training.learn.LearnBundle
 import training.learn.Module
 import training.learn.NewLearnProjectUtil
@@ -57,7 +56,7 @@ class OpenLessonAction : AnAction() {
   @Synchronized @Throws(BadModuleException::class, BadLessonException::class, IOException::class, FontFormatException::class, InterruptedException::class, ExecutionException::class, LessonIsOpenedException::class)
   fun openLesson(project: Project, lesson: Lesson) {
     var project = project
-
+    val langSupport = LangManager.getInstance().getLangSupport()
     try {
       CourseManager.getInstance().lastActivityTime = System.currentTimeMillis()
 
@@ -76,11 +75,11 @@ class OpenLessonAction : AnAction() {
         vf = getScratchFile(myProject, lesson, scratchFileName)
       } else {
         //0. learnProject == null but this project is LearnProject then just getFileInLearnProject
-        if (learnProject == null && getCurrentProject()!!.name == LEARN_PROJECT_NAME) {
+        if (learnProject == null && getCurrentProject()!!.name == langSupport.defaultProjectName) {
           CourseManager.getInstance().learnProject = getCurrentProject()
           vf = getFileInLearnProject(lesson)
           //1. learnProject == null and current project has different name then initLearnProject and register post startup open lesson
-        } else if (learnProject == null && getCurrentProject()!!.name != LEARN_PROJECT_NAME) {
+        } else if (learnProject == null && getCurrentProject()!!.name != langSupport.defaultProjectName) {
           val myLearnProject = initLearnProject(myProject) ?: return
 // in case of user aborted to create a LearnProject
           openLessonWhenLearnProjectStart(lesson, myLearnProject)
@@ -279,9 +278,19 @@ class OpenLessonAction : AnAction() {
           fileName = lesson.module!!.nameWithoutWhitespaces + "." + extensionFile
         }
 
-        var lessonVirtualFile = sourceRootFile.findChild(fileName)
+        var lessonVirtualFile: VirtualFile? = null
+        for (file in ProjectRootManager.getInstance(learnProject).contentSourceRoots){
+            if (file.name == fileName){
+                lessonVirtualFile = file
+                break
+            } else {
+                lessonVirtualFile = file.findChild(fileName)
+                if(lessonVirtualFile != null){
+                    break
+                }
+            }
+        }
         if (lessonVirtualFile == null) {
-
           try {
             lessonVirtualFile = sourceRootFile.createChildData(this, fileName)
           } catch (e: IOException) {
@@ -303,12 +312,12 @@ class OpenLessonAction : AnAction() {
   //
   private fun initLearnProject(projectToClose: Project?): Project? {
     var myLearnProject: Project? = null
-
+      val langSupport = LangManager.getInstance().getLangSupport()
     //if projectToClose is open
     val openProjects = ProjectManager.getInstance().openProjects
     for (openProject in openProjects) {
       val name = openProject.name
-      if (name == LEARN_PROJECT_NAME) {
+      if (name == langSupport.defaultProjectName) {
         myLearnProject = openProject
         if (ApplicationManager.getApplication().isUnitTestMode) return openProject
       }
@@ -328,14 +337,14 @@ class OpenLessonAction : AnAction() {
 
       } else {
         try {
-          myLearnProject = NewLearnProjectUtil.createLearnProject(LEARN_PROJECT_NAME, projectToClose, LangManager.getInstance().getLangSupport())
+          myLearnProject = NewLearnProjectUtil.createLearnProject(projectToClose, langSupport)
         } catch (e: IOException) {
           e.printStackTrace()
         }
 
       }
 
-      LangManager.getInstance().getLangSupport().applyToProjectAfterConfigure().invoke(myLearnProject!!)
+      langSupport.applyToProjectAfterConfigure().invoke(myLearnProject!!)
     }
 
     CourseManager.getInstance().learnProject = myLearnProject
