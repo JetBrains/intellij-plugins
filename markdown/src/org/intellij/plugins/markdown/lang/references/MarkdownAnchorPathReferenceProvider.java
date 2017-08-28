@@ -7,6 +7,7 @@ import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
+import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,6 +16,8 @@ import java.util.List;
 public class MarkdownAnchorPathReferenceProvider implements PathReferenceProvider {
   @Override
   public boolean createReferences(@NotNull final PsiElement psiElement, @NotNull final List<PsiReference> references, final boolean soft) {
+    if (!(psiElement instanceof MarkdownPsiElement)) return false;
+
     final TextRange range = ElementManipulators.getValueTextRange(psiElement);
     final String elementText = psiElement.getText();
     final int anchorOffset = elementText.indexOf('#');
