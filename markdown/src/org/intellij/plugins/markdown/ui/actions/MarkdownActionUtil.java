@@ -9,7 +9,6 @@ import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.TextEditor;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Couple;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -24,6 +23,11 @@ public class MarkdownActionUtil {
   @Nullable
   public static SplitFileEditor findSplitEditor(AnActionEvent e) {
     final FileEditor editor = e.getData(PlatformDataKeys.FILE_EDITOR);
+    return findSplitEditor(editor);
+  }
+
+  @Nullable
+  public static SplitFileEditor findSplitEditor(@Nullable FileEditor editor) {
     if (editor instanceof SplitFileEditor) {
       return (SplitFileEditor)editor;
     }
