@@ -1,13 +1,13 @@
-FILE
+Markdown file
   ASTWrapperPsiElement(Markdown:Markdown:MARKDOWN_FILE)
-    MarkdownHeaderImpl(Markdown:Markdown:SETEXT_1)
+    markdown: Markdown:SETEXT_1
       ASTWrapperPsiElement(Markdown:SETEXT_CONTENT)
         PsiElement(Markdown:Markdown:TEXT)('Test Markdown document')
       PsiElement(Markdown:Markdown:EOL)('\n')
       PsiElement(Markdown:Markdown:SETEXT_1)('======================')
     PsiElement(Markdown:Markdown:EOL)('\n')
     PsiElement(Markdown:Markdown:EOL)('\n')
-    MarkdownHeaderImpl(Markdown:Markdown:SETEXT_2)
+    markdown: Markdown:SETEXT_2
       ASTWrapperPsiElement(Markdown:SETEXT_CONTENT)
         PsiElement(Markdown:Markdown:TEXT)('Text')
       PsiElement(Markdown:Markdown:EOL)('\n')
@@ -66,7 +66,7 @@ FILE
     PsiElement(Markdown:Markdown:EOL)('\n')
     PsiElement(Markdown:Markdown:EOL)('\n')
     PsiElement(Markdown:Markdown:EOL)('\n')
-    MarkdownHeaderImpl(Markdown:Markdown:SETEXT_2)
+    markdown: Markdown:SETEXT_2
       ASTWrapperPsiElement(Markdown:SETEXT_CONTENT)
         PsiElement(Markdown:Markdown:TEXT)('Links')
       PsiElement(Markdown:Markdown:EOL)('\n')
@@ -124,7 +124,7 @@ FILE
     PsiElement(Markdown:Markdown:EOL)('\n')
     PsiElement(Markdown:Markdown:EOL)('\n')
     PsiElement(Markdown:Markdown:EOL)('\n')
-    MarkdownHeaderImpl(Markdown:Markdown:SETEXT_2)
+    markdown: Markdown:SETEXT_2
       ASTWrapperPsiElement(Markdown:SETEXT_CONTENT)
         PsiElement(Markdown:Markdown:TEXT)('Images')
       PsiElement(Markdown:Markdown:EOL)('\n')
@@ -148,51 +148,51 @@ FILE
           PsiElement(Markdown:Markdown:))(')')
     PsiElement(Markdown:Markdown:EOL)('\n')
     PsiElement(Markdown:Markdown:EOL)('\n')
-    MarkdownHeaderImpl(Markdown:Markdown:SETEXT_2)
+    markdown: Markdown:SETEXT_2
       ASTWrapperPsiElement(Markdown:SETEXT_CONTENT)
         PsiElement(Markdown:Markdown:TEXT)('Headers')
       PsiElement(Markdown:Markdown:EOL)('\n')
       PsiElement(Markdown:Markdown:SETEXT_2)('-------')
     PsiElement(Markdown:Markdown:EOL)('\n')
     PsiElement(Markdown:Markdown:EOL)('\n')
-    MarkdownHeaderImpl(Markdown:Markdown:ATX_1)
+    markdown: Markdown:ATX_1
       PsiElement(Markdown:Markdown:ATX_HEADER)('#')
       ASTWrapperPsiElement(Markdown:ATX_CONTENT)
         PsiElement(Markdown:WHITE_SPACE)(' ')
         PsiElement(Markdown:Markdown:TEXT)('First level title')
     PsiElement(Markdown:Markdown:EOL)('\n')
-    MarkdownHeaderImpl(Markdown:Markdown:ATX_2)
+    markdown: Markdown:ATX_2
       PsiElement(Markdown:Markdown:ATX_HEADER)('##')
       ASTWrapperPsiElement(Markdown:ATX_CONTENT)
         PsiElement(Markdown:WHITE_SPACE)(' ')
         PsiElement(Markdown:Markdown:TEXT)('Second level title')
     PsiElement(Markdown:Markdown:EOL)('\n')
-    MarkdownHeaderImpl(Markdown:Markdown:ATX_3)
+    markdown: Markdown:ATX_3
       PsiElement(Markdown:Markdown:ATX_HEADER)('###')
       ASTWrapperPsiElement(Markdown:ATX_CONTENT)
         PsiElement(Markdown:WHITE_SPACE)(' ')
         PsiElement(Markdown:Markdown:TEXT)('Third level title')
     PsiElement(Markdown:Markdown:EOL)('\n')
-    MarkdownHeaderImpl(Markdown:Markdown:ATX_4)
+    markdown: Markdown:ATX_4
       PsiElement(Markdown:Markdown:ATX_HEADER)('####')
       ASTWrapperPsiElement(Markdown:ATX_CONTENT)
         PsiElement(Markdown:WHITE_SPACE)(' ')
         PsiElement(Markdown:Markdown:TEXT)('Fourth level title')
     PsiElement(Markdown:Markdown:EOL)('\n')
-    MarkdownHeaderImpl(Markdown:Markdown:ATX_5)
+    markdown: Markdown:ATX_5
       PsiElement(Markdown:Markdown:ATX_HEADER)('#####')
       ASTWrapperPsiElement(Markdown:ATX_CONTENT)
         PsiElement(Markdown:WHITE_SPACE)(' ')
         PsiElement(Markdown:Markdown:TEXT)('Fifth level title')
     PsiElement(Markdown:Markdown:EOL)('\n')
-    MarkdownHeaderImpl(Markdown:Markdown:ATX_6)
+    markdown: Markdown:ATX_6
       PsiElement(Markdown:Markdown:ATX_HEADER)('######')
       ASTWrapperPsiElement(Markdown:ATX_CONTENT)
         PsiElement(Markdown:WHITE_SPACE)(' ')
         PsiElement(Markdown:Markdown:TEXT)('Sixth level title')
     PsiElement(Markdown:Markdown:EOL)('\n')
     PsiElement(Markdown:Markdown:EOL)('\n')
-    MarkdownHeaderImpl(Markdown:Markdown:ATX_3)
+    markdown: Markdown:ATX_3
       PsiElement(Markdown:Markdown:ATX_HEADER)('###')
       ASTWrapperPsiElement(Markdown:ATX_CONTENT)
         PsiElement(Markdown:WHITE_SPACE)(' ')
@@ -210,7 +210,7 @@ FILE
             PsiElement(Markdown:Markdown:TEXT)('//localhost')
           PsiElement(Markdown:Markdown:))(')')
     PsiElement(Markdown:Markdown:EOL)('\n')
-    MarkdownHeaderImpl(Markdown:Markdown:ATX_3)
+    markdown: Markdown:ATX_3
       PsiElement(Markdown:Markdown:ATX_HEADER)('###')
       ASTWrapperPsiElement(Markdown:ATX_CONTENT)
         PsiElement(Markdown:WHITE_SPACE)(' ')
@@ -231,7 +231,7 @@ FILE
             PsiElement(Markdown:Markdown:))(')')
     PsiElement(Markdown:Markdown:EOL)('\n')
     PsiElement(Markdown:Markdown:EOL)('\n')
-    MarkdownHeaderImpl(Markdown:Markdown:SETEXT_2)
+    markdown: Markdown:SETEXT_2
       ASTWrapperPsiElement(Markdown:SETEXT_CONTENT)
         PsiElement(Markdown:Markdown:TEXT)('Code')
       PsiElement(Markdown:Markdown:EOL)('\n')
@@ -298,7 +298,7 @@ FILE
       PsiElement(Markdown:Markdown:CODE_LINE)('    }')
     PsiElement(Markdown:Markdown:EOL)('\n')
     PsiElement(Markdown:Markdown:EOL)('\n')
-    MarkdownHeaderImpl(Markdown:Markdown:SETEXT_2)
+    markdown: Markdown:SETEXT_2
       ASTWrapperPsiElement(Markdown:SETEXT_CONTENT)
         PsiElement(Markdown:Markdown:TEXT)('Quotes')
       PsiElement(Markdown:Markdown:EOL)('\n')
@@ -364,7 +364,7 @@ FILE
       PsiElement(Markdown:WHITE_SPACE)('>')
       PsiElement(Markdown:Markdown:EOL)('\n')
       PsiElement(Markdown:WHITE_SPACE)('> ')
-      MarkdownHeaderImpl(Markdown:Markdown:ATX_3)
+      markdown: Markdown:ATX_3
         PsiElement(Markdown:Markdown:ATX_HEADER)('###')
         ASTWrapperPsiElement(Markdown:ATX_CONTENT)
           PsiElement(Markdown:WHITE_SPACE)(' ')
@@ -388,7 +388,7 @@ FILE
     PsiElement(Markdown:Markdown:EOL)('\n')
     PsiElement(Markdown:Markdown:EOL)('\n')
     PsiElement(Markdown:Markdown:EOL)('\n')
-    MarkdownHeaderImpl(Markdown:Markdown:SETEXT_2)
+    markdown: Markdown:SETEXT_2
       ASTWrapperPsiElement(Markdown:SETEXT_CONTENT)
         PsiElement(Markdown:Markdown:TEXT)('Html')
       PsiElement(Markdown:Markdown:EOL)('\n')
@@ -436,7 +436,7 @@ FILE
       PsiElement(Markdown:Markdown:HTML_BLOCK_CONTENT)('</table>')
     PsiElement(Markdown:Markdown:EOL)('\n')
     PsiElement(Markdown:Markdown:EOL)('\n')
-    MarkdownHeaderImpl(Markdown:Markdown:SETEXT_2)
+    markdown: Markdown:SETEXT_2
       ASTWrapperPsiElement(Markdown:SETEXT_CONTENT)
         PsiElement(Markdown:Markdown:TEXT)('Horizontal rules')
       PsiElement(Markdown:Markdown:EOL)('\n')
@@ -454,7 +454,7 @@ FILE
     PsiElement(Markdown:Markdown:EOL)('\n')
     PsiElement(Markdown:Markdown:EOL)('\n')
     PsiElement(Markdown:Markdown:EOL)('\n')
-    MarkdownHeaderImpl(Markdown:Markdown:SETEXT_2)
+    markdown: Markdown:SETEXT_2
       ASTWrapperPsiElement(Markdown:SETEXT_CONTENT)
         PsiElement(Markdown:Markdown:TEXT)('Lists')
       PsiElement(Markdown:Markdown:EOL)('\n')

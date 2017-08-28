@@ -76,6 +76,8 @@
                      implementationClass="org.intellij.plugins.markdown.lang.references.MarkdownUnresolvedFileReferenceInspection"/>
 
     <lang.foldingBuilder language="Markdown" implementationClass="org.intellij.plugins.markdown.folding.MarkdownFoldingBuilder"/>
+    <stubIndex implementation="org.intellij.plugins.markdown.lang.index.MarkdownHeadersIndex"/>
+    <anchorReferenceProvider implementation="org.intellij.plugins.markdown.lang.references.MarkdownAnchorPathReferenceProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.intellij.markdown">

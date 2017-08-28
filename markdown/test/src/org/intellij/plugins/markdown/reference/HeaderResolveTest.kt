@@ -1,10 +1,12 @@
 package org.intellij.plugins.markdown.reference
 
-import com.intellij.psi.PsiPolyVariantReference
-import com.intellij.psi.PsiPolyVariantReferenceBase
+import com.intellij.openapi.paths.PsiDynaReference
 import com.intellij.testFramework.ResolveTestCase
+import com.intellij.util.containers.ContainerUtil
+import junit.framework.TestCase
 import org.intellij.plugins.markdown.MarkdownTestingUtil
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownHeaderImpl
+import org.intellij.plugins.markdown.lang.references.MarkdownAnchorReference
 
 class HeaderResolveTest : ResolveTestCase() {
   override fun getTestDataPath(): String = MarkdownTestingUtil.TEST_DATA_PATH + "/reference/linkDestination/headers/"
@@ -30,12 +32,29 @@ class HeaderResolveTest : ResolveTestCase() {
     doTest()
   }
 
+  fun testAFileHeader1() {
+    configureByFile("header1.md")
+    doTest()
+  }
+
+  fun testAFileHeaderMultipleResolve() {
+    configureByFile("multipleHeaders.md")
+    checkMultiResolve(2)
+  }
+
   fun testMultipleHeaders() {
+    checkMultiResolve(2)
+  }
+
+  private fun checkMultiResolve(resolveCount: Int) {
     val fileName = getTestName(true) + ".md"
     val reference = configureByFile(fileName)
-    assertInstanceOf(reference, PsiPolyVariantReference::class.java)
+    val markdownAnchorReference : MarkdownAnchorReference = ContainerUtil.findInstance((reference as PsiDynaReference<*>).references,
+                                                             MarkdownAnchorReference::class.java)
 
-    val resolve = (reference as PsiPolyVariantReferenceBase<*>).multiResolve(false)
-    assertTrue(resolve.size == 2)
+    TestCase.assertNotNull(markdownAnchorReference)
+    val result = markdownAnchorReference.multiResolve(false)
+
+    assertTrue(result.size == resolveCount)
   }
 }

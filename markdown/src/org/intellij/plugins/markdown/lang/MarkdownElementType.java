@@ -19,6 +19,7 @@ import com.intellij.psi.tree.IElementType;
 import org.intellij.markdown.MarkdownElementTypes;
 import org.intellij.markdown.MarkdownTokenTypes;
 import org.intellij.markdown.flavours.gfm.GFMTokenTypes;
+import org.intellij.plugins.markdown.lang.stubs.impl.MarkdownHeaderStubElementType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -65,11 +66,24 @@ public class MarkdownElementType extends IElementType {
       result = new MarkdownLazyElementType(markdownType.toString());
     }
     else {
-      result = new MarkdownElementType(markdownType.toString());
+      result = isHeaderElementType(markdownType)
+               ? new MarkdownHeaderStubElementType(markdownType.toString())
+               : new MarkdownElementType(markdownType.toString());
     }
     markdownToPlatformTypeMap.put(markdownType, result);
     platformToMarkdownTypeMap.put(result, markdownType);
     return result;
+  }
+
+  private static boolean isHeaderElementType(@NotNull org.intellij.markdown.IElementType markdownType) {
+    return markdownType == MarkdownElementTypes.ATX_1 ||
+           markdownType == MarkdownElementTypes.ATX_2 ||
+           markdownType == MarkdownElementTypes.ATX_3 ||
+           markdownType == MarkdownElementTypes.ATX_4 ||
+           markdownType == MarkdownElementTypes.ATX_5 ||
+           markdownType == MarkdownElementTypes.ATX_6 ||
+           markdownType == MarkdownElementTypes.SETEXT_1 ||
+           markdownType == MarkdownElementTypes.SETEXT_2;
   }
 
   @Contract("!null -> !null")

@@ -10,7 +10,7 @@ public class MarkdownTableRowImpl extends MarkdownCompositePsiElementBase {
   }
 
   @Override
-  protected String getPresentableTagName() {
+  public String getPresentableTagName() {
     if (getNode().getElementType() == MarkdownElementTypes.TABLE_HEADER) {
       return "th";
     }

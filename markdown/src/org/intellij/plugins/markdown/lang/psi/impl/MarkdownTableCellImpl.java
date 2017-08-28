@@ -9,7 +9,7 @@ public class MarkdownTableCellImpl extends MarkdownCompositePsiElementBase {
   }
 
   @Override
-  protected String getPresentableTagName() {
+  public String getPresentableTagName() {
     return "td";
   }
 }

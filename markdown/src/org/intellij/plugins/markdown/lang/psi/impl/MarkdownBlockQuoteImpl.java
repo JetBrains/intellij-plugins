@@ -23,7 +23,7 @@ public class MarkdownBlockQuoteImpl extends MarkdownCompositePsiElementBase {
   }
 
   @Override
-  protected String getPresentableTagName() {
+  public String getPresentableTagName() {
     return "blockquote";
   }
 

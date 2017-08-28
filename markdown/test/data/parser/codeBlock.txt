@@ -1,4 +1,4 @@
-FILE
+Markdown file
   ASTWrapperPsiElement(Markdown:Markdown:MARKDOWN_FILE)
     MarkdownParagraphImpl(Markdown:PARAGRAPH)
       PsiElement(Markdown:Markdown:TEXT)('A code block')

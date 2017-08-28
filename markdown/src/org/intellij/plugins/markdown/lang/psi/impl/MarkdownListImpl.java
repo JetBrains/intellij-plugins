@@ -23,7 +23,7 @@ public class MarkdownListImpl extends MarkdownCompositePsiElementBase {
 
 
   @Override
-  protected String getPresentableTagName() {
+  public String getPresentableTagName() {
     return getNode().getElementType() == MarkdownElementTypes.ORDERED_LIST
            ? "ol"
            : "ul";

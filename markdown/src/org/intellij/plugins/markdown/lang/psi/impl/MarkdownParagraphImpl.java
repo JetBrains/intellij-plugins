@@ -22,7 +22,7 @@ public class MarkdownParagraphImpl extends MarkdownCompositePsiElementBase {
   }
 
   @Override
-  protected String getPresentableTagName() {
+  public String getPresentableTagName() {
     return "p";
   }
 }

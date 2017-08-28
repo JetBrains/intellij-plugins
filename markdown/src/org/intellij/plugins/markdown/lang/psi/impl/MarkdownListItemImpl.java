@@ -51,7 +51,7 @@ public class MarkdownListItemImpl extends MarkdownCompositePsiElementBase {
   }
 
   @Override
-  protected String getPresentableTagName() {
+  public String getPresentableTagName() {
     return "li";
   }
 

@@ -12,14 +12,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class MarkdownCompositePsiElementBase extends ASTWrapperPsiElement implements MarkdownPsiElement {
+public abstract class MarkdownCompositePsiElementBase extends ASTWrapperPsiElement implements MarkdownCompositePsiElement {
   public static final int PRESENTABLE_TEXT_LENGTH = 50;
 
   public MarkdownCompositePsiElementBase(@NotNull ASTNode node) {
     super(node);
   }
-
-  protected abstract String getPresentableTagName();
 
   @NotNull
   protected CharSequence getChars() {

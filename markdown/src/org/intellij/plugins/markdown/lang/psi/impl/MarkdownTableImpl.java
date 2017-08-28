@@ -21,7 +21,7 @@ public class MarkdownTableImpl extends MarkdownCompositePsiElementBase {
   }
 
   @Override
-  protected String getPresentableTagName() {
+  public String getPresentableTagName() {
     return "table";
   }
 }

@@ -1,31 +1,31 @@
 -puppetlabsCoreTypes.md
- -h1 location=Core Types Cheat Sheet
-  -h2 location=The Trifecta
-   -h3 location=[file][]
-    h4 location=Important Attributes
-    h4 location=For Normal Files
-    h4 location=For Directories
-    h4 location=For Symlinks
-    h4 location=Other Notable Attributes
-   -h3 location=[package][]
-    h4 location=Important Attributes
-   -h3 location=[service][]
-    h4 location=Important Attributes
-    h4 location=Other Notable Attributes
-  -h2 location=Hello World
-   -[h3 location=[notify][]]
-    h4 location=Important Attributes
-  -h2 location=Grab Bag
-   -h3 location=[exec][]
-    h4 location=Important Attributes
-    h4 location=Attributes to Limit When a Command Should Run
-    h4 location=Other Notable Attributes:
-   -h3 location=[cron][]
-    h4 location=Important Attributes
-    h4 location=Other Notable Attributes
-   -h3 location=[user][]
-    h4 location=Important Attributes
-    h4 location=Other Notable Attributes
-   -h3 location=[group][]
-    h4 location=Important Attributes
-  h2 location=Everything Else
+ -h1 Core Types Cheat Sheet
+  -h2 The Trifecta
+   -h3 [file][]
+    h4 Important Attributes
+    h4 For Normal Files
+    h4 For Directories
+    h4 For Symlinks
+    h4 Other Notable Attributes
+   -h3 [package][]
+    h4 Important Attributes
+   -h3 [service][]
+    h4 Important Attributes
+    h4 Other Notable Attributes
+  -h2 Hello World
+   -[h3 [notify][]]
+    h4 Important Attributes
+  -h2 Grab Bag
+   -h3 [exec][]
+    h4 Important Attributes
+    h4 Attributes to Limit When a Command Should Run
+    h4 Other Notable Attributes:
+   -h3 [cron][]
+    h4 Important Attributes
+    h4 Other Notable Attributes
+   -h3 [user][]
+    h4 Important Attributes
+    h4 Other Notable Attributes
+   -h3 [group][]
+    h4 Important Attributes
+  h2 Everything Else

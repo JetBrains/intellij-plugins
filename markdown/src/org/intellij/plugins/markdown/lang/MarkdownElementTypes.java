@@ -17,13 +17,14 @@ package org.intellij.plugins.markdown.lang;
 
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
+import com.intellij.psi.tree.IStubFileElementType;
 import org.intellij.markdown.flavours.gfm.GFMElementTypes;
 import org.intellij.markdown.flavours.gfm.GFMTokenTypes;
 
 import static org.intellij.plugins.markdown.lang.MarkdownElementType.platformType;
 
 public interface MarkdownElementTypes {
-  IFileElementType MARKDOWN_FILE_ELEMENT_TYPE = new IFileElementType(MarkdownLanguage.INSTANCE);
+  IFileElementType MARKDOWN_FILE_ELEMENT_TYPE = new IStubFileElementType("Markdown file", MarkdownLanguage.INSTANCE);
 
   IElementType MARKDOWN_FILE = platformType(org.intellij.markdown.MarkdownElementTypes.MARKDOWN_FILE);
 

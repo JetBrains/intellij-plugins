@@ -10,11 +10,22 @@ import com.intellij.psi.tree.IElementType;
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes;
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypeSets;
 import org.intellij.plugins.markdown.lang.psi.MarkdownRecursiveElementVisitor;
+import org.intellij.plugins.markdown.lang.stubs.MarkdownCompositeStubBasedPsiElementBase;
+import org.intellij.plugins.markdown.lang.stubs.MarkdownStubElement;
+import org.intellij.plugins.markdown.lang.stubs.impl.MarkdownHeaderStubElement;
+import org.intellij.plugins.markdown.lang.stubs.impl.MarkdownHeaderStubElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class MarkdownHeaderImpl extends MarkdownCompositePsiElementBase {
+import javax.swing.*;
+
+public class MarkdownHeaderImpl extends MarkdownCompositeStubBasedPsiElementBase<MarkdownStubElement> {
   public MarkdownHeaderImpl(@NotNull ASTNode node) {
     super(node);
+  }
+
+  public MarkdownHeaderImpl(MarkdownHeaderStubElement stub, MarkdownHeaderStubElementType type) {
+    super(stub, type);
   }
 
   @Override
@@ -29,28 +40,46 @@ public class MarkdownHeaderImpl extends MarkdownCompositePsiElementBase {
 
   @NotNull
   @Override
-  protected String getPresentableTagName() {
+  public String getPresentableTagName() {
     return "h" + getHeaderNumber();
   }
 
   @NotNull
   @Override
   public ItemPresentation getPresentation() {
-    return new DelegatingItemPresentation(super.getPresentation()) {
+    ItemPresentation basePresentation = super.getPresentation();
+    return new DelegatingItemPresentation(basePresentation) {
       @Override
       public String getLocationString() {
-        if (!isValid()) {
-          return null;
-        }
-        final PsiElement contentHolder = findChildByType(MarkdownTokenTypeSets.INLINE_HOLDING_ELEMENT_TYPES);
-        if (contentHolder == null) {
-          return null;
-        }
-        else {
-          return StringUtil.trim(contentHolder.getText());
-        }
+        //making null here because stub is being deserialized without 'base' presentation
+        return null;
+      }
+
+      @Override
+      public String getPresentableText() {
+        String headerText = getHeaderText();
+        return headerText == null ? null : "h" + getHeaderNumber() + " " + headerText;
+      }
+
+      @Override
+      public Icon getIcon(boolean open) {
+        //null here because stub is being deserialized without 'base' presentation
+        return null;
       }
     };
+  }
+
+  @Nullable
+  private String getHeaderText() {
+    if (!isValid()) {
+      return null;
+    }
+    final PsiElement contentHolder = findChildByType(MarkdownTokenTypeSets.INLINE_HOLDING_ELEMENT_TYPES);
+    if (contentHolder == null) {
+      return null;
+    }
+
+    return StringUtil.trim(contentHolder.getText());
   }
 
   private int getHeaderNumber() {
@@ -74,5 +103,11 @@ public class MarkdownHeaderImpl extends MarkdownCompositePsiElementBase {
       return 6;
     }
     throw new IllegalStateException("Type should be one of header types");
+  }
+
+
+  @Override
+  public String getName() {
+    return getHeaderText();
   }
 }

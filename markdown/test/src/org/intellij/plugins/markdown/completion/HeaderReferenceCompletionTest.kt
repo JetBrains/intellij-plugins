@@ -4,9 +4,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import org.intellij.plugins.markdown.MarkdownTestingUtil
 
 class HeaderReferenceCompletionTest : LightPlatformCodeInsightFixtureTestCase() {
-  override fun getTestDataPath(): String {
-    return MarkdownTestingUtil.TEST_DATA_PATH + "/completion/headerAnchor/"
-  }
+  override fun getTestDataPath(): String = MarkdownTestingUtil.TEST_DATA_PATH + "/completion/headerAnchor/"
 
   fun testHeader1() {
     doTest()
@@ -22,12 +20,12 @@ class HeaderReferenceCompletionTest : LightPlatformCodeInsightFixtureTestCase() 
 
   fun testMultipleHeaders() {
     myFixture.testCompletionVariants(getBeforeFileName(),
-                                     "#environment-variables",
-                                     "#how-do-i-get-set-up",
-                                     "#mxbezier3scalar",
-                                     "#plugin-list",
-                                     "#requirements",
-                                     "#what-is-this-repository-for")
+                                     "environment-variables", 
+                                     "how-do-i-get-set-up", 
+                                     "mxbezier3scalar", 
+                                     "plugin-list", 
+                                     "requirements", 
+                                     "what-is-this-repository-for")
   }
 
   private fun getBeforeFileName() = getTestName(true) + ".md"
@@ -36,5 +34,22 @@ class HeaderReferenceCompletionTest : LightPlatformCodeInsightFixtureTestCase() 
     myFixture.testCompletion(getBeforeFileName(), getTestName(true) + "_after.md")
   }
 
+  fun testRelativePath() {
+    myFixture.testCompletion("relativePath.md", "relativePath_after.md")
+  }
 
+  fun testAFileHeaders1() {
+    myFixture.configureByFile("relativePath.md")
+    myFixture.testCompletionVariants(getBeforeFileName(), "aFileHeaders1.md", "relativePath.md")
+  }
+
+  fun testAFileHeaders2() {
+    myFixture.configureByFile("multipleHeaders.md")
+    myFixture.testCompletionVariants(getBeforeFileName(), "environment-variables",
+                                                          "how-do-i-get-set-up",
+                                                          "mxbezier3scalar",
+                                                          "plugin-list",
+                                                          "requirements",
+                                                          "what-is-this-repository-for")
+  }
 }
