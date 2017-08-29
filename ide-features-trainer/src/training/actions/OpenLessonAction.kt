@@ -22,7 +22,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindowManager
 import training.lang.LangManager
 import training.learn.CourseManager
-import training.learn.CourseManager.Companion.LEARN_PROJECT_NAME
 import training.learn.LearnBundle
 import training.learn.Module
 import training.learn.NewLearnProjectUtil
@@ -61,6 +60,7 @@ class OpenLessonAction : AnAction() {
   @Synchronized @Throws(BadModuleException::class, BadLessonException::class, IOException::class, FontFormatException::class, InterruptedException::class, ExecutionException::class, LessonIsOpenedException::class)
   fun openLesson(project: Project, lesson: Lesson) {
     try {
+      val langSupport = LangManager.getInstance().getLangSupport()
       if (lesson.isOpen) throw LessonIsOpenedException(lesson.name + " is opened")
 
       //If lesson doesn't have parent module
@@ -223,8 +223,8 @@ class OpenLessonAction : AnAction() {
     val myLanguage = lesson.lang
 
     val languageByID = findLanguageByID(myLanguage)
-    if (CourseManager.getInstance().mapModuleVirtualFile.containsKey(lesson.module)) {
-      vf = CourseManager.getInstance().mapModuleVirtualFile[lesson.module]
+    if (CourseManager.instance.mapModuleVirtualFile.containsKey(lesson.module)) {
+      vf = CourseManager.instance.mapModuleVirtualFile[lesson.module]
       ScratchFileService.getInstance().scratchesMapping.setMapping(vf, languageByID)
     }
     if (vf == null || !vf.isValid) {
