@@ -40,7 +40,7 @@ class LangManager : PersistentStateComponent<LangManager.State> {
   fun updateLangSupport(langSupport: LangSupport) {
     myLangSupport = langSupport
     myState.languageName  = supportedLanguagesExtensions.find { it.instance == langSupport }?.language ?: throw Exception("Unable to get language.")
-    CourseManager.getInstance().updateModules()
+    CourseManager.instance.updateModules()
     (LearnToolWindowFactory.myLearnToolWindow ?: return).reinitViews()
   }
 

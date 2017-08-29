@@ -24,8 +24,10 @@ import com.intellij.util.ui.UIUtil
 import training.lang.LangManager
 import training.learn.CourseManager
 import training.learn.LearnBundle
+import training.statistic.ActivityManager
 import training.ui.LearnIcons
 import training.ui.LearnToolWindowFactory
+import training.ui.UiManager
 import java.awt.Point
 import java.util.concurrent.TimeUnit
 import javax.swing.JFrame
@@ -38,7 +40,7 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
 
   override fun projectOpened() {
     registerLearnToolWindow(myProject)
-    CourseManager.getInstance().updateToolWindow(myProject)
+    UiManager.updateToolWindow(myProject)
 
     //show where learn tool window locates only on the first start
     if (!PropertiesComponent.getInstance().isTrueValue(SHOW_TOOLWINDOW_INFO)) {
@@ -69,17 +71,17 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
 
   fun startTrackActivity(project: Project) {
     val alarm = Alarm()
-    if (CourseManager.getInstance().lastActivityTime == -1L) return
-    if (CourseManager.getInstance().calcUnpassedLessons() == 0) return
-    if (CourseManager.getInstance().calcPassedLessons() == 0) return
+    if (ActivityManager.instance.lastActivityTime == -1L) return
+    if (CourseManager.instance.calcNotPassedLessons() == 0) return
+    if (CourseManager.instance.calcPassedLessons() == 0) return
     alarm.addRequest({
-                       val lastActivityTime = CourseManager.getInstance().lastActivityTime
+                       val lastActivityTime = ActivityManager.instance.lastActivityTime
                        val currentTimeMillis = System.currentTimeMillis()
                        val TWO_WEEKS = TimeUnit.DAYS.toMillis(14)
 
-                       if (currentTimeMillis - lastActivityTime > TWO_WEEKS) {
+                       if (currentTimeMillis - lastActivityTime!! > TWO_WEEKS) {
                          val message = StringBuilder()
-                         val unpassedLessons = CourseManager.getInstance().calcUnpassedLessons()
+                         val unpassedLessons = CourseManager.instance.calcNotPassedLessons()
 
                          message.append(LearnBundle.message("learn.activity.message", unpassedLessons, if (unpassedLessons == 1) ""
                          else LearnBundle.message("learn.activity.message.lessons"))).append("<br/>")
@@ -101,7 +103,7 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
                          }
                          val neverAction = object : AnAction(LearnBundle.message("learn.activity.never")) {
                            override fun actionPerformed(e: AnActionEvent) {
-                             CourseManager.getInstance().lastActivityTime = -1
+                             ActivityManager.instance.lastActivityTime = -1
                              notification.expire()
                            }
                          }
@@ -154,7 +156,6 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
 
   companion object {
     private val LOG = Logger.getInstance(LearnProjectComponent::class.java.name)
-
     private val SHOW_TOOLWINDOW_INFO = "learn.toolwindow.button.info.shown"
   }
 

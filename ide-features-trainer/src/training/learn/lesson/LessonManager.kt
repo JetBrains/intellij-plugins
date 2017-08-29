@@ -12,6 +12,7 @@ import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.ui.LearnBalloonBuilder
 import training.ui.Message
+import training.ui.UiManager
 import java.util.*
 
 /**
@@ -48,13 +49,13 @@ class LessonManager {
   internal fun initLesson(editor: Editor) {
     cleanEditor() //remove mouse blocks and action recorders from last editor
     lastEditor = editor //rearrange last editor
-
-    val learnPanel = CourseManager.getInstance().learnPanel
-    learnPanel.setLessonName(myCurrentLesson!!.name)
-    val module = myCurrentLesson!!.module ?: throw Exception("Unable to find module for lesson: " + myCurrentLesson!!)
+    val cLesson = myCurrentLesson ?: throw Exception("Current lesson is null")
+    val learnPanel = UiManager.learnPanel ?: throw Exception("Unable to get Learn panel (is null)")
+    learnPanel.setLessonName(cLesson.name)
+    val module = cLesson.module ?: throw Exception("Unable to find module for lesson: " + myCurrentLesson!!)
     val moduleName = module.name
     learnPanel.setModuleName(moduleName)
-    learnPanel.modulePanel.init(myCurrentLesson)
+    learnPanel.modulePanel.init(cLesson)
     clearEditor(editor)
     clearLessonPanel()
     removeActionsRecorders()
@@ -73,76 +74,67 @@ class LessonManager {
 
     var runnable: Runnable? = null
     var buttonText: String? = null
-    val lesson = CourseManager.getInstance().giveNextLesson(myCurrentLesson)
+    val lesson = CourseManager.instance.giveNextLesson(cLesson)
+    val project = editor.project ?: throw Exception("Unable to open lesson in a null project")
     if (lesson != null) {
       //            buttonText = lesson.getName();
       runnable = Runnable {
         try {
-          CourseManager.getInstance().openLesson(editor.project, lesson)
+          CourseManager.instance.openLesson(project, lesson)
         } catch (e: Exception) {
           e.printStackTrace()
         }
       }
     } else {
-      val nextModule = CourseManager.getInstance().giveNextModule(myCurrentLesson)
+      val nextModule = CourseManager.instance.giveNextModule(cLesson)
       if (nextModule != null) {
         buttonText = nextModule.name
         runnable = Runnable {
           val notPassedLesson = nextModule.giveNotPassedLesson()
-          if (notPassedLesson == null) {
-            try {
-              CourseManager.getInstance().openLesson(editor.project, nextModule.lessons[0])
-            } catch (e: Exception) {
-              e.printStackTrace()
-            }
-
-          } else {
-            try {
-              CourseManager.getInstance().openLesson(editor.project, notPassedLesson)
-            } catch (e: Exception) {
-              e.printStackTrace()
-            }
-
+          try {
+            CourseManager.instance.openLesson(project, notPassedLesson ?: nextModule.lessons[0])
+          } catch (e: Exception) {
+            e.printStackTrace()
           }
         }
       }
     }
 
-    if (runnable != null) {
-      CourseManager.getInstance().learnPanel.setButtonSkipAction(runnable, buttonText, true)
-    } else {
-      CourseManager.getInstance().learnPanel.setButtonSkipAction(null, null, false)
-    }
+    if (runnable != null)
+      UiManager.learnPanel?.setButtonSkipAction(runnable, buttonText, true)
+    else
+      UiManager.learnPanel?.setButtonSkipAction(null, null, false)
   }
 
   fun addMessage(message: String) {
-    CourseManager.getInstance().learnPanel.addMessage(message)
-    CourseManager.getInstance().updateToolWindowScrollPane()
+    UiManager.learnPanel?.addMessage(message)
+    UiManager.updateToolWindowScrollPane()
   }
 
   fun addMessages(messages: Array<Message>) {
-    CourseManager.getInstance().learnPanel.addMessages(messages)
-    CourseManager.getInstance().updateToolWindowScrollPane()
+    UiManager.learnPanel?.addMessages(messages)
+    UiManager.updateToolWindowScrollPane()
   }
 
   fun passExercise() {
-    CourseManager.getInstance().learnPanel.setPreviousMessagesPassed()
+    UiManager.learnPanel?.setPreviousMessagesPassed()
   }
 
   fun passLesson(project: Project, editor: Editor) {
-    val learnPanel = CourseManager.getInstance().learnPanel
+    val learnPanel = UiManager.learnPanel ?: throw Exception("Learn panel is null")
     learnPanel.setLessonPassed()
-    if (myCurrentLesson!!.module != null && myCurrentLesson!!.module!!.hasNotPassedLesson()) {
-      val notPassedLesson = myCurrentLesson!!.module!!.giveNotPassedLesson()
+    val cLesson = myCurrentLesson ?: throw Exception("Current lesson is not defined (is null)")
+    if (cLesson.module != null && cLesson.module.hasNotPassedLesson()) {
+      val notPassedLesson = cLesson.module.giveNotPassedLesson()
       learnPanel.setButtonNextAction({
         try {
-          CourseManager.getInstance().openLesson(project, notPassedLesson)
+          CourseManager.instance.openLesson(project, notPassedLesson)
         } catch (e: Exception) {
           e.printStackTrace()
         }
       }, notPassedLesson)
     } else {
-      val module = CourseManager.getInstance().giveNextModule(myCurrentLesson)
+      val module = CourseManager.instance.giveNextModule(cLesson)
       if (module == null) {
         clearLessonPanel()
         learnPanel.setModuleName("")
@@ -154,17 +146,17 @@ class LessonManager {
         if (lesson == null) lesson = module.lessons[0]
 
         val lessonFromNextModule = lesson
-        val nextModule = lessonFromNextModule!!.module ?: return
+        val nextModule = lessonFromNextModule.module ?: return
         learnPanel.setButtonNextAction({
           try {
-            CourseManager.getInstance().openLesson(project, lessonFromNextModule)
+            CourseManager.instance.openLesson(project, lessonFromNextModule)
           } catch (e: Exception) {
             e.printStackTrace()
           }
         }, lesson, LearnBundle.message("learn.ui.button.next.module") + " " + nextModule.name)
       }
     }
-    learnPanel.modulePanel.updateLessons(myCurrentLesson)
+    learnPanel.modulePanel.updateLessons(cLesson)
   }
 
 
@@ -183,11 +175,11 @@ class LessonManager {
   }
 
   private fun clearLessonPanel() {
-    CourseManager.getInstance().learnPanel.clearLessonPanel()
+    UiManager.learnPanel?.clearLessonPanel()
   }
 
   private fun hideButtons() {
-    CourseManager.getInstance().learnPanel.hideButtons()
+    UiManager.learnPanel?.hideButtons()
   }
 
   private fun removeActionsRecorders() {
@@ -230,7 +222,7 @@ class LessonManager {
         .forEach { return }
 
     val blockCaretAction = BlockCaretAction(editor)
-    blockCaretAction.addActionHandler(Runnable{
+    blockCaretAction.addActionHandler(Runnable {
       try {
         showCaretBlockedBalloon()
       } catch (e: InterruptedException) {
@@ -258,7 +250,7 @@ class LessonManager {
 
   fun blockMouse(editor: Editor) {
     mouseListenerHolder = MouseListenerHolder(editor)
-    mouseListenerHolder!!.grabMouseActions(Runnable{
+    mouseListenerHolder!!.grabMouseActions(Runnable {
       try {
         showCaretBlockedBalloon()
       } catch (e: InterruptedException) {
