@@ -19,6 +19,7 @@ package com.intellij.coldFusion.model.psi;
 import com.intellij.coldFusion.model.files.CfmlFile;
 import com.intellij.coldFusion.model.lexer.CfmlLexer;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
+import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lexer.HtmlHighlightingLexer;
@@ -53,9 +54,11 @@ public class CfmlIndexPatternBuilder implements IndexPatternBuilder {
     return null;
   }
 
+  private static final TokenSet tsCOMMENTS = TokenSet.create(CfmlTokenTypes.COMMENT, CfscriptTokenTypes.COMMENT);
+  
   public TokenSet getCommentTokenSet(@NotNull final PsiFile file) {
     if (file instanceof CfmlFile) {
-      return CfmlTokenTypes.tsCOMMENTS;
+      return tsCOMMENTS;
     }
     return null;
   }
