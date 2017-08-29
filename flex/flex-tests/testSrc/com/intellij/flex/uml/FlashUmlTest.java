@@ -83,7 +83,7 @@ public class FlashUmlTest extends CodeInsightTestCase {
 
   @Override
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), getTestRootDisposable());
   }
 
   @Override

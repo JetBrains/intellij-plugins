@@ -37,7 +37,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
                                   urlToPath(convertFromUrl(FlexSchemaHandler.class.getResource("z.xsd"))),
                                   urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))))
     super.setUp()
-    runInEdtAndWait { FlexTestUtils.setupFlexSdk(myModule, getTestName(false), FlexAutoPopupTest.class) }
+    runInEdtAndWait { FlexTestUtils.setupFlexSdk(myModule, getTestName(false), FlexAutoPopupTest.class, myFixture.getProjectDisposable()) }
     CodeInsightSettings.instance.SELECT_AUTOPOPUP_SUGGESTIONS_BY_CHARS = true
   }
 

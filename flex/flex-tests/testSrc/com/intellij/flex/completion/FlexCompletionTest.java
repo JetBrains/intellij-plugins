@@ -113,7 +113,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   protected void setUpJdk() {
     if (!needsJavaModule()) {
-      FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+      FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
     }
   }
 

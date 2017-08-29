@@ -57,7 +57,7 @@ public class FlexUnitConfigurationTest extends CodeInsightTestCase implements Fl
 
   @Override
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
   public Object getData(final String dataId) {

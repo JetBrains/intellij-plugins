@@ -1,15 +1,27 @@
 package com.intellij.flex.maven;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.idea.maven.MavenImportingTestCase;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ImportingNonJavaModulesTest extends MavenImportingTestCase {
+  @Override
+  protected void tearDown() throws Exception {
+    for (Sdk sdk : ProjectJdkTable.getInstance().getSdksOfType(FlexmojosSdkType.getInstance())) {
+      WriteAction.run(()->ProjectJdkTable.getInstance().removeJdk(sdk));
+    }
+    super.tearDown();
+  }
+
   public void testRecreatingNonJavaModules() {
     Module m = createModule("flex-module", FlexModuleType.getInstance());
 

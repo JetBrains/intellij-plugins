@@ -72,7 +72,7 @@ public class FlexPullUpTest extends MultiFileTestCase {
 
   @Override
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
   private void doTestPullUp(final String from, final String to, final int docCommentPolicy, final String... toPullUp) {

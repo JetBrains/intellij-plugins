@@ -29,7 +29,7 @@ class ActionScriptRearrangerTest extends AbstractRearrangerTest {
                                   urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))))
     super.setUp()
 
-    def sdk = FlexTestUtils.getSdk(new JSTestUtils.TestDescriptor(this), myModule)
+    def sdk = FlexTestUtils.getSdk(new JSTestUtils.TestDescriptor(this), myFixture.getProjectDisposable())
 
     ApplicationManager.application.runWriteAction(new Runnable() {
       void run() {

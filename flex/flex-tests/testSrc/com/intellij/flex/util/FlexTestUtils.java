@@ -122,12 +122,12 @@ public class FlexTestUtils {
                                   @NotNull String testName,
                                   @NotNull Class clazz,
                                   String pathToFlexSdk,
-                                  boolean air) {
+                                  boolean air, @NotNull Disposable parent) {
     boolean withFlexSdk = JSTestUtils
       .testMethodHasOption(JSTestUtils.getTestMethod(clazz, testName), JSTestOption.WithFlexSdk, JSTestOption.WithGumboSdk,
                            JSTestOption.WithFlexFacet);
     if (withFlexSdk) {
-      doSetupFlexSdk(module, pathToFlexSdk, air, getSdkVersion(testName, clazz));
+      doSetupFlexSdk(module, pathToFlexSdk, air, getSdkVersion(testName, clazz), parent);
     }
   }
 
@@ -143,8 +143,8 @@ public class FlexTestUtils {
     return JSTestUtils.testMethodHasOption(JSTestUtils.getTestMethod(clazz, testName), JSTestOption.WithGumboSdk) ? "4.0.0" : "3.4.0";
   }
 
-  public static void setupFlexSdk(@NotNull final Module module, @NotNull String testName, @NotNull Class clazz) {
-    setupFlexSdk(module, testName, clazz, getPathToMockFlex(clazz, testName), false);
+  public static void setupFlexSdk(@NotNull final Module module, @NotNull String testName, @NotNull Class clazz, @NotNull Disposable parent) {
+    setupFlexSdk(module, testName, clazz, getPathToMockFlex(clazz, testName), false, parent);
   }
 
   public static void addASDocToSdk(final Module module, final Class clazz, final String testName) {
@@ -160,9 +160,9 @@ public class FlexTestUtils {
   private static void doSetupFlexSdk(@NotNull Module module,
                                      final String flexSdkRootPath,
                                      final boolean air,
-                                     final String sdkVersion) {
+                                     final String sdkVersion, @NotNull Disposable parent) {
     WriteAction.run(() -> {
-      final Sdk sdk = createSdk(flexSdkRootPath, sdkVersion, module);
+      final Sdk sdk = createSdk(flexSdkRootPath, sdkVersion, parent);
 
       if (ModuleType.get(module) == FlexModuleType.getInstance()) {
         modifyBuildConfiguration(module, bc -> {

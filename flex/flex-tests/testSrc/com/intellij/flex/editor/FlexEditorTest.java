@@ -50,7 +50,7 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
 
   protected void doTestWithJSSupportLoaderAndFlex(final Callable<Void> call) throws Exception {
     doTestWithJSSupport((Callable<Object>)() -> {
-      FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), this.getClass());
+      FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), this.getClass(), getTestRootDisposable());
       return call.call();
     });
   }

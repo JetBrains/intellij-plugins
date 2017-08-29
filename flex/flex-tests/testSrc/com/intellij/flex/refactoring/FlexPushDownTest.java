@@ -59,7 +59,7 @@ public class FlexPushDownTest extends MultiFileTestCase {
 
   @Override
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), getTestRootDisposable());
   }
 
   private void doTestPushDown(final String from, final int docCommentPolicy, final boolean makeAbstract, final String... toPushDown) {

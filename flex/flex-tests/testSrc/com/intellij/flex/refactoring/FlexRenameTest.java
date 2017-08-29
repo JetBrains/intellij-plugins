@@ -52,7 +52,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
 
   @Override
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
   protected ModuleType getModuleType() {

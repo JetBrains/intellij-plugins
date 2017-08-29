@@ -53,7 +53,7 @@ public class FlexHierarchyTest extends HierarchyViewTestBase {
 
   @Override
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
   private void doJSTypeHierarchyTest(final String hierarchyType, final String classFqn) throws Exception {

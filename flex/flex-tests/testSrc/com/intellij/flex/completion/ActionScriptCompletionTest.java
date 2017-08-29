@@ -76,7 +76,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   protected void setUpJdk() {
     CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
     if (!needsJavaModule()) {
-      FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+      FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
     }
   }
 

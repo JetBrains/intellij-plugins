@@ -33,7 +33,7 @@ public class FlexColorAnnotatorTest extends CodeInsightFixtureTestCase<FlexModul
 
     IdeaTestFixtureFactory.getFixtureFactory().registerFixtureBuilder(FlexModuleFixtureBuilder.class, FlexModuleFixtureBuilderImpl.class);
     super.setUp();
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getProjectDisposable());
     myFixture.setTestDataPath(FlexTestUtils.getTestDataPath("flex_color_gutter"));
   }
 

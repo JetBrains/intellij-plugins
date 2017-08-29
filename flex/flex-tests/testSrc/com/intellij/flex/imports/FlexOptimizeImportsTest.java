@@ -43,7 +43,7 @@ public class FlexOptimizeImportsTest extends CodeInsightFixtureTestCase<FlexModu
     IdeaTestFixtureFactory.getFixtureFactory().registerFixtureBuilder(FlexModuleFixtureBuilder.class, FlexModuleFixtureBuilderImpl.class);
     super.setUp();
     JSTestUtils.initJSIndexes(getProject());
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getProjectDisposable());
     myFixture.setTestDataPath(FlexTestUtils.getTestDataPath("imports/optimize"));
   }
 

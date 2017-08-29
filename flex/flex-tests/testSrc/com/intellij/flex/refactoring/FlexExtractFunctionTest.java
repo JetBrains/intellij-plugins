@@ -36,7 +36,7 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
                                   urlToPath(convertFromUrl(FlexSchemaHandler.class.getResource("z.xsd"))),
                                   urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
     super.setUp();
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
   protected JSExtractFunctionHandler createMockHandler(JSExtractFunctionSettings extractFunctionSettings) {

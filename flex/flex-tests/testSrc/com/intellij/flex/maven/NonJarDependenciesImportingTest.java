@@ -1,10 +1,21 @@
 package com.intellij.flex.maven;
 
+import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
+import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
+import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.idea.maven.MavenImportingTestCase;
 
 import java.io.File;
 
 public class NonJarDependenciesImportingTest extends MavenImportingTestCase {
+  @Override
+  protected void tearDown() throws Exception {
+    for (Sdk sdk : ProjectJdkTable.getInstance().getSdksOfType(FlexmojosSdkType.getInstance())) {
+      WriteAction.run(()->ProjectJdkTable.getInstance().removeJdk(sdk));
+    }
+    super.tearDown();
+  }
   public void testArtifactTypeProvidedByExtensionPlugin() {
     // This test ensures that we download all necessary extension plugins.
     importProject("<groupId>test</groupId>" +

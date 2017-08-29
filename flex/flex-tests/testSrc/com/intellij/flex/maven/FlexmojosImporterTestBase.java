@@ -8,9 +8,11 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.flex.projectStructure.model.SharedLibraryEntry;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -32,6 +34,14 @@ public abstract class FlexmojosImporterTestBase extends MavenImportingTestCase {
   protected static final String SOURCE_DIR = "src";
 
   protected abstract String getFlexmojosVersion();
+
+  @Override
+  protected void tearDown() throws Exception {
+    for (Sdk sdk : ProjectJdkTable.getInstance().getSdksOfType(FlexmojosSdkType.getInstance())) {
+      WriteAction.run(()->ProjectJdkTable.getInstance().removeJdk(sdk));
+    }
+    super.tearDown();
+  }
 
   protected void checkBCCount(final String moduleName, int bcCount) {
     final Module module = ModuleManager.getInstance(myProject).findModuleByName(moduleName);

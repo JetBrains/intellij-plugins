@@ -71,7 +71,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
 
   @Override
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
   private PsiElement getDocElementForLookupItem(DocumentationProvider provider, String fileName) throws Exception {

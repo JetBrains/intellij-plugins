@@ -48,7 +48,7 @@ public class FlexAutoImportsTest extends CodeInsightFixtureTestCase<FlexModuleFi
     IdeaTestFixtureFactory.getFixtureFactory().registerFixtureBuilder(FlexModuleFixtureBuilder.class, FlexModuleFixtureBuilderImpl.class);
     super.setUp();
     JSTestUtils.initJSIndexes(getProject());
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getProjectDisposable());
     myFixture.enableInspections(JSUnresolvedVariableInspection.class);
     myFixture.setTestDataPath(FlexTestUtils.getTestDataPath("imports/auto"));
   }

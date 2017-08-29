@@ -57,7 +57,7 @@ public class FlexUnitCompletionTest extends BaseJSCompletionTestCase implements 
 
   @Override
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
 

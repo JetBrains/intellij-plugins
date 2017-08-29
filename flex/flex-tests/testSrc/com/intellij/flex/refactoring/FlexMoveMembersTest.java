@@ -67,7 +67,7 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
 
   @Override
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
   private void doTest(final String sourceClassName, final String targetClassName, final String visibility, final String memberName) {

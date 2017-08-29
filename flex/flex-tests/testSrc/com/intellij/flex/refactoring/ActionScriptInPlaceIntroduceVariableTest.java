@@ -29,7 +29,7 @@ public class ActionScriptInPlaceIntroduceVariableTest extends JSInplaceIntroduce
     VfsRootAccess.allowRootAccess(getTestRootDisposable(),
                                   urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
     super.setUp();
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
   public void testInplaceBasicAS() throws Exception {

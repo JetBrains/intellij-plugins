@@ -12,7 +12,7 @@ import com.intellij.util.ProfilingUtil;
 public class FlexHighlightingPerformanceTest extends ActionScriptDaemonAnalyzerTestCase {
   @Override
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
   @Override
