@@ -16,7 +16,7 @@ class LessonUsageCollector : UsagesCollector() {
   override fun getUsages(): Set<UsageDescriptor> {
     val result = HashSet<UsageDescriptor>()
 
-    val modules = CourseManager.getInstance().modules
+    val modules = CourseManager.instance.modules
     for (module in modules!!) {
       for (lesson in module.lessons) {
         lesson.statistic.mapTo(result) {
