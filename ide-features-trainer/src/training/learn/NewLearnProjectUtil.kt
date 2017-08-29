@@ -13,6 +13,7 @@ import com.intellij.openapi.wm.impl.IdeFrameImpl
 import training.lang.LangSupport
 import training.learn.dialogs.LearnProjectWarningDialog
 import java.io.File
+import java.lang.Boolean.TRUE
 
 /**
  * Created by karashevich on 24/09/15.
@@ -20,41 +21,39 @@ import java.io.File
 object NewLearnProjectUtil {
 
   fun createLearnProject(projectToClose: Project?, langSupport: LangSupport): Project? {
+    val unitTestMode = ApplicationManager.getApplication().isUnitTestMode
     val projectManager = ProjectManagerEx.getInstanceEx()
+
     val allProjectsDir = ProjectUtil.getBaseDir()
     val projectName = langSupport.defaultProjectName
+    val projectFilePath = allProjectsDir / projectName
+    val projectDir = File(projectFilePath).parentFile
 
-    val projectFilePath = allProjectsDir + File.separator + projectName //Project dir
-    val projectDir = File(projectFilePath).parentFile        //dir where project located
     FileUtil.ensureExists(projectDir)
-
     val ideaDir = File(projectFilePath, Project.DIRECTORY_STORE_FOLDER)
     FileUtil.ensureExists(ideaDir)
 
     val newProject: Project =
-        langSupport.createProject(projectName, projectToClose) ?: return projectToClose!!
+        langSupport.createProject(projectName, projectToClose) ?: return projectToClose
 
     langSupport.applyProjectSdk(newProject)
 
-    if (!ApplicationManager.getApplication().isUnitTestMode)
-      newProject.save()
+    if (!unitTestMode) newProject.save()
 
     //close previous project if needed
-    if (newProject !== projectToClose && !ApplicationManager.getApplication().isUnitTestMode && projectToClose != null)
+    if (newProject !== projectToClose && !unitTestMode && projectToClose != null)
       NewProjectUtil.closePreviousProject(projectToClose)
 
     if (newProject !== projectToClose) {
       ProjectUtil.updateLastProjectLocation(projectFilePath)
-
       if (WindowManager.getInstance().isFullScreenSupportedInCurrentOS) {
-        val instance = IdeFocusManager.findInstance()
-        val lastFocusedFrame = instance.lastFocusedFrame
+        val lastFocusedFrame = IdeFocusManager.findInstance().lastFocusedFrame
         if (lastFocusedFrame is IdeFrameEx) {
           val fullScreen = lastFocusedFrame.isInFullScreen
-          if (fullScreen) newProject.putUserData(IdeFrameImpl.SHOULD_OPEN_IN_FULL_SCREEN, java.lang.Boolean.TRUE)
+          if (fullScreen) newProject.putUserData(IdeFrameImpl.SHOULD_OPEN_IN_FULL_SCREEN, TRUE)
         }
       }
-      if (ApplicationManager.getApplication().isUnitTestMode) return newProject
+      if (unitTestMode) return newProject
       else projectManager.openProject(newProject)
     }
 
@@ -69,6 +68,9 @@ object NewLearnProjectUtil {
     dialog.show()
     return dialog.isOK
   }
+}
 
-
+//overload div operator as a path separator
+private operator fun String.div(path: String): String? {
+  return this + File.pathSeparator + path
 }
