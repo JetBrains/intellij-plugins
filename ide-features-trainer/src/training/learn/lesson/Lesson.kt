@@ -50,17 +50,17 @@ data class Lesson(val scenario: Scenario, val lang: String, val module: Module?)
 
   @Throws(NoProjectException::class, BadLessonException::class, ExecutionException::class, LessonIsOpenedException::class, IOException::class, FontFormatException::class, InterruptedException::class, BadModuleException::class)
   fun open() {
-    var currentProject = CourseManager.getInstance().currentProject
+    var currentProject = CourseManager.instance.currentProject
     if (currentProject == null) {
-      currentProject = CourseManager.getInstance().learnProject
+      currentProject = CourseManager.instance.learnProject
     }
     if (currentProject == null) throw NoProjectException()
-    CourseManager.getInstance().openLesson(currentProject, this)
+    CourseManager.instance.openLesson(currentProject, this)
   }
 
   @Throws(NoProjectException::class, BadLessonException::class, ExecutionException::class, LessonIsOpenedException::class, IOException::class, FontFormatException::class, InterruptedException::class, BadModuleException::class)
   fun open(projectWhereToOpenLesson: Project) {
-    CourseManager.getInstance().openLesson(projectWhereToOpenLesson, this)
+    CourseManager.instance.openLesson(projectWhereToOpenLesson, this)
   }
 
   fun close() {
@@ -101,7 +101,6 @@ data class Lesson(val scenario: Scenario, val lang: String, val module: Module?)
   private fun onPass() {
     lessonLog.log("Lesson passed")
     statistic.add(Pair("finished", System.currentTimeMillis()))
-    CourseManager.getInstance().globalLessonLog.commitSession(this)
     lessonListeners.forEach { it.lessonPassed(this) }
 
   }

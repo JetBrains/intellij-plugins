@@ -1,5 +1,6 @@
 package training.ui.views
 
+import com.intellij.lang.Language
 import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -10,8 +11,7 @@ import training.lang.LangManager
 import training.lang.LangSupport
 import training.learn.CourseManager
 import training.learn.LearnBundle
-import training.ui.LearnUIManager
-import training.util.findLanguageByID
+import training.ui.LearnUISettings
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
@@ -51,8 +51,8 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
         add(mainPanel)
 
         //set LearnPanel UI
-        this.preferredSize = Dimension(LearnUIManager.getInstance().width, 100)
-        this.border = LearnUIManager.getInstance().emptyBorder
+        this.preferredSize = Dimension(LearnUISettings.getInstance().width, 100)
+        this.border = LearnUISettings.getInstance().emptyBorder
 
         revalidate()
         repaint()
@@ -63,9 +63,9 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
 
         caption = JLabel()
         caption!!.isOpaque = false
-        caption!!.font = LearnUIManager.getInstance().moduleNameFont
+        caption!!.font = LearnUISettings.getInstance().moduleNameFont
 
-        description = MyJTextPane(LearnUIManager.getInstance().width)
+        description = MyJTextPane(LearnUISettings.getInstance().width)
         description!!.isOpaque = false
         description!!.isEditable = false
         description!!.alignmentX = Component.LEFT_ALIGNMENT
@@ -95,13 +95,13 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
         }
 
 
-        StyleConstants.setFontFamily(REGULAR, LearnUIManager.getInstance().plainFont.family)
-        StyleConstants.setFontSize(REGULAR, LearnUIManager.getInstance().fontSize)
-        StyleConstants.setForeground(REGULAR, LearnUIManager.getInstance().questionColor)
+        StyleConstants.setFontFamily(REGULAR, LearnUISettings.getInstance().plainFont.family)
+        StyleConstants.setFontSize(REGULAR, LearnUISettings.getInstance().fontSize)
+        StyleConstants.setForeground(REGULAR, LearnUISettings.getInstance().questionColor)
 
-        StyleConstants.setFontFamily(REGULAR_GRAY, LearnUIManager.getInstance().plainFont.family)
-        StyleConstants.setFontSize(REGULAR_GRAY, LearnUIManager.getInstance().fontSize)
-        StyleConstants.setForeground(REGULAR_GRAY, LearnUIManager.getInstance().descriptionColor)
+        StyleConstants.setFontFamily(REGULAR_GRAY, LearnUISettings.getInstance().plainFont.family)
+        StyleConstants.setFontSize(REGULAR_GRAY, LearnUISettings.getInstance().fontSize)
+        StyleConstants.setForeground(REGULAR_GRAY, LearnUISettings.getInstance().descriptionColor)
 
         StyleConstants.setLeftIndent(PARAGRAPH_STYLE, 0.0f)
         StyleConstants.setRightIndent(PARAGRAPH_STYLE, 0f)
@@ -119,9 +119,9 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
         mainPanel!!.isFocusable = false
 
         mainPanel!!.add(caption)
-        mainPanel!!.add(Box.createVerticalStrut(LearnUIManager.getInstance().afterCaptionGap))
+        mainPanel!!.add(Box.createVerticalStrut(LearnUISettings.getInstance().afterCaptionGap))
         mainPanel!!.add(description)
-        mainPanel!!.add(Box.createVerticalStrut(LearnUIManager.getInstance().groupGap))
+        mainPanel!!.add(Box.createVerticalStrut(LearnUISettings.getInstance().groupGap))
 
         try {
             initSouthPanel()
@@ -151,8 +151,8 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
 
         for (langSupportExt in sortedLangSupportExtensions) {
 
-            val lessonsCount = CourseManager.getInstance().calcLessonsForLanguage(langSupportExt.instance)
-            val lang = findLanguageByID(langSupportExt.language) ?: continue
+            val lessonsCount = CourseManager.instance.calcLessonsForLanguage(langSupportExt.instance)
+            val lang = Language.findLanguageByID(langSupportExt.language) ?: continue
             val jrb = JRadioButton("${lang!!.displayName} ($lessonsCount lesson${if (lessonsCount != 1) "s" else ""}) ")
             jrb.isOpaque = false
             buttonGroup.add(jrb)
@@ -162,7 +162,7 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
         }
         buttonGroup.setSelected(buttonGroup.elements.nextElement().model, true)
         mainPanel!!.add(radioButtonPanel)
-        mainPanel!!.add(Box.createVerticalStrut(LearnUIManager.getInstance().groupGap))
+        mainPanel!!.add(Box.createVerticalStrut(LearnUISettings.getInstance().groupGap))
         if (myAddButton) mainPanel!!.add(gotoModulesViewButton)
     }
 
@@ -190,14 +190,14 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
     }
 
     override fun getPreferredSize(): Dimension {
-        return Dimension(mainPanel!!.minimumSize.getWidth().toInt() + (LearnUIManager.getInstance().westInset + LearnUIManager.getInstance().eastInset),
-                mainPanel!!.minimumSize.getHeight().toInt() + (LearnUIManager.getInstance().northInset + LearnUIManager.getInstance().southInset))
+        return Dimension(mainPanel!!.minimumSize.getWidth().toInt() + (LearnUISettings.getInstance().westInset + LearnUISettings.getInstance().eastInset),
+                mainPanel!!.minimumSize.getHeight().toInt() + (LearnUISettings.getInstance().northInset + LearnUISettings.getInstance().southInset))
     }
 
 
     override fun getBackground(): Color {
         if (!UIUtil.isUnderDarcula())
-            return LearnUIManager.getInstance().backgroundColor
+            return LearnUISettings.getInstance().backgroundColor
         else
             return UIUtil.getPanelBackground()
     }

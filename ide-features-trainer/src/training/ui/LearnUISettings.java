@@ -14,7 +14,7 @@ import java.awt.*;
 /**
  * Created by jetbrains on 12/08/16.
  */
-public class LearnUIManager {
+public class LearnUISettings {
 
   //GENERAL UI SETTINGS
   private int width;
@@ -72,11 +72,11 @@ public class LearnUIManager {
   private static SimpleAttributeSet PARAGRAPH_STYLE = new SimpleAttributeSet();
 
 
-  public static LearnUIManager getInstance() {
-    return ServiceManager.getService(LearnUIManager.class);
+  public static LearnUISettings getInstance() {
+    return ServiceManager.getService(LearnUISettings.class);
   }
 
-  public LearnUIManager() {
+  public LearnUISettings() {
     width = 350;
     init();
     initGaps();

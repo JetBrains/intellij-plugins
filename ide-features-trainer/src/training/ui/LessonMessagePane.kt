@@ -49,44 +49,44 @@ class LessonMessagePane : JTextPane() {
   }
 
   private fun initStyleConstants() {
-    fontFamily = Font(LearnUIManager.getInstance().fontFace, Font.PLAIN, LearnUIManager.getInstance().fontSize).family
-    font = Font(LearnUIManager.getInstance().fontFace, Font.PLAIN, LearnUIManager.getInstance().fontSize)
+    fontFamily = Font(LearnUISettings.getInstance().fontFace, Font.PLAIN, LearnUISettings.getInstance().fontSize).family
+    font = Font(LearnUISettings.getInstance().fontFace, Font.PLAIN, LearnUISettings.getInstance().fontSize)
 
     StyleConstants.setFontFamily(REGULAR, fontFamily)
-    StyleConstants.setFontSize(REGULAR, LearnUIManager.getInstance().fontSize)
+    StyleConstants.setFontSize(REGULAR, LearnUISettings.getInstance().fontSize)
     StyleConstants.setForeground(REGULAR, JBColor.BLACK)
 
     StyleConstants.setFontFamily(BOLD, fontFamily)
-    StyleConstants.setFontSize(BOLD, LearnUIManager.getInstance().fontSize)
+    StyleConstants.setFontSize(BOLD, LearnUISettings.getInstance().fontSize)
     StyleConstants.setBold(BOLD, true)
     StyleConstants.setForeground(BOLD, JBColor.BLACK)
 
     StyleConstants.setFontFamily(SHORTCUT, fontFamily)
-    StyleConstants.setFontSize(SHORTCUT, LearnUIManager.getInstance().fontSize)
+    StyleConstants.setFontSize(SHORTCUT, LearnUISettings.getInstance().fontSize)
     StyleConstants.setBold(SHORTCUT, true)
     StyleConstants.setForeground(SHORTCUT, JBColor.BLACK)
 
     StyleConstants.setForeground(CODE, JBColor.BLUE)
     EditorColorsManager.getInstance().globalScheme.editorFontName
     StyleConstants.setFontFamily(CODE, EditorColorsManager.getInstance().globalScheme.editorFontName)
-    StyleConstants.setFontSize(CODE, LearnUIManager.getInstance().fontSize)
+    StyleConstants.setFontSize(CODE, LearnUISettings.getInstance().fontSize)
 
     StyleConstants.setForeground(LINK, JBColor.BLUE)
     StyleConstants.setFontFamily(LINK, fontFamily)
     StyleConstants.setUnderline(LINK, true)
-    StyleConstants.setFontSize(LINK, LearnUIManager.getInstance().fontSize)
+    StyleConstants.setFontSize(LINK, LearnUISettings.getInstance().fontSize)
 
-    StyleConstants.setLeftIndent(PARAGRAPH_STYLE, LearnUIManager.getInstance().checkIndent.toFloat())
+    StyleConstants.setLeftIndent(PARAGRAPH_STYLE, LearnUISettings.getInstance().checkIndent.toFloat())
     StyleConstants.setRightIndent(PARAGRAPH_STYLE, 0f)
     StyleConstants.setSpaceAbove(PARAGRAPH_STYLE, 16.0f)
     StyleConstants.setSpaceBelow(PARAGRAPH_STYLE, 0.0f)
     StyleConstants.setLineSpacing(PARAGRAPH_STYLE, 0.2f)
 
-    StyleConstants.setForeground(REGULAR, LearnUIManager.getInstance().defaultTextColor)
-    StyleConstants.setForeground(BOLD, LearnUIManager.getInstance().defaultTextColor)
-    StyleConstants.setForeground(SHORTCUT, LearnUIManager.getInstance().shortcutTextColor)
-    StyleConstants.setForeground(LINK, LearnUIManager.getInstance().lessonLinkColor)
-    StyleConstants.setForeground(CODE, LearnUIManager.getInstance().lessonLinkColor)
+    StyleConstants.setForeground(REGULAR, LearnUISettings.getInstance().defaultTextColor)
+    StyleConstants.setForeground(BOLD, LearnUISettings.getInstance().defaultTextColor)
+    StyleConstants.setForeground(SHORTCUT, LearnUISettings.getInstance().shortcutTextColor)
+    StyleConstants.setForeground(LINK, LearnUISettings.getInstance().lessonLinkColor)
+    StyleConstants.setForeground(CODE, LearnUISettings.getInstance().lessonLinkColor)
 
     this.setParagraphAttributes(PARAGRAPH_STYLE, true)
   }
@@ -141,7 +141,7 @@ class LessonMessagePane : JTextPane() {
 
       //Repaint text with passed style
       val passedStyle = this.addStyle("PassedStyle", null)
-      StyleConstants.setForeground(passedStyle, LearnUIManager.getInstance().passedColor)
+      StyleConstants.setForeground(passedStyle, LearnUISettings.getInstance().passedColor)
       styledDocument.setCharacterAttributes(0, lessonMessage.end, passedStyle, false)
     }
   }
@@ -223,9 +223,9 @@ class LessonMessagePane : JTextPane() {
           val rectangleStart = modelToView(startOffset)
           val rectangleEnd = modelToView(endOffset - 2)
           val color = g2d.color
-          val fontSize = LearnUIManager.getInstance().fontSize
+          val fontSize = LearnUISettings.getInstance().fontSize
 
-          g2d.color = LearnUIManager.getInstance().shortcutBackgroundColor
+          g2d.color = LearnUISettings.getInstance().shortcutBackgroundColor
           val r2d: RoundRectangle2D
           if (!SystemInfo.isMac)
             r2d = RoundRectangle2D.Double(rectangleStart.getX() - 2 * indent, rectangleStart.getY() - indent + 1,

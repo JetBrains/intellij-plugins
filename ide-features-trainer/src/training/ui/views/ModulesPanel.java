@@ -14,7 +14,7 @@ import training.learn.CourseManager;
 import training.learn.Module;
 import training.learn.lesson.Lesson;
 import training.ui.LearnIcons;
-import training.ui.LearnUIManager;
+import training.ui.LearnUISettings;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -23,6 +23,7 @@ import javax.swing.text.StyleConstants;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.List;
 
 /**
  * Created by karashevich on 26/06/15.
@@ -51,8 +52,8 @@ public class ModulesPanel extends JPanel {
         add(Box.createVerticalGlue());
 
         //set LearnPanel UI
-        this.setPreferredSize(new Dimension(LearnUIManager.getInstance().getWidth(), 100));
-        this.setBorder(LearnUIManager.getInstance().getEmptyBorder());
+        this.setPreferredSize(new Dimension(LearnUISettings.getInstance().getWidth(), 100));
+        this.setBorder(LearnUISettings.getInstance().getEmptyBorder());
 
         revalidate();
         repaint();
@@ -62,9 +63,9 @@ public class ModulesPanel extends JPanel {
 
     private void generalizeUI() {
 
-        StyleConstants.setFontFamily(REGULAR, LearnUIManager.getInstance().getFontFace());
-        StyleConstants.setFontSize(REGULAR, LearnUIManager.getInstance().getFontSize());
-        StyleConstants.setForeground(REGULAR, LearnUIManager.getInstance().getDescriptionColor());
+        StyleConstants.setFontFamily(REGULAR, LearnUISettings.getInstance().getFontFace());
+        StyleConstants.setFontSize(REGULAR, LearnUISettings.getInstance().getFontSize());
+        StyleConstants.setForeground(REGULAR, LearnUISettings.getInstance().getDescriptionColor());
 
         StyleConstants.setLeftIndent(PARAGRAPH_STYLE, 0.0f);
         StyleConstants.setRightIndent(PARAGRAPH_STYLE, 0);
@@ -84,14 +85,13 @@ public class ModulesPanel extends JPanel {
     }
 
     private void initModulesPanel() {
-        Module[] modules = CourseManager.getInstance().getModules();
-        assert modules != null;
+        List<Module> modules = CourseManager.Companion.getInstance().getModules();
         for (Module module : modules) {
             if (module.getLessons().size() == 0) continue;
             JPanel moduleHeader = new JPanel();
             moduleHeader.setFocusable(false);
             moduleHeader.setAlignmentX(LEFT_ALIGNMENT);
-            moduleHeader.setBorder(LearnUIManager.getInstance().getCheckmarkShiftBorder());
+            moduleHeader.setBorder(LearnUISettings.getInstance().getCheckmarkShiftBorder());
             moduleHeader.setOpaque(false);
             moduleHeader.setLayout(new BoxLayout(moduleHeader, BoxLayout.X_AXIS));
             LinkLabel moduleName = new LinkLabel(module.getName(), null);
@@ -101,12 +101,12 @@ public class ModulesPanel extends JPanel {
                     Project guessCurrentProject = ProjectUtil.guessCurrentProject(lessonPanel);
                     Lesson lesson = module.giveNotPassedLesson();
                     if (lesson == null) lesson = module.getLessons().get(0);
-                    CourseManager.getInstance().openLesson(guessCurrentProject, lesson);
+                    CourseManager.Companion.getInstance().openLesson(guessCurrentProject, lesson);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }, null);
-            moduleName.setFont(LearnUIManager.getInstance().getModuleNameFont());
+            moduleName.setFont(LearnUISettings.getInstance().getModuleNameFont());
             moduleName.setAlignmentY(BOTTOM_ALIGNMENT);
             moduleName.setAlignmentX(LEFT_ALIGNMENT);
             String progressStr = calcProgress(module);
@@ -116,14 +116,14 @@ public class ModulesPanel extends JPanel {
             } else {
                 progressLabel = new JBLabel();
             }
-            progressLabel.setFont(LearnUIManager.getInstance().getItalicFont());
+            progressLabel.setFont(LearnUISettings.getInstance().getItalicFont());
             progressLabel.setForeground(JBColor.BLACK);
             progressLabel.setAlignmentY(BOTTOM_ALIGNMENT);
             moduleHeader.add(moduleName);
-            moduleHeader.add(Box.createRigidArea(new Dimension(LearnUIManager.getInstance().getProgressGap(), 0)));
+            moduleHeader.add(Box.createRigidArea(new Dimension(LearnUISettings.getInstance().getProgressGap(), 0)));
             moduleHeader.add(progressLabel);
 
-            MyJTextPane descriptionPane = new MyJTextPane(LearnUIManager.getInstance().getWidth());
+            MyJTextPane descriptionPane = new MyJTextPane(LearnUISettings.getInstance().getWidth());
             descriptionPane.setEditable(false);
             descriptionPane.setOpaque(false);
             descriptionPane.setParagraphAttributes(PARAGRAPH_STYLE, true);
@@ -135,13 +135,13 @@ public class ModulesPanel extends JPanel {
             }
             descriptionPane.setAlignmentX(Component.LEFT_ALIGNMENT);
             descriptionPane.setMargin(new Insets(0, 0, 0, 0));
-            descriptionPane.setBorder(LearnUIManager.getInstance().getCheckmarkShiftBorder());
+            descriptionPane.setBorder(LearnUISettings.getInstance().getCheckmarkShiftBorder());
             descriptionPane.addMouseListener(delegateToLinkLabel(descriptionPane, moduleName));
 
             lessonPanel.add(moduleHeader);
-            lessonPanel.add(Box.createVerticalStrut(LearnUIManager.getInstance().getHeaderGap()));
+            lessonPanel.add(Box.createVerticalStrut(LearnUISettings.getInstance().getHeaderGap()));
             lessonPanel.add(descriptionPane);
-            lessonPanel.add(Box.createVerticalStrut(LearnUIManager.getInstance().getModuleGap()));
+            lessonPanel.add(Box.createVerticalStrut(LearnUISettings.getInstance().getModuleGap()));
         }
         lessonPanel.add(Box.createVerticalGlue());
     }
@@ -217,8 +217,8 @@ public class ModulesPanel extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension((int) lessonPanel.getMinimumSize().getWidth() + (LearnUIManager.getInstance().getWestInset() + LearnUIManager.getInstance().getWestInset()),
-                (int) lessonPanel.getMinimumSize().getHeight() + (LearnUIManager.getInstance().getNorthInset() + LearnUIManager.getInstance().getSouthInset()));
+        return new Dimension((int) lessonPanel.getMinimumSize().getWidth() + (LearnUISettings.getInstance().getWestInset() + LearnUISettings.getInstance().getWestInset()),
+                (int) lessonPanel.getMinimumSize().getHeight() + (LearnUISettings.getInstance().getNorthInset() + LearnUISettings.getInstance().getSouthInset()));
     }
 
     @Override
@@ -236,9 +236,9 @@ public class ModulesPanel extends JPanel {
                     final Point basePoint = this.getLocationOnScreen();
                     int y = point.y + 1 - basePoint.y;
                     if (!SystemInfo.isMac) {
-                        LearnIcons.INSTANCE.getCheckMarkGray().paintIcon(this, g, LearnUIManager.getInstance().getWestInset(), y + 4);
+                        LearnIcons.INSTANCE.getCheckMarkGray().paintIcon(this, g, LearnUISettings.getInstance().getWestInset(), y + 4);
                     } else {
-                        LearnIcons.INSTANCE.getCheckMarkGray().paintIcon(this, g, LearnUIManager.getInstance().getWestInset(), y + 2);
+                        LearnIcons.INSTANCE.getCheckMarkGray().paintIcon(this, g, LearnUISettings.getInstance().getWestInset(), y + 2);
                     }
                 }
             }
@@ -248,7 +248,7 @@ public class ModulesPanel extends JPanel {
 
     @Override
     public Color getBackground() {
-        if (!UIUtil.isUnderDarcula()) return LearnUIManager.getInstance().getBackgroundColor();
+        if (!UIUtil.isUnderDarcula()) return LearnUISettings.getInstance().getBackgroundColor();
         else return UIUtil.getPanelBackground();
     }
 

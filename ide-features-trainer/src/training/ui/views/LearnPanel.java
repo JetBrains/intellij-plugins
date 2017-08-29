@@ -12,10 +12,7 @@ import training.learn.CourseManager;
 import training.learn.LearnBundle;
 import training.learn.Module;
 import training.learn.lesson.Lesson;
-import training.ui.LearnIcons;
-import training.ui.LearnUIManager;
-import training.ui.LessonMessagePane;
-import training.ui.Message;
+import training.ui.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -71,8 +68,8 @@ public class LearnPanel extends JPanel {
         add(modulePanel);
 
         //set LearnPanel UI
-        setPreferredSize(new Dimension(LearnUIManager.getInstance().getWidth(), 100));
-        setBorder(LearnUIManager.getInstance().getEmptyBorder());
+        setPreferredSize(new Dimension(LearnUISettings.getInstance().getWidth(), 100));
+        setBorder(LearnUISettings.getInstance().getEmptyBorder());
     }
 
     private void initLessonPanel() {
@@ -83,19 +80,19 @@ public class LearnPanel extends JPanel {
         lessonPanel.setOpaque(false);
 
         moduleNameLabel = new JLabel();
-        moduleNameLabel.setFont(LearnUIManager.getInstance().getPlainFont());
+        moduleNameLabel.setFont(LearnUISettings.getInstance().getPlainFont());
         moduleNameLabel.setFocusable(false);
-        moduleNameLabel.setBorder(LearnUIManager.getInstance().getCheckmarkShiftBorder());
+        moduleNameLabel.setBorder(LearnUISettings.getInstance().getCheckmarkShiftBorder());
 
         allTopicsLabel = new LinkLabel(LearnBundle.INSTANCE.message("learn.ui.alltopics"), null);
         allTopicsLabel.setListener((aSource, aLinkData) -> {
             Project guessCurrentProject = ProjectUtil.guessCurrentProject(lessonPanel);
-            CourseManager.getInstance().setModulesView();
+            UiManager.INSTANCE.setModulesView();
         }, null);
 
         lessonNameLabel = new JLabel();
-        lessonNameLabel.setBorder(LearnUIManager.getInstance().getCheckmarkShiftBorder());
-        lessonNameLabel.setFont(LearnUIManager.getInstance().getLessonHeaderFont());
+        lessonNameLabel.setBorder(LearnUISettings.getInstance().getCheckmarkShiftBorder());
+        lessonNameLabel.setFont(LearnUISettings.getInstance().getLessonHeaderFont());
         lessonNameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         lessonNameLabel.setFocusable(false);
 
@@ -105,7 +102,7 @@ public class LearnPanel extends JPanel {
         lessonMessagePane.setAlignmentX(Component.LEFT_ALIGNMENT);
         lessonMessagePane.setMargin(new Insets(0, 0, 0, 0));
         lessonMessagePane.setBorder(new EmptyBorder(0, 0, 0, 0));
-        lessonMessagePane.setMaximumSize(new Dimension(LearnUIManager.getInstance().getWidth(), 10000));
+        lessonMessagePane.setMaximumSize(new Dimension(LearnUISettings.getInstance().getWidth(), 10000));
 
 
         //Set Next Button UI
@@ -117,7 +114,7 @@ public class LearnPanel extends JPanel {
         button.setOpaque(false);
 
         buttonPanel = new JPanel();
-        buttonPanel.setBorder(LearnUIManager.getInstance().getCheckmarkShiftBorder());
+        buttonPanel.setBorder(LearnUISettings.getInstance().getCheckmarkShiftBorder());
         buttonPanel.setOpaque(false);
         buttonPanel.setFocusable(false);
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
@@ -127,19 +124,19 @@ public class LearnPanel extends JPanel {
         lessonPanel.setName("lessonPanel");
         //shift right for checkmark
         lessonPanel.add(moduleNameLabel);
-        lessonPanel.add(Box.createVerticalStrut(LearnUIManager.getInstance().getLessonNameGap()));
+        lessonPanel.add(Box.createVerticalStrut(LearnUISettings.getInstance().getLessonNameGap()));
         lessonPanel.add(lessonNameLabel);
         lessonPanel.add(lessonMessagePane);
-        lessonPanel.add(Box.createVerticalStrut(LearnUIManager.getInstance().getBeforeButtonGap()));
+        lessonPanel.add(Box.createVerticalStrut(LearnUISettings.getInstance().getBeforeButtonGap()));
         lessonPanel.add(Box.createVerticalGlue());
         lessonPanel.add(buttonPanel);
-        lessonPanel.add(Box.createVerticalStrut(LearnUIManager.getInstance().getAfterButtonGap()));
+        lessonPanel.add(Box.createVerticalStrut(LearnUISettings.getInstance().getAfterButtonGap()));
     }
 
 
     public void setLessonName(String lessonName) {
         lessonNameLabel.setText(lessonName);
-        lessonNameLabel.setForeground(LearnUIManager.getInstance().getDefaultTextColor());
+        lessonNameLabel.setForeground(LearnUISettings.getInstance().getDefaultTextColor());
         lessonNameLabel.setFocusable(false);
         this.revalidate();
         this.repaint();
@@ -147,7 +144,7 @@ public class LearnPanel extends JPanel {
 
     public void setModuleName(String moduleName) {
         moduleNameLabel.setText(moduleName);
-        moduleNameLabel.setForeground(LearnUIManager.getInstance().getDefaultTextColor());
+        moduleNameLabel.setForeground(LearnUISettings.getInstance().getDefaultTextColor());
         moduleNameLabel.setFocusable(false);
         this.revalidate();
         this.repaint();
@@ -164,11 +161,11 @@ public class LearnPanel extends JPanel {
             if (message.getType() == Message.MessageType.LINK) {
                 //add link handler
                 message.setRunnable(() -> {
-                    final Lesson lesson = CourseManager.getInstance().findLesson(message.getText());
+                    final Lesson lesson = CourseManager.Companion.getInstance().findLesson(message.getText());
                     if (lesson != null) {
                         try {
                             Project project = ProjectUtil.guessCurrentProject(LearnPanel.this);
-                            CourseManager.getInstance().openLesson(project, lesson);
+                            CourseManager.Companion.getInstance().openLesson(project, lesson);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -301,7 +298,7 @@ public class LearnPanel extends JPanel {
         modulePanel.setOpaque(false);
 
         //define separator
-        modulePanel.setBorder(new MatteBorder(1, 0, 0, 0, LearnUIManager.getInstance().getSeparatorColor()));
+        modulePanel.setBorder(new MatteBorder(1, 0, 0, 0, LearnUISettings.getInstance().getSeparatorColor()));
     }
 
     public ModulePanel getModulePanel() {
@@ -339,7 +336,7 @@ public class LearnPanel extends JPanel {
             JLabel moduleLessons = new JLabel();
 
             moduleNamePanel = new JPanel();
-            moduleNamePanel.setBorder(new EmptyBorder(LearnUIManager.getInstance().getLessonGap(), LearnUIManager.getInstance().getCheckIndent(), 0, 0));
+            moduleNamePanel.setBorder(new EmptyBorder(LearnUISettings.getInstance().getLessonGap(), LearnUISettings.getInstance().getCheckIndent(), 0, 0));
             moduleNamePanel.setOpaque(false);
             moduleNamePanel.setFocusable(false);
             moduleNamePanel.setLayout(new BoxLayout(moduleNamePanel, BoxLayout.X_AXIS));
@@ -350,7 +347,7 @@ public class LearnPanel extends JPanel {
             moduleNamePanel.add(allTopicsLabel);
 
             moduleLessons.setText(lesson.getModule().getName());
-            moduleLessons.setFont(LearnUIManager.getInstance().getBoldFont());
+            moduleLessons.setFont(LearnUISettings.getInstance().getBoldFont());
             moduleLessons.setFocusable(false);
 
             add(Box.createRigidArea(new Dimension(0, 5)));
@@ -358,7 +355,7 @@ public class LearnPanel extends JPanel {
             add(Box.createRigidArea(new Dimension(0, 10)));
 
             buildLessonLabels(lesson, myLessons);
-            setMaximumSize(new Dimension(LearnUIManager.getInstance().getWidth(), modulePanel.getPreferredSize().height));
+            setMaximumSize(new Dimension(LearnUISettings.getInstance().getWidth(), modulePanel.getPreferredSize().height));
         }
 
         private void buildLessonLabels(Lesson lesson, final List<Lesson> myLessons) {
@@ -368,12 +365,12 @@ public class LearnPanel extends JPanel {
 
                 final MyLinkLabel e = new MyLinkLabel(lessonName);
                 e.setHorizontalTextPosition(SwingConstants.LEFT);
-                e.setBorder(new EmptyBorder(0, LearnUIManager.getInstance().getCheckIndent(), LearnUIManager.getInstance().getLessonGap(), 0));
+                e.setBorder(new EmptyBorder(0, LearnUISettings.getInstance().getCheckIndent(), LearnUISettings.getInstance().getLessonGap(), 0));
                 e.setFocusable(false);
                 e.setListener((aSource, aLinkData) -> {
                     try {
                         Project project = ProjectUtil.guessCurrentProject(LearnPanel.this);
-                        CourseManager.getInstance().openLesson(project, currentLesson);
+                        CourseManager.Companion.getInstance().openLesson(project, currentLesson);
                     } catch (Exception e1) {
                         e1.printStackTrace();
                     }
@@ -381,7 +378,7 @@ public class LearnPanel extends JPanel {
 
                 if (lesson.equals(currentLesson)) {
                     //selected lesson
-                    e.setTextColor(LearnUIManager.getInstance().getLessonActiveColor());
+                    e.setTextColor(LearnUISettings.getInstance().getLessonActiveColor());
                 } else {
                     e.resetTextColor();
                 }
@@ -395,7 +392,7 @@ public class LearnPanel extends JPanel {
             for (Lesson curLesson : lessonLabelMap.keySet()) {
                 MyLinkLabel lessonLabel = lessonLabelMap.get(curLesson);
                 if (lesson.equals(curLesson)) {
-                    lessonLabel.setTextColor(LearnUIManager.getInstance().getLessonActiveColor());
+                    lessonLabel.setTextColor(LearnUISettings.getInstance().getLessonActiveColor());
                 } else {
                     lessonLabel.resetTextColor();
                 }
@@ -456,17 +453,17 @@ public class LearnPanel extends JPanel {
         if(modulePanel.getMinimumSize() == null) return new Dimension(10, 10);
         return new Dimension(
                 (int) lessonPanel.getMinimumSize().getWidth() +
-                        LearnUIManager.getInstance().getWestInset() +
-                        LearnUIManager.getInstance().getEastInset(),
+                        LearnUISettings.getInstance().getWestInset() +
+                        LearnUISettings.getInstance().getEastInset(),
                 (int) lessonPanel.getMinimumSize().getHeight() +
                         (int) modulePanel.getMinimumSize().getHeight() +
-                        LearnUIManager.getInstance().getNorthInset() +
-                        LearnUIManager.getInstance().getSouthInset());
+                        LearnUISettings.getInstance().getNorthInset() +
+                        LearnUISettings.getInstance().getSouthInset());
     }
 
     @Override
     public Color getBackground(){
-        if (!UIUtil.isUnderDarcula()) return LearnUIManager.getInstance().getBackgroundColor();
+        if (!UIUtil.isUnderDarcula()) return LearnUISettings.getInstance().getBackgroundColor();
         else return UIUtil.getPanelBackground();
     }
 }

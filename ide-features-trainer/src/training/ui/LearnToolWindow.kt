@@ -6,7 +6,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.ui.components.JBScrollPane
 import training.lang.LangManager
-import training.learn.CourseManager
 import training.ui.views.LanguageChoosePanel
 import training.ui.views.LearnPanel
 import training.ui.views.ModulesPanel
@@ -47,8 +46,8 @@ class LearnToolWindow : SimpleToolWindowPanel, DataProvider, Disposable {
     private fun reinitViewsInternal() {
         myLearnPanel = LearnPanel()
         modulesPanel = ModulesPanel()
-        CourseManager.getInstance().modulesPanel = modulesPanel
-        CourseManager.getInstance().learnPanel = myLearnPanel
+        UiManager.modulesPanel = modulesPanel
+        UiManager.learnPanel = myLearnPanel
     }
 
     //do not call on modulesPanel view view or learnPanel view
@@ -57,7 +56,7 @@ class LearnToolWindow : SimpleToolWindowPanel, DataProvider, Disposable {
     }
 
     override fun dispose() {
-        CourseManager.getInstance().learnPanel = null
+        UiManager.learnPanel = null
         myLearnPanel = null
     }
 
