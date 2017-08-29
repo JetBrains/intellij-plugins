@@ -56,5 +56,4 @@ public interface CfmlTokenTypes {
     R_ANGLEBRACKET,
     LSLASH_ANGLEBRACKET
   );
-  TokenSet tsCOMMENTS = TokenSet.create(COMMENT, CfscriptTokenTypes.COMMENT);
 }
