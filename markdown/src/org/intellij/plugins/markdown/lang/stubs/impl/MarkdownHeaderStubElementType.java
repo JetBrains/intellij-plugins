@@ -1,7 +1,6 @@
 package org.intellij.plugins.markdown.lang.stubs.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -13,9 +12,7 @@ import org.intellij.plugins.markdown.lang.index.MarkdownHeadersIndex;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownHeaderImpl;
 import org.intellij.plugins.markdown.lang.stubs.MarkdownStubElementType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.io.IOException;
 
 public class MarkdownHeaderStubElementType extends MarkdownStubElementType<MarkdownHeaderStubElement, MarkdownHeaderImpl> {
@@ -39,13 +36,11 @@ public class MarkdownHeaderStubElementType extends MarkdownStubElementType<Markd
   @NotNull
   @Override
   public MarkdownHeaderStubElement createStub(@NotNull MarkdownHeaderImpl psi, StubElement parentStub) {
-    return new MarkdownHeaderStubElement(parentStub, this, psi.getName(), psi.getPresentation());
+    return new MarkdownHeaderStubElement(parentStub, this, psi.getName());
   }
 
   @Override
   public void serialize(@NotNull MarkdownHeaderStubElement stub, @NotNull StubOutputStream dataStream) throws IOException {
-    writeUTFFast(dataStream, stub.getLocationString());
-    writeUTFFast(dataStream, stub.getPresentableText());
     writeUTFFast(dataStream, stub.getIndexedName());
   }
 
@@ -57,44 +52,19 @@ public class MarkdownHeaderStubElementType extends MarkdownStubElementType<Markd
   @NotNull
   @Override
   public MarkdownHeaderStubElement deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) {
-    String locationString = null;
-    String presentableText = null;
     String indexedName = null;
     try {
-      locationString = dataStream.readUTFFast();
-      presentableText = dataStream.readUTFFast();
       indexedName = dataStream.readUTFFast();
     }
     catch (IOException e) {
       LOG.error("Cannot read data stream; ", e.getMessage());
     }
 
-    String finalPresentableString = StringUtil.isEmpty(presentableText) ? null : presentableText;
-    String finalLocationString = StringUtil.isEmpty(locationString) ? null : locationString;
     String finalIndexedString = StringUtil.isEmpty(indexedName) ? null : indexedName;
     return new MarkdownHeaderStubElement(
       parentStub,
       this,
-      finalIndexedString,
-      new ItemPresentation() {
-        @Nullable
-        @Override
-        public String getPresentableText() {
-          return finalPresentableString;
-        }
-
-        @Nullable
-        @Override
-        public String getLocationString() {
-          return finalLocationString;
-        }
-
-        @Nullable
-        @Override
-        public Icon getIcon(boolean unused) {
-          return null;
-        }
-      }
+      finalIndexedString
     );
   }
 
