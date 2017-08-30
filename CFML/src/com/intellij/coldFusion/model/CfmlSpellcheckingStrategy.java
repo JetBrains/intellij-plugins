@@ -17,6 +17,7 @@ package com.intellij.coldFusion.model;
 
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.psi.*;
+import com.intellij.coldFusion.model.psi.impl.CfmlNamedAttributeImpl;
 import com.intellij.coldFusion.model.psi.impl.CfmlTagComponentImpl;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
@@ -76,6 +77,9 @@ public class CfmlSpellcheckingStrategy extends SpellcheckingStrategy {
     }
     else if (element instanceof CfmlTagComponentImpl) {
       return EMPTY_TOKENIZER;
+    } else if (element instanceof CfmlNamedAttributeImpl && 
+               "name".equals(((CfmlNamedAttributeImpl)element).getAttributeName())) {
+      return new TokenizerBase(TextSplitter.getInstance());
     }
 
     else if (element instanceof LeafPsiElement && ((LeafPsiElement)element).getElementType() == CfmlTokenTypes.COMMENT) {
