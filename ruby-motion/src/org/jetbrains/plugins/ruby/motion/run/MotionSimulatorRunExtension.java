@@ -114,7 +114,7 @@ public class MotionSimulatorRunExtension extends RubyRunConfigurationExtension {
     private RubyProcessHandler myHandler;
 
     public MotionProcessOutputReaders(@NotNull GeneralCommandLine commandLine) throws ExecutionException {
-      init(commandLine, true);
+      super(commandLine, true);
     }
 
     @Override
