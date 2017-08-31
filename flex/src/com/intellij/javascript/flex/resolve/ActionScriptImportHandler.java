@@ -292,7 +292,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
 
       if (element != null) {
         ResolveState state = ResolveState.initial();
-        if (expression.importStatement != null) state = state.put(ActionScriptResolveUtil.IMPORT_KEY, expression.importStatement);
+        if (expression.importStatement != null) state = state.put(JSResolveResult.IMPORT_KEY, expression.importStatement);
         return !processor.execute(element, state);
       }
     }
