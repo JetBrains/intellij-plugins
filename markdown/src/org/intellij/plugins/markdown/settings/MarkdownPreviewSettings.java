@@ -23,15 +23,20 @@ public final class MarkdownPreviewSettings {
   @Attribute("UseGrayscaleRendering")
   private boolean myUseGrayscaleRendering = false;
 
+  @Attribute("AutoScrollPreview")
+  private boolean myIsAutoScrollPreview = true;
+
   public MarkdownPreviewSettings() {
   }
 
   public MarkdownPreviewSettings(@NotNull SplitFileEditor.SplitEditorLayout splitEditorLayout,
                                  @NotNull MarkdownHtmlPanelProvider.ProviderInfo htmlPanelProviderInfo,
-                                 boolean useGrayscaleRendering) {
+                                 boolean useGrayscaleRendering,
+                                 boolean isAutoScrollPreview) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myUseGrayscaleRendering = useGrayscaleRendering;
+    myIsAutoScrollPreview = isAutoScrollPreview;
   }
 
   @NotNull
@@ -48,6 +53,10 @@ public final class MarkdownPreviewSettings {
     return myUseGrayscaleRendering;
   }
 
+  public boolean isAutoScrollPreview() {
+    return myIsAutoScrollPreview;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -56,6 +65,7 @@ public final class MarkdownPreviewSettings {
     MarkdownPreviewSettings settings = (MarkdownPreviewSettings)o;
 
     if (myUseGrayscaleRendering != settings.myUseGrayscaleRendering) return false;
+    if (myIsAutoScrollPreview != settings.myIsAutoScrollPreview) return false;
     if (mySplitEditorLayout != settings.mySplitEditorLayout) return false;
     if (!myHtmlPanelProviderInfo.equals(settings.myHtmlPanelProviderInfo)) return false;
 
@@ -67,6 +77,7 @@ public final class MarkdownPreviewSettings {
     int result = mySplitEditorLayout.hashCode();
     result = 31 * result + myHtmlPanelProviderInfo.hashCode();
     result = 31 * result + (myUseGrayscaleRendering ? 1 : 0);
+    result = 31 * result + (myIsAutoScrollPreview ? 1 : 0);
     return result;
   }
 

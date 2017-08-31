@@ -38,7 +38,7 @@ public class MarkdownSplitEditor extends SplitFileEditor<TextEditor, MarkdownPre
     getMainEditor().navigateTo(navigatable);
   }
 
-  private static class MyCaretListener implements CaretListener {
+  private class MyCaretListener implements CaretListener {
     @NotNull
     private final MarkdownPreviewFileEditor myPreviewFileEditor;
 
@@ -48,6 +48,8 @@ public class MarkdownSplitEditor extends SplitFileEditor<TextEditor, MarkdownPre
 
     @Override
     public void caretPositionChanged(CaretEvent e) {
+      if (!isAutoScrollPreview()) return;
+
       final Editor editor = e.getEditor();
       if (editor.getCaretModel().getCaretCount() != 1) {
         return;

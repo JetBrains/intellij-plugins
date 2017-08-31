@@ -53,6 +53,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   private ComboBox myDefaultSplitLayout;
   private JBCheckBox myUseGrayscaleRenderingForJBCheckBox;
   private JPanel myPreviewTitledSeparator;
+  private JBCheckBox myAutoScrollCheckBox;
 
   @NotNull
   private String myCssText = "";
@@ -228,6 +229,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     }
     mySplitLayoutModel.setSelectedItem(settings.getSplitEditorLayout());
     myUseGrayscaleRenderingForJBCheckBox.setSelected(settings.isUseGrayscaleRendering());
+    myAutoScrollCheckBox.setSelected(settings.isAutoScrollPreview());
 
     updateUseGrayscaleEnabled();
   }
@@ -240,6 +242,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     }
     return new MarkdownPreviewSettings(mySplitLayoutModel.getSelectedItem(),
                                        myPreviewPanelModel.getSelected(),
-                                       myUseGrayscaleRenderingForJBCheckBox.isSelected());
+                                       myUseGrayscaleRenderingForJBCheckBox.isSelected(),
+                                       myAutoScrollCheckBox.isSelected());
   }
 }

@@ -137,11 +137,14 @@
               description="Sets markdown editor layout to show preview only"
               icon="MarkdownIcons.Layout.Preview_only">
       </action>
-
+      <action class="com.intellij.openapi.actionSystem.Separator" id="markdown.toolbar.Separator">
+      </action>
+      <action class="org.intellij.plugins.markdown.ui.actions.scrolling.AutoScrollAction"
+              id="org.intellij.plugins.markdown.ui.actions.scrolling.AutoScrollAction"
+              text="Auto Scroll Preview"
+              description="Enable/Disable preview auto scroll"
+              icon="AllIcons.General.AutoscrollFromSource">
+      </action>
     </group>
-
-
-
   </actions>
-
 </idea-plugin>

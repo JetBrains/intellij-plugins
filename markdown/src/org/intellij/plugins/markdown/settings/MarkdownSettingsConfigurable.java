@@ -66,24 +66,29 @@ public class MarkdownSettingsConfigurable implements SearchableConfigurable {
     form.validate();
 
     SplitFileEditor.SplitEditorLayout oldLayout = myMarkdownApplicationSettings.getMarkdownPreviewSettings().getSplitEditorLayout();
+    boolean oldAutoScroll = myMarkdownApplicationSettings.getMarkdownPreviewSettings().isAutoScrollPreview();
 
     myMarkdownApplicationSettings.setMarkdownCssSettings(form.getMarkdownCssSettings());
     myMarkdownApplicationSettings.setMarkdownPreviewSettings(form.getMarkdownPreviewSettings());
 
     SplitFileEditor.SplitEditorLayout newLayout = myMarkdownApplicationSettings.getMarkdownPreviewSettings().getSplitEditorLayout();
+    boolean newAutoScroll = myMarkdownApplicationSettings.getMarkdownPreviewSettings().isAutoScrollPreview();
 
-    updateOpenedEditorsLayout(oldLayout, newLayout);
+    updateOpenedEditorsProperties(oldLayout, newLayout, oldAutoScroll, newAutoScroll);
   }
 
-  private static void updateOpenedEditorsLayout(@NotNull SplitFileEditor.SplitEditorLayout oldLayout,
-                                                @NotNull SplitFileEditor.SplitEditorLayout newLayout) {
+  private static void updateOpenedEditorsProperties(@NotNull SplitFileEditor.SplitEditorLayout oldLayout,
+                                                    @NotNull SplitFileEditor.SplitEditorLayout newLayout,
+                                                    boolean oldAutoScroll,
+                                                    boolean newAutoScroll) {
     for (Project project : ProjectManager.getInstance().getOpenProjects()) {
       ApplicationManager.getApplication().invokeLater(() -> {
         for (FileEditor fileEditor : FileEditorManagerEx.getInstanceEx(project).getAllEditors()) {
           final SplitFileEditor splitFileEditor = MarkdownActionUtil.findSplitEditor(fileEditor);
 
-          if (splitFileEditor != null && splitFileEditor.getCurrentEditorLayout() == oldLayout) {
-            splitFileEditor.triggerLayoutChange(newLayout);
+          if (splitFileEditor != null) {
+            if (splitFileEditor.getCurrentEditorLayout() == oldLayout) splitFileEditor.triggerLayoutChange(newLayout);
+            if (splitFileEditor.isAutoScrollPreview() == oldAutoScroll) splitFileEditor.setAutoScrollPreview(newAutoScroll);
           }
         }
       });
