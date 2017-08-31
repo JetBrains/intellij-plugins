@@ -77,9 +77,9 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
 
   @Override
   public boolean executeTask(DataContext context,
-                             final RunConfiguration configuration,
-                             ExecutionEnvironment env,
-                             PhoneGapAddPlatformTask task) {
+                             @NotNull final RunConfiguration configuration,
+                             @NotNull ExecutionEnvironment env,
+                             @NotNull PhoneGapAddPlatformTask task) {
 
     final PhoneGapRunConfiguration phoneGapRunConfiguration = (PhoneGapRunConfiguration)configuration;
     final PhoneGapCommandLine line = phoneGapRunConfiguration.getCommandLine();
