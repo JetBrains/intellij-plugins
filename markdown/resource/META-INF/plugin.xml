@@ -59,7 +59,7 @@
                              bundle="org.intellij.plugins.markdown.bundle.MarkdownBundle"
                              groupId="language"
                              nonDefaultProject="true"
-                             key="settings.markdown.name"
+                             key="markdown.settings.name"
                              instance="org.intellij.plugins.markdown.settings.MarkdownSettingsConfigurable">
     </applicationConfigurable>
     <applicationService serviceImplementation="org.intellij.plugins.markdown.settings.MarkdownApplicationSettings"/>

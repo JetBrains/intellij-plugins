@@ -66,9 +66,9 @@ class MarkdownAnchorReferenceImpl internal constructor(private val myAnchor: Str
   }
 
   override fun getUnresolvedMessagePattern(): String = if (file == null)
-    MarkdownBundle.message("cannot.resolve.anchor.error.message", myAnchor)
+    MarkdownBundle.message("markdown.cannot.resolve.anchor.error.message", myAnchor)
   else
-    MarkdownBundle.message("cannot.resolve.anchor.in.file.error.message", myAnchor, (file as PsiFile).name)
+    MarkdownBundle.message("markdown.cannot.resolve.anchor.in.file.error.message", myAnchor, (file as PsiFile).name)
 
   companion object {
     private fun dashed(it: String) = it.toLowerCase().replace(" ", "-")

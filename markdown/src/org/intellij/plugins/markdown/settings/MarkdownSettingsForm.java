@@ -95,7 +95,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     myEditor = createEditor();
     myEditorPanel.add(myEditor.getComponent(), BorderLayout.CENTER);
 
-    myCssTitledSeparator = new TitledSeparator(MarkdownBundle.message("settings.markdown.css.title.name"));
+    myCssTitledSeparator = new TitledSeparator(MarkdownBundle.message("markdown.settings.css.title.name"));
 
     createPreviewUIComponents();
   }
@@ -177,7 +177,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   }
 
   private void createPreviewUIComponents() {
-    myPreviewTitledSeparator = new TitledSeparator(MarkdownBundle.message("settings.markdown.preview.name"));
+    myPreviewTitledSeparator = new TitledSeparator(MarkdownBundle.message("markdown.settings.preview.name"));
 
     //noinspection unchecked
     final List<MarkdownHtmlPanelProvider.ProviderInfo> providerInfos =

@@ -36,7 +36,7 @@ public class MarkdownSettingsConfigurable implements SearchableConfigurable {
   @Nls
   @Override
   public String getDisplayName() {
-    return MarkdownBundle.message("settings.markdown.name");
+    return MarkdownBundle.message("markdown.settings.name");
   }
 
   @NotNull
