@@ -194,7 +194,6 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
 
 
   public static class PhoneGapAddPlatformTask extends BeforeRunTask<PhoneGapAddPlatformTask> {
-
     protected PhoneGapAddPlatformTask(@NotNull Key<PhoneGapAddPlatformTask> providerId) {
       super(providerId);
       setEnabled(true);
