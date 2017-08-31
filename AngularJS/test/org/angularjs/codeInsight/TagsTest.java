@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.xml.util.CheckValidXmlInScriptBodyInspection;
@@ -217,6 +218,12 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testCustomTagsCompletionCss() {
     myFixture.testCompletion("customCss.html", "customCss.after.html", "angular.js", "custom.js");
+  }
+
+  public void testDeepPseudoSelector() {
+    myFixture.enableInspections(CssInvalidPseudoSelectorInspection.class);
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
+                                        () -> myFixture.testHighlighting("deepPseudoSelector.html", "angular2.js"));
   }
 
   public void testCustomTagsResolveCss() {

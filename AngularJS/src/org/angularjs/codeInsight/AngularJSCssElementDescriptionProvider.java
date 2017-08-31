@@ -9,17 +9,21 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.css.CssElementDescriptorProvider;
 import com.intellij.psi.css.CssSimpleSelector;
+import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptor;
+import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptorStub;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Processor;
 import com.intellij.xml.util.HtmlUtil;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class AngularJSCssElementDescriptionProvider extends CssElementDescriptorProvider {
+  private static final String NG_DEEP = "ng-deep";
+  private static final Set<CssPseudoSelectorDescriptorStub> PSEUDO_SELECTORS =
+    Collections.singleton(new CssPseudoSelectorDescriptorStub(NG_DEEP, true));
+
   @Override
   public boolean isMyContext(@Nullable PsiElement context) {
     if (context == null || !context.isValid()) return false;
@@ -39,6 +43,22 @@ public class AngularJSCssElementDescriptionProvider extends CssElementDescriptor
 
   @NotNull
   @Override
+  public Collection<? extends CssPseudoSelectorDescriptor> findPseudoSelectorDescriptors(@NotNull String name,
+                                                                                         @Nullable PsiElement context) {
+    if (context == null || !NG_DEEP.equals(name) || !AngularIndexUtil.hasAngularJS2(context.getProject())) {
+      return Collections.emptySet();
+    }
+    return PSEUDO_SELECTORS;
+  }
+
+  @NotNull
+  @Override
+  public Collection<? extends CssPseudoSelectorDescriptor> getAllPseudoSelectorDescriptors(@Nullable PsiElement context) {
+    return context != null && AngularIndexUtil.hasAngularJS2(context.getProject()) ? PSEUDO_SELECTORS : Collections.emptySet();
+  }
+
+  @NotNull
+  @Override
   public String[] getSimpleSelectors(@NotNull PsiElement context) {
     final List<String> result = new LinkedList<>();
     DirectiveUtil.processTagDirectives(context.getProject(), proxy -> {
@@ -53,6 +73,6 @@ public class AngularJSCssElementDescriptionProvider extends CssElementDescriptor
   public PsiElement[] getDeclarationsForSimpleSelector(@NotNull CssSimpleSelector selector) {
     final JSImplicitElement directive =
       DirectiveUtil.getTagDirective(DirectiveUtil.normalizeAttributeName(selector.getElementName()), selector.getProject());
-    return directive != null ? new PsiElement[] {directive} : PsiElement.EMPTY_ARRAY;
+    return directive != null ? new PsiElement[]{directive} : PsiElement.EMPTY_ARRAY;
   }
 }
