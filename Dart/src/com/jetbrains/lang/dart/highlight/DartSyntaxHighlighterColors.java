@@ -91,9 +91,9 @@ public class DartSyntaxHighlighterColors {
   public static final TextAttributesKey ERROR =
     createTextAttributesKey(DART_ERROR, CodeInsightColors.ERRORS_ATTRIBUTES);
   public static final TextAttributesKey WARNING =
-    createTextAttributesKey(DART_WARNING, CodeInsightColors.ERRORS_ATTRIBUTES);
+    createTextAttributesKey(DART_WARNING, CodeInsightColors.WARNINGS_ATTRIBUTES);
   public static final TextAttributesKey HINT =
-    createTextAttributesKey(DART_HINT, CodeInsightColors.WARNINGS_ATTRIBUTES);
+    createTextAttributesKey(DART_HINT, CodeInsightColors.WEAK_WARNING_ATTRIBUTES);
 
   public static final TextAttributesKey BLOCK_COMMENT =
     createTextAttributesKey(DART_BLOCK_COMMENT, DefaultLanguageHighlighterColors.BLOCK_COMMENT);
@@ -117,7 +117,8 @@ public class DartSyntaxHighlighterColors {
   public static final TextAttributesKey DOT = createTextAttributesKey(DART_DOT, DefaultLanguageHighlighterColors.DOT);
   public static final TextAttributesKey SEMICOLON = createTextAttributesKey(DART_SEMICOLON, DefaultLanguageHighlighterColors.SEMICOLON);
   public static final TextAttributesKey COLON = createTextAttributesKey(DART_COLON, DefaultLanguageHighlighterColors.OPERATION_SIGN);
-  public static final TextAttributesKey FAT_ARROW = createTextAttributesKey(DART_FAT_ARROW, DefaultLanguageHighlighterColors.OPERATION_SIGN);
+  public static final TextAttributesKey FAT_ARROW =
+    createTextAttributesKey(DART_FAT_ARROW, DefaultLanguageHighlighterColors.OPERATION_SIGN);
   public static final TextAttributesKey BAD_CHARACTER = createTextAttributesKey(DART_BAD_CHARACTER, HighlighterColors.BAD_CHARACTER);
   public static final TextAttributesKey SYMBOL_LITERAL =
     createTextAttributesKey(DART_SYMBOL_LITERAL, DefaultLanguageHighlighterColors.KEYWORD);
