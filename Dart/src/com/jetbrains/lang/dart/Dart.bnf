@@ -388,7 +388,7 @@ simpleFormalParameter ::= declaredIdentifier | metadata* componentName | metadat
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 private declaredIdentifier ::= metadata* finalConstVarOrTypeAndComponentName;
 
-returnType ::= 'void' !untypedFunctionType | type
+returnType ::= 'void' !untypedFunctionType | type // TODO returnType is now equivalent to type and removed from spec, we could remove it as well
 
 private finalConstVarVoidOrType ::= 'final' type? | 'const' type? | 'var' | 'void' | type // Be careful on using it! It may erroneously consume 'type?'. See finalConstVarOrTypeAndComponentName
 private finalConstVarOrTypeAndComponentName ::= 'covariant'? 'final' type componentName |
@@ -405,7 +405,7 @@ componentName ::= << nonStrictID >>
 // see nonStrictID
 id ::= IDENTIFIER
 
-type ::= functionTypeWrapper | simpleType  {
+type ::= 'void' !untypedFunctionType | functionTypeWrapper | simpleType  {
   methods=[
     resolveReference getReferenceExpression getTypeArguments
   ]

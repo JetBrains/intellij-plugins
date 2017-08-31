@@ -25,3 +25,5 @@ class UseBox {
 
 int global1<T, E extends Object>(){}
 global2<T>(){}
+
+foo<void> bar(a<void> b) {}

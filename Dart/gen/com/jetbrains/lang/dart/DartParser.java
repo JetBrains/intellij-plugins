@@ -6501,13 +6501,35 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // functionTypeWrapper | simpleType
+  // 'void' !untypedFunctionType | functionTypeWrapper | simpleType
   public static boolean type(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "type")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, TYPE, "<type>");
-    r = functionTypeWrapper(b, l + 1);
+    r = type_0(b, l + 1);
+    if (!r) r = functionTypeWrapper(b, l + 1);
     if (!r) r = simpleType(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // 'void' !untypedFunctionType
+  private static boolean type_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "type_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, VOID);
+    r = r && type_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // !untypedFunctionType
+  private static boolean type_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "type_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !untypedFunctionType(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
