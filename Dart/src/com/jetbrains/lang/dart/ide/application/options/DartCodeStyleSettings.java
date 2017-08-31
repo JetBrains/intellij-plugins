@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class DartCodeStyleSettings extends CustomCodeStyleSettings {
 
-  public boolean DELEGATE_TO_DARTFMT = false;
+  public boolean DELEGATE_TO_DARTFMT = true;
 
   public DartCodeStyleSettings(@NotNull final CodeStyleSettings container) {
     super("DartCodeStyleSettings", container);
