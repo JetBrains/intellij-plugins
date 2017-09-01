@@ -11,6 +11,7 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.psi.DartId;
 import org.dartlang.analysis.server.protocol.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +35,15 @@ public class DartLookupObject implements ResolveResult {
     if (psiFile != null) {
       final int offset = DartAnalysisServerService.getInstance(myProject).getConvertedOffset(vFile, myLocation.getOffset());
       final PsiElement elementAtOffset = psiFile.findElementAt(offset);
-      return PsiTreeUtil.getParentOfType(elementAtOffset, DartComponentName.class);
+      if (elementAtOffset != null) {
+        final DartComponentName componentName = PsiTreeUtil.getParentOfType(elementAtOffset, DartComponentName.class);
+        if (componentName != null) {
+          return componentName;
+        }
+        if (elementAtOffset.getParent() instanceof DartId && elementAtOffset.getTextRange().getStartOffset() == offset) {
+          return elementAtOffset; // example in WEB-25478 (https://github.com/flutter/flutter-intellij/issues/385#issuecomment-278826063)
+        }
+      }
     }
     return null;
   }
