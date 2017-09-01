@@ -69,7 +69,7 @@ public class FileOffsetsManager {
   }
 
   @NotNull
-  private LineOffsets getLineOffsets(@NotNull final VirtualFile file) {
+  private synchronized LineOffsets getLineOffsets(@NotNull final VirtualFile file) {
     LineOffsets offsets = myLineOffsetsMap.get(file);
     if (offsets != null && file.getModificationStamp() == offsets.myFileModificationStamp) {
       return offsets;
