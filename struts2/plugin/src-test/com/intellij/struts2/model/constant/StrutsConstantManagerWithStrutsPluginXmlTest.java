@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StrutsConstantManagerWithStrutsPluginXmlTest extends StrutsConstantManagerTestCase {
 
-  static final String SPRING_JAR = "struts2-spring-plugin-" + STRUTS2_VERSION + ".jar";
+  private static final String SPRING_JAR = "struts2-spring-plugin-" + STRUTS2_VERSION + ".jar";
 
   private static final LightProjectDescriptor SPRING = new Struts2ProjectDescriptorBuilder()
     .withStrutsLibrary()

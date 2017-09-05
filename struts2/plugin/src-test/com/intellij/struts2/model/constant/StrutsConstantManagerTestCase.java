@@ -27,15 +27,15 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 /**
- * Base class for testing {@link com.intellij.struts2.model.constant.StrutsConstantManager}.
+ * Base class for testing {@link StrutsConstantManager}.
  *
  * @author Yann C&eacute;bron
  */
 public abstract class StrutsConstantManagerTestCase extends BasicLightHighlightingTestCase {
 
-  protected <T> void performResolveTest(@NotNull final VirtualFile invokingFile,
-                                        @NotNull final StrutsConstantKey<T> strutsConstantKey,
-                                        @Nullable @NonNls final T value) {
+  <T> void performResolveTest(@NotNull final VirtualFile invokingFile,
+                              @NotNull final StrutsConstantKey<T> strutsConstantKey,
+                              @Nullable @NonNls final T value) {
     final StrutsConstantManager constantManager = StrutsConstantManager.getInstance(getProject());
 
     final PsiFile invokingPsiFile = PsiManager.getInstance(getProject()).findFile(invokingFile);
