@@ -3,6 +3,8 @@ package com.google.jstestdriver.idea.rt.coverage;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.jstestdriver.idea.rt.util.PathConverter;
+import com.intellij.util.containers.PeekableIterator;
+import com.intellij.util.containers.PeekableIteratorWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -42,8 +44,8 @@ public class CoverageReport {
   }
 
   private static List<LineHits> doMerge(@NotNull List<LineHits> aList, @NotNull List<LineHits> bList) {
-    PeekingIterator<LineHits> ai = new PeekingIterator<>(aList.iterator());
-    PeekingIterator<LineHits> bi = new PeekingIterator<>(bList.iterator());
+    PeekableIterator<LineHits> ai = new PeekableIteratorWrapper<>(aList.iterator());
+    PeekableIterator<LineHits> bi = new PeekableIteratorWrapper<>(bList.iterator());
     List<LineHits> out = Lists.newArrayList();
     while (ai.hasNext() && bi.hasNext()) {
       final LineHits x;
@@ -144,50 +146,6 @@ public class CoverageReport {
 
     public void addHits(int hitCount) {
       myHits += hitCount;
-    }
-  }
-
-  private static class PeekingIterator<T> implements Iterator<T> {
-
-    private final Iterator<T> myIterator;
-    private T myValue = null;
-    private boolean myValidValue = false;
-
-    private PeekingIterator(Iterator<T> iterator) {
-      myIterator = iterator;
-      advance();
-    }
-
-    @Override
-    public boolean hasNext() {
-      return myValidValue;
-    }
-
-    @Override
-    public T next() {
-      if (myValidValue) {
-        T save = myValue;
-        advance();
-        return save;
-      }
-      throw new NoSuchElementException();
-    }
-
-    public T peek() {
-      if (myValidValue) {
-        return myValue;
-      }
-      throw new NoSuchElementException();
-    }
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException();
-    }
-
-    private void advance() {
-      myValidValue = myIterator.hasNext();
-      myValue = myValidValue ? myIterator.next() : null;
     }
   }
 }
