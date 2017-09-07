@@ -23,6 +23,7 @@ import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
@@ -41,6 +42,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 public class DartModuleBuilder extends ModuleBuilder {
+  private static final Key<Boolean> PUB_GET_SCHEDULED_KEY = Key.create("PUB_GET_SCHEDULED_KEY");
 
   private DartProjectWizardData myWizardData;
 
@@ -139,8 +141,15 @@ public class DartModuleBuilder extends ModuleBuilder {
     DartiumUtil.applyDartiumSettings(FileUtilRt.toSystemIndependentName(wizardData.dartiumPath), wizardData.dartiumSettings);
   }
 
+  public static boolean isPubGetScheduledForNewlyCreatedProject(@NotNull final Project project) {
+    return project.getUserData(PUB_GET_SCHEDULED_KEY) == Boolean.TRUE;
+  }
+
   private static void scheduleFilesOpeningAndPubGet(@NotNull final Module module, @NotNull final Collection<VirtualFile> files) {
+    module.getProject().putUserData(PUB_GET_SCHEDULED_KEY, Boolean.TRUE);
     runWhenNonModalIfModuleNotDisposed(() -> {
+      module.getProject().putUserData(PUB_GET_SCHEDULED_KEY, null);
+
       final FileEditorManager manager = FileEditorManager.getInstance(module.getProject());
       for (VirtualFile file : files) {
         manager.openFile(file, true);
@@ -157,6 +166,7 @@ public class DartModuleBuilder extends ModuleBuilder {
 
   static void runWhenNonModalIfModuleNotDisposed(@NotNull final Runnable runnable, @NotNull final Module module) {
     // runnable must not be executed immediately because the new project model might be not yet committed, so Dart SDK won't be found
+    // In WebStorm we get already initialized project at this point, but in IntelliJ IDEA - not yet initialized.
 
     if (module.getProject().isInitialized()) {
       ApplicationManager.getApplication().invokeLater(runnable, ModalityState.NON_MODAL, module.getDisposed());
