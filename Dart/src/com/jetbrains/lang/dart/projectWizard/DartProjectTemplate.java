@@ -2,7 +2,6 @@ package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.impl.WebBrowserServiceImpl;
 import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration;
 import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType;
@@ -14,7 +13,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.Consumer;
 import com.intellij.util.Url;
-import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfigurationType;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunnerParameters;
@@ -100,9 +98,6 @@ public abstract class DartProjectTemplate {
 
   static void createWebRunConfiguration(final @NotNull Module module, final @NotNull VirtualFile htmlFile) {
     DartModuleBuilder.runWhenNonModalIfModuleNotDisposed(() -> {
-      final WebBrowser dartium = DartiumUtil.getDartiumBrowser();
-      if (dartium == null) return;
-
       final Url url = WebBrowserServiceImpl.getDebuggableUrl(PsiManager.getInstance(module.getProject()).findFile(htmlFile));
       if (url == null) return;
 
@@ -112,7 +107,6 @@ public abstract class DartProjectTemplate {
           runManager.createRunConfiguration("", JavascriptDebugConfigurationType.getTypeInstance().getFactory());
 
         ((JavaScriptDebugConfiguration)settings.getConfiguration()).setUri(url.toDecodedForm());
-        ((JavaScriptDebugConfiguration)settings.getConfiguration()).setEngineId(dartium.getId().toString());
         settings.setName(((JavaScriptDebugConfiguration)settings.getConfiguration()).suggestedName());
 
         runManager.addConfiguration(settings, false);

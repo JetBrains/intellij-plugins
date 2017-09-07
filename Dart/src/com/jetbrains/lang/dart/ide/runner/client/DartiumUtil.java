@@ -95,10 +95,6 @@ public class DartiumUtil {
     }
   }
 
-  public static boolean isCheckedMode(@NotNull final Map<String, String> envVars) {
-    return hasDartFlag(envVars, CHECKED_MODE_OPTION);
-  }
-
   private static boolean hasDartFlag(final Map<String, String> envVars, final String dartFlag) {
     final String dartFlags = envVars.get(DART_FLAGS_ENV_VAR);
     return dartFlags != null && (dartFlags.trim().equals(dartFlag) ||
