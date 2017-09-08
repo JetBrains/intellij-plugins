@@ -11,7 +11,7 @@
     }
 
     static function doIt3(c:Class):* {
-      if (false) doIt3(c);
+      if (true) doIt3(c);
     }
   </mx:Script>
 

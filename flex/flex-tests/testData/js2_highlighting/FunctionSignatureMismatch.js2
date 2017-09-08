@@ -50,7 +50,7 @@ a.toString();
 var arr:Array;
 arr = arr.concat([a]).concat([a]);
 
-throw new Error("Bug");
+
 
 function foo(a:int, ... b:Array) {
   foo(1,[1],[1]);
@@ -76,3 +76,4 @@ var exec:Array = y.exec("tttt");
 Date.parse("111");
 function replacer():String { return ""; }
 'aaa'.replace(/\w/, replacer);
+throw new Error("Bug");

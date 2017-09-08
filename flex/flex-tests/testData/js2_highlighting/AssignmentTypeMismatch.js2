@@ -45,7 +45,7 @@ function Test():void {
 }
 
 function test2():ITest {
-  if (false) return <error descr="Returned expression type String is not assignable to type ITest">new String</error>
+  if (x) return <error descr="Returned expression type String is not assignable to type ITest">new String</error>
   return new TestImpl()
 }
 

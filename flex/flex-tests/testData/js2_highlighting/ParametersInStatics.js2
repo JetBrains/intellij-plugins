@@ -10,7 +10,7 @@ class AAA {
   static function myfun(a:*):void {
     a = 1;
     var b;
-    if (false) myfun(a)
+    if (a) myfun(a)
     else myfun(b);
     BBB(a).aaa = 1;
   }
