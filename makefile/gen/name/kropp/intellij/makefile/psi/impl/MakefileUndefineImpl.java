@@ -1,15 +1,15 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile.psi.impl;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import name.kropp.intellij.makefile.psi.*;
+import name.kropp.intellij.makefile.psi.MakefileUndefine;
+import name.kropp.intellij.makefile.psi.MakefileVariable;
+import name.kropp.intellij.makefile.psi.MakefileVisitor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MakefileUndefineImpl extends ASTWrapperPsiElement implements MakefileUndefine {
 
@@ -29,7 +29,7 @@ public class MakefileUndefineImpl extends ASTWrapperPsiElement implements Makefi
   @Override
   @Nullable
   public MakefileVariable getVariable() {
-    return findChildByClass(MakefileVariable.class);
+    return PsiTreeUtil.getChildOfType(this, MakefileVariable.class);
   }
 
 }

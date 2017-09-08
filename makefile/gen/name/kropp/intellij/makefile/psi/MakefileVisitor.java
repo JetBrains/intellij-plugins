@@ -98,6 +98,7 @@ public class MakefileVisitor extends PsiElementVisitor {
 
   public void visitTarget(@NotNull MakefileTarget o) {
     visitNamedElement(o);
+    // visitNavigationItem(o);
   }
 
   public void visitTargetLine(@NotNull MakefileTargetLine o) {

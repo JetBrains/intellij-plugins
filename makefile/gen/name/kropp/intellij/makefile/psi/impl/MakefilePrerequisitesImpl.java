@@ -1,15 +1,16 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile.psi.impl;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import name.kropp.intellij.makefile.psi.*;
+import name.kropp.intellij.makefile.psi.MakefileNormalPrerequisites;
+import name.kropp.intellij.makefile.psi.MakefileOrderOnlyPrerequisites;
+import name.kropp.intellij.makefile.psi.MakefilePrerequisites;
+import name.kropp.intellij.makefile.psi.MakefileVisitor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MakefilePrerequisitesImpl extends ASTWrapperPsiElement implements MakefilePrerequisites {
 
@@ -29,13 +30,13 @@ public class MakefilePrerequisitesImpl extends ASTWrapperPsiElement implements M
   @Override
   @NotNull
   public MakefileNormalPrerequisites getNormalPrerequisites() {
-    return findNotNullChildByClass(MakefileNormalPrerequisites.class);
+    return notNullChild(PsiTreeUtil.getChildOfType(this, MakefileNormalPrerequisites.class));
   }
 
   @Override
   @Nullable
   public MakefileOrderOnlyPrerequisites getOrderOnlyPrerequisites() {
-    return findChildByClass(MakefileOrderOnlyPrerequisites.class);
+    return PsiTreeUtil.getChildOfType(this, MakefileOrderOnlyPrerequisites.class);
   }
 
 }
