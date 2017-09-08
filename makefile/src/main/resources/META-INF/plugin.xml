@@ -40,6 +40,7 @@ Bugfix for if directive parsing, support for recent IntelliJ platform.
     <documentationProvider implementation="name.kropp.intellij.makefile.MakefileDocumentationProvider"/>
 
     <stubElementTypeHolder class="name.kropp.intellij.makefile.psi.MakefileTypes" />
+    <stubIndex implementation="name.kropp.intellij.makefile.MakefileTargetIndex" />
 
     <internalFileTemplate name="Makefile" />
   </extensions>
