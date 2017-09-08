@@ -2,27 +2,26 @@ package name.kropp.intellij.makefile.stub
 
 import com.intellij.psi.stubs.*
 import name.kropp.intellij.makefile.MakefileLanguage
+import name.kropp.intellij.makefile.TARGET_INDEX_KEY
 import name.kropp.intellij.makefile.psi.MakefileTarget
+import name.kropp.intellij.makefile.psi.impl.MakefileTargetImpl
 
-object MakefileTargetStubElementType : IStubElementType<MakefileTargetStubElement, MakefileTarget>("MakefileTarget", MakefileLanguage) {
-  override fun createStub(p0: MakefileTarget, p1: StubElement<*>?): MakefileTargetStubElement {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
+object MakefileTargetStubElementType : IStubElementType<MakefileTargetStubElement, MakefileTarget>("TARGET", MakefileLanguage) {
+  @JvmStatic
+  fun getInstance(debugName: String) = MakefileTargetStubElementType
 
   override fun getExternalId() = "Makefile"
 
-  override fun createPsi(p0: MakefileTargetStubElement): MakefileTarget {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
+  override fun createStub(psi: MakefileTarget, parent: StubElement<*>?) = MakefileTargetStubElementImpl(parent, psi.name)
+  override fun createPsi(stub: MakefileTargetStubElement) = MakefileTargetImpl(stub, stub.stubType)
 
-  override fun indexStub(p0: MakefileTargetStubElement, p1: IndexSink) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+  override fun indexStub(stub: MakefileTargetStubElement, sink: IndexSink) {
+    sink.occurrence(TARGET_INDEX_KEY, stub.name!!)
   }
 
   override fun serialize(e: MakefileTargetStubElement, outputStream: StubOutputStream) {
     outputStream.writeName(e.name)
   }
-
   override fun deserialize(inputStream: StubInputStream, parent: StubElement<*>?) =
       MakefileTargetStubElementImpl(parent, inputStream.readName()?.string)
 }
