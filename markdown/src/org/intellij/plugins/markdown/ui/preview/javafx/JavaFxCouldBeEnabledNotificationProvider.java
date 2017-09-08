@@ -63,7 +63,9 @@ public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotification
         Logger.getInstance(JavaFxCouldBeEnabledNotificationProvider.class).warn("Could not install and apply OpenJFX");
       }
     });
-    panel.createActionLabel("Do not show again", () -> {
+
+    panel.createActionLabel(MarkdownBundle.message("markdown.javafx.inspection.description.hide"), () -> panel.setVisible(false));
+    panel.createActionLabel(MarkdownBundle.message("markdown.javafx.inspection.description.dont.ask.again"), () -> {
       PropertiesComponent.getInstance().setValue(DONT_ASK_TO_CHANGE_PROVIDER_TYPE_KEY, true);
       EditorNotifications.updateAll();
     });
