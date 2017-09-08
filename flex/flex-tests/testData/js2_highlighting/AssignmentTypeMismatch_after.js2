@@ -45,7 +45,7 @@ function Test():void {
 }
 
 function test2():ITest {
-  if (false) return new String
+  if (x) return new String
   return new TestImpl()
 }
 

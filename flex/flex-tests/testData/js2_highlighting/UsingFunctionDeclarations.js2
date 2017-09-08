@@ -2,7 +2,7 @@ var ff:Function = function result():Boolean { return false; };
 var bb:Boolean = ff();
 function <warning descr="Unused function foo">foo</warning>(x:Function) {
     var x2:String = x();
-    if (false) x2, foo(x(new Main()));
+    if (true) x2, foo(x(new Main()));
 }
 
 class Main {
@@ -17,5 +17,5 @@ class Main {
 }
 
 function trace(... rest):void {
-    if (false) trace(rest);
+    if (true) trace(rest);
 }

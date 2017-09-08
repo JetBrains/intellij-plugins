@@ -7,7 +7,7 @@ public class UnusedGlobalSymbols
 
   public function usedFoo() {
       bar2();
-      if (false) new XXX().test_zzz();
+      if (true) new XXX().test_zzz();
   }
 }
 }

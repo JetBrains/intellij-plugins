@@ -1,5 +1,5 @@
 class Foo {}
 function foo():Foo {
-  if (false) <error descr="Return value of type Foo is required">return;</error>
+  if (Foo) <error descr="Return value of type Foo is required">return;</error>
   return new Foo();
 }
