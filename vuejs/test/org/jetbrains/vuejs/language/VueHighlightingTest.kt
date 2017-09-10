@@ -303,4 +303,25 @@ export default {
     """)
     com.intellij.testFramework.runInInitMode{ myFixture.checkHighlighting() }
   }
+
+  fun testVForInPug() {
+    myFixture.configureByText("VForInPug.vue", """
+<template lang="pug">
+  ul
+    li(v-for="itemP in itemsP") {{ itemP.message }}
+</template>
+<script>
+  export default {
+    name: 'v-for-test',
+    data: {
+      itemsP: [
+        { message: 'Foo' },
+        { message: 'Bar' }
+      ]
+    }
+  }
+</script>
+    """)
+    com.intellij.testFramework.runInInitMode{ myFixture.checkHighlighting() }
+  }
 }

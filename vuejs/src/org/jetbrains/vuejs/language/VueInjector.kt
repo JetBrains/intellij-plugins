@@ -78,12 +78,14 @@ class VueInjector : MultiHostInjector {
     if (context is XmlAttributeValueImpl && context.parent is XmlAttribute
         && VueAttributesProvider.DEFAULT.contains((context.parent as XmlAttribute).name)) {
       val embedded = PsiTreeUtil.getChildOfType(context, JSEmbeddedContent::class.java)
-      if (embedded != null) {
+      if (embedded != null && VueJSLanguage.INSTANCE != embedded.language) {
         val literal = PsiTreeUtil.getChildOfType(embedded, JSLiteralExpressionImpl::class.java)
         if (literal != null) {
           injectInElement(literal, registrar)
           return
         }
+      } else if (embedded == null) {
+        injectInElement(context, registrar)
       }
     }
 

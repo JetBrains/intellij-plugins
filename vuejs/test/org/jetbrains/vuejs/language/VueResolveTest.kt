@@ -444,7 +444,7 @@ export default {
   }
 
   fun testVForDetailsResolve() {
-    myFixture.configureByText("IntoVForVar.vue", """
+    myFixture.configureByText("IntoVForDetailsResolve.vue", """
 <template>
   <ul>
     <li v-for="item in items">
@@ -469,5 +469,189 @@ export default {
     TestCase.assertNotNull(part)
     TestCase.assertTrue(part is JSProperty)
     TestCase.assertTrue(part!!.parent is JSObjectLiteralExpression)
+  }
+
+  fun testVForIteratedExpressionResolve() {
+    myFixture.configureByText("VForIteratedExpressionResolve.vue", """
+<template>
+  <ul>
+    <li v-for="item in <caret>items">
+      {{ item.message }}
+    </li>
+  </ul>
+</template>
+<script>
+  export default {
+    name: 'v-for-test',
+    data: {
+      items: [
+        { message: 'Foo' }
+      ]
+    }
+  }
+</script>
+""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val part = reference!!.resolve()
+    TestCase.assertNotNull(part)
+    TestCase.assertTrue(part is JSProperty)
+    TestCase.assertTrue(part!!.parent is JSObjectLiteralExpression)
+  }
+
+  fun testIntoVForVarInPug() {
+    myFixture.configureByText("IntoVForVarInPug.vue", """
+<template lang="pug">
+  ul
+    li(v-for="item in items") {{ <caret>item.message }}
+</template>
+""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val variable = reference!!.resolve()
+    TestCase.assertNotNull(variable)
+    TestCase.assertTrue(variable!!.parent.parent is VueVForExpression)
+  }
+
+  fun testVForDetailsResolveInPug() {
+    myFixture.configureByText("IntoVForDetailsResolveInPug.vue", """
+<template lang="pug">
+  ul
+    li(v-for="item in items") {{ item.<caret>message }}
+</template>
+<script>
+  export default {
+    name: 'v-for-test',
+    data: {
+      items: [
+        { message: 'Foo' }
+      ]
+    }
+  }
+</script>
+""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val part = reference!!.resolve()
+    TestCase.assertNotNull(part)
+    TestCase.assertTrue(part is JSProperty)
+    TestCase.assertTrue(part!!.parent is JSObjectLiteralExpression)
+  }
+
+  fun testVForIteratedExpressionResolveInPug() {
+    myFixture.configureByText("VForIteratedExpressionResolveInPug.vue", """
+<template lang="pug">
+  ul
+    li(v-for="item in <caret>itemsPP") {{ item.message }}
+</template>
+<script>
+  export default {
+    name: 'v-for-test',
+    data: {
+      itemsPP: [
+        { message: 'Foo' }
+      ]
+    }
+  }
+</script>
+""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val part = reference!!.resolve()
+    TestCase.assertNotNull(part)
+    TestCase.assertTrue(part is JSProperty)
+    TestCase.assertTrue(part!!.parent is JSObjectLiteralExpression)
+  }
+
+  fun testIntoVForVarInHtml() {
+    myFixture.configureByText("a.vue", "")
+    myFixture.configureByText("IntoVForVarInHtml.html", """
+<html>
+  <ul>
+    <li v-for="itemHtml in itemsHtml">
+      {{ <caret>itemHtml.message }}
+    </li>
+  </ul>
+</html>
+""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val variable = reference!!.resolve()
+    TestCase.assertNotNull(variable)
+    TestCase.assertTrue(variable!!.parent.parent is VueVForExpression)
+  }
+
+  fun testKeyIntoForResolve() {
+    myFixture.configureByText("KeyIntoForResolve.vue", """
+<template>
+  <li v-for="(item1, index1) in items1" :key="<caret>item1" v-if="item1 > 0">
+    {{ parentMessage1 }} - {{ index1 }} - {{ item1.message1 }}
+  </li>
+</template>
+<script>
+  export default {
+    data: {
+      parentMessage1: 'Parent',
+      items1: [
+        { message1: 'Foo' },
+        { message1: 'Bar' }
+      ]
+    }
+  }
+</script>
+""".trimIndent())
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val variable = reference!!.resolve()
+    TestCase.assertNotNull(variable)
+    TestCase.assertTrue(variable!!.parent is JSVarStatement)
+    TestCase.assertTrue(variable.parent.parent is JSParenthesizedExpression)
+    TestCase.assertTrue(variable.parent.parent.parent is VueVForExpression)
+  }
+
+  fun testVIfIntoForResolve() {
+    myFixture.configureByText("VIfIntoForResolve.vue", """
+<template>
+  <li v-for="(item1, index1) in items1" :key="item1" v-if="<caret>item1 > 0">
+    {{ parentMessage1 }} - {{ index1 }} - {{ item1.message1 }}
+  </li>
+</template>
+<script>
+  export default {
+    data: {
+      parentMessage1: 'Parent',
+      items1: [
+        { message1: 'Foo' },
+        { message1: 'Bar' }
+      ]
+    }
+  }
+</script>
+""".trimIndent())
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val variable = reference!!.resolve()
+    TestCase.assertNotNull(variable)
+    TestCase.assertTrue(variable!!.parent is JSVarStatement)
+    TestCase.assertTrue(variable.parent.parent is JSParenthesizedExpression)
+    TestCase.assertTrue(variable.parent.parent.parent is VueVForExpression)
+  }
+
+  fun testKeyIntoForResolveHtml() {
+    myFixture.configureByText("a.vue", "")
+    myFixture.configureByText("KeyIntoForResolveHtml.html", """
+<html>
+  <li id="id123" v-for="(item1, index1) in items1" :key="<caret>item1" v-if="item1 > 0">
+    {{ parentMessage1 }} - {{ index1 }} - {{ item1.message1 }}
+  </li>
+</html>
+""".trimIndent())
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val variable = reference!!.resolve()
+    TestCase.assertNotNull(variable)
+    TestCase.assertTrue(variable!!.parent is JSVarStatement)
+    TestCase.assertTrue(variable.parent.parent is JSParenthesizedExpression)
+    TestCase.assertTrue(variable.parent.parent.parent is VueVForExpression)
   }
 }
