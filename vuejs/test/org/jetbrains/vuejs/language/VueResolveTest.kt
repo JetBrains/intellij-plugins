@@ -584,7 +584,7 @@ export default {
   fun testKeyIntoForResolve() {
     myFixture.configureByText("KeyIntoForResolve.vue", """
 <template>
-  <li v-for="(item1, index1) in items1" :key="<caret>item1" v-if="item1 > 0">
+  <li v-for="(item1, index1) of items1" :key="<caret>item1" v-if="item1 > 0">
     {{ parentMessage1 }} - {{ index1 }} - {{ item1.message1 }}
   </li>
 </template>
@@ -653,5 +653,96 @@ export default {
     TestCase.assertTrue(variable!!.parent is JSVarStatement)
     TestCase.assertTrue(variable.parent.parent is JSParenthesizedExpression)
     TestCase.assertTrue(variable.parent.parent.parent is VueVForExpression)
+  }
+
+  fun testResolveByMountedVueInstanceInData() {
+    myFixture.configureByText("a.vue", "")
+    myFixture.configureByText("ResolveByMountedVueInstanceInData.js", """
+new Vue({
+  el: '#ResolveByMountedVueInstanceInData',
+  data: {
+    messageToFind: 'Parent'
+  }
+})
+""")
+    myFixture.configureByText("ResolveByMountedVueInstanceInData.html", """
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<ul id="ResolveByMountedVueInstanceInData">
+  {{ <caret>messageToFind }}
+</ul>
+</body>
+</html>
+""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val property = reference!!.resolve()
+    TestCase.assertNotNull(property)
+    TestCase.assertTrue(property is JSProperty)
+    TestCase.assertTrue(property!!.parent.parent is JSProperty)
+    TestCase.assertEquals("data", (property.parent.parent as JSProperty).name)
+  }
+
+  fun testResolveByMountedVueInstanceInProps() {
+    myFixture.configureByText("a.vue", "")
+    myFixture.configureByText("ResolveByMountedVueInstanceInProps.js", """
+new Vue({
+  el: '#ResolveByMountedVueInstanceInProps',
+  props: ['compProp']
+})
+""")
+    myFixture.configureByText("ResolveByMountedVueInstanceInProps.html", """
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<ul id="ResolveByMountedVueInstanceInProps">
+  {{ <caret>compProp }}
+</ul>
+</body>
+</html>
+""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val arrayItem = reference!!.resolve()
+    TestCase.assertNotNull(arrayItem)
+    TestCase.assertTrue(arrayItem is JSLiteralExpression)
+    TestCase.assertTrue(arrayItem!!.parent.parent is JSProperty)
+    TestCase.assertEquals("props", (arrayItem.parent.parent as JSProperty).name)
+  }
+
+  fun testResolveVForIterableByMountedVueInstance() {
+    myFixture.configureByText("a.vue", "")
+    myFixture.configureByText("ResolveVForIterableByMountedVueInstance.js", """
+new Vue({
+  el: '#ResolveVForIterableByMountedVueInstance',
+  data: {
+    parentMessage: 'Parent',
+    mountedItems: [
+      { message2233: 'Foo' },
+      { message2233: 'Bar' }
+    ]
+  }
+})
+""")
+    myFixture.configureByText("ResolveVForIterableByMountedVueInstance.html", """
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<ul id="ResolveVForIterableByMountedVueInstance">
+  <li v-for="(item, index) in <caret>mountedItems">
+    {{parentMessage }} - {{ index }} - {{item.message2233 }}
+  </li>
+</ul>
+</body>
+</html>
+""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val property = reference!!.resolve()
+    TestCase.assertNotNull(property)
+    TestCase.assertTrue(property is JSProperty)
+    TestCase.assertTrue(property!!.parent.parent is JSProperty)
+    TestCase.assertEquals("data", (property.parent.parent as JSProperty).name)
   }
 }

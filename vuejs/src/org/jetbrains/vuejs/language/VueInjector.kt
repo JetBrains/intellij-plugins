@@ -42,7 +42,8 @@ class VueInjector : MultiHostInjector {
 
     private fun calculateDelimitersFromIndex(project: Project, key: String): Pair<String, PsiElement>? {
       val element = resolve("", GlobalSearchScope.projectScope(project), VueOptionsIndex.KEY) ?: return null
-      val obj = PsiTreeUtil.getParentOfType(element, JSObjectLiteralExpression::class.java) ?: return null
+      val obj = element as? JSObjectLiteralExpression ?:
+                PsiTreeUtil.getParentOfType(element, JSObjectLiteralExpression::class.java) ?: return null
       val property = findProperty(obj, "delimiters") ?: return null
       val delimiter = getDelimiterValue(property, key) ?: return null
       return Pair.create(delimiter, element)

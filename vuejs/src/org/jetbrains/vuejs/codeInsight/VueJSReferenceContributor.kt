@@ -62,7 +62,7 @@ class VueComponentLocalReference(reference: JSReferenceExpressionImpl,
   override fun resolveInner(): Array<ResolveResult> {
     getParentOfType(element, JSFunction::class.java, true) ?: return emptyArray()
     // let function context around the expression be enough to think it is used somewhere in assembling the exported object
-    return org.jetbrains.vuejs.codeInsight.VueJSReferenceExpressionResolver(element, false).resolveInLocalScript(element) ?: emptyArray()
+    return org.jetbrains.vuejs.codeInsight.VueJSReferenceExpressionResolver(element, false).resolveInCurrentComponentDefinition(element) ?: emptyArray()
   }
 
   override fun getVariants(): Array<Any> {
