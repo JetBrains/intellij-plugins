@@ -8,6 +8,8 @@ import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
+import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
@@ -28,6 +30,8 @@ import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.index.INDICES
 import org.jetbrains.vuejs.index.VueComponentsIndex
 import org.jetbrains.vuejs.index.VueOptionsIndex
+import org.jetbrains.vuejs.language.VueJSLanguage
+import org.jetbrains.vuejs.language.VueVForExpression
 
 class VueFrameworkHandler : FrameworkIndexingHandler() {
   init {
@@ -127,6 +131,19 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   override fun indexImplicitElement(element: JSImplicitElementStructure, sink: IndexSink?): Boolean {
     INDICES.filter { it.value == element.userString }.forEach { sink?.occurrence(it.key, element.name); return true }
+    return false
+  }
+
+  override fun addTypeFromResolveResult(evaluator: JSTypeEvaluator?, result: PsiElement?, hasSomeType: Boolean): Boolean {
+    if (result == null || evaluator == null || !org.jetbrains.vuejs.index.hasVue(result.project)) return false
+    if (result is JSVariable && result.language is VueJSLanguage) {
+      val vFor = result.parent as? VueVForExpression ?: result.parent.parent as? VueVForExpression
+      val vForRef = vFor?.getReferenceExpression()
+      val variables = vFor?.getVarStatement()?.variables
+      if (vForRef != null && variables != null && !variables.isEmpty() && result == variables[0]) {
+        if (JSPsiImplUtils.calculateTypeOfVariableForIteratedExpression(evaluator, vForRef, vFor)) return true
+      }
+    }
     return false
   }
 }

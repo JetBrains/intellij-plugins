@@ -5,6 +5,9 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeIn
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection
 import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.inspections.JSAnnotatorInspection
+import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection
+import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.util.ThrowableRunnable
@@ -19,6 +22,9 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     myFixture.enableInspections(HtmlUnknownAttributeInspection())
     myFixture.enableInspections(HtmlUnknownTagInspection())
     myFixture.enableInspections(RequiredAttributesInspection())
+    myFixture.enableInspections(JSUnusedLocalSymbolsInspection())
+    myFixture.enableInspections(JSAnnotatorInspection())
+    myFixture.enableInspections(JSUnresolvedVariableInspection())
   }
 
   fun testDirectivesWithoutParameters() {
@@ -47,7 +53,9 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
 {{todos}}
 </template>
 <script>
-    let todos = 1;
+    export default {
+      data: () => ({todos: [{done: true}]})
+    }
 </script>
 """)
       myFixture.checkHighlighting()
@@ -261,6 +269,7 @@ const props = ['oneTwo']
 </template>
 <script>
 export default {
+  props: ['distract'],
   name: 'custom',
   data: function() {
     return {items:[]};
@@ -269,5 +278,29 @@ export default {
 </script>
 """)
     myFixture.checkHighlighting()
+  }
+
+  fun testVFor() {
+    myFixture.configureByText("VFor.vue", """
+<template>
+  <ul>
+    <li v-for="item in items">
+      {{ item.message }}
+    </li>
+  </ul>
+</template>
+<script>
+  export default {
+    name: 'v-for-test',
+    data: {
+      items: [
+        { message: 'Foo' },
+        { message: 'Bar' }
+      ]
+    }
+  }
+</script>
+    """)
+    com.intellij.testFramework.runInInitMode{ myFixture.checkHighlighting() }
   }
 }

@@ -7,29 +7,63 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver
+import com.intellij.openapi.util.Condition
+import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementResolveResult
+import com.intellij.psi.PsiFile
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.impl.source.resolve.ResolveCache
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlFile
+import com.intellij.psi.xml.XmlTag
+import org.jetbrains.vuejs.language.VueVForExpression
 
 /**
  * @author Irina.Chernushina on 7/28/2017.
  */
 class VueJSSpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
   override fun createReferenceExpressionResolver(referenceExpression: JSReferenceExpressionImpl?,
-                                                 ignorePerformanceLimits: Boolean): ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> {
-    return VueJSReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits)
-  }
-
-
+                                                 ignorePerformanceLimits: Boolean): ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> =
+    VueJSReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits)
 }
 
 class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressionImpl?,
                                        ignorePerformanceLimits: Boolean) :
     JSReferenceExpressionResolver(referenceExpression!!, ignorePerformanceLimits) {
-  override fun resolve(ref: JSReferenceExpressionImpl, incompleteCode: Boolean): Array<ResolveResult> {
-    return resolveInLocalScript(ref) ?: super.resolve(ref, incompleteCode)
+  override fun resolve(ref: JSReferenceExpressionImpl, incompleteCode: Boolean): Array<ResolveResult> =
+    resolveInLocalContext(ref) ?:
+    resolveInLocalScript(ref) ?:
+    super.resolve(ref, incompleteCode)
+
+  private fun resolveInLocalContext(ref: JSReferenceExpressionImpl): Array<ResolveResult>? {
+    if (ref.qualifier != null) return null
+
+    val injectedLanguageManager = InjectedLanguageManager.getInstance(ref.project)
+    val host = injectedLanguageManager.getInjectionHost(ref) ?: return null
+    val elRef: Ref<PsiElement> = Ref(null)
+    var result = false
+    PsiTreeUtil.findFirstParent(host, Condition {
+      if (it is PsiFile) return@Condition true
+
+      val vForAttribute: XmlAttribute? = (it as? XmlTag)?.getAttribute("v-for")
+      if (vForAttribute != null && vForAttribute.valueElement != null) {
+        val vFor = PsiTreeUtil.findChildOfType(vForAttribute.valueElement, VueVForExpression::class.java)
+        if (vFor != null) {
+          val foundVar = vFor.getVarStatement()?.variables?.firstOrNull { it.name == ref.referenceName }
+          result = foundVar != null
+          elRef.set(foundVar)
+        }
+      }
+      result
+    })
+    return if (elRef.isNull) {
+      null
+    }
+    else {
+      arrayOf(PsiElementResolveResult(elRef.get()))
+    }
   }
 
   fun resolveInLocalScript(ref: JSReferenceExpression): Array<ResolveResult>? {

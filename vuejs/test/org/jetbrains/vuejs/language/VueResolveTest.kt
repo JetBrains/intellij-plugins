@@ -1,10 +1,7 @@
 package org.jetbrains.vuejs.language
 
 import com.intellij.lang.javascript.JSTestUtils
-import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
-import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.lang.javascript.psi.JSProperty
-import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
@@ -427,5 +424,50 @@ export default {
       TestCase.assertTrue(property is JSProperty)
       TestCase.assertEquals(expectedPropertyName, (property as JSProperty).name)
     }
+  }
+
+  fun testIntoVForVar() {
+    myFixture.configureByText("IntoVForVar.vue", """
+<template>
+  <ul>
+    <li v-for="item in items">
+      {{ <caret>item.message }}
+    </li>
+  </ul>
+</template>
+""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val variable = reference!!.resolve()
+    TestCase.assertNotNull(variable)
+    TestCase.assertTrue(variable!!.parent.parent is VueVForExpression)
+  }
+
+  fun testVForDetailsResolve() {
+    myFixture.configureByText("IntoVForVar.vue", """
+<template>
+  <ul>
+    <li v-for="item in items">
+      {{ item.<caret>message }}
+    </li>
+  </ul>
+</template>
+<script>
+  export default {
+    name: 'v-for-test',
+    data: {
+      items: [
+        { message: 'Foo' }
+      ]
+    }
+  }
+</script>
+""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val part = reference!!.resolve()
+    TestCase.assertNotNull(part)
+    TestCase.assertTrue(part is JSProperty)
+    TestCase.assertTrue(part!!.parent is JSObjectLiteralExpression)
   }
 }
