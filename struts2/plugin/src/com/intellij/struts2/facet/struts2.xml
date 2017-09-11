@@ -1,46 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <artifacts>
-  <artifact name="Struts 2" version="2.3.20.1">
-    <item name="struts2-core.jar" version="2.3.20.1"
-          url="http://central.maven.org/maven2/org/apache/struts/struts2-core/2.3.20.1/struts2-core-2.3.20.1.jar">
+  <artifact name="Struts 2" version="2.5.13">
+    <item name="struts2-core.jar" version="2.5.13"
+          url="http://central.maven.org/maven2/org/apache/struts/struts2-core/2.5.13/struts2-core-2.5.13.jar">
       <required-class fqn="org.apache.struts2.StrutsConstants"/>
     </item>
-    <item name="freemarker.jar" version="2.3.19"
-          url="http://central.maven.org/maven2/org/freemarker/freemarker/2.3.19/freemarker-2.3.19.jar">
+    <item name="struts2-annotations.jar" version="1.0.6"
+          url="http://central.maven.org/maven2/org/apache/struts/struts-annotations/1.0.6/struts-annotations-1.0.6.jar">
+    </item>
+    <item name="freemarker.jar" version="2.3.23"
+          url="http://central.maven.org/maven2/org/freemarker/freemarker/2.3.23/freemarker-2.3.23.jar">
       <required-class fqn="freemarker.core.TemplateElement"/>
     </item>
-    <item name="xwork-core.jar" version="2.3.20.1"
-          url="http://central.maven.org/maven2/org/apache/struts/xwork/xwork-core/2.3.20.1/xwork-core-2.3.20.1.jar">
-      <required-class fqn="com.opensymphony.xwork2.XWorkException"/>
-    </item>
-    <item name="ognl.jar" version="3.0.6"
-          url="http://central.maven.org/maven2/ognl/ognl/3.0.6/ognl-3.0.6.jar">
+    <item name="ognl.jar" version="3.1.15"
+          url="http://central.maven.org/maven2/ognl/ognl/3.1.15/ognl-3.1.15.jar">
       <required-class fqn="ognl.Ognl"/>
     </item>
-    <item name="commons-fileupload.jar" version="1.3.1"
-          url="http://central.maven.org/maven2/commons-fileupload/commons-fileupload/1.3.1/commons-fileupload-1.3.1.jar">
+    <item name="commons-fileupload.jar" version="1.3.3"
+          url="http://central.maven.org/maven2/commons-fileupload/commons-fileupload/1.3.3/commons-fileupload-1.3.3.jar">
       <required-class fqn="org.apache.commons.fileupload.FileUpload"/>
     </item>
-    <item name="commons-lang.jar" version="3.2"
-          url="http://central.maven.org/maven2/org/apache/commons/commons-lang3/3.2/commons-lang3-3.2.jar">
+    <item name="commons-lang.jar" version="3.6"
+          url="http://central.maven.org/maven2/org/apache/commons/commons-lang3/3.6/commons-lang3-3.6.jar">
       <required-class fqn="org.apache.commons.lang3.ArrayUtils"/>
     </item>
-    <item name="commons-io.jar" version="2.2"
-          url="http://central.maven.org/maven2/commons-io/commons-io/2.2/commons-io-2.2.jar">
+    <item name="commons-io.jar" version="2.5"
+          url="http://central.maven.org/maven2/commons-io/commons-io/2.5/commons-io-2.5.jar">
       <required-class fqn="org.apache.commons.io.FileUtils"/>
-    </item>
-    <item name="asm.jar" version="5.0.2"
-          url="http://central.maven.org/maven2/org/ow2/asm/asm/5.0.2/asm-5.0.2.jar">
-    </item>
-    <item name="asm-commons.jar" version="5.0.2"
-          url="http://central.maven.org/maven2/org/ow2/asm/asm-commons/5.0.2/asm-commons-5.0.2.jar">
-    </item>
-    <item name="asm-tree.jar" version="5.0.2"
-          url="http://central.maven.org/maven2/org/ow2/asm/asm-tree/5.0.2/asm-tree-5.0.2.jar">
-    </item>
-    <item name="javassist.jar" version="3.11.0.GA"
-          url="http://central.maven.org/maven2/javassist/javassist/3.11.0.GA/javassist-3.11.0.GA.jar">
-      <required-class fqn="javassist.ClassPool"/>
     </item>
   </artifact>
 </artifacts>
