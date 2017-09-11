@@ -599,7 +599,7 @@ export default {
     }
   }
 </script>
-""".trimIndent())
+""")
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
     val variable = reference!!.resolve()
@@ -627,7 +627,7 @@ export default {
     }
   }
 </script>
-""".trimIndent())
+""")
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
     val variable = reference!!.resolve()
@@ -645,7 +645,7 @@ export default {
     {{ parentMessage1 }} - {{ index1 }} - {{ item1.message1 }}
   </li>
 </html>
-""".trimIndent())
+""")
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
     val variable = reference!!.resolve()
@@ -744,5 +744,21 @@ new Vue({
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertTrue(property!!.parent.parent is JSProperty)
     TestCase.assertEquals("data", (property.parent.parent as JSProperty).name)
+  }
+
+  fun testKeyIntoForResolvePug() {
+    myFixture.configureByText("KeyIntoForResolvePug.vue", """
+<template lang="pug">
+  ul
+    li(id="id123" v-for="(item123, index1) in items1", :key="<caret>item123") {{ parentMessage1 }}
+</template>
+""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val variable = reference!!.resolve()
+    TestCase.assertNotNull(variable)
+    TestCase.assertTrue(variable!!.parent is JSVarStatement)
+    TestCase.assertTrue(variable.parent.parent is JSParenthesizedExpression)
+    TestCase.assertTrue(variable.parent.parent.parent is VueVForExpression)
   }
 }
