@@ -2,12 +2,12 @@ package org.jetbrains.vuejs.language
 
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate
 import com.intellij.ide.highlighter.HtmlFileType
-import com.intellij.lang.javascript.JSInjectionBracesUtil
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.util.Pair
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.util.NullableFunction
 import org.jetbrains.vuejs.VueFileType
 
 /**
@@ -114,6 +114,34 @@ class VueTypedHandlerTest : LightPlatformCodeInsightFixtureTestCase() {
     myFixture.checkResult("{{{text}}}<caret>")
   }
 
+  fun testNoInterpolationInsideScript() {
+    myFixture.configureByText(HtmlFileType.INSTANCE, """
+<template></template>
+<script>{<caret></script>
+""")
+    doInterpolationBracesCompleterTest("{{", "}}", '{', false)
+    myFixture.checkResult("""
+<template></template>
+<script>{{<caret></script>
+""")
+  }
+
+  fun testNoInterpolationInsideScriptContents() {
+    myFixture.configureByText(HtmlFileType.INSTANCE, """
+<template></template>
+<script>{<caret>
+export default
+</script>
+""")
+    doInterpolationBracesCompleterTest("{{", "}}", '{', false)
+    myFixture.checkResult("""
+<template></template>
+<script>{{<caret>}
+export default
+</script>
+""")
+  }
+
   private fun doInterpolationBracesCompleterTest(start: String,
                                                  end: String,
                                                  typed: Char, addSpace: Boolean) {
@@ -125,7 +153,7 @@ class VueTypedHandlerTest : LightPlatformCodeInsightFixtureTestCase() {
           val oldWhitespace = settings.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS
           try {
             settings.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS = addSpace
-            val result = JSInjectionBracesUtil.InterpolationBracesCompleter { element -> Pair.create(start, end) }
+            val result = VueInterpolationBracesCompleter(NullableFunction { Pair.create(start, end) })
               .beforeCharTyped(typed, myFixture.project, myFixture.editor, myFixture.file)
             if (TypedHandlerDelegate.Result.CONTINUE == result) {
               myFixture.type(typed)
