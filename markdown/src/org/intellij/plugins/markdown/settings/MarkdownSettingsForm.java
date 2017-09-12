@@ -5,7 +5,6 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.EditorSettings;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -41,8 +40,11 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 
 public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, MarkdownPreviewSettings.Holder, Disposable {
+  private static final String JAVA_FX_HTML_PANEL_PROVIDER = "JavaFxHtmlPanelProvider";
+  private static final String LOBO_HTML_PANEL_PROVIDER = "LoboHtmlPanelProvider";
   private JPanel myMainPanel;
   private JBCheckBox myCssFromURIEnabled;
   private TextFieldWithBrowseButton myCssURI;
@@ -54,28 +56,41 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   private JBCheckBox myUseGrayscaleRenderingForJBCheckBox;
   private JPanel myPreviewTitledSeparator;
   private JBCheckBox myAutoScrollCheckBox;
+  private JBCheckBox myPreviewWithJavaFX;
+  private JPanel myMultipleProvidersPreviewPanel;
 
   @NotNull
   private String myCssText = "";
   @Nullable
-  private Editor myEditor;
+  private EditorEx myEditor;
   @NotNull
-  private final ActionListener myUpdateListener;
+  private final ActionListener myCssURIListener;
+  @NotNull
+  private final ActionListener myCustomCssTextListener;
 
   private Object myLastItem;
   private EnumComboBoxModel<SplitFileEditor.SplitEditorLayout> mySplitLayoutModel;
   private CollectionComboBoxModel<MarkdownHtmlPanelProvider.ProviderInfo> myPreviewPanelModel;
 
   public MarkdownSettingsForm() {
-    myUpdateListener = new ActionListener() {
+    myCssURIListener = new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         myCssURI.setEnabled(myCssFromURIEnabled.isSelected());
-        myEditorPanel.setVisible(myApplyCustomCssText.isSelected());
       }
     };
-    myCssFromURIEnabled.addActionListener(myUpdateListener);
-    myApplyCustomCssText.addActionListener(myUpdateListener);
+
+    myCustomCssTextListener = new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        adjustCSSRulesAvailability();
+      }
+    };
+
+    adjustCSSRulesAvailability();
+
+    myCssFromURIEnabled.addActionListener(myCssURIListener);
+    myApplyCustomCssText.addActionListener(myCustomCssTextListener);
     myCssURI.addBrowseFolderListener(new TextBrowseFolderListener(FileChooserDescriptorFactory.createSingleFileDescriptor("css")) {
       @NotNull
       @Override
@@ -83,6 +98,21 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
         return chosenFile.getUrl();
       }
     });
+
+    boolean multipleProviders = isMultipleProviders();
+    myPreviewWithJavaFX.setVisible(!multipleProviders);
+    myMultipleProvidersPreviewPanel.setVisible(multipleProviders);
+
+    updateUseGrayscaleEnabled();
+  }
+
+  void adjustCSSRulesAvailability() {
+    if (myEditor != null) {
+      boolean enabled = myApplyCustomCssText.isSelected();
+      myEditor.getDocument().setReadOnly(!enabled);
+      myEditor.getContentComponent().setEnabled(enabled);
+      myEditor.setCaretEnabled(enabled);
+    }
   }
 
   public JComponent getComponent() {
@@ -100,6 +130,26 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     createPreviewUIComponents();
   }
 
+  private void createJavaFXPreviewSettings() {
+    myPreviewWithJavaFX = new JBCheckBox(MarkdownBundle.message("markdown.settings.preview.with.javafx"));
+    myPreviewWithJavaFX.addActionListener(e -> {
+      final MarkdownHtmlPanelProvider provider = MarkdownHtmlPanelProvider.createFromInfo(getSelectedProvider());
+      final MarkdownHtmlPanelProvider.AvailabilityInfo availability = provider.isAvailable();
+
+      if (!availability.checkAvailability(myMainPanel)) {
+        //todo Do we need somehow inform user about unavailability?
+        myPreviewWithJavaFX.setSelected(false);
+      }
+      else {
+        updateUseGrayscaleEnabled();
+      }
+    });
+  }
+
+  private static boolean isMultipleProviders() {
+    return MarkdownHtmlPanelProvider.getProviders().length > 2;
+  }
+
   public void validate() throws ConfigurationException {
     if (!myCssFromURIEnabled.isSelected()) return;
 
@@ -112,7 +162,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   }
 
   @NotNull
-  private static Editor createEditor() {
+  private static EditorEx createEditor() {
     EditorFactory editorFactory = EditorFactory.getInstance();
     Document editorDocument = editorFactory.createDocument("");
     EditorEx editor = (EditorEx)editorFactory.createEditor(editorDocument);
@@ -148,12 +198,22 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     myCssURI.setText(settings.getStylesheetUri());
     myApplyCustomCssText.setSelected(settings.isTextEnabled());
     myCssText = settings.getStylesheetText();
-    if (myEditor != null && !myEditor.isDisposed()) {
-      ApplicationManager.getApplication().runWriteAction(() -> myEditor.getDocument().setText(myCssText));
-    }
+    resetEditor();
 
     //noinspection ConstantConditions
-    myUpdateListener.actionPerformed(null);
+    myCssURIListener.actionPerformed(null);
+    myCustomCssTextListener.actionPerformed(null);
+  }
+
+  void resetEditor() {
+    if (myEditor != null && !myEditor.isDisposed()) {
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        boolean writable = myEditor.getDocument().isWritable();
+        myEditor.getDocument().setReadOnly(false);
+        myEditor.getDocument().setText(myCssText);
+        myEditor.getDocument().setReadOnly(!writable);
+      });
+    }
   }
 
   @NotNull
@@ -178,7 +238,14 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
 
   private void createPreviewUIComponents() {
     myPreviewTitledSeparator = new TitledSeparator(MarkdownBundle.message("markdown.settings.preview.name"));
+    mySplitLayoutModel = new EnumComboBoxModel<>(SplitFileEditor.SplitEditorLayout.class);
+    myDefaultSplitLayout = new ComboBox(mySplitLayoutModel);
 
+    createMultipleProvidersSettings();
+    createJavaFXPreviewSettings();
+  }
+
+  private void createMultipleProvidersSettings() {
     //noinspection unchecked
     final List<MarkdownHtmlPanelProvider.ProviderInfo> providerInfos =
       ContainerUtil.mapNotNull(MarkdownHtmlPanelProvider.getProviders(),
@@ -190,9 +257,6 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
                                });
     myPreviewPanelModel = new CollectionComboBoxModel<>(providerInfos, providerInfos.get(0));
     myPreviewProvider = new ComboBox(myPreviewPanelModel);
-
-    mySplitLayoutModel = new EnumComboBoxModel<>(SplitFileEditor.SplitEditorLayout.class);
-    myDefaultSplitLayout = new ComboBox(mySplitLayoutModel);
 
     myLastItem = myPreviewProvider.getSelectedItem();
     myPreviewProvider.addItemListener(new ItemListener() {
@@ -218,15 +282,45 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   }
 
   private void updateUseGrayscaleEnabled() {
-    final MarkdownHtmlPanelProvider.ProviderInfo selected = myPreviewPanelModel.getSelected();
-    myUseGrayscaleRenderingForJBCheckBox.setVisible(selected != null && selected.getClassName().contains("JavaFxHtmlPanelProvider"));
+    final MarkdownHtmlPanelProvider.ProviderInfo selected = getSelectedProvider();
+    myUseGrayscaleRenderingForJBCheckBox.setEnabled(selected != null && isProviderOf(selected, JAVA_FX_HTML_PANEL_PROVIDER));
+  }
+
+  private static boolean isProviderOf(@NotNull MarkdownHtmlPanelProvider.ProviderInfo selected, @NotNull String provider) {
+    return selected.getClassName().contains(provider);
+  }
+
+  @NotNull
+  private static MarkdownHtmlPanelProvider getProvider(@NotNull String providerClass) {
+    for (MarkdownHtmlPanelProvider provider : MarkdownHtmlPanelProvider.getProviders()) {
+      if (isProviderOf(provider.getProviderInfo(), providerClass)) return provider;
+    }
+
+    throw new RuntimeException("Cannot find " + providerClass);
+  }
+
+  private MarkdownHtmlPanelProvider.ProviderInfo getSelectedProvider() {
+    if (isMultipleProviders()) {
+      return myPreviewPanelModel.getSelected();
+    }
+    else {
+      return myPreviewWithJavaFX.isEnabled() && myPreviewWithJavaFX.isSelected()
+             ? getProvider(JAVA_FX_HTML_PANEL_PROVIDER).getProviderInfo()
+             : getProvider(LOBO_HTML_PANEL_PROVIDER).getProviderInfo();
+    }
   }
 
   @Override
   public void setMarkdownPreviewSettings(@NotNull MarkdownPreviewSettings settings) {
-    if (myPreviewPanelModel.contains(settings.getHtmlPanelProviderInfo())) {
-      myPreviewPanelModel.setSelectedItem(settings.getHtmlPanelProviderInfo());
+    if (isMultipleProviders()) {
+      if (myPreviewPanelModel.contains(settings.getHtmlPanelProviderInfo())) {
+        myPreviewPanelModel.setSelectedItem(settings.getHtmlPanelProviderInfo());
+      }
     }
+    else {
+      myPreviewWithJavaFX.setSelected(isProviderOf(settings.getHtmlPanelProviderInfo(), JAVA_FX_HTML_PANEL_PROVIDER));
+    }
+
     mySplitLayoutModel.setSelectedItem(settings.getSplitEditorLayout());
     myUseGrayscaleRenderingForJBCheckBox.setSelected(settings.isUseGrayscaleRendering());
     myAutoScrollCheckBox.setSelected(settings.isAutoScrollPreview());
@@ -237,11 +331,11 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   @NotNull
   @Override
   public MarkdownPreviewSettings getMarkdownPreviewSettings() {
-    if (myPreviewPanelModel.getSelected() == null) {
-      throw new IllegalStateException("Should be selected always");
-    }
+    MarkdownHtmlPanelProvider.ProviderInfo provider = getSelectedProvider();
+
+    Objects.requireNonNull(provider);
     return new MarkdownPreviewSettings(mySplitLayoutModel.getSelectedItem(),
-                                       myPreviewPanelModel.getSelected(),
+                                       provider,
                                        myUseGrayscaleRenderingForJBCheckBox.isSelected(),
                                        myAutoScrollCheckBox.isSelected());
   }
