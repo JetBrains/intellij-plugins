@@ -1272,7 +1272,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
   }
 
-  protected void validateRestParameterType(JSParameter parameter) {
+  protected void validateRestParameterType(JSParameterListElement parameter) {
     PsiElement typeElement = parameter.getTypeElement();
     if (typeElement != null && !"Array".equals(typeElement.getText())) {
       final Pair<ASTNode, ASTNode> nodesBefore = getNodesBefore(typeElement, JSTokenTypes.COLON);
