@@ -89,6 +89,11 @@ class VueLexer : HtmlLexer(), VueHandledLexer {
   }
 
   override fun getTokenType(): IElementType? {
+    if (seenTemplate && "html".equals(scriptType, true)) {
+      seenContentType = false
+      scriptType = null
+      seenScript = false
+    }
     val type = super.getTokenType()
     if (seenAttribute && type == JSElementTypes.EMBEDDED_CONTENT) return VueElementTypes.EMBEDDED_JS
 //    if (interpolationLexer != null) return interpolationLexer!!.tokenType
