@@ -5,6 +5,7 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeIn
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection
 import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.util.ThrowableRunnable
 
@@ -54,7 +55,7 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
   }
 
   fun testShorthandArrowFunctionInTemplate() {
-    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.JSX, myFixture.project, ThrowableRunnable<Exception> {
       myFixture.configureByText("ShorthandArrowFunctionInTemplate.vue", """
 <template>
     <div id="app">
@@ -64,7 +65,10 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     export default {
-      data: () => ({bar: 'abc'})
+      data: () => ({bar: 'abc'}),
+      render() {
+        return <div>Hello!</div>
+      }
     }
 </script>
 """)
@@ -73,7 +77,7 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
   }
 
   fun testShorthandArrowFunctionNotParsedInECMAScript5InTemplate() {
-    myFixture.configureByText("ShorthandArrowFunctionInTemplate.vue", """
+      myFixture.configureByText("ShorthandArrowFunctionInTemplate.vue", """
 <template>
     <div id="app">
         <div @event="val =<error descr="expression expected">></error> bar = val"></div>
@@ -82,11 +86,11 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     export default {
-      data: () => ({bar: 'abc'})
+      data: (<error descr="expression expected">)</error> =<error descr="expression expected">></error> ({bar: 'abc'})<EOLError descr="statement expected"></EOLError>
     }
 </script>
 """)
-    myFixture.checkHighlighting()
+      myFixture.checkHighlighting()
   }
 
   fun testLocalPropsInArrayInCompAttrsAndWithKebabCaseAlso() {

@@ -10,6 +10,7 @@ import com.intellij.lang.ecmascript6.ES6ScriptContentProvider
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.dialects.ECMA6SyntaxHighlighterFactory
+import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.dialects.TypeScriptSyntaxHighlighterFactory
 import com.intellij.lang.typescript.TypeScriptContentProvider
 import com.intellij.lexer.EmbeddedTokenTypesProvider
@@ -108,7 +109,7 @@ open class VueLexerTest : LexerTestCase() {
   fun testEventAttribute() = doFileTest("vue")
   fun testHtmlLangTemplate() = doFileTest("vue")
 
-  override fun createLexer(): Lexer = VueLexer()
+  override fun createLexer(): Lexer = VueLexer(JSLanguageLevel.ES6)
   override fun getDirPath() = "/contrib/vuejs/testData/lexer"
 
   override fun doTest(text: String?) {

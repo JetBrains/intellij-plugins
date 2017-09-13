@@ -2,6 +2,7 @@ package org.jetbrains.vuejs.language
 
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.lookup.Lookup
+import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.openapi.application.WriteAction.run
 import com.intellij.openapi.vfs.VfsUtil
@@ -158,7 +159,8 @@ export default {
   }
 
   fun testCompleteElementsFromLocalData() {
-    myFixture.configureByText("CompleteElementsFromLocalData.vue", """
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      myFixture.configureByText("CompleteElementsFromLocalData.vue", """
 <template>{{<caret>}}</template>
 <script>
 let props = ['parentMsg'];
@@ -170,10 +172,10 @@ export default {
     groceryList: {}
   }
 }</script>""")
-    myFixture.completeBasic()
-    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
+      myFixture.completeBasic()
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
 
-    myFixture.configureByText("CompleteElementsFromLocalData.vue", """
+      myFixture.configureByText("CompleteElementsFromLocalData.vue", """
 <template>{{<caret>}}</template>
 <script>
 let props = ['parentMsg'];
@@ -188,8 +190,9 @@ export default {
             }
           }
 }</script>""")
-    myFixture.completeBasic()
-    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
+      myFixture.completeBasic()
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
+    })
   }
 
   fun testInsertAttributeWithoutValue() {

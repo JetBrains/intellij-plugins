@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.language
 import com.intellij.lang.HtmlScriptContentProvider
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageHtmlScriptContentProvider
+import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.openapi.fileTypes.FileTypeManager
 
 interface VueHandledLexer {
@@ -44,5 +45,15 @@ interface VueHandledLexer {
         .forEach { return it }
     }
     return if (getStyleType() == null) Language.findLanguageByID("PostCSS") else null
+  }
+
+  fun findScriptContentProviderVue(mimeType: String?, delegate: (String) -> HtmlScriptContentProvider?,
+                                languageLevel: JSLanguageLevel): HtmlScriptContentProvider? {
+    if (mimeType != null) {
+      return delegate(mimeType) ?: scriptContentViaLang()
+    }
+    else {
+      return LanguageHtmlScriptContentProvider.getScriptContentProvider(languageLevel.dialect)
+    }
   }
 }

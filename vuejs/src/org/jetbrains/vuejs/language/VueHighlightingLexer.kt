@@ -3,12 +3,13 @@ package org.jetbrains.vuejs.language
 import com.intellij.lang.HtmlScriptContentProvider
 import com.intellij.lang.Language
 import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lexer.HtmlHighlightingLexer
 import com.intellij.lexer._HtmlLexer
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTokenType
 
-class VueHighlightingLexer : HtmlHighlightingLexer(), VueHandledLexer {
+class VueHighlightingLexer(private val languageLevel: JSLanguageLevel) : HtmlHighlightingLexer(), VueHandledLexer {
   private var seenTemplate:Boolean = false
 
   init {
@@ -28,10 +29,8 @@ class VueHighlightingLexer : HtmlHighlightingLexer(), VueHandledLexer {
     return type
   }
 
-  override fun findScriptContentProvider(mimeType: String?): HtmlScriptContentProvider? {
-    val type = super.findScriptContentProvider(mimeType ?: "text/ecmascript-6")
-    return type ?: scriptContentViaLang()
-  }
+  override fun findScriptContentProvider(mimeType: String?): HtmlScriptContentProvider? =
+    findScriptContentProviderVue(mimeType, { super.findScriptContentProvider(mimeType) }, languageLevel)
 
   override fun getStyleLanguage(): Language? {
     return styleViaLang(ourDefaultStyleLanguage) ?: super.getStyleLanguage()

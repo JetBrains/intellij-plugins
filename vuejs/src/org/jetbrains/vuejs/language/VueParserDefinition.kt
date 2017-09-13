@@ -1,6 +1,7 @@
 package org.jetbrains.vuejs.language
 
 import com.intellij.lang.html.HTMLParserDefinition
+import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.FileViewProvider
@@ -13,7 +14,7 @@ import org.jetbrains.vuejs.VueLanguage
 
 class VueParserDefinition : HTMLParserDefinition() {
   override fun createLexer(project: Project): Lexer {
-    return VueLexer()
+    return VueLexer(JSRootConfiguration.getInstance(project).languageLevel)
   }
 
   override fun getFileNodeType(): IFileElementType {

@@ -2,6 +2,7 @@ package org.jetbrains.vuejs.language
 
 import com.intellij.lang.javascript.JSSyntaxHighlighterFactory
 import com.intellij.lang.javascript.JavascriptLanguage
+import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.mock.MockApplicationEx
 import com.intellij.mock.MockFileTypeManager
 import com.intellij.openapi.application.ApplicationManager
@@ -75,6 +76,6 @@ class VueHighlightingLexerTest : VueLexerTest() {
   fun testScriptES6() = doFileTest("vue")
   fun testTemplateHtml() = doFileTest("vue")
 
-  override fun createLexer() = VueHighlightingLexer()
+  override fun createLexer() = VueHighlightingLexer(JSLanguageLevel.ES6)
   override fun getDirPath() = "/contrib/vuejs/testData/highlightingLexer"
 }

@@ -1,5 +1,6 @@
 package org.jetbrains.vuejs.language
 
+import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
@@ -217,7 +218,8 @@ export default {
   }
 
   fun testResolveLocallyInsideComponentArrayFunctionInsideExport() {
-    myFixture.configureByText("ResolveLocallyInsideComponentArrayFunctionInsideExport.vue", """
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      myFixture.configureByText("ResolveLocallyInsideComponentArrayFunctionInsideExport.vue", """
 <script>
 let props = ['parentMsg'];
 
@@ -230,12 +232,13 @@ export default {
     }
   }
 }</script>""")
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val literal = reference!!.resolve()
-    TestCase.assertTrue(literal is JSLiteralExpression)
-    TestCase.assertTrue((literal as JSLiteralExpression).isQuotedLiteral)
-    TestCase.assertEquals("'parentMsg'", literal.text)
+      val reference = myFixture.getReferenceAtCaretPosition()
+      TestCase.assertNotNull(reference)
+      val literal = reference!!.resolve()
+      TestCase.assertTrue(literal is JSLiteralExpression)
+      TestCase.assertTrue((literal as JSLiteralExpression).isQuotedLiteral)
+      TestCase.assertEquals("'parentMsg'", literal.text)
+    })
   }
 
   fun testResolveLocallyInsideComponent() {
