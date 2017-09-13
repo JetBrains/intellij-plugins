@@ -15,7 +15,9 @@
 
 package com.intellij.struts2.dom.struts;
 
+import com.intellij.javaee.web.WebRoot;
 import com.intellij.javaee.web.facet.WebFacet;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
 import com.intellij.testFramework.LightProjectDescriptor;
@@ -33,7 +35,7 @@ public class StrutsResultResolvingTest extends StrutsLightHighlightingTestCase {
     .withStrutsLibrary()
     .withStrutsFacet()
     .withWebModuleType(getTestDataPath());
-
+  
   @Override
   @NotNull
   protected String getTestDataLocation() {
@@ -50,12 +52,15 @@ public class StrutsResultResolvingTest extends StrutsLightHighlightingTestCase {
   protected void performSetUp() {
     final WebFacet webFacet = ContainerUtil.getFirstItem(WebFacet.getInstances(myModule));
     assert webFacet != null;
-    webFacet.addWebRoot(VfsUtilCore.pathToUrl(getTestDataPath() + "/jsp"), "/");
-    webFacet.addWebRoot(VfsUtilCore.pathToUrl(getTestDataPath() + "/jsp2"), "2ndWebRoot");
+    WebRoot jsp = webFacet.addWebRoot(VfsUtilCore.pathToUrl(getTestDataPath() + "/jsp"), "/");
+    WebRoot jsp2 = webFacet.addWebRoot(VfsUtilCore.pathToUrl(getTestDataPath() + "/jsp2"), "2ndWebRoot");
+    Disposer.register(myFixture.getProjectDisposable(), () -> {
+      webFacet.removeWebRoot(jsp);
+      webFacet.removeWebRoot(jsp2);
+    });
   }
 
   /**
-   * @throws Throwable On errors.
    * @see com.intellij.struts2.dom.struts.impl.path.DispatchPathResultContributor
    */
   public void testPathDispatcher() {

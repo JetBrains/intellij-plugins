@@ -8,6 +8,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -88,8 +89,8 @@ public class DartTestUtils {
     VfsRootAccess.allowRootAccess(disposable, sdkHome);
 
     ApplicationManager.getApplication().runWriteAction(() -> {
-      DartSdkLibUtil.ensureDartSdkConfigured(module.getProject(), sdkHome);
-      DartSdkLibUtil.enableDartSdk(module);
+      Disposer.register(disposable, DartSdkLibUtil.configureDartSdk(module.getProject(), sdkHome));
+      Disposer.register(disposable, DartSdkLibUtil.configureDartSdk(module));
     });
   }
 

@@ -20,6 +20,7 @@ import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -32,6 +33,8 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -93,14 +96,17 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
 
   /**
    * Perform custom setup.
-   *
-   * @throws Exception On errors.
    */
   protected void performSetUp() {
   }
 
+  private final List<StrutsFileSet> myStrutsFileSets = new ArrayList<>();
   @Override
   protected final void tearDown() throws Exception {
+    for (StrutsFileSet set : myStrutsFileSets) {
+      Disposer.dispose(set);
+    }
+    myStrutsFileSets.clear();
     try {
       performTearDown();
     }
@@ -117,8 +123,6 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
 
   /**
    * Perform custom tear down.
-   *
-   * @throws Exception On errors.
    */
   protected void performTearDown() {
   }
@@ -134,8 +138,6 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
   /**
    * Adds the S2 jars.
    *
-   * @param moduleBuilder Current module builder.
-   * @throws Exception On internal errors.
    */
   static void addStrutsJars(Module module, ModifiableRootModel model) {
     addLibrary(module, model, "struts2",
@@ -161,6 +163,7 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
     final StrutsFacetConfiguration facetConfiguration = strutsFacet.getConfiguration();
 
     final StrutsFileSet fileSet = new StrutsFileSet("test", "test", facetConfiguration);
+    myStrutsFileSets.add(fileSet);
     for (final String fileName : strutsXmlPaths) {
       final VirtualFile file;
       final String path;
