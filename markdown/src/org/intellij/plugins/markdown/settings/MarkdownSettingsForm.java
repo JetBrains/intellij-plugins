@@ -239,7 +239,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   private void createPreviewUIComponents() {
     myPreviewTitledSeparator = new TitledSeparator(MarkdownBundle.message("markdown.settings.preview.name"));
     mySplitLayoutModel = new EnumComboBoxModel<>(SplitFileEditor.SplitEditorLayout.class);
-    myDefaultSplitLayout = new ComboBox(mySplitLayoutModel);
+    myDefaultSplitLayout = new ComboBox<>(mySplitLayoutModel);
 
     createMultipleProvidersSettings();
     createJavaFXPreviewSettings();
@@ -256,7 +256,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
                                  return provider.getProviderInfo();
                                });
     myPreviewPanelModel = new CollectionComboBoxModel<>(providerInfos, providerInfos.get(0));
-    myPreviewProvider = new ComboBox(myPreviewPanelModel);
+    myPreviewProvider = new ComboBox<>(myPreviewPanelModel);
 
     myLastItem = myPreviewProvider.getSelectedItem();
     myPreviewProvider.addItemListener(new ItemListener() {
@@ -283,7 +283,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
 
   private void updateUseGrayscaleEnabled() {
     final MarkdownHtmlPanelProvider.ProviderInfo selected = getSelectedProvider();
-    myUseGrayscaleRenderingForJBCheckBox.setEnabled(selected != null && isProviderOf(selected, JAVA_FX_HTML_PANEL_PROVIDER));
+    myUseGrayscaleRenderingForJBCheckBox.setEnabled(isProviderOf(selected, JAVA_FX_HTML_PANEL_PROVIDER));
   }
 
   private static boolean isProviderOf(@NotNull MarkdownHtmlPanelProvider.ProviderInfo selected, @NotNull String provider) {
@@ -299,9 +299,10 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     throw new RuntimeException("Cannot find " + providerClass);
   }
 
+  @NotNull
   private MarkdownHtmlPanelProvider.ProviderInfo getSelectedProvider() {
     if (isMultipleProviders()) {
-      return myPreviewPanelModel.getSelected();
+      return Objects.requireNonNull(myPreviewPanelModel.getSelected());
     }
     else {
       return myPreviewWithJavaFX.isEnabled() && myPreviewWithJavaFX.isSelected()
