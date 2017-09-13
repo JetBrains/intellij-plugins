@@ -140,7 +140,7 @@
       <separator/>
       <action class="org.intellij.plugins.markdown.ui.actions.scrolling.AutoScrollAction"
               id="org.intellij.plugins.markdown.ui.actions.scrolling.AutoScrollAction"
-              text="Auto Scroll Preview"
+              text="Auto-Scroll Preview"
               description="Enable/Disable preview auto scroll"
               icon="AllIcons.General.AutoscrollFromSource">
       </action>

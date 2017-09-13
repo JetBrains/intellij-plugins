@@ -104,6 +104,19 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     myMultipleProvidersPreviewPanel.setVisible(multipleProviders);
 
     updateUseGrayscaleEnabled();
+
+    myDefaultSplitLayout.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        adjustAutoScroll();
+      }
+    });
+
+    adjustAutoScroll();
+  }
+
+  void adjustAutoScroll() {
+    myAutoScrollCheckBox.setEnabled(myDefaultSplitLayout.getSelectedItem() == SplitFileEditor.SplitEditorLayout.SPLIT);
   }
 
   void adjustCSSRulesAvailability() {
