@@ -46,7 +46,8 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgRepeatImplicitCompletion() {
     myFixture.configureByFiles("ngRepeatImplicit.html", "angular.js");
-    myFixture.testCompletionVariants("ngRepeatImplicit.html", "$index", "$first", "$middle", "$last", "$even", "$odd");
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "$index", "$first", "$middle", "$last", "$even", "$odd");
   }
 
   public void testNgRepeatAfterDotCompletion() {
@@ -62,19 +63,19 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testNgRepeatExplicitCompletion() {
-    myFixture.testCompletion("ngRepeatExplicit.html", "ngRepeatExplicit.after.html", "angular.js");
+    myFixture.testCompletionTyping("ngRepeatExplicit.html", "\n", "ngRepeatExplicit.after.html", "angular.js");
   }
 
   public void testInternalDefinitionCompletion() {
-    myFixture.testCompletion("internalDefinition.html", "internalDefinition.after.html", "angular.js");
+    myFixture.testCompletionTyping("internalDefinition.html", "\n", "internalDefinition.after.html", "angular.js");
   }
 
   public void testNgRepeatExplicitCompletionInScript() {
-    myFixture.testCompletion("ngRepeatExplicitInScript.html", "ngRepeatExplicitInScript.after.html", "angular.js");
+    myFixture.testCompletionTyping("ngRepeatExplicitInScript.html", "\n", "ngRepeatExplicitInScript.after.html", "angular.js");
   }
 
   public void testNgRepeatExplicitCompletionSameTag() {
-    myFixture.testCompletion("ngRepeatExplicitSameTag.html", "ngRepeatExplicitSameTag.after.html", "angular.js");
+    myFixture.testCompletionTyping("ngRepeatExplicitSameTag.html", "\n", "ngRepeatExplicitSameTag.after.html", "angular.js");
   }
 
   public void testNgRepeatExplicitResolve() {
@@ -98,7 +99,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testNgRepeatExplicitKeyCompletion() {
-    myFixture.testCompletion("ngRepeatExplicitHashKey.html", "ngRepeatExplicitHashKey.after.html", "angular.js");
+    myFixture.testCompletionTyping("ngRepeatExplicitHashKey.html", "\n", "ngRepeatExplicitHashKey.after.html", "angular.js");
   }
 
   public void testNgRepeatExplicitKeyResolve() {
@@ -107,7 +108,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testNgRepeatExplicitValueCompletion() {
-    myFixture.testCompletion("ngRepeatExplicitHashValue.html", "ngRepeatExplicitHashValue.after.html", "angular.js");
+    myFixture.testCompletionTyping("ngRepeatExplicitHashValue.html", "\n", "ngRepeatExplicitHashValue.after.html", "angular.js");
   }
 
   public void testNgRepeatExplicitValueResolve() {
@@ -116,7 +117,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testNgRepeatEndCompletion() {
-    myFixture.testCompletion("ngRepeatEnd.html", "ngRepeatEnd.after.html", "angular.js");
+    myFixture.testCompletionTyping("ngRepeatEnd.html", "\n","ngRepeatEnd.after.html", "angular.js");
   }
 
   public void testNgRepeatEndResolve() {
@@ -321,7 +322,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void test$EventExternalCompletion() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(),
-                                        () -> myFixture.testCompletion("$event.html", "$event.after.html", "angular2.js"));
+                                        () -> myFixture.testCompletionTyping("$event.html", "\n","$event.after.html", "angular2.js"));
   }
 
   public void test$EventInlineCompletion() {
