@@ -115,7 +115,7 @@ class VueTypedHandlerTest : LightPlatformCodeInsightFixtureTestCase() {
   }
 
   fun testNoInterpolationInsideScript() {
-    myFixture.configureByText(HtmlFileType.INSTANCE, """
+    myFixture.configureByText(VueFileType.INSTANCE, """
 <template></template>
 <script>{<caret></script>
 """)
