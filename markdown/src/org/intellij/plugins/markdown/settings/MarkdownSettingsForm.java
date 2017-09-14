@@ -115,11 +115,11 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     adjustAutoScroll();
   }
 
-  void adjustAutoScroll() {
+  private void adjustAutoScroll() {
     myAutoScrollCheckBox.setEnabled(myDefaultSplitLayout.getSelectedItem() == SplitFileEditor.SplitEditorLayout.SPLIT);
   }
 
-  void adjustCSSRulesAvailability() {
+  private void adjustCSSRulesAvailability() {
     if (myEditor != null) {
       boolean enabled = myApplyCustomCssText.isSelected();
       myEditor.getDocument().setReadOnly(!enabled);
