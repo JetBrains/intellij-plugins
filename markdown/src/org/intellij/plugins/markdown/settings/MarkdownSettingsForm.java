@@ -59,8 +59,6 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   private JBCheckBox myPreviewWithJavaFX;
   private JPanel myMultipleProvidersPreviewPanel;
 
-  @NotNull
-  private String myCssText = "";
   @Nullable
   private EditorEx myEditor;
   @NotNull
@@ -210,20 +208,19 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     myCssFromURIEnabled.setSelected(settings.isUriEnabled());
     myCssURI.setText(settings.getStylesheetUri());
     myApplyCustomCssText.setSelected(settings.isTextEnabled());
-    myCssText = settings.getStylesheetText();
-    resetEditor();
+    resetEditor(settings.getStylesheetText());
 
     //noinspection ConstantConditions
     myCssURIListener.actionPerformed(null);
     myCustomCssTextListener.actionPerformed(null);
   }
 
-  void resetEditor() {
+  void resetEditor(@NotNull String cssText) {
     if (myEditor != null && !myEditor.isDisposed()) {
       ApplicationManager.getApplication().runWriteAction(() -> {
         boolean writable = myEditor.getDocument().isWritable();
         myEditor.getDocument().setReadOnly(false);
-        myEditor.getDocument().setText(myCssText);
+        myEditor.getDocument().setText(cssText);
         myEditor.getDocument().setReadOnly(!writable);
       });
     }
@@ -232,13 +229,11 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   @NotNull
   @Override
   public MarkdownCssSettings getMarkdownCssSettings() {
-    if (myEditor != null && !myEditor.isDisposed()) {
-      myCssText = ReadAction.compute(() -> myEditor.getDocument().getText());
-    }
     return new MarkdownCssSettings(myCssFromURIEnabled.isSelected(),
                                    myCssURI.getText(),
                                    myApplyCustomCssText.isSelected(),
-                                   myCssText);
+                                   myEditor != null && !myEditor.isDisposed() ?
+                                   ReadAction.compute(() -> myEditor.getDocument().getText()) : "");
   }
 
   @Override
