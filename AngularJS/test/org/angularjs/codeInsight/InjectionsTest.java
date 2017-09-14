@@ -6,10 +6,10 @@ import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
-import com.intellij.lang.javascript.psi.JSNamedElement;
+import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
-import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
+import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -57,8 +57,8 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgRepeatImplicitResolve() {
     myFixture.configureByFiles("ngRepeatImplicitType.html", "angular.js");
-    final PsiElement resolve = checkVariableResolve("ind<caret>ex", "$index", ImplicitJSVariableImpl.class);
-    assertEquals("Number", ((JSVariable)resolve).getTypeString());
+    final PsiElement resolve = checkVariableResolve("ind<caret>ex", "$index", JSLocalImplicitElementImpl.class);
+    assertEquals("Number", ((JSLocalImplicitElementImpl)resolve).getTypeString());
   }
 
   public void testNgRepeatExplicitCompletion() {
@@ -252,7 +252,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  private PsiElement checkVariableResolve(final String signature, final String varName, final Class<? extends JSNamedElement> varClass) {
+  private PsiElement checkVariableResolve(final String signature, final String varName, final Class<? extends JSElement> varClass) {
     int offsetBySignature = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
     assertNotNull(ref);

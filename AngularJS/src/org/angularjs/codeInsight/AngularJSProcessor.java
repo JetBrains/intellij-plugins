@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.JSVariable;
-import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
+import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
@@ -182,7 +182,7 @@ public class AngularJSProcessor {
         public void visitAngularJSRepeatExpression(AngularJSRepeatExpression repeatExpression) {
           if (repeatExpression.getNode().getElementType() == AngularJSElementTypes.REPEAT_EXPRESSION) {
             for (Map.Entry<String, String> entry : NG_REPEAT_IMPLICITS.entrySet()) {
-              myResult.add(new ImplicitJSVariableImpl(entry.getKey(), entry.getValue(), repeatExpression));
+              myResult.add(new JSLocalImplicitElementImpl(entry.getKey(), entry.getValue(), repeatExpression));
             }
           }
           super.visitAngularJSRepeatExpression(repeatExpression);
