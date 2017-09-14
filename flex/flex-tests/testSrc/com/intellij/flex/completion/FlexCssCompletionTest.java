@@ -200,7 +200,7 @@ public class FlexCssCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testClassReferenceCompletion() throws Exception {
+  public void _testClassReferenceCompletion() throws Exception {
     configureByFiles(null, FlexCompletionTest.BASE_PATH + getTestName(false) + ".css");
     new CodeCompletionHandlerBase(CompletionType.BASIC).invokeCompletion(myProject, myEditor);
     checkResultByFile(FlexCompletionTest.BASE_PATH + getTestName(false) + "_after.css");
