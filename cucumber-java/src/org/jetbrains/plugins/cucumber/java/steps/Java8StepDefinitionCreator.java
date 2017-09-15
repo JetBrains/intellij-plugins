@@ -11,7 +11,6 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
-import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
 import com.intellij.psi.impl.source.tree.Factory;
 import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -25,7 +24,6 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
   public static final String CUCUMBER_API_JAVA8_EN = "cucumber.api.java8.En";
@@ -40,11 +38,10 @@ public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
     assert module != null;
     final GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
 
-    Collection<PsiClass> stepDefContainerInterfaces = JavaFullClassNameIndex.getInstance().get(
-      CUCUMBER_API_JAVA8_EN.hashCode(), module.getProject(), dependenciesScope);
+    final PsiClass stepDefContainerInterface =
+      JavaPsiFacade.getInstance(module.getProject()).findClass(CUCUMBER_API_JAVA8_EN, dependenciesScope);
 
-    if (stepDefContainerInterfaces.size() > 0) {
-      final PsiClass stepDefContainerInterface = stepDefContainerInterfaces.iterator().next();
+    if (stepDefContainerInterface != null) {
       final PsiClass createPsiClass = PsiTreeUtil.getChildOfType(result, PsiClass.class);
       assert createPsiClass != null;
       final PsiElementFactory elementFactory = JavaPsiFacade.getInstance(dir.getProject()).getElementFactory();
