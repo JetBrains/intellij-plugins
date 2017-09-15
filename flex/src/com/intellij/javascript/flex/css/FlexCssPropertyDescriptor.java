@@ -226,7 +226,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     String id = CssBundle.message("color.value.presentable.name");
     CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
     CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, null, null, false);
-    return new CssColorValue(commonDescriptorData, valueDescriptorData);
+    return new CssColorValue(commonDescriptorData, valueDescriptorData, false);
   }
   
   private static CssLengthValue createCssLengthValue() {
