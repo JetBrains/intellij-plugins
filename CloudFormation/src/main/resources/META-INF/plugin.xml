@@ -54,10 +54,10 @@
 
   <actions>
     <action id="NewJsonCloudFormationFile" class="com.intellij.aws.cloudformation.CreateJsonTemplateFileAction">
-      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
+      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
     </action>
     <action id="NewYamlCloudFormationFile" class="com.intellij.aws.cloudformation.CreateYamlTemplateFileAction">
-      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
+      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
     </action>
   </actions>
 
