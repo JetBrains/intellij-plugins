@@ -1,6 +1,7 @@
 No problems
 CfnRootNode{
   metadataNode=<null>
+  transformNode=<null>
   parametersNode=CfnParametersNode{
     parameters=[
       CfnParameterNode{

@@ -4,8 +4,8 @@ Transform: AWS::Serverless-2016-10-31
 Description: Prints Hello World
 Resources:
   HelloWorldLambda:
-    Type: 0@<AWS::Serverless::Function>
-    Properties:
+    Type: AWS::Serverless::Function
+    0@<Properties:>
       Handler: main.handle
       Runtime: python2.7
       Events:
@@ -14,4 +14,4 @@ Resources:
           Properties:
             Schedule: rate(5 minutes)
 
-0: Unknown CloudFormation resource type: AWS::Serverless::Function
+0: Required resource properties are not set: CodeUri
