@@ -38,6 +38,13 @@ class YamlCompletionTests : LightCodeInsightFixtureTestCase() {
           CloudFormationConstants.AwsSpecificParameterTypes.sorted()).toTypedArray())
   fun testParameterType3() = checkBasicCompletion("parameter_type_3.yaml")
 
+  fun testServerless1() = checkBasicCompletion("serverless_1.yaml",
+      "CodeUri", "DeadLetterQueue", "Description", "Environment", "Events", "FunctionName", "KmsKeyArn", "MemorySize",
+      "Policies", "Role", "Tags", "Timeout", "Tracing", "VpcConfig")
+  fun testServerless2() = checkBasicCompletion("serverless_2.yaml",
+      "AWS::Serverless::Api", "AWS::Serverless::Function", "AWS::Serverless::SimpleTable")
+  fun testServerless3() = checkBasicCompletion("serverless_3.yaml")
+
   private fun checkBasicCompletion(fileName: String, vararg expectedElements: String) {
     myFixture.configureByFiles(fileName)
     myFixture.complete(CompletionType.BASIC, 1)

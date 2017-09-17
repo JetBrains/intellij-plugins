@@ -24,6 +24,9 @@ class YamlExamplesTest : LightPlatformCodeInsightTestCase() {
   fun test13() = runTest("getatt-nested-stack.yaml")
   fun test14() = runTest("select.yaml")
   fun test15() = runTest("nested-sub-function.yaml")
+  fun test16() = runTest("serverless-swagger-cors.yaml")
+  fun test17() = runTest("serverless-kinesis-stream.yaml")
+  fun test18() = runTest("serverless-iot-backend.yaml")
 
   fun testParameters1() = runTest("parameters1.yaml")
   fun testParameters2() = runTest("parameters2.yaml")
