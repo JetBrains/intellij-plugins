@@ -6,10 +6,10 @@ import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType.Companion.isCustomResourceType
 
 class CfnResourceTypeNode(name: CfnScalarValueNode?, val value: CfnScalarValueNode?) : CfnNamedNode(name) {
-  fun metadata(): CloudFormationResourceType? {
+  fun metadata(context: CfnRootNode): CloudFormationResourceType? {
     val typeName = value?.value ?: return null
 
     return CloudFormationMetadataProvider.METADATA.findResourceType(
-          if (isCustomResourceType(typeName)) CloudFormationConstants.CustomResourceType else typeName)
+          if (isCustomResourceType(typeName)) CloudFormationConstants.CustomResourceType else typeName, context)
   }
 }

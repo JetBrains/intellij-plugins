@@ -1,3 +1,5 @@
+@file:Suppress("Destructure")
+
 package com.intellij.aws.cloudformation
 
 import com.intellij.aws.cloudformation.model.CfnFunctionNode
@@ -54,7 +56,9 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
             val resourceTypeValuePositionMatch = ResourceTypeValueMatch.match(parent, parsed)
             if (resourceTypeValuePositionMatch != null) {
               CloudFormationMetadataProvider.METADATA.resourceTypes.values.forEach { resourceType ->
-                rs.addElement(createLookupElement(resourceType.name, quote))
+                if (resourceType.transform == null || resourceType.transform == parsed.root.transformStringValue) {
+                  rs.addElement(createLookupElement(resourceType.name, quote))
+                }
               }
 
               return
@@ -62,7 +66,8 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
 
             val resourcePropertyNameMatch = ResourcePropertyNameMatch.match(parent, parsed)
             if (resourcePropertyNameMatch != null) {
-              val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(resourcePropertyNameMatch.resource.typeName ?: "") ?: return
+              val typeName = resourcePropertyNameMatch.resource.typeName ?: ""
+              val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(typeName, parsed.root) ?: return
               @Suppress("LoopToCallChain")
               for ((propertyName) in resourceTypeMetadata.properties.values) {
                 if (resourcePropertyNameMatch.resource.properties != null &&
@@ -142,7 +147,7 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
     val resource = CloudFormationResolve.resolveResource(parsed, resourceName) ?: return
 
     val resourceTypeName = resource.typeName ?: return
-    val resourceType = CloudFormationMetadataProvider.METADATA.findResourceType(resourceTypeName) ?: return
+    val resourceType = CloudFormationMetadataProvider.METADATA.findResourceType(resourceTypeName, parsed.root) ?: return
 
     resourceType.attributes.values.forEach {
       rs.addElement(createLookupElement(it.name, quote))

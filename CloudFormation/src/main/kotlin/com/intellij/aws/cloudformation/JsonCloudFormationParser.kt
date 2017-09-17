@@ -29,6 +29,7 @@ import com.intellij.aws.cloudformation.model.CfnResourcesNode
 import com.intellij.aws.cloudformation.model.CfnRootNode
 import com.intellij.aws.cloudformation.model.CfnScalarValueNode
 import com.intellij.aws.cloudformation.model.CfnSecondLevelMappingNode
+import com.intellij.aws.cloudformation.model.CfnTransformNode
 import com.intellij.json.psi.JsonArray
 import com.intellij.json.psi.JsonBooleanLiteral
 import com.intellij.json.psi.JsonNumberLiteral
@@ -80,7 +81,7 @@ class JsonCloudFormationParser private constructor () {
 
       return@mapNotNull when (section) {
         CloudFormationSection.FormatVersion -> { formatVersion(value); null }
-        CloudFormationSection.Transform -> { checkAndGetUnquotedStringText(value); null }
+        CloudFormationSection.Transform -> transform(property)
         CloudFormationSection.Description -> { checkAndGetUnquotedStringText(value); null }
         CloudFormationSection.Parameters -> parameters(property)
         CloudFormationSection.Resources -> resources(property)
@@ -99,6 +100,7 @@ class JsonCloudFormationParser private constructor () {
 
     return CfnRootNode(
         lookupSection<CfnMetadataNode>(sections),
+        lookupSection<CfnTransformNode>(sections),
         lookupSection<CfnParametersNode>(sections),
         lookupSection<CfnMappingsNode>(sections),
         lookupSection<CfnConditionsNode>(sections),
@@ -136,6 +138,11 @@ class JsonCloudFormationParser private constructor () {
   private fun metadata(metadata: JsonProperty): CfnMetadataNode {
     val valueNode = checkAndGetObject(metadata.value)
     return CfnMetadataNode(keyName(metadata), valueNode?.let { expression(valueNode, AllowFunctions.False) } as? CfnObjectValueNode).registerNode(metadata)
+  }
+
+  private fun transform(transform: JsonProperty): CfnTransformNode {
+    val element = checkAndGetStringElement(transform.value)
+    return CfnTransformNode(keyName(transform), element).registerNode(transform)
   }
 
   private fun conditions(conditions: JsonProperty): CfnConditionsNode = parseNameValues(
@@ -296,13 +303,13 @@ class JsonCloudFormationParser private constructor () {
           val functionId = CloudFormationIntrinsicFunction.fullNames[single.name]!!
 
           val jsonValueNode = single.value
-          if (jsonValueNode is JsonArray) {
-            val items = jsonValueNode.valueList.map { expression(it, allowFunctions) }
-            CfnFunctionNode(nameNode, functionId, items).registerNode(value)
-          } else if (jsonValueNode == null){
-            CfnFunctionNode(nameNode, functionId, listOf()).registerNode(value)
-          } else {
-            CfnFunctionNode(nameNode, functionId, listOf(expression(jsonValueNode, allowFunctions))).registerNode(value)
+          when (jsonValueNode) {
+            is JsonArray -> {
+              val items = jsonValueNode.valueList.map { expression(it, allowFunctions) }
+              CfnFunctionNode(nameNode, functionId, items).registerNode(value)
+            }
+            null -> CfnFunctionNode(nameNode, functionId, listOf()).registerNode(value)
+            else -> CfnFunctionNode(nameNode, functionId, listOf(expression(jsonValueNode, allowFunctions))).registerNode(value)
           }
         } else {
           val properties = value.propertyList.map {
@@ -392,7 +399,7 @@ class JsonCloudFormationParser private constructor () {
     assert(CloudFormationPsiUtils.isCloudFormationFile(psiFile)) { psiFile.name + " is not a cfn file" }
 
     val root = CloudFormationPsiUtils.getRootExpression(psiFile)
-        ?: return CfnRootNode(null, null, null, null, null, null).registerNode(psiFile)
+        ?: return CfnRootNode(null, null, null, null, null, null, null).registerNode(psiFile)
     return root(root)
   }
 

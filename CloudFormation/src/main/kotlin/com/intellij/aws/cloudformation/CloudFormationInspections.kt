@@ -1,3 +1,5 @@
+@file:Suppress("IfThenToSafeAccess")
+
 package com.intellij.aws.cloudformation
 
 import com.google.common.collect.ArrayListMultimap
@@ -38,7 +40,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
   val problems: MutableList<CloudFormationProblem> = mutableListOf()
   val references: Multimap<PsiElement, CloudFormationReferenceBase> = ArrayListMultimap.create()
 
-  val numbersPattern = Pattern.compile("^[0-9]+$")!!
+  private val numbersPattern = Pattern.compile("^[0-9]+$")!!
 
   private fun addReference(reference: CloudFormationReferenceBase) {
     references.put(reference.element, reference)
@@ -83,7 +85,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
   }
 */
 
-  var currentResource: CfnResourceNode? = null
+  private var currentResource: CfnResourceNode? = null
 
   override fun function(function: CfnFunctionNode) {
     val arg0 = function.args.getOrNull(0)
@@ -328,7 +330,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     }
 
     if (!isCustomResourceType(typeName)) {
-      val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(typeName)
+      val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(typeName, parsed.root)
       if (resourceTypeMetadata == null) {
         addProblem(resourceTypeValue, CloudFormationBundle.getString("format.unknown.type", typeName))
       }
@@ -505,7 +507,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
       return
     }
 
-    val metadata = resourceType.metadata()
+    val metadata = resourceType.metadata(parsed.root)
     if (metadata != null) {
       val propertiesNode = resource.properties
       if (propertiesNode == null) {

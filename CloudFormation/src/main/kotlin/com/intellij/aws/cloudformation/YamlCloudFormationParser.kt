@@ -29,6 +29,7 @@ import com.intellij.aws.cloudformation.model.CfnResourcesNode
 import com.intellij.aws.cloudformation.model.CfnRootNode
 import com.intellij.aws.cloudformation.model.CfnScalarValueNode
 import com.intellij.aws.cloudformation.model.CfnSecondLevelMappingNode
+import com.intellij.aws.cloudformation.model.CfnTransformNode
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -91,7 +92,7 @@ class YamlCloudFormationParser private constructor () {
 
       return@mapNotNull when (section) {
         CloudFormationSection.FormatVersion -> { formatVersion(value); null }
-        CloudFormationSection.Transform -> { checkAndGetStringValue(value); null }
+        CloudFormationSection.Transform -> transform(property)
         CloudFormationSection.Description -> { checkAndGetStringValue(value); null }
         CloudFormationSection.Parameters -> parameters(property)
         CloudFormationSection.Resources -> resources(property)
@@ -112,6 +113,7 @@ class YamlCloudFormationParser private constructor () {
     // TODO known issue: https://youtrack.jetbrains.com/issue/RUBY-19094
     return CfnRootNode(
         lookupSection<CfnMetadataNode>(sections),
+        lookupSection<CfnTransformNode>(sections),
         lookupSection<CfnParametersNode>(sections),
         lookupSection<CfnMappingsNode>(sections),
         lookupSection<CfnConditionsNode>(sections),
@@ -123,6 +125,11 @@ class YamlCloudFormationParser private constructor () {
   private fun metadata(metadata: CfnKeyValue): CfnMetadataNode {
     val mapping = checkAndGetMapping(metadata.value!!)
     return CfnMetadataNode(keyName(metadata), mapping?.let { expression(it, AllowFunctions.False) } as? CfnObjectValueNode).registerNode(metadata.owner)
+  }
+
+  private fun transform(transform: CfnKeyValue): CfnTransformNode {
+    val element = checkAndGetStringElement(transform.value)
+    return CfnTransformNode(keyName(transform), element).registerNode(transform.owner)
   }
 
   private fun conditions(conditions: CfnKeyValue): CfnConditionsNode = parseNameValues(
@@ -190,11 +197,11 @@ class YamlCloudFormationParser private constructor () {
   )
 
   private fun keyName(property: CfnKeyValue): CfnScalarValueNode? {
-    if (property.key != null) {
-      return CfnScalarValueNode(property.keyText).registerNode(property.key)
+    return if (property.key != null) {
+      CfnScalarValueNode(property.keyText).registerNode(property.key)
     } else {
       addProblem(property.owner, "Expected a name")
-      return CfnScalarValueNode("").registerNode(property.owner)
+      CfnScalarValueNode("").registerNode(property.owner)
     }
   }
 
@@ -292,13 +299,13 @@ class YamlCloudFormationParser private constructor () {
     val nameNode = keyName(propertiesProperty)
     val properties = propertiesProperty.value as? YAMLMapping
 
-    val propertyNodes = (properties?.cfnKeyValues() ?: emptyList()).mapNotNull { property ->
+    val propertyNodes = (properties?.cfnKeyValues() ?: emptyList()).map { property ->
       val yamlValueNode = property.value
       val valueNode = if (yamlValueNode == null) null else {
         expression(yamlValueNode, AllowFunctions.True)
       }
 
-      return@mapNotNull CfnResourcePropertyNode(keyName(property), valueNode).registerNode(property.owner)
+      return@map CfnResourcePropertyNode(keyName(property), valueNode).registerNode(property.owner)
     }
 
     return CfnResourcePropertiesNode(nameNode, propertyNodes).registerNode(propertiesProperty.owner)
@@ -321,22 +328,22 @@ class YamlCloudFormationParser private constructor () {
     val functionId = CloudFormationIntrinsicFunction.fullNames[single.keyText]!!
 
     val yamlValueNode = single.value
-    if (yamlValueNode is YAMLSequence) {
-      val shortFunctionCall = shortFunction(yamlValueNode) ?: return null
-      if (shortFunctionCall.isPresent) {
-        return CfnFunctionNode(nameNode, functionId, listOf(shortFunctionCall.get())).registerNode(value)
-      } else {
-        val items = yamlValueNode.items.mapNotNull {
-          val itemValue = it.value
-          if (itemValue != null) expression(itemValue, AllowFunctions.True) else null
-        }
+    when (yamlValueNode) {
+      is YAMLSequence -> {
+        val shortFunctionCall = shortFunction(yamlValueNode) ?: return null
+        return if (shortFunctionCall.isPresent) {
+          CfnFunctionNode(nameNode, functionId, listOf(shortFunctionCall.get())).registerNode(value)
+        } else {
+          val items = yamlValueNode.items.mapNotNull {
+            val itemValue = it.value
+            if (itemValue != null) expression(itemValue, AllowFunctions.True) else null
+          }
 
-        return CfnFunctionNode(nameNode, functionId, items).registerNode(value)
+          CfnFunctionNode(nameNode, functionId, items).registerNode(value)
+        }
       }
-    } else if (yamlValueNode == null) {
-      return CfnFunctionNode(nameNode, functionId, listOf()).registerNode(value)
-    } else {
-      return CfnFunctionNode(nameNode, functionId, listOf(expression(yamlValueNode, AllowFunctions.True))).registerNode(value)
+      null -> return CfnFunctionNode(nameNode, functionId, listOf()).registerNode(value)
+      else -> return CfnFunctionNode(nameNode, functionId, listOf(expression(yamlValueNode, AllowFunctions.True))).registerNode(value)
     }
   }
 
@@ -514,13 +521,13 @@ class YamlCloudFormationParser private constructor () {
     val topLevelValue = yamlDocument.topLevelValue
     if (topLevelValue == null) {
       addProblem(yamlDocument, "Expected non-empty YAML document")
-      return CfnRootNode(null, null, null, null, null, null).registerNode(yamlDocument)
+      return CfnRootNode(null, null, null, null, null, null, null).registerNode(yamlDocument)
     }
 
     val yamlMapping = topLevelValue as? YAMLMapping
     if (yamlMapping == null) {
       addProblem(topLevelValue, "Expected YAML mapping")
-      return CfnRootNode(null, null, null, null, null, null).registerNode(topLevelValue)
+      return CfnRootNode(null, null, null, null, null, null, null).registerNode(topLevelValue)
     }
 
     return root(yamlMapping)
