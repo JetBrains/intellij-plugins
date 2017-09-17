@@ -1,3 +1,5 @@
+@file:Suppress("LoopToCallChain", "Destructure")
+
 import com.intellij.aws.cloudformation.metadata.CloudFormationLimits
 import com.intellij.aws.cloudformation.metadata.CloudFormationMetadata
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceAttribute
@@ -19,7 +21,36 @@ import java.util.regex.Pattern
 
 object ResourceTypesSaver {
   private val RESOURCE_TYPE_PATTERN = Pattern.compile("<li><a href=\"([^\"]+)\">(AWS::[^<]+)</a></li>")
-  val FETCH_TIMEOUT_MS = 10000
+  private val FETCH_TIMEOUT_MS = 10000
+
+  private fun List<CloudFormationManualResourceType>.toDescriptions() = map { type ->
+    Pair(
+        type.name,
+        CloudFormationResourceTypeDescription(
+            description = type.description,
+            properties = type.properties.map { Pair(it.name, it.description) }.toMap(),
+            attributes = type.attributes.map { Pair(it.name, it.description) }.toMap()
+        )
+    )
+  }.toMap()
+
+  private fun List<CloudFormationManualResourceType>.toResourceTypes(transformName: String?) = map { type ->
+    Pair(
+        type.name,
+        CloudFormationResourceType(
+            name = type.name,
+            url = type.url,
+            transform = transformName,
+            properties = type.properties.map {
+              Pair(
+                  it.name,
+                  CloudFormationResourceProperty(it.name, it.type, it.required, it.url ?: type.url, it.updateRequires ?: "")
+              )
+            }.toMap(),
+            attributes = type.attributes.map { Pair(it.name, CloudFormationResourceAttribute(it.name)) }.toMap()
+        )
+    )
+  }.toMap()
 
   fun saveResourceTypes() {
     val resourceAttributesMap = fetchResourceAttributes()
@@ -37,13 +68,14 @@ object ResourceTypesSaver {
     }.toMap()
 
     val metadata = CloudFormationMetadata(
-        resourceTypes = resourceTypes.mapValues { it.value.first },
+        resourceTypes = resourceTypes.mapValues { it.value.first }
+              + awsServerless20161031ResourceTypes.toResourceTypes(awsServerless20161031TransformName),
         predefinedParameters = predefinedParameters,
         limits = limits
     )
 
     val descriptions = CloudFormationResourceTypesDescription(
-        resourceTypes = resourceTypes.mapValues { it.value.second }
+        resourceTypes = resourceTypes.mapValues { it.value.second } + awsServerless20161031ResourceTypes.toDescriptions()
     )
 
     FileOutputStream(File("src/main/resources/cloudformation-metadata.xml")).use { outputStream -> MetadataSerializer.toXML(metadata, outputStream) }
@@ -182,7 +214,7 @@ object ResourceTypesSaver {
           assert(href.hasAttr("id"))
           val propertyId = href.attr("id")
           assert(propertyId.contains(name, ignoreCase = true)) {
-            "Property anchor id ($propertyId) should have a propery name ($name) as substring in $docLocation"
+            "Property anchor id ($propertyId) should have a property name ($name) as substring in $docLocation"
           }
           val docUrl = doc.baseUri() + "#" + propertyId
 
@@ -205,12 +237,10 @@ object ResourceTypesSaver {
               val fieldName = split[0].trim { it <= ' ' }
               val fieldValue = split[1].trim { it <= ' ' }.replaceFirst("\\.$".toRegex(), "")
 
-              if ("Required" == fieldName) {
-                requiredValue = fieldValue
-              } else if ("Type" == fieldName) {
-                typeValue = element.toString().replace("Type:", "")
-              } else if ("Update requires" == fieldName) {
-                updateValue = element.toString().replace("Update requires:", "")
+              when (fieldName) {
+                "Required" -> requiredValue = fieldValue
+                "Type" -> typeValue = element.toString().replace("Type:", "")
+                "Update requires" -> updateValue = element.toString().replace("Update requires:", "")
               }
             } else {
               descriptionValue = element.toString()
@@ -304,12 +334,10 @@ object ResourceTypesSaver {
 
           val required: Boolean
 
-          if (requiredString.equals("yes", ignoreCase = true)) {
-            required = true
-          } else if (requiredString.equals("no", ignoreCase = true)) {
-            required = false
-          } else {
-            throw RuntimeException("Unknown value for required in property $name in $docLocation: $requiredString")
+          required = when {
+            requiredString.equals("yes", ignoreCase = true) -> true
+            requiredString.equals("no", ignoreCase = true) -> false
+            else -> throw RuntimeException("Unknown value for required in property $name in $docLocation: $requiredString")
           }
 
           properties[name] = Pair(CloudFormationResourceProperty(name, type, required, "", ""), "")
@@ -354,6 +382,7 @@ object ResourceTypesSaver {
     return Pair(
         CloudFormationResourceType(
             resourceTypeName,
+            null,
             doc.baseUri(),
             properties.mapValues { it.value.first },
             resourceAttributes.mapValues { it.value.first }
@@ -367,8 +396,8 @@ object ResourceTypesSaver {
     )
   }
 
-  private val cleanElementIdPattern = Regex(" ?id=\\\"[0-9a-f]{8}\\\"")
-  private val cleanElementNamePattern = Regex(" name=\\\"[0-9a-f]{8}\\\"")
+  private val cleanElementIdPattern = Regex(""" ?id="[0-9a-f]{8}"""")
+  private val cleanElementNamePattern = Regex(""" name="[0-9a-f]{8}"""")
 
   private fun cleanupHtml(s: String): String {
     return s.replace(cleanElementIdPattern, "").replace(cleanElementNamePattern, "")
@@ -383,14 +412,9 @@ object ResourceTypesSaver {
         continue
       }
 
-      val row = ArrayList<String>()
-      for (td in tr.children()) {
-        if (td.tagName() != "td") {
-          continue
-        }
-
-        row.add(td.text())
-      }
+      val row = tr.children()
+          .filter { it.tagName() == "td" }
+          .map { it.text() }
 
       result.add(row)
     }

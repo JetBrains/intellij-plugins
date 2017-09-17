@@ -4,6 +4,7 @@ import com.intellij.aws.cloudformation.CloudFormationConstants
 
 data class CloudFormationResourceType(
     val name: String,
+    val transform: String?,
     val url: String,
     val properties: Map<String, CloudFormationResourceProperty>,
     val attributes: Map<String, CloudFormationResourceAttribute>) {

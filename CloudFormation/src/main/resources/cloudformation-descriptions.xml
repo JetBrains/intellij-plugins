@@ -55951,5 +55951,137 @@ Properties:
         <attributes class="linked-hash-map"/>
       </ResourceTypeDescription>
     </entry>
+    <entry>
+      <string><![CDATA[AWS::Serverless::Function]]></string>
+      <ResourceTypeDescription>
+        <description><![CDATA[Creates a Lambda function, IAM execution role, and event source mappings which trigger the function.]]></description>
+        <properties class="linked-hash-map">
+          <entry>
+            <string><![CDATA[Handler]]></string>
+            <string><![CDATA[Function within your code that is called to begin execution]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[Runtime]]></string>
+            <string><![CDATA[The runtime environment]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[CodeUri]]></string>
+            <string><![CDATA[S3 Uri or location to the function code. The S3 object this Uri references MUST be a Lambda deployment package.]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[FunctionName]]></string>
+            <string><![CDATA[A name for the function. If you don't specify a name, a unique name will be generated for you. More Info]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[Description]]></string>
+            <string><![CDATA[Description of the function.]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[MemorySize]]></string>
+            <string><![CDATA[Size of the memory allocated per invocation of the function in MB. Defaults to 128.]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[Timeout]]></string>
+            <string><![CDATA[Maximum time that the function can run before it is killed in seconds. Defaults to 3.]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[Role]]></string>
+            <string><![CDATA[ARN of an IAM role to use as this function's execution role. If omitted, a default role is created for this function.]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[Policies]]></string>
+            <string><![CDATA[Names of AWS managed IAM policies or IAM policy documents that this function needs, which should be appended to the default role for this function. If the Role property is set, this property has no meaning.]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[Environment]]></string>
+            <string><![CDATA[Configuration for the runtime environment.]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[VpcConfig]]></string>
+            <string><![CDATA[Configuration to enable this function to access private resources within your VPC.]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[Events]]></string>
+            <string><![CDATA[A map (string to Event source object) that defines the events that trigger this function. Keys are limited to alphanumeric characters.]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[Tags]]></string>
+            <string><![CDATA[A map (string to string) that specifies the tags to be added to this function. Keys and values are limited to alphanumeric characters. Keys can be 1 to 127 Unicode characters in length and cannot be prefixed with aws:. Values can be 1 to 255 Unicode characters in length. When the stack is created, SAM will automatically add a lambda:createdBy:SAM tag to this Lambda function.]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[Tracing]]></string>
+            <string><![CDATA[String that specifies the function's X-Ray tracing mode. Accepted values are Active and PassThrough]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[KmsKeyArn]]></string>
+            <string><![CDATA[The Amazon Resource Name (ARN) of an AWS Key Management Service (AWS KMS) key that Lambda uses to encrypt and decrypt your function's environment variables.]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[DeadLetterQueue]]></string>
+            <string><![CDATA[Configures SNS topic or SQS queue where Lambda sends events that it can't process.]]></string>
+          </entry>
+        </properties>
+        <attributes class="singleton-map">
+          <entry>
+            <string><![CDATA[Arn]]></string>
+            <string><![CDATA[The ARN of the Lambda function.]]></string>
+          </entry>
+        </attributes>
+      </ResourceTypeDescription>
+    </entry>
+    <entry>
+      <string><![CDATA[AWS::Serverless::Api]]></string>
+      <ResourceTypeDescription>
+        <description><![CDATA[Creates a collection of Amazon API Gateway resources and methods that can be invoked through HTTPS endpoints.]]></description>
+        <properties class="linked-hash-map">
+          <entry>
+            <string><![CDATA[Name]]></string>
+            <string><![CDATA[A name for the API Gateway RestApi resource]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[StageName]]></string>
+            <string><![CDATA[The name of the stage, which API Gateway uses as the first path segment in the invoke Uniform Resource Identifier (URI).]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[DefinitionUri]]></string>
+            <string><![CDATA[S3 URI or location to the Swagger document describing the API. Either one of DefinitionUri or DefinitionBody must be specified.]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[DefinitionBody]]></string>
+            <string><![CDATA[Swagger specification that describes your API. Either one of DefinitionUri or DefinitionBody must be specified.]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[CacheClusterEnabled]]></string>
+            <string><![CDATA[Indicates whether cache clustering is enabled for the stage.]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[CacheClusterSize]]></string>
+            <string><![CDATA[The stage's cache cluster size.]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[Variables]]></string>
+            <string><![CDATA[A map (string to string map) that defines the stage variables, where the variable name is the key and the variable value is the value. Variable names are limited to alphanumeric characters. Values must match the following regular expression: [A-Za-z0-9._~:/?#&amp;=,-]+.]]></string>
+          </entry>
+        </properties>
+        <attributes class="kotlin.collections.EmptyMap"/>
+      </ResourceTypeDescription>
+    </entry>
+    <entry>
+      <string><![CDATA[AWS::Serverless::SimpleTable]]></string>
+      <ResourceTypeDescription>
+        <description><![CDATA[The AWS::Serverless::SimpleTable resource creates a DynamoDB table with a single attribute primary key. It is useful when data only needs to be accessed via a primary key. To use the more advanced functionality of DynamoDB, use an AWS::DynamoDB::Table resource instead.]]></description>
+        <properties class="linked-hash-map">
+          <entry>
+            <string><![CDATA[PrimaryKey]]></string>
+            <string><![CDATA[Attribute name and type to be used as the table's primary key. This cannot be modified without replacing the resource. Defaults to String attribute named ID.]]></string>
+          </entry>
+          <entry>
+            <string><![CDATA[ProvisionedThroughput]]></string>
+            <string><![CDATA[Read and write throughput provisioning information. Defaults to 5 read and 5 write capacity units per second.]]></string>
+          </entry>
+        </properties>
+        <attributes class="kotlin.collections.EmptyMap" reference="../../../entry[225]/ResourceTypeDescription/attributes"/>
+      </ResourceTypeDescription>
+    </entry>
   </resourceTypes>
 </ResourceTypesDescription>
