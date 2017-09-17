@@ -5,7 +5,6 @@ import com.thoughtworks.xstream.core.ClassLoaderReference
 import com.thoughtworks.xstream.core.util.QuickWriter
 import com.thoughtworks.xstream.io.xml.PrettyPrintWriter
 import com.thoughtworks.xstream.io.xml.StaxDriver
-
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.OutputStreamWriter
@@ -45,15 +44,20 @@ object MetadataSerializer {
 
   private fun createXStream(): XStream {
     val xstream = XStream(null, StaxDriver(), ClassLoaderReference(javaClass.classLoader))
+    XStream.setupDefaultSecurity(xstream)
 
-    xstream.alias("Metadata", CloudFormationMetadata::class.java)
-    xstream.alias("ResourceType", CloudFormationResourceType::class.java)
-    xstream.alias("ResourceProperty", CloudFormationResourceProperty::class.java)
-    xstream.alias("ResourceAttribute", CloudFormationResourceAttribute::class.java)
-    xstream.alias("Limits", CloudFormationLimits::class.java)
+    val mapping = mapOf(
+        Pair("Metadata", CloudFormationMetadata::class.java),
+        Pair("ResourceType", CloudFormationResourceType::class.java),
+        Pair("ResourceProperty", CloudFormationResourceProperty::class.java),
+        Pair("ResourceAttribute", CloudFormationResourceAttribute::class.java),
+        Pair("Limits", CloudFormationLimits::class.java),
+        Pair("ResourceTypeDescription", CloudFormationResourceTypeDescription::class.java),
+        Pair("ResourceTypesDescription", CloudFormationResourceTypesDescription::class.java)
+    )
 
-    xstream.alias("ResourceTypeDescription", CloudFormationResourceTypeDescription::class.java)
-    xstream.alias("ResourceTypesDescription", CloudFormationResourceTypesDescription::class.java)
+    xstream.allowTypes(mapping.map { it.value }.toTypedArray())
+    mapping.forEach { (tag, clazz) -> xstream.alias(tag, clazz) }
 
     return xstream
   }
