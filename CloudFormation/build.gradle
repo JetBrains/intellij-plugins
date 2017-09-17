@@ -1,6 +1,15 @@
+buildscript {
+    ext.kotlin_version = "1.1.4-3"
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
 plugins {
-    id "org.jetbrains.intellij" version "0.2.15"
-    id "org.jetbrains.kotlin.jvm" version "1.1.4-3"
+    id "org.jetbrains.intellij" version "0.2.17"
 }
 
 intellij {
@@ -30,6 +39,7 @@ allprojects {
     }
 
     dependencies {
+        compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
         compile 'com.thoughtworks.xstream:xstream:1.4.10'
     }
 

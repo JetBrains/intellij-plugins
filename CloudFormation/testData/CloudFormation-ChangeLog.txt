@@ -34,11 +34,11 @@ User Guide (API Version 2010-05-15)
           o Using the Console
                 + Logging In to the Console
                 + Creating a Stack
-                      # Creating Stacks Using Change Sets
                       # Selecting a Stack Template
                       # Specifying Stack Name and Parameters
                       # Setting Stack Options
                       # Reviewing Your Stack and Estimating Stack Cost
+                      # Creating Stacks Using Change Sets
                 + Creating an EC2 Key Pair
                 + Estimating the Cost of Your Stack
                 + Viewing Stack Data and Resources
@@ -162,9 +162,13 @@ User Guide (API Version 2010-05-15)
                 + AWS::ApiGateway::BasePathMapping
                 + AWS::ApiGateway::ClientCertificate
                 + AWS::ApiGateway::Deployment
+                + AWS::ApiGateway::DocumentationPart
+                + AWS::ApiGateway::DocumentationVersion
                 + AWS::ApiGateway::DomainName
+                + AWS::ApiGateway::GatewayResponse
                 + AWS::ApiGateway::Method
                 + AWS::ApiGateway::Model
+                + AWS::ApiGateway::RequestValidator
                 + AWS::ApiGateway::Resource
                 + AWS::ApiGateway::RestApi
                 + AWS::ApiGateway::Stage
@@ -177,6 +181,9 @@ User Guide (API Version 2010-05-15)
                 + AWS::AutoScaling::LifecycleHook
                 + AWS::AutoScaling::ScalingPolicy
                 + AWS::AutoScaling::ScheduledAction
+                + AWS::Batch::ComputeEnvironment
+                + AWS::Batch::JobDefinition
+                + AWS::Batch::JobQueue
                 + AWS::CertificateManager::Certificate
                 + AWS::CloudFormation::Authentication
                 + AWS::CloudFormation::CustomResource
@@ -207,6 +214,9 @@ User Guide (API Version 2010-05-15)
                 + AWS::Config::ConfigurationRecorder
                 + AWS::Config::DeliveryChannel
                 + AWS::DataPipeline::Pipeline
+                + AWS::DAX::Cluster
+                + AWS::DAX::ParameterGroup
+                + AWS::DAX::SubnetGroup
                 + AWS::DirectoryService::MicrosoftAD
                 + AWS::DirectoryService::SimpleAD
                 + AWS::DMS::Certificate
@@ -230,6 +240,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::EC2::NetworkAclEntry
                 + AWS::EC2::NetworkInterface
                 + AWS::EC2::NetworkInterfaceAttachment
+                + AWS::EC2::NetworkInterfacePermission
                 + AWS::EC2::PlacementGroup
                 + AWS::EC2::Route
                 + AWS::EC2::RouteTable
@@ -373,6 +384,7 @@ User Guide (API Version 2010-05-15)
                 + API Gateway ApiKey StageKey
                 + API Gateway Deployment StageDescription
                 + API Gateway Deployment StageDescription MethodSetting
+                + API Gateway DocumentationPart Location
                 + API Gateway Method Integration
                 + API Gateway Method Integration IntegrationResponse
                 + API Gateway Method MethodResponse
@@ -396,8 +408,21 @@ User Guide (API Version 2010-05-15)
                 + AutoScaling EBS Block Device
                 + Auto Scaling MetricsCollection
                 + Auto Scaling NotificationConfigurations
+                + Auto Scaling ScalingPolicy CustomizedMetricSpecification
+                + Auto Scaling ScalingPolicy MetricDimension
+                + Auto Scaling ScalingPolicy PredefinedMetricSpecification
                 + Auto Scaling ScalingPolicy StepAdjustments
+                + Auto Scaling ScalingPolicy TargetTrackingConfiguration
                 + Auto Scaling Tags
+                + AWS Batch ComputeEnvironment ComputeResources
+                + AWS Batch JobDefinition ContainerProperties
+                + AWS Batch JobDefinition Environment
+                + AWS Batch JobDefinition MountPoints
+                + AWS Batch JobDefinition RetryStrategy
+                + AWS Batch JobDefinition Ulimit
+                + AWS Batch JobDefinition Volumes
+                + AWS Batch JobDefinition VolumesHost
+                + AWS Batch JobQueue ComputeEnvironmentOrder
                 + ACM Certificate DomainValidationOption
                 + AWS CloudFormation Stack Parameters
                 + AWS CloudFormation Interface Label
@@ -417,6 +442,8 @@ User Guide (API Version 2010-05-15)
                 + CloudFront DistributionConfiguration ViewerCertificate
                 + CloudFront ForwardedValues
                 + CloudFront ForwardedValues Cookies
+                + CloudTrail Trail EventSelector
+                + CloudTrail Trail DataResource
                 + CloudWatch Metric Dimension
                 + CloudWatch Events Rule Target
                 + CloudWatch Logs MetricFilter MetricTransformation
@@ -425,11 +452,16 @@ User Guide (API Version 2010-05-15)
                 + AWS CodeBuild Project Environment
                 + AWS CodeBuild Project Environment EnvironmentVariables
                 + AWS CodeBuild Project Source
+                + AWS CodeBuild Project SourceAuth
                 + AWS CodeCommit Repository Trigger
                 + AWS CodeDeploy DeploymentConfig MinimumHealthyHosts
                 + AWS CodeDeploy DeploymentGroup Alarm
                 + AWS CodeDeploy DeploymentGroup AlarmConfiguration
+                + AWS CodeDeploy DeploymentGroup AutoRollbackConfiguration
                 + AWS CodeDeploy DeploymentGroup Deployment
+                + AWS CodeDeploy DeploymentGroup DeploymentStyle
+                + AWS CodeDeploy DeploymentGroup ELBInfo
+                + AWS CodeDeploy DeploymentGroup LoadBalancerInfo
                 + AWS CodeDeploy DeploymentGroup Deployment Revision
                 + AWS CodeDeploy DeploymentGroup Deployment Revision
                   GitHubLocation
@@ -473,7 +505,7 @@ User Guide (API Version 2010-05-15)
                 + Amazon Cognito UserPool InviteMessageTemplate
                 + AWS Config ConfigRule Scope
                 + AWS Config ConfigRule Source
-                + AWS Config ConfigRule Source SourceDetails
+                + AWS Config ConfigRule SourceDetails
                 + AWS Config ConfigurationRecorder RecordingGroup
                 + AWS Config DeliveryChannel
                   ConfigSnapshotDeliveryProperties
@@ -488,12 +520,12 @@ User Guide (API Version 2010-05-15)
                 + AWS DMS Endpoint S3Settings
                 + AWS Directory Service MicrosoftAD VpcSettings
                 + AWS Directory Service SimpleAD VpcSettings
-                + DynamoDB Attribute Definitions
-                + DynamoDB Global Secondary Indexes
-                + DynamoDB Key Schema
-                + DynamoDB Local Secondary Indexes
-                + DynamoDB Projection Object
-                + DynamoDB Provisioned Throughput
+                + DynamoDB Table AttributeDefinitions
+                + DynamoDB Table GlobalSecondaryIndexes
+                + DynamoDB Table KeySchema
+                + DynamoDB Table LocalSecondaryIndexes
+                + DynamoDB Table Projection
+                + DynamoDB Table ProvisionedThroughput
                 + DynamoDB Table StreamSpecification
                 + DynamoDB Table TimeToLiveSpecification
                 + Amazon EC2 Block Device Mapping Property
@@ -556,7 +588,7 @@ User Guide (API Version 2010-05-15)
                 + AppCookieStickinessPolicy
                 + Elastic Load Balancing ConnectionDrainingPolicy
                 + Elastic Load Balancing ConnectionSettings
-                + ElasticLoadBalancing HealthCheck
+                + ElasticLoadBalancing LoadBalancer HealthCheck
                 + LBCookieStickinessPolicy
                 + ElasticLoadBalancing Listener
                 + ElasticLoadBalancing Policy
@@ -566,6 +598,7 @@ User Guide (API Version 2010-05-15)
                 + Elastic Load Balancing ListenerRule Conditions
                 + Elastic Load Balancing LoadBalancer
                   LoadBalancerAttributes
+                + Elastic Load Balancing LoadBalancer SubnetMapping
                 + Elastic Load Balancing TargetGroup Matcher
                 + Elastic Load Balancing TargetGroup TargetDescription
                 + Elastic Load Balancing TargetGroup TargetGroupAttributes
@@ -621,20 +654,22 @@ User Guide (API Version 2010-05-15)
                 + GameLift Fleet EC2InboundPermission
                 + IAM Policies
                 + IAM User LoginProfile
-                + AWS IoT Actions
-                + AWS IoT CloudwatchAlarm Action
-                + AWS IoT CloudwatchMetric Action
-                + AWS IoT DynamoDB Action
-                + AWS IoT Elasticsearch Action
-                + AWS IoT Firehose Action
-                + AWS IoT Kinesis Action
-                + AWS IoT Lambda Action
-                + AWS IoT Republish Action
-                + AWS IoT S3 Action
-                + AWS IoT Sns Action
-                + AWS IoT Sqs Action
+                + AWS IoT TopicRule Action
+                + AWS IoT TopicRule CloudwatchAlarmAction
+                + AWS IoT TopicRule CloudwatchMetricAction
+                + AWS IoT TopicRule DynamoDBAction
+                + AWS IoT TopicRule DynamoDBv2Action
+                + AWS IoT TopicRule ElasticsearchAction
+                + AWS IoT TopicRule FirehoseAction
+                + AWS IoT TopicRule KinesisAction
+                + AWS IoT TopicRule LambdaAction
+                + AWS IoT TopicRule PutItemInput
+                + AWS IoT TopicRule RepublishAction
+                + AWS IoT TopicRule S3Action
+                + AWS IoT TopicRule SnsAction
+                + AWS IoT TopicRule SqsAction
                 + AWS IoT Thing AttributePayload
-                + AWS IoT TopicRulePayload
+                + AWS IoT TopicRule TopicRulePayload
                 + Kinesis Analytics Application CSVMappingParameters
                 + Kinesis Analytics Application Input
                 + Kinesis Analytics Application InputParallelism
@@ -665,27 +700,25 @@ User Guide (API Version 2010-05-15)
                   ReferenceSchema
                 + Kinesis Analytics ApplicationReferenceDataSource
                   S3ReferenceDataSource
-                + Kinesis Firehose DeliveryStream Destination
-                  CloudWatchLoggingOptions
+                + Kinesis Firehose DeliveryStream BufferingHints
+                + Kinesis Firehose DeliveryStream CloudWatchLoggingOptions
+                + Kinesis Firehose DeliveryStream CopyCommand
+                + Kinesis Firehose DeliveryStream
+                  ElasticsearchBufferingHints
                 + Kinesis Firehose DeliveryStream
                   ElasticsearchDestinationConfiguration
+                + Kinesis Firehose DeliveryStream ElasticsearchRetryOptions
+                + Kinesis Firehose DeliveryStream EncryptionConfiguration
                 + Kinesis Firehose DeliveryStream
-                  ElasticsearchDestinationConfiguration BufferingHints
-                + Kinesis Firehose DeliveryStream
-                  ElasticsearchDestinationConfiguration RetryOptions
+                  ExtendedS3DestinationConfiguration
+                + Kinesis Firehose DeliveryStream KMSEncryptionConfig
+                + Kinesis Firehose DeliveryStream ProcessingConfiguration
+                + Kinesis Firehose DeliveryStream Processor
+                + Kinesis Firehose DeliveryStream ProcessorParameter
                 + Kinesis Firehose DeliveryStream
                   RedshiftDestinationConfiguration
                 + Kinesis Firehose DeliveryStream
-                  RedshiftDestinationConfiguration CopyCommand
-                + Kinesis Firehose DeliveryStream
                   S3DestinationConfiguration
-                + Kinesis Firehose DeliveryStream
-                  S3DestinationConfiguration BufferingHints
-                + Kinesis Firehose DeliveryStream
-                  S3DestinationConfiguration EncryptionConfiguration
-                  KMSEncryptionConfig
-                + Kinesis Firehose DeliveryStream
-                  S3DestinationConfiguration EncryptionConfiguration
                 + AWS Lambda Function DeadLetterConfig
                 + AWS Lambda Function Environment
                 + AWS Lambda Function Code
@@ -725,8 +758,11 @@ User Guide (API Version 2010-05-15)
                 + Amazon Route 53 HostedZoneConfig Property
                 + Amazon Route 53 HostedZoneTags
                 + Amazon Route 53 HostedZoneVPCs
+                + Amazon S3 Bucket MetricsConfiguration
+                + Amazon S3 Bucket TagFilter
                 + Amazon S3 Cors Configuration
                 + Amazon S3 Cors Configuration Rule
+                + Amazon S3 Bucket AbortIncompleteMultipartUpload
                 + Amazon S3 Lifecycle Configuration
                 + Amazon S3 Lifecycle Rule
                 + Amazon S3 Lifecycle Rule NoncurrentVersionTransition
@@ -741,7 +777,7 @@ User Guide (API Version 2010-05-15)
                 + Amazon S3 NotificationConfiguration QueueConfigurations
                 + Amazon S3 NotificationConfiguration TopicConfigurations
                 + Amazon S3 ReplicationConfiguration
-                + Amazon S3 ReplicationConfiguration Rules
+                + Amazon S3 ReplicationConfiguration Rule
                 + Amazon S3 ReplicationConfiguration Rules Destination
                 + Amazon S3 Versioning Configuration
                 + Amazon S3 Website Configuration Property
@@ -886,31 +922,304 @@ since the preceding release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
 
+Changed default umask value from version 1.4-22 onwards
+
+September 14, 2017
+
+The default umask parameter value for the cfn-hup.conf configuration file 
+is now 022. For more information, see cfn-hup.
+
+Updated resources 	September 7, 2017 	
+AWS::ElasticLoadBalancingV2::LoadBalancer
+
+    Use the SubnetMappings property to specify the IDs of the subnets to
+    attach to the load balancer.
+
+    Use the Type property to specify the type of load balancer to create.
+
+AWS::ElasticLoadBalancingV2::TargetGroup
+
+    Use the TargetType property to specify the registration type of the
+    targets in this target group.
+
+2010-05-15
+
+Rollback triggers added to the AWS CloudFormation API
+
+August 31, 2017
+
+Rollback triggers enable you to have AWS CloudFormation monitor the state 
+of your application during stack creation and updating, and to roll back 
+that operation if the application breaches the threshold of any of the 
+alarms you've specified. For more information, see RollbackConfiguration
+<http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_RollbackConfiguration.html> 
+in the AWS CloudFormation API Reference.
+
+2010-05-15
+
+New umask parameter for cfn-hup.conf file
+
+August 31, 2017
+
+Use the umask parameter in the cfn-hup.conf configuration file to control 
+file permissions used by the cfn-hup daemon (version 1.4-21). For more 
+information, see cfn-hup.
+
+Updated resources for VPC Sizing support
+
+August 29, 2017
+
+AWS::EC2::VPCCidrBlock
+
+    Use the CidrBlock property to associate an IPv4 CIDR block with a VPC.
+
+AWS::EC2::VPC
+
+    Use the CidrBlockAssociations attribute with the Fn::GetAtt function to
+    get a list of IPv4 CIDR block association IDs associated with the VPC.
+
+2010-05-15
+
+Updated resources
+
+August 23, 2017
+
+AWS::S3::Bucket
+
+    In the Rule property type, use the TagFilters property to specify tags
+    to use in identifying a subset of objects for an Amazon S3 bucket.
+
+    Use the MetricsConfiguration property to specify a metrics
+    configuration for the CloudWatch request metrics from an Amazon S3
+    bucket.
+
+AWS::IoT::TopicRule
+
+    In the Action property type, use the DynamoDBv2Action property to
+    describe an AWS IoT action that writes data to a DynamoDB table.
+
+    In the Action property type, the DynamoDBAction property now supports
+    the HashKeyType and RangeKeyType properties.
+
+AWS::Lambda::Permission
+
+    Use the EventSourceToken property to specify a unique token that must
+    be supplied by the principal invoking the function.
+
+2010-05-15
+
+New pseudo parameters
+
+August 23, 2017
+
+Use the AWS::Partition pseudo parameter to return the partition that a 
+resource is in.
+
+Use the AWS::URLSuffix pseudo parameter to return the suffix for a domain.
+
+For more information, see Pseudo Parameters Reference.
+
+2010-05-15
+
+New resources for DAX support 	August 22, 2017 	
+AWS::DAX::Cluster
+
+    Use the AWS::DAX::Cluster resource to create a DAX cluster for use with
+    Amazon DynamoDB.
+
+AWS::DAX::ParameterGroup
+
+    Use the AWS::DAX::ParameterGroup resource to create a parameter group
+    for use with Amazon DynamoDB.
+
+AWS::DAX::SubnetGroup
+
+    Use the AWS::DAX::SubnetGroup resource to create a subnet group for use
+    with DAX (DynamoDB Accelerator).
+
+2010-05-15
+
+New resources
+
+August 18, 2017
+
+AWS::ApiGateway::DocumentationPart and 
+AWS::ApiGateway::DocumentationVersion
+
+    Use the AWS::ApiGateway::DocumentationPart and 
+    AWS::ApiGateway::DocumentationVersion resources to create documentation
+    for your API Gateway API.
+
+AWS::ApiGateway::GatewayResponse
+
+    Use the AWS::ApiGateway::GatewayResponse resource to create a custom
+    response for your API Gateway API.
+
+AWS::ApiGateway::RequestValidator
+
+    Use the AWS::ApiGateway::RequestValidator resource to set up validation
+    rules for incoming requests to your API Gateway API.
+
+AWS::EC2::NetworkInterfacePermission
+
+    Use the AWS::EC2::NetworkInterfacePermission resource to grant an AWS
+    account permission to a network interface.
+
+2010-05-15
+
+Updated resources
+
+August 18, 2017
+
+AWS::ApiGateway::Stage
+
+    Use the DocumentationVersion property to specify a versioned snapshot
+    of the API documentation.
+
+AWS::AutoScaling::ScalingPolicy
+
+    Use the TargetTrackingConfiguration property to specify an Auto Scaling
+    target tracking scaling policy configuration.
+
+AWS::CloudTrail::Trail
+
+    Use the EventSelectors property for Amazon S3 Data Events support.
+
+AWS::CodeDeploy::DeploymentGroup
+
+    Use the LoadBalancerInfo and DeploymentStyle properties to specify an
+    Elastic Load Balancing load balancer for an in-place deployment.
+
+    Use the AutoRollbackConfiguration property to configure automatic
+    rollback for the deployment.
+
+AWS::EC2::SpotFleet
+
+    In the SpotFleetRequestConfigData property type, use the 
+    ReplaceUnhealthyInstances property to indicate whether the Spot fleet
+    should replace unhealthy instances and the Type property to specify the
+    type of request.
+
+AWS::EC2::Subnet
+
+    Use the AssignIpv6AddressOnCreation and Ipv6CidrBlock properties to
+    create a subnet with an IPv6 CIDR block.
+
+AWS::KinesisFirehose::DeliveryStream
+
+    Use the ExtendedS3DestinationConfiguration property to configure a
+    destination in Amazon S3.
+
+    Use the ProcessingConfiguration subproperty within each destination
+    configuration to invoke Lambda functions that transform incoming source
+    data and deliver the transformed data to destinations.
+
+AWS::RDS::DBCluster and AWS::RDS::DBInstance
+
+    The default DeletionPolicy is now Snapshot for AWS::RDS::DBCluster 
+    resources and for AWS::RDS::DBInstance resources that don't specify the 
+    DBClusterIdentifier property. For more information about how AWS
+    CloudFormation deletes resources, see DeletionPolicy Attribute.
+
+AWS::S3::Bucket
+
+    In the Rule property type, use the AbortIncompleteMultipartUpload 
+    property to specify a lifecycle rule that aborts incomplete multipart
+    uploads to an Amazon S3 bucket.
+
+AWS::SQS::Queue
+
+    Use the KmsMasterKeyId and KmsDataKeyReusePeriodSeconds properties to
+    configure server-side encryption for Amazon SQS.
+
+Added the Arn attribute to the Fn::GetAtt intrinsic function for the 
+following resources:
+
+    * AWS::CloudTrail::Trail. Also added SnsTopicArn.
+
+    * AWS::CloudWatch::Alarm
+
+    * AWS::DynamoDB::Table
+
+    * AWS::ECS::Cluster
+
+    * AWS::IoT::Policy
+
+    * AWS::IoT::TopicRule
+
+    * AWS::Logs::Destination
+
+2010-05-15
+
+Support for stack tags in AWS CodePipeline artifacts
+
+August 18, 2017
+
+You can now specify tags for stacks in template configuration files for use 
+as artifacts for AWS CodePipeline pipelines. Specified tags are applied to 
+stacks created using the template configuration file. For more information, 
+see AWS CloudFormation Artifacts.
+
+2010-05-15
+
+Create encrypted file systems
+
+August 14, 2017
+
+AWS::EFS::FileSystem
+
+    Use the Encrypted property to encrypt an Amazon EFS file system during
+    creation.
+
+    Use the KmsKeyId property to optionally specify a custom customer
+    master key to use to protect the encrypted file system.
+
+2010-05-15
+
+New resources for AWS Batch support
+
+August 8, 2017
+
+AWS::Batch::ComputeEnvironment
+
+    Use the AWS::Batch::ComputeEnvironment resource to define your AWS
+    Batch compute environment.
+
+AWS::Batch::JobDefinition
+
+    Use the AWS::Batch::JobDefinition resource to specify the parameters
+    for an AWS Batch job definition.
+
+AWS::Batch::JobQueue
+
+    Use the AWS::Batch::JobQueue resource to define your AWS Batch job
+    queue.
+
+2010-05-15
+
 New resources for Amazon Kinesis Analytics support
 
 July 28, 2017
 
 AWS::KinesisAnalytics::Application
 
-    Use the AWS CloudFormation AWS::KinesisAnalytics::Application resource
-    to create an Amazon Kinesis Analytics application.
+    Use the AWS::KinesisAnalytics::Application resource to create an Amazon
+    Kinesis Analytics application.
 
 AWS::KinesisAnalytics::ApplicationOutput
 
-    Use the AWS CloudFormation AWS::KinesisAnalytics::ApplicationOutput 
-    resource to add an external destination to your Amazon Kinesis
-    Analytics application.
+    Use the AWS::KinesisAnalytics::ApplicationOutput resource to add an
+    external destination to your Amazon Kinesis Analytics application.
 
 AWS::KinesisAnalytics::ApplicationReferenceDataSource
 
-    Use the AWS CloudFormation 
-    AWS::KinesisAnalytics::ApplicationReferenceDataSource resource to add a
-    reference data source to an existing Amazon Kinesis Analytics
+    Use the AWS::KinesisAnalytics::ApplicationReferenceDataSource resource
+    to add a reference data source to an existing Amazon Kinesis Analytics
     application.
 
 2010-05-15
 
-Use StackSets to centrally manage stacks across accounts and regions.
+Use StackSets to centrally manage stacks across accounts and regions
 
 July 25, 2017
 
@@ -1266,7 +1575,7 @@ Updated resources
 
 April 28, 2017
 
-AWS Config ConfigRule Source SourceDetails
+AWS Config ConfigRule SourceDetails
 
     Use the MaximumExecutionFrequency subproperty of the 
     AWS::Config::ConfigRule resource to run evaluations for a custom rule
@@ -1483,7 +1792,7 @@ AWS::RDS::DBInstance
 
     Added the Timezone property.
 
-AWS IoT Firehose Action
+AWS IoT TopicRule FirehoseAction
 
     Added the Separator property.
 

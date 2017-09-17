@@ -85,9 +85,11 @@ class JsonCompletionTests : LightCodeInsightFixtureTestCase() {
         "AWS::AccountId",
         "AWS::NoValue",
         "AWS::NotificationARNs",
+        "AWS::Partition",
         "AWS::Region",
         "AWS::StackId",
-        "AWS::StackName")
+        "AWS::StackName",
+        "AWS::URLSuffix")
   }
 
   fun testMappingTopLevelKey1() {

@@ -139,7 +139,7 @@ object ResourceTypesSaver {
 
     val doc = getDocumentFromUrl(docLocation)
 
-    val descriptionElement = doc.select("div").filter { it.attr("id") == "main-col-body" }.single()
+    val descriptionElement = doc.select("div").single { it.attr("id") == "main-col-body" }
     descriptionElement.getElementsByAttributeValueMatching("id", "language-filter").forEach { it.remove() }
     descriptionElement.getElementsByAttributeValueMatching("summary", "Breadcrumbs").forEach { it.remove() }
     val description = cleanupHtml(descriptionElement.toString())
@@ -188,8 +188,8 @@ object ResourceTypesSaver {
 
           var requiredValue: String? = null
           var typeValue: String? = null
-          var descriptionValue: String = ""
-          var updateValue: String = ""
+          var descriptionValue = ""
+          var updateValue = ""
 
           for (element in descrElements) {
             if (element.parent() !== descr) {
@@ -217,7 +217,7 @@ object ResourceTypesSaver {
             }
           }
 
-          var type: String = ""
+          var type = ""
 
           if (typeValue != null) {
             type = typeValue
@@ -245,12 +245,14 @@ object ResourceTypesSaver {
           var required = false
 
           if (requiredValue != null) {
-            if (requiredValue == "Yes") {
+            if (requiredValue.equals("Yes", ignoreCase = true)) {
               required = true
-            } else if (requiredValue.startsWith("No") ||
+            } else if (
+                requiredValue.startsWith("No", ignoreCase = true) ||
                 requiredValue.startsWith("Conditional") ||
                 requiredValue == "Required if NetBiosNameServers is specified; optional otherwise" ||
                 requiredValue == "Yes, for VPC security groups" ||
+                requiredValue == "Yes. The IamInstanceProfile and ServiceRole options are required" ||
                 requiredValue == "Can be used instead of GroupId for EC2 security groups" ||
                 requiredValue == "Yes, for VPC security groups; can be used instead of GroupName for EC2 security groups" ||
                 requiredValue == "Yes, for ICMP and any protocol that uses ports" ||
@@ -274,6 +276,12 @@ object ResourceTypesSaver {
           if (resourceTypeName == "AWS::AutoScaling::AutoScalingGroup" && name == "NotificationConfigurations") {
             val additionalProperty = CloudFormationResourceProperty("NotificationConfiguration", type, required, docUrl, updateValue)
             properties[additionalProperty.name] = Pair(additionalProperty, descriptionValue)
+          }
+
+          // Most likely a documentation bugs, it contradicts examples in the same article
+          // see https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-batch-jobdefinition.html
+          if (resourceTypeName == "AWS::Batch::JobDefinition" && name == "Parameters") {
+            required = false
           }
 
           properties[name] = Pair(CloudFormationResourceProperty(name, type, required, docUrl, updateValue), descriptionValue)
