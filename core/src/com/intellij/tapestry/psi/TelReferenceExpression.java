@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.util.PropertyUtil;
+import com.intellij.psi.util.PropertyUtilBase;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,8 +39,8 @@ public class TelReferenceExpression extends TelCompositeElement implements TelRe
     public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
       PsiElement resolve = resolve();
       // if we referenced property name before (without get) then rename should also strip get prefix
-      if (resolve instanceof PsiMethod && PropertyUtil.getPropertyName((PsiMethod)resolve) != null) {
-        String newPropertyName = PropertyUtil.getPropertyName(newElementName);
+      if (resolve instanceof PsiMethod && PropertyUtilBase.getPropertyName((PsiMethod)resolve) != null) {
+        String newPropertyName = PropertyUtilBase.getPropertyName(newElementName);
         if (newPropertyName != null) newElementName = newPropertyName;
       }
       final PsiElement newReferenceName = TelPsiUtil.parseReference(newElementName, getProject()).getReferenceNameElement();

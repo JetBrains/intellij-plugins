@@ -7,6 +7,7 @@ import com.intellij.psi.resolve.JavaMethodCandidateInfo;
 import com.intellij.psi.resolve.JavaMethodResolveHelper;
 import com.intellij.psi.scope.BaseScopeProcessor;
 import com.intellij.psi.util.PropertyUtil;
+import com.intellij.psi.util.PropertyUtilBase;
 import com.intellij.tapestry.core.TapestryConstants;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
@@ -76,8 +77,8 @@ abstract class TelVariantsProcessor<T> extends BaseScopeProcessor {
       }
       if (!myMethodCall &&
           myPropertyAccessors != null &&
-          PropertyUtil.isSimplePropertyGetter(method) &&
-          (myReferenceName == null || myReferenceName.equalsIgnoreCase(PropertyUtil.getPropertyName(method)))) {
+          PropertyUtilBase.isSimplePropertyGetter(method) &&
+          (myReferenceName == null || myReferenceName.equalsIgnoreCase(PropertyUtilBase.getPropertyName(method)))) {
         myPropertyAccessors.addMethod(method, state.get(PsiSubstitutor.KEY), false);
       }
       if (myForCompletion || myMethodCall && myReferenceName.equalsIgnoreCase(namedElement.getName())) {
@@ -98,12 +99,12 @@ abstract class TelVariantsProcessor<T> extends BaseScopeProcessor {
       if (myForCompletion || !myMethodCall && myReferenceName.equalsIgnoreCase(namedElement.getName())) {
         addIfNotNull(myResult, createResult(namedElement, true));
       }
-      final String getterName = PropertyUtil.suggestGetterName(field);
+      final String getterName = PropertyUtilBase.suggestGetterName(field);
       if (myForCompletion || myMethodCall && myReferenceName.equalsIgnoreCase(getterName)) {
         myMethods.addMethod(new TapestryAccessorMethod(field, true, getterName), state.get(PsiSubstitutor.KEY), false);
         //addIfNotNull(createResult(new PropertyAccessorElement(field, getterName, true), true), myResult);
       }
-      final String setterName = PropertyUtil.suggestSetterName(field);
+      final String setterName = PropertyUtilBase.suggestSetterName(field);
       if (!field.hasModifierProperty(FINAL) && (myForCompletion || myMethodCall && myReferenceName.equalsIgnoreCase(setterName))) {
         myMethods.addMethod(new TapestryAccessorMethod(field, false, setterName), state.get(PsiSubstitutor.KEY), false);
         //addIfNotNull(createResult(new PropertyAccessorElement(field, setterName, false), true), myResult);
