@@ -72,7 +72,7 @@ public class UnregisteredActivatorInspection extends AbstractOsgiVisitor {
                 }
 
                 PsiElement identifier = unwrap(psiClass.getNameIdentifier());
-                if (identifier != null) {
+                if (isValidElement(identifier)) {
                   holder.registerProblem(identifier, OsmorcBundle.message("UnregisteredActivatorInspection.message"), fixes);
                 }
               }

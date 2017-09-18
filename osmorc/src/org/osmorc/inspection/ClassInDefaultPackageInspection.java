@@ -47,7 +47,7 @@ public class ClassInDefaultPackageInspection extends AbstractOsgiVisitor {
           PsiClass[] classes = ((PsiClassOwner)file).getClasses();
           if (classes.length > 0) {
             PsiElement identifier = unwrap(classes[0].getNameIdentifier());
-            if (identifier != null && identifier.isPhysical()) {
+            if (isValidElement(identifier)) {
               holder.registerProblem(identifier, OsmorcBundle.message("ClassInDefaultPackageInspection.message"));
             }
           }
