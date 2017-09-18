@@ -24,6 +24,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.beanProperties.CreateBeanPropertyFixes;
 import com.intellij.psi.util.PropertyUtil;
+import com.intellij.psi.util.PropertyUtilBase;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +74,7 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
     }
 
     final Map<String, PsiMethod> properties =
-      PropertyUtil.getAllProperties(psiClass, true, !isLast() || referenceSet.isSupportsReadOnlyProperties());
+      PropertyUtilBase.getAllProperties(psiClass, true, !isLast() || referenceSet.isSupportsReadOnlyProperties());
 
     final Object[] variants = new Object[properties.size()];
     int i = 0;
@@ -81,7 +82,7 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
       final String propertyName = entry.getKey();
 
       final PsiMethod psiMethod = entry.getValue();
-      final PsiType propertyType = PropertyUtil.getPropertyType(psiMethod);
+      final PsiType propertyType = PropertyUtilBase.getPropertyType(psiMethod);
       assert propertyType != null;
 
       final LookupElementBuilder variant =
@@ -101,13 +102,13 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
   }
 
   public PsiElement handleElementRename(final String newElementName) throws IncorrectOperationException {
-    final String name = PropertyUtil.getPropertyName(newElementName);
+    final String name = PropertyUtilBase.getPropertyName(newElementName);
     return super.handleElementRename(name == null ? newElementName : name);
   }
 
   public PsiElement bindToElement(@NotNull final PsiElement element) throws IncorrectOperationException {
     if (element instanceof PsiMethod) {
-      final String propertyName = PropertyUtil.getPropertyName((PsiMember)element);
+      final String propertyName = PropertyUtilBase.getPropertyName((PsiMember)element);
       if (propertyName != null) {
         return super.handleElementRename(propertyName);
       }
@@ -132,10 +133,10 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
   @Nullable
   private PsiMethod resolveProperty(@NotNull final PsiClass psiClass, final String propertyName) {
     PsiMethod method = isLast() ?
-                       PropertyUtil.findPropertySetter(psiClass, propertyName, false, true) :
-                       PropertyUtil.findPropertyGetter(psiClass, propertyName, false, true);
+                       PropertyUtilBase.findPropertySetter(psiClass, propertyName, false, true) :
+                       PropertyUtilBase.findPropertyGetter(psiClass, propertyName, false, true);
     if (method == null && referenceSet.isSupportsReadOnlyProperties()) {
-      method = PropertyUtil.findPropertyGetter(psiClass, propertyName, false, true);
+      method = PropertyUtilBase.findPropertyGetter(psiClass, propertyName, false, true);
     }
     return method == null || !method.hasModifierProperty(PsiModifier.PUBLIC) ? null : method;
   }

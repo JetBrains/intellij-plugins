@@ -23,6 +23,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PropertyUtil;
+import com.intellij.psi.util.PropertyUtilBase;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
@@ -120,8 +121,8 @@ final class ActionUtil {
       }
 
       // do not include simple getters (with underlying field)
-      if (PropertyUtil.isSimplePropertyGetter(psiMethod) &&
-          actionClass.findFieldByName(PropertyUtil.getPropertyName(psiMethod), true) != null) {
+      if (PropertyUtilBase.isSimplePropertyGetter(psiMethod) &&
+          actionClass.findFieldByName(PropertyUtilBase.getPropertyName(psiMethod), true) != null) {
         continue;
       }
 
