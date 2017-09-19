@@ -5,10 +5,10 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeIn
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection
 import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.inspections.JSAnnotatorInspection
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
-import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.util.ThrowableRunnable
 
@@ -102,8 +102,9 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
   }
 
   fun testLocalPropsInArrayInCompAttrsAndWithKebabCaseAlso() {
-    myFixture.configureByText("LocalPropsInArrayInCompAttrsAndWithKebabCaseAlso.vue",
-                              """
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("LocalPropsInArrayInCompAttrsAndWithKebabCaseAlso.vue",
+                                """
 <template>
     <div id="app">
         <camelCase one-two="test" <warning descr="Attribute three-four is not allowed here">three-four</warning>=1></camelCase>
@@ -117,12 +118,14 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     }
 </script>
 """)
-    myFixture.checkHighlighting()
+      myFixture.checkHighlighting()
+    })
   }
 
   fun testLocalPropsInObjectInCompAttrsAndWithKebabCaseAlso() {
-    myFixture.configureByText("LocalPropsInObjectInCompAttrsAndWithKebabCaseAlso.vue",
-                              """
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("LocalPropsInObjectInCompAttrsAndWithKebabCaseAlso.vue",
+                                """
 <template>
     <div id="app">
         <camelCase one-two="test" <warning descr="Attribute three-four is not allowed here">three-four</warning>=1></camelCase>
@@ -138,11 +141,13 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     }
 </script>
 """)
-    myFixture.checkHighlighting()
+      myFixture.checkHighlighting()
+    })
   }
 
   fun testImportedComponentPropsInCompAttrsAsArray() {
-    myFixture.configureByText("compUI.vue", """
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("compUI.vue", """
 <script>
     export default {
         name: 'compUI',
@@ -150,7 +155,7 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     }
 </script>
 """)
-    myFixture.configureByText("ImportedComponentPropsAsArray.vue", """
+      myFixture.configureByText("ImportedComponentPropsAsArray.vue", """
 <template>
     <div id="app">
         <comp-u-i see-me="12345" <warning descr="Attribute butNotThis is not allowed here">butNotThis</warning>="112"></comp-u-i>
@@ -161,11 +166,13 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     import CompUI from 'compUI.vue'
 </script>
 """)
-    myFixture.checkHighlighting()
+      myFixture.checkHighlighting()
+    })
   }
 
   fun testImportedComponentPropsInCompAttrsAsObject() {
-    myFixture.configureByText("compUI.vue", """
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("compUI.vue", """
 <script>
     export default {
         name: 'compUI',
@@ -175,7 +182,7 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     }
 </script>
 """)
-    myFixture.configureByText("ImportedComponentPropsAsObject.vue", """
+      myFixture.configureByText("ImportedComponentPropsAsObject.vue", """
 <template>
     <div id="app">
         <comp-u-i see-me="12345" <warning descr="Attribute butNotThis is not allowed here">butNotThis</warning>="112"></comp-u-i>
@@ -186,11 +193,13 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     import CompUI from 'compUI.vue'
 </script>
 """)
-    myFixture.checkHighlighting()
+      myFixture.checkHighlighting()
+    })
   }
 
   fun testImportedComponentPropsInCompAttrsObjectRef() {
-    myFixture.configureByText("compUI.vue", """
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("compUI.vue", """
 <script>
 const props = {seeMe: {}}
     export default {
@@ -199,7 +208,7 @@ const props = {seeMe: {}}
     }
 </script>
 """)
-    myFixture.configureByText("ImportedComponentPropsAsObjectRef.vue", """
+      myFixture.configureByText("ImportedComponentPropsAsObjectRef.vue", """
 <template>
     <div id="app">
         <comp-u-i see-me="12345" <warning descr="Attribute butNotThis is not allowed here">butNotThis</warning>="112"></comp-u-i>
@@ -210,12 +219,14 @@ const props = {seeMe: {}}
     import CompUI from 'compUI.vue'
 </script>
 """)
-    myFixture.checkHighlighting()
+      myFixture.checkHighlighting()
+    })
   }
 
   fun testLocalPropsInArrayInCompAttrsRef() {
-    myFixture.configureByText("LocalPropsInArrayInCompAttrsRef.vue",
-                              """
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("LocalPropsInArrayInCompAttrsRef.vue",
+                                """
 <template>
     <div id="app">
         <camelCase one-two="test" <warning descr="Attribute three-four is not allowed here">three-four</warning>=1></camelCase>
@@ -230,11 +241,13 @@ const props = ['oneTwo']
     }
 </script>
 """)
-    myFixture.checkHighlighting()
+      myFixture.checkHighlighting()
+    })
   }
 
   fun testCompRequiredAttributesTest() {
-    myFixture.configureByText("CompRequiredAttributesTest.vue", """
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("CompRequiredAttributesTest.vue", """
 <template>
     <div id="app">
         <<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute withCamelCase">camelCase</warning></warning></warning></warning>></<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute withCamelCase">camelCase</warning></warning></warning></warning>>
@@ -257,11 +270,13 @@ const props = ['oneTwo']
       }
     }
 </script>""")
-    myFixture.checkHighlighting()
+      myFixture.checkHighlighting()
+    })
   }
 
   fun testVueAttributeInCustomTag() {
-    myFixture.configureByText("VueAttributeInCustomTag.vue", """
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("VueAttributeInCustomTag.vue", """
 <template>
   <custom v-for="item in items">
     Hello!
@@ -277,11 +292,13 @@ export default {
 }
 </script>
 """)
-    myFixture.checkHighlighting()
+      myFixture.checkHighlighting()
+    })
   }
 
   fun testVFor() {
-    myFixture.configureByText("VFor.vue", """
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("VFor.vue", """
 <template>
   <ul>
     <li v-for="item in items">
@@ -301,10 +318,12 @@ export default {
   }
 </script>
     """)
-    com.intellij.testFramework.runInInitMode{ myFixture.checkHighlighting() }
+      com.intellij.testFramework.runInInitMode { myFixture.checkHighlighting() }
+    })
   }
 
   fun testVForInPug() {
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
     myFixture.configureByText("VForInPug.vue", """
 <template lang="pug">
   ul
@@ -323,5 +342,6 @@ export default {
 </script>
     """)
     com.intellij.testFramework.runInInitMode{ myFixture.checkHighlighting() }
+    })
   }
 }
