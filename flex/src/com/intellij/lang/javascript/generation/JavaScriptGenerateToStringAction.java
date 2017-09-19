@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class JavaScriptGenerateToStringAction extends ActionScriptBaseJSGenerateAction {
 
+  @NotNull
   protected BaseJSGenerateHandler getGenerateHandler() {
     return new ActionScriptGenerateToStringHandler();
   }

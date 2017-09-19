@@ -40,12 +40,13 @@ public class ActionScriptGenerateDelegatesHandler extends BaseJSGenerateHandler 
     if (!super.isValidFor(editor, file)) {
       return false;
     }
-    return !findCandidateFields(findClass(file, editor)).isEmpty();
+    final JSClass aClass = findClass(file, editor, null);
+    return aClass != null && !findCandidateFields(aClass).isEmpty();
   }
 
   @Override
   public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
-    final JSClass jsClass = findClass(file, editor);
+    final JSClass jsClass = findClass(file, editor, null);
     if (jsClass == null) return;
 
     Collection<JSField> fields = findCandidateFields(jsClass);
@@ -265,7 +266,7 @@ public class ActionScriptGenerateDelegatesHandler extends BaseJSGenerateHandler 
     return null;
   }
 
-  private static Collection<JSField> findCandidateFields(JSClass clazz) {
+  private static Collection<JSField> findCandidateFields(@NotNull JSClass clazz) {
     Collection<JSField> result = new ArrayList<>();
     for (JSField field : clazz.getFields()) {
       JSType type = field.getType();

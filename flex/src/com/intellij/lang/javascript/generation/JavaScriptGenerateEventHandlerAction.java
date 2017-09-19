@@ -1,5 +1,7 @@
 package com.intellij.lang.javascript.generation;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author Maxim.Mossienko
  *         Date: Jul 19, 2008
@@ -7,6 +9,7 @@ package com.intellij.lang.javascript.generation;
  */
 public class JavaScriptGenerateEventHandlerAction extends ActionScriptBaseJSGenerateAction {
 
+  @NotNull
   protected BaseJSGenerateHandler getGenerateHandler() {
     return new ActionScriptGenerateEventHandler();
   }

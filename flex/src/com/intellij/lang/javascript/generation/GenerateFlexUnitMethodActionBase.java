@@ -18,6 +18,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class GenerateFlexUnitMethodActionBase extends ActionScriptBaseJSGenerateAction {
+  @NotNull
   protected BaseJSGenerateHandler getGenerateHandler() {
     return new BaseJSGenerateHandler() {
       protected String getTitleKey() {
