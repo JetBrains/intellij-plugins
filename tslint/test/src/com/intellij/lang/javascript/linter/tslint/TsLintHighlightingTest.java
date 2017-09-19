@@ -2,10 +2,13 @@ package com.intellij.lang.javascript.linter.tslint;
 
 import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.linter.JSLinterAnnotationResult;
 import com.intellij.lang.javascript.linter.LinterHighlightingTest;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
+import com.intellij.lang.javascript.linter.tslint.highlight.TsLintExternalAnnotator;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
+import com.intellij.lang.javascript.linter.tslint.highlight.TsLinterInput;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueueImpl;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.application.PathManager;
@@ -50,6 +53,12 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
     return "tslint";
   }
 
+  @Override
+  protected boolean shouldEnableInspection() {
+    final String name = getTestName(false);
+    return !"NoConfig".equals(name) && !"BadConfig".equals(name);
+  }
+
   public void testOne() {
     doTest("one", "one/one.ts", true, true, null);
   }
@@ -60,13 +69,28 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   }
 
   public void testNoConfig() {
-    doTest("noConfig", "noConfig/data.ts", false, true, null);
-    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: Config file was not found.", false, true);
+    final PsiFile[] files = myFixture.configureByFiles("noConfig/data.ts");
+    final String configFilePath = FileUtil.toSystemDependentName(files[0].getVirtualFile().getParent().getPath() + "/tslint.json");
+
+    doOnlyGlobalAnnotationTest("Config file was not found.", files[0], configFilePath);
   }
 
   public void testBadConfig() {
-    doTest("badConfig", "badConfig/data.ts", false, true, null);
-    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: Config file was not found.", false, true);
+    final PsiFile[] files = myFixture.configureByFiles("badConfig/data.ts", "badConfig/tslint.json");
+    final String configFilePath = FileUtil.toSystemDependentName(files[1].getVirtualFile().getPath());
+
+    doOnlyGlobalAnnotationTest("Config file was not found.", files[0], configFilePath);
+  }
+
+  private void doOnlyGlobalAnnotationTest(@SuppressWarnings("SameParameterValue") final String expected,
+                                          final PsiFile dataFile, final String configPath) {
+    final TsLintConfiguration configuration = TsLintConfiguration.getInstance(getProject());
+    final TsLintState.Builder builder = new TsLintState.Builder(configuration.getExtendedState().getState());
+    builder.setCustomConfigFileUsed(true).setCustomConfigFilePath(configPath);
+    final TsLinterInput input = new TsLinterInput(myFixture.getProject(), dataFile, "", builder.build(), null, null);
+    final JSLinterAnnotationResult<TsLintState> result = new TsLintExternalAnnotator().annotate(input);
+    Assert.assertNotNull(result.getFileLevelError());
+    Assert.assertEquals(expected, result.getFileLevelError().getMessage());
   }
 
   public void testLineSeparatorsWin() {
