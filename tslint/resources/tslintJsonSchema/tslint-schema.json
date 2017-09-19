@@ -666,6 +666,10 @@
           "description": "Disallows parameter properties in class constructors",
           "type": "boolean"
         },
+        "no-parameter-reassignment": {
+          "description": "Disallows reassigning parameters",
+          "type": "boolean"
+        },
         "no-reference": {
           "description": "Disallows /// <reference path=> imports (use ES6-style imports instead)",
           "type": "boolean"
