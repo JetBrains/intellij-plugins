@@ -89,9 +89,15 @@ public class AngularTypedHandlerTest extends LightPlatformCodeInsightFixtureTest
   }
 
   public void testOneSymbolDelimiterTypeOverOneSymbol() {
-    myFixture.configureByText(HtmlFileType.INSTANCE, "<caret>$");
+    myFixture.configureByText(HtmlFileType.INSTANCE, "#<caret>$");
     doInterpolationBracesCompleterTest("#", "$", '$', false);
-    myFixture.checkResult("$<caret>");
+    myFixture.checkResult("#$<caret>");
+  }
+
+  public void testDoNotCompleteEndWithoutStart() {
+    myFixture.configureByText(HtmlFileType.INSTANCE, "abc {<caret>");
+    doInterpolationBracesCompleterTest("{{", "}}", '}', false);
+    myFixture.checkResult("abc {}<caret>");
   }
 
   public void testThreeSymbolDelimiters() {
