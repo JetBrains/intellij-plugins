@@ -278,7 +278,7 @@ const props = ['oneTwo']
     JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
       myFixture.configureByText("VueAttributeInCustomTag.vue", """
 <template>
-  <custom v-for="item in items">
+  <custom v-for="<warning descr="Unused local variable item">item</warning> in items">
     Hello!
   </custom>
 </template>
@@ -301,7 +301,7 @@ export default {
       myFixture.configureByText("VFor.vue", """
 <template>
   <ul>
-    <li v-for="item in items">
+    <li v-for="(item, <warning descr="Unused local variable key">key</warning>) in items">
       {{ item.message }}
     </li>
   </ul>
