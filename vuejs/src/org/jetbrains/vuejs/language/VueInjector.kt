@@ -12,8 +12,8 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.impl.JSLiteralExpressionImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
-import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiLanguageInjectionHost
 import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl
@@ -97,11 +97,9 @@ class VueInjector : MultiHostInjector {
   }
 
   private fun injectInElement(host: PsiLanguageInjectionHost, registrar: MultiHostRegistrar) {
-    val value = host.text
-    val start = if (value.startsWith("'") || value.startsWith("\"")) 1 else 0
-    val end = if (value.endsWith("'") || value.endsWith("\"")) 1 else 0
-    val length = value.length
-    registrar.startInjecting(VueJSLanguage.INSTANCE).addPlace(null, null, host, TextRange(start, length - end)).doneInjecting()
+    registrar.startInjecting(VueJSLanguage.INSTANCE)
+      .addPlace(null, null, host, ElementManipulators.getValueTextRange(host))
+      .doneInjecting()
   }
 
   override fun elementsToInjectIn(): MutableList<out Class<out PsiElement>> {
