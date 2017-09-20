@@ -224,6 +224,11 @@ public class DartAnalysisServerService implements Disposable {
     }
 
     @Override
+    public void computedClosingLabels(@NotNull final String filePath, List<ClosingLabel> labels) {
+      myServerData.computedClosingLabels(FileUtil.toSystemIndependentName(filePath), labels);
+    }
+
+    @Override
     public void computedImplemented(String _filePath,
                                     List<ImplementedClass> implementedClasses,
                                     List<ImplementedMember> implementedMembers) {
@@ -1491,6 +1496,9 @@ public class DartAnalysisServerService implements Disposable {
       subscriptions.put(AnalysisService.OVERRIDES, myVisibleFiles);
       if (StringUtil.compareVersionNumbers(mySdkVersion, "1.13") >= 0) {
         subscriptions.put(AnalysisService.IMPLEMENTED, myVisibleFiles);
+      }
+      if (StringUtil.compareVersionNumbers(mySdkVersion, "1.25.0") >= 0) {
+        subscriptions.put(AnalysisService.CLOSING_LABELS, myVisibleFiles);
       }
 
       if (LOG.isDebugEnabled()) {

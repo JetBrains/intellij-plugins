@@ -16,20 +16,7 @@ package com.google.dart.server.internal;
 
 import com.google.common.collect.Lists;
 import com.google.dart.server.AnalysisServerListener;
-
-import org.dartlang.analysis.server.protocol.AnalysisError;
-import org.dartlang.analysis.server.protocol.AnalysisStatus;
-import org.dartlang.analysis.server.protocol.CompletionSuggestion;
-import org.dartlang.analysis.server.protocol.HighlightRegion;
-import org.dartlang.analysis.server.protocol.ImplementedClass;
-import org.dartlang.analysis.server.protocol.ImplementedMember;
-import org.dartlang.analysis.server.protocol.NavigationRegion;
-import org.dartlang.analysis.server.protocol.Occurrences;
-import org.dartlang.analysis.server.protocol.Outline;
-import org.dartlang.analysis.server.protocol.OverrideMember;
-import org.dartlang.analysis.server.protocol.PubStatus;
-import org.dartlang.analysis.server.protocol.RequestError;
-import org.dartlang.analysis.server.protocol.SearchResult;
+import org.dartlang.analysis.server.protocol.*;
 
 import java.util.List;
 
@@ -131,6 +118,13 @@ public class BroadcastAnalysisServerListener implements AnalysisServerListener {
   public void computedOverrides(String file, List<OverrideMember> overrides) {
     for (AnalysisServerListener listener : getListeners()) {
       listener.computedOverrides(file, overrides);
+    }
+  }
+
+  @Override
+  public void computedClosingLabels(String file, List<ClosingLabel> labels) {
+    for (AnalysisServerListener listener : getListeners()) {
+      listener.computedClosingLabels(file, labels);
     }
   }
 
