@@ -158,7 +158,6 @@
     <treeStructureProvider
         implementation="com.intellij.lang.javascript.flex.projectStructure.ui.FlexCompositeSdkProjectViewStructureProvider"/>
 
-    <resolveScopeProvider implementation="com.intellij.lang.javascript.flex.MxmlResolveScopeProvider"/>
     <resolveScopeProvider implementation="com.intellij.lang.javascript.flex.ActionScriptResolveScopeProvider"/>
 
     <statistics.usagesCollector
@@ -272,7 +271,7 @@
     <classInheritorsProvider implementation="com.intellij.javascript.flex.mxml.XmlBackedClassInheritorsProvider"/>
     <conditionalCompilationDefinitionsProvider
         implementation="com.intellij.lang.javascript.flex.build.JSConditionalCompilationDefinitionsProviderImpl"/>
-    <elementScopeProvider language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.flex.ActionScriptResolveScopeProvider"/>
+    <elementScopeProvider implementation="com.intellij.lang.javascript.flex.ActionScriptResolveScopeProvider"/>
     <xmlBackedClassProvider implementation="com.intellij.javascript.flex.mxml.MxmlJSClassProvider"/>
     <smartCompletionContributor language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.flex.completion.ActionScriptSmartCompletionContributor"/>
     <dialectSpecificHandlersFactory language="ECMA Script Level 4" implementationClass="com.intellij.javascript.flex.ActionScriptSpecificHandlersFactory"/>

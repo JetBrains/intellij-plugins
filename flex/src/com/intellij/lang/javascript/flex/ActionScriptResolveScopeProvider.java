@@ -2,12 +2,11 @@ package com.intellij.lang.javascript.flex;
 
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.javascript.flex.FlexApplicationComponent;
-import com.intellij.lang.javascript.ActionScriptFileType;
-import com.intellij.lang.javascript.JavaScriptFileType;
-import com.intellij.lang.javascript.TypeScriptFileType;
+import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider;
 import com.intellij.lang.javascript.psi.resolve.JSElementResolveScopeProvider;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
+import com.intellij.lang.javascript.psi.resolve.JSResolveScopeProvider;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -16,20 +15,24 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiCodeFragment;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.ResolveScopeManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ActionScriptResolveScopeProvider extends JSElementResolveScopeProvider {
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class ActionScriptResolveScopeProvider extends JSResolveScopeProvider implements JSElementResolveScopeProvider {
+
+  @Nullable
   @Override
   public GlobalSearchScope getResolveScope(@NotNull VirtualFile file, Project project) {
     return getResolveScope(file, project, true);
   }
 
   @Nullable
-  private GlobalSearchScope getResolveScope(@NotNull VirtualFile file, Project project, boolean checkApplicable) {
+  private static GlobalSearchScope getResolveScope(@NotNull VirtualFile file, Project project, boolean checkApplicable) {
     if (file instanceof VirtualFileWindow) {
       file = ((VirtualFileWindow)file).getDelegate();
     }
@@ -55,7 +58,7 @@ public class ActionScriptResolveScopeProvider extends JSElementResolveScopeProvi
     return null;
   }
 
-  @NotNull
+  @Nullable
   @Override
   public GlobalSearchScope getElementResolveScope(@NotNull PsiElement element) {
     final GlobalSearchScope tempScope = JSInheritanceUtil.getEnforcedScope();
@@ -69,12 +72,14 @@ public class ActionScriptResolveScopeProvider extends JSElementResolveScopeProvi
       final GlobalSearchScope forced = ((PsiCodeFragment)element).getForcedResolveScope();
       if (forced != null) return forced;
     }
-    final PsiFile containingFile = element.getContainingFile();
-    if (containingFile == null) return getProjectScopeIncludingPredefines(element.getProject());
-    final PsiFile psiFile = containingFile.getOriginalFile();
-    VirtualFile file = psiFile.getVirtualFile();
-    final Project project = psiFile.getProject();
-    if (file == null) return getProjectScopeIncludingPredefines(project);
+
+    if (!DialectDetector.isActionScript(element)) return null;
+
+    Project project = element.getProject();
+    VirtualFile file = getFileForScopeEvaluation(element);
+    if (file == null) {
+      return getProjectScopeIncludingPredefines(project);
+    }
 
     final GlobalSearchScope scope = isApplicable(file) ? ResolveScopeManager.getInstance(project).getDefaultResolveScope(file) : null;
     if (scope != null) {
@@ -91,8 +96,13 @@ public class ActionScriptResolveScopeProvider extends JSElementResolveScopeProvi
   }
 
   @Override
-  protected boolean isApplicable(@NotNull final VirtualFile file) {
+  protected List<VirtualFile> getPredefinedLibraryFiles(@NotNull Project project) {
+    return JSResolveUtil.JS_INDEXED_ROOT_PROVIDER.getLibraryFiles(project)
+      .stream().filter(ActionScriptResolveScopeProvider::isApplicable).collect(Collectors.toList());
+  }
+
+  private static boolean isApplicable(@NotNull final VirtualFile file) {
     return file.getFileType() == ActionScriptFileType.INSTANCE || file.getFileType() == FlexApplicationComponent.MXML ||
-           file.getFileType() == FlexApplicationComponent.SWF_FILE_TYPE;
+           file.getFileType() == FlexApplicationComponent.SWF_FILE_TYPE || JavaScriptSupportLoader.isFlexMxmFile(file);
   }
 }

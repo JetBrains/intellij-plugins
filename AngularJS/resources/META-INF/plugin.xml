@@ -114,7 +114,7 @@
     <dialectSpecificHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSSpecificHandlersFactory"/>
     <inheritedLanguagesConfigurableProvider language="AngularJS"
                                             implementationClass="org.angularjs.codeInsight.AngularJSLanguageConfigurableProvider"/>
-    <elementScopeProvider language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSResolveScopeProvider"/>
+    <elementScopeProvider implementation="org.angularjs.codeInsight.AngularJSResolveScopeProvider"/>
     <LanguageServiceProvider implementation="org.angularjs.service.Angular2LanguageServiceProvider"/>
     <LanguageServiceFilter implementation="org.angularjs.service.Angular2LanguageServiceFilter"/>
     <analysisHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSAnalysisHandlersFactory"/>

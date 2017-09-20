@@ -365,6 +365,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   @Nullable
   public static JSClass findDirectiveClass(PsiElement context) {
     final PsiFile file = context.getContainingFile();
+    if (file == null) return null;
     if (file.getLanguage().is(Angular2HTMLLanguage.INSTANCE)) { // inline template
       return PsiTreeUtil.getParentOfType(InjectedLanguageManager.getInstance(context.getProject()).getInjectionHost(file), JSClass.class);
     }
