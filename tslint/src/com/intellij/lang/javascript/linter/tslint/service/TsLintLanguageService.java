@@ -55,26 +55,27 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
   public final Future<List<TsLinterError>> highlight(@Nullable VirtualFile virtualFile,
                                                      @Nullable VirtualFile config,
                                                      @Nullable String content) {
+    final MyParameters parameters = MyParameters.checkParameters(virtualFile, config);
+    if (parameters.getErrors() != null) return new FixedFuture<>(parameters.getErrors());
+
     final JSLanguageServiceQueue process = getProcess();
     if (process == null) {
       return new FixedFuture<>(Collections.singletonList(new TsLinterError(JSLanguageServiceUtil.getLanguageServiceCreationError(this))));
     }
-    final MyParameters parameters = MyParameters.checkParameters(virtualFile, config, process);
-    if (parameters.getErrors() != null) return new FixedFuture<>(parameters.getErrors());
     TsLintGetErrorsCommand command = new TsLintGetErrorsCommand(parameters.getPath(), parameters.getConfigPath(),
                                                                 StringUtil.notNullize(content));
     return process.execute(command, createHighlightProcessor(parameters.getPath()));
   }
 
   public final Future<List<TsLinterError>> highlightAndFix(@Nullable VirtualFile virtualFile, @NotNull TsLintState state) {
+    VirtualFile config = virtualFile == null ? null : myConfigFileSearcher.getConfig(state, virtualFile);
+    final MyParameters parameters = MyParameters.checkParameters(virtualFile, config);
+    if (parameters.getErrors() != null) return new FixedFuture<>(parameters.getErrors());
+
     final JSLanguageServiceQueue process = getProcess();
     if (process == null) {
       return new FixedFuture<>(Collections.singletonList(new TsLinterError(JSLanguageServiceUtil.getLanguageServiceCreationError(this))));
     }
-
-    VirtualFile config = virtualFile == null ? null : myConfigFileSearcher.getConfig(state, virtualFile);
-    final MyParameters parameters = MyParameters.checkParameters(virtualFile, config, process);
-    if (parameters.getErrors() != null) return new FixedFuture<>(parameters.getErrors());
 
     //doesn't pass content (file should be saved before)
     TsLintFixErrorsCommand command = new TsLintFixErrorsCommand(parameters.getPath(), parameters.getConfigPath());
@@ -93,15 +94,12 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
       myErrors = errors;
     }
 
-    public static MyParameters checkParameters(@Nullable VirtualFile virtualFile, @Nullable VirtualFile config,
-                                               @Nullable JSLanguageServiceQueue process) {
+    public static MyParameters checkParameters(@Nullable VirtualFile virtualFile, @Nullable VirtualFile config) {
       String error;
-      if (process == null) {
-        error = "Can not create language service";
+      if (config == null) {
+        error = "Config file was not found.";
       } else if (virtualFile == null || !virtualFile.isInLocalFileSystem()) {
         error = "Path not specified";
-      } else if (config == null) {
-        error = "Config file was not found.";
       } else {
         final String configPath = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(config);
         final String path = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(virtualFile);
