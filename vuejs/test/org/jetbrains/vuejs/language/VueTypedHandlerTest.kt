@@ -95,9 +95,16 @@ class VueTypedHandlerTest : LightPlatformCodeInsightFixtureTestCase() {
 
   @Throws(Exception::class)
   fun testOneSymbolDelimiterTypeOverOneSymbol() {
-    myFixture.configureByText(HtmlFileType.INSTANCE, "<caret>$")
+    myFixture.configureByText(HtmlFileType.INSTANCE, "#1<caret>$")
     doInterpolationBracesCompleterTest("#", "$", '$', false)
-    myFixture.checkResult("$<caret>")
+    myFixture.checkResult("#1$<caret>")
+  }
+
+  @Throws(Exception::class)
+  fun testDoNotCompleteEndWithoutStart() {
+    myFixture.configureByText(HtmlFileType.INSTANCE, "abc {<caret>")
+    doInterpolationBracesCompleterTest("{{", "}}", '}', false)
+    myFixture.checkResult("abc {}<caret>")
   }
 
   @Throws(Exception::class)
