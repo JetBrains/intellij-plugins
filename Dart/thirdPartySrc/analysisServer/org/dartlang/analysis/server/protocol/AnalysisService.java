@@ -44,4 +44,5 @@ public class AnalysisService {
 
   public static final String OVERRIDES = "OVERRIDES";
 
+  public static final String CLOSING_LABELS = "CLOSING_LABELS";
 }
