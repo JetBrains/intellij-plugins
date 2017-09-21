@@ -3,7 +3,7 @@ var cli = require('./intellijCli.js')
   , cliOptions = { configFile: require.resolve('./intellij.conf.js') };
 
 var browsers = cli.getBrowsers();
-if (browsers) {
+if (browsers && !cli.isDebug()) {
   cliOptions.browsers = browsers;
 }
 
