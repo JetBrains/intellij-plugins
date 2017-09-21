@@ -252,19 +252,18 @@ public class FlexTestUtils {
 
   public static FlexProjectConfigurationEditor createConfigEditor(final Module... modules) {
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") final Map<Module, ModifiableRootModel> models =
-      FactoryMap.createMap(module-> {
-          final ModifiableRootModel result = ModuleRootManager.getInstance(module).getModifiableModel();
-          Disposer.register(module, new Disposable() {
-            @Override
-            public void dispose() {
-              if (!result.isDisposed()) {
-                result.dispose();
-              }
+      FactoryMap.create(module -> {
+        final ModifiableRootModel result1 = ModuleRootManager.getInstance(module).getModifiableModel();
+        Disposer.register(module, new Disposable() {
+          @Override
+          public void dispose() {
+            if (!result1.isDisposed()) {
+              result1.dispose();
             }
-          });
-          return result;
-        }
-      );
+          }
+        });
+        return result1;
+      });
 
     return new FlexProjectConfigurationEditor(modules[0].getProject(), new FlexProjectConfigurationEditor.ProjectModifiableModelProvider() {
       @Override

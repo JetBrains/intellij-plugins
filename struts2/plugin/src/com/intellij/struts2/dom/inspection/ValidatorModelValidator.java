@@ -61,8 +61,8 @@ public class ValidatorModelValidator extends ValidatorBase {
 
     // cache S2facet/validation settings per module
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") final Map<Module, Boolean> enabledForModule =
-      FactoryMap.createMap(module -> isEnabledForModule(module) &&
-                                     StrutsFacet.getInstance(module) != null);
+      FactoryMap.create(module1 -> isEnabledForModule(module1) &&
+                                   StrutsFacet.getInstance(module1) != null);
 
     // collect all validation.xml files located in sources of S2-modules
     final Set<VirtualFile> files = new THashSet<>();

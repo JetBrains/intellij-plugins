@@ -55,7 +55,7 @@ public class Struts2ModelValidator extends ValidatorBase {
 
     // cache validation settings per module
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") final Map<Module, Boolean> enabledForModule =
-      FactoryMap.createMap(module -> isEnabledForModule(module));
+      FactoryMap.create(module1 -> isEnabledForModule(module1));
 
     final Set<VirtualFile> files = new THashSet<>();
     for (final VirtualFile file : context.getCompileScope().getFiles(StdFileTypes.XML, false)) {
