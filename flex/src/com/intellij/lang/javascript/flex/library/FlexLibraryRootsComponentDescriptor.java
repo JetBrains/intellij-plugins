@@ -56,6 +56,7 @@ public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDe
     return FlexBundle.message("add.library.components.action.name");
   }
 
+  @Override
   @NotNull
   public List<? extends AttachRootButtonDescriptor> createAttachButtons() {
     return Arrays.asList(new AddDocUrlDescriptor());
