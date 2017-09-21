@@ -114,12 +114,9 @@ public class FlexPullUpTest extends MultiFileTestCase {
 
     final JSMemberInfo[] infosArray = JSMemberInfo.getSelected(memberInfos, sourceClass, Conditions.alwaysTrue());
     MultiMap<PsiElement, String> conflicts =
-      JSPullUpConflictsUtil.checkConflicts(infosArray, sourceClass, targetClass, new JSInterfaceContainmentVerifier() {
-        @Override
-        public boolean checkedInterfacesContain(JSFunction psiMethod) {
-          return JSPullUpHelper.checkedInterfacesContain(memberInfos, psiMethod);
-        }
-      }, JSVisibilityUtil.DEFAULT_OPTIONS);
+      JSPullUpConflictsUtil.checkConflicts(infosArray, sourceClass, targetClass, 
+                                           JSInterfaceContainmentVerifier.create(memberInfos),
+                                           JSVisibilityUtil.DEFAULT_OPTIONS);
 
     ArrayList<String> messages = new ArrayList<>(conflicts.values());
     for (int i = 0; i < messages.size(); i++) {
