@@ -195,6 +195,15 @@ export default {
     })
   }
 
+  fun testScrInStyleCompletion() {
+    myFixture.addFileToProject("./foo/bar.xml", "")
+    myFixture.addFileToProject("./real.xml", "")
+    val file = myFixture.addFileToProject("./ScrInStyleCompletion.vue", """<style src="./<caret>"></style>""")
+    myFixture.configureFromExistingVirtualFile(file.virtualFile)
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "foo", "real.xml")
+  }
+
   fun testInsertAttributeWithoutValue() {
     noAutoComplete(Runnable {
       myFixture.configureByText("InsertAttributeWithoutValue.vue", "<template v-onc<caret>></template>")

@@ -11,11 +11,14 @@ import com.intellij.xml.XmlAttributeDescriptor
 import com.intellij.xml.XmlAttributeDescriptorsProvider
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor
 import icons.VuejsIcons
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.VueLanguage
 import javax.swing.Icon
 
 class VueAttributesProvider : XmlAttributeDescriptorsProvider{
   companion object {
+    val SCOPED = "scoped"
+    @NonNls private val SRC_ATTR_NAME = "src"
     val DEFAULT_BINDABLE = arrayOf("key", "is")
     val DEFAULT = setOf("v-text", "v-html", "v-show", "v-if", "v-else", "v-else-if", "v-for",
                           "v-on", "v-bind", "v-model", "v-pre", "v-cloak","v-once",
@@ -38,15 +41,15 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
     if (context == null || !org.jetbrains.vuejs.index.hasVue(context.project)) return emptyArray()
     val default = getDefaultVueAttributes()
     if (insideStyle(context)) {
-      return default.plus(VueAttributeDescriptor("scoped"))
+      return default.plus(VueAttributeDescriptor(SCOPED))
     }
     return default
   }
 
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
     if (context == null || !org.jetbrains.vuejs.index.hasVue(context.project)) return null
-    if (insideStyle(context)) {
-      return VueAttributeDescriptor("scoped")
+    if (attributeName in arrayOf(SCOPED, SRC_ATTR_NAME) && insideStyle(context)) {
+      return VueAttributeDescriptor(attributeName!!)
     }
     return vueAttributeDescriptor(attributeName)
   }

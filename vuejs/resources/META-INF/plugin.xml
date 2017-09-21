@@ -18,6 +18,7 @@
     <completion.contributor language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSCompletionContributor"
      order="last"/>
     <psi.referenceContributor language="JavaScript" implementation="org.jetbrains.vuejs.codeInsight.VueJSReferenceContributor"/>
+    <psi.referenceContributor language="Vue" implementation="org.jetbrains.vuejs.codeInsight.VueReferenceContributor"/>
     <implicitUsageProvider implementation="org.jetbrains.vuejs.codeInsight.VueImplicitUsageProvider"/>
 
     <lang.syntaxHighlighterFactory language="Vue" implementationClass="org.jetbrains.vuejs.language.VueSyntaxHighlighterFactory" />
