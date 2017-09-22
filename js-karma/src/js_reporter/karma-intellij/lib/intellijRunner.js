@@ -1,5 +1,4 @@
-var http = require('http')
-  , cli = require('./intellijCli')
+var cli = require('./intellijCli')
   , intellijUtil = require('./intellijUtil')
   , RESUME_TEST_RUNNING_MESSAGE = 'resume-test-running'
   , EXIT_CODE_BUF = new Buffer('\x1FEXIT');
@@ -35,8 +34,11 @@ function runWithConfig(config) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
-    }
+    },
+    rejectUnauthorized: false
   };
+
+  var http = cli.getProtocol() === 'https:' ? require('https') : require('http');
 
   var request = http.request(options, function(response) {
     response.on('data', function(buffer) {

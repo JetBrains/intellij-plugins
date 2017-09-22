@@ -311,14 +311,14 @@ public class KarmaServer {
     }
     KarmaConfig config = myState.getKarmaConfig();
     if (config != null) {
-      String baseUrl = "http://" + config.getHostname() + ":" + getServerPort();
+      String baseUrl = config.getProtocol() + "//" + config.getHostname() + ":" + getServerPort();
       String urlRoot = config.getUrlRoot();
       if (!withUrlRoot || "/".equals(urlRoot)) {
         return baseUrl + path;
       }
       return baseUrl + config.getUrlRoot() + path;
     }
-    LOG.error("Karma config isn't ready yet.");
+    LOG.error("Karma config not ready");
     return "http://localhost:" + getServerPort() + path;
   }
 

@@ -28,7 +28,7 @@ public class KarmaServerState {
   private static final Logger LOG = Logger.getInstance(KarmaServerState.class);
   private static final String BROWSER_CONNECTED_EVENT_TYPE = "browserConnected";
   private static final String BROWSER_DISCONNECTED_EVENT_TYPE = "browserDisconnected";
-  private static final Pattern SERVER_PORT_LINE_PATTERN = Pattern.compile("Karma.+server started at http://[^:]+:(\\d+)/.*$");
+  private static final Pattern SERVER_PORT_LINE_PATTERN = Pattern.compile("Karma.+server started at http[s]?://[^:]+:(\\d+)/.*$");
 
   private static final String[][] FAILED_TO_START_BROWSER_PATTERNS = new String[][] {
     {"ERROR [launcher]: No binary for ", " browser on your platform.\n"},

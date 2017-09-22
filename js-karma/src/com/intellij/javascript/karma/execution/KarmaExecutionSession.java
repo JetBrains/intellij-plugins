@@ -144,6 +144,7 @@ public class KarmaExecutionSession {
     commandLine.addParameter("--karmaPackageDir=" + myKarmaServer.getServerSettings().getKarmaPackage().getSystemDependentPath());
     commandLine.addParameter("--serverPort=" + serverPort);
     if (config != null) {
+      commandLine.addParameter("--protocol=" + config.getProtocol());
       commandLine.addParameter("--urlRoot=" + config.getUrlRoot());
     }
     if (isDebug()) {

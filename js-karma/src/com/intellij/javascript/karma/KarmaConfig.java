@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.util.ObjectUtils;
 import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +22,7 @@ public class KarmaConfig {
   private static final String AUTO_WATCH = "autoWatch";
   private static final String BASE_PATH = "basePath";
   private static final String BROWSERS = "browsers";
+  private static final String PROTOCOL = "protocol";
   private static final String HOST_NAME = "hostname";
   private static final String URL_ROOT = "urlRoot";
   private static final String WEBPACK = "webpack";
@@ -28,6 +30,7 @@ public class KarmaConfig {
   private final boolean myAutoWatch;
   private final List<String> myBrowsers;
   private final String myBasePath;
+  private final String myProtocol;
   private final String myHostname;
   private final String myUrlRoot;
   private final boolean myWebpack;
@@ -35,12 +38,14 @@ public class KarmaConfig {
   public KarmaConfig(boolean autoWatch,
                      @NotNull String basePath,
                      @NotNull List<String> browsers,
+                     @NotNull String protocol,
                      @NotNull String hostname,
                      @NotNull String urlRoot,
                      boolean webpack) {
     myAutoWatch = autoWatch;
     myBasePath = basePath;
     myBrowsers = ImmutableList.copyOf(browsers);
+    myProtocol = protocol;
     myHostname = hostname;
     myUrlRoot = urlRoot;
     myWebpack = webpack;
@@ -58,6 +63,11 @@ public class KarmaConfig {
   @NotNull
   public List<String> getBrowsers() {
     return myBrowsers;
+  }
+
+  @NotNull
+  public String getProtocol() {
+    return myProtocol;
   }
 
   @NotNull
@@ -83,11 +93,12 @@ public class KarmaConfig {
       boolean autoWatch = JsonUtil.getChildAsBoolean(rootObject, AUTO_WATCH, false);
       List<String> browsers = parseBrowsers(rootObject);
       String basePath = parseBasePath(jsonElement, rootObject, configurationFileDir);
+      String protocol = ObjectUtils.notNull(JsonUtil.getChildAsString(rootObject, PROTOCOL), "http:");
       String hostname = parseHostname(jsonElement, rootObject);
       String urlRoot = parseUrlRoot(jsonElement, rootObject);
       boolean webpack = JsonUtil.getChildAsBoolean(rootObject, WEBPACK, false);
 
-      return new KarmaConfig(autoWatch, basePath, browsers, hostname, urlRoot, webpack);
+      return new KarmaConfig(autoWatch, basePath, browsers, protocol, hostname, urlRoot, webpack);
     }
     return null;
   }
