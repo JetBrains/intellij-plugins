@@ -61,6 +61,7 @@ public class TapestryFrameworkSupportProvider extends FacetBasedFrameworkSupport
     final Project project = facet.getModule().getProject();
     StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> {
       Runnable action = () -> {
+        if (project.isDisposed()) return;
         final TapestryFacetConfiguration configuration = facet.getConfiguration();
 
         final NewFacetDialog newFacetDialog = new NewFacetDialog(configuration);
@@ -90,7 +91,7 @@ public class TapestryFrameworkSupportProvider extends FacetBasedFrameworkSupport
       };
       
       if (ApplicationManager.getApplication().isWriteAccessAllowed()) {
-        ApplicationManager.getApplication().invokeLater(action, ModalityState.NON_MODAL);
+        ApplicationManager.getApplication().invokeLater(action, ModalityState.defaultModalityState());
       } else {
         action.run();
       }
