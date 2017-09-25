@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSNamedElementKind;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
@@ -69,7 +70,7 @@ public class FlexMoveClassDialog extends RefactoringDialog {
     myCallback = callback;
 
     final JSQualifiedNamedElement firstElement = myElements.iterator().next();
-    myFileLocal = JSResolveUtil.isFileLocalSymbol(firstElement);
+    myFileLocal = ActionScriptResolveUtil.isFileLocalSymbol(firstElement);
 
     setSize(500, 130);
 

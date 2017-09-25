@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -116,7 +117,7 @@ public class ActionScriptClassResolver extends JSClassResolver {
           ) {
           continue;
         }
-        if (!allowFileLocalSymbols && JSResolveUtil.isFileLocalSymbol(clazz)) {
+        if (!allowFileLocalSymbols && ActionScriptResolveUtil.isFileLocalSymbol(clazz)) {
           continue;
         }
 

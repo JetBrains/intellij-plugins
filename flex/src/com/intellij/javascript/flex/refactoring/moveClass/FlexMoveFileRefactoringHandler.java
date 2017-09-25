@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClass;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -73,7 +74,7 @@ public class FlexMoveFileRefactoringHandler extends MoveHandlerDelegate {
       return false;
     }
 
-    if (JSResolveUtil.isFileLocalSymbol(first)) {
+    if (ActionScriptResolveUtil.isFileLocalSymbol(first)) {
       if (elements.length > 1) {
         return false;
       }

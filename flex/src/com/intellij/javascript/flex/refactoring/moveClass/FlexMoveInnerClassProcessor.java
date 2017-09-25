@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.lang.javascript.refactoring.JSChangeVisibilityUtil;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
+import com.intellij.lang.javascript.refactoring.util.ActionScriptRefactoringUtil;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringConflictsUtil;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
@@ -124,7 +125,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
     //JSRefactoringUtil.addRemovalFormatters(mySourceClass, myMembersToMove, Condition.TRUE, Condition.TRUE, postponedFormatters);
 
     JSClass targetClass = myElement instanceof JSClass ? (JSClass)myElement : null;
-    JSRefactoringUtil.fixOutgoingReferences(myElement, importsInTargetFile, namespacesInTargetFile, Collections.singletonList(
+    ActionScriptRefactoringUtil.fixOutgoingReferences(myElement, importsInTargetFile, namespacesInTargetFile, Collections.singletonList(
       ((JSAttributeListOwner)myElement)), targetClass, false, false);
 
     myElement.setName(myClassName);

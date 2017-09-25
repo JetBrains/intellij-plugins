@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
@@ -288,7 +289,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
         }
       }
       else {
-        if (JSResolveUtil.isFileLocalSymbol(mySourceClass)) {
+        if (ActionScriptResolveUtil.isFileLocalSymbol(mySourceClass)) {
           renameOriginalFileLocalClass(formatters);
         }
         else {

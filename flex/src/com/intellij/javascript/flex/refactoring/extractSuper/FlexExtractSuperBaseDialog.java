@@ -17,10 +17,8 @@ package com.intellij.javascript.flex.refactoring.extractSuper;
 
 import com.intellij.ide.util.PlatformPackageUtil;
 import com.intellij.lang.javascript.JSBundle;
-import com.intellij.lang.javascript.psi.JSElement;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractSuperMode;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
@@ -34,7 +32,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.refactoring.classMembers.MemberInfoBase;
 import com.intellij.refactoring.extractSuperclass.ExtractSuperBaseDialog;
 import com.intellij.refactoring.util.DocCommentPolicy;
 import com.intellij.util.ThreeState;
@@ -169,7 +166,7 @@ public abstract class FlexExtractSuperBaseDialog extends ExtractSuperBaseDialog<
   protected void updateDialog() {
     super.updateDialog();
     boolean canSetPackage =
-      getMode() != JSExtractSuperMode.RenameImplementation || !JSResolveUtil.isFileLocalSymbol(mySourceClass);
+      getMode() != JSExtractSuperMode.RenameImplementation || !ActionScriptResolveUtil.isFileLocalSymbol(mySourceClass);
     myPackageNameField.setEnabled(canSetPackage);
     myPackageNameLabel.setEnabled(canSetPackage);
     ((JSReferenceEditor)myPackageNameField).setScope(getScope());
