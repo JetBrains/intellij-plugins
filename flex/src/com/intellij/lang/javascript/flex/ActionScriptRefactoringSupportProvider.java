@@ -2,7 +2,8 @@ package com.intellij.lang.javascript.flex;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.refactoring.JavascriptRefactoringSupportProvider;
-import com.intellij.lang.javascript.refactoring.changeSignature.JSChangeSignatureHandler;
+import com.intellij.javascript.flex.refactoring.extractSuper.FlexExtractInterfaceDialog;
+import com.intellij.javascript.flex.refactoring.extractSuper.FlexExtractSuperClassDialog;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractInterfaceHandler;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractSuperClassHandler;
 import com.intellij.lang.javascript.refactoring.introduceConstant.JSIntroduceConstantHandler;
@@ -12,7 +13,6 @@ import com.intellij.lang.javascript.refactoring.memberPushDown.JSPushDownHandler
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.RefactoringActionHandler;
-import com.intellij.refactoring.changeSignature.ChangeSignatureHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class ActionScriptRefactoringSupportProvider extends JavascriptRefactoringSupportProvider {
@@ -25,12 +25,12 @@ public class ActionScriptRefactoringSupportProvider extends JavascriptRefactorin
 
   @Override
   public RefactoringActionHandler getExtractInterfaceHandler() {
-    return new JSExtractInterfaceHandler();
+    return new JSExtractInterfaceHandler(((aClass, element) -> new FlexExtractInterfaceDialog(aClass, element)));
   }
 
   @Override
   public RefactoringActionHandler getExtractSuperClassHandler() {
-    return new JSExtractSuperClassHandler();
+    return new JSExtractSuperClassHandler((aClass, element) -> new FlexExtractSuperClassDialog(aClass, element));
   }
 
   @Override

@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.javascript.flex.refactoring.extractSuper.FlexExtractInterfaceDialog;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractInterfaceHandler;
 import com.intellij.lang.javascript.refactoring.memberPullUp.JSPullUpHandler;
 import com.intellij.lang.javascript.refactoring.memberPushDown.JSPushDownHandler;
@@ -20,7 +21,7 @@ public class MxmlRefactoringSupportProvider extends RefactoringSupportProvider {
 
   @Override
   public RefactoringActionHandler getExtractInterfaceHandler() {
-    return new JSExtractInterfaceHandler();
+    return new JSExtractInterfaceHandler((aClass, element) -> new FlexExtractInterfaceDialog(aClass, element));
   }
 
   @Override

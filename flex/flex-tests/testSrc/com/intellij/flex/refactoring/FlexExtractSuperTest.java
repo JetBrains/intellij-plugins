@@ -10,7 +10,8 @@ import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractSuperProcessor;
+import com.intellij.javascript.flex.refactoring.extractSuper.FlexExtractSuperProcessor;
+import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractSuperMode;
 import com.intellij.lang.javascript.refactoring.util.JSMemberInfo;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -76,7 +77,7 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
-  private void doTest(final JSExtractSuperProcessor.Mode mode, final boolean classNotInterface, final String sourceClassName,
+  private void doTest(final JSExtractSuperMode mode, final boolean classNotInterface, final String sourceClassName,
                       final String extractedSuperName,
                       final int docCommentPolicy,
                       final String... members) {
@@ -89,7 +90,7 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
     }, false);
   }
 
-  private void doTestConflicts(final JSExtractSuperProcessor.Mode mode, final boolean classNotInterface, final String sourceClassName,
+  private void doTestConflicts(final JSExtractSuperMode mode, final boolean classNotInterface, final String sourceClassName,
                                final String extractedSuperName,
                                final int docCommentPolicy,
                                final String[] members,
@@ -107,7 +108,7 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
                              String from,
                              final String extractedSuperName,
                              int docCommentPolicy,
-                             JSExtractSuperProcessor.Mode mode,
+                             JSExtractSuperMode mode,
                              String[] members,
                              String[] conflicts) {
     JSClass sourceClass = JSTestUtils.findClassByQName(from, GlobalSearchScope.moduleScope(myModule));
@@ -120,8 +121,8 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
         WriteCommandAction.runWriteCommandAction(null,
                                                  (Computable<PsiDirectory>)() -> ActionScriptCreateClassOrInterfaceFix
                                                    .findOrCreateDirectory(StringUtil.getPackageName(extractedSuperName), finalSourceClass));
-      new JSExtractSuperProcessor(sourceClass, infosArray, StringUtil.getShortName(extractedSuperName),
-                                  StringUtil.getPackageName(extractedSuperName), docCommentPolicy, mode, classNotInterface, dir).run();
+      new FlexExtractSuperProcessor(sourceClass, infosArray, StringUtil.getShortName(extractedSuperName),
+                                    StringUtil.getPackageName(extractedSuperName), docCommentPolicy, mode, classNotInterface, dir).run();
       assertEquals("Conflicts expected:\n" + StringUtil.join(conflicts, "\n"), 0, conflicts.length);
       myProject.getComponent(PostprocessReformattingAspect.class).doPostponedFormatting();
       FileDocumentManager.getInstance().saveAllDocuments();
@@ -134,24 +135,24 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
   }
 
   public void testInterface() {
-    doTest(JSExtractSuperProcessor.Mode.ExtractSuperTurnRefs, false, "com.Foo", "bar.IFoo", DocCommentPolicy.COPY, "moved1",
+    doTest(JSExtractSuperMode.ExtractSuperTurnRefs, false, "com.Foo", "bar.IFoo", DocCommentPolicy.COPY, "moved1",
            "moved2", "moved3", "moved4", "moved5", "MyInt");
   }
 
   public void testInterface2() {
-    doTest(JSExtractSuperProcessor.Mode.ExtractSuperTurnRefs, false, "SourceClass", "ISuper", DocCommentPolicy.COPY);
+    doTest(JSExtractSuperMode.ExtractSuperTurnRefs, false, "SourceClass", "ISuper", DocCommentPolicy.COPY);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testUsages() {
-    doTest(JSExtractSuperProcessor.Mode.ExtractSuperTurnRefs, false, "SourceClass", "ISuper", DocCommentPolicy.COPY,
+    doTest(JSExtractSuperMode.ExtractSuperTurnRefs, false, "SourceClass", "ISuper", DocCommentPolicy.COPY,
            "movedMethod",
            "movedProp",
            "IMoved");
   }
 
   public void testNoTurnRefs() {
-    doTest(JSExtractSuperProcessor.Mode.ExtractSuper, false, "From", "ISuper", DocCommentPolicy.COPY,
+    doTest(JSExtractSuperMode.ExtractSuper, false, "From", "ISuper", DocCommentPolicy.COPY,
            "movedMethod",
            "movedProp");
   }
@@ -163,20 +164,20 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
       "Constant AuxConst with internal visibility won't be accessible from method movedMethod(AuxClass, AuxInterface, AuxClassPub, AuxFunc, AuxConst)",
       "Function AuxFunc() with internal visibility won't be accessible from method movedMethod(AuxClass, AuxInterface, AuxClassPub, AuxFunc, AuxConst)"
     };
-    doTestConflicts(JSExtractSuperProcessor.Mode.ExtractSuperTurnRefs, false, "From", "com.ISuper", DocCommentPolicy.COPY,
+    doTestConflicts(JSExtractSuperMode.ExtractSuperTurnRefs, false, "From", "com.ISuper", DocCommentPolicy.COPY,
                     new String[]{"movedMethod"}, conflicts);
   }
 
   public void testInterfaceFromInterface() {
-    doTest(JSExtractSuperProcessor.Mode.ExtractSuper, false, "IFrom", "ISuper", DocCommentPolicy.COPY,
+    doTest(JSExtractSuperMode.ExtractSuper, false, "IFrom", "ISuper", DocCommentPolicy.COPY,
            "movedMethod",
            "movedProp",
            "IMoved");
   }
 
   public void testExtractImplementationClass() {
-    // TODO FileDocumentManager.getInstance().saveDocument(document); in JSExtractSuperProcessor.renameOriginalClass seems to fix it
-    doTest(JSExtractSuperProcessor.Mode.RenameImplementation, false, "com.From", "bar.FromImpl", DocCommentPolicy.COPY,
+    // TODO FileDocumentManager.getInstance().saveDocument(document); in FlexExtractSuperProcessor.renameOriginalClass seems to fix it
+    doTest(JSExtractSuperMode.RenameImplementation, false, "com.From", "bar.FromImpl", DocCommentPolicy.COPY,
            "movedMethod",
            "movedProp",
            "movedProp2",
@@ -194,82 +195,82 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
       "Class FromImpl with internal visibility won't be accessible from constructor Usage.Usage()",
       "Method FromImpl.stat() with internal visibility won't be accessible from constructor Usage()"
     };
-    doTestConflicts(JSExtractSuperProcessor.Mode.RenameImplementation, false, "From", "com.FromImpl", DocCommentPolicy.COPY,
+    doTestConflicts(JSExtractSuperMode.RenameImplementation, false, "From", "com.FromImpl", DocCommentPolicy.COPY,
                     new String[]{"movedMethod"}, conflicts);
   }
 
   public void testMxml1() {
-    doTest(JSExtractSuperProcessor.Mode.ExtractSuper, false, "From", "com.IBar", DocCommentPolicy.COPY);
+    doTest(JSExtractSuperMode.ExtractSuper, false, "From", "com.IBar", DocCommentPolicy.COPY);
   }
 
   public void testMxmlTurnRefs() {
-    doTest(JSExtractSuperProcessor.Mode.ExtractSuperTurnRefs, false, "From", "com.IBar", DocCommentPolicy.COPY, "IFoo", "foo", "bar");
+    doTest(JSExtractSuperMode.ExtractSuperTurnRefs, false, "From", "com.IBar", DocCommentPolicy.COPY, "IFoo", "foo", "bar");
   }
 
   public void testMxmlExtractImpl() {
-    doTest(JSExtractSuperProcessor.Mode.RenameImplementation, false, "From", "bar.FromImpl", DocCommentPolicy.COPY, "foo1", "foo2");
+    doTest(JSExtractSuperMode.RenameImplementation, false, "From", "bar.FromImpl", DocCommentPolicy.COPY, "foo1", "foo2");
   }
 
   public void testExtractImplementationWithExplicitConstructor() {
-    doTest(JSExtractSuperProcessor.Mode.RenameImplementation, false, "From", "FromImpl", DocCommentPolicy.COPY);
+    doTest(JSExtractSuperMode.RenameImplementation, false, "From", "FromImpl", DocCommentPolicy.COPY);
   }
 
   public void testSuperClass1() {
-    doTest(JSExtractSuperProcessor.Mode.ExtractSuperTurnRefs, true, "com.From", "bar.NewClass", DocCommentPolicy.COPY, "v1", "v2", "foo1",
+    doTest(JSExtractSuperMode.ExtractSuperTurnRefs, true, "com.From", "bar.NewClass", DocCommentPolicy.COPY, "v1", "v2", "foo1",
            "foo2", "MyInt1");
   }
 
   public void testSuperClass2() {
-    doTest(JSExtractSuperProcessor.Mode.ExtractSuper, true, "Foo", "com.NewClass", DocCommentPolicy.COPY);
+    doTest(JSExtractSuperMode.ExtractSuper, true, "Foo", "com.NewClass", DocCommentPolicy.COPY);
   }
 
   public void testInterface3() {
-    doTest(JSExtractSuperProcessor.Mode.ExtractSuper, false, "com.Foo", "IFoo", DocCommentPolicy.COPY);
+    doTest(JSExtractSuperMode.ExtractSuper, false, "com.Foo", "IFoo", DocCommentPolicy.COPY);
   }
 
   public void testFileLocal1() {
-    doTest(JSExtractSuperProcessor.Mode.ExtractSuper, true, "From.as:Local1", "com.foo.Local1Base", DocCommentPolicy.COPY, "v", "foo");
+    doTest(JSExtractSuperMode.ExtractSuper, true, "From.as:Local1", "com.foo.Local1Base", DocCommentPolicy.COPY, "v", "foo");
   }
 
   public void testFileLocal2() {
-    doTest(JSExtractSuperProcessor.Mode.ExtractSuperTurnRefs, false, "From.as:Local1", "com.foo.ILocal1", DocCommentPolicy.COPY, "foo");
+    doTest(JSExtractSuperMode.ExtractSuperTurnRefs, false, "From.as:Local1", "com.foo.ILocal1", DocCommentPolicy.COPY, "foo");
   }
 
   public void testFileLocal3() {
-    doTest(JSExtractSuperProcessor.Mode.RenameImplementation, true, "From.as:Local1", "Local1Ex", DocCommentPolicy.COPY, "foo", "v");
+    doTest(JSExtractSuperMode.RenameImplementation, true, "From.as:Local1", "Local1Ex", DocCommentPolicy.COPY, "foo", "v");
   }
 
   public void testFileLocal4() {
-    doTest(JSExtractSuperProcessor.Mode.RenameImplementation, false, "From.as:Local1", "Local1Ex", DocCommentPolicy.COPY, "foo");
+    doTest(JSExtractSuperMode.RenameImplementation, false, "From.as:Local1", "Local1Ex", DocCommentPolicy.COPY, "foo");
   }
 
   public void testOverriddenParameter() {
-    doTest(JSExtractSuperProcessor.Mode.ExtractSuperTurnRefs, true, "Foo", "FooBase", DocCommentPolicy.COPY, "foo");
+    doTest(JSExtractSuperMode.ExtractSuperTurnRefs, true, "Foo", "FooBase", DocCommentPolicy.COPY, "foo");
   }
 
   public void testRefsInMovedMembers1() {
-    doTest(JSExtractSuperProcessor.Mode.ExtractSuperTurnRefs, true, "From", "FromSuper", DocCommentPolicy.COPY, "foo", "bar");
+    doTest(JSExtractSuperMode.ExtractSuperTurnRefs, true, "From", "FromSuper", DocCommentPolicy.COPY, "foo", "bar");
   }
 
   public void testRefsInMovedMembers2() {
-    doTest(JSExtractSuperProcessor.Mode.ExtractSuperTurnRefs, false, "From", "IFrom", DocCommentPolicy.COPY, "foo");
+    doTest(JSExtractSuperMode.ExtractSuperTurnRefs, false, "From", "IFrom", DocCommentPolicy.COPY, "foo");
   }
 
   public void testRefsInMovedMembers3() {
-    doTest(JSExtractSuperProcessor.Mode.RenameImplementation, true, "From.as:From", "FromEx", DocCommentPolicy.COPY, "foo");
+    doTest(JSExtractSuperMode.RenameImplementation, true, "From.as:From", "FromEx", DocCommentPolicy.COPY, "foo");
   }
 
   public void testSuperCall() {
-    doTest(JSExtractSuperProcessor.Mode.ExtractSuperTurnRefs, true, "From", "FromSuper", DocCommentPolicy.COPY, "foo");
+    doTest(JSExtractSuperMode.ExtractSuperTurnRefs, true, "From", "FromSuper", DocCommentPolicy.COPY, "foo");
   }
 
   public void testHierarchyReturnType() {
-    doTest(JSExtractSuperProcessor.Mode.ExtractSuperTurnRefs, false, "From", "IFrom", DocCommentPolicy.COPY, "moved");
+    doTest(JSExtractSuperMode.ExtractSuperTurnRefs, false, "From", "IFrom", DocCommentPolicy.COPY, "moved");
   }
 
   @JSTestOptions(JSTestOption.WithGumboSdk)
   public void testForInStatement() {
-    doTest(JSExtractSuperProcessor.Mode.RenameImplementation, true, "From.as:Box", "BoxImpl", DocCommentPolicy.COPY, "sleep");
+    doTest(JSExtractSuperMode.RenameImplementation, true, "From.as:Box", "BoxImpl", DocCommentPolicy.COPY, "sleep");
   }
 
   @JSTestOptions(JSTestOption.WithGumboSdk)
@@ -285,7 +286,7 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
         });
 
         FlexExtractSuperTest.this.performAction(false, "skins.MyNewSkin1", "skins.IMySkin", DocCommentPolicy.COPY,
-                                                JSExtractSuperProcessor.Mode.ExtractSuperTurnRefs, new String[]{"updateDisplayList"},
+                                                JSExtractSuperMode.ExtractSuperTurnRefs, new String[]{"updateDisplayList"},
                                                 ArrayUtil.EMPTY_STRING_ARRAY);
       }
     });
