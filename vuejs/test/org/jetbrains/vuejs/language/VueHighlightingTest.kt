@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.util.ThrowableRunnable
+import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
 
 /**
  * @author Irina.Chernushina on 7/19/2017.
@@ -25,6 +26,7 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     myFixture.enableInspections(JSUnusedLocalSymbolsInspection())
     myFixture.enableInspections(JSAnnotatorInspection())
     myFixture.enableInspections(JSUnresolvedVariableInspection())
+    myFixture.enableInspections(ThisExpressionReferencesGlobalObjectJSInspection())
   }
 
   fun testDirectivesWithoutParameters() {
@@ -343,5 +345,21 @@ export default {
     """)
     com.intellij.testFramework.runInInitMode{ myFixture.checkHighlighting() }
     })
+  }
+
+  fun testTopLevelThisInInjection() {
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+    myFixture.configureByText("TopLevelThisInInjection.vue", """
+<template>
+{{ this.topLevelProp }}
+</template>
+<script>
+  export default {
+    props: ['topLevelProp']
+  }
+</script>
+""")
+    myFixture.checkHighlighting()
+  })
   }
 }
