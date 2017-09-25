@@ -68,7 +68,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
         }
 
         if (oldSplitEditorLayout == mySplitEditorLayout) {
-          triggerLayoutChange(newSettings.getMarkdownPreviewSettings().getSplitEditorLayout());
+          triggerLayoutChange(newSettings.getMarkdownPreviewSettings().getSplitEditorLayout(), false);
         }
       });
     };
@@ -106,16 +106,16 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     final int N = SplitEditorLayout.values().length;
     final int newValue = (oldValue + N - 1) % N;
 
-    triggerLayoutChange(SplitEditorLayout.values()[newValue]);
+    triggerLayoutChange(SplitEditorLayout.values()[newValue], true);
   }
 
-  public void triggerLayoutChange(@NotNull SplitFileEditor.SplitEditorLayout newLayout) {
+  public void triggerLayoutChange(@NotNull SplitEditorLayout newLayout, boolean requestFocus) {
     if (mySplitEditorLayout == newLayout) {
       return;
     }
 
     mySplitEditorLayout = newLayout;
-    invalidateLayout();
+    invalidateLayout(requestFocus);
   }
 
   @NotNull
@@ -131,10 +131,12 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     myAutoScrollPreview = autoScrollPreview;
   }
 
-  private void invalidateLayout() {
+  private void invalidateLayout(boolean requestFocus) {
     adjustEditorsVisibility();
     myToolbarWrapper.refresh();
     myComponent.repaint();
+
+    if (!requestFocus) return;
 
     final JComponent focusComponent = getPreferredFocusedComponent();
     if (focusComponent != null) {
@@ -187,7 +189,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
       }
       if (compositeState.getSplitLayout() != null) {
         mySplitEditorLayout = SplitEditorLayout.valueOf(compositeState.getSplitLayout());
-        invalidateLayout();
+        invalidateLayout(true);
       }
     }
   }
