@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body ng-app="app" ng-controller="AppCtrl as app">
+
+<div ng-repeat="(<warning descr="Unused local variable key">key</warning>, person) in app.people">
+  {{person.firstName}}
+</div>
+
+<script src="angular.js"></script>
+<script src="customObj.js"></script>
+</body>
+</html>

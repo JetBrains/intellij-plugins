@@ -2,6 +2,8 @@ package org.angularjs.codeInsight;
 
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
+import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
+import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 
@@ -62,6 +64,13 @@ public class NgRepeatTest extends LightPlatformCodeInsightFixtureTestCase {
       assertEquals("created_at", variants.get(0));
       assertEquals("email", variants.get(1));
     });
+  }
+
+  public void testUnusedHighlighting() {
+    myFixture.enableInspections(JSUnusedLocalSymbolsInspection.class);
+    myFixture.enableInspections(JSUnusedGlobalSymbolsInspection.class);
+    myFixture.configureByFiles("unusedHighlighting.html", "angular.js", "customObj.js");
+    myFixture.checkHighlighting(true, false, true);
   }
 
   public void testInspection() {

@@ -2,10 +2,10 @@ package {
   public class UnusedParameterHasAssignToFieldQuickFix_3 {
     private var _xxx:int;
     private var _yyy:int;
-    public function UnusedParameterHasAssignToFieldQuickFix_3(xxx:int, yyy): void {
+    public function UnusedParameterHasAssignToFieldQuickFix_3(yyy, xxx:int): void {
         super();
-        _xxx = xxx;
         _yyy = yyy;
+        _xxx = xxx;
     }
   }
 }
