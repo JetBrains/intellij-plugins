@@ -2,7 +2,7 @@ package com.intellij.javascript.flex;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.refactoring.RenameMoveUtils;
+import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;

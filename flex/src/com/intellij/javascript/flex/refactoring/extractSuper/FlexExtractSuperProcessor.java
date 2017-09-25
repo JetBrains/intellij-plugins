@@ -13,7 +13,7 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
-import com.intellij.lang.javascript.refactoring.RenameMoveUtils;
+import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSConvertReferencesToSuperUtil;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractSuperMode;
 import com.intellij.lang.javascript.refactoring.memberPullUp.JSPullUpConflictsUtil;

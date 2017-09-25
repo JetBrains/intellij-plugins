@@ -1,12 +1,11 @@
 package com.intellij.javascript.flex;
 
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.findUsages.SuperMethodUtil;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
-import com.intellij.lang.javascript.refactoring.RenameMoveUtils;
+import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
