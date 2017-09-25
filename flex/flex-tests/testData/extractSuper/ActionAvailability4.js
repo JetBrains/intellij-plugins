@@ -1,1 +1,0 @@
-function abc<caret expected="">() {}

@@ -303,10 +303,6 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
     checkActions(getTestName(false) + ".xml");
   }
 
-  public void testActionAvailability4() throws Exception {
-    checkActions(getTestName(false) + ".js");
-  }
-
   private void checkActions(String filename) throws Exception {
     configureByFile(getTestRoot() + filename);
     LinkedHashMap<Integer, String> markers = JSTestUtils.extractPositionMarkers(myProject, getEditor().getDocument());
