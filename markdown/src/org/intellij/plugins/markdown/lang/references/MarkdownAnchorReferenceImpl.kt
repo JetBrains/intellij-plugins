@@ -29,20 +29,19 @@ class MarkdownAnchorReferenceImpl internal constructor(private val myAnchor: Str
     if (myAnchor.isEmpty()) return PsiElementResolveResult.createResults(myPsiElement)
 
     val project = myPsiElement.project
-    val headers = ContainerUtil.newArrayList<PsiElement>()
 
     // optimization: trying to find capitalized header
     val suggestedHeader = StringUtil.replace(canonicalText, "-", " ")
-    MarkdownHeadersIndex.collectFileHeaders(StringUtil.capitalize(suggestedHeader), project, headers, file)
+    var headers: Collection<PsiElement> = MarkdownHeadersIndex.collectFileHeaders(StringUtil.capitalize(suggestedHeader), project, file)
     if (headers.isNotEmpty()) return PsiElementResolveResult.createResults(headers)
 
-    MarkdownHeadersIndex.collectFileHeaders(StringUtil.capitalizeWords(suggestedHeader, true), project, headers, file)
+    headers = MarkdownHeadersIndex.collectFileHeaders(StringUtil.capitalizeWords(suggestedHeader, true), project, file)
     if (headers.isNotEmpty()) return PsiElementResolveResult.createResults(headers)
 
     // header search
-    StubIndex.getInstance().getAllKeys(MarkdownHeadersIndex.KEY, project)
+    headers = StubIndex.getInstance().getAllKeys(MarkdownHeadersIndex.KEY, project)
       .filter { Companion.dashed(it) == canonicalText }
-      .forEach { MarkdownHeadersIndex.collectFileHeaders(it, project, headers, file) }
+      .flatMap { MarkdownHeadersIndex.collectFileHeaders(it, project, file) }
 
     return PsiElementResolveResult.createResults(headers)
   }
