@@ -51,9 +51,8 @@ public class MarkdownApplicationSettings implements PersistentStateComponent<Mar
 
   @Override
   public void setMarkdownCssSettings(@NotNull MarkdownCssSettings settings) {
-    myState.myCssSettings = settings;
-
     ApplicationManager.getApplication().getMessageBus().syncPublisher(SettingsChangedListener.TOPIC).onSettingsChange(this);
+    myState.myCssSettings = settings;
   }
 
   @NotNull
@@ -72,9 +71,8 @@ public class MarkdownApplicationSettings implements PersistentStateComponent<Mar
 
   @Override
   public void setMarkdownPreviewSettings(@NotNull MarkdownPreviewSettings settings) {
-    myState.myPreviewSettings = settings;
-
     ApplicationManager.getApplication().getMessageBus().syncPublisher(SettingsChangedListener.TOPIC).onSettingsChange(this);
+    myState.myPreviewSettings = settings;
   }
 
   @NotNull

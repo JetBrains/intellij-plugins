@@ -2,6 +2,7 @@ package org.intellij.plugins.markdown.ui.split;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.ex.EditorGutterComponentEx;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.util.Disposer;
@@ -55,6 +56,25 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     if (mySecondEditor instanceof TextEditor) {
       mySecondEditor.putUserData(PARENT_SPLIT_KEY, this);
     }
+
+    MarkdownApplicationSettings.SettingsChangedListener settingsChangedListener = newSettings -> {
+      boolean oldAutoScrollPreview = MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isAutoScrollPreview();
+      SplitEditorLayout oldSplitEditorLayout =
+        MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().getSplitEditorLayout();
+
+      ApplicationManager.getApplication().invokeLater(() -> {
+        if (oldAutoScrollPreview == myAutoScrollPreview) {
+          setAutoScrollPreview(newSettings.getMarkdownPreviewSettings().isAutoScrollPreview());
+        }
+
+        if (oldSplitEditorLayout == mySplitEditorLayout) {
+          triggerLayoutChange(newSettings.getMarkdownPreviewSettings().getSplitEditorLayout());
+        }
+      });
+    };
+
+    ApplicationManager.getApplication().getMessageBus().connect(this)
+      .subscribe(MarkdownApplicationSettings.SettingsChangedListener.TOPIC, settingsChangedListener);
   }
 
   @NotNull
