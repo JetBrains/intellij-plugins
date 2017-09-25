@@ -13,7 +13,7 @@ public class MarkdownSplitEditor extends SplitFileEditor<TextEditor, MarkdownPre
                              @NotNull MarkdownPreviewFileEditor secondEditor) {
     super(mainEditor, secondEditor);
 
-    mainEditor.getEditor().getCaretModel().addCaretListener(new MyCaretListener(secondEditor));
+    mainEditor.getEditor().getCaretModel().addCaretListener(new MyCaretListener());
   }
 
   @NotNull
@@ -39,13 +39,6 @@ public class MarkdownSplitEditor extends SplitFileEditor<TextEditor, MarkdownPre
   }
 
   private class MyCaretListener implements CaretListener {
-    @NotNull
-    private final MarkdownPreviewFileEditor myPreviewFileEditor;
-
-    public MyCaretListener(@NotNull MarkdownPreviewFileEditor previewFileEditor) {
-      myPreviewFileEditor = previewFileEditor;
-    }
-
     @Override
     public void caretPositionChanged(CaretEvent e) {
       if (!isAutoScrollPreview()) return;
@@ -56,7 +49,7 @@ public class MarkdownSplitEditor extends SplitFileEditor<TextEditor, MarkdownPre
       }
 
       final int offset = editor.logicalPositionToOffset(e.getNewPosition());
-      myPreviewFileEditor.scrollToSrcOffset(offset);
+      getSecondEditor().scrollToSrcOffset(offset);
     }
   }
 }
