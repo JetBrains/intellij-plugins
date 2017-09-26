@@ -63,7 +63,7 @@ public class Angular2ServiceTest extends CodeInsightFixtureTestCase {
     String mainFilePath = settings.getMainFilePath();
     String outDir = settings.getOutDirectory();
     boolean hasOutDirectory = settings.isHasOutDirectory();
-    String params = settings.getTypeScriptCompilerParams();
+    String params = settings.getDefaultServiceOptions();
     boolean useConfig = settings.isUseConfigForCompiler();
     boolean showAllProjectErrors = settings.isShowAllProjectErrors();
 
@@ -75,7 +75,7 @@ public class Angular2ServiceTest extends CodeInsightFixtureTestCase {
       settings.setUseMainFile(isMainFile);
       settings.setHasOutDirectory(hasOutDirectory);
       settings.setOutDirectory(outDir);
-      settings.setTypeScriptCompilerParams(params);
+      settings.setDefaultServiceOptions(params);
       settings.setUseConfigForCompiler(useConfig);
       settings.setShowAllProjectErrors(showAllProjectErrors);
     });
