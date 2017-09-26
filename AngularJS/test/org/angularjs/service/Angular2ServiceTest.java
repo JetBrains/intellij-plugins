@@ -56,27 +56,27 @@ public class Angular2ServiceTest extends CodeInsightFixtureTestCase {
   }
 
   protected void registerRestoreForSettings(TypeScriptCompilerSettings settings, Disposable disposable) {
-    boolean compilerEnabled = settings.isCompilerEnabled();
-    boolean changes = settings.isTrackFileSystemChanges();
+    boolean useForProjectsWithoutConfig = settings.useServiceForProjectsWithoutConfig();
+    boolean changes = settings.isRecompileOnChanges();
     boolean isMainFile = settings.isUseMainFile();
-    boolean service = settings.isUseService();
+    boolean useDeprecatedSettings = settings.useDeprecatedSettings();
+    boolean service = settings.useService();
     String mainFilePath = settings.getMainFilePath();
     String outDir = settings.getOutDirectory();
     boolean hasOutDirectory = settings.isHasOutDirectory();
     String params = settings.getDefaultServiceOptions();
-    boolean useConfig = settings.isUseConfigForCompiler();
     boolean showAllProjectErrors = settings.isShowAllProjectErrors();
 
     Disposer.register(disposable, () -> {
       settings.setUseService(service);
-      settings.setImmediateCompileEnabled(compilerEnabled);
-      settings.setTrackFileSystemChanges(changes);
+      settings.setUseServiceForProjectsWithoutConfig(useForProjectsWithoutConfig);
+      settings.setRecompileOnChanges(changes);
       settings.setMainFilePath(mainFilePath);
       settings.setUseMainFile(isMainFile);
       settings.setHasOutDirectory(hasOutDirectory);
       settings.setOutDirectory(outDir);
       settings.setDefaultServiceOptions(params);
-      settings.setUseConfigForCompiler(useConfig);
+      settings.setUseDeprecatedSettings(useDeprecatedSettings);
       settings.setShowAllProjectErrors(showAllProjectErrors);
     });
   }
