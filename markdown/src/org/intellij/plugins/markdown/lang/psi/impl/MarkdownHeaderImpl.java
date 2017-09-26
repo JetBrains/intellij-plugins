@@ -10,7 +10,7 @@ import com.intellij.psi.tree.IElementType;
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes;
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypeSets;
 import org.intellij.plugins.markdown.lang.psi.MarkdownRecursiveElementVisitor;
-import org.intellij.plugins.markdown.lang.stubs.MarkdownCompositeStubBasedPsiElementBase;
+import org.intellij.plugins.markdown.lang.stubs.MarkdownStubBasedPsiElementBase;
 import org.intellij.plugins.markdown.lang.stubs.MarkdownStubElement;
 import org.intellij.plugins.markdown.lang.stubs.impl.MarkdownHeaderStubElement;
 import org.intellij.plugins.markdown.lang.stubs.impl.MarkdownHeaderStubElementType;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class MarkdownHeaderImpl extends MarkdownCompositeStubBasedPsiElementBase<MarkdownStubElement> {
+public class MarkdownHeaderImpl extends MarkdownStubBasedPsiElementBase<MarkdownStubElement> {
   public MarkdownHeaderImpl(@NotNull ASTNode node) {
     super(node);
   }
@@ -36,12 +36,6 @@ public class MarkdownHeaderImpl extends MarkdownCompositeStubBasedPsiElementBase
     }
 
     super.accept(visitor);
-  }
-
-  @NotNull
-  @Override
-  public String getPresentableTagName() {
-    return "h" + getHeaderNumber();
   }
 
   @NotNull

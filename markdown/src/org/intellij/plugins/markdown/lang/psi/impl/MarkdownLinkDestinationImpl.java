@@ -14,9 +14,6 @@ import org.intellij.plugins.markdown.lang.psi.MarkdownElementVisitor;
 import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElement;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.List;
-
 public class MarkdownLinkDestinationImpl extends ASTWrapperPsiElement implements MarkdownPsiElement {
   public MarkdownLinkDestinationImpl(@NotNull ASTNode node) {
     super(node);
@@ -36,12 +33,6 @@ public class MarkdownLinkDestinationImpl extends ASTWrapperPsiElement implements
   @Override
   public PsiReference[] getReferences() {
     return ReferenceProvidersRegistry.getReferencesFromProviders(this);
-  }
-
-  @NotNull
-  @Override
-  public List<MarkdownPsiElement> getCompositeChildren() {
-    return Collections.emptyList();
   }
 
   public static class Manipulator extends AbstractElementManipulator<MarkdownLinkDestinationImpl> {

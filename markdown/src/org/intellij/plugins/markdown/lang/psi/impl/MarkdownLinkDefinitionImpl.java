@@ -10,9 +10,6 @@ import org.intellij.plugins.markdown.structureView.MarkdownBasePresentation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.List;
-
 public class MarkdownLinkDefinitionImpl extends ASTWrapperPsiElement implements MarkdownPsiElement {
   public MarkdownLinkDefinitionImpl(@NotNull ASTNode node) {
     super(node);
@@ -70,11 +67,5 @@ public class MarkdownLinkDefinitionImpl extends ASTWrapperPsiElement implements 
         }
       }
     };
-  }
-
-  @NotNull
-  @Override
-  public List<MarkdownPsiElement> getCompositeChildren() {
-    return Collections.emptyList();
   }
 }

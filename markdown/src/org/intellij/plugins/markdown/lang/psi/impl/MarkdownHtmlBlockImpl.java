@@ -8,9 +8,6 @@ import org.intellij.plugins.markdown.structureView.MarkdownBasePresentation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.List;
-
 public class MarkdownHtmlBlockImpl extends ASTWrapperPsiElement implements MarkdownPsiElement {
 
   public MarkdownHtmlBlockImpl(@NotNull ASTNode node) {
@@ -32,11 +29,5 @@ public class MarkdownHtmlBlockImpl extends ASTWrapperPsiElement implements Markd
         return null;
       }
     };
-  }
-
-  @NotNull
-  @Override
-  public List<MarkdownPsiElement> getCompositeChildren() {
-    return Collections.emptyList();
   }
 }

@@ -14,9 +14,6 @@ import org.intellij.plugins.markdown.structureView.MarkdownBasePresentation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.List;
-
 public class MarkdownCodeFenceImpl extends CompositePsiElement implements PsiLanguageInjectionHost, MarkdownPsiElement {
   public MarkdownCodeFenceImpl(IElementType type) {
     super(type);
@@ -135,12 +132,6 @@ public class MarkdownCodeFenceImpl extends CompositePsiElement implements PsiLan
         return false;
       }
     };
-  }
-
-  @NotNull
-  @Override
-  public List<MarkdownPsiElement> getCompositeChildren() {
-    return Collections.emptyList();
   }
 
   public static class Manipulator extends AbstractElementManipulator<MarkdownCodeFenceImpl> {
