@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.validation.ValidateTypesUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole
@@ -114,5 +115,10 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
         myResult = ContainerUtil.getFirstItem(((JSGenericTypeImpl)type).getArguments());
       }
     }
+  }
+
+  @Override
+  protected void postProcessType(@Nullable JSFunctionItem item, @NotNull JSReferenceExpression expr, int paramIndex) {
+    
   }
 }

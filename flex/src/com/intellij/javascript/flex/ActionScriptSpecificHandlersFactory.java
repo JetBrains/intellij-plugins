@@ -85,4 +85,9 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
   public AccessibilityProcessingHandler createAccessibilityProcessingHandler(@Nullable PsiElement place, boolean skipNsResolving) {
     return new ActionScriptAccessibilityProcessingHandler(place, skipNsResolving);
   }
+
+  @Override
+  public <T extends ResultSink> QualifiedItemProcessor<T> createQualifiedItemProcessor(@NotNull T sink, @NotNull PsiElement place) {
+    return new QualifiedItemProcessor<>(sink, place.getContainingFile());
+  }
 }
