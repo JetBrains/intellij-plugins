@@ -278,6 +278,7 @@
     <handlersFactory language="ECMA Script Level 4" implementationClass="com.intellij.javascript.flex.ActionScriptHandlersFactory"/>
     <JSImplicitElementsIndexFileTypeProvider implementation="com.intellij.javascript.flex.MxmlJSImplicitElementsIndexFileTypeProvider"/>
     <analysisHandlersFactory language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.inspections.actionscript.ActionScriptAnalysisHandlersFactory"/>
+    <predefinedLibraryProvider implementation="com.intellij.lang.javascript.flex.library.ActionScriptLibraryProvider"/>
   </extensions>
 
   <extensionPoints>

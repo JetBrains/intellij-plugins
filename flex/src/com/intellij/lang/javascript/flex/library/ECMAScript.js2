@@ -1,0 +1,257 @@
+package {
+public native function eval(x:*):Object;
+public native function parseInt(string:*, radix:int = 10):Number;
+public native function parseFloat(string:*):Number;
+public native function isNaN(number:Number):Boolean;
+public native function get NaN():Number;
+public native function isFinite(number:Number):Boolean;
+public native function decodeURI(encodedURI:String):String;
+public native function decodeURIComponent(encodedURIComponent:String):String;
+public native function get Infinity():Number;
+public native function encodeURI(uri:String):String;
+public native function encodeURIComponent(uriComponent:String):String;
+public native var undefined:*;
+
+public dynamic class Object {
+  public native function get constructor():*;
+  public native function set constructor(o:*):void;
+  public native function get length():Number;
+  public native function set length(n:Number):void;
+  public native function get prototype():Object;
+  public native function set prototype(o:Object):void;
+
+  public native function toLocaleString():String;
+
+  public native function toSource():Object;
+  public native function unwatch(prop:String):void;
+  public native function watch(prop:String, handler:Object):void;
+
+  public native function hasOwnProperty(propertyName:String):Boolean;
+  public native function isPrototypeOf(o:Object):Boolean;
+  public native function propertyIsEnumerable(propertyName:String):Boolean;
+
+  public native function toString():String;
+}
+
+public dynamic class Array extends Object {
+  native public function Array(... rest):*;
+  public native function get index():Number;
+  public native function get input():Number;
+  public native function concat(... items):Array;
+  public native function join(separator:String):String;
+  public native function pop():*;
+  public native function push(... items):void;
+  public native function reverse():Array;
+  public native function shift():*;
+
+  native function slice(start:Number = 0, end:Number = Number.MAX_VALUE):Array;
+  public native function sort(comparefn:Function = null):Array;
+  public native function splice(start:Number,deleteCount:Number = 0, ... items):Array;
+  public native function unshift(... items):uint;
+  public native function get length():uint;
+  private static const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+
+public class Boolean extends Object {
+  public native function valueOf():Boolean;
+}
+
+public dynamic class Date extends Object {
+  public native function Date(... rest);
+  public native function getDate():Number;
+  public native function getDay():Number;
+  public native function getMonth():Number;
+  public native function getFullYear():Number;
+  public native function getHours():Number;
+
+  public native function getMilliseconds():Number;
+  public native function getMinutes():Number;
+  public native function getSeconds():Number;
+  public native function getTime():Number;
+  public native function getTimezoneOffset():Number;
+
+  public native function getUTCDate():Number;
+  public native function getUTCDay():Number;
+  public native function getUTCFullYear():Number;
+  public native function getUTCHours():Number;
+  public native function getUTCMilliseconds():Number;
+  public native function getUTCMinutes():Number;
+
+  public native function getUTCMonth():Number;
+  public native function getUTCSeconds():Number;
+  public native function getYear():Number;
+  public static native function parse(s:*):Date;
+  public native function setDate(date:*):void;
+
+  public native function setFullYear(year:Number, month: Number = 1, date: Number = 1):void;
+  public native function setHours(hour:Number, min: Number = 1, sec: Number = 1, ms:Number = 1):void;
+  public native function setMilliseconds(ms: Number):void;
+
+  public native function setMinutes(min: Number, sec: Number = 1, ms:Number = 1):void;
+  public native function setMonth(month: Number, date: Number = 1):void;
+  public native function setSeconds(sec: Number, ms:Number = 1):void;
+
+  public native function setTime(time: Number):void;
+  public native function setUTCDate(date: Number):void;
+  public native function setUTCFullYear(year:Number, month: Number = 1, date: Number = 1):void;
+  public native function setUTCHours(hour:Number, min: Number = 1, sec: Number = 1, ms:Number = 1):void;
+
+  public native function setUTCMilliseconds(ms: Number):void;
+  public native function setUTCMinutes(min: Number, sec: Number = 1, ms:Number = 1):void;
+  public native function setUTCMonth(month: Number, date: Number = 1):void;
+  public native function setUTCSeconds(sec: Number, ms:Number = 1):void;
+
+  public native function setYear(year: Number):void;
+  public native function toGMTString():String;
+  public native function toLocaleDateString():String;
+  public native function toLocaleTimeString():String;
+  public native function toDateString():String;
+
+  public native function toTimeString():String;
+  public native function toUTCString():String;
+  public native static function UTC(year:Number, month:Number, date:Number = 1, hours:Number = 1, minutes:Number = 1, seconds:Number = 1, ms:Number = 1):String;
+  public native function valueOf():Date;
+}
+
+class IArguments extends Array {
+  public native function get callee():Function;
+  public native function set callee(value:Function):void;
+  [Deprecated(message="Property caller is obsolete")]
+  public native function get caller():Function;
+}
+
+public dynamic class Function extends Object {
+  public native function get arguments():IArguments;
+  public native function get arity():Number;
+  public native function apply(thisArg:Object, argArray:Array = null):Object;
+  public native function call(thisArg:Object, ...args):Object;
+}
+
+public class Math extends Object {
+  public native static const E:Number;
+  public native static const LN10:Number;
+  public native static const LN2:Number;
+  public native static const LOG10E:Number;
+  public native static const LOG2E:Number;
+
+  public native static const PI:Number;
+  public native static const SQRT1_2:Number;
+  public native static const SQRT2:Number;
+
+  public native static function abs(x:Number):Number;
+  public native static function acos(x:Number):Number;
+  public native static function asin(x:Number):Number;
+  public native static function atan(x:Number):Number;
+  public native static function atan2(y:Number, x:Number):Number;
+
+  public native static function ceil(value:Number):Number;
+  public native static function cos(x:Number):Number;
+  public native static function exp(x:Number):Number;
+  public native static function floor(x:Number):Number;
+  public native static function log(x:Number):Number;
+  public native static function max(... x/*Number*/):Number;
+  public native static function min(... x/*Number*/):Number;
+
+  public native static function pow(x:Number, y:Number):Number;
+  public native static function random():Number;
+  public native static function round(x:Number):Number;
+  public native static function sin(x:Number):Number;
+  public native static function sqrt(x:Number):Number;
+  public native static function tan(x:Number):Number;
+}
+        
+public class Number extends Object {
+  public static native function get MAX_VALUE():Number
+  public static native function get MIN_VALUE():Number
+  public static native function get NaN():Number
+  public static native function get Infinity():Number
+  public static native function get NEGATIVE_INFINITY():Number
+  public static native function get POSITIVE_INFINITY():Number
+
+  public native function toExponential(fractionalDigits:Number):String;
+  public native function toFixed(fractionalDigits:Number):String;
+  public native function toPrecision(precision:Number):String;
+  public native function toString(radix:Number = 10):String;
+  public native function valueOf():Number;
+}
+
+public dynamic class RegExp extends Object {
+  public native function RegExp(pattern:String = null, options:String = null);
+  public native function get global():Boolean;
+  public native function get ignoreCase():Boolean;
+  public native function get lastIndex():Number;
+  public native function set lastIndex(n:Number):void;
+
+  public native static function get leftContext():String;
+  public native static function get input():String;
+  public native static function get lastParen():String;
+  public native static function get lastMatch():String;
+  public native static function get rightContext():String;
+
+  public native function get multiline():Boolean;
+  public native function get source():String;
+
+  public native static function get $1():String;
+  public native static function get $2():String;
+  public native static function get $3():String;
+  public native static function get $4():String;
+  public native static function get $5():String;
+
+  public native function exec(string:String):*;
+  public native function test(string:String):Boolean;
+}
+
+public class String extends Object {
+  public native function anchor(nameAttribute:String):String;
+  public native function big():String;
+  public native function blink():String;
+  public native function bold():String;
+  public native function charAt(pos:Number):String;
+  public native function charCodeAt(pos:Number):Number;
+
+  public native function concat(...strings):String;
+  public native function fixed():String;
+  public native function fontcolor(color:String):String;
+  public native function fontsize(size:Number):String;
+  public static native function fromCharCode(... chars):String;
+  public native function indexOf(searchString:String, position:Number = -1):Number;
+
+  public native function italics():String;
+  public native function lastIndexOf(searchString:String, position:Number = -1):Number;
+  native public function get length():int;
+  public native function link(href:String):String;
+  public native function localeCompare(other:String):int;
+  public native function match(regexp:RegExp):Array;
+  public native function replace(searchValue:*, replaceValue:*):String;
+
+  public native function search(regexp:*):int;
+  public native function slice(start:Number, end:Number = Number.MAX_VALUE):String;
+  public native function small():String;
+  public native function split(separator:*, limit:Number = -1):Array;
+  public native function strike():String;
+  public native function sub():String;
+
+  public native function substr(start:Number, length:Number = -1):String;
+  public native function substring(start:Number, end:Number = -1):String;
+  public native function sup():String;
+  public native function toLowerCase():String;
+  public native function toLocaleLowerCase():String;
+  public native function toLocaleUpperCase():String;
+  public native function toUpperCase():String;
+  public native function valueOf():String;
+}
+
+public dynamic class Error extends Object {
+  public native function Error(msg:*="", id:*=0);
+  public var name:String;
+  public var message:String;
+  native AS3 function getStackTrace():String;
+}
+
+public class EvalError extends Error {}
+public class RangeError extends Error {}
+public class ReferenceError extends Error {}
+public class SyntaxError extends Error {}
+public class TypeError extends Error {}
+public class URIError extends Error {}
+}

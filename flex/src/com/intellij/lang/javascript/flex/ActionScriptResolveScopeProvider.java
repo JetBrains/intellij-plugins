@@ -3,7 +3,7 @@ package com.intellij.lang.javascript.flex;
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.javascript.*;
-import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider;
+import com.intellij.lang.javascript.flex.library.ActionScriptLibraryProvider;
 import com.intellij.lang.javascript.psi.resolve.JSElementResolveScopeProvider;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveScopeProvider;
@@ -53,7 +53,7 @@ public class ActionScriptResolveScopeProvider extends JSResolveScopeProvider imp
             moduleScope, TypeScriptFileType.INSTANCE, JavaScriptFileType.INSTANCE
           )
         ));
-      return fileTypesScope.union(GlobalSearchScope.filesScope(project, JSCorePredefinedLibrariesProvider.getActionScriptPredefinedLibraryFiles()));
+      return fileTypesScope.union(GlobalSearchScope.filesScope(project, ActionScriptLibraryProvider.getActionScriptPredefinedLibraryFiles()));
     }
     return null;
   }
