@@ -37,7 +37,7 @@ public class ErrorProneJavaBackendCompiler implements BackendCompiler {
   @NotNull
   @Override
   public Configurable createConfigurable() {
-    return new JavacConfigurable(ErrorProneCompilerConfiguration.getOptions(myProject));
+    return new JavacConfigurable(myProject, ErrorProneCompilerConfiguration.getOptions(myProject));
   }
 
   @NotNull
