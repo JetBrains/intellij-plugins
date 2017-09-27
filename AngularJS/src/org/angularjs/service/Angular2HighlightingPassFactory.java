@@ -28,7 +28,7 @@ public class Angular2HighlightingPassFactory extends JSLanguageServiceHighlighti
       .filter(el -> el instanceof Angular2LanguageServiceProvider)
       .findAny();
 
-    myProvider = providerOptional.isPresent() ? (Angular2LanguageServiceProvider)providerOptional.get() : null;
+    myProvider = (Angular2LanguageServiceProvider)providerOptional.orElse(null);
   }
 
   @Nullable
