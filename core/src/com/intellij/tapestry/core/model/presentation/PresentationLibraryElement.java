@@ -33,7 +33,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
   /**
    * The element type.
    */
-  public static enum ElementType {
+  public enum ElementType {
 
     /**
      * A page.
@@ -232,7 +232,6 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
    */
   public List<TemplateElement> getEmbeddedComponents() {
 
-    final List<TemplateElement> embeddedComponentsClass = new ArrayList<>();
     final List<TemplateElement> embeddedComponentsTemplate = new ArrayList<>();
     final List<TemplateElement> embeddedComponents = new ArrayList<>();
 
@@ -252,7 +251,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
       }
     }
 
-    embeddedComponentsClass.addAll(embeddedComponents);
+    final List<TemplateElement> embeddedComponentsClass = new ArrayList<>(embeddedComponents);
 
     for (int i = 0; i < getTemplate().length; i++) {
 
