@@ -147,6 +147,8 @@ public class DartAnalysisServerService implements Disposable {
   private boolean myHaveShownInitialProgress;
   private boolean mySentAnalysisBusy;
 
+  private ClosingLabelManager.PreferenceChangeListener closingLabelPreferenceChangeListener;
+
   // files with red squiggles in Project View. This field is also used as a lock to access these 3 collections
   @NotNull private final Set<String> myFilePathsWithErrors = new THashSet<>();
   // how many files with errors are in this folder (recursively)
@@ -523,6 +525,14 @@ public class DartAnalysisServerService implements Disposable {
     myServerData = new DartServerData(this);
     myUpdateFilesAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, project);
     myShowServerProgressAlarm = new Alarm(project);
+
+    closingLabelPreferenceChangeListener = new ClosingLabelManager.PreferenceChangeListener() {
+      @Override
+      public void closingLabelPreferenceChanged() {
+        handleClosingLabelPreferenceChanged();
+      }
+    };
+    ClosingLabelManager.getInstance().addListener(closingLabelPreferenceChangeListener);
   }
 
   @SuppressWarnings("unused") // for Flutter plugin
@@ -657,6 +667,11 @@ public class DartAnalysisServerService implements Disposable {
   @Override
   public void dispose() {
     stopServer();
+    ClosingLabelManager.getInstance().removeListener(closingLabelPreferenceChangeListener);
+  }
+
+  private void handleClosingLabelPreferenceChanged() {
+    analysis_setSubscriptions();
   }
 
   @NotNull
@@ -1497,7 +1512,8 @@ public class DartAnalysisServerService implements Disposable {
       if (StringUtil.compareVersionNumbers(mySdkVersion, "1.13") >= 0) {
         subscriptions.put(AnalysisService.IMPLEMENTED, myVisibleFiles);
       }
-      if (StringUtil.compareVersionNumbers(mySdkVersion, "1.25.0") >= 0) {
+      if (ClosingLabelManager.getInstance().getShowClosingLabels()
+          && StringUtil.compareVersionNumbers(mySdkVersion, "1.25.0") >= 0) {
         subscriptions.put(AnalysisService.CLOSING_LABELS, myVisibleFiles);
       }
 
