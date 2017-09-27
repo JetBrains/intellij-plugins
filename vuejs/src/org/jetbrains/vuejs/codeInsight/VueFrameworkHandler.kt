@@ -44,19 +44,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val obj = property.parent as JSObjectLiteralExpression
     if (obj.properties.isEmpty()) return outData
 
-    if (obj.parent !is JSProperty && obj.properties[0] == property)  {
-      if (obj.parent is JSExportAssignment && obj.containingFile.fileType == VueFileType.INSTANCE) {
-        return tryProcessComponentInVue(obj, property, outData)
-      }
-      else {
-        val componentName = tryGetNameFromComponentDefinition(obj)
-        if (componentName != null) {
-          val out = outData ?: JSElementIndexingDataImpl()
-          out.addImplicitElement(JSImplicitElementImpl.Builder(componentName, property)
-                                   .setUserString(VueComponentsIndex.JS_KEY).toImplicitElement())
-          return out
-        }
-      }
+    if (obj.parent is JSExportAssignment && obj.properties[0] == property && obj.containingFile.fileType == VueFileType.INSTANCE)  {
+      return tryProcessComponentInVue(obj, property, outData)
     }
 
     if (obj.properties[0] == property && ((obj.parent as? JSProperty) == null) && isDescriptorOfLinkedInstanceDefinition(obj)) {
@@ -68,6 +57,45 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       return out
     }
     return outData
+  }
+
+  override fun shouldCreateStubForCallExpression(node: ASTNode?): Boolean {
+    val reference = (node?.psi as? JSCallExpression)?.methodExpression as? JSReferenceExpression ?: return false
+    return isVueComponentMethod(reference)
+  }
+
+  override fun processCallExpression(callExpression: JSCallExpression?, outData: JSElementIndexingData) {
+    val reference = callExpression?.methodExpression as? JSReferenceExpression ?: return
+    if (isVueComponentMethod(reference)) {
+      val arguments = callExpression.arguments
+      val componentName = getTextIfLiteral(arguments[0])
+      if (arguments.size >= 2 && componentName != null) {
+        val descriptor = arguments[1]
+        var provider: PsiElement = callExpression
+        // not null type string indicates the global component
+        var typeString = ""
+        if (descriptor is JSObjectLiteralExpression && !descriptor.properties.isEmpty()) {
+          provider = descriptor.firstProperty!!
+        }
+        else if (descriptor is JSReferenceExpression) {
+          typeString = descriptor.text
+        }
+        outData.addImplicitElement(JSImplicitElementImpl.Builder(componentName, provider)
+                                     .setUserString(VueComponentsIndex.JS_KEY)
+                                     .setTypeString(typeString)
+                                     .toImplicitElement())
+      }
+    }
+  }
+
+  private fun isVueComponentMethod(reference: JSReferenceExpression) =
+    JSSymbolUtil.isAccurateReferenceExpressionName(reference, "Vue", "component")
+
+  private fun getTextIfLiteral(holder: PsiElement): String? {
+    if (holder is JSLiteralExpression && holder.isQuotedLiteral) {
+      return StringUtil.unquoteString(holder.text)
+    }
+    return null
   }
 
   private fun isDescriptorOfLinkedInstanceDefinition(obj: JSObjectLiteralExpression): Boolean {
@@ -114,19 +142,6 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     out.addImplicitElement(JSImplicitElementImpl.Builder(compName, property).setUserString(VueComponentsIndex.JS_KEY).toImplicitElement())
 
     return out
-  }
-
-  private fun tryGetNameFromComponentDefinition(obj : JSObjectLiteralExpression) : String? {
-    val callExpression = (obj.parent as? JSArgumentList)?.parent as? JSCallExpression ?: return null
-    if (callExpression.methodExpression is JSReferenceExpression &&
-        JSSymbolUtil.isAccurateReferenceExpressionName(callExpression.methodExpression as JSReferenceExpression, "Vue", "component")) {
-      val callArgs = callExpression.arguments
-      if (callArgs.size > 1 && callArgs[1] == obj &&
-          callArgs[0] is JSLiteralExpression && (callArgs[0] as JSLiteralExpression).isQuotedLiteral) {
-        return StringUtil.unquoteString((callArgs[0] as JSLiteralExpression).text)
-      }
-    }
-    return null
   }
 
   override fun indexImplicitElement(element: JSImplicitElementStructure, sink: IndexSink?): Boolean {

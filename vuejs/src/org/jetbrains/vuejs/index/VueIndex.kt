@@ -20,22 +20,22 @@ import org.jetbrains.vuejs.VueFileType
 val VUE = "vue"
 val INDICES:MutableMap<StubIndexKey<String, JSImplicitElementProvider>, String> = mutableMapOf()
 
-fun getAllKeys(scope:GlobalSearchScope, key:StubIndexKey<String, JSImplicitElementProvider>): Collection<JSImplicitElement> {
-  val keys = StubIndex.getInstance().getAllKeys(key, scope.project!!)
-  return keys.mapNotNull {
-    resolve(it, scope, key)
-  }
+fun getForAllKeys(scope:GlobalSearchScope, key:StubIndexKey<String, JSImplicitElementProvider>,
+                  filter: ((String) -> Boolean)?): Collection<JSImplicitElement> {
+  var keys = StubIndex.getInstance().getAllKeys(key, scope.project!!)
+  if (filter != null) keys = keys.filter { filter.invoke(it) }
+  return keys.mapNotNull { resolve(it, scope, key) }.flatMap { it.toMutableList() }
 }
 
-fun resolve(name:String, scope:GlobalSearchScope, key:StubIndexKey<String, JSImplicitElementProvider>): JSImplicitElement? {
+fun resolve(name:String, scope:GlobalSearchScope, key:StubIndexKey<String, JSImplicitElementProvider>): Collection<JSImplicitElement>? {
   if (DumbService.isDumb(scope.project!!)) return null
-  var result:JSImplicitElement? = null
+  val result = mutableListOf<JSImplicitElement>()
   StubIndex.getInstance().processElements(key, name, scope.project!!, scope, JSImplicitElementProvider::class.java, Processor {
     val element = (it.indexingData?.implicitElements ?: emptyList()).firstOrNull { it.userString == INDICES[key] }
-    result = element
-    return@Processor element != null
+    if (element != null) result.add(element)
+    return@Processor false
   })
-  return result
+  return if (result.isEmpty()) null else result
 }
 
 fun hasVue(project: Project): Boolean {

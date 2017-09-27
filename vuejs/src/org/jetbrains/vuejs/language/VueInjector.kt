@@ -24,6 +24,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.NullableFunction
 import org.jetbrains.vuejs.codeInsight.VueAttributesProvider
+import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.onlyLocal
 import org.jetbrains.vuejs.codeInsight.findProperty
 import org.jetbrains.vuejs.index.VueOptionsIndex
 import org.jetbrains.vuejs.index.resolve
@@ -41,7 +42,8 @@ class VueInjector : MultiHostInjector {
     })
 
     private fun calculateDelimitersFromIndex(project: Project, key: String): Pair<String, PsiElement>? {
-      val element = resolve("", GlobalSearchScope.projectScope(project), VueOptionsIndex.KEY) ?: return null
+      val elements = resolve("", GlobalSearchScope.projectScope(project), VueOptionsIndex.KEY) ?: return null
+      val element = onlyLocal(elements).firstOrNull() ?: return null
       val obj = element as? JSObjectLiteralExpression ?:
                 PsiTreeUtil.getParentOfType(element, JSObjectLiteralExpression::class.java) ?: return null
       val property = findProperty(obj, "delimiters") ?: return null

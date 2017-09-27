@@ -20,6 +20,6 @@ fun toAsset(name: String): String {
 
 fun getNameVariants(name: String, withKebab: Boolean): Set<String> {
   val camelCaseName = toAsset(name).decapitalize()
-  if (withKebab) return setOf(camelCaseName, camelCaseName.capitalize(), fromAsset(name))
+  if (withKebab) return setOf(fromAsset(name), camelCaseName, camelCaseName.capitalize())
   return setOf(camelCaseName, camelCaseName.capitalize())
 }
