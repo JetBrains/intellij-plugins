@@ -194,8 +194,13 @@ WHAT_EVER=[^]*
 <YYINITIAL> {VARIABLE_TYPE_DECL} { return CfmlTokenTypes.VAR_ANNOTATION; }
 <YYINITIAL> {TAG_START} {CF_TAG_NAME}  {
     String tagName = yytext().subSequence(1, yylength()).toString();
-    boolean startTemplateText =  !"include".equalsIgnoreCase(tagName);
-    if (startTemplateText) myCurrentConfiguration.myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
+    boolean startTemplateText =  !"cfinclude".equalsIgnoreCase(tagName) &&  
+      (myCurrentConfiguration.myBlockType != CfmlElementTypes.SQL ||
+       !"cfqueryparam".equals(tagName)
+      );
+    if (startTemplateText) {
+      myCurrentConfiguration.myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
+    }
     yypushback(yylength() - 1);
     return startTag();
 }
