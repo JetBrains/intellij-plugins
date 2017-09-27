@@ -1756,8 +1756,13 @@ class _CfmlLexer implements FlexLexer {
           case 85: break;
           case 35: 
             { String tagName = yytext().subSequence(1, yylength()).toString();
-    boolean startTemplateText =  !"cfinclude".equalsIgnoreCase(tagName);
-    if (startTemplateText) myCurrentConfiguration.myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
+    boolean startTemplateText =  !"cfinclude".equalsIgnoreCase(tagName) &&  
+      (myCurrentConfiguration.myBlockType != CfmlElementTypes.SQL ||
+       !"cfqueryparam".equals(tagName)
+      );
+    if (startTemplateText) {
+      myCurrentConfiguration.myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
+    }
     yypushback(yylength() - 1);
     return startTag();
             }

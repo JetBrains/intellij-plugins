@@ -85,6 +85,10 @@ public class CfmlLexerTest extends LexerTestCase {
     doTest();
   }
 
+  public void testSqlWithInclude2() throws Throwable {
+    doTest();
+  }
+
   public void testLexerState() {
     String charSequence = "component name=\"Foo\" {}";
     CfmlLexer lexer = new CfmlLexer(true, null);
