@@ -523,6 +523,8 @@ public class DartAnalysisServerService implements Disposable {
     myServerData = new DartServerData(this);
     myUpdateFilesAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, project);
     myShowServerProgressAlarm = new Alarm(project);
+
+    DartClosingLabelManager.getInstance().addListener(this::handleClosingLabelPreferenceChanged, this);
   }
 
   @SuppressWarnings("unused") // for Flutter plugin
@@ -657,6 +659,10 @@ public class DartAnalysisServerService implements Disposable {
   @Override
   public void dispose() {
     stopServer();
+  }
+
+  private void handleClosingLabelPreferenceChanged() {
+    analysis_setSubscriptions();
   }
 
   @NotNull
@@ -1497,7 +1503,8 @@ public class DartAnalysisServerService implements Disposable {
       if (StringUtil.compareVersionNumbers(mySdkVersion, "1.13") >= 0) {
         subscriptions.put(AnalysisService.IMPLEMENTED, myVisibleFiles);
       }
-      if (StringUtil.compareVersionNumbers(mySdkVersion, "1.25.0") >= 0) {
+      if (DartClosingLabelManager.getInstance().getShowClosingLabels()
+          && StringUtil.compareVersionNumbers(mySdkVersion, "1.25.0") >= 0) {
         subscriptions.put(AnalysisService.CLOSING_LABELS, myVisibleFiles);
       }
 

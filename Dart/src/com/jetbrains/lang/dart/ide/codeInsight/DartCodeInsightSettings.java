@@ -33,9 +33,10 @@ public class DartCodeInsightSettings implements PersistentStateComponent<DartCod
 
   public boolean INSERT_DEFAULT_ARG_VALUES = true;
 
+  public boolean SHOW_CLOSING_LABELS = true;
+
   @MagicConstant(intValues = {YES, NO, ASK})
   public int ADD_IMPORTS_ON_PASTE = ASK;
-
 
   @Override
   public DartCodeInsightSettings getState() {
