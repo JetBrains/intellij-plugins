@@ -25,7 +25,9 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.onlyLocal
 import org.jetbrains.vuejs.index.VueOptionsIndex
+import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.language.VueVForExpression
 
 /**
@@ -103,7 +105,8 @@ fun findInMountedVueInstance(reference : JSReferenceExpression) : JSObjectLitera
     if (it is PsiFile) return@Condition true
     val idValue = (it as? XmlTag)?.getAttribute("id")?.valueElement?.value ?: return@Condition false
     if (!StringUtil.isEmptyOrSpaces(idValue)) {
-      val element = org.jetbrains.vuejs.index.resolve("#" + idValue, GlobalSearchScope.projectScope(reference.project), VueOptionsIndex.KEY)
+      val elements = resolve("#" + idValue, GlobalSearchScope.projectScope(reference.project), VueOptionsIndex.KEY) ?: return@Condition false
+      val element = onlyLocal(elements).firstOrNull()
       val obj = element as? JSObjectLiteralExpression ?: PsiTreeUtil.getParentOfType(element, JSObjectLiteralExpression::class.java)
       ref.set(obj)
       return@Condition obj != null

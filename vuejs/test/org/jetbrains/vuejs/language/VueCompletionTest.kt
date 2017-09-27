@@ -67,6 +67,125 @@ import compUI from 'compUI.vue'
     UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "comp-u-i")
   }
 
+  fun testCompleteWithImport() {
+    myFixture.configureByText("toImport.vue", """
+<template>text here</template>
+<script>
+  export default {
+    name: 'toImport',
+    props: ['strangeCase']
+  }
+</script>
+""")
+    myFixture.configureByText("CompleteWithImport.vue", """
+<template>
+<to<caret>
+</template>
+<script>
+export default {
+}
+</script>
+""")
+
+    noAutoComplete(Runnable {
+      myFixture.completeBasic()
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
+      myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+      myFixture.checkResult("""
+<template>
+<to-import<caret>
+</template>
+<script>
+import ToImport from "./toImport";
+
+export default {
+    components: {ToImport}
+}
+</script>
+""")
+    })
+  }
+
+  fun testCompleteWithoutImportForRenamedGlobalComponent() {
+    myFixture.configureByText("libComponent.vue", """
+<template>text here</template>
+<script>
+  export default {
+    name: 'libComponent',
+    props: ['strangeCase']
+  }
+</script>
+""")
+    myFixture.configureByText("main.js", """
+import LibComponent from "./libComponent"
+Vue.component('renamed-component', LibComponent)
+""")
+    myFixture.configureByText("CompleteWithoutImportForRenamedGlobalComponent.vue", """
+<template>
+<ren<caret>
+</template>
+<script>
+export default {
+}
+</script>
+""")
+
+    noAutoComplete(Runnable {
+      myFixture.completeBasic()
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "renamed-component")
+      myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+      myFixture.checkResult("""
+<template>
+<renamed-component<caret>
+</template>
+<script>
+export default {
+}
+</script>
+""")
+    })
+  }
+
+  fun testCompleteWithoutImportForGlobalComponent() {
+    myFixture.configureByText("lib2Component.vue", """
+<template>text here</template>
+<script>
+  export default {
+    name: 'lib2Component',
+    props: ['strangeCase']
+  }
+</script>
+""")
+    myFixture.configureByText("main.js", """
+import Lib2Component from "./lib2Component"
+Vue.component('lib2-component', LibComponent)
+""")
+    myFixture.configureByText("CompleteWithoutImportForGlobalComponent.vue", """
+<template>
+<lib<caret>
+</template>
+<script>
+export default {
+}
+</script>
+""")
+
+    noAutoComplete(Runnable {
+      myFixture.completeBasic()
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "lib2-component")
+      myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+      myFixture.checkResult("""
+<template>
+<lib2-component<caret>
+</template>
+<script>
+export default {
+}
+</script>
+""")
+    })
+  }
+
   fun testCompleteAttributesFromProps() {
     myFixture.configureByText("compUI.vue", """
 <template>{{ strangeCase }}</template>

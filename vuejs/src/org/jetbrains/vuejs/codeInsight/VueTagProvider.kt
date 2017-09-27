@@ -1,5 +1,6 @@
 package org.jetbrains.vuejs.codeInsight
 
+import com.intellij.codeInsight.completion.CompletionUtilCore
 import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
@@ -30,9 +31,11 @@ import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import com.intellij.xml.XmlTagNameProvider
 import com.intellij.xml.util.HtmlUtil
 import icons.VuejsIcons
+import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.selectComponent
 import org.jetbrains.vuejs.index.VueComponentsIndex
-import org.jetbrains.vuejs.index.getAllKeys
+import org.jetbrains.vuejs.index.getForAllKeys
 import org.jetbrains.vuejs.index.hasVue
+import org.jetbrains.vuejs.index.resolve
 
 class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
@@ -45,10 +48,11 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
         return@processLocalComponents localComponent == null
       })
 
-      val component = localComponent ?:
-                      org.jetbrains.vuejs.index.resolve(tag.name, tag.resolveScope, VueComponentsIndex.KEY) ?:
-                      org.jetbrains.vuejs.index.resolve(toAsset(tag.name), tag.resolveScope, VueComponentsIndex.KEY) ?:
-                      org.jetbrains.vuejs.index.resolve(toAsset(tag.name).capitalize(), tag.resolveScope, VueComponentsIndex.KEY)
+      if (localComponent != null) return VueElementDescriptor(localComponent!!)
+
+      val component = selectComponent(resolve(tag.name, tag.resolveScope, VueComponentsIndex.KEY), false) ?:
+                      selectComponent(resolve(toAsset(tag.name), tag.resolveScope, VueComponentsIndex.KEY), false) ?:
+                      selectComponent(resolve(toAsset(tag.name).capitalize(), tag.resolveScope, VueComponentsIndex.KEY), false)
       if (component != null) {
         return VueElementDescriptor(component)
       }
@@ -84,17 +88,24 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun addTagNameVariants(elements: MutableList<LookupElement>?, tag: XmlTag, prefix: String?) {
     val files:MutableList<PsiFile> = mutableListOf()
     processLocalComponents(tag, { property, element ->
-      elements?.add(PrioritizedLookupElement.withPriority(createVueLookup(element, property.name!!).bold(), 100.0))
+      elements?.add(PrioritizedLookupElement.withPriority(createVueLookup(element, property.name!!, false).bold(), 100.0))
       files.add(element.containingFile)
       return@processLocalComponents true
     })
-    elements?.addAll(getAllKeys(tag.resolveScope, VueComponentsIndex.KEY).filter { !files.contains(it.containingFile) }.
-      map { createVueLookup(it, it.name) })
+    val namePrefix = tag.name.substringBefore(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, tag.name)
+    val globals = mutableSetOf<String>()
+    val variants = getForAllKeys(tag.resolveScope, VueComponentsIndex.KEY, { key -> key.startsWith(namePrefix, true) }).
+      filter { !files.contains(it.containingFile) }
+    variants.forEach { if (VueComponents.isGlobal(it)) globals.addAll(getNameVariants(it.name, true)) }
+
+    val components = variants.filter { !globals.contains(it.name) || VueComponents.isGlobal(it) }.
+      map { createVueLookup(it, it.name, VueComponents.isGlobal(it)) }
+    elements?.addAll(components)
   }
 
-  private fun createVueLookup(element: JSImplicitElement, name: String) =
+  private fun createVueLookup(element: JSImplicitElement, name: String, isGlobal: Boolean) =
     LookupElementBuilder.create(element, fromAsset(name)).
-      withInsertHandler(VueInsertHandler.INSTANCE).
+      withInsertHandler(if (isGlobal) null else VueInsertHandler.INSTANCE).
       withIcon(VuejsIcons.Vue)
 }
 
@@ -150,7 +161,7 @@ private fun findInnerDetailDescriptor(obj: JSObjectLiteralExpression,
       else null
     }
   )
-  return searchers.map { it.create() }.filterNotNull().firstOrNull()
+  return searchers.mapNotNull { it.create() }.firstOrNull()
 }
 
 fun readDataProps(dataProps: JSProperty, filter : PairProcessor<String, PsiElement>?) : List<VueAttributeDescriptor> {
@@ -245,7 +256,7 @@ private fun withNameVariants(props: List<VueAttributeDescriptor>, withKebab: Boo
 class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescriptor {
   override fun getDeclaration() = element
   override fun getName(context: PsiElement?):String = (context as? XmlTag)?.name ?: name
-  override fun getName() = fromAsset(element.name)
+  override fun getName() = fromAsset(declaration.name)
   override fun init(element: PsiElement?) {}
   override fun getQualifiedName() = name
   override fun getDefaultName() = name
@@ -264,7 +275,7 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
   override fun getAttributesDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
     var result = HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context).plus(VueAttributesProvider.getDefaultVueAttributes())
 
-    val obj = (declaration.parent as? JSProperty)?.context as? JSObjectLiteralExpression
+    val obj = VueComponents.findComponentDescriptor(declaration)
     if (obj != null) {
       val propsProperty = findProperty(obj, PROPS)
       if (propsProperty != null) {
@@ -288,7 +299,7 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
     if (attributeName == null) return null
 
-    val obj = (declaration.parent as? JSProperty)?.context as? JSObjectLiteralExpression ?: return null
+    val obj = VueComponents.findComponentDescriptor(declaration) ?: return null
 
     val propsProperty = obj.findProperty(PROPS)
     if (propsProperty != null) {

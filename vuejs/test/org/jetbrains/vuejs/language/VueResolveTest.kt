@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.language
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
+import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
@@ -11,6 +12,8 @@ import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
  * @author Irina.Chernushina on 7/28/2017.
  */
 class VueResolveTest : LightPlatformCodeInsightFixtureTestCase() {
+  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/testData/resolve/"
+
   fun testResolveInjectionToPropInObject() {
     myFixture.configureByText("ResolveToPropInObject.vue", """
 <template>
@@ -760,5 +763,83 @@ new Vue({
     TestCase.assertTrue(variable!!.parent is JSVarStatement)
     TestCase.assertTrue(variable.parent.parent is JSParenthesizedExpression)
     TestCase.assertTrue(variable.parent.parent.parent is VueVForExpression)
+  }
+
+  fun testResolveForRenamedGlobalComponent() {
+    myFixture.configureByText("libComponent.vue", """
+<template>text here</template>
+<script>
+  export default {
+    name: 'libComponent',
+    props: ['libComponentProp']
+  }
+</script>
+""")
+    myFixture.configureByText("main.js", """
+import LibComponent from "./libComponent"
+Vue.component('renamed-component', LibComponent)
+""")
+    myFixture.configureByText("CompleteWithoutImportForRenamedGlobalComponent.vue", """
+<template>
+<renamed-component <caret>lib-component-prop=1></renamed-component>
+</template>
+<script>
+export default {
+}
+</script>
+""")
+
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val literal = reference!!.resolve()
+    TestCase.assertNotNull(literal)
+    TestCase.assertTrue(literal is JSLiteralExpression)
+    TestCase.assertEquals("'libComponentProp'", literal!!.text)
+    TestCase.assertTrue(literal.parent is JSArrayLiteralExpression)
+    TestCase.assertEquals("props", (literal.parent.parent as JSProperty).name)
+  }
+
+  fun testLocalQualifiedNameOfGlobalComponent() {
+    myFixture.configureByText("LocalQualifiedNameOfGlobalComponent.js", """
+      let CompDef = {
+        props: {
+          kuku: {}
+        }
+      };
+
+      Vue.component('complex-ref', CompDef);
+    """.trimIndent())
+    myFixture.configureByText("LocalQualifiedNameOfGlobalComponent.vue", """
+      <template>
+        <complex-ref <caret>kuku="e23"></complex-ref>
+      </template>
+    """.trimIndent())
+
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val property = reference!!.resolve()
+    TestCase.assertNotNull(property)
+    TestCase.assertTrue(property is JSProperty)
+    TestCase.assertEquals("kuku", (property as JSProperty).name)
+    TestCase.assertTrue(property.parent.parent is JSProperty)
+    TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
+  }
+
+  fun testResolveVueRouterComponents() {
+    myFixture.configureByFile("vue-router.js")
+    myFixture.configureByText("ResolveVueRouterComponents.vue", """
+      <template>
+        <router-link <caret>to="/post"></router-link>
+      </template>
+    """.trimIndent())
+
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val property = reference!!.resolve()
+    TestCase.assertNotNull(property)
+    TestCase.assertTrue(property is JSProperty)
+    TestCase.assertEquals("to", (property as JSProperty).name)
+    TestCase.assertTrue(property.parent.parent is JSProperty)
+    TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
   }
 }
