@@ -199,8 +199,11 @@
     <projectService serviceInterface="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView"
                     serviceImplementation="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView"/>
 
+    <applicationService serviceInterface="com.jetbrains.lang.dart.analyzer.ClosingLabelManager"
+                        serviceImplementation="com.jetbrains.lang.dart.analyzer.ClosingLabelManager"/>
     <applicationService serviceInterface="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"
                         serviceImplementation="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"/>
+
     <codeFoldingOptionsProvider instance="com.jetbrains.lang.dart.folding.DartCodeFoldingOptionsProvider"/>
     <editorNotificationProvider implementation="com.jetbrains.lang.dart.ide.actions.DartEditorNotificationsProvider"/>
     <consoleFilterProvider implementation="com.jetbrains.lang.dart.ide.runner.DartConsoleFilterProvider" order="first"/>
@@ -228,6 +231,8 @@
     <editorSmartKeysConfigurable instance="com.jetbrains.lang.dart.ide.editor.DartSmartKeysConfigurable"/>
 
     <postStartupActivity implementation="com.jetbrains.lang.dart.DartDumbAwareStartupActivity"/>
+
+    <editorAppearanceConfigurable instance="com.jetbrains.lang.dart.analyzer.DartEditorAppearanceConfigurable"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">

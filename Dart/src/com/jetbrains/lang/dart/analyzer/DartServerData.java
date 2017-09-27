@@ -77,10 +77,12 @@ public class DartServerData {
   }
 
   void computedClosingLabels(@NotNull final String filePath, @NotNull final List<ClosingLabel> labels) {
-    if (myFilePathsWithUnsentChanges.contains(filePath)) return;
+    if (myFilePathsWithUnsentChanges.contains(filePath)) {
+      return;
+    }
 
-    // TODO(devoncarew): implement
-
+    ClosingLabelManager.getInstance().computedClosingLabels(
+      myService.getProject(), FileUtil.toSystemIndependentName(filePath), labels);
   }
 
   void computedHighlights(@NotNull final String filePath, @NotNull final List<HighlightRegion> regions) {
