@@ -12,7 +12,7 @@ import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import gnu.trove.TIntLongHashMap;
-import jetbrains.buildServer.messages.serviceMessages.intellij.ServiceMessageVisitor;
+import jetbrains.buildServer.messages.serviceMessages.ServiceMessageVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
