@@ -22,6 +22,7 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import icons.JsTestDriverIcons;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Top-level of the plugin - this class is registered in the plugin XML.
@@ -36,8 +37,9 @@ public class JstdConfigurationType extends ConfigurationTypeBase implements Dumb
   public JstdConfigurationType() {
     super(ID, NAME, NAME, JsTestDriverIcons.JsTestDriver);
     addFactory(new ConfigurationFactory(this) {
+      @NotNull
       @Override
-      public RunConfiguration createTemplateConfiguration(Project project) {
+      public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new JstdRunConfiguration(project, this, NAME);
       }
 
