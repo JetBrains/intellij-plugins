@@ -21,6 +21,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.EnumComboBoxModel;
+import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.TitledSeparator;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.containers.ContainerUtil;
@@ -248,6 +249,12 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     myPreviewTitledSeparator = new TitledSeparator(MarkdownBundle.message("markdown.settings.preview.name"));
     mySplitLayoutModel = new EnumComboBoxModel<>(SplitFileEditor.SplitEditorLayout.class);
     myDefaultSplitLayout = new ComboBox<>(mySplitLayoutModel);
+    myDefaultSplitLayout.setRenderer(new ListCellRendererWrapper<SplitFileEditor.SplitEditorLayout>() {
+      @Override
+      public void customize(JList list, SplitFileEditor.SplitEditorLayout value, int index, boolean selected, boolean hasFocus) {
+        setText(value.getPresentationText());
+      }
+    });
 
     createMultipleProvidersSettings();
     createJavaFXPreviewSettings();
