@@ -4,7 +4,6 @@ import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.EditorSettings;
@@ -44,7 +43,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, MarkdownPreviewSettings.Holder, Disposable {
-  private static final Logger LOG = Logger.getInstance(MarkdownSettingsForm.class);
   private static final String JAVA_FX_HTML_PANEL_PROVIDER = "JavaFxHtmlPanelProvider";
   private static final String LOBO_HTML_PANEL_PROVIDER = "LoboHtmlPanelProvider";
   private JPanel myMainPanel;
@@ -345,18 +343,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     MarkdownHtmlPanelProvider.ProviderInfo provider = getSelectedProvider();
 
     Objects.requireNonNull(provider);
-
-    SplitFileEditor.SplitEditorLayout editorLayout = mySplitLayoutModel.getSelectedItem();
-    SplitFileEditor.SplitEditorLayout layout;
-    if (editorLayout != null) {
-      layout = editorLayout;
-    }
-    else {
-      layout = SplitFileEditor.SplitEditorLayout.SPLIT;
-      LOG.warn("No editor layout is selected. ", new Throwable());
-    }
-
-    return new MarkdownPreviewSettings(layout,
+    return new MarkdownPreviewSettings(mySplitLayoutModel.getSelectedItem(),
                                        provider,
                                        myUseGrayscaleRenderingForJBCheckBox.isSelected(),
                                        myAutoScrollCheckBox.isSelected());
