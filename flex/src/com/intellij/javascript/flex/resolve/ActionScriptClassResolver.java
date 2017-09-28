@@ -28,6 +28,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static com.intellij.lang.javascript.psi.JSCommonTypeNames.*;
 
@@ -182,6 +184,13 @@ public class ActionScriptClassResolver extends JSClassResolver {
       if (result != null) return result;
     }
     return null;
+  }
+
+  @NotNull
+  @Override
+  public List<JSClass> findClassesByQName(@NotNull String qName, @NotNull GlobalSearchScope scope) {
+    final PsiElement clazz = findClassByQName(qName, scope);
+    return clazz instanceof JSClass ? Collections.singletonList((JSClass)clazz) : Collections.emptyList();
   }
 }
 
