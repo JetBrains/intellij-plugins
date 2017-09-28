@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.UserDataHolderBase;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.JBSplitter;
 import org.intellij.plugins.markdown.MarkdownBundle;
@@ -359,6 +360,11 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
       this.showFirst = showFirst;
       this.showSecond = showSecond;
       this.presentationName = presentationName;
+    }
+
+    public String getPresentationText() {
+      //noinspection ConstantConditions
+      return StringUtil.capitalize(StringUtil.substringAfter(presentationName, "Show "));
     }
 
     @Override
