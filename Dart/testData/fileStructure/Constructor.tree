@@ -1,7 +1,0 @@
--Constructor.dart
- -Constructor
-  [Constructor.Constructor()]
-  Constructor.one(num1)
-  Constructor.two(num1, num2)
-  num1 → int
-  num2 → int

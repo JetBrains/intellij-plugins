@@ -246,6 +246,11 @@ public class DartAnalysisServerService implements Disposable {
     }
 
     @Override
+    public void computedOutline(@NotNull final String _filePath, @NotNull final Outline outline) {
+      myServerData.computedOutline(FileUtil.toSystemIndependentName(_filePath), outline);
+    }
+
+    @Override
     public void flushedResults(@NotNull final List<String> _filePaths) {
       final List<String> filePaths = new ArrayList<>(_filePaths.size());
       for (String path : _filePaths) {
@@ -697,6 +702,13 @@ public class DartAnalysisServerService implements Disposable {
   @NotNull
   public List<DartServerData.DartRegion> getImplementedMembers(@NotNull final VirtualFile file) {
     return myServerData.getImplementedMembers(file);
+  }
+
+  @Nullable
+  @Contract("null -> null")
+  public Outline getOutline(@Nullable final VirtualFile file) {
+    if (file == null) return null;
+    return myServerData.getOutline(file);
   }
 
   void updateCurrentFile() {
@@ -1500,6 +1512,7 @@ public class DartAnalysisServerService implements Disposable {
       subscriptions.put(AnalysisService.HIGHLIGHTS, myVisibleFiles);
       subscriptions.put(AnalysisService.NAVIGATION, myVisibleFiles);
       subscriptions.put(AnalysisService.OVERRIDES, myVisibleFiles);
+      subscriptions.put(AnalysisService.OUTLINE, myVisibleFiles);
       if (StringUtil.compareVersionNumbers(mySdkVersion, "1.13") >= 0) {
         subscriptions.put(AnalysisService.IMPLEMENTED, myVisibleFiles);
       }

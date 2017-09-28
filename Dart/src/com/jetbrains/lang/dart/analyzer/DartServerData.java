@@ -24,18 +24,13 @@ public class DartServerData {
 
   private final DartAnalysisServerService myService;
 
-  private final Map<String, List<DartError>> myErrorData =
-    Collections.synchronizedMap(new THashMap<String, List<DartError>>());
-  private final Map<String, List<DartHighlightRegion>> myHighlightData =
-    Collections.synchronizedMap(new THashMap<String, List<DartHighlightRegion>>());
-  private final Map<String, List<DartNavigationRegion>> myNavigationData =
-    Collections.synchronizedMap(new THashMap<String, List<DartNavigationRegion>>());
-  private final Map<String, List<DartOverrideMember>> myOverrideData =
-    Collections.synchronizedMap(new THashMap<String, List<DartOverrideMember>>());
-  private final Map<String, List<DartRegion>> myImplementedClassData =
-    Collections.synchronizedMap(new THashMap<String, List<DartRegion>>());
-  private final Map<String, List<DartRegion>> myImplementedMemberData =
-    Collections.synchronizedMap(new THashMap<String, List<DartRegion>>());
+  private final Map<String, List<DartError>> myErrorData = Collections.synchronizedMap(new THashMap<>());
+  private final Map<String, List<DartHighlightRegion>> myHighlightData = Collections.synchronizedMap(new THashMap<>());
+  private final Map<String, List<DartNavigationRegion>> myNavigationData = Collections.synchronizedMap(new THashMap<>());
+  private final Map<String, List<DartOverrideMember>> myOverrideData = Collections.synchronizedMap(new THashMap<>());
+  private final Map<String, List<DartRegion>> myImplementedClassData = Collections.synchronizedMap(new THashMap<>());
+  private final Map<String, List<DartRegion>> myImplementedMemberData = Collections.synchronizedMap(new THashMap<>());
+  private final Map<String, Outline> myOutlineData = Collections.synchronizedMap(new THashMap<>());
 
   private final Set<String> myFilePathsWithUnsentChanges = Sets.newConcurrentHashSet();
 
@@ -115,6 +110,13 @@ public class DartServerData {
 
     myNavigationData.put(filePath, newRegions);
     forceFileAnnotation(file, true);
+  }
+
+  void computedOutline(@NotNull final String filePath, @NotNull final Outline outline) {
+    if (myFilePathsWithUnsentChanges.contains(filePath)) return;
+
+    myOutlineData.put(filePath, outline);
+    // todo force structure view rebuild
   }
 
   @NotNull
@@ -239,6 +241,11 @@ public class DartServerData {
     return classes != null ? classes : Collections.emptyList();
   }
 
+  @Nullable
+  Outline getOutline(@NotNull final VirtualFile file) {
+    return myOutlineData.get(file.getPath());
+  }
+
   private void forceFileAnnotation(@Nullable final VirtualFile file, final boolean clearCache) {
     if (file != null) {
       final Project project = myService.getProject();
@@ -267,6 +274,7 @@ public class DartServerData {
     myOverrideData.remove(file.getPath());
     myImplementedClassData.remove(file.getPath());
     myImplementedMemberData.remove(file.getPath());
+    myOutlineData.remove(file.getPath());
   }
 
   void onFlushedResults(@NotNull final List<String> filePaths) {
@@ -300,6 +308,11 @@ public class DartServerData {
         myImplementedMemberData.remove(path);
       }
     }
+    if (!myOutlineData.isEmpty()) {
+      for (String path : filePaths) {
+        myOutlineData.remove(path);
+      }
+    }
   }
 
   void clearData() {
@@ -309,6 +322,7 @@ public class DartServerData {
     myOverrideData.clear();
     myImplementedClassData.clear();
     myImplementedMemberData.clear();
+    myOutlineData.clear();
   }
 
   void onDocumentChanged(@NotNull final DocumentEvent e) {
@@ -327,6 +341,7 @@ public class DartServerData {
     updateRegionsDeletingTouched(filePath, myOverrideData.get(filePath), e);
     updateRegionsDeletingTouched(filePath, myImplementedClassData.get(filePath), e);
     updateRegionsDeletingTouched(filePath, myImplementedMemberData.get(filePath), e);
+    // A bit outdated outline data is not a big problem, updated data will come shortly
   }
 
   /**

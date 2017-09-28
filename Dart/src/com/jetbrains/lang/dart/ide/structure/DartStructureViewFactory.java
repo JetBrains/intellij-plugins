@@ -1,8 +1,6 @@
 package com.jetbrains.lang.dart.ide.structure;
 
-import com.intellij.ide.structureView.StructureViewBuilder;
-import com.intellij.ide.structureView.StructureViewModel;
-import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
+import com.intellij.ide.structureView.*;
 import com.intellij.lang.PsiStructureViewFactory;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
@@ -16,7 +14,7 @@ public class DartStructureViewFactory implements PsiStructureViewFactory {
       @Override
       @NotNull
       public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
-        return new DartStructureViewModel(psiFile, editor);
+        return new DartStructureViewModel(editor, psiFile);
       }
 
       @Override

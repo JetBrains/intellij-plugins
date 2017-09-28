@@ -1,31 +1,57 @@
 package com.jetbrains.lang.dart.ide.structure;
 
-import com.intellij.ide.IdeBundle;
 import com.intellij.ide.structureView.StructureViewModel;
-import com.intellij.ide.structureView.StructureViewModelBase;
 import com.intellij.ide.structureView.StructureViewTreeElement;
-import com.intellij.ide.util.treeView.smartTree.*;
+import com.intellij.ide.structureView.TextEditorBasedStructureViewModel;
+import com.intellij.ide.structureView.impl.common.PsiTreeElementBase;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.PlatformIcons;
-import com.jetbrains.lang.dart.DartComponentType;
-import com.jetbrains.lang.dart.psi.*;
-import org.jetbrains.annotations.NonNls;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import org.dartlang.analysis.server.protocol.Outline;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartStructureViewModel extends StructureViewModelBase implements StructureViewModel.ElementInfoProvider {
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-  private static final Sorter[] SORTERS = new Sorter[]{Sorter.ALPHA_SORTER};
+class DartStructureViewModel extends TextEditorBasedStructureViewModel implements StructureViewModel.ElementInfoProvider {
 
-  public DartStructureViewModel(@NotNull PsiFile psiFile, @Nullable Editor editor) {
-    super(psiFile, editor, new DartStructureViewElement(psiFile));
-    // order matters, first elements are compared first when walking up parents in AST:
-    withSuitableClasses(DartVarAccessDeclaration.class, DartFunctionDeclarationWithBodyOrNative.class, DartMethodDeclaration.class,
-                        DartFactoryConstructorDeclaration.class, DartNamedConstructorDeclaration.class,
-                        DartFunctionTypeAlias.class, DartGetterDeclaration.class, DartSetterDeclaration.class,
-                        DartEnumConstantDeclaration.class, DartClass.class);
+  public DartStructureViewModel(Editor editor, PsiFile psiFile) {
+    super(editor, psiFile);
+  }
+
+  @NotNull
+  @Override
+  public StructureViewTreeElement getRoot() {
+    return new DartStructureViewRootElement(getPsiFile());
+  }
+
+  @Override
+  @Nullable
+  public Object getCurrentEditorElement() {
+    if (getEditor() == null) return null;
+
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance(getPsiFile().getProject());
+    final Outline outline = service.getOutline(getPsiFile().getVirtualFile());
+    if (outline == null) return null;
+
+    return findDeepestOutlineForOffset(getEditor().getCaretModel().getOffset(), outline.getChildren());
+  }
+
+  @Nullable
+  private Outline findDeepestOutlineForOffset(final int offset, @NotNull final List<Outline> outlines) {
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance(getPsiFile().getProject());
+    for (Outline outline : outlines) {
+      final int startOffset = service.getConvertedOffset(getPsiFile().getVirtualFile(), outline.getOffset());
+      final int endOffset = service.getConvertedOffset(getPsiFile().getVirtualFile(), outline.getOffset() + outline.getLength());
+      if (offset >= startOffset && offset <= endOffset) {
+        final Outline deeperOutline = findDeepestOutlineForOffset(offset, outline.getChildren());
+        return deeperOutline != null ? deeperOutline : outline;
+      }
+    }
+    return null;
   }
 
   @Override
@@ -33,68 +59,28 @@ public class DartStructureViewModel extends StructureViewModelBase implements St
     return false;
   }
 
-  @NotNull
-  @Override
-  public Filter[] getFilters() {
-    return new Filter[]{ourFieldsFilter};
-  }
-
-  @NotNull
-  public Sorter[] getSorters() {
-    return SORTERS;
-  }
-
   @Override
   public boolean isAlwaysLeaf(StructureViewTreeElement element) {
-    final Object value = element.getValue();
-    return value instanceof DartComponent && !(value instanceof DartClass);
+    return false;
   }
 
-  @Override
-  public boolean shouldEnterElement(Object element) {
-    return element instanceof DartClass;
+  private static class DartStructureViewRootElement extends PsiTreeElementBase<PsiFile> {
+
+    public DartStructureViewRootElement(PsiFile file) {super(file);}
+
+    @Nullable
+    @Override
+    public String getPresentableText() {
+      return null;
+    }
+
+    @NotNull
+    @Override
+    public Collection<StructureViewTreeElement> getChildrenBase() {
+      final DartAnalysisServerService service = DartAnalysisServerService.getInstance(getValue().getProject());
+      final Outline outline = service.getOutline(getValue().getVirtualFile());
+      return outline != null ? Arrays.asList(new DartStructureViewElement(getValue(), outline).getChildren())
+                             : Collections.emptyList();
+    }
   }
-
-
-  private static final Filter ourFieldsFilter = new Filter() {
-    @NonNls public static final String ID = "SHOW_FIELDS";
-
-    @Override
-    public boolean isVisible(TreeElement treeNode) {
-      if (!(treeNode instanceof DartStructureViewElement)) return true;
-      final PsiElement element = ((DartStructureViewElement)treeNode).getElement();
-
-      DartComponentType type = DartComponentType.typeOf(element);
-      if (type == DartComponentType.FIELD || type == DartComponentType.VARIABLE) {
-        return false;
-      }
-
-      if (element instanceof DartComponent && (((DartComponent)element).isGetter() || ((DartComponent)element).isGetter())) {
-        return false;
-      }
-
-      return true;
-    }
-
-    @Override
-    public boolean isReverted() {
-      return true;
-    }
-
-    @Override
-    @NotNull
-    public ActionPresentation getPresentation() {
-      return new ActionPresentationData(
-        IdeBundle.message("action.structureview.show.fields"),
-        null,
-        PlatformIcons.FIELD_ICON
-      );
-    }
-
-    @Override
-    @NotNull
-    public String getName() {
-      return ID;
-    }
-  };
 }
