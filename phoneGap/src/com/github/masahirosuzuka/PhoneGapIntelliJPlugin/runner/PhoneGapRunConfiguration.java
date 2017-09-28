@@ -11,6 +11,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.javascript.JSRunConfigurationBase;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.DefaultJDOMExternalizer;
@@ -36,7 +37,7 @@ import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGa
  * <p/>
  * Created by Masahiro Suzuka on 2014/04/05.
  */
-public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
+public class PhoneGapRunConfiguration extends JSRunConfigurationBase {
 
   private static final String CORDOVA_IOS_LOG_PATH = "/platforms/ios/cordova/console.log";
 
