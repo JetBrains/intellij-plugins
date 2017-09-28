@@ -111,7 +111,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
         printBrowserCapturingSuggestion();
       }
       Disposer.dispose(alarm);
-    }, 1000, ModalityState.any());
+    }, 10000, ModalityState.any());
   }
 
   private void printBrowserCapturingSuggestion() {
