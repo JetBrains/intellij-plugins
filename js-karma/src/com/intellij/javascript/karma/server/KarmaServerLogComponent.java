@@ -2,6 +2,7 @@ package com.intellij.javascript.karma.server;
 
 import com.intellij.execution.actions.StopProcessAction;
 import com.intellij.execution.filters.TextConsoleBuilderImpl;
+import com.intellij.execution.process.NopProcessHandler;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunnerLayoutUi;
@@ -94,6 +95,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
     TextConsoleBuilderImpl builder = new TextConsoleBuilderImpl(project, scope);
     builder.setUsePredefinedMessageFilter(false);
     builder.addFilter(new NodeStackTraceFilter(project));
+    builder.setViewer(false);
     return builder.getConsole();
   }
 
@@ -113,14 +115,18 @@ public class KarmaServerLogComponent implements ComponentWithActions {
     if (requestFocus && !server.isPortBound()) {
       ui.selectAndFocus(content, false, false);
     }
-    final KarmaServerTerminatedListener terminationCallback = new KarmaServerTerminatedListener() {
+    NopProcessHandler wrapperProcessHandler = new NopProcessHandler();
+    // we can't attach console to real process handler to not lose any messages
+    console.attachToProcess(wrapperProcessHandler);
+    KarmaServerTerminatedListener terminationCallback = new KarmaServerTerminatedListener() {
       @Override
       public void onTerminated(int exitCode) {
+        wrapperProcessHandler.destroyProcess();
         KarmaUtil.selectAndFocusIfNotDisposed(ui, content, false, false);
       }
     };
     server.onTerminated(terminationCallback);
-    final ArchivedOutputListener outputListener = new ArchivedOutputListener() {
+    ArchivedOutputListener outputListener = new ArchivedOutputListener() {
       @Override
       public void onOutputAvailable(@NotNull String text, Key outputType, boolean archived) {
         ConsoleViewContentType contentType = ConsoleViewContentType.getConsoleViewType(outputType);
