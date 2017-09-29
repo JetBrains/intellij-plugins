@@ -10,6 +10,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
+import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.Element;
 import org.dartlang.analysis.server.protocol.ElementKind;
 import org.dartlang.analysis.server.protocol.Outline;
@@ -133,7 +134,13 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
         baseIcon = DartComponentType.VARIABLE.getIcon();
         break;
       default:
-        baseIcon = null;
+        final String name = myOutline.getElement().getName();
+        if (name.startsWith("test ") || name.startsWith("group ")) {
+          baseIcon = DartIcons.TestNode;
+        }
+        else {
+          baseIcon = null;
+        }
     }
 
     return baseIcon;
