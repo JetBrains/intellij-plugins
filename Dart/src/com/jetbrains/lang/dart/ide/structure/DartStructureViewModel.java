@@ -7,6 +7,7 @@ import com.intellij.ide.structureView.impl.common.PsiTreeElementBase;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.analyzer.DartServerData;
 import org.dartlang.analysis.server.protocol.Outline;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,8 +19,21 @@ import java.util.List;
 
 class DartStructureViewModel extends TextEditorBasedStructureViewModel implements StructureViewModel.ElementInfoProvider {
 
-  public DartStructureViewModel(Editor editor, PsiFile psiFile) {
+  private final DartServerData.OutlineListener myListener = filePath -> {
+    if (filePath.equals(getPsiFile().getVirtualFile().getPath())) {
+      fireModelUpdate();
+    }
+  };
+
+  public DartStructureViewModel(@Nullable final Editor editor, @NotNull final PsiFile psiFile) {
     super(editor, psiFile);
+    DartAnalysisServerService.getInstance(getPsiFile().getProject()).addOutlineListener(myListener);
+  }
+
+  @Override
+  public void dispose() {
+    DartAnalysisServerService.getInstance(getPsiFile().getProject()).removeOutlineListener(myListener);
+    super.dispose();
   }
 
   @NotNull

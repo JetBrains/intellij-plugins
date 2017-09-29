@@ -2039,4 +2039,12 @@ public class DartAnalysisServerService implements Disposable {
       return log.toString();
     }
   }
+
+  public void addOutlineListener(@NotNull final DartServerData.OutlineListener listener) {
+    myServerData.addOutlineListener(listener);
+  }
+
+  public void removeOutlineListener(@NotNull final DartServerData.OutlineListener listener) {
+    myServerData.removeOutlineListener(listener);
+  }
 }

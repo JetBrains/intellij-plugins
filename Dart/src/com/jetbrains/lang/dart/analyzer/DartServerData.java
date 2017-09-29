@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.search.SearchScope;
+import com.intellij.util.EventDispatcher;
 import com.intellij.util.SmartList;
 import gnu.trove.THashMap;
 import org.dartlang.analysis.server.protocol.*;
@@ -22,7 +23,13 @@ import java.util.*;
 
 public class DartServerData {
 
+  public interface OutlineListener extends EventListener {
+    void outlineUpdated(@NotNull final String filePath);
+  }
+
   private final DartAnalysisServerService myService;
+
+  private EventDispatcher<OutlineListener> myEventDispatcher = EventDispatcher.create(OutlineListener.class);
 
   private final Map<String, List<DartError>> myErrorData = Collections.synchronizedMap(new THashMap<>());
   private final Map<String, List<DartHighlightRegion>> myHighlightData = Collections.synchronizedMap(new THashMap<>());
@@ -116,7 +123,7 @@ public class DartServerData {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
     myOutlineData.put(filePath, outline);
-    // todo force structure view rebuild
+    myEventDispatcher.getMulticaster().outlineUpdated(filePath);
   }
 
   @NotNull
@@ -244,6 +251,14 @@ public class DartServerData {
   @Nullable
   Outline getOutline(@NotNull final VirtualFile file) {
     return myOutlineData.get(file.getPath());
+  }
+
+  void addOutlineListener(@NotNull final OutlineListener listener) {
+    myEventDispatcher.addListener(listener);
+  }
+
+  void removeOutlineListener(@NotNull final OutlineListener listener) {
+    myEventDispatcher.removeListener(listener);
   }
 
   private void forceFileAnnotation(@Nullable final VirtualFile file, final boolean clearCache) {
