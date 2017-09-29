@@ -9,11 +9,11 @@ class Foo extends Bar {
 
 <structure activeFilters="HIDE_INHERITED" activeSorters="ALPHA_COMPARATOR">
     <node text="ExtraTopMembers.js2">
-        <node text="Bar" ICON="AS_CLASS_ICON">
-             <node text="foo()" ICON="METHOD_ICON"/>
+        <node text="Bar" icon="AS_CLASS_ICON">
+             <node text="foo()"/>
          </node>
         <node text="Foo" icon="AS_CLASS_ICON">
-          <node text="bar()" ICON="METHOD_ICON"/>
+          <node text="bar()"/>
         </node>
     </node>
 </structure>
