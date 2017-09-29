@@ -92,8 +92,15 @@ public class KarmaExecutionSession {
     catch (IOException e) {
       throw new ExecutionException("Can't find karma-intellij test runner", e);
     }
-    if (server.areBrowsersReady()) {
-      return createOSProcessHandler(server, clientAppFile);
+    if (isDebug()) {
+      if (server.isPortBound()) {
+        return createOSProcessHandler(server, clientAppFile);
+      }
+    }
+    else {
+      if (server.areBrowsersReady()) {
+        return createOSProcessHandler(server, clientAppFile);
+      }
     }
     final NopProcessHandler nopProcessHandler = new NopProcessHandler();
     terminateOnServerShutdown(server, nopProcessHandler);

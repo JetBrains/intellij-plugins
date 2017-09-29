@@ -7,14 +7,13 @@ import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
+import com.intellij.execution.process.NopProcessHandler;
 import com.intellij.execution.process.OSProcessHandler;
-import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.AsyncProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.ide.browsers.BrowserFamily;
-import com.intellij.ide.browsers.BrowserLauncher;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.javascript.debugger.DebuggableFileFinder;
@@ -27,15 +26,13 @@ import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.lang.javascript.modules.NodeModuleUtil;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
-import com.intellij.util.Alarm;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
 import com.intellij.xdebugger.XDebugProcess;
@@ -47,7 +44,8 @@ import org.jetbrains.concurrency.Promise;
 import org.jetbrains.concurrency.Promises;
 import org.jetbrains.debugger.connection.VmConnection;
 
-import java.io.PrintWriter;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class KarmaDebugProgramRunner extends AsyncProgramRunner {
   private static final Logger LOG = Logger.getInstance(KarmaDebugProgramRunner.class);
@@ -76,42 +74,30 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
       return Promise.resolve(KarmaUtil.createDefaultDescriptor(executionResult, environment));
     }
     KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
-    if (karmaServer.areBrowsersReady()) {
-      KarmaDebugBrowserSelector browserSelector = new KarmaDebugBrowserSelector(
-        karmaServer.getCapturedBrowsers(),
-        environment,
-        consoleView
-      );
-      DebuggableWebBrowser debuggableWebBrowser = browserSelector.selectDebugEngine();
-      if (debuggableWebBrowser == null) {
-        return Promises.resolvedPromise(KarmaUtil.createDefaultDescriptor(executionResult, environment));
-      }
-      return KarmaKt.prepareKarmaDebugger(environment.getProject(), debuggableWebBrowser,
-                                          () -> createDescriptor(environment, executionResult, consoleView, karmaServer,
-                                                                 debuggableWebBrowser));
-    }
-    else {
+    if (executionResult.getProcessHandler() instanceof NopProcessHandler) {
       RunContentDescriptor descriptor = KarmaUtil.createDefaultDescriptor(executionResult, environment);
-      karmaServer.onPortBound(() -> {
-        if (Disposer.isDisposed(environment)) {
-          return;
-        }
-        Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, environment);
-        alarm.addRequest(() -> {
-          if (karmaServer.isTerminated()) {
-            return;
-          }
-          WebBrowser browser = WebBrowserManager.getInstance().getFirstBrowserOrNull(BrowserFamily.CHROME);
-          BrowserLauncher.getInstance().browse(karmaServer.formatUrl("/"), browser, environment.getProject());
-          Disposer.dispose(alarm);
-        }, 2000, ModalityState.NON_MODAL);
-        karmaServer.onBrowsersReady(() -> {
-          Disposer.dispose(alarm);
-          ExecutionUtil.restartIfActive(descriptor);
-        });
-      });
+      karmaServer.onPortBound(() -> ExecutionUtil.restartIfActive(descriptor));
       return Promises.resolvedPromise(descriptor);
     }
+    DebuggableWebBrowser debuggableWebBrowser = getChromeInfo();
+    return KarmaKt.prepareKarmaDebugger(environment.getProject(), debuggableWebBrowser, () -> {
+      //noinspection CodeBlock2Expr
+      return createDescriptor(environment, executionResult, consoleView, karmaServer, debuggableWebBrowser);
+    });
+  }
+
+  @NotNull
+  private static DebuggableWebBrowser getChromeInfo() throws ExecutionException {
+    WebBrowser browser = WebBrowserManager.getInstance().getFirstBrowserOrNull(BrowserFamily.CHROME);
+    if (browser == null) {
+      throw new ExecutionException("Debugging is available in Chrome browser only.<p>" +
+                                   "Please configure Chrome browser in 'Settings | Tools | Web Browsers'");
+    }
+    DebuggableWebBrowser debuggableWebBrowser = DebuggableWebBrowser.create(browser);
+    if (debuggableWebBrowser == null) {
+      throw new ExecutionException("Cannot find Chrome engine for debugging");
+    }
+    return debuggableWebBrowser;
   }
 
   @NotNull
@@ -137,11 +123,10 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
           debugProcess.setElementsInspectorEnabled(false);
           debugProcess.setConsoleMessagesSupportEnabled(false);
           debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess));
-          Alarm alarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, consoleView);
-          alarm.addRequest(() -> {
-            resumeTestRunning(executionResult.getProcessHandler());
-            Disposer.dispose(alarm);
-          }, 2000);
+          //noinspection CodeBlock2Expr
+          karmaServer.onBrowsersReady(() -> {
+            resumeTestRunning((OSProcessHandler)executionResult.getProcessHandler());
+          });
           return debugProcess;
         }
       }
@@ -188,13 +173,17 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
     return new RemoteDebuggingFileFinder(mappings, null);
   }
 
-  private static void resumeTestRunning(@NotNull ProcessHandler processHandler) {
-    if (processHandler instanceof OSProcessHandler) {
-      // process's input stream will be closed on process termination
-      @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "ConstantConditions"})
-      PrintWriter writer = new PrintWriter(processHandler.getProcessInput());
-      writer.print("resume-test-running\n");
-      writer.flush();
+  private static void resumeTestRunning(@NotNull OSProcessHandler processHandler) {
+    Process process = processHandler.getProcess();
+    if (process.isAlive()) {
+      try {
+        OutputStream processInput = process.getOutputStream();
+        processInput.write("resume-test-running\n".getBytes(CharsetToolkit.UTF8_CHARSET));
+        processInput.flush();
+      }
+      catch (IOException e) {
+        LOG.warn("process.isAlive()=" + process.isAlive(), e);
+      }
     }
   }
 }
