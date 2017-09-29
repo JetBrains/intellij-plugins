@@ -46,8 +46,6 @@ public interface CfmlElementTypes extends CfmlStubElementTypes {
   TemplateDataElementType TEMPLATE_DATA =
     new TemplateDataElementType("CFML_TEMPLATE_DATA", CfmlLanguage.INSTANCE, TEMPLATE_TEXT, OUTER_ELEMENT_TYPE);
 
-  IElementType CFML_FILE_CONTENT = new CfmlElementType("CFML_FILE_CONTENT");
-  IElementType FILE_CONTENT = new CfmlCompositeElementType("FILE_CONTENT");
   IElementType VALUE = new CfmlCompositeElementType("VALUE");
   IElementType TYPE = new CfmlCompositeElementType("TYPE");
   IElementType IFEXPRESSION = new CfmlCompositeElementType("IFEXPRESSION");
@@ -90,7 +88,7 @@ public interface CfmlElementTypes extends CfmlStubElementTypes {
   IElementType SWITCHEXPRESSION = new CfmlCompositeElementType("SWITCHEXPRESSION");
   IElementType CASEEXPRESSION = new CfmlCompositeElementType("CASEEXPRESSION");
   IElementType TRYCATCHEXPRESSION = new CfmlCompositeElementType("TRYCATCHEXPRESSION");
-  IElementType STATEMENT = new CfmlCompositeElementType("STATEMENT");
+  
   IElementType BLOCK_OF_STATEMENTS = new CfmlCompositeElementType("BLOCK_OF_STATEMENTS");
   IElementType CATCHEXPRESSION = new CfmlCompositeElementType("CATCH_EXPRESSION");
   IElementType INCLUDEEXPRESSION = new CfmlCompositeElementType("INCLUDE_EXPRESSION");
@@ -100,7 +98,7 @@ public interface CfmlElementTypes extends CfmlStubElementTypes {
       return new CfmlScriptImportImpl(node);
     }
   };
-  IElementType VAR_DEF = new CfmlCompositeElementType("VAR_DEF");
+  
   IElementType FUNCTION_ARGUMENT = new CfmlCompositeElementType("FUNCTION_ARGUMENT") {
     @Override
     public PsiElement createPsiElement(ASTNode node) {
