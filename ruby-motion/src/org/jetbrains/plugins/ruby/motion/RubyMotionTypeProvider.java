@@ -170,7 +170,7 @@ public class RubyMotionTypeProvider extends AbstractRubyTypeProvider {
     final RPsiElement value = ref.getValue();
     // method name may be identifier on constant
     if (value instanceof RPossibleCall) {
-      final String shortName = ((RPossibleCall)value).getPossibleCommand();
+      final String shortName = ((RPossibleCall)value).getCommand();
       final String sdkVersion = RubyMotionUtil.getInstance().getSdkVersion(module);
       final String[] frameworks = RubyMotionUtil.getInstance().getRequiredFrameworks(module);
       boolean isIdSelector = false;
