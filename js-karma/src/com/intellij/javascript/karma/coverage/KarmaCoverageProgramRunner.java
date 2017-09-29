@@ -11,6 +11,7 @@ import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.configurations.coverage.CoverageEnabledConfiguration;
+import com.intellij.execution.process.NopProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.runners.GenericProgramRunner;
@@ -69,17 +70,16 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
       return descriptor;
     }
     KarmaServer server = consoleView.getKarmaExecutionSession().getKarmaServer();
-    if (server.areBrowsersReady()) {
-      listenForCoverageFile(env, server);
+    if (executionResult.getProcessHandler() instanceof NopProcessHandler) {
+      server.onBrowsersReady(() -> ExecutionUtil.restartIfActive(descriptor));
     }
     else {
-      server.onBrowsersReady(() -> ExecutionUtil.restartIfActive(descriptor));
+      listenForCoverageFile(env, server);
     }
     return descriptor;
   }
 
-  private static void listenForCoverageFile(@NotNull ExecutionEnvironment env,
-                                            @NotNull KarmaServer server) throws ExecutionException {
+  private static void listenForCoverageFile(@NotNull ExecutionEnvironment env, @NotNull KarmaServer server) {
     KarmaRunConfiguration runConfiguration = (KarmaRunConfiguration) env.getRunProfile();
     CoverageEnabledConfiguration coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration);
     CoverageHelper.resetCoverageSuit(runConfiguration);

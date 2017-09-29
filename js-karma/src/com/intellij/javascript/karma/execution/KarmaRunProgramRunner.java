@@ -5,6 +5,7 @@ import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultRunExecutor;
+import com.intellij.execution.process.NopProcessHandler;
 import com.intellij.execution.runners.*;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.javascript.karma.server.KarmaServer;
@@ -40,8 +41,8 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
       return descriptor;
     }
 
-    KarmaServer server = consoleView.getKarmaExecutionSession().getKarmaServer();
-    if (!server.areBrowsersReady()) {
+    if (executionResult.getProcessHandler() instanceof NopProcessHandler) {
+      KarmaServer server = consoleView.getKarmaExecutionSession().getKarmaServer();
       server.onBrowsersReady(() -> ExecutionUtil.restartIfActive(descriptor));
     }
     else {
@@ -50,5 +51,4 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
     RerunTestsAction.register(descriptor);
     return descriptor;
   }
-
 }
