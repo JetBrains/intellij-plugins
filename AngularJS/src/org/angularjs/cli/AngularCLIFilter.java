@@ -25,7 +25,9 @@ public class AngularCLIFilter extends AbstractFileHyperlinkFilter implements Dum
     final int index = line.indexOf(CREATE);
     if (index >= 0) {
       final int start = index + CREATE.length();
-      final String fileName = line.substring(start).trim();
+      int end = line.indexOf(" (", start);
+      if (end == -1) end = line.length();
+      final String fileName = line.substring(start, end).trim();
       return Collections.singletonList(new FileHyperlinkRawData(fileName, -1, -1, start, start + fileName.length()));
     }
     return Collections.emptyList();
