@@ -1,5 +1,6 @@
 package com.intellij.javascript.karma.server;
 
+import com.intellij.execution.ExecutionException;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +17,7 @@ public class KarmaJsSourcesLocator {
 
   private final File myKarmaIntellijPackageDir;
 
-  public KarmaJsSourcesLocator(@NotNull NodePackage karmaPackage) throws IOException {
+  public KarmaJsSourcesLocator(@NotNull NodePackage karmaPackage) {
     myKarmaIntellijPackageDir = findKarmaIntellijPackageDir(karmaPackage);
   }
 
@@ -59,7 +60,7 @@ public class KarmaJsSourcesLocator {
   private File getAppFile(@NotNull String baseName) throws IOException {
     File file = new File(myKarmaIntellijPackageDir, "lib" + File.separatorChar + baseName);
     if (!file.isFile()) {
-      throw new IOException("Can't find " + file);
+      throw new IOException("Cannot locate " + file.getAbsolutePath());
     }
     return file;
   }
@@ -70,7 +71,12 @@ public class KarmaJsSourcesLocator {
   }
 
   @NotNull
-  public File getClientAppFile() throws IOException {
-    return getAppFile("intellijRunner.js");
+  public File getClientAppFile() throws ExecutionException {
+    try {
+      return getAppFile("intellijRunner.js");
+    }
+    catch (IOException e) {
+      throw new ExecutionException("Cannot locate intellijRunner.js", e);
+    }
   }
 }

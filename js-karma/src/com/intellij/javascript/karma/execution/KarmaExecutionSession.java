@@ -36,7 +36,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.io.LocalFileFinder;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 public class KarmaExecutionSession {
@@ -85,13 +84,7 @@ public class KarmaExecutionSession {
 
   @NotNull
   private ProcessHandler createProcessHandler(@NotNull final KarmaServer server) throws ExecutionException {
-    final File clientAppFile;
-    try {
-      clientAppFile = server.getKarmaJsSourcesLocator().getClientAppFile();
-    }
-    catch (IOException e) {
-      throw new ExecutionException("Can't find karma-intellij test runner", e);
-    }
+    File clientAppFile = server.getKarmaJsSourcesLocator().getClientAppFile();
     if (isDebug()) {
       if (server.isPortBound()) {
         return createOSProcessHandler(server, clientAppFile);
