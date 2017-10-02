@@ -196,12 +196,33 @@ export default {
   }
 
   fun testScrInStyleCompletion() {
-    myFixture.addFileToProject("./foo/bar.xml", "")
-    myFixture.addFileToProject("./real.xml", "")
+    val excluded = arrayOf("exclude.xml", "exclude.txt")
+    val included = arrayOf("foo/bar.xml", "a.pcss", "b.styl", "c.less", "d.sass", "e.scss", "f.css")
+
+    excluded.forEach { myFixture.addFileToProject(it, "") }
+    included.forEach { myFixture.addFileToProject(it, "") }
+
     val file = myFixture.addFileToProject("./ScrInStyleCompletion.vue", """<style src="./<caret>"></style>""")
     myFixture.configureFromExistingVirtualFile(file.virtualFile)
     myFixture.completeBasic()
-    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "foo", "real.xml")
+
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, included.map { it.substringBefore('/', it) })
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, excluded)
+  }
+
+  fun testScrInStyleCompletionWithLang() {
+    val excluded = arrayOf("exclude.xml", "exclude.txt", "a.pcss", "c.less", "d.sass", "e.scss", "f.css")
+    val included = arrayOf("foo/bar.xml", "b.styl")
+
+    excluded.forEach { myFixture.addFileToProject(it, "") }
+    included.forEach { myFixture.addFileToProject(it, "") }
+
+    val file = myFixture.addFileToProject("./ScrInStyleCompletion.vue", """<style src="./<caret>" lang="stylus"></style>""")
+    myFixture.configureFromExistingVirtualFile(file.virtualFile)
+    myFixture.completeBasic()
+
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, included.map { it.substringBefore('/', it) })
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, excluded)
   }
 
   fun testInsertAttributeWithoutValue() {

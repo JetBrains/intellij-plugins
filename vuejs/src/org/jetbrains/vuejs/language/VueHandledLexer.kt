@@ -38,14 +38,7 @@ interface VueHandledLexer {
     return fileType == language.associatedFileType
   }
 
-  fun styleViaLang(default: Language?): Language? {
-    if (default != null && getStyleType() != null) {
-      default.dialects
-        .filter { getStyleType().equals(it.id, ignoreCase = true) }
-        .forEach { return it }
-    }
-    return if (getStyleType() == null) Language.findLanguageByID("PostCSS") else null
-  }
+  fun styleViaLang(default: Language?): Language? = Companion.styleViaLang(default, getStyleType())
 
   fun findScriptContentProviderVue(mimeType: String?, delegate: (String) -> HtmlScriptContentProvider?,
                                 languageLevel: JSLanguageLevel): HtmlScriptContentProvider? {
@@ -54,6 +47,17 @@ interface VueHandledLexer {
     }
     else {
       return LanguageHtmlScriptContentProvider.getScriptContentProvider(languageLevel.dialect)
+    }
+  }
+
+  companion object {
+    fun styleViaLang(default: Language?, style: String?): Language? {
+      if (default != null && style != null) {
+        default.dialects
+          .filter { style.equals(it.id, ignoreCase = true) }
+          .forEach { return it }
+      }
+      return if (style == null) Language.findLanguageByID("PostCSS") else null
     }
   }
 }
