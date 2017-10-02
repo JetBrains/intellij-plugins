@@ -13,6 +13,7 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 
 import java.util.List;
 
@@ -182,10 +183,10 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
   }
 
   public void testScopeOptions3() throws Exception {
-    doTestForAllScopes(getTestName(false), "js2");
+    doTestWithScopeSelection(scopes -> ContainerUtil.getFirstItem(scopes), "js2");
   }
 
   public void testScopeOptionsMxml() throws Exception {
-    doTestForAllScopes(getTestName(false), "mxml");
+    doTestWithScopeSelection(scopes -> ContainerUtil.getFirstItem(scopes), "mxml");
   }
 }
