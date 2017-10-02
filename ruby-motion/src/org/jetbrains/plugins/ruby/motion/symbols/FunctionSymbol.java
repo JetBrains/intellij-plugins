@@ -16,6 +16,7 @@
 package org.jetbrains.plugins.ruby.motion.symbols;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.Pair;
 import com.jetbrains.cidr.CocoaDocumentationManagerImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +25,10 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Type;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.RTypedSyntheticSymbol;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Symbol;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.RType;
+import org.jetbrains.plugins.ruby.ruby.lang.psi.controlStructures.methods.ArgumentInfo;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Dennis.Ushakov
@@ -37,7 +42,7 @@ public class FunctionSymbol extends RTypedSyntheticSymbol implements MotionSymbo
                         @Nullable Symbol parent,
                         @NotNull RType returnType, @NotNull Function function) {
     super(module.getProject(), name, function.isClassMethod() ? Type.CLASS_METHOD : Type.INSTANCE_METHOD,
-          parent, returnType, getMinParameterCount(function), getMaxParameterCount(function));
+          parent, returnType, createArgumentInfos(function.getArguments(), function.isVariadic()));
     myModule = module;
     myFunction = function;
   }
@@ -53,14 +58,6 @@ public class FunctionSymbol extends RTypedSyntheticSymbol implements MotionSymbo
     return myFunction;
   }
 
-  public static int getMinParameterCount(final Function function) {
-    return function.getArguments().size();
-  }
-
-  public static int getMaxParameterCount(final Function function) {
-    return function.isVariadic() ? -1 : function.getArguments().size();
-  }
-
   @Override
   public CocoaDocumentationManagerImpl.DocTokenType getInfoType() {
     return getParentSymbol() != null ?
@@ -72,5 +69,17 @@ public class FunctionSymbol extends RTypedSyntheticSymbol implements MotionSymbo
   @Override
   public String getInfoName() {
     return myFunction.getName();
+  }
+
+  @NotNull
+  private static List<ArgumentInfo> createArgumentInfos(List<Pair<String, String>> arguments, boolean variadic) {
+    List<ArgumentInfo> result = new ArrayList<>(arguments.size());
+    for (int i = 0; i < arguments.size(); i++) {
+      Pair<String, String> argAndType = arguments.get(i);
+      result.add(new ArgumentInfo(argAndType.getFirst(),
+                                  i + 1 < arguments.size() || !variadic ? ArgumentInfo.Type.SIMPLE
+                                                                        : ArgumentInfo.Type.ARRAY));
+    }
+    return result;
   }
 }

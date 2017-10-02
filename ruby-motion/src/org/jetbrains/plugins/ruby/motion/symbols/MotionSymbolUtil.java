@@ -43,6 +43,7 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.types.RTypeFactory;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.collections.RArrayType;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.impl.REmptyType;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.impl.RSymbolTypeImpl;
+import org.jetbrains.plugins.ruby.ruby.lang.psi.controlStructures.methods.ArgumentInfo;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -99,8 +100,9 @@ public class MotionSymbolUtil {
                                                   String name) {
     final String typeName = struct.getFieldType(name);
     final RType type = getTypeByName(module, typeName);
-    final RTypedSyntheticSymbol reader = new RTypedSyntheticSymbol(module.getProject(), name, Type.FIELD_READER, parent, type, 0);
-    final RTypedSyntheticSymbol writer = new RTypedSyntheticSymbol(module.getProject(), name + "=", Type.FIELD_WRITER, parent, type, 1);
+    final RTypedSyntheticSymbol reader = new RTypedSyntheticSymbol(module.getProject(), name, Type.FIELD_READER, parent, type, Collections.emptyList());
+    final RTypedSyntheticSymbol writer = new RTypedSyntheticSymbol(module.getProject(), name + "=", Type.FIELD_WRITER, parent, type,
+                                                                   Collections.singletonList(new ArgumentInfo("value", ArgumentInfo.Type.SIMPLE)));
     return new Symbol[] {reader, writer};
   }
 

@@ -26,6 +26,7 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.RTypedSynth
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.RType;
 
 import javax.swing.*;
+import java.util.Collections;
 
 /**
  * @author Dennis.Ushakov
@@ -38,7 +39,7 @@ public class ConstantSymbol extends RTypedSyntheticSymbol implements MotionSymbo
                         @NotNull Constant constant,
                         @Nullable String name,
                         @NotNull RType returnType) {
-    super(module.getProject(), name, Type.CONSTANT, null, returnType, 0);
+    super(module.getProject(), name, Type.CONSTANT, null, returnType, Collections.emptyList());
     myModule = module;
     myConstant = constant;
   }
