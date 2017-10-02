@@ -6,7 +6,7 @@ import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.javascript.JSRunConfigurationBase;
+import com.intellij.javascript.JSRunProfileWithCompileBeforeLaunchOption;
 import com.intellij.javascript.karma.scope.KarmaScopeKind;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
@@ -32,8 +32,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-public class KarmaRunConfiguration extends JSRunConfigurationBase implements RefactoringListenerProvider,
-                                                                             PreferableRunConfiguration {
+public class KarmaRunConfiguration extends LocatableConfigurationBase implements RefactoringListenerProvider,
+                                                                                 PreferableRunConfiguration,
+                                                                                 JSRunProfileWithCompileBeforeLaunchOption {
 
   private static final Logger LOG = Logger.getInstance(KarmaRunConfiguration.class);
 

@@ -24,7 +24,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.javascript.JSRunConfigurationBase;
+import com.intellij.javascript.JSRunProfileWithCompileBeforeLaunchOption;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
@@ -43,7 +43,8 @@ import java.io.File;
  *
  * @author alexeagle@google.com (Alex Eagle)
  */
-public class JstdRunConfiguration extends JSRunConfigurationBase implements RefactoringListenerProvider {
+public class JstdRunConfiguration extends LocatableConfigurationBase implements RefactoringListenerProvider,
+                                                                                JSRunProfileWithCompileBeforeLaunchOption {
 
   private @NotNull JstdRunSettings myRunSettings = new JstdRunSettings.Builder().build();
   private volatile String myGeneratedName;
