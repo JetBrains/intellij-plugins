@@ -8,13 +8,13 @@ import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
-import com.intellij.lang.javascript.refactoring.extractMethod.JSExtractFunctionBaseTest;
-import com.intellij.lang.javascript.refactoring.extractMethod.JSExtractFunctionHandler;
-import com.intellij.lang.javascript.refactoring.extractMethod.JSExtractFunctionSettings;
-import com.intellij.lang.javascript.refactoring.extractMethod.MockJSExtractFunctionHandler;
+import com.intellij.lang.javascript.refactoring.extractMethod.*;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.Function;
+
+import java.util.List;
 
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
@@ -39,8 +39,10 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
-  protected JSExtractFunctionHandler createMockHandler(JSExtractFunctionSettings extractFunctionSettings) {
-    return new MockJSExtractFunctionHandler(extractFunctionSettings);
+  protected JSExtractFunctionHandler createMockHandler(DefaultJSExtractFunctionSettings extractFunctionSettings,
+                                                       Function<List<JSExtractFunctionHandler.IntroductionScope>,
+                                                         JSExtractFunctionHandler.IntroductionScope> scopeSelector) {
+    return new MockJSExtractFunctionHandler(extractFunctionSettings, scopeSelector);
   }
 
   public void testExpressionInClass() throws Exception {
@@ -73,7 +75,7 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
 
   public void testSelectEntireLine() throws Exception {
     doTest(
-      at -> {
+      () -> {
         JSExtractFunctionSettings.ParametersInfo parametersInfo = new JSExtractFunctionSettings.ParametersInfo();
         JSVariable var = PsiTreeUtil.getParentOfType(myFile.findElementAt(myEditor.getCaretModel().getOffset()), JSVariable.class);
         assertNotNull(var);
@@ -84,7 +86,7 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
           "created",
           true,
           false,
-          JSAttributeList.AccessType.PUBLIC, parametersInfo, at
+          JSAttributeList.AccessType.PUBLIC, parametersInfo
         );
       },
       getTestName(false),
