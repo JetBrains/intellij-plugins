@@ -17,6 +17,7 @@ package org.jetbrains.plugins.ruby.motion.symbols;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Pair;
+import com.intellij.util.io.StringRef;
 import com.jetbrains.cidr.CocoaDocumentationManagerImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -76,7 +77,7 @@ public class FunctionSymbol extends RTypedSyntheticSymbol implements MotionSymbo
     List<ArgumentInfo> result = new ArrayList<>(arguments.size());
     for (int i = 0; i < arguments.size(); i++) {
       Pair<String, String> argAndType = arguments.get(i);
-      result.add(new ArgumentInfo(argAndType.getFirst(),
+      result.add(new ArgumentInfo(StringRef.fromNullableString(argAndType.getFirst()),
                                   i + 1 < arguments.size() || !variadic ? ArgumentInfo.Type.SIMPLE
                                                                         : ArgumentInfo.Type.ARRAY));
     }
