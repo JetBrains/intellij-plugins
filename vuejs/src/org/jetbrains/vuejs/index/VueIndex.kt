@@ -24,7 +24,7 @@ fun getForAllKeys(scope:GlobalSearchScope, key:StubIndexKey<String, JSImplicitEl
                   filter: ((String) -> Boolean)?): Collection<JSImplicitElement> {
   var keys = StubIndex.getInstance().getAllKeys(key, scope.project!!)
   if (filter != null) keys = keys.filter { filter.invoke(it) }
-  return keys.mapNotNull { resolve(it, scope, key) }.flatMap { it.toMutableList() }
+  return keys.mapNotNull { resolve(it, scope, key) }.flatMap { it.toList() }
 }
 
 fun resolve(name:String, scope:GlobalSearchScope, key:StubIndexKey<String, JSImplicitElementProvider>): Collection<JSImplicitElement>? {

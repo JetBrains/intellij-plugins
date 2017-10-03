@@ -53,11 +53,12 @@ class VueComponents {
       return (parent as? JSProperty)?.context as? JSObjectLiteralExpression
     }
 
-    fun getLiteralFromResolve(result : Collection<PsiElement>): JSObjectLiteralExpression? {
-      return result.mapNotNull {
-        it as? JSObjectLiteralExpression ?:
-        JSStubBasedPsiTreeUtil.calculateMeaningfulElement(it) as? JSObjectLiteralExpression
-      }.firstOrNull()
+    private fun getLiteralFromResolve(result : Collection<PsiElement>): JSObjectLiteralExpression? {
+      return result.mapNotNull(fun(it : PsiElement) : JSObjectLiteralExpression? {
+        val element : PsiElement? = (it as? JSVariable)?.initializerOrStub ?: it
+        if (element is JSObjectLiteralExpression) return element
+        return JSStubBasedPsiTreeUtil.calculateMeaningfulElement(element!!) as? JSObjectLiteralExpression
+      }).firstOrNull()
     }
 
     fun isGlobal(it: JSImplicitElement) = it.typeString != null
