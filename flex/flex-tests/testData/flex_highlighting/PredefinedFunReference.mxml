@@ -4,7 +4,7 @@
     <mx:Script>
       import foo.getFoo
       getFoo("xxx");
-      private static const <warning descr="Unused constant THIS_IS_NOT_USED_ANYWHERE">THIS_IS_NOT_USED_ANYWHERE</warning>:int = 0; // TODO:should be reported as unused
+      private static const <warning descr="Unused constant THIS_IS_NOT_USED_ANYWHERE">THIS_IS_NOT_USED_ANYWHERE</warning>:int = 0;
       private function onclick(e:Event) {}
     </mx:Script>
   <mx:Button click="onclick(event)"/>
