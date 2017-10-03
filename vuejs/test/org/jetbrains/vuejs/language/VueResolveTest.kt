@@ -842,4 +842,38 @@ export default {
     TestCase.assertTrue(property.parent.parent is JSProperty)
     TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
   }
+
+  fun testResolveIntoGlobalComponentInLocalVar() {
+    myFixture.configureByText("ResolveIntoGlobalComponentInLocalVarComponent.js", """
+(function(a, b, c) {/* ... */}
+(
+  a,b,
+  function() {
+      let CompDefIFFE = {
+        props: {
+          from: {}
+        }
+      };
+
+      function install() {
+        Vue.component('iffe-comp', CompDefIFFE);
+      }
+  }
+))
+""")
+    myFixture.configureByText("ResolveIntoGlobalComponentInLocalVarComponent.vue", """
+      <template>
+        <iffe-comp <caret>from="e23"></complex-ref>
+      </template>
+""")
+
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val property = reference!!.resolve()
+    TestCase.assertNotNull(property)
+    TestCase.assertTrue(property is JSProperty)
+    TestCase.assertEquals("from", (property as JSProperty).name)
+    TestCase.assertTrue(property.parent.parent is JSProperty)
+    TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
+  }
 }
