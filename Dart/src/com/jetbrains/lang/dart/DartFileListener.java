@@ -139,12 +139,7 @@ public class DartFileListener implements VirtualFileListener {
       }
     };
 
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
-      runnable.run();
-    }
-    else {
-      DumbService.getInstance(project).smartInvokeLater(runnable, ModalityState.NON_MODAL);
-    }
+    DumbService.getInstance(project).smartInvokeLater(runnable, ModalityState.NON_MODAL);
   }
 
   @Nullable
