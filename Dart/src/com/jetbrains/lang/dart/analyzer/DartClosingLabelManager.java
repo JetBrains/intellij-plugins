@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.analyzer;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
@@ -79,7 +80,7 @@ public class DartClosingLabelManager {
       return;
     }
 
-    UIUtil.invokeLaterIfNeeded(() -> {
+    final Runnable runnable = () -> {
       for (final FileEditor fileEditor : FileEditorManager.getInstance(project).getAllEditors(file)) {
         if (!(fileEditor instanceof TextEditor)) {
           continue;
@@ -118,7 +119,9 @@ public class DartClosingLabelManager {
             editor.getDocument().getLineEndOffset(line), true, new TextLabelCustomElementRenderer(lineText.get(line)));
         }
       }
-    });
+    };
+
+    ApplicationManager.getApplication().invokeLater(runnable, ModalityState.NON_MODAL, project.getDisposed());
   }
 
   private static void clearEditorInlays(@NotNull Editor editor) {
