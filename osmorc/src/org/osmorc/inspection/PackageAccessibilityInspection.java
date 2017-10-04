@@ -60,7 +60,7 @@ import static org.osmorc.i18n.OsmorcBundle.message;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class PackageAccessibilityInspection extends BaseJavaBatchLocalInspectionTool {
+public class PackageAccessibilityInspection extends AbstractBaseJavaLocalInspectionTool {
   public boolean checkTests = false;
 
   @Override
