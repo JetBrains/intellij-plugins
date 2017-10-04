@@ -231,7 +231,7 @@ public class FlashBuilderProjectLoadUtil {
 
         final Element compilerElement = actionScriptPropertiesElement.getChild(COMPILER_TAG);
         if (compilerElement != null) {
-          loadProjectType(project, dotProjectFile, compilerElement);
+          loadProjectType(project, dotProjectFile, compilerElement, actionScriptPropertiesElement);
           loadSourcePaths(project, compilerElement);
           loadOutputFolderPath(project, compilerElement);
           loadTargetPlayerVersion(project, compilerElement);
@@ -305,7 +305,7 @@ public class FlashBuilderProjectLoadUtil {
 
   private static void loadProjectType(final FlashBuilderProject flashBuilderProject,
                                       final VirtualFile dotProjectFile,
-                                      final Element compilerElement) {
+                                      final Element compilerElement, Element parentElement) {
     final VirtualFile dir = dotProjectFile.getParent();
     assert dir != null;
 
@@ -315,7 +315,6 @@ public class FlashBuilderProjectLoadUtil {
     flashBuilderProject.setPureActionScript(airSdk || dir.findChild(FlashBuilderImporter.DOT_FLEX_PROPERTIES) == null &&
                                                       flexLibPropertiesFile == null);
     if (flexLibPropertiesFile == null) {
-      final Element parentElement = compilerElement.getParentElement();
       //noinspection unchecked
       for (final Element buildTargetsElement : parentElement
                                                                      .getChildren(BUILD_TARGETS_ELEMENT, parentElement.getNamespace())) {
