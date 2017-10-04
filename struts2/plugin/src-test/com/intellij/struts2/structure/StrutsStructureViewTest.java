@@ -14,10 +14,8 @@
  */
 package com.intellij.struts2.structure;
 
-import com.intellij.ide.structureView.newStructureView.StructureViewComponent;
 import com.intellij.struts2.BasicLightHighlightingTestCase;
 import com.intellij.testFramework.PlatformTestUtil;
-import com.intellij.util.Consumer;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,16 +35,16 @@ public class StrutsStructureViewTest extends BasicLightHighlightingTestCase {
     myFixture.testStructureView(component -> {
       component.setActionActive(StructureViewTreeModel.HIDE_PARAMS_ID, false);
       TreeUtil.expandAll(component.getTree());
-
-      PlatformTestUtil.assertTreeEqual(component.getTree(),
-                                       "-struts-structure.xml\n" +
-                                       " myBean\n" +
-                                       " myConstant\n" +
-                                       " struts2.xml\n" +
-                                       " -myPackage\n" +
-                                       "  -myAction\n" +
-                                       "   success\n" +
-                                       "   paramName\n");
+      PlatformTestUtil.assertTreeEqual(
+        component.getTree(),
+        "-struts-structure.xml\n" +
+        " myBean\n" +
+        " myConstant\n" +
+        " struts2.xml\n" +
+        " -myPackage\n" +
+        "  -myAction\n" +
+        "   success\n" +
+        "   paramName\n");
     });
   }
 
@@ -55,15 +53,15 @@ public class StrutsStructureViewTest extends BasicLightHighlightingTestCase {
     myFixture.testStructureView(component -> {
       component.setActionActive(StructureViewTreeModel.HIDE_PARAMS_ID, true);
       TreeUtil.expandAll(component.getTree());
-
-      PlatformTestUtil.assertTreeEqual(component.getTree(),
-                                       "-struts-structure.xml\n" +
-                                       " myBean\n" +
-                                       " myConstant\n" +
-                                       " struts2.xml\n" +
-                                       " -myPackage\n" +
-                                       "  -myAction\n" +
-                                       "   success\n");
+      PlatformTestUtil.assertTreeEqual(
+        component.getTree(),
+        "-struts-structure.xml\n" +
+        " myBean\n" +
+        " myConstant\n" +
+        " struts2.xml\n" +
+        " -myPackage\n" +
+        "  -myAction\n" +
+        "   success\n");
     });
   }
 }

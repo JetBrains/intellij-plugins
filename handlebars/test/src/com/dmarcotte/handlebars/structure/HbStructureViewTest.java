@@ -9,10 +9,10 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.Consumer;
-
-import javax.swing.*;
+import com.intellij.util.ui.tree.TreeUtil;
 
 import static com.intellij.testFramework.PlatformTestUtil.assertTreeEqual;
 
@@ -20,26 +20,21 @@ public class HbStructureViewTest extends LightPlatformCodeInsightFixtureTestCase
 
   private static final String ourTestFileName = "test.hbs";
 
-  private void doStructureViewTest(final String fileText, final String expectedTree) {
+  private void doStructureViewTest(String fileText, String expectedTree) {
     myFixture.configureByText(ourTestFileName, fileText);
 
-    testStructureView(myFixture.getFile(), component -> {
-      JTree tree = ((StructureViewComponent) component.getSelectedStructureView()).getTree();
-
-      // expand the whole tree
-      int rowCount = tree.getRowCount();
-      for (int i = 0; i <= rowCount; i++) {
-        tree.expandRow(i);
-      }
-
-      assertTreeEqual(tree, expectedTree + "\n");
+    doTestStructureView(myFixture.getFile(), composite -> {
+      StructureViewComponent svc = (StructureViewComponent)composite.getSelectedStructureView();
+      PlatformTestUtil.waitForPromise(svc.rebuildAndUpdate());
+      TreeUtil.expandAll(svc.getTree());
+      assertTreeEqual(svc.getTree(), expectedTree + "\n");
     });
   }
 
-  public void testStructureView(PsiFile file, Consumer<StructureViewComposite> consumer) {
-    final VirtualFile vFile = file.getVirtualFile();
-    final FileEditor fileEditor = FileEditorManager.getInstance(getProject()).getSelectedEditor(vFile);
-    final StructureViewBuilder builder = LanguageStructureViewBuilder.INSTANCE.getStructureViewBuilder(file);
+  private void doTestStructureView(PsiFile file, Consumer<StructureViewComposite> consumer) {
+    VirtualFile vFile = file.getVirtualFile();
+    FileEditor fileEditor = FileEditorManager.getInstance(getProject()).getSelectedEditor(vFile);
+    StructureViewBuilder builder = LanguageStructureViewBuilder.INSTANCE.getStructureViewBuilder(file);
     assert builder != null;
 
     StructureViewComposite composite = null;

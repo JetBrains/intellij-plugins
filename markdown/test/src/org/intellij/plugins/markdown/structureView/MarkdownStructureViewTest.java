@@ -17,10 +17,10 @@ public class MarkdownStructureViewTest extends LightPlatformCodeInsightFixtureTe
 
   public void doTest() {
     myFixture.configureByFile(getTestName(true) + ".md");
-    myFixture.testStructureView(structureViewComponent -> {
-      structureViewComponent.select(structureViewComponent.getTreeModel().getCurrentEditorElement(), false);
-      TreeUtil.expandAll(structureViewComponent.getTree());
-      JTree tree = structureViewComponent.getTree();
+    myFixture.testStructureView(svc -> {
+      svc.select(svc.getTreeModel().getCurrentEditorElement(), false);
+      JTree tree = svc.getTree();
+      TreeUtil.expandAll(tree);
       assertSameLinesWithFile(
         getTestDataPath() + '/' + getTestName(true) + ".txt",
         PlatformTestUtil.print(tree, tree.getModel().getRoot(), new Queryable.PrintInfo(null, new String[]{"location"}), true));
