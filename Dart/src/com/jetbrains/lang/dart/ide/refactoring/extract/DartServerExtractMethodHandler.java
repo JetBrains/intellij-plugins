@@ -60,7 +60,10 @@ public class DartServerExtractMethodHandler implements RefactoringActionHandler 
       }
       if (initialStatus.hasError()) {
         final String title = DartBundle.message("dart.refactoring.extract.method.error");
-        CommonRefactoringUtil.showErrorHint(project, editor, initialStatus.getMessage(), title, null);
+        final String message = initialStatus.getMessage();
+        // This is not null if the status has an error.
+        assert message != null;
+        CommonRefactoringUtil.showErrorHint(project, editor, message, title, null);
         return;
       }
     }
@@ -107,16 +110,19 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog<ServerExtrac
     }
 
     if (myRefactoring.canExtractGetter()) {
-      myGetterCheckBox.setSelected(true);
-      myGetterCheckBox.addActionListener(e -> {
-        myRefactoring.setCreateGetter(myGetterCheckBox.isSelected());
-        mySignatureLabel.setText(myRefactoring.getSignature());
-      });
+      myGetterCheckBox.setSelected(false);
+      updateRefactoringPreview();
+      myGetterCheckBox.addActionListener(e -> updateRefactoringPreview());
     }
     else {
       myGetterCheckBox.setEnabled(false);
     }
 
+    mySignatureLabel.setText(myRefactoring.getSignature());
+  }
+
+  private void updateRefactoringPreview() {
+    myRefactoring.setCreateGetter(myGetterCheckBox.isSelected());
     mySignatureLabel.setText(myRefactoring.getSignature());
   }
 
