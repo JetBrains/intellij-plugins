@@ -1,4 +1,4 @@
-<PRE><b>ng-controller</b></PRE> @ngdoc directive<BR>
+@ngdoc directive<BR>
  @param {expression} ngController Name of a globally accessible constructor function or an<BR>
      <a href="psi_element://guide/expression">expression</a> that on the current scope evaluates to a<BR>
      constructor function. The controller instance can be published into a scope property<BR>
