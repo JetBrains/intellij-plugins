@@ -40,7 +40,15 @@
                      enabledByDefault="true" level="WARNING"
                      implementationClass="org.jetbrains.vuejs.inspections.DuplicateTagInspection"/>
     <multiHostInjector implementation="org.jetbrains.vuejs.language.VueInjector" id="vue"/>
+
+    <internalFileTemplate name="Vue Single File Component"/>
+    <createFromTemplateHandler implementation="org.jetbrains.vuejs.VueCreateFromTemplateHandler"/>
   </extensions>
+  <actions>
+    <action class="org.jetbrains.vuejs.CreateVueSingleFileComponentAction" id="CreateVueSingleFileComp">
+      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
+    </action>
+  </actions>
   <extensions defaultExtensionNs="JavaScript">
     <frameworkIndexingHandler implementation="org.jetbrains.vuejs.codeInsight.VueFrameworkHandler"/>
     <intentionAndInspectionFilter language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueInspectionFilter"/>
