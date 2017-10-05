@@ -623,7 +623,7 @@ module Teamcity
       end
 
       def create_snippet_text(step_def_name, step_keyword, step_multiline_arg)
-        if ::Teamcity::Cucumber::CUCUMBER_VERSION == 2
+        if ::Teamcity::Cucumber::CUCUMBER_VERSION >= 2
           step_multiline_arg ||= ::Cucumber::Core::Ast::EmptyMultilineArgument.new
           @step_mother.snippet_text(step_keyword || '', step_def_name, step_multiline_arg)
         else
