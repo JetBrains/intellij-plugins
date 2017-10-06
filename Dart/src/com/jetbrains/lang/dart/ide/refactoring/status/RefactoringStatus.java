@@ -123,7 +123,7 @@ public class RefactoringStatus {
 
   /**
    * Return the message from the {@link RefactoringStatusEntry} with the highest severity; may be
-   * {@code null} if not entries are present.
+   * {@code null} if no entries are present.
    */
   @Nullable
   public String getMessage() {
