@@ -362,4 +362,55 @@ export default {
     myFixture.checkHighlighting()
   })
   }
+
+  fun testExternalMixin() {
+    myFixture.configureByText("MixinWithProp.vue", """
+<script>
+    export default {
+        props: {
+            mixinProp:  {
+                type: String
+            },
+            requiredMixinProp: {
+              required: true
+            }
+        },
+        methods: {
+            helloFromMixin: function () {
+                console.log('hello from mixin!')
+            }
+        }
+    }
+</script>
+""")
+    myFixture.configureByText("CompWithMixin.vue", """
+<template>
+    <div>
+        <div>{{ mixinProp }}</div>
+    </div>
+</template>
+<script>
+    import Mixin from "./MixinWithProp"
+
+    export default {
+        mixins: [Mixin]
+    }
+</script>
+""")
+    myFixture.configureByText("ParentComp.vue", """
+<template>
+  <<warning descr="Element comp-with-mixin doesn't have required attribute requiredMixinProp">comp-with-mixin</warning> mixin-prop=123>
+  1</<warning descr="Element comp-with-mixin doesn't have required attribute requiredMixinProp">comp-with-mixin</warning>>
+</template>
+<script>
+  import CompWithMixin from './CompWithMixin'
+
+  export default {
+    components: { CompWithMixin }
+  }
+</script>
+""")
+
+    JSTestUtils.testES6<Exception>(project, { myFixture.checkHighlighting(true, false, true) })
+  }
 }

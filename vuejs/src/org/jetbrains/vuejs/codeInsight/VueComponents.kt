@@ -39,18 +39,22 @@ class VueComponents {
       if (parent is JSCallExpression) {
         val reference = element.typeString ?: return null
 
-        val scope = PsiTreeUtil.getContextOfType(element, JSCatchBlock::class.java, JSClass::class.java, JSExecutionScope::class.java)
-          ?: element.containingFile
-
-        val resolvedLocally = JSStubBasedPsiTreeUtil.resolveLocally(reference, scope)
-        if (resolvedLocally != null) {
-          return getLiteralFromResolve(listOf(resolvedLocally))
-        }
-
-        val elements = ES6QualifiedNameResolver(scope).resolveQualifiedName(reference)
-        return getLiteralFromResolve(elements)
+        return resolveReferenceToObjectLiteral(element, reference)
       }
       return (parent as? JSProperty)?.context as? JSObjectLiteralExpression
+    }
+
+    fun resolveReferenceToObjectLiteral(element: JSImplicitElement, reference: String): JSObjectLiteralExpression? {
+      val scope = PsiTreeUtil.getContextOfType(element, JSCatchBlock::class.java, JSClass::class.java, JSExecutionScope::class.java)
+                  ?: element.containingFile
+
+      val resolvedLocally = JSStubBasedPsiTreeUtil.resolveLocally(reference, scope)
+      if (resolvedLocally != null) {
+        return getLiteralFromResolve(listOf(resolvedLocally))
+      }
+
+      val elements = ES6QualifiedNameResolver(scope).resolveQualifiedName(reference)
+      return getLiteralFromResolve(elements)
     }
 
     private fun getLiteralFromResolve(result : Collection<PsiElement>): JSObjectLiteralExpression? {

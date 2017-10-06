@@ -876,4 +876,118 @@ export default {
     TestCase.assertTrue(property.parent.parent is JSProperty)
     TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
   }
+
+  fun testResolveMixinProp() {
+    myFixture.configureByText("MixinWithProp.vue", """
+<script>
+    export default {
+        props: {
+            mixinProp:  {
+                type: String
+            }
+        },
+        methods: {
+            helloFromMixin: function () {
+                console.log('hello from mixin!')
+            }
+        }
+    }
+</script>
+""")
+    myFixture.configureByText("CompWithMixin.vue", """
+<template>
+    <div>
+        <div>{{ mixinProp }}</div>
+    </div>
+</template>
+<script>
+    import Mixin from "./MixinWithProp"
+
+    export default {
+        mixins: [Mixin]
+    }
+</script>
+""")
+    myFixture.configureByText("ParentComp.vue", """
+<template>
+  <comp-with-mixin <caret>mixin-prop=123>1</comp-with-mixin>
+</template>
+""")
+
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val property = reference!!.resolve()
+    TestCase.assertNotNull(property)
+    TestCase.assertTrue(property is JSProperty)
+    TestCase.assertEquals("mixinProp", (property as JSProperty).name)
+    TestCase.assertTrue(property.parent.parent is JSProperty)
+    TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
+    TestCase.assertEquals("MixinWithProp.vue", property.containingFile.name)
+  }
+
+  fun testResolveIntoLocalMixin() {
+    myFixture.configureByText("ResolveIntoLocalMixin.vue", """
+<template>
+    <local-mixin <caret>local-mixin-prop="1" local-prop="1"></local-mixin>
+</template>
+
+<script>
+    let LocalMixin = {
+        props: {
+            localMixinProp: {
+                required: true
+            }
+        }
+    };
+
+    export default {
+        name: "local-mixin",
+        mixins: [LocalMixin],
+        props: {
+            localProp: {}
+        }
+    }
+</script>
+""")
+
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val property = reference!!.resolve()
+    TestCase.assertNotNull(property)
+    TestCase.assertTrue(property is JSProperty)
+    TestCase.assertEquals("localMixinProp", (property as JSProperty).name)
+    TestCase.assertTrue(property.parent.parent is JSProperty)
+    TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
+  }
+
+  fun testResolveInMixinLiteral() {
+    myFixture.configureByText("ResolveInMixinLiteral.vue", """
+<template>
+    <local-mixin <caret>prop-in-mixin-literal="11" local-prop="1"></local-mixin>
+</template>
+
+<script>
+    export default {
+        name: "local-mixin",
+        mixins: [{
+            props: {
+                propInMixinLiteral: {}
+            }
+        }],
+        props: {
+            localProp: {}
+        }
+    }
+</script>
+""")
+
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val property = reference!!.resolve()
+    TestCase.assertNotNull(property)
+    TestCase.assertTrue(property is JSProperty)
+    TestCase.assertEquals("propInMixinLiteral", (property as JSProperty).name)
+    TestCase.assertTrue(property.parent.parent is JSProperty)
+    TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
+  }
 }
