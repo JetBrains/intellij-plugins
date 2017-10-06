@@ -123,7 +123,9 @@ public class DartServerData {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
     myOutlineData.put(filePath, outline);
-    myEventDispatcher.getMulticaster().outlineUpdated(filePath);
+    ApplicationManager.getApplication().invokeLater(() -> myEventDispatcher.getMulticaster().outlineUpdated(filePath),
+                                                    ModalityState.NON_MODAL,
+                                                    myService.getProject().getDisposed());
   }
 
   @NotNull
