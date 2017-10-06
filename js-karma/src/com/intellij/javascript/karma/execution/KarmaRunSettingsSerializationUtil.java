@@ -5,12 +5,9 @@ import com.intellij.javascript.karma.scope.KarmaScopeKind;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.openapi.util.JDOMExternalizerUtil;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,15 +28,15 @@ public class KarmaRunSettingsSerializationUtil {
   public static KarmaRunSettings readXml(@NotNull Element element) {
     KarmaRunSettings.Builder builder = new KarmaRunSettings.Builder();
 
-    builder.setConfigPath(JDOMExternalizerUtil.getFirstChildValueAttribute(element, CONFIG_FILE));
-    builder.setBrowsers(JDOMExternalizerUtil.getFirstChildValueAttribute(element, BROWSERS));
+    builder.setConfigPath(JDOMExternalizerUtil.readCustomField(element, CONFIG_FILE));
+    builder.setBrowsers(JDOMExternalizerUtil.readCustomField(element, BROWSERS));
 
-    String karmaPackageDir = JDOMExternalizerUtil.getFirstChildValueAttribute(element, KARMA_PACKAGE_DIR);
+    String karmaPackageDir = JDOMExternalizerUtil.readCustomField(element, KARMA_PACKAGE_DIR);
     if (karmaPackageDir != null) {
       builder.setKarmaPackage(new NodePackage(karmaPackageDir));
     }
 
-    String interpreterRefName = JDOMExternalizerUtil.getFirstChildValueAttribute(element, NODE_INTERPRETER);
+    String interpreterRefName = JDOMExternalizerUtil.readCustomField(element, NODE_INTERPRETER);
     builder.setInterpreterRef(NodeJsInterpreterRef.create(interpreterRefName));
 
     EnvironmentVariablesData envData = EnvironmentVariablesData.readExternal(element);
@@ -47,7 +44,7 @@ public class KarmaRunSettingsSerializationUtil {
     KarmaScopeKind scopeKind = readScopeKind(element);
     builder.setScopeKind(scopeKind);
     if (scopeKind == KarmaScopeKind.TEST_FILE) {
-      builder.setTestFilePath(JDOMExternalizerUtil.getFirstChildValueAttribute(element, TEST_FILE_PATH));
+      builder.setTestFilePath(JDOMExternalizerUtil.readCustomField(element, TEST_FILE_PATH));
     }
     else if (scopeKind == KarmaScopeKind.SUITE || scopeKind == KarmaScopeKind.TEST) {
       builder.setTestNames(readTestNames(element));
@@ -58,7 +55,7 @@ public class KarmaRunSettingsSerializationUtil {
 
   @NotNull
   private static KarmaScopeKind readScopeKind(@NotNull Element element) {
-    String value = JDOMExternalizerUtil.getFirstChildValueAttribute(element, SCOPE_KIND);
+    String value = JDOMExternalizerUtil.readCustomField(element, SCOPE_KIND);
     if (StringUtil.isNotEmpty(value)) {
       try {
         return KarmaScopeKind.valueOf(value);
@@ -79,22 +76,22 @@ public class KarmaRunSettingsSerializationUtil {
   }
 
   public static void writeXml(@NotNull Element element, @NotNull KarmaRunSettings settings) {
-    JDOMExternalizerUtil.addElementWithValueAttribute(element, CONFIG_FILE, settings.getConfigSystemIndependentPath());
+    JDOMExternalizerUtil.writeCustomField(element, CONFIG_FILE, settings.getConfigSystemIndependentPath());
     if (StringUtil.isNotEmpty(settings.getBrowsers())) {
-      JDOMExternalizerUtil.addElementWithValueAttribute(element, BROWSERS, settings.getBrowsers());
+      JDOMExternalizerUtil.writeCustomField(element, BROWSERS, settings.getBrowsers());
     }
     if (settings.getKarmaPackage() != null) {
-      JDOMExternalizerUtil.addElementWithValueAttribute(element, KARMA_PACKAGE_DIR,
-                                                        settings.getKarmaPackage().getSystemIndependentPath());
+      JDOMExternalizerUtil.writeCustomField(element, KARMA_PACKAGE_DIR,
+                                            settings.getKarmaPackage().getSystemIndependentPath());
     }
-    JDOMExternalizerUtil.addElementWithValueAttribute(element, NODE_INTERPRETER, settings.getInterpreterRef().getReferenceName());
+    JDOMExternalizerUtil.writeCustomField(element, NODE_INTERPRETER, settings.getInterpreterRef().getReferenceName());
     settings.getEnvData().writeExternal(element);
     KarmaScopeKind scopeKind = settings.getScopeKind();
     if (scopeKind != KarmaScopeKind.ALL) {
-      JDOMExternalizerUtil.addElementWithValueAttribute(element, SCOPE_KIND, scopeKind.name());
+      JDOMExternalizerUtil.writeCustomField(element, SCOPE_KIND, scopeKind.name());
     }
     if (scopeKind == KarmaScopeKind.TEST_FILE) {
-      JDOMExternalizerUtil.addElementWithValueAttribute(element, TEST_FILE_PATH, settings.getTestFileSystemIndependentPath());
+      JDOMExternalizerUtil.writeCustomField(element, TEST_FILE_PATH, settings.getTestFileSystemIndependentPath());
     }
     else if (scopeKind == KarmaScopeKind.SUITE || scopeKind == KarmaScopeKind.TEST) {
       Element testNamesElement = new Element(TEST_NAMES);
