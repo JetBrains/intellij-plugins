@@ -19,14 +19,18 @@ import java.util.List;
 
 class DartStructureViewModel extends TextEditorBasedStructureViewModel implements StructureViewModel.ElementInfoProvider {
 
+  @NotNull private final StructureViewTreeElement myRootElement;
+
   private final DartServerData.OutlineListener myListener = filePath -> {
     if (filePath.equals(getPsiFile().getVirtualFile().getPath())) {
       fireModelUpdate();
     }
   };
 
+
   public DartStructureViewModel(@Nullable final Editor editor, @NotNull final PsiFile psiFile) {
     super(editor, psiFile);
+    myRootElement = new DartStructureViewRootElement(psiFile);
     DartAnalysisServerService.getInstance(getPsiFile().getProject()).addOutlineListener(myListener);
   }
 
@@ -39,7 +43,7 @@ class DartStructureViewModel extends TextEditorBasedStructureViewModel implement
   @NotNull
   @Override
   public StructureViewTreeElement getRoot() {
-    return new DartStructureViewRootElement(getPsiFile());
+    return myRootElement;
   }
 
   @Override
@@ -51,7 +55,8 @@ class DartStructureViewModel extends TextEditorBasedStructureViewModel implement
     final Outline outline = service.getOutline(getPsiFile().getVirtualFile());
     if (outline == null) return null;
 
-    return findDeepestOutlineForOffset(getEditor().getCaretModel().getOffset(), outline.getChildren());
+    final Outline result = findDeepestOutlineForOffset(getEditor().getCaretModel().getOffset(), outline.getChildren());
+    return result != null ? DartStructureViewElement.getPresentableText(result) : null;
   }
 
   @Nullable

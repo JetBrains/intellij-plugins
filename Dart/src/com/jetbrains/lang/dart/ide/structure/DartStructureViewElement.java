@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.structure;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.structureView.StructureViewTreeElement;
+import com.intellij.ide.util.treeView.NodeDescriptorProvidingKey;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.util.text.StringUtil;
@@ -19,19 +20,16 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class DartStructureViewElement implements StructureViewTreeElement, ItemPresentation {
+public class DartStructureViewElement implements StructureViewTreeElement, ItemPresentation, NodeDescriptorProvidingKey {
 
   @NotNull private final PsiFile myPsiFile;
   @NotNull private final Outline myOutline;
 
+  private String myPresentableText;
+
   public DartStructureViewElement(@NotNull final PsiFile psiFile, @NotNull final Outline outline) {
     myPsiFile = psiFile;
     myOutline = outline;
-  }
-
-  @Override
-  public Object getValue() {
-    return myOutline;
   }
 
   @NotNull
@@ -65,10 +63,19 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
     return true;
   }
 
-  @Nullable
+  @NotNull
   @Override
   public String getPresentableText() {
-    final Element element = myOutline.getElement();
+    if (myPresentableText == null) {
+      myPresentableText = getPresentableText(myOutline);
+    }
+
+    return myPresentableText;
+  }
+
+  @NotNull
+  public static String getPresentableText(@NotNull final Outline outline) {
+    final Element element = outline.getElement();
     final StringBuilder b = new StringBuilder(element.getName());
     if (!StringUtil.isEmpty(element.getTypeParameters())) {
       b.append(element.getTypeParameters());
@@ -144,5 +151,26 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
     }
 
     return baseIcon;
+  }
+
+  @Override
+  public Object getValue() {
+    return getPresentableText();
+  }
+
+  @NotNull
+  @Override
+  public Object getKey() {
+    return getPresentableText();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof DartStructureViewElement && ((DartStructureViewElement)obj).getPresentableText().equals(getPresentableText());
+  }
+
+  @Override
+  public int hashCode() {
+    return getPresentableText().hashCode();
   }
 }
