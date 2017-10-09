@@ -25,11 +25,14 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
   @NotNull private final PsiFile myPsiFile;
   @NotNull private final Outline myOutline;
 
-  private String myPresentableText;
+  private final String myValue;
+  private final String myPresentableText;
 
   public DartStructureViewElement(@NotNull final PsiFile psiFile, @NotNull final Outline outline) {
     myPsiFile = psiFile;
     myOutline = outline;
+    myValue = getValue(outline);
+    myPresentableText = getPresentableText(outline);
   }
 
   @NotNull
@@ -66,10 +69,6 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
   @NotNull
   @Override
   public String getPresentableText() {
-    if (myPresentableText == null) {
-      myPresentableText = getPresentableText(myOutline);
-    }
-
     return myPresentableText;
   }
 
@@ -154,8 +153,14 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
   }
 
   @Override
-  public Object getValue() {
-    return getPresentableText();
+  public String getValue() {
+    return myValue;
+  }
+
+  @NotNull
+  public static String getValue(@NotNull final Outline outline) {
+    final Outline parent = outline.getParent();
+    return parent != null ? getPresentableText(parent) + getPresentableText(outline) : getPresentableText(outline);
   }
 
   @NotNull

@@ -56,7 +56,7 @@ class DartStructureViewModel extends TextEditorBasedStructureViewModel implement
     if (outline == null) return null;
 
     final Outline result = findDeepestOutlineForOffset(getEditor().getCaretModel().getOffset(), outline.getChildren());
-    return result != null ? DartStructureViewElement.getPresentableText(result) : null;
+    return result != null ? DartStructureViewElement.getValue(result) : null;
   }
 
   @Nullable
