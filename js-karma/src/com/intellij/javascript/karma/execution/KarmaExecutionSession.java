@@ -85,26 +85,29 @@ public class KarmaExecutionSession {
   @NotNull
   private ProcessHandler createProcessHandler(@NotNull final KarmaServer server) throws ExecutionException {
     File clientAppFile = server.getKarmaJsSourcesLocator().getClientAppFile();
+    ProcessHandler processHandler = null;
     if (isDebug()) {
       if (server.isPortBound()) {
-        return createOSProcessHandler(server, clientAppFile);
+        processHandler = createOSProcessHandler(server, clientAppFile);
       }
     }
     else {
       if (server.areBrowsersReady()) {
-        return createOSProcessHandler(server, clientAppFile);
+        processHandler = createOSProcessHandler(server, clientAppFile);
       }
     }
-    final NopProcessHandler nopProcessHandler = new NopProcessHandler();
-    terminateOnServerShutdown(server, nopProcessHandler);
-    return nopProcessHandler;
+    if (processHandler == null) {
+      processHandler = new NopProcessHandler();
+    }
+    terminateOnServerShutdown(server, processHandler);
+    return processHandler;
   }
 
-  private static void terminateOnServerShutdown(@NotNull final KarmaServer server, @NotNull final ProcessHandler processHandler) {
-    final KarmaServerTerminatedListener terminationCallback = new KarmaServerTerminatedListener() {
+  private static void terminateOnServerShutdown(@NotNull KarmaServer server, @NotNull ProcessHandler processHandler) {
+    KarmaServerTerminatedListener terminationCallback = new KarmaServerTerminatedListener() {
       @Override
       public void onTerminated(int exitCode) {
-        processHandler.destroyProcess();
+        ScriptRunnerUtil.terminateProcessHandler(processHandler, 2000, null);
       }
     };
     server.onTerminated(terminationCallback);
