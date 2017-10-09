@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.gist.GistManager
 import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.IOUtil
+import org.angularjs.cli.AngularJSProjectConfigurator.findCliJson
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
@@ -85,10 +86,9 @@ private fun doLoad(project: Project, cli: VirtualFile): List<Blueprint> {
 fun findAngularCliFolder(project: Project, file: VirtualFile?): VirtualFile? {
   var current = file
   while (current != null) {
-    if (current.isDirectory && current.findChild(AngularJSProjectConfigurator.ANGULAR_CLI_JSON) != null) return current
+    if (current.isDirectory && findCliJson(current) != null) return current
     current = current.parent
   }
-  if (project.baseDir?.findChild(AngularJSProjectConfigurator.ANGULAR_CLI_JSON) != null) return project.baseDir
+  if (findCliJson(project.baseDir) != null) return project.baseDir
   return null
 }
-
