@@ -20,6 +20,7 @@ import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PatternCondition;
+import com.intellij.patterns.StandardPatterns;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileContent;
@@ -46,7 +47,7 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
   @NotNull
   @Override
   public ElementPattern<FileContent> createSuitableFilePattern() {
-    return FileContentPattern.fileContent().withName(AngularJSProjectConfigurator.ANGULAR_CLI_JSON).with(new PatternCondition<FileContent>("notLibrary") {
+    return FileContentPattern.fileContent().withName(StandardPatterns.string().endsWith(AngularJSProjectConfigurator.ANGULAR_CLI_JSON)).with(new PatternCondition<FileContent>("notLibrary") {
       @Override
       public boolean accepts(@NotNull FileContent content, ProcessingContext context) {
         return !JSLibraryUtil.isProbableLibraryFile(content.getFile());
