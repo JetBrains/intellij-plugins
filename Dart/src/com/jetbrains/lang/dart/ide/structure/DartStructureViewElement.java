@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.ide.structure;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.NodeDescriptorProvidingKey;
 import com.intellij.navigation.ItemPresentation;
@@ -148,14 +149,13 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
       case ElementKind.PARAMETER:
       case ElementKind.PREFIX:
       case ElementKind.TYPE_PARAMETER:
+      case ElementKind.UNIT_TEST_GROUP:
+        return AllIcons.RunConfigurations.Junit;
+      case ElementKind.UNIT_TEST_TEST:
+        return DartIcons.TestNode;
       case ElementKind.UNKNOWN:
         return null; // unexpected
       default:
-        final String name = myOutline.getElement().getName();
-        if (name.startsWith("test ") || name.startsWith("group ")) {
-          return DartIcons.TestNode;
-        }
-
         return null;
     }
   }
