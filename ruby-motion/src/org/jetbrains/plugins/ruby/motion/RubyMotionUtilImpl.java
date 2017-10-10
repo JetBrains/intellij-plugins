@@ -435,7 +435,7 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
         RModuleUtil.getInstance().refreshRubyModuleTypeContent(module);
         GeneratorsUtil.openFileInEditor(project, "app/app_delegate.rb", applicationHomePath);
         GeneratorsUtil.openFileInEditor(project, RakeUtilBase.RAKE_FILE, applicationHomePath);
-        GeneratorsUtil.openFileInEditor(project, BundlerUtil.GEMFILE, applicationHomePath);
+        BundlerUtil.openGemFileInEditor(project, applicationHomePath);
       }
     };
     final MergingCommandLineArgumentsProvider resultProvider =
