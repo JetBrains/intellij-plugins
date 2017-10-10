@@ -1,12 +1,12 @@
 package com.jetbrains.lang.dart.ide.structure;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.NodeDescriptorProvidingKey;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
+import com.intellij.ui.LayeredIcon;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
@@ -20,7 +20,19 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+import static com.intellij.icons.AllIcons.Nodes.*;
+import static com.intellij.icons.AllIcons.Nodes.Class;
+import static com.intellij.icons.AllIcons.Nodes.Enum;
+
 public class DartStructureViewElement implements StructureViewTreeElement, ItemPresentation, NodeDescriptorProvidingKey {
+
+  private static final LayeredIcon STATIC_FINAL_FIELD_ICON = new LayeredIcon(Field, StaticMark, FinalMark);
+  private static final LayeredIcon FINAL_FIELD_ICON = new LayeredIcon(Field, FinalMark);
+  private static final LayeredIcon STATIC_FIELD_ICON = new LayeredIcon(Field, StaticMark);
+  private static final LayeredIcon STATIC_METHOD_ICON = new LayeredIcon(Method, StaticMark);
+  private static final LayeredIcon TOP_LEVEL_FUNCTION_ICON = new LayeredIcon(Function, StaticMark);
+  private static final LayeredIcon TOP_LEVEL_VAR_ICON = new LayeredIcon(Variable, StaticMark);
+  private static final LayeredIcon TOP_LEVEL_CONST_ICON = new LayeredIcon(Variable, StaticMark, FinalMark);
 
   @NotNull private final PsiFile myPsiFile;
   @NotNull private final Outline myOutline;
@@ -97,59 +109,55 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
   @Nullable
   @Override
   public Icon getIcon(boolean unused) {
-    final Icon baseIcon;
     final Element element = myOutline.getElement();
+    final boolean finalOrConst = element.isConst() || element.isFinal();
+
     switch (element.getKind()) {
       case ElementKind.CLASS:
-        baseIcon = element.isAbstract() ? AllIcons.Nodes.AbstractClass : AllIcons.Nodes.Class;
-        break;
-      case ElementKind.CLASS_TYPE_ALIAS:
-        baseIcon = DartComponentType.TYPEDEF.getIcon();
-        break;
+        return element.isAbstract() ? AbstractClass : Class;
       case ElementKind.CONSTRUCTOR:
-        baseIcon = DartComponentType.CONSTRUCTOR.getIcon();
-        break;
+        return Method;
       case ElementKind.ENUM:
-        baseIcon = AllIcons.Nodes.Enum;
-        break;
+        return Enum;
       case ElementKind.ENUM_CONSTANT:
-        baseIcon = AllIcons.Nodes.Field;
-        break;
+        return STATIC_FINAL_FIELD_ICON;
       case ElementKind.FIELD:
-        baseIcon = DartComponentType.FIELD.getIcon();
-        break;
+        if (finalOrConst && element.isTopLevelOrStatic()) return STATIC_FINAL_FIELD_ICON;
+        if (finalOrConst) return FINAL_FIELD_ICON;
+        if (element.isTopLevelOrStatic()) return STATIC_FIELD_ICON;
+        return Field;
       case ElementKind.FUNCTION:
-        baseIcon = DartComponentType.FUNCTION.getIcon();
-        break;
+        return element.isTopLevelOrStatic() ? TOP_LEVEL_FUNCTION_ICON : Function;
       case ElementKind.FUNCTION_TYPE_ALIAS:
-        baseIcon = DartComponentType.TYPEDEF.getIcon();
-        break;
+        return DartComponentType.TYPEDEF.getIcon();
       case ElementKind.GETTER:
-        baseIcon = AllIcons.Nodes.PropertyRead;
-        break;
-      case ElementKind.LOCAL_VARIABLE:
-        baseIcon = DartComponentType.VARIABLE.getIcon();
-        break;
+        return element.isTopLevelOrStatic() ? PropertyReadStatic : PropertyRead;
       case ElementKind.METHOD:
-        baseIcon = DartComponentType.METHOD.getIcon();
-        break;
+        if (element.isAbstract()) return AbstractMethod;
+        return element.isTopLevelOrStatic() ? STATIC_METHOD_ICON : Method;
       case ElementKind.SETTER:
-        baseIcon = AllIcons.Nodes.PropertyWrite;
-        break;
+        return element.isTopLevelOrStatic() ? PropertyWriteStatic : PropertyWrite;
       case ElementKind.TOP_LEVEL_VARIABLE:
-        baseIcon = DartComponentType.VARIABLE.getIcon();
-        break;
+        return finalOrConst ? TOP_LEVEL_CONST_ICON : TOP_LEVEL_VAR_ICON;
+      case ElementKind.CLASS_TYPE_ALIAS:
+      case ElementKind.COMPILATION_UNIT:
+      case ElementKind.FILE:
+      case ElementKind.LABEL:
+      case ElementKind.LIBRARY:
+      case ElementKind.LOCAL_VARIABLE:
+      case ElementKind.PARAMETER:
+      case ElementKind.PREFIX:
+      case ElementKind.TYPE_PARAMETER:
+      case ElementKind.UNKNOWN:
+        return null; // unexpected
       default:
         final String name = myOutline.getElement().getName();
         if (name.startsWith("test ") || name.startsWith("group ")) {
-          baseIcon = DartIcons.TestNode;
+          return DartIcons.TestNode;
         }
-        else {
-          baseIcon = null;
-        }
-    }
 
-    return baseIcon;
+        return null;
+    }
   }
 
   @Override
