@@ -9,7 +9,7 @@
     <mx:Script source="/<error>pack</error>/<error>MxScriptAndStyleSource.mxml</error>"/>
     <mx:Script source="<error>empty.txt</error>"/>
     <mx:Script source="/<error>empty.txt</error>"/>
-    <mx:Script source="<error>http:</error>//<error>some.site</error>/<error>style.css</error>"/>
+    <mx:Script source="<error>http:</error>/<error></error>/<error>some.site</error>/<error>style.css</error>"/>
     <mx:Script source="<error>dir</error>/<error>css.css</error>"/>
 
     <mx:Style source="${SOME_ABSOLUTE_PATH}"/>
