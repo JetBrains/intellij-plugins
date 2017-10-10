@@ -11,7 +11,6 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.javascript.JSRunProfileWithCompileBeforeLaunchOption;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.DefaultJDOMExternalizer;
@@ -37,7 +36,7 @@ import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGa
  * <p/>
  * Created by Masahiro Suzuka on 2014/04/05.
  */
-public class PhoneGapRunConfiguration extends LocatableConfigurationBase implements JSRunProfileWithCompileBeforeLaunchOption {
+public class PhoneGapRunConfiguration extends LocatableConfigurationBase implements RunProfileWithCompileBeforeLaunchOption {
 
   private static final String CORDOVA_IOS_LOG_PATH = "/platforms/ios/cordova/console.log";
 
@@ -356,5 +355,10 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
     assert myWorkDir != null;
     return FileUtil
       .toCanonicalPath(FileUtil.toSystemIndependentName(StringUtil.trimEnd(myWorkDir, File.separator)) + CORDOVA_IOS_LOG_PATH);
+  }
+
+  @Override
+  public boolean isBuildBeforeLaunchAddedByDefault() {
+    return false;
   }
 }
