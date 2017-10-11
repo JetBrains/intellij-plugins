@@ -166,6 +166,9 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     import CompUI from 'compUI.vue'
+    export default {
+      components: {CompUI}
+    }
 </script>
 """)
       myFixture.checkHighlighting()
@@ -193,6 +196,9 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     import CompUI from 'compUI.vue'
+    export default {
+      components: {CompUI}
+    }
 </script>
 """)
       myFixture.checkHighlighting()
@@ -219,6 +225,9 @@ const props = {seeMe: {}}
 </template>
 <script>
     import CompUI from 'compUI.vue'
+    export default {
+      components: {CompUI}
+    }
 </script>
 """)
       myFixture.checkHighlighting()
@@ -412,5 +421,28 @@ export default {
 """)
 
     JSTestUtils.testES6<Exception>(project, { myFixture.checkHighlighting(true, false, true) })
+  }
+
+  fun testNotImportedComponentIsUnknown() {
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("ExternalComp.vue", """
+<script>
+    export default {
+        name: 'ExternalComp',
+        props: {
+          seeMe: {}
+        }
+    }
+</script>
+""")
+      myFixture.configureByText("notImportedComponentIsUnknown.vue", """
+<template>
+    <div id="app">
+      <<warning descr="Unknown html tag ExternalComp">ExternalComp</warning>>22</<warning descr="Unknown html tag ExternalComp">ExternalComp</warning>>
+    </div>
+</template>
+""")
+      myFixture.checkHighlighting()
+    })
   }
 }
