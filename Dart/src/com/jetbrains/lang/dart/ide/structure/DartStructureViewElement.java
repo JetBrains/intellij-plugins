@@ -140,6 +140,11 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
         return element.isTopLevelOrStatic() ? PropertyWriteStatic : PropertyWrite;
       case ElementKind.TOP_LEVEL_VARIABLE:
         return finalOrConst ? TOP_LEVEL_CONST_ICON : TOP_LEVEL_VAR_ICON;
+      case ElementKind.UNIT_TEST_GROUP:
+        return AllIcons.RunConfigurations.Junit;
+      case ElementKind.UNIT_TEST_TEST:
+        return DartIcons.TestNode;
+
       case ElementKind.CLASS_TYPE_ALIAS:
       case ElementKind.COMPILATION_UNIT:
       case ElementKind.FILE:
@@ -149,14 +154,9 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
       case ElementKind.PARAMETER:
       case ElementKind.PREFIX:
       case ElementKind.TYPE_PARAMETER:
-      case ElementKind.UNIT_TEST_GROUP:
-        return AllIcons.RunConfigurations.Junit;
-      case ElementKind.UNIT_TEST_TEST:
-        return DartIcons.TestNode;
       case ElementKind.UNKNOWN:
-        return null; // unexpected
       default:
-        return null;
+        return null; // unexpected
     }
   }
 
