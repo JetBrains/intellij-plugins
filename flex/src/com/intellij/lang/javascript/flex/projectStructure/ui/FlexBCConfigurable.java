@@ -496,6 +496,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     return myConfiguration;
   }
 
+  @Override
   public String getHelpTopic() {
     return "BuildConfigurationPage.General";
   }

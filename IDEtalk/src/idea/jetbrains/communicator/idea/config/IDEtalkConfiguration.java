@@ -144,6 +144,7 @@ public class IDEtalkConfiguration implements Configurable {
   }
 
 
+  @Override
   @Nullable
   @NonNls
   public String getHelpTopic() {

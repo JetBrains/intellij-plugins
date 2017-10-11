@@ -45,6 +45,7 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
     return "Flex Compiler";
   }
 
+  @Override
   public String getHelpTopic() {
     return "reference.projectsettings.compiler.flex";
   }

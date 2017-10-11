@@ -24,6 +24,7 @@ public class ActionScriptProfileSettingsConfigurable implements SearchableConfig
     return "asprofile.settings";
   }
 
+  @Override
   public String getHelpTopic() {
     return null;
   }

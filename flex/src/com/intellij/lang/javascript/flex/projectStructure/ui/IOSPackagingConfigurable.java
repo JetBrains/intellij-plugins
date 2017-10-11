@@ -19,6 +19,7 @@ public class IOSPackagingConfigurable extends AirPackagingConfigurableBase<Modif
     return TAB_NAME;
   }
 
+  @Override
   public String getHelpTopic() {
     return "BuildConfigurationPage.iOS";
   }

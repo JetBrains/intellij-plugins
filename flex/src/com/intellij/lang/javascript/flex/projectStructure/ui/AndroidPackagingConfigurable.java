@@ -19,6 +19,7 @@ public class AndroidPackagingConfigurable extends AirPackagingConfigurableBase<M
     return TAB_NAME;
   }
 
+  @Override
   public String getHelpTopic() {
     return "BuildConfigurationPage.Android";
   }

@@ -361,6 +361,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     return myModel;
   }
 
+  @Override
   public String getHelpTopic() {
     return "BuildConfigurationPage.CompilerOptions";
   }

@@ -58,6 +58,7 @@ public class CfmlProjectConfigurable implements SearchableConfigurable, Configur
     return "ColdFusion";
   }
 
+  @Override
   @NotNull
   public String getHelpTopic() {
     return "reference.plugin.settings.project.settings.cfml";

@@ -1211,6 +1211,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     return myDependencies;
   }
 
+  @Override
   public String getHelpTopic() {
     return "BuildConfigurationPage.Dependencies";
   }
