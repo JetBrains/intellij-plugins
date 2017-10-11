@@ -201,6 +201,10 @@ export default {
 </template>
 <script>
 import compUI from 'compUI.vue'
+
+export default {
+  components: {compUI}
+}
 </script>
 """)
     myFixture.completeBasic()

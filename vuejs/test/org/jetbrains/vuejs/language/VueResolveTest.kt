@@ -912,6 +912,12 @@ export default {
 <template>
   <comp-with-mixin <caret>mixin-prop=123>1</comp-with-mixin>
 </template>
+<script>
+  import CompWithMixin from './CompWithMixin'
+  export default {
+    components: { CompWithMixin }
+  }
+</script>
 """)
 
     val reference = myFixture.getReferenceAtCaretPosition()

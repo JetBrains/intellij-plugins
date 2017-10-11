@@ -36,6 +36,7 @@ import org.jetbrains.vuejs.COMPUTED
 import org.jetbrains.vuejs.METHODS
 import org.jetbrains.vuejs.MIXINS
 import org.jetbrains.vuejs.PROPS
+import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isGlobal
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.resolveReferenceToObjectLiteral
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.selectComponent
 import org.jetbrains.vuejs.index.*
@@ -44,8 +45,8 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
     if (tag != null && hasVue(tag.project)) {
       var localComponent:JSImplicitElement? = null
-      processLocalComponents(tag, { property, element ->
-        if (property.name == tag.name || property.name == toAsset(tag.name) || property.name == toAsset(tag.name).capitalize()) {
+      processLocalComponents(tag, { foundName, element ->
+        if (foundName == tag.name || foundName == toAsset(tag.name) || foundName == toAsset(tag.name).capitalize()) {
           localComponent = element
         }
         return@processLocalComponents localComponent == null
@@ -56,42 +57,52 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       val component = selectComponent(resolve(tag.name, tag.resolveScope, VueComponentsIndex.KEY), false) ?:
                       selectComponent(resolve(toAsset(tag.name), tag.resolveScope, VueComponentsIndex.KEY), false) ?:
                       selectComponent(resolve(toAsset(tag.name).capitalize(), tag.resolveScope, VueComponentsIndex.KEY), false)
-      if (component != null) {
+      if (component != null && isGlobal(component)) {
         return VueElementDescriptor(component)
       }
     }
     return null
   }
 
-  private fun processLocalComponents(tag: XmlTag, processor: (JSProperty, JSImplicitElement) -> Boolean): Boolean {
+  private fun processLocalComponents(tag: XmlTag, processor: (String?, JSImplicitElement) -> Boolean): Boolean {
     val content = findScriptContent(tag.containingFile as? HtmlFileImpl) ?: return true
     val defaultExport = ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment ?: return true
     val component = defaultExport.stubSafeElement as? JSObjectLiteralExpression ?: return true
+
+    // recursive usage case
+    val nameProperty = component.findProperty("name")
+    val nameValue = nameProperty?.value as? JSLiteralExpression
+    if (nameValue != null && nameValue.isQuotedLiteral) {
+      val name = StringUtil.unquoteString(nameValue.text)
+      processor.invoke(name, JSImplicitElementImpl(name, nameProperty))
+    }
+
     val components = component.findProperty("components")?.objectLiteralExpressionInitializer ?: return true
     for (property in components.properties) {
       val obj = JSStubBasedPsiTreeUtil.calculateMeaningfulElement(property) as? JSObjectLiteralExpression
+      val propName = property.name
       if (obj != null) {
         val elements = findProperty(obj, "name")?.indexingData?.implicitElements
         if (elements != null) {
           elements.forEach {
-            if (it.userString == VueComponentsIndex.JS_KEY && !processor.invoke(property, it)) return false
+            if (it.userString == VueComponentsIndex.JS_KEY && !processor.invoke(propName, it)) return false
           }
           continue
         }
         val first = obj.firstProperty
         if (first != null) {
-          if (property.name != null && !processor.invoke(property, JSImplicitElementImpl(property.name!!, first))) return false
+          if (propName != null && !processor.invoke(propName, JSImplicitElementImpl(propName, first))) return false
         }
       }
-      if (property.name != null && !processor.invoke(property, JSImplicitElementImpl(property.name!!, property.nameIdentifier))) return false
+      if (propName != null && !processor.invoke(propName, JSImplicitElementImpl(propName, property.nameIdentifier))) return false
     }
     return true
   }
 
   override fun addTagNameVariants(elements: MutableList<LookupElement>?, tag: XmlTag, prefix: String?) {
     val files:MutableList<PsiFile> = mutableListOf()
-    processLocalComponents(tag, { property, element ->
-      elements?.add(PrioritizedLookupElement.withPriority(createVueLookup(element, property.name!!, false).bold(), 100.0))
+    processLocalComponents(tag, { foundName, element ->
+      elements?.add(PrioritizedLookupElement.withPriority(createVueLookup(element, foundName!!, false).bold(), 100.0))
       files.add(element.containingFile)
       return@processLocalComponents true
     })
@@ -112,7 +123,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       withIcon(VuejsIcons.Vue)
 }
 
-private val FUNCTION_FILTER = PairProcessor<String, PsiElement> { name, element ->
+private val FUNCTION_FILTER = PairProcessor<String, PsiElement> { _, element ->
   element is JSFunctionProperty || element is JSProperty && element.value is JSFunction }
 
 fun findComponentInnerDetailInObjectLiteral(obj : JSObjectLiteralExpression, attributeName: String) : Pair<String, PsiElement>? {
@@ -276,6 +287,7 @@ private fun withNameVariants(props: List<VueAttributeDescriptor>, withKebab: Boo
   if (props.isEmpty()) return emptyList()
   val alternatives : MutableSet<VueAttributeDescriptor> = mutableSetOf()
   props.forEach {
+    @Suppress("UnnecessaryVariable")
     val attr = it
     getNameVariants(it.name, withKebab).minus(it.name).forEach { alternatives.add(attr.createNameVariant(it)) }
   }
@@ -328,7 +340,7 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
       val prefix = VueElementDescriptor.BIND_VARIANTS.find { attributeName.startsWith(it) }
       val normalizedName = if (prefix != null) attributeName.substring(prefix.length) else attributeName
       val nameVariants = getNameVariants(normalizedName, true)
-      return PairProcessor { name, element -> name in nameVariants }
+      return PairProcessor { name, _ -> name in nameVariants }
     }
   }
 
