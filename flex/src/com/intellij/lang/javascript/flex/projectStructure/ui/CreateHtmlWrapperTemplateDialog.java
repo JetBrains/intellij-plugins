@@ -26,6 +26,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
 
@@ -272,13 +273,13 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
     final String expressInstallSwf = checkPlayerVersion && expressInstall ? PLAYER_PRODUCT_INSTALL_SWF : "";
 
     final String fixedText = StringUtil.replace(text,
-                                                new String[]{
+                                                Arrays.asList(
                                                   USE_BROWSER_HISTORY_MACRO,
                                                   FlexCommonUtils.VERSION_MAJOR_MACRO,
                                                   FlexCommonUtils.VERSION_MINOR_MACRO,
                                                   FlexCommonUtils.VERSION_REVISION_MACRO,
-                                                  EXPRESS_INSTALL_SWF_MACRO},
-                                                new String[]{useBrowserHistory, major, minor, revision, expressInstallSwf});
+                                                  EXPRESS_INSTALL_SWF_MACRO),
+                                                Arrays.asList(useBrowserHistory, major, minor, revision, expressInstallSwf));
 
     FlexUtils.addFileWithContent(file.getName(), fixedText, folder);
   }
