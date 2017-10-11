@@ -44,7 +44,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   override fun processAnyProperty(property: JSProperty, outData: JSElementIndexingData?): JSElementIndexingData? {
     val obj = property.parent as JSObjectLiteralExpression
-    if (obj.properties.isEmpty()) return outData
+    val firstProperty = obj.firstProperty
+    if (firstProperty == null) return outData
 
     val out : Ref<JSElementIndexingData?> = Ref(outData)
     val outGetter = {
@@ -68,11 +69,11 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         }
     }
 
-    if (obj.parent is JSExportAssignment && obj.properties[0] == property && obj.containingFile.fileType == VueFileType.INSTANCE)  {
+    if (obj.parent is JSExportAssignment && firstProperty == property && obj.containingFile.fileType == VueFileType.INSTANCE)  {
       tryProcessComponentInVue(obj, property, outGetter)
     }
 
-    if (obj.properties[0] == property && ((obj.parent as? JSProperty) == null) && isDescriptorOfLinkedInstanceDefinition(obj)) {
+    if (firstProperty == property && ((obj.parent as? JSProperty) == null) && isDescriptorOfLinkedInstanceDefinition(obj)) {
       val binding = (obj.findProperty("el")?.value as? JSLiteralExpression)?.value as? String
       outGetter()!!.addImplicitElement(JSImplicitElementImpl.Builder(binding ?: "", property)
                                .setUserString(VueOptionsIndex.JS_KEY)
