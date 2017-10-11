@@ -6,7 +6,6 @@ import com.intellij.psi.impl.beanProperties.BeanProperty;
 import com.intellij.psi.resolve.JavaMethodCandidateInfo;
 import com.intellij.psi.resolve.JavaMethodResolveHelper;
 import com.intellij.psi.scope.BaseScopeProcessor;
-import com.intellij.psi.util.PropertyUtil;
 import com.intellij.psi.util.PropertyUtilBase;
 import com.intellij.tapestry.core.TapestryConstants;
 import gnu.trove.THashSet;

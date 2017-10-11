@@ -1,7 +1,7 @@
 package com.intellij.tapestry.core.model.presentation.valueresolvers;
 
-import org.jetbrains.annotations.Nullable;
 import org.apache.commons.chain.Command;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Base class for all value resolver commands.
