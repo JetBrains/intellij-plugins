@@ -895,14 +895,12 @@ public class FlexCommonUtils {
   }
 
   public static String replace(final String text, final Map<String, String> replacementMap) {
-    final String[] from = new String[replacementMap.size()];
-    final String[] to = new String[replacementMap.size()];
+    final List<String> from = new ArrayList<>(replacementMap.size());
+    final List<String> to = new ArrayList<>(replacementMap.size());
 
-    int i = 0;
     for (Map.Entry<String, String> entry : replacementMap.entrySet()) {
-      from[i] = entry.getKey();
-      to[i] = entry.getValue();
-      i++;
+      from.add(entry.getKey());
+      to.add(entry.getValue());
     }
 
     return StringUtil.replace(text, from, to);
