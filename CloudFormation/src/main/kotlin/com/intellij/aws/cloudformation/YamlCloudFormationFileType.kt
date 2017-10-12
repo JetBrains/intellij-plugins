@@ -22,11 +22,11 @@ class YamlCloudFormationFileType : LanguageFileType(YAMLLanguage.INSTANCE), File
   override fun isMyFileType(file: VirtualFile): Boolean {
     val extension = file.extension ?: return false
 
-    return fileTypeRecursionGuard.doPreventingRecursion(javaClass.simpleName, false, {
+    return fileTypeRecursionGuard.doPreventingRecursion(javaClass, false, {
       if (YamlCloudFormationFileType.EXTENSION1.equals(extension, ignoreCase = true) ||
           YamlCloudFormationFileType.EXTENSION2.equals(extension, ignoreCase = true) ||
           FileTypeManager.getInstance().getFileTypeByFile(file) === YAMLFileType.YML) {
-        return@doPreventingRecursion detectFileTypeFromContent(file, FILE_SIGNATURE)
+        return@doPreventingRecursion signatureDetector.detectSignature(file)
       }
 
       return@doPreventingRecursion false
@@ -39,6 +39,7 @@ class YamlCloudFormationFileType : LanguageFileType(YAMLLanguage.INSTANCE), File
     private val EXTENSION1 = "yml"
     private val EXTENSION2 = "yaml"
 
-    private val FILE_SIGNATURE = CloudFormationSection.FormatVersion.id.toByteArray(Charsets.US_ASCII)
+    private val signature = CloudFormationSection.FormatVersion.id.toByteArray(Charsets.US_ASCII)
+    private val signatureDetector = FileContentDetector(JsonCloudFormationFileType.INSTANCE.name, signature)
   }
 }

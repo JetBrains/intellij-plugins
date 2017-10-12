@@ -22,11 +22,11 @@ class JsonCloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE), File
   override fun isMyFileType(file: VirtualFile): Boolean {
     val extension = file.extension ?: return false
 
-    return fileTypeRecursionGuard.doPreventingRecursion(javaClass.simpleName, false, {
+    return fileTypeRecursionGuard.doPreventingRecursion(javaClass, false, {
       if (JsonFileType.DEFAULT_EXTENSION.equals(extension, ignoreCase = true) ||
           JsonCloudFormationFileType.EXTENSION.equals(extension, ignoreCase = true) ||
           FileTypeManager.getInstance().getFileTypeByFile(file) === JsonFileType.INSTANCE) {
-        return@doPreventingRecursion detectFileTypeFromContent(file, SIGNATURE)
+        return@doPreventingRecursion signatureDetector.detectSignature(file)
       }
 
       return@doPreventingRecursion false
@@ -37,6 +37,8 @@ class JsonCloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE), File
     val INSTANCE = JsonCloudFormationFileType()
 
     private val EXTENSION = "template"
-    private val SIGNATURE = CloudFormationSection.FormatVersion.id.toByteArray(Charsets.US_ASCII)
+
+    private val signature = CloudFormationSection.FormatVersion.id.toByteArray(Charsets.US_ASCII)
+    private val signatureDetector = FileContentDetector(INSTANCE.name, signature)
   }
 }
