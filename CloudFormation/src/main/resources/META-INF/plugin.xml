@@ -37,8 +37,8 @@
     <p>Parameters section: 'param' live template, verify Parameters section, provide completion on parameter properties and type</p>
   ]]></change-notes>
 
-  <!-- from IDEA 2017.1 to IDEA 2017.3 -->
-  <idea-version since-build="171.3566.24" until-build="173.*"/>
+  <!-- from IDEA 2017.1 to IDEA 2018.1 -->
+  <idea-version since-build="171.3566.24" until-build="181.*"/>
 
   <depends>com.intellij.modules.lang</depends>
   <depends>org.jetbrains.plugins.yaml</depends>
