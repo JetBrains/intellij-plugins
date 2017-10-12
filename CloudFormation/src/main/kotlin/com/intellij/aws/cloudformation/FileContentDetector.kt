@@ -18,7 +18,11 @@ class FileContentDetector(moniker: String, private val signature: ByteArray) {
       return true
     }
 
-    val timeStamp = file.timeStamp
+    val timeStamp = try {
+      file.modificationStamp
+    } catch (e: UnsupportedOperationException) {
+      file.timeStamp
+    }
 
     val cached = file.getUserData(cacheKey)
     if (cached != null && cached.stamp == timeStamp) {
