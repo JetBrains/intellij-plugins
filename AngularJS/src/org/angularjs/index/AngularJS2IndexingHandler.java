@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.frameworks.jquery.JQueryCssLanguage;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.literal.JSLiteralImplicitElementCustomProvider;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
@@ -383,7 +384,18 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
       if (directiveFile != null) {
         for (PsiElement element : directiveFile.getChildren()) {
           if (element instanceof JSClass) {
-            return (JSClass)element;
+            JSClass clazz = (JSClass)element;
+            JSAttributeList list = clazz.getAttributeList();
+            for (ES6Decorator decorator : PsiTreeUtil.findChildrenOfType(list, ES6Decorator.class)) {
+              PsiElement[] decoratorChildren = decorator.getChildren();
+              if (decoratorChildren.length > 0 && decoratorChildren[0] instanceof JSCallExpression) {
+                JSCallExpression call = (JSCallExpression)decoratorChildren[0];
+                if (call.getMethodExpression() instanceof JSReferenceExpression &&
+                    isDirective(((JSReferenceExpression)call.getMethodExpression()).getReferenceName())) {
+                  return clazz;
+                }
+              }
+            }
           }
         }
       }
