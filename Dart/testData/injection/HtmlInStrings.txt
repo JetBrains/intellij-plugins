@@ -123,8 +123,7 @@ Dart File
               XmlToken:XML_END_TAG_START('</')
               XmlToken:XML_NAME('html')
               XmlToken:XML_TAG_END('>')
-            XmlText
-              PsiWhiteSpace('\n        ')
+            PsiWhiteSpace('\n        ')
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
   VAR_DECLARATION_LIST
