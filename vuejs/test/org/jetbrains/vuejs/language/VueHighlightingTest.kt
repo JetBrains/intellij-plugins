@@ -9,9 +9,12 @@ import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.inspections.JSAnnotatorInspection
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
+import com.intellij.spellchecker.inspections.SpellCheckingInspection
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.util.ThrowableRunnable
 import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
+import junit.framework.TestCase
+import org.jetbrains.vuejs.VueFileType
 
 /**
  * @author Irina.Chernushina on 7/19/2017.
@@ -444,5 +447,27 @@ export default {
 """)
       myFixture.checkHighlighting()
     })
+  }
+
+  fun testNoDoubleSpellCheckingInAttributesWithEmbeddedContents() {
+    myFixture.enableInspections(SpellCheckingInspection())
+    myFixture.configureByText(VueFileType.INSTANCE, """
+<template>
+    <div>
+        <ul>
+            <li v-for="somewordd in someObject">{{ somewordd }}
+        </ul>
+    </div>
+</template>
+<script>
+    var someObject = []
+</script>
+""")
+    val list = myFixture.doHighlighting().filter { it.severity.name == "TYPO"}
+    val typoRanges : MutableSet<Pair<Int, Int>> = mutableSetOf()
+    for (info in list) {
+      val pair = Pair(info.startOffset, info.endOffset)
+      if (!typoRanges.add(pair)) TestCase.assertTrue("Duplicate $pair", false)
+    }
   }
 }
