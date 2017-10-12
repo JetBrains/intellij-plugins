@@ -671,7 +671,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
       final String componentName = unquote(arguments[0]);
       addImplicitElements(property, BINDINGS, AngularDirectivesDocIndex.KEY, DirectiveUtil.getAttributeName(property.getName()),
-                          "A;" + DirectiveUtil.getAttributeName(componentName) + ";expression;", data);
+                          "A;" + (componentName != null ? DirectiveUtil.getAttributeName(componentName) : "") + ";expression;", data);
       return true;
     }
     return false;
