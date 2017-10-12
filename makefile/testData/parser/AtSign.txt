@@ -1,0 +1,12 @@
+Makefile
+  PsiComment(COMMENT)('# GSettings')
+  PsiWhiteSpace('\n')
+  PsiElement(macro)('@GSETTINGS_RULES@')
+  PsiWhiteSpace('\n')
+  MakefileVariableAssignmentImpl(VARIABLE_ASSIGNMENT)
+    MakefileVariableImpl(VARIABLE)
+      PsiElement(identifier)('gsettings_SCHEMAS')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    MakefileVariableValueImpl(VARIABLE_VALUE)
+      PsiElement(line)(' org.gnome.Publisher.gschema.xml')

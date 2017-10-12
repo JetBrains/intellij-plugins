@@ -32,6 +32,7 @@ ERROR="$(error"
 WARNING="$(warning"
 INFO="$(info"
 SHELL="$(shell"
+MACRO="@"[^@\r\n]+"@"
 VARIABLE_VALUE=[^\r\n]*[^\\\r\n]
 COLON=":"
 DOUBLECOLON="::"
@@ -49,6 +50,7 @@ CONDITION_CHARACTER=[^#\r\n]
 
 {DOCCOMMENT}           { return DOC_COMMENT; }
 {COMMENT}              { return COMMENT; }
+^{MACRO}               { return MACRO; }
 
 {ERROR}                { yybegin(FUNCTION); return FUNCTION_ERROR; }
 {WARNING}              { yybegin(FUNCTION); return FUNCTION_WARNING; }

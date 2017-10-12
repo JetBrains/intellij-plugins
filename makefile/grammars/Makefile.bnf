@@ -45,7 +45,7 @@
 
 makefile ::= any
 
-private any ::= (topconditional|rule|variable-assignment|directive|function)*
+private any ::= (topconditional|rule|variable-assignment|directive|function|macro)*
 
 private directive ::= define|include|undefine|override|export|privatevar|vpath
 

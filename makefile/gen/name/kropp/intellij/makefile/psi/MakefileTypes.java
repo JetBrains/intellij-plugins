@@ -69,6 +69,7 @@ public interface MakefileTypes {
   IElementType KEYWORD_UNDEFINE = new MakefileTokenType("undefine");
   IElementType KEYWORD_VPATH = new MakefileTokenType("vpath");
   IElementType LINE = new MakefileTokenType("line");
+  IElementType MACRO = new MakefileTokenType("macro");
   IElementType PIPE = new MakefileTokenType("|");
   IElementType SEMICOLON = new MakefileTokenType(";");
   IElementType SPLIT = new MakefileTokenType("split");

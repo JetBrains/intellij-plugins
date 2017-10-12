@@ -124,7 +124,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (topconditional|rule|variable-assignment|directive|function)*
+  // (topconditional|rule|variable-assignment|directive|function|macro)*
   static boolean any(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "any")) return false;
     int c = current_position_(b);
@@ -136,7 +136,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // topconditional|rule|variable-assignment|directive|function
+  // topconditional|rule|variable-assignment|directive|function|macro
   private static boolean any_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "any_0")) return false;
     boolean r;
@@ -146,6 +146,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!r) r = variable_assignment(b, l + 1);
     if (!r) r = directive(b, l + 1);
     if (!r) r = function(b, l + 1);
+    if (!r) r = consumeToken(b, MACRO);
     exit_section_(b, m, null, r);
     return r;
   }
