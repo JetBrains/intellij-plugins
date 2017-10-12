@@ -52,9 +52,9 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
 
     val injectedLanguageManager = InjectedLanguageManager.getInstance(ref.project)
     // injection host can be xml attribute value or embedded js inside jade tag - this we just skip moving up
-    val host = injectedLanguageManager.getInjectionHost(ref) ?: return null
+    val host = injectedLanguageManager.getInjectionHost(ref)
     val elRef: Ref<PsiElement> = Ref(null)
-    PsiTreeUtil.findFirstParent(host, Condition {
+    PsiTreeUtil.findFirstParent(host ?: ref, Condition {
       if (it is PsiFile) return@Condition true
 
       val valueElement = (it as? XmlTag)?.getAttribute("v-for")?.valueElement ?: return@Condition false
