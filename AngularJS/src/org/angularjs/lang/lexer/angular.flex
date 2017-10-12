@@ -90,6 +90,7 @@ IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
   "]"                         { return RBRACKET; }
   "."                         { return DOT; }
   "?."                        { return ELVIS; }
+  "!."                        { return ASSERT_NOT_NULL; }
   ","                         { return COMMA; }
   ";"                         { return SEMICOLON; }
   ":"                         { return COLON; }

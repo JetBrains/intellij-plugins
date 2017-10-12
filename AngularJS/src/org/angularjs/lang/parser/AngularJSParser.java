@@ -194,7 +194,9 @@ public class AngularJSParser
 
     @Override
     protected boolean isReferenceQualifierSeparator(IElementType tokenType) {
-      return tokenType == AngularJSTokenTypes.ELVIS || super.isReferenceQualifierSeparator(tokenType);
+      return tokenType == AngularJSTokenTypes.ELVIS ||
+             tokenType == AngularJSTokenTypes.ASSERT_NOT_NULL ||
+             super.isReferenceQualifierSeparator(tokenType);
     }
 
     @Override

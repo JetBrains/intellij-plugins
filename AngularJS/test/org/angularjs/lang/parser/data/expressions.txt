@@ -184,6 +184,14 @@ ASTWrapperPsiElement(FILE)
 ------
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
+    JSReferenceExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('aaa')
+      PsiElement(ASSERT_NOT_NULL)('!.')
+      PsiElement(JS:IDENTIFIER)('foo')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
     AngularJSRepeatExpression
       JSVarStatement
         PsiElement(JS:LET_KEYWORD)('let')
