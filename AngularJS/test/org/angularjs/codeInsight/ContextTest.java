@@ -164,6 +164,15 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testInlineTemplateCreateFunctionWithType2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.enableInspections(JSUnresolvedFunctionInspection.class);
+      myFixture.getAllQuickFixes("createFunctionWithType.ts", "angular2.js");
+      myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
+      myFixture.checkResultByFile("createFunctionWithType.fixed.ts", true);
+    });
+  }
+
   public void testInlineTemplateCreateField2TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.enableInspections(JSUnresolvedVariableInspection.class);
