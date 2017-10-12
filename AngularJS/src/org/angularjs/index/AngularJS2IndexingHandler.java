@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.literal.JSLiteralImplicitElementCustomProvider;
+import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.resolve.JSTypeInfo;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
@@ -17,6 +18,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure;
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.types.JSContext;
+import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -28,8 +30,11 @@ import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.impl.source.tree.TreeUtil;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.MultiMap;
+import org.angularjs.codeInsight.AngularJSProcessor;
+import org.angularjs.codeInsight.attributes.AngularEventHandlerDescriptor;
 import org.angularjs.html.Angular2HTMLLanguage;
 import org.angularjs.lang.AngularJSLanguage;
 import org.jetbrains.annotations.NotNull;
@@ -465,6 +470,29 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
       sink.occurrence(AngularDecoratorsIndex.KEY, element.getName());
       sink.occurrence(AngularSymbolIndex.KEY, element.getName());
       return true;
+    }
+    return false;
+  }
+
+  @Override
+  public boolean addTypeFromResolveResult(JSTypeEvaluator evaluator, PsiElement result, boolean hasSomeType) {
+    if (result instanceof JSImplicitElement && AngularJSProcessor.$EVENT.equals(((JSImplicitElement)result).getName())) {
+      XmlAttribute parent = ObjectUtils.tryCast(result.getParent(), XmlAttribute.class);
+      AngularEventHandlerDescriptor descriptor = ObjectUtils.tryCast(parent != null ? parent.getDescriptor() : null,
+                                                                     AngularEventHandlerDescriptor.class);
+      PsiElement declaration = descriptor != null ? descriptor.getDeclaration() : null;
+      JSType type  = null;
+      if (declaration instanceof JSField) {
+        type = ((JSField)declaration).getType();
+      } else if (declaration instanceof JSFunction) {
+        type = ((JSFunction)declaration).getReturnType();
+      }
+      if (type instanceof JSGenericTypeImpl) {
+        List<JSType> arguments = ((JSGenericTypeImpl)type).getArguments();
+        if (arguments.size() == 1) {
+          evaluator.addType(arguments.get(0), declaration);
+        }
+      }
     }
     return false;
   }
