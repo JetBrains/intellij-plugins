@@ -407,3 +407,11 @@ ASTWrapperPsiElement(FILE)
       JSArgumentList
         PsiElement(JS:LPAR)('(')
         PsiElement(JS:RPAR)(')')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSReferenceExpression
+      JSThisExpression
+        PsiElement(JS:THIS_KEYWORD)('this')
+      PsiElement(JS:DOT)('.')
+      PsiElement(JS:IDENTIFIER)('foo')

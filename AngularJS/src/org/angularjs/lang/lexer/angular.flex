@@ -44,6 +44,7 @@ IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
   {NUMBER}                    { return NUMERIC_LITERAL; }
   {WHITE_SPACE}               { return WHITE_SPACE; }
 
+  "this"                      { return THIS_KEYWORD; }
   "true"                      { return TRUE_KEYWORD; }
   "false"                     { return FALSE_KEYWORD; }
   "null"                      { return NULL_KEYWORD; }
