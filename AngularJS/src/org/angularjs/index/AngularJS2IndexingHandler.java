@@ -386,7 +386,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
           if (element instanceof JSClass) {
             JSClass clazz = (JSClass)element;
             JSAttributeList list = clazz.getAttributeList();
-            for (ES6Decorator decorator : PsiTreeUtil.findChildrenOfType(list, ES6Decorator.class)) {
+            for (ES6Decorator decorator : PsiTreeUtil.getChildrenOfTypeAsList(list, ES6Decorator.class)) {
               PsiElement[] decoratorChildren = decorator.getChildren();
               if (decoratorChildren.length > 0 && decoratorChildren[0] instanceof JSCallExpression) {
                 JSCallExpression call = (JSCallExpression)decoratorChildren[0];
@@ -488,22 +488,24 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
 
   @Override
   public boolean addTypeFromResolveResult(JSTypeEvaluator evaluator, PsiElement result, boolean hasSomeType) {
-    if (result instanceof JSImplicitElement && AngularJSProcessor.$EVENT.equals(((JSImplicitElement)result).getName())) {
-      XmlAttribute parent = ObjectUtils.tryCast(result.getParent(), XmlAttribute.class);
-      AngularEventHandlerDescriptor descriptor = ObjectUtils.tryCast(parent != null ? parent.getDescriptor() : null,
-                                                                     AngularEventHandlerDescriptor.class);
-      PsiElement declaration = descriptor != null ? descriptor.getDeclaration() : null;
-      JSType type  = null;
-      if (declaration instanceof JSField) {
-        type = ((JSField)declaration).getType();
-      } else if (declaration instanceof JSFunction) {
-        type = ((JSFunction)declaration).getReturnType();
-      }
-      if (type instanceof JSGenericTypeImpl) {
-        List<JSType> arguments = ((JSGenericTypeImpl)type).getArguments();
-        if (arguments.size() == 1) {
-          evaluator.addType(arguments.get(0), declaration);
-        }
+    if (!(result instanceof JSImplicitElement) || !AngularJSProcessor.$EVENT.equals(((JSImplicitElement)result).getName())) {
+      return false;
+    }
+    XmlAttribute parent = ObjectUtils.tryCast(result.getParent(), XmlAttribute.class);
+    AngularEventHandlerDescriptor descriptor = ObjectUtils.tryCast(parent != null ? parent.getDescriptor() : null,
+                                                                   AngularEventHandlerDescriptor.class);
+    PsiElement declaration = descriptor != null ? descriptor.getDeclaration() : null;
+    JSType type  = null;
+    if (declaration instanceof JSField) {
+      type = ((JSField)declaration).getType();
+    } else if (declaration instanceof JSFunction) {
+      type = ((JSFunction)declaration).getReturnType();
+    }
+    if (type instanceof JSGenericTypeImpl) {
+      List<JSType> arguments = ((JSGenericTypeImpl)type).getArguments();
+      if (arguments.size() == 1) {
+        evaluator.addType(arguments.get(0), declaration);
+        return true;
       }
     }
     return false;
