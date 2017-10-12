@@ -1,3 +1,5 @@
+JS:THIS_KEYWORD ('this')
+WHITE_SPACE ('\n')
 JS:TRUE_KEYWORD ('true')
 WHITE_SPACE ('\n')
 JS:FALSE_KEYWORD ('false')

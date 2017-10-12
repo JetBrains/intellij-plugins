@@ -18,3 +18,4 @@ let todo todoService.todos | started : status | search : term
 let todo of todoService.todos; let index=index, let last=last
 let item of (ops$ | async); trackBy: tracker
 fetchFromApi().then()
+this.foo
