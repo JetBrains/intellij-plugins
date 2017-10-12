@@ -44,6 +44,7 @@ User Guide (API Version 2010-05-15)
                 + Viewing Stack Data and Resources
                 + Creating Quick-Create Links for Stacks
                 + Deleting a Stack
+                + Protecting a Stack From Being Deleted
                 + Viewing Deleted Stacks
           o Using the AWS CLI
                 + Creating a Stack
@@ -71,6 +72,7 @@ User Guide (API Version 2010-05-15)
                 + Continue Rolling Back an Update
           o Exporting Stack Output Values
           o Listing Stacks That Import an Exported Output Value
+          o Working with Nested Stacks
           o Working with Windows Stacks
                 + Windows AMIs and Templates
                 + Bootstrapping Windows Stacks
@@ -84,8 +86,8 @@ User Guide (API Version 2010-05-15)
                 + Mappings
                 + Conditions
                 + Transform
-                      # AWS::Include Transform
                       # AWS::Serverless Transform
+                      # AWS::Include Transform
                 + Resources
                 + Outputs
           o What Is AWS CloudFormation Designer?
@@ -176,6 +178,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::ApiGateway::UsagePlanKey
                 + AWS::ApplicationAutoScaling::ScalableTarget
                 + AWS::ApplicationAutoScaling::ScalingPolicy
+                + AWS::Athena::NamedQuery
                 + AWS::AutoScaling::AutoScalingGroup
                 + AWS::AutoScaling::LaunchConfiguration
                 + AWS::AutoScaling::LifecycleHook
@@ -282,6 +285,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::ElasticBeanstalk::Environment
                 + AWS::ElasticLoadBalancing::LoadBalancer
                 + AWS::ElasticLoadBalancingV2::Listener
+                + AWS::ElasticLoadBalancingV2::ListenerCertificate
                 + AWS::ElasticLoadBalancingV2::ListenerRule
                 + AWS::ElasticLoadBalancingV2::LoadBalancer
                 + AWS::ElasticLoadBalancingV2::TargetGroup
@@ -361,7 +365,11 @@ User Guide (API Version 2010-05-15)
                 + AWS::SQS::QueuePolicy
                 + AWS::SSM::Association
                 + AWS::SSM::Document
+                + AWS::SSM::MaintenanceWindow
+                + AWS::SSM::MaintenanceWindowTarget
+                + AWS::SSM::MaintenanceWindowTask
                 + AWS::SSM::Parameter
+                + AWS::SSM::PatchBaseline
                 + AWS::StepFunctions::Activity
                 + AWS::StepFunctions::StateMachine
                 + AWS::WAF::ByteMatchSet
@@ -445,6 +453,11 @@ User Guide (API Version 2010-05-15)
                 + CloudTrail Trail EventSelector
                 + CloudTrail Trail DataResource
                 + CloudWatch Metric Dimension
+                + CloudWatch Events Rule EcsParameters
+                + CloudWatch Events Rule InputTransformer
+                + CloudWatch Events Rule KinesisParameters
+                + CloudWatch Events Rule RunCommandParameters
+                + CloudWatch Events Rule RunCommandTarget
                 + CloudWatch Events Rule Target
                 + CloudWatch Logs MetricFilter MetricTransformation
                   Property
@@ -512,8 +525,8 @@ User Guide (API Version 2010-05-15)
                 + AWS Data Pipeline Pipeline ParameterObjects
                 + AWS Data Pipeline Parameter Objects Attributes
                 + AWS Data Pipeline Pipeline ParameterValues
-                + AWS Data Pipeline PipelineObjects
-                + AWS Data Pipeline Data Pipeline Object Fields
+                + AWS Data Pipeline PipelineObject
+                + AWS Data Pipeline Pipeline Field
                 + AWS Data Pipeline Pipeline PipelineTags
                 + AWS DMS Endpoint DynamoDBSettings
                 + AWS DMS Endpoint MongoDbSettings
@@ -579,8 +592,14 @@ User Guide (API Version 2010-05-15)
                 + Amazon ECS TaskDefinition Volumes
                 + Amazon ECS TaskDefinition Volumes Host
                 + Amazon Elastic File System FileSystem FileSystemTags
+                + Elastic Beanstalk Application
+                  ApplicationResourceLifecycleConfig
+                + Elastic Beanstalk Application
+                  ApplicationVersionLifecycleConfig
+                + Elastic Beanstalk Application MaxAgeRule
+                + Elastic Beanstalk Application MaxCountRule
                 + Elastic Beanstalk Environment Tier
-                + Elastic Beanstalk OptionSettings Property Type
+                + Elastic Beanstalk OptionSetting
                 + Elastic Beanstalk SourceBundle Property Type
                 + Elastic Beanstalk SourceConfiguration Property Type
                 + ElastiCache ReplicationGroup NodeGroupConfiguration
@@ -593,6 +612,7 @@ User Guide (API Version 2010-05-15)
                 + ElasticLoadBalancing Listener
                 + ElasticLoadBalancing Policy
                 + Elastic Load Balancing Listener Certificates
+                + Elastic Load Balancing ListenerCertificate Certificate
                 + Elastic Load Balancing Listener DefaultActions
                 + Elastic Load Balancing ListenerRule Actions
                 + Elastic Load Balancing ListenerRule Conditions
@@ -609,7 +629,7 @@ User Guide (API Version 2010-05-15)
                 + Amazon EMR Cluster AutoScalingPolicy
                 + Amazon EMR Cluster BootstrapActionConfig
                 + Amazon EMR Cluster CloudWatchAlarmDefinition
-                + Amazon EMR Cluster Configuration
+                + Amazon EMR Cluster Configurations
                 + Amazon EMR Cluster InstanceFleetConfig
                 + Amazon EMR Cluster
                   InstanceFleetProvisioningSpecifications
@@ -711,6 +731,8 @@ User Guide (API Version 2010-05-15)
                 + Kinesis Firehose DeliveryStream EncryptionConfiguration
                 + Kinesis Firehose DeliveryStream
                   ExtendedS3DestinationConfiguration
+                + Kinesis Firehose DeliveryStream
+                  KinesisStreamSourceConfiguration
                 + Kinesis Firehose DeliveryStream KMSEncryptionConfig
                 + Kinesis Firehose DeliveryStream ProcessingConfiguration
                 + Kinesis Firehose DeliveryStream Processor
@@ -758,28 +780,28 @@ User Guide (API Version 2010-05-15)
                 + Amazon Route 53 HostedZoneConfig Property
                 + Amazon Route 53 HostedZoneTags
                 + Amazon Route 53 HostedZoneVPCs
-                + Amazon S3 Bucket MetricsConfiguration
-                + Amazon S3 Bucket TagFilter
-                + Amazon S3 Cors Configuration
-                + Amazon S3 Cors Configuration Rule
                 + Amazon S3 Bucket AbortIncompleteMultipartUpload
-                + Amazon S3 Lifecycle Configuration
-                + Amazon S3 Lifecycle Rule
-                + Amazon S3 Lifecycle Rule NoncurrentVersionTransition
-                + Amazon S3 Lifecycle Rule Transition
-                + Amazon S3 Logging Configuration
-                + Amazon S3 NotificationConfiguration
-                + Amazon S3 NotificationConfiguration Config Filter
-                + Amazon S3 NotificationConfiguration Config Filter S3Key
-                + Amazon S3 NotificationConfiguration Config Filter S3Key
-                  Rules
-                + Amazon S3 NotificationConfiguration LambdaConfigurations
-                + Amazon S3 NotificationConfiguration QueueConfigurations
-                + Amazon S3 NotificationConfiguration TopicConfigurations
-                + Amazon S3 ReplicationConfiguration
-                + Amazon S3 ReplicationConfiguration Rule
-                + Amazon S3 ReplicationConfiguration Rules Destination
-                + Amazon S3 Versioning Configuration
+                + Amazon S3 Bucket AccelerateConfiguration
+                + Amazon S3 Bucket CorsConfiguration
+                + Amazon S3 Bucket CorsRule
+                + Amazon S3 Bucket FilterRule
+                + Amazon S3 Bucket LambdaConfiguration
+                + Amazon S3 Bucket LifecycleConfiguration
+                + Amazon S3 Bucket LoggingConfiguration
+                + Amazon S3 Bucket MetricsConfiguration
+                + Amazon S3 Bucket NoncurrentVersionTransition
+                + Amazon S3 Bucket NotificationConfiguration
+                + Amazon S3 Bucket NotificationFilter
+                + Amazon S3 Bucket QueueConfiguration
+                + Amazon S3 Bucket ReplicationConfiguration
+                + Amazon S3 Bucket ReplicationDestination
+                + Amazon S3 Bucket ReplicationRule
+                + Amazon S3 Bucket Rule
+                + Amazon S3 Bucket S3KeyFilter
+                + Amazon S3 Bucket TagFilter
+                + Amazon S3 Bucket TopicConfiguration
+                + Amazon S3 Bucket Transition
+                + Amazon S3 Bucket VersioningConfiguration
                 + Amazon S3 Website Configuration Property
                 + Amazon S3 Website Configuration Redirect All Requests To
                   Property
@@ -789,6 +811,23 @@ User Guide (API Version 2010-05-15)
                 + Amazon S3 Website Configuration Routing Rules Routing
                   Rule Condition Property
                 + SSM Association Targets
+                + SSM MaintenanceWindowTarget Targets
+                + SSM MaintenanceWindowTask LoggingInfo
+                + SSM MaintenanceWindowTask
+                  MaintenanceWindowAutomationParameters
+                + SSM MaintenanceWindowTask
+                  MaintenanceWindowLambdaParameters
+                + SSM MaintenanceWindowTask
+                  MaintenanceWindowRunCommandParameters
+                + SSM MaintenanceWindowTask
+                  MaintenanceWindowStepFunctionsParameters
+                + SSM MaintenanceWindowTask NotificationConfig
+                + SSM MaintenanceWindowTask Target
+                + SSM MaintenanceWindowTask TaskInvocationParameters
+                + SSM PatchBaseline PatchFilterGroup
+                + SSM PatchBaseline Rule
+                + SSM PatchBaseline PatchFilter
+                + SSM PatchBaseline RuleGroup
                 + Amazon SNS Subscription
                 + Amazon SQS RedrivePolicy
                 + AWS WAF ByteMatchSet ByteMatchTuples
@@ -921,6 +960,119 @@ The following table describes the important changes to the documentation
 since the preceding release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
+
+New resources
+
+October 11, 2017
+
+AWS::SSM::MaintenanceWindow
+
+    Use the AWS::SSM::MaintenanceWindow resource to create an Amazon EC2
+    Systems Manager Maintenance Window.
+
+AWS::SSM::MaintenanceWindowTarget
+
+    Use the AWS::SSM::MaintenanceWindowTarget resource to register a target
+    with a Maintenance Window.
+
+AWS::SSM::MaintenanceWindowTask
+
+    Use the AWS::SSM::MaintenanceWindowTask resource to define a
+    Maintenance Window task.
+
+AWS::SSM::PatchBaseline
+
+    Use the AWS::SSM::PatchBaseline resource to define a Systems Manager
+    patch baseline.
+
+2010-05-15
+
+New resource
+
+October 10, 2017
+
+AWS::ElasticLoadBalancingV2::ListenerCertificate
+
+    Use the AWS::ElasticLoadBalancingV2::ListenerCertificate resource to
+    specify certificates for an Elastic Load Balancing listener.
+
+2010-05-15
+
+New resource
+
+September 27, 2017
+
+AWS::Athena::NamedQuery
+
+    Use the AWS::Athena::NamedQuery resource to create an Amazon Athena
+    query.
+
+2010-05-15
+
+Updated resources 	September 27, 2017 	
+AWS::EC2::NatGateway
+
+    Use the Tags property to specify resource tags for a NAT gateway.
+
+AWS::ElasticBeanstalk::Application
+
+    Use the ResourceLifecycleConfig property to define lifecycle settings
+    for resources that belong to the application, and the service role that
+    Elastic Beanstalk assumes in order to apply lifecycle settings.
+
+AWS::ElasticBeanstalk::ConfigurationTemplate and 
+AWS::ElasticBeanstalk::Environment
+
+    Use the PlatformArn property to specify a custom platform for Elastic
+    Beanstalk.
+
+AWS::ElasticLoadBalancingV2::TargetGroup
+
+    In the TargetDescription property type, use the AvailabilityZone 
+    property to specify the Availability Zone where the IP address is to be
+    registered.
+
+AWS::Events::Rule
+
+    In the Target property type, use the following properties for input
+    transformation of events and setting Amazon ECS task and Kinesis stream
+    targets.
+
+        * EcsParameters
+
+        * InputTransformer
+
+        * KinesisParameters
+
+        * RunCommandParameters
+
+AWS::KinesisFirehose::DeliveryStream
+
+    Use the DeliveryStreamType property to specify the stream type and the 
+    KinesisStreamSourceConfiguration property to specify the stream and
+    role ARNs for a Kinesis stream used as the source for a delivery
+    stream.
+
+AWS::RDS::DBInstance
+
+    For the Engine property, if you have specified oracle-se or oracle-se1
+    , you can update to oracle-se2 without the database instance being
+    replaced.
+
+AWS::S3::Bucket
+
+    Use the AccelerateConfiguration property to configure the transfer
+    acceleration state for an Amazon S3 bucket.
+
+2010-05-15
+Termination protection added for stacks. 	September 26, 2017 	
+
+Enabling termination protection on a stack prevents it from being 
+accidently deleted. A user cannot delete a stack with termination 
+protection enabled. For more information, see Protecting a Stack From Being 
+Deleted.
+
+2010-05-15
 
 Changed default umask value from version 1.4-22 onwards
 
