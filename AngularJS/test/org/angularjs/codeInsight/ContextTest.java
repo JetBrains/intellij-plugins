@@ -171,7 +171,6 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.launchAction(myFixture.findSingleIntention("Create Field 'todo'"));
       myFixture.checkResultByFile("createField.fixed.ts", true);
     });
-
   }
 
   public void testNonInlineTemplateCreateFunction2TypeScript() throws Exception {
@@ -189,6 +188,15 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.getAllQuickFixes("createField.html", "createField.ts", "angular2.js");
       myFixture.launchAction(myFixture.findSingleIntention("Create Field 'todo'"));
       myFixture.checkResultByFile("createField.ts", "createField.fixed.ts", true);
+    });
+  }
+
+  public void testNonInlineTemplateCreateFunctionDoubleClass2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.enableInspections(JSUnresolvedFunctionInspection.class);
+      myFixture.getAllQuickFixes("createFunctionDoubleClass.html", "createFunctionDoubleClass.ts", "angular2.js");
+      myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
+      myFixture.checkResultByFile("createFunctionDoubleClass.ts", "createFunctionDoubleClass.fixed.ts", true);
     });
   }
 }
