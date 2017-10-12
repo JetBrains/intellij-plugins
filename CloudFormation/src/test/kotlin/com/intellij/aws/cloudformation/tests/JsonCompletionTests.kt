@@ -31,7 +31,7 @@ class JsonCompletionTests : LightCodeInsightFixtureTestCase() {
   }
 
   fun testResourceProperty1() {
-    checkBasicCompletion("ResourceProperty1.template", "ApplicationName", "ApplicationVersions")
+    checkBasicCompletion("ResourceProperty1.template", "ApplicationName", "ApplicationVersions", "ResourceLifecycleConfig")
   }
 
   fun testDependsOn1() {

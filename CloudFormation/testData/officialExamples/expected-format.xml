@@ -17,4 +17,10 @@
     <line>282</line>
     <description>Expected an expression</description>
   </problem>
+
+  <problem>
+    <file>dynamodb_table-0b27.template</file>
+    <line>45</line>
+    <description>Required resource properties are not set: AttributeDefinitions</description>
+  </problem>
 </problems>

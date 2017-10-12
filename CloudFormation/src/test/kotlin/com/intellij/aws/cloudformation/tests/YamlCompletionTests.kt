@@ -21,9 +21,11 @@ class YamlCompletionTests : LightCodeInsightFixtureTestCase() {
   fun testRefDoubleQuotes3() = checkBasicCompletion("ref_double_quotes_3.yaml", *predefinedAndECSCluster.withQuotes("\""))
 
   fun testResourceProperty1() = checkBasicCompletion("resource_property_1.yaml",
-      "ApplicationName", "ApplicationVersions", "ConfigurationTemplates", "Description")
+      "ApplicationName", "ApplicationVersions", "ConfigurationTemplates",
+      "Description", "ResourceLifecycleConfig")
   fun testResourceProperty2() = checkBasicCompletion("resource_property_2.yaml",
-      "ApplicationName", "ApplicationVersions", "ConfigurationTemplates", "Description")
+      "ApplicationName", "ApplicationVersions", "ConfigurationTemplates",
+      "Description", "ResourceLifecycleConfig")
 
   fun testProperty1() = checkBasicCompletion("resource_1.yaml",
       "Condition", "CreationPolicy", "DeletionPolicy", "DependsOn",
