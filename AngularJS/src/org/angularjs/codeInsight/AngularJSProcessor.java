@@ -198,7 +198,6 @@ public class AngularJSProcessor {
         if (AngularAttributesRegistry.isEventAttribute(name, element.getProject())) {
           final JSImplicitElementImpl.Builder builder = new JSImplicitElementImpl.Builder($EVENT, element).
             setType(JSImplicitElement.Type.Variable);
-          builder.setTypeString("Event");
           myResult.add(builder.toImplicitElement());
         }
       }
