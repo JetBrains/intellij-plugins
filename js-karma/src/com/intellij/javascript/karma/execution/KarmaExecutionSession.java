@@ -48,9 +48,9 @@ public class KarmaExecutionSession {
   private final Executor myExecutor;
   private final KarmaServer myKarmaServer;
   private final KarmaRunSettings myRunSettings;
-  private final SMTRunnerConsoleView mySmtConsoleView;
   private final ProcessHandler myProcessHandler;
   private final KarmaExecutionType myExecutionType;
+  private final SMTRunnerConsoleView mySmtConsoleView;
 
   public KarmaExecutionSession(@NotNull Project project,
                                @NotNull KarmaRunConfiguration runConfiguration,
@@ -63,17 +63,17 @@ public class KarmaExecutionSession {
     myExecutor = executor;
     myKarmaServer = karmaServer;
     myRunSettings = runSettings;
-    mySmtConsoleView = createSMTRunnerConsoleView();
     myExecutionType = executionType;
     myProcessHandler = createProcessHandler(karmaServer);
+    mySmtConsoleView = createSMTRunnerConsoleView();
+    mySmtConsoleView.attachToProcess(myProcessHandler);
   }
 
   @NotNull
   private SMTRunnerConsoleView createSMTRunnerConsoleView() {
     KarmaTestProxyFilterProvider filterProvider = new KarmaTestProxyFilterProvider(myProject, myKarmaServer);
     TestConsoleProperties testConsoleProperties = new KarmaConsoleProperties(myRunConfiguration, myExecutor, filterProvider);
-    KarmaConsoleView consoleView = new KarmaConsoleView(testConsoleProperties, myKarmaServer, this);
-    Disposer.register(myProject, consoleView);
+    KarmaConsoleView consoleView = new KarmaConsoleView(testConsoleProperties, myKarmaServer, myExecutionType, myProcessHandler);
     SMTestRunnerConnectionUtil.initConsoleView(consoleView, FRAMEWORK_NAME);
     return consoleView;
   }
@@ -127,7 +127,6 @@ public class KarmaExecutionSession {
     OSProcessHandler processHandler = new KillableColoredProcessHandler(commandLine);
     server.getRestarter().onRunnerExecutionStarted(processHandler);
     ProcessTerminatedListener.attach(processHandler);
-    mySmtConsoleView.attachToProcess(processHandler);
     return processHandler;
   }
 

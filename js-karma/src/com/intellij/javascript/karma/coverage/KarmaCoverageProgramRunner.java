@@ -69,7 +69,7 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
     if (consoleView == null) {
       return descriptor;
     }
-    KarmaServer server = consoleView.getKarmaExecutionSession().getKarmaServer();
+    KarmaServer server = consoleView.getKarmaServer();
     if (executionResult.getProcessHandler() instanceof NopProcessHandler) {
       server.onBrowsersReady(() -> ExecutionUtil.restartIfActive(descriptor));
     }

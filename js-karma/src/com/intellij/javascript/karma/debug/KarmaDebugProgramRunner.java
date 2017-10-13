@@ -73,7 +73,7 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
     if (consoleView == null) {
       return Promise.resolve(KarmaUtil.createDefaultDescriptor(executionResult, environment));
     }
-    KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
+    KarmaServer karmaServer = consoleView.getKarmaServer();
     if (executionResult.getProcessHandler() instanceof NopProcessHandler) {
       RunContentDescriptor descriptor = KarmaUtil.createDefaultDescriptor(executionResult, environment);
       karmaServer.onPortBound(() -> ExecutionUtil.restartIfActive(descriptor));
