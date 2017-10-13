@@ -6,12 +6,12 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
-import com.intellij.lang.javascript.JSStubElementTypes
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
-import com.intellij.openapi.util.NullableFactory
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -19,27 +19,22 @@ import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
 import com.intellij.psi.impl.source.xml.XmlDocumentImpl
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ArrayUtil
-import com.intellij.util.PairProcessor
 import com.intellij.xml.XmlAttributeDescriptor
 import com.intellij.xml.XmlElementDescriptor
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import com.intellij.xml.XmlTagNameProvider
 import com.intellij.xml.util.HtmlUtil
 import icons.VuejsIcons
-import org.jetbrains.vuejs.COMPUTED
-import org.jetbrains.vuejs.METHODS
-import org.jetbrains.vuejs.MIXINS
-import org.jetbrains.vuejs.PROPS
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isGlobal
-import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.resolveReferenceToObjectLiteral
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.selectComponent
-import org.jetbrains.vuejs.index.*
+import org.jetbrains.vuejs.index.VueComponentsIndex
+import org.jetbrains.vuejs.index.getForAllKeys
+import org.jetbrains.vuejs.index.hasVue
+import org.jetbrains.vuejs.index.resolve
 
 class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
@@ -123,175 +118,12 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       withIcon(VuejsIcons.Vue)
 }
 
-private val FUNCTION_FILTER = PairProcessor<String, PsiElement> { _, element ->
-  element is JSFunctionProperty || element is JSProperty && element.value is JSFunction }
-
-fun findComponentInnerDetailInObjectLiteral(obj : JSObjectLiteralExpression, attributeName: String) : Pair<String, PsiElement>? {
-  val filter = VueElementDescriptor.Companion.nameVariantsFilter(attributeName)
-
-  var descriptor = findInnerDetailDescriptor(obj, filter)
-  if (descriptor?.name != attributeName) {
-    descriptor = descriptor?.createNameVariant(attributeName)
-  }
-  return if(descriptor == null) null else Pair(descriptor.name, descriptor.declaration!!)
+fun findComponentInnerDetailInObjectLiteral(obj : JSObjectLiteralExpression, attributeName: String) : VueAttributeDescriptor? {
+  return VueComponentDetailsProvider.INSTANCE.resolveAttribute(obj, attributeName, false)
 }
 
-private fun findInnerDetailDescriptor(obj: JSObjectLiteralExpression,
-                                      filter: PairProcessor<String, PsiElement>): VueAttributeDescriptor? {
-  val namedFunctionFilter = PairProcessor<String, PsiElement> { name, element ->
-    filter.process(name, element) &&
-    FUNCTION_FILTER.process(name, element)
-  }
-  val searchers : List<NullableFactory<VueAttributeDescriptor>> = listOf(
-    NullableFactory {
-      val propsProperty = findProperty(obj, PROPS)
-      if (propsProperty != null) {
-        readProps(propsProperty, true, filter).firstOrNull()
-      }
-      else null
-    },
-    NullableFactory {
-      val computedProperty = findProperty(obj, COMPUTED)
-      if (computedProperty != null) {
-        readProps(computedProperty, true, namedFunctionFilter).firstOrNull()
-      }
-      else null
-    },
-    NullableFactory {
-      val methodsProperty = findProperty(obj, METHODS)
-      if (methodsProperty != null) {
-        readProps(methodsProperty, true, namedFunctionFilter).firstOrNull()
-      }
-      else null
-    },
-    NullableFactory {
-      val dataProperty = findProperty(obj, "data")
-      if (dataProperty != null) {
-        readDataProps(dataProperty, filter).firstOrNull()
-      }
-      else null
-    },
-    NullableFactory {
-      getComponentMixins(obj)?.mapNotNull {
-        val mixinObj = resolveMixinObject(it) ?: return@mapNotNull null
-        return@mapNotNull findInnerDetailDescriptor(mixinObj, filter)
-      }?.firstOrNull()
-    }
-  )
-  return searchers.mapNotNull { it.create() }.firstOrNull()
-}
-
-private fun resolveMixinObject(it: JSImplicitElement): JSObjectLiteralExpression? {
-  var mixinObj = it.parent as? JSObjectLiteralExpression
-  if (it.typeString != null) {
-    mixinObj = resolveReferenceToObjectLiteral(it, it.typeString!!)
-  }
-  return mixinObj
-}
-
-private fun getComponentMixins(obj: JSObjectLiteralExpression): List<JSImplicitElement>? {
-  val mixinsProperty = findProperty(obj, MIXINS) ?: return null
-  val elements = resolve("", GlobalSearchScope.fileScope(mixinsProperty.containingFile), VueMixinBindingIndex.KEY) ?: return null
-  return elements.filter { PsiTreeUtil.isAncestor(mixinsProperty, it.parent, false) }
-}
-
-fun readDataProps(dataProps: JSProperty, filter : PairProcessor<String, PsiElement>?) : List<VueAttributeDescriptor> {
-  var dataObject = dataProps.objectLiteralExpressionInitializer
-  if (dataObject == null) {
-    val function = dataProps.tryGetFunctionInitializer() ?: return emptyList()
-    dataObject = JSStubBasedPsiTreeUtil.findDescendants<JSObjectLiteralExpression>(function, TokenSet.create(
-      JSStubElementTypes.OBJECT_LITERAL_EXPRESSION))
-      .find {
-        it.context == function ||
-        it.context is JSParenthesizedExpression && it.context?.context == function ||
-        it.context is JSReturnStatement
-      } ?: return emptyList()
-  }
-  return filteredObjectProperties(dataObject, filter)
-}
-
-private fun getComponentInnerDetailsFromObjectLiteralBase(obj : JSObjectLiteralExpression) : MutableList<Pair<String, PsiElement>> {
-  val result : MutableList<VueAttributeDescriptor> = mutableListOf()
-  val propsProperty = findProperty(obj, PROPS)
-  if (propsProperty != null) {
-    @Suppress("UNCHECKED_CAST")
-    result.addAll(withNameVariants(readProps(propsProperty, true, null), false))
-  }
-  val computedProperty = findProperty(obj, COMPUTED)
-  if (computedProperty != null) {
-    @Suppress("UNCHECKED_CAST")
-    result.addAll(withNameVariants(readProps(computedProperty, true, FUNCTION_FILTER), false))
-  }
-  val methodsProperty = findProperty(obj, METHODS)
-  if (methodsProperty != null) {
-    @Suppress("UNCHECKED_CAST")
-    result.addAll(withNameVariants(readProps(methodsProperty, true, FUNCTION_FILTER), false))
-  }
-  val dataProperty = findProperty(obj, "data")
-  if (dataProperty != null) {
-    @Suppress("UNCHECKED_CAST")
-    result.addAll(withNameVariants(readDataProps(dataProperty, null), false))
-  }
-  return result.map { Pair(it.name, it.declaration!!) } as MutableList
-}
-
-fun getComponentInnerDetailsFromObjectLiteral(obj : JSObjectLiteralExpression) : List<Pair<String, PsiElement>> {
-  val result = getComponentInnerDetailsFromObjectLiteralBase(obj)
-  getComponentMixins(obj)?.forEach {
-    val mixinObject = resolveMixinObject(it) ?: return@forEach
-    result.addAll(getComponentInnerDetailsFromObjectLiteralBase(mixinObject))
-  }
-  return result
-}
-
-private fun readProps(propsProperty : JSProperty, checkForArray: Boolean, filter : PairProcessor<String, PsiElement>?): List<VueAttributeDescriptor> {
-  var propsObject = propsProperty.objectLiteralExpressionInitializer
-  if (propsObject == null) {
-    if (propsProperty.initializerReference != null) {
-      val resolved = JSStubBasedPsiTreeUtil.resolveLocally(propsProperty.initializerReference!!, propsProperty)
-      if (resolved != null) {
-        propsObject = JSStubBasedPsiTreeUtil
-          .findDescendants(resolved, JSStubElementTypes.OBJECT_LITERAL_EXPRESSION).find { it.context == resolved }
-        if (propsObject == null && checkForArray) {
-          return readPropsFromArray(resolved, filter)
-        }
-      }
-    }
-  }
-  if (propsObject != null) {
-    return filteredObjectProperties(propsObject, filter)
-  }
-  return if (checkForArray) readPropsFromArray(propsProperty, filter) else return emptyList()
-}
-
-private fun filteredObjectProperties(propsObject: JSObjectLiteralExpression, filter: PairProcessor<String, PsiElement>?) =
-  propsObject.properties.filter { filter == null || filter.process(it.name!!, it) }.map { VueAttributeDescriptor(it.name!!, it) }
-
-private fun readPropsFromArray(holder: PsiElement, filter: PairProcessor<String, PsiElement>?): List<VueAttributeDescriptor> =
-  getStringLiteralsFromInitializerArray(holder, filter).map { VueAttributeDescriptor(StringUtil.unquoteString(it.text), it) }
-
-fun getStringLiteralsFromInitializerArray(holder: PsiElement, filter: PairProcessor<String, PsiElement>?): List<JSLiteralExpression> {
-  return JSStubBasedPsiTreeUtil.findDescendants(holder, JSStubElementTypes.LITERAL_EXPRESSION)
-    .filter({
-              var result = it.significantValue != null &&
-                           (filter == null || filter.process(StringUtil.unquoteString(it.significantValue!!), it))
-              if (result) {
-                val context = it.context
-                result = (context is JSArrayLiteralExpression) && (context.parent == holder) || context == holder
-              }
-              result
-            })
-}
-
-private fun withNameVariants(props: List<VueAttributeDescriptor>, withKebab: Boolean) : List<VueAttributeDescriptor> {
-  if (props.isEmpty()) return emptyList()
-  val alternatives : MutableSet<VueAttributeDescriptor> = mutableSetOf()
-  props.forEach {
-    @Suppress("UnnecessaryVariable")
-    val attr = it
-    getNameVariants(it.name, withKebab).minus(it.name).forEach { alternatives.add(attr.createNameVariant(it)) }
-  }
-  return props.plus(alternatives)
+fun getComponentInnerDetailsFromObjectLiteral(obj : JSObjectLiteralExpression) : List<VueAttributeDescriptor> {
+  return VueComponentDetailsProvider.INSTANCE.getAttributes(obj, false)
 }
 
 class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescriptor {
@@ -313,11 +145,6 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
     return descriptor?.getElementDescriptor(childTag!!)
   }
 
-  private fun getImmediateAttributesDescriptors(obj : JSObjectLiteralExpression): List<VueAttributeDescriptor> {
-    val propsProperty = findProperty(obj, PROPS) ?: return emptyList()
-    return withNameVariants(readProps(propsProperty, true, null), true)
-  }
-
   override fun getAttributesDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
     val result = mutableListOf<XmlAttributeDescriptor>()
     result.addAll(HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context))
@@ -325,46 +152,18 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
 
     val obj = VueComponents.findComponentDescriptor(declaration)
     if (obj != null) {
-      result.addAll(getImmediateAttributesDescriptors(obj))
-      getComponentMixins(obj)?.forEach {
-        val mixinObject = resolveMixinObject(it) ?: return@forEach
-        result.addAll(getImmediateAttributesDescriptors(mixinObject))
-      }
+      result.addAll(VueComponentDetailsProvider.INSTANCE.getAttributes(obj, true))
     }
     return result.toTypedArray()
   }
 
-  companion object {
-    private val BIND_VARIANTS = setOf(":", "v-bind:")
-    fun nameVariantsFilter(attributeName : String) : PairProcessor<String, PsiElement> {
-      val prefix = VueElementDescriptor.BIND_VARIANTS.find { attributeName.startsWith(it) }
-      val normalizedName = if (prefix != null) attributeName.substring(prefix.length) else attributeName
-      val nameVariants = getNameVariants(normalizedName, true)
-      return PairProcessor { name, _ -> name in nameVariants }
-    }
-  }
-
-  private fun getImmediateAttributeDescriptor(obj : JSObjectLiteralExpression, attributeName: String): VueAttributeDescriptor? {
-    val propsProperty = obj.findProperty(PROPS) ?: return null
-    val descriptor = readProps(propsProperty, true, nameVariantsFilter(attributeName)).firstOrNull() ?: return null
-    return if (descriptor.name != attributeName) descriptor.createNameVariant(attributeName) else descriptor
-  }
-
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
     if (attributeName == null) return null
+    if (VueAttributesProvider.DEFAULT.contains(attributeName)) return VueAttributeDescriptor(attributeName)
 
     val obj = VueComponents.findComponentDescriptor(declaration) ?: return null
-
-    val descriptor = getImmediateAttributeDescriptor(obj, attributeName)
-    if (descriptor != null) return descriptor
-    val fromMixin = getComponentMixins(obj)?.mapNotNull {
-      val mixinObject = resolveMixinObject(it) ?: return@mapNotNull null
-      getImmediateAttributeDescriptor(mixinObject, attributeName)
-    }?.firstOrNull()
-    if (fromMixin != null) return fromMixin
-
-    if (VueAttributesProvider.DEFAULT.contains(attributeName)) return VueAttributeDescriptor(attributeName)
-    return null
+    val descriptor = VueComponentDetailsProvider.INSTANCE.resolveAttribute(obj, attributeName, true) ?: return null
+    return descriptor.createNameVariant(attributeName)
   }
 
   override fun getAttributeDescriptor(attribute: XmlAttribute?) = getAttributeDescriptor(attribute?.name, attribute?.parent)

@@ -87,6 +87,7 @@ class VueAttributeDescriptor(private val name:String,
   override fun getIcon(): Icon = VuejsIcons.Vue
 
   fun createNameVariant(newName: String) : VueAttributeDescriptor {
+    if (newName == name) return this
     val descriptor = VueAttributeDescriptor(newName, element)
     descriptor.suppressRequired = true
     return descriptor

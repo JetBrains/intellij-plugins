@@ -21,7 +21,7 @@ class VueJSCompletionContributor : CompletionContributor() {
     val defaultExport = com.intellij.lang.ecmascript6.resolve.ES6PsiUtil.findDefaultExport(embeddedScriptContents)
     if (defaultExport is ES6ExportDefaultAssignment && defaultExport.stubSafeElement is JSObjectLiteralExpression) {
       getComponentInnerDetailsFromObjectLiteral(defaultExport.stubSafeElement as JSObjectLiteralExpression)
-        .forEach { result.addElement(LookupElementBuilder.create(it.first)) }
+        .forEach { result.addElement(LookupElementBuilder.create(it.name)) }
     }
 
     super.fillCompletionVariants(parameters, result)
