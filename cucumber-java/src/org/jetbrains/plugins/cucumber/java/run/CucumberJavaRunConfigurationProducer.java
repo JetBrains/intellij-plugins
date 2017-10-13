@@ -33,9 +33,11 @@ import java.util.Set;
 public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfigurationProducerBase<CucumberJavaRunConfiguration> implements Cloneable {
   public static final String FORMATTER_OPTIONS = " --format org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter --monochrome";
   public static final String FORMATTER_OPTIONS_1_2 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter --monochrome";
+  public static final String FORMATTER_OPTIONS_2 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm2SMFormatter --monochrome";
   public static final String CUCUMBER_1_0_MAIN_CLASS = "cucumber.cli.Main";
   public static final String CUCUMBER_1_1_MAIN_CLASS = "cucumber.api.cli.Main";
   public static final String CUCUMBER_1_2_PLUGIN_CLASS = "cucumber.api.Plugin";
+  public static final String CUCUMBER_2_CLASS_MARKER = "cucumber.api.formatter.Formatter";
 
 
   public static final Set<String> HOOK_ANNOTATION_NAMES = ContainerUtil.newHashSet("cucumber.annotation.Before",
@@ -88,7 +90,9 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
         mainClassName = CUCUMBER_1_1_MAIN_CLASS;
       }
 
-      if (LocationUtil.isJarAttached(location, PsiDirectory.EMPTY_ARRAY, CUCUMBER_1_2_PLUGIN_CLASS))  {
+      if (LocationUtil.isJarAttached(location, PsiDirectory.EMPTY_ARRAY, CUCUMBER_2_CLASS_MARKER)) {
+        formatterOptions = FORMATTER_OPTIONS_2;
+      } else if (LocationUtil.isJarAttached(location, PsiDirectory.EMPTY_ARRAY, CUCUMBER_1_2_PLUGIN_CLASS))  {
         formatterOptions = FORMATTER_OPTIONS_1_2;
       } else {
         formatterOptions = FORMATTER_OPTIONS;
