@@ -93,8 +93,8 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
     ref.referenceName ?: return null
     val obj = findScriptWithExport(ref)?.second?.stubSafeElement as? JSObjectLiteralExpression
               ?: findInMountedVueInstance(ref) ?: return null
-    val pair = findComponentInnerDetailInObjectLiteral(obj, ref.referenceName!!) ?: return null
-    return arrayOf(PsiElementResolveResult(pair.second))
+    val descriptor = findComponentInnerDetailInObjectLiteral(obj, ref.referenceName!!) ?: return null
+    return arrayOf(PsiElementResolveResult(descriptor.declaration!!))
   }
 }
 
