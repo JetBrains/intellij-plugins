@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The authors
+ * Copyright 2017 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,7 +32,7 @@ public class JamResultPathTest extends JamConventionLightTestCase {
     .withStrutsLibrary()
     .withStrutsFacet()
     .withLibrary("struts2-convention-plugin", "struts2-convention-plugin-" + STRUTS2_VERSION + ".jar")
-    .withWebModuleType(getTestDataPath());
+    .withWebModuleType();
 
   @NotNull
   @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2017 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,11 +18,12 @@ package com.intellij.struts2.dom.struts;
 import com.intellij.javaee.web.WebRoot;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 
 /**
  * Tests for {@link com.intellij.struts2.dom.struts.action.StrutsPathReferenceConverter}.
@@ -34,8 +35,8 @@ public class StrutsResultResolvingTest extends StrutsLightHighlightingTestCase {
   private final LightProjectDescriptor WEB = new Struts2ProjectDescriptorBuilder()
     .withStrutsLibrary()
     .withStrutsFacet()
-    .withWebModuleType(getTestDataPath());
-  
+    .withWebModuleType();
+
   @Override
   @NotNull
   protected String getTestDataLocation() {
@@ -52,12 +53,27 @@ public class StrutsResultResolvingTest extends StrutsLightHighlightingTestCase {
   protected void performSetUp() {
     final WebFacet webFacet = ContainerUtil.getFirstItem(WebFacet.getInstances(myModule));
     assert webFacet != null;
-    WebRoot jsp = webFacet.addWebRoot(VfsUtilCore.pathToUrl(getTestDataPath() + "/jsp"), "/");
-    WebRoot jsp2 = webFacet.addWebRoot(VfsUtilCore.pathToUrl(getTestDataPath() + "/jsp2"), "2ndWebRoot");
-    Disposer.register(myFixture.getProjectDisposable(), () -> {
-      webFacet.removeWebRoot(jsp);
-      webFacet.removeWebRoot(jsp2);
-    });
+
+    myFixture.copyDirectoryToProject("jsp", "jsp");
+    myFixture.copyDirectoryToProject("jsp2", "jsp2");
+    myFixture.copyDirectoryToProject("WEB-INF", "WEB-INF");
+    try {
+      final String jspUrl = myFixture.getTempDirFixture().findOrCreateDir("/jsp/").getUrl();
+      WebRoot jsp = webFacet.addWebRoot(jspUrl, "/");
+      final String jsp2Url = myFixture.getTempDirFixture().findOrCreateDir("/jsp2/").getUrl();
+      WebRoot jsp2 = webFacet.addWebRoot(jsp2Url, "/2ndWebRoot/");
+
+      final String defaultWebRootUrl = myFixture.getTempDirFixture().findOrCreateDir("/").getUrl();
+      Disposer.register(myFixture.getProjectDisposable(), () -> {
+        webFacet.removeWebRoot(jsp);
+        webFacet.addWebRoot(defaultWebRootUrl, "/"); // restore for later tests
+
+        webFacet.removeWebRoot(jsp2);
+      });
+    }
+    catch (IOException e) {
+      fail();
+    }
   }
 
   /**
@@ -108,8 +124,11 @@ public class StrutsResultResolvingTest extends StrutsLightHighlightingTestCase {
     performCompletionVariantTest("struts-completionvariants.xml",
                                  "/anotherActionPathTest/anotherActionPath1.action",
                                  "2ndWebRoot",
+                                 "WEB-INF",
                                  "actionPath1.action",
                                  "index.jsp",
+                                 "jsp",
+                                 "jsp2",
                                  "jsp2-index.jsp",
                                  "struts-completionvariants.xml");
   }

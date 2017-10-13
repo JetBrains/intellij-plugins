@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The authors
+ * Copyright 2017 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,7 +45,7 @@ public class UITagsAttributesReferenceProviderTest extends BasicLightHighlightin
   @NotNull
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
-    return createWebDescriptor();
+    return WEB;
   }
 
   public void testPathAttributes() {

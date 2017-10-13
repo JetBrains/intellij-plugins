@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 The authors
+ * Copyright 2017 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,6 +49,9 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
 
   private static final LightProjectDescriptor STRUTS =
     new Struts2ProjectDescriptorBuilder().withStrutsLibrary().withStrutsFacet().build();
+
+  protected static final LightProjectDescriptor WEB =
+    new Struts2ProjectDescriptorBuilder().withStrutsLibrary().withStrutsFacet().withWebModuleType().build();
 
   protected static final String STRUTS_XML = "struts.xml";
 
@@ -132,7 +135,7 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
 
   protected LightProjectDescriptor createWebDescriptor() {
     return new Struts2ProjectDescriptorBuilder().withStrutsLibrary()
-      .withStrutsFacet().withWebModuleType(getTestDataPath()).build();
+      .withStrutsFacet().withWebModuleType().build();
   }
 
   /**

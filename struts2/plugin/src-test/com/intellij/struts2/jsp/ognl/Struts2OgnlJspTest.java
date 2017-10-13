@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The authors
+ * Copyright 2017 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,7 +32,7 @@ public class Struts2OgnlJspTest extends BasicLightHighlightingTestCase {
   @NotNull
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
-    return createWebDescriptor();
+    return WEB;
   }
 
   /**
@@ -51,6 +51,7 @@ public class Struts2OgnlJspTest extends BasicLightHighlightingTestCase {
   }
 
   public void testStruts2TaglibOgnlInjection() {
+    myFixture.copyDirectoryToProject("WEB-INF", "WEB-INF");
     myFixture.testHighlighting(true, true, false, "taglib-ognl-injection.jsp");
   }
 }

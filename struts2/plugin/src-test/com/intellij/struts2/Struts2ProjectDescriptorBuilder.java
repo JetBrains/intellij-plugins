@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 The authors
+ * Copyright 2017 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,7 @@
 package com.intellij.struts2;
 
 import com.intellij.facet.FacetManager;
+import com.intellij.facet.FacetTypeRegistry;
 import com.intellij.facet.impl.FacetUtil;
 import com.intellij.javaee.DeploymentDescriptorsConstants;
 import com.intellij.javaee.web.facet.WebFacet;
@@ -25,8 +26,6 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.struts2.facet.StrutsFacetType;
 import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
@@ -51,13 +50,13 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
   private boolean addStrutsLibrary;
   private boolean addJ2eeLibrary;
   private boolean addStrutsFacet;
-  private String webXmlUrl;
+  private boolean addWebFacet;
 
   private final List<LibraryDefinition> libraries = new SmartList<>();
   private final List<Callback> callbacks = new SmartList<>();
 
-  public Struts2ProjectDescriptorBuilder withWebModuleType(String testDataRoot) {
-    webXmlUrl = VfsUtilCore.pathToUrl(testDataRoot + "/WEB-INF/web.xml");
+  public Struts2ProjectDescriptorBuilder withWebModuleType() {
+    addWebFacet = true;
     return this;
   }
 
@@ -93,8 +92,8 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
   @Override
   public Sdk getSdk() {
     Sdk sdk = IdeaTestUtil.getMockJdk18();
-    if (webXmlUrl != null) {
-      sdk=IdeaTestUtil.addWebJarsTo(sdk);
+    if (addWebFacet) {
+      sdk = IdeaTestUtil.addWebJarsTo(sdk);
     }
     return sdk;
   }
@@ -120,15 +119,16 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
       FacetManager.getInstance(module).addFacet(StrutsFacetType.getInstance(), "struts2", webFacet);
     }
 
-    if (webXmlUrl != null) {
-      final VirtualFile root = model.getSourceRoots()[0];
-      webFacet.addWebRoot(root, "/");
+    if (addWebFacet) {
+      final WebFacet facet = FacetUtil.addFacet(module, FacetTypeRegistry.getInstance().findFacetType(WebFacet.ID));
+      final String sourceRootUrl = model.getSourceRootUrls()[0];
+      facet.addWebRoot(sourceRootUrl, "/");
 
-      final ConfigFileInfoSet descriptors = webFacet.getDescriptorsContainer().getConfiguration();
-      descriptors.addConfigFile(DeploymentDescriptorsConstants.WEB_XML_META_DATA, webXmlUrl);
+      final ConfigFileInfoSet descriptors = facet.getDescriptorsContainer().getConfiguration();
+      descriptors.addConfigFile(DeploymentDescriptorsConstants.WEB_XML_META_DATA, sourceRootUrl + "/WEB-INF/web.xml");
 
       for (String url : ModuleRootManager.getInstance(module).getSourceRootUrls()) {
-        webFacet.addWebSourceRoot(url);
+        facet.addWebSourceRoot(url);
       }
     }
 
@@ -141,7 +141,7 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
   /**
    * Performs custom initialization.
    */
-   public abstract static class Callback {
+  public abstract static class Callback {
 
     protected abstract void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry);
 
@@ -166,7 +166,7 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
     if (addStrutsLibrary != builder.addStrutsLibrary) return false;
     if (addJ2eeLibrary != builder.addJ2eeLibrary) return false;
     if (addStrutsFacet != builder.addStrutsFacet) return false;
-    if (webXmlUrl != null ? !webXmlUrl.equals(builder.webXmlUrl) : builder.webXmlUrl != null) return false;
+    if (addWebFacet != builder.addWebFacet) return false;
     if (!callbacks.equals(builder.callbacks)) return false;
     if (!libraries.equals(builder.libraries)) return false;
 
@@ -178,7 +178,7 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
     int result = (addStrutsLibrary ? 1 : 0);
     result = 31 * result + (addStrutsFacet ? 1 : 0);
     result = 31 * result + (addJ2eeLibrary ? 1 : 0);
-    result = 31 * result + (webXmlUrl != null ? webXmlUrl.hashCode() : 0);
+    result = 31 * result + (addWebFacet ? 1 : 0);
     result = 31 * result + libraries.hashCode();
     result = 31 * result + callbacks.hashCode();
     return result;
