@@ -1402,8 +1402,11 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testShowImplementationsForStatic() throws Exception {
-    doTestFor(true, () -> JSTestUtils
-                .invokeShowImplementations(JSFunction.class, myFile.findElementAt(myEditor.getCaretModel().getOffset()), 0, true),
+    doTestFor(true, () -> {
+                final PsiElement at = myFile.findElementAt(myEditor.getCaretModel().getOffset());
+                JSTestUtils.testIncludeSelfInGoToImplementation(at, true);
+                assertEquals(0, JSTestUtils.getGoToImplementationsResults(at).size());
+              },
               getTestName(false) + ".js2");
   }
 
