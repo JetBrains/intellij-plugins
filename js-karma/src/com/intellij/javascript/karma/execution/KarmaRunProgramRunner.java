@@ -42,8 +42,7 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
     }
 
     if (executionResult.getProcessHandler() instanceof NopProcessHandler) {
-      KarmaServer server = consoleView.getKarmaExecutionSession().getKarmaServer();
-      server.onBrowsersReady(() -> ExecutionUtil.restartIfActive(descriptor));
+      consoleView.getKarmaServer().onBrowsersReady(() -> ExecutionUtil.restartIfActive(descriptor));
     }
     else {
       RerunTestsNotification.showRerunNotification(environment.getContentToReuse(), executionResult.getExecutionConsole());

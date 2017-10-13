@@ -2,8 +2,10 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.process.NopProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.testframework.PoolOfTestIcons;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.TestTreeView;
@@ -39,14 +41,17 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
   private static final Logger LOG = Logger.getInstance(KarmaConsoleView.class);
 
   private final KarmaServer myServer;
-  private final KarmaExecutionSession myExecutionSession;
+  private final KarmaExecutionType myExecutionType;
+  private final ProcessHandler myProcessHandler;
 
   public KarmaConsoleView(@NotNull TestConsoleProperties consoleProperties,
                           @NotNull KarmaServer server,
-                          @NotNull KarmaExecutionSession executionSession) {
+                          @NotNull KarmaExecutionType executionType,
+                          @NotNull ProcessHandler processHandler) {
     super(consoleProperties);
     myServer = server;
-    myExecutionSession = executionSession;
+    myExecutionType = executionType;
+    myProcessHandler = processHandler;
   }
 
   @Override
@@ -79,10 +84,12 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     else {
       myServer.onPortBound(() -> {
         KarmaUtil.selectAndFocusIfNotDisposed(ui, consoleContent, false, false);
-        scheduleBrowserCapturingSuggestion();
+        if (myExecutionType != KarmaExecutionType.DEBUG) {
+          schedulePrintingBrowserCapturingSuggestion();
+        }
       });
     }
-    final ProcessAdapter listener = new ProcessAdapter() {
+    ProcessAdapter listener = new ProcessAdapter() {
       @Override
       public void processTerminated(@NotNull ProcessEvent event) {
         if (myServer.getProcessHandler().isProcessTerminated()) {
@@ -92,26 +99,26 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
         rootFormatter.onTestRunProcessTerminated();
       }
     };
-    myExecutionSession.getProcessHandler().addProcessListener(listener);
+    myProcessHandler.addProcessListener(listener);
     Disposer.register(this, new Disposable() {
       @Override
       public void dispose() {
-        myExecutionSession.getProcessHandler().removeProcessListener(listener);
+        myProcessHandler.removeProcessListener(listener);
       }
     });
     return consoleContent;
   }
 
-  private void scheduleBrowserCapturingSuggestion() {
-    final Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
+  private void schedulePrintingBrowserCapturingSuggestion() {
+    Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
     alarm.addRequest(() -> {
       if (!myServer.getProcessHandler().isProcessTerminated() &&
           !myServer.areBrowsersReady() &&
-          !Disposer.isDisposed(this)) {
+          !myProcessHandler.isProcessTerminated()) {
         printBrowserCapturingSuggestion();
       }
       Disposer.dispose(alarm);
-    }, 10000, ModalityState.any());
+    }, myProcessHandler instanceof NopProcessHandler ? 1000 : 10000, ModalityState.any());
   }
 
   private void printBrowserCapturingSuggestion() {
@@ -134,8 +141,8 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
   }
 
   @NotNull
-  public KarmaExecutionSession getKarmaExecutionSession() {
-    return myExecutionSession;
+  public KarmaServer getKarmaServer() {
+    return myServer;
   }
 
   public JSDebugTabLayouter createDebugLayouter(@NotNull JavaScriptDebugProcess<?> debugProcess) {
