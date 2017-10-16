@@ -111,11 +111,10 @@ public class JstdServer {
     String name = "JstdServer#" + id;
     if (process != null && SystemInfo.isUnix) {
       try {
-        int pid = UnixProcessManager.getProcessPid(process);
+        int pid = OSProcessUtil.getProcessID(process);
         name += " (pid " + pid + ")";
       }
-      catch (Exception ignored) {
-      }
+      catch (Exception ignored) { }
     }
     return name;
   }
