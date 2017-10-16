@@ -1,5 +1,6 @@
 package org.jetbrains.vuejs.language
 
+import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
@@ -9,9 +10,19 @@ import org.jetbrains.vuejs.VueLanguage
  * @author Irina.Chernushina on 7/21/2017.
  */
 class VueInjectionTest : LightPlatformCodeInsightFixtureTestCase() {
+  private var oldAutoComplete = false
+
   override fun setUp() {
     super.setUp()
+    val settings = CodeInsightSettings.getInstance()
+    oldAutoComplete = settings.AUTOCOMPLETE_ON_CODE_COMPLETION
+    settings.AUTOCOMPLETE_ON_CODE_COMPLETION = false
     myFixture.configureByText("a.vue", "")  // to enable vue in the project
+  }
+
+  override fun tearDown() {
+    CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = oldAutoComplete
+    super.tearDown()
   }
 
   fun testSimpleInterpolationInHtml() {
@@ -152,7 +163,7 @@ new Vue({
     TestCase.assertEquals(text.replace("<caret>", ""), host!!.text)
     val expected = mutableSetOf("interpolation", "another", "two")
     com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil.enumerate(host,
-                                                                              { injectedPsi, places -> expected.remove(injectedPsi.text) })
+                                                                              { injectedPsi, _ -> expected.remove(injectedPsi.text) })
     TestCase.assertEquals(emptySet<String>(), expected)
   }
 
@@ -173,7 +184,7 @@ another}}{{two}}"""
 """, """
 another""", "two")
     com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil.enumerate(host,
-                                                                              { injectedPsi, places -> expected.remove(injectedPsi.text) })
+                                                                              { injectedPsi, _ -> expected.remove(injectedPsi.text) })
     TestCase.assertEquals(emptySet<String>(), expected)
   }
 
