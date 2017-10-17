@@ -378,4 +378,85 @@ export default {
       CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = old
     }
   }
+
+  fun testMixinsInCompletion() {
+    myFixture.configureByText("index.js", globalMixinText())
+    myFixture.configureByText("FirstMixin.vue", """
+<script>
+  export default {
+    props: ['FirstMixinProp']
+  }
+</script>
+""")
+    myFixture.configureByText("SecondMixin.vue", """
+<script>
+  export default {
+    props: ['SecondMixinProp']
+  }
+</script>
+""")
+    myFixture.configureByText("CompWithTwoMixins.vue", """
+<template>
+  <mixins-in-completion <caret>></mixins-in-completion>
+</template>
+<script>
+  import FirstMixin from './FirstMixin';
+  import SecondMixin from './SecondMixin';
+
+  export default {
+    name: 'mixins-in-completion',
+    mixins: [FirstMixin, SecondMixin]
+  }
+</script>
+""")
+    noAutoComplete(Runnable {
+                     JSTestUtils.testES6<Exception>(project, {
+                       myFixture.completeBasic()
+                       UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!,
+                                                             "FirstMixinProp", "firstMixinProp", "first-mixin-prop",
+                                                             "SecondMixinProp", "secondMixinProp", "second-mixin-prop",
+                                                             "hi2dden", "Hi2dden",
+                                                             "InterestingProp", "interestingProp", "interesting-prop")
+                     })
+                   })
+  }
+
+  fun testNoNotImportedMixinsInCompletion() {
+    myFixture.configureByText("index.js", globalMixinText())
+    myFixture.configureByText("FirstMixin.vue", """
+<script>
+  export default {
+    props: ['FirstMixinProp']
+  }
+</script>
+""")
+    myFixture.configureByText("SecondMixin.vue", """
+<script>
+  export default {
+    props: ['SecondMixinProp']
+  }
+</script>
+""")
+    myFixture.configureByText("NoNotImportedMixinsInCompletion.vue", """
+<template>
+  <local-comp <caret>></local-comp>
+</template>
+<script>
+  export default {
+    name: "local-comp"
+  }
+</script>
+""")
+    noAutoComplete(Runnable {
+                     JSTestUtils.testES6<Exception>(project, {
+                       myFixture.completeBasic()
+                       UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!,
+                                                             "hi2dden", "Hi2dden",
+                                                             "InterestingProp", "interestingProp", "interesting-prop")
+                       UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!,
+                                                             "FirstMixinProp", "firstMixinProp", "first-mixin-prop",
+                                                             "SecondMixinProp", "secondMixinProp", "second-mixin-prop")
+                     })
+                   })
+  }
 }

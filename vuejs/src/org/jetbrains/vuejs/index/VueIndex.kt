@@ -19,6 +19,8 @@ import org.jetbrains.vuejs.VueFileType
 
 val VUE = "vue"
 val INDICES:MutableMap<StubIndexKey<String, JSImplicitElementProvider>, String> = mutableMapOf()
+val GLOBAL = "global"
+val LOCAL = "local"
 
 fun getForAllKeys(scope:GlobalSearchScope, key:StubIndexKey<String, JSImplicitElementProvider>,
                   filter: ((String) -> Boolean)?): Collection<JSImplicitElement> {
@@ -31,9 +33,10 @@ fun resolve(name:String, scope:GlobalSearchScope, key:StubIndexKey<String, JSImp
   if (DumbService.isDumb(scope.project!!)) return null
   val result = mutableListOf<JSImplicitElement>()
   StubIndex.getInstance().processElements(key, name, scope.project!!, scope, JSImplicitElementProvider::class.java, Processor {
-    val element = (it.indexingData?.implicitElements ?: emptyList()).firstOrNull { it.userString == INDICES[key] }
-    if (element != null) result.add(element)
-    return@Processor false
+    it.indexingData?.implicitElements
+      ?.filter { it.userString == INDICES[key] }
+      ?.forEach { result.add(it) }
+    return@Processor true
   })
   return if (result.isEmpty()) null else result
 }

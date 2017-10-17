@@ -877,6 +877,29 @@ export default {
     TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
   }
 
+  fun testGlobalComponentLiteral() {
+    myFixture.configureByText("index.js", """
+Vue.component('global-comp-literal', {
+  props: {
+    insideGlobalCompLiteral: {}
+  }
+});
+""")
+    myFixture.configureByText("GlobalComponentLiteral.vue", """
+<template>
+  <global-comp-literal <caret>inside-global-comp-literal=222></global-comp-literal>
+</template>
+""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val property = reference!!.resolve()
+    TestCase.assertNotNull(property)
+    TestCase.assertTrue(property is JSProperty)
+    TestCase.assertEquals("insideGlobalCompLiteral", (property as JSProperty).name)
+    TestCase.assertTrue(property.parent.parent is JSProperty)
+    TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
+  }
+
   fun testResolveMixinProp() {
     myFixture.configureByText("MixinWithProp.vue", """
 <script>
@@ -956,14 +979,7 @@ export default {
 </script>
 """)
 
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()
-    TestCase.assertNotNull(property)
-    TestCase.assertTrue(property is JSProperty)
-    TestCase.assertEquals("localMixinProp", (property as JSProperty).name)
-    TestCase.assertTrue(property.parent.parent is JSProperty)
-    TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
+    doTestResolveIntoProperty("localMixinProp")
   }
 
   fun testResolveInMixinLiteral() {
@@ -987,13 +1003,70 @@ export default {
 </script>
 """)
 
+    doTestResolveIntoProperty("propInMixinLiteral")
+  }
+
+  private fun doTestResolveIntoProperty(name: String) {
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
     val property = reference!!.resolve()
     TestCase.assertNotNull(property)
     TestCase.assertTrue(property is JSProperty)
-    TestCase.assertEquals("propInMixinLiteral", (property as JSProperty).name)
+    TestCase.assertEquals(name, (property as JSProperty).name)
     TestCase.assertTrue(property.parent.parent is JSProperty)
     TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
   }
+
+  fun testResolveIntoGlobalMixin1() {
+    myFixture.configureByText("GlobalMixins.js", globalMixinText())
+    myFixture.configureByText("ResolveIntoGlobalMixin1.vue", """
+<template>
+    <local-comp <caret>hi2dden="found" interesting-prop="777"</local-comp>
+</template>
+
+<script>
+    export default {
+        name: "local-comp"
+    }
+</script>
+""")
+    doTestResolveIntoProperty("hi2dden")
+  }
+
+  fun testResolveIntoGlobalMixin2() {
+    myFixture.configureByText("GlobalMixins.js", globalMixinText())
+    myFixture.configureByText("ResolveIntoGlobalMixin2.vue", """
+<template>
+    <local-comp hi2dden="found" <caret>interesting-prop="777"</local-comp>
+</template>
+
+<script>
+    export default {
+        name: "local-comp"
+    }
+</script>
+""")
+    doTestResolveIntoProperty("interestingProp")
+  }
+}
+
+fun globalMixinText(): String {
+  return """
+  let mixin = {
+      props: {
+          hi2dden: {}
+      }
+  };
+
+  Vue.mixin(mixin);
+
+  Vue.mixin({
+      props: {
+          interestingProp: {},
+          requiredMixinProp: {
+            required: true
+          }
+      }
+  });
+  """
 }

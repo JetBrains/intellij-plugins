@@ -375,6 +375,22 @@ export default {
   })
   }
 
+  fun testGlobalComponentLiteral() {
+      myFixture.configureByText("index.js", """
+Vue.component('global-comp-literal', {
+  props: {
+    insideGlobalCompLiteral: {}
+  }
+});
+""")
+      myFixture.configureByText("GlobalComponentLiteral.vue", """
+<template>
+  <global-comp-literal inside-global-comp-literal=222></global-comp-literal>
+</template>
+""")
+    myFixture.doHighlighting()
+  }
+
   fun testExternalMixin() {
     myFixture.configureByText("MixinWithProp.vue", """
 <script>
@@ -423,6 +439,56 @@ export default {
 </script>
 """)
 
+    JSTestUtils.testES6<Exception>(project, { myFixture.checkHighlighting(true, false, true) })
+  }
+
+  fun testTwoExternalMixins() {
+    myFixture.configureByText("FirstMixin.vue", """
+<script>
+  export default {
+    props: ['FirstMixinProp']
+  }
+</script>
+""")
+    myFixture.configureByText("SecondMixin.vue", """
+<script>
+  export default {
+    props: ['SecondMixinProp']
+  }
+</script>
+""")
+    myFixture.configureByText("CompWithTwoMixins.vue", """
+<template>
+  <comp-with-two-mixins first-mixin-prop=1 second-mixin-prop=2
+  <warning descr="Attribute third-mixin-prop is not allowed here">third-mixin-prop</warning>=3></comp-with-two-mixins>
+</template>
+<script>
+  import FirstMixin from './FirstMixin';
+  import SecondMixin from './SecondMixin';
+
+  export default {
+    name: 'CompWithTwoMixins',
+    mixins: [FirstMixin, SecondMixin]
+  }
+</script>
+""")
+    JSTestUtils.testES6<Exception>(project, { myFixture.checkHighlighting(true, false, true) })
+  }
+
+  fun testTwoGlobalMixins() {
+    myFixture.configureByText("GlobalMixins.js", globalMixinText())
+    myFixture.configureByText("CompWithGlobalMixins.vue", """
+<template>
+    <<warning descr="Element local-comp doesn't have required attribute requiredMixinProp">local-comp</warning> hi2dden="found" interesting-prop="777"
+    <warning descr="Attribute not-existing is not allowed here">not-existing</warning>=5></<warning descr="Element local-comp doesn't have required attribute requiredMixinProp">local-comp</warning>>
+</template>
+
+<script>
+    export default {
+        name: "local-comp"
+    }
+</script>
+""")
     JSTestUtils.testES6<Exception>(project, { myFixture.checkHighlighting(true, false, true) })
   }
 

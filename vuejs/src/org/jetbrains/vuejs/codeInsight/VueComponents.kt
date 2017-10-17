@@ -1,5 +1,6 @@
 package org.jetbrains.vuejs.codeInsight
 
+import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
@@ -7,6 +8,7 @@ import com.intellij.lang.javascript.psi.resolve.ES6QualifiedNameResolver
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 
@@ -66,5 +68,23 @@ class VueComponents {
     }
 
     fun isGlobal(it: JSImplicitElement) = it.typeString != null
+
+    fun vueMixinDescriptorFinder(implicitElement: JSImplicitElement) : JSObjectLiteralExpression? {
+      if (!StringUtil.isEmptyOrSpaces(implicitElement.typeString)) {
+        val expression = VueComponents.resolveReferenceToObjectLiteral(implicitElement, implicitElement.typeString!!)
+        if (expression != null) {
+          return expression
+        }
+      }
+      val mixinObj = (implicitElement.parent as? JSProperty)?.parent as? JSObjectLiteralExpression
+      if (mixinObj != null) return mixinObj
+
+      val call = implicitElement.parent as? JSCallExpression
+      if (call != null) {
+        return JSStubBasedPsiTreeUtil.findDescendants(call, JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
+          .firstOrNull { (it.context as? JSArgumentList)?.context == call || (it.context == call) }
+      }
+      return null
+    }
   }
 }
