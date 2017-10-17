@@ -28,16 +28,18 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.MIXINS
 import org.jetbrains.vuejs.VueFileType
-import org.jetbrains.vuejs.index.INDICES
-import org.jetbrains.vuejs.index.VueComponentsIndex
-import org.jetbrains.vuejs.index.VueMixinBindingIndex
-import org.jetbrains.vuejs.index.VueOptionsIndex
+import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.language.VueJSLanguage
 import org.jetbrains.vuejs.language.VueVForExpression
 
 class VueFrameworkHandler : FrameworkIndexingHandler() {
   init {
     INDICES.values.forEach { JSImplicitElementImpl.ourUserStringsRegistry.registerUserString(it) }
+  }
+
+  companion object {
+    const val VUE = "Vue"
+    private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE, "mixin", "component", "extends")
   }
 
   override fun findModule(result: PsiElement): PsiElement? = org.jetbrains.vuejs.codeInsight.findModule(result)
@@ -47,22 +49,17 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val firstProperty = obj.firstProperty
     if (firstProperty == null) return outData
 
-    val out : Ref<JSElementIndexingData?> = Ref(outData)
-    val outGetter = {
-      if (out.isNull) out.set(JSElementIndexingDataImpl())
-      out.get()
-    }
-
+    val out = outData ?: JSElementIndexingDataImpl()
     if (MIXINS == property.name && property.value is JSArrayLiteralExpression) {
       (property.value as JSArrayLiteralExpression).expressions
         .forEach {
           if (it is JSReferenceExpression) {
-            outGetter()!!.addImplicitElement(JSImplicitElementImpl.Builder("", property)
+            out.addImplicitElement(JSImplicitElementImpl.Builder(LOCAL, property)
                                      .setUserString(VueMixinBindingIndex.JS_KEY)
                                      .setTypeString(it.text)
                                      .toImplicitElement())
-          } else if (it is JSObjectLiteralExpression) {
-            outGetter()!!.addImplicitElement(JSImplicitElementImpl.Builder("", it)
+          } else if (it is JSObjectLiteralExpression && it.firstProperty != null) {
+            out.addImplicitElement(JSImplicitElementImpl.Builder(LOCAL, it.firstProperty!!)
                                      .setUserString(VueMixinBindingIndex.JS_KEY)
                                      .toImplicitElement())
           }
@@ -70,21 +67,21 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     }
 
     if (obj.parent is JSExportAssignment && firstProperty == property && obj.containingFile.fileType == VueFileType.INSTANCE)  {
-      tryProcessComponentInVue(obj, property, outGetter)
+      tryProcessComponentInVue(obj, property, out)
     }
 
     if (firstProperty == property && ((obj.parent as? JSProperty) == null) && isDescriptorOfLinkedInstanceDefinition(obj)) {
       val binding = (obj.findProperty("el")?.value as? JSLiteralExpression)?.value as? String
-      outGetter()!!.addImplicitElement(JSImplicitElementImpl.Builder(binding ?: "", property)
+      out.addImplicitElement(JSImplicitElementImpl.Builder(binding ?: "", property)
                                .setUserString(VueOptionsIndex.JS_KEY)
                                .toImplicitElement())
     }
-    return out.get()
+    return if (out.isEmpty) outData else out
   }
 
   override fun shouldCreateStubForCallExpression(node: ASTNode?): Boolean {
     val reference = (node?.psi as? JSCallExpression)?.methodExpression as? JSReferenceExpression ?: return false
-    return isVueComponentMethod(reference)
+    return isVueComponentMethod(reference) || isVueMixinMethod(reference)
   }
 
   override fun processCallExpression(callExpression: JSCallExpression?, outData: JSElementIndexingData) {
@@ -94,17 +91,21 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       val componentName = getTextIfLiteral(arguments[0])
       if (arguments.size >= 2 && componentName != null) {
         val descriptor = arguments[1]
-        var provider: PsiElement = callExpression
+        val provider: PsiElement = (descriptor as? JSObjectLiteralExpression)?.firstProperty ?: callExpression
         // not null type string indicates the global component
-        var typeString = ""
-        if (descriptor is JSObjectLiteralExpression && !descriptor.properties.isEmpty()) {
-          provider = descriptor.firstProperty!!
-        }
-        else if (descriptor is JSReferenceExpression) {
-          typeString = descriptor.text
-        }
+        val typeString = (descriptor as? JSReferenceExpression)?.text ?: ""
         outData.addImplicitElement(JSImplicitElementImpl.Builder(componentName, provider)
                                      .setUserString(VueComponentsIndex.JS_KEY)
+                                     .setTypeString(typeString)
+                                     .toImplicitElement())
+      }
+    } else if (isVueMixinMethod(reference)) {
+      val arguments = callExpression.arguments
+      if (arguments.size == 1) {
+        val provider = (arguments[0] as? JSObjectLiteralExpression)?.firstProperty ?: callExpression
+        val typeString = (arguments[0] as? JSReferenceExpression)?.text ?: ""
+        outData.addImplicitElement(JSImplicitElementImpl.Builder(GLOBAL, provider)
+                                     .setUserString(VueMixinBindingIndex.JS_KEY)
                                      .setTypeString(typeString)
                                      .toImplicitElement())
       }
@@ -112,7 +113,10 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   private fun isVueComponentMethod(reference: JSReferenceExpression) =
-    JSSymbolUtil.isAccurateReferenceExpressionName(reference, "Vue", "component")
+    JSSymbolUtil.isAccurateReferenceExpressionName(reference, VUE, "component")
+
+  private fun isVueMixinMethod(reference: JSReferenceExpression) =
+    JSSymbolUtil.isAccurateReferenceExpressionName(reference, VUE, "mixin")
 
   private fun getTextIfLiteral(holder: PsiElement): String? {
     if (holder is JSLiteralExpression && holder.isQuotedLiteral) {
@@ -125,9 +129,9 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val argumentList = obj.parent as? JSArgumentList ?: return false
     if (argumentList.arguments[0] == obj) {
       return JSSymbolUtil.isAccurateReferenceExpressionName(
-          (argumentList.parent as? JSNewExpression)?.methodExpression as? JSReferenceExpression, "Vue") ||
+          (argumentList.parent as? JSNewExpression)?.methodExpression as? JSReferenceExpression, VUE) ||
         JSSymbolUtil.isAccurateReferenceExpressionName(
-          (argumentList.parent as? JSCallExpression)?.methodExpression as? JSReferenceExpression, "Vue", "extends")
+          (argumentList.parent as? JSCallExpression)?.methodExpression as? JSReferenceExpression, VUE, "extends")
     }
     return false
   }
@@ -139,7 +143,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     return super.shouldCreateStubForLiteral(node)
   }
 
-  override fun hasSignificantValue(expression: JSLiteralExpression): Boolean {//todo?
+  override fun hasSignificantValue(expression: JSLiteralExpression): Boolean {
     val parentType = expression.node.treeParent?.elementType ?: return false
     if (JSElementTypes.ARRAY_LITERAL_EXPRESSION == parentType ||
         JSElementTypes.PROPERTY == parentType && "required" == expression.node.treeParent.findChildByType(JSTokenTypes.IDENTIFIER)?.text) {
@@ -154,14 +158,14 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                                         TokenSet.create(JSStubElementTypes.CALL_EXPRESSION, JSStubElementTypes.NEW_EXPRESSION),
                                         TokenSet.create(JSElementTypes.EXPRESSION_STATEMENT)) ?: return false
     val ref = statement.findChildByType(JSElementTypes.REFERENCE_EXPRESSION) ?: return false
-    return ref.getChildren(TokenSet.create(JSTokenTypes.IDENTIFIER)).filter { "Vue" == it.text }.any()
+    return ref.getChildren(TokenSet.create(JSTokenTypes.IDENTIFIER)).filter { it.text in VUE_DESCRIPTOR_OWNERS }.any()
   }
 
   private fun tryProcessComponentInVue(obj: JSObjectLiteralExpression, property: JSProperty,
-                                       outData: () -> JSElementIndexingData?) {
+                                       outData: JSElementIndexingData) {
     val compName = (obj.findProperty("name")?.value as? JSLiteralExpression)?.value as? String
                    ?: FileUtil.getNameWithoutExtension(obj.containingFile.name)
-    outData()!!.addImplicitElement(JSImplicitElementImpl.Builder(compName, property).setUserString(VueComponentsIndex.JS_KEY).toImplicitElement())
+    outData.addImplicitElement(JSImplicitElementImpl.Builder(compName, property).setUserString(VueComponentsIndex.JS_KEY).toImplicitElement())
   }
 
   override fun indexImplicitElement(element: JSImplicitElementStructure, sink: IndexSink?): Boolean {
