@@ -28,6 +28,11 @@ public class MarkdownStructureViewFactory implements PsiStructureViewFactory {
       public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
         return new MarkdownStructureViewModel(psiFile, editor);
       }
+
+      @Override
+      public boolean isRootNodeShown() {
+        return false;
+      }
     };
   }
 
