@@ -116,16 +116,18 @@ fun findInMountedVueInstance(reference : JSReferenceExpression) : JSObjectLitera
   return ref.get()
 }
 
-fun findScriptWithExport(element : JSReferenceExpression) : Pair<PsiElement, ES6ExportDefaultAssignment>? {
+fun findScriptWithExport(element: PsiElement) : Pair<PsiElement, ES6ExportDefaultAssignment>? {
   val xmlFile = getContainingXmlFile(element) ?: return null
+
   val module = org.jetbrains.vuejs.codeInsight.findModule(xmlFile) ?: return null
-  val defaultExport = com.intellij.lang.ecmascript6.resolve.ES6PsiUtil.findDefaultExport(module) ?: return null
-  if (defaultExport is ES6ExportDefaultAssignment && defaultExport.stubSafeElement is JSObjectLiteralExpression) {
+  val defaultExport = com.intellij.lang.ecmascript6.resolve.ES6PsiUtil.findDefaultExport(module)
+                      as? ES6ExportDefaultAssignment ?: return null
+  if (defaultExport.stubSafeElement is JSObjectLiteralExpression) {
     return Pair(module, defaultExport)
   }
   return null
 }
 
-private fun getContainingXmlFile(element: JSReferenceExpression) =
-  (element.containingFile as? XmlFile ?:
+fun getContainingXmlFile(element: PsiElement) =
+  (element.containingFile as? XmlFile ?: element as? XmlFile ?:
    InjectedLanguageManager.getInstance(element.project).getInjectionHost(element)?.containingFile as? XmlFile)
