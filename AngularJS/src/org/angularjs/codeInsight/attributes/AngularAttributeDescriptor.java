@@ -78,20 +78,22 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
   public static XmlAttributeDescriptor[] getFieldBasedDescriptors(JSImplicitElement declaration,
                                                                   String decorator,
                                                                   NullableFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> factory) {
-    final JSClass clazz = PsiTreeUtil.getContextOfType(declaration, JSClass.class);
-    if (clazz != null) {
-      JSField[] fields = clazz.getFields();
-      final List<XmlAttributeDescriptor> result = new ArrayList<>(fields.length);
-      for (JSField field : fields) {
-        String decoratedName = getDecoratedName(field, decorator);
-        if (decoratedName == null) continue;
-        ContainerUtil.addIfNotNull(result, factory.fun(Pair.create(field, decoratedName)));
-      }
-      for (JSFunction function : clazz.getFunctions()) {
-        String decoratedName = getDecoratedName(function, decorator);
-        if (decoratedName == null) continue;
-        ContainerUtil.addIfNotNull(result, factory.fun(Pair.create(function, decoratedName)));
-      }
+    final JSClass context = PsiTreeUtil.getContextOfType(declaration, JSClass.class);
+    if (context != null) {
+      final List<XmlAttributeDescriptor> result = new ArrayList<>();
+      JSClassUtils.processClassesInHierarchy(context, true, (clazz, typeSubstitutor, fromImplements) -> {
+        for (JSField field : clazz.getFields()) {
+          String decoratedName = getDecoratedName(field, decorator);
+          if (decoratedName == null) continue;
+          ContainerUtil.addIfNotNull(result, factory.fun(Pair.create(field, decoratedName)));
+        }
+        for (JSFunction function : clazz.getFunctions()) {
+          String decoratedName = getDecoratedName(function, decorator);
+          if (decoratedName == null) continue;
+          ContainerUtil.addIfNotNull(result, factory.fun(Pair.create(function, decoratedName)));
+        }
+        return true;
+      });
       return result.toArray(new XmlAttributeDescriptor[result.size()]);
     }
     if (declaration.getContainingFile() instanceof JsonFile) {
