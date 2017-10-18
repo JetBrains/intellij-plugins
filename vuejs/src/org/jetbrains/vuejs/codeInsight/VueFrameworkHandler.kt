@@ -14,15 +14,15 @@ import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
-import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
-import com.intellij.psi.XmlRecursiveElementWalkingVisitor
+import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlDocument
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
@@ -184,19 +184,27 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 }
 
 fun findModule(result: PsiElement): PsiElement? {
-  if (result is XmlFile) {
-    if (result.fileType == VueFileType.INSTANCE) {
-      val ref = Ref.create<JSElement>()
-      result.accept(object : XmlRecursiveElementWalkingVisitor() {
-        override fun visitXmlTag(tag: XmlTag?) {
-          if (HtmlUtil.isScriptTag(tag)) {
-            ref.set(PsiTreeUtil.findChildOfType(tag, JSElement::class.java))
-            return
-          }
-        }
-      })
-      return ref.get()
-    }
+  if (result is XmlFile && result.fileType == VueFileType.INSTANCE) {
+    val visitor = MyScriptVisitor()
+    result.accept(visitor)
+    return visitor.jsElement
   }
   return null
+}
+
+private class MyScriptVisitor : XmlElementVisitor() {
+  internal var jsElement : JSElement? = null
+  override fun visitXmlTag(tag: XmlTag?) {
+    if (HtmlUtil.isScriptTag(tag)) {
+      jsElement = PsiTreeUtil.findChildOfType(tag, JSElement::class.java)
+    }
+  }
+
+  override fun visitXmlDocument(document: XmlDocument?) = recursion(document)
+
+  override fun visitXmlFile(file: XmlFile?) = recursion(file)
+
+  private fun recursion(document: PsiElement?) {
+    document?.children?.forEach { it.accept(this) }
+  }
 }
