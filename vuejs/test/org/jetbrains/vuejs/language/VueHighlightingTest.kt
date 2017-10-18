@@ -537,21 +537,30 @@ Vue.component('global-comp-literal', {
     }
   }
 
-  // todo make look like master after other commits are merged
-  fun testComponentNameAsStringTemplate() {
-    myFixture.configureByText("ComponentNameAsStringTemplate.vue", """
-<template>
-    <open1 ></open1>
-</template>
-<script>
+  fun testTypeScriptTypesAreResolved() {
+    myFixture.configureByText("TypeScriptTypesAreResolved.vue", """
+<script lang="ts">
+    function ds(a : string) {
+      encodeURI(a);
+    }
+    ds('a');
     export default {
-        name: `open1`,
-        methods: {
-            test() {}
-        }
+        name: "some-name"
     }
 </script>
 """)
-    JSTestUtils.testES6<Exception>(project, { myFixture.checkHighlighting(true, false, true) })
+    myFixture.checkHighlighting(true, false, true)
+  }
+
+  fun testTypeScriptTypesAreNotResolvedIfECMA5Script() {
+    myFixture.configureByText("TypeScriptTypesAreNotResolvedIfECMA5Script.vue", """
+<script>
+    function ds(a<error descr=", or ) expected"> </error>: <weak_warning descr="Unresolved variable or type string">string</weak_warning><error descr="Expecting newline or semicolon">)</error> {
+      encodeURI(<weak_warning descr="Unresolved variable or type a">a</weak_warning>);
+    }
+    ds('a');
+</script>
+""")
+    myFixture.checkHighlighting(true, false, true)
   }
 }

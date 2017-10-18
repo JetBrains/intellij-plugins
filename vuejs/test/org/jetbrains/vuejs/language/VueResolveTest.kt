@@ -2,6 +2,7 @@ package org.jetbrains.vuejs.language
 
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
@@ -1047,6 +1048,30 @@ Vue.component('global-comp-literal', {
 </script>
 """)
     doTestResolveIntoProperty("interestingProp")
+  }
+
+  fun testTypeScriptResolve() {
+    myFixture.configureByText("TypeScriptResolve.vue", """
+<script lang="ts"><caret>encodeURI('a')</script>
+""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val function = reference!!.resolve()
+    TestCase.assertNotNull(function)
+    TestCase.assertTrue(function is TypeScriptFunction)
+    TestCase.assertEquals("lib.d.ts", function!!.containingFile.name)
+  }
+
+  fun testECMA5Resolve() {
+    myFixture.configureByText("TypeScriptResolve.vue", """
+<script><caret>encodeURI('a')</script>
+""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val function = reference!!.resolve()
+    TestCase.assertNotNull(function)
+    TestCase.assertTrue(function is TypeScriptFunction)
+    TestCase.assertEquals("lib.es5.d.ts", function!!.containingFile.name)
   }
 }
 
