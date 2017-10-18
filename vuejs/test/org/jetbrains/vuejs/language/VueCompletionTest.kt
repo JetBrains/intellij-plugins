@@ -459,4 +459,29 @@ export default {
                      })
                    })
   }
+
+  fun testNoCompletionInVueAttributes() {
+    JSTestUtils.withNoLibraries(project, {
+      myFixture.configureByText("NoCompletionInVueAttributes.vue", """
+<template>
+    <ul v-show="open<caret>">
+    </ul>
+</template>
+""")
+      myFixture.completeBasic()
+      assertSameElements(myFixture.lookupElementStrings!!)
+    })
+  }
+
+  fun testTypeScriptCompletionFromPredefined() {
+    JSTestUtils.withNoLibraries(project, {
+      myFixture.configureByText("TypeScriptCompletionFromPredefined.vue", """
+<script lang="ts">
+    open<caret>
+</script>
+""")
+      myFixture.completeBasic()
+      assertSameElements(myFixture.lookupElementStrings!!, "open", "opener", "onopen", "openDatabase")
+    })
+  }
 }

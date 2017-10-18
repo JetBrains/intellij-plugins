@@ -536,4 +536,31 @@ Vue.component('global-comp-literal', {
       if (!typoRanges.add(pair)) TestCase.assertTrue("Duplicate $pair", false)
     }
   }
+
+  fun testTypeScriptTypesAreResolved() {
+    myFixture.configureByText("TypeScriptTypesAreResolved.vue", """
+<script lang="ts">
+    function ds(a : string) {
+      encodeURI(a);
+    }
+    ds('a');
+    export default {
+        name: "some-name"
+    }
+</script>
+""")
+    myFixture.checkHighlighting(true, false, true)
+  }
+
+  fun testTypeScriptTypesAreNotResolvedIfECMA5Script() {
+    myFixture.configureByText("TypeScriptTypesAreNotResolvedIfECMA5Script.vue", """
+<script>
+    function ds(a<error descr=", or ) expected"> </error>: <weak_warning descr="Unresolved variable or type string">string</weak_warning><error descr="Expecting newline or semicolon">)</error> {
+      encodeURI(<weak_warning descr="Unresolved variable or type a">a</weak_warning>);
+    }
+    ds('a');
+</script>
+""")
+    myFixture.checkHighlighting(true, false, true)
+  }
 }
