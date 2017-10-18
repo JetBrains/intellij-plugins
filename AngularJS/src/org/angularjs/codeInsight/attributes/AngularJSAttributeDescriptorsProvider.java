@@ -46,7 +46,9 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
           for (XmlAttributeDescriptor attributeDescriptor : descriptors) {
             final String name = attributeDescriptor.getName();
             if (name.startsWith("on")) {
-              addAttributes(project, result, "(" + name.substring(2) + ")", null);
+              addAttributes(project, result, "(" + name.substring(2) + ")", attributeDescriptor.getDeclaration());
+            } else {
+              addAttributes(project, result, "[" + name + "]", attributeDescriptor.getDeclaration());
             }
           }
         }
@@ -186,6 +188,20 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
           }
         }
       }
+
+      XmlElementDescriptor descriptor = xmlTag.getDescriptor();
+      if (descriptor instanceof HtmlElementDescriptorImpl) {
+        final XmlAttributeDescriptor[] descriptors = ((HtmlElementDescriptorImpl)descriptor).getDefaultAttributeDescriptors(xmlTag);
+        for (XmlAttributeDescriptor attributeDescriptor : descriptors) {
+          final String name = attributeDescriptor.getName();
+          if (name.startsWith("on") && attrName.equals("(" + name.substring(2) + ")")) {
+            return new AngularBindingDescriptor(attributeDescriptor.getDeclaration(), attrName);
+          } else if (attrName.equals("[" + name + "]")){
+            return new AngularEventHandlerDescriptor(attributeDescriptor.getDeclaration(), attrName);
+          }
+        }
+      }
+
 
       if (AngularAttributesRegistry.isBindingAttribute(attrName, project)) {
         return new AngularBindingDescriptor(xmlTag, attrName);

@@ -275,6 +275,14 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testBindingStandardCompletion2() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("bindingHtml.html", "angular2.js");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "[value]");
+    });
+  }
+
   public void testVariableDeclarations2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("variable.html", "custom.ts", "angular2.js");
