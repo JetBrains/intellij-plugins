@@ -1,15 +1,9 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-exports.__esModule = true;
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var path = require('path');
 function createAngularSessionClass(ts_impl, sessionClass) {
     ts_impl.server.CommandNames.IDEGetHtmlErrors = "IDEGetHtmlErrors";
@@ -21,7 +15,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
     var AngularSession = (function (_super) {
         __extends(AngularSession, _super);
         function AngularSession() {
-            return _super !== null && _super.apply(this, arguments) || this;
+            _super.apply(this, arguments);
         }
         AngularSession.prototype.executeCommand = function (request) {
             var command = request.command;
@@ -38,6 +32,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                 var fileName = args.file;
                 var project = this.getProjectForFileEx(fileName);
                 if (project == null || !this.getProjectConfigPathEx(project)) {
+                    this.logError(new Error("No project"), command);
                     return { response: { infos: [] }, responseRequired: true };
                 }
                 return { response: { infos: this.getProjectDiagnosticsEx(project) }, responseRequired: true };
@@ -50,7 +45,8 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                     var openArgs = request.arguments;
                     var file = openArgs.file;
                     var normalizePath = ts_impl.normalizePath(file);
-                    this.projectService.getOrCreateScriptInfoForNormalizedPath(normalizePath, true, openArgs.fileContent);
+                    var service = this.projectService;
+                    service.getOrCreateScriptInfoForNormalizedPath(normalizePath, true, openArgs.fileContent);
                 }
             }
             return _super.prototype.executeCommand.call(this, request);
@@ -87,15 +83,27 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             else if (version == "2.0.5") {
                 sessionThis.logMessage("Override updateFileMap (new)");
                 extendEx(ts_impl.server.Project, "updateGraph", function (oldFunc, args) {
+                    var _this = this;
                     var result = oldFunc.apply(this, args);
                     try {
-                        if (this.getScriptInfoLSHost) {
+                        var connector = this.getScriptInfoLSHost;
+                        if (!connector) {
+                            if (sessionThis.projectService.getOrCreateScriptInfoNotOpenedByClientForNormalizedPath) {
+                                connector = function (fileName) {
+                                    var info = sessionThis.projectService.getOrCreateScriptInfoNotOpenedByClientForNormalizedPath(fileName);
+                                    if (info) {
+                                        info.attachToProject(_this);
+                                    }
+                                };
+                            }
+                        }
+                        if (connector) {
                             var projectPath = sessionThis.getProjectConfigPathEx(this);
                             if (projectPath) {
                                 sessionThis.logMessage("Connect templates to project");
                                 for (var _i = 0, _a = sessionThis.getTemplatesRefs(this); _i < _a.length; _i++) {
                                     var fileName = _a[_i];
-                                    this.getScriptInfoLSHost(fileName);
+                                    connector(fileName);
                                 }
                             }
                         }
@@ -150,7 +158,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             }
             try {
                 if (this.projectService) {
-                    for (var _i = 0, _a = this.projectService.configuredProjects; _i < _a.length; _i++) {
+                    for (var _i = 0, _a = this.getConfiguredProjects(this.projectService); _i < _a.length; _i++) {
                         var prj = _a[_i];
                         this.updateNgProject(prj);
                     }
@@ -165,6 +173,10 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                 }
             }
         };
+        AngularSession.prototype.getConfiguredProjects = function (projectService) {
+            var configuredProjects = projectService.configuredProjects;
+            return Array.isArray(configuredProjects) ? configuredProjects : Array.from(configuredProjects.values());
+        };
         AngularSession.prototype.getHtmlDiagnosticsEx = function (fileNames) {
             var result = [];
             if (!skipAngular) {
@@ -174,7 +186,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
         };
         AngularSession.prototype.appendHtmlDiagnostics = function (project, fileNames, result) {
             var _this = this;
-            var _loop_1 = function (fileName) {
+            var _loop_1 = function(fileName) {
                 fileName = ts_impl.normalizePath(fileName);
                 project = project == null ? this_1.getForceProject(fileName) : project;
                 try {
@@ -290,7 +302,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             if (result == null) {
                 result = [];
             }
-            var _loop_2 = function (file) {
+            var _loop_2 = function(file) {
                 var fileName = file.fileName;
                 var ngDiagnostics = this_2.getNgDiagnostics(project, fileName, file);
                 if (!ngDiagnostics || ngDiagnostics.length == 0) {
