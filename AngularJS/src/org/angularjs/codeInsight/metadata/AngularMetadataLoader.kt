@@ -16,23 +16,25 @@ object AngularMetadataLoader {
   fun load(file: VirtualFile): AngularMetadata {
     var cachedValue = file.getUserData(KEY)
     if (cachedValue == null) {
-      cachedValue = file.putUserDataIfAbsent(KEY, CachedValueImpl({ CachedValueProvider.Result.create(doLoad(file), file) }))
+      cachedValue = file.putUserDataIfAbsent(KEY, CachedValueImpl({ val visited = mutableSetOf(file)
+                                                                    CachedValueProvider.Result.create(doLoad(file, visited), visited)
+                                                                  }))
     }
     return cachedValue.value
   }
 
-  private fun doLoad(file: VirtualFile): AngularMetadata {
+  private fun doLoad(file: VirtualFile, visited: MutableSet<VirtualFile>): AngularMetadata {
     val text = VfsUtil.loadText(file)
     val classes = mutableListOf<AngularClass>()
     try {
       val json = GSON.fromJson<Any>(text, Any::class.java)
       if (json is Map<*, *>) {
-        classes.addAll(loadMetadata(file, json))
+        classes.addAll(loadMetadata(file, visited, json))
       }
       if (json is ArrayList<*> && json.size > 0) {
         val metadata = json[0]
         if (metadata is Map<*, *>) {
-          classes.addAll(loadMetadata(file, metadata))
+          classes.addAll(loadMetadata(file, visited, metadata))
         }
       }
     }
@@ -42,14 +44,14 @@ object AngularMetadataLoader {
     return AngularMetadata(classes.toTypedArray())
   }
 
-  private fun loadMetadata(file: VirtualFile, json: Map<*, *>): List<AngularClass> {
+  private fun loadMetadata(file: VirtualFile, visited: MutableSet<VirtualFile>, json: Map<*, *>): List<AngularClass> {
     val classes = mutableListOf<AngularClass>()
 
     val metadata = json["metadata"]
     if (metadata is Map<*, *>) {
       for (clazz in metadata) {
         if (clazz.key is String && clazz.value is Map<*, *>) {
-          val parsed = parseClass(file, classes, clazz.key as String, clazz.value as Map<*, *>)
+          val parsed = parseClass(file, visited, classes, clazz.key as String, clazz.value as Map<*, *>)
           if (parsed != null) {
             classes.add(parsed)
           }
@@ -60,7 +62,7 @@ object AngularMetadataLoader {
     return classes
   }
 
-  private fun parseClass(file: VirtualFile, classes: List<AngularClass>, key: String, value: Map<*, *>): AngularClass? {
+  private fun parseClass(file: VirtualFile, visited: MutableSet<VirtualFile>, classes: List<AngularClass>, key: String, value: Map<*, *>): AngularClass? {
     if (value["__symbolic"] != "class") return null
     val members = value["members"]
     val inputs = mutableListOf<AngularField>()
@@ -91,6 +93,7 @@ object AngularMetadataLoader {
           val superFile = file.parent.findFileByRelativePath(module + ".metadata.json")
           if (superFile != null) {
             val superMetadata = load(superFile)
+            visited.add(superFile)
             superClass = superMetadata.findClass(name)
           }
         } else {
