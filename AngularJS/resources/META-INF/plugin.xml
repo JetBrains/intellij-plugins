@@ -30,7 +30,6 @@
     <stubIndex implementation="org.angularjs.index.AngularDirectivesIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularDirectivesDocIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularControllerIndex"/>
-    <stubIndex implementation="org.angularjs.index.AngularDecoratorsIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularModuleIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularFilterIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularSymbolIndex"/>
@@ -118,6 +117,7 @@
     <LanguageServiceProvider implementation="org.angularjs.service.Angular2LanguageServiceProvider"/>
     <LanguageServiceFilter implementation="org.angularjs.service.Angular2LanguageServiceFilter"/>
     <analysisHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSAnalysisHandlersFactory"/>
+    <JSImplicitElementsIndexFileTypeProvider implementation="org.angularjs.index.Angular2ImplicitlyElementsFileTypeProvider"/>
   </extensions>
 
   <actions>

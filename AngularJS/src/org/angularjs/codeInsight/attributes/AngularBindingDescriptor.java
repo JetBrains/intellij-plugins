@@ -4,6 +4,9 @@ import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.JSTypeUtils;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeContext;
@@ -40,17 +43,21 @@ public class AngularBindingDescriptor extends AngularAttributeDescriptor {
 
   @NotNull
   private static AngularBindingDescriptor createBinding(Pair<PsiElement, String> dom) {
+    PsiElement element = dom.first;
+    if (element instanceof TypeScriptClass) {
+      JSQualifiedNamedElement declaration = findMember((JSClass)element, dom.second);
+      if (declaration != null) return createBinding(Pair.pair(declaration, dom.second));
+    }
     return new AngularBindingDescriptor(dom.first, "[" + dom.second + "]");
   }
 
   @Nullable
   private static AngularBindingDescriptor createOneTimeBinding(Pair<PsiElement, String> dom) {
     PsiElement element = dom.first;
-    if (element instanceof JSImplicitElement) {
-      String type = ((JSImplicitElement)element).getTypeString();
-      if (type != null && (type.endsWith("String") || type.endsWith("Object"))) {
-        return new AngularBindingDescriptor(element, dom.second);
-      }
+    if (element instanceof TypeScriptClass) {
+      JSQualifiedNamedElement declaration = findMember((JSClass)element, dom.second);
+      if (declaration != null) return createOneTimeBinding(Pair.pair(declaration, dom.second));
+      return new AngularBindingDescriptor(element, dom.second);
     }
     final JSType type = expandStringLiteralTypes(element instanceof JSFunction ?
                                                  ((JSFunction)element).getReturnType() :
