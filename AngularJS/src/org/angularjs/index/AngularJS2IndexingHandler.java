@@ -316,12 +316,13 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     AngularEventHandlerDescriptor descriptor = ObjectUtils.tryCast(parent != null ? parent.getDescriptor() : null,
                                                                    AngularEventHandlerDescriptor.class);
     PsiElement declaration = descriptor != null ? descriptor.getDeclaration() : null;
-    JSType type  = null;
+    JSType type = null;
     if (declaration instanceof JSField) {
       type = ((JSField)declaration).getType();
     } else if (declaration instanceof JSFunction) {
       type = ((JSFunction)declaration).getReturnType();
     }
+    type = JSTypeUtils.getValuableType(type);
     if (type instanceof JSGenericTypeImpl) {
       List<JSType> arguments = ((JSGenericTypeImpl)type).getArguments();
       if (arguments.size() == 1) {
