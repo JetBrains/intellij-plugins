@@ -97,7 +97,10 @@ public class AngularIndexUtil {
     }
   }
 
-  private static boolean processMetadata(Project project, String lookupKey, Processor<JSImplicitElement> processor, GlobalSearchScope scope) {
+  private static boolean processMetadata(@NotNull Project project,
+                                         @NotNull String lookupKey,
+                                         @NotNull Processor<JSImplicitElement> processor,
+                                         @NotNull GlobalSearchScope scope) {
     FileBasedIndex.ValueProcessor<Collection<JSImplicitElementsIndex.JSElementProxy>> implicitElementsProcessor =
       (virtualFile, value) -> {
         final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
