@@ -1,15 +1,9 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-exports.__esModule = true;
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var angular_session_1 = require("./angular-session");
 var AngularLanguagePluginFactory = (function () {
     function AngularLanguagePluginFactory() {
@@ -33,7 +27,7 @@ function createPluginClass(state) {
     var AngularLanguagePlugin = (function (_super) {
         __extends(AngularLanguagePlugin, _super);
         function AngularLanguagePlugin(state) {
-            return _super.call(this, state) || this;
+            _super.call(this, state);
         }
         AngularLanguagePlugin.prototype.getSession = function (ts_impl, loggerImpl, defaultOptionHolder, pathProcessor, mainFile, projectEmittedWithAllFiles) {
             var _this = this;
@@ -83,7 +77,6 @@ function createPluginClass(state) {
                 delete require.cache[name_1];
             }
             catch (err) {
-                //do nothing
             }
             _super.prototype.overrideSysDefaults.call(this, ts_impl, state, serverFile);
         };

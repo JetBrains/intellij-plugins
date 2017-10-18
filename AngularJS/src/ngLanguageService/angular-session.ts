@@ -33,6 +33,8 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
                 let fileName = args.file;
                 let project = this.getProjectForFileEx(fileName);
                 if (project == null || !this.getProjectConfigPathEx(project)) {
+                    this.logError(new Error("No project"), command);
+                    
                     return {response: {infos: []}, responseRequired: true}
                 }
 
@@ -48,7 +50,8 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
                     const openArgs = <ts.server.protocol.OpenRequestArgs>request.arguments;
                     let file = openArgs.file;
                     let normalizePath = ts_impl.normalizePath(file);
-                    (this.projectService as any).getOrCreateScriptInfoForNormalizedPath(normalizePath, true, openArgs.fileContent);
+                    let service = this.projectService as any;
+                    service.getOrCreateScriptInfoForNormalizedPath(normalizePath, true, openArgs.fileContent);
                 }
             }
 
@@ -87,15 +90,28 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
                 extendEx((ts_impl.server as any).Project, "updateGraph", function (this: ts.server.Project, oldFunc, args) {
                     let result = oldFunc.apply(this, args);
                     try {
-                        if ((<any>this).getScriptInfoLSHost) {
+                        let connector = (<any>this).getScriptInfoLSHost
+                        if (!connector) {
+                            if ((<any>sessionThis.projectService).getOrCreateScriptInfoNotOpenedByClientForNormalizedPath) {
+                                connector = (fileName) => {
+                                    let info = (<any>sessionThis.projectService).getOrCreateScriptInfoNotOpenedByClientForNormalizedPath(fileName);
+                                    if (info) {
+                                        info.attachToProject(this);
+                                    }
+                                }
+                                
+                            }
+                        }
+                        
+                        if (connector) {
                             let projectPath = sessionThis.getProjectConfigPathEx(this);
                             if (projectPath) {
                                 sessionThis.logMessage("Connect templates to project");
                                 for (let fileName of sessionThis.getTemplatesRefs(this)) {
-                                    (<any>this).getScriptInfoLSHost(fileName);
+                                    connector(fileName);
                                 }
                             }
-                        }
+                        } 
 
                     } catch (err) {
                         if (ts_impl["ngIncompatible"] && !ts_impl["ngInitErrorIncompatible"]) {
@@ -152,7 +168,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
 
             try {
                 if (this.projectService) {
-                    for (let prj of this.projectService.configuredProjects) {
+                    for (let prj of this.getConfiguredProjects(this.projectService)) {
                         this.updateNgProject(prj);
                     }
                 }
@@ -165,6 +181,12 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
                 }
             }
         }
+
+        private getConfiguredProjects(projectService: any) {
+            let configuredProjects = projectService.configuredProjects;
+            return Array.isArray(configuredProjects) ? configuredProjects : (<any>Array).from(configuredProjects.values());
+        }
+
 
         getHtmlDiagnosticsEx(fileNames: string[]): ts.server.protocol.DiagnosticEventBody[] {
             let result: ts.server.protocol.DiagnosticEventBody[] = [];
