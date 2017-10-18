@@ -30,6 +30,7 @@ public class TelFileType extends LanguageFileType {
     return "Expression Language in Tapestry 5";
   }
 
+  @Override
   @NotNull
   @NonNls
   public String getDefaultExtension() {

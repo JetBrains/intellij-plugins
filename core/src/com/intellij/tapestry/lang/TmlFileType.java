@@ -30,6 +30,7 @@ public class TmlFileType extends XmlLikeFileType {
     return "Tapestry template file";
   }
 
+  @Override
   @NotNull
   public String getDefaultExtension() {
     return TapestryConstants.TEMPLATE_FILE_EXTENSION;
