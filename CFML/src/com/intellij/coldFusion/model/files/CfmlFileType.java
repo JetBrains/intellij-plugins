@@ -61,6 +61,7 @@ public class CfmlFileType extends LanguageFileType {
     return "Cold Fusion";
   }
 
+  @Override
   @NotNull
   public String getDefaultExtension() {
     return "cfm";

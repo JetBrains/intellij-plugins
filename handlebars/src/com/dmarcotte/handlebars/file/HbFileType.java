@@ -51,6 +51,7 @@ public class HbFileType extends LanguageFileType implements TemplateLanguageFile
     return HbBundle.message("hb.files.file.type.description");
   }
 
+  @Override
   @NotNull
   public String getDefaultExtension() {
     return DEFAULT_EXTENSION;

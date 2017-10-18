@@ -25,6 +25,7 @@ public class GherkinFileType extends LanguageFileType {
     return "Cucumber scenario files";
   }
 
+  @Override
   @NotNull
   public String getDefaultExtension() {
     return "feature";

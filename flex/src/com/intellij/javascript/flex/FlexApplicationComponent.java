@@ -39,6 +39,7 @@ public class FlexApplicationComponent extends FileTypeFactory implements MetaDat
       return "SWF file type";
     }
 
+    @Override
     @NotNull
     public String getDefaultExtension() {
       return "swf";
@@ -48,14 +49,17 @@ public class FlexApplicationComponent extends FileTypeFactory implements MetaDat
       return ICON;
     }
 
+    @Override
     public boolean isBinary() {
       return true;
     }
 
+    @Override
     public boolean isReadOnly() {
       return true;
     }
 
+    @Override
     public String getCharset(@NotNull final VirtualFile file, @NotNull final byte[] content) {
       return null;
     }

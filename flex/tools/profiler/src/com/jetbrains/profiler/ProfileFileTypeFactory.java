@@ -21,6 +21,7 @@ public class ProfileFileTypeFactory extends FileTypeFactory {
       return "Profiler Snapshot";
     }
 
+    @Override
     @NotNull
     public String getDefaultExtension() {
       return "";
@@ -30,14 +31,17 @@ public class ProfileFileTypeFactory extends FileTypeFactory {
       return AllIcons.Actions.ProfileCPU;
     }
 
+    @Override
     public boolean isBinary() {
       return true;
     }
 
+    @Override
     public boolean isReadOnly() {
       return false;
     }
 
+    @Override
     public String getCharset(@NotNull VirtualFile virtualFile, @NotNull byte[] bytes) {
       return null;
     }
