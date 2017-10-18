@@ -1,21 +1,27 @@
 package org.angularjs.index;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
+import com.intellij.json.psi.JsonObject;
+import com.intellij.json.psi.JsonProperty;
+import com.intellij.json.psi.JsonStringLiteral;
+import com.intellij.json.psi.JsonValue;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.*;
+import com.intellij.lang.javascript.JSElementTypes;
+import com.intellij.lang.javascript.JSInjectionController;
+import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.frameworks.jquery.JQueryCssLanguage;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
+import com.intellij.lang.javascript.index.JSImplicitElementsIndex;
+import com.intellij.lang.javascript.index.JSIndexContentBuilder;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.literal.JSLiteralImplicitElementCustomProvider;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.resolve.JSTypeInfo;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure;
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.types.JSContext;
@@ -27,9 +33,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.css.*;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
-import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.impl.source.tree.TreeUtil;
-import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ObjectUtils;
@@ -50,12 +54,6 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   public static final String TEMPLATE_REF = "TemplateRef";
   public static final String SELECTOR = "selector";
   public static final String NAME = "name";
-  public static final String DECORATORS = "adei";
-  public static final String DECORATE = "__decorate";
-
-  static {
-    JSImplicitElement.ourUserStringsRegistry.registerUserString(DECORATORS);
-  }
 
   @Override
   public void processCallExpression(JSCallExpression callExpression, @NotNull JSElementIndexingData outData) {
@@ -72,76 +70,6 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
         addImplicitElementToModules(callExpression, (JSElementIndexingDataImpl)outData, determineModuleName(callExpression));
       }
      }
-  }
-
-  @Nullable
-  @Override
-  public JSElementIndexingData processAnyProperty(@NotNull JSProperty property, @Nullable JSElementIndexingData outData) {
-    final JSObjectLiteralExpression object = (JSObjectLiteralExpression)property.getParent();
-    String name = property.getName();
-    if ("args".equals(name)) {
-      final JSProperty type = object.findProperty("type");
-      if (type != null) {
-        final JSExpression value = type.getValue();
-        if (value instanceof JSReferenceExpression && isDirective(((JSReferenceExpression)value).getReferenceName())) {
-          return addImplicitElement(property, (JSElementIndexingDataImpl)outData, getPropertyName(property, SELECTOR));
-        }
-      }
-    }
-    if (name != null && object.getParent() instanceof JSAssignmentExpression) {
-      JSDefinitionExpression definition = ((JSAssignmentExpression)object.getParent()).getDefinitionExpression();
-      JSExpression value = property.getValue();
-      if (definition != null && "propDecorators".equals(definition.getName()) && value instanceof JSArrayLiteralExpression) {
-        for (JSExpression expression : ((JSArrayLiteralExpression)value).getExpressions()) {
-          if (expression instanceof JSObjectLiteralExpression) {
-            JSObjectLiteralExpression decoratorProperties = (JSObjectLiteralExpression)expression;
-            JSProperty type = decoratorProperties.findProperty("type");
-            String decoratorName = type != null && type.getValue() != null ? type.getValue().getText() : null;
-            if (isInterestingDecorator(decoratorName)) {
-              JSImplicitElementImpl.Builder builder =
-                new JSImplicitElementImpl.Builder(getDecoratedName(property.getName(), decoratorProperties), property).setUserString(DECORATORS)
-                  .setTypeString(decoratorName + ";Object");
-              if (outData == null) outData = new JSElementIndexingDataImpl();
-              outData.addImplicitElement(builder.toImplicitElement());
-            }
-          }
-        }
-      }
-    }
-    if (("inputs".equals(name) || "outputs".equals(name)) && property.getValue() instanceof JSArrayLiteralExpression) {
-      JSProperty args = PsiTreeUtil.getParentOfType(object, JSProperty.class);
-      if (args != null && "args".equals(args.getName())) {
-        String decoratorName = StringUtil.capitalize(name.substring(0, name.length() - 1));
-        for (JSExpression expression : ((JSArrayLiteralExpression)property.getValue()).getExpressions()) {
-          if (expression instanceof JSLiteralExpression) {
-            Object fieldName = ((JSLiteralExpression)expression).getValue();
-            if (fieldName instanceof String) {
-              JSImplicitElementImpl.Builder builder =
-                new JSImplicitElementImpl.Builder((String)fieldName, property).setUserString(DECORATORS)
-                  .setTypeString(decoratorName + ";Object");
-              if (outData == null) outData = new JSElementIndexingDataImpl();
-              outData.addImplicitElement(builder.toImplicitElement());
-            }
-          }
-        }
-      }
-    }
-    return outData;
-  }
-
-  private static String getDecoratedName(String name, JSObjectLiteralExpression decorator) {
-    JSProperty args = decorator.findProperty("args");
-    if (args != null) {
-      JSExpression argv = args.getValue();
-      if (argv instanceof JSArrayLiteralExpression) {
-        JSExpression[] expressions = ((JSArrayLiteralExpression)argv).getExpressions();
-        if (expressions[0] instanceof JSLiteralExpression) {
-          Object value = ((JSLiteralExpression)expressions[0]).getValue();
-          if (value instanceof String) return (String)value;
-        }
-      }
-    }
-    return name;
   }
 
   @Override
@@ -234,7 +162,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
         elementBuilder.setUserString(ANGULAR_DIRECTIVES_INDEX_USER_STRING);
         outData.addImplicitElement(elementBuilder.toImplicitElement());
       }
-      final String prefix = isTemplate(element) && !attributeName.startsWith("[") ? "*" : "";
+      final String prefix = template && !attributeName.startsWith("[") ? "*" : "";
       final String attr = prefix + attributeName;
       elementBuilder = new JSImplicitElementImpl.Builder(attr, element)
         .setType(JSImplicitElement.Type.Class).setTypeString("A;" + elements + ";;");
@@ -259,43 +187,19 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
       final JSParameterList params = constructor != null ? constructor.getParameterList() : null;
       return params != null && params.getText().contains(TEMPLATE_REF);
     }
-    final PsiElement parent = decorator.getParent();
-    if (parent instanceof JSArrayLiteralExpression) {
-      final JSCallExpression metadata = PsiTreeUtil.getNextSiblingOfType(decorator, JSCallExpression.class);
-      return hasTemplateRef(metadata);
-    }
-    if (parent instanceof JSObjectLiteralExpression) {
-      JSQualifiedName namespace = getCompiledDecoratorNamespace(parent);
-      if (namespace == null) return false;
-      final JSBlockStatement block = PsiTreeUtil.getParentOfType(parent, JSBlockStatement.class);
-      final JSFile file = block == null ? PsiTreeUtil.getParentOfType(parent, JSFile.class) : null;
-      final JSSourceElement[] statements = block != null ? block.getStatements() :
-                                           file != null ? file.getStatements() :
-                                           JSStatement.EMPTY;
-      for (JSSourceElement statement : statements) {
-        if (statement instanceof JSExpressionStatement) {
-          final JSExpression expression = ((JSExpressionStatement)statement).getExpression();
-          if (expression instanceof JSAssignmentExpression) {
-            final JSDefinitionExpression def = ((JSAssignmentExpression)expression).getDefinitionExpression();
-            if (def != null && "ctorParameters".equals(def.getName()) && namespace.equals(def.getJSNamespace().getQualifiedName())) {
-              return hasTemplateRef(expression) ||
-                     PsiTreeUtil.hasErrorElements(expression) && !DialectDetector.isES6(expression) && hasTemplateRef(PsiTreeUtil.getNextSiblingOfType(statement, JSExpressionStatement.class));
-            }
-          }
-        }
-      }
+
+    JsonProperty property = PsiTreeUtil.getParentOfType(decorator, JsonProperty.class);
+    if (property == null || !"selector".equals(property.getName())) return false;
+    property = PsiTreeUtil.getParentOfType(property, JsonProperty.class);
+    if (property == null || !"arguments".equals(property.getName())) return false;
+    property = PsiTreeUtil.getParentOfType(property, JsonProperty.class);
+    if (property == null || !"decorators".equals(property.getName())) return false;
+    PsiElement parent = property.getParent();
+    if (parent instanceof JsonObject) {
+      JsonProperty members = ((JsonObject)parent).findProperty("members");
+      return members != null && members.getText().contains(TEMPLATE_REF);
     }
     return false;
-  }
-
-  private static boolean hasTemplateRef(@Nullable PsiElement expression) {
-    return expression != null && expression.getText().contains(TEMPLATE_REF);
-  }
-
-  private static JSQualifiedName getCompiledDecoratorNamespace(PsiElement parent) {
-    JSAssignmentExpression assignment = PsiTreeUtil.getParentOfType(parent, JSAssignmentExpression.class, true, JSFunction.class, JSFile.class);
-    JSDefinitionExpression definition = assignment != null ? assignment.getDefinitionExpression() : null;
-    return definition != null ? definition.getJSNamespace().getQualifiedName() : null;
   }
 
   @Nullable
@@ -403,89 +307,6 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     return null;
   }
 
-  @Nullable
-  @Override
-  public JSLiteralImplicitElementCustomProvider createLiteralImplicitElementCustomProvider() {
-    return new JSLiteralImplicitElementCustomProvider() {
-      @Override
-      public boolean checkIfCandidate(@NotNull ASTNode literalExpression) {
-        ASTNode parent = TreeUtil.findParent(literalExpression, JSStubElementTypes.CALL_EXPRESSION);
-        LeafElement leaf = parent != null ? TreeUtil.findFirstLeaf(parent) : null;
-        return leaf != null && leaf.getText().startsWith(DECORATE);
-      }
-
-      @Override
-      public void fillIndexingDataForCandidate(@NotNull JSLiteralExpression argument, @NotNull JSElementIndexingData outIndexingData) {
-        String name = argument.isQuotedLiteral() ? AngularJSIndexingHandler.unquote(argument) : null;
-        if (name == null) return;
-        JSCallExpression callExpression = PsiTreeUtil.getParentOfType(argument, JSCallExpression.class);
-        if (callExpression == null) return;
-
-        JSExpression first = callExpression.getArguments()[0];
-        if (!(first instanceof JSArrayLiteralExpression)) return;
-        JSExpression[] expressions = ((JSArrayLiteralExpression)first).getExpressions();
-        if (expressions.length != 2) return;
-
-        JSExpression decorator = expressions[0];
-        String decoratorName = getCallName(decorator);
-        if (!isInterestingDecorator(decoratorName)) return;
-
-        JSExpression metadata = expressions[1];
-        String metadataName = getCallName(metadata);
-        if (metadataName == null || !metadataName.startsWith("__metadata")) return;
-        JSExpression[] meta = ((JSCallExpression)metadata).getArguments();
-        if (meta.length != 2) return;
-
-        if (!(meta[0] instanceof JSLiteralExpression)) return;
-        String type = AngularJSIndexingHandler.unquote(meta[0]);
-        if (!"design:type".equals(type)) return;
-
-        JSImplicitElementImpl.Builder builder =
-          new JSImplicitElementImpl.Builder(getDecoratedName(name, decorator), argument).setUserString(DECORATORS)
-            .setTypeString(decoratorName + ";" + meta[1].getText());
-        outIndexingData.addImplicitElement(builder.toImplicitElement());
-      }
-
-      private String getDecoratedName(String name, JSExpression decorator) {
-        if (decorator instanceof JSCallExpression) {
-          final JSExpression expression = ((JSCallExpression)decorator).getMethodExpression();
-          if (expression instanceof JSReferenceExpression) {
-            JSExpression[] arguments = ((JSCallExpression)decorator).getArguments();
-            if (arguments.length > 0 && arguments[0] instanceof JSLiteralExpression) {
-              Object value = ((JSLiteralExpression)arguments[0]).getValue();
-              if (value instanceof String) return (String)value;
-            }
-          }
-        }
-        return name;
-      }
-
-      private String getCallName(JSExpression call) {
-        if (call instanceof JSCallExpression) {
-          JSExpression expression = ((JSCallExpression)call).getMethodExpression();
-          if (expression instanceof JSReferenceExpression) {
-            return ((JSReferenceExpression)expression).getReferenceName();
-          }
-        }
-        return null;
-      }
-    };
-  }
-
-  protected boolean isInterestingDecorator(String decoratorName) {
-    return "Input".equals(decoratorName) || "Output".equals(decoratorName);
-  }
-
-  @Override
-  public boolean indexImplicitElement(@NotNull JSImplicitElementStructure element, @Nullable IndexSink sink) {
-    if (sink != null && DECORATORS.equals(element.getUserString())) {
-      sink.occurrence(AngularDecoratorsIndex.KEY, element.getName());
-      sink.occurrence(AngularSymbolIndex.KEY, element.getName());
-      return true;
-    }
-    return false;
-  }
-
   @Override
   public boolean addTypeFromResolveResult(JSTypeEvaluator evaluator, PsiElement result, boolean hasSomeType) {
     if (!(result instanceof JSImplicitElement) || !AngularJSProcessor.$EVENT.equals(((JSImplicitElement)result).getName())) {
@@ -509,6 +330,29 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
       }
     }
     return false;
+  }
+
+  @Override
+  public boolean canProcessCustomElement(@NotNull PsiElement element) {
+    return element instanceof JsonProperty && element.getContainingFile().getName().endsWith(".metadata.json");
+  }
+
+  @Override
+  public boolean processCustomElement(@NotNull PsiElement customElement, @NotNull JSIndexContentBuilder builder) {
+    if (customElement instanceof JsonProperty && "selector".equals(((JsonProperty)customElement).getName())) {
+      JsonValue value = ((JsonProperty)customElement).getValue();
+      if (value instanceof JsonStringLiteral) {
+        JSElementIndexingDataImpl data = addImplicitElement(value, null, ((JsonStringLiteral)value).getValue());
+        if (data != null && data.getImplicitElements() != null) {
+          for (JSImplicitElement element : data.getImplicitElements()) {
+            JSImplicitElementImpl.Builder elementBuilder = ((JSImplicitElementImpl)element).toBuilder().setProvider(null);
+            JSImplicitElementsIndex.JSElementProxy proxy = new JSImplicitElementsIndex.JSElementProxy(elementBuilder, value.getTextRange().getStartOffset());
+            builder.addImplicitElement(element.getName(), proxy);
+          }
+        }
+      }
+    }
+    return true;
   }
 
   @Override

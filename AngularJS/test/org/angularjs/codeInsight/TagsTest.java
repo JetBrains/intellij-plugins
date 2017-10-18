@@ -321,7 +321,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testComplexSelectorList2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("ionic.html", "angular2.js", "ionic.js");
+      myFixture.configureByFiles("ionic.html", "angular2.js", "ionic.metadata.json");
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(), "ion-item");
     });

@@ -1,5 +1,8 @@
 package org.angularjs.codeInsight.attributes;
 
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
@@ -27,6 +30,11 @@ public class AngularEventHandlerDescriptor extends AngularAttributeDescriptor {
 
   @NotNull
   private static AngularEventHandlerDescriptor createEventHandler(Pair<PsiElement, String> dom) {
+    PsiElement element = dom.first;
+    if (element instanceof TypeScriptClass) {
+      JSQualifiedNamedElement declaration = findMember((JSClass)element, dom.second);
+      if (declaration != null) return createEventHandler(Pair.pair(declaration, dom.second));
+    }
     return new AngularEventHandlerDescriptor(dom.first, "(" + dom.second + ")");
   }
 

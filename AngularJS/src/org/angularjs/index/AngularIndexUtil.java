@@ -1,6 +1,8 @@
 package org.angularjs.index;
 
+import com.intellij.json.psi.JsonFile;
 import com.intellij.lang.javascript.DialectDetector;
+import com.intellij.lang.javascript.index.JSImplicitElementsIndex;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.JSQualifiedNameImpl;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
@@ -47,7 +49,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 58;
+  public static final int BASE_VERSION = 59;
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
@@ -89,6 +91,25 @@ public class AngularIndexUtil {
         return true;
       }
     );
+
+    if (index == AngularDirectivesIndex.KEY) {
+      processMetadata(project, lookupKey, processor, scope);
+    }
+  }
+
+  private static boolean processMetadata(Project project, String lookupKey, Processor<JSImplicitElement> processor, GlobalSearchScope scope) {
+    FileBasedIndex.ValueProcessor<Collection<JSImplicitElementsIndex.JSElementProxy>> implicitElementsProcessor =
+      (virtualFile, value) -> {
+        final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
+        if (psiFile instanceof JsonFile) {
+          for (JSImplicitElementsIndex.JSElementProxy proxy : value) {
+            JSOffsetBasedImplicitElement element = proxy.toOffsetBasedImplicitElement(psiFile);
+            if (AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString()) && !processor.process(element)) return false;
+          }
+        }
+        return true;
+      };
+    return FileBasedIndex.getInstance().processValues(JSImplicitElementsIndex.INDEX_ID, lookupKey, null, implicitElementsProcessor, scope);
   }
 
   public static ResolveResult[] multiResolveAngularNamedDefinitionIndex(@NotNull final Project project,
@@ -177,15 +198,18 @@ public class AngularIndexUtil {
       final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
       final FileBasedIndex fileIndex = FileBasedIndex.getInstance();
       final StubIndex stubIndex = StubIndex.getInstance();
-      final Collection<String> allKeys =
+      Collection<String> allKeys =
         id instanceof StubIndexKey ? stubIndex.getAllKeys((StubIndexKey<String, ?>)id, project) :
         fileIndex.getAllKeys(id, project);
 
-      return CachedValueProvider.Result.create(ContainerUtil.filter(allKeys, key -> id instanceof StubIndexKey ?
-                                                                                    !stubIndex.processElements((StubIndexKey<String, PsiElement>)id, key, project, scope, PsiElement.class,
-                                        element -> false) :
-                                                                                    !fileIndex.processValues(id, key, null,
-                                                                                                             (FileBasedIndex.ValueProcessor)(file, value) -> false, scope)), PsiManager.getInstance(project).getModificationTracker());
+      List<String> filteredKeys = ContainerUtil.filter(allKeys, key -> id instanceof StubIndexKey ?
+                                                                 !stubIndex.processElements((StubIndexKey<String, PsiElement>)id, key, project, scope, PsiElement.class, element -> false) :
+                                                                 !fileIndex.processValues(id, key, null, (FileBasedIndex.ValueProcessor)(file, value) -> false, scope));
+      if (id == AngularDirectivesIndex.KEY) {
+        allKeys = FileBasedIndex.getInstance().getAllKeys(JSImplicitElementsIndex.INDEX_ID, project);
+        filteredKeys.addAll(ContainerUtil.filter(allKeys, key -> !processMetadata(project, key, element -> false, scope)));
+      }
+      return CachedValueProvider.Result.create(filteredKeys, PsiManager.getInstance(project).getModificationTracker());
     }
   }
 }
