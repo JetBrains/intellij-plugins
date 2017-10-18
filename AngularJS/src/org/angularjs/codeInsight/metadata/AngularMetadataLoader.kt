@@ -29,7 +29,7 @@ object AngularMetadataLoader {
       if (json is Map<*, *>) {
         classes.addAll(loadMetadata(file, json))
       }
-      if (json is ArrayList<*>) {
+      if (json is ArrayList<*> && json.size > 0) {
         val metadata = json[0]
         if (metadata is Map<*, *>) {
           classes.addAll(loadMetadata(file, metadata))
@@ -68,11 +68,14 @@ object AngularMetadataLoader {
     if (members is Map<*, *>) {
       for (member in members) {
         if (member.key is String && member.value is ArrayList<*>) {
+          val declarations = (member.value as ArrayList<*>)
+          if (declarations.size < 1) continue
+
           val name = member.key as String
-          if (findDecorator((member.value as ArrayList<*>)[0], "Input") != null) {
+          if (findDecorator(declarations[0], "Input") != null) {
             inputs.add(AngularField(name))
           }
-          if (findDecorator((member.value as ArrayList<*>)[0], "Output") != null) {
+          if (findDecorator(declarations[0], "Output") != null) {
             outputs.add(AngularField(name))
           }
         }

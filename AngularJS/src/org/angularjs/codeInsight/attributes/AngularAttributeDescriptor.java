@@ -112,7 +112,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
     for (AngularClass directive : metadata.findDirectives(declaration.getName())) {
       PsiElement realDeclaration = declaration;
       if (file instanceof JSFile) {
-        ResolveResultSink sink = new ResolveResultSink(null, directive.getName());
+        ResolveResultSink sink = new ResolveResultSink(file, directive.getName());
         ES6PsiUtil.processExportDeclarationInScope((JSFile)file, new TypeScriptQualifiedItemProcessor<>(sink, file), ResolveState.initial(), file);
         realDeclaration = sink.getResult() != null ? sink.getResult() : declaration;
       }
@@ -218,7 +218,8 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
     return myElement;
   }
 
-  protected static JSQualifiedNamedElement findMember(JSClass element, String name) {
+  @Nullable
+  protected static JSQualifiedNamedElement findMember(@NotNull JSClass element, @NotNull String name) {
     Ref<JSQualifiedNamedElement> result = Ref.create();
     JSClassUtils.processClassesInHierarchy(element, true, (clazz, typeSubstitutor, fromImplements) -> {
       result.set(clazz.findFieldByName(name));
