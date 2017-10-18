@@ -12,6 +12,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.SmartList;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
@@ -37,6 +38,14 @@ import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 final class DartFileUrlMapper extends FileUrlMapper {
   private static final String SDK_URL_MARKER = "/packages/$sdk/lib/";
   private static final String PACKAGE_URL_MARKER = "/" + DartUrlResolver.PACKAGES_FOLDER_NAME + "/";
+
+  private static final String DART_SDK_JS = "dart_sdk.js";
+  // Real dart_sdk.js is huge and unreadable and showing it may cause performance problems.
+  private static final LightVirtualFile DART_SDK_JS_STUB = new LightVirtualFile(DART_SDK_JS, "// Dart SDK");
+
+  static {
+    DART_SDK_JS_STUB.setWritable(false);
+  }
 
   @NotNull
   @Override
@@ -129,6 +138,10 @@ final class DartFileUrlMapper extends FileUrlMapper {
     }
 
     if ("http".equalsIgnoreCase(scheme)) {
+      if (path.equals("/" + DART_SDK_JS)) {
+        return DART_SDK_JS_STUB;
+      }
+
       final int sdkUrlMarkerIndex = path.indexOf(SDK_URL_MARKER);
       if (sdkUrlMarkerIndex >= 0) {
         // http://localhost:63343/dart-tagtree/example/packages/$sdk/lib/_internal/js_runtime/lib/js_helper.dart
