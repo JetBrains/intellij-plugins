@@ -14,7 +14,7 @@ class VueElementResolveScopeProvider : JSElementResolveScopeProvider {
 
   override fun getElementResolveScope(element: PsiElement): GlobalSearchScope? {
     val psiFile = element.containingFile
-    if (psiFile.fileType != VueFileType.INSTANCE) return null
+    if (psiFile?.fileType != VueFileType.INSTANCE) return null
     if (DialectDetector.isTypeScript(element)) {
       return tsProvider.getResolveScope(psiFile.viewProvider.virtualFile, element.project)
     }
