@@ -79,14 +79,14 @@ public class FlexMoveFileRefactoringHandler extends MoveHandlerDelegate {
         return false;
       }
       else {
-        return super.canMove(elements, targetContainer);
+        return targetContainer == null || super.canMove(elements, targetContainer);
       }
     }
 
     for (PsiElement element : elements) {
       if (adjustForMove(element) == null) return false;
     }
-    return super.canMove(elements, targetContainer);
+    return targetContainer == null || super.canMove(elements, targetContainer);
   }
 
   @Nullable
