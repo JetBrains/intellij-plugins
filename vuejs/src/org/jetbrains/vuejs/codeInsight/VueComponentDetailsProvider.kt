@@ -40,9 +40,27 @@ class VueComponentDetailsProvider {
 
   companion object {
     val INSTANCE = VueComponentDetailsProvider()
-    private val BIND_VARIANTS = setOf(":", "v-bind:")
+    private val BIND_VARIANTS = setOf(".prop", ".camel", ".sync")
+    private val ON_VARIANTS = setOf("*")
+    private val PREFIX_VARIANTS = mapOf(Pair(":", BIND_VARIANTS),
+                                        Pair("v-bind:", BIND_VARIANTS),
+                                        Pair("@", ON_VARIANTS), Pair("v-on:", ON_VARIANTS))
+
+    fun getBoundName(attributeName : String): String? {
+      return PREFIX_VARIANTS.map {
+        val after = attributeName.substringAfter(it.key, "")
+        if (!after.isEmpty()) {
+          if (it.value.contains("*")) {
+            return after.substringBefore(".", after)
+          }
+          return@map it.value.map { after.substringBefore(it, "") }.firstOrNull { !it.isEmpty() } ?: after
+        }
+        return@map ""
+      }.firstOrNull { !it.isEmpty() }
+    }
+
     fun nameVariantsFilter(attributeName : String) : (String, PsiElement) -> Boolean {
-      val prefix = BIND_VARIANTS.find { attributeName.startsWith(it) }
+      val prefix = PREFIX_VARIANTS.keys.find { attributeName.startsWith(it) }
       val normalizedName = if (prefix != null) attributeName.substring(prefix.length) else attributeName
       val nameVariants = getNameVariants(normalizedName, true)
       return { name, _ -> name in nameVariants }

@@ -1073,6 +1073,27 @@ Vue.component('global-comp-literal', {
     TestCase.assertTrue(function is TypeScriptFunction)
     TestCase.assertEquals("lib.es5.d.ts", function!!.containingFile.name)
   }
+
+  fun testVBindResolve() {
+    myFixture.configureByText("VBindCommonResolve.vue", """
+<template>
+    <for-v-bind :<caret>test-prop.camel="1"></for-v-bind>
+</template>
+<script>
+    export default {
+        name: "for-v-bind",
+        props: {
+            testProp: {}
+        }
+    }
+</script>
+""")
+    doTestResolveIntoProperty("testProp")
+  }
+
+  fun testCustomResolve() {
+
+  }
 }
 
 fun globalMixinText(): String {

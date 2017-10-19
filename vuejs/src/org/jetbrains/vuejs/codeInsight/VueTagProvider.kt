@@ -29,6 +29,7 @@ import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import com.intellij.xml.XmlTagNameProvider
 import com.intellij.xml.util.HtmlUtil
 import icons.VuejsIcons
+import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.getBoundName
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isGlobal
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.selectComponent
 import org.jetbrains.vuejs.index.VueComponentsIndex
@@ -160,10 +161,20 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
     if (attributeName == null) return null
     if (VueAttributesProvider.DEFAULT.contains(attributeName)) return VueAttributeDescriptor(attributeName)
+    val extractedName = getBoundName(attributeName)
 
-    val obj = VueComponents.findComponentDescriptor(declaration) ?: return null
-    val descriptor = VueComponentDetailsProvider.INSTANCE.resolveAttribute(obj, attributeName, true) ?: return null
-    return descriptor.createNameVariant(attributeName)
+    val obj = VueComponents.findComponentDescriptor(declaration)
+    if (obj != null) {
+      val descriptor = VueComponentDetailsProvider.INSTANCE.resolveAttribute(obj, extractedName ?: attributeName, true)
+      if (descriptor != null) {
+        return descriptor.createNameVariant(extractedName ?: attributeName)
+      }
+    }
+
+    if (extractedName != null) {
+      return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(extractedName, context) ?: VueAttributeDescriptor(extractedName)
+    }
+    return null
   }
 
   override fun getAttributeDescriptor(attribute: XmlAttribute?) = getAttributeDescriptor(attribute?.name, attribute?.parent)
