@@ -23,13 +23,13 @@ import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -157,15 +157,24 @@ public class KarmaExecutionSession {
     }
     if (myRunSettings.getScopeKind() == KarmaScopeKind.TEST_FILE) {
       List<String> topNames = findTopLevelSuiteNames(myProject, myRunSettings.getTestFileSystemIndependentPath());
+      String testFileName = PathUtil.getFileName(myRunSettings.getTestFileSystemIndependentPath());
       if (topNames.size() > 1) {
-        throw new ExecutionException("Cannot run test file with several top level suites");
+        throw new ExecutionException(testFileName + " contains multiple top level suites (" +
+                                     StringUtil.join(topNames, s -> StringUtil.wrapWithDoubleQuote(s), ", ") + ")");
       }
-      topNames = ContainerUtil.map(topNames, s -> s + " ");
-      commandLine.addParameter("--testName=" + StringUtil.join(topNames, "|"));
+      String suiteName = ContainerUtil.getFirstItem(topNames);
+      if (suiteName == null) {
+        throw new ExecutionException("No test suites found in " + testFileName);
+      }
+      commandLine.addParameter("--testName=" + suiteName + " ");
       myKarmaServer.setLastTestRunWithTestNameFilter(true);
     }
     else if (myRunSettings.getScopeKind() == KarmaScopeKind.SUITE || myRunSettings.getScopeKind() == KarmaScopeKind.TEST) {
-      commandLine.addParameter("--testName=" + StringUtil.join(myRunSettings.getTestNames(), " "));
+      String fullName = StringUtil.join(myRunSettings.getTestNames(), " ");
+      if (myRunSettings.getScopeKind() == KarmaScopeKind.SUITE) {
+        fullName += " "; // to distinguish "suite" and "suite_2"
+      }
+      commandLine.addParameter("--testName=" + fullName);
       myKarmaServer.setLastTestRunWithTestNameFilter(true);
     }
     else {
@@ -201,11 +210,6 @@ public class KarmaExecutionSession {
   @NotNull
   public ProcessHandler getProcessHandler() {
     return myProcessHandler;
-  }
-
-  @NotNull
-  public KarmaServer getKarmaServer() {
-    return myKarmaServer;
   }
 
   @NotNull
