@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.jabber.impl;
 
+import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.dispatcher.AsyncMessageDispatcher;
 import jetbrains.communicator.core.impl.BaseTestCase;
@@ -60,7 +61,7 @@ public class JabberTransportTest extends BaseTestCase {
 
   public void testIsOnlineNotConnected() {
     assertFalse("Not online - return false", UserImpl.create("fake", myTransport.getName()).isOnline());
-    assertEquals("Not online - offline icon expected", "/ideTalk/offline.png", myTransport.getIcon(
+    assertEquals("Not online - offline icon expected", IdetalkCoreIcons.IdeTalk.Offline, myTransport.getIcon(
       myTransport.getUserPresence(new MockUser())));
   }
 
