@@ -470,4 +470,21 @@ export default {
       if (!typoRanges.add(pair)) TestCase.assertTrue("Duplicate $pair", false)
     }
   }
+
+  fun testComponentNameAsStringTemplate() {
+    myFixture.configureByText("ComponentNameAsStringTemplate.vue", """
+<template>
+    <open1 @click="test"></open1>
+</template>
+<script>
+    export default {
+        name: `open1`,
+        methods: {
+            test() {}
+        }
+    }
+</script>
+""")
+    JSTestUtils.testES6<Exception>(project, { myFixture.checkHighlighting(true, false, true) })
+  }
 }
