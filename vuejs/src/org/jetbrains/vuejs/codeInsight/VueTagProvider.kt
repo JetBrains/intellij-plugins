@@ -12,7 +12,6 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.html.HtmlFileImpl
@@ -69,14 +68,16 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     val nameProperty = component.findProperty("name")
     val nameValue = nameProperty?.value as? JSLiteralExpression
     if (nameValue != null && nameValue.isQuotedLiteral) {
-      val name = StringUtil.unquoteString(nameValue.text)
-      processor.invoke(name, JSImplicitElementImpl(name, nameProperty))
+      val name = nameValue.value as? String
+      if (name != null) {
+        processor.invoke(name, JSImplicitElementImpl(name, nameProperty))
+      }
     }
 
     val components = component.findProperty("components")?.objectLiteralExpressionInitializer ?: return true
     for (property in components.properties) {
       val obj = JSStubBasedPsiTreeUtil.calculateMeaningfulElement(property) as? JSObjectLiteralExpression
-      val propName = property.name
+      val propName = property.name ?: continue
       if (obj != null) {
         val elements = findProperty(obj, "name")?.indexingData?.implicitElements
         if (elements != null) {
@@ -87,10 +88,10 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
         }
         val first = obj.firstProperty
         if (first != null) {
-          if (propName != null && !processor.invoke(propName, JSImplicitElementImpl(propName, first))) return false
+          if (!processor.invoke(propName, JSImplicitElementImpl(propName, first))) return false
         }
       }
-      if (propName != null && !processor.invoke(propName, JSImplicitElementImpl(propName, property.nameIdentifier))) return false
+      if (!processor.invoke(propName, JSImplicitElementImpl(propName, property.nameIdentifier))) return false
     }
     return true
   }
