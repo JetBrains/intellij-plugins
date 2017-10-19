@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
+import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement

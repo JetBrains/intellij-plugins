@@ -471,10 +471,11 @@ export default {
     }
   }
 
+  // todo make look like master after other commits are merged
   fun testComponentNameAsStringTemplate() {
     myFixture.configureByText("ComponentNameAsStringTemplate.vue", """
 <template>
-    <open1 @click="test"></open1>
+    <open1 ></open1>
 </template>
 <script>
     export default {
