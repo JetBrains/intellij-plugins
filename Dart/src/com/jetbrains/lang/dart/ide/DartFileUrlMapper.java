@@ -115,6 +115,7 @@ final class DartFileUrlMapper extends FileUrlMapper {
   @Override
   public VirtualFile getFile(@NotNull final Url url, @NotNull final Project project, @Nullable Url requestor) {
     final String scheme = url.getScheme();
+    final String authority = url.getAuthority();
     final String path = url.getPath();
 
     if (DartUrlResolver.DART_SCHEME.equals(scheme)) {
@@ -137,20 +138,20 @@ final class DartFileUrlMapper extends FileUrlMapper {
       }
     }
 
-    if ("http".equalsIgnoreCase(scheme)) {
+    if ("http".equalsIgnoreCase(scheme) || scheme == null && authority == null) {
       if (path.equals("/" + DART_SDK_JS)) {
         return DART_SDK_JS_STUB;
       }
 
       final int sdkUrlMarkerIndex = path.indexOf(SDK_URL_MARKER);
-      if (sdkUrlMarkerIndex >= 0) {
+      if (sdkUrlMarkerIndex >= 0 || scheme == null && path.startsWith(SDK_URL_MARKER.substring(1))) {
         // http://localhost:63343/dart-tagtree/example/packages/$sdk/lib/_internal/js_runtime/lib/js_helper.dart
         final String relPath = path.substring(sdkUrlMarkerIndex + SDK_URL_MARKER.length());
         return DartUrlResolver.findFileInDartSdkLibFolder(project, DartSdk.getDartSdk(project), DartUrlResolver.DART_PREFIX + relPath);
       }
 
       final int packageUrlMarkerIndex = path.lastIndexOf(PACKAGE_URL_MARKER);
-      if (packageUrlMarkerIndex >= 0) {
+      if (packageUrlMarkerIndex >= 0 || scheme == null && path.startsWith(PACKAGE_URL_MARKER.substring(1))) {
         // http://localhost:63343/DartSample2/web/packages/browser/dart.js or http://localhost:63343/DartSample2/packages/DartSample2/src/myFile.dart
         // First make sure that this URL relates to Dart. 'packageUrlMarkerIndex >= 0' condition is not strict enough to guarantee that this is a Dart project
         final VirtualFile contextFile = findContextFile(project, requestor);
