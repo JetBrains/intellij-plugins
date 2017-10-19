@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.ide.structure;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.NodeDescriptorProvidingKey;
 import com.intellij.navigation.ItemPresentation;
@@ -24,6 +23,7 @@ import javax.swing.*;
 import static com.intellij.icons.AllIcons.Nodes.*;
 import static com.intellij.icons.AllIcons.Nodes.Class;
 import static com.intellij.icons.AllIcons.Nodes.Enum;
+import static com.intellij.icons.AllIcons.RunConfigurations.Junit;
 
 public class DartStructureViewElement implements StructureViewTreeElement, ItemPresentation, NodeDescriptorProvidingKey {
 
@@ -33,6 +33,9 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
   private static final LayeredIcon STATIC_METHOD_ICON = new LayeredIcon(Method, StaticMark);
   private static final LayeredIcon TOP_LEVEL_FUNCTION_ICON = new LayeredIcon(Function, StaticMark);
   private static final LayeredIcon TOP_LEVEL_VAR_ICON = new LayeredIcon(Variable, StaticMark);
+  private static final LayeredIcon CONSTRUCTOR_INVOCATION_ICON = new LayeredIcon(Class, TabPin);
+  private static final LayeredIcon FUNCTION_INVOCATION_ICON = new LayeredIcon(Method, TabPin);
+
   private static final LayeredIcon TOP_LEVEL_CONST_ICON = new LayeredIcon(Variable, StaticMark, FinalMark);
 
   @NotNull private final PsiFile myPsiFile;
@@ -118,6 +121,8 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
         return element.isAbstract() ? AbstractClass : Class;
       case ElementKind.CONSTRUCTOR:
         return Method;
+      case ElementKind.CONSTRUCTOR_INVOCATION:
+        return CONSTRUCTOR_INVOCATION_ICON;
       case ElementKind.ENUM:
         return Enum;
       case ElementKind.ENUM_CONSTANT:
@@ -129,6 +134,8 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
         return Field;
       case ElementKind.FUNCTION:
         return element.isTopLevelOrStatic() ? TOP_LEVEL_FUNCTION_ICON : Function;
+      case ElementKind.FUNCTION_INVOCATION:
+        return FUNCTION_INVOCATION_ICON;
       case ElementKind.FUNCTION_TYPE_ALIAS:
         return DartComponentType.TYPEDEF.getIcon();
       case ElementKind.GETTER:
@@ -141,7 +148,7 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
       case ElementKind.TOP_LEVEL_VARIABLE:
         return finalOrConst ? TOP_LEVEL_CONST_ICON : TOP_LEVEL_VAR_ICON;
       case ElementKind.UNIT_TEST_GROUP:
-        return AllIcons.RunConfigurations.Junit;
+        return Junit;
       case ElementKind.UNIT_TEST_TEST:
         return DartIcons.TestNode;
 
