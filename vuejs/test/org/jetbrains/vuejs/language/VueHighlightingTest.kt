@@ -568,6 +568,7 @@ Vue.component('global-comp-literal', {
     myFixture.configureByText("VBindHighlighting.vue", """
 <template>
     <for-v-bind :class="2" v-bind:style="" :test-prop.camel="1" v-on:click="callMe" @copy="onCopy" ></for-v-bind>
+    <for-v-bind class="" style=""></for-v-bind>
 </template>
 
 <script>
