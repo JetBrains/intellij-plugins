@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
 import com.intellij.psi.meta.PsiPresentableMetaData
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
@@ -29,8 +30,6 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
 
     fun vueAttributeDescriptor(attributeName: String?): VueAttributeDescriptor? {
       if (DEFAULT.contains(attributeName!!)) return VueAttributeDescriptor(attributeName)
-      if (attributeName.startsWith(":") || attributeName.startsWith("v-bind:")) return VueAttributeDescriptor(attributeName)
-      if (attributeName.startsWith("@") || attributeName.startsWith("v-on:")) return VueAttributeDescriptor(attributeName)
       return null
     }
 
@@ -47,9 +46,13 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
   }
 
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
-    if (context == null || !org.jetbrains.vuejs.index.hasVue(context.project)) return null
+    if (context == null || !org.jetbrains.vuejs.index.hasVue(context.project) || attributeName == null) return null
     if (attributeName in arrayOf(SCOPED, SRC_ATTR_NAME) && insideStyle(context)) {
-      return VueAttributeDescriptor(attributeName!!)
+      return VueAttributeDescriptor(attributeName)
+    }
+    val extractedName = VueComponentDetailsProvider.getBoundName(attributeName)
+    if (extractedName != null) {
+      return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(extractedName, context) ?: VueAttributeDescriptor(extractedName)
     }
     return vueAttributeDescriptor(attributeName)
   }

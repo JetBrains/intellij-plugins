@@ -563,4 +563,26 @@ Vue.component('global-comp-literal', {
 """)
     myFixture.checkHighlighting(true, false, true)
   }
+
+  fun testVBindVOnHighlighting() {
+    myFixture.configureByText("VBindHighlighting.vue", """
+<template>
+    <for-v-bind :class="2" v-bind:style="" :test-prop.camel="1" v-on:click="callMe" @copy="onCopy" ></for-v-bind>
+</template>
+
+<script>
+    export default {
+        name: "for-v-bind",
+        props: {
+            testProp: {}
+        },
+        methods: {
+            callMe() {},
+            onCopy() {}
+        }
+    }
+</script>
+""")
+    JSTestUtils.testES6<Exception>(project, { myFixture.checkHighlighting(true, false, true) })
+  }
 }
