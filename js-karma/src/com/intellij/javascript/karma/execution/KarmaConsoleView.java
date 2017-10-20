@@ -77,18 +77,16 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     ui.addContent(consoleContent, 1, PlaceInGrid.bottom, false);
 
     consoleContent.setCloseable(false);
-    final KarmaRootTestProxyFormatter rootFormatter = new KarmaRootTestProxyFormatter(this, myServer);
     if (myServer.areBrowsersReady()) {
       KarmaUtil.selectAndFocusIfNotDisposed(ui, consoleContent, false, false);
     }
     else {
-      myServer.onPortBound(() -> {
-        KarmaUtil.selectAndFocusIfNotDisposed(ui, consoleContent, false, false);
-        if (myExecutionType != KarmaExecutionType.DEBUG) {
-          schedulePrintingBrowserCapturingSuggestion();
-        }
-      });
+      myServer.onBrowsersReady(() -> KarmaUtil.selectAndFocusIfNotDisposed(ui, consoleContent, false, false));
+      if (myExecutionType != KarmaExecutionType.DEBUG) {
+        myServer.onPortBound(() -> schedulePrintingBrowserCapturingSuggestion());
+      }
     }
+    KarmaRootTestProxyFormatter rootFormatter = new KarmaRootTestProxyFormatter(this, myServer);
     ProcessAdapter listener = new ProcessAdapter() {
       @Override
       public void processTerminated(@NotNull ProcessEvent event) {
