@@ -78,14 +78,12 @@ class VueComponentDetailsProvider {
 
   private fun iterateProviders(descriptor: JSObjectLiteralExpression, processor : (JSObjectLiteralExpression) -> Boolean) {
     listOf(VueMixinLocalComponentDetailsProvider(), VueGlobalMixinComponentDetailsProvider())
-      .firstOrNull {
+      .any {
         val finder = it.getDescriptorFinder()
-        val indexedData = it.getIndexedData(descriptor)
-        val selected = indexedData.firstOrNull {
+        it.getIndexedData(descriptor).any {
           val obj = finder(it)
           obj != null && !processor(obj)
         }
-        selected != null
       }
   }
 }
