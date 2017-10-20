@@ -45,6 +45,15 @@ class VueComponentDetailsProvider {
     private val PREFIX_VARIANTS = mapOf(Pair(":", BIND_VARIANTS),
                                         Pair("v-bind:", BIND_VARIANTS),
                                         Pair("@", ON_VARIANTS), Pair("v-on:", ON_VARIANTS))
+    private val EVENT_MODIFIERS = setOf(".stop", ".prevent", ".capture", ".self", ".once")
+    private val NO_VALUE = mapOf(Pair("@", EVENT_MODIFIERS), Pair("v-on:", EVENT_MODIFIERS))
+
+    fun attributeAllowsNoValue(attributeName : String) : Boolean {
+      return NO_VALUE.any {
+        val cutPrefix = attributeName.substringAfter(it.key, "")
+        !cutPrefix.isEmpty() && it.value.any { cutPrefix.endsWith(it) }
+      }
+    }
 
     fun getBoundName(attributeName : String): String? {
       return PREFIX_VARIANTS.map {

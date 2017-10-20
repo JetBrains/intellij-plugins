@@ -14,6 +14,7 @@ import com.intellij.xml.impl.BasicXmlAttributeDescriptor
 import icons.VuejsIcons
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.VueLanguage
+import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.attributeAllowsNoValue
 import javax.swing.Icon
 
 class VueAttributesProvider : XmlAttributeDescriptorsProvider{
@@ -52,7 +53,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
     }
     val extractedName = VueComponentDetailsProvider.getBoundName(attributeName)
     if (extractedName != null) {
-      return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(extractedName, context) ?: VueAttributeDescriptor(extractedName)
+      return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(extractedName, context) ?: VueAttributeDescriptor(attributeName)
     }
     return vueAttributeDescriptor(attributeName)
   }
@@ -76,14 +77,16 @@ class VueAttributeDescriptor(private val name:String,
   override fun hasIdType() = false
   override fun getDependences(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY
   override fun getEnumeratedValueDeclaration(xmlElement: XmlElement?, value: String?): PsiElement? {
-    return if (VueAttributesProvider.HAVE_NO_PARAMS.contains(name)) xmlElement else super.getEnumeratedValueDeclaration(xmlElement, value)
+    return if (isEnumerated) xmlElement else super.getEnumeratedValueDeclaration(xmlElement, value)
   }
 
   override fun hasIdRefType() = false
   override fun getDefaultValue() = null
-  override fun isEnumerated() = VueAttributesProvider.HAVE_NO_PARAMS.contains(name)
+  override fun isEnumerated() = VueAttributesProvider.HAVE_NO_PARAMS.contains(name) || attributeAllowsNoValue(name)
   override fun getEnumeratedValues(): Array<out String> {
-    if (VueAttributesProvider.HAVE_NO_PARAMS.contains(name)) return arrayOf(name)
+    if (isEnumerated) {
+      return arrayOf(name)
+    }
     return ArrayUtil.EMPTY_STRING_ARRAY
   }
   override fun getTypeName() = null
