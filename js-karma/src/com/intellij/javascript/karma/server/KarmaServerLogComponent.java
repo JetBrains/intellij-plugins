@@ -3,10 +3,14 @@ package com.intellij.javascript.karma.server;
 import com.intellij.execution.actions.StopProcessAction;
 import com.intellij.execution.filters.TextConsoleBuilderImpl;
 import com.intellij.execution.process.NopProcessHandler;
+import com.intellij.execution.process.ProcessAdapter;
+import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.PlaceInGrid;
+import com.intellij.ide.browsers.OpenUrlHyperlinkInfo;
 import com.intellij.javascript.karma.util.ArchivedOutputListener;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.nodejs.NodeStackTraceFilter;
@@ -23,6 +27,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.content.Content;
+import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -100,10 +105,10 @@ public class KarmaServerLogComponent implements ComponentWithActions {
   }
 
   public static void register(@NotNull Project project,
-                              @NotNull final KarmaServer server,
-                              @NotNull final RunnerLayoutUi ui,
+                              @NotNull KarmaServer server,
+                              @NotNull RunnerLayoutUi ui,
                               boolean requestFocus) {
-    final ConsoleView console = createConsole(project);
+    ConsoleView console = createConsole(project);
     KarmaServerLogComponent component = new KarmaServerLogComponent(console, server);
     final Content content = ui.createContent("KarmaServer",
                                              component,
@@ -137,6 +142,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
       }
     };
     server.getProcessOutputManager().addOutputListener(outputListener);
+    component.registerPrintingBrowserCapturingSuggestion();
     Disposer.register(content, console);
     Disposer.register(console, new Disposable() {
       @Override
@@ -144,6 +150,39 @@ public class KarmaServerLogComponent implements ComponentWithActions {
         server.removeTerminatedListener(terminationCallback);
         server.getProcessOutputManager().removeOutputListener(outputListener);
       }
+    });
+  }
+
+  private void registerPrintingBrowserCapturingSuggestion() {
+    myServer.onPortBound(() -> {
+      Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, myConsole);
+      Runnable request = () -> {
+        if (!myServer.getProcessHandler().isProcessTerminated() && !myServer.areBrowsersReady()) {
+          myConsole.print("Waiting for a captured browser... To capture a browser open ", ConsoleViewContentType.SYSTEM_OUTPUT);
+          String url = myServer.formatUrl("/");
+          myConsole.printHyperlink(url, new OpenUrlHyperlinkInfo(url));
+          myConsole.print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+        }
+        Disposer.dispose(alarm);
+      };
+      alarm.addRequest(request, 3000, ModalityState.any());
+      ProcessAdapter listener = new ProcessAdapter() {
+        @Override
+        public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
+          if (outputType != ProcessOutputTypes.SYSTEM && !Disposer.isDisposed(alarm)) {
+            alarm.cancelAllRequests();
+            alarm.addRequest(request, 3000);
+          }
+        }
+      };
+      myServer.getProcessHandler().addProcessListener(listener);
+      myServer.onBrowsersReady(() -> alarm.dispose());
+      Disposer.register(alarm, new Disposable() {
+        @Override
+        public void dispose() {
+          myServer.getProcessHandler().removeProcessListener(listener);
+        }
+      });
     });
   }
 

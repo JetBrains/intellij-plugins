@@ -83,7 +83,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     else {
       myServer.onBrowsersReady(() -> KarmaUtil.selectAndFocusIfNotDisposed(ui, consoleContent, false, false));
       if (myExecutionType != KarmaExecutionType.DEBUG) {
-        myServer.onPortBound(() -> schedulePrintingBrowserCapturingSuggestion());
+        registerPrintingBrowserCapturingSuggestion();
       }
     }
     KarmaRootTestProxyFormatter rootFormatter = new KarmaRootTestProxyFormatter(this, myServer);
@@ -107,21 +107,26 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     return consoleContent;
   }
 
-  private void schedulePrintingBrowserCapturingSuggestion() {
-    Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
-    alarm.addRequest(() -> {
-      if (!myServer.getProcessHandler().isProcessTerminated() &&
-          !myServer.areBrowsersReady() &&
-          !myProcessHandler.isProcessTerminated()) {
-        getResultsViewer().getTestsRootNode().addLast(printer -> {
-          printer.print("To capture a browser open ", ConsoleViewContentType.SYSTEM_OUTPUT);
-          String url = myServer.formatUrl("/");
-          printer.printHyperlink(url, new OpenUrlHyperlinkInfo(url));
-          printer.print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
-        });
+  private void registerPrintingBrowserCapturingSuggestion() {
+    myServer.onPortBound(() -> {
+      if (Disposer.isDisposed(this)) {
+        return;
       }
-      Disposer.dispose(alarm);
-    }, myProcessHandler instanceof NopProcessHandler ? 1000 : 10000, ModalityState.any());
+      Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
+      alarm.addRequest(() -> {
+        if (!myServer.getProcessHandler().isProcessTerminated() &&
+            !myServer.areBrowsersReady() &&
+            !myProcessHandler.isProcessTerminated()) {
+          getResultsViewer().getTestsRootNode().addLast(printer -> {
+            printer.print("To capture a browser open ", ConsoleViewContentType.SYSTEM_OUTPUT);
+            String url = myServer.formatUrl("/");
+            printer.printHyperlink(url, new OpenUrlHyperlinkInfo(url));
+            printer.print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+          });
+        }
+        Disposer.dispose(alarm);
+      }, myProcessHandler instanceof NopProcessHandler ? 1000 : 10000, ModalityState.any());
+    });
   }
 
   private void printServerFinishedInfo() {
