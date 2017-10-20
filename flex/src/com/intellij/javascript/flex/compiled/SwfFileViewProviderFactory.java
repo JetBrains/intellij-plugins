@@ -4,6 +4,7 @@ import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.psi.impl.JSFileImpl;
+import com.intellij.lang.javascript.psi.stubs.impl.JSFileCachedData;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -40,6 +41,8 @@ public class SwfFileViewProviderFactory implements FileViewProviderFactory {
   }
 
   static class CompiledJSFile extends JSFileImpl implements PsiCompiledFile {
+    private static final JSFileCachedData EMPTY = new JSFileCachedData();
+
     public CompiledJSFile(FileViewProvider fileViewProvider) {
       super(fileViewProvider, DialectDetector.getJSLanguage(fileViewProvider.getVirtualFile()));
     }
@@ -51,6 +54,12 @@ public class SwfFileViewProviderFactory implements FileViewProviderFactory {
     @Override
     public PsiFile getDecompiledPsiFile() {
       return this;
+    }
+
+    @NotNull
+    @Override
+    public JSFileCachedData getCachedData() {
+      return EMPTY;
     }
   }
 }
