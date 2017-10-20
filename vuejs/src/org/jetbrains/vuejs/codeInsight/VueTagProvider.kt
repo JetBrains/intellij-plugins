@@ -173,7 +173,7 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
     }
 
     if (extractedName != null) {
-      return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(extractedName, context) ?: VueAttributeDescriptor(extractedName)
+      return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(extractedName, context) ?: VueAttributeDescriptor(attributeName)
     }
     return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(attributeName, context)
   }
