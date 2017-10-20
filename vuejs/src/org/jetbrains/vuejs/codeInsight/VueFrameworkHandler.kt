@@ -15,7 +15,6 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.impl.source.tree.TreeUtil
@@ -120,7 +119,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   private fun getTextIfLiteral(holder: PsiElement): String? {
     if (holder is JSLiteralExpression && holder.isQuotedLiteral) {
-      return StringUtil.unquoteString(holder.text)
+      return holder.value as String
     }
     return null
   }

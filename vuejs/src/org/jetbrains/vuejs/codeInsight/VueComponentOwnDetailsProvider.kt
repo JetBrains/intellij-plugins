@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 
@@ -17,7 +16,7 @@ class VueComponentOwnDetailsProvider {
     }
 
     fun getDetails(descriptor: JSObjectLiteralExpression,
-                   filter: ((String, PsiElement) -> Boolean)?,
+                   filter: (String, PsiElement) -> Boolean,
                    onlyPublic: Boolean,
                    onlyFirst: Boolean): List<VueAttributeDescriptor> {
       val detailsList = CompMember.values().filter { !onlyPublic || it.isPublic }
@@ -33,9 +32,9 @@ class VueComponentOwnDetailsProvider {
   }
 
   private enum class CompMember(val propertyName: String,
-                                  val isPublic: Boolean,
-                                  val isFunctions: Boolean,
-                                  private val canBeArray: Boolean) {
+                                val isPublic: Boolean,
+                                val isFunctions: Boolean,
+                                private val canBeArray: Boolean) {
     Props("props", true, false, true),
     Computed("computed", false, true, false),
     Methods("methods", false, true, false),
@@ -66,12 +65,8 @@ class VueComponentOwnDetailsProvider {
     protected open fun getObjectLiteralFromResolved(resolved: PsiElement): JSObjectLiteralExpression? = null
 
     fun readMembers(descriptor: JSObjectLiteralExpression,
-                    filter: ((String, PsiElement) -> Boolean)?): List<VueAttributeDescriptor> {
-      val detailsFilter = if (isFunctions) { name, element ->
-        FUNCTION_FILTER(element) &&
-        (filter == null || filter(name, element))
-      }
-      else filter
+                    filter: (String, PsiElement) -> Boolean): List<VueAttributeDescriptor> {
+      val detailsFilter = if (isFunctions) { name, element -> FUNCTION_FILTER(element) && filter(name, element) } else filter
       val property = descriptor.findProperty(propertyName) ?: return emptyList()
 
       var propsObject = property.objectLiteralExpressionInitializer ?: getObjectLiteral(property)
@@ -93,23 +88,10 @@ class VueComponentOwnDetailsProvider {
       return if (canBeArray) readPropsFromArray(property, detailsFilter) else return emptyList()
     }
 
-    private fun filteredObjectProperties(propsObject: JSObjectLiteralExpression, filter: ((String, PsiElement) -> Boolean)?) =
-      propsObject.properties.filter { filter == null || filter(it.name!!, it) }.map { VueAttributeDescriptor(it.name!!, it) }
+    private fun filteredObjectProperties(propsObject: JSObjectLiteralExpression, filter: (String, PsiElement) -> Boolean) =
+      propsObject.properties.filter { filter(it.name!!, it) }.map { VueAttributeDescriptor(it.name!!, it) }
 
-    private fun readPropsFromArray(holder: PsiElement, filter: ((String, PsiElement) -> Boolean)?): List<VueAttributeDescriptor> =
-      getStringLiteralsFromInitializerArray(holder, filter).map { VueAttributeDescriptor(
-        StringUtil.unquoteString(it.text), it) }
-
-    private fun getStringLiteralsFromInitializerArray(holder: PsiElement,
-                                                      filter: ((String, PsiElement) -> Boolean)?): List<JSLiteralExpression> {
-      return JSStubBasedPsiTreeUtil.findDescendants(holder,
-                                                    JSStubElementTypes.LITERAL_EXPRESSION)
-        .filter({
-                  val context = it.context
-                  it.significantValue != null &&
-                  (filter == null || filter(StringUtil.unquoteString(it.significantValue!!), it)) &&
-                  ((context is JSArrayLiteralExpression) && (context.parent == holder) || context == holder)
-                })
-    }
+    private fun readPropsFromArray(holder: PsiElement, filter: (String, PsiElement) -> Boolean): List<VueAttributeDescriptor> =
+      getStringLiteralsFromInitializerArray(holder, filter).map { VueAttributeDescriptor(it.value as String, it) }
   }
 }

@@ -10,10 +10,10 @@ import com.intellij.psi.PsiElement
 class VueComponentDetailsProvider {
   fun getAttributes(descriptor: JSObjectLiteralExpression, onlyPublic: Boolean): List<VueAttributeDescriptor> {
     val result: MutableList<VueAttributeDescriptor> = mutableListOf()
-    val details: List<VueAttributeDescriptor> = VueComponentOwnDetailsProvider.getDetails(descriptor, null, onlyPublic, false)
+    val details: List<VueAttributeDescriptor> = VueComponentOwnDetailsProvider.getDetails(descriptor, EMPTY_FILTER, onlyPublic, false)
     result.addAll(details)
     iterateProviders(descriptor, {
-      result.addAll(VueComponentOwnDetailsProvider.getDetails(it, null, onlyPublic, false))
+      result.addAll(VueComponentOwnDetailsProvider.getDetails(it, EMPTY_FILTER, onlyPublic, false))
       true
     })
 
