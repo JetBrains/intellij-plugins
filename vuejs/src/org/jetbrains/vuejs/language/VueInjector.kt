@@ -4,14 +4,14 @@ import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.lang.injection.MultiHostRegistrar
 import com.intellij.lang.javascript.JSInjectionBracesUtil
 import com.intellij.lang.javascript.JSInjectionBracesUtil.injectInXmlTextByDelimiters
-import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.index.JavaScriptIndex
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSDefinitionExpression
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.impl.JSLiteralExpressionImpl
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiLanguageInjectionHost
@@ -22,10 +22,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.NullableFunction
-import com.intellij.util.PairProcessor
-import org.jetbrains.vuejs.codeInsight.VueAttributesProvider
+import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.onlyLocal
-import org.jetbrains.vuejs.codeInsight.findProperty
 import org.jetbrains.vuejs.index.VueOptionsIndex
 import org.jetbrains.vuejs.index.resolve
 import java.util.*
@@ -65,23 +63,10 @@ class VueInjector : MultiHostInjector {
     }
 
     private fun getDelimiterValue(holder: PsiElement, key: String): String? {
-      val list = getStringLiteralsFromInitializerArray(holder, null)
+      val list = getStringLiteralsFromInitializerArray(holder, EMPTY_FILTER)
       if (list.size != 2) return null
       val literal = list[if (JSInjectionBracesUtil.START_SYMBOL_KEY == key) 0 else 1] as? JSLiteralExpression ?: return null
-      return StringUtil.unquoteString(literal.significantValue!!)
-    }
-
-    private fun getStringLiteralsFromInitializerArray(holder: PsiElement, filter: PairProcessor<String, PsiElement>?): List<JSLiteralExpression> {
-      return JSStubBasedPsiTreeUtil.findDescendants(holder, JSStubElementTypes.LITERAL_EXPRESSION)
-        .filter({
-                  var result = it.significantValue != null &&
-                               (filter == null || filter.process(StringUtil.unquoteString(it.significantValue!!), it))
-                  if (result) {
-                    val context = it.context
-                    result = (context is JSArrayLiteralExpression) && (context.parent == holder) || context == holder
-                  }
-                  result
-                })
+      return es6Unquote(literal.significantValue!!)
     }
   }
 
