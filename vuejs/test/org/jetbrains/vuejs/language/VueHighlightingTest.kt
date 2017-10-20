@@ -9,6 +9,8 @@ import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.inspections.JSAnnotatorInspection
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
+import com.intellij.lang.javascript.inspections.JSValidateTypesInspection
+import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import com.intellij.spellchecker.inspections.SpellCheckingInspection
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.util.ThrowableRunnable
@@ -30,6 +32,8 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     myFixture.enableInspections(JSAnnotatorInspection())
     myFixture.enableInspections(JSUnresolvedVariableInspection())
     myFixture.enableInspections(ThisExpressionReferencesGlobalObjectJSInspection())
+    myFixture.enableInspections(JSValidateTypesInspection())
+    myFixture.enableInspections(TypeScriptValidateTypesInspection())
   }
 
   fun testDirectivesWithoutParameters() {
@@ -602,5 +606,19 @@ Vue.component('global-comp-literal', {
 </script>
 """)
     JSTestUtils.testES6<Exception>(project, { myFixture.checkHighlighting(true, false, true) })
+  }
+
+  fun testTypeScriptTypesInVue() {
+    myFixture.configureByText("TypeScriptTypesInVue.vue", """
+<script lang="ts">
+    interface Test {
+        hello: string
+    }
+
+    const <warning descr="Unused constant test">test</warning>: Test = {
+        hello: "not working",
+    }
+</script>""")
+    myFixture.checkHighlighting(true, false, true)
   }
 }
