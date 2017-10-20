@@ -113,20 +113,15 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
       if (!myServer.getProcessHandler().isProcessTerminated() &&
           !myServer.areBrowsersReady() &&
           !myProcessHandler.isProcessTerminated()) {
-        printBrowserCapturingSuggestion();
+        getResultsViewer().getTestsRootNode().addLast(printer -> {
+          printer.print("To capture a browser open ", ConsoleViewContentType.SYSTEM_OUTPUT);
+          String url = myServer.formatUrl("/");
+          printer.printHyperlink(url, new OpenUrlHyperlinkInfo(url));
+          printer.print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+        });
       }
       Disposer.dispose(alarm);
     }, myProcessHandler instanceof NopProcessHandler ? 1000 : 10000, ModalityState.any());
-  }
-
-  private void printBrowserCapturingSuggestion() {
-    SMTestProxy.SMRootTestProxy rootNode = getResultsViewer().getTestsRootNode();
-    rootNode.addLast(printer -> {
-      printer.print("To capture a browser open ", ConsoleViewContentType.SYSTEM_OUTPUT);
-      String url = myServer.formatUrl("/");
-      printer.printHyperlink(url, new OpenUrlHyperlinkInfo(url));
-      printer.print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
-    });
   }
 
   private void printServerFinishedInfo() {
