@@ -66,7 +66,10 @@ public class KarmaExecutionSession {
     myExecutionType = executionType;
     myProcessHandler = createProcessHandler(karmaServer);
     mySmtConsoleView = createSMTRunnerConsoleView();
-    mySmtConsoleView.attachToProcess(myProcessHandler);
+    if (!(myProcessHandler instanceof NopProcessHandler)) {
+      // show test result notifications for real test runs only
+      mySmtConsoleView.attachToProcess(myProcessHandler);
+    }
   }
 
   @NotNull
