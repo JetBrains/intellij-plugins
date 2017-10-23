@@ -5,7 +5,6 @@ import com.intellij.execution.filters.TextConsoleBuilderImpl;
 import com.intellij.execution.process.NopProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
-import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunnerLayoutUi;
@@ -32,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class KarmaServerLogComponent implements ComponentWithActions {
 
@@ -155,34 +155,46 @@ public class KarmaServerLogComponent implements ComponentWithActions {
 
   private void registerPrintingBrowserCapturingSuggestion() {
     myServer.onPortBound(() -> {
+      if (myServer.getServerSettings().isDebug() || myServer.areBrowsersReady() || Disposer.isDisposed(myConsole)) {
+        return;
+      }
+      final int DELAY_MILLIS = 3000;
       Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, myConsole);
-      Runnable request = () -> {
-        if (!myServer.getProcessHandler().isProcessTerminated() && !myServer.areBrowsersReady()) {
-          myConsole.print("Waiting for a captured browser... To capture a browser open ", ConsoleViewContentType.SYSTEM_OUTPUT);
-          String url = myServer.formatUrl("/");
-          myConsole.printHyperlink(url, new OpenUrlHyperlinkInfo(url));
-          myConsole.print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+      AtomicLong lastPrintTimeMillis = new AtomicLong(0);
+      alarm.addRequest(new Runnable() {
+        @Override
+        public void run() {
+          if (myServer.getProcessHandler().isProcessTerminated()) {
+            Disposer.dispose(alarm);
+            return;
+          }
+          long timeoutMillis = lastPrintTimeMillis.get() + DELAY_MILLIS - System.currentTimeMillis();
+          if (timeoutMillis > 0) {
+            alarm.addRequest(this, timeoutMillis + 100, ModalityState.any());
+          }
+          else {
+            myConsole.print("Waiting for a captured browser... To capture a browser open ", ConsoleViewContentType.SYSTEM_OUTPUT);
+            String url = myServer.formatUrl("/");
+            myConsole.printHyperlink(url, new OpenUrlHyperlinkInfo(url));
+            myConsole.print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+            Disposer.dispose(alarm);
+          }
         }
-        Disposer.dispose(alarm);
-      };
-      alarm.addRequest(request, 3000, ModalityState.any());
+      }, DELAY_MILLIS, ModalityState.any());
       ProcessAdapter listener = new ProcessAdapter() {
         @Override
         public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
-          if (outputType != ProcessOutputTypes.SYSTEM && !Disposer.isDisposed(alarm)) {
-            alarm.cancelAllRequests();
-            alarm.addRequest(request, 3000);
-          }
+          lastPrintTimeMillis.set(System.currentTimeMillis());
         }
       };
       myServer.getProcessHandler().addProcessListener(listener);
-      myServer.onBrowsersReady(() -> alarm.dispose());
       Disposer.register(alarm, new Disposable() {
         @Override
         public void dispose() {
           myServer.getProcessHandler().removeProcessListener(listener);
         }
       });
+      myServer.onBrowsersReady(() -> Disposer.dispose(alarm));
     });
   }
 
