@@ -10,9 +10,8 @@ import com.intellij.psi.PsiElement;
 public class FlexDocumentationBuilder extends JSDocumentationBuilder {
   FlexDocumentationBuilder(PsiElement element,
                            PsiElement _contextElement,
-                           boolean showNamedItem,
                            JSDocumentationProvider provider) {
-    super(element, _contextElement, showNamedItem, provider);
+    super(element, _contextElement, provider);
   }
 
   @Override
