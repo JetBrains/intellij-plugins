@@ -135,7 +135,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
   }
 
   private void registerKarmaServerTab(@NotNull RunnerLayoutUi ui) {
-    KarmaServerLogComponent.register(getProperties().getProject(), myServer, ui, true);
+    KarmaServerLogComponent.register(getProperties().getProject(), myServer, ui);
   }
 
   @NotNull

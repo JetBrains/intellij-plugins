@@ -110,8 +110,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
 
   public static void register(@NotNull Project project,
                               @NotNull KarmaServer server,
-                              @NotNull RunnerLayoutUi ui,
-                              boolean requestFocus) {
+                              @NotNull RunnerLayoutUi ui) {
     ConsoleView console = createConsole(project);
     KarmaServerLogComponent component = new KarmaServerLogComponent(console, server);
     final Content content = ui.createContent("KarmaServer",
@@ -121,8 +120,8 @@ public class KarmaServerLogComponent implements ComponentWithActions {
                                              console.getPreferredFocusableComponent());
     content.setCloseable(false);
     ui.addContent(content, 4, PlaceInGrid.bottom, false);
-    if (requestFocus && !server.isPortBound()) {
-      ui.selectAndFocus(content, false, false);
+    if (!server.areBrowsersReady()) {
+      KarmaUtil.selectAndFocusIfNotDisposed(ui, content, false, false);
     }
     NopProcessHandler wrapperProcessHandler = new NopProcessHandler();
     // we can't attach console to real process handler to not lose any messages
