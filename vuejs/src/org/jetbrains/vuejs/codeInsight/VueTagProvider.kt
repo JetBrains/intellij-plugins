@@ -120,14 +120,6 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       withIcon(VuejsIcons.Vue)
 }
 
-fun findComponentInnerDetailInObjectLiteral(obj : JSObjectLiteralExpression, attributeName: String) : VueAttributeDescriptor? {
-  return VueComponentDetailsProvider.INSTANCE.resolveAttribute(obj, attributeName, false)
-}
-
-fun getComponentInnerDetailsFromObjectLiteral(obj : JSObjectLiteralExpression) : List<VueAttributeDescriptor> {
-  return VueComponentDetailsProvider.INSTANCE.getAttributes(obj, false)
-}
-
 class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescriptor {
   override fun getDeclaration() = element
   override fun getName(context: PsiElement?):String = (context as? XmlTag)?.name ?: name
