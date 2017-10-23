@@ -2,7 +2,6 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.process.NopProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
@@ -82,9 +81,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     }
     else {
       myServer.onBrowsersReady(() -> KarmaUtil.selectAndFocusIfNotDisposed(ui, consoleContent, false, false));
-      if (myExecutionType != KarmaExecutionType.DEBUG) {
-        registerPrintingBrowserCapturingSuggestion();
-      }
+      registerPrintingBrowserCapturingSuggestion();
     }
     KarmaRootTestProxyFormatter rootFormatter = new KarmaRootTestProxyFormatter(this, myServer);
     ProcessAdapter listener = new ProcessAdapter() {
@@ -108,15 +105,16 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
   }
 
   private void registerPrintingBrowserCapturingSuggestion() {
+    if (myExecutionType == KarmaExecutionType.DEBUG) {
+      return;
+    }
     myServer.onPortBound(() -> {
       if (Disposer.isDisposed(this)) {
         return;
       }
       Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
       alarm.addRequest(() -> {
-        if (!myServer.getProcessHandler().isProcessTerminated() &&
-            !myServer.areBrowsersReady() &&
-            !myProcessHandler.isProcessTerminated()) {
+        if (!myProcessHandler.isProcessTerminated()) {
           getResultsViewer().getTestsRootNode().addLast(printer -> {
             printer.print("To capture a browser open ", ConsoleViewContentType.SYSTEM_OUTPUT);
             String url = myServer.formatUrl("/");
@@ -125,7 +123,8 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
           });
         }
         Disposer.dispose(alarm);
-      }, myProcessHandler instanceof NopProcessHandler ? 1000 : 10000, ModalityState.any());
+      }, 1000, ModalityState.any());
+      myServer.onBrowsersReady(() -> Disposer.dispose(alarm));
     });
   }
 
