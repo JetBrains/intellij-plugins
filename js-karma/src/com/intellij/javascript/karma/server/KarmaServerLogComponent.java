@@ -10,9 +10,11 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.ide.browsers.OpenUrlHyperlinkInfo;
+import com.intellij.javascript.karma.execution.KarmaServerSettings;
 import com.intellij.javascript.karma.util.ArchivedOutputListener;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.nodejs.NodeStackTraceFilter;
+import com.intellij.lang.javascript.ConsoleCommandLineFolder;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionPlaces;
@@ -24,9 +26,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComponentWithActions;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.content.Content;
 import com.intellij.util.Alarm;
+import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -142,6 +146,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
       }
     };
     server.getProcessOutputManager().addOutputListener(outputListener);
+    component.foldCommandLine();
     component.registerPrintingBrowserCapturingSuggestion();
     Disposer.register(content, console);
     Disposer.register(console, new Disposable() {
@@ -151,6 +156,16 @@ public class KarmaServerLogComponent implements ComponentWithActions {
         server.getProcessOutputManager().removeOutputListener(outputListener);
       }
     });
+  }
+
+  private void foldCommandLine() {
+    ConsoleCommandLineFolder folder = new ConsoleCommandLineFolder("karma", "start");
+    KarmaServerSettings serverSettings = myServer.getServerSettings();
+    folder.addPlaceholderText("--config=" + PathUtil.getFileName(serverSettings.getConfigurationFilePath()));
+    if (!StringUtil.isEmptyOrSpaces(serverSettings.getBrowsers())) {
+      folder.addPlaceholderText("--browsers=" + serverSettings.getBrowsers());
+    }
+    folder.foldCommandLine(myConsole, myServer.getProcessHandler());
   }
 
   private void registerPrintingBrowserCapturingSuggestion() {

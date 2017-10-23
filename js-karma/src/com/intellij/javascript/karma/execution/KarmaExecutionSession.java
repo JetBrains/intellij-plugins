@@ -20,6 +20,7 @@ import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
+import com.intellij.lang.javascript.ConsoleCommandLineFolder;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -51,6 +52,7 @@ public class KarmaExecutionSession {
   private final ProcessHandler myProcessHandler;
   private final KarmaExecutionType myExecutionType;
   private final SMTRunnerConsoleView mySmtConsoleView;
+  private final ConsoleCommandLineFolder myFolder = new ConsoleCommandLineFolder("karma", "run");
 
   public KarmaExecutionSession(@NotNull Project project,
                                @NotNull KarmaRunConfiguration runConfiguration,
@@ -69,6 +71,7 @@ public class KarmaExecutionSession {
     if (!(myProcessHandler instanceof NopProcessHandler)) {
       // show test result notifications for real test runs only
       mySmtConsoleView.attachToProcess(myProcessHandler);
+      myFolder.foldCommandLine(mySmtConsoleView, myProcessHandler);
     }
   }
 
@@ -170,6 +173,7 @@ public class KarmaExecutionSession {
         throw new ExecutionException("No test suites found in " + testFileName);
       }
       commandLine.addParameter("--testName=" + suiteName + " ");
+      myFolder.addLastParameterFrom(commandLine);
       myKarmaServer.setLastTestRunWithTestNameFilter(true);
     }
     else if (myRunSettings.getScopeKind() == KarmaScopeKind.SUITE || myRunSettings.getScopeKind() == KarmaScopeKind.TEST) {
@@ -178,6 +182,7 @@ public class KarmaExecutionSession {
         fullName += " "; // to distinguish "suite" and "suite_2"
       }
       commandLine.addParameter("--testName=" + fullName);
+      myFolder.addLastParameterFrom(commandLine);
       myKarmaServer.setLastTestRunWithTestNameFilter(true);
     }
     else {
