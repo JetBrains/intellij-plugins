@@ -67,7 +67,7 @@ public class RubyMotionOverrideTest extends RubyMotionLightFixtureTestCase {
     for (ClassMember classMember : list) {
       MemberChooserObjectBase methodMember = (MemberChooserObjectBase)classMember;
       if (name.equals(methodMember.getText())) {
-        final PsiElement element = OverriddenMethodGenerator.generate(classMember, LanguageLevel.RUBY19);
+        final PsiElement element = OverriddenMethodGenerator.generate(classMember, LanguageLevel.DEFAULT);
         assertNotNull(element);
         namesInClass.append(element.getText()).append("\n");
       }
