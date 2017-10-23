@@ -195,19 +195,12 @@ public class KarmaServerLogComponent implements ComponentWithActions {
           }
         }
       }, DELAY_MILLIS, ModalityState.any());
-      ProcessAdapter listener = new ProcessAdapter() {
+      myServer.getProcessHandler().addProcessListener(new ProcessAdapter() {
         @Override
         public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
           lastPrintTimeMillis.set(System.currentTimeMillis());
         }
-      };
-      myServer.getProcessHandler().addProcessListener(listener);
-      Disposer.register(alarm, new Disposable() {
-        @Override
-        public void dispose() {
-          myServer.getProcessHandler().removeProcessListener(listener);
-        }
-      });
+      }, alarm);
       myServer.onBrowsersReady(() -> Disposer.dispose(alarm));
     });
   }
