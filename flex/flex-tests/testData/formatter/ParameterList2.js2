@@ -3,22 +3,11 @@ class Foo {
 
 
 
-             c
-
-
-                     :
+             c       :           Boolean,
 
 
 
-                                 Boolean,
-
-
-
-            d
-                    :                   String
-
-
-
+            d :                   String
 
 
 
