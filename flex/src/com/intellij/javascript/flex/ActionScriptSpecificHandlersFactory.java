@@ -7,9 +7,7 @@ import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.ActionScriptExpectedTypeEvaluator;
 import com.intellij.lang.javascript.index.JSCustomIndexer;
 import com.intellij.lang.javascript.index.JSIndexContentBuilder;
-import com.intellij.lang.javascript.psi.ExpectedTypeEvaluator;
-import com.intellij.lang.javascript.psi.JSExpectedTypeKind;
-import com.intellij.lang.javascript.psi.JSExpression;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.*;
@@ -28,6 +26,12 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
   @Override
   public JSTypeEvaluator newTypeEvaluator(JSEvaluateContext context, JSTypeProcessor processor) {
     return new ActionScriptTypeEvaluator(context, processor);
+  }
+
+  @NotNull
+  @Override
+  public JSGenericTypesEvaluator getGenericTypeEvaluator() {
+    return JSGenericTypesEvaluator.NO_OP;
   }
 
   @NotNull
