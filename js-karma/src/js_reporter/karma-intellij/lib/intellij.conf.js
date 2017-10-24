@@ -15,8 +15,14 @@ function configureDebug(config) {
   // By default, browserNoActivityTimeout=10000 ms, not enough for suspended execution.
   // https://github.com/karma-runner/karma/blob/master/docs/config/01-configuration-file.md#browsernoactivitytimeout
   config.browserNoActivityTimeout = null;
-  config.browsers = intellijUtil.isString(config.browserForDebugging) ? [config.browserForDebugging] : [];
-  console.error('intellij: config.browsers = ' + JSON.stringify(config.browsers));
+  if (intellijUtil.isString(config.browserForDebugging)) {
+    config.browsers = [config.browserForDebugging];
+    console.info('intellij: set config.browsers to ' + JSON.stringify(config.browsers));
+  }
+  else if (Array.isArray(config.browsers) && config.browsers.length > 0) {
+    config.browsers = [];
+    console.info('intellij: a browser for tests debugging will be captured automatically');
+  }
   (function fixMochaTimeout() {
     var client = config.client;
     if (typeof client === 'undefined') {
