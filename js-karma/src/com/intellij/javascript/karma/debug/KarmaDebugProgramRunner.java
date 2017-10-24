@@ -116,8 +116,11 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
         public XDebugProcess start(@NotNull XDebugSession session) {
           JavaScriptDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
           WebBrowser browser = debuggableWebBrowser.getWebBrowser();
+          // If a capturing page was open, but not connected (e.g. it happens after karma server restart),
+          // reload it to capture. Otherwise (no capturing page was open), reloading shouldn't harm.
+          boolean reloadPage = !karmaServer.areBrowsersReady();
           JavaScriptDebugProcess<? extends VmConnection> debugProcess =
-            debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, false);
+            debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, reloadPage);
           debugProcess.setScriptsCanBeReloaded(true);
           debugProcess.addFirstLineBreakpointPattern("\\.browserify$");
           debugProcess.setElementsInspectorEnabled(false);
