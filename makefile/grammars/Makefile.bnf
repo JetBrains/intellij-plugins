@@ -90,7 +90,7 @@ vpath ::= 'vpath' (pattern directory*)? EOL {pin=1}
 pattern ::= identifier
 directory ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
 
-topconditional ::= conditional-keyword condition block ('else' block)* 'endif' {pin=1}
+topconditional ::= conditional-keyword condition block ('else' block)* 'endif'? {pin=1}
 block ::= any
 
 function ::= ('$(error'|'$(warning'|'$(info'|'$(shell') function-param* ')'

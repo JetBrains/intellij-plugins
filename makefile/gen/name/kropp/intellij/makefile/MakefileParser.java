@@ -1010,7 +1010,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // conditional-keyword condition block ('else' block)* 'endif'
+  // conditional-keyword condition block ('else' block)* 'endif'?
   public static boolean topconditional(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "topconditional")) return false;
     boolean r, p;
@@ -1020,7 +1020,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = r && report_error_(b, consumeToken(b, CONDITION));
     r = p && report_error_(b, block(b, l + 1)) && r;
     r = p && report_error_(b, topconditional_3(b, l + 1)) && r;
-    r = p && consumeToken(b, KEYWORD_ENDIF) && r;
+    r = p && topconditional_4(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1046,6 +1046,13 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = r && block(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  // 'endif'?
+  private static boolean topconditional_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "topconditional_4")) return false;
+    consumeToken(b, KEYWORD_ENDIF);
+    return true;
   }
 
   /* ********************************************************** */
