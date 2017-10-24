@@ -10,8 +10,8 @@ import com.intellij.psi.PsiElement
 class VueComponentDetailsProvider {
   fun getAttributes(descriptor: JSObjectLiteralExpression, onlyPublic: Boolean): List<VueAttributeDescriptor> {
     val result: MutableList<VueAttributeDescriptor> = mutableListOf()
-    val details: List<VueAttributeDescriptor> = VueComponentOwnDetailsProvider.getDetails(descriptor, EMPTY_FILTER, onlyPublic, false)
-    result.addAll(details)
+    result.addAll(VueComponentOwnDetailsProvider.getDetails(descriptor, EMPTY_FILTER, onlyPublic, false))
+    result.addAll(VueDirectivesProvider.getAttributes(descriptor, descriptor.project))
     iterateProviders(descriptor, {
       result.addAll(VueComponentOwnDetailsProvider.getDetails(it, EMPTY_FILTER, onlyPublic, false))
       true
@@ -35,6 +35,9 @@ class VueComponentDetailsProvider {
       holder.set(VueComponentOwnDetailsProvider.getDetails(it, filter, onlyPublic, true).firstOrNull())
       holder.isNull
     })
+    if (holder.isNull) {
+      holder.set(VueDirectivesProvider.resolveAttribute(descriptor, attrName, descriptor.project))
+    }
     return holder.get()
   }
 

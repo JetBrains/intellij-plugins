@@ -25,6 +25,7 @@ import com.intellij.psi.xml.XmlDocument
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
+import org.jetbrains.vuejs.DIRECTIVES
 import org.jetbrains.vuejs.MIXINS
 import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.index.*
@@ -38,7 +39,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   companion object {
     const val VUE = "Vue"
-    private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE, "mixin", "component", "extends")
+    private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE, "mixin", "component", "extends", "directive")
   }
 
   override fun findModule(result: PsiElement): PsiElement? = org.jetbrains.vuejs.codeInsight.findModule(result)
@@ -53,14 +54,21 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       (property.value as JSArrayLiteralExpression).expressions
         .forEach {
           if (it is JSReferenceExpression) {
-            out.addImplicitElement(JSImplicitElementImpl.Builder(LOCAL, property)
-                                     .setUserString(VueMixinBindingIndex.JS_KEY)
-                                     .setTypeString(it.text)
-                                     .toImplicitElement())
+            recordMixin(out, property, it.text, false)
           } else if (it is JSObjectLiteralExpression && it.firstProperty != null) {
-            out.addImplicitElement(JSImplicitElementImpl.Builder(LOCAL, it.firstProperty!!)
-                                     .setUserString(VueMixinBindingIndex.JS_KEY)
-                                     .toImplicitElement())
+            recordMixin(out, it.firstProperty!!, null, false)
+          }
+        }
+    } else if (DIRECTIVES == property.name) {
+      (property.value as? JSObjectLiteralExpression)?.properties?.forEach {
+          directive ->
+          if (!directive.name.isNullOrBlank()) {
+            if (directive.value is JSReferenceExpression) {
+              recordDirective(out, directive, directive.name!!, directive.value!!.text, false)
+            }
+            else if (directive.value is JSObjectLiteralExpression || directive.value is JSFunction) {
+              recordDirective(out, directive, directive.name!!, null, false)
+            }
           }
         }
     }
@@ -80,12 +88,12 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   override fun shouldCreateStubForCallExpression(node: ASTNode?): Boolean {
     val reference = (node?.psi as? JSCallExpression)?.methodExpression as? JSReferenceExpression ?: return false
-    return isVueComponentMethod(reference) || isVueMixinMethod(reference)
+    return VueStaticMethod.matchesAny(reference)
   }
 
   override fun processCallExpression(callExpression: JSCallExpression?, outData: JSElementIndexingData) {
     val reference = callExpression?.methodExpression as? JSReferenceExpression ?: return
-    if (isVueComponentMethod(reference)) {
+    if (VueStaticMethod.Component.matches(reference)) {
       val arguments = callExpression.arguments
       val componentName = getTextIfLiteral(arguments[0])
       if (arguments.size >= 2 && componentName != null) {
@@ -98,24 +106,45 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                                      .setTypeString(typeString)
                                      .toImplicitElement())
       }
-    } else if (isVueMixinMethod(reference)) {
+    } else if (VueStaticMethod.Mixin.matches(reference)) {
       val arguments = callExpression.arguments
       if (arguments.size == 1) {
         val provider = (arguments[0] as? JSObjectLiteralExpression)?.firstProperty ?: callExpression
         val typeString = (arguments[0] as? JSReferenceExpression)?.text ?: ""
-        outData.addImplicitElement(JSImplicitElementImpl.Builder(GLOBAL, provider)
-                                     .setUserString(VueMixinBindingIndex.JS_KEY)
-                                     .setTypeString(typeString)
-                                     .toImplicitElement())
+        recordMixin(outData, provider, typeString, true)
+      }
+    } else if (VueStaticMethod.Directive.matches(reference)) {
+      val arguments = callExpression.arguments
+      val directiveName = getTextIfLiteral(arguments[0])
+      if (arguments.size >= 2 && directiveName != null && !directiveName.isNullOrBlank()) {
+        // not null type string indicates the global directive
+        val typeString = (arguments[1] as? JSReferenceExpression)?.text ?: ""
+        recordDirective(outData, callExpression, directiveName, typeString, true)
       }
     }
   }
 
-  private fun isVueComponentMethod(reference: JSReferenceExpression) =
-    JSSymbolUtil.isAccurateReferenceExpressionName(reference, VUE, "component")
+  private fun recordDirective(outData: JSElementIndexingData,
+                              provider: JSImplicitElementProvider,
+                              directiveName: String,
+                              typeString: String?,
+                              isGlobal: Boolean) {
+    val index = if (isGlobal) VueGlobalDirectivesIndex.JS_KEY else VueLocalDirectivesIndex.JS_KEY
+    outData.addImplicitElement(JSImplicitElementImpl.Builder(directiveName, provider)
+                                 .setUserString(index)
+                                 .setTypeString(typeString)
+                                 .toImplicitElement())
+  }
 
-  private fun isVueMixinMethod(reference: JSReferenceExpression) =
-    JSSymbolUtil.isAccurateReferenceExpressionName(reference, VUE, "mixin")
+  private fun recordMixin(outData: JSElementIndexingData,
+                          provider: JSImplicitElementProvider,
+                          typeString: String?,
+                          isGlobal: Boolean) {
+    outData.addImplicitElement(JSImplicitElementImpl.Builder(if (isGlobal) GLOBAL else LOCAL, provider)
+                                 .setUserString(VueMixinBindingIndex.JS_KEY)
+                                 .setTypeString(typeString)
+                                 .toImplicitElement())
+  }
 
   private fun getTextIfLiteral(holder: PsiElement): String? {
     if (holder is JSLiteralExpression && holder.isQuotedLiteral) {
@@ -193,6 +222,17 @@ fun findModule(result: PsiElement): PsiElement? {
     return visitor.jsElement
   }
   return null
+}
+
+private enum class VueStaticMethod(val methodName: String) {
+  Component("component"), Mixin("mixin"), Directive("directive");
+
+  companion object {
+    fun matchesAny(reference: JSReferenceExpression): Boolean = values().any { it.matches(reference) }
+  }
+
+  fun matches(reference: JSReferenceExpression): Boolean =
+    JSSymbolUtil.isAccurateReferenceExpressionName(reference, VueFrameworkHandler.VUE, methodName)
 }
 
 private class MyScriptVisitor : XmlElementVisitor() {

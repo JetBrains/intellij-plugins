@@ -621,4 +621,9 @@ Vue.component('global-comp-literal', {
 </script>""")
     myFixture.checkHighlighting(true, false, true)
   }
+
+  fun testCustomDirectives() {
+    directivesTestCase(myFixture)
+    JSTestUtils.testES6<Exception>(project, { myFixture.checkHighlighting(true, false, true) })
+  }
 }

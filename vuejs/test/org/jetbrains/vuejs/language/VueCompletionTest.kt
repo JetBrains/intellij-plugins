@@ -6,8 +6,10 @@ import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.openapi.application.WriteAction.run
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import junit.framework.TestCase
 
 class VueCompletionTest : LightPlatformCodeInsightFixtureTestCase() {
   fun testCompleteCssClasses() {
@@ -483,5 +485,14 @@ export default {
       myFixture.completeBasic()
       assertSameElements(myFixture.lookupElementStrings!!, "open", "opener", "onopen", "openDatabase")
     })
+  }
+
+  fun testCustomDirectivesInCompletion() {
+    directivesTestCase(myFixture)
+    val attribute = myFixture.findElementByText("style", XmlAttribute::class.java)
+    TestCase.assertNotNull(attribute)
+    myFixture.editor.caretModel.moveToOffset(attribute.textOffset - 1)
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "v-focus", "v-local-directive", "v-some-other-directive", "v-imported-directive")
   }
 }
