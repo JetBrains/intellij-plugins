@@ -145,10 +145,13 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
 
   this.onBrowserError = function (browser, error) {
     if (tree == null) {
-      // https://youtrack.jetbrains.com/issue/WEB-16291
-      var message = beforeRunStart ? '"onBrowserError" unexpectedly called before "onRunStart"'
-                                   : '"onBrowserError" unexpectedly called after "onRunComplete"';
-      console.error('[karma bug found] ' + message + ", logged by karma-intellij plugin");
+      var disconnected = browser && typeof browser.state === 'number'
+                         && browser.constructor && browser.state === browser.constructor.STATE_DISCONNECTED;
+      // skip logging disconnected events (https://github.com/karma-runner/karma/issues/2853)
+      if (beforeRunStart || !disconnected) {
+        console.error(beforeRunStart ? '"onBrowserError" before "onRunStart"'
+                                     : '"onBrowserError" after "onRunComplete"', error);
+      }
     }
     else {
       addBrowserErrorNode(tree, browser, error);
