@@ -66,19 +66,23 @@ public class KarmaServerState {
                                     @NotNull String browserName,
                                     @Nullable Boolean autoCaptured) {
     if (BROWSER_CONNECTED_EVENT_TYPE.equals(eventType)) {
-      boolean captured = ObjectUtils.notNull(autoCaptured, true);
-      CapturedBrowser browser = new CapturedBrowser(browserName, browserId, captured);
+      CapturedBrowser browser = new CapturedBrowser(browserName, browserId, ObjectUtils.notNull(autoCaptured, true));
       myCapturedBrowsers.put(browserId, browser);
-      if (autoCaptured == Boolean.FALSE || canSetBrowsersReady()) {
-        setBrowsersReady();
-      }
     }
     else {
       myCapturedBrowsers.remove(browserId);
     }
+    updateBrowsersReadyStatus();
   }
 
-  private boolean canSetBrowsersReady() {
+  private void updateBrowsersReadyStatus() {
+    boolean ready = isCapturedBrowsersQuorum();
+    if (myBrowsersReady.compareAndSet(!ready, ready)) {
+      myServer.fireOnBrowsersReady(ready);
+    }
+  }
+
+  private boolean isCapturedBrowsersQuorum() {
     List<String> expectedBrowsers = myOverriddenBrowsers;
     if (expectedBrowsers == null) {
       KarmaConfig config = myConfig;
@@ -89,24 +93,11 @@ public class KarmaServerState {
     }
     Set<String> expectedBrowserSet = ContainerUtil.newHashSet(expectedBrowsers);
     expectedBrowserSet.removeAll(myFailedToStartBrowsers);
-    int autoCapturedBrowserCount = getAutoCapturedBrowserCount();
-    return autoCapturedBrowserCount > 0 && expectedBrowserSet.size() <= autoCapturedBrowserCount;
-  }
-
-  private int getAutoCapturedBrowserCount() {
-    int res = 0;
-    for (CapturedBrowser browser : myCapturedBrowsers.values()) {
-      if (browser.isAutoCaptured()) {
-        res++;
-      }
+    if (myCapturedBrowsers.values().stream().anyMatch(o -> !o.isAutoCaptured())) {
+      return true;
     }
-    return res;
-  }
-
-  private void setBrowsersReady() {
-    if (myBrowsersReady.compareAndSet(false, true)) {
-      myServer.fireOnBrowsersReady();
-    }
+    long autoCapturedCount = myCapturedBrowsers.values().stream().filter(o -> o.isAutoCaptured()).count();
+    return autoCapturedCount > 0 && expectedBrowserSet.size() <= autoCapturedCount;
   }
 
   public boolean areBrowsersReady() {
@@ -146,9 +137,7 @@ public class KarmaServerState {
   private void onBrowserCapturingFailed(@NotNull String notCapturedBrowser) {
     LOG.info("Browser " + notCapturedBrowser + " failed to be captured");
     myFailedToStartBrowsers.add(notCapturedBrowser);
-    if (canSetBrowsersReady()) {
-      setBrowsersReady();
-    }
+    updateBrowsersReadyStatus();
   }
 
   @Nullable

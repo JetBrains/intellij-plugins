@@ -243,13 +243,18 @@ public class KarmaServer {
     });
   }
 
-  void fireOnBrowsersReady() {
+  void fireOnBrowsersReady(boolean browsersReady) {
     UIUtil.invokeLaterIfNeeded(() -> {
-      List<Runnable> callbacks = ContainerUtil.newArrayList(myOnBrowsersReadyCallbacks);
-      myOnBrowsersReadyCallbacks.clear();
-      myOnBrowsersReadyCallbacks = null;
-      for (Runnable callback : callbacks) {
-        callback.run();
+      if (browsersReady) {
+        List<Runnable> callbacks = ContainerUtil.newArrayList(myOnBrowsersReadyCallbacks);
+        myOnBrowsersReadyCallbacks.clear();
+        myOnBrowsersReadyCallbacks = null;
+        for (Runnable callback : callbacks) {
+          callback.run();
+        }
+      }
+      else {
+        myOnBrowsersReadyCallbacks = Lists.newCopyOnWriteArrayList();
       }
     });
   }
