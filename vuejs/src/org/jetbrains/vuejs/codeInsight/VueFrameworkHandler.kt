@@ -85,8 +85,10 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   override fun processCallExpression(callExpression: JSCallExpression?, outData: JSElementIndexingData) {
     val reference = callExpression?.methodExpression as? JSReferenceExpression ?: return
+    val arguments = callExpression.arguments
+    if (arguments.isEmpty()) return
+
     if (isVueComponentMethod(reference)) {
-      val arguments = callExpression.arguments
       val componentName = getTextIfLiteral(arguments[0])
       if (arguments.size >= 2 && componentName != null) {
         val descriptor = arguments[1]
@@ -99,7 +101,6 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                                      .toImplicitElement())
       }
     } else if (isVueMixinMethod(reference)) {
-      val arguments = callExpression.arguments
       if (arguments.size == 1) {
         val provider = (arguments[0] as? JSObjectLiteralExpression)?.firstProperty ?: callExpression
         val typeString = (arguments[0] as? JSReferenceExpression)?.text ?: ""
