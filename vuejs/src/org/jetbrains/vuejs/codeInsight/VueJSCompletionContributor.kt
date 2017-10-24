@@ -19,7 +19,10 @@ class VueJSCompletionContributor : CompletionContributor() {
     val scriptWithExport = findScriptWithExport(parameters.position.originalElement) ?: return false
     val defaultExport = scriptWithExport.second
     val obj = defaultExport.stubSafeElement as? JSObjectLiteralExpression ?: return false
-    VueComponentDetailsProvider.INSTANCE.getAttributes(obj, false).forEach { result.addElement(LookupElementBuilder.create(it.name)) }
+    VueComponentDetailsProvider.INSTANCE.getAttributes(obj, false)
+      // do not suggest directives in injected javascript fragments
+      .filter { !it.isDirective() }
+      .forEach { result.addElement(LookupElementBuilder.create(it.name)) }
     return true
   }
 }

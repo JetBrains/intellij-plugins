@@ -39,11 +39,19 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
 
   override fun getAttributeDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
     if (context == null || !org.jetbrains.vuejs.index.hasVue(context.project)) return emptyArray()
-    val default = getDefaultVueAttributes()
+    val result = mutableListOf<XmlAttributeDescriptor>()
+    result.addAll(getDefaultVueAttributes())
     if (insideStyle(context)) {
-      return default.plus(VueAttributeDescriptor(SCOPED))
+      result.add(VueAttributeDescriptor(SCOPED))
+      result.add(VueAttributeDescriptor(SRC_ATTR_NAME))
     }
-    return default
+    result.addAll(VueDirectivesProvider.getAttributes(findLocalDescriptor(context), context.project))
+    return result.toTypedArray()
+  }
+
+  private fun findLocalDescriptor(context: XmlTag): JSObjectLiteralExpression? {
+    val scriptWithExport = findScriptWithExport(context.containingFile.originalFile) ?: return null
+    return scriptWithExport.second.stubSafeElement as? JSObjectLiteralExpression
   }
 
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
@@ -51,6 +59,8 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
     if (attributeName in arrayOf(SCOPED, SRC_ATTR_NAME) && insideStyle(context)) {
       return VueAttributeDescriptor(attributeName)
     }
+    val fromDirective = VueDirectivesProvider.resolveAttribute(findLocalDescriptor(context), attributeName, context.project)
+    if (fromDirective != null) return fromDirective
     val extractedName = VueComponentDetailsProvider.getBoundName(attributeName)
     if (extractedName != null) {
       return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(extractedName, context) ?: VueAttributeDescriptor(attributeName)
@@ -64,6 +74,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
 class VueAttributeDescriptor(private val name:String,
                              private val element:PsiElement? = null) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
   private var suppressRequired = false
+  private var isDirective = false
   override fun getName() = name
   override fun getDeclaration() = element
   override fun init(element: PsiElement?) {}
@@ -82,7 +93,7 @@ class VueAttributeDescriptor(private val name:String,
 
   override fun hasIdRefType() = false
   override fun getDefaultValue() = null
-  override fun isEnumerated() = VueAttributesProvider.HAVE_NO_PARAMS.contains(name) || attributeAllowsNoValue(name)
+  override fun isEnumerated() = isDirective || VueAttributesProvider.HAVE_NO_PARAMS.contains(name) || attributeAllowsNoValue(name)
   override fun getEnumeratedValues(): Array<out String> {
     if (isEnumerated) {
       return arrayOf(name)
@@ -98,6 +109,13 @@ class VueAttributeDescriptor(private val name:String,
     descriptor.suppressRequired = true
     return descriptor
   }
+
+  fun setIsDirective() : VueAttributeDescriptor {
+    isDirective = true
+    return this
+  }
+
+  fun isDirective(): Boolean = isDirective
 }
 
 fun findProperty(obj: JSObjectLiteralExpression?, name:String) = obj?.properties?.find { it.name == name }

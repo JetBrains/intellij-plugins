@@ -33,9 +33,13 @@ fun resolve(name:String, scope:GlobalSearchScope, key:StubIndexKey<String, JSImp
   if (DumbService.isDumb(scope.project!!)) return null
   val result = mutableListOf<JSImplicitElement>()
   StubIndex.getInstance().processElements(key, name, scope.project!!, scope, JSImplicitElementProvider::class.java, Processor {
-    it.indexingData?.implicitElements
-      ?.filter { it.userString == INDICES[key] }
-      ?.forEach { result.add(it) }
+    provider: JSImplicitElementProvider? ->
+      provider?.indexingData?.implicitElements
+        // the check for name is needed for groups of elements, for instance:
+        // directives: {a:..., b:...} -> a and b are recorded in 'directives' data.
+        // You can find it with 'a' or 'b' key, but you should filter the result
+        ?.filter { it.userString == INDICES[key] && name == it.name }
+        ?.forEach { result.add(it) }
     return@Processor true
   })
   return if (result.isEmpty()) null else result

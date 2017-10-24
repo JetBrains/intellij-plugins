@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.openapi.application.PathManager
+import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
@@ -1091,8 +1092,42 @@ Vue.component('global-comp-literal', {
     doTestResolveIntoProperty("testProp")
   }
 
-  fun testCustomResolve() {
+  fun testResolveGlobalCustomDirective() {
+    directivesTestCase(myFixture)
+    val attribute = myFixture.findElementByText("v-focus", XmlAttribute::class.java)
+    TestCase.assertNotNull(attribute)
+    myFixture.editor.caretModel.moveToOffset(attribute.textOffset)
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val callExpression = reference!!.resolve()
+    TestCase.assertNotNull(callExpression)
+    // unstub for test
+    TestCase.assertNotNull(callExpression!!.text)
+    TestCase.assertEquals("focus", ((callExpression as JSCallExpression).arguments[0] as JSLiteralExpression).value)
+    TestCase.assertEquals("CustomDirectives.js", callExpression.containingFile.name)
+  }
 
+  fun testResolveLocalCustomDirective() {
+    directivesTestCase(myFixture)
+    val names = mapOf(Pair("v-local-directive", "localDirective"),
+                      Pair("v-some-other-directive", "someOtherDirective"),
+                      Pair("v-imported-directive", "importedDirective"))
+    names.forEach {
+      val attribute = myFixture.findElementByText(it.key, XmlAttribute::class.java)
+      TestCase.assertNotNull(attribute)
+      myFixture.editor.caretModel.moveToOffset(attribute.textOffset)
+      doTestResolveIntoDirective(it.value, "CustomDirectives.vue")
+    }
+  }
+
+  private fun doTestResolveIntoDirective(directive: String, fileName : String) {
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val property = reference!!.resolve()
+    TestCase.assertNotNull(property)
+    TestCase.assertTrue(property is JSProperty)
+    TestCase.assertEquals(directive, (property as JSProperty).name)
+    TestCase.assertEquals(fileName, property.containingFile.name)
   }
 }
 
