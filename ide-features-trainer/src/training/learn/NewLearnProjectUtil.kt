@@ -5,7 +5,6 @@ import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.openapi.wm.ex.IdeFrameEx
@@ -27,11 +26,10 @@ object NewLearnProjectUtil {
     val allProjectsDir = ProjectUtil.getBaseDir()
     val projectName = langSupport.defaultProjectName
     val projectFilePath = allProjectsDir / projectName
-    val projectDir = File(projectFilePath).parentFile
-
-    FileUtil.ensureExists(projectDir)
-    val ideaDir = File(projectFilePath, Project.DIRECTORY_STORE_FOLDER)
-    FileUtil.ensureExists(ideaDir)
+//    val projectDir = File(projectFilePath).parentFile
+//    FileUtil.ensureExists(projectDir)
+//    val ideaDir = File(projectFilePath, Project.DIRECTORY_STORE_FOLDER)
+//    FileUtil.ensureExists(ideaDir)
 
     val newProject: Project =
         langSupport.createProject(projectName, projectToClose) ?: return projectToClose
@@ -72,5 +70,5 @@ object NewLearnProjectUtil {
 
 //overload div operator as a path separator
 private operator fun String.div(path: String): String? {
-  return this + File.pathSeparator + path
+  return this + File.separatorChar + path
 }

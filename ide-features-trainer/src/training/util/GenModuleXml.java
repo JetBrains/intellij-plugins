@@ -35,6 +35,7 @@ public class GenModuleXml {
     public final static String MODULE_LESSON_FILENAME_ATTR = "filename";
     public final static String MODULE_LESSON_SOLUTION = "solution";
 
+    @Deprecated
     public static void gen(String moduleName, String id, String path) throws URISyntaxException {
         try {
 

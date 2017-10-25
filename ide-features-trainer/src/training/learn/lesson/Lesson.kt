@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException
 /**
  * Created by karashevich on 29/01/15.
  */
-data class Lesson(val scenario: Scenario, val lang: String, val module: Module?) {
+data class Lesson(val scenario: Scenario, val lang: String, var module: Module?) {
 
   var lessonListeners: ArrayList<LessonListener> = ArrayList<LessonListener>()
     private set

@@ -44,5 +44,4 @@ abstract class AbstractLangSupport : LangSupport {
     return ToolWindowAnchor.LEFT
   }
 
-
 }

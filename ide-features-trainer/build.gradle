@@ -13,7 +13,7 @@ buildscript {
 
 
 plugins {
-    id "org.jetbrains.intellij" version "0.2.13"
+    id "org.jetbrains.intellij" version "0.2.17"
 }
 
 repositories {
@@ -21,13 +21,11 @@ repositories {
     mavenCentral()
     jcenter()
     maven { url "http://repository.jetbrains.com/repo/"}
-//    maven { url "http://dl.bintray.com/jonnyzzz/maven" }
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
-//    compile "org.jonnyzzz.kotlin.xml.bind:jdom:0.1.9"
 }
 
 group 'org.sk'
@@ -39,17 +37,13 @@ apply plugin: "kotlin"
 sourceCompatibility = 1.8
 
 intellij {
-    localPath '/Users/jetbrains/Library/Application Support/JetBrains/Toolbox/apps/IDEA-U/ch-1/171.4694.23/IntelliJ IDEA.app'
-    plugins = ['Pythonid:2017.1.171.4694.26']
-//    localPath '/Users/jetbrains/Library/Application Support/JetBrains/Toolbox/apps/PyCharm-C/ch-0/171.4694.38/PyCharm CE.app'
-//    plugins = ['Pythonid']
-//    plugins = ['Pythonid:2017.1.171.3691.19']
-//    updateSinceUntilBuild = false
+    version 'IU-173.2941.3'
+    plugins = ['Pythonid:2017.3.173.2941.9', 'org.jetbrains.plugins.go:173.2941.3.439']
 //    publish {
 //        username repoUser
 //        password repoPassword
 //    }
-    intellij.updateSinceUntilBuild = false
+//    intellij.updateSinceUntilBuild = false
 }
 
 sourceSets {
