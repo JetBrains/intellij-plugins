@@ -36,6 +36,7 @@
 
     <externalAnnotator language="JavaScript" implementationClass="com.intellij.lang.javascript.linter.tslint.highlight.TsLintExternalAnnotator"/>
     <externalAnnotator language="HTML" implementationClass="com.intellij.lang.javascript.linter.tslint.highlight.TsLintExternalAnnotator"/>
+    <psi.referenceContributor language="JSON" implementation="com.intellij.lang.javascript.linter.tslint.TsLintConfigReferenceContributor"/>
   </extensions>
   <extensions defaultExtensionNs="JavaScript.JsonSchema">
     <ProviderFactory implementation="com.intellij.lang.javascript.linter.tslint.schema.TsLintJsonSchemaProviderFactory"/>
