@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <modules>
-    <module name="modules/EditorBasics.xml"/>
-    <module name="modules/Completions.xml"/>
-    <module name="modules/Refactorings.xml"/>
-    <module name="modules/CodeAssistance.xml"/>
-    <module name="modules/Navigation.xml"/>
+    <module name="modules/java/EditorBasics.xml"/>
+    <module name="modules/go/EditorBasics.xml"/>
+    <module name="modules/java/Completions.xml"/>
+    <module name="modules/java/Refactorings.xml"/>
+    <module name="modules/java/CodeAssistance.xml"/>
+    <module name="modules/java/Navigation.xml"/>
     <!--<module name="modules/Loops.xml"/>-->
 </modules>
 

@@ -1,6 +1,5 @@
 package training.actions
 
-import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.ide.scratch.ScratchRootType
 import com.intellij.openapi.actionSystem.AnAction
@@ -71,7 +70,7 @@ class OpenLessonAction : AnAction() {
       val scratchFileName = "Learning"
       val vf: VirtualFile?
       val learnProject = CourseManager.instance.learnProject
-      if (lesson.module.moduleType == Module.ModuleType.SCRATCH) {
+      if (lesson.module == null || lesson.module!!.moduleType == Module.ModuleType.SCRATCH) {
         CourseManager.instance.checkEnvironment(project)
         vf = getScratchFile(myProject, lesson, scratchFileName)
       } else {
@@ -102,7 +101,7 @@ class OpenLessonAction : AnAction() {
         }
       }
 
-      val currentProject = if (lesson.module.moduleType != Module.ModuleType.SCRATCH) CourseManager.instance.learnProject!! else project
+      val currentProject = if (lesson.module != null && lesson.module!!.moduleType != Module.ModuleType.SCRATCH) CourseManager.instance.learnProject!! else project
       if (vf == null) return  //if user aborts opening lesson in LearnProject or Virtual File couldn't be computed
 
       //open next lesson if current is passed
@@ -114,8 +113,8 @@ class OpenLessonAction : AnAction() {
         override fun lessonNext(lesson: Lesson) {
           if (lesson.module == null) return
 
-          if (lesson.module.hasNotPassedLesson()) {
-            val nextLesson = lesson.module.giveNotPassedAndNotOpenedLesson() ?: throw BadLessonException("Unable to obtain not passed and not opened lessons")
+          if (lesson.module != null && lesson.module!!.hasNotPassedLesson()) {
+            val nextLesson = lesson.module!!.giveNotPassedAndNotOpenedLesson() ?: throw BadLessonException("Unable to obtain not passed and not opened lessons")
             openLesson(currentProject, nextLesson)
           }
         }
@@ -241,7 +240,7 @@ class OpenLessonAction : AnAction() {
         vf = ScratchRootType.getInstance().createScratchFile(project, filename, languageByID, "")
         assert(vf != null)
       }
-      if (lesson.module != null) CourseManager.instance.registerVirtualFile(lesson.module, vf!!)
+      if (lesson.module != null) CourseManager.instance.registerVirtualFile(lesson.module!!, vf!!)
     }
     return vf
   }
@@ -261,6 +260,7 @@ class OpenLessonAction : AnAction() {
   @Throws(IOException::class)
   private fun getFileInLearnProject(lesson: Lesson): VirtualFile {
 
+    if (lesson.module == null) throw Exception("Error: cannot create learning file in project for a lesson (${lesson.name}) without module (or module is null)")
     val function = object : Computable<VirtualFile> {
 
       override fun compute(): VirtualFile {
@@ -272,7 +272,7 @@ class OpenLessonAction : AnAction() {
 
         var fileName = "Test." + extensionFile
         if (lesson.module != null) {
-          fileName = lesson.module.nameWithoutWhitespaces + "." + extensionFile
+          fileName = lesson.module!!.nameWithoutWhitespaces + "." + extensionFile
         }
 
         var lessonVirtualFile: VirtualFile? = null
@@ -296,7 +296,7 @@ class OpenLessonAction : AnAction() {
 
         }
 
-        if (lesson.module != null) CourseManager.instance.registerVirtualFile(lesson.module, lessonVirtualFile!!)
+        if (lesson.module != null) CourseManager.instance.registerVirtualFile(lesson.module!!, lessonVirtualFile!!)
         return lessonVirtualFile!!
       }
     }
@@ -347,13 +347,8 @@ class OpenLessonAction : AnAction() {
     CourseManager.instance.learnProject = myLearnProject
 
     assert(CourseManager.instance.learnProject != null)
-    assert(CourseManager.instance.learnProject!!.projectFile != null)
-    assert(CourseManager.instance.learnProject!!.projectFile!!.parent != null)
-    assert(CourseManager.instance.learnProject!!.projectFile!!.parent.parent != null)
 
     CourseManager.instance.learnProjectPath = CourseManager.instance.learnProject!!.basePath
-    //Hide LearnProject from Recent projects
-    RecentProjectsManager.getInstance().removePath(CourseManager.instance.learnProject!!.presentableUrl)
 
     return myLearnProject
 

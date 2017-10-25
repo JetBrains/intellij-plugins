@@ -124,8 +124,8 @@ class LessonManager {
     val learnPanel = UiManager.learnPanel ?: throw Exception("Learn panel is null")
     learnPanel.setLessonPassed()
     val cLesson = myCurrentLesson ?: throw Exception("Current lesson is not defined (is null)")
-    if (cLesson.module != null && cLesson.module.hasNotPassedLesson()) {
-      val notPassedLesson = cLesson.module.giveNotPassedLesson()
+    if (cLesson.module != null && cLesson.module!!.hasNotPassedLesson()) {
+      val notPassedLesson = cLesson.module!!.giveNotPassedLesson()
       learnPanel.setButtonNextAction({
         try {
           CourseManager.instance.openLesson(project, notPassedLesson)
