@@ -20,7 +20,6 @@ import training.learn.exceptons.NoSdkException
 import training.learn.exceptons.OldJdkException
 import training.learn.lesson.Lesson
 import training.util.GenModuleXml
-import training.util.GenModuleXml.MODULE_MODULES_PATH
 import java.util.*
 
 class CourseManager internal constructor() {
@@ -28,7 +27,8 @@ class CourseManager internal constructor() {
   var learnProject: Project? = null
   var learnProjectPath: String? = null
   var mapModuleVirtualFile = HashMap<Module, VirtualFile>()
-  val modules: MutableList<Module> = ArrayList<Module>()
+  var modules: MutableList<Module> = ArrayList<Module>()
+  val modulesId2modules: MutableMap<String, Module> = mutableMapOf()
   val currentProject: Project?
     get() {
       val lastFocusedFrame = IdeFocusManager.getGlobalInstance().lastFocusedFrame ?: return null
@@ -45,10 +45,21 @@ class CourseManager internal constructor() {
     for (element in modulesRoot.children) {
       if (element.name == GenModuleXml.MODULE_TYPE_ATTR) {
         val moduleFilename = element.getAttribute(GenModuleXml.MODULE_NAME_ATTR).value
-        val module = Module.initModule(moduleFilename, MODULE_MODULES_PATH) ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
+        val module = Module.initModule(moduleFilename) ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
         modules.add(module)
       }
     }
+    mergeModules()
+  }
+
+  private fun mergeModules() {
+    // leave only uniques Module id
+    modules.forEach { if (it.id != null && !modulesId2modules.keys.contains(it.id!!)) modulesId2modules.put(it.id!!, it) }
+    modules.forEach {
+      val mergedModule = modulesId2modules.get(it.id)
+      it.lessons.forEach { lesson ->  mergedModule!!.addLesson(lesson) }
+    }
+    modules = modulesId2modules.values.toCollection(arrayListOf())
   }
 
   fun getModuleById(id: String): Module? {

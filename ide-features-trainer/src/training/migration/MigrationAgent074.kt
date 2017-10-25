@@ -26,6 +26,7 @@ class MigrationAgent074: MigrationManager.MigrationAgent() {
   private fun getFileRoot(): Element? {
     try {
       val xmlFile = getFileForVersion074()
+      if (!xmlFile.exists()) return null
       val inputStream = FileInputStream(xmlFile)
       val builder = SAXBuilder()
       return builder.build(inputStream).document.rootElement ?: throw Exception("Unable to build document from file input stream or root is null")

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<idea-plugin>
+    <extensions defaultExtensionNs="training">
+        <TrainingLangExtension language="go" implementationClass="training.lang.GoLangSupport"/>
+    </extensions>
+</idea-plugin>

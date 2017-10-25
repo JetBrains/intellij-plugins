@@ -50,13 +50,13 @@ class PythonLangSupport : AbstractLangSupport() {
 
   private fun findOrCreatePySdk(): Sdk {
     //find registered python SDKs
-    var pySdk = ProjectJdkTable.getInstance().allJdks.find { sdk -> sdk.sdkType is PythonSdkType && isNoOlderThan27(sdk)}
+    var pySdk: Sdk? = ProjectJdkTable.getInstance().allJdks.find { sdk -> sdk.sdkType is PythonSdkType && isNoOlderThan27(sdk)}
 
     //register first detected SDK
     if (pySdk == null) {
-      val sdkList = detectPySdks()
+      val sdkList: List<Sdk> = detectPySdks()
       pySdk = sdkList.firstOrNull() ?: throw NoSdkException("Python")
-      ApplicationManager.getApplication().runWriteAction { ProjectJdkTable.getInstance().addJdk(pySdk) }
+      ApplicationManager.getApplication().runWriteAction { ProjectJdkTable.getInstance().addJdk(pySdk!!) }
     }
     return pySdk
   }
