@@ -66,7 +66,7 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
             attributeList.getAccessType() == JSAttributeList.AccessType.PROTECTED
           ) {
           // we are resolving in context of the class or element within context of the class
-          if ((myClassScopeTypeNames != null || isParentClassContext(element))) {
+          if ((myClassScopes != null || isParentClassContext(element))) {
             resolveProcessor.addPossibleCandidateResult(element, JSResolveResult.PROTECTED_MEMBER_IS_NOT_ACCESSIBLE);
             return false;
           } // if element / context out of class then protected element is ok due to includes
