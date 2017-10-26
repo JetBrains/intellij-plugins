@@ -1,9 +1,6 @@
 package com.intellij.javascript.karma.server;
 
-import com.intellij.execution.process.ProcessAdapter;
-import com.intellij.execution.process.ProcessEvent;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessOutputTypes;
+import com.intellij.execution.process.*;
 import com.intellij.javascript.karma.util.ArchivedOutputListener;
 import com.intellij.javascript.karma.util.StreamEventListener;
 import com.intellij.openapi.application.ApplicationManager;
@@ -44,12 +41,11 @@ public class KarmaProcessOutputManager {
     myProcessHandler.addProcessListener(new ProcessAdapter() {
       @Override
       public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
-        String text = event.getText();
-        if (outputType != ProcessOutputTypes.SYSTEM && outputType != ProcessOutputTypes.STDERR) {
-          processStandardOutput(text, outputType);
+        if (ProcessOutputType.isStdout(outputType)) {
+          processStandardOutput(event.getText(), outputType);
         }
         else {
-          addText(text, outputType);
+          addText(event.getText(), outputType);
         }
       }
     });
