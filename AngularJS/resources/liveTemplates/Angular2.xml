@@ -15,7 +15,7 @@
       <option name="HTML" value="true" />
     </context>
   </template>
-  <template name="a-ngFor" value="*ngFor=&quot;let $item$ of $list$&quot;" description="Angular *ngFor" toReformat="true" toShortenFQNames="true">
+  <template name="a-ngFor" value="*ngFor=&quot;let $item$ of $list$&quot;$END$" description="Angular *ngFor" toReformat="true" toShortenFQNames="true">
     <variable name="item" expression="" defaultValue="&quot;item&quot;" alwaysStopAt="true" />
     <variable name="list" expression="" defaultValue="&quot;list&quot;" alwaysStopAt="true" />
     <context>
@@ -23,7 +23,15 @@
       <option name="HTML" value="true" />
     </context>
   </template>
-  <template name="a-ngForAsync" value="*ngFor=&quot;let $item$ of $stream$ | async as $list$&quot;" description="Angular *ngForAsync" toReformat="true" toShortenFQNames="true">
+  <template name="a-ngFor-trackBy" value="*ngFor=&quot;let $item$ of $list$; trackBy:$item$.id&quot;$END$" description="Angular *ngFor with trackBy" toReformat="true" toShortenFQNames="true">
+    <variable name="item" expression="" defaultValue="&quot;item&quot;" alwaysStopAt="true" />
+    <variable name="list" expression="" defaultValue="&quot;list&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="HTML_TEXT" value="false" />
+      <option name="HTML" value="true" />
+    </context>
+  </template>
+  <template name="a-ngForAsync" value="*ngFor=&quot;let $item$ of $stream$ | async as $list$&quot;$END$" description="Angular *ngForAsync" toReformat="true" toShortenFQNames="true">
     <variable name="item" expression="" defaultValue="&quot;item&quot;" alwaysStopAt="true" />
     <variable name="stream" expression="" defaultValue="&quot;stream&quot;" alwaysStopAt="true" />
     <variable name="list" expression="" defaultValue="&quot;list&quot;" alwaysStopAt="true" />
@@ -123,7 +131,7 @@
       <option name="TypeScript" value="true" />
     </context>
   </template>
-  <template name="a-guard-can-activate-child" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { ActivatedRouteSnapshot, CanActivateChild, RouterStateSnapshot } from &apos;@angular/router&apos;;&#10;&#10;@Injectable()&#10;export class $Name$Guard implements CanActivateChild {&#10;	constructor() { }&#10;&#10;	canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {&#10;		return true;$END$&#10;	}&#10;}" description="Angular CanActivateChild guard" toReformat="true" toShortenFQNames="true">
+  <template name="a-guard-can-activate-child" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { ActivatedRouteSnapshot, CanActivateChild, RouterStateSnapshot } from &apos;@angular/router&apos;;&#10;&#10;@Injectable()&#10;export class $Name$Guard implements CanActivateChild {&#10;	constructor() { }&#10;&#10;	canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {&#10;		return true;$END$&#10;	}&#10;}" description="Angular CanActivateChild guard" toReformat="true" toShortenFQNames="true">
     <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
@@ -146,6 +154,13 @@
   <template name="a-component" value="import { Component, OnInit } from &apos;@angular/core&apos;;&#10;&#10;@Component({&#10;	selector: &apos;$selector_name$&apos;,&#10;	templateUrl: &apos;$name$.component.html&apos;&#10;})&#10;&#10;export class $Name$Component implements OnInit {&#10;	constructor() { }&#10;&#10;	ngOnInit() { }$END$&#10;}" description="Angular component" toReformat="true" toShortenFQNames="true">
     <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
     <variable name="name" expression="lowercaseAndDash(Name)" defaultValue="" alwaysStopAt="true" />
+    <variable name="selector_name" expression="lowercaseAndDash(Name)" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-component-inline" value="import { Component, OnInit } from &apos;@angular/core&apos;;&#10;&#10;@Component({&#10;	selector: &apos;$selector_name$&apos;,&#10;	template: `$END$`&#10;})&#10;&#10;export class $Name$Component implements OnInit {&#10;	constructor() { }&#10;&#10;	ngOnInit() { }&#10;}" description="Angular component with an inline template" toReformat="true" toShortenFQNames="true">
+    <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
     <variable name="selector_name" expression="lowercaseAndDash(Name)" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
@@ -177,8 +192,24 @@
       <option name="TypeScript" value="true" />
     </context>
   </template>
-  <template name="a-service-httpclient" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { Http, Response } from &apos;@angular/common/http&apos;;&#10;&#10;@Injectable()&#10;export class $ServiceName$Service {&#10;	constructor(private httpClient: HttpClient) { }&#10;	$END$&#10;}" description="Angular service with HttpClient" toReformat="true" toShortenFQNames="true">
+  <template name="a-service-httpclient" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { HttpClient } from &apos;@angular/common/http&apos;;&#10;&#10;@Injectable()&#10;export class $ServiceName$Service {&#10;	constructor(private httpClient: HttpClient) { }&#10;	$END$&#10;}" description="Angular service with HttpClient" toReformat="true" toShortenFQNames="true">
     <variable name="ServiceName" expression="" defaultValue="&quot;ServiceName&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-http-interceptor" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { HttpInterceptor, HttpEvent, HttpHandler, HttpRequest } from &apos;@angular/common/http&apos;;&#10;import { Observable } from &apos;rxjs/Observable&apos;;&#10;&#10;@Injectable()&#10;export class HeaderInterceptor implements HttpInterceptor {&#10;	intercept(req: HttpRequest&lt;any&gt;, next: HttpHandler): Observable&lt;HttpEvent&lt;any&gt;&gt; {&#10;		return next.handle(req);&#10;	}&#10;}" description="Empty Angular HttpInterceptor for HttpClient" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-http-interceptor-headers" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest } from &apos;@angular/common/http&apos;;&#10;import { Observable } from &apos;rxjs/Observable&apos;;&#10;&#10;@Injectable()&#10;export class HeaderInterceptor implements HttpInterceptor {&#10;	constructor() {}&#10;&#10;	intercept(req: HttpRequest&lt;any&gt;, next: HttpHandler): Observable&lt;HttpEvent&lt;any&gt;&gt; {&#10;		const headers = req.headers&#10;			.set(&apos;Content-Type&apos;, &apos;application/json&apos;);&#10;		const authReq = req.clone({ headers });&#10;		return next.handle(authReq);&#10;	}&#10;}" description="Angular HttpInterceptor for headers HttpClient" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-http-interceptor-logging" value="import { HttpInterceptor, HttpHandler, HttpRequest, HttpEvent, HttpResponse } from &apos;@angular/common/http&apos;;&#10;import { Observable } from &apos;rxjs/Observable&apos;;&#10;import &apos;rxjs/add/operator/do&apos;;&#10;&#10;export class LogInterceptor implements HttpInterceptor {&#10;	constructor() {}&#10;&#10;	intercept(req: HttpRequest&lt;any&gt;, next: HttpHandler): Observable&lt;HttpEvent&lt;any&gt;&gt; {&#10;		const started = Date.now();&#10;		return next.handle(req).do(event =&gt; {&#10;			if (event instanceof HttpResponse) {&#10;				const elapsed = Date.now() - started;&#10;				console.log(`Request for \${req.urlWithParams} took \$elapsed$ ms.`);&#10;			}&#10;		});&#10;	}&#10;}" description="Angular HttpInterceptor for Logging HttpClient" toReformat="true" toShortenFQNames="true">
+    <variable name="elapsed" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
     </context>
@@ -221,6 +252,12 @@
   <template name="a-module-root" value="import { NgModule } from &apos;@angular/core&apos;;&#10;import { BrowserModule  } from &apos;@angular/platform-browser&apos;;&#10;import { HttpModule } from &apos;@angular/http&apos;;&#10;&#10;import { $App$Component } from &apos;./$app$.component&apos;;&#10;import { AppRoutingModule } from &apos;./$app$.routing&apos;; //TODO: Create $app$.routing&#10;&#10;@NgModule({&#10;	imports: [&#10;		BrowserModule,&#10;		HttpModule,&#10;	&#10;		AppRoutingModule,&#10;	],&#10;	declarations: [$App$Component],&#10;	providers: [/* TODO: Providers go here */],&#10;	bootstrap: [$App$Component],&#10;})&#10;export class $App$Module { }&#10;$END$" description="Angular Root Module" toReformat="true" toShortenFQNames="true">
     <variable name="App" expression="" defaultValue="&quot;App&quot;" alwaysStopAt="true" />
     <variable name="app" expression="lowercaseAndDash(App)" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-router-events" value="checkEvents() {&#10;	this.router.events.subscribe(event =&gt; {&#10;		switch (true) {&#10;			case event instanceof $eventName$:&#10;				$END$&#10;				break;&#10;&#10;			default:&#10;				break;&#10;		}&#10;	});&#10;}" description="Angular Router Events" toReformat="true" toShortenFQNames="true">
+    <variable name="eventName" expression="" defaultValue="&quot;eventName&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
     </context>
