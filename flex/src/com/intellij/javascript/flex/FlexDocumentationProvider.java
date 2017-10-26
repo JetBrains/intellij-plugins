@@ -879,7 +879,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
   @NotNull
   @Override
-  protected JSDocumentationBuilder createDocumentationBuilder(@NotNull PsiElement element) {
+  protected JSDocumentationBuilder createDocumentationBuilder(@NotNull PsiElement element, PsiElement contextElement) {
     return new FlexDocumentationBuilder(element, null, this);
   }
 
