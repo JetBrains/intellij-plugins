@@ -51,6 +51,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.intellij.lang.javascript.psi.resolve.AccessibilityProcessingHandler.processWithStatic;
 import static com.intellij.lang.javascript.psi.types.JSNamedType.createType;
 
 /**
@@ -454,15 +455,10 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
 
   private static void processStaticsOf(JSClass parameterClass, ResolveProcessor processor, @Nullable JSClass contextClass) {
     processor.configureClassScope(contextClass);
-    
-    boolean savedProcessStatics = processor.getAccessibilityProcessingHandler().isProcessStatics();
-    try {
-      processor.getAccessibilityProcessingHandler().setProcessStatics(true);
+
+    processWithStatic(processor, true, () -> {
       processor.setTypeName(parameterClass.getQualifiedName());
-      parameterClass.processDeclarations(processor, ResolveState.initial(), parameterClass, parameterClass);
-    }
-    finally {
-      processor.getAccessibilityProcessingHandler().setProcessStatics(savedProcessStatics);
-    }
+      return parameterClass.processDeclarations(processor, ResolveState.initial(), parameterClass, parameterClass);
+    });
   }
 }
