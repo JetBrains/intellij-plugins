@@ -64,7 +64,7 @@ public class StrutsConventionImplicitUsageProvider implements ImplicitUsageProvi
   }
 
   private static boolean isAnnotatedWithAction(PsiModifierListOwner psiModifierListOwner) {
-    return AnnotationUtil.isAnnotated(psiModifierListOwner, StrutsConventionConstants.ACTION, false);
+    return AnnotationUtil.isAnnotated(psiModifierListOwner, StrutsConventionConstants.ACTION, 0);
   }
 
   private static boolean isConventionActionClass(@Nullable PsiClass psiClass) {
@@ -81,7 +81,7 @@ public class StrutsConventionImplicitUsageProvider implements ImplicitUsageProvi
       return true;
     }
 
-    if (AnnotationUtil.isAnnotated(psiClass, StrutsConventionConstants.ACTIONS, false)) {
+    if (AnnotationUtil.isAnnotated(psiClass, StrutsConventionConstants.ACTIONS, 0)) {
       return true;
     }
 
