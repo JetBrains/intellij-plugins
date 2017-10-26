@@ -90,7 +90,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   }
 
   @Override
-  protected void addTypeFromClass(@NotNull PsiElement resolveResult, @Nullable PsiElement constructor) {
+  protected void addTypeFromClassCandidate(@NotNull PsiElement resolveResult, @Nullable PsiElement constructor) {
     if (resolveResult instanceof JSFunction) {
       resolveResult = resolveResult.getParent();
     }
