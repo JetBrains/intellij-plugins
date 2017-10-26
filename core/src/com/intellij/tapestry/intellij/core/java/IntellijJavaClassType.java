@@ -226,14 +226,14 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
     }
   }
 
-  private static Collection<String> annotations = Arrays.asList("org.apache.tapestry5.annotations.SupportsInformalParameters");
+  private static final String INFORMAL_PARAMETERS_ANNOTATION = "org.apache.tapestry5.annotations.SupportsInformalParameters";
 
   @Override
   public boolean supportsInformalParameters() {
     if (_supportInformalParameters == null) {
       boolean result = false;
       PsiClass psiClass = getPsiClass();
-      if (psiClass != null && AnnotationUtil.isAnnotated(psiClass, annotations, true)) {
+      if (psiClass != null && AnnotationUtil.isAnnotated(psiClass, INFORMAL_PARAMETERS_ANNOTATION, AnnotationUtil.CHECK_HIERARCHY)) {
         result = true;
       }
       _supportInformalParameters = result;

@@ -24,9 +24,6 @@ public class TapestryImplicitUsageProvider implements ImplicitUsageProvider {
 
   @Override
   public boolean isImplicitWrite(PsiElement element) {
-    if (element instanceof PsiField && AnnotationUtil.isAnnotated((PsiField)element, ourAnnotations, false)) {
-      return true;
-    }
-    return false;
+    return element instanceof PsiField && AnnotationUtil.isAnnotated((PsiField)element, ourAnnotations, 0);
   }
 }
