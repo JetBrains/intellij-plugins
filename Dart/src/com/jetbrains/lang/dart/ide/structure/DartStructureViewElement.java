@@ -41,8 +41,8 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
   @NotNull private final PsiFile myPsiFile;
   @NotNull private final Outline myOutline;
 
-  private final String myValue;
-  private final String myPresentableText;
+  @NotNull private final String myValue;
+  @NotNull private final String myPresentableText;
 
   public DartStructureViewElement(@NotNull final PsiFile psiFile, @NotNull final Outline outline) {
     myPsiFile = psiFile;
@@ -168,6 +168,7 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
   }
 
   @Override
+  @NotNull
   public String getValue() {
     return myValue;
   }
@@ -175,7 +176,7 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
   @NotNull
   public static String getValue(@NotNull final Outline outline) {
     final Outline parent = outline.getParent();
-    return parent != null ? getPresentableText(parent) + getPresentableText(outline) : getPresentableText(outline);
+    return (parent != null ? getValue(parent) + parent.getChildren().indexOf(outline) : "") + getPresentableText(outline);
   }
 
   @NotNull
@@ -186,11 +187,11 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
 
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof DartStructureViewElement && ((DartStructureViewElement)obj).getPresentableText().equals(getPresentableText());
+    return obj instanceof DartStructureViewElement && ((DartStructureViewElement)obj).getValue().equals(getValue());
   }
 
   @Override
   public int hashCode() {
-    return getPresentableText().hashCode();
+    return getValue().hashCode();
   }
 }
