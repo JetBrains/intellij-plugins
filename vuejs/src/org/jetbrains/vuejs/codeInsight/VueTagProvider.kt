@@ -107,10 +107,9 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     val globals = mutableSetOf<String>()
     val variants = getForAllKeys(tag.resolveScope, VueComponentsIndex.KEY, { key -> key.startsWith(namePrefix, true) }).
       filter { !files.contains(it.containingFile) }
-    variants.forEach { if (VueComponents.isGlobal(it)) globals.addAll(getNameVariants(it.name, true)) }
 
     val components = variants.filter { !globals.contains(it.name) || VueComponents.isGlobal(it) }.
-      map { createVueLookup(it, it.name, VueComponents.isGlobal(it)) }
+      map { createVueLookup(it, fromAsset(it.name), VueComponents.isGlobal(it)) }.distinctBy { it.lookupString }
     elements?.addAll(components)
   }
 
