@@ -39,16 +39,17 @@ public class DartMethodSeparatorsTest extends DaemonAnalyzerTestCase {
                                              "   \n" +
                                              "  baz(){}\n" +
                                              "\n" +
-                                             "  abstract <lineMarker>abs</lineMarker>();\n" +
+                                             "  <lineMarker>abstract</lineMarker> abs();\n" +
                                              "}");
       doDoTest(false, false);
 
       // getters and setters
       configureByText(DartFileType.INSTANCE, "class A {\n" +
                                              "  firstMethod(){}\n" + // no line marker
-                                             "  get <lineMarker>v</lineMarker> => 1;\n" +
-                                             "  set <lineMarker>v</lineMarker>(i) {}\n" +
-                                             "  int get <lineMarker>i</lineMarker> => 1;\n" +
+                                             "  <lineMarker>@</lineMarker>foo\n" +
+                                             "  get v => 1;\n" +
+                                             "  <lineMarker>set</lineMarker> v(i) {}\n" +
+                                             "  <lineMarker>int</lineMarker> get i => 1;\n" +
                                              "}");
       doDoTest(false, false);
 
@@ -56,16 +57,17 @@ public class DartMethodSeparatorsTest extends DaemonAnalyzerTestCase {
       configureByText(DartFileType.INSTANCE, "class A {\n" +
                                              "  firstMethod(){}\n" + // no line marker
                                              "  <lineMarker>A</lineMarker>() {}\n" +
-                                             "  A.<lineMarker>b</lineMarker>() {}\n" +
+                                             "  <lineMarker>A</lineMarker>.b() {}\n" +
                                              "}");
       doDoTest(false, false);
 
       // globals
       configureByText(DartFileType.INSTANCE, "  firstFunction(){}\n" + // no line marker
                                              "  <lineMarker>func</lineMarker>(){}\n" +
-                                             "  get <lineMarker>v</lineMarker> => 1;\n" +
-                                             "  set <lineMarker>v</lineMarker>(i) {}\n" +
-                                             "  int get <lineMarker>i</lineMarker> => 1;");
+                                             "  <lineMarker>/// doc</lineMarker>\n" +
+                                             "  get v => 1;\n" +
+                                             "  <lineMarker>set</lineMarker> v(i) {}\n" +
+                                             "  <lineMarker>int</lineMarker> get i => 1;");
       doDoTest(false, false);
 
       // any preceding sibling implies that the method will be marked
