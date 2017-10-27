@@ -118,7 +118,7 @@ public class JSUntypedDeclarationInspection extends JSInspection {
       final Template t = templateManager.createTemplate("","");
       t.addTextSegment(":");
 
-      JSType detectedTypeFromUsage = TypeFromUsageDetector.detectTypeFromUsage(parent, containingFile);
+      JSType detectedTypeFromUsage = TypeFromUsageDetector.detectTypeFromUsage(parent);
 
       if (detectedTypeFromUsage != null) {
         BaseCreateFix.addTypeVariable(t, "a", anchor, detectedTypeFromUsage.getTypeText(JSType.TypeTextFormat.CODE));
