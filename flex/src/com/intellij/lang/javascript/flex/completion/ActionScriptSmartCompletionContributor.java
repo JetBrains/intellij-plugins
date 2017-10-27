@@ -155,7 +155,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
     else if (location.getQualifier() == null) {
       if (JSResolveUtil.isExprInStrictTypeContext(location)) {
         if (parent instanceof JSVariable || parent instanceof JSFunction) {
-          JSType type = TypeFromUsageDetector.detectTypeFromUsage(parent, parent.getContainingFile());
+          JSType type = TypeFromUsageDetector.detectTypeFromUsage(parent);
           if (type == null && parent instanceof JSVariable) {
             PsiElement parent2 = parent.getParent();
             PsiElement grandParent = parent2 instanceof JSVarStatement ? parent2.getParent() : null;
