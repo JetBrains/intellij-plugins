@@ -34,5 +34,6 @@
     <orderEntry type="module" module-name="testFramework-JavaScript" scope="TEST" />
     <orderEntry type="module" module-name="testFramework-JavaScript" scope="TEST" />
     <orderEntry type="module" module-name="spellchecker" />
+    <orderEntry type="module" module-name="JavaScript-tests" scope="TEST" />
   </component>
 </module>
