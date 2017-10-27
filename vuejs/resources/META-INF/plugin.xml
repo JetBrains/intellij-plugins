@@ -48,6 +48,14 @@
     
     <spellchecker.bundledDictionaryProvider implementation="org.jetbrains.vuejs.spellchecker.VueSpellcheckingDictionaryProvider"/>
     <spellchecker.support language="Vue" implementationClass="org.jetbrains.vuejs.spellchecker.VueSpellcheckingStrategy"/>
+
+    <liveTemplateContext implementation="org.jetbrains.vuejs.liveTemplate.VueBaseLiveTemplateContextType"/>
+    <liveTemplateContext implementation="org.jetbrains.vuejs.liveTemplate.VueScriptLiveTemplateContextType"/>
+    <liveTemplateContext implementation="org.jetbrains.vuejs.liveTemplate.VueComponentDescriptorLiveTemplateContextType"/>
+    <liveTemplateContext implementation="org.jetbrains.vuejs.liveTemplate.VueTemplateLiveTemplateContextType"/>
+    <liveTemplateContext implementation="org.jetbrains.vuejs.liveTemplate.VueInsideTagLiveTemplateContextType"/>
+    <liveTemplateContext implementation="org.jetbrains.vuejs.liveTemplate.VueTopLevelLiveTemplateContextType"/>
+    <defaultLiveTemplatesProvider implementation="org.jetbrains.vuejs.liveTemplate.VueTemplatesProvider"/>
   </extensions>
   <actions>
     <action class="org.jetbrains.vuejs.CreateVueSingleFileComponentAction" id="CreateVueSingleFileComp">
