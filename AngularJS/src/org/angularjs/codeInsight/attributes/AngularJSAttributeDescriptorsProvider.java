@@ -38,7 +38,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
       final boolean hasAngularJS2 = AngularIndexUtil.hasAngularJS2(project);
-      if (!AngularIndexUtil.hasAngularJS(xmlTag.getProject()) && !hasAngularJS2) return XmlAttributeDescriptor.EMPTY;
+      if (!AngularIndexUtil.hasAngularJS(xmlTag.getProject())) return XmlAttributeDescriptor.EMPTY;
 
       final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<>();
       final XmlElementDescriptor descriptor = xmlTag.getDescriptor();
