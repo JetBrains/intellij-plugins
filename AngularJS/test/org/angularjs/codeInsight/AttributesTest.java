@@ -109,6 +109,10 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.testCompletion("custom.html", "custom.after.html", "custom.js", "angular.js");
   }
 
+  public void testCustomAttributesNoCompletionIfNoAngular() {
+    myFixture.testCompletion("custom.html", "custom.no.completion.after.html", "custom.js");
+  }
+
   public void testCustomAttributesTemplateCompletion() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
                                         (ThrowableRunnable<Exception>)() -> myFixture.testCompletion("custom.html", "custom.after.html", "custom_template.js", "angular.js"));
