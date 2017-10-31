@@ -405,7 +405,6 @@ public class FlexStackFrame extends XStackFrame {
         try { while(true) { wait(); if (result != null) break;} }
         catch (InterruptedException ex) {
           FlexDebugProcess.log(ex);
-          return;
         }
       }
     }
@@ -548,7 +547,7 @@ public class FlexStackFrame extends XStackFrame {
           if (name.startsWith("$")) {   // $x is legal variable name, this evaluation is $1
             boolean completeDigits = name.length() > 1;
             for (int j = 1; j < name.length(); ++j) {
-              completeDigits &= Character.isDigit(name.charAt(j));
+              completeDigits = Character.isDigit(name.charAt(j));
               if (!completeDigits) break;
             }
             if (completeDigits) name = "this";
