@@ -2,8 +2,6 @@ package org.intellij.plugins.markdown.extensions.plantuml
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.openapi.vfs.VirtualFile
 import net.sourceforge.plantuml.FileFormat
 import net.sourceforge.plantuml.FileFormatOption
 import net.sourceforge.plantuml.SourceStringReader
@@ -16,17 +14,17 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
-internal class PlantUMLPluginGeneratingProvider(private val pluginCache: MarkdownCodeFencePluginCacheProvider) : MarkdownCodeFencePluginGeneratingProvider {
-  override fun getCacheRoot(): VirtualFile {
-    return VfsUtil.createDirectories("$markdownCachePath${File.separator}plantUML")
-  }
+internal class PlantUMLPluginGeneratingProvider(private var pluginCache: MarkdownCodeFencePluginCacheProvider?) : MarkdownCodeFencePluginGeneratingProvider {
+  constructor() : this(null)
+
+  override fun getCacheRootPath(): String = "$markdownCachePath${File.separator}plantUML"
 
   override fun generateHtml(text: String): String {
-    val newDiagramPath = File("${getCacheRoot().path}${File.separator}" +
-                              "${MarkdownUtil.md5(pluginCache.file.path, MARKDOWN_FILE_PATH_KEY)}${File.separator}" +
+    val newDiagramPath = File("${getCacheRootPath()}${File.separator}" +
+                              "${MarkdownUtil.md5(pluginCache?.file?.path, MARKDOWN_FILE_PATH_KEY)}${File.separator}" +
                               "${MarkdownUtil.md5(text, "plantUML-diagram")}.png").absolutePath
 
-    pluginCache.addAliveCachedFile(LocalFileSystem.getInstance().refreshAndFindFileByPath(cachedDiagram(newDiagramPath, text))!!)
+    pluginCache?.addAliveCachedFile(LocalFileSystem.getInstance().refreshAndFindFileByPath(cachedDiagram(newDiagramPath, text))!!)
 
     return "<img src=\"file:${cachedDiagram(newDiagramPath, text)}\"></img>"
   }

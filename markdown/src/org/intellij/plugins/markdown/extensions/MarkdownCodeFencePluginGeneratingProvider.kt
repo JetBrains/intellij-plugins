@@ -1,7 +1,7 @@
 package org.intellij.plugins.markdown.extensions
 
 import com.intellij.openapi.application.PathManager
-import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.extensions.ExtensionPointName
 import java.io.File
 
 interface MarkdownCodeFencePluginGeneratingProvider {
@@ -18,9 +18,10 @@ interface MarkdownCodeFencePluginGeneratingProvider {
   /**
    * Code fence plugin name; used for caching
    */
-  fun getCacheRoot(): VirtualFile
+  fun getCacheRootPath(): String
 
   companion object {
+    val EP_NAME = ExtensionPointName.create<MarkdownCodeFencePluginGeneratingProvider>("org.intellij.markdown.codeFencePluginGeneratingProvider")
     val markdownCachePath = "${PathManager.getSystemPath()}${File.separator}markdown"
   }
 }

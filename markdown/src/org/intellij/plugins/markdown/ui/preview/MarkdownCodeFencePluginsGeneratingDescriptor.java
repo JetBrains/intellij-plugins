@@ -13,20 +13,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 public class MarkdownCodeFencePluginsGeneratingDescriptor implements MarkdownHtmlGeneratingDescriptor {
-  private MarkdownCodeFencePluginGeneratingProvider[] myPluginCacheProviders;
-
   @Override
   public Map<IElementType, GeneratingProvider> customizeHtmlGeneratingProviders(@NotNull MarkdownCodeFencePluginCacheProvider pluginCacheProvider) {
-    myPluginCacheProviders = new MarkdownCodeFencePluginGeneratingProvider[]{
-      new PlantUMLPluginGeneratingProvider(pluginCacheProvider)};
-
     return ContainerUtil.newHashMap(Pair.create(MarkdownElementTypes.CODE_FENCE,
                                                 new MarkdownCodeFenceGeneratingProvider(
-                                                  myPluginCacheProviders)));
-  }
-
-  @Override
-  public MarkdownCodeFencePluginGeneratingProvider[] getCodeFencePluginProviders() {
-    return myPluginCacheProviders;
+                                                  new MarkdownCodeFencePluginGeneratingProvider[]{
+                                                    new PlantUMLPluginGeneratingProvider(pluginCacheProvider)})));
   }
 }

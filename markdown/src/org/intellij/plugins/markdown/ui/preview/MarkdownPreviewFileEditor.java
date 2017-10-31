@@ -46,7 +46,6 @@ import java.io.File;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class MarkdownPreviewFileEditor extends UserDataHolderBase implements FileEditor {
   private final static long PARSING_CALL_TIMEOUT_MS = 50L;
@@ -321,12 +320,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
 
     String html = new HtmlGenerator(text, parsedTree, htmlGeneratingProviders, true).generateHtml();
 
-    MarkdownCodeFencePluginCache.getInstance(myProject).registerCacheProvider(
-      Arrays.stream(MarkdownHtmlGeneratingDescriptor.EP_NAME.getExtensions())
-        .flatMap(descriptor -> Arrays.stream(descriptor.getCodeFencePluginProviders()))
-        .map(provider -> provider.getCacheRoot())
-        .collect(Collectors.toList()),
-      codeFencePluginCache);
+    MarkdownCodeFencePluginCache.getInstance(myProject).registerCacheProvider(codeFencePluginCache);
 
     return html;
   }
