@@ -12,6 +12,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.NotNullLazyValue;
@@ -26,6 +27,7 @@ import org.intellij.markdown.html.GeneratingProvider;
 import org.intellij.markdown.html.HtmlGenerator;
 import org.intellij.markdown.parser.LinkMap;
 import org.intellij.markdown.parser.MarkdownParser;
+import org.intellij.plugins.markdown.lang.generating.MarkdownHtmlGeneratingDescriptor;
 import org.intellij.plugins.markdown.lang.parser.MarkdownParserManager;
 import org.intellij.plugins.markdown.settings.MarkdownApplicationSettings;
 import org.intellij.plugins.markdown.settings.MarkdownCssSettings;
@@ -42,7 +44,9 @@ import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class MarkdownPreviewFileEditor extends UserDataHolderBase implements FileEditor {
   private final static long PARSING_CALL_TIMEOUT_MS = 50L;
@@ -80,6 +84,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   private MarkdownHtmlPanel myPanel;
   @Nullable
   private MarkdownHtmlPanelProvider.ProviderInfo myLastPanelProviderInfo = null;
+  @NotNull private final Project myProject;
   @NotNull
   private final VirtualFile myFile;
   @Nullable
@@ -99,7 +104,8 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   @NotNull
   private String myLastRenderedHtml = "";
 
-  public MarkdownPreviewFileEditor(@NotNull VirtualFile file) {
+  public MarkdownPreviewFileEditor(@NotNull Project project, @NotNull VirtualFile file) {
+    myProject = project;
     myFile = file;
     myDocument = FileDocumentManager.getInstance().getDocument(myFile);
 
@@ -230,7 +236,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       return;
     }
 
-    final String html = generateMarkdownHtml(myFile, myDocument.getText());
+    final String html = generateMarkdownHtml();
 
     // EA-75860: The lines to the top may be processed slowly; Since we're in pooled thread, we can be disposed already.
     if (!myFile.isValid() || Disposer.isDisposed(this)) {
@@ -297,15 +303,32 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   }
 
   @NotNull
-  private static String generateMarkdownHtml(@NotNull VirtualFile file, @NotNull String text) {
-    final VirtualFile parent = file.getParent();
+  private String generateMarkdownHtml() {
+    assert myDocument != null;
+    String text = myDocument.getText();
+
+    final VirtualFile parent = myFile.getParent();
     final URI baseUri = parent != null ? new File(parent.getPath()).toURI() : null;
 
     final ASTNode parsedTree = new MarkdownParser(MarkdownParserManager.FLAVOUR).buildMarkdownTreeFromString(text);
     final Map<IElementType, GeneratingProvider> htmlGeneratingProviders =
       MarkdownParserManager.FLAVOUR.createHtmlGeneratingProviders(LinkMap.Builder.buildLinkMap(parsedTree, text), baseUri);
 
-    return new HtmlGenerator(text, parsedTree, htmlGeneratingProviders, true).generateHtml();
+    MarkdownCodeFencePluginCacheProvider codeFencePluginCache = new MarkdownCodeFencePluginCacheProvider(myFile);
+    Arrays.stream(MarkdownHtmlGeneratingDescriptor.EP_NAME.getExtensions())
+      .map(descriptor -> descriptor.customizeHtmlGeneratingProviders(codeFencePluginCache))
+      .forEach(htmlGeneratingProviders::putAll);
+
+    String html = new HtmlGenerator(text, parsedTree, htmlGeneratingProviders, true).generateHtml();
+
+    MarkdownCodeFencePluginCache.getInstance(myProject).registerCacheProvider(
+      Arrays.stream(MarkdownHtmlGeneratingDescriptor.EP_NAME.getExtensions())
+        .flatMap(descriptor -> Arrays.stream(descriptor.getCodeFencePluginProviders()))
+        .map(provider -> provider.getCacheRoot())
+        .collect(Collectors.toList()),
+      codeFencePluginCache);
+
+    return html;
   }
 
   @Contract("_, null, null -> fail")

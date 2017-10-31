@@ -19,10 +19,11 @@
                     interface="org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelProvider" />
     <extensionPoint qualifiedName="org.intellij.markdown.fenceLanguageProvider"
                     interface="org.intellij.plugins.markdown.injection.CodeFenceLanguageProvider" />
+    <extensionPoint qualifiedName="org.intellij.markdown.htmlGeneratingProvider"
+                    interface="org.intellij.plugins.markdown.lang.generating.MarkdownHtmlGeneratingDescriptor" />
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-
     <fileTypeFactory implementation="org.intellij.plugins.markdown.lang.MarkdownFileTypeFactory"/>
     <lang.parserDefinition language="Markdown" implementationClass="org.intellij.plugins.markdown.lang.parser.MarkdownParserDefinition"/>
     <lang.ast.factory language="Markdown" implementationClass="org.intellij.plugins.markdown.lang.psi.MarkdownASTFactory"/>
@@ -83,6 +84,8 @@
   <extensions defaultExtensionNs="org.intellij.markdown">
     <html.panel.provider implementation="org.intellij.plugins.markdown.ui.preview.lobo.LoboHtmlPanelProvider" />
     <html.panel.provider implementation="org.intellij.plugins.markdown.ui.preview.javafx.JavaFxHtmlPanelProvider" />
+    <fenceLanguageProvider implementation="org.intellij.plugins.markdown.extensions.plantuml.PlantUMLCodeFenceLanguageProvider"/>
+    <htmlGeneratingProvider implementation="org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginsGeneratingDescriptor"/>
   </extensions>
 
   <actions>
@@ -146,4 +149,10 @@
       </action>
     </group>
   </actions>
+  <project-components>
+    <component>
+      <implementation-class>org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCache</implementation-class>
+      <interface-class>org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCache</interface-class>
+    </component>
+  </project-components>
 </idea-plugin>
