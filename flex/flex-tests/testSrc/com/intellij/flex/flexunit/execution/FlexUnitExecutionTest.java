@@ -128,7 +128,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
   protected void setUp() {
     UIUtil.invokeAndWaitIfNeeded((Runnable)() -> {
       try {
-        FlexUnitExecutionTest.super.setUp();
+        super.setUp();
         CompilerProjectExtension.getInstance(myProject).setCompilerOutputUrl(createOutputFolder().getUrl());
       }
       catch (Throwable e) {
@@ -207,7 +207,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
     final Ref<VirtualFile> result = new Ref<>();
     UIUtil.invokeAndWaitIfNeeded((Runnable)() -> {
       try {
-        result.set(FlexUnitExecutionTest.super.configureByFiles(projectRoot, vFiles));
+        result.set(super.configureByFiles(projectRoot, vFiles));
       }
       catch (IOException e) {
         LOG.error(e);
@@ -485,7 +485,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
         myStopBlocking = true;
       }
       try {
-        FlexUnitExecutionTest.super.tearDown();
+        super.tearDown();
       }
       catch (Exception e) {
         throw new RuntimeException(e);
