@@ -250,16 +250,16 @@ public class SwcCatalogXmlUtil {
       @Override
       public void attribute(CharSequence name, CharSequence value, int start, int end) {
         if (COMPONENT_LOCATION.equals(getLocation())) {
-          if (NAME.equals(name)) {
+          if (NAME.contentEquals(name)) {
             myNameAttr = value.toString().trim();
           }
-          else if (CLASS_NAME.equals(name)) {
+          else if (CLASS_NAME.contentEquals(name)) {
             myClassNameAttr = value.toString().trim();
           }
-          else if (URI.equals(name)) {
+          else if (URI.contentEquals(name)) {
             myUriAttr = value.toString().trim();
           }
-          else if (ICON.equals(name)) {
+          else if (ICON.contentEquals(name)) {
             myIconAttr = value.toString().trim();
           }
         }
@@ -336,7 +336,7 @@ public class SwcCatalogXmlUtil {
 
       @Override
       public void endTag(final CharSequence localName, final String namespace, final int start, final int end) {
-        if (COMPONENT.equals(localName)) {
+        if (COMPONENT.contentEquals(localName)) {
           if (StringUtil.isNotEmpty(classAttr)) {
             final String classFqn = classAttr.replace(":", ".");
             final String componentName = idAttr != null ? idAttr : classAttr.substring(classFqn.lastIndexOf('.') + 1);
