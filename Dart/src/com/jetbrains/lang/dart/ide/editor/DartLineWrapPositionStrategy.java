@@ -20,9 +20,10 @@ public class DartLineWrapPositionStrategy extends DefaultLineWrapPositionStrateg
                                    int endOffset,
                                    int maxPreferredOffset,
                                    boolean allowToBeyondMaxPreferredOffset,
-                                   boolean virtual) {
+                                   boolean isSoftWrap) {
     int pos =
-      super.calculateWrapPosition(document, project, startOffset, endOffset, maxPreferredOffset, allowToBeyondMaxPreferredOffset, virtual);
+      super.calculateWrapPosition(document, project, startOffset, endOffset, maxPreferredOffset, allowToBeyondMaxPreferredOffset,
+                                  isSoftWrap);
     if (pos < 0) {
       return pos;
     }
