@@ -34,7 +34,7 @@ public class JTreeUtil {
   private static boolean isNodesSorted(List<TreeNode> nodes, Comparator<TreeNode> comparator) {
     TreeNode prev = null;
     for (TreeNode node : nodes) {
-      if (prev != null && comparator.compare(prev, node) == 1) {
+      if (prev != null && comparator.compare(prev, node) > 0) {
         return false;
       }
       prev = node;
