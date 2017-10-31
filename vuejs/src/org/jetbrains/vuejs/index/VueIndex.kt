@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
@@ -48,20 +49,25 @@ fun resolve(name:String, scope:GlobalSearchScope, key:StubIndexKey<String, JSImp
 fun hasVue(project: Project): Boolean {
   if (DumbService.isDumb(project)) return false
 
-  if (project.baseDir != null) {
-    val packageJson = project.baseDir.findChild(PackageJsonUtil.FILE_NAME)
-    if (packageJson != null) {
-      val dependencies = PackageJsonDependencies.getOrCreate(project, packageJson)
-      if (dependencies != null &&
-          (dependencies.dependencies.containsKey(VUE) || dependencies.devDependencies.containsKey(VUE))) {
-        return true
+  return CachedValuesManager.getManager(project).getCachedValue(project, {
+    var hasVue = false
+    var packageJson:VirtualFile? = null
+    if (project.baseDir != null) {
+      packageJson = project.baseDir.findChild(PackageJsonUtil.FILE_NAME)
+      if (packageJson != null) {
+        val dependencies = PackageJsonDependencies.getOrCreate(project, packageJson)
+        if (dependencies != null &&
+            (dependencies.dependencies.containsKey(VUE) || dependencies.devDependencies.containsKey(VUE))) {
+          hasVue = true
+        }
       }
     }
-  }
 
-  return CachedValuesManager.getManager(project)
-    .getCachedValue(project, {
+    if (hasVue) {
+      CachedValueProvider.Result.create(true, packageJson)
+    } else {
       val result = FileTypeIndex.containsFileOfType(VueFileType.INSTANCE, GlobalSearchScope.projectScope(project))
       CachedValueProvider.Result.create(result, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, ProjectRootModificationTracker.getInstance(project))
-    })
+    }
+  })
 }
