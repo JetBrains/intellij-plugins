@@ -12,15 +12,19 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class PlantUMLCodeFenceLanguageProvider implements CodeFenceLanguageProvider {
+  private static final String PLANTUML = "plantuml";
+  private static final String PUML = "puml";
+  private static final List<String> PLANT_UML_LANGS = ContainerUtil.list(PLANTUML, PUML);
+
   @Nullable
   @Override
   public Language getLanguageByInfoString(@NotNull String infoString) {
-    return PlantUMLLanguage.INSTANCE;
+    return PLANT_UML_LANGS.contains(infoString) ? PlantUMLLanguage.INSTANCE : null;
   }
 
   @NotNull
   @Override
   public List<LookupElement> getCompletionVariantsForInfoString(@NotNull CompletionParameters parameters) {
-    return ContainerUtil.list(LookupElementBuilder.create("plantuml"));
+    return ContainerUtil.list(LookupElementBuilder.create(PUML));
   }
 }
