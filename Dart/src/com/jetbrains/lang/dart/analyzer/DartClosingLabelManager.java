@@ -103,6 +103,12 @@ public class DartClosingLabelManager {
         Map<Integer, String> lineText = new HashMap<>();
         for (ClosingLabel label : labels) {
           final int offset = service.getConvertedOffset(file, label.getOffset() + label.getLength());
+          if (offset >= editor.getDocument().getTextLength()) {
+            // probably outdated data from server; up-to-date data will come soon
+            lineText.clear();
+            break;
+          }
+
           final Integer line = editor.getDocument().getLineNumber(offset);
 
           if (lineText.containsKey(line)) {
