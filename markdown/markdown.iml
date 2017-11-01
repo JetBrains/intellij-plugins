@@ -54,7 +54,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/plantuml.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/plantuml-jar-asl/plantuml.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
