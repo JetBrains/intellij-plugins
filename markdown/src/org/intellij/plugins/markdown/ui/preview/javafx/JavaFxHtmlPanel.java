@@ -122,7 +122,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
     MarkdownApplicationSettings.SettingsChangedListener settingsChangedListener =
       new MarkdownApplicationSettings.SettingsChangedListener() {
         @Override
-        public void onSettingsChange(@NotNull final MarkdownApplicationSettings settings) {
+        public void beforeSettingsChanged(@NotNull final MarkdownApplicationSettings settings) {
           runInPlatformWhenAvailable(() -> {
             if (myWebView != null) {
               updateFontSmoothingType(myWebView, settings.getMarkdownPreviewSettings().isUseGrayscaleRendering());
