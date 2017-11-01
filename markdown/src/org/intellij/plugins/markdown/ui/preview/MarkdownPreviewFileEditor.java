@@ -348,7 +348,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
 
   private class MyUpdatePanelOnSettingsChangedListener implements MarkdownApplicationSettings.SettingsChangedListener {
     @Override
-    public void onSettingsChange(@NotNull MarkdownApplicationSettings settings) {
+    public void beforeSettingsChanged(@NotNull MarkdownApplicationSettings settings) {
       final MarkdownHtmlPanelProvider newPanelProvider = retrievePanelProvider(settings);
 
       mySwingAlarm.addRequest(() -> {
