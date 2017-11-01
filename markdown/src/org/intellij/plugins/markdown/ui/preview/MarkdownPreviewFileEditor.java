@@ -83,7 +83,8 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   private MarkdownHtmlPanel myPanel;
   @Nullable
   private MarkdownHtmlPanelProvider.ProviderInfo myLastPanelProviderInfo = null;
-  @NotNull private final Project myProject;
+  @NotNull
+  private final Project myProject;
   @NotNull
   private final VirtualFile myFile;
   @Nullable
@@ -231,7 +232,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
    * Is always run from pooled thread
    */
   private void updateHtml(final boolean preserveScrollOffset) {
-    if (!myFile.isValid() || myDocument == null || Disposer.isDisposed(this)) {
+    if (!myFile.isValid() || myDocument == null || Disposer.isDisposed(this) || myProject.isDisposed()) {
       return;
     }
 
