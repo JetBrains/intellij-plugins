@@ -626,4 +626,12 @@ Vue.component('global-comp-literal', {
     directivesTestCase(myFixture)
     JSTestUtils.testES6<Exception>(project, { myFixture.checkHighlighting(true, false, true) })
   }
+
+  fun testEmptyAttributeValue() {
+    myFixture.configureByText("EmptyAttributeValue.vue", """
+<template>
+    <div v-for=></div>
+</template>""")
+    myFixture.doHighlighting()
+  }
 }
