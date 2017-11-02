@@ -70,51 +70,51 @@ public class RubyMotionTypeConversionTest extends RubyMotionLightFixtureTestCase
   public void testInt() {
     defaultConfigure();
     RType type = MotionSymbolUtil.getTypeByName(getModule(), "int");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
     type = MotionSymbolUtil.getTypeByName(getModule(), "char");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
     type = MotionSymbolUtil.getTypeByName(getModule(), "short");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
     type = MotionSymbolUtil.getTypeByName(getModule(), "long");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
     type = MotionSymbolUtil.getTypeByName(getModule(), "long long");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
     type = MotionSymbolUtil.getTypeByName(getModule(), "unsigned int");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
     type = MotionSymbolUtil.getTypeByName(getModule(), "unsigned char");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
     type = MotionSymbolUtil.getTypeByName(getModule(), "unsigned short");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
     type = MotionSymbolUtil.getTypeByName(getModule(), "unsigned long");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
     type = MotionSymbolUtil.getTypeByName(getModule(), "unsigned long long");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
 
     type = MotionSymbolUtil.getTypeByName(getModule(), "Byte");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
     type = MotionSymbolUtil.getTypeByName(getModule(), "SignedByte");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
 
     type = MotionSymbolUtil.getTypeByName(getModule(), "Int16");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
     type = MotionSymbolUtil.getTypeByName(getModule(), "SInt16");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
     type = MotionSymbolUtil.getTypeByName(getModule(), "UInt16");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
     type = MotionSymbolUtil.getTypeByName(getModule(), "Int64");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
 
     type = MotionSymbolUtil.getTypeByName(getModule(), "NSInteger");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
     type = MotionSymbolUtil.getTypeByName(getModule(), "NSUInteger");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
 
     type = MotionSymbolUtil.getTypeByName(getModule(), "int32_t");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
     type = MotionSymbolUtil.getTypeByName(getModule(), "uint64_t");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
     type = MotionSymbolUtil.getTypeByName(getModule(), "size_t");
-    assertEquals("Fixnum", type.getPresentableName());
+    assertEquals("Integer", type.getPresentableName());
   }
 
   public void testNSObject() {
