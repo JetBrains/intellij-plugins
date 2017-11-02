@@ -53,7 +53,7 @@
 </context>
 </template>
 
-<template name="vcomputed" value="computed: {&#10;	$name$() {&#10;		return this.$data$ $END$&#10;	}&#10;}," description="Computed value" toReformat="true" toShortenFQNames="true">
+<template name="vcomputed" value="computed: {&#10;	$name$() {&#10;		return this.$data$ $END$;&#10;	}&#10;}," description="Computed value" toReformat="true" toShortenFQNames="true">
 <variable name="name" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true" />
 <variable name="data" expression="" defaultValue="&quot;data&quot;" alwaysStopAt="true" />
 <context>
@@ -86,28 +86,28 @@
 </context>
 </template>
 
-<template name="vimport-export" value="import $Name$ from &apos;~components/$Name$.vue&apos;&#10;&#10;export default {&#10;	components: {&#10;		$Name$&#10;	},&#10;}" description="Import Vue component and include it in export default" toReformat="true" toShortenFQNames="true">
+<template name="vimport-export" value="import $Name$ from &apos;~components/$Name$.vue&apos;;&#10;&#10;export default {&#10;	components: {&#10;		$Name$&#10;	},&#10;}" description="Import Vue component and include it in export default" toReformat="true" toShortenFQNames="true">
 <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
 <context>
   <option name="VUE_SCRIPT" value="true" />
 </context>
 </template>
 
-<template name="vimport" value="import $New$ from &apos;./components/$New$.vue&apos;;&#10;" description="Import Vue component" toReformat="true" toShortenFQNames="true">
+<template name="vimport" value="import $New$ from &apos;./components/$New$.vue&apos;;" description="Import Vue component" toReformat="true" toShortenFQNames="true">
 <variable name="New" expression="" defaultValue="&quot;New&quot;" alwaysStopAt="true" />
 <context>
   <option name="VUE_SCRIPT" value="true" />
 </context>
 </template>
 
-<template name="vimport-gsap" value="import { TimelineMax, $Ease$ } from &apos;gsap&apos;" description="Import methods from GSAP" toReformat="true" toShortenFQNames="true">
+<template name="vimport-gsap" value="import { TimelineMax, $Ease$ } from &apos;gsap&apos;;" description="Import methods from GSAP" toReformat="true" toShortenFQNames="true">
 <variable name="Ease" expression="" defaultValue="&quot;Ease&quot;" alwaysStopAt="true" />
 <context>
   <option name="VUE_SCRIPT" value="true" />
 </context>
 </template>
 
-<template name="vimport-lib" value="import { $libName$ } from &apos;$libName$&apos;&#10;" description="Import library" toReformat="true" toShortenFQNames="true">
+<template name="vimport-lib" value="import { $libName$ } from &apos;$libName$&apos;;" description="Import library" toReformat="true" toShortenFQNames="true">
 <variable name="libName" expression="" defaultValue="&quot;libName&quot;" alwaysStopAt="true" />
 <context>
   <option name="VUE_SCRIPT" value="true" />
@@ -128,16 +128,17 @@
 </context>
 </template>
 
-<template name="vmixin" value="const $mixinName$ = {&#10;	mounted() {&#10;		console.log(&apos;hello from mixin!&apos;)&#10;	},&#10;}" description="Vue mixin" toReformat="true" toShortenFQNames="true">
+<template name="vmixin" value="const $mixinName$ = {&#10;	mounted() {&#10;		console.log(&apos;hello from mixin!&apos;);&#10;	},&#10;}" description="Vue mixin" toReformat="true" toShortenFQNames="true">
 <variable name="mixinName" expression="" defaultValue="&quot;mixinName&quot;" alwaysStopAt="true" />
 <context>
   <option name="JS_STATEMENT" value="true" />
 </context>
 </template>
 
-<template name="vprops" value="props: {&#10;	$propName$: {&#10;		type: $number$,&#10;		default: $END$&#10;	},&#10;}," description="Vue props with default" toReformat="true" toShortenFQNames="true">
+<template name="vprops" value="props: {&#10;	$propName$: {&#10;		type: $type$,&#10;		default: $default$$END$&#10;	},&#10;}," description="Vue props with default" toReformat="true" toShortenFQNames="true">
 <variable name="propName" expression="" defaultValue="&quot;propName&quot;" alwaysStopAt="true" />
-<variable name="number" expression="" defaultValue="&quot;number&quot;" alwaysStopAt="true" />
+<variable name="type" expression="" defaultValue="&quot;Number&quot;" alwaysStopAt="true" />
+<variable name="default" expression="" defaultValue="&quot;0&quot;" alwaysStopAt="true" />
 <context>
   <option name="VUE_COMPONENT_DESCRIPTOR" value="true" />
 </context>
