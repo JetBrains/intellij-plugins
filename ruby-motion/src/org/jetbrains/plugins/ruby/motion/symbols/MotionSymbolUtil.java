@@ -37,7 +37,6 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.fqn.FQN;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.RTypedSyntheticSymbol;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Symbol;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.Context;
-import org.jetbrains.plugins.ruby.ruby.codeInsight.types.CoreTypes;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.RType;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.RTypeFactory;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.collections.RArrayType;
@@ -156,11 +155,11 @@ public class MotionSymbolUtil {
       return RTypeFactory.createBoolType(project);
     }
     if (FLOAT_TYPES.contains(typeName)) {
-      return RTypeFactory.createTypeByFQN(project, CoreTypes.Float);
+      return RTypeFactory.createFloatType(project);
     }
     if (INT_TYPES.contains(typeName) || INT_TYPES.contains(typeName.replace("unsigned ", "")) ||
         typeName.matches("[SU]?Int\\d*") || typeName.matches("u?int\\d*_t")) {
-      return RTypeFactory.createTypeByFQN(project, CoreTypes.Fixnum);
+      return RTypeFactory.createIntType(project);
     }
     return null;
   }
