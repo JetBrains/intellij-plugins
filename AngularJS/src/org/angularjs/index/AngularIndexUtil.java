@@ -210,7 +210,12 @@ public class AngularIndexUtil {
                                                                  !fileIndex.processValues(id, key, null, (FileBasedIndex.ValueProcessor)(file, value) -> false, scope));
       if (id == AngularDirectivesIndex.KEY) {
         allKeys = FileBasedIndex.getInstance().getAllKeys(JSImplicitElementsIndex.INDEX_ID, project);
-        filteredKeys.addAll(ContainerUtil.filter(allKeys, key -> !processMetadata(project, key, element -> false, scope)));
+        List<String> filteredFromMeta = ContainerUtil.filter(allKeys, key -> !processMetadata(project, key, element -> false, scope));
+        if (filteredKeys.isEmpty()) {
+          filteredKeys = filteredFromMeta;
+        } else {
+          filteredKeys.addAll(filteredFromMeta);
+        }
       }
       return CachedValueProvider.Result.create(filteredKeys, PsiManager.getInstance(project).getModificationTracker());
     }
