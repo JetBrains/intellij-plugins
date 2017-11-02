@@ -75,7 +75,7 @@ class VueInjector : MultiHostInjector {
     if (!org.jetbrains.vuejs.index.hasVue(project)) return
 
     // this supposed to work in <template lang="jade"> attribute values
-    if (context is XmlAttributeValueImpl && context.parent is XmlAttribute
+    if (context is XmlAttributeValueImpl && !context.value.isNullOrBlank() && context.parent is XmlAttribute
         && VueAttributesProvider.DEFAULT.contains((context.parent as XmlAttribute).name)) {
       val embedded = PsiTreeUtil.getChildOfType(context, JSEmbeddedContent::class.java)
       if (embedded != null && VueJSLanguage.INSTANCE != embedded.language) {
