@@ -148,7 +148,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   private fun getTextIfLiteral(holder: PsiElement): String? {
     if (holder is JSLiteralExpression && holder.isQuotedLiteral) {
-      return holder.value as String
+      return holder.value as? String
     }
     return null
   }
