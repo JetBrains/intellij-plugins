@@ -148,22 +148,7 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
     final List<String> intentions = ContainerUtil.map(myFixture.getAvailableIntentions(), intention -> intention.getText());
     assertOrderedEquals(intentions,
                         "Import library 'dart:async'",
-                        "Edit inspection profile setting",
-                        "Suppress warning with comment",
-                        "Suppress warning with EOL comment",
-                        "Disable inspection",
                         "Change to 'Futures'",
-                        "Edit inspection profile setting",
-                        "Suppress warning with comment",
-                        "Suppress warning with EOL comment",
-                        "Disable inspection",
-                        "Create class 'Future'",
-                        "Edit inspection profile setting",
-                        "Suppress warning with comment",
-                        "Suppress warning with EOL comment",
-                        "Disable inspection",
-                        "Remove type annotation",
-                        "Edit intention settings",
-                        "Disable 'Dart/Quick assist powered by the Dart Analysis Server'");
+                        "Create class 'Future'");
   }
 }
