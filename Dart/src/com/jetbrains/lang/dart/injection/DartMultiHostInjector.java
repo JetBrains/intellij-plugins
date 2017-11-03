@@ -20,6 +20,11 @@ import java.util.List;
 
 public class DartMultiHostInjector implements MultiHostInjector {
 
+  // Trailing space is intentional, it helps to avoid errors like "XML attribute Dart_string_template_placeholderhref is not allowed here"
+  // in strings like "<a ${label}href=''></a>". As for the leading space, we decided not to add it as we'd more likely get
+  // a string like "<${label}>...</${label}>" than "<a foo${label}>...</a>", and we'd like it to be parsed as HTML.
+  public static final String STRING_TEMPLATE_PLACEHOLDER = "Dart_string_template_placeholder ";
+
   @Nullable private static final Language JS_REGEXP_LANG = Language.findLanguageByID("JSRegexp");
 
   @NotNull
@@ -85,7 +90,7 @@ public class DartMultiHostInjector implements MultiHostInjector {
         String suffix = null;
         final PsiElement nextSibling = child.getNextSibling();
         if (nextSibling != null && nextSibling.getNode().getElementType() != DartTokenTypes.CLOSING_QUOTE) {
-          suffix = "placeholder"; // string template like $foo or ${foo}
+          suffix = STRING_TEMPLATE_PLACEHOLDER; // string template like $foo or ${foo}
           textBuf.append(suffix);
         }
 
