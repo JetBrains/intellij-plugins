@@ -89,8 +89,8 @@ public class DartTestUtils {
     VfsRootAccess.allowRootAccess(disposable, sdkHome);
 
     ApplicationManager.getApplication().runWriteAction(() -> {
-      Disposer.register(disposable, DartSdkLibUtil.configureDartSdk(module.getProject(), sdkHome));
-      Disposer.register(disposable, DartSdkLibUtil.configureDartSdk(module));
+      Disposer.register(disposable, DartSdkLibUtil.configureDartSdkAndReturnUndoingDisposable(module.getProject(), sdkHome));
+      Disposer.register(disposable, DartSdkLibUtil.enableDartSdkAndReturnUndoingDisposable(module));
     });
   }
 

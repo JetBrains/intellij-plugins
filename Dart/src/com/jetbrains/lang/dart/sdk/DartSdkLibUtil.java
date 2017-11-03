@@ -45,25 +45,30 @@ public class DartSdkLibUtil {
   }
 
   public static void ensureDartSdkConfigured(@NotNull final Project project, @NotNull final String sdkHomePath) {
-    configureDartSdk(project, sdkHomePath);
+    configureDartSdkAndReturnUndoingDisposable(project, sdkHomePath);
   }
 
   /**
    * @return Disposable which undoes configuration
    */
   @NotNull
-  public static Disposable configureDartSdk(@NotNull final Project project, @NotNull final String sdkHomePath) {
+  @VisibleForTesting
+  public static Disposable configureDartSdkAndReturnUndoingDisposable(@NotNull final Project project, @NotNull final String sdkHomePath) {
     final LibraryTable libraryTable = ProjectLibraryTable.getInstance(project);
     final Library library = libraryTable.getLibraryByName(DartSdk.DART_SDK_LIB_NAME);
     if (library == null) {
       final LibraryTable.ModifiableModel model = libraryTable.getModifiableModel();
       Library lib = createDartSdkLib(project, model, sdkHomePath);
       model.commit();
-      return ()-> WriteCommandAction.runWriteCommandAction(null, ()->{
-        LibraryTable.ModifiableModel m = libraryTable.getModifiableModel();
-        m.removeLibrary(lib);
-        m.commit();
-      });
+      return () -> {
+        if (((LibraryEx)lib).isDisposed()) return;
+
+        WriteCommandAction.runWriteCommandAction(null, () -> {
+          LibraryTable.ModifiableModel m = libraryTable.getModifiableModel();
+          m.removeLibrary(lib);
+          m.commit();
+        });
+      };
     }
     final DartSdk sdk = DartSdk.getSdkByLibrary(library);
     if (sdk == null || !sdkHomePath.equals(sdk.getHomePath())) {
@@ -215,29 +220,34 @@ public class DartSdkLibUtil {
   }
 
   public static void enableDartSdk(@NotNull final Module module) {
-    configureDartSdk(module);
+    enableDartSdkAndReturnUndoingDisposable(module);
   }
 
   /**
    * @return Disposable which undoes configuration
    */
   @NotNull
-  public static Disposable configureDartSdk(@NotNull final Module module) {
+  @VisibleForTesting
+  public static Disposable enableDartSdkAndReturnUndoingDisposable(@NotNull final Module module) {
     if (isDartSdkEnabled(module)) return () -> {};
 
     final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
     try {
       modifiableModel.addInvalidLibrary(DartSdk.DART_SDK_LIB_NAME, LibraryTablesRegistrar.PROJECT_LEVEL);
       modifiableModel.commit();
-      return ()-> WriteCommandAction.runWriteCommandAction(null, ()->{
-        ModifiableRootModel m = ModuleRootManager.getInstance(module).getModifiableModel();
-        for (OrderEntry orderEntry : m.getOrderEntries()) {
-          if (isDartSdkOrderEntry(orderEntry)) {
-            m.removeOrderEntry(orderEntry);
+      return () -> {
+        if (module.isDisposed()) return;
+
+        WriteCommandAction.runWriteCommandAction(null, () -> {
+          ModifiableRootModel m = ModuleRootManager.getInstance(module).getModifiableModel();
+          for (OrderEntry orderEntry : m.getOrderEntries()) {
+            if (isDartSdkOrderEntry(orderEntry)) {
+              m.removeOrderEntry(orderEntry);
+            }
           }
-        }
-        m.commit();
-      });
+          m.commit();
+        });
+      };
     }
     catch (Exception e) {
       LOG.error(e);
