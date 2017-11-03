@@ -12,6 +12,7 @@ import com.intellij.util.ProcessingContext;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.injection.DartMultiHostInjector;
 import com.jetbrains.lang.dart.resolve.DartResolver;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +40,10 @@ public class DartReferenceContributor extends PsiReferenceContributor {
     @NotNull
     @Override
     public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
+      if (element.getText().contains(DartMultiHostInjector.STRING_TEMPLATE_PLACEHOLDER)) {
+        return PsiReference.EMPTY_ARRAY;
+      }
+
       final VirtualFile file = DartResolveUtil.getRealVirtualFile(InjectedLanguageUtil.getTopLevelFile(element));
       if (!DartAnalysisServerService.isLocalAnalyzableFile(file)) return PsiReference.EMPTY_ARRAY;
 

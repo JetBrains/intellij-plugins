@@ -336,7 +336,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
   }
 
   public void _testAnalysisOptionsFile() {
-    // do nt use configureByText(), because that method creates file with different name (___.analysis_options)
+    // do not use configureByText(), because that method creates file with different name (___.analysis_options)
     final PsiFile file = myFixture.addFileToProject(".analysis_options",
                                                     "analyzer:\n" +
                                                     "  errors:\n" +
@@ -363,5 +363,13 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
     myFixture.type("//");
     assertEmpty(myFixture.doHighlighting(HighlightSeverity.WEAK_WARNING));
+  }
+
+  public void testInjectedHtmlWithStringTemplates() {
+    myFixture.configureByText("foo.dart", "main() {\n" +
+                                          "  var varNameLongerThanDart_string_template_placeholder;\n" +
+                                          "  var <warning>b</warning> = \"<a href='$varNameLongerThanDart_string_template_placeholder'></a>\";\n" +
+                                          "}");
+    myFixture.checkHighlighting();
   }
 }
