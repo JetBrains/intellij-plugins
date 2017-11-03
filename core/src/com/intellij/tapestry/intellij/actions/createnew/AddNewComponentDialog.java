@@ -85,7 +85,7 @@ public class AddNewComponentDialog extends JDialog {
         return _contentPane;
     }
 
-    public String getName() {
+    public String getNewComponentName() {
         return _name.getText();
     }
 

@@ -51,7 +51,7 @@ public class AddNewPageAction extends AddNewElementAction<PagesNode> {
     builder.setPreferredFocusComponent(addNewComponentDialog.getNameComponent());
 
     builder.setOkOperation(() -> {
-      final String pageName = addNewComponentDialog.getName();
+      final String pageName = addNewComponentDialog.getNewComponentName();
 
       if (!Validators.isValidComponentName(pageName)) {
         Messages.showErrorDialog("Invalid page name!", CommonBundle.getErrorTitle());

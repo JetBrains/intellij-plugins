@@ -50,7 +50,7 @@ public class AddNewComponentAction extends AddNewElementAction<ComponentsNode> {
     builder.setPreferredFocusComponent(addNewComponentDialog.getNameComponent());
 
     builder.setOkOperation(() -> {
-      final String componentName = addNewComponentDialog.getName();
+      final String componentName = addNewComponentDialog.getNewComponentName();
 
       if (!Validators.isValidComponentName(componentName)) {
         Messages.showErrorDialog("Invalid component name!", CommonBundle.getErrorTitle());
