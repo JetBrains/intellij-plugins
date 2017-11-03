@@ -42,7 +42,7 @@ public class AddNewMixinDialog extends JDialog {
         return _contentPane;
     }
 
-    public String getName() {
+    public String getNewMixinName() {
         return _name.getText();
     }
 

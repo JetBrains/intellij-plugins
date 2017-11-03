@@ -51,7 +51,7 @@ public class AddNewMixinAction extends AddNewElementAction<MixinsNode> {
     builder.setPreferredFocusComponent(addNewMixinDialog.getNameComponent());
 
     builder.setOkOperation(() -> {
-      final String mixinName = addNewMixinDialog.getName();
+      final String mixinName = addNewMixinDialog.getNewMixinName();
 
       if (!Validators.isValidComponentName(mixinName)) {
         Messages.showErrorDialog("Invalid mixin name!", CommonBundle.getErrorTitle());
