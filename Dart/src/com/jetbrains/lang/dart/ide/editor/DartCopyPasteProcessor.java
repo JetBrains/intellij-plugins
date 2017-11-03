@@ -111,16 +111,20 @@ public class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCopyPaste
         final String title = DartBundle.message("dialog.paste.on.import.title");
 
         final DialogWrapper.DoNotAskOption doNotAskOption = new DialogWrapper.DoNotAskOption.Adapter() {
-          @NotNull
           @Override
-          public String getDoNotShowMessage() {
-            return DartBundle.message("always.update.imports.do.not.ask.again");
+          public boolean shouldSaveOptionsOnCancel() {
+            return true;
           }
 
           @Override
           public void rememberChoice(boolean isSelected, int exitCode) {
-            if (isSelected && exitCode == DialogWrapper.OK_EXIT_CODE) {
+            if (!isSelected) return;
+
+            if (exitCode == DialogWrapper.OK_EXIT_CODE) {
               DartCodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE = CodeInsightSettings.YES;
+            }
+            else if (exitCode == DialogWrapper.CANCEL_EXIT_CODE) {
+              DartCodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE = CodeInsightSettings.NO;
             }
           }
         };
