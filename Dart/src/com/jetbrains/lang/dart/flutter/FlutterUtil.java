@@ -4,10 +4,20 @@ import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
+import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.representer.Representer;
+import org.yaml.snakeyaml.resolver.Resolver;
+
+import java.io.IOException;
+import java.util.Map;
 
 public class FlutterUtil {
 
@@ -37,5 +47,61 @@ public class FlutterUtil {
 
   public static boolean isFlutterPluginInstalled() {
     return FLUTTER_PLUGIN_INSTALLED;
+  }
+
+  /**
+   * Returns true if the passed pubspec declares a flutter dependency.
+   * <p/>
+   * This method intentionally matches the contents in PubRoot.declaresFlutter in the Flutter plugin, which ensures that
+   * the same logic is used between the two plugins to avoid issues like this:
+   * https://github.com/flutter/flutter-intellij/issues/1445
+   */
+  public static boolean isPubspecDeclaringFlutter(@NotNull final VirtualFile pubspec) {
+    // It uses Flutter if it contains:
+    // dependencies:
+    //   flutter:
+
+    try {
+      final String contents = new String(pubspec.contentsToByteArray(true /* cache contents */));
+      final Map<String, Object> yaml = loadPubspecInfo(contents);
+      if (yaml == null) {
+        return false;
+      }
+
+      final Object flutterEntry = yaml.get("dependencies");
+      //noinspection SimplifiableIfStatement
+      if (flutterEntry instanceof Map) {
+        return ((Map)flutterEntry).containsKey("flutter");
+      }
+
+      return false;
+    }
+    catch (IOException e) {
+      return false;
+    }
+  }
+
+  /**
+   * See comment above in {@link #isPubspecDeclaringFlutter(VirtualFile)}. This method was also copied from PubRoot.
+   */
+  private static Map<String, Object> loadPubspecInfo(@NotNull String yamlContents) {
+    final Yaml yaml = new Yaml(new SafeConstructor(), new Representer(), new DumperOptions(), new Resolver() {
+      @Override
+      protected void addImplicitResolvers() {
+        this.addImplicitResolver(Tag.BOOL, BOOL, "yYnNtTfFoO");
+        this.addImplicitResolver(Tag.NULL, NULL, "~nN\u0000");
+        this.addImplicitResolver(Tag.NULL, EMPTY, null);
+        this.addImplicitResolver(new Tag("tag:yaml.org,2002:value"), VALUE, "=");
+        this.addImplicitResolver(Tag.MERGE, MERGE, "<");
+      }
+    });
+
+    try {
+      //noinspection unchecked
+      return (Map)yaml.load(yamlContents);
+    }
+    catch (Exception e) {
+      return null;
+    }
   }
 }
