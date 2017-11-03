@@ -10,7 +10,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartLanguage;
@@ -388,33 +387,12 @@ public class DartStatementMover extends LineMover {
     }
     PsiElement sibling =
       StatementUpDownMover.firstNonWhiteElement(down ? range.lastElement.getNextSibling() : range.firstElement.getPrevSibling(), down);
-    final DartFunctionExpression fn = findChildOfType(sibling, DartFunctionExpression.class, DartPsiCompositeElement.class);
-    if (fn != null && sibling != null && PsiTreeUtil.getParentOfType(fn, DartPsiCompositeElement.class) == sibling) {
+    DartFunctionExpression fn = PsiTreeUtil.findChildOfType(sibling, DartFunctionExpression.class, true, DartPsiCompositeElement.class);
+    if (fn != null && PsiTreeUtil.getParentOfType(fn, DartPsiCompositeElement.class) == sibling) {
       destLine =
         editor.getDocument().getLineNumber(down ? sibling.getTextRange().getEndOffset() + 1 : sibling.getTextRange().getStartOffset());
     }
     return destLine;
-  }
-
-  @Nullable
-  private static <T extends PsiElement> T findChildOfType(@Nullable final PsiElement element,
-                                                          @NotNull final Class<T> aClass,
-                                                          @Nullable final Class<? extends PsiElement> stopAt) {
-    final PsiElementProcessor.FindElement<PsiElement> processor;
-    processor = new PsiElementProcessor.FindElement<PsiElement>() {
-      @Override
-      public boolean execute(@NotNull PsiElement each) {
-        if (element == each) return true; // strict
-        if (aClass.isInstance(each)) {
-          return setFound(each);
-        }
-        return stopAt == null || !stopAt.isInstance(each);
-      }
-    };
-
-    PsiTreeUtil.processElements(element, processor);
-    //noinspection unchecked
-    return (T)processor.getFoundElement();
   }
 
   private static boolean isInside(final int offset, final PsiElement guard) {
