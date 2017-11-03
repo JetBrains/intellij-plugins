@@ -5,6 +5,7 @@ import com.intellij.codeInsight.daemon.HighlightDisplayKey
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.lang.javascript.typescript.TypeScriptHighlightingTest
 import com.intellij.lang.typescript.inspections.TypeScriptValidateJSTypesInspection
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -96,7 +97,9 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
                             "Overriding",
                             "ModuleMergeAsFunctionParam",
                             "ExtendStandardInterface",
-                            "ReExportAllModule")
+                            "ReExportAllModule",
+                            "TypeOfTypeSOE",
+                            "EnumComparison")
 
   override fun doHighlightingWithInvokeFixAndCheckResult(fixName: String?,
                                                          ext: String?,
@@ -124,16 +127,31 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
       return mutableListOf()
     }
 
-    val manager = InspectionProfileManager.getInstance(project)
-    val profile = manager.currentProfile
-    val key = HighlightDisplayKey.find(TypeScriptValidateJSTypesInspection().shortName)
-    val wasLevel = profile.getToolDefaultState(TypeScriptValidateJSTypesInspection().shortName, project).level
+    val rollback = ContextCreator().createContext(project)
     try {
-      profile.setErrorLevel(key, HighlightDisplayLevel.ERROR, project)
       return super.doTestFor(checkWeakWarnings, *fileNames)
     }
     finally {
-      profile.setErrorLevel(key, wasLevel, project)
+      rollback()
+    }
+  }
+
+  companion object {
+    private class ContextCreator {
+      private val inspections = arrayOf(TypeScriptValidateJSTypesInspection().shortName/*,
+                                        TypeScriptUnresolvedVariableInspection().shortName*/)
+      private val was: MutableMap<HighlightDisplayKey, HighlightDisplayLevel> = mutableMapOf()
+
+      fun createContext(project: Project): () -> Unit {
+        val manager = InspectionProfileManager.getInstance(project)
+        val profile = manager.currentProfile
+        inspections.forEach {
+          val key = HighlightDisplayKey.find(it)
+          was.put(key, profile.getToolDefaultState(it, project).level)
+          profile.setErrorLevel(key, HighlightDisplayLevel.ERROR, project)
+        }
+        return { was.forEach { profile.setErrorLevel(it.key, it.value, project) } }
+      }
     }
   }
 

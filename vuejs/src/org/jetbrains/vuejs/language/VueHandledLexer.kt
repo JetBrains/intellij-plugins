@@ -4,7 +4,9 @@ import com.intellij.lang.HtmlScriptContentProvider
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageHtmlScriptContentProvider
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
+import com.intellij.lexer.Lexer
 import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.psi.tree.IElementType
 
 interface VueHandledLexer {
   fun seenScript():Boolean
@@ -42,11 +44,19 @@ interface VueHandledLexer {
 
   fun findScriptContentProviderVue(mimeType: String?, delegate: (String) -> HtmlScriptContentProvider?,
                                 languageLevel: JSLanguageLevel): HtmlScriptContentProvider? {
+    val provider: HtmlScriptContentProvider?;
     if (mimeType != null) {
-      return delegate(mimeType) ?: scriptContentViaLang()
+      provider = delegate(mimeType) ?: scriptContentViaLang()
     }
     else {
-      return LanguageHtmlScriptContentProvider.getScriptContentProvider(languageLevel.dialect)
+      provider = LanguageHtmlScriptContentProvider.getScriptContentProvider(languageLevel.dialect)
+    }
+    provider ?: return null
+    val moduleType = toModuleContentType(provider.scriptElementType)
+    if (provider.scriptElementType == moduleType) return provider
+    return object: HtmlScriptContentProvider {
+      override fun getScriptElementType(): IElementType = moduleType
+      override fun getHighlightingLexer(): Lexer? = provider.highlightingLexer
     }
   }
 
