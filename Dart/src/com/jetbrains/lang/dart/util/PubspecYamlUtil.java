@@ -38,6 +38,11 @@ public class PubspecYamlUtil {
 
   private static final Key<Pair<Long, Map<String, Object>>> MOD_STAMP_TO_PUBSPEC_NAME = Key.create("MOD_STAMP_TO_PUBSPEC_NAME");
 
+  public static boolean isPubspecFile(@NotNull final VirtualFile file) {
+    // https://www.dartlang.org/tools/pub/pubspec
+    return !file.isDirectory() && file.getName().equals(PUBSPEC_YAML);
+  }
+
   @Nullable
   public static VirtualFile findPubspecYamlFile(@NotNull final Project project, @NotNull final VirtualFile contextFile) {
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
