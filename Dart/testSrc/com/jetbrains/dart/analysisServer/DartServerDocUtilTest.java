@@ -307,7 +307,7 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testTypedefSig() {
-    doTest("<code>typedef F(int x) → int<br></code>", "typedef int <caret>F(int x);");
+    doTest("<code>typedef F = int Function(int x)<br></code>", "typedef int <caret>F(int x);");
   }
 
   private void doTest(String expectedDoc, String fileContents) {
