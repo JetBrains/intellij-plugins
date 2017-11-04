@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.language
 import com.intellij.lang.HtmlScriptContentProvider
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageHtmlScriptContentProvider
+import com.intellij.lang.javascript.JSElementTypes.toModuleContentType
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.fileTypes.FileTypeManager
