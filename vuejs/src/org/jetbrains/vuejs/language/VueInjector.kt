@@ -33,6 +33,8 @@ import java.util.*
  */
 class VueInjector : MultiHostInjector {
   companion object {
+    private val delimitersOptionHolders = setOf("Vue.config.delimiters", "Vue.options.delimiters")
+
     val BRACES_FACTORY: NullableFunction<PsiElement, Pair<String, String>> = JSInjectionBracesUtil.delimitersFactory(
       VueJSLanguage.INSTANCE.displayName, { project, key ->
       if (project == null || key == null) return@delimitersFactory null
@@ -54,7 +56,7 @@ class VueInjector : MultiHostInjector {
       return delimitersDefinitions.filter {
         it is JSDefinitionExpression &&
         (it as PsiElement).context != null &&
-        it.qualifiedName == "Vue.config.delimiters"
+        it.qualifiedName in delimitersOptionHolders
       }.map {
         val delimiter = getDelimiterValue((it as PsiElement).context!!, key)
         if (delimiter != null) return Pair.create(delimiter, it)
