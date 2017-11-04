@@ -38,6 +38,7 @@ import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
 import com.jetbrains.lang.dart.psi.DartNewExpression;
+import com.jetbrains.lang.dart.psi.DartParenthesizedExpression;
 import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
 import com.jetbrains.lang.dart.psi.DartUriElement;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -206,7 +207,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
         reference.getRangeInElement(); // to ensure that references are sorted by range
         reference = ((PsiMultiReference)reference).getReferences()[0];
       }
-      if (reference instanceof DartNewExpression) {
+      if (reference instanceof DartNewExpression || reference instanceof DartParenthesizedExpression) {
         // historically DartNewExpression is a reference; it can appear here only in situation like new Foo(o.<caret>);
         // without the following hack closing paren is replaced on Tab. We won't get here if at least one symbol after dot typed.
         context.setReplacementOffset(context.getStartOffset());
