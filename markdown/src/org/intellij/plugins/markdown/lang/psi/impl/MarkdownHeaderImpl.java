@@ -1,8 +1,9 @@
 package org.intellij.plugins.markdown.lang.psi.impl;
 
+import com.intellij.ide.projectView.PresentationData;
 import com.intellij.lang.ASTNode;
-import com.intellij.navigation.DelegatingItemPresentation;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -17,9 +18,18 @@ import org.intellij.plugins.markdown.lang.stubs.impl.MarkdownHeaderStubElementTy
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import static org.intellij.plugins.markdown.highlighting.MarkdownHighlighterColors.*;
 
 public class MarkdownHeaderImpl extends MarkdownStubBasedPsiElementBase<MarkdownStubElement> {
+  TextAttributesKey[] HEADERS_TEXT_ATTRIBUTES_KEY = new TextAttributesKey[]{
+    HEADER_PRESENTATION_LEVEL_1_ATTR_KEY,
+    HEADER_PRESENTATION_LEVEL_2_ATTR_KEY,
+    HEADER_PRESENTATION_LOW_LEVELS,
+    HEADER_PRESENTATION_LOW_LEVELS,
+    HEADER_PRESENTATION_LOW_LEVELS,
+    HEADER_PRESENTATION_LOW_LEVELS
+  };
+
   public MarkdownHeaderImpl(@NotNull ASTNode node) {
     super(node);
   }
@@ -41,26 +51,10 @@ public class MarkdownHeaderImpl extends MarkdownStubBasedPsiElementBase<Markdown
   @NotNull
   @Override
   public ItemPresentation getPresentation() {
-    ItemPresentation basePresentation = super.getPresentation();
-    return new DelegatingItemPresentation(basePresentation) {
-      @Override
-      public String getLocationString() {
-        //making null here because stub is being deserialized without 'base' presentation
-        return null;
-      }
+    String headerText = getHeaderText();
+    String text = headerText == null ? "Invalid header: " + getText() : headerText;
 
-      @Override
-      public String getPresentableText() {
-        String headerText = getHeaderText();
-        return headerText == null ? null : "h" + getHeaderNumber() + " " + headerText;
-      }
-
-      @Override
-      public Icon getIcon(boolean open) {
-        //null here because stub is being deserialized without 'base' presentation
-        return null;
-      }
-    };
+    return new PresentationData(text, "", null, HEADERS_TEXT_ATTRIBUTES_KEY[getHeaderNumber() - 1]);
   }
 
   @Nullable

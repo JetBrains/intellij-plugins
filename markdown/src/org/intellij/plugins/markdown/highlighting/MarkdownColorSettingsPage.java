@@ -71,6 +71,8 @@ public class MarkdownColorSettingsPage implements ColorSettingsPage {
     result.put("ul", MarkdownHighlighterColors.UNORDERED_LIST_ATTR_KEY);
     result.put("ol", MarkdownHighlighterColors.ORDERED_LIST_ATTR_KEY);
 
+    result.put("lowLevelHeaders", MarkdownHighlighterColors.HEADER_PRESENTATION_LOW_LEVELS);
+
     return result;
   }
 
@@ -162,6 +164,8 @@ public class MarkdownColorSettingsPage implements ColorSettingsPage {
       put("markdown.editor.colors.list_item", MarkdownHighlighterColors.LIST_ITEM_ATTR_KEY);
       put("markdown.editor.colors.html_block", MarkdownHighlighterColors.HTML_BLOCK_ATTR_KEY);
       put("markdown.editor.colors.inline_html", MarkdownHighlighterColors.INLINE_HTML_ATTR_KEY);
+
+      put("markdown.structure.view.low.level.headers", MarkdownHighlighterColors.HEADER_PRESENTATION_LOW_LEVELS);
     }
 
     @NotNull

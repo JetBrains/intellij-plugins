@@ -64,4 +64,8 @@ public class MarkdownHighlighterColors {
   public static final TextAttributesKey LINK_LABEL_ATTR_KEY = createTextAttributesKey("MARKDOWN_LINK_LABEL", KEYWORD);
   public static final TextAttributesKey LINK_TITLE_ATTR_KEY = createTextAttributesKey("MARKDOWN_LINK_TITLE", BLOCK_COMMENT);
   public static final TextAttributesKey AUTO_LINK_ATTR_KEY = createTextAttributesKey("MARKDOWN_AUTO_LINK", HYPERLINK_ATTRIBUTES);
+
+  public static final TextAttributesKey HEADER_PRESENTATION_LEVEL_1_ATTR_KEY = createTextAttributesKey("MARKDOWN_STRUCTURE_HEADER_LEVEL_1", BOLD_ATTR_KEY);
+  public static final TextAttributesKey HEADER_PRESENTATION_LEVEL_2_ATTR_KEY = createTextAttributesKey("MARKDOWN_STRUCTURE_HEADER_LEVEL_2", TEXT);
+  public static final TextAttributesKey HEADER_PRESENTATION_LOW_LEVELS = createTextAttributesKey("MARKDOWN_STRUCTURE_HEADER_LOW_LEVELS");
 }
