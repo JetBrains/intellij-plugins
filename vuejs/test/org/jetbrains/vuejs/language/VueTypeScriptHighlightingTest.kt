@@ -99,7 +99,8 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
                             "ExtendStandardInterface",
                             "ReExportAllModule",
                             "TypeOfTypeSOE",
-                            "EnumComparison")
+                            "EnumComparison",
+                            "ClassExpressionInExtendSimple")
 
   override fun doHighlightingWithInvokeFixAndCheckResult(fixName: String?,
                                                          ext: String?,
