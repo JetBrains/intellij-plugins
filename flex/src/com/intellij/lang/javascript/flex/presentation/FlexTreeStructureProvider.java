@@ -48,31 +48,31 @@ import static com.intellij.lang.javascript.flex.presentation.FlexStructureViewPr
 public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAware {
   @NotNull
   @Override
-  public Collection<AbstractTreeNode> modify(@NotNull AbstractTreeNode parent, @NotNull Collection<AbstractTreeNode> children, ViewSettings settings) {
+  public Collection<AbstractTreeNode> modify(@NotNull AbstractTreeNode parent,
+                                             @NotNull Collection<AbstractTreeNode> children,
+                                             ViewSettings settings) {
     List<AbstractTreeNode> result = new ArrayList<>();
     if (parent instanceof SwfQualifiedNamedElementNode || parent instanceof FlexFileNode) {
-      if (((ProjectViewNode)parent).getSettings().isShowMembers()) {
-        JSQualifiedNamedElement parentElement = getElement(parent);
-        if (parentElement != null) {
-          JSStructureViewElement structureViewElement =
-            parentElement instanceof XmlBackedJSClassImpl
-            ? new FlexStructureViewElement(((XmlBackedJSClassImpl)parentElement), (XmlFile)parentElement.getContainingFile(), false)
-            : new JSStructureViewElement(parentElement, false, true);
-          StructureViewTreeElement[] structureViewChildren = structureViewElement.getChildren();
-          for (final StructureViewTreeElement structureViewChild : structureViewChildren) {
-            if (structureViewChild instanceof JSStructureViewElement) {
-              PsiElement childElement = ((JSStructureViewElement)structureViewChild).getValue();
-              result.add(new FlexClassMemberNode((JSElement)childElement, ((ProjectViewNode)parent).getSettings()));
-            }
-            else {
-              result.add(new UnknownNode(parentElement.getProject(), structureViewChild, ((ProjectViewNode)parent).getSettings()));
-            }
+      JSQualifiedNamedElement psiParent = getElement(parent);
+      if (settings != null && settings.isShowMembers() && psiParent != null) {
+        JSStructureViewElement elementNode =
+          psiParent instanceof XmlBackedJSClassImpl ?
+          new FlexStructureViewElement(((XmlBackedJSClassImpl)psiParent)) :
+          new JSStructureViewElement(psiParent, true);
+        StructureViewTreeElement[] structureViewChildren = elementNode.getChildren();
+        for (StructureViewTreeElement structureViewChild : structureViewChildren) {
+          if (structureViewChild instanceof JSStructureViewElement) {
+            PsiElement childElement = ((JSStructureViewElement)structureViewChild).getValue();
+            result.add(new FlexClassMemberNode((JSElement)childElement, ((ProjectViewNode)parent).getSettings()));
+          }
+          else {
+            result.add(new UnknownNode(psiParent.getProject(), structureViewChild, ((ProjectViewNode)parent).getSettings()));
           }
         }
       }
     }
     else {
-      for (final AbstractTreeNode child : children) {
+      for (AbstractTreeNode child : children) {
         Object o = child.getValue();
         if (o instanceof JSFileImpl && !(o instanceof PsiCompiledFile) && DialectDetector.isActionScript((PsiFile)o) ||
             o instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)o)) {
