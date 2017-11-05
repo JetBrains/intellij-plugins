@@ -20,7 +20,6 @@ import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.RowIcon;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -72,7 +71,7 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     assertEquals("ZZZ2", getText(items[2]));
     assertEquals("A15", getText(items[0]));
 
-    List<? extends AbstractTreeNode> treeNodes = getChildren(items[1]);
+    List<AbstractTreeNode> treeNodes = getChildren(items[1]);
     assertEquals(4 + OBJECT_METHODS_COUNT, treeNodes.size());
 
     assertEquals("EE", getText(treeNodes.get(0)));
@@ -94,23 +93,23 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
 
   public void testGroupByClass2() throws Exception {
     configureByFile(BASE_PATH + "15.js2");
-    final Object[] items = getTopLevelItems();
+    Object[] items = getTopLevelItems();
     assertEquals(3, items.length);
 
     assertEquals("ZZZ", getText(items[1]));
     assertEquals("ZZZ2", getText(items[2]));
     assertEquals("A15", getText(items[0]));
 
-    List<? extends AbstractTreeNode> treeNodes = getChildren(items[0]);
+    List<AbstractTreeNode> treeNodes = getChildren(items[0]);
     assertEquals(7, treeNodes.size());
-    final Iterator<? extends AbstractTreeNode> iterator = treeNodes.iterator();
+    Iterator<? extends AbstractTreeNode> iterator = treeNodes.iterator();
 
-    final AbstractTreeNode node = iterator.next();
+    AbstractTreeNode node = iterator.next();
     assertEquals("mypackage.ZZZ", getText(node));
 
     Collection<? extends AbstractTreeNode> treeNodes2 = getChildren(node);
     assertEquals(2, treeNodes2.size());
-    final Iterator<? extends AbstractTreeNode> iterator2 = treeNodes2.iterator();
+    Iterator<? extends AbstractTreeNode> iterator2 = treeNodes2.iterator();
 
     assertEquals("aaa", getText(iterator2.next()));
     assertEquals("c2", getText(iterator2.next()));
@@ -122,24 +121,24 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     assertEquals("_automation:Object", getText(iterator.next()));
     assertEquals("delegate:Object", getText(iterator.next()));
 
-    final PsiElement element = checkIfCurrentEditorElementIsValid((AbstractTreeNode)items[1], JSClass.class);
+    PsiElement element = checkIfCurrentEditorElementIsValid((AbstractTreeNode)items[1], JSClass.class);
     assertTrue(JSStructureViewModel.shouldEnterElementStatic(element));
   }
 
   public void testGroupByClass3() {
     configureByFiles(null, BASE_PATH + "15_2.js2", BASE_PATH + "15_3.js2");
-    final Object[] items = getTopLevelItems();
+    Object[] items = getTopLevelItems();
     assertEquals(1, items.length);
 
     assertEquals("A15", getText(items[0]));
 
-    List<? extends AbstractTreeNode> treeNodes = getChildren(items[0]);
+    List<AbstractTreeNode> treeNodes = getChildren(items[0]);
     assertEquals(3, treeNodes.size());
 
     assertEquals("mypackage.ZZZ", getText(treeNodes.get(0)));
     assertEquals("Object", getText(treeNodes.get(1)));
 
-    List<? extends AbstractTreeNode> treeNodes2 = getChildren(treeNodes.get(0));
+    List<AbstractTreeNode> treeNodes2 = getChildren(treeNodes.get(0));
     assertEquals(2, treeNodes2.size());
 
     assertEquals("aaa", getText(treeNodes2.get(0)));
@@ -150,12 +149,12 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
 
   public void testBug3() {
     configureByFiles(null, BASE_PATH + "22.js2", BASE_PATH + "22_2.js2");
-    final Object[] items = getTopLevelItems();
+    Object[] items = getTopLevelItems();
     assertEquals(2, items.length);
     assertEquals("XXX", getText(items[0]));
     assertEquals("YYY", getText(items[1]));
 
-    List<? extends AbstractTreeNode> treeNodes = getChildren(items[0]);
+    List<AbstractTreeNode> treeNodes = getChildren(items[0]);
     assertEquals(3 + OBJECT_METHODS_COUNT, treeNodes.size());
     assertEquals("constructor():*", getText(treeNodes.get(0)));
     assertEquals("aaa", getText(treeNodes.get(OBJECT_METHODS_COUNT + 1)));
@@ -176,12 +175,13 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
 
   public void testPrivateIconsForClassMembers() throws Exception {
     configureByFile(BASE_PATH + "15.js2");
-    final Object[] items = getTopLevelItems();
+    Object[] items = getTopLevelItems();
     assertEquals(3, items.length);
-    ArrayList<? extends AbstractTreeNode> treeNodes = (ArrayList<? extends AbstractTreeNode>)getChildren(items[0]);
+    List<AbstractTreeNode> treeNodes = getChildren(items[0]);
     assertEquals(JSAttributeList.AccessType.PUBLIC, getAccessType(treeNodes.get(1), false)); // automation():Object
 
-    treeNodes = (ArrayList<? extends AbstractTreeNode>)getChildren(items[1]);
+    treeNodes = getChildren(items[1]);
+    assertTrue(treeNodes.size() + ">" + (3 + OBJECT_METHODS_COUNT), treeNodes.size() > 3 + OBJECT_METHODS_COUNT);
     assertEquals(JSAttributeList.AccessType.PRIVATE, getAccessType(treeNodes.get(3 + OBJECT_METHODS_COUNT))); // ttt
 
     assertEquals(JSAttributeList.AccessType.PRIVATE, getAccessType(treeNodes.get(0))); // EE
@@ -190,11 +190,11 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
   public void testIncludedMembers() {
     configureByFiles(null, BASE_PATH + "IncludedMembers.js2", BASE_PATH + "IncludedMembers_2.js2");
 
-    final Object[] items = getTopLevelItems();
+    Object[] items = getTopLevelItems();
     assertEquals(1, items.length);
 
     assertEquals("C", getText(items[0]));
-    List<? extends AbstractTreeNode> treeNodes = getChildren(items[0]);
+    List<AbstractTreeNode> treeNodes = getChildren(items[0]);
     assertEquals(2 + OBJECT_METHODS_COUNT, treeNodes.size());
     assertEquals("__aaa__()", getText(treeNodes.get(0)));
   }

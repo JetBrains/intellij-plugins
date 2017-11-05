@@ -8,7 +8,7 @@ public class Inherited2 extends Inherited2Base {
     protected override function get prop() : String { return "fooo"; }
 
 }
-<structure>
+<structure activeProviders="SHOW_INHERITED">
     <node text="Inherited2.as">
         <node text="Inherited2" icon="AS_CLASS_ICON">
             <node text="foo()" icon="METHOD_ICON"/>
@@ -21,7 +21,7 @@ public class Inherited2 extends Inherited2Base {
     </node>
 </structure>
 
-<structure activeFilters="SHOW_FIELDS">
+<structure activeProviders="SHOW_INHERITED" activeFilters="SHOW_FIELDS">
     <node text="Inherited2.as">
         <node text="Inherited2" icon="AS_CLASS_ICON">
             <node text="foo()" icon="METHOD_ICON"/>
@@ -32,7 +32,7 @@ public class Inherited2 extends Inherited2Base {
     </node>
 </structure>
 
-<structure activeGroupers="SHOW_CLASSES">
+<structure activeProviders="SHOW_INHERITED" activeGroupers="SHOW_CLASSES">
     <node text="Inherited2.as">
         <node text="Inherited2" icon="AS_CLASS_ICON">
             <node text="Inherited2Base" icon="(GROUP)">
@@ -47,7 +47,7 @@ public class Inherited2 extends Inherited2Base {
     </node>
 </structure>
 
-<structure activeGroupers="SHOW_CLASSES" activeFilters="SHOW_FIELDS">
+<structure activeProviders="SHOW_INHERITED" activeGroupers="SHOW_CLASSES" activeFilters="SHOW_FIELDS">
     <node text="Inherited2.as">
         <node text="Inherited2" icon="AS_CLASS_ICON">
             <node text="Inherited2Base" icon="(GROUP)">
