@@ -101,7 +101,7 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     assertEquals("A15", getText(items[0]));
 
     List<AbstractTreeNode> treeNodes = getChildren(items[0]);
-    assertEquals(7, treeNodes.size());
+    assertEquals(6, treeNodes.size());
     Iterator<? extends AbstractTreeNode> iterator = treeNodes.iterator();
 
     AbstractTreeNode node = iterator.next();
@@ -114,7 +114,6 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     assertEquals("aaa", getText(iterator2.next()));
     assertEquals("c2", getText(iterator2.next()));
 
-    assertEquals("Object", getText(iterator.next()));
     assertEquals("automation():Object", getText(iterator.next()));
     assertEquals("initialized():Boolean", getText(iterator.next()));
     assertEquals("register(c:Object):void", getText(iterator.next()));
