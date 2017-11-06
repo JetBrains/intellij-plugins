@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.NoAccessDuringPsiEvents;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.openapi.util.Condition;
@@ -165,7 +166,7 @@ public class AngularIndexUtil {
   }
 
   private static int getAngularJSVersion(final Project project) {
-    if (DumbService.isDumb(project)) return -1;
+    if (DumbService.isDumb(project) || NoAccessDuringPsiEvents.isInsideEventProcessing()) return -1;
 
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
       int version = -1;
