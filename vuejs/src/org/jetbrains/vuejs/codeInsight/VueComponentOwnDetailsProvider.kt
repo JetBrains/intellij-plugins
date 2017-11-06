@@ -89,7 +89,10 @@ class VueComponentOwnDetailsProvider {
     }
 
     private fun filteredObjectProperties(propsObject: JSObjectLiteralExpression, filter: (String, PsiElement) -> Boolean) =
-      propsObject.properties.filter { filter(it.name!!, it) }.map { VueAttributeDescriptor(it.name!!, it) }
+      propsObject.properties.filter {
+        val propName = it.name
+        propName != null && filter(propName, it)
+      }.map { VueAttributeDescriptor(it.name!!, it) }
 
     private fun readPropsFromArray(holder: PsiElement, filter: (String, PsiElement) -> Boolean): List<VueAttributeDescriptor> =
       getStringLiteralsFromInitializerArray(holder, filter).map { VueAttributeDescriptor(it.value as String, it) }
