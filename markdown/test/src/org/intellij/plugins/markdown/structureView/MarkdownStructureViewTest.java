@@ -23,7 +23,7 @@ public class MarkdownStructureViewTest extends LightPlatformCodeInsightFixtureTe
       PlatformTestUtil.waitForPromise(svc.select(svc.getTreeModel().getCurrentEditorElement(), false));
       assertSameLinesWithFile(
         getTestDataPath() + '/' + getTestName(true) + ".txt",
-        PlatformTestUtil.print(tree, tree.getModel().getRoot(), new Queryable.PrintInfo(null, new String[]{"location"}), true));
+        PlatformTestUtil.print(tree, tree.getModel().getRoot(), new Queryable.PrintInfo(null, null), true));
     });
   }
 
