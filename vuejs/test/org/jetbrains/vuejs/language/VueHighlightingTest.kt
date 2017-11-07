@@ -644,4 +644,23 @@ Vue.component('global-comp-literal', {
     val intentions = myFixture.filterAvailableIntentions("Create Variable 'someNonExistingReference2389'")
     TestCase.assertTrue(intentions.isEmpty())
   }
+
+  fun testNoSplitTagInsideInjection() {
+    myFixture.configureByText("NoSplitTagInsideInjection.vue", """
+<template>
+{{ <caret>injection }}
+</template>
+""")
+    var intentions = myFixture.filterAvailableIntentions("Split current tag")
+    TestCase.assertTrue(intentions.isEmpty())
+
+    //but near
+    myFixture.configureByText("NoSplitTagInsideInjection2.vue", """
+<template>
+{{ injection }} here <caret>we can split
+</template>
+""")
+    intentions = myFixture.filterAvailableIntentions("Split current tag")
+    TestCase.assertFalse(intentions.isEmpty())
+  }
 }
