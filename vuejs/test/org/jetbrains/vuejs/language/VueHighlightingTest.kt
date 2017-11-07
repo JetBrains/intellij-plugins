@@ -634,4 +634,14 @@ Vue.component('global-comp-literal', {
 </template>""")
     myFixture.doHighlighting()
   }
+
+  fun testNoCreateVarQuickFix() {
+    myFixture.configureByText("NoCreateVarQuickFix.vue", """
+<template>
+{{ <caret>someNonExistingReference2389 }}
+</template>
+""")
+    val intentions = myFixture.filterAvailableIntentions("Create Variable 'someNonExistingReference2389'")
+    TestCase.assertTrue(intentions.isEmpty())
+  }
 }

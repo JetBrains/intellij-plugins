@@ -70,5 +70,6 @@
     <inheritedLanguagesConfigurableProvider language="VueJS"
                                             implementationClass="org.jetbrains.vuejs.codeInsight.VueJSLanguageConfigurableProvider"/>
     <dialectSpecificHandlersFactory language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory"/>
+    <analysisHandlersFactory implementationClass="org.jetbrains.vuejs.codeInsight.VueAnalysisHandlersFactory" language="VueJS"/>
   </extensions>
 </idea-plugin>
