@@ -81,7 +81,6 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
                                 "ClassExpressionContext",
                                 "ClassExpressionGenerics",
                                 "ClassExpressionGenericsSimple",
-                                "ClassExpressionInExtendSimple",
                                 "ClassExpressionWithSameNameNamespace",
                                 "ClassExpressionWithStaticGenericParameterType",
                                 "ClassExpressionWithoutNameFieldAccess",
@@ -621,8 +620,7 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
                                 "VariableGenericCallSignatures",
                                 "VoidAsType",
                                 "XmlHttpRequestApi",
-                                "YieldInDecorator",
-                            "ClassExpressionInExtendSimple")
+                                "YieldInDecorator")
 
   override fun doHighlightingWithInvokeFixAndCheckResult(fixName: String?,
                                                          ext: String?,
