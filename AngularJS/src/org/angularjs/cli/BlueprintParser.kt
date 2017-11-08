@@ -16,6 +16,7 @@ class BlueprintParser {
     for (line in converted.split('\n')) {
       if (line.startsWith("ng generate")) {
         if (name != null) result.add(Blueprint(name, description, arguments))
+        name = null
         break
       }
       if (line.startsWith("    ")) {
@@ -40,6 +41,7 @@ class BlueprintParser {
         else if (!text.isBlank() && !text[0].isWhitespace()) description = text
       }
     }
+    if (name != null) result.add(Blueprint(name, description, arguments))
     return result
   }
 

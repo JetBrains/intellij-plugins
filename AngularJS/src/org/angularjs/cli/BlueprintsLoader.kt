@@ -63,7 +63,7 @@ private class BlueprintsExternalizer : DataExternalizer<List<Blueprint>> {
 }
 
 private fun doLoad(project: Project, cli: VirtualFile): List<Blueprint> {
-  val interpreter = NodeJsInterpreterManager.getInstance(project).default
+  val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter
   val node = NodeJsLocalInterpreter.tryCast(interpreter) ?: return emptyList()
 
   val modules:MutableList<CompletionModuleInfo> = mutableListOf()
