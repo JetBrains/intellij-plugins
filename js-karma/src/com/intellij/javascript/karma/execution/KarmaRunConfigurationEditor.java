@@ -51,7 +51,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   public KarmaRunConfigurationEditor(@NotNull Project project) {
     myProject = project;
     myNodeInterpreterField = new NodeJsInterpreterField(project, false);
-    myKarmaPackageField = new NodePackageField(project, KarmaUtil.NODE_PACKAGE_NAME, myNodeInterpreterField::getInterpreter);
+    myKarmaPackageField = new NodePackageField(myNodeInterpreterField, KarmaUtil.NODE_PACKAGE_NAME);
     myConfigPathField = createConfigurationFileTextField(project);
     myEnvVarsComponent = new EnvironmentVariablesTextFieldWithBrowseButton();
     myBrowsers = createBrowsersTextField();
