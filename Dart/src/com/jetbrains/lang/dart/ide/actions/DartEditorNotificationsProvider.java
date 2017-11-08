@@ -158,6 +158,8 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
         DartSdkLibUtil.enableDartSdk(myModule);
       });
 
+      DartAnalysisServerService.getInstance(project).serverReadyForRequest(project);
+
       final DartSdk sdk = DartSdk.getDartSdk(project);
       if (sdk != null && DartSdkLibUtil.isDartSdkEnabled(myModule)) {
         final String title = DartSdkLibUtil.isIdeWithMultipleModuleSupport()
