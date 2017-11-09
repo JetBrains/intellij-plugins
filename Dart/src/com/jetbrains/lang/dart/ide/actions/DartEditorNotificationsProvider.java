@@ -53,12 +53,14 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
       return null;
     }
 
-    if (PubspecYamlUtil.PUBSPEC_YAML.equalsIgnoreCase(vFile.getName())) {
+    boolean isPubspecFile = PubspecYamlUtil.isPubspecFile(vFile);
+
+    if (isPubspecFile) {
       final Module module = ModuleUtilCore.findModuleForFile(vFile, myProject);
       if (module == null) return null;
 
       // Defer to the Flutter plugin for package management and SDK configuration if appropriate.
-      if (FlutterUtil.isFlutterPluginInstalled() && FlutterUtil.isFlutterModule(module)) return null;
+      if (FlutterUtil.isFlutterPluginInstalled() && FlutterUtil.isPubspecDeclaringFlutter(vFile)) return null;
 
       final DartSdk sdk = DartSdk.getDartSdk(myProject);
       if (sdk != null && DartSdkLibUtil.isDartSdkEnabled(module)) {
@@ -66,7 +68,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
       }
     }
 
-    if (PubspecYamlUtil.PUBSPEC_YAML.equalsIgnoreCase(vFile.getName()) || vFile.getFileType() == DartFileType.INSTANCE) {
+    if (isPubspecFile || vFile.getFileType() == DartFileType.INSTANCE) {
       final DartSdk sdk = DartSdk.getDartSdk(myProject);
 
       final PsiFile psiFile = PsiManager.getInstance(myProject).findFile(vFile);
