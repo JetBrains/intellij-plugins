@@ -221,7 +221,7 @@ varAccessDeclaration ::= metadata* 'static'? ('covariant'? finalOrConst type    
                                               'covariant'? finalOrConst                    componentName <<failIfItLooksLikeConstantObjectExpression>> |
                                               'covariant'               type !asExpression componentName |
                                                                         type !asExpression componentName |
-                                              'covariant'? 'var'                           componentName)
+                                              'covariant'? 'var'                           componentName) !'.'
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 private finalOrConst ::= 'final' | 'const'
 private varDeclarationListWithSemicolon ::= varDeclarationList ';'{pin=1}

@@ -4,6 +4,7 @@ import com.intellij.formatting.Block;
 import com.intellij.formatting.Spacing;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.formatter.common.AbstractBlock;
@@ -275,7 +276,7 @@ public class DartSpacingProcessor {
     if (elementType == STATEMENTS && (parentType == SWITCH_CASE || parentType == DEFAULT_CASE)) {
       return Spacing.createSpacing(0, 0, 1, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
-    if (!COMMENTS.contains(type2) && BLOCKS.contains(parentType)) {
+    if (!COMMENTS.contains(type2) && BLOCKS.contains(parentType) && !(node1.getTreeNext() instanceof PsiErrorElement)) {
       return addLineBreak();
     }
 
