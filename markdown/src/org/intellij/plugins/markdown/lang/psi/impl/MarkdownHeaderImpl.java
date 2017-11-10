@@ -18,12 +18,13 @@ import org.intellij.plugins.markdown.lang.stubs.impl.MarkdownHeaderStubElementTy
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static org.intellij.plugins.markdown.highlighting.MarkdownHighlighterColors.*;
+import static org.intellij.plugins.markdown.highlighting.MarkdownHighlighterColors.HEADER_PRESENTATION_LEVEL_1_ATTR_KEY;
+import static org.intellij.plugins.markdown.highlighting.MarkdownHighlighterColors.HEADER_PRESENTATION_LOW_LEVELS;
 
 public class MarkdownHeaderImpl extends MarkdownStubBasedPsiElementBase<MarkdownStubElement> {
   TextAttributesKey[] HEADERS_TEXT_ATTRIBUTES_KEY = new TextAttributesKey[]{
     HEADER_PRESENTATION_LEVEL_1_ATTR_KEY,
-    HEADER_PRESENTATION_LEVEL_2_ATTR_KEY,
+    HEADER_PRESENTATION_LOW_LEVELS,
     HEADER_PRESENTATION_LOW_LEVELS,
     HEADER_PRESENTATION_LOW_LEVELS,
     HEADER_PRESENTATION_LOW_LEVELS,
