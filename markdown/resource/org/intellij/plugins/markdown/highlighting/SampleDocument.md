@@ -163,7 +163,7 @@ Tables:
 
 *************
 <header1>#Header level 1 structure view presentation</header1>
-<header2>##Header level 2 structure view presentation</header2>
+<lowLevelHeaders>##Header level 2 structure view presentation</lowLevelHeaders>
 <lowLevelHeaders>###Header level 3 structure view presentation</lowLevelHeaders>
 <lowLevelHeaders>####Header level 4 structure view presentation</lowLevelHeaders>
 <lowLevelHeaders>#####Header level 5 structure view presentation</lowLevelHeaders>
