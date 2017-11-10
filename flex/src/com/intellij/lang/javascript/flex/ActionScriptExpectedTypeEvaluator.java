@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author yole
  */
-public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
+public class ActionScriptExpectedTypeEvaluator extends JSBaseExpectedTypeEvaluator {
   public ActionScriptExpectedTypeEvaluator(JSExpression parent, JSExpectedTypeKind expectedTypeKind) {
     super(parent, expectedTypeKind);
   }
