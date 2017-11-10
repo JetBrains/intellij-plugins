@@ -29,7 +29,7 @@ class CfmlSqlInjectionCompletionDatasourceTest : SqlCompletionTestCase(null) {
     object : SqlDataSourceTestCase() {
       fun create() {
         this.myFixture = this@CfmlSqlInjectionCompletionDatasourceTest.myFixture
-        createDataSource(SqliteDialect.INSTANCE, "Sqlite.create.ddl")
+        createDataSource(SqliteDialect.INSTANCE, null, "Sqlite.create.ddl")
       }
     }.create()
   }
