@@ -677,7 +677,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
       myCombo = new JBComboBoxTableCellEditorComponent(table);
       myCombo.setCell(table, row, column);
-      myCombo.setOptions(LinkageType.getSwcLinkageValues());
+      myCombo.setOptions((Object[])LinkageType.getSwcLinkageValues());
       myCombo.setDefaultValue(value);
       myCombo.setToString(o -> ((LinkageType)o).getShortText());
       return myCombo;
