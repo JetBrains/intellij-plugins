@@ -19,32 +19,34 @@ import com.intellij.util.ProcessingContext
 /**
  * @author Irina.Chernushina on 8/1/2017.
  */
-class VueJSReferenceContributor : PsiReferenceContributor() {
-  private val ELEMENT_INSIDE_SCRIPT: ElementPattern<out PsiElement> = createElementInsideScript()
+class VueInsideScriptReferenceContributor : PsiReferenceContributor() {
+  companion object {
+    private val FUNCTION_INSIDE_SCRIPT: ElementPattern<out PsiElement> = createFunctionInsideScript()
 
-  private fun createElementInsideScript(): ElementPattern<out PsiElement> {
-    return PlatformPatterns.psiElement(JSReferenceExpression::class.java)
-      .and(FilterPattern(object: ElementFilter {
-        override fun isAcceptable(element: Any?, context: PsiElement?): Boolean {
-          if (element !is PsiElement) return false
-          val function = getParentOfType(element, JSFunction::class.java) ?: return false
+    private fun createFunctionInsideScript(): ElementPattern<out PsiElement> {
+      return PlatformPatterns.psiElement(JSReferenceExpression::class.java)
+        .and(FilterPattern(object: ElementFilter {
+          override fun isAcceptable(element: Any?, context: PsiElement?): Boolean {
+            if (element !is PsiElement) return false
+            val function = getParentOfType(element, JSFunction::class.java) ?: return false
 
-          if (element !is JSReferenceExpression || element.qualifier !is JSThisExpression) return false
+            if (element !is JSReferenceExpression || element.qualifier !is JSThisExpression) return false
 
-          val pair = findScriptWithExport(element) ?: return false
-          // lexical this for arrow functions => must be in-place
-          val isArrowFunction = com.intellij.lang.javascript.psi.impl.JSPsiImplUtils.isArrowFunction(function)
-          return isAncestor(pair.first, element, true) && (!isArrowFunction || isAncestor(pair.second, element, true))
-        }
+            val pair = findScriptWithExport(element) ?: return false
+            // lexical this for arrow functions => must be in-place
+            val isArrowFunction = com.intellij.lang.javascript.psi.impl.JSPsiImplUtils.isArrowFunction(function)
+            return isAncestor(pair.first, element, true) && (!isArrowFunction || isAncestor(pair.second, element, true))
+          }
 
-        override fun isClassAcceptable(hintClass: Class<*>?): Boolean {
-          return true
-        }
-      }))
+          override fun isClassAcceptable(hintClass: Class<*>?): Boolean {
+            return true
+          }
+        }))
+    }
   }
 
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
-    registrar.registerReferenceProvider(ELEMENT_INSIDE_SCRIPT, VueComponentLocalReferenceProvider())
+    registrar.registerReferenceProvider(FUNCTION_INSIDE_SCRIPT, VueComponentLocalReferenceProvider())
   }
 }
 

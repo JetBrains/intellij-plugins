@@ -17,7 +17,7 @@
     <lang.braceMatcher language="VueJS" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
     <completion.contributor language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSCompletionContributor"
      order="last"/>
-    <psi.referenceContributor language="JavaScript" implementation="org.jetbrains.vuejs.codeInsight.VueJSReferenceContributor"/>
+    <psi.referenceContributor language="JavaScript" implementation="org.jetbrains.vuejs.codeInsight.VueInsideScriptReferenceContributor"/>
     <psi.referenceContributor language="Vue" implementation="org.jetbrains.vuejs.codeInsight.VueReferenceContributor"/>
 
     <lang.syntaxHighlighterFactory language="Vue" implementationClass="org.jetbrains.vuejs.language.VueSyntaxHighlighterFactory" />
