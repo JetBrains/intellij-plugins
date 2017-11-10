@@ -90,7 +90,7 @@ class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandl
           else {
             cacheHolder = project.baseDir
           }
-          val cacheHolderPsi = PsiManager.getInstance(project).findDirectory(cacheHolder!!) ?: return getTypeFromModule(modules, project)
+          val cacheHolderPsi = PsiManager.getInstance(project).findDirectory(cacheHolder!!) ?: return null
           return CachedValuesManager.getManager(project).getCachedValue(cacheHolderPsi, {
             CachedValueProvider.Result.create(getTypeFromModule(modules, project), cacheHolderPsi)
           })
