@@ -122,7 +122,7 @@ public class JSCreateFieldDialog extends DialogWrapper {
       return Pair.create(JSBundle.message("invalid.identifier.value.0", getFieldName()), true);
     }
     String type = getFieldType().trim();
-    if ("void".equals(type) || type.contains(" ") || JSRefactoringUtil.createTypeElement(myTargetClass.getProject(), type, JavaScriptSupportLoader.ECMA_SCRIPT_L4) == null) {
+    if ("void".equals(type) || type.contains(" ") || JSRefactoringUtil.createTypeElement(type, myTargetClass) == null) {
       return Pair.create(JSBundle.message("invalid.field.type.expression", type), true);
     }
     if (isConstant() && StringUtil.isEmpty(getInitializer())) {
