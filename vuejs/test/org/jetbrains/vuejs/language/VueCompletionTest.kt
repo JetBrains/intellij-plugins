@@ -4,6 +4,7 @@ import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
+import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.WriteAction.run
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.xml.XmlAttribute
@@ -12,6 +13,8 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import junit.framework.TestCase
 
 class VueCompletionTest : LightPlatformCodeInsightFixtureTestCase() {
+  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/testData/completion/"
+
   fun testCompleteCssClasses() {
     myFixture.configureByText("a.css", ".externalClass {}")
     myFixture.configureByText("a.vue", "<template><div class=\"<caret>\"></div></template><style>.internalClass</style>")
@@ -494,5 +497,57 @@ export default {
     myFixture.editor.caretModel.moveToOffset(attribute.textOffset - 1)
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "v-focus", "v-local-directive", "v-some-other-directive", "v-imported-directive")
+  }
+
+  fun testVueOutObjectLiteralCompletion() {
+    configureVueDefinitions()
+    myFixture.configureByText("VueOutObjectLiteralCompletion.vue", """
+    <script>
+      export default {
+        <caret>
+      }
+    </script>
+""")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "props", "methods", "data", "computed", "beforeMount")
+  }
+
+  fun testVueOutObjectLiteralCompletionTs() {
+    configureVueDefinitions()
+    myFixture.configureByText("VueOutObjectLiteralCompletionTs.vue", """
+    <script lang="ts">
+      export default {
+        before<caret>
+      }
+    </script>
+""")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "beforeCreate", "beforeDestroy", "beforeUpdate", "beforeMount")
+  }
+
+  fun testVueOutObjectLiteralCompletionJsx() {
+    configureVueDefinitions()
+    myFixture.configureByText("VueOutObjectLiteralCompletionJsx.vue", """
+    <script lang="jsx">
+      export default {
+        before<caret>
+      }
+    </script>
+""")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "beforeCreate", "beforeDestroy", "beforeUpdate", "beforeMount")
+  }
+
+  private fun configureVueDefinitions() {
+    myFixture.configureByText(PackageJsonUtil.FILE_NAME, """
+{
+  "name": "test",
+  "version": "0.0.1",
+  "dependencies": {
+    "vue": "2.5.3"
+  }
+}
+""")
+    myFixture.copyDirectoryToProject("node_modules", ".")
   }
 }

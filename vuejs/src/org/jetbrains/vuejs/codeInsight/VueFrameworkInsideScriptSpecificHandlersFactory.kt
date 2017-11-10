@@ -57,7 +57,6 @@ class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandl
 
   private class DynamicDelegatingFactory(val delegate: JSDialectSpecificHandlersFactoryI) : JSDialectSpecificHandlersFactoryI by delegate {
     override fun newExpectedTypeEvaluator(parent: JSExpression?, expectedTypeKind: JSExpectedTypeKind?): ExpectedTypeEvaluator {
-      val delegate = getDelegate(parent)
       parent ?: return delegate.newExpectedTypeEvaluator(parent, expectedTypeKind)
 
       val languageOfElement = DialectDetector.languageOfElement(parent)
