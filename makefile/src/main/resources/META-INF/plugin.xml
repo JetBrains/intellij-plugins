@@ -8,11 +8,7 @@
   Support for UNIX Makefiles
     ]]></description>
 
-  <change-notes><![CDATA[
-Plugin now supports self-describing Makefiles, ## comments on targets are treated as doc-comments.
-It is now possible to set up working directory for Makefile run configuration.
-    ]]>
-  </change-notes>
+  <change-notes><![CDATA[]]></change-notes>
 
   <idea-version since-build="163.0"/>
 
