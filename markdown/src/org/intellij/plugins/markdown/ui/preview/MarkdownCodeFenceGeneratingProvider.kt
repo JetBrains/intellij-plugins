@@ -11,9 +11,9 @@ import java.util.*
 internal class MarkdownCodeFenceGeneratingProvider(private val pluginCacheProviders: Array<MarkdownCodeFencePluginGeneratingProvider>)
   : GeneratingProvider {
 
-  private fun pluginGeneratedHtml(languageString: String, codeFenceContent: String): String {
+  private fun pluginGeneratedHtml(language: String, codeFenceContent: String): String {
     return pluginCacheProviders
-      .filter { it.isApplicable(languageString) }.stream()
+      .filter { it.isApplicable(language) }.stream()
       .findFirst()
       .map { it.generateHtml(codeFenceContent) }
       .orElse(codeFenceContent)
@@ -51,9 +51,8 @@ internal class MarkdownCodeFenceGeneratingProvider(private val pluginCacheProvid
       }
     }
 
-    if (state == 1 && language != null) {
-      val codeFenceGeneratedHtml = pluginGeneratedHtml(language, codeFenceContent.toString())
-      visitor.consumeHtml(codeFenceGeneratedHtml)
+    if (state == 1) {
+      visitor.consumeHtml(if (language != null) pluginGeneratedHtml(language, codeFenceContent.toString()) else codeFenceContent)
     }
 
     if (state == 0) {
