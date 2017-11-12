@@ -8,7 +8,7 @@ interface MarkdownCodeFencePluginGeneratingProvider {
   /**
    * Check if plugin applicable for code fence language string
    */
-  fun isApplicable(languageString: String?): Boolean
+  fun isApplicable(language: String?): Boolean
 
   /**
    * Consumes code fence content

@@ -15,6 +15,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 internal class PlantUMLPluginGeneratingProvider(private var pluginCache: MarkdownCodeFencePluginCacheProvider?) : MarkdownCodeFencePluginGeneratingProvider {
+  // this empty constructor is needed for the component initialization
   constructor() : this(null)
 
   override fun getCacheRootPath(): String = "$markdownCachePath${File.separator}plantUML"
@@ -26,7 +27,7 @@ internal class PlantUMLPluginGeneratingProvider(private var pluginCache: Markdow
 
     pluginCache?.addAliveCachedFile(LocalFileSystem.getInstance().refreshAndFindFileByPath(cachedDiagram(newDiagramPath, text))!!)
 
-    return "<img src=\"file:${cachedDiagram(newDiagramPath, text)}\"></img>"
+    return "<img src=\"file:${cachedDiagram(newDiagramPath, text)}\"/>"
   }
 
   private fun cachedDiagram(newDiagramPath: String, text: String) =
@@ -44,9 +45,7 @@ internal class PlantUMLPluginGeneratingProvider(private var pluginCache: Markdow
     return diagramPath
   }
 
-  override fun isApplicable(languageString: String?): Boolean {
-    return languageString == "puml" || languageString == "plantuml"
-  }
+  override fun isApplicable(language: String?): Boolean = language == "puml" || language == "plantuml"
 
   companion object {
     @Throws(IOException::class)

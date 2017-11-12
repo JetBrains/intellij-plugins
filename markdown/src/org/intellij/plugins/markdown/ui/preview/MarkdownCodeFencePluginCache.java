@@ -60,7 +60,7 @@ public class MarkdownCodeFencePluginCache implements ProjectComponent {
       VfsUtil.createDirectories(provider.getCacheRootPath());
     }
     catch (IOException e) {
-      LOG.error("Cannot init code fence plugin cache", e);
+      LOG.warn("Cannot init code fence plugin cache", e);
     }
   }
 

@@ -34,7 +34,7 @@ internal class MarkdownCodeFenceGeneratingProvider(private val pluginCacheProvid
     var lastChildWasContent = false
 
     val attributes = ArrayList<String>()
-    var languageString: String? = null
+    var language: String? = null
     val codeFenceContent = StringBuilder()
     for (child in childrenToConsider) {
       if (state == 1 && child.type in listOf(MarkdownTokenTypes.CODE_FENCE_CONTENT, MarkdownTokenTypes.EOL)) {
@@ -42,8 +42,8 @@ internal class MarkdownCodeFenceGeneratingProvider(private val pluginCacheProvid
         lastChildWasContent = child.type == MarkdownTokenTypes.CODE_FENCE_CONTENT
       }
       if (state == 0 && child.type == MarkdownTokenTypes.FENCE_LANG) {
-        languageString = HtmlGenerator.leafText(text, child).toString().trim().split(' ')[0]
-        attributes.add("class=\"languageString-$languageString\"")
+        language = HtmlGenerator.leafText(text, child).toString().trim().split(' ')[0]
+        attributes.add("class=\"language-$language\"")
       }
       if (state == 0 && child.type == MarkdownTokenTypes.EOL) {
         visitor.consumeTagOpen(node, "code", *attributes.toTypedArray())
@@ -51,8 +51,8 @@ internal class MarkdownCodeFenceGeneratingProvider(private val pluginCacheProvid
       }
     }
 
-    if (state == 1 && languageString != null) {
-      val codeFenceGeneratedHtml = pluginGeneratedHtml(languageString, codeFenceContent.toString())
+    if (state == 1 && language != null) {
+      val codeFenceGeneratedHtml = pluginGeneratedHtml(language, codeFenceContent.toString())
       visitor.consumeHtml(codeFenceGeneratedHtml)
     }
 
@@ -65,7 +65,6 @@ internal class MarkdownCodeFenceGeneratingProvider(private val pluginCacheProvid
     visitor.consumeHtml("</code></pre>")
   }
 
-  private fun codeFenceRawText(text: String, node: ASTNode): CharSequence {
-    return if (node.type != MarkdownTokenTypes.BLOCK_QUOTE) node.getTextInNode(text) else ""
-  }
+  private fun codeFenceRawText(text: String, node: ASTNode): CharSequence =
+    if (node.type != MarkdownTokenTypes.BLOCK_QUOTE) node.getTextInNode(text) else ""
 }

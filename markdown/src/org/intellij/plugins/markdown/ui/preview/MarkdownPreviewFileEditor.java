@@ -19,6 +19,7 @@ import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Alarm;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
 import org.intellij.markdown.IElementType;
@@ -27,7 +28,6 @@ import org.intellij.markdown.html.GeneratingProvider;
 import org.intellij.markdown.html.HtmlGenerator;
 import org.intellij.markdown.parser.LinkMap;
 import org.intellij.markdown.parser.MarkdownParser;
-import org.intellij.plugins.markdown.lang.generating.MarkdownHtmlGeneratingDescriptor;
 import org.intellij.plugins.markdown.lang.parser.MarkdownParserManager;
 import org.intellij.plugins.markdown.settings.MarkdownApplicationSettings;
 import org.intellij.plugins.markdown.settings.MarkdownCssSettings;
@@ -44,7 +44,6 @@ import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Map;
 
 public class MarkdownPreviewFileEditor extends UserDataHolderBase implements FileEditor {
@@ -311,17 +310,16 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     final URI baseUri = parent != null ? new File(parent.getPath()).toURI() : null;
 
     final ASTNode parsedTree = new MarkdownParser(MarkdownParserManager.FLAVOUR).buildMarkdownTreeFromString(text);
-    final Map<IElementType, GeneratingProvider> htmlGeneratingProviders =
-      MarkdownParserManager.FLAVOUR.createHtmlGeneratingProviders(LinkMap.Builder.buildLinkMap(parsedTree, text), baseUri);
 
     MarkdownCodeFencePluginCacheProvider codeFencePluginCache = new MarkdownCodeFencePluginCacheProvider(myFile);
-    Arrays.stream(MarkdownHtmlGeneratingDescriptor.EP_NAME.getExtensions())
-      .map(descriptor -> descriptor.customizeHtmlGeneratingProviders(codeFencePluginCache))
-      .forEach(htmlGeneratingProviders::putAll);
 
-    String html = new HtmlGenerator(text, parsedTree, htmlGeneratingProviders, true).generateHtml();
+    Map<IElementType, GeneratingProvider> map = ContainerUtil.newHashMap(
+      MarkdownParserManager.FLAVOUR.createHtmlGeneratingProviders(LinkMap.Builder.buildLinkMap(parsedTree, text), baseUri));
+    map.putAll(MarkdownParserManager.CODE_FENCE_PLUGIN_FLAVOUR.createHtmlGeneratingProviders(codeFencePluginCache));
 
-    MarkdownCodeFencePluginCache.getInstance(myProject).registerCacheProvider(codeFencePluginCache);
+    String html = new HtmlGenerator(text, parsedTree, map, true).generateHtml();
+
+    if (!myProject.isDisposed()) MarkdownCodeFencePluginCache.getInstance(myProject).registerCacheProvider(codeFencePluginCache);
 
     return html;
   }

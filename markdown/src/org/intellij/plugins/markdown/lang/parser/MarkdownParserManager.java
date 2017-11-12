@@ -4,10 +4,12 @@ import org.intellij.markdown.MarkdownElementTypes;
 import org.intellij.markdown.ast.ASTNode;
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor;
 import org.intellij.markdown.parser.MarkdownParser;
+import org.intellij.plugins.markdown.extensions.plantuml.CodeFencePluginFlavourDescriptor;
 import org.jetbrains.annotations.NotNull;
 
 public class MarkdownParserManager {
   public static final GFMFlavourDescriptor FLAVOUR = new GFMFlavourDescriptor();
+  public static final CodeFencePluginFlavourDescriptor CODE_FENCE_PLUGIN_FLAVOUR = new CodeFencePluginFlavourDescriptor();
 
   private static final ThreadLocal<ParsingInfo> ourLastParsingResult = new ThreadLocal<>();
 

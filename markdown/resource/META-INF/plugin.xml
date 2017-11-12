@@ -19,8 +19,6 @@
                     interface="org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelProvider" />
     <extensionPoint qualifiedName="org.intellij.markdown.fenceLanguageProvider"
                     interface="org.intellij.plugins.markdown.injection.CodeFenceLanguageProvider" />
-    <extensionPoint qualifiedName="org.intellij.markdown.htmlGeneratingProvider"
-                    interface="org.intellij.plugins.markdown.lang.generating.MarkdownHtmlGeneratingDescriptor" />
     <extensionPoint qualifiedName="org.intellij.markdown.codeFencePluginGeneratingProvider"
                     interface="org.intellij.plugins.markdown.extensions.MarkdownCodeFencePluginGeneratingProvider" />
   </extensionPoints>
@@ -87,7 +85,6 @@
     <html.panel.provider implementation="org.intellij.plugins.markdown.ui.preview.lobo.LoboHtmlPanelProvider" />
     <html.panel.provider implementation="org.intellij.plugins.markdown.ui.preview.javafx.JavaFxHtmlPanelProvider" />
     <fenceLanguageProvider implementation="org.intellij.plugins.markdown.extensions.plantuml.PlantUMLCodeFenceLanguageProvider"/>
-    <htmlGeneratingProvider implementation="org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginsGeneratingDescriptor"/>
     <codeFencePluginGeneratingProvider implementation="org.intellij.plugins.markdown.extensions.plantuml.PlantUMLPluginGeneratingProvider"/>
   </extensions>
 
