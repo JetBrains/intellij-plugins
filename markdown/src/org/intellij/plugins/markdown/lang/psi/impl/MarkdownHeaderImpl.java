@@ -1,7 +1,7 @@
 package org.intellij.plugins.markdown.lang.psi.impl;
 
-import com.intellij.ide.projectView.PresentationData;
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ColoredItemPresentation;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.text.StringUtil;
@@ -18,19 +18,12 @@ import org.intellij.plugins.markdown.lang.stubs.impl.MarkdownHeaderStubElementTy
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static org.intellij.plugins.markdown.highlighting.MarkdownHighlighterColors.HEADER_PRESENTATION_LEVEL_1_ATTR_KEY;
-import static org.intellij.plugins.markdown.highlighting.MarkdownHighlighterColors.HEADER_PRESENTATION_LOW_LEVELS;
+import javax.swing.*;
+
+import static org.intellij.plugins.markdown.structureView.MarkdownStructureColors.MARKDOWN_HEADER;
+import static org.intellij.plugins.markdown.structureView.MarkdownStructureColors.MARKDOWN_HEADER_BOLD;
 
 public class MarkdownHeaderImpl extends MarkdownStubBasedPsiElementBase<MarkdownStubElement> {
-  TextAttributesKey[] HEADERS_TEXT_ATTRIBUTES_KEY = new TextAttributesKey[]{
-    HEADER_PRESENTATION_LEVEL_1_ATTR_KEY,
-    HEADER_PRESENTATION_LOW_LEVELS,
-    HEADER_PRESENTATION_LOW_LEVELS,
-    HEADER_PRESENTATION_LOW_LEVELS,
-    HEADER_PRESENTATION_LOW_LEVELS,
-    HEADER_PRESENTATION_LOW_LEVELS
-  };
-
   public MarkdownHeaderImpl(@NotNull ASTNode node) {
     super(node);
   }
@@ -55,7 +48,23 @@ public class MarkdownHeaderImpl extends MarkdownStubBasedPsiElementBase<Markdown
     String headerText = getHeaderText();
     String text = headerText == null ? "Invalid header: " + getText() : headerText;
 
-    return new PresentationData(text, "", null, HEADERS_TEXT_ATTRIBUTES_KEY[getHeaderNumber() - 1]);
+    return new ColoredItemPresentation() {
+      public String getPresentableText() {
+        return text;
+      }
+
+      public String getLocationString() {
+        return null;
+      }
+
+      public Icon getIcon(final boolean open) {
+        return null;
+      }
+
+      public TextAttributesKey getTextAttributesKey() {
+        return getHeaderNumber() == 1 ? MARKDOWN_HEADER_BOLD : MARKDOWN_HEADER;
+      }
+    };
   }
 
   @Nullable
