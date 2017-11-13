@@ -114,7 +114,7 @@ class CfmlSplittedMultiHostInjector(project: Project) : MultiHostInjector {
   }
 
   fun getHeadAndSplittedElements(context: PsiElement): Pair<PsiElement, Array<PsiElement>> {
-    val head: PsiElement? = findHead(context) { it is CfmlTagImpl && it.name.toLowerCase() == "cfquery" }
+    val head: PsiElement? = findHead(context) { it is CfmlTagImpl && it.name?.toLowerCase() == "cfquery" }
     val filteredChildren: Array<PsiElement> =
       if (head != null)
         filterChildren(head) { it is CfmlLeafPsiElement }

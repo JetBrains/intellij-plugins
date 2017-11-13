@@ -43,7 +43,7 @@ class CfmlSqlInjectionCompletionTest : SqlCompletionTestCase(null) {
                 "create table b(b1 int, b2 int);" +
                 "create table c(c1 int, c2 int);" +
                 "select <caret> from c, b", CompletionType.BASIC,
-                Arrays.asList("c1", "c2", "b1", "b2", "c", "b"), Arrays.asList("a"))
+                Arrays.asList("c1", "c2", "b1", "b2", "c", "b"))
 
 
   // IDEA-90682
