@@ -35,7 +35,7 @@ public class DartFormatterInHtmlTest extends FormatterTestCase {
 
   private static void setTestStyleSettings() {
     final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
-    CodeStyleSettings.IndentOptions indentOptions = settings.getIndentOptions();
+    CommonCodeStyleSettings.IndentOptions indentOptions = settings.getIndentOptions();
     assertNotNull(indentOptions);
     indentOptions.INDENT_SIZE = 2;
     indentOptions.CONTINUATION_INDENT_SIZE = 2;

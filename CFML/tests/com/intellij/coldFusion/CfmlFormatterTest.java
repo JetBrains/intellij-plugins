@@ -188,7 +188,7 @@ public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
     CodeStyleSettings currSettings = CodeStyleSettingsManager.getSettings(project);
     Assert.assertNotNull(currSettings);
     CodeStyleSettings tempSettings = currSettings.clone();
-    CodeStyleSettings.IndentOptions indentOptions = tempSettings.getIndentOptions(CfmlFileType.INSTANCE);
+    CommonCodeStyleSettings.IndentOptions indentOptions = tempSettings.getIndentOptions(CfmlFileType.INSTANCE);
     Assert.assertNotNull(indentOptions);
     defineStyleSettings(tempSettings);
     CodeStyleSettingsManager.getInstance(project).setTemporarySettings(tempSettings);
