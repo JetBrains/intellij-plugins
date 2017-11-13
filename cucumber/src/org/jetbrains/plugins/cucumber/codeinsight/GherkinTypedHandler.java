@@ -155,12 +155,13 @@ public class GherkinTypedHandler extends TypedHandlerDelegate {
     return (passedPipeCount - 2 == columnNumber) ? i : -1;
   }
 
+  @NotNull
   @Override
   public Result beforeCharTyped(char c,
-                                Project project,
-                                Editor editor,
-                                PsiFile file,
-                                FileType fileType) {
+                                @NotNull Project project,
+                                @NotNull Editor editor,
+                                @NotNull PsiFile file,
+                                @NotNull FileType fileType) {
     if (fileType.equals(GherkinFileType.INSTANCE)) {
       if (c == PIPE) {
         final GherkinTableRow currentRow = findCurrentRow(editor, file);

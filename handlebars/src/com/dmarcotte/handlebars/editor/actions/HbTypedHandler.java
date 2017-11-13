@@ -11,7 +11,6 @@ import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiDocumentManager;
@@ -31,8 +30,9 @@ public class HbTypedHandler extends TypedHandlerDelegate {
   public static final String OPEN_BRACE = "{";
   public static final String CLOSE_BRACES = "}}";
 
+  @NotNull
   @Override
-  public Result beforeCharTyped(char c, Project project, Editor editor, PsiFile file, FileType fileType) {
+  public Result beforeCharTyped(char c, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file, @NotNull FileType fileType) {
     int offset = editor.getCaretModel().getOffset();
 
     if (offset == 0 || offset > editor.getDocument().getTextLength()) {
@@ -61,8 +61,9 @@ public class HbTypedHandler extends TypedHandlerDelegate {
     return Result.CONTINUE;
   }
 
+  @NotNull
   @Override
-  public Result charTyped(char c, Project project, @NotNull Editor editor, @NotNull PsiFile file) {
+  public Result charTyped(char c, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
     int offset = editor.getCaretModel().getOffset();
     FileViewProvider provider = file.getViewProvider();
 

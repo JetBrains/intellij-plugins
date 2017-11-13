@@ -11,7 +11,8 @@ import java.util.List;
 
 public class DartWordSelectionHandler extends AbstractWordSelectioner {
 
-  public boolean canSelect(final PsiElement e) {
+  @Override
+  public boolean canSelect(@NotNull final PsiElement e) {
     return e.getLanguage() == DartLanguage.INSTANCE;
   }
 

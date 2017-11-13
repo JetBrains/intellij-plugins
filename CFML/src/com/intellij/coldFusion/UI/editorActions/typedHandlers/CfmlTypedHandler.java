@@ -46,8 +46,9 @@ import org.jetbrains.annotations.NotNull;
 public class CfmlTypedHandler extends TypedHandlerDelegate {
   static final boolean ourEnableDoublePoundInsertion = SystemProperties.getBooleanProperty("idea.cfml.insert.pair.pound", true);
 
+  @NotNull
   @Override
-  public Result checkAutoPopup(char charTyped, final Project project, final Editor editor, final PsiFile file) {
+  public Result checkAutoPopup(char charTyped, @NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file) {
     PsiFile cfmlFile = file.getViewProvider().getPsi(CfmlLanguage.INSTANCE);
 
     if (isNotCfmlFile(cfmlFile, editor)) {
@@ -60,7 +61,9 @@ public class CfmlTypedHandler extends TypedHandlerDelegate {
     return Result.CONTINUE;
   }
 
-  public Result beforeCharTyped(final char c, final Project project, final Editor editor, final PsiFile file, final FileType fileType) {
+  @NotNull
+  @Override
+  public Result beforeCharTyped(final char c, @NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file, @NotNull final FileType fileType) {
     PsiFile cfmlFile = file.getViewProvider().getPsi(CfmlLanguage.INSTANCE);
 
     if (isNotCfmlFile(cfmlFile, editor)) {
@@ -177,7 +180,9 @@ public class CfmlTypedHandler extends TypedHandlerDelegate {
   }
 
 
-  public Result charTyped(final char c, final Project project, @NotNull final Editor editor, @NotNull final PsiFile file) {
+  @NotNull
+  @Override
+  public Result charTyped(final char c, @NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file) {
     if (isNotCfmlFile(file, editor)) {
       return Result.CONTINUE;
     }

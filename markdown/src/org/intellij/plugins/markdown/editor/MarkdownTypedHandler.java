@@ -8,10 +8,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import org.intellij.plugins.markdown.injection.LanguageListCompletionContributor;
+import org.jetbrains.annotations.NotNull;
 
 public class MarkdownTypedHandler extends TypedHandlerDelegate {
+  @NotNull
   @Override
-  public Result checkAutoPopup(char charTyped, Project project, Editor editor, PsiFile file) {
+  public Result checkAutoPopup(char charTyped, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
     if (charTyped == '`') {
       PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
       for (Caret caret : editor.getCaretModel().getAllCarets()) {

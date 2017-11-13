@@ -31,8 +31,9 @@ public class DartTypeHandler extends TypedHandlerDelegate {
   private static final TokenSet INVALID_INSIDE_REFERENCE =
     TokenSet.create(DartTokenTypes.SEMICOLON, DartTokenTypes.LBRACE, DartTokenTypes.RBRACE);
 
+  @NotNull
   @Override
-  public Result beforeCharTyped(final char c, final Project project, final Editor editor, final PsiFile file, final FileType fileType) {
+  public Result beforeCharTyped(final char c, @NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file, @NotNull final FileType fileType) {
     myAfterTypeOrComponentName = false;
     myAfterDollarInStringInterpolation = false;
 
@@ -78,8 +79,9 @@ public class DartTypeHandler extends TypedHandlerDelegate {
     return Result.CONTINUE;
   }
 
+  @NotNull
   @Override
-  public Result charTyped(char c, Project project, @NotNull Editor editor, @NotNull PsiFile file) {
+  public Result charTyped(char c, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
     if (c == '<' && myAfterTypeOrComponentName) {
       myAfterTypeOrComponentName = false;
       EditorModificationUtil.insertStringAtCaret(editor, ">", false, 0);
