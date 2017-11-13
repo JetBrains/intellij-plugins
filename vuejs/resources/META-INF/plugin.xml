@@ -8,6 +8,7 @@
   <depends>com.intellij.modules.platform</depends>
   <depends optional="true" config-file="js-debugger.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="css-support.xml">com.intellij.css</depends>
+  <depends optional="true" config-file="vue-copyright.xml">com.intellij.copyright</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <fileTypeFactory implementation="org.jetbrains.vuejs.VueFileTypeFactory" />
