@@ -20,12 +20,10 @@ import com.intellij.lang.javascript.refactoring.util.JSMemberInfo;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.util.Conditions;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.MultiFileTestCase;
-import com.intellij.refactoring.classMembers.MemberInfoBase;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +37,7 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
 
   private static final String VISIBILITY_AS_IS = null;
 
-  private static final String[] ALL_MEMBERS = new String[]{};
+  private static final String[] ALL_MEMBERS = {};
 
   @Override
   protected void setUp() throws Exception {
@@ -84,20 +82,7 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
   }
 
   private void doTestImpl(final String sourceClassName, final String targetClassName, final String visibility, final String[] memberNames) {
-    doTest(new PerformAction() {
-      @Override
-      public void performAction(VirtualFile rootDir, VirtualFile rootAfter) {
-        FlexMoveMembersTest.this.performAction(sourceClassName, targetClassName, visibility, memberNames);
-      }
-    });
-  }
-
-  private static void foo() {
-    bar();
-  }
-
-  private static void bar() {
-    foo();
+    doTest((rootDir, rootAfter) -> performAction(sourceClassName, targetClassName, visibility, memberNames));
   }
 
   private void performAction(String sourceClassName, final String targetClassName, final String visibility, final String[] memberNames) {
@@ -109,17 +94,11 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
     assertNotNull("Class " + targetClassName + " not found", targetClass);
 
     final List<JSMemberInfo> memberInfos = new ArrayList<>();
-    JSMemberInfo.extractStaticMembers(sourceClass, memberInfos, new MemberInfoBase.Filter<JSAttributeListOwner>() {
-      @Override
-      public boolean includeMember(JSAttributeListOwner member) {
-        return memberNames.length == 0 || ArrayUtil.contains(member.getName(), memberNames);
-      }
-    });
+    JSMemberInfo.extractStaticMembers(sourceClass, memberInfos,
+                                      member -> memberNames == ALL_MEMBERS || ArrayUtil.contains(member.getName(), memberNames));
 
     JSMemberInfo.sortByOffset(memberInfos);
-    for (JSMemberInfo memberInfo : memberInfos) {
-      memberInfo.setChecked(true);
-    }
+    memberInfos.forEach(memberInfo -> memberInfo.setChecked(true));
 
     new JSMoveMembersProcessor(myProject, null, sourceClass, ActionScriptMoveMembersDialog.getScope(myProject), new JSMoveMembersOptions() {
 
@@ -183,12 +162,9 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
   }
 
   public void testBackAndForth() {
-    doTest(new PerformAction() {
-      @Override
-      public void performAction(VirtualFile rootDir, VirtualFile rootAfter) {
-        FlexMoveMembersTest.this.performAction("From", "To", VISIBILITY_AS_IS, new String[]{"foo"});
-        FlexMoveMembersTest.this.performAction("To", "From", VISIBILITY_AS_IS, new String[]{"foo"});
-      }
+    doTest((rootDir, rootAfter) -> {
+      performAction("From", "To", VISIBILITY_AS_IS, new String[]{"foo"});
+      performAction("To", "From", VISIBILITY_AS_IS, new String[]{"foo"});
     });
   }
 
@@ -234,7 +210,7 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
   }
 
   public void testConflicts1() {
-    String[] conflicts = new String[]{"Field From.foo with private visibility won't be accessible from method move1()",
+    String[] conflicts = {"Field From.foo with private visibility won't be accessible from method move1()",
       "Method move1() with private visibility in the target class is not accessible from field From.foo",
       "Constant move2 with protected visibility in the target class is not accessible from field From.bar",
       "Field From.zzz with internal visibility won't be accessible from method move1()",
@@ -245,24 +221,24 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
   }
 
   public void testConflicts2() {
-    String[] conflicts = new String[]{"Class To already contains a field bar", "Class To already contains a method foo()"};
+    String[] conflicts = {"Class To already contains a field bar", "Class To already contains a method foo()"};
     doTestConflicts("From", "To", VISIBILITY_AS_IS, new String[]{"foo", "bar", "zz"}, conflicts);
   }
 
   public void testConflicts3() {
-    String[] conflicts = new String[]{"Method From.move2() with protected visibility won't be accessible from method move()"};
+    String[] conflicts = {"Method From.move2() with protected visibility won't be accessible from method move()"};
     doTestConflicts("From", "a.To", VISIBILITY_AS_IS, new String[]{"move"}, conflicts);
   }
 
   public void testConflicts4() {
     String[] conflicts =
-      new String[]{"Method move() with protected visibility in the target class is not accessible from method From.move2()",
+      {"Method move() with protected visibility in the target class is not accessible from method From.move2()",
         "Class Class1 with internal visibility won't be accessible from method move()"};
     doTestConflicts("From", "a.To", VISIBILITY_AS_IS, new String[]{"move"}, conflicts);
   }
 
   public void testConflicts5() {
-    String[] conflicts = new String[]{"Field a with internal visibility in the target class is not accessible from method From.foo()"};
+    String[] conflicts = {"Field a with internal visibility in the target class is not accessible from method From.foo()"};
     doTestConflicts("foo.From", "bar.To", VISIBILITY_AS_IS, ALL_MEMBERS, conflicts);
   }
 
@@ -315,7 +291,7 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
   }
 
   public void testConflictsNs() {
-    String[] conflicts = new String[]{"Namespace MyNs with internal visibility won't be accessible from field v",
+    String[] conflicts = {"Namespace MyNs with internal visibility won't be accessible from field v",
       "Namespace MyNs with internal visibility won't be accessible from method foo()",
       "Namespace MyNs2 with internal visibility won't be accessible from method foo()"};
     doTestConflicts("foo.From", "bar.To", VISIBILITY_AS_IS, ALL_MEMBERS, conflicts);
