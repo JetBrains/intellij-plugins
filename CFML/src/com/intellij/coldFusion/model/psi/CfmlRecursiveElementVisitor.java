@@ -19,8 +19,9 @@ import com.intellij.coldFusion.model.files.CfmlFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiRecursiveVisitor;
 
-public class CfmlRecursiveElementVisitor extends PsiElementVisitor {
+public class CfmlRecursiveElementVisitor extends PsiElementVisitor implements PsiRecursiveVisitor {
 
   public static class Stop extends RuntimeException {
     public static final Stop DONE = new Stop();
