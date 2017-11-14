@@ -39,6 +39,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class KarmaServerLogComponent implements ComponentWithActions {
 
+  public static final String KARMA_SERVER_CONTENT_ID = "KarmaServer";
   private final ConsoleView myConsole;
   private final KarmaServer myServer;
   private ActionGroup myActionGroup;
@@ -113,16 +114,13 @@ public class KarmaServerLogComponent implements ComponentWithActions {
                               @NotNull RunnerLayoutUi ui) {
     ConsoleView console = createConsole(project);
     KarmaServerLogComponent component = new KarmaServerLogComponent(console, server);
-    final Content content = ui.createContent("KarmaServer",
+    final Content content = ui.createContent(KARMA_SERVER_CONTENT_ID,
                                              component,
                                              "Karma Server",
                                              null,
                                              console.getPreferredFocusableComponent());
     content.setCloseable(false);
     ui.addContent(content, 4, PlaceInGrid.bottom, false);
-    if (!server.areBrowsersReady()) {
-      KarmaUtil.selectAndFocusIfNotDisposed(ui, content, false, false);
-    }
     NopProcessHandler wrapperProcessHandler = new NopProcessHandler();
     // we can't attach console to real process handler to not lose any messages
     console.attachToProcess(wrapperProcessHandler);
@@ -130,7 +128,6 @@ public class KarmaServerLogComponent implements ComponentWithActions {
       @Override
       public void onTerminated(int exitCode) {
         wrapperProcessHandler.destroyProcess();
-        KarmaUtil.selectAndFocusIfNotDisposed(ui, content, false, false);
       }
     };
     server.onTerminated(terminationCallback);

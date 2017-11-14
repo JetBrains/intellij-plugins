@@ -4,7 +4,6 @@ import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.library.JSLibraryUtil;
@@ -16,7 +15,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
-import com.intellij.ui.content.Content;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
@@ -35,15 +33,6 @@ public class KarmaUtil {
   private static final String[] MOST_RELEVANT_NAMES = {"karma.conf", "karma-conf", "karma-js.conf"};
 
   private KarmaUtil() {
-  }
-
-  public static void selectAndFocusIfNotDisposed(@NotNull RunnerLayoutUi ui,
-                                                 @NotNull Content content,
-                                                 boolean requestFocus,
-                                                 boolean forced) {
-    if (!ui.isDisposed()) {
-      ui.selectAndFocus(content, requestFocus, forced);
-    }
   }
 
   @NotNull

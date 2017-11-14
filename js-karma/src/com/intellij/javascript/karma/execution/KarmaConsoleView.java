@@ -23,7 +23,6 @@ import com.intellij.javascript.debugger.JSDebugTabLayouter;
 import com.intellij.javascript.debugger.JavaScriptDebugProcess;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
-import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
@@ -38,6 +37,7 @@ import org.jetbrains.debugger.connection.VmConnection;
 public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionConsoleEx {
 
   private static final Logger LOG = Logger.getInstance(KarmaConsoleView.class);
+  private static final String TEST_RUN_CONTENT_ID = ExecutionConsole.CONSOLE_CONTENT_ID;
 
   private final KarmaServer myServer;
   private final KarmaExecutionType myExecutionType;
@@ -54,7 +54,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
   }
 
   @Override
-  public void buildUi(final RunnerLayoutUi ui) {
+  public void buildUi(@NotNull RunnerLayoutUi ui) {
     registerConsoleContent(ui);
     registerKarmaServerTab(ui);
   }
@@ -76,11 +76,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     ui.addContent(consoleContent, 1, PlaceInGrid.bottom, false);
 
     consoleContent.setCloseable(false);
-    if (myServer.areBrowsersReady()) {
-      KarmaUtil.selectAndFocusIfNotDisposed(ui, consoleContent, false, false);
-    }
-    else {
-      myServer.onBrowsersReady(() -> KarmaUtil.selectAndFocusIfNotDisposed(ui, consoleContent, false, false));
+    if (!myServer.areBrowsersReady()) {
       registerPrintingBrowserCapturingSuggestion();
     }
     KarmaRootTestProxyFormatter rootFormatter = new KarmaRootTestProxyFormatter(this, myServer);
@@ -135,6 +131,25 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
 
   private void registerKarmaServerTab(@NotNull RunnerLayoutUi ui) {
     KarmaServerLogComponent.register(getProperties().getProject(), myServer, ui);
+    if (myServer.areBrowsersReady()) {
+      selectContentId(ui, TEST_RUN_CONTENT_ID);
+    }
+    else {
+      selectContentId(ui, KarmaServerLogComponent.KARMA_SERVER_CONTENT_ID);
+      myServer.onBrowsersReady(() -> selectContentId(ui, TEST_RUN_CONTENT_ID));
+    }
+  }
+
+  private static void selectContentId(@NotNull RunnerLayoutUi ui, @NotNull String contentId) {
+    if (!ui.isDisposed()) {
+      Content content = ui.findContent(contentId);
+      if (content != null) {
+        ui.selectAndFocus(content, false, false);
+      }
+      else {
+        LOG.warn("Cannot find content for " + contentId);
+      }
+    }
   }
 
   @NotNull
