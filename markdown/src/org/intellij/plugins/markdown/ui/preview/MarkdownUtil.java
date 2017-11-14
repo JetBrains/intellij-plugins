@@ -1,12 +1,26 @@
 package org.intellij.plugins.markdown.ui.preview;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.ContainerUtil;
+import org.intellij.markdown.IElementType;
+import org.intellij.markdown.ast.ASTNode;
+import org.intellij.markdown.html.GeneratingProvider;
+import org.intellij.markdown.html.HtmlGenerator;
+import org.intellij.markdown.parser.LinkMap;
+import org.intellij.markdown.parser.MarkdownParser;
+import org.intellij.plugins.markdown.lang.parser.MarkdownParserManager;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.math.BigInteger;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 import java.util.Objects;
 
 public class MarkdownUtil {
@@ -25,5 +39,28 @@ public class MarkdownUtil {
     byte[] code = md5.digest(key.getBytes(StandardCharsets.UTF_8));
     BigInteger bi = new BigInteger(code).abs();
     return bi.abs().toString(16);
+  }
+
+  @NotNull
+  public static String generateMarkdownHtml(@NotNull Project project,
+                                            @NotNull VirtualFile file,
+                                            @NotNull String text,
+                                            boolean useCache) {
+
+    final VirtualFile parent = file.getParent();
+    final URI baseUri = parent != null ? new File(parent.getPath()).toURI() : null;
+
+    final ASTNode parsedTree = new MarkdownParser(MarkdownParserManager.FLAVOUR).buildMarkdownTreeFromString(text);
+    MarkdownCodeFencePluginCacheProvider codeFencePluginCache = new MarkdownCodeFencePluginCacheProvider(file);
+
+    Map<IElementType, GeneratingProvider> map = ContainerUtil.newHashMap(
+      MarkdownParserManager.FLAVOUR.createHtmlGeneratingProviders(LinkMap.Builder.buildLinkMap(parsedTree, text), baseUri));
+    map.putAll(MarkdownParserManager.CODE_FENCE_PLUGIN_FLAVOUR.createHtmlGeneratingProviders(codeFencePluginCache));
+
+    String html = new HtmlGenerator(text, parsedTree, map, true).generateHtml();
+
+    if (!project.isDisposed() && useCache) MarkdownCodeFencePluginCache.getInstance(project).registerCacheProvider(codeFencePluginCache);
+
+    return html;
   }
 }

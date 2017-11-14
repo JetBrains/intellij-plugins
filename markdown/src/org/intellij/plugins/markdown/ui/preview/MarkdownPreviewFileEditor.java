@@ -19,16 +19,9 @@ import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Alarm;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
-import org.intellij.markdown.IElementType;
-import org.intellij.markdown.ast.ASTNode;
-import org.intellij.markdown.html.GeneratingProvider;
 import org.intellij.markdown.html.HtmlGenerator;
-import org.intellij.markdown.parser.LinkMap;
-import org.intellij.markdown.parser.MarkdownParser;
-import org.intellij.plugins.markdown.lang.parser.MarkdownParserManager;
 import org.intellij.plugins.markdown.settings.MarkdownApplicationSettings;
 import org.intellij.plugins.markdown.settings.MarkdownCssSettings;
 import org.intellij.plugins.markdown.settings.MarkdownPreviewSettings;
@@ -42,9 +35,6 @@ import org.owasp.html.Sanitizers;
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.net.URI;
-import java.util.Map;
 
 public class MarkdownPreviewFileEditor extends UserDataHolderBase implements FileEditor {
   private final static long PARSING_CALL_TIMEOUT_MS = 50L;
@@ -235,7 +225,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       return;
     }
 
-    final String html = generateMarkdownHtml();
+    final String html = MarkdownUtil.generateMarkdownHtml(myProject, myFile, myDocument.getText(), true);
 
     // EA-75860: The lines to the top may be processed slowly; Since we're in pooled thread, we can be disposed already.
     if (!myFile.isValid() || Disposer.isDisposed(this)) {
@@ -299,29 +289,6 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   @Override
   public void dispose() {
     Disposer.dispose(myPanel);
-  }
-
-  @NotNull
-  private String generateMarkdownHtml() {
-    assert myDocument != null;
-    String text = myDocument.getText();
-
-    final VirtualFile parent = myFile.getParent();
-    final URI baseUri = parent != null ? new File(parent.getPath()).toURI() : null;
-
-    final ASTNode parsedTree = new MarkdownParser(MarkdownParserManager.FLAVOUR).buildMarkdownTreeFromString(text);
-
-    MarkdownCodeFencePluginCacheProvider codeFencePluginCache = new MarkdownCodeFencePluginCacheProvider(myFile);
-
-    Map<IElementType, GeneratingProvider> map = ContainerUtil.newHashMap(
-      MarkdownParserManager.FLAVOUR.createHtmlGeneratingProviders(LinkMap.Builder.buildLinkMap(parsedTree, text), baseUri));
-    map.putAll(MarkdownParserManager.CODE_FENCE_PLUGIN_FLAVOUR.createHtmlGeneratingProviders(codeFencePluginCache));
-
-    String html = new HtmlGenerator(text, parsedTree, map, true).generateHtml();
-
-    if (!myProject.isDisposed()) MarkdownCodeFencePluginCache.getInstance(myProject).registerCacheProvider(codeFencePluginCache);
-
-    return html;
   }
 
   @Contract("_, null, null -> fail")
