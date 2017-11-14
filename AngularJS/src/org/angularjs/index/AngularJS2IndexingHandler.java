@@ -207,7 +207,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     final JSProperty selector = getProperty(decorator, name);
     final JSExpression value = selector != null ? selector.getValue() : null;
     if (value instanceof JSBinaryExpression) {
-      return JSInjectionController.getInjectionText(value);
+      return JSInjectionController.getConcatenationText(value);
     }
     if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()) {
       return AngularJSIndexingHandler.unquote(value);
