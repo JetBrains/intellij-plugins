@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.library;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -13,7 +14,6 @@ import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UIBundle;
 import com.intellij.util.IconUtil;
-import icons.FlexIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +25,7 @@ public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDe
 
   public OrderRootTypePresentation getRootTypePresentation(@NotNull final OrderRootType type) {
     if (type instanceof JavadocOrderRootType) {
-      return new OrderRootTypePresentation(FlexBundle.message("documentation.order.root.type.name"), FlexIcons.Flex.Documentation);
+      return new OrderRootTypePresentation(FlexBundle.message("documentation.order.root.type.name"), AllIcons.FileTypes.Text);
     }
     return DefaultLibraryRootsComponentDescriptor.getDefaultPresentation(type);
   }
@@ -79,7 +79,6 @@ public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDe
       return VirtualFile.EMPTY_ARRAY;
     }
   }
-
 }
 
 

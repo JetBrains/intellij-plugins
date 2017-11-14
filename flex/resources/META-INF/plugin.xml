@@ -346,8 +346,7 @@
     <group>
       <action id="PackageAIR" text="Package AIR Application..."
               description="Create AIR mobile or desktop-targeted package (*.apk, *.ipa, *.air)"
-              class="com.intellij.lang.javascript.flex.actions.airpackage.AirPackageAction"
-              icon="FlexIcons.Flex.BuildConfig">
+              class="com.intellij.lang.javascript.flex.actions.airpackage.AirPackageAction">
       </action>
       <separator/>
       <add-to-group group-id="BuildMenu" anchor="before" relative-to-action="CompileProject"/>
