@@ -16,6 +16,8 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.ExecutionConsoleEx;
 import com.intellij.execution.ui.RunnerLayoutUi;
+import com.intellij.execution.ui.layout.LayoutAttractionPolicy;
+import com.intellij.execution.ui.layout.LayoutViewOptions;
 import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.browsers.OpenUrlHyperlinkInfo;
@@ -247,6 +249,13 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     public void registerAdditionalContent(@NotNull RunnerLayoutUi ui) {
       super.registerAdditionalContent(ui);
       registerKarmaServerTab(ui);
+      // Overwrite "initFocusContent(DebuggerContentInfo.CONSOLE_CONTENT, LayoutViewOptions.STARTUP, ...)
+      // from com.intellij.xdebugger.impl.ui.DebuggerSessionTabBase()
+      ui.getDefaults().initFocusContent(myServer.areBrowsersReady() ? ExecutionConsole.CONSOLE_CONTENT_ID
+                                                                    : KarmaServerLogComponent.KARMA_SERVER_CONTENT_ID,
+                                        LayoutViewOptions.STARTUP,
+                                        new LayoutAttractionPolicy.FocusOnce(false));
+      // to be replaced in 181 with ui.getDefaults().clearFocusContent(LayoutViewOptions.STARTUP);
     }
   }
 }
