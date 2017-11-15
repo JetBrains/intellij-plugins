@@ -51,7 +51,7 @@ class CollapseDemo{
         <Try trigger="CollapseRegion">Sometimes you need to collapse some code for better readability. Try to collapse code, with <action>CollapseRegion</action></Try>
         <Try trigger="ExpandRegion">To expand code region, try <action>ExpandRegion</action></Try>
         <Try trigger="CollapseAllRegions">If you want to collapse all regions in code, use <action>CollapseAllRegions</action></Try>
-        <Try trigger="ExpandAllRegions">And <action>ExpandAllRegions</action>in reverse order.</Try>
+        <Try trigger="ExpandAllRegions">And <action>ExpandAllRegions</action> in reverse order.</Try>
     <Win/>
 </CaretBlock>
 </MouseBlock>
