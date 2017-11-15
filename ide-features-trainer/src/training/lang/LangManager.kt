@@ -61,5 +61,5 @@ class LangManager : PersistentStateComponent<LangManager.State> {
     return (findLanguageByID(myState.languageName) ?: return "default").displayName
   }
 
-  data class State(var languageName: String?)
+  data class State(var languageName: String? = "java")
 }

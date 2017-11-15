@@ -12,7 +12,7 @@ import java.net.URL
 
 object ProjectUtils {
 
-  val ideProjectsBasePath by lazy { WizardContext(null, null).projectFileDirectory }
+  private val ideProjectsBasePath by lazy { WizardContext(null, null).projectFileDirectory }
 
   /**
    * For example:
