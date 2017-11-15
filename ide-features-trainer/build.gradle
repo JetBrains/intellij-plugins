@@ -1,13 +1,12 @@
 buildscript {
-    ext.kotlin_version = '1.1.60'
-    ext.kotlinVersion='1.0.6'
+    ext.kotlin_version = '1.1.4-3'
     repositories {
         mavenLocal()
         mavenCentral()
         maven { url "http://repository.jetbrains.com/repo/"}
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_version}"
     }
 }
 
@@ -38,6 +37,7 @@ sourceCompatibility = 1.8
 
 intellij {
     version 'IU-173.2941.3'
+    //to check compatibility for Python and Go
     plugins = ['Pythonid:2017.3.173.2941.9', 'org.jetbrains.plugins.go:173.2941.3.439']
 //    publish {
 //        username repoUser
