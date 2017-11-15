@@ -13,7 +13,6 @@
           <option name="pluginClasspaths">
             <array />
           </option>
-          <option name="version" value="true" />
           <option name="coroutinesWarn" value="true" />
         </compilerArguments>
       </configuration>
@@ -33,7 +32,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.4" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.60" level="project" />
     <orderEntry type="module-library" scope="RUNTIME">
       <library>
         <CLASSES>
@@ -44,8 +43,8 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="Gradle: org.jetbrains:annotations:13.0" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.4" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.1.4" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.60" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.1.60" level="project" />
     <orderEntry type="module-library" scope="PROVIDED">
       <library name="Gradle: com.jetbrains:ideaIU:173.2941.3">
         <CLASSES>
@@ -205,18 +204,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library" scope="PROVIDED">
-      <library name="Gradle: org.jetbrains.plugins:org.jetbrains.plugins.go:173.2941.3.439">
-        <CLASSES>
-          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/plugins.jetbrains.com/org.jetbrains.plugins.go-master-173.2941.3.439/intellij-go/lib/google-app-engine.jar!/" />
-          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/plugins.jetbrains.com/org.jetbrains.plugins.go-master-173.2941.3.439/intellij-go/lib/intellij-go-173.2941.3.439.jar!/" />
-          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/plugins.jetbrains.com/org.jetbrains.plugins.go-master-173.2941.3.439/intellij-go/lib/plan9.jar!/" />
-          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/plugins.jetbrains.com/org.jetbrains.plugins.go-master-173.2941.3.439/intellij-go/lib/utils.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" scope="PROVIDED">
       <library name="Gradle: org.jetbrains.plugins:Pythonid:2017.3.173.2941.9">
         <CLASSES>
           <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/plugins.jetbrains.com/Pythonid-master-2017.3.173.2941.9/python/lib/commons-io-2.3.jar!/" />
@@ -225,6 +212,18 @@
           <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/plugins.jetbrains.com/Pythonid-master-2017.3.173.2941.9/python/lib/jsoup-1.10.3.jar!/" />
           <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/plugins.jetbrains.com/Pythonid-master-2017.3.173.2941.9/python/lib/libthrift-0.9.2.jar!/" />
           <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/plugins.jetbrains.com/Pythonid-master-2017.3.173.2941.9/python/lib/python.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="Gradle: org.jetbrains.plugins:org.jetbrains.plugins.go:173.2941.3.439">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/plugins.jetbrains.com/org.jetbrains.plugins.go-master-173.2941.3.439/intellij-go/lib/google-app-engine.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/plugins.jetbrains.com/org.jetbrains.plugins.go-master-173.2941.3.439/intellij-go/lib/intellij-go-173.2941.3.439.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/plugins.jetbrains.com/org.jetbrains.plugins.go-master-173.2941.3.439/intellij-go/lib/plan9.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/plugins.jetbrains.com/org.jetbrains.plugins.go-master-173.2941.3.439/intellij-go/lib/utils.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
