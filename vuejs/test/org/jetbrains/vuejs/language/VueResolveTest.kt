@@ -1,14 +1,18 @@
 package org.jetbrains.vuejs.language
 
+import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
+import java.io.File
 
 /**
  * @author Irina.Chernushina on 7/28/2017.
@@ -1128,6 +1132,24 @@ Vue.component('global-comp-literal', {
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertEquals(directive, (property as JSProperty).name)
     TestCase.assertEquals(fileName, property.containingFile.name)
+  }
+
+  fun testResolveIntoVueDefinitions() {
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
+    myFixture.configureByText("ResolveIntoVueDefinitions.vue", """
+<script>
+  export default {
+    <caret>mixins: []
+  }
+</script>
+""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val target = reference!!.resolve()
+    TestCase.assertNotNull(target)
+    TestCase.assertEquals("options.d.ts", target!!.containingFile.name)
+    TestCase.assertTrue(target.parent is TypeScriptPropertySignature)
   }
 }
 
