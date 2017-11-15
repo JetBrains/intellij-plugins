@@ -5,7 +5,6 @@ import mypackage.AbstractService;
 
 public class test implements ICallable
 {
-
     public function call():void {
     }
 
@@ -23,5 +22,6 @@ public class test implements ICallable
     public function getTargetParentNode():Object {
         return null;
     }
+
 }
 }
