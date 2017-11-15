@@ -1,6 +1,5 @@
 package training.lang
 
-import com.intellij.ide.util.projectWizard.ModuleBuilder
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
@@ -12,10 +11,6 @@ import training.project.ProjectUtils
  * @author Sergey Karashevich
  */
 class GoLangSupport : AbstractLangSupport() {
-
-  override fun getModuleBuilder(): ModuleBuilder? {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
 
   override fun importLearnProject(): Project? {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
