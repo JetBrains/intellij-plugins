@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.language
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate
 import com.intellij.ide.highlighter.HtmlFileType
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
-import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.util.Pair
@@ -57,36 +56,6 @@ class VueTypedHandlerTest : LightPlatformCodeInsightFixtureTestCase() {
     finally {
       settings.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS = oldWhitespace
     }
-  }
-
-  fun testLineCommentPugFragment() {
-    myFixture.configureByText(VueFileType.INSTANCE, """
-<template lang="pug">
-<selection>    my-comp(requiredProp=1)
-</selection></template>
-<script>
-    import MyComp from "./MyComp";
-
-    export default {
-        components: {MyComp},
-        name: "for-pug"
-    }
-</script>
-""")
-    myFixture.performEditorAction(IdeActions.ACTION_COMMENT_LINE)
-    myFixture.checkResult("""
-<template lang="pug">
-<selection>    //my-comp(requiredProp=1)
-</selection></template>
-<script>
-    import MyComp from "./MyComp";
-
-    export default {
-        components: {MyComp},
-        name: "for-pug"
-    }
-</script>
-""")
   }
 
   @Throws(Exception::class)
