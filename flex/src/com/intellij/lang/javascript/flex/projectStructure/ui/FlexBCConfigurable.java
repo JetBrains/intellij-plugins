@@ -6,6 +6,7 @@ import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
+import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
@@ -48,7 +49,6 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
-import icons.FlexIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -228,9 +228,9 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
       }
     });
 
-    myMainClassWarning.setIcon(FlexIcons.Flex.SmallWarning);
-    myOutputFileNameWarning.setIcon(FlexIcons.Flex.SmallWarning);
-    myOutputFolderWarning.setIcon(FlexIcons.Flex.SmallWarning);
+    myMainClassWarning.setIcon(AllIcons.General.BalloonWarning12);
+    myOutputFileNameWarning.setIcon(AllIcons.General.BalloonWarning12);
+    myOutputFolderWarning.setIcon(AllIcons.General.BalloonWarning12);
 
     myWarning.setIcon(UIUtil.getBalloonWarningIcon());
   }

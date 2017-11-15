@@ -5,6 +5,7 @@ import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.ComponentSet;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
+import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
@@ -70,7 +71,6 @@ import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.classpath.ChooseLibrariesFromTablesDialog;
-import icons.FlexIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -816,7 +816,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     myComponentSetCombo.addItemListener(updateSdkItemsListener);
     myFrameworkLinkageCombo.addItemListener(updateSdkItemsListener);
 
-    myTargetPlayerWarning.setIcon(FlexIcons.Flex.SmallWarning);
+    myTargetPlayerWarning.setIcon(AllIcons.General.BalloonWarning12);
     myWarning.setIcon(UIUtil.getBalloonWarningIcon());
 
     myTable = new EditableTreeTable<MyTableItem>("", DEPENDENCY_TYPE_COLUMN) {

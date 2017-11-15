@@ -26,7 +26,6 @@ public class FlexIcons {
       public static final Icon MavenFlex = load("/images/flex/sdk/mavenFlex.png"); // 16x16
 
     }
-    public static final Icon SmallWarning = load("/images/flex/smallWarning.png"); // 12x12
 
   }
 }
