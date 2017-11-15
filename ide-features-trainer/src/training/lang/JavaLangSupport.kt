@@ -1,8 +1,6 @@
 package training.lang
 
 import com.intellij.ide.impl.NewProjectUtil
-import com.intellij.ide.util.projectWizard.JavaModuleBuilder
-import com.intellij.ide.util.projectWizard.ModuleBuilder
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.module.ModuleManager
@@ -46,7 +44,6 @@ class JavaLangSupport : AbstractLangSupport() {
     LanguageLevelProjectExtensionImpl.getInstanceImpl(newProject).currentLevel = LanguageLevel.JDK_1_6
   }
 
-  override fun getModuleBuilder(): ModuleBuilder = JavaModuleBuilder()
 
   //Java SDK and project configuration staff
 
@@ -111,6 +108,6 @@ class JavaLangSupport : AbstractLangSupport() {
   private fun isCompatibleJdk(projectJdk: Sdk, type: SdkType?) = (type == null || projectJdk.sdkType === type)
 
   override fun createProject(projectName: String, projectToClose: Project?): Project? {
-    return ProjectUtils.importOrOpenProject("/learnProjects/SimpleProject", "SimpleProject")
+    return ProjectUtils.importOrOpenProject("/learnProjects/java/LearnProject", "LearnProject")
   }
 }

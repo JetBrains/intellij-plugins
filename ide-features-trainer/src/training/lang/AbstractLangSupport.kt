@@ -16,7 +16,6 @@
 package training.lang
 
 import com.intellij.ide.impl.ProjectUtil
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindowAnchor
 import java.io.File
 
@@ -26,14 +25,6 @@ abstract class AbstractLangSupport : LangSupport {
 
   override fun needToCheckSDK(): Boolean {
     return true
-  }
-
-  override fun createProject(projectName: String, projectToClose: Project?): Project? {
-    val moduleBuilder = getModuleBuilder()
-    if (moduleBuilder != null) {
-      return moduleBuilder.createProject(projectName, getProjectFilePath(projectName))
-    }
-    return projectToClose
   }
 
   override fun getProjectFilePath(projectName: String): String {

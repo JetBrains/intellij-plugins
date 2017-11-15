@@ -1,6 +1,5 @@
 package training.lang
 
-import com.intellij.ide.util.projectWizard.ModuleBuilder
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.project.Project
@@ -10,7 +9,6 @@ import com.intellij.openapi.projectRoots.SdkTypeId
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
-import com.jetbrains.python.module.PythonModuleBuilder
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PythonSdkType
@@ -24,6 +22,10 @@ import java.util.*
  * @author Sergey Karashevich
  */
 class PythonLangSupport : AbstractLangSupport() {
+  
+  override fun createProject(projectName: String, projectToClose: Project?): Project? {
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+  }
 
   override fun importLearnProject(): Project? {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -62,9 +64,6 @@ class PythonLangSupport : AbstractLangSupport() {
   }
 
   override fun applyToProjectAfterConfigure(): (Project) -> Unit = {}
-
-
-  override fun getModuleBuilder(): ModuleBuilder = PythonModuleBuilder()
 
   override fun checkSdkCompatibility(sdk: Sdk, sdkTypeId: SdkTypeId) {
     if (sdkTypeId is PythonSdkType) {

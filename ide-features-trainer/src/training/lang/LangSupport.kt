@@ -1,6 +1,5 @@
 package training.lang
 
-import com.intellij.ide.util.projectWizard.ModuleBuilder
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkTypeId
@@ -30,5 +29,4 @@ interface LangSupport {
     fun importLearnProject(): Project?
 
     fun createProject(projectName: String, projectToClose: Project?): Project?
-    fun getModuleBuilder(): ModuleBuilder?
 }
