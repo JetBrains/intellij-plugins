@@ -127,6 +127,7 @@ public class KarmaServer {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     serverSettings.getEnvData().configureCommandLine(commandLine, true);
     commandLine.withWorkDirectory(serverSettings.getConfigurationFile().getParentFile());
+    commandLine.setRedirectErrorStream(true);
     commandLine.setExePath(serverSettings.getNodeInterpreter().getInterpreterSystemDependentPath());
     File serverFile = myKarmaJsSourcesLocator.getServerAppFile();
     //NodeCommandLineUtil.addNodeOptionsForDebugging(commandLine, Collections.emptyList(), 34598, true,
