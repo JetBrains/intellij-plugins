@@ -6,10 +6,7 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
-import com.intellij.lang.javascript.inspections.JSAnnotatorInspection
-import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection
-import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
-import com.intellij.lang.javascript.inspections.JSValidateTypesInspection
+import com.intellij.lang.javascript.inspections.*
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import com.intellij.spellchecker.inspections.SpellCheckingInspection
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
@@ -31,6 +28,7 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     myFixture.enableInspections(JSUnusedLocalSymbolsInspection())
     myFixture.enableInspections(JSAnnotatorInspection())
     myFixture.enableInspections(JSUnresolvedVariableInspection())
+    myFixture.enableInspections(JSUnresolvedFunctionInspection())
     myFixture.enableInspections(ThisExpressionReferencesGlobalObjectJSInspection())
     myFixture.enableInspections(JSValidateTypesInspection())
     myFixture.enableInspections(TypeScriptValidateTypesInspection())
@@ -642,6 +640,26 @@ Vue.component('global-comp-literal', {
 </template>
 """)
     val intentions = myFixture.filterAvailableIntentions("Create Variable 'someNonExistingReference2389'")
+    TestCase.assertTrue(intentions.isEmpty())
+  }
+
+  fun testNoCreateFunctionQuickFix() {
+    myFixture.configureByText("NoCreateFunctionQuickFix.vue", """
+<template>
+<div onclick="<caret>notExistingF()"></div>
+</template>
+""")
+    val intentions = myFixture.filterAvailableIntentions("Create Function 'notExistingF'")
+    TestCase.assertTrue(intentions.isEmpty())
+  }
+
+  fun testNoCreateClassQuickFix() {
+    myFixture.configureByText("NoCreateClassQuickFix.vue", """
+<template>
+<div onclick="new <caret>NotExistingClass().a()"></div>
+</template>
+""")
+    val intentions = myFixture.filterAvailableIntentions("Create Class 'NotExistingClass'")
     TestCase.assertTrue(intentions.isEmpty())
   }
 
