@@ -11,13 +11,13 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Url;
 import com.intellij.xdebugger.XDebugSession;
 import com.jetbrains.debugger.wip.ChromeDebugProcess;
-import com.jetbrains.debugger.wip.ChromeDebuggerEngine;
+import com.jetbrains.debugger.wip.ChromeLocalDebuggerEngine;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
+public class DartiumDebuggerEngine extends ChromeLocalDebuggerEngine {
   private static final Logger LOG = Logger.getInstance(DartiumDebuggerEngine.class);
 
   @NotNull
