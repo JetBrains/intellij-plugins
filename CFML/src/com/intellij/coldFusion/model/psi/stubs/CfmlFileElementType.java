@@ -54,7 +54,7 @@ public class CfmlFileElementType extends IStubFileElementType<CfmlFileStub> {
 
   @Override
   public int getStubVersion() {
-    return super.getStubVersion() + 34;
+    return super.getStubVersion() + 35;
   }
 
   @NotNull
