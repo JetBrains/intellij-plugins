@@ -2,6 +2,8 @@ package org.jetbrains.vuejs.language
 
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.lookup.Lookup
+import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.openapi.application.WriteAction.run
@@ -494,5 +496,32 @@ export default {
     myFixture.editor.caretModel.moveToOffset(attribute.textOffset - 1)
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "v-focus", "v-local-directive", "v-some-other-directive", "v-imported-directive")
+  }
+
+  fun testPrettyLookup() {
+    myFixture.configureByText("PrettyLookup.vue", """
+<template>
+{{ call<caret> }}
+</template>
+<script>
+  export default {
+    methods: {
+      callMe(aaa, bbb) {
+        return 5;
+      }
+    }
+  }
+</script>
+""")
+    noAutoComplete( Runnable {
+      myFixture.completeBasic()
+      TestCase.assertNotNull(myFixture.lookupElements)
+      val item : LookupElement? = myFixture.lookupElements?.firstOrNull { "callMe" == it.lookupString }
+      TestCase.assertNotNull(item)
+      val presentation = LookupElementPresentation()
+      item!!.renderElement(presentation)
+      TestCase.assertEquals("number", presentation.typeText)
+      TestCase.assertEquals("(aaa, bbb)", presentation.tailText)
+    })
   }
 }

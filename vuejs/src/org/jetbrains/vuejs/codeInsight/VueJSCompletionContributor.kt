@@ -4,6 +4,9 @@ import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.lang.javascript.completion.JSCompletionUtil
+import com.intellij.lang.javascript.completion.JSLookupPriority
+import com.intellij.lang.javascript.completion.JSLookupUtilImpl
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 
 /**
@@ -21,8 +24,12 @@ class VueJSCompletionContributor : CompletionContributor() {
     val obj = defaultExport.stubSafeElement as? JSObjectLiteralExpression ?: return false
     VueComponentDetailsProvider.INSTANCE.getAttributes(obj, false)
       // do not suggest directives in injected javascript fragments
-      .filter { !it.isDirective() }
-      .forEach { result.addElement(LookupElementBuilder.create(it.name)) }
+      .filter { !it.isDirective()}
+      .forEach {
+        val builder = if (it.declaration == null) LookupElementBuilder.create(it.name)
+          else JSLookupUtilImpl.createLookupElement(it.declaration!!, it.name)
+        result.addElement(JSCompletionUtil.withJSLookupPriority(builder, JSLookupPriority.MAX_PRIORITY))
+      }
     return true
   }
 }
