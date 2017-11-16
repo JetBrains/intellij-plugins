@@ -145,7 +145,7 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
 
     val obj = VueComponents.findComponentDescriptor(declaration)
     if (obj != null) {
-      result.addAll(VueComponentDetailsProvider.INSTANCE.getAttributes(obj, true))
+      result.addAll(VueComponentDetailsProvider.INSTANCE.getAttributes(obj, true, true))
     }
     return result.toTypedArray()
   }

@@ -266,12 +266,12 @@ const props = ['oneTwo']
       myFixture.configureByText("CompRequiredAttributesTest.vue", """
 <template>
     <div id="app">
-        <<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute withCamelCase">camelCase</warning></warning></warning></warning>></<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute withCamelCase">camelCase</warning></warning></warning></warning>>
-        <<warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute withCamelCase">camelCase</warning></warning></warning> :one="5"></<warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute withCamelCase">camelCase</warning></warning></warning>>
+        <<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning></warning>></<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning></warning>>
+        <<warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning> :one="5"></<warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning>>
         <camelCase one="test" two="2" three=3 with-camel-case="1" <warning descr="Attribute four is not allowed here">four</warning>=1></camelCase>
         <camelCase one="test" v-bind:two="2" :three=3 withCamelCase="1"></camelCase>
         <camelCase one="test" v-bind:two="2" :three=3 withCamelCase="1" not-required=11></camelCase>
-        <<warning descr="Element camelCase doesn't have required attribute withCamelCase">camelCase</warning> one="test" v-bind:two="2" :three=3></<warning descr="Element camelCase doesn't have required attribute withCamelCase">camelCase</warning>>
+        <<warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning> one="test" v-bind:two="2" :three=3></<warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning>>
     </div>
 </template>
 <script>
@@ -429,8 +429,8 @@ Vue.component('global-comp-literal', {
 """)
     myFixture.configureByText("ParentComp.vue", """
 <template>
-  <<warning descr="Element comp-with-mixin doesn't have required attribute requiredMixinProp">comp-with-mixin</warning> mixin-prop=123>
-  1</<warning descr="Element comp-with-mixin doesn't have required attribute requiredMixinProp">comp-with-mixin</warning>>
+  <<warning descr="Element comp-with-mixin doesn't have required attribute required-mixin-prop">comp-with-mixin</warning> mixin-prop=123>
+  1</<warning descr="Element comp-with-mixin doesn't have required attribute required-mixin-prop">comp-with-mixin</warning>>
 </template>
 <script>
   import CompWithMixin from './CompWithMixin'
@@ -481,8 +481,8 @@ Vue.component('global-comp-literal', {
     myFixture.configureByText("GlobalMixins.js", globalMixinText())
     myFixture.configureByText("CompWithGlobalMixins.vue", """
 <template>
-    <<warning descr="Element local-comp doesn't have required attribute requiredMixinProp">local-comp</warning> hi2dden="found" interesting-prop="777"
-    <warning descr="Attribute not-existing is not allowed here">not-existing</warning>=5></<warning descr="Element local-comp doesn't have required attribute requiredMixinProp">local-comp</warning>>
+    <<warning descr="Element local-comp doesn't have required attribute required-mixin-prop">local-comp</warning> hi2dden="found" interesting-prop="777"
+    <warning descr="Attribute not-existing is not allowed here">not-existing</warning>=5></<warning descr="Element local-comp doesn't have required attribute required-mixin-prop">local-comp</warning>>
 </template>
 
 <script>

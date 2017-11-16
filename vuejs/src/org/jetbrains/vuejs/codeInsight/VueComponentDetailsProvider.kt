@@ -8,7 +8,9 @@ import com.intellij.psi.PsiElement
  * @author Irina.Chernushina on 10/13/2017.
  */
 class VueComponentDetailsProvider {
-  fun getAttributes(descriptor: JSObjectLiteralExpression, onlyPublic: Boolean): List<VueAttributeDescriptor> {
+  fun getAttributes(descriptor: JSObjectLiteralExpression,
+                    onlyPublic: Boolean,
+                    xmlContext: Boolean): List<VueAttributeDescriptor> {
     val result: MutableList<VueAttributeDescriptor> = mutableListOf()
     result.addAll(VueComponentOwnDetailsProvider.getDetails(descriptor, EMPTY_FILTER, onlyPublic, false))
     result.addAll(VueDirectivesProvider.getAttributes(descriptor, descriptor.project))
@@ -20,7 +22,8 @@ class VueComponentDetailsProvider {
     return result.map {
       @Suppress("UnnecessaryVariable")
       val attrDescriptor = it
-      getNameVariants(it.name, true).map { attrDescriptor.createNameVariant(it) }
+      if (xmlContext) return@map listOf(attrDescriptor.createNameVariant(fromAsset(it.name)))
+      getNameVariants(it.name, xmlContext).map { attrDescriptor.createNameVariant(it) }
     }.flatten()
   }
 
