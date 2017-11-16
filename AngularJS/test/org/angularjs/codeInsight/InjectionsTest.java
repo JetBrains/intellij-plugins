@@ -4,6 +4,7 @@ import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
+import com.intellij.lang.javascript.inspections.JSBitwiseOperatorUsageInspection;
 import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSElement;
@@ -339,4 +340,11 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.configureByFiles("noXml.xml", "angular.js");
     assertNotSame(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
   }
+
+  public void testBitwise() {
+    myFixture.enableInspections(JSBitwiseOperatorUsageInspection.class);
+    myFixture.configureByFiles("bitwise.html", "angular.js", "custom.js");
+    myFixture.checkHighlighting();
+  }
+
 }
