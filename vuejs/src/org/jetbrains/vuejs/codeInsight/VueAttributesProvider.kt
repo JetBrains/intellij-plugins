@@ -73,13 +73,11 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
 
 class VueAttributeDescriptor(private val name:String,
                              private val element:PsiElement? = null) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
-  private var suppressRequired = false
   private var isDirective = false
   override fun getName() = name
   override fun getDeclaration() = element
   override fun init(element: PsiElement?) {}
   override fun isRequired(): Boolean {
-    if (suppressRequired) return false
     val initializer = (element as? JSProperty)?.objectLiteralExpressionInitializer ?: return false
     val literal = findProperty(initializer, "required")?.literalExpressionInitializer
     return literal != null && literal.isBooleanLiteral && "true" == literal.significantValue
@@ -106,7 +104,6 @@ class VueAttributeDescriptor(private val name:String,
   fun createNameVariant(newName: String) : VueAttributeDescriptor {
     if (newName == name) return this
     val descriptor = VueAttributeDescriptor(newName, element)
-    descriptor.suppressRequired = true
     return descriptor
   }
 

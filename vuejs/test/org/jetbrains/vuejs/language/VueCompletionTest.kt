@@ -212,7 +212,7 @@ export default {
 </script>
 """)
     myFixture.completeBasic()
-    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "strangeCase", "StrangeCase", "strange-case")
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "strange-case")
   }
 
   fun testCompletePropsInInterpolation() {
@@ -318,7 +318,8 @@ export default {
           }
 }</script>""")
       myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg", "GroceryList", "ParentMsg")
+      UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "grocery-list", "parent-msg")
     })
   }
 
@@ -417,10 +418,12 @@ export default {
                      JSTestUtils.testES6<Exception>(project, {
                        myFixture.completeBasic()
                        UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!,
-                                                             "FirstMixinProp", "firstMixinProp", "first-mixin-prop",
-                                                             "SecondMixinProp", "secondMixinProp", "second-mixin-prop",
-                                                             "hi2dden", "Hi2dden",
-                                                             "InterestingProp", "interestingProp", "interesting-prop")
+                                                             "first-mixin-prop", "second-mixin-prop", "hi2dden",
+                                                             "interesting-prop")
+                       UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!,
+                                                             "FirstMixinProp", "firstMixinProp",
+                                                             "SecondMixinProp", "secondMixinProp", "Hi2dden",
+                                                             "InterestingProp", "interestingProp")
                      })
                    })
   }
@@ -454,12 +457,11 @@ export default {
     noAutoComplete(Runnable {
                      JSTestUtils.testES6<Exception>(project, {
                        myFixture.completeBasic()
-                       UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!,
-                                                             "hi2dden", "Hi2dden",
-                                                             "InterestingProp", "interestingProp", "interesting-prop")
+                       UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "hi2dden", "interesting-prop")
                        UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!,
-                                                             "FirstMixinProp", "firstMixinProp", "first-mixin-prop",
-                                                             "SecondMixinProp", "secondMixinProp", "second-mixin-prop")
+                                                          "Hi2dden", "interestingProp", "InterestingProp",
+                                                          "FirstMixinProp", "firstMixinProp", "first-mixin-prop",
+                                                          "SecondMixinProp", "secondMixinProp", "second-mixin-prop")
                      })
                    })
   }
