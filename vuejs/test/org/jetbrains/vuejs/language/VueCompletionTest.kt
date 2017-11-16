@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.WriteAction.run
 import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
@@ -592,7 +591,8 @@ $script""")
     </script>
 """)
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "props", "methods", "data", "computed", "beforeMount")
+    assertContainsElements(myFixture.lookupElementStrings!!, "props", "methods", "data", "computed", "beforeMount",
+                           "beforeUpdate", "mixins")
   }
 
   fun testVueOutObjectLiteralCompletionTs() {
@@ -600,12 +600,13 @@ $script""")
     myFixture.configureByText("VueOutObjectLiteralCompletionTs.vue", """
     <script lang="ts">
       export default {
-        before<caret>
+        <caret>
       }
     </script>
 """)
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "beforeCreate", "beforeDestroy", "beforeUpdate", "beforeMount")
+    assertContainsElements(myFixture.lookupElementStrings!!, "props", "methods", "data", "computed", "beforeMount",
+                           "beforeUpdate", "mixins")
   }
 
   fun testVueOutObjectLiteralCompletionJsx() {
@@ -634,7 +635,8 @@ fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture) {
     "version": "0.0.1",
     "dependencies": {
       "vue": "2.5.3"
-    }
+    },
+    "typings": "types/index.d.ts"
   }
   """)
 }
