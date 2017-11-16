@@ -24,10 +24,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.RowIcon;
@@ -37,10 +34,7 @@ import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
-import com.jetbrains.lang.dart.psi.DartNewExpression;
-import com.jetbrains.lang.dart.psi.DartParenthesizedExpression;
-import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
-import com.jetbrains.lang.dart.psi.DartUriElement;
+import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
@@ -211,6 +205,13 @@ public class DartServerCompletionContributor extends CompletionContributor {
         // historically DartNewExpression is a reference; it can appear here only in situation like new Foo(o.<caret>);
         // without the following hack closing paren is replaced on Tab. We won't get here if at least one symbol after dot typed.
         context.setReplacementOffset(context.getStartOffset());
+      }
+      if (reference instanceof DartReferenceExpression) {
+        final PsiElement firstChild = ((DartReferenceExpression)reference).getFirstChild();
+        final PsiElement lastChild = ((DartReferenceExpression)reference).getLastChild();
+        if (firstChild != lastChild && lastChild instanceof PsiErrorElement) {
+          context.setReplacementOffset(firstChild.getTextRange().getEndOffset());
+        }
       }
     }
   }

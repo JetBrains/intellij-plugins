@@ -89,6 +89,10 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     doTest("parse", Lookup.REPLACE_SELECT_CHAR);
   }
 
+  public void testDoNotEatAwaitOnTab() {
+    doTest("fooBar", Lookup.REPLACE_SELECT_CHAR);
+  }
+
   public void testFunctionNoArgsInvocation() {
     doTest();
   }
