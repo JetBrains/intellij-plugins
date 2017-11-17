@@ -591,8 +591,20 @@ $script""")
     </script>
 """)
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "props", "methods", "data", "computed", "beforeMount",
-                           "beforeUpdate", "mixins")
+    assertVueExportedObjectCompletionVariants()
+  }
+
+  private fun assertVueExportedObjectCompletionVariants() {
+    assertSameElements(myFixture.lookupElementStrings!!, listOf("activated", "beforeCreate", "beforeDestroy", "beforeMount",
+                                                                "beforeUpdate", "comments", "compile", "component", "components",
+                                                                "computed", "config", "created", "data", "deactivated", "delete",
+                                                                "delimiters", "destroyed", "directive", "directives", "el",
+                                                                "errorCaptured", "extend", "extends", "filter", "filters",
+                                                                "functional", "inheritAttrs", "inject", "methods", "mixin",
+                                                                "mixins", "model", "mounted", "name", "nextTick", "parent",
+                                                                "props", "propsData", "provide", "render", "renderError",
+                                                                "set", "staticRenderFns", "template", "transitions", "updated",
+                                                                "use", "watch"))
   }
 
   fun testVueOutObjectLiteralCompletionTs() {
@@ -605,8 +617,7 @@ $script""")
     </script>
 """)
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "props", "methods", "data", "computed", "beforeMount",
-                           "beforeUpdate", "mixins")
+    assertVueExportedObjectCompletionVariants()
   }
 
   fun testVueOutObjectLiteralCompletionJsx() {
