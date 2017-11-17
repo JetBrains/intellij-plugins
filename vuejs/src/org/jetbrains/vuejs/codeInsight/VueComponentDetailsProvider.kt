@@ -22,7 +22,12 @@ class VueComponentDetailsProvider {
     return result.map {
       @Suppress("UnnecessaryVariable")
       val attrDescriptor = it
-      if (xmlContext) return@map listOf(attrDescriptor.createNameVariant(fromAsset(it.name)))
+      if (xmlContext) {
+        val fromAsset = fromAsset(it.name)
+        return@map listOf(attrDescriptor.createNameVariant(fromAsset),
+                          attrDescriptor.createNameVariant(":$fromAsset"),
+                          attrDescriptor.createNameVariant("v-bind:$fromAsset"))
+      }
       getNameVariants(it.name, xmlContext).map { attrDescriptor.createNameVariant(it) }
     }.flatten()
   }
