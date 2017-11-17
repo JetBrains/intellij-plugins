@@ -209,7 +209,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
       if (reference instanceof DartReferenceExpression) {
         final PsiElement firstChild = ((DartReferenceExpression)reference).getFirstChild();
         final PsiElement lastChild = ((DartReferenceExpression)reference).getLastChild();
-        if (firstChild != lastChild && lastChild instanceof PsiErrorElement) {
+        if (firstChild != lastChild &&
+            lastChild instanceof PsiErrorElement &&
+            context.getStartOffset() <= firstChild.getTextRange().getEndOffset()) {
           context.setReplacementOffset(firstChild.getTextRange().getEndOffset());
         }
       }
