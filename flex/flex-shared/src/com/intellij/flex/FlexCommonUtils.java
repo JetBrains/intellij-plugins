@@ -569,6 +569,15 @@ public class FlexCommonUtils {
       return true;
     }
 
+    if (swcName.equals("starling.swc")) {
+      return true; // Feathers SDK
+    }
+
+    if (swcName.equals("feathers.swc") ||
+        swcName.equals("feathers-mxml.swc")) {
+      return !bcNature.pureAS; // Feathers SDK
+    }
+
     LOG.warn("Unknown SWC in '<Flex SDK>/frameworks/libs' folder: " + swcName);
     return true;
   }
