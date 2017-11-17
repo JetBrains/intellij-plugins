@@ -11,11 +11,13 @@ import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl
 import com.intellij.lang.javascript.psi.types.JSContextualUnionTypeImpl
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
 import com.intellij.psi.PsiElement
+import com.intellij.psi.ResolveResult
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.language.VueJSLanguage
+import java.util.*
 
 /**
  * @author Irina.Chernushina on 11/10/2017.
@@ -42,7 +44,7 @@ class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandl
     val typeAlias = JSFileReferencesUtil.resolveModuleReference(obj.containingFile, "vue")
                       .mapNotNull {
                         it as? JSElement ?: return@mapNotNull null
-                        ES6CreateImportUtil.findSymbolInModule(obj, it, "Component")
+                        ES6CreateImportUtil.getSymbolInModule("Component", obj, it).filter { it.isValidResult }
                       }
                       .flatten()
                       .filter {
