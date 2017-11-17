@@ -3,6 +3,8 @@ package org.intellij.plugins.markdown.ui.preview.javafx;
 import com.intellij.util.FieldAccessor;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
+import com.sun.javafx.embed.EmbeddedSceneInterface;
+import com.sun.javafx.tk.TKScene;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 
@@ -29,9 +31,16 @@ public class JFXPanelWrapper extends JFXPanel {
 
   @Override
   public void addNotify() {
-    // JFXPanel is scaled asynchronously after first repaint, what may lead
-    // to showing unscaled content. To work it around, set "scaleFactor" ahead.
-    if (UIUtil.isJreHiDPIEnabled()) myScaleFactorAccessor.set(this, Math.round(JBUI.sysScale(this)));
     super.addNotify();
+    if (UIUtil.isJreHiDPIEnabled()) {
+      // JFXPanel is scaled asynchronously after first repaint, what may lead
+      // to showing unscaled content. To work it around, set "scaleFactor" ahead.
+      int scale = Math.round(JBUI.sysScale(this));
+      myScaleFactorAccessor.set(this, scale);
+      TKScene tks = getScene().impl_getPeer();
+      if (tks instanceof EmbeddedSceneInterface) {
+        ((EmbeddedSceneInterface)tks).setPixelScaleFactor(scale);
+      }
+    }
   }
 }
