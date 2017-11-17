@@ -47,7 +47,7 @@ class VueCompletionTest : LightPlatformCodeInsightFixtureTestCase() {
     myFixture.configureByText("a.js", "")
     myFixture.configureByText("index.html", "<html <caret>></html>")
     myFixture.completeBasic()
-    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "v-bind", "v-else")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "v-bind", "v-else", ":class")
   }
 
   fun testCompleteImportedComponent() {
@@ -525,5 +525,55 @@ export default {
       TestCase.assertEquals("number", presentation.typeText)
       TestCase.assertEquals("(aaa, bbb)", presentation.tailText)
     })
+  }
+
+  fun testCompleteVBind() {
+    val script =
+"""
+<script>
+  export default {
+    name: 'childComp',
+    props: {
+      twoWords: {
+      }
+    },
+    methods: {
+      useMe(){}
+    }
+  }
+</script>
+"""
+    myFixture.configureByText("CompleteVBind.vue", """
+<template>
+<child-comp :<caret>></child-comp>
+</template>
+$script""")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, ":two-words", ":hidden", ":onclick", ":onchange")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, ":use-me")
+
+    myFixture.configureByText("CompleteVBind.vue", """
+<template>
+<a v-bind:<caret>></a>
+</template>
+$script""")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "v-bind:href", "v-bind:hidden", "v-bind:onclick", "v-bind:onchange")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, ":use-me", ":two-words")
+
+    myFixture.configureByText("User.vue", """
+<template>
+<child :<caret>></child>
+</template>
+<script>
+  import Child from './CompleteVBind';
+  export default {
+    components: { Child }
+  }
+</script>
+""")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, ":two-words", ":onclick", ":onchange")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, ":use-me", ":v-for", ":v-bind")
   }
 }

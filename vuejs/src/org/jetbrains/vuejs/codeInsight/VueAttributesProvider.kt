@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
 import com.intellij.psi.meta.PsiPresentableMetaData
 import com.intellij.psi.xml.XmlElement
@@ -14,10 +15,11 @@ import com.intellij.xml.impl.BasicXmlAttributeDescriptor
 import icons.VuejsIcons
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.VueLanguage
+import org.jetbrains.vuejs.codeInsight.VueAttributesProvider.Companion.isBinding
 import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.attributeAllowsNoValue
 import javax.swing.Icon
 
-class VueAttributesProvider : XmlAttributeDescriptorsProvider{
+class VueAttributesProvider : XmlAttributeDescriptorsProvider {
   companion object {
     val SCOPED = "scoped"
     @NonNls private val SRC_ATTR_NAME = "src"
@@ -35,12 +37,26 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
     }
 
     fun getDefaultVueAttributes() = DEFAULT.map { VueAttributeDescriptor(it) }.toTypedArray()
+    fun isBinding(name: String) = name.startsWith(":") || name.startsWith("v-bind:")
+
+    fun addBindingAttributes(result: MutableList<XmlAttributeDescriptor>,
+                             commonAttributes: Array<out XmlAttributeDescriptor>) {
+      result.addAll(commonAttributes.map { VueAttributeDescriptor(":" + it.name, it.declaration) })
+      result.addAll(commonAttributes.map { VueAttributeDescriptor("v-bind:" + it.name, it.declaration) })
+    }
   }
 
   override fun getAttributeDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
     if (context == null || !org.jetbrains.vuejs.index.hasVue(context.project)) return emptyArray()
     val result = mutableListOf<XmlAttributeDescriptor>()
     result.addAll(getDefaultVueAttributes())
+
+    // v-bind:any-standard-attribute support
+    val commonAttributes = (context.descriptor as? HtmlElementDescriptorImpl)?.getDefaultAttributeDescriptors(context)
+    if (commonAttributes != null) {
+      addBindingAttributes(result, commonAttributes)
+    }
+
     if (insideStyle(context)) {
       result.add(VueAttributeDescriptor(SCOPED))
       result.add(VueAttributeDescriptor(SRC_ATTR_NAME))
@@ -78,10 +94,12 @@ class VueAttributeDescriptor(private val name:String,
   override fun getDeclaration() = element
   override fun init(element: PsiElement?) {}
   override fun isRequired(): Boolean {
+    if (isBinding(name)) return false
     val initializer = (element as? JSProperty)?.objectLiteralExpressionInitializer ?: return false
     val literal = findProperty(initializer, "required")?.literalExpressionInitializer
     return literal != null && literal.isBooleanLiteral && "true" == literal.significantValue
   }
+
   override fun isFixed() = false
   override fun hasIdType() = false
   override fun getDependences(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY

@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.html.HtmlFileImpl
+import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
 import com.intellij.psi.impl.source.xml.XmlDocumentImpl
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider
@@ -138,9 +139,16 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
     return descriptor?.getElementDescriptor(childTag!!)
   }
 
+  // it is better to use default attributes method since it is guaranteed to do not call any extension providers
+  private fun getDefaultHtmlAttributes(context: XmlTag?): Array<out XmlAttributeDescriptor> =
+    ((HtmlNSDescriptorImpl.guessTagForCommonAttributes(context) as? HtmlElementDescriptorImpl)?.
+      getDefaultAttributeDescriptors(context) ?: emptyArray())
+
   override fun getAttributesDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
     val result = mutableListOf<XmlAttributeDescriptor>()
-    result.addAll(HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context))
+    val defaultHtmlAttributes = getDefaultHtmlAttributes(context)
+    result.addAll(defaultHtmlAttributes)
+    VueAttributesProvider.addBindingAttributes(result, defaultHtmlAttributes)
     result.addAll(VueAttributesProvider.getDefaultVueAttributes())
 
     val obj = VueComponents.findComponentDescriptor(declaration)
