@@ -24,7 +24,7 @@ import com.intellij.lang.javascript.psi.impl.PublicInheritorFilter;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
-import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
+import com.intellij.lang.javascript.validation.fixes.BaseCreateMembersFix;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
@@ -56,8 +56,8 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
     return ""; // not used in this action
   }
 
-  protected BaseCreateMethodsFix createFix(final JSClass jsClass) {
-    return new GenerateEventHandlerFix(jsClass);
+  protected BaseCreateMembersFix createFix(final PsiElement jsClass) {
+    return new GenerateEventHandlerFix((JSClass)jsClass);
   }
 
   protected boolean collectCandidatesAndShowDialog() {
@@ -149,8 +149,8 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
       return null;
     }
 
-    final JSClass jsClass = BaseJSGenerateHandler.findClass(psiFile, editor, null);
-    if (jsClass == null || !ActionScriptEventDispatchUtils.isEventDispatcher(jsClass)) {
+    final PsiElement jsClass = BaseJSGenerateHandler.findClassOrObjectLiteral(psiFile, editor, null);
+    if (!(jsClass instanceof JSClass) || !ActionScriptEventDispatchUtils.isEventDispatcher((JSClass)jsClass)) {
       return null;
     }
 
@@ -217,7 +217,7 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
     return unquoted.substring(dotIndex + 1).replaceAll("[^\\p{Alnum}]", "_");
   }
 
-  public static class GenerateEventHandlerFix extends BaseCreateMethodsFix {
+  public static class GenerateEventHandlerFix extends BaseCreateMembersFix {
     private boolean inMxmlEventAttributeValue;
     private boolean inEventListenerCall;
     private PsiElement handlerCallerAnchorInArgumentList;
@@ -550,5 +550,10 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
         return myLookupItems;
       }
     }
+  }
+
+  @Override
+  protected boolean isValidForTarget(PsiElement jsClass) {
+    return jsClass instanceof JSClass && !((JSClass)jsClass).isInterface();
   }
 }

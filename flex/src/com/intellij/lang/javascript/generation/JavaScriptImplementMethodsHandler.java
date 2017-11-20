@@ -8,8 +8,9 @@ import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.validation.ActionScriptImplementedMethodProcessor;
-import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
+import com.intellij.lang.javascript.validation.fixes.BaseCreateMembersFix;
 import com.intellij.lang.javascript.validation.fixes.ImplementMethodsFix;
+import com.intellij.psi.PsiElement;
 
 import java.util.Collection;
 
@@ -17,8 +18,8 @@ import java.util.Collection;
  * as only
  */
 public class JavaScriptImplementMethodsHandler extends BaseJSGenerateHandler {
-  protected void collectCandidates(final JSClass clazz, final Collection<JSNamedElementNode> candidates) {
-    for(JSFunction fun: ActionScriptImplementedMethodProcessor.collectFunctionsToImplement(clazz)) {
+  protected void collectCandidates(final PsiElement clazz, final Collection<JSChooserElementNode> candidates) {
+    for(JSFunction fun: ActionScriptImplementedMethodProcessor.collectFunctionsToImplement((JSClass)clazz)) {
       candidates.add(new JSNamedElementNode(fun));
     }
   }
@@ -31,8 +32,13 @@ public class JavaScriptImplementMethodsHandler extends BaseJSGenerateHandler {
     return JSBundle.message("no.methods.to.implement");
   }
 
-  protected BaseCreateMethodsFix createFix(final JSClass clazz) {
-    return new ImplementMethodsFix(clazz);
+  protected BaseCreateMembersFix createFix(final PsiElement clazz) {
+    return new ImplementMethodsFix((JSClass)clazz);
+  }
+
+  @Override
+  protected boolean isValidForTarget(PsiElement jsClass) {
+    return jsClass instanceof JSClass && !((JSClass)jsClass).isInterface();
   }
 
   @Override

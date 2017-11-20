@@ -8,7 +8,7 @@ import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.generation.JSNamedElementNode;
+import com.intellij.lang.javascript.generation.JSChooserElementNode;
 import com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandler;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -198,10 +198,10 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
     }
 
     public void execute() {
-      Collection<JSNamedElementNode> candidates = new ArrayList<>();
+      Collection<JSChooserElementNode> candidates = new ArrayList<>();
       collectCandidates(myClass, candidates);
       ImplementMethodsFix fix = new ImplementMethodsFix(myClass);
-      for(JSNamedElementNode el: candidates) {
+      for(JSChooserElementNode el: candidates) {
         fix.addElementToProcess((JSFunction)el.getPsiElement());
       }
       fix.invoke(myClass.getProject(), null, myClass.getContainingFile());

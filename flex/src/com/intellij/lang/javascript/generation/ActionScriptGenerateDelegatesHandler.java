@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.psi.util.JSUtils;
-import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
+import com.intellij.lang.javascript.validation.fixes.BaseCreateMembersFix;
 import com.intellij.lang.javascript.validation.fixes.JSAttributeListWrapper;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -36,20 +36,21 @@ public class ActionScriptGenerateDelegatesHandler extends BaseJSGenerateHandler 
 
 
   @Override
-  public boolean isValidFor(Editor editor, PsiFile file) {
-    if (!super.isValidFor(editor, file)) {
+  protected boolean isValidForTarget(PsiElement jsClass) {
+    if (!super.isValidForTarget(jsClass)) {
       return false;
     }
-    final JSClass aClass = findClass(file, editor, null);
-    return aClass != null && !findCandidateFields(aClass).isEmpty();
+
+    if (!(jsClass instanceof JSClass) || ((JSClass)jsClass).isInterface()) return false;
+    return !findCandidateFields((JSClass)jsClass).isEmpty();
   }
 
   @Override
   public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
-    final JSClass jsClass = findClass(file, editor, null);
-    if (jsClass == null) return;
+    final PsiElement jsClass = findClassOrObjectLiteral(file, editor, null);
+    if (!(jsClass instanceof JSClass)) return;
 
-    Collection<JSField> fields = findCandidateFields(jsClass);
+    Collection<JSField> fields = findCandidateFields((JSClass)jsClass);
 
     final JSField field;
     if (ApplicationManager.getApplication().isUnitTestMode()) {
@@ -57,7 +58,7 @@ public class ActionScriptGenerateDelegatesHandler extends BaseJSGenerateHandler 
       field = fields.iterator().next();
     }
     else {
-      final MemberChooser<JSNamedElementNode> targetChooser = createMemberChooserDialog(project, jsClass, wrap(fields), false, false,
+      final MemberChooser<JSChooserElementNode> targetChooser = createMemberChooserDialog(project, jsClass, wrap(fields), false, false,
                                                                                         CodeInsightBundle
                                                                                           .message(
                                                                                             "generate.delegate.target.chooser.title"));
@@ -72,7 +73,7 @@ public class ActionScriptGenerateDelegatesHandler extends BaseJSGenerateHandler 
     if (fieldClass == null) return;
 
     final boolean allowPackageLocal = !JSPsiImplUtils.differentPackageName(StringUtil.getPackageName(fieldClass.getQualifiedName()),
-                                                                           StringUtil.getPackageName(jsClass.getQualifiedName()));
+                                                                           StringUtil.getPackageName(((JSClass)jsClass).getQualifiedName()));
 
     // don't add members along with their supers
     class MemberDescriptor {
@@ -147,7 +148,7 @@ public class ActionScriptGenerateDelegatesHandler extends BaseJSGenerateHandler 
             return true;
           }
 
-          if (JSInheritanceUtil.findMethodInClass(method, jsClass, true) != null) {
+          if (JSInheritanceUtil.findMethodInClass(method, (JSClass)jsClass, true) != null) {
             return true;
           }
           memberCandidates.put(new MemberDescriptor(method), method);
@@ -168,7 +169,7 @@ public class ActionScriptGenerateDelegatesHandler extends BaseJSGenerateHandler 
             return true;
           }
 
-          if (jsClass.findFunctionByName(f.getName()) != null) {
+          if (((JSClass)jsClass).findFunctionByName(f.getName()) != null) {
             return true;
           }
 
@@ -180,13 +181,13 @@ public class ActionScriptGenerateDelegatesHandler extends BaseJSGenerateHandler 
     };
 
     fieldClass.processDeclarations(p, ResolveState.initial(), fieldClass, fieldClass);
-    Collection<JSNamedElementNode> selected;
+    Collection<JSChooserElementNode> selected;
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       LOG.assertTrue(!memberCandidates.isEmpty());
       selected = wrap(memberCandidates.values());
     }
     else {
-      final MemberChooser<JSNamedElementNode> methodsChooser =
+      final MemberChooser<JSChooserElementNode> methodsChooser =
         createMemberChooserDialog(project, jsClass, wrap(memberCandidates.values()), false,
                                   true, CodeInsightBundle.message("generate.delegate.method.chooser.title"));
       methodsChooser.show();
@@ -194,13 +195,13 @@ public class ActionScriptGenerateDelegatesHandler extends BaseJSGenerateHandler 
       selected = methodsChooser.getSelectedElements();
     }
 
-    BaseCreateMethodsFix fix = new BaseCreateMethodsFix<JSNamedElement>(jsClass) {
+    BaseCreateMembersFix fix = new BaseCreateMembersFix<JSNamedElement>((JSClass)jsClass) {
 
       final JavaScriptGenerateAccessorHandler.MyBaseCreateMethodsFix generateGetterFix =
-        new JavaScriptGenerateAccessorHandler.MyBaseCreateMethodsFix(JSGetterSetterGenerationMode.Getter, jsClass,
+        new JavaScriptGenerateAccessorHandler.MyBaseCreateMethodsFix(JSGetterSetterGenerationMode.Getter, (JSClass)jsClass,
                                                                      null, false, field.getName());
       final JavaScriptGenerateAccessorHandler.MyBaseCreateMethodsFix generateSetterFix =
-        new JavaScriptGenerateAccessorHandler.MyBaseCreateMethodsFix(JSGetterSetterGenerationMode.Setter, jsClass,
+        new JavaScriptGenerateAccessorHandler.MyBaseCreateMethodsFix(JSGetterSetterGenerationMode.Setter, (JSClass)jsClass,
                                                                      null, false, field.getName());
 
       @Override
@@ -237,8 +238,8 @@ public class ActionScriptGenerateDelegatesHandler extends BaseJSGenerateHandler 
     doInvoke(project, editor, file, selected, fix);
   }
 
-  private static Collection<JSNamedElementNode> wrap(Collection<? extends JSNamedElement> items) {
-    final List<JSNamedElementNode> targetCandidates = new ArrayList<>(items.size());
+  private static Collection<JSChooserElementNode> wrap(Collection<? extends JSNamedElement> items) {
+    final List<JSChooserElementNode> targetCandidates = new ArrayList<>(items.size());
     for (JSNamedElement field : items) {
       targetCandidates.add(new JSNamedElementNode(field));
     }
@@ -254,15 +255,16 @@ public class ActionScriptGenerateDelegatesHandler extends BaseJSGenerateHandler 
   }
 
   @Override
-  protected void collectCandidates(JSClass clazz, Collection<JSNamedElementNode> candidates) {
-    Collection<JSField> fields = findCandidateFields(clazz);
+  protected void collectCandidates(PsiElement clazz, Collection<JSChooserElementNode> candidates) {
+    if (!(clazz instanceof JSClass)) return; // shouldn't be available if it is not a class
+    Collection<JSField> fields = findCandidateFields((JSClass)clazz);
     for (JSField field : fields) {
       candidates.add(new JSNamedElementNode(field));
     }
   }
 
   @Override
-  protected BaseCreateMethodsFix createFix(JSClass clazz) {
+  protected BaseCreateMembersFix createFix(PsiElement clazz) {
     return null;
   }
 

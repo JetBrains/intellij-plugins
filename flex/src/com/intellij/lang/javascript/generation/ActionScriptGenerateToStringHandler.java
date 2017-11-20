@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSOverrideHandler;
-import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
+import com.intellij.lang.javascript.validation.fixes.BaseCreateMembersFix;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -25,15 +25,15 @@ class ActionScriptGenerateToStringHandler extends BaseJSGenerateHandler {
     return "generate.to.string.chooser.title";
   }
 
-  protected BaseCreateMethodsFix createFix(final JSClass jsClass) {
+  protected BaseCreateMembersFix createFix(final PsiElement jsClass) {
 
-    return new BaseCreateMethodsFix<JSVariable>(jsClass) {
+    return new BaseCreateMembersFix<JSVariable>((JSClass)jsClass) {
       @Override
       public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
         evalAnchor(editor, file);
 
         final boolean[] needOverride = new boolean[1];
-        JSInheritanceUtil.processOverrides(jsClass, new JSOverrideHandler() {
+        JSInheritanceUtil.processOverrides((JSClass)jsClass, new JSOverrideHandler() {
           public boolean process(@NotNull List<JSPsiElementBase> elements, final PsiElement scope, final String className) {
             needOverride[0] = !"Object".equals(className);
             return false;
@@ -43,7 +43,7 @@ class ActionScriptGenerateToStringHandler extends BaseJSGenerateHandler {
         @NonNls String functionText = "public " +
                                       (needOverride[0] ? "override " : "") +
                                       "function toString():String {\nreturn " +
-                                      (needOverride[0] ? "super.toString()" : "\"" + jsClass.getName());
+                                      (needOverride[0] ? "super.toString()" : "\"" + ((JSClass)jsClass).getName());
 
         final String semicolon = JSCodeStyleSettings.getSemicolon(file);
 
@@ -73,11 +73,16 @@ class ActionScriptGenerateToStringHandler extends BaseJSGenerateHandler {
   }
 
 
-  protected void collectCandidates(final JSClass clazz, final Collection<JSNamedElementNode> candidates) {
+  protected void collectCandidates(final PsiElement clazz, final Collection<JSChooserElementNode> candidates) {
     collectJSVariables(clazz, candidates, false, false, true, true, true, false);
   }
 
   protected boolean canHaveEmptySelectedElements() {
     return true;
+  }
+
+  @Override
+  protected boolean isValidForTarget(PsiElement jsClass) {
+    return jsClass instanceof JSClass && !((JSClass)jsClass).isInterface();
   }
 }
