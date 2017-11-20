@@ -1,7 +1,6 @@
 package com.google.jstestdriver.idea.server;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.AsyncPromise;
@@ -39,21 +38,19 @@ public class JstdServerRegistry {
     return promise;
   }
 
-  @NotNull
-  private Promise<JstdServer> doStart(@NotNull final JstdServerSettings settings, @NotNull final AsyncPromise<JstdServer> promise) {
+  private void doStart(@NotNull JstdServerSettings settings, @NotNull AsyncPromise<JstdServer> promise) {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       try {
-        final JstdServer server = new JstdServer(settings);
-        UIUtil.invokeLaterIfNeeded(() -> {
+        JstdServer server = new JstdServer(settings);
+        ApplicationManager.getApplication().invokeLater(() -> {
           myServer = server;
           promise.setResult(server);
         });
       }
-      catch (final Exception e) {
-        UIUtil.invokeLaterIfNeeded(() -> promise.setError(e));
+      catch (Exception e) {
+        ApplicationManager.getApplication().invokeLater(() -> promise.setError(e));
       }
     });
-    return promise;
   }
 
   @NotNull
