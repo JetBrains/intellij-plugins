@@ -25,7 +25,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -56,7 +55,7 @@ public class KarmaServer {
     myServerSettings = serverSettings;
     myKarmaJsSourcesLocator = new KarmaJsSourcesLocator(serverSettings.getKarmaPackage());
     myCoveragePeer = serverSettings.isWithCoverage() ? new KarmaCoveragePeer() : null;
-    KillableColoredProcessHandler processHandler = startServer(serverSettings);
+    KillableColoredProcessHandler processHandler = startServer(serverSettings, myKarmaJsSourcesLocator, myCoveragePeer);
     myProcessHashCode = System.identityHashCode(processHandler.getProcess());
     File configurationFile = myServerSettings.getConfigurationFile();
     myState = new KarmaServerState(this, configurationFile);
@@ -67,6 +66,17 @@ public class KarmaServer {
     myDisposable = new MyDisposable();
     Disposer.register(project, myDisposable);
     myRestarter = new KarmaServerRestarter(configurationFile, myDisposable);
+
+    final int processHashCode = System.identityHashCode(processHandler.getProcess());
+    LOG.info("Karma server " + processHashCode + " started successfully: " + processHandler.getCommandLine());
+    processHandler.addProcessListener(new ProcessAdapter() {
+      @Override
+      public void processTerminated(@NotNull final ProcessEvent event) {
+        LOG.info("Karma server " + processHashCode + " terminated with exit code " + event.getExitCode());
+        Disposer.dispose(myDisposable);
+        fireOnTerminated(event.getExitCode());
+      }
+    });
   }
 
   private void registerStreamEventHandlers() {
@@ -123,24 +133,27 @@ public class KarmaServer {
     myHandlers.put(handler.getEventType(), handler);
   }
 
-  private KillableColoredProcessHandler startServer(@NotNull KarmaServerSettings serverSettings) throws IOException {
+  @NotNull
+  private static KillableColoredProcessHandler startServer(@NotNull KarmaServerSettings serverSettings,
+                                                           @NotNull KarmaJsSourcesLocator sourcesLocator,
+                                                           @Nullable KarmaCoveragePeer coveragePeer) throws IOException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     serverSettings.getEnvData().configureCommandLine(commandLine, true);
     commandLine.withWorkDirectory(serverSettings.getConfigurationFile().getParentFile());
     commandLine.setRedirectErrorStream(true);
     commandLine.setExePath(serverSettings.getNodeInterpreter().getInterpreterSystemDependentPath());
-    File serverFile = myKarmaJsSourcesLocator.getServerAppFile();
+    File serverFile = sourcesLocator.getServerAppFile();
     //NodeCommandLineUtil.addNodeOptionsForDebugging(commandLine, Collections.emptyList(), 34598, true,
     //                                               serverSettings.getNodeInterpreter(), true);
     commandLine.addParameter(serverFile.getAbsolutePath());
-    commandLine.addParameter("--karmaPackageDir=" + myServerSettings.getKarmaPackage().getSystemDependentPath());
+    commandLine.addParameter("--karmaPackageDir=" + serverSettings.getKarmaPackage().getSystemDependentPath());
     commandLine.addParameter("--configFile=" + serverSettings.getConfigurationFilePath());
     String browsers = serverSettings.getBrowsers();
     if (!StringUtil.isEmptyOrSpaces(browsers)) {
       commandLine.addParameter("--browsers=" + browsers);
     }
-    if (myCoveragePeer != null) {
-      commandLine.addParameter("--coverageTempDir=" + myCoveragePeer.getCoverageTempDir());
+    if (coveragePeer != null) {
+      commandLine.addParameter("--coverageTempDir=" + coveragePeer.getCoverageTempDir());
     }
     if (serverSettings.isDebug()) {
       commandLine.addParameter("--debug=true");
@@ -154,20 +167,8 @@ public class KarmaServer {
     catch (ExecutionException e) {
       throw new IOException("Can not start Karma server: " + commandLine.getCommandLineString(), e);
     }
-    final int processHashCode = System.identityHashCode(processHandler.getProcess());
-    LOG.info("Karma server " + processHashCode + " started successfully: "
-             + commandLine.getCommandLineString());
-
-    processHandler.addProcessListener(new ProcessAdapter() {
-      @Override
-      public void processTerminated(@NotNull final ProcessEvent event) {
-        LOG.info("Karma server " + processHashCode + " terminated with exit code " + event.getExitCode());
-        Disposer.dispose(myDisposable);
-        fireOnTerminated(event.getExitCode());
-      }
-    });
-    ProcessTerminatedListener.attach(processHandler);
     processHandler.setShouldDestroyProcessRecursively(true);
+    ProcessTerminatedListener.attach(processHandler);
     return processHandler;
   }
 
@@ -225,11 +226,6 @@ public class KarmaServer {
     return myState.areBrowsersReady();
   }
 
-  @NotNull
-  public Collection<CapturedBrowser> getCapturedBrowsers() {
-    return myState.getCapturedBrowsers();
-  }
-
   /**
    * Executes {@code callback} in EDT when at least one browser is captured and all config.browsers are captured.
    */
@@ -258,11 +254,6 @@ public class KarmaServer {
         myOnBrowsersReadyCallbacks = Lists.newCopyOnWriteArrayList();
       }
     });
-  }
-
-  public boolean isTerminated() {
-    ApplicationManager.getApplication().assertIsDispatchThread();
-    return myExitCode != null;
   }
 
   /**
