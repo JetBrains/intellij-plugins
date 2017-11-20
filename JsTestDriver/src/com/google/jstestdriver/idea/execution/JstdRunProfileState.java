@@ -48,6 +48,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.PeekableIterator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -185,7 +186,8 @@ public class JstdRunProfileState implements RunProfileState {
       TestRunner.class,
       JsTestDriverServer.class,
       Maps.class,
-      Gson.class
+      Gson.class,
+      PeekableIterator.class
     );
     Set<String> classpathPaths = ImmutableSet.copyOf(Lists.transform(classpathFiles, GET_ABSOLUTE_PATH));
     return Joiner.on(pathSeparator).join(classpathPaths);
