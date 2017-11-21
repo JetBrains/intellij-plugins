@@ -96,7 +96,7 @@ public class Angular2Injector implements MultiHostInjector {
 
         final TextRange range = ElementManipulators.getValueTextRange(context);
         registrar.startInjecting(language).addPlace(null, null, (PsiLanguageInjectionHost)context, range).doneInjecting();
-        JSFormattableInjectionUtil.setReformattableInjection(registrar, context);
+        JSFormattableInjectionUtil.setReformattableInjection(context, language);
       }
     }
     return false;

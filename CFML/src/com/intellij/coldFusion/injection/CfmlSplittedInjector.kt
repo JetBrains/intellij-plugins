@@ -12,7 +12,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiLanguageInjectionHost
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
-import com.intellij.psi.impl.source.tree.injected.MultiHostRegistrarImpl
 import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.plugins.intelliLang.Configuration
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage
@@ -31,12 +30,12 @@ class CfmlSplittedInjector(val myConfiguration: Configuration,
   private val mySupport: LanguageInjectionSupport = InjectorUtils.findNotNullInjectionSupport(CfmlLanguageInjectionSupport.SUPPORT_ID)
 
 
-  override fun getLanguagesToInject(registrar: MultiHostRegistrar, vararg splittedElements: PsiElement) {
-    val head = getHead(splittedElements.toList()) ?: return
+  override fun getLanguagesToInject(registrar: MultiHostRegistrar, vararg splittedElements: PsiElement): Boolean {
+    val head = getHead(splittedElements.toList()) ?: return false
     val list = collectSplittedInjections(head, *splittedElements)
-    if (list.isEmpty()) return
+    if (list.isEmpty()) return false
     val lang = list[0].second.language
-    processInjection(lang!!, list, splittedElements[0].containingFile, registrar)
+    return processInjection(lang!!, list, splittedElements[0].containingFile, registrar)
   }
 
   fun collectSplittedInjections(head: PsiElement,
@@ -58,17 +57,19 @@ class CfmlSplittedInjector(val myConfiguration: Configuration,
   fun processInjection(lang: Language,
                        injectionList: List<Trinity<PsiLanguageInjectionHost, InjectedLanguage, TextRange>>,
                        finalContainingFile: PsiFile,
-                       registrar: MultiHostRegistrar) {
-    registerInjection(lang, injectionList, finalContainingFile, registrar)
-    InjectorUtils.registerSupport(mySupport, false, registrar)
-    InjectorUtils.putInjectedFileUserData(registrar, InjectedLanguageUtil.FRANKENSTEIN_INJECTION, null)
+                       registrar: MultiHostRegistrar): Boolean {
+    var injected = registerInjection(lang, injectionList, finalContainingFile, registrar)
+    InjectorUtils.registerSupport(mySupport, false, injectionList.get(0).first, lang)
+    val host = injectionList.get(0).getFirst()
+    InjectorUtils.putInjectedFileUserData(host, lang, InjectedLanguageUtil.FRANKENSTEIN_INJECTION, null)
+    return injected
   }
 
   //we are overriding this method from InjectorUtils.registerInjection(...) to replace suffixes with our replacement
   fun registerInjection(lang: Language,
                         injectionList: List<Trinity<PsiLanguageInjectionHost, InjectedLanguage, TextRange>>,
                         finalContainingFile: PsiFile,
-                        registrar: MultiHostRegistrar) {
+                        registrar: MultiHostRegistrar) : Boolean {
     var injectionStarted = false
     for (t in injectionList) {
       val host = t.first
@@ -78,10 +79,12 @@ class CfmlSplittedInjector(val myConfiguration: Configuration,
       val injectedLanguage = t.second
 
       if (!injectionStarted) {
-        registrar.startInjecting(lang)
         // TextMate language requires file extension
-        if (registrar is MultiHostRegistrarImpl && !StringUtil.equalsIgnoreCase(lang.id, t.second.id)) {
-          registrar.setFileExtension(StringUtil.toLowerCase(t.second.id))
+        if (!StringUtil.equalsIgnoreCase(lang.id, t.second.id)) {
+          registrar.startInjecting(lang, StringUtil.toLowerCase(t.second.id))
+        }
+        else {
+          registrar.startInjecting(lang)
         }
         injectionStarted = true
       }
@@ -89,6 +92,8 @@ class CfmlSplittedInjector(val myConfiguration: Configuration,
     }
     if (injectionStarted)
       registrar.doneInjecting()
+    
+    return injectionStarted
   }
 
   //create dummy for <cfqueryparam> and <cfif> CFML tags in SQL injection to resolve SQL expression without errors
