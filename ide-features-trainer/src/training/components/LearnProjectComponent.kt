@@ -75,53 +75,48 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
     if (CourseManager.instance.calcNotPassedLessons() == 0) return
     if (CourseManager.instance.calcPassedLessons() == 0) return
     alarm.addRequest({
-                       val lastActivityTime = ActivityManager.instance.lastActivityTime
-                       val currentTimeMillis = System.currentTimeMillis()
-                       val TWO_WEEKS = TimeUnit.DAYS.toMillis(14)
+      val lastActivityTime = ActivityManager.instance.lastActivityTime
+      val currentTimeMillis = System.currentTimeMillis()
+      val TWO_WEEKS = TimeUnit.DAYS.toMillis(14)
 
-                       if (currentTimeMillis - lastActivityTime!! > TWO_WEEKS) {
-                         val message = StringBuilder()
-                         val unpassedLessons = CourseManager.instance.calcNotPassedLessons()
+      if (currentTimeMillis - lastActivityTime!! > TWO_WEEKS) {
+        val message = StringBuilder()
+        val unpassedLessons = CourseManager.instance.calcNotPassedLessons()
 
-                         message.append(LearnBundle.message("learn.activity.message", unpassedLessons, if (unpassedLessons == 1) ""
-                         else LearnBundle.message("learn.activity.message.lessons"))).append("<br/>")
-                         val notification = Notification(CourseManager.NOTIFICATION_ID,
-                                                         LearnBundle.message("learn.activity.title"),
-                                                         message.toString(),
-                                                         NotificationType.INFORMATION)
-                         val learnAction = object : AnAction(LearnBundle.message("learn.activity.learn")) {
-                           override fun actionPerformed(e: AnActionEvent) {
-                             val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW)
-                             toolWindow.activate(null)
-                             notification.expire()
-                           }
-                         }
-                         val laterAction = object : AnAction(LearnBundle.message("learn.activity.later")) {
-                           override fun actionPerformed(e: AnActionEvent) {
-                             notification.expire()
-                           }
-                         }
-                         val neverAction = object : AnAction(LearnBundle.message("learn.activity.never")) {
-                           override fun actionPerformed(e: AnActionEvent) {
-                             ActivityManager.instance.lastActivityTime = -1
-                             notification.expire()
-                           }
-                         }
-                         notification.addAction(learnAction).addAction(laterAction).addAction(neverAction).notify(project)
-                       }
-                       Disposer.dispose(alarm)
-                     }, 30000)
+        message.append(LearnBundle.message("learn.activity.message", unpassedLessons, if (unpassedLessons == 1) ""
+        else LearnBundle.message("learn.activity.message.lessons"))).append("<br/>")
+        val notification = Notification(CourseManager.NOTIFICATION_ID,
+            LearnBundle.message("learn.activity.title"),
+            message.toString(),
+            NotificationType.INFORMATION)
+        val learnAction = object : AnAction(LearnBundle.message("learn.activity.learn")) {
+          override fun actionPerformed(e: AnActionEvent) {
+            val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW)
+            toolWindow.activate(null)
+            notification.expire()
+          }
+        }
+        val laterAction = object : AnAction(LearnBundle.message("learn.activity.later")) {
+          override fun actionPerformed(e: AnActionEvent) {
+            notification.expire()
+          }
+        }
+        val neverAction = object : AnAction(LearnBundle.message("learn.activity.never")) {
+          override fun actionPerformed(e: AnActionEvent) {
+            ActivityManager.instance.lastActivityTime = -1
+            notification.expire()
+          }
+        }
+        notification.addAction(learnAction).addAction(laterAction).addAction(neverAction).notify(project)
+      }
+      Disposer.dispose(alarm)
+    }, 30000)
   }
 
   private fun pluginFirstStart() {
 
     //do not show popups in test mode
     if (ApplicationManager.getApplication().isUnitTestMode) return
-
-    if (UISettings.instance.hideToolStripes) {
-      UISettings.instance.hideToolStripes = false
-      UISettings.instance.fireUISettingsChanged()
-    }
 
     ApplicationManager.getApplication().invokeLater {
       val learnStripeButton = learnStripeButton
@@ -130,15 +125,35 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
         PropertiesComponent.getInstance().setValue(SHOW_TOOLWINDOW_INFO, true.toString())
         val alarm = Alarm()
         alarm.addRequest({
-                           GotItMessage.createMessage(LearnBundle.message("learn.tool.window.quick.access.title"),
-                                                      LearnBundle.message("learn.tool.window.quick.access.message"))
-                             .show(RelativePoint(learnStripeButton,
-                                                 Point(learnStripeButton.bounds.width, learnStripeButton.bounds.height / 2)),
-                                   Balloon.Position.atRight)
-                           Disposer.dispose(alarm)
-                         }, 5000)
+          pointToLearnStripeButton(learnStripeButton)
+          Disposer.dispose(alarm)
+        }, 5000)
       }
     }
+  }
+
+  private fun pointToLearnStripeButton(learnStripeButton: StripeButton) {
+
+    val toolStripesAreHiddenDefault = UISettings.instance.hideToolStripes
+
+    fun showToolStripes() {
+      UISettings.instance.hideToolStripes = false
+      UISettings.instance.fireUISettingsChanged()
+    }
+
+    fun hideToolStripes() {
+      UISettings.instance.hideToolStripes = true
+      UISettings.instance.fireUISettingsChanged()
+    }
+
+    showToolStripes()
+
+    GotItMessage.createMessage(LearnBundle.message("learn.tool.window.quick.access.title"),
+        LearnBundle.message("learn.tool.window.quick.access.message"))
+        .setCallback({ if (toolStripesAreHiddenDefault) hideToolStripes() })
+        .show(RelativePoint(learnStripeButton,
+            Point(learnStripeButton.bounds.width, learnStripeButton.bounds.height / 2)),
+            Balloon.Position.atRight)
   }
 
   private val learnStripeButton: StripeButton?
@@ -150,8 +165,7 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
       val rootPane = (ideFrame as JFrame).rootPane
       val pane = UIUtil.findComponentOfType(rootPane, ToolWindowsPane::class.java)
       val componentsOfType = UIUtil.findComponentsOfType(pane, StripeButton::class.java)
-      val learnStripeButton: StripeButton? = componentsOfType.lastOrNull { it.text == LearnToolWindowFactory.LEARN_TOOL_WINDOW }
-      return learnStripeButton
+      return componentsOfType.lastOrNull { it.text == LearnToolWindowFactory.LEARN_TOOL_WINDOW }
     }
 
   companion object {
