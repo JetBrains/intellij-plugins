@@ -18,6 +18,7 @@ public class ActionScriptHandlersFactory extends JSHandlersFactory {
     return new ActionScriptCompletionKeywordsContributor();
   }
 
+  @NotNull
   @Override
   public Class<? extends JSCodeStyleSettings> getCodeStyleSettingsClass() {
     return ECMA4CodeStyleSettings.class;
