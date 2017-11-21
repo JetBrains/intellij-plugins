@@ -29,8 +29,6 @@ import com.google.jstestdriver.embedded.JsTestDriverBuilder;
 import com.google.jstestdriver.hooks.PluginInitializer;
 import com.google.jstestdriver.hooks.ResourcePreProcessor;
 import com.google.jstestdriver.hooks.TestListener;
-import com.google.jstestdriver.idea.rt.coverage.CoverageReport;
-import com.google.jstestdriver.idea.rt.coverage.CoverageSerializationUtils;
 import com.google.jstestdriver.idea.rt.coverage.CoverageSession;
 import com.google.jstestdriver.idea.rt.execution.tree.TreeManager;
 import com.google.jstestdriver.idea.rt.util.EscapeUtils;
@@ -83,9 +81,6 @@ public class TestRunner {
   public void executeAll() {
     for (File config : mySettings.getConfigFiles()) {
       executeTests(config);
-    }
-    if (myCoverageSession != null) {
-      myCoverageSession.finish();
     }
   }
 
@@ -202,11 +197,7 @@ public class TestRunner {
       File[] coverageReportFiles = emptyOutputDir.listFiles((dir, name) -> name.endsWith("-coverage.dat"));
       if (coverageReportFiles != null && coverageReportFiles.length == 1) {
         try {
-          CoverageReport coverageReport = CoverageSerializationUtils.readLCOV(coverageReportFiles[0]);
-          for (String excludedPath : coverageExcludedFiles) {
-            coverageReport.clearReportByFilePath(excludedPath);
-          }
-          myCoverageSession.mergeReport(coverageReport);
+          myCoverageSession.copyCoverageFile(coverageReportFiles[0]);
         }
         catch (Exception e) {
           myTreeManager.printThrowable(e);

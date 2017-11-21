@@ -1,8 +1,6 @@
 package com.google.jstestdriver.idea.coverage;
 
 import com.google.jstestdriver.idea.execution.JstdRunConfiguration;
-import com.google.jstestdriver.idea.rt.coverage.CoverageReport;
-import com.google.jstestdriver.idea.rt.coverage.CoverageSerializationUtils;
 import com.intellij.codeEditor.printing.ExportToHTMLSettings;
 import com.intellij.coverage.*;
 import com.intellij.coverage.view.CoverageViewExtension;
@@ -11,6 +9,8 @@ import com.intellij.coverage.view.DirectoryCoverageViewExtension;
 import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.configurations.coverage.CoverageEnabledConfiguration;
 import com.intellij.execution.testframework.AbstractTestProxy;
+import com.intellij.javascript.testFramework.coverage.CoverageSerializationUtils;
+import com.intellij.javascript.testFramework.coverage.LcovCoverageReport;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -160,7 +160,7 @@ public class JstdCoverageEngine extends CoverageEngine {
   public void generateReport(@NotNull Project project,
                              @NotNull DataContext dataContext,
                              @NotNull CoverageSuitesBundle currentSuiteBundle) {
-    CoverageReport coverageReport = new CoverageReport();
+    LcovCoverageReport coverageReport = new LcovCoverageReport();
     for (CoverageSuite suite : currentSuiteBundle.getSuites()) {
       ProjectData projectData = suite.getCoverageData(CoverageDataManager.getInstance(project));
       if (projectData != null) {
@@ -169,8 +169,8 @@ public class JstdCoverageEngine extends CoverageEngine {
         for (Map.Entry<String, ClassData> classDataEntry : classDataMap.entrySet()) {
           String fileName = classDataEntry.getKey();
           ClassData classData = classDataEntry.getValue();
-          List<CoverageReport.LineHits> lineHitsList = convertClassDataToLineHits(classData);
-          coverageReport.mergeFileReport(fileName, lineHitsList);
+          List<LcovCoverageReport.LineHits> lineHitsList = convertClassDataToLineHits(classData);
+          coverageReport.mergeFileReport(null, fileName, lineHitsList);
         }
       }
     }
@@ -212,13 +212,13 @@ public class JstdCoverageEngine extends CoverageEngine {
     return name.toString();
   }
 
-  private static List<CoverageReport.LineHits> convertClassDataToLineHits(@NotNull ClassData classData) {
+  private static List<LcovCoverageReport.LineHits> convertClassDataToLineHits(@NotNull ClassData classData) {
     int lineCount = classData.getLines().length;
-    List<CoverageReport.LineHits> lineHitsList = ContainerUtil.newArrayListWithCapacity(lineCount);
+    List<LcovCoverageReport.LineHits> lineHitsList = ContainerUtil.newArrayListWithCapacity(lineCount);
     for (int lineInd = 0; lineInd < lineCount; lineInd++) {
       LineData lineData = classData.getLineData(lineInd);
       if (lineData != null) {
-        CoverageReport.LineHits lineHits = new CoverageReport.LineHits(
+        LcovCoverageReport.LineHits lineHits = new LcovCoverageReport.LineHits(
           lineData.getLineNumber(),
           lineData.getHits()
         );
