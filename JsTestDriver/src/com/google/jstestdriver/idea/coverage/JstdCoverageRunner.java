@@ -1,11 +1,11 @@
 package com.google.jstestdriver.idea.coverage;
 
-import com.google.jstestdriver.idea.rt.coverage.CoverageReport;
-import com.google.jstestdriver.idea.rt.coverage.CoverageSerializationUtils;
 import com.intellij.coverage.CoverageEngine;
 import com.intellij.coverage.CoverageRunner;
 import com.intellij.coverage.CoverageSuite;
 import com.intellij.coverage.SimpleCoverageAnnotator;
+import com.intellij.javascript.testFramework.coverage.CoverageSerializationUtils;
+import com.intellij.javascript.testFramework.coverage.LcovCoverageReport;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.rt.coverage.data.ClassData;
 import com.intellij.rt.coverage.data.LineData;
@@ -38,19 +38,19 @@ public class JstdCoverageRunner extends CoverageRunner {
 
   @NotNull
   private static ProjectData readProjectData(@NotNull File dataFile) throws IOException {
-    CoverageReport report = CoverageSerializationUtils.readLCOV(dataFile);
+    LcovCoverageReport report = CoverageSerializationUtils.readLCOV(null, dataFile);
     ProjectData projectData = new ProjectData();
-    for (Map.Entry<String, List<CoverageReport.LineHits>> entry : report.getInfo().entrySet()) {
+    for (Map.Entry<String, List<LcovCoverageReport.LineHits>> entry : report.getInfo().entrySet()) {
       String filePath = SimpleCoverageAnnotator.getFilePath(entry.getKey());
       ClassData classData = projectData.getOrCreateClassData(filePath);
       int max = 0;
-      List<CoverageReport.LineHits> lineHitsList = entry.getValue();
+      List<LcovCoverageReport.LineHits> lineHitsList = entry.getValue();
       if (lineHitsList.size() > 0) {
-        CoverageReport.LineHits lastLineHits = lineHitsList.get(lineHitsList.size() - 1);
+        LcovCoverageReport.LineHits lastLineHits = lineHitsList.get(lineHitsList.size() - 1);
         max = lastLineHits.getLineNumber();
       }
       LineData[] lines = new LineData[max + 1];
-      for (CoverageReport.LineHits lineHits : lineHitsList) {
+      for (LcovCoverageReport.LineHits lineHits : lineHitsList) {
         LineData lineData = new LineData(lineHits.getLineNumber(), null);
         lineData.setHits(lineHits.getHits());
         lines[lineHits.getLineNumber()] = lineData;
