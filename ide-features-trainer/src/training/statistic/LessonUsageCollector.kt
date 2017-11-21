@@ -17,7 +17,7 @@ class LessonUsageCollector : UsagesCollector() {
     val result = HashSet<UsageDescriptor>()
 
     val modules = CourseManager.instance.modules
-    for (module in modules!!) {
+    for (module in modules) {
       for (lesson in module.lessons) {
         lesson.statistic.mapTo(result) {
           UsageDescriptor("module>" + module.name +

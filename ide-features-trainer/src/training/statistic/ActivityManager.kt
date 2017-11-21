@@ -14,10 +14,10 @@ class ActivityManager: PersistentStateComponent<ActivityManager> {
 
   override fun loadState(persistedState: ActivityManager?) {
     if (persistedState == null) return
-    if (persistedState.lastActivityTime == null || persistedState.lastActivityTime == 0L)
-      lastActivityTime = System.currentTimeMillis()
+    lastActivityTime = if (persistedState.lastActivityTime == null || persistedState.lastActivityTime == 0L)
+      System.currentTimeMillis()
     else
-      lastActivityTime = persistedState.lastActivityTime
+      persistedState.lastActivityTime
   }
 
   companion object {
