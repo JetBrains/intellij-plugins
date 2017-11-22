@@ -23,7 +23,7 @@
     }
 }]]></CopyText>
     </MouseBlock>
-    <Try action="EditorDeleteLine" trigger="EditorDeleteLine">Delete current line with <action>EditorDeleteLine</action></Try>
-    <Try action="$Undo" trigger="$Undo">To restore deleted line just press <action>$Undo</action></Try>
+    <Try action="EditorDeleteLine" trigger="EditorDeleteLine">Delete the current line with <action>EditorDeleteLine</action>.</Try>
+    <Try action="$Undo" trigger="$Undo">To restore the deleted line, press <action>$Undo</action>.</Try>
     <Win/>
 </xml>

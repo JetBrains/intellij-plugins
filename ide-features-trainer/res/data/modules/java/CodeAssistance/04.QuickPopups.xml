@@ -20,7 +20,7 @@ class DecimalFormatDemo {
 }]]></CopyText>
 </MouseBlock>
         <MoveCaret position="5:9" />
-        <Try trigger="QuickJavaDoc">Press <action>QuickJavaDoc</action> to see documentation for the symbol at at caret.</Try>
+        <Try trigger="QuickJavaDoc">Press <action>QuickJavaDoc</action> to see documentation for the symbol at the caret.</Try>
         <Try check="training.check.CheckQuickPopupsQuickDoc">Press <action>EditorEscape</action> to close the popup.</Try>
         <Try trigger="QuickImplementations">Press <action>QuickImplementations</action> to see the definition of the symbol at the caret.</Try>
     <Win/>

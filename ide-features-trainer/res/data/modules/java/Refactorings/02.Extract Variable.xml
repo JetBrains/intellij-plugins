@@ -25,7 +25,7 @@
 <CaretBlock>
     <SetSelection start-position="9:9" end-position="9:52" />
     <MoveCaret position="9:44" />
-    <Try triggers="IntroduceVariable;NextTemplateVariable">Press <action>IntroduceVariable</action> to extract variable or field.</Try>
+    <Try triggers="IntroduceVariable;NextTemplateVariable">Press <action>IntroduceVariable</action> to extract a variable or field.</Try>
     <Win/>
 </CaretBlock>
 </MouseBlock>

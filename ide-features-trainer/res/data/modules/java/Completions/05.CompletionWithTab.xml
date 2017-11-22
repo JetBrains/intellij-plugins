@@ -14,6 +14,6 @@ class FrameDemo {
 </MouseBlock>
         <MoveCaret position="9:56" />
         <Try trigger="CodeCompletion">Press <action>CodeCompletion</action> to show completion options.</Try>
-        <Try trigger="EditorChooseLookupItemReplace">Choose <code>DO_NOTHING_ON_CLOSE</code> for example and press <action>EditorTab</action>. It overwrites the word at caret rather than just inserts.</Try>
+        <Try trigger="EditorChooseLookupItemReplace">Choose <code>DO_NOTHING_ON_CLOSE</code>, for example, and press <action>EditorTab</action>. This overwrites the word at the caret rather than simply inserting it.</Try>
     <Win/>
 </xml>

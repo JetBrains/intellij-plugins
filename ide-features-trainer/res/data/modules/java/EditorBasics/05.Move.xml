@@ -17,10 +17,10 @@
     <ShowLineNumber/>
     <CaretBlock>
         <MoveCaret position="6:9"/>
-        <Try trigger="MoveLineDown">You can rearrange lines sequence with one shortcut instead of 3 actions: copy, delete and paste. Pull down the line where cursor stands with <action>MoveLineDown</action></Try>
-        <Try trigger="MoveLineUp">It works in a opposite way also <action>MoveLineUp</action></Try>
+        <Try trigger="MoveLineDown">Rearranging lines usually takes two actions: cut and paste. In this IDE, you can do it with just one: pressing <action>MoveLineDown</action> will pull down the current line.</Try>
+        <Try trigger="MoveLineUp">Similarly, to pull a line up, use <action>MoveLineUp</action>.</Try>
         <MoveCaret position="10:5"/>
-        <Try trigger="MoveStatementUp">Now try to move the whole statement up with <action>MoveStatementUp</action></Try>
+        <Try trigger="MoveStatementUp">Now try moving the whole statement up with <action>MoveStatementUp</action>.</Try>
     </CaretBlock>
     </MouseBlock>
     <Win/>

@@ -24,13 +24,13 @@ class Refactorings {
 </MouseBlock>
         <MoveCaret position="9:74" />
         <SetSelection start-position="9:74" end-position="9:77" />
-        <Try check="training.check.CheckExtractConstant" trigger="IntroduceConstant">Press <action>IntroduceConstant</action> to extract the selected expression to a constant</Try>
+        <Try check="training.check.CheckExtractConstant" trigger="IntroduceConstant">Press <action>IntroduceConstant</action> to extract the selected expression into a constant.</Try>
         <SetSelection start-string="BufferedReader reader" end-string="lines.size()]);" />
-        <Try trigger="ExtractMethod">Press <action>ExtractMethod</action> to extract the selected code block into a method</Try>
+        <Try trigger="ExtractMethod">Press <action>ExtractMethod</action> to extract the selected code block into a method.</Try>
         <SetSelection start-string="new FileReader" end-string="new FileReader"/>
         <Action action="EditorSelectWord"/>
-        <Try check="training.check.CheckRefactoringBasics" trigger="IntroduceParameter">Press <action>IntroduceParameter</action>to extract the selected expression to a parameter</Try>
+        <Try check="training.check.CheckRefactoringBasics" trigger="IntroduceParameter">Press <action>IntroduceParameter</action> to extract the selected expression into a parameter.</Try>
         <MoveCaret string="new FileReader("/>
-        <Try triggers="IntroduceVariable;NextTemplateVariable">Press <action>IntroduceVariable</action> and select <code>new BufferedReader(...)</code> from the suggested list to extract it to a variable</Try>
+        <Try triggers="IntroduceVariable;NextTemplateVariable">Press <action>IntroduceVariable</action> and select <code>new FileReader(...)</code> from the list of suggestions to extract it into a variable.</Try>
     <Win/>
 </xml>

@@ -23,9 +23,9 @@ class Rename{
         void touchByStylus(int x, int y, float strength);
     }
 }]]></CopyText>
-        <Try trigger="RenameElement">To rename anything put the caret at some occurence and use Rename refactoring. Put the caret to the field <code>deviceName</code> in any place of code and start renaming by pressing <action>RenameElement</action></Try>
-        <Try trigger="NextTemplateVariable">Write another name for this field instead selected. For example type <code>tabletName</code> and save the result by taping <action>EditorEnter</action></Try>
-        <Try trigger="RenameElement"><ide/> automatically recognizes getter for renaming fields and also recommends to refactor it. Put the caret to the field <code>stylus</code> and activate renaming with <action>RenameElement</action></Try>
-        <Try trigger="NextTemplateVariable">Replace <code>stylus</code> with <code>pencil</code>, for example, and complete refactoring with <action>EditorEnter</action></Try>
+        <Try trigger="RenameElement">You can rename anything by placing the caret on a symbol and using the Rename refactoring. Place the caret on the <code>deviceName</code> field anywhere in the code, and then press <action>RenameElement</action>.</Try>
+        <Try trigger="NextTemplateVariable">Enter a new name for this field. For example, type <code>tabletName</code>, and then save the result by pressing <action>EditorEnter</action>.</Try>
+        <Try trigger="RenameElement"><ide/> automatically detects the matching getter method when you rename a field and recommends refactoring it. Place the caret on the <code>stylus</code> field and start renaming it with <action>RenameElement</action>.</Try>
+        <Try trigger="NextTemplateVariable">Replace <code>stylus</code> with <code>pencil</code>, for example, and then complete the refactoring by pressing <action>EditorEnter</action>.</Try>
     <Win/>
 </xml>
