@@ -1,7 +1,6 @@
 package org.intellij.plugins.markdown.ui.preview;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.intellij.markdown.IElementType;
@@ -42,11 +41,7 @@ public class MarkdownUtil {
   }
 
   @NotNull
-  public static String generateMarkdownHtml(@NotNull Project project,
-                                            @NotNull VirtualFile file,
-                                            @NotNull String text,
-                                            boolean useCache) {
-
+  public static String generateMarkdownHtml(@NotNull VirtualFile file, @NotNull String text) {
     final VirtualFile parent = file.getParent();
     final URI baseUri = parent != null ? new File(parent.getPath()).toURI() : null;
 
@@ -59,7 +54,7 @@ public class MarkdownUtil {
 
     String html = new HtmlGenerator(text, parsedTree, map, true).generateHtml();
 
-    if (!project.isDisposed() && useCache) MarkdownCodeFencePluginCache.getInstance(project).registerCacheProvider(codeFencePluginCache);
+    MarkdownCodeFencePluginCache.getInstance().registerCacheProvider(codeFencePluginCache);
 
     return html;
   }

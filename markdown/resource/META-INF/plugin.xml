@@ -64,6 +64,7 @@
                              instance="org.intellij.plugins.markdown.settings.MarkdownSettingsConfigurable">
     </applicationConfigurable>
     <applicationService serviceImplementation="org.intellij.plugins.markdown.settings.MarkdownApplicationSettings"/>
+    <applicationService serviceImplementation="org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCache"/>
     <editorNotificationProvider implementation="org.intellij.plugins.markdown.ui.preview.javafx.JavaFxCouldBeEnabledNotificationProvider"/>
     <lang.psiStructureViewFactory language="Markdown"
                                   implementationClass="org.intellij.plugins.markdown.structureView.MarkdownStructureViewFactory"/>
@@ -149,10 +150,4 @@
       </action>
     </group>
   </actions>
-  <project-components>
-    <component>
-      <implementation-class>org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCache</implementation-class>
-      <interface-class>org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCache</interface-class>
-    </component>
-  </project-components>
 </idea-plugin>

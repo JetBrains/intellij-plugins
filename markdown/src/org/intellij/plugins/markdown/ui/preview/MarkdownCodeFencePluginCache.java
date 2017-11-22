@@ -1,41 +1,43 @@
 package org.intellij.plugins.markdown.ui.preview;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.components.ProjectComponent;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.vfs.*;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileEvent;
+import com.intellij.openapi.vfs.VirtualFileListener;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.Alarm;
 import com.intellij.util.containers.ContainerUtil;
 import org.intellij.plugins.markdown.extensions.MarkdownCodeFencePluginGeneratingProvider;
 import org.intellij.plugins.markdown.lang.MarkdownFileType;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class MarkdownCodeFencePluginCache implements ProjectComponent {
+public class MarkdownCodeFencePluginCache implements Disposable {
   public static final String MARKDOWN_FILE_PATH_KEY = "markdown-md5-file-path";
 
-  @NotNull private static final Logger LOG = Logger.getInstance(MarkdownCodeFencePluginCache.class);
-  @NotNull private Alarm myAlarm = new Alarm();
+  @NotNull private Alarm myAlarm = new Alarm(this);
 
   @NotNull private final Collection<MarkdownCodeFencePluginCacheProvider> myCodeFencePluginCaches = ContainerUtil.newConcurrentSet();
-  @NotNull private final Collection<VirtualFile> myAdditionalCacheToDelete = ContainerUtil.newConcurrentSet();
-  @NotNull private Collection<VirtualFile> myCodeFencePluginSystemCache = ContainerUtil.emptyList();
+  @NotNull private final Collection<File> myAdditionalCacheToDelete = ContainerUtil.newConcurrentSet();
+  @NotNull private static final Collection<File> CODE_FENCE_PLUGIN_SYSTEM_PATHS = getPluginSystemPaths();
 
-  public static MarkdownCodeFencePluginCache getInstance(@NotNull Project project) {
-    return project.getComponent(MarkdownCodeFencePluginCache.class);
+  public static MarkdownCodeFencePluginCache getInstance() {
+    return ServiceManager.getService(MarkdownCodeFencePluginCache.class);
   }
 
-  public MarkdownCodeFencePluginCache(@NotNull Project project) {
-    initCodeFencePluginCache(project);
+  public MarkdownCodeFencePluginCache() {
+    scheduleClearCache();
 
     VirtualFileManager.getInstance().addVirtualFileListener(new VirtualFileListener() {
       @Override
@@ -47,43 +49,29 @@ public class MarkdownCodeFencePluginCache implements ProjectComponent {
     });
   }
 
-  private static void initCodeFencePluginCache(@NotNull Project project) {
-    StartupManager.getInstance(project).registerStartupActivity(
-      () -> ApplicationManager.getApplication().invokeLater(
-        () -> WriteAction.run(
-          () -> Arrays.stream(MarkdownCodeFencePluginGeneratingProvider.Companion.getEP_NAME().getExtensions())
-            .forEach(provider -> createDirectories(provider)))));
+  private static List<File> getPluginSystemPaths() {
+    return Arrays.stream(MarkdownCodeFencePluginGeneratingProvider.Companion.getEP_NAME().getExtensions())
+      .map(provider -> new File(provider.getCacheRootPath()))
+      .collect(Collectors.toList());
   }
 
-  private static void createDirectories(@NotNull MarkdownCodeFencePluginGeneratingProvider provider) {
-    try {
-      VfsUtil.createDirectories(provider.getCacheRootPath());
-    }
-    catch (IOException e) {
-      LOG.warn("Cannot init code fence plugin cache", e);
-    }
-  }
-
-  public Collection<VirtualFile> collectFilesToRemove() {
+  public Collection<File> collectFilesToRemove() {
     return myCodeFencePluginCaches.stream()
       .flatMap(cacheProvider -> processSourceFileToDelete(cacheProvider.getFile(), cacheProvider.getAliveCachedFiles()).stream())
       .collect(Collectors.toList());
   }
 
-  private Collection<VirtualFile> processSourceFileToDelete(@NotNull VirtualFile sourceFile,
-                                                            @NotNull Collection<VirtualFile> aliveCachedFiles) {
-    Collection<VirtualFile> filesToDelete = ContainerUtil.newHashSet();
-    for (VirtualFile codeFencePluginSystemPath : myCodeFencePluginSystemCache) {
-      for (VirtualFile sourceFileCacheDirectory : codeFencePluginSystemPath.getChildren()) {
+  private static Collection<File> processSourceFileToDelete(@NotNull VirtualFile sourceFile, @NotNull Collection<File> aliveCachedFiles) {
+    Collection<File> filesToDelete = ContainerUtil.newHashSet();
+    for (File codeFencePluginSystemPath : CODE_FENCE_PLUGIN_SYSTEM_PATHS) {
+      for (File sourceFileCacheDirectory : getChildren(codeFencePluginSystemPath)) {
         if (isCachedSourceFile(sourceFileCacheDirectory, sourceFile) && aliveCachedFiles.isEmpty()) {
           filesToDelete.add(sourceFileCacheDirectory);
           continue;
         }
 
-        for (VirtualFile imgFile : sourceFileCacheDirectory.getChildren()) {
-          if (!isCachedSourceFile(sourceFileCacheDirectory, sourceFile) || aliveCachedFiles.contains(imgFile)) {
-            continue;
-          }
+        for (File imgFile : getChildren(sourceFileCacheDirectory)) {
+          if (!isCachedSourceFile(sourceFileCacheDirectory, sourceFile) || aliveCachedFiles.contains(imgFile)) continue;
 
           filesToDelete.add(imgFile);
         }
@@ -93,7 +81,13 @@ public class MarkdownCodeFencePluginCache implements ProjectComponent {
     return filesToDelete;
   }
 
-  boolean isCachedSourceFile(@NotNull VirtualFile sourceFileDir, @NotNull VirtualFile sourceFile) {
+  @NotNull
+  private static File[] getChildren(@NotNull File directory) {
+    File[] files = directory.listFiles();
+    return files != null ? files : new File[0];
+  }
+
+  private static boolean isCachedSourceFile(@NotNull File sourceFileDir, @NotNull VirtualFile sourceFile) {
     return sourceFileDir.getName().equals(MarkdownUtil.md5(sourceFile.getPath(), MARKDOWN_FILE_PATH_KEY));
   }
 
@@ -101,22 +95,10 @@ public class MarkdownCodeFencePluginCache implements ProjectComponent {
     myCodeFencePluginCaches.add(pluginCacheProvider);
   }
 
-  @Override
-  public void projectOpened() {
-    scheduleClearCache();
-  }
-
-  void scheduleClearCache() {
+  private void scheduleClearCache() {
     myAlarm.addRequest(() -> {
-      Stream.concat(myAdditionalCacheToDelete.stream(), collectFilesToRemove().stream())
-        .forEach(file -> ApplicationManager.getApplication().invokeLater(() -> WriteAction.run(() -> {
-          try {
-            file.delete(this);
-          }
-          catch (IOException e) {
-            LOG.error("Cannot delete file: " + file.getPath(), e);
-          }
-        })));
+      Collection<File> filesToDelete = ContainerUtil.union(myAdditionalCacheToDelete, collectFilesToRemove());
+      ApplicationManager.getApplication().invokeLater(() -> WriteAction.run(() -> FileUtil.asyncDelete(filesToDelete)));
 
       clear();
 
@@ -130,7 +112,7 @@ public class MarkdownCodeFencePluginCache implements ProjectComponent {
   }
 
   @Override
-  public void projectClosed() {
-    myAlarm.cancelAllRequests();
+  public void dispose() {
+    Disposer.dispose(myAlarm);
   }
 }

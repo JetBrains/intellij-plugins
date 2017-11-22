@@ -12,7 +12,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.NotNullLazyValue;
@@ -73,8 +72,6 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   @Nullable
   private MarkdownHtmlPanelProvider.ProviderInfo myLastPanelProviderInfo = null;
   @NotNull
-  private final Project myProject;
-  @NotNull
   private final VirtualFile myFile;
   @Nullable
   private final Document myDocument;
@@ -93,8 +90,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   @NotNull
   private String myLastRenderedHtml = "";
 
-  public MarkdownPreviewFileEditor(@NotNull Project project, @NotNull VirtualFile file) {
-    myProject = project;
+  public MarkdownPreviewFileEditor(@NotNull VirtualFile file) {
     myFile = file;
     myDocument = FileDocumentManager.getInstance().getDocument(myFile);
 
@@ -221,11 +217,11 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
    * Is always run from pooled thread
    */
   private void updateHtml(final boolean preserveScrollOffset) {
-    if (!myFile.isValid() || myDocument == null || Disposer.isDisposed(this) || myProject.isDisposed()) {
+    if (!myFile.isValid() || myDocument == null || Disposer.isDisposed(this)) {
       return;
     }
 
-    final String html = MarkdownUtil.generateMarkdownHtml(myProject, myFile, myDocument.getText(), true);
+    final String html = MarkdownUtil.generateMarkdownHtml(myFile, myDocument.getText());
 
     // EA-75860: The lines to the top may be processed slowly; Since we're in pooled thread, we can be disposed already.
     if (!myFile.isValid() || Disposer.isDisposed(this)) {

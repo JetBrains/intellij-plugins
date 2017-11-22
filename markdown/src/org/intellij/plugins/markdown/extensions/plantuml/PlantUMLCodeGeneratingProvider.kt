@@ -1,7 +1,6 @@
 package org.intellij.plugins.markdown.extensions.plantuml
 
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.LocalFileSystem
 import net.sourceforge.plantuml.FileFormat
 import net.sourceforge.plantuml.FileFormatOption
 import net.sourceforge.plantuml.SourceStringReader
@@ -25,24 +24,24 @@ internal class PlantUMLPluginGeneratingProvider(private var pluginCache: Markdow
                               "${MarkdownUtil.md5(pluginCache?.file?.path, MARKDOWN_FILE_PATH_KEY)}${File.separator}" +
                               "${MarkdownUtil.md5(text, "plantUML-diagram")}.png").absolutePath
 
-    pluginCache?.addAliveCachedFile(LocalFileSystem.getInstance().refreshAndFindFileByPath(cachedDiagram(newDiagramPath, text))!!)
+    cacheDiagram(newDiagramPath, text)
+    pluginCache?.addAliveCachedFile(File(newDiagramPath))
 
-    return "<img src=\"file:${cachedDiagram(newDiagramPath, text)}\"/>"
+    return "<img src=\"file:${newDiagramPath}\"/>"
   }
 
-  private fun cachedDiagram(newDiagramPath: String, text: String) =
-    if (FileUtil.exists(newDiagramPath)) newDiagramPath else generateDiagram(text, newDiagramPath)
+  private fun cacheDiagram(newDiagramPath: String, text: String) {
+    if (!FileUtil.exists(newDiagramPath)) generateDiagram(text, newDiagramPath)
+  }
 
   @Throws(IOException::class)
-  private fun generateDiagram(text: CharSequence, diagramPath: String): String {
+  private fun generateDiagram(text: CharSequence, diagramPath: String) {
     var innerText: String = text.toString().trim()
     if (!innerText.startsWith("@startuml")) innerText = "@startuml\n" + innerText
     if (!innerText.endsWith("@enduml")) innerText += "\n@enduml"
 
     FileUtil.createParentDirs(File(diagramPath))
     storeDiagram(innerText, diagramPath)
-
-    return diagramPath
   }
 
   override fun isApplicable(language: String?): Boolean = language == "puml" || language == "plantuml"

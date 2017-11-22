@@ -4,19 +4,20 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Objects;
 
 public class MarkdownCodeFencePluginCacheProvider {
   @NotNull private final VirtualFile myFile;
-  @NotNull private final Collection<VirtualFile> myAliveCachedFiles = ContainerUtil.newHashSet();
+  @NotNull private final Collection<File> myAliveCachedFiles = ContainerUtil.newHashSet();
 
   public MarkdownCodeFencePluginCacheProvider(@NotNull VirtualFile file) {
     myFile = file;
   }
 
   @NotNull
-  public Collection<VirtualFile> getAliveCachedFiles() {
+  public Collection<File> getAliveCachedFiles() {
     return myAliveCachedFiles;
   }
 
@@ -25,7 +26,7 @@ public class MarkdownCodeFencePluginCacheProvider {
     return myFile;
   }
 
-  public void addAliveCachedFile(@NotNull VirtualFile file) {
+  public void addAliveCachedFile(@NotNull File file) {
     myAliveCachedFiles.add(file);
   }
 
