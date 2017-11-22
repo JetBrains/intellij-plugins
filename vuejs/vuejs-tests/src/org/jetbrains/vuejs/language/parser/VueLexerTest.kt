@@ -1,4 +1,4 @@
-package org.jetbrains.vuejs.language
+package org.jetbrains.vuejs.language.parser
 
 import com.intellij.javascript.HtmlInlineJSScriptTokenTypesProvider
 import com.intellij.lang.LanguageHtmlInlineScriptTokenTypesProvider
@@ -27,6 +27,9 @@ import org.jetbrains.plugins.sass.SASSParserDefinition
 import org.jetbrains.plugins.sass.SassTokenTypesProvider
 import org.jetbrains.plugins.sass.highlighting.SASSSyntaxHighlighterFactory
 import java.util.*
+import kotlin.collections.forEach
+import kotlin.collections.plus
+import kotlin.jvm.java
 
 @TestDataPath("\$CONTENT_ROOT/testData/lexer")
 open class VueLexerTest : LexerTestCase() {
@@ -108,8 +111,8 @@ open class VueLexerTest : LexerTestCase() {
   fun testHtmlLangTemplate() = doFileTest("vue")
   fun testVFor() = doFileTest("vue")
 
-  override fun createLexer(): Lexer = VueLexer(JSLanguageLevel.ES6)
-  override fun getDirPath() = "/contrib/vuejs/testData/lexer"
+  override fun createLexer(): Lexer = org.jetbrains.vuejs.language.VueLexer(JSLanguageLevel.ES6)
+  override fun getDirPath() = "/contrib/vuejs/vuejs-tests/testData/lexer"
 
   override fun doTest(text: String?) {
     super.doTest(text)

@@ -5,6 +5,7 @@ import com.intellij.lang.html.HTMLLanguage
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.VueLanguage
+import kotlin.text.replace
 
 /**
  * @author Irina.Chernushina on 7/21/2017.

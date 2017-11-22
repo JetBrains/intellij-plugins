@@ -1,4 +1,4 @@
-package org.jetbrains.vuejs.language
+package org.jetbrains.vuejs.language.parser
 
 import com.intellij.lang.javascript.JSSyntaxHighlighterFactory
 import com.intellij.lang.javascript.JavascriptLanguage
@@ -18,6 +18,8 @@ import com.intellij.psi.codeStyle.*
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2
 import com.intellij.testFramework.PlatformTestUtil
 import org.jetbrains.vuejs.VueFileType
+import kotlin.collections.plus
+import kotlin.jvm.java
 
 class VueHighlightingLexerTest : VueLexerTest() {
   override fun setUp() {
@@ -76,6 +78,6 @@ class VueHighlightingLexerTest : VueLexerTest() {
   fun testScriptES6() = doFileTest("vue")
   fun testTemplateHtml() = doFileTest("vue")
 
-  override fun createLexer() = VueHighlightingLexer(JSLanguageLevel.ES6)
-  override fun getDirPath() = "/contrib/vuejs/testData/highlightingLexer"
+  override fun createLexer() = org.jetbrains.vuejs.language.VueHighlightingLexer(JSLanguageLevel.ES6)
+  override fun getDirPath() = "/contrib/vuejs/vuejs-tests/testData/highlightingLexer"
 }

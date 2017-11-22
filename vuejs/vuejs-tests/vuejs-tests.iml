@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="true" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="javascript-openapi" scope="TEST" />
+    <orderEntry type="module" module-name="vuejs" scope="TEST" />
+    <orderEntry type="module" module-name="javascript-psi-impl" scope="TEST" />
+    <orderEntry type="module" module-name="testFramework-JavaScript" scope="TEST" />
+    <orderEntry type="module" module-name="JavaScriptLanguage" scope="TEST" />
+    <orderEntry type="module" module-name="css-psi-impl" scope="TEST" />
+    <orderEntry type="module" module-name="copyright" scope="TEST" />
+    <orderEntry type="module" module-name="JavaScript-tests" scope="TEST" />
+    <orderEntry type="module" module-name="sass" scope="TEST" />
+    <orderEntry type="module" module-name="Jade" scope="TEST" />
+  </component>
+</module>
