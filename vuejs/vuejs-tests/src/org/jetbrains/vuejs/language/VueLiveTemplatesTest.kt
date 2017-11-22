@@ -8,6 +8,7 @@ import com.intellij.codeInsight.template.impl.actions.ListTemplatesAction
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.liveTemplate.*
+import kotlin.collections.forEach
 
 /**
  * @author Irina.Chernushina on 10/26/2017.

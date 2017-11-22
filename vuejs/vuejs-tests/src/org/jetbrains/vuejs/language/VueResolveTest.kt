@@ -1,24 +1,24 @@
 package org.jetbrains.vuejs.language
 
-import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.openapi.application.PathManager
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
-import java.io.File
+import kotlin.collections.forEach
+import kotlin.jvm.java
+import kotlin.text.trimIndent
 
 /**
  * @author Irina.Chernushina on 7/28/2017.
  */
 class VueResolveTest : LightPlatformCodeInsightFixtureTestCase() {
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/testData/resolve/"
+  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/resolve/"
 
   fun testResolveInjectionToPropInObject() {
     myFixture.configureByText("ResolveToPropInObject.vue", """

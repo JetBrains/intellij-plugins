@@ -9,7 +9,7 @@ import com.intellij.util.Consumer
 
 class VueOptimizeImportTest : JSOptimizeImportTestBase() {
   override fun getDefaultExtension(): String = "vue"
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/testData/optimize_import/"
+  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/optimize_import/"
 
 
   fun testVueSimpleOptimize() {
