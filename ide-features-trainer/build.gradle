@@ -43,7 +43,7 @@ intellij {
 //        username repoUser
 //        password repoPassword
 //    }
-//    intellij.updateSinceUntilBuild = false
+    intellij.updateSinceUntilBuild = false
 }
 
 sourceSets {
