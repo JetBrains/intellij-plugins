@@ -27,7 +27,7 @@ sourceSets {
   }
   test {
     java {
-      srcDirs 'test'
+      srcDirs 'vuejs-tests/src'
     }
   }
 }
@@ -40,7 +40,7 @@ intellij {
   pluginName 'Vue.js'
   downloadSources false
   updateSinceUntilBuild false
-  plugins = ['JavaScriptLanguage', 'CSS', 'JavaScriptDebugger']
+  plugins = ['JavaScriptLanguage', 'CSS', 'JavaScriptDebugger', 'Copyright']
 }
 
 repositories {

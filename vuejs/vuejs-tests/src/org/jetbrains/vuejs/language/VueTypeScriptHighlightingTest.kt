@@ -11,6 +11,10 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.testFramework.PlatformTestCase
+import kotlin.collections.forEach
+import kotlin.text.endsWith
+import kotlin.text.substringAfterLast
+import kotlin.text.substringBeforeLast
 
 /**
  * @author Irina.Chernushina on 10/24/2017.
@@ -287,7 +291,6 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
                                 "ImportOverloadFunction",
                                 "ImportReferencingImport",
                                 "ImportSOE",
-                                "ImportSOE2",
                                 "ImportUsingExternalModule",
                                 "ImportUsingInternalModule",
                                 "ImportVar",
@@ -684,7 +687,7 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
     if (filePath.endsWith(".d.ts")) return original
 
     val text = VfsUtil.loadText(original)
-    val withoutExtension = filePath.substringBeforeLast(".", filePath)
+    val withoutExtension = filePath.substringBeforeLast("", filePath)
     val ioFile = createTempFile(withoutExtension.substringAfterLast("/", withoutExtension) + ".vue",
                                 "<script lang=\"ts\">\n" + text + "\n</script>")
     PlatformTestCase.myFilesToDelete.add(ioFile)

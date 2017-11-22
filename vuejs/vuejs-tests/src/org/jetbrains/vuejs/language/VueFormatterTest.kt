@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.typescript.TypeScriptFormatterTest
 import com.intellij.util.Consumer
 
 class VueFormatterTest : JavaScriptFormatterTestBase() {
-
   fun testTypeScriptTag() {
     TypeScriptFormatterTest.setTempSettings(getProject(), Consumer { settings ->
       settings.FORCE_QUOTE_STYlE = true

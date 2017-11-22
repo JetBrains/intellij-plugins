@@ -14,9 +14,14 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
+import kotlin.collections.firstOrNull
+import kotlin.collections.forEach
+import kotlin.collections.map
+import kotlin.jvm.java
+import kotlin.text.substringBefore
 
 class VueCompletionTest : LightPlatformCodeInsightFixtureTestCase() {
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/testData/types/"
+  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/types/"
 
   fun testCompleteCssClasses() {
     myFixture.configureByText("a.css", ".externalClass {}")

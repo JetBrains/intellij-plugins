@@ -14,6 +14,7 @@ import com.intellij.util.ThrowableRunnable
 import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
 import junit.framework.TestCase
 import org.jetbrains.vuejs.VueFileType
+import kotlin.collections.filter
 
 /**
  * @author Irina.Chernushina on 7/19/2017.
