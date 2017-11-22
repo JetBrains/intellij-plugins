@@ -20,12 +20,14 @@ import com.intellij.formatting.FormattingModelBuilder;
 import com.intellij.formatting.FormattingModelProvider;
 import com.intellij.formatting.SpacingBuilder;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.java.JavaLanguage;
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.psi.OgnlTokenGroups;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.lang.ognl.OgnlTypes.*;
@@ -55,29 +57,30 @@ public class OgnlFormattingModelBuilder implements FormattingModelBuilder {
   }
 
   private static SpacingBuilder createSpacingBuilder(final CodeStyleSettings settings) {
+    CommonCodeStyleSettings javaSettings = settings.getCommonSettings(JavaLanguage.INSTANCE);
     return new SpacingBuilder(settings, OgnlLanguage.INSTANCE)
-      .after(COMMA).spaceIf(settings.SPACE_AFTER_COMMA)
-      .before(COMMA).spaceIf(settings.SPACE_BEFORE_COMMA)
+      .after(COMMA).spaceIf(javaSettings.SPACE_AFTER_COMMA)
+      .before(COMMA).spaceIf(javaSettings.SPACE_BEFORE_COMMA)
 
-      .after(QUESTION).spaceIf(settings.SPACE_AFTER_QUEST)
-      .before(QUESTION).spaceIf(settings.SPACE_BEFORE_QUEST)
+      .after(QUESTION).spaceIf(javaSettings.SPACE_AFTER_QUEST)
+      .before(QUESTION).spaceIf(javaSettings.SPACE_BEFORE_QUEST)
 
-      .after(COLON).spaceIf(settings.SPACE_AFTER_COLON)
-      .before(COLON).spaceIf(settings.SPACE_BEFORE_COLON)
+      .after(COLON).spaceIf(javaSettings.SPACE_AFTER_COLON)
+      .before(COLON).spaceIf(javaSettings.SPACE_BEFORE_COLON)
 
-      .withinPair(LPARENTH, RPARENTH).spaceIf(settings.SPACE_WITHIN_PARENTHESES)
-      .withinPair(LBRACE, RBRACE).spaceIf(settings.SPACE_WITHIN_BRACES)
-      .withinPair(LBRACKET, RBRACKET).spaceIf(settings.SPACE_WITHIN_BRACKETS)
+      .withinPair(LPARENTH, RPARENTH).spaceIf(javaSettings.SPACE_WITHIN_PARENTHESES)
+      .withinPair(LBRACE, RBRACE).spaceIf(javaSettings.SPACE_WITHIN_BRACES)
+      .withinPair(LBRACKET, RBRACKET).spaceIf(javaSettings.SPACE_WITHIN_BRACKETS)
 
-      .aroundInside(OgnlTokenGroups.ADDITION_OPS, BINARY_EXPRESSION).spaceIf(settings.SPACE_AROUND_ADDITIVE_OPERATORS)
-      .aroundInside(OgnlTokenGroups.MULTIPLICATION_OPS, BINARY_EXPRESSION).spaceIf(settings.SPACE_AROUND_MULTIPLICATIVE_OPERATORS)
+      .aroundInside(OgnlTokenGroups.ADDITION_OPS, BINARY_EXPRESSION).spaceIf(javaSettings.SPACE_AROUND_ADDITIVE_OPERATORS)
+      .aroundInside(OgnlTokenGroups.MULTIPLICATION_OPS, BINARY_EXPRESSION).spaceIf(javaSettings.SPACE_AROUND_MULTIPLICATIVE_OPERATORS)
 
-      .around(OgnlTokenGroups.UNARY_OPS).spaceIf(settings.SPACE_AROUND_UNARY_OPERATOR)
-      .around(OgnlTokenGroups.EQUALITY_OPS).spaceIf(settings.SPACE_AROUND_EQUALITY_OPERATORS)
-      .around(OgnlTokenGroups.RELATIONAL_OPS).spaceIf(settings.SPACE_AROUND_RELATIONAL_OPERATORS)
+      .around(OgnlTokenGroups.UNARY_OPS).spaceIf(javaSettings.SPACE_AROUND_UNARY_OPERATOR)
+      .around(OgnlTokenGroups.EQUALITY_OPS).spaceIf(javaSettings.SPACE_AROUND_EQUALITY_OPERATORS)
+      .around(OgnlTokenGroups.RELATIONAL_OPS).spaceIf(javaSettings.SPACE_AROUND_RELATIONAL_OPERATORS)
 
-      .around(OgnlTokenGroups.LOGICAL_OPS).spaceIf(settings.SPACE_AROUND_LOGICAL_OPERATORS)
-      .around(OgnlTokenGroups.SHIFT_OPS).spaceIf(settings.SPACE_AROUND_SHIFT_OPERATORS)
-      .around(OgnlTokenGroups.BITWISE_OPS).spaceIf(settings.SPACE_AROUND_BITWISE_OPERATORS);
+      .around(OgnlTokenGroups.LOGICAL_OPS).spaceIf(javaSettings.SPACE_AROUND_LOGICAL_OPERATORS)
+      .around(OgnlTokenGroups.SHIFT_OPS).spaceIf(javaSettings.SPACE_AROUND_SHIFT_OPERATORS)
+      .around(OgnlTokenGroups.BITWISE_OPS).spaceIf(javaSettings.SPACE_AROUND_BITWISE_OPERATORS);
   }
 }
