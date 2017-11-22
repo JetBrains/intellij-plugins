@@ -7,7 +7,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataKey
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
@@ -111,13 +110,6 @@ class OpenLessonAction : AnAction() {
       UiManager.setLessonView()
       lesson.onStart()
 
-
-      //Dispose balloon while scratch file is closing. InfoPanel still exists.
-      project.messageBus.connect(project).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
-        override fun fileClosed(source: FileEditorManager, file: VirtualFile) {
-          lesson.close()
-        }
-      })
 
       //to start any lesson we need to do 4 steps:
       //1. open editor or find editor
