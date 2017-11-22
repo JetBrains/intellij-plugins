@@ -7,30 +7,11 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
+import com.intellij.util.xmlb.annotations.Transient
 import training.learn.lesson.Lesson
 
 @State(name = "StatisticBase", storages = arrayOf(Storage(value = "ide-features-trainer.xml")))
-class StatisticBase : PersistentStateComponent<StatisticBase>, UsagesCollector() {
-
-  override fun getGroupId(): GroupDescriptor {
-    return GroupDescriptor.create("plugin.IdeFeaturesTrainer")
-  }
-
-  /**
-   * returns a set of lesson states in a next format:
-   *    - for a started lesson: UsageDescriptor(${lesson.id}#STARTED, 0)
-   *    - for a passed lesson UsageDescriptor(${lesson.id}#PASSED, delta_in_seconds )
-   */
-  override fun getUsages(): MutableSet<UsageDescriptor> {
-    return sessionLessonId2State
-        .map {
-          val (lessonId, statisticData) = it
-          val key = "$lessonId#${statisticData.state}"
-          val count: Int = if (statisticData.state == StatisticState.STARTED) 0 else (statisticData.timestamp!! / 1000).toInt()
-          UsageDescriptor(key, count)
-        }
-        .toMutableSet()
-  }
+class StatisticBase : PersistentStateComponent<StatisticBase> {
 
   override fun getState(): StatisticBase = this
 
@@ -41,7 +22,8 @@ class StatisticBase : PersistentStateComponent<StatisticBase>, UsagesCollector()
 
   var persistedLessonId2State: LinkedHashMap<String, StatisticData> = LinkedHashMap()
   //non persisted history of lessons states
-  private val sessionLessonId2State: ArrayList<Pair<String, StatisticData>> = ArrayList()
+  @Transient
+  val sessionLessonId2State: ArrayList<Pair<String, StatisticData>> = ArrayList()
 
   companion object {
     private var cachedService: StatisticBase? = null
@@ -78,5 +60,28 @@ class StatisticBase : PersistentStateComponent<StatisticBase>, UsagesCollector()
       persistedLessonId2State.put(lesson.id, statisticData)
       sessionLessonId2State.add(Pair(lesson.id, statisticData))
     }
+  }
+}
+
+class StatisticCollector: UsagesCollector() {
+
+  override fun getGroupId(): GroupDescriptor {
+    return GroupDescriptor.create("plugin.IdeFeaturesTrainer")
+  }
+
+  /**
+   * returns a set of lesson states in a next format:
+   *    - for a started lesson: UsageDescriptor(${lesson.id}#STARTED, 1)
+   *    - for a passed lesson UsageDescriptor(${lesson.id}#PASSED, delta_in_seconds )
+   */
+  override fun getUsages(): MutableSet<UsageDescriptor> {
+    return StatisticBase.instance.sessionLessonId2State
+        .map {
+          val (lessonId, statisticData) = it
+          val key = "$lessonId#${statisticData.state}"
+          val count: Int = if (statisticData.state == StatisticBase.StatisticState.STARTED) 1 else (statisticData.timestamp!! / 1000).toInt()
+          UsageDescriptor(key, count)
+        }
+        .toMutableSet()
   }
 }
