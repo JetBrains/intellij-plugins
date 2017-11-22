@@ -25,13 +25,13 @@ class FoldingDemo {
 }]]></CopyText>
     <CaretBlock>
         <MoveCaret position="12:27" />
-        <Try trigger="CollapseRegion">We start learning the folding basics in <link>Collapse</link> lesson. Let's look to other folding options. Select any part of code and run folding by pressing <action>CollapseRegion</action></Try>
+        <Try trigger="CollapseRegion">We first learned the basics of folding in the <link>Collapse</link> lesson. Now let's look at some other folding options. Select any part of code and fold it by pressing <action>CollapseRegion</action>.</Try>
     </CaretBlock>
 </MouseBlock>
-        <Try trigger="ExpandRegion">Fine! <ide /> collapses <code>new Runnable()</code> to a lambda function. To expand this structure use <action>ExpandRegion</action></Try>
+        <Try trigger="ExpandRegion">Excellent! <ide /> collapses <code>new Runnable()</code> to a lambda function. Use <action>ExpandRegion</action> to expand this structure.</Try>
         <SetSelection start-position="7:9" end-position="8:24" />
         <MoveCaret position="8:24" />
-        <Try trigger="CollapseSelection"><ide /> allows you to fold any sequence of statements or declarations. Try to fold selected region with <action>CollapseSelection</action></Try>
-        <Try trigger="ExpandRegion">And <action>ExpandRegion</action> in a back way.</Try>
+        <Try trigger="CollapseSelection"><ide /> allows you to fold any sequence of statements or declarations. Try folding the selected region with <action>CollapseSelection</action>.</Try>
+        <Try trigger="ExpandRegion">Now hit <action>ExpandRegion</action> to go the other way.</Try>
     <Win/>
 </xml>

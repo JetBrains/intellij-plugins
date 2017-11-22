@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module name="Editor Basics" lessonsPath="EditorBasics/" version="0.3" id="basics" fileType="SCRATCH"  description="Learn how to select, comment, delete, duplicate and move lines. And also how to move and collapse blocks of code">
+<module name="Editor Basics" lessonsPath="EditorBasics/" version="0.3" id="basics" fileType="SCRATCH"  description="Learn how to select, comment, delete, duplicate, and move lines. Learn how to move and collapse blocks of code.">
   <lesson filename="02.Comment.xml" lang="GO"/>
   <!--<lesson filename="ObjC/01.Select.xml" lang="OCLanguage"/> -->
 </module>
