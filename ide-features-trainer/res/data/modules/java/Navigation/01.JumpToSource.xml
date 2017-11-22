@@ -36,10 +36,10 @@ class JumpToSourceDemo {
 }]]></CopyText>
         <CaretBlock>
         <MoveCaret position="6:59" />
-            <Text><ide/> has imposing list of navigation features.</Text>
-            <Try trigger="EditSource">Basically lets start from one very frequently used feature - Jump to Source. Try calling this action by <action>EditSource</action> to look up the source of <code>Params</code>.</Try>
+            <Text><ide/> offers a wide array of navigation features.</Text>
+            <Try trigger="EditSource">Let's start with one of the most frequently used features, Jump to Source. Press <action>EditSource</action> to look up the source of <code>Params</code>.</Try>
     </CaretBlock>
 </MouseBlock>
-        <Try check="training.check.CheckJumpFromString" trigger="EditSource">You may also Jump to Source of classes implemented in JDK. Press <action>EditSource</action> when the caret is on <code>String</code>.</Try>
+        <Try check="training.check.CheckJumpFromString" trigger="EditSource">You may also Jump to Source of classes implemented in the JDK. Place the caret on <code>String</code> and press <action>EditSource</action>.</Try>
     <Win/>
 </xml>

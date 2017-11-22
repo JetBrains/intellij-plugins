@@ -48,10 +48,10 @@ class CollapseDemo{
 
 }]]></CopyText>
     <MoveCaret position="13:9"/>
-        <Try trigger="CollapseRegion">Sometimes you need to collapse some code for better readability. Try to collapse code, with <action>CollapseRegion</action></Try>
-        <Try trigger="ExpandRegion">To expand code region, try <action>ExpandRegion</action></Try>
-        <Try trigger="CollapseAllRegions">If you want to collapse all regions in code, use <action>CollapseAllRegions</action></Try>
-        <Try trigger="ExpandAllRegions">And <action>ExpandAllRegions</action> in reverse order.</Try>
+        <Try trigger="CollapseRegion">Sometimes you need to collapse a piece of code for better readability. Try collapsing code with <action>CollapseRegion</action>.</Try>
+        <Try trigger="ExpandRegion">To expand a code region, hit <action>ExpandRegion</action></Try>
+        <Try trigger="CollapseAllRegions">If you want to collapse all regions in the file, use <action>CollapseAllRegions</action>.</Try>
+        <Try trigger="ExpandAllRegions">Similarly, press <action>ExpandAllRegions</action> to expand all available regions.</Try>
     <Win/>
 </CaretBlock>
 </MouseBlock>

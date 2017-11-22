@@ -29,8 +29,8 @@ class DeclarationDemo {
     }
 }]]></CopyText>
     <MoveCaret position="8:16"/>
-    <Try triggers="com.intellij.codeInsight.navigation.actions.GotoDeclarationAction">Use <action>GotoDeclaration</action> to jump to declaration of a class/interface.</Try>
+    <Try triggers="com.intellij.codeInsight.navigation.actions.GotoDeclarationAction">Use <action>GotoDeclaration</action> to jump to the declaration of a class or interface.</Try>
     <MoveCaret position="26:17"/>
-    <Try triggers="GotoImplementation">To see implementations of a class/interface use <action>GotoImplementation</action>.</Try>
+    <Try triggers="GotoImplementation">To see implementations of a class/interface, use <action>GotoImplementation</action>.</Try>
     <Win/>
 </xml>

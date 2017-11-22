@@ -14,11 +14,11 @@
     return a]]></CopyText>
     </MouseBlock>
     <MoveCaret position="9:9"/>
-    <Try action="EditorNextWordWithSelection" trigger="EditorNextWordWithSelection">Put the caret before any word. Press <action>EditorNextWordWithSelection</action> to move caret to the next word with selection.</Try>
-    <Try action="EditorSelectWord" trigger="EditorSelectWord">Press <action>EditorSelectWord</action> to extend selection to the next code block.</Try>
-    <Try trigger="EditorSelectWord">Try increase your selection with <action>EditorSelectWord</action> until your file will be selected.</Try>
-    <Try action="EditorUnSelectWord" trigger="EditorUnSelectWord"><action>EditorUnSelectWord</action> shrinks selection. Try to press it.</Try>
-    <Try action="$SelectAll" trigger="$SelectAll">Select the whole file with <action>$SelectAll</action></Try>
-    <Text action="learn.next.lesson">Awesome, press button to start next lesson or use <action>learn.next.lesson</action></Text>
+    <Try action="EditorNextWordWithSelection" trigger="EditorNextWordWithSelection">Place the caret before any word. Press <action>EditorNextWordWithSelection</action> to move the caret to the next word and select everything in between.</Try>
+    <Try action="EditorSelectWord" trigger="EditorSelectWord">Press <action>EditorSelectWord</action> to extend the selection to the next code block.</Try>
+    <Try trigger="EditorSelectWord">Try increasing your selection with <action>EditorSelectWord</action> until your whole file is selected.</Try>
+    <Try action="EditorUnSelectWord" trigger="EditorUnSelectWord"><action>EditorUnSelectWord</action> is used to shrink a selection. Try pressing it.</Try>
+    <Try action="$SelectAll" trigger="$SelectAll">Now select the whole file instantly with <action>$SelectAll</action>.</Try>
+    <Text action="learn.next.lesson">Awesome! Click the button below to start the next lesson, or use <action>learn.next.lesson</action>.</Text>
     <Win/>
 </xml>
