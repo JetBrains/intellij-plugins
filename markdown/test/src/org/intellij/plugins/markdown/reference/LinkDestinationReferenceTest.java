@@ -4,6 +4,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.impl.FakePsiElement;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.intellij.plugins.markdown.MarkdownTestingUtil;
 import org.jetbrains.annotations.NotNull;
@@ -72,7 +73,13 @@ public class LinkDestinationReferenceTest extends LightPlatformCodeInsightFixtur
     doTest();
   }
 
-  public void testUrl() {
-    doTest();
+  public void testTrailingSlashUrl() {
+    final PsiFile file = myFixture.configureByFile( "trailingSlashUrl.md");
+    final String fileText = file.getText();
+
+    final PsiReference reference = file.findReferenceAt(fileText.indexOf("app", fileText.indexOf("[url]")));
+    assertNotNull(reference);
+
+    assertTrue((reference.resolve()) instanceof FakePsiElement);
   }
 }
