@@ -21,9 +21,6 @@ data class Lesson(val scenario: Scenario, val lang: String, var module: Module?)
 
   var lessonListeners: ArrayList<LessonListener> = ArrayList<LessonListener>()
     private set
-  var statistic = ArrayList<Pair<String, Long>>()
-  var exerciseCount: Short = 0
-    private set
   var passed: Boolean = false
   var isOpen: Boolean = false
     private set
@@ -80,27 +77,21 @@ data class Lesson(val scenario: Scenario, val lang: String, var module: Module?)
 
   fun onStart() {
     lessonLog.log("Lesson started")
-    exerciseCount = 0
-    statistic.add(Pair("started", System.currentTimeMillis()))
     lessonLog.resetCounter()
     lessonListeners.forEach { it.lessonStarted(this) }
   }
 
   private fun onItemPassed() {
-    statistic.add(Pair("passed item #" + exerciseCount, System.currentTimeMillis()))
-    exerciseCount++
   }
 
   private fun onClose() {
     lessonListeners.clear()
-    statistic.add(Pair("closed", System.currentTimeMillis()))
 
   }
 
   //call onPass handlers in lessonListeners
   private fun onPass() {
     lessonLog.log("Lesson passed")
-    statistic.add(Pair("finished", System.currentTimeMillis()))
     lessonListeners.forEach { it.lessonPassed(this) }
 
   }

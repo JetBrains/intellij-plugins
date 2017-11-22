@@ -65,11 +65,11 @@ object LessonStateManager {
   }
 
   fun getStateFromBase(id: String): LessonState {
-    if (LessonStateBase.instance.myMap.containsKey(id)) {
-      return LessonStateBase.instance.myMap[id]!!
+    return if (LessonStateBase.instance.myMap.containsKey(id)) {
+      LessonStateBase.instance.myMap[id]!!
     } else {
       LessonStateBase.instance.myMap.put(id, LessonState.NOT_PASSED)
-      return LessonState.NOT_PASSED
+      LessonState.NOT_PASSED
     }
   }
 

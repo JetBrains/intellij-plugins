@@ -27,8 +27,9 @@ import training.learn.NewLearnProjectUtil
 import training.learn.dialogs.SdkModuleProblemDialog
 import training.learn.exceptons.*
 import training.learn.lesson.Lesson
-import training.learn.lesson.LessonListenerAdapter
 import training.learn.lesson.LessonProcessor
+import training.learn.lesson.listeners.NextLessonListener
+import training.learn.lesson.listeners.StatisticLessonListener
 import training.ui.LearnToolWindowFactory
 import training.ui.UiManager
 import training.util.findLanguageByID
@@ -57,7 +58,7 @@ class OpenLessonAction : AnAction() {
   }
 
   @Synchronized @Throws(BadModuleException::class, BadLessonException::class, IOException::class, FontFormatException::class, InterruptedException::class, ExecutionException::class, LessonIsOpenedException::class)
-  fun openLesson(project: Project, lesson: Lesson) {
+  private fun openLesson(project: Project, lesson: Lesson) {
     try {
       val langSupport = LangManager.getInstance().getLangSupport()
       if (lesson.isOpen) throw LessonIsOpenedException(lesson.name + " is opened")
@@ -66,13 +67,12 @@ class OpenLessonAction : AnAction() {
       if (lesson.module == null)
         throw BadLessonException("Unable to open lesson without specified module")
 
-      val myProject = project
       val scratchFileName = "Learning"
       val vf: VirtualFile?
       val learnProject = CourseManager.instance.learnProject
       if (lesson.module == null || lesson.module!!.moduleType == Module.ModuleType.SCRATCH) {
         CourseManager.instance.checkEnvironment(project)
-        vf = getScratchFile(myProject, lesson, scratchFileName)
+        vf = getScratchFile(project, lesson, scratchFileName)
       } else {
         //0. learnProject == null but this project is LearnProject then just getFileInLearnProject
         if (learnProject == null && getCurrentProject()!!.name == langSupport.defaultProjectName) {
@@ -80,13 +80,13 @@ class OpenLessonAction : AnAction() {
           vf = getFileInLearnProject(lesson)
           //1. learnProject == null and current project has different name then initLearnProject and register post startup open lesson
         } else if (learnProject == null && getCurrentProject()!!.name != langSupport.defaultProjectName) {
-          val myLearnProject = initLearnProject(myProject) ?: return
+          val myLearnProject = initLearnProject(project) ?: return
           // in case of user aborted to create a LearnProject
           openLessonWhenLearnProjectStart(lesson, myLearnProject)
           return
           //2. learnProject != null and learnProject is disposed then reinitProject and getFileInLearnProject
         } else if (learnProject!!.isDisposed) {
-          val myLearnProject = initLearnProject(myProject) ?: return
+          val myLearnProject = initLearnProject(project) ?: return
           // in case of user aborted to create a LearnProject
           openLessonWhenLearnProjectStart(lesson, myLearnProject)
           return
@@ -104,21 +104,13 @@ class OpenLessonAction : AnAction() {
       val currentProject = if (lesson.module != null && lesson.module!!.moduleType != Module.ModuleType.SCRATCH) CourseManager.instance.learnProject!! else project
       if (vf == null) return  //if user aborts opening lesson in LearnProject or Virtual File couldn't be computed
 
+      addNextLessonListenerIfNeeded(currentProject, lesson)
+      addStatisticLessonListenerIfNeeded(currentProject, lesson)
+
       //open next lesson if current is passed
       UiManager.setLessonView()
       lesson.onStart()
 
-      lesson.addLessonListener(object : LessonListenerAdapter() {
-        @Throws(BadLessonException::class, ExecutionException::class, IOException::class, FontFormatException::class, InterruptedException::class, BadModuleException::class, LessonIsOpenedException::class)
-        override fun lessonNext(lesson: Lesson) {
-          if (lesson.module == null) return
-
-          if (lesson.module != null && lesson.module!!.hasNotPassedLesson()) {
-            val nextLesson = lesson.module!!.giveNotPassedAndNotOpenedLesson() ?: throw BadLessonException("Unable to obtain not passed and not opened lessons")
-            openLesson(currentProject, nextLesson)
-          }
-        }
-      })
 
       //Dispose balloon while scratch file is closing. InfoPanel still exists.
       project.messageBus.connect(project).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
@@ -146,9 +138,7 @@ class OpenLessonAction : AnAction() {
           }
         }
       }
-      if (textEditor!!.editor.isDisposed) {
-        throw Exception("Editor is already disposed!!!")
-      }
+      if (textEditor!!.editor.isDisposed) throw Exception("Editor is already disposed!")
 
       //2. set the focus on this editor
       //FileEditorManager.getInstance(project).setSelectedEditor(vf, TextEditorProvider.getInstance().getEditorTypeId());
@@ -172,6 +162,18 @@ class OpenLessonAction : AnAction() {
       e.printStackTrace()
     }
 
+  }
+
+  private fun addNextLessonListenerIfNeeded(currentProject: Project, lesson: Lesson) {
+    val lessonListener = NextLessonListener(currentProject)
+    if (!lesson.lessonListeners.any { it is NextLessonListener })
+      lesson.addLessonListener(lessonListener)
+  }
+
+  private fun addStatisticLessonListenerIfNeeded(currentProject: Project, lesson: Lesson) {
+    val statLessonListener = StatisticLessonListener(currentProject)
+    if (!lesson.lessonListeners.any { it is StatisticLessonListener })
+      lesson.addLessonListener(statLessonListener)
   }
 
   //

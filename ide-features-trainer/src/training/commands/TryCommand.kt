@@ -77,7 +77,6 @@ class TryCommand : Command(Command.CommandType.TRY) {
     val lesson = executionList.lesson
     LessonManager.getInstance(lesson).passExercise()
     val lessonLog = lesson.lessonLog
-    lessonLog.log("Passed exercise. Exercise #" + lessonLog.myLesson?.exerciseCount)
     lesson.passItem()
     startNextCommand(executionList)
   }

@@ -117,7 +117,7 @@ class Module(val name: String, moduleXmlPath: String, private val root: Element)
   }
 
   fun hasNotPassedLesson(): Boolean {
-    return lessons.none { it.passed }
+    return lessons.any { !it.passed }
   }
 
   val nameWithoutWhitespaces: String
