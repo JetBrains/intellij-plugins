@@ -15,13 +15,13 @@ class FeedbackEvent(feedback: Map<String, String>) {
     @Transient var feedback = feedback
 
     override fun toString(): String {
-        return "${timestamp}\t${recorderId}\t${userUid}\t${actionType}\t${map2json(feedback)}"
+        return "$timestamp\t$recorderId\t$userUid\t$actionType\t${map2json(feedback)}"
     }
 
-    fun map2json(feedback: Map<String, String>): String{
-        var result = StringBuilder()
+    private fun map2json(feedback: Map<String, String>): String{
+        val result = StringBuilder()
         result.append("{\"feedback\":{")
-        feedback.keys.forEachIndexed { i, s ->  result.append(""); result.append("${if (i == 0) "" else ", "}\"${s}\":\"${feedback.get(s)}\"")}
+        feedback.keys.forEachIndexed { i, s ->  result.append(""); result.append("${if (i == 0) "" else ", "}\"$s\":\"${feedback.get(s)}\"")}
         result.append("}}")
         return result.toString()
     }
