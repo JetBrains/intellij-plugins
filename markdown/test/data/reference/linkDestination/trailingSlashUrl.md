@@ -1,1 +1,1 @@
-[url](http://app.com/foo.txt/)
+[url](http://app.com/fo<caret>o.txt/)
