@@ -12,9 +12,11 @@ import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.steps.search.CucumberStepSearchUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -257,7 +259,10 @@ public class CucumberUtil {
    * @return OutlineStepSubstitution that contains result step name and can calculate offsets
    */
   @NotNull
-  public static OutlineStepSubstitution substituteTableReferences(String stepName, Map<String, String> outlineTableMap) {
+  public static OutlineStepSubstitution substituteTableReferences(String stepName, @Nullable Map<String, String> outlineTableMap) {
+    if (outlineTableMap == null) {
+      return new OutlineStepSubstitution(stepName, Collections.emptyList());
+    }
     List<Pair<Integer, Integer>> offsets = new ArrayList<>();
     StringBuilder result = new StringBuilder();
 
