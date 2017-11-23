@@ -74,10 +74,7 @@ public class LinkDestinationReferenceTest extends LightPlatformCodeInsightFixtur
   }
 
   public void testTrailingSlashUrl() {
-    final PsiFile file = myFixture.configureByFile( "trailingSlashUrl.md");
-    final String fileText = file.getText();
-
-    final PsiReference reference = file.findReferenceAt(fileText.indexOf("app", fileText.indexOf("[url]")));
+    final PsiReference reference = myFixture.getReferenceAtCaretPosition("trailingSlashUrl.md");
     assertNotNull(reference);
 
     assertTrue((reference.resolve()) instanceof FakePsiElement);
