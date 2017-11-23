@@ -2,6 +2,7 @@ package training.actions
 
 import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.ide.scratch.ScratchRootType
+import com.intellij.ide.startup.StartupManagerEx
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataKey
@@ -192,7 +193,9 @@ class OpenLessonAction : AnAction() {
   }
 
   private fun openLessonWhenLearnProjectStart(lesson: Lesson?, myLearnProject: Project) {
-    StartupManager.getInstance(myLearnProject).registerPostStartupActivity {
+    val startupManager = StartupManager.getInstance(myLearnProject)
+    if (startupManager is StartupManagerEx && startupManager.postStartupActivityPassed()) return
+    startupManager.registerPostStartupActivity {
       val toolWindowManager = ToolWindowManager.getInstance(myLearnProject)
       val learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW)
       if (learnToolWindow != null) {
