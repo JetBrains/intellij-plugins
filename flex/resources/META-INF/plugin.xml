@@ -37,7 +37,7 @@
     <packaging.sourceItemProvider implementation="com.intellij.lang.javascript.flex.artifacts.FlashPackagingSourceItemsProvider"/>
     <xml.schemaProvider implementation="com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler"/>
     <xml.xmlExtension implementation="com.intellij.javascript.flex.mxml.schema.FlexXmlExtension"/>
-    <renamePsiElementProcessor implementation="com.intellij.lang.javascript.refactoring.JSQualifiedElementRenameProcessor"/>
+    <renamePsiElementProcessor implementation="com.intellij.lang.javascript.refactoring.ActionScriptQualifiedElementRenameProcessor"/>
     <renamePsiElementProcessor implementation="com.intellij.javascript.flex.FlexRenameHandler"/>
     <updateAddedFileProcessor implementation="com.intellij.javascript.flex.FlexUpdateAddedFileHandler"/>
     <moveFileHandler implementation="com.intellij.javascript.flex.FlexMoveFileHandler"/>

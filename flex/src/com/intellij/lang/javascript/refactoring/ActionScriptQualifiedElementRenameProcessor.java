@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public class JSQualifiedElementRenameProcessor extends JSDefaultRenameProcessor {
+public class ActionScriptQualifiedElementRenameProcessor extends JSDefaultRenameProcessor {
   @Override
   public boolean canProcessElement(@NotNull PsiElement element) {
     VirtualFile vFile;
