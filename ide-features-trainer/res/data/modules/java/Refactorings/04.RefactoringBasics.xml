@@ -31,6 +31,6 @@ class Refactorings {
         <Action action="EditorSelectWord"/>
         <Try check="training.check.CheckRefactoringBasics" trigger="IntroduceParameter">Press <action>IntroduceParameter</action> to extract the selected expression into a parameter.</Try>
         <MoveCaret string="new FileReader("/>
-        <Try triggers="IntroduceVariable;NextTemplateVariable">Press <action>IntroduceVariable</action> and select <code>new FileReader(...)</code> from the list of suggestions to extract it into a variable.</Try>
+        <Try triggers="IntroduceVariable;NextTemplateVariable">Press <action>IntroduceVariable</action> and select <code>new BufferedReader(...)</code> from the list of suggestions to extract it into a variable.</Try>
     <Win/>
 </xml>
