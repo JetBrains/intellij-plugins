@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.validation.fixes;
 
+import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.DialectDetector;
@@ -114,7 +115,8 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
           toImport.add(type);
         }
       }
-
+      if (!FileModificationService.getInstance().preparePsiElementForWrite(myClass)) return;
+      final Editor finalEditor = getEditor(myClass.getProject(), myClass.getContainingFile());
       WriteAction.run(() -> {
         if (!toImport.isEmpty()) {
           FormatFixer formatFixer = ImportUtils.insertImportStatements(myClass, toImport);
@@ -122,8 +124,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
             formatFixer.fixFormat();
           }
         }
-        super.applyFix(project, psiElement, myClass.getContainingFile(),
-                       getEditor(myClass.getProject(), myClass.getContainingFile()));
+        super.applyFix(project, psiElement, myClass.getContainingFile(), finalEditor);
       });
     }
     else {
