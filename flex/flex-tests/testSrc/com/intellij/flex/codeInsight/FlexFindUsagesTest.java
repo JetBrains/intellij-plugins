@@ -13,6 +13,8 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiReference;
 
+import java.util.Arrays;
+
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
@@ -115,9 +117,12 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
   public void testMixJsAndJs2() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.JS_1_8_5, getProject(), () -> {
     String testName = getTestName(false);
     PsiReference[] references = findElementAtCaret(testName + ".js2", testName + ".mxml", testName + ".js");
-    assertEquals(3, references.length);
+    assertTrue(Arrays.stream(references).noneMatch(r -> r.getElement().getContainingFile().getName().endsWith(".js")));
+    assertEquals(5, references.length);
+    });
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
