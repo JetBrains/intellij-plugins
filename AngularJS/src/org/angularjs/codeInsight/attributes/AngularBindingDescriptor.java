@@ -3,19 +3,20 @@ package org.angularjs.codeInsight.attributes;
 import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSTypeUtils;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeContext;
-import com.intellij.lang.javascript.psi.types.JSTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
+import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations;
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.*;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.NotNullFunction;
+import com.intellij.util.NullableFunction;
 import com.intellij.xml.XmlAttributeDescriptor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
@@ -72,25 +73,8 @@ public class AngularBindingDescriptor extends AngularAttributeDescriptor {
   private static JSType expandStringLiteralTypes(@Nullable JSType type) {
     if (type == null) return null;
 
-    type = JSTypeUtils.getValuableType(type);
-    ProcessingContext context = new ProcessingContext();
-    Function<JSType, JSType> expander = new Function<JSType, JSType>() {
-      @Override
-      public JSType fun(@NotNull JSType toApply) {
-        if (toApply instanceof JSStringLiteralTypeImpl) {
-          return STRING_TYPE;
-        }
-        else if (toApply instanceof JSTypeImpl) {
-          JSType typedef = ((JSTypeImpl)toApply).getTypedef(null, context);
-          if (typedef != null && toApply != typedef) {
-            return typedef.transformTypeHierarchy(this);
-          }
-        }
-        return toApply;
-      }
-    };
-
-    return type.transformTypeHierarchy(expander);
+    type = TypeScriptTypeRelations.expandTypeRecursive(type);
+    return type.transformTypeHierarchy(toApply -> toApply instanceof JSStringLiteralTypeImpl ? STRING_TYPE : toApply);
   }
 
   @Nullable
