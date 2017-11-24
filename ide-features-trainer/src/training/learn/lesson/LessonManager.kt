@@ -50,12 +50,11 @@ class LessonManager {
     cleanEditor() //remove mouse blocks and action recorders from last editor
     lastEditor = editor //rearrange last editor
     val cLesson = myCurrentLesson ?: throw Exception("Current lesson is null")
-    val learnPanel = UiManager.learnPanel ?: throw Exception("Unable to get Learn panel (is null)")
-    learnPanel.setLessonName(cLesson.name)
+    UiManager.setLessonNameOnLearnPanels(cLesson.name)
     val module = cLesson.module ?: throw Exception("Unable to find module for lesson: " + myCurrentLesson!!)
     val moduleName = module.name
-    learnPanel.setModuleName(moduleName)
-    learnPanel.modulePanel.init(cLesson)
+    UiManager.setModuleNameOnLearnPanels(moduleName)
+    UiManager.initLessonOnLearnPanels(cLesson)
     clearEditor(editor)
     clearLessonPanel()
     removeActionsRecorders()
@@ -101,32 +100,31 @@ class LessonManager {
     }
 
     if (runnable != null)
-      UiManager.learnPanel?.setButtonSkipAction(runnable, buttonText, true)
+      UiManager.setButtonSkipActionOnLearnPanels(runnable, buttonText, true)
     else
-      UiManager.learnPanel?.setButtonSkipAction(null, null, false)
+      UiManager.setButtonSkipActionOnLearnPanels(null, null, false)
   }
 
   fun addMessage(message: String) {
-    UiManager.learnPanel?.addMessage(message)
+    UiManager.addMessageToLearnPanels(message)
     UiManager.updateToolWindowScrollPane()
   }
 
   fun addMessages(messages: Array<Message>) {
-    UiManager.learnPanel?.addMessages(messages)
+    UiManager.addMessagesToLearnPanels(messages)
     UiManager.updateToolWindowScrollPane()
   }
 
   fun passExercise() {
-    UiManager.learnPanel?.setPreviousMessagesPassed()
+    UiManager.setPreviousMessagePassedOnLearnPanels()
   }
 
   fun passLesson(project: Project, editor: Editor) {
-    val learnPanel = UiManager.learnPanel ?: throw Exception("Learn panel is null")
-    learnPanel.setLessonPassed()
+    UiManager.setLessonPassedOnLearnPanels()
     val cLesson = myCurrentLesson ?: throw Exception("Current lesson is not defined (is null)")
     if (cLesson.module != null && cLesson.module!!.hasNotPassedLesson()) {
       val notPassedLesson = cLesson.module!!.giveNotPassedLesson()
-      learnPanel.setButtonNextAction({
+      UiManager.setButtonNextActionOnLearnPanels(Runnable {
         try {
           CourseManager.instance.openLesson(project, notPassedLesson)
         } catch (e: Exception) {
@@ -137,17 +135,17 @@ class LessonManager {
       val module = CourseManager.instance.giveNextModule(cLesson)
       if (module == null) {
         clearLessonPanel()
-        learnPanel.setModuleName("")
-        learnPanel.setLessonName(LearnBundle.message("learn.ui.course.completed.caption"))
-        learnPanel.addMessage(LearnBundle.message("learn.ui.course.completed.description"))
-        learnPanel.hideNextButton()
+        UiManager.setModuleNameOnLearnPanels("")
+        UiManager.setLessonNameOnLearnPanels(LearnBundle.message("learn.ui.course.completed.caption"))
+        UiManager.addMessageToLearnPanels(LearnBundle.message("learn.ui.course.completed.description"))
+        UiManager.hideNextButtonOnLearnPanels()
       } else {
         var lesson = module.giveNotPassedLesson()
         if (lesson == null) lesson = module.lessons[0]
 
         val lessonFromNextModule = lesson
         val nextModule = lessonFromNextModule.module ?: return
-        learnPanel.setButtonNextAction({
+        UiManager.setButtonNextActionOnLearnPanels(Runnable{
           try {
             CourseManager.instance.openLesson(project, lessonFromNextModule)
           } catch (e: Exception) {
@@ -156,7 +154,7 @@ class LessonManager {
         }, lesson, LearnBundle.message("learn.ui.button.next.module") + " " + nextModule.name)
       }
     }
-    learnPanel.modulePanel.updateLessons(cLesson)
+    UiManager.updateLessonsForPanels(cLesson)
   }
 
 
@@ -175,11 +173,11 @@ class LessonManager {
   }
 
   private fun clearLessonPanel() {
-    UiManager.learnPanel?.clearLessonPanel()
+    UiManager.clearLessonPanels()
   }
 
   private fun hideButtons() {
-    UiManager.learnPanel?.hideButtons()
+    UiManager.hideLearnPanelButtons()
   }
 
   private fun removeActionsRecorders() {

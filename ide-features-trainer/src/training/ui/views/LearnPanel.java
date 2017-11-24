@@ -280,8 +280,14 @@ public class LearnPanel extends JPanel {
 
         buttonAction.setEnabled(true);
         button.setAction(buttonAction);
-        if (text == null || text.isEmpty()) button.setText(LearnBundle.INSTANCE.message("learn.ui.button.skip"));
-        else button.setText(LearnBundle.INSTANCE.message("learn.ui.button.skip.module") + " " + text);
+        if (text == null || text.isEmpty()) {
+            button.setText(LearnBundle.INSTANCE.message("learn.ui.button.skip"));
+            button.updateUI();
+        } else {
+            button.setText(LearnBundle.INSTANCE.message("learn.ui.button.skip.module") + " " + text);
+            button.updateUI();
+        }
+        button.setVisible(false);
         button.setSelected(true);
         button.setVisible(visible);
     }
@@ -443,14 +449,14 @@ public class LearnPanel extends JPanel {
         }
     }
 
-    public void clickButton(){
+    public void clickButton() {
         if (button != null && button.isEnabled() && button.isVisible()) button.doClick();
     }
 
     @Override
     public Dimension getPreferredSize() {
-        if(lessonPanel.getMinimumSize() == null) return new Dimension(10, 10);
-        if(modulePanel.getMinimumSize() == null) return new Dimension(10, 10);
+        if (lessonPanel.getMinimumSize() == null) return new Dimension(10, 10);
+        if (modulePanel.getMinimumSize() == null) return new Dimension(10, 10);
         return new Dimension(
                 (int) lessonPanel.getMinimumSize().getWidth() +
                         LearnUISettings.getInstance().getWestInset() +
@@ -462,7 +468,7 @@ public class LearnPanel extends JPanel {
     }
 
     @Override
-    public Color getBackground(){
+    public Color getBackground() {
         if (!UIUtil.isUnderDarcula()) return LearnUISettings.getInstance().getBackgroundColor();
         else return UIUtil.getPanelBackground();
     }

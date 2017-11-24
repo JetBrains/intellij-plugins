@@ -21,6 +21,7 @@ import training.learn.exceptons.OldJdkException
 import training.learn.lesson.Lesson
 import training.util.GenModuleXml
 import java.util.*
+import kotlin.collections.HashMap
 
 class CourseManager internal constructor() {
 
@@ -57,7 +58,7 @@ class CourseManager internal constructor() {
     modules.forEach { if (it.id != null && !modulesId2modules.keys.contains(it.id!!)) modulesId2modules.put(it.id!!, it) }
     modules.forEach {
       val mergedModule = modulesId2modules.get(it.id)
-      it.lessons.forEach { lesson ->  mergedModule!!.addLesson(lesson) }
+      it.lessons.forEach { lesson -> mergedModule!!.addLesson(lesson) }
     }
     modules = modulesId2modules.values.toCollection(arrayListOf())
   }
@@ -91,14 +92,20 @@ class CourseManager internal constructor() {
   }
 
 
-  @Synchronized fun openLesson(project: Project, lesson: Lesson?) {
+  /**
+   * @param projectWhereToOpen -- where to open projectWhereToOpen
+   */
+  @Synchronized
+  fun openLesson(projectWhereToOpen: Project, lesson: Lesson?) {
     val action = ActionManager.getInstance().getAction("learn.open.lesson")
-    val focusOwner = IdeFocusManager.getInstance(project).focusOwner
+    val focusOwner = IdeFocusManager.getInstance(projectWhereToOpen).focusOwner
     val parent = DataManager.getInstance().getDataContext(focusOwner)
-    val context = SimpleDataContext.getSimpleContext(OpenLessonAction.LESSON_DATA_KEY.name, lesson, parent)
+    val data = HashMap<String, Any?>()
+    data[OpenLessonAction.LESSON_DATA_KEY.name] = lesson
+    data[OpenLessonAction.PROJECT_WHERE_TO_OPEN_DATA_KEY.name] = projectWhereToOpen
+    val context = SimpleDataContext.getSimpleContext(data, parent)
     val event = AnActionEvent.createFromAnAction(action, null, "", context)
     ActionUtil.performActionDumbAware(action, event)
-
   }
 
   /**

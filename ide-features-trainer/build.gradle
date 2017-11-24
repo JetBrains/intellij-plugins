@@ -36,9 +36,9 @@ apply plugin: "kotlin"
 sourceCompatibility = 1.8
 
 intellij {
-    version 'IU-173.3415.22'
+    version 'IU-173.3727.78'
     //to check compatibility for Python and Go
-    plugins = ['Pythonid:2017.3.173.3415.6', 'org.jetbrains.plugins.go:173.3415.23']
+    plugins = ['Pythonid:2017.3.173.3727.89', 'org.jetbrains.plugins.go:173.3727.80']
 //    publish {
 //        username repoUser
 //        password repoPassword
