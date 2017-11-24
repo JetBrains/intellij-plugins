@@ -27,7 +27,8 @@ class ShowChooseLangPanelAction: AnAction() {
 
     override fun actionPerformed(e: AnActionEvent?) {
         val myLanguageChoosePanel = LanguageChoosePanel()
-        val myLearnToolWindow = LearnToolWindowFactory.myLearnToolWindow ?: throw Exception("Unable to get Learn toolwindow (is null)")
+        if (e == null || e.project == null) return
+        val myLearnToolWindow = LearnToolWindowFactory.learnWindowPerProject[e.project!!] ?: return
         val scrollPane = myLearnToolWindow.scrollPane
         scrollPane!!.setViewportView(myLanguageChoosePanel)
         scrollPane.revalidate()
