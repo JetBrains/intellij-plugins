@@ -17,48 +17,49 @@ import javax.swing.JPanel
  */
 class LearnToolWindow : SimpleToolWindowPanel, DataProvider, Disposable {
 
-    val myContentPanel: JPanel = JPanel()
-    //TODO: remove public modificator set ScrollPane before release
-    var scrollPane: JBScrollPane? = null
-        set
-    private var myLearnPanel: LearnPanel? = null
-    private var modulesPanel: ModulesPanel? = null
-    private var myProject: Project? = null
+  val myContentPanel: JPanel = JPanel()
+  //TODO: remove public modificator set ScrollPane before release
+  var scrollPane: JBScrollPane? = null
+    set
+  private var myLearnPanel: LearnPanel? = null
+  private var modulesPanel: ModulesPanel? = null
+  private var myProject: Project? = null
 
-    internal constructor() : super(true, true)
+  internal constructor() : super(true, true)
 
-    constructor(vertical: Boolean) : super(vertical) {}
-    constructor(vertical: Boolean, borderless: Boolean) : super(vertical, borderless) {}
+  constructor(vertical: Boolean) : super(vertical) {}
+  constructor(vertical: Boolean, borderless: Boolean) : super(vertical, borderless) {}
 
-    fun init(project: Project) {
+  fun init(project: Project) {
 
-        myProject = project
-        reinitViewsInternal()
-        if (LangManager.getInstance().isLangUndefined()) {
-            val myLanguageChoosePanel = LanguageChoosePanel()
-            scrollPane = JBScrollPane(myLanguageChoosePanel)
-        } else {
-            scrollPane = JBScrollPane(modulesPanel)
-        }
-        setContent(scrollPane)
+    myProject = project
+    reinitViewsInternal()
+    if (LangManager.getInstance().isLangUndefined()) {
+      val myLanguageChoosePanel = LanguageChoosePanel()
+      scrollPane = JBScrollPane(myLanguageChoosePanel)
+    } else {
+      scrollPane = JBScrollPane(modulesPanel)
     }
+    setContent(scrollPane)
+  }
 
-    private fun reinitViewsInternal() {
-        myLearnPanel = LearnPanel()
-        modulesPanel = ModulesPanel()
-        UiManager.modulesPanel = modulesPanel
-        UiManager.learnPanel = myLearnPanel
-    }
+  private fun reinitViewsInternal() {
+    myLearnPanel = LearnPanel()
+    modulesPanel = ModulesPanel()
+    UiManager.modulesPanelPerProject[myProject!!] = modulesPanel!!
+    UiManager.learnPanelPerProject[myProject!!] = myLearnPanel!!
+  }
 
-    //do not call on modulesPanel view view or learnPanel view
-    public fun reinitViews() {
-        reinitViewsInternal()
-    }
+  //do not call on modulesPanel view view or learnPanel view
+  fun reinitViews() {
+    reinitViewsInternal()
+  }
 
-    override fun dispose() {
-        UiManager.learnPanel = null
-        myLearnPanel = null
-    }
+  override fun dispose() {
+    UiManager.learnPanelPerProject.remove(myProject)
+    UiManager.modulesPanelPerProject.remove(myProject)
+    myLearnPanel = null
+  }
 
 
 }

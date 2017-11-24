@@ -12,21 +12,18 @@ import com.intellij.openapi.wm.ToolWindowFactory
 class LearnToolWindowFactory : ToolWindowFactory, DumbAware {
 
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-
-    myLearnToolWindow = LearnToolWindow()
-    myLearnToolWindow!!.init(project)
+    val learnToolWindow = LearnToolWindow()
+    learnToolWindow.init(project)
     val contentManager = toolWindow.contentManager
-
-    val content = contentManager.factory.createContent(myLearnToolWindow, null, false)
+    val content = contentManager.factory.createContent(learnToolWindow, null, false)
     contentManager.addContent(content)
-
-    Disposer.register(project, myLearnToolWindow!!)
+    learnWindowPerProject.put(project, learnToolWindow)
+    Disposer.register(project, learnToolWindow)
   }
 
   companion object {
     val LEARN_TOOL_WINDOW = "Learn"
-    var myLearnToolWindow: LearnToolWindow? = null
-      private set
+    val learnWindowPerProject = HashMap<Project, LearnToolWindow>()
   }
 }
 
