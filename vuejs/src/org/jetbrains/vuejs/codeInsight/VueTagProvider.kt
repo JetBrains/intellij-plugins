@@ -80,16 +80,15 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       val obj = JSStubBasedPsiTreeUtil.calculateMeaningfulElement(property) as? JSObjectLiteralExpression
       val propName = property.name ?: continue
       if (obj != null) {
-        val elements = findProperty(obj, "name")?.indexingData?.implicitElements
-        if (elements != null) {
-          elements.forEach {
-            if (it.userString == VueComponentsIndex.JS_KEY && !processor.invoke(propName, it)) return false
-          }
+        val elements = findProperty(obj, "name")?.indexingData?.implicitElements?.filter { it.userString == VueComponentsIndex.JS_KEY }
+        if (elements != null && !elements.isEmpty()) {
+          if (elements.any { !processor.invoke(propName, it) }) return false
           continue
         }
         val first = obj.firstProperty
         if (first != null) {
           if (!processor.invoke(propName, JSImplicitElementImpl(propName, first))) return false
+          continue
         }
       }
       if (!processor.invoke(propName, JSImplicitElementImpl(propName, property.nameIdentifier))) return false
