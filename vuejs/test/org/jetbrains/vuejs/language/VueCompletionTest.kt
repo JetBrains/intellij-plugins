@@ -231,7 +231,7 @@ export default {
 }
 </script>""")
     myFixture.completeBasic()
-    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "myMessage", "MyMessage")
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "myMessage")
   }
 
   fun testCompleteComputedPropsInInterpolation() {
@@ -242,7 +242,7 @@ export default {
 <script>
 export default {
   name: 'childComp',
-  props: {'myMessage': {}},
+  props: {'MyMessage': {}},
   computed: {
     testWrong: 111,
     testRight: function() {}
@@ -250,7 +250,7 @@ export default {
 }
 </script>""")
     myFixture.completeBasic()
-    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "myMessage", "MyMessage", "testRight", "TestRight")
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "MyMessage", "testRight")
     UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "testWrong")
   }
 
@@ -322,8 +322,9 @@ export default {
           }
 }</script>""")
       myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg", "GroceryList", "ParentMsg")
-      UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "grocery-list", "parent-msg")
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
+      UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "grocery-list", "parent-msg",
+                                         "GroceryList", "ParentMsg")
     })
   }
 
@@ -636,6 +637,41 @@ $script""")
   private fun configureVueDefinitions() {
     createPackageJsonWithVueDependency(myFixture)
     myFixture.copyDirectoryToProject("node_modules", "./node_modules")
+  }
+
+  fun testNoDoubleCompletionForLocalComponent() {
+    myFixture.configureByText("AnotherPanel.vue", """
+<script>
+  import Comp from "./Comp";
+
+  export default {
+    components: {Comp},
+    name: "another-panel",
+    methods: {
+      displayDetails() {
+
+      }
+    }
+</script>""")
+    myFixture.configureByText("NoDoubleCompletionForLocalComponent.vue", """
+<template>
+<<caret>
+</template>
+
+<script>
+  import AnotherPanel from "./AnotherPanel";
+
+  export default {
+    name: 'comp',
+    components: {
+      AnotherPanel
+    },
+  }
+</script>
+""")
+    myFixture.completeBasic()
+    val cnt = myFixture.lookupElementStrings!!.filter { "another-panel" == it }.count()
+    TestCase.assertEquals(1, cnt)
   }
 }
 

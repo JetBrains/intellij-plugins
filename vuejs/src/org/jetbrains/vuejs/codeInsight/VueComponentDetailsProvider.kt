@@ -27,8 +27,12 @@ class VueComponentDetailsProvider {
         return@map listOf(attrDescriptor.createNameVariant(fromAsset),
                           attrDescriptor.createNameVariant(":$fromAsset"),
                           attrDescriptor.createNameVariant("v-bind:$fromAsset"))
+      } else {
+        if (it.name.contains('-')) {
+          listOf(attrDescriptor.createNameVariant(toAsset(it.name)))
+        }
+        else listOf(it)
       }
-      getNameVariants(it.name, xmlContext).map { attrDescriptor.createNameVariant(it) }
     }.flatten()
   }
 
