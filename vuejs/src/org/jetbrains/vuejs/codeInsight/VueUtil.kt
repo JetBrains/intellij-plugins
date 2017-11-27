@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.tree.TokenSet
 
 fun fromAsset(text: String): String {
   val split = es6Unquote(text).split("(?=[A-Z])".toRegex()).dropLastWhile(String::isEmpty).toTypedArray()
@@ -39,8 +40,8 @@ fun es6Unquote(s: String) : String {
 val EMPTY_FILTER : (String, PsiElement) -> Boolean  = { _, _ -> true}
 fun getStringLiteralsFromInitializerArray(holder: PsiElement,
                                           filter: (String, PsiElement) -> Boolean): List<JSLiteralExpression> {
-  return JSStubBasedPsiTreeUtil.findDescendants(holder,
-                                                JSStubElementTypes.LITERAL_EXPRESSION)
+  return JSStubBasedPsiTreeUtil.findDescendants<JSLiteralExpression>(holder,
+                                                TokenSet.create(JSStubElementTypes.LITERAL_EXPRESSION, JSStubElementTypes.STRING_TEMPLATE_EXPRESSION))
     .filter({
               val context = it.context
               !it.significantValue.isNullOrBlank() &&
