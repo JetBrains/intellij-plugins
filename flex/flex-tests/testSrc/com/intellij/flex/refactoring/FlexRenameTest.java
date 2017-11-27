@@ -163,7 +163,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
   public void testMxmlComponentRename() throws Exception {
     String name = getTestName(false);
-    doTest("RenamedComponent2.mxml", name + "_after.mxml", name + ".mxml", "RenamedComponent.mxml");
+    doTest("RenamedComponent2", name + "_after.mxml", name + ".mxml", "RenamedComponent.mxml");
     assertEquals(4, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
@@ -222,7 +222,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
   public void testMxmlComponentRename3() throws Exception {
     String name = getTestName(false);
-    doTest("RenamedComponent3.mxml", name + "_after.mxml", name + ".mxml", "RenamedComponent2.mxml");
+    doTest("RenamedComponent3", name + "_after.mxml", name + ".mxml", "RenamedComponent2.mxml");
     assertEquals(3, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
