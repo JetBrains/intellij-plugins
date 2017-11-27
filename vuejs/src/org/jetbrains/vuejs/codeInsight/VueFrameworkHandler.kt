@@ -46,8 +46,6 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   override fun processAnyProperty(property: JSProperty, outData: JSElementIndexingData?): JSElementIndexingData? {
     val obj = property.parent as JSObjectLiteralExpression
-    val firstProperty = obj.firstProperty
-    if (firstProperty == null) return outData
 
     val out = outData ?: JSElementIndexingDataImpl()
     if (MIXINS == property.name && property.value is JSArrayLiteralExpression) {
@@ -73,17 +71,25 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         }
     }
 
-    if (obj.parent is JSExportAssignment && firstProperty == property && obj.containingFile.fileType == VueFileType.INSTANCE)  {
-      tryProcessComponentInVue(obj, property, out)
-    }
-
-    if (firstProperty == property && ((obj.parent as? JSProperty) == null) && isDescriptorOfLinkedInstanceDefinition(obj)) {
-      val binding = (obj.findProperty("el")?.value as? JSLiteralExpression)?.value as? String
-      out.addImplicitElement(JSImplicitElementImpl.Builder(binding ?: "", property)
-                               .setUserString(VueOptionsIndex.JS_KEY)
-                               .toImplicitElement())
+    val firstProperty = obj.firstProperty ?: return outData
+    if (firstProperty == property) {
+      if (obj.parent is JSExportAssignment) {
+        if (obj.containingFile.fileType == VueFileType.INSTANCE || obj.containingFile is JSFile && hasComponentIndicatorProperties(obj)) {
+          tryProcessComponentInVue(obj, property, out)
+        }
+      } else if (((obj.parent as? JSProperty) == null) && isDescriptorOfLinkedInstanceDefinition(obj)) {
+        val binding = (obj.findProperty("el")?.value as? JSLiteralExpression)?.value as? String
+        out.addImplicitElement(JSImplicitElementImpl.Builder(binding ?: "", property)
+                                 .setUserString(VueOptionsIndex.JS_KEY)
+                                 .toImplicitElement())
+      }
     }
     return if (out.isEmpty) outData else out
+  }
+
+  private fun hasComponentIndicatorProperties(obj: JSObjectLiteralExpression): Boolean {
+    return obj.findProperty("name") != null &&
+           (obj.findProperty("template") != null || obj.findProperty("render") != null)
   }
 
   override fun shouldCreateStubForCallExpression(node: ASTNode?): Boolean {
@@ -97,8 +103,11 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     if (arguments.isEmpty()) return
 
     if (VueStaticMethod.Component.matches(reference)) {
-      val componentName = getTextIfLiteral(arguments[0])
-      if (arguments.size >= 2 && componentName != null) {
+      if (arguments.size >= 2) {
+        var componentName = getTextIfLiteral(arguments[0])
+        if (componentName == null) {
+          componentName = tryLibraryComponentNameHeuristics(arguments[0], arguments[1]) ?: return
+        }
         val descriptor = arguments[1]
         val provider: PsiElement = (descriptor as? JSObjectLiteralExpression)?.firstProperty ?: callExpression
         // not null type string indicates the global component
@@ -124,6 +133,17 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     }
   }
 
+  private fun tryLibraryComponentNameHeuristics(nameExp: JSExpression?, descriptorExp: JSExpression?): String? {
+    val nameRef = nameExp as? JSReferenceExpression ?: return null
+    val descriptorRef = descriptorExp as? JSReferenceExpression ?: return null
+    val qualifierRef = nameRef.qualifier as? JSReferenceExpression ?: return null
+    if (qualifierRef.qualifier == null && descriptorRef.qualifier == null &&
+        qualifierRef.referenceName != null && qualifierRef.referenceName == descriptorRef.referenceName) {
+      return qualifierRef.referenceName + "*"
+    }
+    return null
+  }
+
   private fun recordDirective(outData: JSElementIndexingData,
                               provider: JSImplicitElementProvider,
                               directiveName: String,
@@ -144,13 +164,6 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                                  .setUserString(VueMixinBindingIndex.JS_KEY)
                                  .setTypeString(typeString)
                                  .toImplicitElement())
-  }
-
-  private fun getTextIfLiteral(holder: PsiElement): String? {
-    if (holder is JSLiteralExpression && holder.isQuotedLiteral) {
-      return holder.value as? String
-    }
-    return null
   }
 
   private fun isDescriptorOfLinkedInstanceDefinition(obj: JSObjectLiteralExpression): Boolean {

@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "dependencies": {
+    "wind-dom": "0.0.3"
+  },
+  "name": "mint-swipe"
+}

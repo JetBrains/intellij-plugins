@@ -4,8 +4,6 @@ import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
-import kotlin.text.startsWith
-import kotlin.text.trim
 
 /**
  * @author Irina.Chernushina on 11/15/2017.
@@ -14,7 +12,7 @@ class VueDocumentationTest : LightPlatformCodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/"
 
   fun testDocumentationFromDefinitions() {
-    createPackageJsonWithVueDependency(myFixture)
+    createPackageJsonWithVueDependency(myFixture, "")
     myFixture.copyDirectoryToProject("./types/node_modules", "./node_modules")
     myFixture.configureByText("testDocumentationFromDefinitions.vue", """
 <script>

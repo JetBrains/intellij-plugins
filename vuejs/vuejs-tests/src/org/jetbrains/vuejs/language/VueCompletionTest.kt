@@ -14,11 +14,6 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
-import kotlin.collections.firstOrNull
-import kotlin.collections.forEach
-import kotlin.collections.map
-import kotlin.jvm.java
-import kotlin.text.substringBefore
 
 class VueCompletionTest : LightPlatformCodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/types/"
@@ -640,7 +635,7 @@ $script""")
   }
 
   private fun configureVueDefinitions() {
-    createPackageJsonWithVueDependency(myFixture)
+    createPackageJsonWithVueDependency(myFixture, "")
     myFixture.copyDirectoryToProject("node_modules", "./node_modules")
   }
 
@@ -678,15 +673,52 @@ $script""")
     val cnt = myFixture.lookupElementStrings!!.filter { "another-panel" == it }.count()
     TestCase.assertEquals(1, cnt)
   }
+
+  fun testElementUiCompletion() {
+    createPackageJsonWithVueDependency(myFixture, "\"element-ui\": \"2.0.5\"")
+    myFixture.copyDirectoryToProject("../libs/element-ui/node_modules", "./node_modules")
+    myFixture.configureByText("ElementUiCompletion.vue",
+"""
+<template><el-<caret></template>
+""")
+    myFixture.completeBasic()
+    assertSameElements(myFixture.lookupElementStrings!!, listOf("el-col", "el-button", "el-button-group"))
+  }
+
+  fun testMintUiCompletion() {
+    createPackageJsonWithVueDependency(myFixture, "\"mint-ui\": \"^2.2.3\"")
+    myFixture.copyDirectoryToProject("../libs/mint-ui/node_modules", "./node_modules")
+    myFixture.configureByText("MintUiCompletion.vue",
+"""
+<template><mt-<caret></template>
+""")
+    myFixture.completeBasic()
+    assertSameElements(myFixture.lookupElementStrings!!, listOf("mt-field", "mt-swipe", "mt-swipe-item"))
+  }
+
+  fun testVuetifyCompletion() {
+    createPackageJsonWithVueDependency(myFixture, "\"vuetify\": \"0.17.2\"")
+    myFixture.copyDirectoryToProject("../libs/vuetify/node_modules", "./node_modules")
+    myFixture.configureByText("VuetifyCompletion.vue",
+"""
+<template><v-<caret></template>
+""")
+    myFixture.completeBasic()
+    assertSameElements(myFixture.lookupElementStrings!!, listOf("v-app", "v-list", "v-list-group", "v-list-tile",
+                                                                "v-list-tile-action", "v-list-tile-action-text",
+                                                                "v-list-tile-avatar", "v-list-tile-content",
+                                                                "v-list-tile-sub-title", "v-list-tile-title"))
+  }
 }
 
-fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture) {
+fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,
+                                       additionalDependencies: String) {
   fixture.configureByText(PackageJsonUtil.FILE_NAME, """
   {
     "name": "test",
     "version": "0.0.1",
     "dependencies": {
-      "vue": "2.5.3"
+      "vue": "2.5.3", $additionalDependencies
     },
     "typings": "types/index.d.ts"
   }
