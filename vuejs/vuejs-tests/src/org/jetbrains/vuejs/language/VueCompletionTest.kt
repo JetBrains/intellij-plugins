@@ -14,11 +14,6 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
-import kotlin.collections.firstOrNull
-import kotlin.collections.forEach
-import kotlin.collections.map
-import kotlin.jvm.java
-import kotlin.text.substringBefore
 
 class VueCompletionTest : LightPlatformCodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/types/"
@@ -678,15 +673,35 @@ $script""")
     val cnt = myFixture.lookupElementStrings!!.filter { "another-panel" == it }.count()
     TestCase.assertEquals(1, cnt)
   }
+
+  fun testWrongPropsNotInCompletion() {
+    myFixture.configureByText("WrongPropsNotInCompletion.vue", """
+<template>
+    <test-comp <caret>></test-comp>
+</template>
+
+<script>
+    export default {
+        name: "test-comp",
+        props: ["aaa", `sss`, 'ddd', true, 123]
+    };
+</script>
+""")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "aaa", ":aaa", "v-for", "sss", "ddd")
+    // actually the test is against exception, which occured on completion
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "123", "true")
+  }
 }
 
-fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture) {
+fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,
+                                       additionalDependencies: String) {
   fixture.configureByText(PackageJsonUtil.FILE_NAME, """
   {
     "name": "test",
     "version": "0.0.1",
     "dependencies": {
-      "vue": "2.5.3"
+      "vue": "2.5.3", $additionalDependencies
     },
     "typings": "types/index.d.ts"
   }
