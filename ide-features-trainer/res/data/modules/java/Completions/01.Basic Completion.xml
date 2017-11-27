@@ -1,5 +1,6 @@
 <xml type="Scenario" name="Basic Completion" id="Completions.BasicCompletion" subtype="aimless" projectTree="hide" lang="JAVA">
     <MouseBlock>
+        <CaretBlock>
         <CopyText><![CDATA[import java.lang.*;
 import java.util.*;
 
@@ -22,15 +23,18 @@ class BasicCompletionDemo implements Runnable{
 }
         ]]></CopyText>
     <MoveCaret position="14:29"/>
-    <CaretBlock>
         <TypeText> </TypeText>
         <Try trigger="EditorChooseLookupItem">By default, IntelliJ IDEA completes your code instantly. Start typing <code>Ran</code> right where the caret is, and you will see the Lookup Menu with matching suggestions. You can choose the first item from the Lookup menu by pressing <action>EditorEnter</action>.</Try>
         <Try trigger="CodeCompletion">To activate Basic Completion, press <action>CodeCompletion</action> and you will see lookup menu again.</Try>
-        <Try trigger="EditorChooseLookupItem">Press <action>EditorEnter</action> to choose the top item in the lookup menu.</Try>
+        </CaretBlock>
+    </MouseBlock>
+        <Try trigger="EditorChooseLookupItem">Select <code>i</code> inside the lookup menu and press <action>EditorEnter</action>.</Try>
+    <MouseBlock>
+        <CaretBlock>
         <Try trigger="EditorCompleteStatement">Press <action>EditorCompleteStatement</action> to complete this statement.</Try>
         <MoveCaret position="18:27"/>
         <Try triggers="CodeCompletion;CodeCompletion">Sometimes you need to see suggestions for static constants or methods. Press <action>CodeCompletion</action> twice to access a deeper level of Code Completion.</Try>
-    </CaretBlock>
+        </CaretBlock>
     </MouseBlock>
     <Win/>
 </xml>
