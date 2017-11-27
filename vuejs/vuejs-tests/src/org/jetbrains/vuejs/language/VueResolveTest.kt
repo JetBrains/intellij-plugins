@@ -6,13 +6,11 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.util.Trinity
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
-import kotlin.collections.forEach
-import kotlin.jvm.java
-import kotlin.text.trimIndent
 
 /**
  * @author Irina.Chernushina on 7/28/2017.
@@ -1135,7 +1133,7 @@ Vue.component('global-comp-literal', {
   }
 
   fun testResolveIntoVueDefinitions() {
-    createPackageJsonWithVueDependency(myFixture)
+    createPackageJsonWithVueDependency(myFixture, "")
     myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
     myFixture.configureByText("ResolveIntoVueDefinitions.vue", """
 <script>
@@ -1150,6 +1148,67 @@ Vue.component('global-comp-literal', {
     TestCase.assertNotNull(target)
     TestCase.assertEquals("options.d.ts", target!!.containingFile.name)
     TestCase.assertTrue(target.parent is TypeScriptPropertySignature)
+  }
+
+  fun testResolveElementUiComponent() {
+    createPackageJsonWithVueDependency(myFixture, "\"element-ui\": \"2.0.5\"")
+    myFixture.copyDirectoryToProject("../libs/element-ui/node_modules", "./node_modules")
+    val testData = arrayOf(
+      Trinity("el-col", "ElCol", "col.js"),
+      Trinity("el-button", "ElButton", "button.vue"),
+      Trinity("el-button-group", "ElButtonGroup", "button-group.vue")
+    )
+    testData.forEach {
+      myFixture.configureByText("ResolveElementUiComponent.vue", "<template><<caret>${it.first}></${it.first}></template>")
+      doResolveIntoLibraryComponent(it.second, it.third)
+    }
+  }
+
+  fun testResolveMintUiComponent() {
+    createPackageJsonWithVueDependency(myFixture, "\"mint-ui\": \"^2.2.3\"")
+    myFixture.copyDirectoryToProject("../libs/mint-ui/node_modules", "./node_modules")
+    val testData = arrayOf(
+      Trinity("mt-field", "mt-field", "field.vue"),
+      Trinity("mt-swipe", "mt-swipe", "swipe.vue"),
+      Trinity("mt-swipe-item", "mt-swipe-item", "swipe-item.vue")
+    )
+    testData.forEach {
+      myFixture.configureByText("ResolveMintUiComponent.vue", "<template><<caret>${it.first}></${it.first}></template>")
+      doResolveIntoLibraryComponent(it.second, it.third)
+    }
+  }
+
+  fun testResolveVuetifyComponent() {
+    createPackageJsonWithVueDependency(myFixture, "\"vuetify\": \"0.17.2\"")
+    myFixture.copyDirectoryToProject("../libs/vuetify/node_modules", "./node_modules")
+    val testData = arrayOf(
+      Trinity("v-list", "v-list", "VList.js"),
+      Trinity("v-list-tile-content", "v-list-tile-content", "index.js"),
+      Trinity("v-app", "v-app", "VApp.js")
+    )
+    testData.forEach {
+      myFixture.configureByText("ResolveVuetifyComponent.vue", "<template><<caret>${it.first}></${it.first}></template>")
+      if (it.first == "v-list-tile-content") {
+        val reference = myFixture.getReferenceAtCaretPosition()
+        TestCase.assertNotNull(reference)
+        val target = reference!!.resolve()
+        TestCase.assertNotNull(target)
+        TestCase.assertEquals(it.third, target!!.containingFile.name)
+        TestCase.assertTrue(target.parent is JSCallExpression)
+      } else {
+        doResolveIntoLibraryComponent(it.second, it.third)
+      }
+    }
+  }
+
+  private fun doResolveIntoLibraryComponent(compName: String, fileName: String) {
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val target = reference!!.resolve()
+    TestCase.assertNotNull(target)
+    TestCase.assertEquals(fileName, target!!.containingFile.name)
+    TestCase.assertTrue(target.parent is JSProperty)
+    TestCase.assertEquals("'$compName'", (target.parent as JSProperty).value!!.text)
   }
 }
 

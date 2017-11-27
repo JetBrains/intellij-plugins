@@ -19,6 +19,7 @@ import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
 import com.intellij.psi.impl.source.xml.XmlDocumentImpl
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
@@ -33,16 +34,21 @@ import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.get
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isGlobal
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.selectComponent
 import org.jetbrains.vuejs.index.VueComponentsIndex
-import org.jetbrains.vuejs.index.getForAllKeys
 import org.jetbrains.vuejs.index.hasVue
 import org.jetbrains.vuejs.index.resolve
 
 class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
     if (tag != null && hasVue(tag.project)) {
+      val name = tag.name
+      // do not perform additional work for html tags
+      if (HtmlUtil.isHtmlBlockTag(name) ||
+          HtmlUtil.isHtml5Tag(name) ||
+          HtmlUtil.isPossiblyInlineTag(name)) return null
+
       var localComponent:JSImplicitElement? = null
       processLocalComponents(tag, { foundName, element ->
-        if (foundName == tag.name || foundName == toAsset(tag.name) || foundName == toAsset(tag.name).capitalize()) {
+        if (foundName == name || foundName == toAsset(name) || foundName == toAsset(name).capitalize()) {
           localComponent = element
         }
         return@processLocalComponents localComponent == null
@@ -50,14 +56,22 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
 
       if (localComponent != null) return VueElementDescriptor(localComponent!!)
 
-      val component = selectComponent(resolve(tag.name, tag.resolveScope, VueComponentsIndex.KEY), false) ?:
-                      selectComponent(resolve(toAsset(tag.name), tag.resolveScope, VueComponentsIndex.KEY), false) ?:
-                      selectComponent(resolve(toAsset(tag.name).capitalize(), tag.resolveScope, VueComponentsIndex.KEY), false)
-      if (component != null && isGlobal(component)) {
-        return VueElementDescriptor(component)
+      val variants = nameVariantsWithStar(name)
+      @Suppress("LoopToCallChain") // by performance reasons
+      for (variant in variants) {
+        val component = selectComponent(resolve(variant, GlobalSearchScope.allScope(tag.project), VueComponentsIndex.KEY), false)
+        if (component != null && (isGlobal(component) || VueComponents.isGlobalLibraryComponent(variant, component))) {
+          return VueElementDescriptor(component)
+        }
       }
     }
     return null
+  }
+
+  private fun nameVariantsWithStar(name: String): MutableSet<String> {
+    val variants = mutableSetOf(name, toAsset(name), toAsset(name).capitalize())
+    variants.addAll(variants.map { it + "*" })
+    return variants
   }
 
   private fun processLocalComponents(tag: XmlTag, processor: (String?, JSImplicitElement) -> Boolean): Boolean {
@@ -104,16 +118,20 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       return@processLocalComponents true
     })
     val namePrefix = tag.name.substringBefore(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, tag.name)
-    val globals = mutableSetOf<String>()
-    val variants = getForAllKeys(tag.resolveScope, VueComponentsIndex.KEY, { key -> key.startsWith(namePrefix, true) }).
-      filter { !files.contains(it.containingFile) }
 
-    val components = variants.filter { !globals.contains(it.name) || VueComponents.isGlobal(it) }.
-      map { createVueLookup(it, fromAsset(it.name), VueComponents.isGlobal(it)) }.distinctBy { it.lookupString }
+    val variants = nameVariantsWithStar(namePrefix)
+    val allComponents = VueComponents.getAllComponents(tag.project, { key -> variants.any { key.startsWith(it, true) } }, false)
+    val components = allComponents.map.keys
+      .filter { !files.contains(allComponents.map[it]!!.first.containingFile) }
+      .map {
+        val value = allComponents.map[it]!!
+        createVueLookup(value.first, fromAsset(it), value.second)
+      }
+
     elements?.addAll(components)
   }
 
-  private fun createVueLookup(element: JSImplicitElement, name: String, isGlobal: Boolean) =
+  private fun createVueLookup(element: PsiElement, name: String, isGlobal: Boolean) =
     LookupElementBuilder.create(element, fromAsset(name)).
       withInsertHandler(if (isGlobal) null else VueInsertHandler.INSTANCE).
       withIcon(VuejsIcons.Vue)

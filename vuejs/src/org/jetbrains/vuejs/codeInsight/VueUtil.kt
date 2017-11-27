@@ -50,3 +50,10 @@ fun getStringLiteralsFromInitializerArray(holder: PsiElement,
               ((context is JSArrayLiteralExpression) && (context.parent == holder) || context == holder)
             })
 }
+
+fun getTextIfLiteral(holder: PsiElement?): String? {
+  if (holder != null && holder is JSLiteralExpression && holder.isQuotedLiteral) {
+    return holder.value as? String
+  }
+  return null
+}
