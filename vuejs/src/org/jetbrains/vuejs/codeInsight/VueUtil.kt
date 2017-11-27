@@ -43,7 +43,8 @@ fun getStringLiteralsFromInitializerArray(holder: PsiElement,
                                                 JSStubElementTypes.LITERAL_EXPRESSION)
     .filter({
               val context = it.context
-              it.significantValue != null &&
+              !it.significantValue.isNullOrBlank() &&
+              QUOTES.contains(it.significantValue!![0]) &&
               filter(es6Unquote(it.significantValue!!), it) &&
               ((context is JSArrayLiteralExpression) && (context.parent == holder) || context == holder)
             })

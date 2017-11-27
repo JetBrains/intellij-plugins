@@ -709,6 +709,25 @@ $script""")
                                                                 "v-list-tile-avatar", "v-list-tile-content",
                                                                 "v-list-tile-sub-title", "v-list-tile-title"))
   }
+
+  fun testWrongPropsNotInCompletion() {
+    myFixture.configureByText("WrongPropsNotInCompletion.vue", """
+<template>
+    <test-comp <caret>></test-comp>
+</template>
+
+<script>
+    export default {
+        name: "test-comp",
+        props: ["aaa", `sss`, 'ddd', true, 123]
+    };
+</script>
+""")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "aaa", ":aaa", "v-for", "sss", "ddd")
+    // actually the test is against exception, which occured on completion
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "123", "true")
+  }
 }
 
 fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,
