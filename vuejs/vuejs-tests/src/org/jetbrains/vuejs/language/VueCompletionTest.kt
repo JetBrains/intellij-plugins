@@ -719,13 +719,13 @@ $script""")
 <script>
     export default {
         name: "test-comp",
-        props: ["aaa", 'ddd', true, 123]
+        props: ["aaa", `sss`, 'ddd', true, 123]
     };
 </script>
 """)
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "aaa", ":aaa", "v-for", "ddd")
-    // actually the test is against exception, which occured on completion
+    assertContainsElements(myFixture.lookupElementStrings!!, "aaa", ":aaa", "v-for", "ddd", "sss")
+    // actually the test is against exception, which occurred on completion
     UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "123", "true")
   }
 }
