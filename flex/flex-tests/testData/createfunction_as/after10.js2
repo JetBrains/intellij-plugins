@@ -6,6 +6,6 @@ class C {
   }
 
     private static function bar():String {
-        <caret>
+        return "";
     }
 }

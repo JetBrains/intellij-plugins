@@ -3,7 +3,7 @@
     <mx:Button label="{getMsg('zzzzz')}"/>
     <mx:Script><![CDATA[
         private function getMsg(s:String):String {
-            
+            return "";
         }
         ]]></mx:Script>
 </mx:Application>

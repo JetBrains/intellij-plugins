@@ -13,7 +13,7 @@ public class CreateFunctionAmbiguous {
     }
 
     private function foo(p:com.bar.A, p2:com.zz.A):com.foo.A {
-        
+        return undefined;
     }
 
 }

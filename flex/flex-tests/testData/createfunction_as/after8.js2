@@ -5,6 +5,6 @@ class C {
   }
 
     private static function bar():int {
-        <caret>
+        return undefined;
     }
 }

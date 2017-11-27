@@ -54,6 +54,10 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
     myNode = node;
   }
 
+  @Override
+  protected void appendFunctionBody(Template template, JSReferenceExpression refExpr, PsiFile file) {
+  }
+
   @Nullable
   public static ActionScriptCreateConstructorFix createIfApplicable(final JSCallExpression node) {
     final JSClass clazz;
