@@ -55,6 +55,7 @@ public class TaglibCssInlineStyleInjector implements MultiHostInjector, DumbAwar
       ))
       .withLocalName(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES);
 
+  @Override
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement context) {
     final FileType fileType = context.getContainingFile().getFileType();
     if (fileType != StdFileTypes.JSP && fileType != StdFileTypes.JSPX) {
@@ -69,6 +70,7 @@ public class TaglibCssInlineStyleInjector implements MultiHostInjector, DumbAwar
     }
   }
 
+  @Override
   @NotNull
   public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
     return Collections.singletonList(XmlAttributeValue.class);

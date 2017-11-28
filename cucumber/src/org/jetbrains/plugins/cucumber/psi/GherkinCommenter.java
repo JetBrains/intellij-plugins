@@ -14,27 +14,32 @@ public class GherkinCommenter implements CodeDocumentationAwareCommenter {
   @NonNls
   private static final String LINE_COMMENT_PREFIX = "#";
 
+  @Override
   @Nullable
   public String getLineCommentPrefix() {
     return LINE_COMMENT_PREFIX;
   }
 
+  @Override
   @Nullable
   public String getBlockCommentPrefix() {
     // N/A
     return null;
   }
 
+  @Override
   @Nullable
   public String getBlockCommentSuffix() {
     // N/A
     return null;
   }
 
+  @Override
   public String getCommentedBlockCommentPrefix() {
     return null;
   }
 
+  @Override
   public String getCommentedBlockCommentSuffix() {
     return null;
   }

@@ -7,22 +7,27 @@ import com.jetbrains.lang.dart.DartTokenTypesSets;
 import org.jetbrains.annotations.Nullable;
 
 public class DartCommenter implements CodeDocumentationAwareCommenter {
+  @Override
   public String getLineCommentPrefix() {
     return "//";
   }
 
+  @Override
   public String getBlockCommentPrefix() {
     return "/*";
   }
 
+  @Override
   public String getBlockCommentSuffix() {
     return "*/";
   }
 
+  @Override
   public String getCommentedBlockCommentPrefix() {
     return null;
   }
 
+  @Override
   public String getCommentedBlockCommentSuffix() {
     return null;
   }

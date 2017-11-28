@@ -54,6 +54,7 @@ public class FreeMarkerJavaScriptInjector implements MultiHostInjector {
       }))
       .withSuperParent(3, psiElement(FtlMacro.class).with(FreemarkerInjectionConstants.TAGLIB_PREFIX));
 
+  @Override
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement host) {
     if (JS_ELEMENT_PATTERN.accepts(host)) {
       registrar.startInjecting(JavaScriptSupportLoader.JAVASCRIPT.getLanguage())
@@ -63,6 +64,7 @@ public class FreeMarkerJavaScriptInjector implements MultiHostInjector {
     }
   }
 
+  @Override
   @NotNull
   public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
     return Collections.singletonList(FtlStringLiteral.class);

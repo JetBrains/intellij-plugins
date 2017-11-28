@@ -45,22 +45,27 @@ public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlComme
   private static final String CFML_COMMENT_PREFIX = "<!---";
   private static final String CFML_COMMENT_SUFFIX = "--->";
 
+  @Override
   public String getLineCommentPrefix() {
     return null;
   }
 
+  @Override
   public String getBlockCommentPrefix() {
     return "<!---";
   }
 
+  @Override
   public String getBlockCommentSuffix() {
     return "--->";
   }
 
+  @Override
   public String getCommentedBlockCommentPrefix() {
     return "&lt;!&mdash;";
   }
 
+  @Override
   public String getCommentedBlockCommentSuffix() {
     return "&mdash;&gt;";
   }

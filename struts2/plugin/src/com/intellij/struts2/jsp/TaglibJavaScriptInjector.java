@@ -84,6 +84,7 @@ public class TaglibJavaScriptInjector implements MultiHostInjector, DumbAware {
                      // tabbedPanel
                      "disabledTabs");
 
+  @Override
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement host) {
     final FileType fileType = host.getContainingFile().getFileType();
     if (fileType != StdFileTypes.JSP && fileType != StdFileTypes.JSPX) {
@@ -108,6 +109,7 @@ public class TaglibJavaScriptInjector implements MultiHostInjector, DumbAware {
     }
   }
 
+  @Override
   @NotNull
   public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
     return Collections.singletonList(XmlAttributeValue.class);
