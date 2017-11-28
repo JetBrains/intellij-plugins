@@ -2,18 +2,15 @@ package com.intellij.lang.javascript.inspections.actionscript;
 
 import com.intellij.codeInsight.daemon.impl.quickfix.RenameElementFix;
 import com.intellij.codeInsight.daemon.impl.quickfix.RenameFileFix;
-import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector;
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.*;
-import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector;
-import com.intellij.lang.javascript.flex.*;
+import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.highlighting.JSFixFactory;
 import com.intellij.lang.javascript.highlighting.JSSemanticHighlightingUtil;
 import com.intellij.lang.javascript.index.JSSymbolUtil;
@@ -21,13 +18,10 @@ import com.intellij.lang.javascript.index.JSTypeEvaluateManager;
 import com.intellij.lang.javascript.inspections.actionscript.fixes.ActionScriptConstructorChecker;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XFilterQueryArgumentList;
-import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeListImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageStatementImpl;
-import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageWrapper;
-import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
@@ -37,9 +31,6 @@ import com.intellij.lang.javascript.ui.JSFormatUtil;
 import com.intellij.lang.javascript.validation.*;
 import com.intellij.lang.javascript.validation.fixes.*;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Pair;
@@ -1031,91 +1022,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
   }
 
-  @Nullable
-  @Override
-  protected LocalQuickFix getPreferredQuickFixForUnresolvedRef(final PsiElement nameIdentifier) {
-    final Module module = ModuleUtilCore.findModuleForPsiElement(nameIdentifier);
-    if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) return null;
-
-    final String conditionalCompilerDefinitionName = getPotentialConditionalCompilerDefinitionName(nameIdentifier);
-    if (conditionalCompilerDefinitionName != null) {
-      return new DeclareConditionalCompilerDefinitionFix(module, conditionalCompilerDefinitionName);
-    }
-
-    final JSCallExpression callExpression = PsiTreeUtil.getParentOfType(nameIdentifier, JSCallExpression.class);
-    if (callExpression == null) return null;
-
-    if (JSResolveUtil.isEventListenerCall(callExpression)) {
-      final JSExpression[] params = callExpression.getArguments();
-
-      if (params.length >= 2 && PsiTreeUtil.isAncestor(params[1], nameIdentifier, true)) {
-        return new CreateJSEventMethod(nameIdentifier.getText(), () -> {
-          PsiElement responsibleElement = null;
-          if (params[0] instanceof JSReferenceExpression) {
-            responsibleElement = ((JSReferenceExpression)params[0]).getQualifier();
-          }
-
-          return responsibleElement == null ? FlexCommonTypeNames.FLASH_EVENT_FQN : responsibleElement.getText();
-        });
-      }
-    }
-    else if (needsFlexMobileViewAsFirstArgument(callExpression)) {
-      final JSExpression[] params = callExpression.getArguments();
-
-      if (params.length >= 1 && PsiTreeUtil.isAncestor(params[0], nameIdentifier, true)) {
-        final String contextPackage = JSResolveUtil.getPackageNameFromPlace(callExpression);
-        final String fqn = StringUtil.getQualifiedName(contextPackage, nameIdentifier.getText());
-
-        final CreateFlexMobileViewIntentionAndFix fix = new CreateFlexMobileViewIntentionAndFix(fqn, nameIdentifier, true);
-        fix.setCreatedClassFqnConsumer(fqn1 -> {
-          final String packageName = StringUtil.getPackageName(fqn1);
-          if (StringUtil.isNotEmpty(packageName) && !packageName.equals(contextPackage)) {
-            ImportUtils.doImport(nameIdentifier, fqn1, true);
-          }
-        });
-        return fix;
-      }
-    }
-
-    return null;
-  }
-
-  @Nullable
-  private static String getPotentialConditionalCompilerDefinitionName(final PsiElement identifier) {
-    final PsiElement parent1 = identifier.getParent();
-    final PsiElement parent2 = parent1 == null ? null : parent1.getParent();
-    final PsiElement parent3 = parent2 == null ? null : parent2.getParent();
-    if (parent1 instanceof JSReferenceExpression && ((JSReferenceExpression)parent1).getQualifier() == null &&
-        parent2 instanceof JSE4XNamespaceReference &&
-        parent3 instanceof JSReferenceExpression && ((JSReferenceExpression)parent3).getQualifier() == null) {
-      return getNormalizedConditionalCompilerDefinitionName(parent3.getText());
-    }
-    return null;
-  }
-
-  @Nullable
-  private static String getNormalizedConditionalCompilerDefinitionName(final String name) {
-    final int colonsIndex = name.indexOf("::");
-    if (colonsIndex > 0) {
-      final String first = name.substring(0, colonsIndex).trim();
-      final String second = name.substring(colonsIndex + "::".length()).trim();
-      if (StringUtil.isJavaIdentifier(first) && StringUtil.isJavaIdentifier(second)) {
-        return first + "::" + second;
-      }
-    }
-    return null;
-  }
-
-  private static boolean needsFlexMobileViewAsFirstArgument(final JSCallExpression callExpression) {
-    final JSExpression methodExpr = callExpression.getMethodExpression();
-    final PsiElement function = methodExpr instanceof JSReferenceExpression ? ((JSReferenceExpression)methodExpr).resolve() : null;
-    final PsiElement clazz =
-      function instanceof JSFunction && ArrayUtil.contains(((JSFunction)function).getName(), "pushView", "replaceView")
-      ? function.getParent()
-      : null;
-    return clazz instanceof JSClass && "spark.components.ViewNavigator".equals(((JSClass)clazz).getQualifiedName());
-  }
-
   @Override
   public void visitJSAttribute(JSAttribute jsAttribute) {
     if ("Embed".equals(jsAttribute.getName())) {
@@ -1284,85 +1190,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  protected boolean addCreateFromUsageFixes(JSReferenceExpression node,
-                                            ResolveResult[] resolveResults,
-                                            List<LocalQuickFix> fixes,
-                                            boolean inTypeContext,
-                                            boolean ecma) {
-    final PsiElement nodeParent = node.getParent();
-    final JSExpression qualifier = node.getQualifier();
-    final String referencedName = node.getReferenceName();
-
-    inTypeContext = super.addCreateFromUsageFixes(node, resolveResults, fixes, inTypeContext, ecma);
-    if (!(nodeParent instanceof JSArgumentList) && nodeParent.getParent() instanceof JSCallExpression) {
-      inTypeContext = true;
-    }
-
-    if (!inTypeContext) {
-      boolean getter = !(node.getParent() instanceof JSDefinitionExpression);
-      fixes.add(new CreateJSPropertyAccessorIntentionAction(referencedName, getter));
-    }
-    if (qualifier == null) {
-      boolean canHaveTypeFix = false;
-
-      if (nodeParent instanceof JSReferenceListMember) {
-        canHaveTypeFix = true;
-      }
-      else if (!(nodeParent instanceof JSDefinitionExpression) && resolveResults.length == 0) {
-        canHaveTypeFix = true;
-        fixes.add(createClassOrInterfaceFix(node, false));
-        fixes.add(createClassOrInterfaceFix(node, true));
-      }
-
-      if (!inTypeContext && JSReadWriteAccessDetector.ourInstance.getExpressionAccess(node) == ReadWriteAccessDetector.Access.Read) {
-        canHaveTypeFix = true;
-        fixes.add(new CreateJSFunctionIntentionAction(referencedName, true));
-      }
-
-      if (canHaveTypeFix) fixes.add(new AddImportECMAScriptClassOrFunctionAction(null, node));
-    }
-    else if (canHaveImportTo(resolveResults)) {
-      fixes.add(new AddImportECMAScriptClassOrFunctionAction(null, node));
-    }
-    return inTypeContext;
-  }
-
-  @Override
-  protected void addCreateFromUsageFixesForCall(@NotNull JSCallExpression node,
-                                                @NotNull JSReferenceExpression referenceExpression,
-                                                @NotNull ResolveResult[] resolveResults,
-                                                @NotNull List<LocalQuickFix> quickFixes) {
-    if (canHaveImportTo(resolveResults)) {
-      quickFixes.add(new AddImportECMAScriptClassOrFunctionAction(null, referenceExpression));
-    }
-    if (!(node instanceof JSNewExpression)) {
-      //foo() -> AS methods are callable without this -> method
-      quickFixes.add(JSFixFactory.getInstance().createJSFunctionIntentionAction(referenceExpression.getReferenceName(), true));
-    }
-
-    super.addCreateFromUsageFixesForCall(node, referenceExpression, resolveResults, quickFixes);
-  }
-
-  private static boolean canHaveImportTo(ResolveResult[] resolveResults) {
-    if (resolveResults.length == 0) return true;
-    for (ResolveResult r : resolveResults) {
-      if (!r.isValidResult()) {
-        if (r instanceof JSResolveResult &&
-            ((JSResolveResult)r).getResolveProblemKey() == JSResolveResult.QUALIFIED_NAME_IS_NOT_IMPORTED) {
-          return true;
-        }
-        continue;
-      }
-      PsiElement element = r.getElement();
-      if (element instanceof JSClass) return true;
-      if (element instanceof JSFunction) {
-        if (((JSFunction)element).isConstructor()) return true;
-      }
-    }
-    return false;
-  }
-
-  @Override
   public void visitJSBinaryExpression(JSBinaryExpression node) {
     super.visitJSBinaryExpression(node);
 
@@ -1420,9 +1247,9 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       if (resolveResult instanceof JSClass && ((JSClass)resolveResult).isInterface()) {
         final PsiElement referenceNameElement = methodExpression.getReferenceNameElement();
 
-        reportUnresolvedFunctionError(referenceNameElement,
-                                      this.getUnresolvedReferenceHighlightType(methodExpression),
-                                      JSBundle.message("javascript.interface.can.not.be.instantiated.message"), null);
+        myProblemReporter.registerProblem(referenceNameElement,
+                                          JSBundle.message("javascript.interface.can.not.be.instantiated.message"),
+                                          ProblemHighlightType.ERROR);
         return false;
       }
     }
@@ -1456,62 +1283,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         "javascript.argument.type.mismatch",
         null, false);
     }
-  }
-
-  @Nullable
-  @Override
-  protected JSType getResolveResultType(JSExpression qualifier, PsiElement resultElement) {
-    if (resultElement instanceof JSVariable) { // do not evaluate initializer
-      return ((JSVariable)resultElement).getType();
-    }
-    return super.getResolveResultType(qualifier, resultElement);
-  }
-
-  @Nullable
-  @Override
-  public ProblemHighlightType getUnresolvedReferenceHighlightType(@NotNull JSReferenceExpression node) {
-    JSExpression qualifier = ((JSReferenceExpressionImpl)node).getResolveQualifier();
-
-    if (qualifier != null) {
-      final PsiFile containingFile = node.getContainingFile();
-      JSType type = null;
-      boolean checkType = false;
-
-      if (qualifier instanceof JSReferenceExpression) {
-        ResolveResult[] results = ((JSReferenceExpression)qualifier).multiResolve(false);
-
-        if (results.length != 0) {
-          PsiElement resultElement = results[0].getElement();
-          if (resultElement instanceof JSPackageWrapper) return ProblemHighlightType.ERROR;
-          type = getResolveResultType(qualifier, resultElement);
-          checkType = true;
-        }
-      }
-      else {
-        type = JSResolveUtil.getExpressionJSType(qualifier);
-        checkType = true;
-      }
-      if (checkType && (type instanceof JSAnyType || type == null)) {
-        return ProblemHighlightType.LIKE_UNKNOWN_SYMBOL;
-      }
-
-      JSClass jsClass = JSResolveUtil.findClassOfQualifier(qualifier, containingFile);
-      if (jsClass == null) {
-        return ProblemHighlightType.ERROR;
-      }
-
-      final JSAttributeList attributeList = jsClass.getAttributeList();
-      if (attributeList == null || !attributeList.hasModifier(JSAttributeList.ModifierType.DYNAMIC)) {
-        return ProblemHighlightType.ERROR;
-      }
-
-      final String qualifiedName = jsClass.getQualifiedName();
-      if ("Error".equals(qualifiedName) || "Date".equals(qualifiedName)) {
-        return ProblemHighlightType.GENERIC_ERROR_OR_WARNING;
-      }
-    }
-
-    return super.getUnresolvedReferenceHighlightType(node);
   }
 
   private void checkClassReferenceInStaticContext(final JSExpression node, @PropertyKey(resourceBundle = JSBundle.BUNDLE) String key) {

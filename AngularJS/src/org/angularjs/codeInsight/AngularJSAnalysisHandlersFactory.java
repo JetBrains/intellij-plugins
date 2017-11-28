@@ -2,14 +2,13 @@ package org.angularjs.codeInsight;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.JSAnalysisHandlersFactory;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
-import com.intellij.lang.javascript.validation.JSAnnotatingVisitor;
-import com.intellij.lang.javascript.validation.JavaScriptAnnotatingVisitor;
+import com.intellij.lang.javascript.validation.JSReferenceChecker;
+import com.intellij.lang.javascript.validation.JSReferenceInspectionProblemReporter;
 import com.intellij.lang.javascript.validation.fixes.CreateJSFunctionIntentionAction;
 import com.intellij.lang.javascript.validation.fixes.CreateJSVariableIntentionAction;
 import com.intellij.openapi.editor.Editor;
@@ -26,8 +25,8 @@ import java.util.List;
 public class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory {
   @NotNull
   @Override
-  public JSAnnotatingVisitor createAnnotatingVisitor(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
-    return new JavaScriptAnnotatingVisitor(psiElement, holder) {
+  public JSReferenceChecker getReferenceChecker(@NotNull JSReferenceInspectionProblemReporter reporter) {
+    return new JSReferenceChecker(reporter) {
       @Override
       protected void addCreateFromUsageFixesForCall(@NotNull JSCallExpression node,
                                                     @NotNull JSReferenceExpression referenceExpression,

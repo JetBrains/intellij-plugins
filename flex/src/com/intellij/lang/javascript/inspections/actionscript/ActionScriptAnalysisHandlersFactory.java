@@ -2,9 +2,7 @@ package com.intellij.lang.javascript.inspections.actionscript;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.JSAnalysisHandlersFactory;
-import com.intellij.lang.javascript.validation.ActionScriptKeywordHighlighterVisitor;
-import com.intellij.lang.javascript.validation.JSAnnotatingVisitor;
-import com.intellij.lang.javascript.validation.JSKeywordHighlighterVisitor;
+import com.intellij.lang.javascript.validation.*;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,5 +19,11 @@ public class ActionScriptAnalysisHandlersFactory extends JSAnalysisHandlersFacto
   @Override
   public JSKeywordHighlighterVisitor createKeywordHighlighterVisitor(@NotNull AnnotationHolder holder) {
     return new ActionScriptKeywordHighlighterVisitor(holder);
+  }
+
+  @NotNull
+  @Override
+  public JSReferenceChecker getReferenceChecker(@NotNull JSReferenceInspectionProblemReporter reporter) {
+    return new ActionScriptReferenceChecker(reporter);
   }
 }
