@@ -30,6 +30,7 @@ import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import com.intellij.xml.XmlTagNameProvider
 import com.intellij.xml.util.HtmlUtil
 import icons.VuejsIcons
+import org.jetbrains.vuejs.GLOBAL_BINDING_MARK
 import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.getBoundName
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isGlobal
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.selectComponent
@@ -56,7 +57,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
 
       if (localComponent != null) return VueElementDescriptor(localComponent!!)
 
-      val variants = nameVariantsWithStar(name)
+      val variants = nameVariantsWithPossiblyGlobalMark(name)
       @Suppress("LoopToCallChain") // by performance reasons
       for (variant in variants) {
         val component = selectComponent(resolve(variant, GlobalSearchScope.allScope(tag.project), VueComponentsIndex.KEY), false)
@@ -68,9 +69,9 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     return null
   }
 
-  private fun nameVariantsWithStar(name: String): MutableSet<String> {
+  private fun nameVariantsWithPossiblyGlobalMark(name: String): MutableSet<String> {
     val variants = mutableSetOf(name, toAsset(name), toAsset(name).capitalize())
-    variants.addAll(variants.map { it + "*" })
+    variants.addAll(variants.map { it + GLOBAL_BINDING_MARK })
     return variants
   }
 
@@ -119,7 +120,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     })
     val namePrefix = tag.name.substringBefore(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, tag.name)
 
-    val variants = nameVariantsWithStar(namePrefix)
+    val variants = nameVariantsWithPossiblyGlobalMark(namePrefix)
     val allComponents = VueComponents.getAllComponents(tag.project, { key -> variants.any { key.startsWith(it, true) } }, false)
     val components = allComponents.map.keys
       .filter { !files.contains(allComponents.map[it]!!.first.containingFile) }
