@@ -160,6 +160,10 @@
                 ]
               }
             }]},
+        "ban-comma-operator": {
+          "description": "Bans the comma operator",
+          "type": "boolean"
+        },
         "ban-types": {
           "description": "Bans specific types from being used. Does not ban the corresponding runtime objects from being used",
           "oneOf": [
@@ -493,6 +497,10 @@
           "description": "Disallows multiple import statements from the same module",
           "type": "boolean"
         },
+        "no-duplicate-switch-case": {
+          "description": "Prevents duplicate cases in switch statements",
+          "type": "boolean"
+        },
         "no-duplicate-super": {
           "description": "Warns if ‘super()’ appears twice in a constructor",
           "type": "boolean"
@@ -534,6 +542,24 @@
         "no-for-in-array": {
           "description": "Disallows iterating over an array with a for-in loop",
           "type": "boolean"
+        },
+        "no-implicit-dependencies": {
+          "description": "Disallows importing modules that are not listed as dependency in the project’s package.json.\nDisallows importing transient dependencies and modules installed above your package’s root directory.",
+          "oneOf": [
+            {"type": "boolean"},
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {"type": "boolean", "enum": [true]},
+                  {
+                    "type": "string",
+                    "enum": ["dev", "optional"]
+                  }
+                ]
+              }
+            }
+          ]
         },
         "no-import-side-effect": {
           "description": "Avoid import statements with side-effect",
@@ -670,6 +696,10 @@
           "description": "Disallows reassigning parameters",
           "type": "boolean"
         },
+        "no-redundant-jsdoc": {
+          "description": "Forbids JSDoc which duplicates TypeScript functionality",
+          "type": "boolean"
+        },
         "no-reference": {
           "description": "Disallows /// <reference path=> imports (use ES6-style imports instead)",
           "type": "boolean"
@@ -679,6 +709,10 @@
         },
         "no-require-imports": {
           "description": "Disallows invocation of require()",
+          "type": "boolean"
+        },
+        "no-return-await": {
+          "description": "Disallows unnecessary return await",
           "type": "boolean"
         },
         "no-shadowed-variable": {
@@ -768,6 +802,24 @@
         },
         "no-unnecessary-callback-wrapper": {
           "description": "Replaces x => f(x) with just f. To catch more cases, enable only-arrow-functions and arrow-return-shorthand too"
+        },
+        "no-unnecessary-class": {
+          "description": "Disallows classes that are not strictly necessary",
+          "oneOf": [
+            {"type": "boolean"},
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {"type": "boolean", "enum": [true]},
+                  {
+                    "type": "string",
+                    "enum": ["allow-constructor-only", "allow-empty-class", "allow-static-only"]
+                  }
+                ]
+              }
+            }
+          ]
         },
         "no-unnecessary-initializer": {
           "description": "Forbids a ‘var’/’let’ statement or destructuring initializer to be initialized to ‘undefined’",
