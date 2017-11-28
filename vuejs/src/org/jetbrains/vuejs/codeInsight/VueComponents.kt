@@ -19,6 +19,7 @@ import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.vuejs.GLOBAL_BINDING_MARK
 import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.index.VueComponentsIndex
 import org.jetbrains.vuejs.index.getForAllKeys
@@ -135,38 +136,41 @@ class VueComponents {
 
       val componentsList = allValues.mapNotNull {
         val isGlobal = isGlobal(it)
-        if (isGlobal && it.name.endsWith("*")) {
+        if (isGlobal && it.name.endsWith(GLOBAL_BINDING_MARK)) {
           val pair = doAdditionalLibResolve(it) ?: return@mapNotNull null
-          libCompResolveMap.put(fromAsset(pair.first), fromAsset(it.name.substringBefore("*")))
+          libCompResolveMap.put(fromAsset(pair.first), fromAsset(it.name.substringBefore(GLOBAL_BINDING_MARK)))
           Trinity(pair.first, pair.second, true)
         }
-        else if (!onlyGlobal) {
+        else if (!onlyGlobal || isGlobal) {
           Trinity(it.name, it, isGlobal)
         }
         else null
-      }.groupBy { fromAsset(it.first) }.map {
-        var selected: Trinity<String, out PsiElement, Boolean>? = null
-        for (trinity in it.value) {
-          val isVue = VueFileType.INSTANCE == trinity.second.containingFile.fileType
-          if (trinity.third) {
-            if (isVue) return@map trinity
-            selected = trinity
-          }
-          else if (selected == null && isVue) selected = trinity
-        }
-        return@map selected ?: it.value[0]
-      }
+      }.groupBy { fromAsset(it.first) }.map { selectComponentDefinition(it.value) }
+
       val componentsMap = mutableMapOf<String, Pair<PsiElement, Boolean>>()
       componentsList.forEach { componentsMap.put(fromAsset(it.first), Pair(it.second, it.third)) }
       return ComponentsData(componentsMap, libCompResolveMap)
     }
 
+    private fun selectComponentDefinition(list: List<Trinity<String, out PsiElement, Boolean>>): Trinity<String, out PsiElement, Boolean> {
+      var selected: Trinity<String, out PsiElement, Boolean>? = null
+      for (trinity in list) {
+        val isVue = VueFileType.INSTANCE == trinity.second.containingFile.fileType
+        if (trinity.third) {
+          if (isVue) return trinity
+          selected = trinity
+        }
+        else if (selected == null && isVue) selected = trinity
+      }
+      return selected ?: list[0]
+    }
+
     private fun doAdditionalLibResolve(element: JSImplicitElement): Pair<String, PsiElement>? {
       val descriptor = VueComponents.findComponentDescriptor(element)
       if (descriptor == null) {
-        return Pair(element.name.substringBefore("*"), element)
+        return Pair(element.name.substringBefore(GLOBAL_BINDING_MARK), element)
       }
-      val name = getTextIfLiteral(descriptor.findProperty("name")?.value) ?: element.name.substringBefore("*")
+      val name = getTextIfLiteral(descriptor.findProperty("name")?.value) ?: element.name.substringBefore(GLOBAL_BINDING_MARK)
       return Pair(name, descriptor)
     }
 
