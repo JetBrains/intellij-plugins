@@ -11,6 +11,7 @@ public class PostCssCommenter extends CssCommenter implements Commenter {
   @NonNls
   private static final String LINE_COMMENT_PREFIX = "//";
 
+  @Override
   @Nullable
   public String getLineCommentPrefix() {
     return LINE_COMMENT_PREFIX;
