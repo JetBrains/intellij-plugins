@@ -18,6 +18,7 @@ public class KarmaRunSettingsSerializationUtil {
   private static final String KARMA_PACKAGE_DIR = "karma-package-dir";
   private static final String BROWSERS = "browsers";
   private static final String NODE_INTERPRETER = "node-interpreter";
+  private static final String NODE_OPTIONS = "node-options";
   private static final String SCOPE_KIND = "scope-kind";
   private static final String TEST_FILE_PATH = "test-file-path";
   private static final String TEST_NAMES = "test-names";
@@ -38,6 +39,7 @@ public class KarmaRunSettingsSerializationUtil {
 
     String interpreterRefName = JDOMExternalizerUtil.readCustomField(element, NODE_INTERPRETER);
     builder.setInterpreterRef(NodeJsInterpreterRef.create(interpreterRefName));
+    builder.setNodeOptions(StringUtil.notNullize(JDOMExternalizerUtil.readCustomField(element, NODE_OPTIONS)));
 
     EnvironmentVariablesData envData = EnvironmentVariablesData.readExternal(element);
     builder.setEnvData(envData);
@@ -85,6 +87,9 @@ public class KarmaRunSettingsSerializationUtil {
                                             settings.getKarmaPackage().getSystemIndependentPath());
     }
     JDOMExternalizerUtil.writeCustomField(element, NODE_INTERPRETER, settings.getInterpreterRef().getReferenceName());
+    if (StringUtil.isNotEmpty(settings.getNodeOptions())) {
+      JDOMExternalizerUtil.writeCustomField(element, NODE_OPTIONS, settings.getNodeOptions());
+    }
     settings.getEnvData().writeExternal(element);
     KarmaScopeKind scopeKind = settings.getScopeKind();
     if (scopeKind != KarmaScopeKind.ALL) {

@@ -18,9 +18,11 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.ui.components.JBTextField;
+import com.intellij.ui.components.fields.ExpandableTextField;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.*;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +40,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
 
   private final Project myProject;
   private final NodeJsInterpreterField myNodeInterpreterField;
+  private final RawCommandLineEditor myNodeOptionsEditor;
   private final NodePackageField myKarmaPackageField;
   private final TextFieldWithHistoryWithBrowseButton myConfigPathField;
   private final EnvironmentVariablesTextFieldWithBrowseButton myEnvVarsComponent;
@@ -51,6 +54,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   public KarmaRunConfigurationEditor(@NotNull Project project) {
     myProject = project;
     myNodeInterpreterField = new NodeJsInterpreterField(project, false);
+    myNodeOptionsEditor = createNodeOptionsEditor();
     myKarmaPackageField = new NodePackageField(myNodeInterpreterField, KarmaUtil.NODE_PACKAGE_NAME);
     myConfigPathField = createConfigurationFileTextField(project);
     myEnvVarsComponent = new EnvironmentVariablesTextFieldWithBrowseButton();
@@ -65,12 +69,24 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
       .addLabeledComponent("", browsersDescription, 0, false)
       .addComponent(new JSeparator(), 8)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.node_interpreter.label"), myNodeInterpreterField, 8)
+      .addLabeledComponent("Node o&ptions:", myNodeOptionsEditor)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.karma_package_dir.label"), myKarmaPackageField)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.environment.label"), myEnvVarsComponent)
       .addSeparator(8)
       .addComponent(scopeKindPanel)
       .addComponent(mySelectedScopeKindPanel)
       .getPanel();
+  }
+
+  @NotNull
+  private static RawCommandLineEditor createNodeOptionsEditor() {
+    RawCommandLineEditor editor = new RawCommandLineEditor();
+    editor.setDialogCaption("Node Options");
+    JTextField field = editor.getTextField();
+    if (field instanceof ExpandableTextField) {
+      field.putClientProperty("monospaced", false);
+    }
+    return editor;
   }
 
   @NotNull
@@ -86,7 +102,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   @NotNull
   private JPanel createScopeKindRadioButtonPanel() {
     JPanel testKindPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, JBUI.scale(40), 0));
-    testKindPanel.setBorder(JBUI.Borders.empty(0, 10, 0, 0));
+    testKindPanel.setBorder(JBUI.Borders.emptyLeft(10));
     ButtonGroup buttonGroup = new ButtonGroup();
     for (KarmaScopeKind scopeKind : KarmaScopeKind.values()) {
       JRadioButton radioButton = new JRadioButton(UIUtil.removeMnemonic(scopeKind.getName()));
@@ -198,6 +214,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     KarmaRunSettings runSettings = runConfiguration.getRunSettings();
 
     myNodeInterpreterField.setInterpreterRef(runSettings.getInterpreterRef());
+    myNodeOptionsEditor.setText(runSettings.getNodeOptions());
     myKarmaPackageField.setSelected(runConfiguration.getKarmaPackage());
     myConfigPathField.setTextAndAddToHistory(FileUtil.toSystemDependentName(runSettings.getConfigPath()));
     myBrowsers.setText(runSettings.getBrowsers());
@@ -221,11 +238,12 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   }
 
   @Override
-  protected void applyEditorTo(@NotNull KarmaRunConfiguration runConfiguration) throws ConfigurationException {
+  protected void applyEditorTo(@NotNull KarmaRunConfiguration runConfiguration) {
     KarmaRunSettings.Builder builder = new KarmaRunSettings.Builder();
     builder.setConfigPath(myConfigPathField.getChildComponent().getText());
     builder.setBrowsers(StringUtil.notNullize(myBrowsers.getText()));
     builder.setInterpreterRef(myNodeInterpreterField.getInterpreterRef());
+    builder.setNodeOptions(myNodeOptionsEditor.getText());
     builder.setEnvData(myEnvVarsComponent.getData());
     builder.setKarmaPackage(myKarmaPackageField.getSelected());
     KarmaScopeKind scopeKind = getScopeKind();

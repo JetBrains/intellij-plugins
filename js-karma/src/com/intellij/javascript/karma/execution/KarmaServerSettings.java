@@ -13,6 +13,7 @@ public class KarmaServerSettings {
   private final boolean myWithCoverage;
   private final boolean myDebug;
   private final NodeJsLocalInterpreter myNodeInterpreter;
+  private final String myNodeOptions;
   private final NodePackage myKarmaPackage;
   private final String myConfigFilePath;
   private final String myBrowsers;
@@ -22,6 +23,7 @@ public class KarmaServerSettings {
     myWithCoverage = builder.myWithCoverage;
     myDebug = builder.myDebug;
     myNodeInterpreter = builder.myNodeInterpreter;
+    myNodeOptions = builder.myRunSettings.getNodeOptions();
     myKarmaPackage = builder.myKarmaPackage;
     myConfigFilePath = FileUtil.toSystemDependentName(builder.myRunSettings.getConfigPath());
     myBrowsers = builder.myRunSettings.getBrowsers();
@@ -31,6 +33,11 @@ public class KarmaServerSettings {
   @NotNull
   public NodeJsLocalInterpreter getNodeInterpreter() {
     return myNodeInterpreter;
+  }
+
+  @NotNull
+  public String getNodeOptions() {
+    return myNodeOptions;
   }
 
   @NotNull
@@ -76,6 +83,7 @@ public class KarmaServerSettings {
     return myWithCoverage == that.myWithCoverage &&
            myDebug == that.myDebug &&
            myNodeInterpreter.getInterpreterSystemIndependentPath().equals(that.myNodeInterpreter.getInterpreterSystemIndependentPath()) &&
+           myNodeOptions.equals(that.myNodeOptions) &&
            myKarmaPackage.equals(that.myKarmaPackage) &&
            myConfigFilePath.equals(that.myConfigFilePath) &&
            myBrowsers.equals(that.myBrowsers) &&
@@ -87,6 +95,7 @@ public class KarmaServerSettings {
     int result = myWithCoverage ? 1 : 0;
     result = 31 * result + (myDebug ? 1 : 0);
     result = 31 * result + myNodeInterpreter.getInterpreterSystemIndependentPath().hashCode();
+    result = 31 * result + myNodeOptions.hashCode();
     result = 31 * result + myKarmaPackage.hashCode();
     result = 31 * result + myConfigFilePath.hashCode();
     result = 31 * result + myBrowsers.hashCode();

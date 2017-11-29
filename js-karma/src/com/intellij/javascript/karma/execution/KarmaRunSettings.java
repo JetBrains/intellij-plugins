@@ -20,6 +20,7 @@ public class KarmaRunSettings {
   private final NodePackage myKarmaPackage;
   private final String myBrowsers;
   private final NodeJsInterpreterRef myInterpreterRef;
+  private final String myNodeOptions;
   private final EnvironmentVariablesData myEnvData;
   private final KarmaScopeKind myScopeKind;
   private final String myTestFilePath;
@@ -30,6 +31,7 @@ public class KarmaRunSettings {
     myKarmaPackage = builder.myKarmaPackage;
     myBrowsers = builder.myBrowsers;
     myInterpreterRef = builder.myInterpreterRef;
+    myNodeOptions = builder.myNodeOptions;
     myEnvData = builder.myEnvData;
     myScopeKind = builder.myScopeKind;
     myTestFilePath = FileUtil.toSystemDependentName(builder.myTestFilePath);
@@ -59,6 +61,11 @@ public class KarmaRunSettings {
   @NotNull
   public NodeJsInterpreterRef getInterpreterRef() {
     return myInterpreterRef;
+  }
+
+  @NotNull
+  public String getNodeOptions() {
+    return myNodeOptions;
   }
 
   @NotNull
@@ -97,6 +104,7 @@ public class KarmaRunSettings {
           ComparatorUtil.equalsNullable(myKarmaPackage, that.myKarmaPackage) &&
           myBrowsers.equals(that.myBrowsers) &&
           myInterpreterRef.getReferenceName().equals(that.myInterpreterRef.getReferenceName()) &&
+          myNodeOptions.equals(that.myNodeOptions) &&
           myEnvData.equals(that.myEnvData) &&
           myScopeKind.equals(that.myScopeKind) &&
           myTestFilePath.equals(that.myTestFilePath) &&
@@ -109,6 +117,7 @@ public class KarmaRunSettings {
     result = 31 * result + (myKarmaPackage != null ? myKarmaPackage.hashCode() : 0);
     result = 31 * result + myBrowsers.hashCode();
     result = 31 * result + myInterpreterRef.getReferenceName().hashCode();
+    result = 31 * result + myNodeOptions.hashCode();
     result = 31 * result + myEnvData.hashCode();
     result = 31 * result + myScopeKind.hashCode();
     result = 31 * result + myTestFilePath.hashCode();
@@ -127,6 +136,7 @@ public class KarmaRunSettings {
     private NodePackage myKarmaPackage = null;
     private String myBrowsers = "";
     private NodeJsInterpreterRef myInterpreterRef = NodeJsInterpreterRef.createProjectRef();
+    private String myNodeOptions = "";
     private EnvironmentVariablesData myEnvData = EnvironmentVariablesData.DEFAULT;
     private KarmaScopeKind myScopeKind = KarmaScopeKind.ALL;
     private String myTestFilePath = "";
@@ -139,6 +149,7 @@ public class KarmaRunSettings {
       myKarmaPackage = settings.getKarmaPackage();
       myBrowsers = settings.getBrowsers();
       myInterpreterRef = settings.getInterpreterRef();
+      myNodeOptions = settings.myNodeOptions;
       myEnvData = settings.myEnvData;
       myScopeKind = settings.myScopeKind;
       myTestFilePath = settings.myTestFilePath;
@@ -166,6 +177,12 @@ public class KarmaRunSettings {
     @NotNull
     public Builder setInterpreterRef(@NotNull NodeJsInterpreterRef interpreterRef) {
       myInterpreterRef = interpreterRef;
+      return this;
+    }
+
+    @NotNull
+    public Builder setNodeOptions(@NotNull String nodeOptions) {
+      myNodeOptions = nodeOptions;
       return this;
     }
 

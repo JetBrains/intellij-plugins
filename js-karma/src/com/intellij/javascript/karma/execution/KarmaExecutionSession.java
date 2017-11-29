@@ -32,6 +32,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.execution.ParametersListUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.io.LocalFileFinder;
@@ -147,6 +148,8 @@ public class KarmaExecutionSession {
     commandLine.setWorkDirectory(configFile.getParentFile());
     commandLine.setCharset(CharsetToolkit.UTF8_CHARSET);
     commandLine.setExePath(interpreter.getInterpreterSystemDependentPath());
+    List<String> nodeOptionList = ParametersListUtil.parse(myRunSettings.getNodeOptions().trim());
+    commandLine.addParameters(nodeOptionList);
     //NodeCommandLineUtil.addNodeOptionsForDebugging(commandLine, Collections.emptyList(), 5858, false, interpreter, true);
     commandLine.addParameter(clientAppFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myKarmaServer.getServerSettings().getKarmaPackage().getSystemDependentPath());
