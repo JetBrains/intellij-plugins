@@ -635,7 +635,7 @@ $script""")
   }
 
   private fun configureVueDefinitions() {
-    createPackageJsonWithVueDependency(myFixture)
+    createPackageJsonWithVueDependency(myFixture, "")
     myFixture.copyDirectoryToProject("node_modules", "./node_modules")
   }
 
