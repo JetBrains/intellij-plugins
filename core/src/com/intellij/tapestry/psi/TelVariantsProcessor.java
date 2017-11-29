@@ -5,7 +5,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.beanProperties.BeanProperty;
 import com.intellij.psi.resolve.JavaMethodCandidateInfo;
 import com.intellij.psi.resolve.JavaMethodResolveHelper;
-import com.intellij.psi.scope.BaseScopeProcessor;
+import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PropertyUtilBase;
 import com.intellij.tapestry.core.TapestryConstants;
 import gnu.trove.THashSet;
@@ -24,7 +24,7 @@ import static com.intellij.util.containers.ContainerUtil.addIfNotNull;
  * @author peter
  * @author Alexey Chmutov
  */
-abstract class TelVariantsProcessor<T> extends BaseScopeProcessor {
+abstract class TelVariantsProcessor<T> implements PsiScopeProcessor {
 
   @NonNls private static final THashSet<String> INSECURE_OBJECT_METHODS =
     new THashSet<>(Arrays.asList("wait", "notify", "notifyAll"));
