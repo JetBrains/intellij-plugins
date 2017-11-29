@@ -9,9 +9,7 @@ import com.intellij.xml.HtmlXmlExtension
 import org.jetbrains.vuejs.VueLanguage
 
 class VueXmlExtension : HtmlXmlExtension() {
-  override fun isAvailable(file: PsiFile?): Boolean {
-    return file?.language is VueLanguage
-  }
+  override fun isAvailable(file: PsiFile?): Boolean = file?.language is VueLanguage
 
   override fun getPrefixDeclaration(context: XmlTag, namespacePrefix: String?): SchemaPrefix? {
     if ("v-bind" == namespacePrefix || "v-on" == namespacePrefix) {
@@ -41,4 +39,6 @@ class VueXmlExtension : HtmlXmlExtension() {
     tag?.attributes?.filter(predicate)?.forEach { return true }
     return super.isRequiredAttributeImplicitlyPresent(tag, attrName)
   }
+
+  override fun isCollapsibleTag(tag: XmlTag?): Boolean = VueTagProvider().getDescriptor(tag) != null
 }
