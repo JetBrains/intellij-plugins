@@ -87,10 +87,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     return if (out.isEmpty) outData else out
   }
 
-  private fun hasComponentIndicatorProperties(obj: JSObjectLiteralExpression): Boolean {
-    return obj.findProperty("name") != null &&
-           (obj.findProperty("template") != null || obj.findProperty("render") != null)
-  }
+  private fun hasComponentIndicatorProperties(obj: JSObjectLiteralExpression): Boolean =
+    obj.findProperty("template") != null || obj.findProperty("render") != null
 
   override fun shouldCreateStubForCallExpression(node: ASTNode?): Boolean {
     val reference = (node?.psi as? JSCallExpression)?.methodExpression as? JSReferenceExpression ?: return false

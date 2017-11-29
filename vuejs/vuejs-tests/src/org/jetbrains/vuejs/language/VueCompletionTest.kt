@@ -737,7 +737,7 @@ fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,
     "name": "test",
     "version": "0.0.1",
     "dependencies": {
-      "vue": "2.5.3", $additionalDependencies
+      "vue": "2.5.3" ${if (additionalDependencies.isBlank()) "" else ", " + additionalDependencies}
     },
     "typings": "types/index.d.ts"
   }

@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.inspections.*
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
+import com.intellij.openapi.application.PathManager
 import com.intellij.spellchecker.inspections.SpellCheckingInspection
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.util.ThrowableRunnable
@@ -20,6 +21,8 @@ import org.jetbrains.vuejs.VueFileType
  * @author Irina.Chernushina on 7/19/2017.
  */
 class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
+  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/"
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(HtmlUnknownBooleanAttributeInspectionBase())
@@ -685,7 +688,8 @@ Vue.component('global-comp-literal', {
   }
 
   fun testEmptyTagsForVueAreAllowed() {
-    myFixture.configureByText("EmptyTagsForVueAreAllowed.vue",
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      myFixture.configureByText("EmptyTagsForVueAreAllowed.vue",
 """
 <template>
   <test-empty-tags/>
@@ -700,6 +704,32 @@ Vue.component('global-comp-literal', {
   }
 </script>
 """)
-    JSTestUtils.testES6<Exception>(myFixture.project, { myFixture.checkHighlighting() })
+      myFixture.checkHighlighting()
+    })
+  }
+
+  fun testBuiltinTagsHighlighting() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      createPackageJsonWithVueDependency(myFixture, "")
+      myFixture.copyDirectoryToProject("./types/node_modules", "./node_modules")
+      myFixture.configureByText("BuiltinTagsHighlighting.vue", """
+<template>
+    <transition-group>
+        <transition>
+            Text
+        </transition>
+    </transition-group>
+    <keep-alive>
+        333
+    </keep-alive>
+    <component>
+        ddd
+    </component>
+    <slot>
+        fff
+    </slot>
+</template>""")
+      myFixture.checkHighlighting()
+    })
   }
 }
