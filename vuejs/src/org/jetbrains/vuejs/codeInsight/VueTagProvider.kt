@@ -57,13 +57,21 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
 
       if (localComponent != null) return VueElementDescriptor(localComponent!!)
 
+      val fromAsset = fromAsset(name)
       val variants = nameVariantsWithPossiblyGlobalMark(name)
       @Suppress("LoopToCallChain") // by performance reasons
       for (variant in variants) {
         val component = selectComponent(resolve(variant, GlobalSearchScope.allScope(tag.project), VueComponentsIndex.KEY), false)
-        if (component != null && (isGlobal(component) || VueComponents.isGlobalLibraryComponent(variant, component))) {
+        if (component != null &&
+            (isGlobal(component) ||
+             VueComponents.isGlobalLibraryComponent(variant, component) ||
+             VUE_FRAMEWORK_COMPONENTS.contains(fromAsset))) {
           return VueElementDescriptor(component)
         }
+      }
+      // keep this last in case in future we would be able to normally resolve into these components
+      if (VUE_FRAMEWORK_UNRESOLVABLE_COMPONENTS.contains(fromAsset)) {
+        return VueElementDescriptor(JSImplicitElementImpl(fromAsset, tag))
       }
     }
     return null
@@ -136,6 +144,20 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     LookupElementBuilder.create(element, fromAsset(name)).
       withInsertHandler(if (isGlobal) null else VueInsertHandler.INSTANCE).
       withIcon(VuejsIcons.Vue)
+
+  companion object {
+    private val VUE_FRAMEWORK_COMPONENTS = setOf(
+      "component",
+      "keep-alive",
+      "slot",
+      "transition",
+      "transition-group"
+    )
+    private val VUE_FRAMEWORK_UNRESOLVABLE_COMPONENTS = setOf(
+      "component",
+      "slot"
+    )
+  }
 }
 
 class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescriptor {
