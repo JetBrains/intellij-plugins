@@ -90,6 +90,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
 class VueAttributeDescriptor(private val name:String,
                              private val element:PsiElement? = null) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
   private var isDirective = false
+  private var isNonProp = false
   override fun getName() = name
   override fun getDeclaration() = element
   override fun init(element: PsiElement?) {}
@@ -109,7 +110,8 @@ class VueAttributeDescriptor(private val name:String,
 
   override fun hasIdRefType() = false
   override fun getDefaultValue() = null
-  override fun isEnumerated() = isDirective || VueAttributesProvider.HAVE_NO_PARAMS.contains(name) || attributeAllowsNoValue(name)
+  override fun isEnumerated() = isDirective || isNonProp ||
+                                VueAttributesProvider.HAVE_NO_PARAMS.contains(name) || attributeAllowsNoValue(name)
   override fun getEnumeratedValues(): Array<out String> {
     if (isEnumerated) {
       return arrayOf(name)
@@ -127,6 +129,11 @@ class VueAttributeDescriptor(private val name:String,
 
   fun setIsDirective() : VueAttributeDescriptor {
     isDirective = true
+    return this
+  }
+
+  fun setIsNonProp() : VueAttributeDescriptor {
+    isNonProp = true
     return this
   }
 

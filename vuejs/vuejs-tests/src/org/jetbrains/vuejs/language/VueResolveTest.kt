@@ -9,6 +9,7 @@ import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.Trinity
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.util.ThrowableRunnable
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
 
@@ -420,7 +421,7 @@ export default {
 """, "carrot")
 }
 
-  fun doTestResolveLocallyInsideComponent(text: String, expectedPropertyName: String?) {
+  private fun doTestResolveLocallyInsideComponent(text: String, expectedPropertyName: String?) {
     myFixture.configureByText("ResolveLocallyInsideComponent.vue", text)
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
@@ -904,6 +905,172 @@ Vue.component('global-comp-literal', {
     TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
   }
 
+  fun testLocalPropsInArrayInCompAttrsAndWithKebabCaseAlso() {
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("LocalPropsInArrayInCompAttrsAndWithKebabCaseAlso.vue",
+                                """
+<template>
+    <div id="app">
+        <camelCase <caret>one-two="test" three-four=1></camelCase>
+    </div>
+</template>
+<script>
+    export default {
+      name: 'camelCase',
+      props: ['oneTwo']
+    }
+</script>
+""")
+      myFixture.checkHighlighting()
+      myFixture.doHighlighting()
+      val reference = myFixture.getReferenceAtCaretPosition()
+      TestCase.assertNotNull(reference)
+      val literal = reference!!.resolve()
+      TestCase.assertNotNull(literal)
+      TestCase.assertTrue(literal is JSLiteralExpression)
+      TestCase.assertEquals("oneTwo", (literal as JSLiteralExpression).value)
+      TestCase.assertTrue(literal.parent is JSArrayLiteralExpression)
+    })
+  }
+
+  fun testLocalPropsInArrayInCompAttrsRef() {
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("LocalPropsInArrayInCompAttrsRef.vue",
+                                """
+<template>
+    <div id="app">
+        <camelCase <caret>one-two="test" three-four=1></camelCase>
+    </div>
+</template>
+<script>
+const props = ['oneTwo']
+    export default {
+      name: 'camelCase',
+      props: props
+    }
+</script>
+""")
+      myFixture.doHighlighting()
+      val reference = myFixture.getReferenceAtCaretPosition()
+      TestCase.assertNotNull(reference)
+      val literal = reference!!.resolve()
+      TestCase.assertNotNull(literal)
+      TestCase.assertTrue(literal is JSLiteralExpression)
+      TestCase.assertEquals("oneTwo", (literal as JSLiteralExpression).value)
+      TestCase.assertTrue(literal.parent is JSArrayLiteralExpression)
+    })
+  }
+
+
+  fun testImportedComponentPropsInCompAttrsAsArray() {
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("compUI.vue", """
+<script>
+    export default {
+        name: 'compUI',
+        props: ['seeMe']
+    }
+</script>
+""")
+      myFixture.configureByText("ImportedComponentPropsAsArray.vue", """
+<template>
+    <div id="app">
+        <comp-u-i <caret>see-me="12345" butNotThis="112"></comp-u-i>
+    </div>
+</template>
+<script>
+    import CompUI from 'compUI.vue'
+    export default {
+      components: {CompUI}
+    }
+</script>
+""")
+      myFixture.checkHighlighting()
+    })
+    myFixture.doHighlighting()
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val literal = reference!!.resolve()
+    TestCase.assertNotNull(literal)
+    TestCase.assertTrue(literal is JSLiteralExpression)
+    TestCase.assertEquals("seeMe", (literal as JSLiteralExpression).value)
+    TestCase.assertEquals("compUI.vue", literal.containingFile.name)
+    TestCase.assertTrue(literal.parent is JSArrayLiteralExpression)
+  }
+
+  fun testImportedComponentPropsInCompAttrsObjectRef() {
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("compUI.vue", """
+<script>
+const props = {seeMe: {}}
+    export default {
+        name: 'compUI',
+        props: props
+    }
+</script>
+""")
+      myFixture.configureByText("ImportedComponentPropsAsObjectRef.vue", """
+<template>
+    <div id="app">
+        <comp-u-i <caret>see-me="12345" ></comp-u-i>
+    </div>
+</template>
+<script>
+    import CompUI from 'compUI.vue'
+    export default {
+      components: {CompUI}
+    }
+</script>
+""")
+      myFixture.checkHighlighting()
+      val reference = myFixture.getReferenceAtCaretPosition()
+      TestCase.assertNotNull(reference)
+      val property = reference!!.resolve()
+      TestCase.assertNotNull(property)
+      TestCase.assertTrue(property is JSProperty)
+      TestCase.assertEquals("seeMe", (property as JSProperty).name)
+      TestCase.assertEquals("compUI.vue", property.containingFile.name)
+    })
+  }
+
+  fun testImportedComponentPropsInCompAttrsAsObject() {
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("compUI.vue", """
+<script>
+    export default {
+        name: 'compUI',
+        props: {
+          seeMe: {}
+        }
+    }
+</script>
+""")
+      myFixture.configureByText("ImportedComponentPropsAsObject.vue", """
+<template>
+    <div id="app">
+        <comp-u-i <caret>see-me="12345" butNotThis="112"></comp-u-i>
+    </div>
+</template>
+<script>
+    import CompUI from 'compUI.vue'
+    export default {
+      components: {CompUI}
+    }
+</script>
+""")
+      myFixture.checkHighlighting()
+      val reference = myFixture.getReferenceAtCaretPosition()
+      TestCase.assertNotNull(reference)
+      val property = reference!!.resolve()
+      TestCase.assertNotNull(property)
+      TestCase.assertTrue(property is JSProperty)
+      TestCase.assertTrue(property!!.parent.parent is JSProperty)
+      TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
+      TestCase.assertEquals("seeMe", (property as JSProperty).name)
+      TestCase.assertEquals("compUI.vue", property.containingFile.name)
+    })
+  }
+
   fun testResolveMixinProp() {
     myFixture.configureByText("MixinWithProp.vue", """
 <script>
@@ -956,6 +1123,59 @@ Vue.component('global-comp-literal', {
     TestCase.assertTrue(property.parent.parent is JSProperty)
     TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
     TestCase.assertEquals("MixinWithProp.vue", property.containingFile.name)
+  }
+
+
+  fun testTwoExternalMixins() {
+    myFixture.configureByText("FirstMixin.vue", """
+<script>
+  export default {
+    props: ['FirstMixinProp']
+  }
+</script>
+""")
+    myFixture.configureByText("SecondMixin.vue", """
+<script>
+  export default {
+    props: ['SecondMixinProp']
+  }
+</script>
+""")
+    myFixture.configureByText("CompWithTwoMixins.vue", """
+<template>
+  <comp-with-two-mixins <caret>first-mixin-prop=1 second-mixin-prop=2 />
+</template>
+<script>
+  import FirstMixin from './FirstMixin';
+  import SecondMixin from './SecondMixin';
+
+  export default {
+    name: 'CompWithTwoMixins',
+    mixins: [FirstMixin, SecondMixin]
+  }
+</script>
+""")
+    JSTestUtils.testES6<Exception>(project, {
+      myFixture.checkHighlighting(true, false, true)
+
+      val checkResolve = { propName: String, file: String ->
+        val reference = myFixture.getReferenceAtCaretPosition()
+        TestCase.assertNotNull(reference)
+        val literal = reference!!.resolve()
+        TestCase.assertNotNull(literal)
+        TestCase.assertTrue(literal is JSLiteralExpression)
+        TestCase.assertEquals(propName, (literal as JSLiteralExpression).value)
+        TestCase.assertTrue(literal.parent.parent is JSProperty)
+        TestCase.assertEquals("props", (literal.parent.parent as JSProperty).name)
+        TestCase.assertEquals(file, literal.containingFile.name)
+      }
+      checkResolve("FirstMixinProp", "FirstMixin.vue")
+
+      val attribute = myFixture.findElementByText("second-mixin-prop", XmlAttribute::class.java)
+      TestCase.assertNotNull(attribute)
+      myFixture.editor.caretModel.moveToOffset(attribute.textOffset)
+      checkResolve("SecondMixinProp", "SecondMixin.vue")
+    })
   }
 
   fun testResolveIntoLocalMixin() {

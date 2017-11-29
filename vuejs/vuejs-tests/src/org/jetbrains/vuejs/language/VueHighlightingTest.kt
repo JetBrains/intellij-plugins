@@ -119,8 +119,8 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
                                 """
 <template>
     <div id="app">
-        <camelCase one-two="test" <warning descr="Attribute three-four is not allowed here">three-four</warning>=1></camelCase>
-        <camelCase oneTwo="test" <warning descr="Attribute three-four is not allowed here">three-four</warning>=1></camelCase>
+        <camelCase one-two="test" three-four=1></camelCase>
+        <camelCase oneTwo="test" three-four=1></camelCase>
     </div>
 </template>
 <script>
@@ -140,8 +140,8 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
                                 """
 <template>
     <div id="app">
-        <camelCase one-two="test" <warning descr="Attribute three-four is not allowed here">three-four</warning>=1></camelCase>
-        <camelCase oneTwo="test" <warning descr="Attribute three-four is not allowed here">three-four</warning>=1></camelCase>
+        <camelCase one-two="test" three-four=1></camelCase>
+        <camelCase oneTwo="test" three-four=1></camelCase>
     </div>
 </template>
 <script>
@@ -170,8 +170,8 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
       myFixture.configureByText("ImportedComponentPropsAsArray.vue", """
 <template>
     <div id="app">
-        <comp-u-i see-me="12345" <warning descr="Attribute butNotThis is not allowed here">butNotThis</warning>="112"></comp-u-i>
-        <comp-u-i seeMe="12345" <warning descr="Attribute butNotThis is not allowed here">butNotThis</warning>="112"></comp-u-i>
+        <comp-u-i see-me="12345" butNotThis="112"></comp-u-i>
+        <comp-u-i seeMe="12345" butNotThis="112"></comp-u-i>
     </div>
 </template>
 <script>
@@ -200,8 +200,8 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
       myFixture.configureByText("ImportedComponentPropsAsObject.vue", """
 <template>
     <div id="app">
-        <comp-u-i see-me="12345" <warning descr="Attribute butNotThis is not allowed here">butNotThis</warning>="112"></comp-u-i>
-        <comp-u-i seeMe="12345" <warning descr="Attribute butNotThis is not allowed here">butNotThis</warning>="112"></comp-u-i>
+        <comp-u-i see-me="12345" butNotThis="112"></comp-u-i>
+        <comp-u-i seeMe="12345" butNotThis="112"></comp-u-i>
     </div>
 </template>
 <script>
@@ -229,36 +229,14 @@ const props = {seeMe: {}}
       myFixture.configureByText("ImportedComponentPropsAsObjectRef.vue", """
 <template>
     <div id="app">
-        <comp-u-i see-me="12345" <warning descr="Attribute butNotThis is not allowed here">butNotThis</warning>="112"></comp-u-i>
-        <comp-u-i seeMe="12345" <warning descr="Attribute butNotThis is not allowed here">butNotThis</warning>="112"></comp-u-i>
+        <comp-u-i see-me="12345" butNotThis="112"></comp-u-i>
+        <comp-u-i seeMe="12345" butNotThis="112"></comp-u-i>
     </div>
 </template>
 <script>
     import CompUI from 'compUI.vue'
     export default {
       components: {CompUI}
-    }
-</script>
-""")
-      myFixture.checkHighlighting()
-    })
-  }
-
-  fun testLocalPropsInArrayInCompAttrsRef() {
-    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
-      myFixture.configureByText("LocalPropsInArrayInCompAttrsRef.vue",
-                                """
-<template>
-    <div id="app">
-        <camelCase one-two="test" <warning descr="Attribute three-four is not allowed here">three-four</warning>=1></camelCase>
-        <camelCase oneTwo="test" <warning descr="Attribute three-four is not allowed here">three-four</warning>=1></camelCase>
-    </div>
-</template>
-<script>
-const props = ['oneTwo']
-    export default {
-      name: 'camelCase',
-      props: props
     }
 </script>
 """)
@@ -273,7 +251,7 @@ const props = ['oneTwo']
     <div id="app">
         <<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning></warning>></<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning></warning>>
         <<warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning> :one="5"></<warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning>>
-        <camelCase one="test" two="2" three=3 with-camel-case="1" <warning descr="Attribute four is not allowed here">four</warning>=1></camelCase>
+        <camelCase one="test" two="2" three=3 with-camel-case="1" four=1></camelCase>
         <camelCase one="test" v-bind:two="2" :three=3 withCamelCase="1"></camelCase>
         <camelCase one="test" v-bind:two="2" :three=3 withCamelCase="1" not-required=11></camelCase>
         <<warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning> one="test" v-bind:two="2" :three=3></<warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning>>
@@ -466,8 +444,7 @@ Vue.component('global-comp-literal', {
 """)
     myFixture.configureByText("CompWithTwoMixins.vue", """
 <template>
-  <comp-with-two-mixins first-mixin-prop=1 second-mixin-prop=2
-  <warning descr="Attribute third-mixin-prop is not allowed here">third-mixin-prop</warning>=3></comp-with-two-mixins>
+  <comp-with-two-mixins first-mixin-prop=1 second-mixin-prop=2 third-mixin-prop=3></comp-with-two-mixins>
 </template>
 <script>
   import FirstMixin from './FirstMixin';
@@ -487,7 +464,7 @@ Vue.component('global-comp-literal', {
     myFixture.configureByText("CompWithGlobalMixins.vue", """
 <template>
     <<warning descr="Element local-comp doesn't have required attribute required-mixin-prop">local-comp</warning> hi2dden="found" interesting-prop="777"
-    <warning descr="Attribute not-existing is not allowed here">not-existing</warning>=5></<warning descr="Element local-comp doesn't have required attribute required-mixin-prop">local-comp</warning>>
+    not-existing=5></<warning descr="Element local-comp doesn't have required attribute required-mixin-prop">local-comp</warning>>
 </template>
 
 <script>
@@ -729,6 +706,25 @@ Vue.component('global-comp-literal', {
         fff
     </slot>
 </template>""")
+      myFixture.checkHighlighting()
+    })
+  }
+
+  fun testNonPropsAttributesAreNotHighlighted() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      myFixture.configureByText("EmptyTagsForVueAreAllowed.vue",
+                                """
+<template>
+  <non-props-component aaa="e" bbb/>
+  <div <warning descr="Attribute aaa is not allowed here">aaa</warning>="1"></div>
+</template>
+
+<script>
+  export default {
+    name: 'non-props-component'
+  }
+</script>
+""")
       myFixture.checkHighlighting()
     })
   }
