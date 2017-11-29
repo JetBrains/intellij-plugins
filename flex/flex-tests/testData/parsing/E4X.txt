@@ -780,8 +780,7 @@ JSFile:E4X.js2
           XmlToken:XML_TAG_NAME('employee')
           XmlToken:XML_TAG_END('>')
         PsiWhiteSpace('\n')
-        XmlToken:XML_END_TAG_START('</')
-        XmlToken:XML_TAG_END('>')
+        PsiElement(JS:XML_TAG__LIST_END)('</>')
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n\n')
   JSVarStatement
