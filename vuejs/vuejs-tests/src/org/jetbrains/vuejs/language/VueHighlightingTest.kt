@@ -11,10 +11,10 @@ import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspectio
 import com.intellij.spellchecker.inspections.SpellCheckingInspection
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.util.ThrowableRunnable
+import com.intellij.xml.util.CheckEmptyTagInspection
 import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
 import junit.framework.TestCase
 import org.jetbrains.vuejs.VueFileType
-import kotlin.collections.filter
 
 /**
  * @author Irina.Chernushina on 7/19/2017.
@@ -33,6 +33,7 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     myFixture.enableInspections(ThisExpressionReferencesGlobalObjectJSInspection())
     myFixture.enableInspections(JSValidateTypesInspection())
     myFixture.enableInspections(TypeScriptValidateTypesInspection())
+    myFixture.enableInspections(CheckEmptyTagInspection())
   }
 
   fun testDirectivesWithoutParameters() {
@@ -681,5 +682,24 @@ Vue.component('global-comp-literal', {
 """)
     intentions = myFixture.filterAvailableIntentions("Split current tag")
     TestCase.assertFalse(intentions.isEmpty())
+  }
+
+  fun testEmptyTagsForVueAreAllowed() {
+    myFixture.configureByText("EmptyTagsForVueAreAllowed.vue",
+"""
+<template>
+  <test-empty-tags/>
+  <warning descr="Empty tag doesn't work in some browsers"><div/></warning>
+  <warning descr="Empty tag doesn't work in some browsers"><h1/></warning>
+  <img src="aaa.jpg"/>
+</template>
+
+<script>
+  export default {
+    name: 'test-empty-tags'
+  }
+</script>
+""")
+    JSTestUtils.testES6<Exception>(myFixture.project, { myFixture.checkHighlighting() })
   }
 }
