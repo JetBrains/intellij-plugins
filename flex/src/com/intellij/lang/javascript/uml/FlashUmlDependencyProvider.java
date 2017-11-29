@@ -5,12 +5,12 @@ import com.intellij.lang.Language;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
-import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSGenericSignature;
 import com.intellij.lang.javascript.psi.ecmal4.JSImportStatement;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.uml.FlashUmlRelationship.Factory;
 import com.intellij.openapi.util.Pair;
@@ -21,10 +21,9 @@ import com.intellij.psi.css.CssDeclaration;
 import com.intellij.psi.css.CssElementVisitor;
 import com.intellij.psi.css.CssFunction;
 import com.intellij.psi.css.CssString;
-import com.intellij.psi.scope.BaseScopeProcessor;
+import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.*;
-import com.intellij.util.Processor;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.NotNull;
@@ -250,7 +249,7 @@ public class FlashUmlDependencyProvider {
       });
     }
 
-    myClazz.processDeclarations(new BaseScopeProcessor() {
+    myClazz.processDeclarations(new PsiScopeProcessor() {
       @Override
       public boolean execute(@NotNull final PsiElement element, @NotNull final ResolveState state) {
         element.accept(visitor);
