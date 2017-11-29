@@ -23,7 +23,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.resolve.JavaMethodCandidateInfo;
 import com.intellij.psi.resolve.JavaMethodResolveHelper;
-import com.intellij.psi.scope.BaseScopeProcessor;
 import com.intellij.psi.scope.JavaScopeProcessorEvent;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +35,7 @@ import java.util.Set;
 import static com.intellij.psi.PsiModifier.*;
 import static com.intellij.util.containers.ContainerUtil.addIfNotNull;
 
-public abstract class CfmlVariantsProcessor<T> extends BaseScopeProcessor {
+public abstract class CfmlVariantsProcessor<T> implements PsiScopeProcessor {
 
   public static class CfmlProcessorEvent implements PsiScopeProcessor.Event {
     private CfmlProcessorEvent() {
