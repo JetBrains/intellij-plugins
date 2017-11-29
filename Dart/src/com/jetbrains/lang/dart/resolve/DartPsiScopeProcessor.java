@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.resolve;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -70,15 +69,6 @@ public abstract class DartPsiScopeProcessor implements PsiScopeProcessor {
   }
 
   protected abstract boolean doExecute(final @NotNull DartComponentName dartComponentName);
-
-  @Override
-  public <T> T getHint(@NotNull Key<T> hintKey) {
-    return null;
-  }
-
-  @Override
-  public void handleEvent(@NotNull Event event, @Nullable Object associated) {
-  }
 
   protected boolean isFilteredOut(final String name) {
     for (Pair<VirtualFile, DartShowHideInfo> filter : myShowHideFilters) {

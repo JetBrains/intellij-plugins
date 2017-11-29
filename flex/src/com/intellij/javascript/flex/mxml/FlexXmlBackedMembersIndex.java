@@ -16,7 +16,6 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.navigation.PsiElementNavigationItem;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -91,15 +90,6 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
               consumer.consume(element);
             }
             return true;
-          }
-
-          @Override
-          public <T> T getHint(@NotNull Key<T> hintKey) {
-            return null;
-          }
-
-          @Override
-          public void handleEvent(@NotNull Event event, Object associated) {
           }
         }, state, null, file);
       }
