@@ -2,10 +2,7 @@ package name.kropp.intellij.makefile
 
 import com.intellij.execution.Executor
 import com.intellij.execution.configuration.EnvironmentVariablesData
-import com.intellij.execution.configurations.CommandLineState
-import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.configurations.LocatableConfigurationBase
-import com.intellij.execution.configurations.RunProfileState
+import com.intellij.execution.configurations.*
 import com.intellij.execution.process.ColoredProcessHandler
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.process.ProcessTerminatedListener
@@ -21,13 +18,15 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
   var filename = ""
   var target = ""
   var workingDirectory = ""
-  var environmentVariables = EnvironmentVariablesData.DEFAULT
+  var environmentVariables: EnvironmentVariablesData = EnvironmentVariablesData.DEFAULT
+  var arguments = ""
 
   private companion object {
     const val MAKEFILE = "makefile"
     const val FILENAME = "filename"
     const val TARGET = "target"
     const val WORKING_DIRECTORY = "workingDirectory"
+    const val ARGUMENTS = "arguments"
   }
 
   override fun checkConfiguration() {
@@ -41,6 +40,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
     child.setAttribute(FILENAME, filename)
     child.setAttribute(TARGET, target)
     child.setAttribute(WORKING_DIRECTORY, workingDirectory)
+    child.setAttribute(ARGUMENTS, arguments)
     environmentVariables.writeExternal(child)
   }
 
@@ -51,6 +51,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
       filename = child.getAttributeValue(FILENAME) ?: ""
       target = child.getAttributeValue(TARGET) ?: ""
       workingDirectory = child.getAttributeValue(WORKING_DIRECTORY) ?: ""
+      arguments = child.getAttributeValue(ARGUMENTS) ?: ""
       environmentVariables = EnvironmentVariablesData.readExternal(child)
     }
   }
@@ -59,9 +60,11 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
     val makePath = ServiceManager.getService(project, MakefileProjectSettings::class.java).settings?.path ?: DEFAULT_MAKE_PATH
     return object : CommandLineState(executionEnvironment) {
       override fun startProcess(): ProcessHandler {
-        val args = mutableListOf("-f", filename)
-        if (!target.isNullOrEmpty()) {
-          args += target
+        val params = ParametersList()
+        params.addParametersString(arguments)
+        params.addAll("-f", filename)
+        if (!target.isEmpty()) {
+          params.add(target)
         }
         val workDirectory = if (workingDirectory.isNotEmpty()) resolveMacros(workingDirectory) else File(filename).parent
         val cmd = GeneralCommandLine()
@@ -69,7 +72,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
             .withWorkDirectory(workDirectory)
             .withEnvironment(environmentVariables.envs)
             .withParentEnvironmentType(if (environmentVariables.isPassParentEnvs) GeneralCommandLine.ParentEnvironmentType.CONSOLE else GeneralCommandLine.ParentEnvironmentType.NONE)
-            .withParameters(args)
+            .withParameters(params.list)
         val processHandler = ColoredProcessHandler(cmd)
         ProcessTerminatedListener.attach(processHandler)
         return processHandler

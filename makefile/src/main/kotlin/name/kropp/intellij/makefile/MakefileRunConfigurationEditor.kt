@@ -12,6 +12,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiManager
 import com.intellij.ui.DocumentAdapter
+import com.intellij.ui.EditorTextField
 import com.intellij.ui.TextFieldWithAutoCompletion
 import com.intellij.ui.components.JBList
 import com.intellij.util.ui.FormBuilder
@@ -25,6 +26,7 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
   private val filenameField = TextFieldWithBrowseButton()
   private val targetCompletionProvider = TextFieldWithAutoCompletion.StringsCompletionProvider(emptyList(), MakefileTargetIcon)
   private val targetField = TextFieldWithAutoCompletion<String>(project, targetCompletionProvider, true, "")
+  private val argumentsField = EditorTextField()
   private val workingDirectoryField = TextFieldWithBrowseButton()
   private val environmentVarsComponent = EnvironmentVariablesComponent()
 
@@ -35,6 +37,7 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
         .setVerticalGap(UIUtil.DEFAULT_VGAP)
         .addLabeledComponent("&Makefile", filenameField)
         .addLabeledComponent("&Target", targetField)
+        .addLabeledComponent("&Arguments", argumentsField)
         .addLabeledComponent("&Working Directory", createComponentWithMacroBrowse(workingDirectoryField))
         .addComponent(environmentVarsComponent)
         .panel
@@ -69,6 +72,7 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
     configuration.target = targetField.text
     configuration.workingDirectory = workingDirectoryField.text
     configuration.environmentVariables = environmentVarsComponent.envData
+    configuration.arguments = argumentsField.text
   }
 
   override fun resetEditorFrom(configuration: MakefileRunConfiguration) {
@@ -76,6 +80,7 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
     targetField.text = configuration.target
     workingDirectoryField.text = configuration.workingDirectory
     environmentVarsComponent.envData = configuration.environmentVariables
+    argumentsField.text = configuration.arguments
 
     updateTargetCompletion(configuration.filename)
   }
