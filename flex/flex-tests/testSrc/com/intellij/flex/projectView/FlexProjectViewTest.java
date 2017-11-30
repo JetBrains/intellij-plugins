@@ -8,7 +8,6 @@ import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.projectView.BaseProjectViewTestCase;
 import com.intellij.testFramework.PlatformTestUtil;
-import com.intellij.util.ui.tree.TreeUtil;
 
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
@@ -58,7 +57,7 @@ public class FlexProjectViewTest extends BaseProjectViewTestCase {
     myStructure.setHideEmptyMiddlePackages(hideEmptyMiddlePackages);
     myStructure.setFlattenPackages(flattenPackages);
 
-    TreeUtil.expandAll(myPane.getTree());
+    PlatformTestUtil.expandAll(myPane.getTree());
     PlatformTestUtil.assertTreeEqual(myPane.getTree(), expected + "\n" + getRootFiles() + " External Libraries\n", true);
   }
 
