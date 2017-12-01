@@ -349,7 +349,7 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
           final PsiLanguageInjectionHost valueElement = (PsiLanguageInjectionHost)xmlAttribute.getValueElement();
           if (valueElement != null) {
             final Ref<PsiElement> ref = new Ref<>();
-            InjectedLanguageUtil.enumerate(valueElement, (injectedPsi, places) -> {
+            InjectedLanguageManager.getInstance(psiFile.getProject()).enumerate(valueElement, (injectedPsi, places) -> {
               int i = injectedPsi.getText().indexOf(attributeValue);
               if (i != -1) {
                 ref.set(PsiTreeUtil.findElementOfClassAtOffset(injectedPsi, i, JSReferenceExpression.class, false));

@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.javascript.JSDebuggerSupportUtils;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.resolve.JSImportHandlingUtil;
@@ -322,7 +323,7 @@ public class FlexStackFrame extends XStackFrame {
 
           if (psiLanguageInjectionHost != null) {
             final Ref<PsiElement> result = new Ref<>();
-            InjectedLanguageUtil.enumerate(psiLanguageInjectionHost, (injectedPsi, places) -> {
+            InjectedLanguageManager.getInstance(file.getProject()).enumerate(psiLanguageInjectionHost, (injectedPsi, places) -> {
               final int injectedStart = InjectedLanguageUtil.getInjectedStart(places);
               result.set(injectedPsi.findElementAt(offset - injectedStart + (places.get(0).getPrefix().length())));
             });

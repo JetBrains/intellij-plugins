@@ -4,11 +4,11 @@ import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.ProblemsHolder;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlTag;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +73,7 @@ class InjectedASWriter implements ValueReferenceResolver {
   public ValueWriter processProperty(PsiElement host, String name, @Nullable String type, boolean isStyle, @NotNull MxmlObjectReferenceProvider mxmlObjectReferenceProvider)
     throws InvalidPropertyException {
     final InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, type, problemsHolder);
-    InjectedLanguageUtil.enumerate(host, visitor);
+    InjectedLanguageManager.getInstance(host.getProject()).enumerate(host, visitor);
 
     //noinspection ThrowableResultOfMethodCallIgnored
     if (visitor.getInvalidPropertyException() != null) {

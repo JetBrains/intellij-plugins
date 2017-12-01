@@ -24,7 +24,6 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.css.StylesheetFile;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
@@ -196,7 +195,7 @@ public final class ModuleInfoUtil {
         }
 
         MyInjectedPsiVisitor visitor = new MyInjectedPsiVisitor(host);
-        InjectedLanguageUtil.enumerate(host, visitor);
+        InjectedLanguageManager.getInstance(host.getProject()).enumerate(host, visitor);
         StylesheetFile stylesheetFile = visitor.getStylesheetFile();
         byte[] data = stylesheetFile == null ? null : cssWriter.write(stylesheetFile, module);
         return data == null ? null : new LocalStyleHolder(InjectedLanguageManager.getInstance(stylesheetFile.getProject()).getTopLevelFile(stylesheetFile).getVirtualFile(), data);

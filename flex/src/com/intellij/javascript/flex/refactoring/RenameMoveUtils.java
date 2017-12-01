@@ -1,6 +1,7 @@
 package com.intellij.javascript.flex.refactoring;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.flex.ImportUtils;
@@ -19,7 +20,6 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.Nullable;
@@ -177,7 +177,7 @@ public class RenameMoveUtils {
         if (hasReferencesToOldPackage.get().booleanValue()) return;
 
         if (element instanceof PsiLanguageInjectionHost) {
-          InjectedLanguageUtil.enumerate(element, new JSResolveUtil.JSInjectedFilesVisitor() {
+          InjectedLanguageManager.getInstance(element.getProject()).enumerate(element, new JSResolveUtil.JSInjectedFilesVisitor() {
             @Override
             protected void process(JSFile file) {
               checkIfFileHasReferencesToOldPackage(file, expectedPackageNameFromFile, hasReferencesToOldPackage);

@@ -2,6 +2,7 @@ package org.jetbrains.vuejs.language
 
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.lang.html.HTMLLanguage
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.VueLanguage
@@ -163,7 +164,7 @@ new Vue({
     TestCase.assertNotNull(host)
     TestCase.assertEquals(text.replace("<caret>", ""), host!!.text)
     val expected = mutableSetOf("interpolation", "another", "two")
-    com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil.enumerate(host,
+    InjectedLanguageManager.getInstance(project).enumerate(host,
                                                                               { injectedPsi, _ -> expected.remove(injectedPsi.text) })
     TestCase.assertEquals(emptySet<String>(), expected)
   }
@@ -184,7 +185,7 @@ another}}{{two}}"""
 
 """, """
 another""", "two")
-    com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil.enumerate(host,
+    InjectedLanguageManager.getInstance(project).enumerate(host,
                                                                               { injectedPsi, _ -> expected.remove(injectedPsi.text) })
     TestCase.assertEquals(emptySet<String>(), expected)
   }

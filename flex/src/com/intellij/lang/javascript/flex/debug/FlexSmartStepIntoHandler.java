@@ -10,11 +10,9 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.util.PsiFormatUtilBase;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Processor;
 import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.stepping.PsiBackedSmartStepIntoVariant;
@@ -77,7 +75,7 @@ class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmartStepI
     if (injectionHost != null) {
       visited.add(injectionHost);
 
-      InjectedLanguageUtil.enumerate(injectionHost, new JSResolveUtil.JSInjectedFilesVisitor() {
+      InjectedLanguageManager.getInstance(injectionHost.getProject()).enumerate(injectionHost, new JSResolveUtil.JSInjectedFilesVisitor() {
         @Override
         protected void process(JSFile file) {
           Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);

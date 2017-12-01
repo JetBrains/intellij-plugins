@@ -1,12 +1,12 @@
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartLanguage;
@@ -41,7 +41,7 @@ public abstract class DartStringLiteralExpressionBase extends DartClassReference
     // References in HTML and in Dart code are handled somewhere else, so if they occasionally appeared here we need to filter them out.
     final List<TextRange> forbiddenRanges = new SmartList<>();
 
-    InjectedLanguageUtil.enumerate(this, (injectedPsi, places) -> {
+    InjectedLanguageManager.getInstance(getProject()).enumerate(this, (injectedPsi, places) -> {
       for (PsiLanguageInjectionHost.Shred place : places) {
         if (place.getHost() == this) {
           forbiddenRanges.add(place.getRangeInsideHost());
