@@ -34,10 +34,9 @@ public abstract class BndRunConfigurationBase extends LocatableConfigurationBase
     super(project, factory, name);
   }
 
-  @NotNull
   @Override
-  protected RunConfigurationOptions createOptions() {
-    return new BndRunConfigurationOptions();
+  protected Class<BndRunConfigurationOptions> getOptionsClass() {
+    return BndRunConfigurationOptions.class;
   }
 
   @Override

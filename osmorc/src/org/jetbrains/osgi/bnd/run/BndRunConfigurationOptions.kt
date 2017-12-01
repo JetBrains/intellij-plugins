@@ -17,6 +17,6 @@ import com.intellij.execution.configurations.LocatableRunConfigurationOptions
 
 class BndRunConfigurationOptions : LocatableRunConfigurationOptions() {
   var bndRunFile by string()
-  var useAlternativeJre by storedProperty(true)
+  var useAlternativeJre by storedProperty(false)
   var alternativeJrePath by string()
 }
