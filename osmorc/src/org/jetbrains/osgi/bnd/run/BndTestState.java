@@ -76,9 +76,10 @@ public class BndTestState extends JavaCommandLineState {
 
     myConfiguration = configuration;
 
-    File runFile = new File(myConfiguration.bndRunFile);
-    if (!runFile.isFile()) {
-      throw new CantRunException(message("bnd.run.configuration.invalid", runFile));
+    String bndRunFile = myConfiguration.getOptions().getBndRunFile();
+    File runFile = bndRunFile == null ? null : new File(bndRunFile);
+    if (runFile == null || !runFile.isFile()) {
+      throw new CantRunException(message("bnd.run.configuration.invalid", bndRunFile));
     }
 
     try {
@@ -128,7 +129,7 @@ public class BndTestState extends JavaCommandLineState {
 
   @Nullable
   @Override
-  protected ConsoleView createConsole(@NotNull Executor executor) throws ExecutionException {
+  protected ConsoleView createConsole(@NotNull Executor executor) {
     TestConsoleProperties consoleProperties = new MyTestConsoleProperties(this, executor);
     return SMTestRunnerConnectionUtil.createConsole(TEST_FRAMEWORK_NAME, consoleProperties);
   }
