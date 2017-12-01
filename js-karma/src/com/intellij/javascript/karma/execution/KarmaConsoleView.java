@@ -2,10 +2,10 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.process.NopProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.testframework.PoolOfTestIcons;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.TestTreeView;
 import com.intellij.execution.testframework.sm.runner.SMTestProxy;
@@ -25,7 +25,6 @@ import com.intellij.javascript.debugger.JSDebugTabLayouter;
 import com.intellij.javascript.debugger.JavaScriptDebugProcess;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
@@ -81,24 +80,27 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     if (!myServer.areBrowsersReady()) {
       registerPrintingBrowserCapturingSuggestion();
     }
-    KarmaRootTestProxyFormatter rootFormatter = new KarmaRootTestProxyFormatter(this, myServer);
-    ProcessAdapter listener = new ProcessAdapter() {
+    if (myProcessHandler instanceof NopProcessHandler) {
+      KarmaRootTestProxyFormatter rootFormatter = new KarmaRootTestProxyFormatter(this);
+      myProcessHandler.addProcessListener(new ProcessAdapter() {
+        @Override
+        public void processTerminated(@NotNull ProcessEvent event) {
+          Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, KarmaConsoleView.this);
+          alarm.addRequest(() -> {
+            rootFormatter.onTestRunProcessTerminated();
+            Disposer.dispose(alarm);
+          }, 200);
+        }
+      }, this);
+    }
+    myServer.getProcessHandler().addProcessListener(new ProcessAdapter() {
       @Override
       public void processTerminated(@NotNull ProcessEvent event) {
-        if (myServer.getProcessHandler().isProcessTerminated()) {
-          rootFormatter.onServerProcessTerminated();
-          printServerFinishedInfo();
+        if (!myProcessHandler.isProcessTerminated()) {
+          print("Karma server terminated\n", ConsoleViewContentType.SYSTEM_OUTPUT);
         }
-        rootFormatter.onTestRunProcessTerminated();
       }
-    };
-    myProcessHandler.addProcessListener(listener);
-    Disposer.register(this, new Disposable() {
-      @Override
-      public void dispose() {
-        myProcessHandler.removeProcessListener(listener);
-      }
-    });
+    }, this);
     return consoleContent;
   }
 
@@ -124,11 +126,6 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
       }, 1000, ModalityState.any());
       myServer.onBrowsersReady(() -> Disposer.dispose(alarm));
     });
-  }
-
-  private void printServerFinishedInfo() {
-    SMTestProxy.SMRootTestProxy rootNode = getResultsViewer().getTestsRootNode();
-    rootNode.addSystemOutput("Karma server process terminated");
   }
 
   private void registerKarmaServerTab(@NotNull RunnerLayoutUi ui) {
@@ -180,15 +177,11 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
 
   private static class KarmaRootTestProxyFormatter implements SMRootTestProxyFormatter {
 
-    private final KarmaServer myServer;
     private final TestTreeView myTreeView;
     private boolean myTestRunProcessTerminated = false;
-    private boolean myServerProcessTerminated = false;
 
-    private KarmaRootTestProxyFormatter(@NotNull SMTRunnerConsoleView consoleView,
-                                        @NotNull KarmaServer server) {
+    private KarmaRootTestProxyFormatter(@NotNull SMTRunnerConsoleView consoleView) {
       myTreeView = consoleView.getResultsViewer().getTreeView();
-      myServer = server;
       if (myTreeView != null) {
         TestTreeRenderer originalRenderer = ObjectUtils.tryCast(myTreeView.getCellRenderer(), TestTreeRenderer.class);
         if (originalRenderer != null) {
@@ -197,38 +190,20 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
       }
     }
 
-    private static void render(@NotNull TestTreeRenderer renderer, @NotNull String msg, boolean error) {
+    private static void render(@NotNull TestTreeRenderer renderer, @NotNull String msg) {
       renderer.clear();
-      if (error) {
-        renderer.setIcon(PoolOfTestIcons.TERMINATED_ICON);
-      }
       renderer.append(msg);
     }
 
     @Override
     public void format(@NotNull SMTestProxy.SMRootTestProxy testProxy, @NotNull TestTreeRenderer renderer) {
       if (testProxy.isLeaf()) {
-        if (myServerProcessTerminated) {
-          render(renderer, "Server is dead", true);
-        }
-        else {
-          if (myTestRunProcessTerminated) {
-            render(renderer, "Aborted", true);
-          }
-          else if (myServer.isPortBound() && !myServer.areBrowsersReady()) {
-            render(renderer, "Waiting for browser capturing...", false);
-          }
-        }
+        render(renderer, myTestRunProcessTerminated ? "Stopped" : "Waiting for browser capturing...");
       }
     }
 
     private void onTestRunProcessTerminated() {
       myTestRunProcessTerminated = true;
-      myTreeView.repaint();
-    }
-
-    private void onServerProcessTerminated() {
-      myServerProcessTerminated = true;
       myTreeView.repaint();
     }
   }
