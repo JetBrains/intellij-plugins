@@ -5,7 +5,6 @@ import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTokenType;
 import com.intellij.util.ProcessingContext;
@@ -44,7 +43,8 @@ public class DartReferenceContributor extends PsiReferenceContributor {
         return PsiReference.EMPTY_ARRAY;
       }
 
-      final VirtualFile file = DartResolveUtil.getRealVirtualFile(InjectedLanguageUtil.getTopLevelFile(element));
+      final VirtualFile file = DartResolveUtil.getRealVirtualFile(
+        InjectedLanguageManager.getInstance(element.getProject()).getTopLevelFile(element));
       if (!DartAnalysisServerService.isLocalAnalyzableFile(file)) return PsiReference.EMPTY_ARRAY;
 
       final List<PsiReference> result = new SmartList<>();
