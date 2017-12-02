@@ -66,7 +66,7 @@ public class StrutsConventionImplicitUsageProviderTest extends BasicLightHighlig
 
   public void testConventionUnusedInterface() {
     doTest("Unused.java",
-           "public interface <warning descr=\"Class 'Unused' is never used\">Unused</warning> {}");
+           "public interface <warning descr=\"Interface 'Unused' is never used\">Unused</warning> {}");
   }
 
   public void testConventionEndsWithAction() {
