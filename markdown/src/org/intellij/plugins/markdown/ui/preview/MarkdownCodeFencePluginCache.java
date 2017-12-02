@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.intellij.util.ArrayUtilRt.EMPTY_FILE_ARRAY;
+
 public class MarkdownCodeFencePluginCache implements Disposable {
   public static final String MARKDOWN_FILE_PATH_KEY = "markdown-md5-file-path";
 
@@ -84,7 +86,7 @@ public class MarkdownCodeFencePluginCache implements Disposable {
   @NotNull
   private static File[] getChildren(@NotNull File directory) {
     File[] files = directory.listFiles();
-    return files != null ? files : new File[0];
+    return files != null ? files : EMPTY_FILE_ARRAY;
   }
 
   private static boolean isCachedSourceFile(@NotNull File sourceFileDir, @NotNull VirtualFile sourceFile) {
