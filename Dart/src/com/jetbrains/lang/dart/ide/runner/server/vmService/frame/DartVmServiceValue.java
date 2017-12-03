@@ -377,11 +377,13 @@ public class DartVmServiceValue extends XNamedValue {
     });
   }
 
-  private void addListChildren(@NotNull final XCompositeNode node, @NotNull final ElementList<InstanceRef> listElements) {
-    final XValueChildrenList childrenList = new XValueChildrenList(listElements.size());
+  private void addListChildren(@NotNull final XCompositeNode node, @Nullable final ElementList<InstanceRef> listElements) {
+    final XValueChildrenList childrenList = new XValueChildrenList(listElements == null ? 0 : listElements.size());
     int index = myCollectionChildrenAlreadyShown.get();
-    for (InstanceRef listElement : listElements) {
-      childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, String.valueOf(index++), listElement, null, null, false));
+    if (listElements != null) {
+      for (InstanceRef listElement : listElements) {
+        childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, String.valueOf(index++), listElement, null, null, false));
+      }
     }
     node.addChildren(childrenList, true);
   }
