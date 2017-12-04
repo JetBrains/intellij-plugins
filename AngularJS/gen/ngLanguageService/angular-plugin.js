@@ -12,7 +12,7 @@ var __extends = (this && this.__extends) || (function () {
 exports.__esModule = true;
 var angular_session_20_1 = require("./angular-session-20");
 var angular_session_latest_1 = require("./angular-session-latest");
-var AngularLanguagePluginFactory = (function () {
+var AngularLanguagePluginFactory = /** @class */ (function () {
     function AngularLanguagePluginFactory() {
     }
     AngularLanguagePluginFactory.prototype.create = function (state) {
@@ -31,7 +31,7 @@ function createPluginClass(state) {
     var instantiateSession = require(fixedPath + "ts-session-provider.js").instantiateSession;
     var loggerImpl = require(fixedPath + "logger-impl.js");
     var util = require(fixedPath + "util.js");
-    var AngularLanguagePlugin = (function (_super) {
+    var AngularLanguagePlugin = /** @class */ (function (_super) {
         __extends(AngularLanguagePlugin, _super);
         function AngularLanguagePlugin(state) {
             return _super.call(this, state) || this;

@@ -12,7 +12,7 @@ var __extends = (this && this.__extends) || (function () {
 exports.__esModule = true;
 var ngutil_1 = require("./ngutil");
 function createAngularSessionClass(ts_impl, sessionClass, loggerImpl) {
-    var AngularSessionLatest = (function (_super) {
+    var AngularSessionLatest = /** @class */ (function (_super) {
         __extends(AngularSessionLatest, _super);
         function AngularSessionLatest() {
             return _super !== null && _super.apply(this, arguments) || this;
@@ -20,22 +20,37 @@ function createAngularSessionClass(ts_impl, sessionClass, loggerImpl) {
         AngularSessionLatest.prototype.executeCommand = function (request) {
             var command = request.command;
             if (command == ngutil_1.IDEGetHtmlErrors) {
+                if (!this.hasConfiguredProject(request))
+                    return { responseRequired: true, response: [] };
                 request.command = ts_impl.server.CommandNames.SemanticDiagnosticsSync;
                 return _super.prototype.executeCommand.call(this, request);
             }
             if (command == ngutil_1.IDENgCompletions) {
+                if (!this.hasConfiguredProject(request))
+                    return { responseRequired: true, response: [] };
                 request.command = ts_impl.server.CommandNames.Completions;
                 return _super.prototype.executeCommand.call(this, request);
             }
             if (command == ngutil_1.IDEGetProjectHtmlErr || command == "geterrForProject") {
                 var fileRequestArgs = request.arguments;
-                this.sendNgProjectDiagnostics(fileRequestArgs);
+                if (this.hasConfiguredProject(request)) {
+                    this.sendNgProjectDiagnostics(fileRequestArgs);
+                }
                 if (command == ngutil_1.IDEGetProjectHtmlErr) {
                     request.command = ts_impl.server.CommandNames.GeterrForProject;
                 }
                 return _super.prototype.executeCommand.call(this, request);
             }
             return _super.prototype.executeCommand.call(this, request);
+        };
+        AngularSessionLatest.prototype.hasConfiguredProject = function (request) {
+            var fileRequestArgs = request.arguments;
+            var fileName = ts_impl.normalizePath(fileRequestArgs.file);
+            var defaultProject = this.projectService.getDefaultProjectForFile(fileName, false);
+            if (defaultProject == null || defaultProject.projectKind == ts_impl.server.ProjectKind.Inferred) {
+                return false;
+            }
+            return true;
         };
         AngularSessionLatest.prototype.sendNgProjectDiagnostics = function (fileRequestArgs) {
             var _this = this;

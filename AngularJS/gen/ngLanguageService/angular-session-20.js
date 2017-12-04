@@ -42,7 +42,7 @@ function createAngularSessionClassTs20(ts_impl, sessionClass) {
     var skipAngular = ts_impl["skipNg"];
     var refreshErrorCount = 0;
     var globalError = skipAngular ? skipAngular : null;
-    var AngularSession = (function (_super) {
+    var AngularSession = /** @class */ (function (_super) {
         __extends(AngularSession, _super);
         function AngularSession() {
             return _super !== null && _super.apply(this, arguments) || this;
