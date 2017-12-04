@@ -17,7 +17,6 @@ package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.CopyProvider;
-import com.intellij.ide.actions.ContextHelpAction;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -160,8 +159,6 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     addGroupBySeverityAction(group);
     group.addAction(new FilterProblemsAction());
     group.addSeparator();
-
-    group.addAction(new ContextHelpAction("reference.toolWindow.DartAnalysis"));
 
     return ActionManager.getInstance().createActionToolbar("DartProblemsView", group, false).getComponent();
   }

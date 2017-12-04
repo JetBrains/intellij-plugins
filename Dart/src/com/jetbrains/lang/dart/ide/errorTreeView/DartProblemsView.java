@@ -118,6 +118,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
       myPanel = new DartProblemsViewPanel(project, myPresentationHelper);
 
       myToolWindow = toolWindowManager.registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
+      myToolWindow.setHelpId("reference.toolWindow.DartAnalysis");
       myCurrentIcon = DartIcons.Dart_13;
       updateIcon();
 
