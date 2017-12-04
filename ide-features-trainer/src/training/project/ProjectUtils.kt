@@ -12,7 +12,12 @@ import java.net.URL
 
 object ProjectUtils {
 
-  private val ideProjectsBasePath by lazy { WizardContext(null, null).projectFileDirectory }
+  private val ideProjectsBasePath by lazy {
+    val ideaProjectsPath = WizardContext(null, null).projectFileDirectory
+    val ideaProjects = File(ideaProjectsPath)
+    FileUtils.ensureDirectoryExists(ideaProjects)
+    return@lazy ideaProjectsPath
+  }
 
   /**
    * For example:
