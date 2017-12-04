@@ -43,7 +43,7 @@ public abstract class AbstractStepDefinition {
 
   public abstract List<String> getVariableNames();
 
-  public boolean matches(String stepName) {
+  public boolean matches(@NotNull String stepName) {
     final Pattern pattern = getPattern();
     return pattern != null && new Perl5Matcher().contains(stepName, pattern);
   }

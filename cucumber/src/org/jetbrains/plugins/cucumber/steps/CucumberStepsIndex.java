@@ -111,12 +111,17 @@ public class CucumberStepsIndex {
     if (module == null) {
       return Collections.emptyList();
     }
+    String substitutedName = step.getSubstitutedName();
+    if (substitutedName == null) {
+      return Collections.emptyList();
+    }
 
     Map<Class<? extends AbstractStepDefinition>, AbstractStepDefinition> definitionsByClass =
       new java.util.HashMap<>();
     List<AbstractStepDefinition> allSteps = loadStepsFor(featureFile, module);
+
     for (AbstractStepDefinition stepDefinition : allSteps) {
-      if (stepDefinition.matches(step.getSubstitutedName()) && stepDefinition.supportsStep(step)) {
+      if (stepDefinition.matches(substitutedName) && stepDefinition.supportsStep(step)) {
         final Pattern currentLongestPattern = getPatternByDefinition(definitionsByClass.get(stepDefinition.getClass()));
         final Pattern newPattern = getPatternByDefinition(stepDefinition);
         final int newPatternLength = ((newPattern != null) ? newPattern.getPattern().length() : -1);
