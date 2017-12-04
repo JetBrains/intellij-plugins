@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Trinity
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
@@ -19,6 +18,7 @@ import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.containers.putValue
 import org.jetbrains.vuejs.GLOBAL_BINDING_MARK
 import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.index.VueComponentsIndex
@@ -134,33 +134,36 @@ class VueComponents {
       val allValues = getForAllKeys(scope, VueComponentsIndex.KEY, filter)
       val libCompResolveMap = mutableMapOf<String, String>()
 
-      val componentsList = allValues.mapNotNull {
-        val isGlobal = isGlobal(it)
-        if (isGlobal && it.name.endsWith(GLOBAL_BINDING_MARK)) {
-          val pair = doAdditionalLibResolve(it) ?: return@mapNotNull null
-          libCompResolveMap.put(fromAsset(pair.first), fromAsset(it.name.substringBefore(GLOBAL_BINDING_MARK)))
-          Trinity(pair.first, pair.second, true)
+      val componentData = mutableMapOf<String, MutableList<Pair<PsiElement, Boolean>>>()
+      for (value in allValues) {
+        val isGlobal = isGlobal(value)
+        if (isGlobal && value.name.endsWith(GLOBAL_BINDING_MARK)) {
+          val pair = doAdditionalLibResolve(value) ?: continue
+          val normalizedName = fromAsset(pair.first)
+          libCompResolveMap.put(normalizedName, fromAsset(value.name.substringBefore(GLOBAL_BINDING_MARK)))
+          componentData.putValue(normalizedName, Pair(pair.second, true))
         }
         else if (!onlyGlobal || isGlobal) {
-          Trinity(it.name, it, isGlobal)
+          componentData.putValue(fromAsset(value.name), Pair(value, isGlobal))
         }
-        else null
-      }.groupBy { fromAsset(it.first) }.map { selectComponentDefinition(it.value) }
+      }
 
       val componentsMap = mutableMapOf<String, Pair<PsiElement, Boolean>>()
-      componentsList.forEach { componentsMap.put(fromAsset(it.first), Pair(it.second, it.third)) }
+      for (entry in componentData) {
+        componentsMap.put(entry.key, selectComponentDefinition(entry.value))
+      }
       return ComponentsData(componentsMap, libCompResolveMap)
     }
 
-    private fun selectComponentDefinition(list: List<Trinity<String, out PsiElement, Boolean>>): Trinity<String, out PsiElement, Boolean> {
-      var selected: Trinity<String, out PsiElement, Boolean>? = null
-      for (trinity in list) {
-        val isVue = VueFileType.INSTANCE == trinity.second.containingFile.fileType
-        if (trinity.third) {
-          if (isVue) return trinity
-          selected = trinity
+    private fun selectComponentDefinition(list: List<Pair<PsiElement, Boolean>>): Pair<PsiElement, Boolean> {
+      var selected: Pair<PsiElement, Boolean>? = null
+      for (componentData in list) {
+        val isVue = VueFileType.INSTANCE == componentData.first.containingFile.fileType
+        if (componentData.second) {
+          if (isVue) return componentData
+          selected = componentData
         }
-        else if (selected == null && isVue) selected = trinity
+        else if (selected == null && isVue) selected = componentData
       }
       return selected ?: list[0]
     }

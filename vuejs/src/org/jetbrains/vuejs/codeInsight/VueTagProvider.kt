@@ -29,6 +29,7 @@ import com.intellij.xml.XmlElementDescriptor
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import com.intellij.xml.XmlTagNameProvider
 import com.intellij.xml.util.HtmlUtil
+import com.intellij.xml.util.XmlUtil
 import icons.VuejsIcons
 import org.jetbrains.vuejs.GLOBAL_BINDING_MARK
 import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.getBoundName
@@ -43,9 +44,9 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     if (tag != null && hasVue(tag.project)) {
       val name = tag.name
       // do not perform additional work for html tags
-      if (HtmlUtil.isHtmlBlockTag(name) ||
-          HtmlUtil.isHtml5Tag(name) ||
-          HtmlUtil.isPossiblyInlineTag(name)) return null
+      if (XmlUtil.isTagDefinedByNamespace(tag)) {
+        return null
+      }
 
       var localComponent:JSImplicitElement? = null
       processLocalComponents(tag, { foundName, element ->
