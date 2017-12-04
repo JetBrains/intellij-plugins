@@ -15,7 +15,6 @@
  */
 package jetbrains.communicator.idea.toolWindow;
 
-import com.intellij.ide.actions.ContextHelpAction;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -131,7 +130,6 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
     if (actions != null) {
       toolbarActions.addAll(actions);
     }
-    toolbarActions.add(new ContextHelpAction("reference.toolWindows.idetalk"));
 
     ActionGroup treeActions = (ActionGroup) myActionManager.getAction("IDEtalk_Tree");
 
