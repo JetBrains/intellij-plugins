@@ -57,6 +57,11 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
                                         () -> myFixture.testCompletion("custom.html", "custom.after.html", "angular2.js", "custom.ts"));
   }
 
+  public void testCustomTagsCompletion20NoNormalize() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
+                                        () -> myFixture.testCompletion("custom_no_normalize.html", "custom_no_normalize.after.html", "angular2.js", "custom_no_normalize.ts"));
+  }
+
   public void testCustomTagsCompletion20JavaScript() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
                                         () -> myFixture.testCompletion("custom.html", "custom.after.html", "angular2.js", "custom2.js"));

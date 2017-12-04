@@ -63,7 +63,7 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
     if (!(xmlTag instanceof HtmlTag && AngularIndexUtil.hasAngularJS(project))) return null;
 
     final String tagName = xmlTag.getName();
-    final String directiveName = DirectiveUtil.normalizeAttributeName(tagName);
+    String directiveName = DirectiveUtil.normalizeAttributeName(tagName);
     if (XmlUtil.isTagDefinedByNamespace(xmlTag)) return null;
     if ((NG_CONTAINER.equals(directiveName) || NG_CONTENT.equals(directiveName) || NG_TEMPLATE.equals(directiveName)) &&
         AngularIndexUtil.hasAngularJS2(project)) {
@@ -76,7 +76,8 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
       directive = null;
     }
     if (directive == null && !tagName.equals(directiveName) && AngularIndexUtil.hasAngularJS2(project)) {
-      directive = DirectiveUtil.getTagDirective(tagName, project);
+      directiveName = tagName;
+      directive = DirectiveUtil.getTagDirective(directiveName, project);
       if (!DirectiveUtil.isAngular2Directive(directive)) directive = null;
     }
 

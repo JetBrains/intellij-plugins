@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.json.psi.JsonElement;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
@@ -50,7 +51,8 @@ public class DirectiveUtil {
 
   public static boolean isAngular2Directive(final PsiElement directive) {
     return directive instanceof JSImplicitElement && (directive.getParent() instanceof JSCallExpression ||
-                                                      directive.getParent() instanceof ES6Decorator);
+                                                      directive.getParent() instanceof ES6Decorator ||
+                                                      directive.getParent() instanceof JsonElement);
   }
 
   public static String attributeToDirective(final PsiElement directive, final String name) {
