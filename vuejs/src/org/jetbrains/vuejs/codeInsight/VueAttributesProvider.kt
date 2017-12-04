@@ -23,7 +23,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
   companion object {
     val SCOPED = "scoped"
     @NonNls private val SRC_ATTR_NAME = "src"
-    val DEFAULT_BINDABLE = arrayOf("key", "is")
+    private val DEFAULT_BINDABLE = arrayOf("key", "is")
     val DEFAULT = setOf("v-text", "v-html", "v-show", "v-if", "v-else", "v-else-if", "v-for",
                           "v-on", "v-bind", "v-model", "v-pre", "v-cloak","v-once",
                           "slot", "ref").
@@ -88,9 +88,9 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
 }
 
 class VueAttributeDescriptor(private val name:String,
-                             private val element:PsiElement? = null) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
-  private var isDirective = false
-  private var isNonProp = false
+                             private val element:PsiElement? = null,
+                             private val isDirective: Boolean = false,
+                             private val isNonProp: Boolean = false) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
   override fun getName() = name
   override fun getDeclaration() = element
   override fun init(element: PsiElement?) {}
@@ -123,18 +123,7 @@ class VueAttributeDescriptor(private val name:String,
 
   fun createNameVariant(newName: String) : VueAttributeDescriptor {
     if (newName == name) return this
-    val descriptor = VueAttributeDescriptor(newName, element)
-    return descriptor
-  }
-
-  fun setIsDirective() : VueAttributeDescriptor {
-    isDirective = true
-    return this
-  }
-
-  fun setIsNonProp() : VueAttributeDescriptor {
-    isNonProp = true
-    return this
+    return VueAttributeDescriptor(newName, element)
   }
 
   fun isDirective(): Boolean = isDirective

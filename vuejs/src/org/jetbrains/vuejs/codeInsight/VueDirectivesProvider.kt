@@ -57,6 +57,6 @@ class VueDirectivesProvider {
     private fun createSearchScope(descriptor: JSObjectLiteralExpression?, project: Project) =
       descriptor?.resolveScope ?: GlobalSearchScope.projectScope(project)
 
-    private fun createDescriptor(it: JSImplicitElement) = VueAttributeDescriptor("v-" + fromAsset(it.name), it.parent).setIsDirective()
+    private fun createDescriptor(it: JSImplicitElement) = VueAttributeDescriptor("v-" + fromAsset(it.name), it.parent, true)
   }
 }
