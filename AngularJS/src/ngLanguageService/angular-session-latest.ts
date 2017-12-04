@@ -10,12 +10,16 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: Sess
     class AngularSessionLatest extends sessionClass {
         executeCommand(request: ts.server.protocol.Request): { response?: any; responseRequired?: boolean } {
             let command = request.command;
+
             if (command == IDEGetHtmlErrors) {
+                if (!this.hasConfiguredProject(request)) return {responseRequired: true, response: []};
+
                 request.command = ts_impl.server.CommandNames.SemanticDiagnosticsSync;
 
                 return super.executeCommand(request)
             }
             if (command == IDENgCompletions) {
+                if (!this.hasConfiguredProject(request)) return {responseRequired: true, response: []};
 
                 request.command = ts_impl.server.CommandNames.Completions;
                 return super.executeCommand(request)
@@ -23,7 +27,10 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: Sess
 
             if (command == IDEGetProjectHtmlErr || command == "geterrForProject") {
                 let fileRequestArgs = <ts.server.protocol.FileRequestArgs>request.arguments;
-                this.sendNgProjectDiagnostics(fileRequestArgs);
+                if (this.hasConfiguredProject(request)) {
+                    this.sendNgProjectDiagnostics(fileRequestArgs);
+                }
+
 
                 if (command == IDEGetProjectHtmlErr) {
                     request.command = ts_impl.server.CommandNames.GeterrForProject;
@@ -32,6 +39,17 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: Sess
             }
 
             return super.executeCommand(request);
+        }
+
+        private hasConfiguredProject(request: ts.server.protocol.Request) {
+            let fileRequestArgs = <ts.server.protocol.FileRequestArgs>request.arguments;
+            let fileName = ts_impl.normalizePath(fileRequestArgs.file);
+            let defaultProject = this.projectService.getDefaultProjectForFile(fileName, false);
+            if (defaultProject == null || defaultProject.projectKind == ts_impl.server.ProjectKind.Inferred) {
+                return false;
+            }
+
+            return true;
         }
 
         private sendNgProjectDiagnostics(fileRequestArgs: ts.server.protocol.FileRequestArgs) {

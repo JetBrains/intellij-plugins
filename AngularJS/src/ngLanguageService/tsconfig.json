@@ -5,6 +5,7 @@
   },
   "compileOnSave": false,
   "include": [
-    "**/*.ts"
+    "**/*.ts",
+    "node_modules/ngPluginIDE/index.ts"
   ]
 }
