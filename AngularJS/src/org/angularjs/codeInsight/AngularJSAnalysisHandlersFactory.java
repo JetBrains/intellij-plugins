@@ -55,7 +55,7 @@ public class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory 
             protected void writeFunctionAndName(Template template,
                                                 String createdMethodName,
                                                 PsiFile file,
-                                                JSClass clazz,
+                                                PsiElement clazz,
                                                 JSReferenceExpression referenceExpression) {
               template.addTextSegment(JSClassUtils.createClassFunctionName(createdMethodName, file));
             }

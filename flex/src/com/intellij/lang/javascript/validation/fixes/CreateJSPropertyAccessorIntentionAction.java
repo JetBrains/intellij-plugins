@@ -2,9 +2,9 @@ package com.intellij.lang.javascript.validation.fixes;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 
 public class CreateJSPropertyAccessorIntentionAction extends CreateJSFunctionIntentionActionBase {
@@ -18,7 +18,7 @@ public class CreateJSPropertyAccessorIntentionAction extends CreateJSFunctionInt
   protected void writeFunctionAndName(Template template,
                                       String referencedName,
                                       PsiFile file,
-                                      JSClass clazz,
+                                      PsiElement clazz,
                                       JSReferenceExpression referenceExpression) {
     template.addTextSegment("function ");
     template.addTextSegment(myIsGetter ? "get ":"set ");

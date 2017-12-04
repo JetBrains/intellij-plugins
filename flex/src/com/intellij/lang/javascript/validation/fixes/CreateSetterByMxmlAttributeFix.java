@@ -35,8 +35,8 @@ public class CreateSetterByMxmlAttributeFix extends CreateJSPropertyAccessorInte
     template.addTextSegment(":");
     addReturnType(template, referenceExpression, file);
 
-    final JSClass clazz = findClass(anchorParent);
-    if (clazz == null || !clazz.isInterface()) {
+    final PsiElement clazz = findClass(anchorParent);
+    if (clazz == null || clazz instanceof JSClass && !((JSClass)clazz).isInterface()) {
       template.addTextSegment(" {");
       addBody(template, file);
       template.addTextSegment("}");
