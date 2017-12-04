@@ -218,7 +218,7 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
     return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(attributeName, context)
            // relax attributes check: https://vuejs.org/v2/guide/components.html#Non-Prop-Attributes
            // vue allows any non-declared as props attributes to be passed to a component
-           ?: VueAttributeDescriptor(attributeName).setIsNonProp()
+           ?: VueAttributeDescriptor(attributeName, isNonProp = true)
   }
 
   override fun getAttributeDescriptor(attribute: XmlAttribute?) = getAttributeDescriptor(attribute?.name, attribute?.parent)
