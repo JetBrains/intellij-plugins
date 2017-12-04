@@ -2,6 +2,7 @@ package com.intellij.javascript.karma.debug;
 
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.JavaScriptDebugEngine;
+import com.intellij.openapi.util.registry.Registry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +27,8 @@ public class DebuggableWebBrowser {
 
   @Nullable
   public static DebuggableWebBrowser create(@NotNull WebBrowser browser) {
-    JavaScriptDebugEngine debugEngine = JavaScriptDebugEngine.Companion.findByBrowser(browser, false);
+    boolean withExtension = Registry.is("js.karma.debugWithExtension", false);
+    JavaScriptDebugEngine debugEngine = JavaScriptDebugEngine.Companion.findByBrowser(browser, withExtension);
     return debugEngine != null ? new DebuggableWebBrowser(debugEngine, browser) : null;
   }
 }
