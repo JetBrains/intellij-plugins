@@ -6,7 +6,6 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.VueLanguage
-import kotlin.text.replace
 
 /**
  * @author Irina.Chernushina on 7/21/2017.
@@ -78,6 +77,21 @@ new Vue({
   delimiters: ['<%', '%>']
 })
 </script>
+""")
+    TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
+  }
+
+  fun testCustomDelimitersInterpolationInVueVariantJS() {
+    myFixture.configureByText("CustomDelimitersInterpolationInVueVariantJS.js", """
+new Vue({
+  delimiters: ['<%', '%>']
+})
+""")
+    myFixture.configureByText("CustomDelimitersInterpolationInVue.vue", """<template>
+    <div>
+      <% 1 + <caret>2 %>
+    </div>
+</template>
 """)
     TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
   }
@@ -188,6 +202,18 @@ another""", "two")
     InjectedLanguageManager.getInstance(project).enumerate(host,
                                                                               { injectedPsi, _ -> expected.remove(injectedPsi.text) })
     TestCase.assertEquals(emptySet<String>(), expected)
+  }
+
+  fun testInjectionByConfigDelimitersAssignmentJS() {
+    myFixture.configureByText("InjectionByConfigDelimitersAssignmentJS.js", "Vue.config.delimiters = ['<%', '%>']")
+    myFixture.configureByText("InjectionByConfigDelimitersAssignmentJS.vue", "<template><% <caret> %></template>")
+    TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
+  }
+
+  fun testInjectionByOptionsDelimitersAssignmentJS() {
+    myFixture.configureByText("InjectionByConfigDelimitersAssignmentJS.js", "Vue.options.delimiters = ['<%', '%>']")
+    myFixture.configureByText("InjectionByConfigDelimitersAssignmentJS.vue", "<template><% <caret> %></template>")
+    TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
   }
 
   fun testInjectionByConfigDelimitersAssignment() {
