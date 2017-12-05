@@ -1,5 +1,5 @@
 class A {
-  const X:int = 1;
+  private const _X:int = 1;
   private var _i:int;
   private var _i2:int;
   var _i3:int;
@@ -13,6 +13,10 @@ class A {
   function get i3():int {
     return _i3;
   }
+
+    public function get X():int {
+        return _X;
+    }
 
     public function get i():int {
         return _i;
