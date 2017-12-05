@@ -39,7 +39,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   companion object {
     const val VUE = "Vue"
-    private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE, "mixin", "component", "extends", "directive")
+    private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE, "mixin", "component", "extends", "directive", "delimiters")
   }
 
   override fun findModule(result: PsiElement): PsiElement? = org.jetbrains.vuejs.codeInsight.findModule(result)
@@ -194,10 +194,14 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   // limit building stub in other file types like js/html to Vue-descriptor-like members
   private fun insideVueDescriptor(expression: JSLiteralExpression): Boolean {
     val statement = TreeUtil.findParent(expression.node,
-                                        TokenSet.create(JSStubElementTypes.CALL_EXPRESSION, JSStubElementTypes.NEW_EXPRESSION),
+                                        TokenSet.create(JSStubElementTypes.CALL_EXPRESSION, JSStubElementTypes.NEW_EXPRESSION,
+                                                        JSStubElementTypes.ASSIGNMENT_EXPRESSION),
                                         TokenSet.create(JSElementTypes.EXPRESSION_STATEMENT)) ?: return false
-    val ref = statement.findChildByType(JSElementTypes.REFERENCE_EXPRESSION) ?: return false
-    return ref.getChildren(TokenSet.create(JSTokenTypes.IDENTIFIER)).filter { it.text in VUE_DESCRIPTOR_OWNERS }.any()
+    val referenceHolder = if (statement.elementType == JSStubElementTypes.ASSIGNMENT_EXPRESSION)
+      statement.findChildByType(JSStubElementTypes.DEFINITION_EXPRESSION)
+    else statement
+    val ref = referenceHolder?.findChildByType(JSElementTypes.REFERENCE_EXPRESSION) ?: return false
+    return ref.getChildren(TokenSet.create(JSTokenTypes.IDENTIFIER)).filter { it.text in VUE_DESCRIPTOR_OWNERS}.any()
   }
 
   private fun tryProcessComponentInVue(obj: JSObjectLiteralExpression, property: JSProperty,
