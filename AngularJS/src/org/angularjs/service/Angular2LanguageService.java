@@ -14,13 +14,14 @@ import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings;
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl;
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptCompletionsRequestArgs;
 import com.intellij.lang.typescript.compiler.ui.TypeScriptServerServiceSettings;
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfig;
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService;
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Key;
@@ -46,25 +47,25 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 import static com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorCheckerProvider.checkServiceIsAvailable;
 
 public class Angular2LanguageService extends TypeScriptServerServiceImpl {
 
-  private static final ParameterizedCachedValueProvider<VirtualFile, Project> CACHE_SERVICE_PATH_PROVIDER =
-    new ParameterizedCachedValueProvider<VirtualFile, Project>() {
+  private static final ParameterizedCachedValueProvider<Collection<VirtualFile>, Project> CACHE_SERVICE_PATH_PROVIDER =
+    new ParameterizedCachedValueProvider<Collection<VirtualFile>, Project>() {
 
-
-      @Nullable
+      @NotNull
       @Override
-      public CachedValueProvider.Result<VirtualFile> compute(Project project) {
-        VirtualFile result = findServiceDirectoryImpl(project);
-
+      public CachedValueProvider.Result<Collection<VirtualFile>> compute(Project project) {
+        Collection<VirtualFile> result = findServiceDirectoriesImpl(project);
         return CachedValueProvider.Result.create(result, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS);
       }
     };
 
-  public static final Key<ParameterizedCachedValue<VirtualFile, Project>> NG_SERVICE_PATH_KEY = Key.create("CACHED_NG_SERVICE_PATH");
+  public static final Key<ParameterizedCachedValue<Collection<VirtualFile>, Project>> NG_SERVICE_PATH_KEY =
+    Key.create("CACHED_NG_SERVICE_PATH");
   private final Condition<VirtualFile> myFileFilter;
 
   public Angular2LanguageService(@NotNull Project project,
@@ -99,28 +100,48 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
     return new Angular2LanguageServiceProtocol(myProject, path, mySettings, readyConsumer, createEventConsumer());
   }
 
-  public static VirtualFile getServiceDirectory(Project project) {
-    return CachedValuesManager.getManager(project)
+  public static VirtualFile getServiceDirectory(@NotNull Project project) {
+    Collection<VirtualFile> result = CachedValuesManager.getManager(project)
       .getParameterizedCachedValue(project, NG_SERVICE_PATH_KEY, CACHE_SERVICE_PATH_PROVIDER, false, project);
+
+    //todo anstarovoyt multi-projects support
+    return result.size() == 1 ? ContainerUtil.getFirstItem(result) : null;
+  }
+
+  @NotNull
+  private static Collection<VirtualFile> findServiceDirectoriesImpl(@NotNull Project project) {
+    if (project.isDefault() || project.isDisposed()) return ContainerUtil.emptyList();
+    
+    ApplicationManager.getApplication().assertReadAccessAllowed();
+
+    VirtualFile baseDir = project.getBaseDir();
+    if (baseDir == null) return ContainerUtil.emptyList();
+    VirtualFile rootService = searchInRootDirectory(baseDir);
+    if (rootService != null) return Collections.singleton(rootService);
+
+    Collection<TypeScriptConfig> configFiles = TypeScriptConfigService.Provider.getConfigFiles(project);
+    if (configFiles.isEmpty()) return ContainerUtil.emptyList();
+
+    return configFiles.stream()
+      .map(el -> el.getConfigDirectory())
+      .map(dir -> searchInRootDirectory(dir)).filter(el -> el != null)
+      .collect(Collectors.toList());
   }
 
   @Nullable
-  private static VirtualFile findServiceDirectoryImpl(Project project) {
-    for (VirtualFile file : ProjectRootManager.getInstance(project).getContentRoots()) {
-      if (file.isInLocalFileSystem() && file.isDirectory()) {
-        VirtualFile modules = file.findChild("node_modules");
-        if (modules != null) {
-          VirtualFile angularPackage = modules.findChild("@angular");
-          if (angularPackage != null) {
-            VirtualFile serviceDirectory = angularPackage.findChild("language-service");
-            if (serviceDirectory != null) {
-              return serviceDirectory;
-            }
+  private static VirtualFile searchInRootDirectory(@NotNull VirtualFile file) {
+    if (file.isInLocalFileSystem() && file.isDirectory()) {
+      VirtualFile modules = file.findChild("node_modules");
+      if (modules != null) {
+        VirtualFile angularPackage = modules.findChild("@angular");
+        if (angularPackage != null) {
+          VirtualFile serviceDirectory = angularPackage.findChild("language-service");
+          if (serviceDirectory != null) {
+            return serviceDirectory;
           }
         }
       }
     }
-
     return null;
   }
 
