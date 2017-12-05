@@ -159,10 +159,5 @@ public class XmlObjectEvaluator {
     public void setMessage(@NotNull String message,
                            final Icon icon, @NotNull final SimpleTextAttributes attributes, @Nullable XDebuggerTreeNodeHyperlink link) {
     }
-
-    @Override
-    public boolean isObsolete() {
-      return false;
-    }
   }
 }
