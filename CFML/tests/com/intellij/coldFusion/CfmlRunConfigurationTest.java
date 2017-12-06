@@ -3,7 +3,6 @@ package com.intellij.coldFusion;
 import com.intellij.coldFusion.UI.runner.CfmlRunConfiguration;
 import com.intellij.coldFusion.UI.runner.CfmlRunConfigurationType;
 import com.intellij.execution.RunManager;
-import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.ConfigurationFromContext;
@@ -28,8 +27,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
+import static org.assertj.core.api.Assertions.assertThat;
 
+public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
   private static final String WWWROOT_SRC = "wwwroot/src/";
   private PsiFile indexCfm;
   private PsiFile index2Cfm;
@@ -43,14 +43,14 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
   public void testDefaultRunConfiguration() {
     final CfmlRunConfiguration configuration = getDefaultCfmlRunConfiguration();
     final String url = configuration.getRunnerParameters().getUrl();
-    TestCase.assertEquals(true, StringUtil.startsWith(url, "http://localhost:8500/"));
-    TestCase.assertEquals(false, StringUtil.startsWith(url, "http://localhost:8500//"));
+    assertThat(url).startsWith("http://localhost:8500/");
+    assertThat(url).doesNotStartWith("http://localhost:8500//");
   }
 
   public CfmlRunConfiguration getDefaultCfmlRunConfiguration() {
     final Project project = myFixture.getProject();
     final Editor editor = openCfmFileInEditor(indexCfm);
-    final Presentation presentation = getPresentationForRunAction(editor);
+    final Presentation presentation = getPresentationForRunAction();
     assert editor != null;
     final DataContext dataContext = DataManager.getInstance().getDataContext(editor.getComponent());
 
@@ -64,7 +64,7 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
       if (configurationFromContext != null) configs.add(configurationFromContext);
     }
 
-    TestCase.assertEquals(true, configs.size() == 1);
+    assertThat(configs).hasSize(1);
     final ConfigurationFromContext defaultConfigurationFromContext = configs.get(0);
     final RunConfiguration configuration = defaultConfigurationFromContext.getConfiguration();
     TestCase.assertNotNull(configuration);
@@ -93,7 +93,7 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
       if (configuration == null) {
         return null;
       }
-      ((RunManagerEx)configurationContext.getRunManager()).setTemporaryConfiguration(configuration);
+      configurationContext.getRunManager().setTemporaryConfiguration(configuration);
     }
     //end of the emulated block
     return (CfmlRunConfiguration)configuration.getConfiguration();
@@ -141,7 +141,7 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
     return editor;
   }
 
-  public Presentation getPresentationForRunAction(Editor editor){
+  public Presentation getPresentationForRunAction() {
     AnAction[] actions = ExecutorAction.getActions();
     final AnAction runAction = actions[0];
     AnActionEvent e = AnActionEvent.createFromDataContext(ActionPlaces.EDITOR_POPUP, null, DataManager
