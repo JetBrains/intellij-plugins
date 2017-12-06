@@ -12,8 +12,6 @@ import com.intellij.util.Query;
 
 /**
  * @author Alexey Chmutov
- *         Date: Dec 11, 2009
- *         Time: 4:38:39 PM
  */
 public class TapestryFindUsagesTest extends TapestryBaseTestCase {
   @Override

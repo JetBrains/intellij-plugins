@@ -8,8 +8,6 @@ import com.intellij.testFramework.UsefulTestCase;
 
 /**
  * @author Alexey Chmutov
- *         Date: 29.07.2009
- *         Time: 16:42:14
  */
 public class TapestryLexerTest extends UsefulTestCase {
 

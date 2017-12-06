@@ -18,7 +18,6 @@ import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.lang.TelLanguage;
-import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -26,8 +25,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Alexey Chmutov
- *         Date: 09.10.2009
- *         Time: 16:34:47
  */
 public abstract class TelQualifiedReference implements PsiPolyVariantReference {
 

@@ -20,8 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jun 22, 2009
- *         Time: 9:16:55 PM
  */
 public class TelParserDefinition implements ParserDefinition {
 

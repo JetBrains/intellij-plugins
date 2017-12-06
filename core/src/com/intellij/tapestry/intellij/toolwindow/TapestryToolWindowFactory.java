@@ -12,8 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jun 19, 2009
- *         Time: 12:57:05 PM
  */
 public class TapestryToolWindowFactory implements ToolWindowFactory {
   public static final String TAPESTRY_TOOLWINDOW_ID = "Tapestry";

@@ -24,8 +24,6 @@ import java.util.List;
 
 /**
  * @author Alexey Chmutov
- *         Date: 19.10.2009
- *         Time: 18:27:02
  */
 public class TapestryAccessorMethod extends LightElement implements PsiMethod {
   private static final Logger LOG = Logger.getInstance("#com.intellij.tapestry.psi.TapestryAccessorMethod");

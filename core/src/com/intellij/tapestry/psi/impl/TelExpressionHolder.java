@@ -10,8 +10,6 @@ import com.intellij.xml.util.XmlUtil;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jun 24, 2009
- *         Time: 4:44:59 PM
  */
 public class TelExpressionHolder extends ASTWrapperPsiElement implements XmlTagChild {
   public TelExpressionHolder(ASTNode node) {

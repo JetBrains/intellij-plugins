@@ -8,8 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jul 20, 2009
- *         Time: 5:26:28 PM
  */
 public abstract class BasicTapestryAttributeDescriptor extends BasicXmlAttributeDescriptor {
 

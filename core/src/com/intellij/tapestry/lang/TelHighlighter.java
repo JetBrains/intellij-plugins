@@ -14,8 +14,6 @@ import java.util.Map;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jun 22, 2009
- *         Time: 9:00:33 PM
  */
 public class TelHighlighter extends SyntaxHighlighterBase {
   @NotNull

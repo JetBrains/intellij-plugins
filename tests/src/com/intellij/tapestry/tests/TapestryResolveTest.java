@@ -21,8 +21,6 @@ import java.util.Map;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jul 16, 2009
- *         Time: 6:11:55 PM
  */
 public class TapestryResolveTest extends TapestryBaseTestCase {
   @Override

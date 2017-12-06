@@ -19,8 +19,6 @@ import java.util.List;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jun 10, 2009
- *         Time: 3:56:33 PM
  */
 public class TapestryTagDescriptor extends BasicTapestryTagDescriptor {
   private final PresentationLibraryElement myComponent;

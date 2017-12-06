@@ -34,8 +34,6 @@ import java.util.List;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jun 15, 2009
- *         Time: 12:54:29 PM
  */
 class DescriptorUtil {
   private DescriptorUtil() {

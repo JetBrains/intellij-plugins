@@ -26,8 +26,6 @@ import java.util.Set;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jul 17, 2009
- *         Time: 6:39:24 PM
  */
 public class TapestryXmlExtension extends DefaultXmlExtension {
   private static final Set<String> ourTapestryTemplateNamespaces = new THashSet<>(Arrays.asList(

@@ -10,8 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jun 22, 2009
- *         Time: 8:44:31 PM
  */
 public class TelLanguage extends Language implements InjectableLanguage {
 

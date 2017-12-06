@@ -18,8 +18,6 @@ import static com.intellij.tapestry.intellij.lang.descriptor.DescriptorUtil.getT
 
 /**
  * @author Alexey Chmutov
- *         Date: Jul 16, 2009
- *         Time: 3:25:47 PM
  */
 public abstract class BasicTapestryTagDescriptor implements XmlElementDescriptor, PsiWritableMetaData {
   private final TapestryNamespaceDescriptor myNamespaceDescriptor;

@@ -9,8 +9,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Alexey Chmutov
- *         Date: 09.10.2009
- *         Time: 16:29:14
  */
 public class TelRangeExpression extends TelCompositeElement implements TelExpression {
 

@@ -12,8 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Alexey Chmutov
- *         Date: 09.10.2009
- *         Time: 18:49:07
  */
 public class TelPsiUtil {
   private TelPsiUtil() {

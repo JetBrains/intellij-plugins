@@ -10,8 +10,6 @@ import com.intellij.testFramework.EditorTestUtil;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jul 16, 2009
- *         Time: 6:11:55 PM
  */
 public class TapestryActionsTest extends TapestryBaseTestCase {
   @Override

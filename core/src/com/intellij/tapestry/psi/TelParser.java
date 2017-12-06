@@ -14,8 +14,6 @@ import static com.intellij.tapestry.psi.TelTokenTypes.*;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jun 22, 2009
- *         Time: 9:53:11 PM
  */
 public class TelParser implements PsiParser {
   private static final Key<String> LAST_FOUND_IDENT = Key.create("LAST_FOUND_IDENT");

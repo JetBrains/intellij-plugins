@@ -13,8 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jul 1, 2009
- *         Time: 3:43:26 PM
  */
 public class TapestryNamespaceDescriptor extends SchemaNSDescriptor {
   private XmlFile myFile;

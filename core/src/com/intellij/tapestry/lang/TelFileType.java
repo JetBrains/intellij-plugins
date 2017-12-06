@@ -10,8 +10,6 @@ import javax.swing.*;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jun 22, 2009
- *         Time: 8:52:51 PM
  */
 public class TelFileType extends LanguageFileType {
   public static final TelFileType INSTANCE = new TelFileType();

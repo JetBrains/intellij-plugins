@@ -11,8 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Alexey Chmutov
- *         Date: Dec 8, 2009
- *         Time: 3:35:11 PM
  */
 public class TmlFindUsagesProvider implements FindUsagesProvider {
   public WordsScanner getWordsScanner() {

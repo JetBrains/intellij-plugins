@@ -14,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jun 18, 2009
- *         Time: 9:25:36 PM
  */
 public class TmlParserDefinition implements ParserDefinition {
   @NotNull

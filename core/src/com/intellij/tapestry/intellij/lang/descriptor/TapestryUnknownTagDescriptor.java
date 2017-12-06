@@ -8,8 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jun 10, 2009
- *         Time: 3:56:33 PM
  */
 public class TapestryUnknownTagDescriptor extends BasicTapestryTagDescriptor {
   private final String myQualifiedName;

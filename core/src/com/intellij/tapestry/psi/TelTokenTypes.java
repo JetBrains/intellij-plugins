@@ -13,8 +13,6 @@ import com.intellij.tapestry.lang.TelLanguage;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jun 22, 2009
- *         Time: 3:11:01 PM
  */
 @SuppressWarnings({"AbstractClassNeverImplemented"})
 public abstract class TelTokenTypes {

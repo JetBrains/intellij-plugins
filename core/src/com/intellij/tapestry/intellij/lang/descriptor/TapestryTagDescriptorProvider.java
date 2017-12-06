@@ -8,8 +8,6 @@ import com.intellij.tapestry.psi.TmlFile;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jun 10, 2009
- *         Time: 2:10:05 PM
  */
 public class TapestryTagDescriptorProvider implements XmlElementDescriptorProvider {
   public XmlElementDescriptor getDescriptor(XmlTag tag) {

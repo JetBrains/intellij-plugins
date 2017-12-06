@@ -8,8 +8,6 @@ import java.io.Reader;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jun 18, 2009
- *         Time: 9:43:36 PM
  */
 public class TmlLexer extends XHtmlLexer {
   private IElementType myTokenType;

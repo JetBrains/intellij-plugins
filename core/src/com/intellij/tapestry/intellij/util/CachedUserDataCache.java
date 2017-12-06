@@ -11,8 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jun 29, 2009
- *         Time: 3:54:33 PM
  */
 public abstract class CachedUserDataCache<T, Owner extends UserDataHolder> extends UserDataCache<CachedValue<T>, Owner, Object> {
   public CachedUserDataCache(@NonNls String keyName) {

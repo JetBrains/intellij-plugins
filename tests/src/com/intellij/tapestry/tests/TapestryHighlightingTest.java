@@ -19,8 +19,6 @@ import static com.intellij.codeInsight.daemon.impl.HighlightInfoFilter.EXTENSION
 
 /**
  * @author Alexey Chmutov
- *         Date: Jul 16, 2009
- *         Time: 6:11:55 PM
  */
 public class TapestryHighlightingTest extends TapestryBaseTestCase {
   private static final Set<String> ourTestsWithExtraLibraryComponents = ContainerUtil.newHashSet("ComponentFromJar", "LibraryMapping");

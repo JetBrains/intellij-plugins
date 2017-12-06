@@ -16,8 +16,6 @@ import java.util.Map;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jun 30, 2009
- *         Time: 2:39:11 PM
  */
 abstract class ElementsCachedMap extends CachedUserDataCache<Map<String, PresentationLibraryElement>, Module> {
   private final boolean myCacheComponents;

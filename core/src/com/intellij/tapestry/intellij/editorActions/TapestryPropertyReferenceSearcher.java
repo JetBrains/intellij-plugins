@@ -14,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Alexey Chmutov
- *         Date: Dec 10, 2009
- *         Time: 6:38:33 PM
  */
 public class TapestryPropertyReferenceSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
   public TapestryPropertyReferenceSearcher() {

@@ -10,8 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jun 23, 2009
- *         Time: 2:48:18 PM
  */
 public class TmlHighlighter extends XmlFileHighlighter {
 

@@ -19,8 +19,6 @@ import java.util.Set;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jul 7, 2009
- *         Time: 3:51:19 PM
  */
 public class TapestrySchemaProvider extends XmlSchemaProvider implements DumbAware {
   public XmlFile getSchema(@NotNull @NonNls String url, @Nullable Module module, @NotNull PsiFile baseFile) {

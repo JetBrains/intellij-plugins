@@ -16,7 +16,6 @@ import java.io.IOException;
  * Created by IntelliJ IDEA.
  *
  * @author Alexey Chmutov
- *         Date: 03.04.2008
  */
 public class Util {
   protected static final String DOT_TML = "." + TapestryConstants.TEMPLATE_FILE_EXTENSION;

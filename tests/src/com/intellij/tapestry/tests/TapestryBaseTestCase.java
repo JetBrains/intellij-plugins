@@ -27,8 +27,6 @@ import java.io.File;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jul 13, 2009
- *         Time: 3:49:34 PM
  */
 public abstract class TapestryBaseTestCase extends UsefulTestCase {
   static final String TEST_APPLICATION_PACKAGE = "com.testapp";

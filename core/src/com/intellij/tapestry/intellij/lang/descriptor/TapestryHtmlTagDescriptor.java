@@ -23,8 +23,6 @@ import java.util.List;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jul 8, 2009
- *         Time: 9:18:09 PM
  */
 public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWritableMetaData {
   private final TapestryNamespaceDescriptor myNamespaceDescriptor;

@@ -9,8 +9,6 @@ import javax.swing.*;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jun 18, 2009
- *         Time: 8:25:40 PM
  */
 public class TmlFileType extends XmlLikeFileType {
 

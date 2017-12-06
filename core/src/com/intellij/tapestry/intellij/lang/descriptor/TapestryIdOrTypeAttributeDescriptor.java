@@ -6,8 +6,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Alexey Chmutov
- *         Date: Jun 10, 2009
- *         Time: 2:45:07 PM
  */
 public class TapestryIdOrTypeAttributeDescriptor extends BasicTapestryAttributeDescriptor {
   private final String myName;
