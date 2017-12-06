@@ -3,7 +3,7 @@ package  {
 
     CONFIG::debugging
     public class ConditionalBlocks extends Button {
-        private static const companyName:String = <error>NAMES</error>::Company;
+        private static const companyName:String = <error>NAMES</error>::<error>Company</error>;
 
         public function ConditionalBlocks() {
             super();
@@ -16,7 +16,7 @@ package  {
         }
     }
 
-    <error>CONFIG</error>::release
+    <error>CONFIG</error>::<error>release</error>
     public class ConditionalBlocks extends Button {
         public function ConditionalBlocks() {
             super();

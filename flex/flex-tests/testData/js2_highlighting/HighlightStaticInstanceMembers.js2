@@ -34,14 +34,14 @@ class <info>Derived</info> extends <info>Base</info> {
     var <info descr="field">x2</info>;
 
     public static function  <info descr="static method">derivedStaticFunction</info>():void {
-      <error descr="Instance member is not accessible">x</error> = 1;
-      <error descr="Instance member is not accessible">x2</error> = 1;
-      <info>Base</info>.<error descr="Instance member is not accessible">x</error> = 1;
-      <info>Derived</info>.<error descr="Instance member is not accessible">x</error> = 1;
-      <info>Derived</info>.<error descr="Instance member is not accessible">x2</error> = 1;
+      <error descr="Instance member is not accessible"><info descr="field">x</info></error> = 1;
+      <error descr="Instance member is not accessible"><info descr="field">x2</info></error> = 1;
+      <info descr="class">Base</info>.<error descr="Instance member is not accessible"><info descr="field">x</info></error> = 1;
+      <info descr="class">Derived</info>.<error descr="Instance member is not accessible"><info descr="field">x</info></error> = 1;
+      <info descr="class">Derived</info>.<error descr="Instance member is not accessible"><info descr="field">x2</info></error> = 1;
     }
 }
 
-<info>Base</info>.<info descr="static method">staticFunction</info>();
-<info>Derived</info>.<info descr="static method">derivedStaticFunction</info>();
-<info>Derived</info>.<error descr="Static member is not accessible">staticFunction</error>();
+<info descr="class">Base</info>.<info descr="static method">staticFunction</info>();
+<info descr="class">Derived</info>.<info descr="static method">derivedStaticFunction</info>();
+<info descr="class">Derived</info>.<error descr="Static member is not accessible"><info descr="static method">staticFunction</info></error>();

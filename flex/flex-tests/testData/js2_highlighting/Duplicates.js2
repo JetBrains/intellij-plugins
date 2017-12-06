@@ -54,16 +54,16 @@ function foo2() {
 }
 
 class Wtf {
-  <error>CONFIG</error>::Release
+  <error>CONFIG</error>::<error>Release</error>
   private static const FRAMERATE: Number = 32.0;
 
-  <error>CONFIG</error>::Debug
+  <error>CONFIG</error>::<error>Debug</error>
   private static const FRAMERATE: Number = 999.0;
   
-  <error>CONFIG</error>::Debug
+  <error>CONFIG</error>::<error>Debug</error>
   private static const <error>FRAMERATE2</error>: Number = 999.0;
   
-  <error>CONFIG</error>::Debug
+  <error>CONFIG</error>::<error>Debug</error>
   private static const <error>FRAMERATE2</error>: Number = 999.0;
 }
 

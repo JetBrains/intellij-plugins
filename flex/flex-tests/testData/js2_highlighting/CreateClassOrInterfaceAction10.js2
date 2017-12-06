@@ -3,7 +3,7 @@ package {
 import flash.events.IEventDispatcher;
 public class CreateClassOrInterfaceAction10 {
   private function foo() : IEventDispatcher {
-    return new <error>Abc<caret></error>(0);
+    return <error descr="Returned expression type Abc is not assignable to type IEventDispatcher">new <error descr="Unresolved type Abc">Abc</error>(0)</error>;
   }
 }
 }

@@ -6,7 +6,7 @@
     public function foo():void {
       var error:Error;
       error.toString();
-      error.<warning>toString1</warning>();
+      error.<weak_warning">toString1</weak_warning>();
     }
 
     ]]>

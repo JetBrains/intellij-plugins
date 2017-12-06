@@ -13,7 +13,7 @@
   </mx:Button>
   <mx:transitions>
   <mx:Transition fromState="<error descr="Invalid state reference">foo</error>" toState="<error descr="Invalid state reference">bar</error>">
-    <mx:Resize easingFunction="<warning descr="Expression statement is not assignment or call"><error descr="Unresolved variable or type foo">foo</error></warning>" />
+    <mx:Resize easingFunction=<error descr="Unresolved variable or type foo">foo</error>" />
     <mx:Resize easingFunction="bar" />
   </mx:Transition>
   <<error descr="Element mx:Object is not allowed here">mx:Object</error> />
