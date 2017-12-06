@@ -113,7 +113,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
   }
 
   @Override
-  public void readExternal(final Element element) throws InvalidDataException {
+  public void readExternal(@NotNull final Element element) throws InvalidDataException {
     workingDir = element.getAttributeValue(WORKING_DIR_ATTRIBUTE);
     vmParameters = element.getAttributeValue(VM_PARAMETERS_ATTRIBUTE);
     programParameters = element.getAttributeValue(PROGRAM_PARAMETERS_ATTRIBUTE);
@@ -197,7 +197,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
   }
 
   @Override
-  public void writeExternal(final Element element) throws WriteExternalException {
+  public void writeExternal(@NotNull final Element element) throws WriteExternalException {
     // store the vm parameters
     element.setAttribute(VM_PARAMETERS_ATTRIBUTE, vmParameters == null ? "" : vmParameters);
     element.setAttribute(PROGRAM_PARAMETERS_ATTRIBUTE, programParameters == null ? "" : programParameters);

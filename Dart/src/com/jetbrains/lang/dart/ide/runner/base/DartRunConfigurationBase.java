@@ -37,13 +37,13 @@ public abstract class DartRunConfigurationBase extends LocatableConfigurationBas
   }
 
   @Override
-  public void writeExternal(final Element element) throws WriteExternalException {
+  public void writeExternal(@NotNull final Element element) throws WriteExternalException {
     super.writeExternal(element);
     XmlSerializer.serializeInto(getRunnerParameters(), element, new SkipDefaultValuesSerializationFilters());
   }
 
   @Override
-  public void readExternal(final Element element) throws InvalidDataException {
+  public void readExternal(@NotNull final Element element) throws InvalidDataException {
     super.readExternal(element);
     XmlSerializer.deserializeInto(getRunnerParameters(), element);
   }

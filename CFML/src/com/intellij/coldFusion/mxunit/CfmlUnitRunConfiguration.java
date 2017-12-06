@@ -198,14 +198,14 @@ public class CfmlUnitRunConfiguration extends LocatableConfigurationBase {
   }
 
   @Override
-  public void readExternal(final Element element) throws InvalidDataException {
+  public void readExternal(@NotNull Element element) throws InvalidDataException {
     super.readExternal(element);
     myRunnerParameters = createRunnerParametersInstance();
     XmlSerializer.deserializeInto(myRunnerParameters, element);
   }
 
   @Override
-  public void writeExternal(final Element element) throws WriteExternalException {
+  public void writeExternal(@NotNull Element element) throws WriteExternalException {
     super.writeExternal(element);
     if (myRunnerParameters != null) {
       XmlSerializer.serializeInto(myRunnerParameters, element);

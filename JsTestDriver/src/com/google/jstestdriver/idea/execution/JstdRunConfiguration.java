@@ -96,14 +96,14 @@ public class JstdRunConfiguration extends LocatableConfigurationBase implements 
   }
 
   @Override
-  public void readExternal(Element element) throws InvalidDataException {
+  public void readExternal(@NotNull Element element) throws InvalidDataException {
     super.readExternal(element);
     JstdRunSettings runSettings = JstdRunSettingsSerializationUtils.readFromXml(element);
     setRunSettings(runSettings);
   }
 
   @Override
-  public void writeExternal(Element element) throws WriteExternalException {
+  public void writeExternal(@NotNull Element element) throws WriteExternalException {
     super.writeExternal(element);
     JstdRunSettingsSerializationUtils.writeToXml(element, myRunSettings);
   }

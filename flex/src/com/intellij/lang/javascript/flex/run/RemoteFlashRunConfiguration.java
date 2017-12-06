@@ -42,14 +42,14 @@ public class RemoteFlashRunConfiguration extends LocatableConfigurationBase {
   }
 
   @Override
-  public void readExternal(final Element element) throws InvalidDataException {
+  public void readExternal(@NotNull final Element element) throws InvalidDataException {
     super.readExternal(element);
     myRunnerParameters = new RemoteFlashRunnerParameters();
     XmlSerializer.deserializeInto(myRunnerParameters, element);
   }
 
   @Override
-  public void writeExternal(final Element element) throws WriteExternalException {
+  public void writeExternal(@NotNull final Element element) throws WriteExternalException {
     super.writeExternal(element);
     XmlSerializer.serializeInto(myRunnerParameters, element);
   }

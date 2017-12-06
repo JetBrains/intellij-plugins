@@ -186,7 +186,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
   }
 
   @Override
-  public void readExternal(Element element) throws InvalidDataException {
+  public void readExternal(@NotNull Element element) throws InvalidDataException {
     super.readExternal(element);
 
     //noinspection deprecation
@@ -194,7 +194,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
   }
 
   @Override
-  public void writeExternal(Element element) throws WriteExternalException {
+  public void writeExternal(@NotNull Element element) throws WriteExternalException {
     super.writeExternal(element);
 
     //noinspection deprecation
