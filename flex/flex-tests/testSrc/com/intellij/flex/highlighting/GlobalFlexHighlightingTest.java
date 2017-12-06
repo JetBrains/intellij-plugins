@@ -1,20 +1,15 @@
 package com.intellij.flex.highlighting;
 
 import com.intellij.codeInsight.daemon.impl.DefaultHighlightVisitorBasedInspection;
-import com.intellij.codeInspection.ex.InspectionProfileImpl;
 import com.intellij.codeInspection.ex.InspectionToolRegistrar;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.intellij.testFramework.InspectionTestCase;
-import com.intellij.testFramework.InspectionsKt;
 
 import java.util.List;
 
@@ -66,6 +61,11 @@ public class GlobalFlexHighlightingTest extends InspectionTestCase {
     doSyntaxErrorsTest();
   }
 
+  private void doSyntaxErrorsTest() {
+    doTest(getTestName(false), new DefaultHighlightVisitorBasedInspection.SyntaxErrorInspection());
+  }
+
+/*
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testReportingAnnotatorProblemsInMxml() {
     doAnnotatorTest();
@@ -75,9 +75,6 @@ public class GlobalFlexHighlightingTest extends InspectionTestCase {
     doAnnotatorTest();
   }
 
-  private void doSyntaxErrorsTest() {
-    doTest(getTestName(false), new DefaultHighlightVisitorBasedInspection.SyntaxErrorInspection());
-  }
 
   private void doAnnotatorTest() {
     final InspectionProfileImpl profile = InspectionProjectProfileManager.getInstance(myProject).getCurrentProfile();
@@ -92,7 +89,7 @@ public class GlobalFlexHighlightingTest extends InspectionTestCase {
       profile.setToolEnabled(JSUnresolvedVariableInspection.SHORT_NAME, false);
     }
   }
-
+*/
   @Override
   public String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("global_inspections");
