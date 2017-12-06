@@ -13,8 +13,17 @@ import java.util.regex.Matcher;
 import java.util.regex.PatternSyntaxException;
 
 public class JavaStepDefinition extends AbstractStepDefinition {
+  @Nullable
+  private final PsiClass annotationClass;
+
   public JavaStepDefinition(PsiElement stepDef) {
     super(stepDef);
+    this.annotationClass = null;
+  }
+
+  public JavaStepDefinition(PsiElement stepDef, @Nullable PsiClass annotationClass) {
+    super(stepDef);
+    this.annotationClass = annotationClass;
   }
 
   @Override
@@ -34,8 +43,12 @@ public class JavaStepDefinition extends AbstractStepDefinition {
   @Nullable
   @Override
   protected String getCucumberRegexFromElement(PsiElement element) {
-    if (element instanceof PsiMethod) {
-      final PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation((PsiMethod)element);
+    if (element instanceof PsiMethod && annotationClass != null) {
+      final String annotationName = annotationClass.getQualifiedName();
+      if (annotationName == null) {
+        return null;
+      }
+      final PsiAnnotation stepAnnotation = ((PsiMethod) element).getModifierList().findAnnotation(annotationName);
       if (stepAnnotation == null) {
         return null;
       }

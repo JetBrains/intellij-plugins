@@ -52,7 +52,7 @@ public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
       if (annotationClass.isAnnotationType()) {
         final Query<PsiMethod> javaStepDefinitions = AnnotatedElementsSearch.searchPsiMethods(annotationClass, dependenciesScope);
         for (PsiMethod stepDefMethod : javaStepDefinitions) {
-          result.add(new JavaStepDefinition(stepDefMethod));
+          result.add(new JavaStepDefinition(stepDefMethod, annotationClass));
         }
       }
     }
