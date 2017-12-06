@@ -37,6 +37,8 @@ public class AngularJSTestSuite {
     testSuite.addTestSuite(DirectiveRenameTest.class);
     testSuite.addTestSuite(ContextTest.class);
     testSuite.addTestSuite(AngularUiRouterTest.class);
+    testSuite.addTestSuite(RenameTest.class);
+    testSuite.addTestSuite(IntentionsTest.class);
 
     return testSuite;
   }
