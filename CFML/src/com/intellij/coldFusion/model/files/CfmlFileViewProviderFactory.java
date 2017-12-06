@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 06.10.2008
  */
 public class CfmlFileViewProviderFactory implements FileViewProviderFactory {
   @NotNull

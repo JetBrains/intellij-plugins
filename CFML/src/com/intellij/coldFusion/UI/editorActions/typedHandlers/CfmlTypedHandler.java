@@ -41,7 +41,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 13.10.2008
  */
 public class CfmlTypedHandler extends TypedHandlerDelegate {
   static final boolean ourEnableDoublePoundInsertion = SystemProperties.getBooleanProperty("idea.cfml.insert.pair.pound", true);

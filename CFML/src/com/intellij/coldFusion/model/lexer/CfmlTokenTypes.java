@@ -21,7 +21,6 @@ import com.intellij.psi.tree.TokenSet;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 30.09.2008
  */
 public interface CfmlTokenTypes {
   IElementType START_EXPRESSION = new CfmlElementType("START_EXPRESSION");

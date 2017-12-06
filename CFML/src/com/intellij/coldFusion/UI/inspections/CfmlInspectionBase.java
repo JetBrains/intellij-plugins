@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 17.02.2009
  */
 public abstract class CfmlInspectionBase extends LocalInspectionTool {
   @NotNull

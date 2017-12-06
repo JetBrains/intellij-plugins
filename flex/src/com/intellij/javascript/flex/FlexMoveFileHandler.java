@@ -16,8 +16,6 @@ import java.util.Map;
 
 /**
  * @author Maxim.Mossienko
- *         Date: Sep 18, 2008
- *         Time: 3:49:24 PM
  */
 public class FlexMoveFileHandler extends MoveFileHandler {
   public boolean canProcessElement(final PsiFile element) {

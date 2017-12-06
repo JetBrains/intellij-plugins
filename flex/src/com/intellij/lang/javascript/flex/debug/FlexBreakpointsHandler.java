@@ -34,8 +34,6 @@ import java.util.Collection;
 
 /**
  * @author Maxim.Mossienko
- *         Date: 30.01.2009
- *         Time: 9:44:23
  */
 public class FlexBreakpointsHandler {
 

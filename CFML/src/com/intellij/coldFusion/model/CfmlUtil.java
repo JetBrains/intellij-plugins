@@ -50,7 +50,6 @@ import java.util.Set;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 20.10.2008
  */
 public class CfmlUtil {
   @Nullable

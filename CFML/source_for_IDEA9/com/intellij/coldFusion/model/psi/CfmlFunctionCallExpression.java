@@ -28,7 +28,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 24.02.2009
  */
 public class CfmlFunctionCallExpression extends CfmlCompositeElement implements CfmlExpression, CfmlFunctionCall, CfmlTypedElement {
   public CfmlFunctionCallExpression(final ASTNode node) {

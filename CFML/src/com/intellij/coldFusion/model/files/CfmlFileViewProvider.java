@@ -36,7 +36,6 @@ import java.util.Set;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 06.10.2008
  */
 public class CfmlFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvider implements TemplateLanguageFileViewProvider {
 

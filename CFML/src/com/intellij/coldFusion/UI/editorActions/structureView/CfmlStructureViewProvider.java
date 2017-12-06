@@ -30,7 +30,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 20.01.2009
  */
 public class CfmlStructureViewProvider implements PsiStructureViewFactory {
   @Override

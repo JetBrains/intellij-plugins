@@ -26,7 +26,6 @@ import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.*;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 10.12.2008
  */
 public class CfmlExpressionParser {
   private PsiBuilder myBuilder = null;

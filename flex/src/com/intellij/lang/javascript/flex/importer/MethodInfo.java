@@ -6,8 +6,6 @@ import static com.intellij.lang.javascript.flex.importer.Abc.*;
 
 /**
  * @author Maxim.Mossienko
- *         Date: Oct 20, 2008
- *         Time: 7:00:56 PM
  */
 class MethodInfo extends MemberInfo {
   int flags;

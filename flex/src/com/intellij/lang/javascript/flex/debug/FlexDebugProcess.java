@@ -89,8 +89,6 @@ import static com.intellij.lang.javascript.flex.run.RemoteFlashRunnerParameters.
 
 /**
  * @author Maxim.Mossienko
- *         Date: Jan 22, 2008
- *         Time: 4:38:36 PM
  */
 public class FlexDebugProcess extends XDebugProcess {
   private static final String TRACE_MARKER = "[trace] ";

@@ -20,8 +20,6 @@ import java.io.ByteArrayInputStream;
 
 /**
  * @author Maxim.Mossienko
- *         Date: Sep 18, 2008
- *         Time: 3:49:24 PM
  */
 public class SwfFileStubBuilder implements BinaryFileStubBuilder {
   private static final int VERSION = 2;

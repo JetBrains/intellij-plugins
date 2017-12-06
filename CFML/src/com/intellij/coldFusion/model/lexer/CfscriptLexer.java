@@ -25,7 +25,6 @@ import com.intellij.psi.tree.TokenSet;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 20.11.2008
  */
 public class CfscriptLexer extends MergingLexerAdapter {
 

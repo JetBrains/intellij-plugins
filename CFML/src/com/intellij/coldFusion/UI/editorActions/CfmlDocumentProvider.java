@@ -26,7 +26,6 @@ import java.util.List;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 27.10.2008
  */
 public class CfmlDocumentProvider implements DocumentationProvider {
   public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {

@@ -4,8 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Maxim.Mossienko
-*         Date: Oct 20, 2008
-*         Time: 7:00:39 PM
 */
 abstract class MemberInfo {
   Traits parentTraits;

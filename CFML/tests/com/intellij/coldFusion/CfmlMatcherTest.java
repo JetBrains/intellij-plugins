@@ -26,7 +26,6 @@ import com.intellij.psi.PsiDocumentManager;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 30.10.2008
  */
 public class CfmlMatcherTest extends CfmlCodeInsightFixtureTestCase {
   public static final int BEGIN = 0;

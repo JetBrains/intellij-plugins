@@ -37,7 +37,6 @@ import java.net.URL;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 07.04.2009
  */
 public class CfmlRunConfiguration extends RunConfigurationBase implements LocatableConfiguration{
   private CfmlRunnerParameters myRunnerParameters = new CfmlRunnerParameters();

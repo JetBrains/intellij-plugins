@@ -27,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 09.02.2009
  */
 public class CfmlBreadcrumbsInfoProvider extends BreadcrumbsInfoProvider {
   public Language[] getLanguages() {

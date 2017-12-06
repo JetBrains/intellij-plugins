@@ -9,8 +9,6 @@ import java.io.IOException;
 
 /**
  * @author Maxim.Mossienko
- *         Date: Jun 20, 2008
- *         Time: 7:42:22 PM
  */
 class CompositeDebuggerCommand extends DebuggerCommand {
   private final DebuggerCommand[] myCommands;

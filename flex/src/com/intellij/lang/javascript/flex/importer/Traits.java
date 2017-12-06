@@ -7,8 +7,6 @@ import java.util.LinkedHashMap;
 
 /**
  * @author Maxim.Mossienko
-*         Date: Oct 20, 2008
-*         Time: 7:01:09 PM
 */
 class Traits {
   Object name;

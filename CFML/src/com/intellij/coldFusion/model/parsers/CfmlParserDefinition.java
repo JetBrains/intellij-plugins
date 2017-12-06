@@ -38,7 +38,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 09.10.2008
  */
 public class CfmlParserDefinition implements ParserDefinition {
 

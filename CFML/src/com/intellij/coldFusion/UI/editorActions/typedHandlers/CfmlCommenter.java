@@ -35,7 +35,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 28.10.2008
  */
 // TODO: uncomment html style comments
 public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlCommenter.MyCommenterData> {

@@ -25,7 +25,6 @@ import com.intellij.psi.PsiFile;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 16.10.2008
  */
 public class CfmlBackspaceHandler extends BackspaceHandlerDelegate {
 

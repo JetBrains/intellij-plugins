@@ -2,8 +2,6 @@ package com.intellij.lang.javascript.flex.importer;
 
 /**
  * @author Maxim.Mossienko
-*         Date: Oct 20, 2008
-*         Time: 7:01:03 PM
 */
 class SlotInfo extends MemberInfo {
   Multiname type;

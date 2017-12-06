@@ -12,8 +12,6 @@ import java.io.IOException;
 
 /**
  * @author Maxim.Mossienko
- *         Date: Sep 18, 2008
- *         Time: 3:49:24 PM
  */
 public class SwfFileDecompiler implements BinaryFileDecompiler {
   @NotNull

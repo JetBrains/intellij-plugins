@@ -23,8 +23,6 @@ import java.util.Map;
 
 /**
  * @author Maxim.Mossienko
- *         Date: Sep 18, 2008
- *         Time: 3:03:37 PM
  */
 public class FlexRenameHandler extends RenamePsiElementProcessor {
   public boolean canProcessElement(@NotNull final PsiElement element) {

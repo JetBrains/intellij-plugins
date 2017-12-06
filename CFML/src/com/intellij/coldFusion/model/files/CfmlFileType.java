@@ -34,7 +34,6 @@ import javax.swing.*;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 30.09.2008
  */
 public class CfmlFileType extends LanguageFileType {
   public static final CfmlFileType INSTANCE = new CfmlFileType();

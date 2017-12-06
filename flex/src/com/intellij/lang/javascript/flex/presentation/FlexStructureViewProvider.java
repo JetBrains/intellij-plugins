@@ -28,8 +28,6 @@ import java.util.Set;
 
 /**
  * @author Maxim.Mossienko
- * Date: Jul 17, 2008
- * Time: 10:31:43 PM
  */
 public class FlexStructureViewProvider implements XmlStructureViewBuilderProvider {
 

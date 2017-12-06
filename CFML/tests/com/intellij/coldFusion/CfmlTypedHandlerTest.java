@@ -33,7 +33,6 @@ import static com.intellij.testFramework.EditorTestUtil.getAllTokens;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 12.01.2009
  */
 public class CfmlTypedHandlerTest extends CfmlCodeInsightFixtureTestCase {
 

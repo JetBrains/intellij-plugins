@@ -35,7 +35,6 @@ import java.util.LinkedList;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 19.02.2009
  */
 public class CfmlStructureViewElement extends PsiTreeElementBase<PsiElement> {
   protected CfmlStructureViewElement(final PsiElement psiElement) {

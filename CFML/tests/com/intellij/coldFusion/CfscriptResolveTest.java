@@ -34,7 +34,6 @@ import java.util.Map;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 17.02.2009
  */
 public class CfscriptResolveTest extends JavaCodeInsightFixtureTestCase {
   static PsiClass addJavaClassTo(JavaCodeInsightTestFixture fixture) {

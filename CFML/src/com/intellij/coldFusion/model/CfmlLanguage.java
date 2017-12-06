@@ -20,7 +20,6 @@ import com.intellij.psi.templateLanguages.TemplateLanguage;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 30.09.2008
  */
 public class CfmlLanguage extends Language implements TemplateLanguage {
   public static final CfmlLanguage INSTANCE = new CfmlLanguage();

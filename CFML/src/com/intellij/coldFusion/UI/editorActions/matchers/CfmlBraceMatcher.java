@@ -39,7 +39,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 09.10.2008
  */
 public class CfmlBraceMatcher implements BraceMatcher {
   private static final BracePair[] PAIRS = new BracePair[]{

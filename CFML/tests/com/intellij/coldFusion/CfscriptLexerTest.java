@@ -26,7 +26,6 @@ import java.io.IOException;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 21.01.2009
  */
 public class CfscriptLexerTest extends UsefulTestCase {
 

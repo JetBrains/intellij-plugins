@@ -20,7 +20,6 @@ import com.intellij.psi.tree.IElementType;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 06.10.2008
  */
 public class CfmlElementType extends IElementType {
   public CfmlElementType(final String s) {

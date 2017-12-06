@@ -21,7 +21,6 @@ import com.intellij.openapi.actionSystem.IdeActions;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 30.01.2009
  */
 public class CfmlCommenterTest extends CfmlCodeInsightFixtureTestCase {
     public void testBetweenComments() {

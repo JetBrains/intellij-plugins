@@ -16,8 +16,6 @@ import java.util.Set;
 
 /**
  * @author Maxim.Mossienko
-*         Date: Oct 20, 2008
-*         Time: 7:02:29 PM
 */
 class AS3InterfaceDumper extends AbstractDumpProcessor {
   private int memberCount;

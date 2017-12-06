@@ -5,8 +5,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Maxim.Mossienko
-*         Date: Oct 20, 2008
-*         Time: 7:02:22 PM
 */
 class AbcDumper extends AbstractDumpProcessor {
   private final boolean dumpCode;

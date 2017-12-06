@@ -55,8 +55,6 @@ import java.util.regex.Matcher;
 
 /**
  * @author Maxim.Mossienko
- *         Date: Jul 26, 2008
- *         Time: 3:55:46 PM
  */
 public class FlexCompilerHandler extends AbstractProjectComponent {
 

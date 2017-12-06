@@ -29,7 +29,6 @@ import com.intellij.psi.tree.TokenSet;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 06.10.2008
  */
 public interface CfmlElementTypes extends CfmlStubElementTypes {
   // IElementType SOME = new CfmlElementType("SOME");

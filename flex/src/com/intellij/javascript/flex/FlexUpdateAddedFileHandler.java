@@ -11,8 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Maxim.Mossienko
- *         Date: Sep 18, 2008
- *         Time: 3:41:49 PM
  */
 public class FlexUpdateAddedFileHandler extends UpdateAddedFileProcessor{
   @Override

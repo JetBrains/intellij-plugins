@@ -11,8 +11,6 @@ import java.util.*;
 
 /**
  * @author Maxim.Mossienko
- *         Date: Oct 20, 2008
- *         Time: 7:01:16 PM
  */
 class Abc {
   static final @NonNls String TAB = "  ";

@@ -31,7 +31,6 @@ import static com.intellij.coldFusion.model.lexer.CfmlTokenTypes.*;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 13.10.2008
  */
 public class CfmlParser implements PsiParser {
   private static final Logger LOG = Logger.getInstance("#com.intellij.coldFusion.model.parsers.CfmlParser");

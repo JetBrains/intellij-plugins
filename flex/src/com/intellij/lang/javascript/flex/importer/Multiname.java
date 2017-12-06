@@ -2,7 +2,6 @@ package com.intellij.lang.javascript.flex.importer;
 
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.util.containers.BidirectionalMap;
-import com.intellij.util.containers.hash.LinkedHashMap;
 import gnu.trove.THashMap;
 
 import java.util.Map;
@@ -10,8 +9,6 @@ import java.util.Set;
 
 /**
  * @author Maxim.Mossienko
-*         Date: Oct 20, 2008
-*         Time: 7:03:18 PM
 */
 class Multiname {
   private static final String PUBLIC_NS_IN_SOURCE = "public";

@@ -4,8 +4,6 @@ import org.jetbrains.annotations.NonNls;
 
 /**
  * @author Maxim.Mossienko
- *         Date: Oct 20, 2008
- *         Time: 7:01:59 PM
  */
 class Swf {
   private static class Rect {

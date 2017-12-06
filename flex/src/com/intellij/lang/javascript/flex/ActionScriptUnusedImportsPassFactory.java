@@ -44,8 +44,6 @@ import java.util.List;
 
 /**
  * @author Maxim.Mossienko
- *         Date: Jul 29, 2008
- *         Time: 10:23:03 PM
  */
 public class ActionScriptUnusedImportsPassFactory extends AbstractProjectComponent implements TextEditorHighlightingPassFactory {
   public ActionScriptUnusedImportsPassFactory(Project project, TextEditorHighlightingPassRegistrar registrar) {

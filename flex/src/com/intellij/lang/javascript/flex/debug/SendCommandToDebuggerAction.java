@@ -17,8 +17,6 @@ import javax.swing.*;
 
 /**
  * @author Maxim.Mossienko
- * Date: Jan 22, 2008
- * Time: 4:37:21 PM
  */
 public class SendCommandToDebuggerAction extends AnAction {
   public void update(final AnActionEvent e) {

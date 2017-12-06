@@ -29,7 +29,6 @@ import java.util.Map;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 06.10.2008
  */
 public class CfmlColorSettingPage implements ColorSettingsPage {
   private static final AttributesDescriptor[] ATTRS;

@@ -43,7 +43,6 @@ import java.util.regex.Pattern;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 24.02.2009
  */
 public class CfmlFile extends PsiFileBase {
   private final CachedValue<Map<String, CfmlImplicitVariable>> myImplicitVars;

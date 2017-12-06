@@ -26,7 +26,6 @@ import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.*;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 13.01.2009
  */
 public class CfscriptParser {
   // parse statement or statements block in curly brackets

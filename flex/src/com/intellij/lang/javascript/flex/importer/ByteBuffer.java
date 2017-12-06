@@ -10,8 +10,6 @@ import java.util.zip.InflaterInputStream;
 
 /**
  * @author Maxim.Mossienko
-*         Date: Oct 20, 2008
-*         Time: 7:02:53 PM
 */
 class ByteBuffer {
   private byte[] bytes;

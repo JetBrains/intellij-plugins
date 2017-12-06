@@ -40,8 +40,6 @@ import java.util.Iterator;
 
 /**
  * @author Maxim.Mossienko
- *         Date: Apr 25, 2008
- *         Time: 8:36:38 PM
  */
 public class AddImportECMAScriptClassOrFunctionAction implements HintAction, QuestionAction, LocalQuickFix {
   private final PsiPolyVariantReference myReference;

@@ -22,7 +22,6 @@ import java.util.concurrent.Callable;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 14.01.2009
  */
 public class CfscriptParserTest extends CfmlCodeInsightFixtureTestCase {
   public void testSimpleStatement() throws Throwable {

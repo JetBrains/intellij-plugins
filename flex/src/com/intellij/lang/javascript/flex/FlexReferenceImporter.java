@@ -11,8 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Maxim.Mossienko
- * Date: Apr 14, 2008
- * Time: 11:43:22 PM
  */
 public class FlexReferenceImporter implements ReferenceImporter {
   @Override

@@ -22,7 +22,6 @@ import java.util.concurrent.Callable;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 14.11.2008
  */
 public class CfmlParserTest extends CfmlCodeInsightFixtureTestCase {
 

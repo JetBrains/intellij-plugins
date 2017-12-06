@@ -49,7 +49,6 @@ import java.util.Set;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 11.02.2009
  */
 public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlReferenceExpression>
   implements CfmlReference, CfmlExpression, CfmlTypedElement {

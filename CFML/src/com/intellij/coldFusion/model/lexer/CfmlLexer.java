@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 06.10.2008
  */
 public class CfmlLexer extends MergingLexerAdapter {
   private static final int LEXER_STATE_LIMIT = 0xFFFF;

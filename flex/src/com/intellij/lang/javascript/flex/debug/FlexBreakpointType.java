@@ -16,8 +16,6 @@ import java.util.List;
 
 /**
  * @author Maxim.Mossienko
- * Date: Jan 22, 2008
- * Time: 4:26:21 PM
  */
 public class FlexBreakpointType extends XLineBreakpointTypeBase {
   protected FlexBreakpointType() {

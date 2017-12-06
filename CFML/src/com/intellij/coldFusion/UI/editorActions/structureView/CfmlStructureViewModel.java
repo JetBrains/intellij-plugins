@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 19.02.2009
  */
 public class CfmlStructureViewModel extends TextEditorBasedStructureViewModel {
   private PsiFile myCfmlPsiFile;

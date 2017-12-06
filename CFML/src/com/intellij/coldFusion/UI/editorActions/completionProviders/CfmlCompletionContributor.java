@@ -45,7 +45,6 @@ import static com.intellij.patterns.XmlPatterns.xmlTag;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 09.10.2008
  */
 public class CfmlCompletionContributor extends CompletionContributor {
 

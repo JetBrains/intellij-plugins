@@ -10,8 +10,6 @@ import java.util.Set;
 
 /**
  * @author Maxim.Mossienko
-*         Date: Oct 20, 2008
-*         Time: 7:02:13 PM
 */
 abstract class AbstractDumpProcessor implements FlexByteCodeInformationProcessor {
   protected @NonNls StringBuilder sb = new StringBuilder();

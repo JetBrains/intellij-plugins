@@ -28,8 +28,6 @@ import static com.intellij.lang.javascript.psi.impl.JSPsiImplUtils.*;
 
 /**
  * @author Maxim.Mossienko
- *         Date: Sep 18, 2008
- *         Time: 3:07:25 PM
  */
 public class RenameMoveUtils {
   private static final Key<String> oldPackageKey = Key.create("old.package.key");

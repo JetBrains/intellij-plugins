@@ -16,8 +16,6 @@ import static com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil.Searche
 
 /**
  * @author Maxim.Mossienko
- *         Date: Jul 17, 2008
- *         Time: 9:50:49 PM
  */
 public abstract class ActionScriptImplementedMethodProcessor extends JSCollectMembersToImplementProcessor {
 

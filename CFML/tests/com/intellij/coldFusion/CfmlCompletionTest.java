@@ -38,7 +38,6 @@ import java.util.Map;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 04.12.2008
  */
 public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
 

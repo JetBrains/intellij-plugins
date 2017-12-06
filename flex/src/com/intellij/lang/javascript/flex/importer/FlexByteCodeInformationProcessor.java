@@ -6,8 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Maxim.Mossienko
-*         Date: Oct 20, 2008
-*         Time: 7:02:07 PM
 */
 interface FlexByteCodeInformationProcessor {
   void dumpStat(@NotNull @NonNls String stat);

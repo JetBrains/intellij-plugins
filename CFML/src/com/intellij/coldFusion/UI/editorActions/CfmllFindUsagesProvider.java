@@ -27,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 12.02.2009
  */
 public class CfmllFindUsagesProvider implements FindUsagesProvider {
   public WordsScanner getWordsScanner() {

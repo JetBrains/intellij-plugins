@@ -35,7 +35,6 @@ import static com.intellij.codeInspection.ProblemHighlightType.WEAK_WARNING;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 17.02.2009
  */
 public class CfmlReferenceInspection extends CfmlInspectionBase {
   private static final Map<String, Condition<PsiElement>> myDictionary = new HashMap<>();

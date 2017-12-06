@@ -26,7 +26,6 @@ import java.util.ResourceBundle;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 17.11.2008
  */
 public class CfmlBundle {
 

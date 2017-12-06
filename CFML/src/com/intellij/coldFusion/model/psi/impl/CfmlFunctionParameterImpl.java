@@ -31,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author vnikolaenko
- *         Time: 13:57:29
  */
 public class CfmlFunctionParameterImpl extends CfmlCompositeElement implements CfmlParameter, CfmlVariable {
   public static final CfmlFunctionParameterImpl[] EMPTY_ARRAY = new CfmlFunctionParameterImpl[0];

@@ -24,7 +24,6 @@ import static com.intellij.coldFusion.model.psi.CfmlExpressionTypeCalculator.*;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 24.11.2008
  */
 public interface CfscriptTokenTypes {
   IElementType COMMENT = new CfmlElementType("COMMENT");

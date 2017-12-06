@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by Lera Nikolaenko
- * Date: 05.11.2008
  */
 public class CfmlAttributeImpl extends CfmlCompositeElement implements CfmlAttribute {
   public CfmlAttributeImpl(ASTNode astNode) {
