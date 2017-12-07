@@ -239,7 +239,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
           myPanel.setHtml(myLastRenderedHtml);
 
           if (preserveScrollOffset) {
-            myPanel.scrollToMarkdownSrcOffset(myLastScrollOffset);
+            scrollToSrcOffset(myLastScrollOffset);
           }
         }
 
