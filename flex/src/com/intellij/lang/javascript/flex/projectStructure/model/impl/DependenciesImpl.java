@@ -10,10 +10,10 @@ import com.intellij.openapi.module.ModulePointerManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
+import com.intellij.util.xmlb.annotations.XCollection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -200,7 +200,7 @@ class DependenciesImpl implements ModifiableDependencies {
     public String FRAMEWORK_LINKAGE = DEFAULT_FRAMEWORK_LINKAGE.getSerializedText();
 
     @Tag("entries")
-    @AbstractCollection(surroundWithTag = false)
+    @XCollection
     public EntryState[] ENTRIES = new EntryState[0];
 
     @Property(surroundWithTag = false)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 package org.jetbrains.osgi.jps.model.impl;
 
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Tag;
+import com.intellij.util.xmlb.annotations.XCollection;
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.jetbrains.osgi.jps.model.OsmorcJarContentEntry;
 import org.jetbrains.osgi.jps.model.OutputPathType;
@@ -63,7 +63,7 @@ public class OsmorcModuleExtensionProperties {
   public boolean myAlwaysRebuildBundleJar = false;
 
   @Tag("additionalJARContents")
-  @AbstractCollection(surroundWithTag = false)
+  @XCollection
   public List<OsmorcJarContentEntry> myAdditionalJARContents = ContainerUtil.newArrayList();
 
   @Attribute("ignoreFilePattern")

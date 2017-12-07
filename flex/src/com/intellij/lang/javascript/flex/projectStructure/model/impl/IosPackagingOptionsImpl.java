@@ -2,10 +2,10 @@ package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.AirSigningOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableIosPackagingOptions;
-import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
+import com.intellij.util.xmlb.annotations.XCollection;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ class IosPackagingOptionsImpl extends AirPackagingOptionsBase implements Modifia
     @Attribute("package-file-name")
     public String PACKAGE_FILE_NAME = "";
     @Tag("files-to-package")
-    @AbstractCollection(surroundWithTag = false)
+    @XCollection
     public List<FilePathAndPathInPackage> FILES_TO_PACKAGE = new ArrayList<>();
     @Property(surroundWithTag = false)
     public AirSigningOptions SIGNING_OPTIONS = new AirSigningOptions();

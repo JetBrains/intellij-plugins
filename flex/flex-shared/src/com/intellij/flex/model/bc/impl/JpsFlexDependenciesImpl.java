@@ -8,10 +8,10 @@ import com.intellij.flex.model.sdk.JpsFlexSdkType;
 import com.intellij.flex.model.sdk.JpsFlexmojosSdkProperties;
 import com.intellij.flex.model.sdk.JpsFlexmojosSdkType;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
+import com.intellij.util.xmlb.annotations.XCollection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.*;
@@ -26,7 +26,6 @@ import org.jetbrains.jps.model.module.impl.JpsSdkReferenceRole;
 import java.util.List;
 
 class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDependenciesImpl> implements JpsFlexDependencies {
-
   static final JpsFlexDependenciesRole ROLE = new JpsFlexDependenciesRole();
 
   // todo  may be one untyped reference instead of 2 sdk references?
@@ -235,7 +234,7 @@ class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDependencie
     @Attribute("framework-linkage")
     public String FRAMEWORK_LINKAGE = DEFAULT_FRAMEWORK_LINKAGE.getSerializedText();
     @Tag("entries")
-    @AbstractCollection(surroundWithTag = false)
+    @XCollection
     public EntryState[] ENTRIES = new EntryState[0];
 
     @Tag("sdk")

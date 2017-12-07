@@ -23,7 +23,6 @@ import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,12 +50,6 @@ public abstract class BndRunConfigurationBase extends LocatableConfigurationBase
     Element element = new Element("state");
     super.writeExternal(element);
     return element;
-  }
-
-  @Override
-  public void loadState(Element element) {
-    super.readExternal(element);
-    XmlSerializer.deserializeInto(this, element);
   }
 
   @NotNull

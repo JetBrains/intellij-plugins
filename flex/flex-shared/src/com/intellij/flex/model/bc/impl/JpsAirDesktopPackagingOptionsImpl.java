@@ -2,10 +2,10 @@ package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.model.bc.JpsAirDesktopPackagingOptions;
 import com.intellij.flex.model.bc.JpsAirPackageEntry;
-import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
+import com.intellij.util.xmlb.annotations.XCollection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.JpsElementCollection;
 import org.jetbrains.jps.model.JpsElementCreator;
@@ -86,7 +86,7 @@ class JpsAirDesktopPackagingOptionsImpl extends JpsAirPackagingOptionsBase<JpsAi
     @Attribute("package-file-name")
     public String PACKAGE_FILE_NAME = "";
     @Tag("files-to-package")
-    @AbstractCollection(surroundWithTag = false)
+    @XCollection
     public List<JpsAirPackageEntryImpl.State> FILES_TO_PACKAGE = new ArrayList<>();
     @Property(surroundWithTag = false)
     public JpsAirSigningOptionsImpl.State SIGNING_OPTIONS = new JpsAirSigningOptionsImpl.State();
