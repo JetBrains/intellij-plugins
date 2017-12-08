@@ -1,18 +1,16 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2017 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package org.jetbrains.osgi.bnd.resolve;
 
 import aQute.bnd.build.Run;
@@ -40,6 +38,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.osgi.bnd.BndFileType;
+import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 import org.osgi.resource.Resource;
 import org.osgi.resource.Wire;
 import org.osgi.service.resolver.ResolutionException;
@@ -85,8 +85,11 @@ public class ResolveAction extends AnAction {
 
           List<VersionedClause> versionedClauses = projectResolver.getRunBundles().stream()
             .map(c -> {
+              Version left = new Version(c.getVersion());
+              Version right = new Version(left.getMajor(), left.getMinor(), left.getMicro() + 1);
+              VersionRange range = new VersionRange(VersionRange.LEFT_CLOSED, left, right, VersionRange.RIGHT_OPEN);
               Attrs attrs = new Attrs();
-              attrs.put(Constants.VERSION_ATTRIBUTE, c.getVersion());
+              attrs.put(Constants.VERSION_ATTRIBUTE, range.toString());
               return new VersionedClause(c.getBundleSymbolicName(), attrs);
             })
             .sorted(Comparator.comparing(VersionedClause::getName))
