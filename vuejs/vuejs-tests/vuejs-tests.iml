@@ -18,5 +18,6 @@
     <orderEntry type="module" module-name="JavaScript-tests" scope="TEST" />
     <orderEntry type="module" module-name="sass" scope="TEST" />
     <orderEntry type="module" module-name="Jade" scope="TEST" />
+    <orderEntry type="module" module-name="postcss" scope="TEST" />
   </component>
 </module>
