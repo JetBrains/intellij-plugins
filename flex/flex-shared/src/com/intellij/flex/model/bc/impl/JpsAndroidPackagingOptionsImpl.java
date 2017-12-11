@@ -87,8 +87,7 @@ class JpsAndroidPackagingOptionsImpl extends JpsAirPackagingOptionsBase<JpsAndro
     public String CUSTOM_DESCRIPTOR_PATH = "";
     @Attribute("package-file-name")
     public String PACKAGE_FILE_NAME = "";
-    @Tag("files-to-package")
-    @XCollection
+    @XCollection(propertyElementName = "files-to-package")
     public List<JpsAirPackageEntryImpl.State> FILES_TO_PACKAGE = new ArrayList<>();
     @Property(surroundWithTag = false)
     public JpsAirSigningOptionsImpl.State SIGNING_OPTIONS = new JpsAirSigningOptionsImpl.State();

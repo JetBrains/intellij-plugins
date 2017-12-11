@@ -49,8 +49,7 @@ class IosPackagingOptionsImpl extends AirPackagingOptionsBase implements Modifia
     public String CUSTOM_DESCRIPTOR_PATH = "";
     @Attribute("package-file-name")
     public String PACKAGE_FILE_NAME = "";
-    @Tag("files-to-package")
-    @XCollection
+    @XCollection(propertyElementName = "files-to-package")
     public List<FilePathAndPathInPackage> FILES_TO_PACKAGE = new ArrayList<>();
     @Property(surroundWithTag = false)
     public AirSigningOptions SIGNING_OPTIONS = new AirSigningOptions();

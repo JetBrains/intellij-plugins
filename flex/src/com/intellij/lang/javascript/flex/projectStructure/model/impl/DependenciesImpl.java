@@ -199,8 +199,7 @@ class DependenciesImpl implements ModifiableDependencies {
     @Attribute("framework-linkage")
     public String FRAMEWORK_LINKAGE = DEFAULT_FRAMEWORK_LINKAGE.getSerializedText();
 
-    @Tag("entries")
-    @XCollection
+    @XCollection(propertyElementName = "entries")
     public EntryState[] ENTRIES = new EntryState[0];
 
     @Property(surroundWithTag = false)

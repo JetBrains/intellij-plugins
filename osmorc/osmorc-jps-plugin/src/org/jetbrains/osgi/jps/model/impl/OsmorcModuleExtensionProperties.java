@@ -62,8 +62,7 @@ public class OsmorcModuleExtensionProperties {
   @Attribute("alwaysRebuildBundleJAR")
   public boolean myAlwaysRebuildBundleJar = false;
 
-  @Tag("additionalJARContents")
-  @XCollection
+  @XCollection(propertyElementName = "additionalJARContents")
   public List<OsmorcJarContentEntry> myAdditionalJARContents = ContainerUtil.newArrayList();
 
   @Attribute("ignoreFilePattern")
