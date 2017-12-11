@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PostCssTreeElementFactory extends CssTreeElementFactory {
 
+  @Override
   @NotNull
   public CompositeElement createComposite(final IElementType type) {
     if (type == PostCssElementTypes.POST_CSS_NEST) {
