@@ -34,7 +34,7 @@ import icons.VuejsIcons
 import org.jetbrains.vuejs.GLOBAL_BINDING_MARK
 import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.getBoundName
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isGlobal
-import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.selectComponent
+import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isNotInLibrary
 import org.jetbrains.vuejs.index.VueComponentsIndex
 import org.jetbrains.vuejs.index.hasVue
 import org.jetbrains.vuejs.index.resolve
@@ -48,27 +48,26 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
         return null
       }
 
-      var localComponent:JSImplicitElement? = null
+      val localComponents = mutableListOf<JSImplicitElement>()
       processLocalComponents(tag, { foundName, element ->
         if (foundName == name || foundName == toAsset(name) || foundName == toAsset(name).capitalize()) {
-          localComponent = element
+          localComponents.add(element)
         }
-        return@processLocalComponents localComponent == null
+        return@processLocalComponents true
       })
 
-      if (localComponent != null) return VueElementDescriptor(localComponent!!)
+      if (!localComponents.isEmpty()) return multiDefinitionDescriptor(localComponents)
 
       val fromAsset = fromAsset(name)
       val variants = nameVariantsWithPossiblyGlobalMark(name)
       @Suppress("LoopToCallChain") // by performance reasons
       for (variant in variants) {
-        val component = selectComponent(resolve(variant, GlobalSearchScope.allScope(tag.project), VueComponentsIndex.KEY), false)
-        if (component != null &&
-            (isGlobal(component) ||
-             VueComponents.isGlobalLibraryComponent(variant, component) ||
-             VUE_FRAMEWORK_COMPONENTS.contains(fromAsset))) {
-          return VueElementDescriptor(component)
-        }
+        val resolved = resolve(variant, GlobalSearchScope.allScope(tag.project), VueComponentsIndex.KEY) ?: continue
+        val global = if (VUE_FRAMEWORK_COMPONENTS.contains(fromAsset)) resolved
+        else resolved.filter { isGlobal(it) || VueComponents.isGlobalLibraryComponent(variant, it) }
+        if (global.isEmpty()) continue
+
+        return multiDefinitionDescriptor(global)
       }
       // keep this last in case in future we would be able to normally resolve into these components
       if (VUE_FRAMEWORK_UNRESOLVABLE_COMPONENTS.contains(fromAsset)) {
@@ -161,7 +160,13 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   }
 }
 
-class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescriptor {
+fun multiDefinitionDescriptor(variants: Collection<JSImplicitElement>): VueElementDescriptor {
+  assert(!variants.isEmpty())
+  val sorted = variants.sortedBy { isNotInLibrary(it) }
+  return VueElementDescriptor(sorted[0], sorted)
+}
+
+class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JSImplicitElement> = listOf(element)) : XmlElementDescriptor {
   override fun getDeclaration() = element
   override fun getName(context: PsiElement?):String = (context as? XmlTag)?.name ?: name
   override fun getName() = fromAsset(declaration.name)

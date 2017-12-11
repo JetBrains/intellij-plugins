@@ -26,6 +26,7 @@
     <xml.xmlExtension implementation="org.jetbrains.vuejs.codeInsight.VueXmlExtension"/>
     <xml.tagNameProvider implementation="org.jetbrains.vuejs.codeInsight.VueTagProvider" />
     <xml.elementDescriptorProvider implementation="org.jetbrains.vuejs.codeInsight.VueTagProvider" />
+    <gotoDeclarationHandler implementation="org.jetbrains.vuejs.codeInsight.VueGotoDeclarationHandler"/>
 
     <stubIndex implementation="org.jetbrains.vuejs.index.VueComponentsIndex" />
     <stubIndex implementation="org.jetbrains.vuejs.index.VueOptionsIndex" />

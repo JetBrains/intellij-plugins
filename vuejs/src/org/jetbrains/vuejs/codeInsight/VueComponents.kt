@@ -29,22 +29,16 @@ import org.jetbrains.vuejs.index.getForAllKeys
  */
 class VueComponents {
   companion object {
-    fun selectComponent(elements: Collection<JSImplicitElement>?, ignoreLibraries: Boolean): JSImplicitElement? {
-      elements ?: return null
-      var filtered: Collection<JSImplicitElement> = onlyLocal(elements)
-      if (filtered.isEmpty()) {
-        if (ignoreLibraries) return null
-        filtered = elements
-      }
-
-      return filtered.firstOrNull { it.typeString != null } ?: elements.firstOrNull()
-    }
-
     fun onlyLocal(elements: Collection<JSImplicitElement>): List<JSImplicitElement> {
       return elements.filter {
         val file = it.containingFile.viewProvider.virtualFile
         !JSProjectUtil.isInLibrary(file, it.project) && !JSLibraryUtil.isProbableLibraryFile(file)
       }
+    }
+
+    fun isNotInLibrary(element : JSImplicitElement): Boolean {
+      val file = element.containingFile.viewProvider.virtualFile
+      return !JSProjectUtil.isInLibrary(file, element.project) && !JSLibraryUtil.isProbableLibraryFile(file)
     }
 
     fun findComponentDescriptor(element: JSImplicitElement): JSObjectLiteralExpression? {

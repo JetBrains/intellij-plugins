@@ -1,8 +1,10 @@
 package org.jetbrains.vuejs.codeInsight
 
+import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.xml.SchemaPrefix
+import com.intellij.psi.impl.source.xml.TagNameReference
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.HtmlXmlExtension
@@ -41,4 +43,15 @@ class VueXmlExtension : HtmlXmlExtension() {
   }
 
   override fun isCollapsibleTag(tag: XmlTag?): Boolean = VueTagProvider().getDescriptor(tag) != null
+
+  override fun createTagNameReference(nameElement: ASTNode?, startTagFlag: Boolean): TagNameReference? {
+    val parentTag = nameElement?.treeParent as? XmlTag
+    if (parentTag != null) {
+      val descriptor = VueTagProvider().getDescriptor(parentTag)
+      if (descriptor != null) {
+        return VueTagNameReference(nameElement!!, startTagFlag)
+      }
+    }
+    return super.createTagNameReference(nameElement, startTagFlag)
+  }
 }
