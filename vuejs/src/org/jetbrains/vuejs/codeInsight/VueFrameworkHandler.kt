@@ -40,6 +40,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   companion object {
     const val VUE = "Vue"
     private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE, "mixin", "component", "extends", "directive", "delimiters")
+    private val COMPONENT_INDICATOR_PROPS = setOf("template", "render", "mixins", "components", "props")
   }
 
   override fun findModule(result: PsiElement): PsiElement? = org.jetbrains.vuejs.codeInsight.findModule(result)
@@ -88,7 +89,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   private fun hasComponentIndicatorProperties(obj: JSObjectLiteralExpression): Boolean =
-    obj.findProperty("template") != null || obj.findProperty("render") != null
+    obj.properties.any { Companion.COMPONENT_INDICATOR_PROPS.contains(it.name) }
 
   override fun shouldCreateStubForCallExpression(node: ASTNode?): Boolean {
     val reference = (node?.psi as? JSCallExpression)?.methodExpression as? JSReferenceExpression ?: return false

@@ -1421,6 +1421,31 @@ const props = {seeMe: {}}
     }
   }
 
+  fun testElementUiDatePickerLikeComponent() {
+    myFixture.configureByText("date-picker.js", """
+export default {
+    name: 'ElDatePicker',
+    mixins: []
+}
+""")
+    myFixture.configureByText("index.js", """
+import DatePicker from './date-picker';
+
+/* istanbul ignore next */
+DatePicker.install = function install(Vue) {
+  Vue.component(DatePicker.name, DatePicker);
+};
+
+export default DatePicker;
+""")
+    myFixture.configureByText("usage.vue", """
+<template>
+<<caret>el-date-picker />
+</template>
+""")
+    doResolveIntoLibraryComponent("ElDatePicker", "date-picker.js")
+  }
+
   private fun doResolveIntoLibraryComponent(compName: String, fileName: String) {
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
