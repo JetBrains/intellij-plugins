@@ -4,12 +4,10 @@ import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
 import com.intellij.flex.model.bc.JpsFlexBuildConfigurationManager;
 import com.intellij.flex.model.bc.JpsFlexModuleOrProjectCompilerOptions;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Condition;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Property;
-import com.intellij.util.xmlb.annotations.Tag;
+import com.intellij.util.xmlb.annotations.XCollection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.JpsElementCollection;
@@ -141,8 +139,7 @@ public class JpsFlexBuildConfigurationManagerImpl extends JpsCompositeElementBas
   }
 
   public static class State {
-    @Tag("configurations")
-    @AbstractCollection(surroundWithTag = false, elementTag = "configuration")
+    @XCollection(propertyElementName = "configurations", elementName = "configuration")
     public List<JpsFlexBCState> CONFIGURATIONS = new ArrayList<>();
 
     @Property(surroundWithTag = false)

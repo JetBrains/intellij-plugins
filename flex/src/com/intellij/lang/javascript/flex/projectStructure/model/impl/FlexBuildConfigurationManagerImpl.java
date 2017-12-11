@@ -14,10 +14,9 @@ import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Property;
-import com.intellij.util.xmlb.annotations.Tag;
+import com.intellij.util.xmlb.annotations.XCollection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -235,8 +234,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
   }
 
   public static class State {
-    @Tag("configurations")
-    @AbstractCollection(surroundWithTag = false, elementTag = "configuration")
+    @XCollection(propertyElementName = "configurations", elementName = "configuration")
     public List<FlexBuildConfigurationState> CONFIGURATIONS = new ArrayList<>();
 
     @Property(surroundWithTag = false)
