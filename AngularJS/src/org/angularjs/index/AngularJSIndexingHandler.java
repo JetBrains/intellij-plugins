@@ -174,7 +174,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
   @NotNull
   @Override
-  public String[] interestedMethodNames() {
+  public String[] implicitProviderMethodNames() {
     return ALL_INTERESTING_METHODS;
   }
 
