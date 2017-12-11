@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 public class MarkdownASTFactory extends ASTFactory {
   @Nullable
   @Override
-  public CompositeElement createComposite(IElementType type) {
+  public CompositeElement createComposite(@NotNull IElementType type) {
     if (type == MarkdownElementTypes.CODE_FENCE) {
       return new MarkdownCodeFenceImpl(type);
     }
