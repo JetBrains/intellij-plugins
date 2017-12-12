@@ -628,7 +628,7 @@ Vue.component('global-comp-literal', {
   fun testNoCreateFunctionQuickFix() {
     myFixture.configureByText("NoCreateFunctionQuickFix.vue", """
 <template>
-<div onclick="<caret>notExistingF()"></div>
+<div @click="<caret>notExistingF()"></div>
 </template>
 """)
     val intentions = myFixture.filterAvailableIntentions("Create Function 'notExistingF'")
@@ -727,5 +727,14 @@ Vue.component('global-comp-literal', {
 """)
       myFixture.checkHighlighting()
     })
+  }
+
+  fun testVueAttributeWithoutValueWithFollowingAttrubute() {
+    myFixture.configureByText("VueAttributeWithoutValueWithFollowingAttrubute.vue", """
+<template>
+ <div v-else class="one two three four">5</div>
+</template>
+""")
+    myFixture.doHighlighting()
   }
 }

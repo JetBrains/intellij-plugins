@@ -22,6 +22,8 @@ interface VueHandledLexer {
   fun inTagState():Boolean
   fun seenAttribute():Boolean
   fun setSeenAttribute(attribute:Boolean)
+  fun seenVueAttribute(): Boolean
+  fun setSeenVueAttribute(value: Boolean)
   fun getScriptType(): String?
   fun getStyleType(): String?
 
