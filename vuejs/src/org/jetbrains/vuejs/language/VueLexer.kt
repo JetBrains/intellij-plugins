@@ -2,7 +2,6 @@ package org.jetbrains.vuejs.language
 
 import com.intellij.lang.HtmlScriptContentProvider
 import com.intellij.lang.Language
-import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lexer.HtmlHighlightingLexer
 import com.intellij.lexer.HtmlLexer
@@ -15,10 +14,14 @@ class VueLexer(private val languageLevel: JSLanguageLevel) : HtmlLexer(), VueHan
 //  companion object {
 //    val SEEN_INTERPOLATION:Int = 0x1000
 //  }
+  companion object {
+    val SEEN_VUE_ATTRIBUTE: Int = 0x10000
+  }
 
   private var interpolationLexer: Lexer? = null
   private var interpolationStart = -1
   private var seenTemplate: Boolean = false
+  private var seenVueAttribute: Boolean = false
 
   init {
     registerHandler(XmlTokenType.XML_NAME, VueLangAttributeHandler())
@@ -40,6 +43,7 @@ class VueLexer(private val languageLevel: JSLanguageLevel) : HtmlLexer(), VueHan
   override fun seenTemplate() = seenTemplate
   override fun seenTag() = seenTag
   override fun seenAttribute() = seenAttribute
+  override fun seenVueAttribute() = seenVueAttribute
   override fun getScriptType() = scriptType
   override fun getStyleType() = styleType
   override fun inTagState(): Boolean = (state and HtmlHighlightingLexer.BASE_STATE_MASK) == _HtmlLexer.START_TAG_NAME
@@ -68,8 +72,13 @@ class VueLexer(private val languageLevel: JSLanguageLevel) : HtmlLexer(), VueHan
     seenAttribute = attribute
   }
 
+  override fun setSeenVueAttribute(value: Boolean) {
+    seenVueAttribute = value
+  }
+
   override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
     seenTemplate = initialState and VueTemplateTagHandler.SEEN_TEMPLATE != 0
+    seenVueAttribute = initialState and SEEN_VUE_ATTRIBUTE != 0
     interpolationLexer = null
     interpolationStart = -1
     super.start(buffer, startOffset, endOffset, initialState)
@@ -78,7 +87,9 @@ class VueLexer(private val languageLevel: JSLanguageLevel) : HtmlLexer(), VueHan
   override fun getState(): Int {
     val state = super.getState()
     return state or
-      (if (seenTemplate) VueTemplateTagHandler.SEEN_TEMPLATE else 0)
+      (if (seenTemplate) VueTemplateTagHandler.SEEN_TEMPLATE
+      else if (seenVueAttribute) SEEN_VUE_ATTRIBUTE
+      else 0)
 //     or (if (interpolationLexer != null) SEEN_INTERPOLATION else 0)
   }
 
@@ -94,7 +105,7 @@ class VueLexer(private val languageLevel: JSLanguageLevel) : HtmlLexer(), VueHan
       seenScript = false
     }
     val type = super.getTokenType()
-    if (seenAttribute && type == JSElementTypes.EMBEDDED_CONTENT) {
+    if (seenVueAttribute && type == XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN) {
       return VueElementTypes.EMBEDDED_JS
     }
 //    if (interpolationLexer != null) return interpolationLexer!!.tokenType
@@ -154,3 +165,4 @@ class VueLexer(private val languageLevel: JSLanguageLevel) : HtmlLexer(), VueHan
 //    }
 //  }
 }
+

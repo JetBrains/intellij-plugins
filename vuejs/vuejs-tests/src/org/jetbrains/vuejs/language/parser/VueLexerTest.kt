@@ -111,6 +111,7 @@ open class VueLexerTest : LexerTestCase() {
   fun testHtmlLangTemplate() = doFileTest("vue")
   fun testVFor() = doFileTest("vue")
   fun testLangTag() = doFileTest("vue")
+  fun testAttributeValuesEmbedded() = doFileTest("vue")
 
   override fun createLexer(): Lexer = org.jetbrains.vuejs.language.VueLexer(JSLanguageLevel.ES6)
   override fun getDirPath() = "/contrib/vuejs/vuejs-tests/testData/lexer"
