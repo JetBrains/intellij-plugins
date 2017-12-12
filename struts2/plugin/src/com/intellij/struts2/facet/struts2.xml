@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <artifacts>
-  <artifact name="Struts 2" version="2.5.13">
-    <item name="struts2-core.jar" version="2.5.13"
-          url="http://central.maven.org/maven2/org/apache/struts/struts2-core/2.5.13/struts2-core-2.5.13.jar">
+  <artifact name="Struts 2" version="2.5.14.1">
+    <item name="struts2-core.jar" version="2.5.14.1"
+          url="http://central.maven.org/maven2/org/apache/struts/struts2-core/2.5.14.1/struts2-core-2.5.14.1.jar">
       <required-class fqn="org.apache.struts2.StrutsConstants"/>
     </item>
-    <item name="struts2-annotations.jar" version="1.0.6"
-          url="http://central.maven.org/maven2/org/apache/struts/struts-annotations/1.0.6/struts-annotations-1.0.6.jar">
-    </item>
-    <item name="freemarker.jar" version="2.3.23"
-          url="http://central.maven.org/maven2/org/freemarker/freemarker/2.3.23/freemarker-2.3.23.jar">
+    <item name="freemarker.jar" version="2.3.26-incubating"
+          url="http://central.maven.org/maven2/org/freemarker/freemarker/2.3.26-incubating/freemarker-2.3.26-incubating.jar">
       <required-class fqn="freemarker.core.TemplateElement"/>
     </item>
     <item name="ognl.jar" version="3.1.15"
@@ -28,5 +25,7 @@
           url="http://central.maven.org/maven2/commons-io/commons-io/2.5/commons-io-2.5.jar">
       <required-class fqn="org.apache.commons.io.FileUtils"/>
     </item>
+    <item name="log4j.jar" version="2.9.1"
+          url="http://central.maven.org/maven2/org/apache/logging/log4j/log4j-api/2.9.1/log4j-api-2.9.1.jar"/>
   </artifact>
 </artifacts>
