@@ -40,8 +40,11 @@ open class VueLexerTest : LexerTestCase() {
   }
 
   override fun tearDown() {
-    super.tearDown()
-    onTearDown.forEach(Runnable::run)
+    try {
+      onTearDown.forEach(Runnable::run)
+    } finally {
+      super.tearDown()
+    }
   }
 
   fun registerMetaLanguage() {

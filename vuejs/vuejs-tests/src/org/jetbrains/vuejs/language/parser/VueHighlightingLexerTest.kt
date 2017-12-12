@@ -18,8 +18,6 @@ import com.intellij.psi.codeStyle.*
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2
 import com.intellij.testFramework.PlatformTestUtil
 import org.jetbrains.vuejs.VueFileType
-import kotlin.collections.plus
-import kotlin.jvm.java
 
 class VueHighlightingLexerTest : VueLexerTest() {
   override fun setUp() {
@@ -71,8 +69,11 @@ class VueHighlightingLexerTest : VueLexerTest() {
   }
 
   override fun tearDown() {
-    super.tearDown()
-    CodeStyleSettingsManager.getInstance().dropTemporarySettings()
+    try {
+      CodeStyleSettingsManager.getInstance().dropTemporarySettings()
+    } finally {
+      super.tearDown()
+    }
   }
 
   fun testScriptES6() = doFileTest("vue")
