@@ -1,6 +1,7 @@
 package org.intellij.plugins.markdown.lang.references
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
@@ -30,20 +31,7 @@ class MarkdownAnchorReferenceImpl internal constructor(private val myAnchor: Str
 
     val project = myPsiElement.project
 
-    // optimization: trying to find capitalized header
-    val suggestedHeader = StringUtil.replace(canonicalText, "-", " ")
-    var headers: Collection<PsiElement> = MarkdownHeadersIndex.collectFileHeaders(StringUtil.capitalize(suggestedHeader), project, file)
-    if (headers.isNotEmpty()) return PsiElementResolveResult.createResults(headers)
-
-    headers = MarkdownHeadersIndex.collectFileHeaders(StringUtil.capitalizeWords(suggestedHeader, true), project, file)
-    if (headers.isNotEmpty()) return PsiElementResolveResult.createResults(headers)
-
-    // header search
-    headers = StubIndex.getInstance().getAllKeys(MarkdownHeadersIndex.KEY, project)
-      .filter { Companion.dashed(it) == canonicalText }
-      .flatMap { MarkdownHeadersIndex.collectFileHeaders(it, project, file) }
-
-    return PsiElementResolveResult.createResults(headers)
+    return PsiElementResolveResult.createResults(MarkdownAnchorReference.getPsiHeaders(project, canonicalText, file))
   }
 
   override fun getCanonicalText(): String = myAnchor
@@ -57,7 +45,7 @@ class MarkdownAnchorReferenceImpl internal constructor(private val myAnchor: Str
         StubIndex.getInstance().processElements(MarkdownHeadersIndex.KEY, key, project,
                                                 file?.let { GlobalSearchScope.fileScope(it) },
                                                 MarkdownHeaderImpl::class.java,
-                                                Processor { list.add(dashed(key)) }
+                                                Processor { list.add(MarkdownAnchorReference.dashed(key)) }
         )
       }
 
@@ -68,8 +56,4 @@ class MarkdownAnchorReferenceImpl internal constructor(private val myAnchor: Str
     MarkdownBundle.message("markdown.cannot.resolve.anchor.error.message", myAnchor)
   else
     MarkdownBundle.message("markdown.cannot.resolve.anchor.in.file.error.message", myAnchor, (file as PsiFile).name)
-
-  companion object {
-    private fun dashed(it: String) = it.toLowerCase().replace(" ", "-")
-  }
 }

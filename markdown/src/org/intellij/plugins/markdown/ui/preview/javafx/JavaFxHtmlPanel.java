@@ -1,11 +1,33 @@
 package org.intellij.plugins.markdown.ui.preview.javafx;
 
 import com.intellij.ide.IdeEventQueue;
+import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.progress.ProgressIndicatorProvider;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.ui.popup.*;
+import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.NotNullLazyValue;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.wm.ToolWindowId;
+import com.intellij.openapi.wm.WindowManager;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiManager;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ObjectUtils;
+import com.intellij.util.PsiNavigateUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.JBUI;
@@ -21,8 +43,11 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
 import org.intellij.markdown.html.HtmlGenerator;
+import org.intellij.plugins.markdown.MarkdownBundle;
+import org.intellij.plugins.markdown.lang.references.MarkdownAnchorReference;
 import org.intellij.plugins.markdown.settings.MarkdownApplicationSettings;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanel;
+import org.intellij.plugins.markdown.ui.preview.MarkdownSplitEditor;
 import org.intellij.plugins.markdown.ui.preview.PreviewStaticServer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +55,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
@@ -161,16 +188,17 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   @NotNull
   private String prepareHtml(@NotNull String html) {
     return ImageRefreshFix.setStamps(html
-      .replace("<head>", "<head>"
-                         + "<meta http-equiv=\"Content-Security-Policy\" content=\"" + myCSP + "\"/>"
-                         + getCssLines(null, myCssUris) + "\n" + getScriptingLines()));
+                                       .replace("<head>", "<head>"
+                                                          + "<meta http-equiv=\"Content-Security-Policy\" content=\"" + myCSP + "\"/>"
+                                                          + getCssLines(null, myCssUris) + "\n" + getScriptingLines()));
   }
 
   @Override
   public void setCSS(@Nullable String inlineCss, @NotNull String... fileUris) {
     PreviewStaticServer.getInstance().setInlineStyle(inlineCss);
     myCssUris = inlineCss == null ? fileUris
-                                  : ArrayUtil.mergeArrays(fileUris, PreviewStaticServer.getStyleUrl(PreviewStaticServer.INLINE_CSS_FILENAME));
+                                  : ArrayUtil
+                  .mergeArrays(fileUris, PreviewStaticServer.getStyleUrl(PreviewStaticServer.INLINE_CSS_FILENAME));
     myCSP = PreviewStaticServer.createCSP(ContainerUtil.map(SCRIPTS, s -> PreviewStaticServer.getScriptUrl(s)),
                                           ContainerUtil.concat(
                                             ContainerUtil.map(STYLES, s -> PreviewStaticServer.getStyleUrl(s)),
@@ -211,7 +239,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   }
 
   @NotNull
-  private WebView getWebViewGuaranteed () {
+  private WebView getWebViewGuaranteed() {
     if (myWebView == null) {
       throw new IllegalStateException("WebView should be initialized by now. Check the caller thread");
     }
@@ -220,15 +248,104 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
   @NotNull
   private static String getScriptingLines() {
-      return MY_SCRIPTING_LINES.getValue();
+    return MY_SCRIPTING_LINES.getValue();
   }
 
   @SuppressWarnings("unused")
   public static class JavaPanelBridge {
     static final JavaPanelBridge INSTANCE = new JavaPanelBridge();
+    private static final NotificationGroup MARKDOWN_NOTIFICATION_GROUP =
+      NotificationGroup.toolWindowGroup(MarkdownBundle.message("markdown.navigate.to.header.group"), ToolWindowId.MESSAGES_WINDOW);
 
     public void openInExternalBrowser(@NotNull String link) {
-      SafeOpener.openLink(link);
+      String fileURI = link;
+      String anchor = "";
+      if (link.contains("#")) {
+        fileURI = Objects.requireNonNull(StringUtil.substringBefore(link, "#"));
+        anchor = Objects.requireNonNull(StringUtil.substringAfter(link, "#"));
+      }
+
+      VirtualFile targetFile = VirtualFileManager.getInstance().findFileByUrl(fileURI);
+      if (targetFile == null) {
+        SafeOpener.openLink(link);
+      }
+      else {
+        openLocalFile(targetFile, anchor);
+      }
+    }
+
+    private static void openLocalFile(@NotNull VirtualFile targetFile, @Nullable String anchor) {
+      Project project = ProjectUtil.guessProjectForFile(targetFile);
+      if (project == null) return;
+
+      if (anchor == null) {
+        FileEditorManager.getInstance(project).openFile(targetFile, true);
+        return;
+      }
+
+      final JFrame frame = WindowManager.getInstance().getFrame(project);
+      final Point mousePosition = Objects.requireNonNull(frame).getMousePosition();
+      if (mousePosition == null) return;
+      RelativePoint point = new RelativePoint(frame, mousePosition);
+
+      ApplicationManager.getApplication().invokeLater(() -> {
+        Collection<PsiElement> headers = ProgressManager.getInstance().runProcess(
+          () -> MarkdownAnchorReference.Companion.getPsiHeaders(project, anchor, PsiManager.getInstance(project).findFile(targetFile)),
+          ProgressIndicatorProvider.getGlobalProgressIndicator());
+
+        if (headers.isEmpty()) {
+          showCannotNavigateNotification(project, anchor, point);
+        }
+        else if (headers.size() == 1) {
+          navigateToHeader(project, targetFile, Objects.requireNonNull(ContainerUtil.getFirstItem(headers)));
+        }
+        else {
+          showHeadersPopup(headers, point);
+        }
+      });
+    }
+
+    private static void showCannotNavigateNotification(@NotNull Project project, @NotNull String anchor, @NotNull RelativePoint point) {
+      BalloonBuilder balloonBuilder = JBPopupFactory.getInstance()
+        .createHtmlTextBalloonBuilder(MarkdownBundle.message("markdown.navigate.to.header.no.headers", anchor), MessageType.WARNING,
+                                      null);
+      final Balloon balloon = balloonBuilder.createBalloon();
+      balloon.show(point, Balloon.Position.below);
+      Disposer.register(project, balloon);
+    }
+
+    private static void navigateToHeader(@NotNull Project project, @NotNull VirtualFile targetFile, @NotNull PsiElement item) {
+      MarkdownSplitEditor splitEditor = Objects.requireNonNull(
+        ObjectUtils.tryCast(FileEditorManager.getInstance(project).getSelectedEditor(targetFile), MarkdownSplitEditor.class));
+
+      boolean oldAutoScrollPreview = splitEditor.isAutoScrollPreview();
+
+      if (!oldAutoScrollPreview) splitEditor.setAutoScrollPreview(true);
+      PsiNavigateUtil.navigate(item);
+
+      if (!oldAutoScrollPreview) splitEditor.setAutoScrollPreview(false);
+    }
+
+    private static void showHeadersPopup(@NotNull Collection<PsiElement> headers,
+                                         @NotNull RelativePoint point) {
+      ListPopupStep headersPopup =
+        new BaseListPopupStep<PsiElement>(MarkdownBundle.message("markdown.navigate.to.header"), ContainerUtil.newArrayList(headers)) {
+          @NotNull
+          @Override
+          public String getTextFor(PsiElement value) {
+            Document document = FileDocumentManager.getInstance().getDocument(value.getContainingFile().getVirtualFile());
+            String name = value.getContainingFile().getVirtualFile().getName();
+
+            return value.getText() + " (" + name + ":" + (Objects.requireNonNull(document).getLineNumber(value.getTextOffset()) + 1) + ")";
+          }
+
+          @Override
+          public PopupStep onChosen(final PsiElement selectedValue, boolean finalChoice) {
+            return doFinalStep(() -> PsiNavigateUtil.navigate(selectedValue));
+          }
+        };
+
+      JBPopupFactory.getInstance().createListPopup(headersPopup).show(point);
     }
 
     public void log(@Nullable String text) {
