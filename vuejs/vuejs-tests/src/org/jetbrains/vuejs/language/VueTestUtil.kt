@@ -12,6 +12,11 @@ Vue.directive('focus', {
         el.focus()
     }
 });
+Vue.directive('click-outside', {
+inserted: function (el) {
+        el.focus()
+    }
+});
 """)
   myFixture.configureByText("importedDirective.js", """
 export default {
@@ -21,7 +26,7 @@ export default {
   myFixture.configureByText("CustomDirectives.vue", """
 <template>
     <label>
-        <input v-focus v-local-directive v-some-other-directive/>
+        <input v-focus v-local-directive v-some-other-directive v-click-outside/>
     </label>
     <client-comp v-imported-directive></client-comp>
     <div    style=""></div>

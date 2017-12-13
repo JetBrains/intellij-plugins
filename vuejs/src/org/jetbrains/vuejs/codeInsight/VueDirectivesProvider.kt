@@ -33,15 +33,18 @@ class VueDirectivesProvider {
     }
 
     fun resolveAttribute(descriptor: JSObjectLiteralExpression?, attrName: String, project: Project) : VueAttributeDescriptor? {
-      val searchName = toAsset(attrName.substringAfter("v-", ""))
+      val searchName = attrName.substringAfter("v-", "")
       if (searchName.isEmpty()) return null
-      var element = resolve(searchName, createSearchScope(descriptor, project), VueGlobalDirectivesIndex.KEY)?.firstOrNull()
+      val nameVariants = getNameVariants(searchName, true)
+      val searchScope = createSearchScope(descriptor, project)
+      var element = nameVariants.mapNotNull{ resolve(it, searchScope, VueGlobalDirectivesIndex.KEY)?.firstOrNull() }
+        .firstOrNull()
 
       val directives = findProperty(descriptor, DIRECTIVES)
       val fileScope = createContainingFileScope(directives)
       if (element == null && directives != null && fileScope != null) {
-        element = resolve(searchName, fileScope, VueLocalDirectivesIndex.KEY)
-          ?.firstOrNull { PsiTreeUtil.isAncestor(directives, it.parent, false) }
+        element = nameVariants.mapNotNull{ resolve(it, fileScope, VueLocalDirectivesIndex.KEY)
+          ?.firstOrNull { PsiTreeUtil.isAncestor(directives, it.parent, false) } }.firstOrNull()
       }
 
       element ?: return null
