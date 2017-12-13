@@ -1333,12 +1333,13 @@ const props = {seeMe: {}}
     directivesTestCase(myFixture)
     val names = mapOf(Pair("v-local-directive", "localDirective"),
                       Pair("v-some-other-directive", "someOtherDirective"),
+                      Pair("v-click-outside", "click-outside"),
                       Pair("v-imported-directive", "importedDirective"))
     names.forEach {
       val attribute = myFixture.findElementByText(it.key, XmlAttribute::class.java)
       TestCase.assertNotNull(attribute)
       myFixture.editor.caretModel.moveToOffset(attribute.textOffset)
-      doTestResolveIntoDirective(it.value, "CustomDirectives.vue")
+      doTestResolveIntoDirective(it.value, if (it.value == "click-outside") "CustomDirectives.js" else "CustomDirectives.vue")
     }
   }
 
@@ -1346,10 +1347,17 @@ const props = {seeMe: {}}
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
     val property = reference!!.resolve()
-    TestCase.assertNotNull(property)
-    TestCase.assertTrue(property is JSProperty)
-    TestCase.assertEquals(directive, (property as JSProperty).name)
-    TestCase.assertEquals(fileName, property.containingFile.name)
+    TestCase.assertNotNull(directive, property)
+    if (property is JSProperty) {
+      TestCase.assertEquals(directive, property.name)
+      TestCase.assertEquals(fileName, property.containingFile.name)
+    } else if (property is JSCallExpression) {
+      TestCase.assertNotNull(property.text)
+      TestCase.assertEquals(directive, (property.arguments[0] as JSLiteralExpression).value)
+      TestCase.assertEquals(fileName, property.containingFile.name)
+    } else {
+      TestCase.assertTrue(false)
+    }
   }
 
   fun testResolveIntoVueDefinitions() {
