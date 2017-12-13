@@ -6,17 +6,15 @@ import com.dmarcotte.handlebars.psi.HbPsiFile;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.structureView.TextEditorBasedStructureViewModel;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 class HbStructureViewModel extends TextEditorBasedStructureViewModel {
-  private final HbPsiFile myFile;
-  // classes which we construct structure view nodes for
   static final Class[] ourSuitableClasses = new Class[]{HbBlockWrapper.class, HbPlainMustache.class};
 
-  public HbStructureViewModel(@NotNull HbPsiFile psiFile, @Nullable Editor editor) {
+  public HbStructureViewModel(@NotNull PsiFile psiFile, @Nullable Editor editor) {
     super(editor, psiFile);
-    this.myFile = psiFile;
   }
 
   @NotNull
@@ -28,6 +26,6 @@ class HbStructureViewModel extends TextEditorBasedStructureViewModel {
   @NotNull
   @Override
   public StructureViewTreeElement getRoot() {
-    return new HbTreeElementFile(myFile);
+    return new HbTreeElementFile((HbPsiFile)getPsiFile());
   }
 }

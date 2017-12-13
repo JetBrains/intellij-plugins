@@ -15,33 +15,26 @@
  */
 package com.intellij.coldFusion.UI.editorActions.structureView;
 
-import com.intellij.coldFusion.model.CfmlLanguage;
 import com.intellij.coldFusion.model.psi.CfmlFunction;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.structureView.TextEditorBasedStructureViewModel;
 import com.intellij.ide.util.treeView.smartTree.Filter;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by Lera Nikolaenko
  */
 public class CfmlStructureViewModel extends TextEditorBasedStructureViewModel {
-  private PsiFile myCfmlPsiFile;
   private StructureViewTreeElement myRoot;
   private final Class[] myClasses = {CfmlFunction.class};
 
-  protected CfmlStructureViewModel(@NotNull PsiFile psiFile) {
-    super(psiFile);
-
-    myCfmlPsiFile = psiFile.getViewProvider().getPsi(CfmlLanguage.INSTANCE);
-    myRoot = new CfmlStructureViewElement(myCfmlPsiFile);
-  }
-
-  @Override
-  protected PsiFile getPsiFile() {
-    return myCfmlPsiFile;
+  protected CfmlStructureViewModel(@NotNull PsiFile psiFile, @Nullable Editor editor) {
+    super(editor, psiFile);
+    myRoot = new CfmlStructureViewElement(getPsiFile());
   }
 
   @Override
