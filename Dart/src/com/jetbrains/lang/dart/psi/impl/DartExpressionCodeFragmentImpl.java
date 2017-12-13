@@ -58,6 +58,7 @@ public class DartExpressionCodeFragmentImpl extends DartFile implements DartExpr
     return myContext != null && myContext.isValid() ? myContext : super.getContext();
   }
 
+  @Override
   @NotNull
   public FileViewProvider getViewProvider() {
     if (myViewProvider != null) return myViewProvider;
@@ -77,6 +78,7 @@ public class DartExpressionCodeFragmentImpl extends DartFile implements DartExpr
     return clone;
   }
 
+  @Override
   public boolean isPhysical() {
     return myPhysical;
   }
@@ -102,7 +104,7 @@ public class DartExpressionCodeFragmentImpl extends DartFile implements DartExpr
 
     @Nullable
     @Override
-    public ASTNode parseContents(final ASTNode chameleon) {
+    public ASTNode parseContents(@NotNull final ASTNode chameleon) {
       final PsiElement psi = new DartPsiCompositeElementImpl(chameleon);
       return doParseContents(chameleon, psi);
     }

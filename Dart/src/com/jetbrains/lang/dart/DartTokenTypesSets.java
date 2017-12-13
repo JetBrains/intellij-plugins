@@ -203,7 +203,7 @@ public interface DartTokenTypesSets {
     }
 
     @Override
-    public ASTNode parseContents(final ASTNode chameleon) {
+    public ASTNode parseContents(@NotNull final ASTNode chameleon) {
       final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(chameleon.getTreeParent().getPsi().getProject(),
                                                                                chameleon,
                                                                                new DartDocLexer(),
@@ -241,7 +241,7 @@ public interface DartTokenTypesSets {
     }
 
     @Override
-    public ASTNode parseContents(final ASTNode lazyParseableBlock) {
+    public ASTNode parseContents(@NotNull final ASTNode lazyParseableBlock) {
       final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(lazyParseableBlock.getTreeParent().getPsi().getProject(),
                                                                                lazyParseableBlock,
                                                                                new DartLexer(),
