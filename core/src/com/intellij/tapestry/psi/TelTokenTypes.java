@@ -10,6 +10,7 @@ import com.intellij.psi.tree.ILazyParseableElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.tapestry.lang.TelFileType;
 import com.intellij.tapestry.lang.TelLanguage;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Alexey Chmutov
@@ -44,7 +45,7 @@ public abstract class TelTokenTypes {
   public static final ILazyParseableElementType TAP5_EL_HOLDER =
       new ILazyParseableElementType("TAP5_EL_HOLDER", TelFileType.INSTANCE.getLanguage()) {
         @Override
-        public ASTNode parseContents(ASTNode chameleon) {
+        public ASTNode parseContents(@NotNull ASTNode chameleon) {
           final Project project = chameleon.getPsi().getProject();
           final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon);
           final PsiParser parser = LanguageParserDefinitions.INSTANCE.forLanguage(getLanguage()).createParser(project);
