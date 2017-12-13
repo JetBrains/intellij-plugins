@@ -1,7 +1,7 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
   <mx:Script><![CDATA[
-    function aaa() {
-        <caret>
-    }
+      function aaa() {
+          <caret>
+      }
 ]]></mx:Script>
 </mx:Application>

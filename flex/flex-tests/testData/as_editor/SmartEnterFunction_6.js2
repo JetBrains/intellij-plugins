@@ -1,1 +1,1 @@
-addEventListener("change", function()<caret>);
+addEventListener("change", function ()<caret>);

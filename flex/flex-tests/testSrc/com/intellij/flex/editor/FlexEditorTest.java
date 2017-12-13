@@ -214,7 +214,8 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
   public void testSmartEnterFunction() throws Exception {
     final String testName = getTestName(false);
     doSmartEnterTest(testName + "_6", "js2");
-    doSmartEnterTest(testName + "_7", "js2");
+    doSmartEnterTest(testName + "InInterfaceWithoutSemicolon", "js2");
+    doSmartEnterTest(testName + "InInterfaceWithoutParameterList", "js2");
   }
 
   public void testSmartEnterStatement() throws Exception {

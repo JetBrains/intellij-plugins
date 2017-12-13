@@ -1,4 +1,4 @@
 class C {}
 function x() {
-    x = C(arg)<caret>;
+    x = C(arg);<caret>
 }

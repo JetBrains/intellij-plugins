@@ -1,4 +1,4 @@
 private function onKeyUp(event:KeyboardEvent):void {
-    if(event.keyCode == Keyboard.UP<caret>
+    if (event.keyCode == Keyboard.UP<caret>
     
 }
