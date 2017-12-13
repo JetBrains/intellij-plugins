@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.completion;
 
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
@@ -397,7 +396,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
           ) {
           final String s = variable.getLiteralOrReferenceInitializerText();
           if (s != null && StringUtil.startsWith(s, "\"") && StringUtil.endsWith(s, "\"")) {
-            String key = StringUtil.stripQuotesAroundValue(s);
+            String key = StringUtil.unquoteString(s);
             String event = myEventsMap.get(key);
             if (event == null) return true;
             PsiElement parent = JSResolveUtil.findParent(element);
@@ -407,11 +406,17 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
             LookupElement lookupItem = JSLookupUtilImpl.createPrioritizedLookupItem(
               variable,
               ((JSClass)parent).getName() + "." + name,
-              JSLookupPriority.SMART_PRIORITY, false, true
+              JSLookupPriority.SMART_PRIORITY,
+              false,
+              true,
+              null,
+              false,
+              name
             );
 
-            ((LookupItem)lookupItem).addLookupStrings(name);
-            myVariants.add(lookupItem);
+            if (lookupItem != null) {
+              myVariants.add(lookupItem);
+            }
           }
         }
       }
