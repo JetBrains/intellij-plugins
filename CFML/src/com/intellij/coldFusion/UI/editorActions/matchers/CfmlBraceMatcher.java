@@ -54,6 +54,7 @@ public class CfmlBraceMatcher implements BraceMatcher {
             new BracePair(CfmlTokenTypes.SINGLE_QUOTE, CfmlTokenTypes.SINGLE_QUOTE_CLOSER, false)*/
   };
 
+  @Override
   public int getBraceTokenGroupId(IElementType tokenType) {
     final Language l = tokenType.getLanguage();
     return l.hashCode();
@@ -79,6 +80,7 @@ public class CfmlBraceMatcher implements BraceMatcher {
         */
   }
 
+  @Override
   public boolean isLBraceToken(HighlighterIterator iterator, CharSequence fileText, FileType fileType) {
     final IElementType tokenType = iterator.getTokenType();
     PairedBraceMatcher matcher = LanguageBraceMatching.INSTANCE.forLanguage(tokenType.getLanguage());
@@ -110,6 +112,7 @@ public class CfmlBraceMatcher implements BraceMatcher {
            (!CfmlUtil.isEndTagRequired(getTagName(fileText, iterator), null) || findEndTag(fileText, iterator));
   }
 
+  @Override
   public boolean isRBraceToken(HighlighterIterator iterator, CharSequence fileText, FileType fileType) {
     final IElementType tokenType = iterator.getTokenType();
 
@@ -142,6 +145,7 @@ public class CfmlBraceMatcher implements BraceMatcher {
             !findEndTag(fileText, iterator));
   }
 
+  @Override
   public boolean isPairBraces(IElementType tokenType1, IElementType tokenType2) {
     PairedBraceMatcher matcher = LanguageBraceMatching.INSTANCE.forLanguage(tokenType1.getLanguage());
     if (matcher != null) {
@@ -175,6 +179,7 @@ public class CfmlBraceMatcher implements BraceMatcher {
            (tokenType1.equals(CfmlTokenTypes.OPENER) && tokenType2.equals(CfmlTokenTypes.R_ANGLEBRACKET));
   }
 
+  @Override
   public boolean isStructuralBrace(HighlighterIterator iterator, CharSequence text, FileType fileType) {
     IElementType type = iterator.getTokenType();
     if (type == CfscriptTokenTypes.L_BRACKET || type == CfscriptTokenTypes.R_BRACKET) {
@@ -302,6 +307,7 @@ public class CfmlBraceMatcher implements BraceMatcher {
     return name == null ? name : name.toLowerCase();
   }
 
+  @Override
   public IElementType getOppositeBraceTokenType(@NotNull final IElementType type) {
     for (BracePair pair : PAIRS) {
       if (pair.getLeftBraceType() == type) return pair.getRightBraceType();
