@@ -251,7 +251,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     if (context instanceof JSReferenceExpression && ((JSReferenceExpression)context).getQualifier() == null) {
       final JSQualifiedName directiveNamespace = findDirective(context);
       if (directiveNamespace != null) {
-        info.addType(new JSNamespaceImpl(directiveNamespace, JSContext.INSTANCE, true), false);
+        info.addType(new JSNamespaceImpl(directiveNamespace, JSContext.INSTANCE, true), true);
       }
     }
   }
