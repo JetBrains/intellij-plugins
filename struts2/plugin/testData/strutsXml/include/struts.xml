@@ -15,6 +15,6 @@
   <include file="<error descr="Recursive inclusion of current file">struts.xml</error>"/>
 
   <include file="<error descr="Cannot resolve file 'INVALID_VALUE'">INVALID_VALUE</error>"/>
-  <include file="/com/test<error descr="Cannot resolve file ''">/"</error>/>
+  <include file="/com/test/<error descr="Cannot resolve file ''"></error>"/>
 
 </struts>
