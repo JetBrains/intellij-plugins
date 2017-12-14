@@ -66,7 +66,7 @@ public class MotionDeviceProcessHandler extends RubyProcessHandler implements De
 
   private void findDevice() {
     if (myDevice.isDone()) return;
-    if (AMDeviceManager.getInstance().getConnectedDevices().isEmpty()) {
+    if (AMDeviceManager.getInstance().getDevices().isEmpty()) {
       LOG.warn("No connected devices");
       myDevice.set(null);
       return;
