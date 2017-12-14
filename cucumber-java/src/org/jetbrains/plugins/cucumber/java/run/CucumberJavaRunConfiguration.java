@@ -3,6 +3,7 @@ package org.jetbrains.plugins.cucumber.java.run;
 import com.intellij.diagnostic.logging.LogConfigurationPanel;
 import com.intellij.execution.*;
 import com.intellij.execution.application.ApplicationConfiguration;
+import com.intellij.execution.application.ApplicationConfigurationOptions;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -52,21 +53,22 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
   }
 
   @Override
-  public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
+  public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) {
     return new JavaApplicationCommandLineState<CucumberJavaRunConfiguration>(CucumberJavaRunConfiguration.this, env) {
       protected JavaParameters createJavaParameters() throws ExecutionException {
         final JavaParameters params = new JavaParameters();
         final JavaRunConfigurationModule module = getConfigurationModule();
 
         final int classPathType = JavaParameters.JDK_AND_CLASSES_AND_TESTS;
-        final String jreHome = CucumberJavaRunConfiguration.this.ALTERNATIVE_JRE_PATH_ENABLED ? ALTERNATIVE_JRE_PATH : null;
+        ApplicationConfigurationOptions options = CucumberJavaRunConfiguration.this.getOptions();
+        final String jreHome = options.isAlternativeJrePathEnabled() ? options.getAlternativeJrePath() : null;
         JavaParametersUtil.configureModule(module, params, classPathType, jreHome);
         JavaParametersUtil.configureConfiguration(params, CucumberJavaRunConfiguration.this);
 
         String path = getSMRunnerPath();
         params.getClassPath().add(path);
 
-        params.setMainClass(MAIN_CLASS_NAME);
+        params.setMainClass(options.getMainClassName());
         for (RunConfigurationExtension ext : Extensions.getExtensions(RunConfigurationExtension.EP_NAME)) {
           ext.updateJavaParameters(CucumberJavaRunConfiguration.this, params, getRunnerSettings());
         }
@@ -91,7 +93,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         return params;
       }
 
-      @Nullable
+      @NotNull
       private ConsoleView createConsole(@NotNull final Executor executor, ProcessHandler processHandler) throws ExecutionException {
         // console view
         final String testFrameworkName = "cucumber";

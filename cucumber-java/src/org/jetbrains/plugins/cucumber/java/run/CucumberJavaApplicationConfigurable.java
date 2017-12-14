@@ -10,7 +10,6 @@ import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.LabeledComponent;
@@ -59,8 +58,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
         FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor();
         fileChooserDescriptor.setTitle(CucumberJavaBundle.message("run.configuration.form.choose.file.or.folder.title"));
         fileChooserDescriptor.putUserData(LangDataKeys.MODULE_CONTEXT, myModuleContext);
-        Project project = myProject;
-        VirtualFile file = FileChooser.chooseFile(fileChooserDescriptor, project, null);
+        VirtualFile file = FileChooser.chooseFile(fileChooserDescriptor, myProject, null);
         if (file != null) {
           setFeatureOrFolder(file.getPresentableUrl());
         }
@@ -113,17 +111,17 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
     myModuleSelector.reset(configuration);
     myCommonProgramParameters.reset(configuration);
 
-    myMainClass.getComponent().setText(configuration.MAIN_CLASS_NAME);
+    myMainClass.getComponent().setText(configuration.getOptions().getMainClassName());
     myGlue.getComponent().setText(configuration.getGlue());
     myFeatureOrFolder.getComponent().setText(configuration.getFilePath());
   }
 
   @Override
-  protected void applyEditorTo(@NotNull CucumberJavaRunConfiguration configuration) throws ConfigurationException {
+  protected void applyEditorTo(@NotNull CucumberJavaRunConfiguration configuration) {
     myCommonProgramParameters.applyTo(configuration);
     myModuleSelector.applyTo(configuration);
 
-    configuration.MAIN_CLASS_NAME = myMainClass.getComponent().getText();
+    configuration.getOptions().setMainClassName(myMainClass.getComponent().getText());
     configuration.setGlue(myGlue.getComponent().getText());
     configuration.setFilePath(myFeatureOrFolder.getComponent().getText());
     Module selectedModule = (Module)myModule.getComponent().getSelectedItem();
