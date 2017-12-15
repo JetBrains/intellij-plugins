@@ -171,6 +171,11 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return false;
   }
 
+  @NotNull
+  @Override
+  public String[] inheritanceMethodNames() {
+    return ALL_INTERESTING_METHODS;
+  }
 
   @NotNull
   @Override
