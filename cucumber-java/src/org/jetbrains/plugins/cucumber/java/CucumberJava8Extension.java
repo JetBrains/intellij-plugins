@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
+import org.jetbrains.plugins.cucumber.java.steps.Java8StepDefinition;
 import org.jetbrains.plugins.cucumber.java.steps.Java8StepDefinitionCreator;
-import org.jetbrains.plugins.cucumber.java.steps.JavaStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
 import java.util.ArrayList;
@@ -51,7 +51,9 @@ public class CucumberJava8Extension extends AbstractCucumberJavaExtension {
               final String fqn = psiClass.getQualifiedName();
               if (fqn != null && fqn.startsWith("cucumber.api.java8")) {
                 final PsiMethodCallExpression methodCallExpression = PsiTreeUtil.getParentOfType(element, PsiMethodCallExpression.class);
-                result.add(new JavaStepDefinition(methodCallExpression));
+                if (methodCallExpression != null) {
+                  result.add(new Java8StepDefinition(methodCallExpression));
+                }
               }
             }
           }

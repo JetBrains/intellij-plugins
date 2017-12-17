@@ -1,35 +1,12 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.psi.*;
-import org.apache.oro.text.regex.Pattern;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
-import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.PatternSyntaxException;
-
-public class JavaStepDefinition extends AbstractStepDefinition {
+public class JavaStepDefinition extends AbstractJavaStepDefinition {
   public JavaStepDefinition(PsiElement stepDef) {
     super(stepDef);
-  }
-
-  @Override
-  public List<String> getVariableNames() {
-    PsiElement element = getElement();
-    if (element instanceof PsiMethod) {
-      PsiParameter[] parameters = ((PsiMethod)element).getParameterList().getParameters();
-      ArrayList<String> result = new ArrayList<>();
-      for (PsiParameter parameter : parameters) {
-        result.add(parameter.getName());
-      }
-      return result;
-    }
-    return Collections.emptyList();
   }
 
   @Nullable
@@ -51,34 +28,8 @@ public class JavaStepDefinition extends AbstractStepDefinition {
           }
         }
       }
-    } else if (element instanceof PsiMethodCallExpression) {
-      PsiExpressionList argumentList = ((PsiMethodCallExpression)element).getArgumentList();
-      if (argumentList.getExpressions().length > 1) {
-        PsiExpression stepExpression = argumentList.getExpressions()[0];
-        if (stepExpression instanceof PsiLiteralExpression) {
-          Object value = ((PsiLiteralExpression)stepExpression).getValue();
-          if (value instanceof String) {
-            return (String)value;
-          }
-        }
-      }
     }
 
     return null;
-  }
-
-  @Override
-  public boolean matches(@NotNull String stepName) {
-    Pattern perlPattern = getPattern();
-    if (perlPattern != null) {
-      try {
-        final java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(perlPattern.getPattern());
-        Matcher m = pattern.matcher(stepName);
-        return m.matches();
-      }
-      catch (PatternSyntaxException ignored) {
-      }
-    }
-    return false;
   }
 }
