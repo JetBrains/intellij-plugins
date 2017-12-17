@@ -2,6 +2,7 @@ package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.psi.*;
 import org.apache.oro.text.regex.Pattern;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
@@ -67,9 +68,8 @@ public class JavaStepDefinition extends AbstractStepDefinition {
   }
 
   @Override
-  public boolean matches(String stepName) {
+  public boolean matches(@NotNull String stepName) {
     Pattern perlPattern = getPattern();
-
     if (perlPattern != null) {
       try {
         final java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(perlPattern.getPattern());

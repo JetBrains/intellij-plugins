@@ -5,6 +5,7 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClassOwner;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ContainerUtil;
@@ -41,7 +42,6 @@ public abstract class AbstractCucumberJavaExtension extends AbstractCucumberExte
     return false;
   }
 
-
   @NotNull
   @Override
   public Collection<String> getGlues(@NotNull GherkinFile file, Set<String> gluesFromOtherFiles) {
@@ -69,7 +69,6 @@ public abstract class AbstractCucumberJavaExtension extends AbstractCucumberExte
     if (module == null) {
       return Collections.emptySet();
     }
-
     List<AbstractStepDefinition> stepDefs = loadStepsFor(featureFile, module);
 
     Set<PsiFile> result = new HashSet<>();
@@ -77,8 +76,8 @@ public abstract class AbstractCucumberJavaExtension extends AbstractCucumberExte
       PsiElement stepDefElement = stepDef.getElement();
       if (stepDefElement != null) {
         final PsiFile psiFile = stepDefElement.getContainingFile();
-
-        if (isWritableStepLikeFile(psiFile, psiFile.getParent())) {
+        PsiDirectory psiDirectory = psiFile.getParent();
+        if (psiDirectory != null && isWritableStepLikeFile(psiFile, psiDirectory)) {
           result.add(psiFile);
         }
       }
