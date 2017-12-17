@@ -8,3 +8,5 @@ Feature: Shopping
       | soap  | 5     |
     When I pay 25
     Then my change should be 4
+    And my test step
+    And my another test step

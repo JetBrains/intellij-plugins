@@ -28,6 +28,11 @@ public class ShoppingStepdefs {
   @Then("^my change should be (\\d+)$")
   public void my_change_should_be_(int change) {
     assertEquals(-calc.value().intValue(), change);
+  }@Then("^my change should be (\\d+)$")
+
+  @Then("^my test step$")
+  @Given("^my another test step$")
+  public void my_test_step() {
   }
 
   public static class Grocery {

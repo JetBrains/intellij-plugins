@@ -1,19 +1,23 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.psi.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 public class JavaStepDefinition extends AbstractJavaStepDefinition {
-  public JavaStepDefinition(PsiElement stepDef) {
+  private String myAnnotationClassName;
+
+  public JavaStepDefinition(@NotNull PsiElement stepDef, @NotNull String annotationClassName) {
     super(stepDef);
+    myAnnotationClassName = annotationClassName;
   }
 
   @Nullable
   @Override
   protected String getCucumberRegexFromElement(PsiElement element) {
     if (element instanceof PsiMethod) {
-      final PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation((PsiMethod)element);
+      final PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation((PsiMethod)element, myAnnotationClassName);
       if (stepAnnotation == null) {
         return null;
       }

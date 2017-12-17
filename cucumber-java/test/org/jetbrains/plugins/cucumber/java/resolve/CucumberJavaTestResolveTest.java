@@ -34,6 +34,10 @@ public class CucumberJavaTestResolveTest extends BaseCucumberJavaResolveTest {
     doTest("stepResolve_w", "plast<caret>ic", "payment_mode");
   }
 
+  public void testJavaSeveralStepAnnotation() {
+    doTest("stepResolve_01", "my anot<caret>her test step", "my_test_step");
+  }
+
   public void testJava8StepDef() {
     doTest("stepResolve_java8", "I have cuk<caret>es", "Given");
   }

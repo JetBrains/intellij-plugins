@@ -119,8 +119,12 @@ public class CucumberJavaUtil {
     return false;
   }
 
+  public static PsiAnnotation getCucumberStepAnnotation(@NotNull PsiMethod method) {
+    return getCucumberStepAnnotation(method, null);
+  }
+
   @Nullable
-  public static PsiAnnotation getCucumberStepAnnotation(PsiMethod method) {
+  public static PsiAnnotation getCucumberStepAnnotation(@NotNull PsiMethod method, @Nullable String annotationClassName) {
     if (!method.hasModifierProperty(PsiModifier.PUBLIC)) {
       return null;
     }
@@ -128,7 +132,9 @@ public class CucumberJavaUtil {
     final PsiAnnotation[] annotations = method.getModifierList().getAnnotations();
 
     for (PsiAnnotation annotation : annotations) {
-      if (annotation != null && isCucumberStepAnnotation(annotation)) {
+      if (annotation != null &&
+          (annotationClassName == null ||annotationClassName.equals(annotation.getQualifiedName())) &&
+          isCucumberStepAnnotation(annotation)) {
         return annotation;
       }
     }
