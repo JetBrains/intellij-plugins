@@ -13,13 +13,22 @@ import org.jetbrains.plugins.cucumber.psi.GherkinScenarioOutline;
 import org.jetbrains.plugins.cucumber.psi.GherkinStepsHolder;
 
 public class CucumberJavaScenarioRunConfigurationProducer extends CucumberJavaFeatureRunConfigurationProducer {
+  private static final String SCENARIO_OUTLINE_PARAMETER_REGEXP = "\\\\<.*?\\\\>";
+  private static final String ANY_STRING_REGEXP = ".*";
+  private static final String NAME_FILTER_TEMPLATE = "^%s$";
+
   @Override
   protected String getNameFilter(@NotNull ConfigurationContext context) {
     final PsiElement sourceElement = context.getPsiLocation();
 
     final GherkinStepsHolder scenario = PsiTreeUtil.getParentOfType(sourceElement, GherkinScenario.class, GherkinScenarioOutline.class);
     if (scenario != null) {
-      return "^" + StringUtil.escapeToRegexp(scenario.getScenarioName()) + "$";
+      String nameFilter = String.format(NAME_FILTER_TEMPLATE, StringUtil.escapeToRegexp(scenario.getScenarioName()));
+      if (scenario instanceof GherkinScenarioOutline) {
+        nameFilter = nameFilter.replaceAll(SCENARIO_OUTLINE_PARAMETER_REGEXP, ANY_STRING_REGEXP);
+      }
+
+      return nameFilter;
     }
 
     return super.getNameFilter(context);
