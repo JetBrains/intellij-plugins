@@ -254,6 +254,13 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testNgIfResolve() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("ngIf.ts", "angular2.js", "ngIf.ts");
+      checkVariableResolve("my_use<caret>r.last", "my_user", JSDefinitionExpression.class);
+    });
+  }
+
   private PsiElement checkVariableResolve(final String signature, final String varName, final Class<? extends JSElement> varClass) {
     int offsetBySignature = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);

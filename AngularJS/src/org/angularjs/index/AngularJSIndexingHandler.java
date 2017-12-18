@@ -41,10 +41,10 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.*;
 import com.intellij.util.containers.BidirectionalMap;
 import gnu.trove.THashSet;
+import org.angularjs.codeInsight.AngularJSReferenceExpressionResolver;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.codeInsight.router.AngularJSUiRouterConstants;
 import org.angularjs.lang.AngularJSLanguage;
-import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
 import org.jetbrains.annotations.NotNull;
@@ -568,7 +568,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
     if (resolveResult instanceof JSDefinitionExpression && resolveResult.getLanguage() instanceof AngularJSLanguage) {
       final PsiElement resolveParent = resolveResult.getParent();
-      if (resolveParent instanceof AngularJSAsExpression) {
+      if (AngularJSReferenceExpressionResolver.isAsExpression(resolveParent)) {
         final String name = resolveParent.getFirstChild().getText();
         final JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
         final JSType type = JSNamedType.createType(name, source, JSContext.INSTANCE);

@@ -1,6 +1,7 @@
 package org.angularjs.lang.parser;
 
 import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.impl.PsiBuilderImpl;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.parsing.*;
 import com.intellij.psi.tree.IElementType;
@@ -31,6 +32,9 @@ public class AngularJSParser
             return;
           }
         }
+        if (tryParseNgIfStatement()) {
+          return;
+        }
         if (firstToken == JSTokenTypes.LET_KEYWORD) {
           if (builder.lookAhead(2) != JSTokenTypes.EQ) {
             parseNgForStatement();
@@ -43,9 +47,6 @@ public class AngularJSParser
           if (parseInStatement()) {
             return;
           }
-        }
-        if (tryParseNgIfStatement()) {
-          return;
         }
         super.doParseStatement(canHaveClasses);
       }
@@ -71,6 +72,7 @@ public class AngularJSParser
       }
 
       private boolean tryParseNgIfStatement() {
+        PsiBuilder local = builder;
         PsiBuilder.Marker ngIf = builder.mark();
         getExpressionParser().parseExpression();
         if (builder.getTokenType() != JSTokenTypes.SEMICOLON) {
@@ -78,6 +80,10 @@ public class AngularJSParser
           return false;
         }
         builder.advanceLexer();
+        if (builder.getTokenType() == JSTokenTypes.LET_KEYWORD) {
+          getExpressionParser().parseHashDefinition();
+          builder.advanceLexer();
+        }
         if (builder.getTokenType() != AngularJSTokenTypes.THEN && builder.getTokenType() != JSTokenTypes.ELSE_KEYWORD) {
           ngIf.rollbackTo();
           return false;
@@ -159,34 +165,28 @@ public class AngularJSParser
         parseHashDefinition();
         return true;
       }
-      if (isIdentifierToken(firstToken) && myAngularJSMessageFormatParser.parseMessage()) {
-        return true;
-      }
-      if (parseAsExpression()) {
-        return true;
+      if (isIdentifierToken(firstToken)) {
+        if (myAngularJSMessageFormatParser.parseMessage()) {
+          return true;
+        }
+        int cur = -1;
+        IElementType prev = builder.rawLookup(-1);
+        while (prev != null && ((PsiBuilderImpl)builder).whitespaceOrComment(prev)) {
+          prev = builder.rawLookup(--cur);
+        }
+        if (prev == JSTokenTypes.AS_KEYWORD) {
+          parseExplicitIdentifierWithError();
+          return true;
+        }
       }
       return super.parsePrimaryExpression();
     }
 
-    private boolean parseAsExpression() {
-      PsiBuilder.Marker expr = builder.mark();
-      if (!parseQualifiedTypeName(false)) {
-        expr.rollbackTo();
-        return false;
-      }
-      if (builder.getTokenType() != JSTokenTypes.AS_KEYWORD) {
-        expr.rollbackTo();
-        return false;
-      }
-      builder.advanceLexer();
-      parseExplicitIdentifierWithError();
-      expr.done(AngularJSElementTypes.AS_EXPRESSION);
-      return true;
-    }
-
     private void parseExplicitIdentifierWithError() {
       if (isIdentifierToken(builder.getTokenType())) {
-        parseExplicitIdentifier();
+        final PsiBuilder.Marker def = builder.mark();
+        buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
+        def.done(JSStubElementTypes.DEFINITION_EXPRESSION);
       } else {
         builder.error(JSBundle.message("javascript.parser.message.expected.identifier"));
       }
@@ -327,12 +327,6 @@ public class AngularJSParser
       } else {
         builder.error(JSBundle.message("javascript.parser.message.expected.rparen"));
       }
-    }
-
-    private void parseExplicitIdentifier() {
-      final PsiBuilder.Marker def = builder.mark();
-      buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
-      def.done(JSStubElementTypes.DEFINITION_EXPRESSION);
     }
   }
 }
