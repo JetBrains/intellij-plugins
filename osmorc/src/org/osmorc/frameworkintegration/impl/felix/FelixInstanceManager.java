@@ -39,10 +39,15 @@ public class FelixInstanceManager extends AbstractFrameworkInstanceManager {
   private static final String[] BUNDLE_DIRS = {"bin", "bundle", "bundles"};
   private static final Pattern SYSTEM_BUNDLE = Pattern.compile("felix.*\\.jar");
   private static final Pattern SHELL_BUNDLES = Pattern.compile(".*\\.gogo\\.(command|runtime|shell).*\\.jar");
+  private static final Pattern JLINE_BUNDLES = Pattern.compile(".*\\.gogo\\.(command|runtime|jline).*\\.jar|jline.*\\.jar");
 
   @NotNull
   @Override
   public Collection<SelectedBundle> getFrameworkBundles(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkBundleType type) {
-    return collectBundles(instance, type, BUNDLE_DIRS, SYSTEM_BUNDLE, FelixRunner.MAIN_CLASS, 1, SHELL_BUNDLES, null, 3);
+    Collection<SelectedBundle> shell = collectBundles(instance, type, BUNDLE_DIRS, SYSTEM_BUNDLE, FelixRunner.MAIN_CLASS, 1, SHELL_BUNDLES, null, 3);
+    if (shell.isEmpty()) {
+      shell = collectBundles(instance, type, BUNDLE_DIRS, SYSTEM_BUNDLE, FelixRunner.MAIN_CLASS, 1, JLINE_BUNDLES, null, 4);
+    }
+    return shell;
   }
 }
