@@ -9,7 +9,6 @@ import com.intellij.psi.tree.ICompositeElementType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import org.angularjs.lang.AngularJSLanguage;
-import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
 import org.angularjs.lang.psi.AngularJSMessageFormatExpression;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
@@ -41,14 +40,7 @@ public interface AngularJSElementTypes {
       return new AngularJSFilterExpression(this);
     }
   };
-  IElementType AS_EXPRESSION = new AngularJSElementType("AS_EXPRESSION") {
-    @NotNull
-    @Override
-    public ASTNode createCompositeNode() {
-      return new AngularJSAsExpression(this);
-    }
-  };
-  
+
 
   IElementType MESSAGE_FORMAT_EXPRESSION_NAME = new IElementType("MESSAGE_FORMAT_EXPRESSION_NAME", AngularJSLanguage.INSTANCE);
   IElementType MESSAGE_FORMAT_EXPRESSION = new AngularJSElementType("MESSAGE_FORMAT_EXPRESSION") {
