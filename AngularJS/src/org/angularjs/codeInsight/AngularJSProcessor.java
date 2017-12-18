@@ -144,7 +144,7 @@ public class AngularJSProcessor {
     return attribute != null && CompletionUtil.getOriginalOrSelf(attribute) == CompletionUtil.getOriginalOrSelf(parent);
   }
 
-  public static JSImplicitElementImpl.Builder createVariable(HtmlTag tag, XmlAttribute attribute, String name) {
+  public static JSImplicitElementImpl.Builder createTagReference(HtmlTag tag, XmlAttribute attribute, String name) {
     final JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(name.substring(1), attribute)
       .setType(JSImplicitElement.Type.Variable);
 
@@ -193,9 +193,14 @@ public class AngularJSProcessor {
       });
       if (element instanceof XmlAttribute) {
         final String name = ((XmlAttribute)element).getName();
+        if (AngularAttributesRegistry.isTagReferenceAttribute(name, element.getProject())) {
+          final JSImplicitElementImpl.Builder builder = createTagReference((HtmlTag)element.getParent(),
+                                                                           (XmlAttribute)element, name);
+          myResult.add(builder.toImplicitElement());
+        }
         if (AngularAttributesRegistry.isVariableAttribute(name, element.getProject())) {
-          final JSImplicitElementImpl.Builder builder = createVariable((HtmlTag)element.getParent(),
-                                                                                                 (XmlAttribute)element, name);
+          final JSImplicitElementImpl.Builder builder = new JSImplicitElementImpl.Builder(name.substring(4), element).
+            setType(JSImplicitElement.Type.Variable);
           myResult.add(builder.toImplicitElement());
         }
         if (AngularAttributesRegistry.isEventAttribute(name, element.getProject())) {

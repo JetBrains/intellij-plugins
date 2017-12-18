@@ -232,6 +232,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   protected static boolean isAngular2Attribute(String attrName, Project project) {
     return AngularAttributesRegistry.isEventAttribute(attrName, project) ||
            AngularAttributesRegistry.isBindingAttribute(attrName, project) ||
-           AngularAttributesRegistry.isVariableAttribute(attrName, project);
+           AngularAttributesRegistry.isVariableAttribute(attrName, project) ||
+           AngularAttributesRegistry.isTagReferenceAttribute(attrName, project);
   }
 }
