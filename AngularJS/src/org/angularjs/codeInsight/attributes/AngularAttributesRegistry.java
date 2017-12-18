@@ -58,8 +58,12 @@ public class AngularAttributesRegistry {
     return name.startsWith("(") && name.endsWith(")") && AngularIndexUtil.hasAngularJS2(project);
   }
 
-  public static boolean isVariableAttribute(String name, Project project) {
+  public static boolean isTagReferenceAttribute(String name, Project project) {
     return name.startsWith("#") && AngularIndexUtil.hasAngularJS2(project);
+  }
+
+  public static boolean isVariableAttribute(String name, Project project) {
+    return name.startsWith("let-") && AngularIndexUtil.hasAngularJS2(project);
   }
 
   public static boolean isTemplateAttribute(String name, Project project) {
