@@ -206,11 +206,22 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 }
 
-fun findModule(result: PsiElement): PsiElement? {
-  if (result is XmlFile && result.fileType == VueFileType.INSTANCE) {
+fun findModule(element: PsiElement?): JSEmbeddedContent? {
+  val file = element?.containingFile as? XmlFile
+  if (file != null && file.fileType == VueFileType.INSTANCE) {
+    val script = findScriptTag(file)
+    if (script != null) {
+      return PsiTreeUtil.findChildOfType(script, JSEmbeddedContent::class.java)
+    }
+  }
+  return null
+}
+
+fun findScriptTag(xmlFile : XmlFile): XmlTag? {
+  if (xmlFile.fileType == VueFileType.INSTANCE) {
     val visitor = MyScriptVisitor()
-    result.accept(visitor)
-    return visitor.jsElement
+    xmlFile.accept(visitor)
+    return visitor.scriptTag
   }
   return null
 }
@@ -227,10 +238,13 @@ private enum class VueStaticMethod(val methodName: String) {
 }
 
 private class MyScriptVisitor : XmlElementVisitor() {
-  internal var jsElement : JSElement? = null
+  internal var jsElement: JSEmbeddedContent? = null
+  internal var scriptTag: XmlTag? = null
+
   override fun visitXmlTag(tag: XmlTag?) {
     if (HtmlUtil.isScriptTag(tag)) {
-      jsElement = PsiTreeUtil.findChildOfType(tag, JSElement::class.java)
+      scriptTag = tag
+      jsElement = PsiTreeUtil.findChildOfType(tag, JSEmbeddedContent::class.java)
     }
   }
 

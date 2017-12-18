@@ -6,7 +6,6 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
-import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
@@ -15,7 +14,6 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
 import com.intellij.psi.impl.source.xml.XmlDocumentImpl
@@ -30,6 +28,7 @@ import com.intellij.xml.XmlElementDescriptor
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import com.intellij.xml.XmlTagNameProvider
 import com.intellij.xml.util.HtmlUtil
+import com.intellij.xml.util.XmlUtil
 import icons.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.getBoundName
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isNotInLibrary
@@ -96,7 +95,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   }
 
   private fun processLocalComponents(tag: XmlTag, processor: (String?, JSImplicitElement) -> Boolean): Boolean {
-    val content = findScriptContent(tag.containingFile as? HtmlFileImpl) ?: return true
+    val content = findModule(tag) ?: return true
     val defaultExport = ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment ?: return true
     val component = defaultExport.stubSafeElement as? JSObjectLiteralExpression ?: return true
 
@@ -252,10 +251,4 @@ class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JS
   override fun getContentType() = CONTENT_TYPE_ANY
   override fun getDefaultValue() = null
   override fun getDependences(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY!!
-}
-
-fun findScriptContent(file: HtmlFileImpl?): JSEmbeddedContent? {
-  return PsiTreeUtil.getChildrenOfType(file?.document, XmlTag::class.java)?.
-    firstOrNull { HtmlUtil.isScriptTag(it) }?.children?.
-    firstOrNull { it is JSEmbeddedContent } as? JSEmbeddedContent
 }

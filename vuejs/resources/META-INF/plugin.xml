@@ -44,6 +44,11 @@
     <localInspection language="Vue" groupName="Vue" displayName="Duplicate template/script tag" shortName="VueDuplicateTag"
                      enabledByDefault="true" level="WARNING"
                      implementationClass="org.jetbrains.vuejs.inspections.DuplicateTagInspection"/>
+    <intentionAction>
+      <className>org.jetbrains.vuejs.codeInsight.VueExtractComponentIntention</className>
+      <category>VueJS</category>
+    </intentionAction>
+
     <multiHostInjector implementation="org.jetbrains.vuejs.language.VueInjector" id="vue"/>
 
     <internalFileTemplate name="Vue Single File Component"/>
