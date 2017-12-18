@@ -72,7 +72,6 @@ public class AngularJSParser
       }
 
       private boolean tryParseNgIfStatement() {
-        PsiBuilder local = builder;
         PsiBuilder.Marker ngIf = builder.mark();
         getExpressionParser().parseExpression();
         if (builder.getTokenType() != JSTokenTypes.SEMICOLON) {
