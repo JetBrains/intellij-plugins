@@ -90,8 +90,8 @@ import compUI from 'compUI.vue'
 <to<caret>
 </template>
 <script>
-export default {
-}
+  export default {
+  }
 </script>
 """)
 
@@ -104,13 +104,77 @@ export default {
 <to-import<caret>
 </template>
 <script>
-import ToImport from "./toImport";
-
-export default {
-    components: {ToImport}
-}
+  import ToImport from "./toImport";
+  export default {
+      components: {ToImport}
+  }
 </script>
 """)
+    })
+  }
+
+  fun testCompleteWithImportCreateExport() {
+    myFixture.configureByText("toImport.vue", """
+<script>
+  export default {
+    name: 'toImport'
+  }
+</script>
+""")
+    myFixture.configureByText("CompleteWithImportCreateExport.vue", """
+<template>
+<to<caret>
+</template>
+<script>
+</script>
+""")
+
+    noAutoComplete(Runnable {
+      myFixture.completeBasic()
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
+      myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+      myFixture.checkResult("""
+<template>
+<to-import<caret>
+</template>
+<script>
+    import ToImport from "./toImport";
+    export default {
+        components: {ToImport}
+    }
+</script>
+""")
+    })
+  }
+
+  fun testCompleteWithImportCreateScript() {
+    myFixture.configureByText("toImport.vue", """
+<script>
+  export default {
+    name: 'toImport'
+  }
+</script>
+""")
+    myFixture.configureByText("CompleteWithImportCreateScript.vue", """
+<template>
+<to<caret>
+</template>
+""")
+
+    noAutoComplete(Runnable {
+      myFixture.completeBasic()
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
+      myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+      myFixture.checkResult("""
+<template>
+<to-import
+</template>
+<script>
+    import ToImport from "./toImport";
+    export default {
+        components: {ToImport}
+    }
+</script>""")
     })
   }
 
