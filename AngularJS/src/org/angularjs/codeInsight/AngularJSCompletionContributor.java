@@ -16,7 +16,6 @@ import org.angularjs.index.AngularControllerIndex;
 import org.angularjs.index.AngularFilterIndex;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.lang.AngularJSLanguage;
-import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +47,7 @@ public class AngularJSCompletionContributor extends CompletionContributor {
   }
 
   private static boolean addControllerVariants(CompletionResultSet result, CompletionParameters parameters, PsiReference ref, PsiElement parent) {
-    if (AngularJSAsExpression.isAsControllerRef(ref, parent)) {
+    if (AngularJSReferenceExpressionResolver.isAsControllerRef(ref, parent)) {
       addResults(result, parameters, AngularIndexUtil.getAllKeys(AngularControllerIndex.KEY, parent.getProject()));
       return true;
     }

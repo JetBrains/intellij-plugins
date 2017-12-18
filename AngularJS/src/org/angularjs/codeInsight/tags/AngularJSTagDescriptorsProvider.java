@@ -12,8 +12,9 @@ import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.XmlElementDescriptor;
+import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.XmlTagNameProvider;
-import com.intellij.xml.util.XmlUtil;
+import com.intellij.xml.impl.schema.AnyXmlElementDescriptor;
 import icons.AngularJSIcons;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularIndexUtil;
@@ -64,7 +65,11 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
 
     final String tagName = xmlTag.getName();
     final String directiveName = DirectiveUtil.normalizeAttributeName(tagName);
-    if (XmlUtil.isTagDefinedByNamespace(xmlTag)) return null;
+    final XmlNSDescriptor nsDescriptor = xmlTag.getNSDescriptor(xmlTag.getNamespace(), false);
+    final XmlElementDescriptor descriptor = nsDescriptor != null ? nsDescriptor.getElementDescriptor(xmlTag) : null;
+    if (descriptor != null && !(descriptor instanceof AnyXmlElementDescriptor)) {
+      return null;
+    }
     if ((NG_CONTAINER.equals(directiveName) || NG_CONTENT.equals(directiveName) || NG_TEMPLATE.equals(directiveName)) &&
         AngularIndexUtil.hasAngularJS2(project)) {
       return new AngularJSTagDescriptor(directiveName, createDirective(xmlTag, directiveName));
