@@ -287,7 +287,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testVariableDeclarations2() throws Exception {
+  public void testTemplateReferenceDeclarations2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("variable.html", "custom.ts", "angular2.js");
       myFixture.enableInspections(RequiredAttributesInspection.class);
@@ -296,7 +296,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testVariableCompletion2() throws Exception {
+  public void testTemplateReferenceCompletion2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("binding.html", "angular2.js");
       myFixture.completeBasic();
@@ -304,7 +304,15 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testVariableCompletion2Inline() throws Exception {
+  public void testVariableCompletion2() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("ngTemplate.html", "angular2.js");
+      myFixture.completeBasic();
+      myFixture.checkResultByFile("ngTemplate.after.html");
+    });
+  }
+
+  public void testTemplateReferenceCompletion2Inline() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("binding.ts", "angular2.js");
       myFixture.completeBasic();
@@ -312,7 +320,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testVariableSmart2() throws Exception {
+  public void testTemplateReferenceSmart2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("binding.type.html", "angular2.js");
       final PsiFile file = myFixture.getFile();
@@ -326,7 +334,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testVariableResolve2() throws Exception {
+  public void testTemplateReferenceResolve2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("binding.after.html", "angular2.js");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("user<caret>name", myFixture.getFile());
@@ -339,7 +347,20 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testVariableResolve2Inline() throws Exception {
+  public void testVariableResolve2() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("ngTemplate.after.html", "angular2.js");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("my_<caret>user", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("ngTemplate.after.html", resolve.getContainingFile().getName());
+      assertEquals("let-my_user", resolve.getContainingFile().findElementAt(resolve.getParent().getTextOffset()).getText());
+    });
+  }
+
+  public void testTemplateReferenceResolve2Inline() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("binding.after.ts", "angular2.js");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("in<caret>put_el.", myFixture.getFile());
