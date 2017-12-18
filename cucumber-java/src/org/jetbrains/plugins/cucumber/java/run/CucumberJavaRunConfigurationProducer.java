@@ -4,7 +4,6 @@ import com.intellij.execution.JavaExecutionUtil;
 import com.intellij.execution.JavaRunConfigurationExtensionManager;
 import com.intellij.execution.Location;
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.application.ApplicationConfigurationOptions;
 import com.intellij.execution.junit.JavaRunConfigurationProducerBase;
 import com.intellij.execution.junit2.info.LocationUtil;
 import com.intellij.openapi.module.Module;
@@ -114,9 +113,8 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     configuration.setNameFilter(getNameFilter(context));
     configuration.setFilePath(file.getPath());
     configuration.setProgramParameters(formatterOptions);
-    ApplicationConfigurationOptions options = configuration.getOptions();
-    if (options.getMainClassName() == null) {
-      options.setMainClassName(mainClassName);
+    if (configuration.getMainClassName() == null) {
+      configuration.setMainClassName(mainClassName);
     }
 
     if (configuration.getNameFilter() != null && configuration.getNameFilter().length() > 0) {

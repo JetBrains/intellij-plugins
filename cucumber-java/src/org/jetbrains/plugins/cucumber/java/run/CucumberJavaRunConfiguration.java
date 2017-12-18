@@ -3,7 +3,6 @@ package org.jetbrains.plugins.cucumber.java.run;
 import com.intellij.diagnostic.logging.LogConfigurationPanel;
 import com.intellij.execution.*;
 import com.intellij.execution.application.ApplicationConfiguration;
-import com.intellij.execution.application.ApplicationConfigurationOptions;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -60,15 +59,14 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         final JavaRunConfigurationModule module = getConfigurationModule();
 
         final int classPathType = JavaParameters.JDK_AND_CLASSES_AND_TESTS;
-        ApplicationConfigurationOptions options = CucumberJavaRunConfiguration.this.getOptions();
-        final String jreHome = options.isAlternativeJrePathEnabled() ? options.getAlternativeJrePath() : null;
+        final String jreHome = isAlternativeJrePathEnabled() ? getAlternativeJrePath() : null;
         JavaParametersUtil.configureModule(module, params, classPathType, jreHome);
         JavaParametersUtil.configureConfiguration(params, CucumberJavaRunConfiguration.this);
 
         String path = getSMRunnerPath();
         params.getClassPath().add(path);
 
-        params.setMainClass(options.getMainClassName());
+        params.setMainClass(getMainClassName());
         for (RunConfigurationExtension ext : Extensions.getExtensions(RunConfigurationExtension.EP_NAME)) {
           ext.updateJavaParameters(CucumberJavaRunConfiguration.this, params, getRunnerSettings());
         }
