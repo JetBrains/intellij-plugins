@@ -81,8 +81,9 @@ public class CfmlFileViewProvider extends MultiplePsiFilesPerDocumentFileViewPro
     return null;
   }
 
+  @NotNull
   @Override
-  protected CfmlFileViewProvider cloneInner(final VirtualFile copy) {
+  protected CfmlFileViewProvider cloneInner(@NotNull final VirtualFile copy) {
     return new CfmlFileViewProvider(getManager(), copy, false);
   }
 

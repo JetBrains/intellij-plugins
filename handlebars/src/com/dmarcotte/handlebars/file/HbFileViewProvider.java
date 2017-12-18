@@ -93,8 +93,9 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
     return new THashSet<>(Arrays.asList(new Language[]{myBaseLanguage, getTemplateDataLanguage()}));
   }
 
+  @NotNull
   @Override
-  protected MultiplePsiFilesPerDocumentFileViewProvider cloneInner(VirtualFile virtualFile) {
+  protected MultiplePsiFilesPerDocumentFileViewProvider cloneInner(@NotNull VirtualFile virtualFile) {
     return new HbFileViewProvider(getManager(), virtualFile, false, myBaseLanguage, myTemplateLanguage);
   }
 
