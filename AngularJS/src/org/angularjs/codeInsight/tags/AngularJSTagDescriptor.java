@@ -1,7 +1,6 @@
 package org.angularjs.codeInsight.tags;
 
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl;
 import com.intellij.psi.impl.source.xml.XmlDocumentImpl;
@@ -54,10 +53,10 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
 
   @Override
   public XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
-    XmlTag parent = contextTag.getParentTag();
-    if (parent == null) return null;
-    final XmlNSDescriptor descriptor = parent.getNSDescriptor(childTag.getNamespace(), true);
-    return descriptor == null ? null : descriptor.getElementDescriptor(childTag);
+    for (XmlElementDescriptor descriptor : getElementsDescriptors(contextTag)) {
+      if (descriptor.getName().equals(childTag.getName())) return descriptor;
+    }
+    return null;
   }
 
   @Override

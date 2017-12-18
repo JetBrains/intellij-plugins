@@ -3,7 +3,6 @@ package org.angularjs.lang.parser;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilderFactory;
-import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.impl.DebugUtil;
@@ -60,7 +59,7 @@ public class AngularJSParserTest extends LightPlatformCodeInsightTestCase implem
       if (result.length() > 0) result.append("------\n");
       final AngularJSParserDefinition definition = new AngularJSParserDefinition();
       final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(definition, new AngularJSLexer(), line);
-      final ASTNode root = definition.createParser(getProject()).parse(JSStubElementTypes.FILE, builder);
+      final ASTNode root = definition.createParser(getProject()).parse(AngularJSElementTypes.FILE, builder);
       result.append(DebugUtil.psiToString(root.getPsi(), false, false));
     }    
 
