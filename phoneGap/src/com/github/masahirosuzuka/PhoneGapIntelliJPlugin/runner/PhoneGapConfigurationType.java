@@ -57,6 +57,7 @@ public class PhoneGapConfigurationType implements ConfigurationType, DumbAware {
       super(type);
     }
 
+    @NotNull
     @Override
     public RunConfiguration createTemplateConfiguration(Project project) {
       return new PhoneGapRunConfiguration(project, myConfigurationFactory, RUN_CONFIGURATION_ID);

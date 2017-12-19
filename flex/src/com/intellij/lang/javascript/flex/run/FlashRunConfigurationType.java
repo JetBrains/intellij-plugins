@@ -21,6 +21,7 @@ public class FlashRunConfigurationType implements ConfigurationType {
 
   public FlashRunConfigurationType() {
     myFactory = new ConfigurationFactory(this) {
+      @NotNull
       public RunConfiguration createTemplateConfiguration(Project project) {
         return new FlashRunConfiguration(project, this, "");
       }

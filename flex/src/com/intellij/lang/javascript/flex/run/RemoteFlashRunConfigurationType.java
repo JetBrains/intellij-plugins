@@ -22,6 +22,7 @@ public class RemoteFlashRunConfigurationType implements ConfigurationType, DumbA
 
   public RemoteFlashRunConfigurationType() {
     myFactory = new ConfigurationFactory(this) {
+      @NotNull
       public RunConfiguration createTemplateConfiguration(Project project) {
         return new RemoteFlashRunConfiguration(project, this, "");
       }

@@ -33,6 +33,7 @@ public class CfmlUnitRunConfigurationType implements ConfigurationType {
 
   public CfmlUnitRunConfigurationType() {
     myFactory = new ConfigurationFactory(this) {
+      @NotNull
       public RunConfiguration createTemplateConfiguration(Project project) {
         return new CfmlUnitRunConfiguration(project, this, "");
       }

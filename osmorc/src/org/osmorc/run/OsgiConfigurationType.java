@@ -47,6 +47,7 @@ public class OsgiConfigurationType extends ConfigurationTypeBase {
     super(ID, OsmorcBundle.message("run.configuration.name"), OsmorcBundle.message("run.configuration.description"), OsmorcIdeaIcons.Osgi);
 
     addFactory(new ConfigurationFactory(this) {
+      @NotNull
       @Override
       public RunConfiguration createTemplateConfiguration(Project project) {
         return new OsgiRunConfiguration(project, this, "");
