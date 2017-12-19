@@ -111,7 +111,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
     myModuleSelector.reset(configuration);
     myCommonProgramParameters.reset(configuration);
 
-    myMainClass.getComponent().setText(configuration.getOptions().getMainClassName());
+    myMainClass.getComponent().setText(configuration.getMainClassName());
     myGlue.getComponent().setText(configuration.getGlue());
     myFeatureOrFolder.getComponent().setText(configuration.getFilePath());
   }
