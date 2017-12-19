@@ -8,10 +8,14 @@ import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.projectView.BaseProjectViewTestCase;
 import com.intellij.testFramework.PlatformTestUtil;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
+// this is to make sure that testMxmlWithCss() is not the first one, otherwise it sometimes fails on buildserver because of too long class loading
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class FlexProjectViewTest extends BaseProjectViewTestCase {
 
   private static final String PANE_ID = "";
@@ -241,9 +245,9 @@ public class FlexProjectViewTest extends BaseProjectViewTestCase {
                                      "  MyComp2.as");
   }
 
-  public void testCss() {
+  public void testMxmlWithCss() {
     doTest(true, false, false, true, "-Project\n" +
-                                     " -PsiDirectory: Css\n" +
+                                     " -PsiDirectory: MxmlWithCss\n" +
                                      "  -Foo.mxml\n" +
                                      "   #rSl s|Button#track\n" +
                                      "   .myButtonStyle\n" +
