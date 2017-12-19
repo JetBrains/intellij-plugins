@@ -76,6 +76,50 @@ export default {
     }
 </script>""", 2)
 
+  fun testExtractTagWithAttributeAndMethodCall() = doExtractTest(
+    """<template>
+<caret><p v-if="one">Paragraph! {{ compMethod() }}</p>
+</template>
+<script>
+export default {
+    props: {
+        one: {}
+    },
+    computed: {
+      compMethod() {}
+    }
+}
+</script>""",
+
+    """<template>
+    <new-component :comp-method="compMethod()" :one="one"/>
+</template>
+<script>
+import NewComponent from "./NewComponent";
+export default {
+    components: {NewComponent},
+    props: {
+        one: {}
+    },
+    computed: {
+      compMethod() {}
+    }
+}
+</script>""",
+
+    """<template>
+    <p v-if="one">Paragraph! {{ compMethod }}</p>
+</template>
+<script>
+    export default {
+        name: 'new-component',
+        props: {
+            compMethod: {},
+            one: {}
+        }
+    }
+</script>""", 1)
+
   private fun doExtractTest(existing: String, modified: String, newText: String, numTags: Int = 1) {
     myFixture.configureByText(getTestName(false) + ".vue", existing)
 

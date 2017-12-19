@@ -46,6 +46,7 @@ class VueExtractComponentIntention : JavaScriptIntention() {
         if (parent != null && (type == XmlElementType.XML_NAME || type == XmlElementType.XML_START_TAG_START)) {
           return listOf(parent)
         }
+        if (element is XmlTag) return listOf(element)
         return null
       }
       var start = editor.selectionModel.selectionStart
