@@ -26,39 +26,41 @@ class VueExtractComponentIntention : JavaScriptIntention() {
   override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
     editor ?: return false
     if (VueFileType.INSTANCE != element.containingFile?.fileType) return false
-    return getContext(editor, element) != null
+    return Companion.getContext(editor, element) != null
   }
 
   override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
-    val context = getContext(editor, element) ?: return
+    val context = Companion.getContext(editor, element) ?: return
     VueExtractComponentRefactoring(project, context, editor).perform()
   }
 
   override fun startInWriteAction() = false
 
-  private fun getContext(editor: Editor?, element: PsiElement): List<XmlTag>? {
-    val file = element.containingFile
-    if (file == null) return null
-    if (editor == null || !editor.selectionModel.hasSelection()) {
-      val type = element.node.elementType
-      val parent = element.parent as? XmlTag
-      if (parent != null && (type == XmlElementType.XML_NAME || type == XmlElementType.XML_START_TAG_START)) {
-        return listOf(parent)
+  companion object {
+    fun getContext(editor: Editor?, element: PsiElement): List<XmlTag>? {
+      val file = element.containingFile
+      if (file == null) return null
+      if (editor == null || !editor.selectionModel.hasSelection()) {
+        val type = element.node.elementType
+        val parent = element.parent as? XmlTag
+        if (parent != null && (type == XmlElementType.XML_NAME || type == XmlElementType.XML_START_TAG_START)) {
+          return listOf(parent)
+        }
+        return null
       }
-      return null
-    }
-    var start = editor.selectionModel.selectionStart
-    val end = editor.selectionModel.selectionEnd
+      var start = editor.selectionModel.selectionStart
+      val end = editor.selectionModel.selectionEnd
 
-    val list = mutableListOf<XmlTag>()
-    while (start < end) {
-      while (file.findElementAt(start) is PsiWhiteSpace && start < end) start++
-      if (start == end) break
-      val tag = PsiTreeUtil.findElementOfClassAtOffset(file, start, XmlTag::class.java, true) ?: return null
-      list.add(tag)
-      start = tag.textRange.endOffset
+      val list = mutableListOf<XmlTag>()
+      while (start < end) {
+        while (file.findElementAt(start) is PsiWhiteSpace && start < end) start++
+        if (start == end) break
+        val tag = PsiTreeUtil.findElementOfClassAtOffset(file, start, XmlTag::class.java, true) ?: return null
+        list.add(tag)
+        start = tag.textRange.endOffset
+      }
+      if (list.isEmpty()) return null
+      return list
     }
-    if (list.isEmpty()) return null
-    return list
   }
 }

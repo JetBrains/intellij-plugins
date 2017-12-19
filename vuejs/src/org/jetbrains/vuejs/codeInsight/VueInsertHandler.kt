@@ -138,12 +138,24 @@ class VueInsertHandler : XmlTagInsertHandler() {
     private fun addProperty(newProperty: JSProperty,
                             obj: JSObjectLiteralExpression,
                             onTheNewLine: Boolean): JSProperty {
-      val anchor = obj.firstProperty ?: obj.node.findChildByType(JSTokenTypes.LBRACE)?.psi
+      val firstProperty = obj.firstProperty
+      val anchor: PsiElement?
+      anchor = if ("name" == firstProperty?.name) {
+        PsiTreeUtil.findSiblingForward(firstProperty, JSTokenTypes.COMMA, null) ?: firstProperty
+      } else {
+        obj.node.findChildByType(JSTokenTypes.LBRACE)?.psi
+      }
+      val needsComma = anchor != null && (anchor.node.elementType == JSTokenTypes.COMMA || !obj.properties.isEmpty())
       val addedProperty = JSChangeUtil.doDoAddAfter(obj, newProperty, anchor) as JSProperty
+      var lastAdded: PsiElement = addedProperty
+      if (needsComma) {
+        val comma = JSChangeUtil.createCommaPsiElement(anchor!!)
+        lastAdded = JSChangeUtil.doDoAddAfter(obj, comma, addedProperty)
+      }
       if (onTheNewLine) {
         JSChangeUtil.addWs(obj.node, addedProperty.node, "\n")
-        if (anchor !is JSProperty && addedProperty.nextSibling != null) {
-          JSChangeUtil.addWs(obj.node, addedProperty.nextSibling.node, "\n")
+        if (addedProperty.nextSibling != null) {
+          JSChangeUtil.addWs(obj.node, lastAdded.nextSibling.node, "\n")
         }
       }
       return addedProperty
