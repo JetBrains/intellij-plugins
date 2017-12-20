@@ -30,10 +30,7 @@ import org.jetbrains.vuejs.index.getForAllKeys
 class VueComponents {
   companion object {
     fun onlyLocal(elements: Collection<JSImplicitElement>): List<JSImplicitElement> {
-      return elements.filter {
-        val file = it.containingFile.viewProvider.virtualFile
-        !JSProjectUtil.isInLibrary(file, it.project) && !JSLibraryUtil.isProbableLibraryFile(file)
-      }
+      return elements.filter(this::isNotInLibrary)
     }
 
     fun isNotInLibrary(element : JSImplicitElement): Boolean {
