@@ -18,10 +18,11 @@ package com.jetbrains.lang.dart.ide.findUsages;
 import com.intellij.openapi.project.Project;
 import com.intellij.usages.impl.FileStructureGroupRuleProvider;
 import com.intellij.usages.rules.UsageGroupingRule;
+import org.jetbrains.annotations.NotNull;
 
 public class DartUnitMemberGroupRuleProvider implements FileStructureGroupRuleProvider {
   @Override
-  public UsageGroupingRule getUsageGroupingRule(Project project) {
+  public UsageGroupingRule getUsageGroupingRule(@NotNull Project project) {
     return new DartUnitMemberUsageGroupingRule();
   }
 }
