@@ -237,7 +237,6 @@ public class Flexmojos4ImporterTest extends FlexmojosImporterTestBase {
                                    "            <configuration>\n" +
                                    "              <sources>\n" +
                                    "                <source>localAnotherSourceRoot</source>\n" +
-                                   "                <source>${env." + getEnvVar() + "}</source>\n" +
                                    "              </sources>\n" +
                                    "            </configuration>\n" +
                                    "          </execution>\n" +
@@ -257,8 +256,7 @@ public class Flexmojos4ImporterTest extends FlexmojosImporterTestBase {
 
     final String rootDir = myProjectRoot.getPath();
     String paths = "\t\t\t<path-element>" + FileUtil.toSystemDependentName(rootDir + "/" + SOURCE_DIR) + "</path-element>\n" +
-                   "\t\t\t<path-element>" + FileUtil.toSystemDependentName(rootDir + "/localAnotherSourceRoot") + "</path-element>\n" +
-                   "\t\t\t<path-element>" + new File(System.getenv(getEnvVar())).getCanonicalPath() + "</path-element>\n";
+                   "\t\t\t<path-element>" + FileUtil.toSystemDependentName(rootDir + "/localAnotherSourceRoot") + "</path-element>\n";
     int index = assertContains(s, "\t\t<source-path>\n" + paths + "\t\t</source-path>", 0);
     assertContains(s, "\t<include-sources>\n" + paths.replace("\t\t\t", "\t\t") + "\t</include-sources>", index);
 
