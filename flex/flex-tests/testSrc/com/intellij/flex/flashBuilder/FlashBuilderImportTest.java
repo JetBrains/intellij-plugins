@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRoo
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.ConfigurationException;
@@ -31,6 +32,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.IdeaTestCase;
+import com.intellij.util.TimeoutUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,14 +57,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
     VfsRootAccess.allowRootAccess(getTestRootDisposable(),
                                   urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
     super.setUp();
-
-    ApplicationManager.getApplication().runWriteAction(new ThrowableComputable<Object, IOException>() {
-      @Override
-      public Object compute() {
-        myFlashBuilderProjectDir = prepareFlashBuilderProjectDir();
-        return null;
-      }
-    });
+    WriteAction.run(() -> myFlashBuilderProjectDir = prepareFlashBuilderProjectDir());
   }
 
   private VirtualFile prepareFlashBuilderProjectDir() {
@@ -455,6 +450,11 @@ public class FlashBuilderImportTest extends IdeaTestCase {
         new LibraryInfo(null, null, rootDirPath + "/relative.swc"),
         new LibraryInfo(null, null, swc.getPath())
       });
+
+    final long maxTime = System.currentTimeMillis() + 10000;
+    while (!FileUtil.delete(new File(swc.getPath())) && System.currentTimeMillis() < maxTime) {
+      TimeoutUtil.sleep(10);
+    }
   }
 
   private static VirtualFile createEmptySwc(VirtualFile dir, String name) throws IOException {
