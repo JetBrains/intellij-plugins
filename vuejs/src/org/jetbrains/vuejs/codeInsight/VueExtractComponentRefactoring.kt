@@ -1,7 +1,10 @@
 package org.jetbrains.vuejs.codeInsight
 
+import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration
+import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil.findExistingES6Import
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.openapi.application.WriteAction
@@ -14,6 +17,8 @@ import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.Trinity
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.PostprocessReformattingAspect
@@ -125,13 +130,18 @@ class MyData(private val newComponentName: String, private val list: List<XmlTag
   private val folder: PsiDirectory? = list[0].containingFile.parent
   private val scriptTag = if (list[0].containingFile is XmlFile) findScriptTag(list[0].containingFile as XmlFile) else null
   private val detectedLanguage = detectLanguage()
+  private val importsToCopy: MutableMap<String, ES6ImportDeclaration> = mutableMapOf()
   private val refDataMap: MutableMap<XmlTag, MutableList<RefData>> = calculateProps()
 
   private fun calculateProps(): MutableMap<XmlTag, MutableList<RefData>> {
     val refList: List<RefData> = gatherReferences()
     val map: MutableMap<XmlTag, MutableList<RefData>> = mutableMapOf()
-    refList.map { refData ->
-      val resolved = refData.resolve() ?: return@map
+    refList.forEach { refData ->
+      if (refData.ref is VueTagNameReference) {
+        processVueComponent(refData.ref)
+        return@forEach
+      }
+      val resolved = refData.resolve() ?: return@forEach
       val parentTag = PsiTreeUtil.getParentOfType(resolved, XmlTag::class.java)
       if (scriptTag != null && parentTag == scriptTag || PsiTreeUtil.isAncestor(parentTag, refData.tag, true)) {
         map.putIfAbsent(refData.tag, mutableListOf())
@@ -139,6 +149,22 @@ class MyData(private val newComponentName: String, private val list: List<XmlTag
       }
     }
     return map
+  }
+
+  private fun processVueComponent(ref: VueTagNameReference) {
+    if (scriptTag == null) return
+    val content = PsiTreeUtil.findChildOfType(scriptTag, JSEmbeddedContent::class.java) ?: return
+    val variants = ref.multiResolve(false)
+    val foundImport = variants.mapNotNull {
+      if (!it.isValidResult || it.element == null) return@mapNotNull null
+      val file = it.element!!.containingFile
+      // this means it was not resolved into the other file which we can import
+      if (ref.element.containingFile == file) return@mapNotNull null
+
+      val name = FileUtil.getNameWithoutExtension(file.name)
+      findExistingES6Import(content, null, name, true) ?: findExistingES6Import(content, null, file.name, true)
+    }.firstOrNull() ?: return
+    importsToCopy.put(toAsset(ref.nameElement.text).capitalize(), foundImport)
   }
 
   private fun gatherReferences(): List<RefData> {
@@ -192,14 +218,30 @@ class MyData(private val newComponentName: String, private val list: List<XmlTag
     val newText = """<template>
 ${generateNewTemplateContents()}
 </template>
-<script $detectedLanguage>
+<script $detectedLanguage>${generateImports()}
 export default {
-  name: '$newComponentName'${ if (refDataMap.isEmpty()) ""
-    else sortedProps().joinToString(",\n", ",\nprops: {\n", "\n}") { "${it.getRefName()}: {}" } }
+  name: '$newComponentName'${generateDescriptorMembers()}
 }
 </script>"""
     VfsUtil.saveText(newFile, newText)
     return PsiManager.getInstance(folder.project).findFile(newFile)
+  }
+
+  private fun generateImports(): String {
+    if (importsToCopy.isEmpty()) return ""
+    return importsToCopy.keys.sorted().map { "import ${it} from '${StringUtil.unquoteString(importsToCopy[it]!!.importModuleText ?: "")}'" }
+      .joinToString ( "\n", "\n" )
+  }
+
+  private fun generateDescriptorMembers(): String {
+    val members = mutableListOf<String>()
+    if (!importsToCopy.isEmpty()) {
+      members.add(importsToCopy.keys.sorted().joinToString ( ", ", ",\ncomponents: {", "}" ))
+    }
+    if (!refDataMap.isEmpty()) {
+      members.add(sortedProps().joinToString(",\n", ",\nprops: {\n", "\n}") { "${it.getRefName()}: {}" })
+    }
+    return members.joinToString("")
   }
 
   fun modifyCurrentComponent(newPsiFile: PsiFile, editor: Editor?): PsiElement? {

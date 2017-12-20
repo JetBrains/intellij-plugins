@@ -120,6 +120,104 @@ export default {
     }
 </script>""", 1)
 
+  fun testExtractComponentWithOtherComponentInside() {
+    myFixture.configureByText("OtherComp.vue", "<script>export default { name: 'other-comp' }</script>")
+    doExtractTest(
+"""<template>
+  <caret><div>
+    <other-comp>123 -> {{ prop }}</other-comp>
+  </div>
+</template>
+<script>
+    import OtherComp from './OtherComp'
+    export default {
+        name: 'current-comp',
+        components: { OtherComp },
+        props: ['prop']
+    }
+</script>
+""".trimMargin(),
+
+"""<template>
+    <new-component :prop="prop"/>
+</template>
+<script>
+    import OtherComp from './OtherComp'
+    import NewComponent from "./NewComponent";
+    export default {
+        name: 'current-comp',
+        components: {NewComponent, OtherComp },
+        props: ['prop']
+    }
+</script>""",
+
+"""<template>
+    <div>
+        <other-comp>123 -> {{ prop }}</other-comp>
+    </div>
+</template>
+<script>
+    import OtherComp from './OtherComp'
+    export default {
+        name: 'new-component',
+        components: {OtherComp},
+        props: {
+            prop: {}
+        }
+    }
+</script>""", 1)
+  }
+
+  fun testExtractComponentWithOtherComponentInsideTS() {
+    myFixture.configureByText("OtherComp.vue", "<script>export default { name: 'other-comp' }</script>")
+    doExtractTest(
+"""<template>
+  <caret><div>
+    <other-comp>123 -> {{ prop }}</other-comp>
+    <unknown-comp/>
+  </div>
+</template>
+<script lang="ts">
+    import OtherComp from './OtherComp'
+    export default {
+        name: 'current-comp',
+        components: { OtherComp },
+        props: ['prop']
+    }
+</script>
+""".trimMargin(),
+
+"""<template>
+    <new-component :prop="prop"/>
+</template>
+<script lang="ts">
+    import OtherComp from './OtherComp'
+    import NewComponent from "./NewComponent";
+    export default {
+        name: 'current-comp',
+        components: {NewComponent, OtherComp },
+        props: ['prop']
+    }
+</script>""",
+
+"""<template>
+    <div>
+        <other-comp>123 -> {{ prop }}</other-comp>
+        <unknown-comp/>
+    </div>
+</template>
+<script lang="ts">
+    import OtherComp from './OtherComp'
+    export default {
+        name: 'new-component',
+        components: {OtherComp},
+        props: {
+            prop: {}
+        }
+    }
+</script>""", 1)
+  }
+
   private fun doExtractTest(existing: String, modified: String, newText: String, numTags: Int = 1) {
     myFixture.configureByText(getTestName(false) + ".vue", existing)
 
