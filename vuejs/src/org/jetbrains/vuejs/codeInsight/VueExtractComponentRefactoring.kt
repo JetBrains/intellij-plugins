@@ -1,10 +1,13 @@
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration
+import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil.findExistingES6Import
+import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.openapi.application.WriteAction
@@ -248,7 +251,8 @@ export default {
     val leader = list[0]
     val newTagName = fromAsset(newComponentName)
     val replaceText = "<template><$newTagName ${generateProps()}/></template>"
-    val dummyFile = PsiFileFactory.getInstance(leader.project).createFileFromText("dummy.vue", VueFileType.INSTANCE, replaceText)
+    val project = leader.project
+    val dummyFile = PsiFileFactory.getInstance(project).createFileFromText("dummy.vue", VueFileType.INSTANCE, replaceText)
     val template = PsiTreeUtil.findChildOfType(dummyFile, XmlTag::class.java)!!
     val newTag = template.findFirstSubTag(newTagName)!!
 
@@ -256,7 +260,29 @@ export default {
     list.subList(1, list.size).forEach { it.delete() }
 
     VueInsertHandler.InsertHandlerWorker().insertComponentImport(newlyAdded, newComponentName, newPsiFile, editor)
+    optimizeUnusedComponentsAndImports(newlyAdded.containingFile)
     return newlyAdded
+  }
+
+  private fun optimizeUnusedComponentsAndImports(file: PsiFile) {
+    val content = findModule(file) ?: return
+    val defaultExport = ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment
+    val component = defaultExport?.stubSafeElement as? JSObjectLiteralExpression
+
+    val components = (component?.findProperty("components")?.value as? JSObjectLiteralExpression)?.properties
+    if (components != null && !components.isEmpty()) {
+      val names = components.map { toAsset(it.name ?: "").capitalize() }.toMutableSet()
+      (file as XmlFile).accept(object : VueFileVisitor() {
+        override fun visitElement(element: PsiElement?) {
+          if (element is XmlTag) {
+            names.remove(toAsset(element.name).capitalize())
+            recursion(element)
+          }
+        }
+      })
+      components.filter { it.name != null && names.contains(toAsset(it.name!!).capitalize()) }.forEach { it.delete() }
+//      ES6CreateImportUtil.optimizeImports(file) //works poorly, comment it out for now
+    }
   }
 
   private fun generateProps(): String {

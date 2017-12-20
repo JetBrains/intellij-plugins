@@ -237,7 +237,7 @@ private enum class VueStaticMethod(val methodName: String) {
     JSSymbolUtil.isAccurateReferenceExpressionName(reference, VueFrameworkHandler.VUE, methodName)
 }
 
-private class MyScriptVisitor : XmlElementVisitor() {
+private class MyScriptVisitor : VueFileVisitor() {
   internal var jsElement: JSEmbeddedContent? = null
   internal var scriptTag: XmlTag? = null
 
@@ -247,12 +247,14 @@ private class MyScriptVisitor : XmlElementVisitor() {
       jsElement = PsiTreeUtil.findChildOfType(tag, JSEmbeddedContent::class.java)
     }
   }
+}
 
+open class VueFileVisitor: XmlElementVisitor() {
   override fun visitXmlDocument(document: XmlDocument?) = recursion(document)
 
   override fun visitXmlFile(file: XmlFile?) = recursion(file)
 
-  private fun recursion(document: PsiElement?) {
-    document?.children?.forEach { it.accept(this) }
+  protected fun recursion(element: PsiElement?) {
+    element?.children?.forEach { it.accept(this) }
   }
 }

@@ -146,7 +146,7 @@ export default {
     import NewComponent from "./NewComponent";
     export default {
         name: 'current-comp',
-        components: {NewComponent, OtherComp },
+        components: {NewComponent},
         props: ['prop']
     }
 </script>""",
@@ -195,7 +195,7 @@ export default {
     import NewComponent from "./NewComponent";
     export default {
         name: 'current-comp',
-        components: {NewComponent, OtherComp },
+        components: {NewComponent},
         props: ['prop']
     }
 </script>""",
