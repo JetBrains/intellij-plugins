@@ -4,6 +4,7 @@ import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.DialectDetector
+import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.javascript.frameworks.JSFrameworkSpecificHandlersFactory
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
@@ -11,13 +12,11 @@ import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl
 import com.intellij.lang.javascript.psi.types.JSContextualUnionTypeImpl
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
 import com.intellij.psi.PsiElement
-import com.intellij.psi.ResolveResult
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.language.VueJSLanguage
-import java.util.*
 
 /**
  * @author Irina.Chernushina on 11/10/2017.
@@ -49,7 +48,7 @@ class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandl
                       .flatten()
                       .filter {
                         val psiFile = it.element?.containingFile
-                        psiFile != null && DialectDetector.isTypeScriptDefinitionFile(psiFile)
+                        psiFile != null && TypeScriptUtil.isDefinitionFile(psiFile)
                       }
                       .mapNotNull { (it.element as? TypeScriptTypeAlias)?.typeDeclaration }.firstOrNull() ?: return null
 
