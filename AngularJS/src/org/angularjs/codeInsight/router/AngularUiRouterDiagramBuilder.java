@@ -116,7 +116,7 @@ public class AngularUiRouterDiagramBuilder {
   @Nullable
   public static JSCallExpression findWrappingCallExpression(JSImplicitElement element) {
     if (element.getNavigationElement() instanceof JSCallExpression) return (JSCallExpression)element.getNavigationElement();
-    return ObjectUtils.tryCast(JSStubBasedPsiTreeUtil.getParentOfType(element, TokenSet.create(JSStubElementTypes.CALL_EXPRESSION), true),
+    return ObjectUtils.tryCast(JSStubBasedPsiTreeUtil.getContextOfType(element, TokenSet.create(JSStubElementTypes.CALL_EXPRESSION), true),
                                JSCallExpression.class);
   }
 
