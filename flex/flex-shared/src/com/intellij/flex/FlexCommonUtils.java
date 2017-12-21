@@ -756,12 +756,7 @@ public class FlexCommonUtils {
 
   public static boolean is64BitJava6(final String javaHome) {
     JdkVersionDetector.JdkVersionInfo info = JdkVersionDetector.getInstance().detectJdkVersionInfo(javaHome);
-    if (info != null) {
-      boolean is64Bit = info.getBitness() == Bitness.x64;
-      boolean isJava6 = info.getVersion().contains("version \"1.6.");
-      return is64Bit && isJava6;
-    }
-    return false;
+    return info != null && info.version.feature == 6 && info.bitness == Bitness.x64;
   }
 
   public static List<String> getCommandLineForSdkTool(final @NotNull JpsProject project,
