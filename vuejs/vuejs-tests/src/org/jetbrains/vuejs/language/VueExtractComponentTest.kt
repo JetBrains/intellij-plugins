@@ -191,8 +191,8 @@ export default {
     <new-component :prop="prop"/>
 </template>
 <script lang="ts">
-    import OtherComp from './OtherComp'
     import NewComponent from "./NewComponent";
+
     export default {
         name: 'current-comp',
         components: {NewComponent},

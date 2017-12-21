@@ -2,6 +2,7 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
+import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil.findExistingES6Import
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
@@ -21,7 +22,6 @@ import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.Trinity
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.PostprocessReformattingAspect
@@ -232,7 +232,7 @@ export default {
 
   private fun generateImports(): String {
     if (importsToCopy.isEmpty()) return ""
-    return importsToCopy.keys.sorted().map { "import ${it} from '${StringUtil.unquoteString(importsToCopy[it]!!.importModuleText ?: "")}'" }
+    return importsToCopy.keys.sorted().map { "import ${it} from ${importsToCopy[it]!!.fromClause?.referenceText ?: "''"}" }
       .joinToString ( "\n", "\n" )
   }
 
@@ -281,7 +281,7 @@ export default {
         }
       })
       components.filter { it.name != null && names.contains(toAsset(it.name!!).capitalize()) }.forEach { it.delete() }
-//      ES6CreateImportUtil.optimizeImports(file) //works poorly, comment it out for now
+      ES6CreateImportUtil.optimizeImports(file)
     }
   }
 
