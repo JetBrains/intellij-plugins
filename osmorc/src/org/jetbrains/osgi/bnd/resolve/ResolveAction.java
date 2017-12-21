@@ -17,8 +17,7 @@ import aQute.bnd.build.Run;
 import aQute.bnd.build.Workspace;
 import aQute.bnd.build.model.BndEditModel;
 import aQute.bnd.build.model.clauses.VersionedClause;
-import aQute.bnd.header.Attrs;
-import aQute.bnd.osgi.Constants;
+import aQute.bnd.osgi.resource.ResourceUtils;
 import aQute.bnd.properties.IDocument;
 import biz.aQute.resolve.ProjectResolver;
 import com.intellij.codeInsight.FileModificationService;
@@ -38,8 +37,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.osgi.bnd.BndFileType;
-import org.osgi.framework.Version;
-import org.osgi.framework.VersionRange;
 import org.osgi.resource.Resource;
 import org.osgi.resource.Wire;
 import org.osgi.service.resolver.ResolutionException;
@@ -83,15 +80,8 @@ public class ResolveAction extends AnAction {
              ProjectResolver projectResolver = new ProjectResolver(run)) {
           resolveResult = projectResolver.resolve();
 
-          List<VersionedClause> versionedClauses = projectResolver.getRunBundles().stream()
-            .map(c -> {
-              Version left = new Version(c.getVersion());
-              Version right = new Version(left.getMajor(), left.getMinor(), left.getMicro() + 1);
-              VersionRange range = new VersionRange(VersionRange.LEFT_CLOSED, left, right, VersionRange.RIGHT_OPEN);
-              Attrs attrs = new Attrs();
-              attrs.put(Constants.VERSION_ATTRIBUTE, range.toString());
-              return new VersionedClause(c.getBundleSymbolicName(), attrs);
-            })
+          List<VersionedClause> versionedClauses = resolveResult.keySet().stream()
+            .map(resource -> ResourceUtils.toVersionClause(resource, "[===,==+)"))
             .sorted(Comparator.comparing(VersionedClause::getName))
             .collect(Collectors.toList());
 
