@@ -218,6 +218,56 @@ export default {
 </script>""", 1)
   }
 
+  fun testExtractWithVFor() = doExtractTest(
+"""<template>
+    <div v-for="item in items">
+        <caret><span>Text: {{ item }}</span>
+    </div>
+</template>
+
+<script>
+    export default {
+        name: "test-v-for",
+        data() {
+            return {
+                items: [1,2,3,4,5]
+            }
+        }
+    };
+</script>""",
+
+"""<template>
+    <div v-for="item in items">
+        <new-component :item="item"/>
+    </div>
+</template>
+
+<script>
+    import NewComponent from "./NewComponent";
+    export default {
+        name: "test-v-for",
+        components: {NewComponent},
+        data() {
+            return {
+                items: [1,2,3,4,5]
+            }
+        }
+    };
+</script>""",
+
+"""<template>
+    <span>Text: {{ item }}</span>
+</template>
+<script>
+    export default {
+        name: 'new-component',
+        props: {
+            item: {}
+        }
+    }
+</script>"""
+  )
+
   private fun doExtractTest(existing: String, modified: String, newText: String, numTags: Int = 1) {
     myFixture.configureByText(getTestName(false) + ".vue", existing)
 
