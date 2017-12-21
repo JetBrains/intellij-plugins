@@ -34,13 +34,10 @@ public class ActionScriptStatementMoverTest extends JSStatementMoverTestBase {
   }
 
   public void testMoveStatementInMxml() throws Exception {
-    doTestWithJSSupport(() -> {
-      FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), this.getClass(), getTestRootDisposable());
-      JSTestUtils.initJSIndexes(getProject());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), this.getClass(), getTestRootDisposable());
+    JSTestUtils.initJSIndexes(getProject());
 
-      doMoveStatementTest("mxml");
-      return null;
-    });
+    doMoveStatementTest("mxml");
   }
 
   public void testMoveFunctionInClass() throws Exception {

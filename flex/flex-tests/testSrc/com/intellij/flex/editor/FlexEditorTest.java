@@ -49,10 +49,8 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
   }
 
   protected void doTestWithJSSupportLoaderAndFlex(final Callable<Void> call) throws Exception {
-    doTestWithJSSupport((Callable<Object>)() -> {
-      FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), this.getClass(), getTestRootDisposable());
-      return call.call();
-    });
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), this.getClass(), getTestRootDisposable());
+    call.call();
   }
 
   private void performCopyRefAndPasteTest() throws Exception {
@@ -81,51 +79,51 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
   }
 
   public void testEnter3_5() throws Exception {
-    doEnterTestWithJSSupport("js2");
+    doEnterTestForExtension("js2");
   }
 
   public void testEnter3_6() throws Exception {
-    doEnterTestWithJSSupport("js2");
+    doEnterTestForExtension("js2");
   }
 
   public void testEnter3_8() throws Exception {
-    doEnterTestWithJSSupport("js2");
+    doEnterTestForExtension("js2");
   }
 
   public void testEnter3_10() throws Exception {
-    doEnterTestWithJSSupport("js2");
+    doEnterTestForExtension("js2");
   }
 
   public void testEnter3_11() throws Exception {
-    doEnterTestWithJSSupport("js2");
+    doEnterTestForExtension("js2");
   }
 
   public void testEnter3_12() throws Exception {
-    doEnterTestWithJSSupport("js2");
+    doEnterTestForExtension("js2");
   }
 
   public void testEnter3_22() throws Exception {
-    doEnterTestWithJSSupport("as");
+    doEnterTestForExtension("as");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testEnter3_3InXml() throws Exception {
-    doEnterTestWithJSSupport("mxml");
+    doEnterTestForExtension("mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testEnter3_4InXml() throws Exception {
-    doEnterTestWithJSSupport("mxml");
+    doEnterTestForExtension("mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testEnter3_5InXml() throws Exception {
-    doEnterTestWithJSSupport("mxml");
+    doEnterTestForExtension("mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testEnter3_6InXml() throws Exception {
-    doEnterTestWithJSSupport("mxml");
+    doEnterTestForExtension("mxml");
   }
 
   public void testEnter8() throws Exception {
@@ -266,18 +264,12 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testCopyReference6() throws Exception {
-    doTestWithJSSupport(() -> {
-      performCopyRefAndPasteTest();
-      return null;
-    });
+    performCopyRefAndPasteTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testCopyReferenceInMxml() throws Exception {
-    doTestWithJSSupport(() -> {
-      performCopyRefAndPasteTest("mxml");
-      return null;
-    });
+    performCopyRefAndPasteTest("mxml");
   }
 
   public void testGotoNextPrevMethod() throws Exception {
