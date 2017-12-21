@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.inspections.actionscript;
 
-import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
@@ -37,19 +36,9 @@ import static com.intellij.lang.javascript.psi.JSCommonTypeNames.FUNCTION_CLASS_
  * @author Konstantin.Ulitin
  */
 public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
-  private final JSProblemReporter<Annotation> myReporter;
 
   public ActionScriptTypeChecker(JSProblemReporter<Annotation> reporter) {
-    myReporter = reporter;
-  }
-
-  @Override
-  public Annotation registerProblem(PsiElement place,
-                                    String message,
-                                    @Nullable ProblemHighlightType highlightType,
-                                    LocalQuickFix... fixes) {
-    return myReporter
-      .registerProblem(place, message, highlightType, getValidateTypesInspectionId(), fixes);
+    super(reporter);
   }
 
   @Override
