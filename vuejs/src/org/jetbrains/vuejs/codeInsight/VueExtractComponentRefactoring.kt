@@ -1,5 +1,6 @@
 package org.jetbrains.vuejs.codeInsight
 
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
@@ -33,6 +34,7 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.PathUtilRt
 import com.intellij.util.ui.FormBuilder
+import com.intellij.xml.DefaultXmlExtension
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.codeInsight.VueInsertHandler.Companion.reformatElement
@@ -52,7 +54,7 @@ class VueExtractComponentRefactoring(private val project: Project,
         list[0].containingFile.parent == null ||
         !CommonRefactoringUtil.checkReadOnlyStatus(project, list[0].containingFile)) return
 
-    val componentName = defaultName ?: showDialog(list[0].containingFile.parent!!) ?: return
+    val componentName = defaultName ?: showDialog(list[0]) ?: return
     performRefactoring(componentName, list)
   }
 
@@ -88,7 +90,8 @@ class VueExtractComponentRefactoring(private val project: Project,
     }
   }
 
-  private fun showDialog(folder: PsiDirectory): String? {
+  private fun showDialog(context: XmlTag): String? {
+    val folder = context.containingFile.parent!!
     val nameField = JBTextField(20)
     nameField.emptyText.text = "Component name (in kebab notation)"
     val errorLabel = JLabel("")
@@ -104,11 +107,13 @@ class VueExtractComponentRefactoring(private val project: Project,
     builder.setPreferredFocusComponent(nameField)
     builder.setDimensionServiceKey(VueExtractComponentRefactoring::class.java.name)
 
+    val validator = TagNameValidator(context)
+
     val changesHandler = {
       val normalized = toAsset(nameField.text.trim()).capitalize()
       val fileName = normalized + ".vue"
       errorLabel.text = ""
-      if (normalized.isEmpty() || !PathUtilRt.isValidFileName(fileName, false) || normalized.contains(' ')) {
+      if (normalized.isEmpty() || !PathUtilRt.isValidFileName(fileName, false) || !validator.validate(normalized)) {
         builder.okActionEnabled(false)
       } else if (folder.findFile(fileName) != null) {
         builder.okActionEnabled(false)
@@ -126,6 +131,21 @@ class VueExtractComponentRefactoring(private val project: Project,
 
     return if (builder.showAndGet()) nameField.text.trim()
     else null
+  }
+
+  private class TagNameValidator(context: XmlTag) {
+    private val forbidden = mutableSetOf<String>()
+    init {
+      forbidden.addAll(DefaultXmlExtension.DEFAULT_EXTENSION.getAvailableTagNames(context.containingFile as XmlFile, context)
+        .map { it.name })
+      val elements = mutableListOf<LookupElement>()
+      VueTagProvider().addTagNameVariants(elements, context, null)
+      forbidden.addAll(elements.map { toAsset(it.lookupString).capitalize() })
+    }
+
+    fun validate(normalized: String): Boolean {
+      return !normalized.contains(' ') && !forbidden.contains(normalized.toLowerCase())
+    }
   }
 }
 
@@ -232,8 +252,7 @@ export default {
 
   private fun generateImports(): String {
     if (importsToCopy.isEmpty()) return ""
-    return importsToCopy.keys.sorted().map { "import ${it} from ${importsToCopy[it]!!.fromClause?.referenceText ?: "''"}" }
-      .joinToString ( "\n", "\n" )
+    return importsToCopy.keys.sorted().joinToString("\n", "\n") { "import ${it} from ${importsToCopy[it]!!.fromClause?.referenceText ?: "''"}" }
   }
 
   private fun generateDescriptorMembers(): String {
