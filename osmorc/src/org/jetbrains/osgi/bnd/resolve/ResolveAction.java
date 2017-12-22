@@ -146,6 +146,11 @@ public class ResolveAction extends AnAction {
       setTitle(message("bnd.resolve.succeed.title"));
     }
 
+    @Override
+    protected String getDimensionServiceKey() {
+      return "bnd.resolution.succeeded";
+    }
+
     @Nullable
     @Override
     protected JComponent createCenterPanel() {
@@ -167,6 +172,11 @@ public class ResolveAction extends AnAction {
       myResolutionException = resolutionException;
       init();
       setTitle(message("bnd.resolve.failed.title"));
+    }
+
+    @Override
+    protected String getDimensionServiceKey() {
+      return "bnd.resolution.failed";
     }
 
     @Nullable
