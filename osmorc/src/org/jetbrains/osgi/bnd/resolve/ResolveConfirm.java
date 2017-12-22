@@ -16,12 +16,12 @@
 package org.jetbrains.osgi.bnd.resolve;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.ui.ColoredListCellRenderer;
-import com.intellij.ui.ColoredTreeCellRenderer;
-import com.intellij.ui.LayeredIcon;
-import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.treeStructure.Tree;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.ObjectUtils;
+import com.intellij.util.ui.tree.AbstractTreeModel;
 import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.namespace.IdentityNamespace;
@@ -36,11 +36,11 @@ import org.osgi.resource.Wire;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import java.util.HashMap;
+import javax.swing.tree.TreePath;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ResolveConfirm {
   private JPanel myContentPane;
@@ -57,67 +57,122 @@ public class ResolveConfirm {
   }
 
   public ResolveConfirm(Map<Resource, List<Wire>> resolveResult) {
-    DefaultListModel<Resource> requiredResourcesModel = new DefaultListModel<>();
-    resolveResult.keySet().stream()
-      .sorted()
-      .forEach(requiredResourcesModel::addElement);
-
-    DefaultTreeModel reasonModel = new DefaultTreeModel(new DefaultMutableTreeNode());
+    MyTreeModel reasonModel = new MyTreeModel(resolveResult);
     myReason.setModel(reasonModel);
+    myReason.setCellRenderer(new MyTreeCellRenderer());
 
-    myRequiredResources.setModel(requiredResourcesModel);
+    List<Resource> resources = resolveResult.keySet().stream().sorted().collect(Collectors.toList());
+    myRequiredResources.setModel(new CollectionListModel<>(resources));
+    myRequiredResources.addListSelectionListener(event -> reasonModel.setRoot(myRequiredResources.getSelectedValue()));
+    myRequiredResources.setCellRenderer(new MyListCellRenderer());
+  }
 
-    myRequiredResources.addListSelectionListener(event -> {
-      Resource selectedResource = myRequiredResources.getSelectedValue();
-      updateReasonModel(resolveResult, reasonModel, selectedResource);
-    });
+  public JPanel getContentPane() {
+    return myContentPane;
+  }
 
-    myRequiredResources.setCellRenderer(new ColoredListCellRenderer<Resource>() {
-      @Override
-      protected void customizeCellRenderer(@NotNull JList list, Resource resource, int index, boolean selected, boolean hasFocus) {
-        setIcon(OSGI_BUNDLE_ICON);
+  private static class MyTreeModel extends AbstractTreeModel {
+    private final Map<Resource, List<Wire>> myResolveResult;
+    private DefaultMutableTreeNode myRoot;
 
-        List<Capability> capabilities = resource.getCapabilities(IdentityNamespace.IDENTITY_NAMESPACE);
+    public MyTreeModel(Map<Resource, List<Wire>> resolveResult) {
+      super();
+      myResolveResult = resolveResult;
+      myRoot = new DefaultMutableTreeNode(null);
+    }
 
-        if (capabilities.size() == 1) {
-          Capability capability = capabilities.get(0);
-          String identity = Objects.toString(capability.getAttributes().get(IdentityNamespace.IDENTITY_NAMESPACE));
-          Object version = capability.getAttributes().get(IdentityNamespace.CAPABILITY_VERSION_ATTRIBUTE);
+    @Override
+    public Object getRoot() {
+      return myRoot;
+    }
 
-          append(identity, SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
-          if (version != null) {
-            append(", version ", SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
-            append(version.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
-          }
-        }
-        else {
-          append(resource.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
+    public void setRoot(Resource resource) {
+      myRoot = new DefaultMutableTreeNode(resource);
+      treeStructureChanged(new TreePath(myRoot), ArrayUtil.EMPTY_INT_ARRAY, ArrayUtil.EMPTY_OBJECT_ARRAY);
+    }
+
+    @Override
+    public int getChildCount(Object parent) {
+      return wires(parent).size();
+    }
+
+    @Override
+    public Object getChild(Object parent, int index) {
+      return new DefaultMutableTreeNode(wires(parent).get(index));
+    }
+
+    @Override
+    public boolean isLeaf(Object node) {
+      return wires(node).isEmpty();
+    }
+
+    @Override
+    public void valueForPathChanged(TreePath path, Object newValue) { }
+
+    @Override
+    public int getIndexOfChild(Object parent, Object child) {
+      if (child instanceof DefaultMutableTreeNode) {
+        Object object = ((DefaultMutableTreeNode)child).getUserObject();
+        if (object instanceof Wire) {
+          return wires(parent).indexOf(object);
         }
       }
-    });
+      return -1;
+    }
 
-    myReason.setCellRenderer(new ColoredTreeCellRenderer() {
-      @Override
-      public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+    private List<Wire> wires(Object node) {
+      List<Wire> wires = null;
+      if (node instanceof DefaultMutableTreeNode) {
+        Object object = ((DefaultMutableTreeNode)node).getUserObject();
+        if (object instanceof Resource) {
+          wires = myResolveResult.get(object);
+        }
+        else if (object instanceof Wire) {
+          wires = myResolveResult.get(((Wire)object).getRequirer());
+        }
+      }
+      return ObjectUtils.notNull(wires, Collections.emptyList());
+    }
+  }
 
-        Object userObject = node.getUserObject();
+  private static class MyListCellRenderer extends ColoredListCellRenderer<Resource> {
+    @Override
+    protected void customizeCellRenderer(@NotNull JList list, Resource resource, int index, boolean selected, boolean hasFocus) {
+      renderResource(resource, this);
+      setIcon(OSGI_BUNDLE_ICON);
+    }
+  }
 
-        if (userObject instanceof Capability) {
-          Capability capability = (Capability)userObject;
+  private static class MyTreeCellRenderer extends ColoredTreeCellRenderer {
+    @Override
+    public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+      Object userObject = ((DefaultMutableTreeNode)value).getUserObject();
 
-          String identity = Objects.toString(capability.getAttributes().get(capability.getNamespace()));
-          Object version = capability.getAttributes().get(IdentityNamespace.CAPABILITY_VERSION_ATTRIBUTE);
+      Resource resource = null;
+      Capability capability = null;
+      if (userObject instanceof Resource) {
+        resource = (Resource)userObject;
+      }
+      else if (userObject instanceof Wire) {
+        resource = ((Wire)userObject).getRequirer();
+        capability = ((Wire)userObject).getCapability();
+      }
 
-          append(((Capability)userObject).getNamespace(), SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
+      if (resource != null) {
+        append("REQUIRED BY: ", SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
+        renderResource(resource, this);
+
+        if (capability != null) {
+          String namespace = capability.getNamespace();
+
+          append(" VIA: ", SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
+          append(namespace, SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
+          Map<String, Object> attributes = capability.getAttributes();
           append("=", SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
-          append(identity, SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
-          if (version != null) {
-            append(", version ", SimpleTextAttributes.GRAYED_ATTRIBUTES , true);
-            append(version.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
-          }
+          append(String.valueOf(attributes.get(namespace)), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
+          renderVersion(attributes, this);
 
-          switch (capability.getNamespace()) {
+          switch (namespace) {
             case PackageNamespace.PACKAGE_NAMESPACE:
               setIcon(AllIcons.Nodes.Package);
               break;
@@ -131,65 +186,33 @@ public class ResolveConfirm {
               setIcon(OsmorcIdeaIcons.Osgi);
               break;
           }
-
-        }
-        else if (userObject instanceof Resource) {
-          Resource resource = (Resource)userObject;
-
-          setIcon(null);
-          List<Capability> list = resource.getCapabilities(IdentityNamespace.IDENTITY_NAMESPACE);
-
-          if (list.size() == 1) {
-            Capability capability = list.get(0);
-            String identity = Objects.toString(capability.getAttributes().get(IdentityNamespace.IDENTITY_NAMESPACE));
-            Object version = capability.getAttributes().get(IdentityNamespace.CAPABILITY_VERSION_ATTRIBUTE);
-
-
-            append("REQUIRED BY: ", SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
-            append(identity, SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
-            if (version != null) {
-              append(", version ", SimpleTextAttributes.GRAYED_ATTRIBUTES , true);
-              append(version.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
-            }
-
-          }
-          else {
-            append("REQUIRED BY: " + resource.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
-          }
-        }
-        else {
-          setIcon(null);
-          append(Objects.toString(userObject), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
         }
       }
-    });
-  }
-
-  private static void updateReasonModel(Map<Resource, List<Wire>> resolve, DefaultTreeModel reasonModel, Resource selectedResource) {
-    DefaultMutableTreeNode root = new DefaultMutableTreeNode();
-    if (selectedResource != null) {
-      addRequirer(root, selectedResource, resolve);
+      else {
+        append(String.valueOf(userObject), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
+        setIcon(null);
+      }
     }
-    reasonModel.setRoot(root);
   }
 
-  private static void addRequirer(DefaultMutableTreeNode root, Resource resource, Map<Resource, List<Wire>> resolve) {
-    List<Wire> wires = resolve.get(resource);
-    if (wires == null) return;
-
-    Map<Capability, DefaultMutableTreeNode> map = new HashMap<>();
-
-    wires.forEach(wire -> {
-      DefaultMutableTreeNode requirement = map.computeIfAbsent(wire.getCapability(), DefaultMutableTreeNode::new);
-      DefaultMutableTreeNode child = new DefaultMutableTreeNode(wire.getRequirer());
-      requirement.add(child);
-
-      addRequirer(child, wire.getRequirer(), resolve);
-    });
-    map.values().forEach(root::add);
+  private static void renderResource(Resource resource, SimpleColoredComponent renderer) {
+    List<Capability> capabilities = resource.getCapabilities(IdentityNamespace.IDENTITY_NAMESPACE);
+    if (capabilities.size() == 1) {
+      Map<String, Object> attributes = capabilities.get(0).getAttributes();
+      Object identity = attributes.get(IdentityNamespace.IDENTITY_NAMESPACE);
+      renderer.append(String.valueOf(identity), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
+      renderVersion(attributes, renderer);
+    }
+    else {
+      renderer.append(resource.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
+    }
   }
 
-  public JPanel getContentPane() {
-    return myContentPane;
+  private static void renderVersion(Map<String, Object> attributes, SimpleColoredComponent renderer) {
+    Object version = attributes.get(IdentityNamespace.CAPABILITY_VERSION_ATTRIBUTE);
+    if (version != null) {
+      renderer.append(", version ", SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
+      renderer.append(version.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
+    }
   }
 }
