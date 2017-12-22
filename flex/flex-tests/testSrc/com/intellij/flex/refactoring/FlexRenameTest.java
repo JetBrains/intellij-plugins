@@ -73,7 +73,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
 
   public void testJSNamespace2() throws Exception {
     String testName = getTestName(false);
-    doTest("BBB", testName + "_after.js2", true, testName + ".js2", testName + "_2.js2");
+    doTest("BBB", true, testName + ".js2", testName + "_2.js2");
     assertEquals(3, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
@@ -85,7 +85,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
 
   public void testJSFunction2() throws Exception {
     String testName = getTestName(false);
-    doTest("JSFunctionNew2", testName + "_after.js2", true, testName + ".js2", testName + "_2.js2");
+    doTest("JSFunctionNew2", true, testName + ".js2", testName + "_2.js2");
     assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
@@ -97,7 +97,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
 
   public void testJSVariable2() throws Exception {
     String testName = getTestName(false);
-    doTest("JSVariableNew2", testName + "_after.js2", true, testName + ".js2", testName + "_2.js2");
+    doTest("JSVariableNew2", true, testName + ".js2", testName + "_2.js2");
     assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
@@ -120,7 +120,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
 
   public void testRenameMethodOfInterface2() throws Exception {
     final String name = getTestName(false);
-    doTest("test2", name + "_after." + "js2", false, name + "." + "js2");
+    doTest("test2", false, name + "." + "js2");
     assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
@@ -145,7 +145,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
 
   public void testJSClass2() throws Exception {
     final String name = getTestName(false);
-    doTest("BBB", name + "_after.js2", true, name + ".js2");
+    doTest("BBB", true, name + ".js2");
   }
 
   public void testJSClass3() throws Exception {
@@ -229,7 +229,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
   public void testMxmlComponentRename4() throws Exception {
     String name = getTestName(false);
-    doTest("RenamedComponent4", name + "_after.as", true, name + ".as", "MxmlComponentRename4_2.mxml", "MxmlComponentRename4_3.xml");
+    doTest("RenamedComponent4", true, name + ".as", "MxmlComponentRename4_2.mxml", "MxmlComponentRename4_3.xml");
     assertEquals(7, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
@@ -329,12 +329,12 @@ public class FlexRenameTest extends JSAbstractRenameTest {
 
     configureByFiles(new File(getTestDataPath() + getBasePath() + name), files);
     int referencesCount = findRenamedRefsToReferencedElementAtCaret().length;
-    performAction(name + "_3", true);
+    performAction(name + "_3");
     checkResultByFile(getBasePath() + name + "_after.js2");
 
     assertEquals(referencesCount, findRenamedRefsToReferencedElementAtCaret().length);
 
-    performAction(name + "_4", true);
+    performAction(name + "_4");
     checkResultByFile(getBasePath() + name + "_after2.js2");
     PsiReference[] refs = findRenamedRefsToReferencedElementAtCaret();
     assertEquals(referencesCount, refs.length);
@@ -370,7 +370,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
   public void testSeeTopLevelFunction() throws Exception {
     String name = getTestName(false);
-    doTest("SeeTopLevelFunction_3", name + "_after.as", true, name + ".as", name + "_2.as");
+    doTest("SeeTopLevelFunction_3", true, name + ".as", name + "_2.as");
 
     assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
   }
@@ -410,19 +410,19 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testSuperClasses() throws Exception {
     String name = getTestName(false);
-    doTest("foo", name + "_after.as", true, name + ".as");
+    doTest("foo", true, name + ".as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testSuperClasses2() throws Exception {
     String name = getTestName(false);
-    doTest("foo", name + "_after.as", true, name + ".as");
+    doTest("foo", true, name + ".as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testRenameFileReferenceInInjectedCode() throws Exception {
     final String name = getTestName(false);
-    doTest(null, "foo.txt", name + "_after.mxml", false, true, true, name + ".mxml", name + ".txt");
+    doTest("foo.txt", name + "_after.mxml", false, true, true, name + ".mxml", name + ".txt");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
@@ -500,57 +500,57 @@ public class FlexRenameTest extends JSAbstractRenameTest {
 
   public void testLiteralReference1() throws Exception {
     final String name = getTestName(false);
-    doTest(null, "bar", name + "_after.js2", false, false, false, name + ".js2");
+    doTest("bar", name + "_after.js2", false, false, false, name + ".js2");
   }
 
   public void testLiteralReference2() throws Exception {
     final String name = getTestName(false);
-    doTest(null, "bar", name + "_after.js2", false, true, false, name + ".js2");
+    doTest("bar", name + "_after.js2", false, true, false, name + ".js2");
   }
 
   public void testLiteralReference5() throws Exception {
     final String name = getTestName(false);
-    doTest(null, "Bar", name + "_after.as", false, false, false, name + ".as", name + "_2.as");
+    doTest("Bar", name + "_after.as", false, false, false, name + ".as", name + "_2.as");
     assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   public void testLiteralReference6() throws Exception {
     final String name = getTestName(false);
-    doTest(null, "Bar", name + "_after.as", true, false, false, name + ".as");
+    doTest("Bar", name + "_after.as", true, false, false, name + ".as");
     assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
     assertEquals("Bar.as", myFile.getName());
   }
 
   public void testLiteralReference7() throws Exception {
     final String name = getTestName(false);
-    doTest(null, "Bar", name + "_after.as", true, true, false, name + ".as");
+    doTest("Bar", name + "_after.as", true, true, false, name + ".as");
     assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
     assertEquals("Bar.as", myFile.getName());
   }
 
   public void testLiteralReference8() throws Exception {
     final String name = getTestName(false);
-    doTest(null, "Bar", name + "_after.as", false, false, false, name + ".as");
+    doTest("Bar", name + "_after.as", false, false, false, name + ".as");
     assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
     assertEquals("Bar.as", myFile.getName());
   }
 
   public void testLiteralReference9() throws Exception {
     final String name = getTestName(false);
-    doTest(null, "Bar", name + "_after.as", false, true, false, name + ".as");
+    doTest("Bar", name + "_after.as", false, true, false, name + ".as");
     assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
     assertEquals("Bar.as", myFile.getName());
   }
 
   public void testLiteralReference10() throws Exception {
     final String name = getTestName(false);
-    doTest(null, "bar", name + "_after.as", false, false, false, name + ".as");
+    doTest("bar", name + "_after.as", false, false, false, name + ".as");
     assertEquals(0, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   public void testLiteralReference11() throws Exception {
     final String name = getTestName(false);
-    doTest(null, "bar", name + "_after.as", false, true, false, name + ".as");
+    doTest("bar", name + "_after.as", false, true, false, name + ".as");
     assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
@@ -562,5 +562,50 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     final PsiElement newResolve = newReference == null ? null : newReference.resolve();
     assertTrue(newResolve instanceof JSClass &&
                "bar.RenameFlexClassReferencedInCssRenamed".equals(((JSClass)newResolve).getQualifiedName()));
+  }
+  
+  protected void doTest(final String newName, String ext) throws Exception {
+    final String name = getTestName(false);
+    doTest(newName, name + "_after." + ext, true, true, false,
+            name + "." + ext); // current test data expects that string refs are renamed
+  }
+  
+  protected void doTest(final String newName, String fileNameAfter, String... fileNames) throws Exception {
+    doTest(newName, fileNameAfter, false, true, false, fileNames);
+  }
+
+  protected void doTest(final String newName, boolean substituteElement, String... fileNames) throws Exception {
+    doTest(defaultParameters().withName(newName).substitute(substituteElement).withFiles(fileNames));
+  }
+
+  protected void doTest(File root, final String newName, String fileNameAfter, boolean substituteElement, String... fileNames)
+    throws Exception {
+    doTest(root, newName, fileNameAfter, substituteElement, false, false, fileNames);
+  }
+
+  protected void doTest(final String newName,
+                        final String fileNameAfter,
+                        final boolean substituteElement,
+                        final boolean searchInCommentsAndStrings,
+                        final boolean searchForTextOccurrences,
+                        final String... fileNames) throws Exception {
+    doTest(null, newName, fileNameAfter, substituteElement, searchInCommentsAndStrings, searchForTextOccurrences, fileNames);
+  }
+
+  protected void doTest(final File root,
+                        final String newName,
+                        final String fileNameAfter,
+                        final boolean substituteElement,
+                        final boolean searchInCommentsAndStrings, //true by default
+                        final boolean searchForTextOccurrences, //false by default
+                        final String... fileNames) throws Exception {
+    configureByFiles(root, toVirtualFiles(fileNames));
+
+    performAction(defaultParameters()
+                    .withName(newName)
+                    .substitute(substituteElement)
+                    .searchForTextOccurrences(searchForTextOccurrences)
+                    .searchInCommentsAndStrings(searchInCommentsAndStrings));
+    checkResultByFile(getBasePath() + fileNameAfter);
   }
 }
