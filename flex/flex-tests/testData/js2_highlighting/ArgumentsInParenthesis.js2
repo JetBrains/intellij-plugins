@@ -4,8 +4,8 @@ public class ArgumentsInParenthesis {
     private function foo():void {
         bar(true ? 1 : 2);
         bar((true ? 1 : 2));
-        bar((true ? <error descr="Expression type String is implicitly coerced to unrelated type int">""</error> : <error descr="Expression type String is implicitly coerced to unrelated type int">""</error>));
-        bar(true ? <error descr="Expression type String is implicitly coerced to unrelated type int">""</error> : <error descr="Expression type String is implicitly coerced to unrelated type int">""</error>);
+        bar(<error descr="Argument type String is not assignable to parameter type int">(true ? <error descr="Expression type String is implicitly coerced to unrelated type int">""</error> : <error descr="Expression type String is implicitly coerced to unrelated type int">""</error>)</error>);
+        bar(<error descr="Argument type String is not assignable to parameter type int">true ? <error descr="Expression type String is implicitly coerced to unrelated type int">""</error> : <error descr="Expression type String is implicitly coerced to unrelated type int">""</error></error>);
     }
     
     private function bar(a:int, b:String = ""){}

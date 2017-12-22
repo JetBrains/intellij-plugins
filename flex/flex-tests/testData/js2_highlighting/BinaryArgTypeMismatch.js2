@@ -70,11 +70,11 @@ var y2:* = <error>x</error> * 2;
 ++<error>x</error>;
 <error>x</error>++;
 
-var m:Number = <warning>null</warning>;
-m = <warning>null</warning>;
+var m:Number = <weak_warning>null</weak_warning>;
+m = <weak_warning>null</weak_warning>;
 
 function foo():void {
-  var n:Number = <warning>null</warning>;
+  var n:Number = <weak_warning>null</weak_warning>;
   if (n == <error>null</error>) {}
   if (n === <error>null</error>) {}
   if (n != <error>null</error>) {}

@@ -5,7 +5,6 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.completion.ActionScriptSmartCompletionContributor;
@@ -25,6 +24,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.PropertyKey;
@@ -38,7 +38,7 @@ import static com.intellij.lang.javascript.psi.JSCommonTypeNames.FUNCTION_CLASS_
  */
 public class ActionScriptTypeChecker extends JSTypeChecker {
 
-  public ActionScriptTypeChecker(JSProblemReporter<Annotation> reporter) {
+  public ActionScriptTypeChecker(JSProblemReporter<?> reporter) {
     super(reporter);
   }
 
@@ -147,18 +147,16 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
                                                        String message,
                                                        ProblemHighlightType problemHighlightType,
                                                        LocalQuickFix... fixes) {
-    Annotation annotation = ((JSProblemReporter<Annotation>)myReporter)
-      .registerProblem(expr, message, problemHighlightType, getValidateTypesInspectionId(), fixes);
-    if (annotation != null &&
-        typeOwner != null &&
+    if (typeOwner != null &&
         typeOwner.getParent() instanceof JSParameterList &&
         expr.getParent() instanceof JSArgumentList) {
       JSFunction method = (JSFunction)typeOwner.getParent().getParent();
       if (!(JSResolveUtil.getExpressionJSType(expr) instanceof JSVoidType)) {
         JSFunction topMethod = JSInheritanceUtil.findTopMethods(method).iterator().next();
-        annotation.registerFix(new ChangeSignatureFix(topMethod, (JSArgumentList)expr.getParent()));
+        fixes = ArrayUtil.append(fixes, new ChangeSignatureFix(topMethod, (JSArgumentList)expr.getParent()));
       }
     }
+    myReporter.registerProblem(expr, message, problemHighlightType, getValidateTypesInspectionId(), fixes);
   }
 
   private static boolean isAddEventListenerMethod(final JSFunction method) {

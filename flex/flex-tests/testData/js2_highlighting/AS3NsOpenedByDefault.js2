@@ -8,7 +8,7 @@ package {
           var x:<warning descr="Vector without type">Vector</warning> = new <warning descr="Vector without type can not be instantiated">Vector</warning>();
           var x2:Vector.<Object>;
 
-          var x3:Vector.<AS3NsOpenedByDefault> = <error>new Vector()</error>;
+          var x3:Vector.<AS3NsOpenedByDefault> = <error descr="Initializer type Vector is not assignable to variable type Vector.<AS3NsOpenedByDefault>">new <warning descr="Vector without type can not be instantiated">Vector</warning>()</error>;
       }
   }
 }

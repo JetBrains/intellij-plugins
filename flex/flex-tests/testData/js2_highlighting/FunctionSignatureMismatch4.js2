@@ -3,7 +3,7 @@ package {
         internal function foo(i:int) {}
     }
 }
-package {
+<error descr="Package should be first statement in file">package</error> {
     public class FunctionSignatureMismatch4 extends Base {
         internal override function foo(i: int) {}
 
