@@ -38,6 +38,7 @@ import com.intellij.xml.DefaultXmlExtension
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.codeInsight.VueInsertHandler.Companion.reformatElement
+import org.jetbrains.vuejs.language.VueJSLanguage
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import javax.swing.JLabel
@@ -152,7 +153,9 @@ class VueExtractComponentRefactoring(private val project: Project,
 class MyData(private val newComponentName: String, private val list: List<XmlTag>) {
   private val folder: PsiDirectory? = list[0].containingFile.parent
   private val scriptTag = if (list[0].containingFile is XmlFile) findScriptTag(list[0].containingFile as XmlFile) else null
-  private val detectedLanguage = detectLanguage()
+  private val scriptLanguage = detectLanguage(scriptTag)
+  private val templateLanguage = detectLanguage(findTemplate())
+
   private val importsToCopy: MutableMap<String, ES6ImportDeclaration> = mutableMapOf()
   private val refDataMap: MutableMap<XmlTag, MutableList<RefData>> = calculateProps()
 
@@ -165,7 +168,13 @@ class MyData(private val newComponentName: String, private val list: List<XmlTag
         return@forEach
       }
       val resolved = refData.resolve() ?: return@forEach
-      val parentTag = PsiTreeUtil.getParentOfType(resolved, XmlTag::class.java)
+      var parentTag = PsiTreeUtil.getParentOfType(resolved, XmlTag::class.java)
+      if (parentTag == null && VueJSLanguage.INSTANCE == resolved.language) {
+        val host = InjectedLanguageManager.getInstance(list[0].project).getInjectionHost(resolved)
+        if (host != null) {
+          parentTag = PsiTreeUtil.getParentOfType(host, XmlTag::class.java)
+        }
+      }
       if (scriptTag != null && parentTag == scriptTag || PsiTreeUtil.isAncestor(parentTag, refData.tag, true)) {
         map.putIfAbsent(refData.tag, mutableListOf())
         map[refData.tag]!!.add(refData)
@@ -230,18 +239,17 @@ class MyData(private val newComponentName: String, private val list: List<XmlTag
     }
   }
 
-  private fun detectLanguage(): String {
-    val lang = scriptTag?.getAttribute("lang")?.value ?: return ""
-    return "lang=\"$lang\""
-  }
+  private fun findTemplate(): XmlTag? = PsiTreeUtil.findFirstParent(list[0], { "template" == (it as? XmlTag)?.name }) as? XmlTag
+
+  private fun detectLanguage(tag: XmlTag?): String? = tag?.getAttribute("lang")?.value
 
   fun generateNewComponent(): PsiFile? {
     folder ?: return null
     val newFile = folder.virtualFile.createChildData(this, toAsset(newComponentName).capitalize() + ".vue")
-    val newText = """<template>
+    val newText = """<template${langAttribute(templateLanguage)}>
 ${generateNewTemplateContents()}
 </template>
-<script $detectedLanguage>${generateImports()}
+<script${langAttribute(scriptLanguage)}>${generateImports()}
 export default {
   name: '$newComponentName'${generateDescriptorMembers()}
 }
@@ -249,6 +257,8 @@ export default {
     VfsUtil.saveText(newFile, newText)
     return PsiManager.getInstance(folder.project).findFile(newFile)
   }
+
+  private fun langAttribute(lang: String?) = if (lang == null) "" else " lang=\"" + lang + "\""
 
   private fun generateImports(): String {
     if (importsToCopy.isEmpty()) return ""
@@ -268,18 +278,21 @@ export default {
 
   fun modifyCurrentComponent(newPsiFile: PsiFile, editor: Editor?): PsiElement? {
     val leader = list[0]
+    val containingFile = leader.containingFile
     val newTagName = fromAsset(newComponentName)
-    val replaceText = "<template><$newTagName ${generateProps()}/></template>"
+    val replaceText = if (templateLanguage in setOf("pug", "jade"))
+      "<template lang=\"pug\">\n$newTagName(${generateProps()})\n</template>"
+      else "<template><$newTagName ${generateProps()}/></template>"
     val project = leader.project
     val dummyFile = PsiFileFactory.getInstance(project).createFileFromText("dummy.vue", VueFileType.INSTANCE, replaceText)
     val template = PsiTreeUtil.findChildOfType(dummyFile, XmlTag::class.java)!!
-    val newTag = template.findFirstSubTag(newTagName)!!
+    val newTag = PsiTreeUtil.findChildOfType(template, XmlTag::class.java)!!
 
     val newlyAdded = leader.replace(newTag)
     list.subList(1, list.size).forEach { it.delete() }
 
-    VueInsertHandler.InsertHandlerWorker().insertComponentImport(newlyAdded, newComponentName, newPsiFile, editor)
-    optimizeUnusedComponentsAndImports(newlyAdded.containingFile)
+    VueInsertHandler.InsertHandlerWorker().insertComponentImport(containingFile, newComponentName, newPsiFile, editor)
+    optimizeUnusedComponentsAndImports(containingFile)
     return newlyAdded
   }
 
@@ -295,8 +308,8 @@ export default {
         override fun visitElement(element: PsiElement?) {
           if (element is XmlTag) {
             names.remove(toAsset(element.name).capitalize())
-            recursion(element)
           }
+          if (scriptTag != element) recursion(element)
         }
       })
       components.filter { it.name != null && names.contains(toAsset(it.name!!).capitalize()) }.forEach { it.delete() }

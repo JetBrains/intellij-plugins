@@ -43,7 +43,9 @@ class VueExtractComponentIntention : JavaScriptIntention() {
       if (editor == null || !editor.selectionModel.hasSelection()) {
         val type = element.node.elementType
         val parent = element.parent as? XmlTag
-        if (parent != null && (type == XmlElementType.XML_NAME || type == XmlElementType.XML_START_TAG_START)) {
+        if (parent != null && (type == XmlElementType.XML_NAME ||
+                               type == XmlElementType.XML_START_TAG_START ||
+                               type == XmlElementType.XML_TAG_NAME)) {
           return listOf(parent)
         }
         if (element is XmlTag) return listOf(element)

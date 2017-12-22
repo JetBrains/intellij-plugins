@@ -268,6 +268,57 @@ export default {
 </script>"""
   )
 
+  fun testExtractForPug() = doExtractTest(
+"""<template lang ="pug">
+    div(v-for="item in items")
+        <selection>span Text: {{ item + data1 }}</selection>
+</template>
+
+<script>
+    export default {
+        name: "test-v-for",
+        data() {
+            return {
+                items: [1,2,3,4,5],
+                data1: 2
+            }
+        }
+    };
+</script>""",
+
+"""<template lang ="pug">
+    div(v-for="item in items")
+        new-component(:data1="data1" :item="item")
+</template>
+
+<script>
+    import NewComponent from "./NewComponent";
+    export default {
+        name: "test-v-for",
+        components: {NewComponent},
+        data() {
+            return {
+                items: [1,2,3,4,5],
+                data1: 2
+            }
+        }
+    };
+</script>""",
+
+"""<template lang="pug">
+    span Text: {{ item + data1 }}
+</template>
+<script>
+    export default {
+        name: 'new-component',
+        props: {
+            data1: {},
+            item: {}
+        }
+    }
+</script>"""
+  )
+
   private fun doExtractTest(existing: String, modified: String, newText: String, numTags: Int = 1) {
     myFixture.configureByText(getTestName(false) + ".vue", existing)
 
