@@ -163,7 +163,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
   @NotNull
   @Override
-  protected JSTypeChecker<Annotation> createTypeChecker(PsiElement context) {
+  protected JSTypeChecker createTypeChecker(PsiElement context) {
     return new ActionScriptTypeChecker(myProblemReporter);
   }
 

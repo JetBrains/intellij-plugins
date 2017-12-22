@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.inspections.actionscript;
 
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
@@ -15,11 +16,11 @@ import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
 import com.intellij.lang.javascript.validation.JSProblemReporter;
 import com.intellij.lang.javascript.validation.JSTypeChecker;
 import com.intellij.lang.javascript.validation.fixes.ChangeSignatureFix;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -35,7 +36,7 @@ import static com.intellij.lang.javascript.psi.JSCommonTypeNames.FUNCTION_CLASS_
 /**
  * @author Konstantin.Ulitin
  */
-public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
+public class ActionScriptTypeChecker extends JSTypeChecker {
 
   public ActionScriptTypeChecker(JSProblemReporter<Annotation> reporter) {
     super(reporter);
@@ -48,21 +49,10 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
                                                     @PropertyKey(resourceBundle = JSBundle.BUNDLE) String problemKey,
                                                     boolean allowChangeVariableTypeFix) {
     final JSType type = p.getType();
-    Pair<Annotation, String> annotationAndExprType =
-      checkExpressionIsAssignableToType(expr, type, problemKey,
-                                        allowChangeVariableTypeFix ? p : null, true);
-
-    if (annotationAndExprType != null &&
-        p.getParent() instanceof JSParameterList &&
-        expr.getParent() instanceof JSArgumentList &&
-        !JSCommonTypeNames.VOID_TYPE_NAME.equals(annotationAndExprType.second)) {
-      JSFunction method = (JSFunction)p.getParent().getParent();
-      JSFunction topMethod = JSInheritanceUtil.findTopMethods(method).iterator().next();
-      annotationAndExprType.first.registerFix(new ChangeSignatureFix(topMethod, (JSArgumentList)expr.getParent()));
-    }
+    boolean isAssignable = checkExpressionIsAssignableToType(expr, type, p, problemKey, allowChangeVariableTypeFix ? p : null, null, true);
 
     PsiElement _fun;
-    if (annotationAndExprType == null &&
+    if (isAssignable &&
         type != null && FUNCTION_CLASS_NAME.equals(type.getResolvedTypeText()) &&
         p instanceof JSParameter &&
         isAddEventListenerMethod((JSFunction)p.getParent().getParent()) &&
@@ -147,6 +137,26 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
             }
           }
         }
+      }
+    }
+  }
+
+  @Override
+  protected void registerExpressionNotAssignableToType(JSExpression expr,
+                                                       PsiElement typeOwner,
+                                                       String message,
+                                                       ProblemHighlightType problemHighlightType,
+                                                       LocalQuickFix... fixes) {
+    Annotation annotation = ((JSProblemReporter<Annotation>)myReporter)
+      .registerProblem(expr, message, problemHighlightType, getValidateTypesInspectionId(), fixes);
+    if (annotation != null &&
+        typeOwner != null &&
+        typeOwner.getParent() instanceof JSParameterList &&
+        expr.getParent() instanceof JSArgumentList) {
+      JSFunction method = (JSFunction)typeOwner.getParent().getParent();
+      if (!(JSResolveUtil.getExpressionJSType(expr) instanceof JSVoidType)) {
+        JSFunction topMethod = JSInheritanceUtil.findTopMethods(method).iterator().next();
+        annotation.registerFix(new ChangeSignatureFix(topMethod, (JSArgumentList)expr.getParent()));
       }
     }
   }
