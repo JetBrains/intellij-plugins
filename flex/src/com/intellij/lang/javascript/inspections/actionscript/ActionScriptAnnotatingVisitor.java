@@ -17,7 +17,6 @@ import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.index.JSTypeEvaluateManager;
 import com.intellij.lang.javascript.inspections.actionscript.fixes.ActionScriptConstructorChecker;
 import com.intellij.lang.javascript.psi.*;
-import com.intellij.lang.javascript.psi.e4x.JSE4XFilterQueryArgumentList;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeListImpl;
@@ -57,7 +56,6 @@ import org.jetbrains.annotations.PropertyKey;
 
 import java.util.*;
 
-import static com.intellij.lang.javascript.psi.JSCommonTypeNames.BOOLEAN_CLASS_NAME;
 import static com.intellij.lang.javascript.psi.JSCommonTypeNames.NUMBER_CLASS_NAME;
 
 /**
@@ -1237,54 +1235,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     checkClassReferenceInStaticContext(node, "javascript.validation.message.this.referenced.from.static.context");
   }
 
-  @Override
-  protected boolean processMethodExpressionResolveResult(JSCallExpression callExpression, JSReferenceExpression methodExpression, PsiElement resolveResult, JSType type) {
-    if (callExpression instanceof JSNewExpression) {
-      if (JSResolveUtil.isConstructorFunction(resolveResult)) {
-        resolveResult = resolveResult.getParent(); // TODO: there is no need once our stubs for interface will lose constructors for interfaces
-      }
-
-      if (resolveResult instanceof JSClass && ((JSClass)resolveResult).isInterface()) {
-        final PsiElement referenceNameElement = methodExpression.getReferenceNameElement();
-
-        myProblemReporter.registerProblem(referenceNameElement,
-                                          JSBundle.message("javascript.interface.can.not.be.instantiated.message"),
-                                          ProblemHighlightType.ERROR);
-        return false;
-      }
-    }
-    final JSArgumentList argumentList = callExpression.getArgumentList();
-    if (argumentList instanceof JSE4XFilterQueryArgumentList &&
-        (type != null && !(type instanceof JSAnyType) || resolveResult instanceof JSFunction && ((JSFunction)resolveResult).isGetProperty())) {
-      checkE4XFilterQuery(callExpression, type.getTypeText(), argumentList);
-      return false;
-    }
-    return true;
-  }
-
-  private void checkE4XFilterQuery(JSCallExpression node, String type, JSArgumentList argumentList) {
-    if (!JSResolveUtil.isAssignableType("XML", type, argumentList) &&
-        !JSResolveUtil.isAssignableType("XMLList", type, argumentList)
-      ) {
-      myTypeChecker.registerProblem(
-        node.getMethodExpression(),
-        JSBundle.message("javascript.invalid.e4x.filter.query.receiver", type),
-        ProblemHighlightType.GENERIC_ERROR
-      );
-      return;
-    }
-    myFunctionSignatureChecker.reportProblemIfNotExpectedCountOfParameters(node, 1, "one");
-    JSExpression[] arguments = argumentList.getArguments();
-
-    if (arguments.length >= 1) {
-      myTypeChecker.checkExpressionIsAssignableToType(
-        arguments[0],
-        BOOLEAN_CLASS_NAME,
-        "javascript.argument.type.mismatch",
-        null, false);
-    }
-  }
-
   private void checkClassReferenceInStaticContext(final JSExpression node, @PropertyKey(resourceBundle = JSBundle.BUNDLE) String key) {
     PsiElement element =
       PsiTreeUtil.getParentOfType(node, JSExecutionScope.class, JSClass.class, JSObjectLiteralExpression.class);
@@ -1351,4 +1301,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     return true;
   }
 
+  @Override
+  protected ProblemHighlightType getHighlightTypeForTypeOrSignatureProblem(@NotNull PsiElement node) {
+    return ProblemHighlightType.GENERIC_ERROR;
+  }
 }

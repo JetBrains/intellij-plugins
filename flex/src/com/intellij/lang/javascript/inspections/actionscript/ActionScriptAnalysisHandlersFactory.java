@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.inspections.actionscript;
 
+import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.JSAnalysisHandlersFactory;
 import com.intellij.lang.javascript.validation.*;
@@ -25,5 +26,17 @@ public class ActionScriptAnalysisHandlersFactory extends JSAnalysisHandlersFacto
   @Override
   public JSReferenceChecker getReferenceChecker(@NotNull JSReferenceInspectionProblemReporter reporter) {
     return new ActionScriptReferenceChecker(reporter);
+  }
+
+  @NotNull
+  @Override
+  public JSTypeChecker getTypeChecker(ProblemsHolder holder) {
+    return new ActionScriptTypeChecker(getProblemReporter(holder));
+  }
+
+  @NotNull
+  @Override
+  public JSFunctionSignatureChecker getFunctionSignatureChecker(@NotNull ProblemsHolder holder) {
+    return new ActionScriptFunctionSignatureChecker(getTypeChecker(holder));
   }
 }
