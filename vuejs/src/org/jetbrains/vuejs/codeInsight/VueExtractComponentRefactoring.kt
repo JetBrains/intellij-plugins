@@ -70,7 +70,12 @@ class VueExtractComponentRefactoring(private val project: Project,
       PostprocessReformattingAspect.getInstance(project).postponeFormattingInside {
         PsiDocumentManager.getInstance(project).commitAllDocuments()
         WriteAction.run<RuntimeException> {
-          newPsiFile = data.generateNewComponent() ?: return@run
+          val newText = data.generateNewComponent() ?: return@run
+          val folder: PsiDirectory = list[0].containingFile.parent ?: return@run
+          val virtualFile = folder.virtualFile.createChildData(this, toAsset(componentName).capitalize() + ".vue")
+          VfsUtil.saveText(virtualFile, newText)
+          newPsiFile = PsiManager.getInstance(folder.project).findFile(virtualFile)
+
           newlyAdded = data.modifyCurrentComponent(newPsiFile!!, editor)
         }
       }
@@ -151,7 +156,6 @@ class VueExtractComponentRefactoring(private val project: Project,
 }
 
 class MyData(private val newComponentName: String, private val list: List<XmlTag>) {
-  private val folder: PsiDirectory? = list[0].containingFile.parent
   private val scriptTag = if (list[0].containingFile is XmlFile) findScriptTag(list[0].containingFile as XmlFile) else null
   private val scriptLanguage = detectLanguage(scriptTag)
   private val templateLanguage = detectLanguage(findTemplate())
@@ -200,9 +204,8 @@ class MyData(private val newComponentName: String, private val list: List<XmlTag
   }
 
   private fun gatherReferences(): List<RefData> {
-    folder ?: return emptyList()
     val refs = mutableListOf<RefData>()
-    val injManager = InjectedLanguageManager.getInstance(folder.project)
+    val injManager = InjectedLanguageManager.getInstance(list[0].project)
     list.forEach { tag ->
       PsiTreeUtil.processElements(tag, {
         refs.addAll(addElementReferences(it, tag, 0))
@@ -225,12 +228,13 @@ class MyData(private val newComponentName: String, private val list: List<XmlTag
     return element.references.filter { it != null && (it as? PsiElement)?.parent !is PsiReference }.map { RefData(it, tag, offset) }
   }
 
-  private fun generateNewTemplateContents(): String {
+  private fun generateNewTemplateContents(mapHasDirectUsage: MutableSet<String>): String {
     return list.joinToString("")
     { tag ->
       val sb = StringBuilder(tag.text)
       val tagStart = tag.textRange.startOffset
       val replaces = refDataMap[tag]?.mapNotNull {
+        if (mapHasDirectUsage.contains(it.getRefName())) return@mapNotNull null
         val absRange = it.getReplaceRange() ?: return@mapNotNull null
         Trinity(absRange.startOffset - tagStart, absRange.endOffset - tagStart, it.getRefName())
       }?.sortedByDescending { it.first }
@@ -243,19 +247,32 @@ class MyData(private val newComponentName: String, private val list: List<XmlTag
 
   private fun detectLanguage(tag: XmlTag?): String? = tag?.getAttribute("lang")?.value
 
-  fun generateNewComponent(): PsiFile? {
-    folder ?: return null
-    val newFile = folder.virtualFile.createChildData(this, toAsset(newComponentName).capitalize() + ".vue")
-    val newText = """<template${langAttribute(templateLanguage)}>
-${generateNewTemplateContents()}
+  fun generateNewComponent(): String? {
+    // this piece of code is responsible for handling the cases when the same function is use in a call and passed further as function
+    val hasDirectUsageSet = mutableSetOf<String>()
+    val hasReplaceMap = mutableMapOf<String, Boolean>()
+    refDataMap.forEach { pair ->
+      pair.value.any {
+        val state = it.getReplaceRange() == null
+        val refName = it.getRefName()
+        val existing = hasReplaceMap[refName]
+        if (existing != null && state != existing) {
+          hasDirectUsageSet.add(refName)
+          true
+        } else {
+          hasReplaceMap.put(refName, state)
+          false
+        }
+      }
+    }
+    return """<template${langAttribute(templateLanguage)}>
+${generateNewTemplateContents(hasDirectUsageSet)}
 </template>
 <script${langAttribute(scriptLanguage)}>${generateImports()}
 export default {
-  name: '$newComponentName'${generateDescriptorMembers()}
+  name: '$newComponentName'${generateDescriptorMembers(hasDirectUsageSet)}
 }
 </script>"""
-    VfsUtil.saveText(newFile, newText)
-    return PsiManager.getInstance(folder.project).findFile(newFile)
   }
 
   private fun langAttribute(lang: String?) = if (lang == null) "" else " lang=\"" + lang + "\""
@@ -265,13 +282,14 @@ export default {
     return importsToCopy.keys.sorted().joinToString("\n", "\n") { "import ${it} from ${importsToCopy[it]!!.fromClause?.referenceText ?: "''"}" }
   }
 
-  private fun generateDescriptorMembers(): String {
+  private fun generateDescriptorMembers(mapHasDirectUsage: MutableSet<String>): String {
     val members = mutableListOf<String>()
     if (!importsToCopy.isEmpty()) {
       members.add(importsToCopy.keys.sorted().joinToString ( ", ", ",\ncomponents: {", "}" ))
     }
     if (!refDataMap.isEmpty()) {
-      members.add(sortedProps().joinToString(",\n", ",\nprops: {\n", "\n}") { "${it.getRefName()}: {}" })
+      members.add(sortedProps(true).joinToString(",\n", ",\nprops: {\n", "\n}")
+      { "${it.getRefName()}: ${if (mapHasDirectUsage.contains(it.getRefName())) "{ type: Function }" else "{}" }" })
     }
     return members.joinToString("")
   }
@@ -318,10 +336,13 @@ export default {
   }
 
   private fun generateProps(): String {
-    return sortedProps().joinToString(" "){ ":${fromAsset(it.getRefName())}=\"${it.getExpressionText()}\"" }
+    return sortedProps(true).joinToString(" "){ ":${fromAsset(it.getRefName())}=\"${it.getExpressionText()}\"" }
   }
 
-  private fun sortedProps() = refDataMap.values.flatten().sortedBy { it.getRefName() }
+  private fun sortedProps(distinct: Boolean): List<RefData> {
+    val flatten = refDataMap.values.flatten()
+    return (if (distinct) flatten.distinctBy { it.getRefName() } else flatten).sortedBy { it.getRefName() }
+  }
 
   private class RefData(val ref: PsiReference, val tag: XmlTag, val offset: Int) {
     fun getRefName(): String {

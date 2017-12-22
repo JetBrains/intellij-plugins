@@ -319,6 +319,92 @@ export default {
 </script>"""
   )
 
+  fun testSameNamedFunctionCalls() = doExtractTest(
+"""<template>
+    <selection><p>Very first paragraph {{oneMore}}</p>
+    <p>Second paragraph {{oneMore}}</p>
+    <p>Third paragraph {{oneMore()}}</p>
+    <p>Fourth paragraph {{oneMore()}}</p></selection>
+</template>
+<script>
+    export default {
+        methods: {
+            oneMore() {}
+        }
+    }
+</script>
+""",
+
+"""<template>
+    <new-component :one-more="oneMore"/>
+</template>
+<script>
+    import NewComponent from "./NewComponent";
+    export default {
+        components: {NewComponent},
+        methods: {
+            oneMore() {}
+        }
+    }
+</script>
+""",
+
+"""<template>
+    <p>Very first paragraph {{oneMore}}</p>
+    <p>Second paragraph {{oneMore}}</p>
+    <p>Third paragraph {{oneMore()}}</p>
+    <p>Fourth paragraph {{oneMore()}}</p>
+</template>
+<script>
+    export default {
+        name: 'new-component',
+        props: {
+            oneMore: {type: Function}
+        }
+    }
+</script>""", 4)
+
+  fun testSameNamedProps() = doExtractTest(
+"""<template>
+    <selection><p>Very first paragraph {{propWithCamel}}</p>
+    <p>Second paragraph {{propWithCamel}}</p></selection>
+</template>
+<script>
+    export default {
+        props: {
+            propWithCamel: {}
+        }
+    }
+</script>
+""",
+
+"""<template>
+    <new-component :prop-with-camel="propWithCamel"/>
+</template>
+<script>
+    import NewComponent from "./NewComponent";
+    export default {
+        components: {NewComponent},
+        props: {
+            propWithCamel: {}
+        }
+    }
+</script>
+""",
+
+"""<template>
+    <p>Very first paragraph {{propWithCamel}}</p>
+    <p>Second paragraph {{propWithCamel}}</p>
+</template>
+<script>
+    export default {
+        name: 'new-component',
+        props: {
+            propWithCamel: {}
+        }
+    }
+</script>""", 2)
+
   private fun doExtractTest(existing: String, modified: String, newText: String, numTags: Int = 1) {
     myFixture.configureByText(getTestName(false) + ".vue", existing)
 
