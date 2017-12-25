@@ -329,12 +329,12 @@ public class FlexRenameTest extends JSAbstractRenameTest {
 
     configureByFiles(new File(getTestDataPath() + getBasePath() + name), files);
     int referencesCount = findRenamedRefsToReferencedElementAtCaret().length;
-    performAction(name + "_3");
+    performDialogRename(defaultParameters().withName(name + "_3"));
     checkResultByFile(getBasePath() + name + "_after.js2");
 
     assertEquals(referencesCount, findRenamedRefsToReferencedElementAtCaret().length);
 
-    performAction(name + "_4");
+    performDialogRename(defaultParameters().withName(name + "_4"));
     checkResultByFile(getBasePath() + name + "_after2.js2");
     PsiReference[] refs = findRenamedRefsToReferencedElementAtCaret();
     assertEquals(referencesCount, refs.length);
@@ -601,11 +601,11 @@ public class FlexRenameTest extends JSAbstractRenameTest {
                         final String... fileNames) throws Exception {
     configureByFiles(root, toVirtualFiles(fileNames));
 
-    performAction(defaultParameters()
-                    .withName(newName)
-                    .substitute(substituteElement)
-                    .searchForTextOccurrences(searchForTextOccurrences)
-                    .searchInCommentsAndStrings(searchInCommentsAndStrings));
+    performDialogRename(defaultParameters()
+                          .withName(newName)
+                          .substitute(substituteElement)
+                          .searchForTextOccurrences(searchForTextOccurrences)
+                          .searchInCommentsAndStrings(searchInCommentsAndStrings));
     checkResultByFile(getBasePath() + fileNameAfter);
   }
 }
