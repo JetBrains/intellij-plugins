@@ -53,10 +53,10 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
 
   @Override
   public XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
-    for (XmlElementDescriptor descriptor : getElementsDescriptors(contextTag)) {
-      if (descriptor.getName().equals(childTag.getName())) return descriptor;
-    }
-    return null;
+    XmlTag parent = contextTag.getParentTag();
+    if (parent == null) return null;
+    final XmlNSDescriptor descriptor = parent.getNSDescriptor(childTag.getNamespace(), true);
+    return descriptor == null ? null : descriptor.getElementDescriptor(childTag);
   }
 
   @Override
