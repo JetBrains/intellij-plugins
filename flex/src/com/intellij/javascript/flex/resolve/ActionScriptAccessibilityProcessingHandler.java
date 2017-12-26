@@ -23,13 +23,15 @@ import java.util.Map;
  */
 public class ActionScriptAccessibilityProcessingHandler extends AccessibilityProcessingHandler {
 
+  private static final String AS3_NAMESPACE_VALUE = "http://adobe.com/AS3/2006/builtin";
+  private String myTypeName;
   private Map<String, String> openedNses;
   private boolean defaultNsIsNotAllowed;
   private boolean anyNsAllowed;
 
   public ActionScriptAccessibilityProcessingHandler(@Nullable PsiElement _place, boolean skipNsResolving) {
     super(_place);
-
+    allowUnqualifiedStaticsFromInstance = place instanceof JSReferenceExpression && ((JSReferenceExpression)place).getQualifier() == null;
     if (place instanceof JSReferenceExpression) {
       final JSReferenceExpression namespace = ((JSReferenceExpression)place).getNamespaceElement();
 
@@ -46,6 +48,11 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
         }
       }
     }
+  }
+
+  @Override
+  public void setTypeName(final String qualifiedName) {
+    myTypeName = qualifiedName;
   }
 
   @Override
@@ -89,7 +96,6 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
       }
     }
     else if (myClassDeclarationStarted && !allowUnqualifiedStaticsFromInstance) {
-      // ActionScript only?
       if (attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.STATIC)) {
         boolean referencingClass = false;
 
