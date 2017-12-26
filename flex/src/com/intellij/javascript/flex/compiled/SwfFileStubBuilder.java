@@ -24,7 +24,7 @@ import java.io.ByteArrayInputStream;
  *         Time: 3:49:24 PM
  */
 public class SwfFileStubBuilder implements BinaryFileStubBuilder {
-  private static final int VERSION = 2;
+  private static final int VERSION = 3;
 
   public boolean acceptsFile(@NotNull final VirtualFile file) {
     return file.getFileType() == FlexApplicationComponent.SWF_FILE_TYPE &&
