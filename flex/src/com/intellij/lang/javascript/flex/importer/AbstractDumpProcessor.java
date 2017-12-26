@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.importer;
 
+import com.intellij.lang.javascript.refactoring.ECMAL4NamesValidator;
 import com.intellij.openapi.util.text.StringUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
@@ -106,8 +107,11 @@ abstract class AbstractDumpProcessor implements FlexByteCodeInformationProcessor
       if (restParameter && !dumpRestParameter()) break; // original one do not dump
       if (i > 0) append(",");
 
+      String name = methodInfo.paramNames != null && ECMAL4NamesValidator.isIdentifier(methodInfo.paramNames[i])
+                    ? methodInfo.paramNames[i]
+                    : "a" + (i > 0 ? String.valueOf(i + 1) : "");
       processParameter(
-        methodInfo.paramNames != null ? methodInfo.paramNames[i] : "a" + (i > 0 ? "" + (i + 1) : ""),
+        name,
         paramType,
         parentName,
         methodInfo.optionalValues != null && i < methodInfo.optionalValues.length ? methodInfo.optionalValues[i] : null,
