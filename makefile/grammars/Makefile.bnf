@@ -66,7 +66,7 @@ normal_prerequisites ::= prerequisite* (split prerequisite*)*
 order_only_prerequisites ::= prerequisite* (split prerequisite*)*
 prerequisite ::= identifier|variable_usage {mixin="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteMixin" methods=[updateText isPhonyTarget]}
 
-conditional ::= conditional-keyword condition branch ('else' branch)* 'endif'
+conditional ::= conditional-keyword condition branch ('else' (conditional-keyword condition branch | EOL branch))* 'endif'
 
 private conditional-keyword ::= ('ifeq'|'ifneq'|'ifdef'|'ifndef')
 
@@ -90,7 +90,7 @@ vpath ::= 'vpath' (pattern directory*)? EOL {pin=1}
 pattern ::= identifier
 directory ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
 
-topconditional ::= conditional-keyword condition block ('else' block)* 'endif'? {pin=1}
+topconditional ::= conditional-keyword condition block ('else' (conditional-keyword condition branch | EOL block))* 'endif' {pin=1}
 block ::= any
 
 function ::= ('$(error'|'$(warning'|'$(info'|'$(shell') function-param* ')'

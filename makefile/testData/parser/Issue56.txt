@@ -15,11 +15,9 @@ Makefile
       <empty list>
     PsiElement(else)('else')
     PsiWhiteSpace(' ')
-    MakefileBlockImpl(BLOCK)
-      MakefileTopconditionalImpl(TOPCONDITIONAL)
-        PsiElement(ifneq)('ifneq')
-        PsiElement(condition)(' ("$(wildcard bar.mk)","")')
-        PsiWhiteSpace('\n')
-        MakefileBlockImpl(BLOCK)
-          <empty list>
-        PsiElement(endif)('endif')
+    PsiElement(ifneq)('ifneq')
+    PsiElement(condition)(' ("$(wildcard bar.mk)","")')
+    PsiWhiteSpace('\n')
+    MakefileBranchImpl(BRANCH)
+      <empty list>
+    PsiElement(endif)('endif')

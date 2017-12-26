@@ -126,7 +126,7 @@ Makefile
         PsiElement(else)('else')
         PsiWhiteSpace('  ')
         PsiComment(COMMENT)('#end of line comment')
-        PsiWhiteSpace('\n')
+        PsiElement(EOL)('\n')
         MakefileBranchImpl(BRANCH)
           MakefileCommandImpl(COMMAND)
             PsiElement(\t)('\t')

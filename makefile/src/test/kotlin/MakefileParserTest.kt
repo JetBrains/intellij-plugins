@@ -27,6 +27,7 @@ class MakefileParserTest : ParsingTestCase("parser", "mk", MakefileParserDefinit
   fun testDoccomments() = doTest(true)
   fun testFunctions() = doTest(true)
   fun testAtSign() = doTest(true)
+  fun testElseif() = doTest(true)
 
   fun testIssue7() = doTest(true)
   fun testIssue9() = doTest(true)

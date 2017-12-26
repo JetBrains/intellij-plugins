@@ -24,7 +24,7 @@ Makefile
             PsiElement(line)('echo world')
         PsiWhiteSpace('\n')
         PsiElement(else)('else')
-        PsiWhiteSpace('\n')
+        PsiElement(EOL)('\n')
         MakefileBranchImpl(BRANCH)
           MakefileCommandImpl(COMMAND)
             PsiElement(\t)('\t')

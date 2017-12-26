@@ -44,7 +44,7 @@ FILENAME_CHARACTER=[^:=!?#\ \r\n\t]
 VARIABLE_USAGE_EXPR="$("[^)]*")"
 CONDITION_CHARACTER=[^#\r\n]
 
-%state PREREQUISITES INCLUDES SOURCE DEFINE DEFINEBODY CONDITIONALS FUNCTION
+%state PREREQUISITES ELSE INCLUDES SOURCE DEFINE DEFINEBODY CONDITIONALS FUNCTION
 
 %%
 
@@ -81,12 +81,18 @@ CONDITION_CHARACTER=[^#\r\n]
     "ifneq"            { yybegin(CONDITIONALS); return KEYWORD_IFNEQ; }
     "ifdef"            { yybegin(CONDITIONALS); return KEYWORD_IFDEF; }
     "ifndef"           { yybegin(CONDITIONALS); return KEYWORD_IFNDEF; }
-    "else"             { return KEYWORD_ELSE; }
+    "else"             { yybegin(ELSE); return KEYWORD_ELSE; }
     "endif"            { return KEYWORD_ENDIF; }
     "override"         { return KEYWORD_OVERRIDE; }
     "export"           { return KEYWORD_EXPORT; }
     "private"          { return KEYWORD_PRIVATE; }
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }
+}
+
+<ELSE> {
+    {EOL}              { yybegin(YYINITIAL); return EOL; }
+    {SPACES}           { return WHITE_SPACE; }
+    [^]                { yypushback(yylength()); yybegin(YYINITIAL); return WHITE_SPACE; }
 }
 
 <PREREQUISITES> {

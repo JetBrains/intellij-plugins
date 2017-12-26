@@ -13,7 +13,7 @@ Makefile
           PsiElement(line)(' gcc')
     PsiWhiteSpace('\n')
     PsiElement(else)('else')
-    PsiWhiteSpace('\n')
+    PsiElement(EOL)('\n')
     MakefileBlockImpl(BLOCK)
       MakefileVariableAssignmentImpl(VARIABLE_ASSIGNMENT)
         MakefileVariableImpl(VARIABLE)
