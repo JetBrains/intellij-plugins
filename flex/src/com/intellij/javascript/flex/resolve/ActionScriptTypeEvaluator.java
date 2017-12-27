@@ -90,10 +90,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   }
 
   @Override
-  protected void addTypeFromClassCandidate(@NotNull PsiElement resolveResult, @Nullable PsiElement constructor) {
-    if (resolveResult instanceof JSFunction) {
-      resolveResult = resolveResult.getParent();
-    }
+  protected void addTypeFromClassCandidate(@NotNull JSClass resolveResult) {
     final JSReferenceExpression expression = myContext.getProcessedExpression();
     if (expression == null) return;
 
@@ -103,7 +100,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
                             JSResolveUtil.isExprInStrictTypeContext(expression) ||
                             PsiTreeUtil.getChildOfType(expression, JSE4XNamespaceReference.class) != null || // TODO avoid it
                             parent instanceof JSCallExpression ?
-                            ((JSClass)resolveResult).getQualifiedName():"Class";
+                            resolveResult.getQualifiedName() : "Class";
     JSTypeSource source = JSTypeSourceFactory.createTypeSource(expression);
     JSType namedType = JSNamedType.createType(psiElementType, source, JSContext.UNKNOWN);
     JSType type = JSTypeUtils.isActionScriptVectorType(namedType) ?
@@ -112,8 +109,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
     final JSApplyContextElement peek = myContext.peekJSElementToApply();
     if (peek instanceof JSApplyCallElement) {
       // MyClass(anyVar) is cast to MyClass
-      PsiElement classResolveResult = resolveResult;
-      myContext.processWithoutTopJSElementToApply(() -> addType(type, classResolveResult));
+      myContext.processWithoutTopJSElementToApply(() -> addType(type, resolveResult));
     }
     else {
       addType(type, resolveResult);
