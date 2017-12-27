@@ -20,7 +20,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.ResolveState;
 import com.intellij.psi.meta.PsiPresentableMetaData;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -115,7 +114,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
       PsiElement realDeclaration = declaration;
       if (file instanceof JSFile) {
         ResolveResultSink sink = new ResolveResultSink(file, directive.getName());
-        ES6PsiUtil.processExportDeclarationInScope((JSFile)file, new TypeScriptQualifiedItemProcessor<>(sink, file), ResolveState.initial(), file);
+        ES6PsiUtil.processExportDeclarationInScope((JSFile)file, new TypeScriptQualifiedItemProcessor<>(sink, file), file);
         realDeclaration = sink.getResult() != null ? sink.getResult() : declaration;
       }
       AngularField[] fields = "Input".equals(decorator) ? directive.getInputs() : directive.getOutputs();
