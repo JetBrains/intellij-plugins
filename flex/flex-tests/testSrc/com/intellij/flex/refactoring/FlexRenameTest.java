@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.indexing.FileBasedIndex;
 
 import java.io.File;
@@ -563,7 +564,12 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     assertTrue(newResolve instanceof JSClass &&
                "bar.RenameFlexClassReferencedInCssRenamed".equals(((JSClass)newResolve).getQualifiedName()));
   }
-  
+
+  @Override
+  protected PsiElement findTarget() {
+    return ObjectUtils.coalesce(super.findTarget(), myFile);
+  }
+
   protected void doTest(final String newName, String ext) throws Exception {
     final String name = getTestName(false);
     doTest(newName, name + "_after." + ext, true, true, false,
