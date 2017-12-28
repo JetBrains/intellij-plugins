@@ -114,7 +114,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
       PsiElement realDeclaration = declaration;
       if (file instanceof JSFile) {
         ResolveResultSink sink = new ResolveResultSink(file, directive.getName());
-        ES6PsiUtil.processExportDeclarationInScope((JSFile)file, new TypeScriptQualifiedItemProcessor<>(sink, file), file);
+        ES6PsiUtil.processExportDeclarationInScope((JSFile)file, new TypeScriptQualifiedItemProcessor<>(sink, file));
         realDeclaration = sink.getResult() != null ? sink.getResult() : declaration;
       }
       AngularField[] fields = "Input".equals(decorator) ? directive.getInputs() : directive.getOutputs();
