@@ -165,12 +165,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     return new ActionScriptTypeChecker(myProblemReporter);
   }
 
-  @NotNull
-  @Override
-  protected JSFunctionSignatureChecker createFunctionSignatureChecker(PsiElement context) {
-    return new ActionScriptFunctionSignatureChecker(myTypeChecker);
-  }
-
   public static void checkFileUnderSourceRoot(final JSNamedElement aClass, ErrorReportingClient client) {
     PsiElement nameIdentifier = aClass.getNameIdentifier();
     if (nameIdentifier == null) {
