@@ -86,6 +86,11 @@ CONDITION_CHARACTER=[^#\r\n]
     "override"         { return KEYWORD_OVERRIDE; }
     "export"           { return KEYWORD_EXPORT; }
     "private"          { return KEYWORD_PRIVATE; }
+    {ERROR}                { yybegin(FUNCTION); return FUNCTION_ERROR; }
+    {WARNING}              { yybegin(FUNCTION); return FUNCTION_WARNING; }
+    {INFO}                 { yybegin(FUNCTION); return FUNCTION_INFO; }
+    {SHELL}                { yybegin(FUNCTION); return FUNCTION_SHELL; }
+    {VARIABLE_USAGE_EXPR}   { return VARIABLE_USAGE; }
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }
 }
 

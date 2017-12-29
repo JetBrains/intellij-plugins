@@ -907,24 +907,25 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // target_line recipe
   public static boolean rule(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "rule")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    if (!nextTokenIs(b, "<rule>", IDENTIFIER, VARIABLE_USAGE)) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _NONE_, RULE, "<rule>");
     r = target_line(b, l + 1);
     r = r && recipe(b, l + 1);
-    exit_section_(b, m, RULE, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
   /* ********************************************************** */
-  // identifier
+  // identifier|variable_usage
   public static boolean target(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    if (!nextTokenIs(b, "<target>", IDENTIFIER, VARIABLE_USAGE)) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _NONE_, TARGET, "<target>");
     r = consumeToken(b, IDENTIFIER);
-    exit_section_(b, m, TARGET, r);
+    if (!r) r = consumeToken(b, VARIABLE_USAGE);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -932,9 +933,9 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|variable-assignment|prerequisites ';'? EOL?)
   public static boolean target_line(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target_line")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    if (!nextTokenIs(b, "<target line>", IDENTIFIER, VARIABLE_USAGE)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, TARGET_LINE, null);
+    Marker m = enter_section_(b, l, _NONE_, TARGET_LINE, "<target line>");
     r = targets(b, l + 1);
     r = r && target_line_1(b, l + 1);
     p = r; // pin = 2
@@ -1029,9 +1030,9 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // target+
   public static boolean targets(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "targets")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    if (!nextTokenIs(b, "<targets>", IDENTIFIER, VARIABLE_USAGE)) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _NONE_, TARGETS, "<targets>");
     r = target(b, l + 1);
     int c = current_position_(b);
     while (r) {
@@ -1039,7 +1040,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
       if (!empty_element_parsed_guard_(b, "targets", c)) break;
       c = current_position_(b);
     }
-    exit_section_(b, m, TARGETS, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
