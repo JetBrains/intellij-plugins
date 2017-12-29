@@ -102,6 +102,10 @@ public class AngularJSProcessor {
       if ($EVENT.equals(((JSImplicitElement)declaration).getName())) {
         return eventScopeMatches(injector, element, declaration.getParent());
       }
+      if (declaration.getParent() instanceof XmlAttribute &&
+          AngularAttributesRegistry.isTagReferenceAttribute(((XmlAttribute)declaration.getParent()).getName(), declaration.getProject())) {
+        return true;
+      }
       declaration = declaration.getParent();
     }
     boolean inlineTemplate = element.getContainingFile().getLanguage() == Angular2HTMLLanguage.INSTANCE;
