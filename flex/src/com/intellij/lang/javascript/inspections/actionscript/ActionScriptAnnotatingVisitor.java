@@ -22,7 +22,8 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeListImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageStatementImpl;
 import com.intellij.lang.javascript.psi.resolve.*;
-import com.intellij.lang.javascript.psi.types.*;
+import com.intellij.lang.javascript.psi.types.JSAnyType;
+import com.intellij.lang.javascript.psi.types.JSTypeImpl;
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
 import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
@@ -55,8 +56,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.PropertyKey;
 
 import java.util.*;
-
-import static com.intellij.lang.javascript.psi.JSCommonTypeNames.NUMBER_CLASS_NAME;
 
 /**
  * @author Konstantin.Ulitin
@@ -157,12 +156,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         return null;
       }
     };
-  }
-
-  @NotNull
-  @Override
-  protected JSTypeChecker createTypeChecker(PsiElement context) {
-    return new ActionScriptTypeChecker(myProblemReporter);
   }
 
   public static void checkFileUnderSourceRoot(final JSNamedElement aClass, ErrorReportingClient client) {
@@ -1202,16 +1195,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       else {
         checkIfProperTypeReference(rOperand);
       }
-    }
-    else if (JSTokenTypes.MULTIPLICATIVE_OPERATIONS.contains(sign) ||
-               JSTokenTypes.SHIFT_OPERATIONS.contains(sign) ||
-               sign == JSTokenTypes.MINUS) {
-      final JSType numberType = JSNamedType.createType(NUMBER_CLASS_NAME, JSTypeSourceFactory.createTypeSource(lOperand, true),
-                                                       JSContext.INSTANCE);
-      myTypeChecker.checkExpressionIsAssignableToType(lOperand, numberType,
-                                                      "javascript.expression.type.implicitly.coerced.to.unrelated.type", null, false);
-      myTypeChecker.checkExpressionIsAssignableToType(rOperand, numberType,
-                                                      "javascript.expression.type.implicitly.coerced.to.unrelated.type", null, false);
     }
   }
 
