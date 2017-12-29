@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.CreateJSFunctionIntentionTestBase;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.inspections.JSCheckFunctionSignaturesInspection;
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
@@ -59,6 +60,7 @@ public class CreateASFunctionIntentionTest extends CreateJSFunctionIntentionTest
 
   private void doTestTwoFiles() throws Exception {
     enableInspectionTool(new JSValidateTypesInspection());
+    enableInspectionTool(new JSCheckFunctionSignaturesInspection());
     String name = getTestName(false);
     String directory = "/" + name;
     String first = directory + "/" + name + ".as";
