@@ -16,10 +16,13 @@
 package org.jetbrains.osgi.bnd.resolve;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.ui.*;
-import com.intellij.ui.components.JBList;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.ui.ColoredTreeCellRenderer;
+import com.intellij.ui.SimpleColoredComponent;
+import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.tree.AbstractTreeModel;
 import icons.OsmorcIdeaIcons;
@@ -42,42 +45,49 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ResolveConfirm {
-  private JPanel myContentPane;
-  private JBList<Resource> myRequiredResources;
-  private Tree myReason;
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
+import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
+import static org.osmorc.i18n.OsmorcBundle.message;
 
-  private static final Icon OSGI_BUNDLE_ICON;
-  static {
-    LayeredIcon icon = new LayeredIcon(2);
-    icon.setIcon(AllIcons.Nodes.PpLib, 0);
-    Icon osgiSmall = new LayeredIcon(OsmorcIdeaIcons.Osgi).scale(0.5f);
-    icon.setIcon(osgiSmall, 1, SwingConstants.SOUTH_EAST);
-    OSGI_BUNDLE_ICON = icon;
+class ResolutionSucceedDialog extends DialogWrapper {
+  private final Map<Resource, List<Wire>> myResolveResult;
+  private Tree myTree;
+
+  public ResolutionSucceedDialog(Project project, Map<Resource, List<Wire>> resolveResult) {
+    super(project);
+    myResolveResult = resolveResult;
+    init();
+    setTitle(message("bnd.resolve.succeed.title"));
   }
 
-  public ResolveConfirm(Map<Resource, List<Wire>> resolveResult) {
-    MyTreeModel reasonModel = new MyTreeModel(resolveResult);
-    myReason.setModel(reasonModel);
-    myReason.setCellRenderer(new MyTreeCellRenderer());
-
-    List<Resource> resources = resolveResult.keySet().stream().sorted().collect(Collectors.toList());
-    myRequiredResources.setModel(new CollectionListModel<>(resources));
-    myRequiredResources.addListSelectionListener(event -> reasonModel.setRoot(myRequiredResources.getSelectedValue()));
-    myRequiredResources.setCellRenderer(new MyListCellRenderer());
+  @Override
+  protected String getDimensionServiceKey() {
+    return "bnd.resolution.succeeded";
   }
 
-  public JPanel getContentPane() {
-    return myContentPane;
+  @Override
+  protected JComponent createCenterPanel() {
+    myTree = new Tree();
+    myTree.setRootVisible(false);
+    myTree.setModel(new MyTreeModel(myResolveResult));
+    myTree.setCellRenderer(new MyTreeCellRenderer());
+    return new JBScrollPane(myTree, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED);
+  }
+
+  @Override
+  public JComponent getPreferredFocusedComponent() {
+    return myTree;
   }
 
   private static class MyTreeModel extends AbstractTreeModel {
     private final Map<Resource, List<Wire>> myResolveResult;
+    private final List<Resource> myResolveRoots;
     private DefaultMutableTreeNode myRoot;
 
     public MyTreeModel(Map<Resource, List<Wire>> resolveResult) {
       super();
       myResolveResult = resolveResult;
+      myResolveRoots = resolveResult.keySet().stream().sorted().collect(Collectors.toList());
       myRoot = new DefaultMutableTreeNode(null);
     }
 
@@ -86,24 +96,19 @@ public class ResolveConfirm {
       return myRoot;
     }
 
-    public void setRoot(Resource resource) {
-      myRoot = new DefaultMutableTreeNode(resource);
-      treeStructureChanged(new TreePath(myRoot), ArrayUtil.EMPTY_INT_ARRAY, ArrayUtil.EMPTY_OBJECT_ARRAY);
-    }
-
     @Override
     public int getChildCount(Object parent) {
-      return wires(parent).size();
+      return children(parent).size();
     }
 
     @Override
     public Object getChild(Object parent, int index) {
-      return new DefaultMutableTreeNode(wires(parent).get(index));
+      return new DefaultMutableTreeNode(children(parent).get(index));
     }
 
     @Override
     public boolean isLeaf(Object node) {
-      return wires(node).isEmpty();
+      return children(node).isEmpty();
     }
 
     @Override
@@ -113,33 +118,28 @@ public class ResolveConfirm {
     public int getIndexOfChild(Object parent, Object child) {
       if (child instanceof DefaultMutableTreeNode) {
         Object object = ((DefaultMutableTreeNode)child).getUserObject();
-        if (object instanceof Wire) {
-          return wires(parent).indexOf(object);
+        if (object instanceof Resource || object instanceof Wire) {
+          return children(parent).indexOf(object);
         }
       }
       return -1;
     }
 
-    private List<Wire> wires(Object node) {
-      List<Wire> wires = null;
+    private List<?> children(Object node) {
+      List<?> result = null;
       if (node instanceof DefaultMutableTreeNode) {
         Object object = ((DefaultMutableTreeNode)node).getUserObject();
-        if (object instanceof Resource) {
-          wires = myResolveResult.get(object);
+        if (object == null) {
+          result = myResolveRoots;
+        }
+        else if (object instanceof Resource) {
+          result = myResolveResult.get(object);
         }
         else if (object instanceof Wire) {
-          wires = myResolveResult.get(((Wire)object).getRequirer());
+          result = myResolveResult.get(((Wire)object).getRequirer());
         }
       }
-      return ObjectUtils.notNull(wires, Collections.emptyList());
-    }
-  }
-
-  private static class MyListCellRenderer extends ColoredListCellRenderer<Resource> {
-    @Override
-    protected void customizeCellRenderer(@NotNull JList list, Resource resource, int index, boolean selected, boolean hasFocus) {
-      renderResource(resource, this);
-      setIcon(OSGI_BUNDLE_ICON);
+      return ObjectUtils.notNull(result, Collections.emptyList());
     }
   }
 
@@ -148,20 +148,15 @@ public class ResolveConfirm {
     public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
       Object userObject = ((DefaultMutableTreeNode)value).getUserObject();
 
-      Resource resource = null;
-      Capability capability = null;
       if (userObject instanceof Resource) {
-        resource = (Resource)userObject;
+        renderResource((Resource)userObject, this);
+        setIcon(AllIcons.Nodes.PpLib);
       }
       else if (userObject instanceof Wire) {
-        resource = ((Wire)userObject).getRequirer();
-        capability = ((Wire)userObject).getCapability();
-      }
-
-      if (resource != null) {
         append("REQUIRED BY: ", SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
-        renderResource(resource, this);
+        renderResource(((Wire)userObject).getRequirer(), this);
 
+        Capability capability = ((Wire)userObject).getCapability();
         if (capability != null) {
           String namespace = capability.getNamespace();
 
@@ -177,7 +172,7 @@ public class ResolveConfirm {
               setIcon(AllIcons.Nodes.Package);
               break;
             case IdentityNamespace.IDENTITY_NAMESPACE:
-              setIcon(OSGI_BUNDLE_ICON);
+              setIcon(AllIcons.Nodes.PpLib);
               break;
             case ContractNamespace.CONTRACT_NAMESPACE:
             case ImplementationNamespace.IMPLEMENTATION_NAMESPACE:
@@ -193,26 +188,26 @@ public class ResolveConfirm {
         setIcon(null);
       }
     }
-  }
 
-  private static void renderResource(Resource resource, SimpleColoredComponent renderer) {
-    List<Capability> capabilities = resource.getCapabilities(IdentityNamespace.IDENTITY_NAMESPACE);
-    if (capabilities.size() == 1) {
-      Map<String, Object> attributes = capabilities.get(0).getAttributes();
-      Object identity = attributes.get(IdentityNamespace.IDENTITY_NAMESPACE);
-      renderer.append(String.valueOf(identity), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
-      renderVersion(attributes, renderer);
+    private static void renderResource(Resource resource, SimpleColoredComponent renderer) {
+      List<Capability> capabilities = resource.getCapabilities(IdentityNamespace.IDENTITY_NAMESPACE);
+      if (capabilities.size() == 1) {
+        Map<String, Object> attributes = capabilities.get(0).getAttributes();
+        Object identity = attributes.get(IdentityNamespace.IDENTITY_NAMESPACE);
+        renderer.append(String.valueOf(identity), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
+        renderVersion(attributes, renderer);
+      }
+      else {
+        renderer.append(resource.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
+      }
     }
-    else {
-      renderer.append(resource.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
-    }
-  }
 
-  private static void renderVersion(Map<String, Object> attributes, SimpleColoredComponent renderer) {
-    Object version = attributes.get(IdentityNamespace.CAPABILITY_VERSION_ATTRIBUTE);
-    if (version != null) {
-      renderer.append(", version ", SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
-      renderer.append(version.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
+    private static void renderVersion(Map<String, Object> attributes, SimpleColoredComponent renderer) {
+      Object version = attributes.get(IdentityNamespace.CAPABILITY_VERSION_ATTRIBUTE);
+      if (version != null) {
+        renderer.append(", version ", SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
+        renderer.append(version.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
+      }
     }
   }
 }

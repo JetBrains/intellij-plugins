@@ -24,7 +24,6 @@ import aQute.bnd.properties.IDocument;
 import biz.aQute.resolve.ProjectResolver;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.notification.NotificationType;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
@@ -33,18 +32,16 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.osgi.bnd.BndFileType;
 import org.osgi.resource.Resource;
 import org.osgi.resource.Wire;
 import org.osgi.service.resolver.ResolutionException;
 import org.osmorc.i18n.OsmorcBundle;
 
-import javax.swing.*;
 import java.io.File;
 import java.util.Collections;
 import java.util.Comparator;
@@ -55,9 +52,7 @@ import java.util.stream.Collectors;
 import static com.intellij.openapi.command.WriteCommandAction.writeCommandAction;
 import static org.osmorc.i18n.OsmorcBundle.message;
 
-public class ResolveAction extends AnAction {
-  private static final Logger LOG = Logger.getInstance(ResolveAction.class);
-
+public class ResolveAction extends DumbAwareAction {
   @Override
   public void actionPerformed(@NotNull AnActionEvent event) {
     VirtualFile virtualFile = event.getData(CommonDataKeys.VIRTUAL_FILE);
@@ -113,7 +108,7 @@ public class ResolveAction extends AnAction {
       @Override
       public void onThrowable(@NotNull Throwable t) {
         Throwable cause = t instanceof WrappingException ? t.getCause() : t;
-        LOG.warn("Resolution failed", cause);
+        Logger.getInstance(ResolveAction.class).warn("resolution failed", cause);
         if (cause instanceof ResolutionException) {
           new ResolutionFailedDialog(project, (ResolutionException)cause).show();
         }
@@ -133,62 +128,6 @@ public class ResolveAction extends AnAction {
   private static class WrappingException extends RuntimeException {
     private WrappingException(Throwable cause) {
       super(cause);
-    }
-  }
-
-  private static class ResolutionSucceedDialog extends DialogWrapper {
-    private final Map<Resource, List<Wire>> myResolveResult;
-
-    public ResolutionSucceedDialog(Project project, Map<Resource, List<Wire>> resolveResult) {
-      super(project);
-      myResolveResult = resolveResult;
-      init();
-      setTitle(message("bnd.resolve.succeed.title"));
-    }
-
-    @Override
-    protected String getDimensionServiceKey() {
-      return "bnd.resolution.succeeded";
-    }
-
-    @Nullable
-    @Override
-    protected JComponent createCenterPanel() {
-      return new ResolveConfirm(myResolveResult).getContentPane();
-    }
-
-    @NotNull
-    @Override
-    protected Action[] createActions() {
-      return new Action[]{getOKAction(), getCancelAction()};
-    }
-  }
-
-  private static class ResolutionFailedDialog extends DialogWrapper {
-    private final ResolutionException myResolutionException;
-
-    public ResolutionFailedDialog(Project project, ResolutionException resolutionException) {
-      super(project);
-      myResolutionException = resolutionException;
-      init();
-      setTitle(message("bnd.resolve.failed.title"));
-    }
-
-    @Override
-    protected String getDimensionServiceKey() {
-      return "bnd.resolution.failed";
-    }
-
-    @Nullable
-    @Override
-    protected JComponent createCenterPanel() {
-      return new ResolutionFailed(myResolutionException).getContentPane();
-    }
-
-    @NotNull
-    @Override
-    protected Action[] createActions() {
-      return new Action[]{getOKAction()};
     }
   }
 }
