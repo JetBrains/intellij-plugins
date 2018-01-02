@@ -12,7 +12,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.HashMap;
-import org.apache.oro.text.regex.Pattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.BDDFrameworkType;
@@ -22,6 +21,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * @author yole
@@ -124,8 +124,8 @@ public class CucumberStepsIndex {
       if (stepDefinition.matches(substitutedName) && stepDefinition.supportsStep(step)) {
         final Pattern currentLongestPattern = getPatternByDefinition(definitionsByClass.get(stepDefinition.getClass()));
         final Pattern newPattern = getPatternByDefinition(stepDefinition);
-        final int newPatternLength = ((newPattern != null) ? newPattern.getPattern().length() : -1);
-        if ((currentLongestPattern == null) || (currentLongestPattern.getPattern().length() < newPatternLength)) {
+        final int newPatternLength = ((newPattern != null) ? newPattern.pattern().length() : -1);
+        if ((currentLongestPattern == null) || (currentLongestPattern.pattern().length() < newPatternLength)) {
           definitionsByClass.put(stepDefinition.getClass(), stepDefinition);
         }
       }

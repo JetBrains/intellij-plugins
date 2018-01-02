@@ -42,6 +42,10 @@ public class CucumberJavaTestResolveTest extends BaseCucumberJavaResolveTest {
     doTest("stepResolve_java8", "I have cuk<caret>es", "Given");
   }
 
+  public void testNegativeLookBehind() {
+    doTest("negativeLookBehind", "c<caret>a", "step_method");
+  }
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumberJava8ProjectDescriptor();

@@ -6,10 +6,6 @@ import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.util.CommonProcessors.CollectProcessor;
-import org.apache.oro.text.regex.MalformedPatternException;
-import org.apache.oro.text.regex.Pattern;
-import org.apache.oro.text.regex.Perl5Compiler;
-import org.apache.oro.text.regex.Perl5Matcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
@@ -19,13 +15,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * @author yole, Andrey Vokin
  */
 public abstract class AbstractStepDefinition {
-  private static final java.util.regex.Pattern ESCAPE_PATTERN
-    = java.util.regex.Pattern.compile("(\\$\\w+|#\\{.+?\\})");
+  private static final Pattern ESCAPE_PATTERN = Pattern.compile("(\\$\\w+|#\\{.+?\\})");
 
   private static final String CUCUMBER_START_PREFIX = "\\A";
 
@@ -45,7 +42,8 @@ public abstract class AbstractStepDefinition {
 
   public boolean matches(@NotNull String stepName) {
     final Pattern pattern = getPattern();
-    return pattern != null && new Perl5Matcher().contains(stepName, pattern);
+
+    return pattern != null && pattern.matcher(stepName).matches();
   }
 
   @Nullable
@@ -71,12 +69,12 @@ public abstract class AbstractStepDefinition {
           patternText.replace(patternText.length() - CUCUMBER_END_SUFFIX.length(), patternText.length(), "$");
         }
 
-        myRegex = new Perl5Compiler().compile(patternText.toString(), Perl5Compiler.CASE_INSENSITIVE_MASK);
+        myRegex = Pattern.compile(patternText.toString(), Pattern.CASE_INSENSITIVE);
         myRegexText = cucumberRegex;
       }
       return myRegex;
     }
-    catch (final MalformedPatternException ignored) {
+    catch (final PatternSyntaxException ignored) {
       return null; // Bad regex?
     }
   }

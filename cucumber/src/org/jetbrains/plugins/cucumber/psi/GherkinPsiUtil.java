@@ -3,9 +3,6 @@ package org.jetbrains.plugins.cucumber.psi;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import org.apache.oro.text.regex.MatchResult;
-import org.apache.oro.text.regex.Pattern;
-import org.apache.oro.text.regex.Perl5Matcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
@@ -16,6 +13,8 @@ import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Roman.Chernyatchik
@@ -44,14 +43,13 @@ public class GherkinPsiUtil {
     final List<TextRange> parameterRanges = new ArrayList<>();
     final Pattern pattern = definition.getPattern();
     if (pattern == null) return null;
-    final Perl5Matcher matcher = new Perl5Matcher();
 
-    if (matcher.contains(substitution.getSubstitution(), pattern)) {
-      final MatchResult match = matcher.getMatch();
-      final int groupCount = match.groups();
-      for (int i = 1; i < groupCount; i++) {
-        final int start = match.beginOffset(i);
-        final int end = match.endOffset(i);
+    Matcher matcher = pattern.matcher(substitution.getSubstitution());
+    if (matcher.matches()) {
+      final int groupCount = matcher.groupCount();
+      for (int i = 0; i < groupCount; i++) {
+        final int start = matcher.start(i + 1);
+        final int end = matcher.end(i + 1);
         if (start >= 0 && end >= 0) {
           int rangeStart = substitution.getOffsetInOutlineStep(start);
           int rangeEnd = substitution.getOffsetInOutlineStep(end);
