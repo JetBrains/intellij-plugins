@@ -42,8 +42,7 @@ public abstract class AbstractStepDefinition {
 
   public boolean matches(@NotNull String stepName) {
     final Pattern pattern = getPattern();
-
-    return pattern != null && pattern.matcher(stepName).matches();
+    return pattern != null && pattern.matcher(stepName).find();
   }
 
   @Nullable

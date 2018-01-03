@@ -45,7 +45,7 @@ public class GherkinPsiUtil {
     if (pattern == null) return null;
 
     Matcher matcher = pattern.matcher(substitution.getSubstitution());
-    if (matcher.matches()) {
+    if (matcher.find()) {
       final int groupCount = matcher.groupCount();
       for (int i = 0; i < groupCount; i++) {
         final int start = matcher.start(i + 1);
