@@ -3,10 +3,9 @@ package com.jetbrains.lang.dart.ide.editor;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.editorActions.TypedHandler;
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
+import com.intellij.codeInsight.editorActions.TypedHandlerUtil;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;
-import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
@@ -14,7 +13,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartFileType;
@@ -46,7 +44,7 @@ public class DartTypeHandler extends TypedHandlerDelegate {
     }
 
     if (c == '>' && CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) {
-      if (handleDartGT(editor, DartTokenTypes.LT, DartTokenTypes.GT, INVALID_INSIDE_REFERENCE)) {
+      if (TypedHandlerUtil.handleGenericGT(editor, DartTokenTypes.LT, DartTokenTypes.GT, INVALID_INSIDE_REFERENCE)) {
         return Result.STOP;
       }
       return Result.CONTINUE;
@@ -128,49 +126,6 @@ public class DartTypeHandler extends TypedHandlerDelegate {
         return true;
       }
     }
-    return false;
-  }
-
-  // todo extract helper method, duplicated code in com.intellij.codeInsight.editorActions.JavaTypedHandler.handleJavaGT()
-  private static boolean handleDartGT(final Editor editor,
-                                      final IElementType lt,
-                                      final IElementType gt,
-                                      final TokenSet invalidInsideReference) {
-    if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) return false;
-
-    int offset = editor.getCaretModel().getOffset();
-
-    if (offset == editor.getDocument().getTextLength()) return false;
-
-    HighlighterIterator iterator = ((EditorEx)editor).getHighlighter().createIterator(offset);
-    if (iterator.getTokenType() != gt) return false;
-    while (!iterator.atEnd() && !invalidInsideReference.contains(iterator.getTokenType())) {
-      iterator.advance();
-    }
-
-    if (!iterator.atEnd() && invalidInsideReference.contains(iterator.getTokenType())) iterator.retreat();
-
-    int balance = 0;
-    while (!iterator.atEnd() && balance >= 0) {
-      final IElementType tokenType = iterator.getTokenType();
-      if (tokenType == lt) {
-        balance--;
-      }
-      else if (tokenType == gt) {
-        balance++;
-      }
-      else if (invalidInsideReference.contains(tokenType)) {
-        break;
-      }
-
-      iterator.retreat();
-    }
-
-    if (balance == 0) {
-      EditorModificationUtil.moveCaretRelatively(editor, 1);
-      return true;
-    }
-
     return false;
   }
 }
