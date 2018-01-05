@@ -52,6 +52,7 @@
                      implementationClass="com.dmarcotte.handlebars.inspections.HbEmptyBlockInspection"/>
     <highlightErrorFilter implementation="com.dmarcotte.handlebars.inspections.HbErrorFilter"/>
     <fileIndentOptionsProvider implementation="com.dmarcotte.handlebars.format.HbFileIndentOptionsProvider"/>
+    <psi.referenceContributor implementation="com.dmarcotte.handlebars.file.HbPsiReferenceContributor"/>
   </extensions>
     
   <extensions defaultExtensionNs="JavaScript">
