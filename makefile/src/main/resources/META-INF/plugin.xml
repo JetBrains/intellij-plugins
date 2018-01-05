@@ -5,10 +5,12 @@
   <vendor email="victor.kropp@gmail.com" url="https://victor.kropp.name/projects/makefile/">Victor Kropp</vendor>
 
   <description><![CDATA[
-  Support for UNIX Makefiles
+Support for UNIX Makefiles
     ]]></description>
 
-  <change-notes><![CDATA[]]></change-notes>
+  <change-notes><![CDATA[
+Bugfix release. The last update to support 2016.3.
+]]></change-notes>
 
   <idea-version since-build="163.0"/>
 
