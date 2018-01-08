@@ -6,7 +6,6 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -17,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.OptionalStepDefinitionExtensionPoint;
+import org.jetbrains.plugins.cucumber.inspections.CucumberStepDefinitionCreationContext;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
@@ -195,8 +195,8 @@ public class CucumberStepsIndex {
     return result;
   }
 
-  public Set<Pair<PsiFile, BDDFrameworkType>> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
-    Set<Pair<PsiFile, BDDFrameworkType>> result = new HashSet<>();
+  public Set<CucumberStepDefinitionCreationContext> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
+    Set<CucumberStepDefinitionCreationContext> result = new HashSet<>();
     for (CucumberJvmExtensionPoint ep : myExtensionMap.values()) {
       // Skip if framework file creation support is optional
       if ((ep instanceof OptionalStepDefinitionExtensionPoint) &&
@@ -206,7 +206,7 @@ public class CucumberStepsIndex {
       final Collection<? extends PsiFile> psiFiles = ep.getStepDefinitionContainers(featureFile);
       final BDDFrameworkType frameworkType = ep.getStepFileType();
       for (final PsiFile psiFile : psiFiles) {
-        result.add(Pair.create(psiFile, frameworkType));
+        result.add(new CucumberStepDefinitionCreationContext(psiFile, frameworkType));
       }
     }
     return result;
