@@ -23,6 +23,8 @@ import org.jetbrains.vuejs.GLOBAL_BINDING_MARK
 import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.index.VueComponentsIndex
 import org.jetbrains.vuejs.index.getForAllKeys
+import org.jetbrains.vuejs.index.getOriginalName
+import org.jetbrains.vuejs.index.getTypeString
 
 /**
  * @author Irina.Chernushina on 9/26/2017.
@@ -42,7 +44,7 @@ class VueComponents {
       val parent = element.parent
 
       if (parent is JSCallExpression) {
-        val reference = element.typeString ?: return null
+        val reference = getTypeString(element) ?: return null
 
         return resolveReferenceToObjectLiteral(element, reference)
       }
@@ -70,11 +72,12 @@ class VueComponents {
       }).firstOrNull()
     }
 
-    fun isGlobal(it: JSImplicitElement) = it.typeString != null
+    fun isGlobal(element: JSImplicitElement) = getTypeString(element) != null
 
     fun vueMixinDescriptorFinder(implicitElement: JSImplicitElement): JSObjectLiteralExpression? {
-      if (!StringUtil.isEmptyOrSpaces(implicitElement.typeString)) {
-        val expression = VueComponents.resolveReferenceToObjectLiteral(implicitElement, implicitElement.typeString!!)
+      val typeString = getTypeString(implicitElement)
+      if (!StringUtil.isEmptyOrSpaces(typeString)) {
+        val expression = VueComponents.resolveReferenceToObjectLiteral(implicitElement, typeString!!)
         if (expression != null) {
           return expression
         }
@@ -90,8 +93,11 @@ class VueComponents {
       return null
     }
 
-    fun isGlobalLibraryComponent(name: String, component: JSImplicitElement): Boolean =
-      getLibComponentsMappings(component)[fromAsset(name)] != null
+    fun isGlobalLibraryComponent(component: JSImplicitElement): Boolean {
+      val originalName = getOriginalName(component)
+      if (originalName.endsWith("*")) return false
+      return getLibComponentsMappings(component)[fromAsset(originalName)] != null
+    }
 
     private fun getLibComponentsMappings(component: JSImplicitElement): Map<String, String> {
       val virtualFile = component.containingFile.viewProvider.virtualFile
@@ -128,14 +134,15 @@ class VueComponents {
       val componentData = mutableMapOf<String, MutableList<Pair<PsiElement, Boolean>>>()
       for (value in allValues) {
         val isGlobal = isGlobal(value)
-        if (isGlobal && value.name.endsWith(GLOBAL_BINDING_MARK)) {
+        val name = getOriginalName(value)
+        if (isGlobal && name.endsWith(GLOBAL_BINDING_MARK)) {
           val pair = doAdditionalLibResolve(value) ?: continue
           val normalizedName = fromAsset(pair.first)
-          libCompResolveMap.put(normalizedName, fromAsset(value.name.substringBefore(GLOBAL_BINDING_MARK)))
+          libCompResolveMap.put(normalizedName, fromAsset(name.substringBefore(GLOBAL_BINDING_MARK)))
           componentData.putValue(normalizedName, Pair(pair.second, true))
         }
         else if (!onlyGlobal || isGlobal) {
-          componentData.putValue(fromAsset(value.name), Pair(value, isGlobal))
+          componentData.putValue(fromAsset(name), Pair(value, isGlobal))
         }
       }
 

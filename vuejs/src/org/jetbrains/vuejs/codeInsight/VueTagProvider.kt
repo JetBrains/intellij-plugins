@@ -48,33 +48,45 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
         return null
       }
 
-      val localComponents = mutableListOf<JSImplicitElement>()
-      processLocalComponents(tag, { foundName, element ->
-        if (foundName == name || foundName == toAsset(name) || foundName == toAsset(name).capitalize()) {
-          localComponents.add(element)
-        }
-        return@processLocalComponents true
-      })
-
+      val localComponents = findLocalComponents(name, tag)
       if (!localComponents.isEmpty()) return multiDefinitionDescriptor(localComponents)
 
-      val fromAsset = fromAsset(name)
-      val variants = nameVariantsWithPossiblyGlobalMark(name)
-      @Suppress("LoopToCallChain") // by performance reasons
-      for (variant in variants) {
-        val resolved = resolve(variant, GlobalSearchScope.allScope(tag.project), VueComponentsIndex.KEY) ?: continue
-        val global = if (VUE_FRAMEWORK_COMPONENTS.contains(fromAsset)) resolved
-        else resolved.filter { isGlobal(it) || VueComponents.isGlobalLibraryComponent(variant, it) }
-        if (global.isEmpty()) continue
+      val normalized = fromAsset(name)
+      val globalComponents = findGlobalComponents(normalized, tag)
+      if (!globalComponents.isEmpty()) return multiDefinitionDescriptor(globalComponents)
 
-        return multiDefinitionDescriptor(global)
-      }
       // keep this last in case in future we would be able to normally resolve into these components
-      if (VUE_FRAMEWORK_UNRESOLVABLE_COMPONENTS.contains(fromAsset)) {
-        return VueElementDescriptor(JSImplicitElementImpl(fromAsset, tag))
+      if (VUE_FRAMEWORK_UNRESOLVABLE_COMPONENTS.contains(normalized)) {
+        return VueElementDescriptor(JSImplicitElementImpl(normalized, tag))
       }
     }
     return null
+  }
+
+  private fun findLocalComponents(name: String, tag: XmlTag): List<JSImplicitElement> {
+    val localComponents = mutableListOf<JSImplicitElement>()
+    processLocalComponents(tag, { foundName, element ->
+      if (foundName == name || foundName == toAsset(name) || foundName == toAsset(name).capitalize()) {
+        localComponents.add(element)
+      }
+      return@processLocalComponents true
+    })
+    return localComponents
+  }
+
+  private fun findGlobalComponents(normalized: String, tag: XmlTag): Collection<JSImplicitElement> {
+    val resolvedVariants = resolve(normalized, GlobalSearchScope.allScope(tag.project), VueComponentsIndex.KEY)
+    if (resolvedVariants != null) {
+      return if (VUE_FRAMEWORK_COMPONENTS.contains(normalized)) resolvedVariants
+      else {
+        // prefer library definitions of components for resolve
+        // i.e. prefer the place where the name is defined, not the place where it is registered with Vue.component
+        val libDef = resolvedVariants.filter { VueComponents.isGlobalLibraryComponent(it) }
+        if (libDef.isEmpty()) resolvedVariants.filter { isGlobal(it) }
+        else libDef
+      }
+    }
+    return emptyList()
   }
 
   private fun nameVariantsWithPossiblyGlobalMark(name: String): MutableSet<String> {

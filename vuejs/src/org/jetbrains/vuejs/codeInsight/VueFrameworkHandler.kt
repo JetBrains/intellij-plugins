@@ -80,9 +80,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         }
       } else if (((obj.parent as? JSProperty) == null) && isDescriptorOfLinkedInstanceDefinition(obj)) {
         val binding = (obj.findProperty("el")?.value as? JSLiteralExpression)?.value as? String
-        out.addImplicitElement(JSImplicitElementImpl.Builder(binding ?: "", property)
-                                 .setUserString(VueOptionsIndex.JS_KEY)
-                                 .toImplicitElement())
+        out.addImplicitElement(createImplicitElement(binding ?: "", property, VueOptionsIndex.JS_KEY))
       }
     }
     return if (out.isEmpty) outData else out
@@ -111,10 +109,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         val provider: PsiElement = (descriptor as? JSObjectLiteralExpression)?.firstProperty ?: callExpression
         // not null type string indicates the global component
         val typeString = (descriptor as? JSReferenceExpression)?.text ?: ""
-        outData.addImplicitElement(JSImplicitElementImpl.Builder(componentName, provider)
-                                     .setUserString(VueComponentsIndex.JS_KEY)
-                                     .setTypeString(typeString)
-                                     .toImplicitElement())
+        outData.addImplicitElement(createImplicitElement(componentName, provider, VueComponentsIndex.JS_KEY, typeString))
       }
     } else if (VueStaticMethod.Mixin.matches(reference)) {
       if (arguments.size == 1) {
@@ -149,20 +144,14 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                               typeString: String?,
                               isGlobal: Boolean) {
     val index = if (isGlobal) VueGlobalDirectivesIndex.JS_KEY else VueLocalDirectivesIndex.JS_KEY
-    outData.addImplicitElement(JSImplicitElementImpl.Builder(directiveName, provider)
-                                 .setUserString(index)
-                                 .setTypeString(typeString)
-                                 .toImplicitElement())
+    outData.addImplicitElement(createImplicitElement(directiveName, provider, index, typeString))
   }
 
   private fun recordMixin(outData: JSElementIndexingData,
                           provider: JSImplicitElementProvider,
                           typeString: String?,
                           isGlobal: Boolean) {
-    outData.addImplicitElement(JSImplicitElementImpl.Builder(if (isGlobal) GLOBAL else LOCAL, provider)
-                                 .setUserString(VueMixinBindingIndex.JS_KEY)
-                                 .setTypeString(typeString)
-                                 .toImplicitElement())
+    outData.addImplicitElement(createImplicitElement(if (isGlobal) GLOBAL else LOCAL, provider, VueMixinBindingIndex.JS_KEY, typeString))
   }
 
   private fun isDescriptorOfLinkedInstanceDefinition(obj: JSObjectLiteralExpression): Boolean {
@@ -209,7 +198,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                                        outData: JSElementIndexingData) {
     val compName = (obj.findProperty("name")?.value as? JSLiteralExpression)?.value as? String
                    ?: FileUtil.getNameWithoutExtension(obj.containingFile.name)
-    outData.addImplicitElement(JSImplicitElementImpl.Builder(compName, property).setUserString(VueComponentsIndex.JS_KEY).toImplicitElement())
+    outData.addImplicitElement(createImplicitElement(compName, property, VueComponentsIndex.JS_KEY))
   }
 
   override fun indexImplicitElement(element: JSImplicitElementStructure, sink: IndexSink?): Boolean {
