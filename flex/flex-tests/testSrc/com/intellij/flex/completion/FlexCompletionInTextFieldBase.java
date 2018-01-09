@@ -37,6 +37,7 @@ public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionInTe
     return FlexModuleType.getInstance();
   }
 
+  @Override
   protected void setUpJdk() {
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }

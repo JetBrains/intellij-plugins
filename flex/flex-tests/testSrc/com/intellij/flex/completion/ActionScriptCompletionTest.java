@@ -73,6 +73,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     return JSTestUtils.getTestMethod(getClass(), getTestName(false)).getAnnotation(NeedsJavaModule.class) != null;
   }
 
+  @Override
   protected void setUpJdk() {
     CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
     if (!needsJavaModule()) {
