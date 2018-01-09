@@ -50,9 +50,10 @@ class Baz extends Kuk implements A, B, C {
       var f = int;
       horse() { };
       assert(x == 12);
-      assert(x = 12 * (2 - 1));
+      assert(x = 12 * (2 - 1),);
       assert(a b c);
       assert(a + b, "error");
+      assert(a, "error",);
     }
   }
 

@@ -463,7 +463,7 @@ doWhileStatement ::= 'do' statement 'while' '(' expressionWithRecoverUntilParen 
 forStatement ::= 'await'? 'for' forLoopPartsInBraces statement {pin=2}
 //todo component
 private assertStatementWithSemicolon ::= assertStatement ';' {pin=1}
-assertStatement ::= 'assert' '(' expressionWithRecoverUntilParenOrComma (',' stringLiteralExpression)? ')' {pin=1}
+assertStatement ::= 'assert' '(' expressionWithRecoverUntilParenOrComma (',' stringLiteralExpression)? ','? ')' {pin=1}
 yieldEachStatement ::= 'yield' '*' expression ';' {pin=2}
 yieldStatement ::= 'yield' expression ';' {pin=1}
 breakStatement ::= 'break' referenceExpression? ';' {pin=1}

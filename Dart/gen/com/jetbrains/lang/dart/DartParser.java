@@ -742,7 +742,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'assert' '(' expressionWithRecoverUntilParenOrComma (',' stringLiteralExpression)? ')'
+  // 'assert' '(' expressionWithRecoverUntilParenOrComma (',' stringLiteralExpression)? ','? ')'
   public static boolean assertStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "assertStatement")) return false;
     if (!nextTokenIs(b, ASSERT)) return false;
@@ -752,6 +752,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     p = r; // pin = 1
     r = r && report_error_(b, expressionWithRecoverUntilParenOrComma(b, l + 1));
     r = p && report_error_(b, assertStatement_3(b, l + 1)) && r;
+    r = p && report_error_(b, assertStatement_4(b, l + 1)) && r;
     r = p && consumeToken(b, RPAREN) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
@@ -773,6 +774,13 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = r && stringLiteralExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  // ','?
+  private static boolean assertStatement_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "assertStatement_4")) return false;
+    consumeToken(b, COMMA);
+    return true;
   }
 
   /* ********************************************************** */
