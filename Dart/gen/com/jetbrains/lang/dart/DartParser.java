@@ -1745,7 +1745,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // expression (',' expression)*
+  // expression (','? expression)*
   public static boolean expressionList(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "expressionList")) return false;
     boolean r;
@@ -1756,7 +1756,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // (',' expression)*
+  // (','? expression)*
   private static boolean expressionList_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "expressionList_1")) return false;
     int c = current_position_(b);
@@ -1768,15 +1768,22 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // ',' expression
+  // ','? expression
   private static boolean expressionList_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "expressionList_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, COMMA);
+    r = expressionList_1_0_0(b, l + 1);
     r = r && expression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  // ','?
+  private static boolean expressionList_1_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "expressionList_1_0_0")) return false;
+    consumeToken(b, COMMA);
+    return true;
   }
 
   /* ********************************************************** */

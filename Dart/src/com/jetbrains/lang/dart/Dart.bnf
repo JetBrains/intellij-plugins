@@ -494,7 +494,7 @@ finallyPart::= 'finally' block {pin=1}
 
 varInit ::= '=' expression {pin=1}
 
-expressionList ::= expression (',' expression)*
+expressionList ::= expression (','? expression)*
 arguments ::= '(' argumentList? ')'
 
 argumentList ::= argumentListPart (',' argumentListPart)* ','? {recoverWhile="argument_list_recover"}
