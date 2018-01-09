@@ -21,10 +21,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.putValue
 import org.jetbrains.vuejs.GLOBAL_BINDING_MARK
 import org.jetbrains.vuejs.VueFileType
-import org.jetbrains.vuejs.index.VueComponentsIndex
-import org.jetbrains.vuejs.index.getForAllKeys
-import org.jetbrains.vuejs.index.getOriginalName
-import org.jetbrains.vuejs.index.getTypeString
+import org.jetbrains.vuejs.index.*
+import java.util.*
 
 /**
  * @author Irina.Chernushina on 9/26/2017.
@@ -74,6 +72,8 @@ class VueComponents {
 
     fun isGlobal(element: JSImplicitElement) = getTypeString(element) != null
 
+    fun isGlobalExact(element: JSImplicitElement) = getTypeString(element) != null && !getOriginalName(element).endsWith(GLOBAL_BINDING_MARK)
+
     fun vueMixinDescriptorFinder(implicitElement: JSImplicitElement): JSObjectLiteralExpression? {
       val typeString = getTypeString(implicitElement)
       if (!StringUtil.isEmptyOrSpaces(typeString)) {
@@ -95,11 +95,17 @@ class VueComponents {
 
     fun isGlobalLibraryComponent(component: JSImplicitElement): Boolean {
       val originalName = getOriginalName(component)
-      if (originalName.endsWith("*")) return false
+      if (originalName.endsWith(GLOBAL_BINDING_MARK)) return false
       return getLibComponentsMappings(component)[fromAsset(originalName)] != null
     }
 
-    private fun getLibComponentsMappings(component: JSImplicitElement): Map<String, String> {
+    fun findGlobalLibraryComponent(project: Project, name: String): PsiElement? {
+      val allComponents = getAllComponents(project, null, true)
+      val localName = allComponents.libCompResolveMap[fromAsset(name)] ?: return null
+      return allComponents.map[localName]?.first
+    }
+
+    private fun getLibComponentsMappings(component: JSImplicitElement): Map<String, Pair<PsiElement, Boolean>> {
       val virtualFile = component.containingFile.viewProvider.virtualFile
       val packageJson = PackageJsonUtil.findUpPackageJson(virtualFile)
       val project = component.project
@@ -110,38 +116,43 @@ class VueComponents {
           return CachedValuesManager.getCachedValue(folder,
                                                     CachedValueProvider {
                                                       val scope = GlobalSearchScopesCore.directoryScope(project, packageJson.parent, true)
-                                                      val value = calculateAllComponents(scope, null, true)
-                                                      CachedValueProvider.Result(value.libCompResolveMap, packageJson.parent)
+                                                      val value = calculateAllComponents(scope)
+                                                      CachedValueProvider.Result(value.map, packageJson.parent)
                                                     })
         }
       }
-      return getAllComponents(project, null, true).libCompResolveMap
+      return getAllComponents(project, null, true).map
     }
 
     fun getAllComponents(project: Project, filter: ((String) -> Boolean)?, onlyGlobal: Boolean): ComponentsData {
-      return CachedValuesManager.getManager(project).getCachedValue(project, {
-        val componentsData = calculateAllComponents(GlobalSearchScope.allScope(project), filter, onlyGlobal)
+      val value = CachedValuesManager.getManager(project).getCachedValue(project, {
+        val componentsData = calculateAllComponents(GlobalSearchScope.allScope(project))
         CachedValueProvider.Result(componentsData, PsiManager.getInstance(project).modificationTracker)
       })
+      if (onlyGlobal || filter != null) {
+        val filteredMap = value.map.filter { (!onlyGlobal || it.value.second) && (filter == null || filter.invoke(it.key)) }
+        return ComponentsData(filteredMap, value.libCompResolveMap)
+      }
+      return value
     }
 
-    private fun calculateAllComponents(scope: GlobalSearchScope,
-                                       filter: ((String) -> Boolean)?,
-                                       onlyGlobal: Boolean): ComponentsData {
-      val allValues = getForAllKeys(scope, VueComponentsIndex.KEY, filter)
+    private fun calculateAllComponents(scope: GlobalSearchScope): ComponentsData {
+      val allValues = getForAllKeys(scope, VueComponentsIndex.KEY)
       val libCompResolveMap = mutableMapOf<String, String>()
 
       val componentData = mutableMapOf<String, MutableList<Pair<PsiElement, Boolean>>>()
       for (value in allValues) {
-        val isGlobal = isGlobal(value)
         val name = getOriginalName(value)
-        if (isGlobal && name.endsWith(GLOBAL_BINDING_MARK)) {
+        val isGlobal = isGlobal(value)
+        if (isGlobal && GLOBAL_COMP_COLLECTION == name) {
+          gatherObjectLiteralProperties(value, libCompResolveMap, componentData)
+        } else if (isGlobal && name.endsWith(GLOBAL_BINDING_MARK)) {
           val pair = doAdditionalLibResolve(value) ?: continue
           val normalizedName = fromAsset(pair.first)
-          libCompResolveMap.put(normalizedName, fromAsset(name.substringBefore(GLOBAL_BINDING_MARK)))
+          libCompResolveMap.put(fromAsset(name.substringBefore(GLOBAL_BINDING_MARK)), normalizedName)
           componentData.putValue(normalizedName, Pair(pair.second, true))
         }
-        else if (!onlyGlobal || isGlobal) {
+        else {
           componentData.putValue(fromAsset(name), Pair(value, isGlobal))
         }
       }
@@ -151,6 +162,48 @@ class VueComponents {
         componentsMap.put(entry.key, selectComponentDefinition(entry.value))
       }
       return ComponentsData(componentsMap, libCompResolveMap)
+    }
+
+    private fun gatherObjectLiteralProperties(value: JSImplicitElement,
+                                              libCompResolveMap: MutableMap<String, String>,
+                                              componentData: MutableMap<String, MutableList<Pair<PsiElement, Boolean>>>) {
+      // object properties iteration
+      val objLiteral = findComponentDescriptor(value) ?: return
+      val queue = ArrayDeque<PsiElement>()
+      queue.addAll(objLiteral.children)
+      val visited = mutableSetOf<PsiElement>()
+      while (!queue.isEmpty()) {
+        val element = queue.removeFirst()
+        // technically, I can write spread to itself or a ring
+        if (visited.contains(element)) continue
+        visited.add(element)
+
+        val asSpread = element as? JSSpreadExpression
+        if (asSpread != null) {
+          val spreadExpression = asSpread.expression
+          if (spreadExpression is JSReferenceExpression) {
+            val variants = spreadExpression.multiResolve(false)
+            val literal = getLiteralFromResolve(variants.mapNotNull { if (it.isValidResult) it.element else null }.toList())
+            if (literal != null) queue.addAll(literal.children)
+          } else if (spreadExpression is JSObjectLiteralExpression) {
+            queue.addAll(spreadExpression.children)
+          }
+          continue
+        }
+        val asProperty = element as? JSProperty
+        if (asProperty != null) {
+          val propName = asProperty.name
+          if (propName != null) {
+            val descriptor = JSStubBasedPsiTreeUtil.calculateMeaningfulElement(asProperty) as? JSObjectLiteralExpression
+            val nameFromDescriptor = getTextIfLiteral(descriptor?.findProperty("name")?.value) ?: propName
+            // name used in call Vue.component() overrides what was set in descriptor itself
+            val normalizedName = fromAsset(propName)
+            val realName = fromAsset(nameFromDescriptor)
+            libCompResolveMap.put(normalizedName, realName)
+            componentData.putValue(realName, Pair(descriptor ?: asProperty, true))
+          }
+        }
+      }
     }
 
     private fun selectComponentDefinition(list: List<Pair<PsiElement, Boolean>>): Pair<PsiElement, Boolean> {

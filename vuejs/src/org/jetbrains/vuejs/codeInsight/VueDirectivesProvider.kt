@@ -19,13 +19,12 @@ class VueDirectivesProvider {
   companion object {
     fun getAttributes(descriptor: JSObjectLiteralExpression?, project: Project) : List<VueAttributeDescriptor> {
       val result = mutableListOf<VueAttributeDescriptor>()
-      result.addAll(getForAllKeys(createSearchScope(descriptor, project), VueGlobalDirectivesIndex.KEY, null).
-        map { createDescriptor(it) })
+      result.addAll(getForAllKeys(createSearchScope(descriptor, project), VueGlobalDirectivesIndex.KEY).map { createDescriptor(it) })
 
       val directives = findProperty(descriptor, DIRECTIVES)
       val fileScope = createContainingFileScope(directives)
       if (directives != null && fileScope != null) {
-        result.addAll(getForAllKeys(fileScope, VueLocalDirectivesIndex.KEY, null)
+        result.addAll(getForAllKeys(fileScope, VueLocalDirectivesIndex.KEY)
           .filter { PsiTreeUtil.isAncestor(directives, it.parent, false) }
           .map { createDescriptor(it) })
       }

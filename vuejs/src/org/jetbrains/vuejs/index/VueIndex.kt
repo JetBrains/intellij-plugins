@@ -18,6 +18,7 @@ import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.Processor
+import org.jetbrains.vuejs.GLOBAL_BINDING_MARK
 import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.codeInsight.fromAsset
 
@@ -28,11 +29,10 @@ const val GLOBAL = "global"
 const val LOCAL = "local"
 const val TYPE_DELIMITER = "#"
 const val TYPE_MARKER = "@"
+const val GLOBAL_COMP_COLLECTION = "**"
 
-fun getForAllKeys(scope:GlobalSearchScope, key:StubIndexKey<String, JSImplicitElementProvider>,
-                  filter: ((String) -> Boolean)?): Collection<JSImplicitElement> {
+fun getForAllKeys(scope:GlobalSearchScope, key:StubIndexKey<String, JSImplicitElementProvider>): Collection<JSImplicitElement> {
   var keys = StubIndex.getInstance().getAllKeys(key, scope.project!!)
-  if (filter != null) keys = keys.filter { filter.invoke(it) }
   return keys.mapNotNull { resolve(it, scope, key) }.flatMap { it.toList() }
 }
 
@@ -90,7 +90,8 @@ fun createImplicitElement(name: String, provider: PsiElement, indexKey: String, 
     .toImplicitElement()
 }
 
-private fun normalizeNameForIndex(name: String) = fromAsset(name.substringBeforeLast("*"))
+private fun normalizeNameForIndex(name: String) = if (GLOBAL_COMP_COLLECTION == name) name
+  else fromAsset(name.substringBeforeLast(GLOBAL_BINDING_MARK))
 
 // TYPE_MARKER serves to differentiation between no-type (null) and not-null-empty-type (indicates literal global component)
 fun getTypeString(element : JSImplicitElement): String? {

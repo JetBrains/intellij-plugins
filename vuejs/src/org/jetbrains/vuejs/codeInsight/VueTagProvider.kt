@@ -9,6 +9,7 @@ import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
@@ -34,6 +35,7 @@ import icons.VuejsIcons
 import org.jetbrains.vuejs.GLOBAL_BINDING_MARK
 import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.getBoundName
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isGlobal
+import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isGlobalExact
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isNotInLibrary
 import org.jetbrains.vuejs.index.VueComponentsIndex
 import org.jetbrains.vuejs.index.hasVue
@@ -79,14 +81,20 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     if (resolvedVariants != null) {
       return if (VUE_FRAMEWORK_COMPONENTS.contains(normalized)) resolvedVariants
       else {
-        // prefer library definitions of components for resolve
-        // i.e. prefer the place where the name is defined, not the place where it is registered with Vue.component
-        val libDef = resolvedVariants.filter { VueComponents.isGlobalLibraryComponent(it) }
-        if (libDef.isEmpty()) resolvedVariants.filter { isGlobal(it) }
-        else libDef
+        // if global component was defined with literal name, that's the "source of true"
+        val globalExact = resolvedVariants.filter { isGlobalExact(it) }
+        if (!globalExact.isEmpty()) globalExact
+        else {
+          // prefer library definitions of components for resolve
+          // i.e. prefer the place where the name is defined, not the place where it is registered with Vue.component
+          val libDef = resolvedVariants.filter { VueComponents.isGlobalLibraryComponent(it) }
+          if (libDef.isEmpty()) resolvedVariants.filter { isGlobal(it) }
+          else libDef
+        }
       }
     }
-    return emptyList()
+    val globalAliased = VueComponents.findGlobalLibraryComponent(tag.project, normalized) ?: return emptyList()
+    return setOf(globalAliased as? JSImplicitElement ?: JSLocalImplicitElementImpl(tag.name, null, globalAliased, null))
   }
 
   private fun nameVariantsWithPossiblyGlobalMark(name: String): MutableSet<String> {

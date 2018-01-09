@@ -1454,6 +1454,139 @@ export default DatePicker;
     doResolveIntoLibraryComponent("ElDatePicker", "date-picker.js")
   }
 
+  fun testResolveSimpleObjectMemberComponent() {
+    myFixture.configureByText("a.vue", "")
+    myFixture.configureByText("lib-comp.es6",
+"""
+export default {
+  name: 'lib-comp',
+  template: '',
+  render() {}
+}
+""")
+    myFixture.configureByText("lib.es6",
+"""
+import LibComp from './lib-comp';
+const obj = { LibComp };
+
+Object.keys(obj).forEach(key => {
+        Vue.component(key, obj[key]);
+    });
+""")
+    myFixture.configureByText("ResolveSimpleObjectMemberComponent.vue",
+"""<template><<caret>lib-comp/></template>""")
+    doResolveIntoLibraryComponent("lib-comp", "lib-comp.es6")
+  }
+
+  fun testResolveAliasedObjectMemberComponent() {
+    myFixture.configureByText("a.vue", "")
+    myFixture.configureByText("lib-comp-for-alias.es6",
+"""
+export default {
+  name: 'lib-comp',
+  template: '',
+  render() {}
+}
+""")
+    myFixture.configureByText("libAlias.es6",
+"""
+import Alias from './lib-comp-for-alias';
+const obj = { Alias };
+
+Object.keys(obj).forEach(key => {
+        Vue.component(key, obj[key]);
+    });
+""")
+    myFixture.configureByText("ResolveAliasedObjectMemberComponent.vue",
+"""<template><<caret>alias/></template>""")
+
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val target = reference!!.resolve()
+    TestCase.assertNotNull(target)
+    TestCase.assertEquals("lib-comp-for-alias.es6", target!!.containingFile.name)
+    TestCase.assertTrue(target.parent is JSObjectLiteralExpression)
+  }
+
+  fun testResolveObjectWithSpreadComponent() {
+    myFixture.configureByText("a.vue", "")
+    myFixture.configureByText("lib-spread.es6",
+                              """
+export default {
+  name: 'lib-spread',
+  template: '',
+  render() {}
+}
+""")
+    myFixture.configureByText("lib-register-spread.es6",
+                              """
+import LibSpread from './lib-spread';
+const obj = { LibSpread };
+const other = {...obj};
+
+Object.keys(other).forEach(key => {
+        Vue.component(key, other[key]);
+    });
+""")
+    myFixture.configureByText("ResolveObjectWithSpreadComponent.vue",
+                              """<template><<caret>lib-spread/></template>""")
+    doResolveIntoLibraryComponent("lib-spread", "lib-spread.es6")
+  }
+
+  fun testResolveObjectWithSpreadComponentAliased() {
+    myFixture.configureByText("a.vue", "")
+    myFixture.configureByText("lib-spread.es6",
+                              """
+export default {
+  name: 'lib-spread',
+  template: '',
+  render() {}
+}
+""")
+    myFixture.configureByText("lib-register-spread.es6",
+                              """
+import LibSpreadAlias from './lib-spread';
+const obj = { LibSpreadAlias };
+const other = {...obj};
+
+Object.keys(other).forEach(key => {
+        Vue.component(key, other[key]);
+    });
+""")
+    myFixture.configureByText("ResolveObjectWithSpreadComponentAliased.vue",
+                              """<template><<caret>lib-spread-alias/></template>""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val target = reference!!.resolve()
+    TestCase.assertNotNull(target)
+    TestCase.assertEquals("lib-spread.es6", target!!.containingFile.name)
+    TestCase.assertTrue(target.parent is JSObjectLiteralExpression)
+  }
+
+  fun testResolveObjectWithSpreadLiteralComponent() {
+    myFixture.configureByText("a.vue", "")
+    myFixture.configureByText("lib-spread.es6",
+                              """
+export default {
+  name: 'lib-spread',
+  template: '',
+  render() {}
+}
+""")
+    myFixture.configureByText("lib-register-spread.es6",
+                              """
+import LibSpread from './lib-spread';
+const other = {...{ LibSpread }};
+
+Object.keys(other).forEach(key => {
+        Vue.component(key, other[key]);
+    });
+""")
+    myFixture.configureByText("ResolveObjectWithSpreadLiteralComponent.vue",
+                              """<template><<caret>lib-spread/></template>""")
+    doResolveIntoLibraryComponent("lib-spread", "lib-spread.es6")
+  }
+
   private fun doResolveIntoLibraryComponent(compName: String, fileName: String) {
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)

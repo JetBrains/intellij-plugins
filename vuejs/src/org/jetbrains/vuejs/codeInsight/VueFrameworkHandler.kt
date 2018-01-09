@@ -26,6 +26,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.DIRECTIVES
+import org.jetbrains.vuejs.GLOBAL_BINDING_MARK
 import org.jetbrains.vuejs.MIXINS
 import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.index.*
@@ -108,7 +109,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         val descriptor = arguments[1]
         val provider: PsiElement = (descriptor as? JSObjectLiteralExpression)?.firstProperty ?: callExpression
         // not null type string indicates the global component
-        val typeString = (descriptor as? JSReferenceExpression)?.text ?: ""
+        val typeString = (descriptor as? JSReferenceExpression)?.text ?:
+                         (descriptor as? JSIndexedPropertyAccessExpression)?.qualifier?.text ?: ""
         outData.addImplicitElement(createImplicitElement(componentName, provider, VueComponentsIndex.JS_KEY, typeString))
       }
     } else if (VueStaticMethod.Mixin.matches(reference)) {
@@ -129,11 +131,18 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   private fun tryLibraryComponentNameHeuristics(nameExp: JSExpression?, descriptorExp: JSExpression?): String? {
     val nameRef = nameExp as? JSReferenceExpression ?: return null
+    val descriptorAsIndexedAccess = descriptorExp as? JSIndexedPropertyAccessExpression
+    if (descriptorAsIndexedAccess != null) {
+      val index = descriptorAsIndexedAccess.indexExpression as? JSReferenceExpression ?: return null
+      if (index.referenceName == nameRef.referenceName && nameRef.qualifier == null && index.qualifier == null) {
+        return GLOBAL_COMP_COLLECTION
+      }
+    }
     val descriptorRef = descriptorExp as? JSReferenceExpression ?: return null
     val qualifierRef = nameRef.qualifier as? JSReferenceExpression ?: return null
     if (qualifierRef.qualifier == null && descriptorRef.qualifier == null &&
         qualifierRef.referenceName != null && qualifierRef.referenceName == descriptorRef.referenceName) {
-      return qualifierRef.referenceName + "*"
+      return qualifierRef.referenceName + GLOBAL_BINDING_MARK
     }
     return null
   }
