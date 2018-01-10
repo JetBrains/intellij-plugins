@@ -149,7 +149,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     val namePrefix = tag.name.substringBefore(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, tag.name)
 
     val variants = nameVariantsWithPossiblyGlobalMark(namePrefix)
-    val allComponents = VueComponents.getAllComponents(tag.project, { key -> variants.any { key.startsWith(it, true) } }, false)
+    val allComponents = VueComponents.getAllComponents(tag.project, { key -> variants.any { key.contains(it, true) } }, false)
     val components = allComponents.map.keys
       .filter { !files.contains(allComponents.map[it]!!.first.containingFile) }
       .map {
