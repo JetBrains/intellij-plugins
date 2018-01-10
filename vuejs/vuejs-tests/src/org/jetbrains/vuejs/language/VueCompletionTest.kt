@@ -710,6 +710,17 @@ $script""")
                                                                 "v-list-tile-sub-title", "v-list-tile-title"))
   }
 
+  fun testIviewCompletion() {
+    createPackageJsonWithVueDependency(myFixture, "\"iview\": \"2.8.0\"")
+    myFixture.copyDirectoryToProject("../libs/iview/node_modules", "./node_modules")
+    myFixture.configureByText("IviewCompletion.vue",
+"""
+<template><a<caret></template>
+""")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, listOf("affix", "alert", "auto-complete", "avatar"))
+  }
+
   fun testWrongPropsNotInCompletion() {
     myFixture.configureByText("WrongPropsNotInCompletion.vue", """
 <template>
