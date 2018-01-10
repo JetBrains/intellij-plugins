@@ -204,6 +204,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
     FileEditorManager.getInstance(myProject).openTextEditor(descriptor, true);
   }
 
+  @NotNull
   @Override
   protected String getCommandName() {
     return FlexBundle.message("move.to.upper.level.command.name",
@@ -236,6 +237,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
     }
   }
 
+  @Override
   protected void performPsiSpoilingRefactoring() {
     if (myNonCodeUsages != null) {
       RenameUtil.renameNonCodeUsages(myProject, myNonCodeUsages);

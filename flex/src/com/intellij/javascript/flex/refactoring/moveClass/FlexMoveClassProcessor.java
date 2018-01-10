@@ -57,6 +57,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
     return new FlexMoveClassUsageViewDescriptor();
   }
 
+  @NotNull
   @Override
   protected String getCommandName() {
     StringBuilder s = new StringBuilder();

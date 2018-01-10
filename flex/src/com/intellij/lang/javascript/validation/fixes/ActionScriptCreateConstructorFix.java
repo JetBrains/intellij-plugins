@@ -334,6 +334,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
       super.performRefactoring(usageInfos);
     }
 
+    @NotNull
     @Override
     protected String getCommandName() {
       return getName();

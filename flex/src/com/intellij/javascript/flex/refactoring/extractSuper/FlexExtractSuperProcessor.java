@@ -507,6 +507,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
     myMembersAfterMove = new JSPullUpHelper(myTargetClass, mySourceClass, myMembersToMove, myDocCommentPolicy).moveMembersToBase(formatters);
   }
 
+  @NotNull
   @Override
   protected String getCommandName() {
     if (myMode == JSExtractSuperMode.RenameImplementation) {
