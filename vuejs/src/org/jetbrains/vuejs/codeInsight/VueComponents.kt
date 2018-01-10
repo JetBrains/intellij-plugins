@@ -11,8 +11,10 @@ import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
+import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.util.CachedValueProvider
@@ -96,47 +98,99 @@ class VueComponents {
     fun isGlobalLibraryComponent(component: JSImplicitElement): Boolean {
       val originalName = getOriginalName(component)
       if (originalName.endsWith(GLOBAL_BINDING_MARK)) return false
-      return getLibComponentsMappings(component)[fromAsset(originalName)] != null
+      return resolveComponentsCollection(component)[fromAsset(originalName)]?.second ?: false
     }
 
     fun findGlobalLibraryComponent(project: Project, name: String): PsiElement? {
-      val allComponents = getAllComponents(project, null, true)
-      val localName = allComponents.libCompResolveMap[fromAsset(name)] ?: return null
-      return allComponents.map[localName]?.first
+      val projectComponents = getOnlyProjectComponents(project)
+      var element = findComponentByAlias(projectComponents, name)
+      if (element != null) return element
+
+      val libraryPackageJsons = getLibraryPackageJsons(project)
+      for (packageJson in libraryPackageJsons) {
+        element = findComponentByAlias(getModuleComponents(packageJson, project), name)
+        if (element != null) return element
+      }
+      return null
     }
 
-    private fun getLibComponentsMappings(component: JSImplicitElement): Map<String, Pair<PsiElement, Boolean>> {
+    private fun findComponentByAlias(components: ComponentsData?, alias: String): PsiElement? {
+      if (components == null) return null
+      val localName = components.libCompResolveMap[fromAsset(alias)] ?: return null
+      return components.map[localName]?.first
+    }
+
+    private fun resolveComponentsCollection(component: JSImplicitElement): Map<String, Pair<PsiElement, Boolean>> {
       val virtualFile = component.containingFile.viewProvider.virtualFile
-      val packageJson = PackageJsonUtil.findUpPackageJson(virtualFile)
+      val variants = mutableListOf<VirtualFile>()
+      PackageJsonUtil.processUpPackageJsonFilesInAllScope(virtualFile,
+                                                {
+                                                  if (packageJsonForLibraryAndHasVue(it)) variants.add(it)
+                                                  true
+                                                })
       val project = component.project
-      if (packageJson != null && packageJson.parent != null &&
-          PackageJsonUtil.getOrCreateData(packageJson).isDependencyOfAnyType("vue")) {
+      @Suppress("LoopToCallChain") // we do not want to convert them all and then search
+      for (variant in variants) {
+        val moduleComponents = getModuleComponents(variant, project)
+        if (moduleComponents != null) {
+          return moduleComponents.map
+        }
+      }
+      return getOnlyProjectComponents(project).map
+    }
+
+    private fun getModuleComponents(packageJson: VirtualFile, project: Project): ComponentsData? {
+      if (packageJson.parent != null) {
         val folder = PsiManager.getInstance(project).findDirectory(packageJson.parent)
         if (folder != null) {
           return CachedValuesManager.getCachedValue(folder,
                                                     CachedValueProvider {
                                                       val scope = GlobalSearchScopesCore.directoryScope(project, packageJson.parent, true)
-                                                      val value = calculateAllComponents(scope)
-                                                      CachedValueProvider.Result(value.map, packageJson.parent)
+                                                      CachedValueProvider.Result(calculateScopeComponents(scope), packageJson.parent)
                                                     })
         }
       }
-      return getAllComponents(project, null, true).map
+      return null
+    }
+
+    private fun getOnlyProjectComponents(project: Project): ComponentsData {
+      return CachedValuesManager.getManager(project).getCachedValue(project, {
+        val componentsData = calculateScopeComponents(GlobalSearchScope.projectScope(project))
+        CachedValueProvider.Result(componentsData, PsiManager.getInstance(project).modificationTracker)
+      })
     }
 
     fun getAllComponents(project: Project, filter: ((String) -> Boolean)?, onlyGlobal: Boolean): ComponentsData {
-      val value = CachedValuesManager.getManager(project).getCachedValue(project, {
-        val componentsData = calculateAllComponents(GlobalSearchScope.allScope(project))
-        CachedValueProvider.Result(componentsData, PsiManager.getInstance(project).modificationTracker)
-      })
+      val components = getOnlyProjectComponents(project)
+
+      val libPackageJsonFiles = getLibraryPackageJsons(project)
+      val libraryComponents = libPackageJsonFiles.mapNotNull { getModuleComponents(it, project) }
+
+      var allComponentsMap: Map<String, Pair<PsiElement, Boolean>> = mutableMapOf()
+      val mutableComponentsMap = allComponentsMap as MutableMap
+      val libCompResolveMap: MutableMap<String, String> = mutableMapOf()
+      libraryComponents.forEach {
+          mutableComponentsMap.putAll(it.map)
+          libCompResolveMap.putAll(it.libCompResolveMap)
+        }
+      mutableComponentsMap.putAll(components.map)
+      libCompResolveMap.putAll(components.libCompResolveMap)
+
       if (onlyGlobal || filter != null) {
-        val filteredMap = value.map.filter { (!onlyGlobal || it.value.second) && (filter == null || filter.invoke(it.key)) }
-        return ComponentsData(filteredMap, value.libCompResolveMap)
+        allComponentsMap = allComponentsMap.filter { (!onlyGlobal || it.value.second) && (filter == null || filter.invoke(it.key)) }
       }
-      return value
+      return ComponentsData(allComponentsMap, libCompResolveMap)
     }
 
-    private fun calculateAllComponents(scope: GlobalSearchScope): ComponentsData {
+    private fun getLibraryPackageJsons(project: Project): List<VirtualFile> {
+      return FilenameIndex.getVirtualFilesByName(project, PackageJsonUtil.FILE_NAME, GlobalSearchScope.allScope(project))
+        .filter(this::packageJsonForLibraryAndHasVue)
+   }
+
+    private fun packageJsonForLibraryAndHasVue(it: VirtualFile) = JSLibraryUtil.isProbableLibraryFile(it) &&
+                                                                  PackageJsonUtil.getOrCreateData(it).isDependencyOfAnyType("vue")
+
+    private fun calculateScopeComponents(scope: GlobalSearchScope): ComponentsData {
       val allValues = getForAllKeys(scope, VueComponentsIndex.KEY)
       val libCompResolveMap = mutableMapOf<String, String>()
 
