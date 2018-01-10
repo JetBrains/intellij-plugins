@@ -154,6 +154,9 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
         }
       elements?.addAll(components)
     }
+    elements?.addAll(VUE_FRAMEWORK_COMPONENTS.map {
+      LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vue", true)
+    })
   }
 
   private fun createVueLookup(element: PsiElement, name: String, isGlobal: Boolean, comment: String = "") =
