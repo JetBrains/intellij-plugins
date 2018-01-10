@@ -30,7 +30,6 @@ import com.intellij.xml.XmlElementDescriptor
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import com.intellij.xml.XmlTagNameProvider
 import com.intellij.xml.util.HtmlUtil
-import com.intellij.xml.util.XmlUtil
 import icons.VuejsIcons
 import org.jetbrains.vuejs.GLOBAL_BINDING_MARK
 import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.getBoundName
@@ -45,10 +44,6 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
     if (tag != null && hasVue(tag.project)) {
       val name = tag.name
-      // do not perform additional work for html tags
-      if (XmlUtil.isTagDefinedByNamespace(tag)) {
-        return null
-      }
 
       val localComponents = findLocalComponents(name, tag)
       if (!localComponents.isEmpty()) return multiDefinitionDescriptor(localComponents)
