@@ -145,20 +145,22 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
 
     val variants = nameVariantsWithPossiblyGlobalMark(namePrefix)
     val allComponents = VueComponents.getAllComponents(tag.project, { key -> variants.any { key.contains(it, true) } }, false)
-    val components = allComponents.map.keys
-      .filter { !files.contains(allComponents.map[it]!!.first.containingFile) }
-      .map {
-        val value = allComponents.map[it]!!
-        createVueLookup(value.first, fromAsset(it), value.second)
-      }
-
-    elements?.addAll(components)
+    for (entry in allComponents) {
+      val components = entry.value.keys
+        .filter { !files.contains(entry.value[it]!!.first.containingFile) }
+        .map {
+          val value = entry.value[it]!!
+          createVueLookup(value.first, fromAsset(it), value.second, entry.key)
+        }
+      elements?.addAll(components)
+    }
   }
 
-  private fun createVueLookup(element: PsiElement, name: String, isGlobal: Boolean) =
+  private fun createVueLookup(element: PsiElement, name: String, isGlobal: Boolean, comment: String = "") =
     LookupElementBuilder.create(element, fromAsset(name)).
       withInsertHandler(if (isGlobal) null else VueInsertHandler.INSTANCE).
-      withIcon(VuejsIcons.Vue)
+      withIcon(VuejsIcons.Vue).
+      withTypeText(comment, true)
 
   companion object {
     private val VUE_FRAMEWORK_COMPONENTS = setOf(

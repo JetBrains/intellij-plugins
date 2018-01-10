@@ -160,26 +160,26 @@ class VueComponents {
       })
     }
 
-    fun getAllComponents(project: Project, filter: ((String) -> Boolean)?, onlyGlobal: Boolean): ComponentsData {
-      val components = getOnlyProjectComponents(project)
+    // returns module: (component: (navigation-element, isGlobal))
+    fun getAllComponents(project: Project, filter: ((String) -> Boolean)?, onlyGlobal: Boolean):
+        Map<String, Map<String, Pair<PsiElement, Boolean>>> {
+      val result: MutableMap<String, Map<String, Pair<PsiElement, Boolean>>> = mutableMapOf()
+      result.put("", getOnlyProjectComponents(project).map)
 
-      val libPackageJsonFiles = getLibraryPackageJsons(project)
-      val libraryComponents = libPackageJsonFiles.mapNotNull { getModuleComponents(it, project) }
-
-      var allComponentsMap: Map<String, Pair<PsiElement, Boolean>> = mutableMapOf()
-      val mutableComponentsMap = allComponentsMap as MutableMap
-      val libCompResolveMap: MutableMap<String, String> = mutableMapOf()
-      libraryComponents.forEach {
-          mutableComponentsMap.putAll(it.map)
-          libCompResolveMap.putAll(it.libCompResolveMap)
+      getLibraryPackageJsons(project).forEach {
+        val moduleComponents = getModuleComponents(it, project)
+        if (moduleComponents != null) {
+          val name = PackageJsonUtil.getOrCreateData(it).name ?: it.parent.name
+          result.put(name, moduleComponents.map)
         }
-      mutableComponentsMap.putAll(components.map)
-      libCompResolveMap.putAll(components.libCompResolveMap)
+      }
 
       if (onlyGlobal || filter != null) {
-        allComponentsMap = allComponentsMap.filter { (!onlyGlobal || it.value.second) && (filter == null || filter.invoke(it.key)) }
+        return result.map {
+          Pair(it.key, it.value.filter { (!onlyGlobal || it.value.second) && (filter == null || filter.invoke(it.key)) })
+        }.toMap()
       }
-      return ComponentsData(allComponentsMap, libCompResolveMap)
+      return result
     }
 
     private fun getLibraryPackageJsons(project: Project): List<VirtualFile> {
@@ -282,6 +282,7 @@ class VueComponents {
       return Pair(name, descriptor)
     }
 
-    class ComponentsData(val map: Map<String, Pair<PsiElement, Boolean>>, val libCompResolveMap: Map<String, String>)
+    class ComponentsData(val map: Map<String, Pair<PsiElement, Boolean>>,
+                         val libCompResolveMap: Map<String, String>)
   }
 }
