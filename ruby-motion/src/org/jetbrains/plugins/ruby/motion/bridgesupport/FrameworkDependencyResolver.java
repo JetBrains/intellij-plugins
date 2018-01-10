@@ -19,12 +19,15 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.ruby.motion.RubyMotionUtil;
 import org.jetbrains.plugins.ruby.ruby.RubyUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -41,34 +44,31 @@ public class FrameworkDependencyResolver {
 
   public FrameworkDependencyResolver(final BridgeSupportLoader loader) {
     myLoader = loader;
-    final String path = RubyUtil.getScriptFullPath("rb/motion");
-    final File file = new File(path);
-    if (file.exists() && file.isDirectory()) {
-      for (File child : file.listFiles()) {
-        final String name = child.getName();
-        if (name.endsWith(".yaml") && name.startsWith("dependencies.")) {
+    //noinspection ConstantConditions
+    for (File child : getScriptsDir().listFiles()) {
+      final String name = child.getName();
+      if (name.endsWith(".yaml") && name.startsWith("dependencies.")) {
+        try {
+          final FileInputStream is = new FileInputStream(child);
           try {
-            final FileInputStream is = new FileInputStream(child);
-            try {
-              final Map map = RubyUtil.loadYaml(is);
-              final Map<String, List<String>> result = new HashMap<>();
-              for (Object key : map.keySet()) {
-                final ArrayList list = (ArrayList)map.get(key);
-                final List<String> stringList = new ArrayList<>(list.size());
-                for (Object o : list) {
-                  stringList.add(o.toString());
-                }
-                result.put(key.toString(), stringList);
+            final Map map = RubyUtil.loadYaml(is);
+            final Map<String, List<String>> result = new HashMap<>();
+            for (Object key : map.keySet()) {
+              final ArrayList list = (ArrayList)map.get(key);
+              final List<String> stringList = new ArrayList<>(list.size());
+              for (Object o : list) {
+                stringList.add(o.toString());
               }
-              myDependencyInfo.put(name.replaceAll("dependencies.", "").replaceAll(".yaml", ""), result);
+              result.put(key.toString(), stringList);
             }
-            finally {
-              is.close();
-            }
+            myDependencyInfo.put(name.replaceAll("dependencies.", "").replaceAll(".yaml", ""), result);
           }
-          catch (IOException e) {
-            LOG.error(e);
+          finally {
+            is.close();
           }
+        }
+        catch (IOException e) {
+          LOG.error(e);
         }
       }
     }
@@ -104,5 +104,19 @@ public class FrameworkDependencyResolver {
       processed.add(name);
     }
     return result;
+  }
+
+  @NotNull
+  static File getScriptsDir() {
+    URL dirUrl = FrameworkDependencyResolver.class.getResource("/rb/motion");
+    File dir;
+    try {
+      dir = new File(dirUrl.toURI());
+    }
+    catch (URISyntaxException e) {
+      throw new AssertionError("Incorrect scripts dir uri");
+    }
+    assert dir.exists();
+    return dir;
   }
 }
