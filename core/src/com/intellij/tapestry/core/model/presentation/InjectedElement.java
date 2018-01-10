@@ -120,7 +120,7 @@ public class InjectedElement implements Comparable {
    * {@inheritDoc}
    */
   public boolean equals(Object obj) {
-    return obj != null && obj instanceof InjectedElement && compareByIds(obj) == 0
+    return obj instanceof InjectedElement && compareByIds(obj) == 0
            && getElement().getName().equals(((InjectedElement)obj).getElement().getName());
   }
 

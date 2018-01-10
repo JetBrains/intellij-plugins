@@ -215,7 +215,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
    * {@inheritDoc}
    */
   public boolean equals(Object obj) {
-    return obj != null && (obj instanceof PresentationLibraryElement) && getName().equals(((PresentationLibraryElement)obj).getName());
+    return (obj instanceof PresentationLibraryElement) && getName().equals(((PresentationLibraryElement)obj).getName());
   }
 
   /**

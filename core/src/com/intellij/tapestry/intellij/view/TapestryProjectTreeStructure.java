@@ -1,9 +1,9 @@
 package com.intellij.tapestry.intellij.view;
 
 import com.intellij.ide.util.treeView.NodeDescriptor;
+import com.intellij.tapestry.intellij.view.nodes.RootNode;
 import com.intellij.ui.treeStructure.SimpleNode;
 import com.intellij.ui.treeStructure.SimpleTreeStructure;
-import com.intellij.tapestry.intellij.view.nodes.RootNode;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -41,7 +41,7 @@ public class TapestryProjectTreeStructure extends SimpleTreeStructure {
      */
     @NotNull
     public NodeDescriptor createDescriptor(Object element, NodeDescriptor parentDescriptor) {
-        if (element == null || !(element instanceof NodeDescriptor)) {
+        if (!(element instanceof NodeDescriptor)) {
             return new SimpleNode() {
                 public SimpleNode[] getChildren() {
                     return new SimpleNode[0];
