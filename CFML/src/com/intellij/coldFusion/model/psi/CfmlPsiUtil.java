@@ -306,7 +306,7 @@ public class CfmlPsiUtil {
     CfmlComponentReference referenceToSuperComponent = getSuperComponentReference(element);
     if (referenceToSuperComponent != null) {
       PsiElement resolve = referenceToSuperComponent.resolve();
-      if (resolve != null && resolve instanceof CfmlComponent) {
+      if (resolve instanceof CfmlComponent) {
         return (CfmlComponent)resolve;
       }
     }

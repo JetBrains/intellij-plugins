@@ -55,7 +55,7 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
   public CfmlReferenceExpression getAssignedVariableElement() {
     if (getFirstChild() instanceof CfmlArgumentNameReference) return (CfmlReferenceExpression)getFirstChild();
     PsiElement element = findChildByType(CfmlElementTypes.REFERENCE_EXPRESSION);
-    if (element == null || !(element instanceof CfmlReferenceExpression)) {
+    if (!(element instanceof CfmlReferenceExpression)) {
       return null;
     }
     return (CfmlReferenceExpression)element;

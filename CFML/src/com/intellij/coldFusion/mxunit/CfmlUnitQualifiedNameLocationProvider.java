@@ -68,7 +68,7 @@ public class CfmlUnitQualifiedNameLocationProvider implements SMTestLocator, Dum
     VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(filePath);
     if (virtualFile != null) {
       result = PsiManager.getInstance(project).findFile(virtualFile);
-      if (result == null || !(result instanceof CfmlFile)) {
+      if (!(result instanceof CfmlFile)) {
         return null;
       }
       // TODO: to move to index

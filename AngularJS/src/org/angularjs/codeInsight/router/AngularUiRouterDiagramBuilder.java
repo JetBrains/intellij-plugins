@@ -360,7 +360,7 @@ public class AngularUiRouterDiagramBuilder {
     final JSProperty views = object.findProperty("views");
     if (views != null) {
       final JSExpression value = views.getValue();
-      if (value != null && value instanceof JSObjectLiteralExpression) {
+      if (value instanceof JSObjectLiteralExpression) {
         final JSProperty[] viewsProperties = ((JSObjectLiteralExpression)value).getProperties();
         if (viewsProperties != null && viewsProperties.length > 0) {
           final List<UiView> viewsList = new ArrayList<>();

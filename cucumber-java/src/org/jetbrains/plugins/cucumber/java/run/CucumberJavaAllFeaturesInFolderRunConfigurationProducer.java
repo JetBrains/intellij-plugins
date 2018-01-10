@@ -68,7 +68,7 @@ public class CucumberJavaAllFeaturesInFolderRunConfigurationProducer extends Cuc
   @Override
   protected VirtualFile getFileToRun(ConfigurationContext context) {
     final PsiElement element = context.getPsiLocation();
-    if (element != null && element instanceof PsiDirectory) {
+    if (element instanceof PsiDirectory) {
       return ((PsiDirectory) element).getVirtualFile();
     }
     return null;

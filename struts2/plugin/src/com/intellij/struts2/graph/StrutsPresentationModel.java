@@ -61,7 +61,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
     }
 
     final XmlElement xmlElement = node.getIdentifyingElement().getXmlElement();
-    if (xmlElement != null && xmlElement instanceof Navigatable) {
+    if (xmlElement instanceof Navigatable) {
       OpenSourceUtil.navigate((Navigatable) xmlElement);
       return true;
     }

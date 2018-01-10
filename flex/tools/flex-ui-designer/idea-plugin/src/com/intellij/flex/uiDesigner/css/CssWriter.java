@@ -131,7 +131,7 @@ public class CssWriter {
           propertyOut.writeUInt29(documentWindow == null ? textOffset : documentWindow.injectedToHost(textOffset));
 
           CssPropertyDescriptor propertyDescriptor = ContainerUtil.getFirstItem(declaration.getDescriptors());
-          writePropertyValue(value, propertyDescriptor != null && propertyDescriptor instanceof FlexCssPropertyDescriptor
+          writePropertyValue(value, propertyDescriptor instanceof FlexCssPropertyDescriptor
                                     ? ((FlexCssPropertyDescriptor)propertyDescriptor).getStyleInfo()
                                     : null);
           continue;

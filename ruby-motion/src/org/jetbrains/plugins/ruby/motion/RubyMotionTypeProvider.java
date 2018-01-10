@@ -119,7 +119,7 @@ public class RubyMotionTypeProvider extends AbstractRubyTypeProvider {
     if (!isSelector) return null;
 
     Symbol classSymbol = symbol.getParentSymbol();
-    while (classSymbol != null && classSymbol instanceof ClassModuleSymbol) {
+    while (classSymbol instanceof ClassModuleSymbol) {
       classSymbol = ((ClassModuleSymbol)classSymbol).getSuperClassSymbol(expression);
     }
     if (classSymbol instanceof MotionClassSymbol) {

@@ -372,7 +372,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
       }
     }
     containingFile = containingFile == null ? null : containingFile.getOriginalFile();
-    if (containingFile != null && containingFile instanceof CfmlFile) {
+    if (containingFile instanceof CfmlFile) {
       CfmlFile cfmlContainingFile = (CfmlFile)containingFile;
       if (directoryName.length() == 0) {
         PsiDirectory directory = cfmlContainingFile.getParent();

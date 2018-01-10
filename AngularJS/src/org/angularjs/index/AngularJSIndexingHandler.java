@@ -308,7 +308,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static Pair<JSCallExpression, Integer> findImmediatelyWrappingCall(@NotNull JSProperty property) {
     PsiElement current = property.getParent();
     int level = 0;
-    while (current != null && current instanceof JSElement) {
+    while (current instanceof JSElement) {
       if (current instanceof JSProperty) {
         current = current.getParent();
         continue;
