@@ -12,12 +12,12 @@
       }
 
       override public function foo() {
-          return super.foo();
+          super.foo();
       }
 
       [Inspectable(category="General")]
       override public function set layout(s:String) {
-          return super.layout = s;
+          super.layout = s;
       }
 
       [Inspectable(category="General")]

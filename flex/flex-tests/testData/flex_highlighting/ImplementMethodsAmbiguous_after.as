@@ -8,11 +8,11 @@ public class ImplementMethodsAmbiguous implements Interface1{
 
 
     public function foo(p1:com.bar.A, p2:com.zz.A):com.foo.A {
-        return null;
+        return undefined;
     }
 
     public function bar():com.uu.A {
-        return null;
+        return undefined;
     }
 }
 }

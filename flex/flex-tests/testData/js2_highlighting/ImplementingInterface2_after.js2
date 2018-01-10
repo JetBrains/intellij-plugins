@@ -12,15 +12,15 @@ public class test implements ICallable
     }
 
     public function getRemoteObject():AbstractService {
-        return null;
+        return undefined;
     }
 
     public function getTargetObject():Object {
-        return null;
+        return undefined;
     }
 
     public function getTargetParentNode():Object {
-        return null;
+        return undefined;
     }
 
 }

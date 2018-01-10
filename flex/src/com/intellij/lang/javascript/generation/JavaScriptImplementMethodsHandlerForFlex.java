@@ -4,6 +4,7 @@
 package com.intellij.lang.javascript.generation;
 
 import com.intellij.featureStatistics.ProductivityFeatureNames;
+import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -17,7 +18,7 @@ import java.util.Collection;
 /**
  * as only
  */
-public class JavaScriptImplementMethodsHandler extends BaseJSGenerateHandler {
+public class JavaScriptImplementMethodsHandlerForFlex extends BaseJSGenerateHandler {
   protected void collectCandidates(final PsiElement clazz, final Collection<JSChooserElementNode> candidates) {
     for(JSFunction fun: ActionScriptImplementedMethodProcessor.collectFunctionsToImplement((JSClass)clazz)) {
       candidates.add(new JSNamedElementNode(fun));
@@ -38,7 +39,7 @@ public class JavaScriptImplementMethodsHandler extends BaseJSGenerateHandler {
 
   @Override
   protected boolean isValidForTarget(PsiElement jsClass) {
-    return jsClass instanceof JSClass && !((JSClass)jsClass).isInterface();
+    return jsClass instanceof JSClass && !((JSClass)jsClass).isInterface() && !DialectDetector.isJavaScriptFamily(jsClass);
   }
 
   @Override

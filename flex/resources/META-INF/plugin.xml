@@ -79,10 +79,10 @@
     <codeInsight.overrideMethod language="Mxml"
                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptOverrideMethodsHandler"/>
     <codeInsight.implementMethod language="Mxml"
-                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandler"/>
+                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandlerForFlex"/>
 
     <codeInsight.implementMethod language="JavaScript"
-                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandler"/>
+                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandlerForFlex"/>
     <codeInsight.delegateMethods language="JavaScript"
                                  implementationClass="com.intellij.lang.javascript.generation.ActionScriptGenerateDelegatesHandler"/>
     <codeInsight.delegateMethods language="Mxml"

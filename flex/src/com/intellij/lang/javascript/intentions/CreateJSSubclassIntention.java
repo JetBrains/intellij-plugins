@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.generation.JSChooserElementNode;
-import com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandler;
+import com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandlerForFlex;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -173,7 +173,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
                    getTitle(jsClass),
                    true, templateAttributes, aClass -> {
                      if (aClass != null && !aClass.isInterface() && (jsClass.isInterface() || !interfaces.isEmpty())) {
-                       new MyImplementMethodsHandler(aClass).execute();
+                       new MyImplementMethodsHandlerForFlex(aClass).execute();
                      }
                    });
 
@@ -190,10 +190,10 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
     return name + IMPL_SUFFIX;
   }
 
-  private static class MyImplementMethodsHandler extends JavaScriptImplementMethodsHandler {
+  private static class MyImplementMethodsHandlerForFlex extends JavaScriptImplementMethodsHandlerForFlex {
     private final JSClass myClass;
 
-    public MyImplementMethodsHandler(JSClass aClass) {
+    public MyImplementMethodsHandlerForFlex(JSClass aClass) {
       myClass = aClass;
     }
 
