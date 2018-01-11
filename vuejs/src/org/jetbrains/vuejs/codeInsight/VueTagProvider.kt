@@ -141,22 +141,24 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       files.add(element.containingFile)
       return@processLocalComponents true
     })
-    val namePrefix = tag.name.substringBefore(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, tag.name)
 
-    val variants = nameVariantsWithPossiblyGlobalMark(namePrefix)
-    val allComponents = VueComponents.getAllComponents(tag.project, { key -> variants.any { key.contains(it, true) } }, false)
-    for (entry in allComponents) {
-      val components = entry.value.keys
-        .filter { !files.contains(entry.value[it]!!.first.containingFile) }
-        .map {
-          val value = entry.value[it]!!
-          createVueLookup(value.first, fromAsset(it), value.second, entry.key)
-        }
-      elements?.addAll(components)
+    if (hasVue(tag.project)) {
+      val namePrefix = tag.name.substringBefore(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, tag.name)
+      val variants = nameVariantsWithPossiblyGlobalMark(namePrefix)
+      val allComponents = VueComponents.getAllComponents(tag.project, { key -> variants.any { key.contains(it, true) } }, false)
+      for (entry in allComponents) {
+        val components = entry.value.keys
+          .filter { !files.contains(entry.value[it]!!.first.containingFile) }
+          .map {
+            val value = entry.value[it]!!
+            createVueLookup(value.first, fromAsset(it), value.second, entry.key)
+          }
+        elements?.addAll(components)
+      }
+      elements?.addAll(VUE_FRAMEWORK_COMPONENTS.map {
+        LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vue", true)
+      })
     }
-    elements?.addAll(VUE_FRAMEWORK_COMPONENTS.map {
-      LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vue", true)
-    })
   }
 
   private fun createVueLookup(element: PsiElement, name: String, isGlobal: Boolean, comment: String = "") =
