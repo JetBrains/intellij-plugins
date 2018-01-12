@@ -1587,6 +1587,35 @@ Object.keys(other).forEach(key => {
     doResolveIntoLibraryComponent("lib-spread", "lib-spread.es6")
   }
 
+  fun testResolveWithExplicitForInComponentsBinding() {
+    myFixture.configureByText("a.vue", "")
+    myFixture.configureByText("CompForForIn.es6",
+"""export default {
+name: 'compForForIn',
+template: '',
+render() {}""")
+    myFixture.configureByText("register.es6", """
+import CompForForIn from './CompForForIn';
+
+      const components = {
+        CompForForIn
+      }
+
+components.install = (Vue, options = {}) => {
+    for (const componentName in components) {
+        const component = components[componentName]
+
+        if (component && componentName !== 'install') {
+            Vue.component(component.name, component)
+        }
+    }
+}
+""")
+    myFixture.configureByText("ResolveWithExplicitForInComponentsBinding.vue",
+"""<template><<caret>CompForForIn/></template>""")
+    doResolveIntoLibraryComponent("compForForIn", "CompForForIn.es6")
+  }
+
   private fun doResolveIntoLibraryComponent(compName: String, fileName: String) {
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
