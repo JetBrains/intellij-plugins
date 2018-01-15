@@ -1,8 +1,8 @@
 package com.intellij.flex.codeInsight;
 
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.javascript.flex.FlexDocumentationProvider;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
+import com.intellij.javascript.flex.documentation.FlexDocumentationProvider;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.javascript.JSAbstractDocumentationTest;
