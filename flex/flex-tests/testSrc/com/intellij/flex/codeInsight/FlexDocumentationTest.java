@@ -235,40 +235,40 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testQuickNavigateInfoWithMxml() throws Exception {
-    doNavigateTest(getTestName(false), "mxml", "flash.display.Sprite\n" + "Event mouseDown");
+    doNavigateTest(getTestName(false), "mxml", "flash.display.Sprite\n" + "Event mouseDown <span style=\"\">(MockFlex.as)</span>");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
   public void testQuickNavigateInfoWithMxml2() throws Exception {
-    doNavigateTest(getTestName(false), "mxml", "id xxx");
+    doNavigateTest(getTestName(false), "mxml", "id xxx", false);
   }
 
   public void testQuickNavigateInfo_2() throws Exception {
-    doNavigateTest(getTestName(false), "js2", "xxx.AAA\n" + "public var ttt:* = new Object");
+    doNavigateTest(getTestName(false), "js2", "public var xxx.AAA.ttt:* = new Object");
   }
 
   public void testQuickNavigateInfo_3() throws Exception {
-    doNavigateTest(getTestName(false), "js2", "xxx.AAA\n" + "public static function yyy(p:Object):AAA");
+    doNavigateTest(getTestName(false), "js2", "public static function xxx.AAA.yyy(p:Object):AAA");
   }
 
   public void testQuickNavigateInfo_4() throws Exception {
-    doNavigateTest(getTestName(false), "js2", "xxx.AAA\n" + "public static property yyy:Object");
+    doNavigateTest(getTestName(false), "js2", "(property) public static function xxx.AAA.yyy:Object");
   }
 
   public void testQuickNavigateInfo_5() throws Exception {
-    doNavigateTest(getTestName(false), "js2", "xxx\n" + "public function getTimer()");
+    doNavigateTest(getTestName(false), "js2", "public function xxx.getTimer()");
   }
 
   public void testQuickNavigateInfo_5_2() throws Exception {
-    doNavigateTest(getTestName(false), "js2", "xxx\n" + "public function getTimer()");
+    doNavigateTest(getTestName(false), "js2", "public function xxx.getTimer()");
   }
 
   public void testQuickNavigateInfo_6() throws Exception {
-    doNavigateTest(getTestName(false), "js2", "testData.documentation\n" + "namespace XXX = \"\"");
+    doNavigateTest(getTestName(false), "js2", "testData.documentation\n" + "namespace XXX = \"\"", false);
   }
 
   public void testQuickNavigateInfo_7() throws Exception {
-    doNavigateTest(getTestName(false), "js2", "Foo\n" + "xxx static const XXX = &quot;111&quot;");
+    doNavigateTest(getTestName(false), "js2", "xxx static const Foo.XXX = &quot;111&quot;");
   }
 
   public void testQuickNavigateInfo_9() throws Exception {
@@ -283,7 +283,6 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
 
   public void testQuickNavigateInfo_11() throws Exception {
     doNavigateTest(getTestName(false), "js2",
-                   "QuickNavigateInfo_11.js2\n" +
                    "function foo():Vector.&lt;int&gt;");
   }
 
@@ -462,7 +461,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     myAfterCommitRunnable =
       () -> FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", null);
     final String testName = getTestName(false);
-    doNavigateTest(testName, "js2", "LibraryMain\npublic function someMethod(param:int):int");
+    doNavigateTest(testName, "js2", "public function LibraryMain.someMethod(param:int):int <span style=\"\">(LibraryMain.as)</span>");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
