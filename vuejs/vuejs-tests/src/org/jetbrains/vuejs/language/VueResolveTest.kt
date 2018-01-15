@@ -1587,14 +1587,15 @@ Object.keys(other).forEach(key => {
     doResolveIntoLibraryComponent("lib-spread", "lib-spread.es6")
   }
 
-  fun testResolveWithExplicitForInComponentsBinding() {
-    myFixture.configureByText("a.vue", "")
-    myFixture.configureByText("CompForForIn.es6",
-"""export default {
+  fun testResolveWithExplicitForInComponentsBindingEs6() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      myFixture.configureByText("a.vue", "")
+      myFixture.configureByText("CompForForIn.es6",
+                                """export default {
 name: 'compForForIn',
 template: '',
 render() {}""")
-    myFixture.configureByText("register.es6", """
+      myFixture.configureByText("register.es6", """
 import CompForForIn from './CompForForIn';
 
       const components = {
@@ -1611,9 +1612,41 @@ components.install = (Vue, options = {}) => {
     }
 }
 """)
-    myFixture.configureByText("ResolveWithExplicitForInComponentsBinding.vue",
-"""<template><<caret>CompForForIn/></template>""")
-    doResolveIntoLibraryComponent("compForForIn", "CompForForIn.es6")
+      myFixture.configureByText("ResolveWithExplicitForInComponentsBinding.vue",
+                                """<template><<caret>CompForForIn/></template>""")
+      doResolveIntoLibraryComponent("compForForIn", "CompForForIn.es6")
+    })
+  }
+
+  fun testResolveWithExplicitForInComponentsBinding() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      myFixture.configureByText("a.vue", "")
+      myFixture.configureByText("CompForForIn.vue",
+                                """<script>export default {
+name: 'compForForIn',
+template: '',
+render() {}</script>""")
+      myFixture.configureByText("register.es6", """
+import CompForForIn from './CompForForIn';
+
+      const components = {
+        CompForForIn
+      }
+
+components.install = (Vue, options = {}) => {
+    for (const componentName in components) {
+        const component = components[componentName]
+
+        if (component && componentName !== 'install') {
+            Vue.component(component.name, component)
+        }
+    }
+}
+""")
+      myFixture.configureByText("ResolveWithExplicitForInComponentsBinding.vue",
+                                """<template><<caret>CompForForIn/></template>""")
+      doResolveIntoLibraryComponent("compForForIn", "CompForForIn.vue")
+    })
   }
 
   private fun doResolveIntoLibraryComponent(compName: String, fileName: String) {
