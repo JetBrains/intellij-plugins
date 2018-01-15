@@ -34,7 +34,7 @@ class VueOptimizeImportTest : JSOptimizeImportTestBase() {
       myFixture.configureByText("UnusedImportStatement.vue", """<script lang="ts">import {Foo, Foo2} from './VueSimpleOptimize_2';</script>""")
       OptimizeImportsAction.actionPerformedImpl(DataManager.getInstance().getDataContext(myFixture.editor.contentComponent))
       FileDocumentManager.getInstance().saveAllDocuments()
-      myFixture.checkResult("<script></script>")
+      myFixture.checkResult("<script lang=\"ts\"></script>")
     }
   }
 }
