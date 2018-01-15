@@ -5,16 +5,29 @@ import com.intellij.lang.actionscript.psi.impl.ActionScriptVariableImpl;
 import com.intellij.lang.javascript.documentation.JSQuickNavigateBuilder;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSQualifiedName;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
-import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
+import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
+
+  @Override
+  protected String getQuickNavigateInfoForNavigationElement(PsiElement element, PsiElement originalElement) {
+    if (element instanceof JSNamespaceDeclaration) {
+      return createQuickNavigateForNamespace((JSNamespaceDeclaration)element);
+    }
+    if (element instanceof JSAttributeNameValuePair) {
+      return createQuickNavigateForAnnotationDerived(element);
+    }
+
+    return super.getQuickNavigateInfoForNavigationElement(element, originalElement);
+  }
 
   @Override
   protected void appendParentInfo(PsiElement parent,
@@ -50,4 +63,33 @@ class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
     }
   }
 
+  @Nullable
+  private static String createQuickNavigateForNamespace(final JSNamespaceDeclaration ns) {
+    final String qName = ns.getQualifiedName();
+    if (qName == null) return null;
+    StringBuilder result = new StringBuilder();
+    String packageName = StringUtil.getPackageName(qName);
+    if (packageName.length() > 0) result.append(packageName).append("\n");
+
+    result.append("namespace");
+
+    final String name = ns.getName();
+    result.append(" ").append(name);
+
+    String s = ns.getInitialValueString();
+    if (s != null) {
+      result.append(" = ").append(s);
+    }
+    return result.toString();
+  }
+
+  private String createQuickNavigateForAnnotationDerived(final PsiElement element) {
+    final JSAttributeNameValuePair valuePair = (JSAttributeNameValuePair)element;
+    final JSAttribute parent = (JSAttribute)valuePair.getParent();
+    final StringBuilder builder = new StringBuilder();
+    final JSClass clazz = PsiTreeUtil.getParentOfType(valuePair, JSClass.class);
+    appendParentInfo(clazz != null ? clazz : parent.getContainingFile(), builder, parent, JSTypeSubstitutor.EMPTY);
+    builder.append(parent.getName()).append(" ").append(valuePair.getSimpleValue());
+    return builder.toString();
+  }
 }
