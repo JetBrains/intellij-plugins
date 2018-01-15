@@ -739,6 +739,18 @@ $script""")
     // actually the test is against exception, which occurred on completion
     UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "123", "true")
   }
+
+  fun testBuefyCompletion() {
+    createPackageJsonWithVueDependency(myFixture, "\"buefy\": \"0.6.2\"")
+    myFixture.copyDirectoryToProject("../libs/buefy/node_modules", "./node_modules")
+    myFixture.configureByText("BuefyCompletion.vue",
+                              """
+<template><b-<caret></template>
+""")
+    myFixture.completeBasic()
+    UsefulTestCase.assertSameElements(myFixture.lookupElementStrings!!, listOf("b-autocomplete", "b-checkbox",
+                                                                               "b-checkbox-button", "b-radio", "b-radio-button"))
+  }
 }
 
 fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,

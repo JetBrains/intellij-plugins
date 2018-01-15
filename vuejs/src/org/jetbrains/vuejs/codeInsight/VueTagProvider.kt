@@ -84,7 +84,9 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       }
     }
     val globalAliased = VueComponentsCache.findGlobalLibraryComponent(tag.project, normalized) ?: return emptyList()
-    return setOf(globalAliased as? JSImplicitElement ?: JSLocalImplicitElementImpl(tag.name, null, globalAliased, null))
+
+    return setOf(globalAliased.second as? JSImplicitElement ?:
+                 JSLocalImplicitElementImpl(globalAliased.first, null, globalAliased.second, null))
   }
 
   private fun nameVariantsWithPossiblyGlobalMark(name: String): MutableSet<String> {

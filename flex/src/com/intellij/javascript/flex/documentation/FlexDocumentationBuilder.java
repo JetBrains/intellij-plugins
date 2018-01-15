@@ -1,4 +1,4 @@
-package com.intellij.javascript.flex;
+package com.intellij.javascript.flex.documentation;
 
 import com.intellij.lang.javascript.documentation.JSDocumentationBuilder;
 import com.intellij.lang.javascript.documentation.JSDocumentationProvider;

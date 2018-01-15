@@ -49,7 +49,7 @@ class VueComponentsCache {
       return resolveComponentsCollection(component)[fromAsset(originalName)]?.second ?: false
     }
 
-    fun findGlobalLibraryComponent(project: Project, name: String): PsiElement? {
+    fun findGlobalLibraryComponent(project: Project, name: String): Pair<String, PsiElement>? {
       val projectComponents = getOnlyProjectComponents(project)
       var element = findComponentByAlias(projectComponents, name)
       if (element != null) return element
@@ -62,10 +62,11 @@ class VueComponentsCache {
       return null
     }
 
-    private fun findComponentByAlias(components: ComponentsData?, alias: String): PsiElement? {
+    private fun findComponentByAlias(components: ComponentsData?, alias: String): Pair<String, PsiElement>? {
       if (components == null) return null
       val localName = components.libCompResolveMap[fromAsset(alias)] ?: return null
-      return components.map[localName]?.first
+      val localComp = components.map[localName]?.first ?: return null
+      return Pair(localName, localComp)
     }
 
     private fun getModuleComponents(packageJson: VirtualFile, project: Project): ComponentsData? {

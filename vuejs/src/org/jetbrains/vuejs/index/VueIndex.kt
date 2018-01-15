@@ -110,6 +110,8 @@ fun getVueIndexData(element : JSImplicitElement): VueIndexData {
   val originalName = typeStr.substringAfterLast(DELIMITER)
   val s = typeStr.substringBeforeLast(DELIMITER)
   val parts = s.split(DELIMITER)
+  assert (parts.size == 3)
+
   val isGlobal = "1" == parts[0]
   val nameRef = parts[1]
   val descriptor = parts[2].substringBefore(INDEXED_ACCESS_HINT)

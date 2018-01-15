@@ -1,12 +1,10 @@
-package com.intellij.javascript.flex;
+package com.intellij.javascript.flex.documentation;
 
 import com.intellij.codeInsight.documentation.AbstractExternalFilter;
 import com.intellij.codeInsight.documentation.DocumentationManagerProtocol;
 import com.intellij.codeInsight.documentation.PlatformDocumentationUtil;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
-import com.intellij.lang.actionscript.psi.impl.ActionScriptFunctionImpl;
-import com.intellij.lang.actionscript.psi.impl.ActionScriptVariableImpl;
 import com.intellij.lang.javascript.documentation.JSDocumentationBuilder;
 import com.intellij.lang.javascript.documentation.JSDocumentationProvider;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -18,7 +16,6 @@ import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocReferenceSet;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -92,6 +89,10 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
     DOCUMENTED_ATTRIBUTES.put("Event", "event:");
     DOCUMENTED_ATTRIBUTES.put("Style", "style:");
     DOCUMENTED_ATTRIBUTES.put("Effect", "effect:");
+  }
+
+  public FlexDocumentationProvider() {
+    super(new FlexQuickNavigateBuilder());
   }
 
   @Override
@@ -736,6 +737,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
     return null;
   }
 
+  @Override
   @Nullable
   public PsiElement getDocumentationElementForLink(final PsiManager psiManager, String link, final PsiElement context) {
     return getDocumentationElementForLinkStatic(psiManager, link, context);
@@ -882,41 +884,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
   protected JSDocumentationBuilder createDocumentationBuilder(@NotNull PsiElement element, PsiElement contextElement) {
     return new FlexDocumentationBuilder(element, null, this);
   }
-
-  @Override
-  protected void appendParentInfo(PsiElement parent,
-                                  @NotNull StringBuilder builder,
-                                  @NotNull PsiNamedElement element,
-                                  @NotNull JSTypeSubstitutor substitutor) {
-    if (parent instanceof JSClass) {
-      builder.append(((JSClass)parent).getQualifiedName()).append("\n");
-    }
-    else if (parent instanceof JSPackageStatement) {
-      builder.append(((JSPackageStatement)parent).getQualifiedName()).append("\n");
-    }
-    else if (parent instanceof JSFile) {
-      if (parent.getContext() != null) {
-        final String mxmlPackage = ActionScriptResolveUtil.findPackageForMxml(parent);
-        if (mxmlPackage != null) {
-          builder.append(mxmlPackage).append(mxmlPackage.length() > 0 ? "." : "").append(parent.getContext().getContainingFile().getName())
-            .append("\n");
-        }
-      }
-      else {
-        boolean foundQualified = false;
-
-        if (element instanceof ActionScriptFunctionImpl && ((ActionScriptFunctionImpl)element).hasQualifiedName() ||
-            element instanceof ActionScriptVariableImpl && ((ActionScriptVariableImpl)element).hasQualifiedName()) {
-          final JSQualifiedName namespace = ((JSQualifiedNamedElement)element).getNamespace();
-          assert namespace != null : "null namespace of element having qualified name";
-          builder.append(namespace.getQualifiedName()).append("\n");
-          foundQualified = true;
-        }
-        if (!foundQualified) builder.append(parent.getContainingFile().getName()).append("\n");
-      }
-    }
-  }
-
+  
   @Override
   protected void appendFunctionInfoDoc(@NotNull JSFunction function, @NotNull StringBuilder builder) {
     JSType type = JSPsiImplUtils.getTypeFromDeclaration(function);

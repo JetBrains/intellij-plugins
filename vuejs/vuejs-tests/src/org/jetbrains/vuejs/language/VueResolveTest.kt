@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.Trinity
 import com.intellij.psi.xml.XmlAttribute
@@ -882,6 +883,34 @@ export default {
     TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
   }
 
+  fun testGlobalComponentNameInReference() {
+    myFixture.configureByText("WiseComp.vue",
+"""
+<script>export default { name: 'wise-comp', props: {} }</script>
+""")
+    myFixture.configureByText("register.es6",
+"""
+import WiseComp from 'WiseComp'
+const alias = 'wise-comp-alias'
+Vue.component(alias, WiseComp)
+""")
+    myFixture.configureByText("use.vue",
+"""
+<template><<caret>wise-comp-alias</template>
+""")
+    doResolveAliasIntoLibraryComponent("wise-comp", "WiseComp.vue")
+  }
+
+  private fun doResolveAliasIntoLibraryComponent(compName: String, fileName: String) {
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val target = reference!!.resolve()
+    TestCase.assertNotNull(target)
+    TestCase.assertEquals(fileName, target!!.containingFile.name)
+    TestCase.assertTrue(target.parent is JSObjectLiteralExpression)
+    TestCase.assertEquals("$compName", (target as JSImplicitElement).name)
+  }
+
   fun testGlobalComponentLiteral() {
     myFixture.configureByText("index.js", """
 Vue.component('global-comp-literal', {
@@ -1587,14 +1616,15 @@ Object.keys(other).forEach(key => {
     doResolveIntoLibraryComponent("lib-spread", "lib-spread.es6")
   }
 
-  fun testResolveWithExplicitForInComponentsBinding() {
-    myFixture.configureByText("a.vue", "")
-    myFixture.configureByText("CompForForIn.es6",
-"""export default {
+  fun testResolveWithExplicitForInComponentsBindingEs6() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      myFixture.configureByText("a.vue", "")
+      myFixture.configureByText("CompForForIn.es6",
+                                """export default {
 name: 'compForForIn',
 template: '',
 render() {}""")
-    myFixture.configureByText("register.es6", """
+      myFixture.configureByText("register.es6", """
 import CompForForIn from './CompForForIn';
 
       const components = {
@@ -1611,9 +1641,41 @@ components.install = (Vue, options = {}) => {
     }
 }
 """)
-    myFixture.configureByText("ResolveWithExplicitForInComponentsBinding.vue",
-"""<template><<caret>CompForForIn/></template>""")
-    doResolveIntoLibraryComponent("compForForIn", "CompForForIn.es6")
+      myFixture.configureByText("ResolveWithExplicitForInComponentsBinding.vue",
+                                """<template><<caret>CompForForIn/></template>""")
+      doResolveIntoLibraryComponent("compForForIn", "CompForForIn.es6")
+    })
+  }
+
+  fun testResolveWithExplicitForInComponentsBinding() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      myFixture.configureByText("a.vue", "")
+      myFixture.configureByText("CompForForIn.vue",
+                                """<script>export default {
+name: 'compForForIn',
+template: '',
+render() {}</script>""")
+      myFixture.configureByText("register.es6", """
+import CompForForIn from './CompForForIn';
+
+      const components = {
+        CompForForIn
+      }
+
+components.install = (Vue, options = {}) => {
+    for (const componentName in components) {
+        const component = components[componentName]
+
+        if (component && componentName !== 'install') {
+            Vue.component(component.name, component)
+        }
+    }
+}
+""")
+      myFixture.configureByText("ResolveWithExplicitForInComponentsBinding.vue",
+                                """<template><<caret>CompForForIn/></template>""")
+      doResolveIntoLibraryComponent("compForForIn", "CompForForIn.vue")
+    })
   }
 
   private fun doResolveIntoLibraryComponent(compName: String, fileName: String) {
