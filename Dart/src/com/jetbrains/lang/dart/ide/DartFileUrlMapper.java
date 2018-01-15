@@ -7,8 +7,6 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -25,7 +23,6 @@ import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.builtInWebServer.WebServerPathToFileManager;
 import org.jetbrains.ide.BuiltInServerManagerImpl;
 
 import java.util.Collection;
@@ -52,7 +49,7 @@ final class DartFileUrlMapper extends FileUrlMapper {
   public List<Url> getUrls(@NotNull final VirtualFile file, @NotNull final Project project, @Nullable final String currentAuthority) {
     if (currentAuthority == null || file.getFileType() != DartFileType.INSTANCE) return Collections.emptyList();
 
-    if (Registry.is("dart.redirect.to.pub.server", true) && ProjectFileIndex.getInstance(project).isInContent(file)) {
+    if (ProjectFileIndex.getInstance(project).isInContent(file)) {
       final Pair<VirtualFile, String> servedDirAndPath = PubServerPathHandlerKt.getServedDirAndPathForPubServer(project, file);
       if (servedDirAndPath != null) {
         final VirtualFile servedDir = servedDirAndPath.first;
@@ -75,30 +72,14 @@ final class DartFileUrlMapper extends FileUrlMapper {
       final VirtualFile pubspec = urlResolver.getPubspecYamlFile();
       final VirtualFile dartRoot = pubspec != null ? pubspec.getParent() : null;
 
-      if (Registry.is("dart.redirect.to.pub.server", true)) {
-        // package:PackageName/subdir/foo.dart -> http://localhost:45455/packages/PackageName/subdir/foo.dart
-        final Collection<String> authorities =
-          dartRoot != null
-          ? PubServerManager.getInstance(project).getAlivePubServerAuthoritiesForDartRoot(pubspec.getParent())
-          : PubServerManager.getInstance(project).getAllAlivePubServerAuthorities();
-        for (String pubAuthority : authorities) {
-          final String pubUrlPath = "/packages/" + dartUri.substring(PACKAGE_PREFIX.length());
-          result.add(Urls.newHttpUrl(pubAuthority, pubUrlPath));
-        }
-      }
-      else if (dartRoot != null) {
-        // for built-in server:
-        // package:PackageName/subdir/foo.dart -> http://localhost:63342/ProjectName/MayBeRelPathToDartProject/web/packages/PackageName/subdir/foo.dart
-        final String dartRootUrlPath = WebServerPathToFileManager.getInstance(project).getPath(dartRoot);
-        if (dartRootUrlPath == null) return Collections.emptyList();
-
-        //BuiltInWebBrowserUrlProviderKt.getBuiltInServerUrls(pubspec, project, currentAuthority);
-        final Url dartRootUrl = Urls.newHttpUrl(currentAuthority, "/" + project.getName() + "/" + dartRootUrlPath);
-
-        final String urlPath =
-          StringUtil.trimEnd(dartRootUrl.getPath(), "/") + "/web/packages/" + dartUri.substring(PACKAGE_PREFIX.length());
-
-        result.add(Urls.newHttpUrl(currentAuthority, urlPath));
+      // package:PackageName/subdir/foo.dart -> http://localhost:45455/packages/PackageName/subdir/foo.dart
+      final Collection<String> authorities =
+        dartRoot != null
+        ? PubServerManager.getInstance(project).getAlivePubServerAuthoritiesForDartRoot(pubspec.getParent())
+        : PubServerManager.getInstance(project).getAllAlivePubServerAuthorities();
+      for (String pubAuthority : authorities) {
+        final String pubUrlPath = "/packages/" + dartUri.substring(PACKAGE_PREFIX.length());
+        result.add(Urls.newHttpUrl(pubAuthority, pubUrlPath));
       }
 
       return result;
