@@ -442,7 +442,7 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
       new MergingCommandLineArgumentsProvider(new String[] {getRubyMotionPath() + "/bin/motion", "create",
         "--template=" + projectType.name().toLowerCase(Locale.US), module.getName()},
                                               null, null, null, sdk);
-    ConsoleRunner.run(module, null, processListener, filters, null, ConsoleRunner.ProcessLaunchMode.BACKGROUND_TASK_WITH_PROGRESS,
+    ConsoleRunner.run(project, module, null, processListener, filters, null, ConsoleRunner.ProcessLaunchMode.BACKGROUND_TASK_WITH_PROGRESS,
                       "Generating RubyMotion Application '" + module.getName() + "'...", tempDirectory.getAbsolutePath(), resultProvider,
                       null, false);
   }
