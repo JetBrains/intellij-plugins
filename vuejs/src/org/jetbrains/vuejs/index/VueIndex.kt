@@ -3,6 +3,8 @@ package org.jetbrains.vuejs.index
 import com.intellij.javascript.nodejs.packageJson.PackageJsonDependencies
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
+import com.intellij.lang.javascript.psi.JSIndexedPropertyAccessExpression
+import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.openapi.project.DumbService
@@ -18,7 +20,6 @@ import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.Processor
-import org.jetbrains.vuejs.GLOBAL_BINDING_MARK
 import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.codeInsight.fromAsset
 
@@ -27,12 +28,14 @@ const val VUE = "vue"
 val INDICES:MutableMap<StubIndexKey<String, JSImplicitElementProvider>, String> = mutableMapOf()
 const val GLOBAL = "global"
 const val LOCAL = "local"
-const val TYPE_DELIMITER = "#"
-const val TYPE_MARKER = "@"
-const val GLOBAL_COMP_COLLECTION = "**"
+const val MIXINS = "mixins"
+const val DIRECTIVES = "directives"
+const val GLOBAL_BINDING_MARK = "*"
+private const val INDEXED_ACCESS_HINT = "[]"
+private const val DELIMITER = "#"
 
 fun getForAllKeys(scope:GlobalSearchScope, key:StubIndexKey<String, JSImplicitElementProvider>): Collection<JSImplicitElement> {
-  var keys = StubIndex.getInstance().getAllKeys(key, scope.project!!)
+  val keys = StubIndex.getInstance().getAllKeys(key, scope.project!!)
   return keys.mapNotNull { resolve(it, scope, key) }.flatMap { it.toList() }
 }
 
@@ -81,21 +84,40 @@ fun hasVue(project: Project): Boolean {
   })
 }
 
-fun createImplicitElement(name: String, provider: PsiElement, indexKey: String, type: String? = null): JSImplicitElementImpl {
+fun isGlobal(element: JSImplicitElement) = getVueIndexData(element).isGlobal
+
+fun isGlobalExact(element: JSImplicitElement) = getVueIndexData(element).isGlobalExact()
+
+fun createImplicitElement(name: String, provider: PsiElement, indexKey: String,
+                          nameType: String? = null,
+                          descriptor: PsiElement? = null,
+                          isGlobal: Boolean = false): JSImplicitElementImpl {
   val normalized = normalizeNameForIndex(name)
-  val typeRecord = if (type == null) "" else if (type.isEmpty()) TYPE_MARKER else type
+  val nameTypeRecord = nameType ?: ""
+  val asIndexed = descriptor as? JSIndexedPropertyAccessExpression
+  var descriptorRef = asIndexed?.qualifier?.text ?: (descriptor as? JSReferenceExpression)?.text ?: ""
+  if (asIndexed != null) descriptorRef += INDEXED_ACCESS_HINT
   return JSImplicitElementImpl.Builder(normalized, provider)
     .setUserString(indexKey)
-    .setTypeString("$typeRecord$TYPE_DELIMITER$name")
+    .setTypeString("${if(isGlobal) 1 else 0}$DELIMITER$nameTypeRecord$DELIMITER$descriptorRef$DELIMITER$name")
     .toImplicitElement()
 }
 
-private fun normalizeNameForIndex(name: String) = if (GLOBAL_COMP_COLLECTION == name) name
-  else fromAsset(name.substringBeforeLast(GLOBAL_BINDING_MARK))
+private fun normalizeNameForIndex(name: String) = fromAsset(name.substringBeforeLast(GLOBAL_BINDING_MARK))
 
-// TYPE_MARKER serves to differentiation between no-type (null) and not-null-empty-type (indicates literal global component)
-fun getTypeString(element : JSImplicitElement): String? {
-  val s = element.typeString?.substringBefore(TYPE_DELIMITER) ?: return null
-  return if (TYPE_MARKER == s) "" else if (s.isEmpty()) null else s
+fun getVueIndexData(element : JSImplicitElement): VueIndexData {
+  val typeStr = element.typeString ?: return VueIndexData(element.name, null, null, false, false)
+  val originalName = typeStr.substringAfterLast(DELIMITER)
+  val s = typeStr.substringBeforeLast(DELIMITER)
+  val parts = s.split(DELIMITER)
+  val isGlobal = "1" == parts[0]
+  val nameRef = parts[1]
+  val descriptor = parts[2].substringBefore(INDEXED_ACCESS_HINT)
+  val isIndexed = parts[2].endsWith(INDEXED_ACCESS_HINT)
+  return VueIndexData(originalName, nameRef, descriptor, isIndexed, isGlobal)
 }
-fun getOriginalName(element : JSImplicitElement): String = element.typeString?.substringAfter(TYPE_DELIMITER) ?: element.name
+
+class VueIndexData(val originalName: String,
+                   val nameRef: String?, val descriptorRef: String?, val groupRegistration: Boolean, val isGlobal: Boolean) {
+  fun isGlobalExact() = isGlobal && !originalName.endsWith(GLOBAL_BINDING_MARK)
+}

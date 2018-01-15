@@ -31,14 +31,9 @@ import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import com.intellij.xml.XmlTagNameProvider
 import com.intellij.xml.util.HtmlUtil
 import icons.VuejsIcons
-import org.jetbrains.vuejs.GLOBAL_BINDING_MARK
 import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.getBoundName
-import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isGlobal
-import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isGlobalExact
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isNotInLibrary
-import org.jetbrains.vuejs.index.VueComponentsIndex
-import org.jetbrains.vuejs.index.hasVue
-import org.jetbrains.vuejs.index.resolve
+import org.jetbrains.vuejs.index.*
 
 class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
@@ -82,13 +77,13 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
         else {
           // prefer library definitions of components for resolve
           // i.e. prefer the place where the name is defined, not the place where it is registered with Vue.component
-          val libDef = resolvedVariants.filter { VueComponents.isGlobalLibraryComponent(it) }
+          val libDef = resolvedVariants.filter { VueComponentsCache.isGlobalLibraryComponent(it) }
           if (libDef.isEmpty()) resolvedVariants.filter { isGlobal(it) }
           else libDef
         }
       }
     }
-    val globalAliased = VueComponents.findGlobalLibraryComponent(tag.project, normalized) ?: return emptyList()
+    val globalAliased = VueComponentsCache.findGlobalLibraryComponent(tag.project, normalized) ?: return emptyList()
     return setOf(globalAliased as? JSImplicitElement ?: JSLocalImplicitElementImpl(tag.name, null, globalAliased, null))
   }
 
@@ -145,7 +140,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     if (hasVue(tag.project)) {
       val namePrefix = tag.name.substringBefore(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, tag.name)
       val variants = nameVariantsWithPossiblyGlobalMark(namePrefix)
-      val allComponents = VueComponents.getAllComponents(tag.project, { key -> variants.any { key.contains(it, true) } }, false)
+      val allComponents = VueComponentsCache.getAllComponentsGroupedByModules(tag.project, { key -> variants.any { key.contains(it, true) } }, false)
       for (entry in allComponents) {
         val components = entry.value.keys
           .filter { !files.contains(entry.value[it]!!.first.containingFile) }

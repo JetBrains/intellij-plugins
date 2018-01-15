@@ -1,7 +1,7 @@
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
-import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
+import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
@@ -43,7 +43,7 @@ class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandl
     val typeAlias = JSFileReferencesUtil.resolveModuleReference(obj.containingFile, "vue")
                       .mapNotNull {
                         it as? JSElement ?: return@mapNotNull null
-                        ES6CreateImportUtil.getSymbolInModule("Component", obj, it).filter { it.isValidResult }
+                        ES6PsiUtil.resolveSymbolInModule("Component", obj, it).filter { it.isValidResult }
                       }
                       .flatten()
                       .filter {

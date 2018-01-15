@@ -6,11 +6,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.vuejs.DIRECTIVES
-import org.jetbrains.vuejs.index.VueGlobalDirectivesIndex
-import org.jetbrains.vuejs.index.VueLocalDirectivesIndex
-import org.jetbrains.vuejs.index.getForAllKeys
-import org.jetbrains.vuejs.index.resolve
+import org.jetbrains.vuejs.index.*
 
 /**
  * @author Irina.Chernushina on 10/23/2017.

@@ -749,6 +749,7 @@ public class DartAnalysisServerService implements Disposable {
     if (file != null && file.isInLocalFileSystem()) {
       return file.getFileType() == DartFileType.INSTANCE ||
              HtmlUtil.isHtmlFile(file) ||
+             file.getName().equals(PubspecYamlUtil.PUBSPEC_YAML) ||
              file.getName().equals(DartYamlFileTypeFactory.DOT_ANALYSIS_OPTIONS);
     }
     return false;

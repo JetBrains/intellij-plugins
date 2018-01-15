@@ -4,9 +4,9 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.vuejs.MIXINS
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.vueMixinDescriptorFinder
 import org.jetbrains.vuejs.index.LOCAL
+import org.jetbrains.vuejs.index.MIXINS
 import org.jetbrains.vuejs.index.VueMixinBindingIndex
 import org.jetbrains.vuejs.index.resolve
 
