@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.Trinity
 import com.intellij.psi.xml.XmlAttribute
@@ -880,6 +881,34 @@ export default {
     TestCase.assertEquals("from", (property as JSProperty).name)
     TestCase.assertTrue(property.parent.parent is JSProperty)
     TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
+  }
+
+  fun testGlobalComponentNameInReference() {
+    myFixture.configureByText("WiseComp.vue",
+"""
+<script>export default { name: 'wise-comp', props: {} }</script>
+""")
+    myFixture.configureByText("register.es6",
+"""
+import WiseComp from 'WiseComp'
+const alias = 'wise-comp-alias'
+Vue.component(alias, WiseComp)
+""")
+    myFixture.configureByText("use.vue",
+"""
+<template><<caret>wise-comp-alias</template>
+""")
+    doResolveAliasIntoLibraryComponent("wise-comp", "WiseComp.vue")
+  }
+
+  private fun doResolveAliasIntoLibraryComponent(compName: String, fileName: String) {
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val target = reference!!.resolve()
+    TestCase.assertNotNull(target)
+    TestCase.assertEquals(fileName, target!!.containingFile.name)
+    TestCase.assertTrue(target.parent is JSObjectLiteralExpression)
+    TestCase.assertEquals("$compName", (target as JSImplicitElement).name)
   }
 
   fun testGlobalComponentLiteral() {
