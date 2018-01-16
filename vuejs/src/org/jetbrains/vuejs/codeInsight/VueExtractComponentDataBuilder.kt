@@ -159,7 +159,7 @@ export default {
   name: '$newComponentName'${generateDescriptorMembers(hasDirectUsageSet)}
 }
 </script>"""
-    val dummyFile = PsiFileFactory.getInstance(list[0].project).createFileFromText("forFormat.vue", VueFileType.INSTANCE, newText)
+    val dummyFile = PsiFileFactory.getInstance(containingFile.project).createFileFromText("forFormat.vue", VueFileType.INSTANCE, newText)
     VueInsertHandler.reformatElement(dummyFile)
     return dummyFile.text
   }

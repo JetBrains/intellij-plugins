@@ -45,6 +45,7 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
   private val containingFile = myElementToRename.containingFile
   private val rangeMarker = editor.document.createRangeMarker(elementToRename.textRange)
   private val oldCaret = editor.caretModel.currentCaret.offset
+  private var isCanceled = false
 
   companion object {
     const val GROUP_ID = "VueExtractComponent"
@@ -90,12 +91,14 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
 
   override fun performCleanup() {
     try {
+      isCanceled = true
       WriteAction.run<RuntimeException> { myEditor.document.replaceString(rangeMarker.startOffset, rangeMarker.endOffset, oldText) }
-      myEditor.caretModel.moveToOffset(oldCaret)
     } finally {
       FinishMarkAction.finish(myProject, myEditor, myMarkAction)
     }
   }
+
+  override fun restoreCaretOffset(offset: Int): Int = if (isCanceled) oldCaret else offset
 
   override fun performRefactoring(): Boolean {
     if (myInsertedName == null) return false
@@ -103,7 +106,10 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
     val commandProcessor = CommandProcessor.getInstance()
     val error = validator.invoke(myInsertedName)
     if (error != null) {
-      if (ApplicationManager.getApplication().isUnitTestMode) return true
+      if (ApplicationManager.getApplication().isUnitTestMode) {
+        performCleanupInCommand()
+        return true
+      }
       val tag: XmlTag = findTagBeingRenamed() ?: return true
       askAndRestartRename(error, commandProcessor, tag)
     }
@@ -138,6 +144,10 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
     return true
   }
 
+  private fun performCleanupInCommand() {
+    CommandProcessor.getInstance().executeCommand(myProject, { performCleanup()}, commandName, getGroupId())
+  }
+
   private fun askAndRestartRename(error: String, commandProcessor: CommandProcessor, tag: XmlTag) {
     askConfirmation(error,
                     onYes = {
@@ -147,11 +157,7 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
                           .performInplaceRefactoring(linkedSetOf())
                       }, commandName, getGroupId())
                     },
-                    onNo = {
-                      commandProcessor.executeCommand(myProject, {
-                        performCleanup()
-                      }, commandName, getGroupId())
-                    })
+                    onNo = this::performCleanupInCommand)
   }
 
   private fun findTagBeingRenamed(): XmlTag? {

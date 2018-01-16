@@ -405,21 +405,52 @@ export default {
     }
 </script>""", 2)
 
-  private fun doExtractTest(existing: String, modified: String, newText: String, numTags: Int = 1) {
+  fun testCleanupIfNameIsUsed() {
+    doExtractTest(
+      """<template>
+    <caret><p>Very first paragraph {{propWithCamel}}</p>
+    <p>Second paragraph {{propWithCamel}}</p>
+</template>
+<script>
+    export default {
+        props: {
+            propWithCamel: {}
+        }
+    }
+</script>
+""",
+      """<template>
+    <caret><p>Very first paragraph {{propWithCamel}}</p>
+    <p>Second paragraph {{propWithCamel}}</p>
+</template>
+<script>
+    export default {
+        props: {
+            propWithCamel: {}
+        }
+    }
+</script>
+""", null, 1, "dd")
+  }
+
+  private fun doExtractTest(existing: String, modified: String, newText: String?, numTags: Int = 1,
+                            newCompName: String = "new-component") {
     myFixture.configureByText(getTestName(false) + ".vue", existing)
 
     val context = VueExtractComponentIntention.getContext(myFixture.editor, myFixture.elementAtCaret)
     TestCase.assertNotNull(context)
     TestCase.assertEquals(numTags, context!!.size)
 
-    VueExtractComponentRefactoring(myFixture.project, context, myFixture.editor).perform("new-component")
+    VueExtractComponentRefactoring(myFixture.project, context, myFixture.editor).perform(newCompName)
 
     myFixture.checkResult(modified)
 
-    FileDocumentManager.getInstance().saveAllDocuments()
-    val created = myFixture.file.parent!!.findFile("NewComponent.vue")
-    TestCase.assertNotNull(created)
-    myFixture.configureByText("NewComponent2.vue", VfsUtil.loadText(created!!.viewProvider.virtualFile))
-    myFixture.checkResult(newText)
+    if (newText != null) {
+      FileDocumentManager.getInstance().saveAllDocuments()
+      val created = myFixture.file.parent!!.findFile("NewComponent.vue")
+      TestCase.assertNotNull(created)
+      myFixture.configureByText("NewComponent2.vue", VfsUtil.loadText(created!!.viewProvider.virtualFile))
+      myFixture.checkResult(newText)
+    }
   }
 }
