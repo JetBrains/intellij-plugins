@@ -42,7 +42,7 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
   }
 
   private void ecmaL4Test() throws Exception {
-    doTest("created", getTestName(false), "js2", true);
+    doTest("created", "js2");
   }
 
   public void testLeavingReturn() throws Exception {
@@ -62,7 +62,7 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
   }
 
   public void testMethodInClass() throws Exception {
-    doTest("addHello", getTestName(false), "js2", true);
+    doTest("addHello", "js2");
   }
 
   public void testSelectEntireLine() throws Exception {
@@ -76,7 +76,6 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
 
         return new DefaultJSExtractFunctionSettings("created", true, false, JSAttributeList.AccessType.PUBLIC, parametersInfo, null);
       },
-      getTestName(false),
       "js2"
     );
   }
@@ -150,22 +149,22 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
   }
 
   private void failedEcmaTest() throws Exception {
-    doTest("created", getTestName(false), "js2", false);
+    assertFails(() -> doTest("created", "js2"));
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
   public void testMxml() throws Exception {
-    doTest("created", getTestName(false), "mxml", true);
+    doTest("created", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
   public void testMxml2() throws Exception {
-    doTest("created", getTestName(false), "mxml", true);
+    doTest("created", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
   public void testMxml3() throws Exception {
-    doTest("created", getTestName(false), "mxml", true);
+    doTest("created", "mxml");
   }
 
   public void testScopeOptions3() throws Exception {
