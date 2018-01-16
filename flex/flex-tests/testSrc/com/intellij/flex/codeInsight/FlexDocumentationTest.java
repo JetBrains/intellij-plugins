@@ -230,7 +230,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
 
   public void testQuickNavigateInfo() throws Exception {
     final String testName = getTestName(false);
-    doNavigateTest(testName, "js2", "xxx\npublic class AAA extends ZZZ\n" + "implements yyy.XXX");
+    doNavigateTest(testName, "js2", "public class xxx.AAA extends ZZZ\n" + "implements yyy.XXX");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
