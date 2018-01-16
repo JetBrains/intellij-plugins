@@ -103,7 +103,7 @@ class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
     JSAttributeList attributeList = owner.getAttributeList();
     if (attributeList == null) return;
     
-    appendModifier(result, attributeList, JSAttributeList.ModifierType.OVERRIDE);
+    appendModifierWithSpace(result, attributeList, JSAttributeList.ModifierType.OVERRIDE);
 
     String nsOrAccessModifier = JSResolveUtil.getNamespaceValue(attributeList);
     if (nsOrAccessModifier == null) {
@@ -121,10 +121,10 @@ class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
 
   @Override
   protected void appendPlainModifierList(@NotNull JSAttributeList attributeList, @NotNull StringBuilder result) {
-    appendModifier(result, attributeList, JSAttributeList.ModifierType.STATIC);
-    appendModifier(result, attributeList, JSAttributeList.ModifierType.FINAL);
-    appendModifier(result, attributeList, JSAttributeList.ModifierType.DYNAMIC);
-    appendModifier(result, attributeList, JSAttributeList.ModifierType.NATIVE);
+    appendModifierWithSpace(result, attributeList, JSAttributeList.ModifierType.STATIC);
+    appendModifierWithSpace(result, attributeList, JSAttributeList.ModifierType.FINAL);
+    appendModifierWithSpace(result, attributeList, JSAttributeList.ModifierType.DYNAMIC);
+    appendModifierWithSpace(result, attributeList, JSAttributeList.ModifierType.NATIVE);
   }
 
   @Override
