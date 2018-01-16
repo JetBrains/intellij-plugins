@@ -222,7 +222,9 @@ export default {
   }
 
   private fun generateProps(): String {
-    return sortedProps(true).joinToString(" "){ ":${fromAsset(it.getRefName())}=\"${it.getExpressionText()}\"" }
+    return sortedProps(true).joinToString(" "){
+      ":${fromAsset(it.getRefName())}=\"${it.getExpressionText()}\""
+    }
   }
 
   private fun sortedProps(distinct: Boolean): List<RefData> {
@@ -248,7 +250,7 @@ export default {
     }
 
     fun getExpressionText(): String {
-      return ((ref as? PsiElement)?.parent as? JSCallExpression)?.text ?: return ref.element.text
+      return ((ref as? PsiElement)?.parent as? JSCallExpression)?.text ?: return getRefName()
     }
   }
 }

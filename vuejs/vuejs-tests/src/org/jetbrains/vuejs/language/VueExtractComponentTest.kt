@@ -537,6 +537,53 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </script>""")
   }
 
+  fun testExtractWithMemberAccess() {
+    doExtractTest(
+"""
+<template>
+    <caret><div v-if="item">
+        <p>
+            {{ item.kids ? item.descendants + ' comments' : 'No comments yet.' }}
+        </p>
+    </div>
+</template>
+<script>
+    export default {
+        props: { item: {} }
+    }
+</script>
+""",
+"""
+<template>
+    <new-component :item="item"/>
+</template>
+<script>
+    import NewComponent from "./NewComponent";
+
+    export default {
+        components: {NewComponent},
+        props: { item: {} }
+    }
+</script>
+""",
+"""<template>
+    <div v-if="item">
+        <p>
+            {{ item.kids ? item.descendants + ' comments' : 'No comments yet.' }}
+        </p>
+    </div>
+</template>
+<script>
+    export default {
+        name: 'new-component',
+        props: {
+            item: {}
+        }
+    }
+</script>"""
+    )
+  }
+
   private fun doExtractTest(existing: String, modified: String, newText: String?, numTags: Int = 1,
                             newCompName: String = "new-component") {
     JSTestUtils.testES6<Exception>(project, {
