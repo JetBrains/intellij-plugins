@@ -235,7 +235,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testQuickNavigateInfoWithMxml() throws Exception {
-    doNavigateTest(getTestName(false), "mxml", "flash.display.Sprite\n" + "Event mouseDown <span style=\"\">(MockFlex.as)</span>");
+    doNavigateTest(getTestName(false), "mxml", "flash.display.Sprite\n" + "Event mouseDown" + file("MockFlex.as"));
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
@@ -461,7 +461,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     myAfterCommitRunnable =
       () -> FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", null);
     final String testName = getTestName(false);
-    doNavigateTest(testName, "js2", "public function LibraryMain.someMethod(param:int):int <span style=\"\">(LibraryMain.as)</span>");
+    doNavigateTest(testName, "js2", "public function LibraryMain.someMethod(param:int):int" + file("LibraryMain.as"));
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
