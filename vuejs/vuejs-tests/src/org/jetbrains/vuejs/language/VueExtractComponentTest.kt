@@ -1,5 +1,6 @@
 package org.jetbrains.vuejs.language
 
+import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
@@ -21,6 +22,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     import NewComponent from "./NewComponent";
+
     export default {
         components: {NewComponent}
     }
@@ -41,26 +43,27 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 <div>And div {{ unresolved }} </div></selection>
 </template>
 <script>
-export default {
-    name: 'existing',
-    props: {
-        one: {}
+    export default {
+        name: 'existing',
+        props: {
+            one: {}
+        }
     }
-}
 </script>""",
 
     """<template>
     <new-component :one="one"/>
 </template>
 <script>
-import NewComponent from "./NewComponent";
-export default {
-    name: 'existing',
-    components: {NewComponent},
-    props: {
-        one: {}
+    import NewComponent from "./NewComponent";
+
+    export default {
+        name: 'existing',
+        components: {NewComponent},
+        props: {
+            one: {}
+        }
     }
-}
 </script>""",
 
     """<template>
@@ -81,30 +84,31 @@ export default {
 <caret><p v-if="one">Paragraph! {{ compMethod() }}</p>
 </template>
 <script>
-export default {
-    props: {
-        one: {}
-    },
-    computed: {
-      compMethod() {}
+    export default {
+        props: {
+            one: {}
+        },
+        computed: {
+          compMethod() {}
+        }
     }
-}
 </script>""",
 
     """<template>
     <new-component :comp-method="compMethod()" :one="one"/>
 </template>
 <script>
-import NewComponent from "./NewComponent";
-export default {
-    components: {NewComponent},
-    props: {
-        one: {}
-    },
-    computed: {
-      compMethod() {}
+    import NewComponent from "./NewComponent";
+
+    export default {
+        components: {NewComponent},
+        props: {
+            one: {}
+        },
+        computed: {
+          compMethod() {}
+        }
     }
-}
 </script>""",
 
     """<template>
@@ -142,8 +146,8 @@ export default {
     <new-component :prop="prop"/>
 </template>
 <script>
-    import OtherComp from './OtherComp'
     import NewComponent from "./NewComponent";
+
     export default {
         name: 'current-comp',
         components: {NewComponent},
@@ -244,6 +248,7 @@ export default {
 
 <script>
     import NewComponent from "./NewComponent";
+
     export default {
         name: "test-v-for",
         components: {NewComponent},
@@ -293,6 +298,7 @@ export default {
 
 <script>
     import NewComponent from "./NewComponent";
+
     export default {
         name: "test-v-for",
         components: {NewComponent},
@@ -340,6 +346,7 @@ export default {
 </template>
 <script>
     import NewComponent from "./NewComponent";
+
     export default {
         components: {NewComponent},
         methods: {
@@ -383,6 +390,7 @@ export default {
 </template>
 <script>
     import NewComponent from "./NewComponent";
+
     export default {
         components: {NewComponent},
         props: {
@@ -433,24 +441,122 @@ export default {
 """, null, 1, "dd")
   }
 
+  fun testFindImport() {
+    myFixture.configureByText("OtherName.vue",
+"""
+<script>export default { name: "cool-stuck" }</script>
+""")
+    doExtractTest(
+"""
+<template>
+  <caret><cool-stuck>
+    <p>
+    Inner Text
+    </p>
+  </cool-stuck>
+</template>
+<script>
+    import CoolStuck from './OtherName'
+    export default {
+      components: { CoolStuck }
+    }
+</script>
+"""
+,
+"""
+<template>
+    <new-component/>
+</template>
+<script>
+    import NewComponent from "./NewComponent";
+
+    export default {
+      components: {NewComponent}
+    }
+</script>
+""",
+"""<template>
+    <cool-stuck>
+        <p>
+            Inner Text
+        </p>
+    </cool-stuck>
+</template>
+<script>
+    import CoolStuck from './OtherName'
+    export default {
+        name: 'new-component',
+        components: {CoolStuck}
+    }
+</script>""")
+  }
+
+  fun testFindNonExistingImport() {
+    doExtractTest(
+      """
+<template>
+  <caret><cool-stuck>
+    <p>
+    Inner Text
+    </p>
+  </cool-stuck>
+</template>
+<script>
+    import CoolStuck from './OtherName'
+    export default {
+      components: { CoolStuck }
+    }
+</script>
+"""
+      ,
+      """
+<template>
+    <new-component/>
+</template>
+<script>
+    import NewComponent from "./NewComponent";
+
+    export default {
+      components: {NewComponent}
+    }
+</script>
+""",
+"""<template>
+    <cool-stuck>
+        <p>
+            Inner Text
+        </p>
+    </cool-stuck>
+</template>
+<script>
+    import CoolStuck from './OtherName'
+    export default {
+        name: 'new-component',
+        components: {CoolStuck}
+    }
+</script>""")
+  }
+
   private fun doExtractTest(existing: String, modified: String, newText: String?, numTags: Int = 1,
                             newCompName: String = "new-component") {
-    myFixture.configureByText(getTestName(false) + ".vue", existing)
+    JSTestUtils.testES6<Exception>(project, {
+      myFixture.configureByText(getTestName(false) + ".vue", existing)
 
-    val context = VueExtractComponentIntention.getContext(myFixture.editor, myFixture.elementAtCaret)
-    TestCase.assertNotNull(context)
-    TestCase.assertEquals(numTags, context!!.size)
+      val context = VueExtractComponentIntention.getContext(myFixture.editor, myFixture.elementAtCaret)
+      TestCase.assertNotNull(context)
+      TestCase.assertEquals(numTags, context!!.size)
 
-    VueExtractComponentRefactoring(myFixture.project, context, myFixture.editor).perform(newCompName)
+      VueExtractComponentRefactoring(myFixture.project, context, myFixture.editor).perform(newCompName)
 
-    myFixture.checkResult(modified)
+      myFixture.checkResult(modified)
 
-    if (newText != null) {
-      FileDocumentManager.getInstance().saveAllDocuments()
-      val created = myFixture.file.parent!!.findFile("NewComponent.vue")
-      TestCase.assertNotNull(created)
-      myFixture.configureByText("NewComponent2.vue", VfsUtil.loadText(created!!.viewProvider.virtualFile))
-      myFixture.checkResult(newText)
-    }
+      if (newText != null) {
+        FileDocumentManager.getInstance().saveAllDocuments()
+        val created = myFixture.file.parent!!.findFile("NewComponent.vue")
+        TestCase.assertNotNull(created)
+        myFixture.configureByText("NewComponent2.vue", VfsUtil.loadText(created!!.viewProvider.virtualFile))
+        myFixture.checkResult(newText)
+      }
+    })
   }
 }

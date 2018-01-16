@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
-import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
+import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil.ES6_IMPORT_DECLARATION
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.psi.JSCallExpression
@@ -15,7 +15,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.Trinity
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
@@ -60,20 +59,16 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
 
   private fun processVueComponent(ref: VueTagNameReference) {
     if (scriptTag == null) return
-    val content = PsiTreeUtil.findChildOfType(scriptTag,
-                                              JSEmbeddedContent::class.java) ?: return
-    val variants = ref.multiResolve(false)
-    val foundImport = variants.mapNotNull {
-      if (!it.isValidResult || it.element == null) return@mapNotNull null
-      val file = it.element!!.containingFile
-      // this means it was not resolved into the other file which we can import
-      if (ref.element.containingFile == file) return@mapNotNull null
+    val content = PsiTreeUtil.findChildOfType(scriptTag, JSEmbeddedContent::class.java) ?: return
 
-      val name = FileUtil.getNameWithoutExtension(file.name)
-      ES6ImportPsiUtil.findExistingES6Import(content, null, name,
-                                             true) ?: ES6ImportPsiUtil.findExistingES6Import(
-        content, null, file.name, true)
-    }.firstOrNull() ?: return
+    val declarations = JSResolveUtil.getStubbedChildren(content, ES6_IMPORT_DECLARATION)
+    val foundImport = declarations.firstOrNull { declaration ->
+      val importDeclaration = declaration as ES6ImportDeclaration
+      val byName = importDeclaration.importedBindings.firstOrNull { !it.isNamespaceImport && it.name != null &&
+                                                                    fromAsset(ref.nameElement.text) == fromAsset(it.name!!)}
+      return@firstOrNull byName != null
+    } as? ES6ImportDeclaration ?: return
+
     importsToCopy.put(toAsset(ref.nameElement.text).capitalize(), foundImport)
   }
 
@@ -183,7 +178,7 @@ export default {
     return members.joinToString("")
   }
 
-  fun modifyCurrentComponent(newComponentName: String, currentFile: PsiFile, newPsiFile: PsiFile, editor: Editor?) {
+  fun modifyCurrentComponent(newComponentName: String, currentFile: PsiFile, newPsiFile: PsiFile, editor: Editor) {
     VueInsertHandler.InsertHandlerWorker().insertComponentImport(currentFile, newComponentName, newPsiFile, editor)
     optimizeUnusedComponentsAndImports(currentFile)
   }
@@ -207,8 +202,7 @@ export default {
 
   private fun optimizeUnusedComponentsAndImports(file: PsiFile) {
     val content = findModule(file) ?: return
-    val defaultExport = ES6PsiUtil.findDefaultExport(
-      content) as? JSExportAssignment
+    val defaultExport = ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment
     val component = defaultExport?.stubSafeElement as? JSObjectLiteralExpression
 
     val components = (component?.findProperty("components")?.value as? JSObjectLiteralExpression)?.properties
