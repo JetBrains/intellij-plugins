@@ -8,7 +8,9 @@ import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSQualifiedName;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor;
+import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
@@ -94,6 +96,35 @@ class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
     }
     builder.append(parent.getName()).append(" ").append(valuePair.getSimpleValue());
     return buildResult(ObjectKind.SIMPLE_DECLARATION, builder.toString(), false, element, originalElement);
+  }
+
+  @Override
+  protected void appendAttrList(@NotNull JSAttributeListOwner owner, @NotNull StringBuilder result) {
+    JSAttributeList attributeList = owner.getAttributeList();
+    if (attributeList == null) return;
+    
+    appendModifier(result, attributeList, JSAttributeList.ModifierType.OVERRIDE);
+
+    String nsOrAccessModifier = JSResolveUtil.getNamespaceValue(attributeList);
+    if (nsOrAccessModifier == null) {
+      JSVisibilityUtil.PresentableAccessModifier modifier = JSVisibilityUtil.getPresentableAccessModifier(owner);
+      if (modifier != null) nsOrAccessModifier = modifier.getText();
+    }
+
+    if (nsOrAccessModifier != null) {
+      result.append(nsOrAccessModifier);
+      result.append(" ");
+    }
+
+    appendPlainModifierList(attributeList, result);
+  }
+
+  @Override
+  protected void appendPlainModifierList(@NotNull JSAttributeList attributeList, @NotNull StringBuilder result) {
+    appendModifier(result, attributeList, JSAttributeList.ModifierType.STATIC);
+    appendModifier(result, attributeList, JSAttributeList.ModifierType.FINAL);
+    appendModifier(result, attributeList, JSAttributeList.ModifierType.DYNAMIC);
+    appendModifier(result, attributeList, JSAttributeList.ModifierType.NATIVE);
   }
 
   @Override
