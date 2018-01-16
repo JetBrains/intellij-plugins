@@ -16,7 +16,6 @@ import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.refactoring.FormatFixer
 import com.intellij.lang.xml.XMLLanguage
-import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -34,10 +33,8 @@ class VueInsertHandler : XmlTagInsertHandler() {
 
     fun reformatElement(element: PsiElement?) {
       if (element != null && element.isValid) {
-        WriteAction.run<RuntimeException> {
-          val range = element.textRange
-          FormatFixer.doReformat(element as? PsiFile ?: element.containingFile, range.startOffset, range.endOffset)
-        }
+        val range = element.textRange
+        FormatFixer.doReformat(element as? PsiFile ?: element.containingFile, range.startOffset, range.endOffset)
       }
     }
 

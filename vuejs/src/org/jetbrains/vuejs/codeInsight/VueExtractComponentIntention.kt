@@ -30,6 +30,7 @@ class VueExtractComponentIntention : JavaScriptIntention() {
   }
 
   override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
+    editor ?: return
     val context = Companion.getContext(editor, element) ?: return
     VueExtractComponentRefactoring(project, context, editor).perform()
   }
