@@ -12,10 +12,7 @@ import com.intellij.lang.javascript.refactoring.extractMethod.*;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-
-import java.util.List;
 
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
@@ -38,12 +35,6 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
                                   urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
     super.setUp();
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
-  }
-
-  protected JSExtractFunctionHandler createMockHandler(DefaultJSExtractFunctionSettings extractFunctionSettings,
-                                                       Function<List<JSExtractFunctionHandler.IntroductionScope>,
-                                                         JSExtractFunctionHandler.IntroductionScope> scopeSelector) {
-    return new MockJSExtractFunctionHandler(extractFunctionSettings, scopeSelector);
   }
 
   public void testExpressionInClass() throws Exception {
@@ -83,12 +74,7 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
         parametersInfo.variables.add(var);
         parametersInfo.variableOptions.put(var, new JSExtractFunctionSettings.ParameterInfo(var.getName() + "2", true, null, 0));
 
-        return new MockJSExtractFunctionHandler.MyJSExtractFunctionSettings(
-          "created",
-          true,
-          false,
-          JSAttributeList.AccessType.PUBLIC, parametersInfo
-        );
+        return new DefaultJSExtractFunctionSettings("created", true, false, JSAttributeList.AccessType.PUBLIC, parametersInfo, null);
       },
       getTestName(false),
       "js2"
