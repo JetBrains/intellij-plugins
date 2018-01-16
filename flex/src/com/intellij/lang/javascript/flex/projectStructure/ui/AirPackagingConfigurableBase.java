@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.util.ActionCallback;
@@ -13,11 +12,9 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
-import com.intellij.ui.navigation.History;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -170,7 +167,7 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     return false;
   }
 
-  public void apply() throws ConfigurationException {
+  public void apply() {
     applyTo(myModel);
   }
 
@@ -233,9 +230,6 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     return !myEnabledCheckBox.isVisible() || myEnabledCheckBox.isSelected();
   }
 
-  public void setHistory(final History history) {
-  }
-
   public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
     if (place != null) {
       final Object location = place.getPath(FlexBCConfigurable.LOCATION_ON_TAB);
@@ -255,8 +249,5 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
       }
     }
     return ActionCallback.DONE;
-  }
-
-  public void queryPlace(@NotNull final Place place) {
   }
 }

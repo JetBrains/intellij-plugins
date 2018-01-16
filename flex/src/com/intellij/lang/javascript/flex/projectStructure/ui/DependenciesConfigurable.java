@@ -61,7 +61,6 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
 import com.intellij.ui.components.editors.JBComboBoxTableCellEditorComponent;
-import com.intellij.ui.navigation.History;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.PlatformIcons;
@@ -1708,10 +1707,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   }
 
   @Override
-  public void setHistory(final History history) {
-  }
-
-  @Override
   public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
     if (place != null) {
       final Object location = place.getPath(FlexBCConfigurable.LOCATION_ON_TAB);
@@ -1737,10 +1732,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       }
     }
     return ActionCallback.DONE;
-  }
-
-  @Override
-  public void queryPlace(@NotNull final Place place) {
   }
 
   public void libraryReplaced(@NotNull final Library library, @Nullable final Library replacement) {

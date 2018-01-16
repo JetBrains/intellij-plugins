@@ -9,7 +9,6 @@ import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.TabbedPaneWrapper;
-import com.intellij.ui.navigation.History;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.Nls;
@@ -144,10 +143,6 @@ public class CompositeConfigurable extends ProjectStructureElementConfigurable<M
     //}
     getMainChild().disposeUIResources();
     Disposer.dispose(myDisposable);
-  }
-
-  @Override
-  public void setHistory(final History history) {
   }
 
   @Override

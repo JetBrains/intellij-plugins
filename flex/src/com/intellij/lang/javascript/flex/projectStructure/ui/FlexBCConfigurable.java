@@ -17,9 +17,7 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfiguration
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
-import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
-import com.intellij.lang.javascript.psi.impl.PublicInheritorFilter;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -43,7 +41,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
-import com.intellij.ui.navigation.History;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformIcons;
@@ -137,8 +134,6 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
 
   private final UserActivityListener myUserActivityListener;
   private boolean myFreeze;
-
-  private PublicInheritorFilter myMainClassFilter;
 
   public FlexBCConfigurable(final Module module,
                             final ModifiableFlexBuildConfiguration bc,
@@ -243,7 +238,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
       }
     });
 
-    final String title = "Select folder with HTML wrapper template";
+    final String title = "Select Folder with HTML Wrapper Template";
     final String description = "Folder must contain 'index.template.html' file which must contain '${swf}' macro.";
     myWrapperTemplateTextWithBrowse.addBrowseFolderListener(title, description, myModule.getProject(),
                                                             FileChooserDescriptorFactory.createSingleFolderDescriptor());
@@ -583,7 +578,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
   }
 
   public void apply() throws ConfigurationException {
-    applyOwnTo(myConfiguration, true);
+    applyOwnTo(myConfiguration);
 
     myDependenciesConfigurable.apply();
     myCompilerOptionsConfigurable.apply();
@@ -595,12 +590,10 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
   }
 
   private void rebuildMainClassFilter() {
-    final boolean rlm = myConfiguration.getOutputType() == OutputType.RuntimeLoadedModule;
-    myMainClassFilter = BCUtils.getMainClassFilter(myModule, myConfiguration, rlm, false, true);
   }
 
-  private void applyOwnTo(ModifiableFlexBuildConfiguration configuration, boolean validate) throws ConfigurationException {
-    if (validate && StringUtil.isEmptyOrSpaces(myName)) {
+  private void applyOwnTo(ModifiableFlexBuildConfiguration configuration) throws ConfigurationException {
+    if (StringUtil.isEmptyOrSpaces(myName)) {
       throw new ConfigurationException("Module '" + getModuleName() + "': build configuration name is empty");
     }
     configuration.setName(myName);
@@ -733,10 +726,6 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
   }
 
   @Override
-  public void setHistory(final History history) {
-  }
-
-  @Override
   public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
     if (place != null) {
       final Object location = place.getPath(LOCATION_ON_TAB);
@@ -760,9 +749,5 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
       }
     }
     return ActionCallback.DONE;
-  }
-
-  @Override
-  public void queryPlace(@NotNull final Place place) {
   }
 }
