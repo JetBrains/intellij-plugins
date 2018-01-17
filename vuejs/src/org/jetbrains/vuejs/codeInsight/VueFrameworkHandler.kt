@@ -101,7 +101,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         var componentName = getTextIfLiteral(arguments[0])
         var nameRefString: String? = null
         if (componentName == null) {
-          val nameRef = arguments[0] as JSReferenceExpression
+          val nameRef = arguments[0] as? JSReferenceExpression ?: return
           nameRefString = nameRef.text
           val qualifierRef = nameRef.qualifier as? JSReferenceExpression
           componentName = (qualifierRef?.referenceName ?: nameRef.referenceName) + GLOBAL_BINDING_MARK
