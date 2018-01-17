@@ -12,11 +12,9 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="struts2-dom-api" />
     <orderEntry type="module" module-name="javaee-impl" />
-    <orderEntry type="module" module-name="xml-openapi" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="dom-openapi" />
     <orderEntry type="module" module-name="CSS" />
-    <orderEntry type="module" module-name="xml" />
     <orderEntry type="module" module-name="dom-impl" />
     <orderEntry type="module" module-name="web-openapi" />
     <orderEntry type="module" module-name="web-impl" />
@@ -36,10 +34,11 @@
     <orderEntry type="module" module-name="ognl" />
     <orderEntry type="module" module-name="css-api" />
     <orderEntry type="module" module-name="dom-tests" scope="TEST" />
-    <orderEntry type="module" module-name="jsp-base-impl" />
     <orderEntry type="module" module-name="spring-api" />
     <orderEntry type="module" module-name="properties-psi-api" />
     <orderEntry type="module" module-name="properties-psi-impl" />
     <orderEntry type="module" module-name="groovy-psi" />
+    <orderEntry type="module" module-name="xml-structure-view-impl" />
+    <orderEntry type="module" module-name="xml" />
   </component>
 </module>
