@@ -109,7 +109,7 @@ public abstract class DartProjectTemplate {
         ((JavaScriptDebugConfiguration)settings.getConfiguration()).setUri(url.toDecodedForm());
         settings.setName(((JavaScriptDebugConfiguration)settings.getConfiguration()).suggestedName());
 
-        runManager.addConfiguration(settings, false);
+        runManager.addConfiguration(settings);
         runManager.setSelectedConfiguration(settings);
       }
       catch (Throwable t) {/* ClassNotFound in IDEA Community or if JS Debugger plugin disabled */}
@@ -129,7 +129,7 @@ public abstract class DartProjectTemplate {
 
       settings.setName(runConfiguration.suggestedName());
 
-      runManager.addConfiguration(settings, false);
+      runManager.addConfiguration(settings);
       runManager.setSelectedConfiguration(settings);
     }, module);
   }

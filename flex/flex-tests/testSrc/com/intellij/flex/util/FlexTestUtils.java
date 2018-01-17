@@ -555,7 +555,7 @@ public class FlexTestUtils {
   public static void createFlashRunConfig(final RunManager runManager,
                                           final Module module, final String configName, final String className, boolean generatedName) {
     final RunnerAndConfigurationSettings settings = runManager.createRunConfiguration(configName, FlashRunConfigurationType.getFactory());
-    runManager.addConfiguration(settings, false);
+    runManager.addConfiguration(settings);
 
     final FlashRunnerParameters params = ((FlashRunConfiguration)settings.getConfiguration()).getRunnerParameters();
     params.setModuleName(module.getName());
@@ -578,7 +578,7 @@ public class FlexTestUtils {
                                              boolean generatedName) {
     final RunnerAndConfigurationSettings settings =
       runManager.createRunConfiguration(configName, FlexUnitRunConfigurationType.getFactory());
-    runManager.addConfiguration(settings, false);
+    runManager.addConfiguration(settings);
 
     final FlexUnitRunnerParameters params = ((FlexUnitRunConfiguration)settings.getConfiguration()).getRunnerParameters();
     params.setModuleName(module.getName());

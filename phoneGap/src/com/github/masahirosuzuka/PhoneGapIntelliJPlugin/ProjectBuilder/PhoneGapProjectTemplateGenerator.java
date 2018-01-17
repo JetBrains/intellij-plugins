@@ -151,7 +151,7 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
     runConfiguration.setPlatform(
       SystemInfo.isMac ? PhoneGapRunConfigurationEditor.PLATFORM_IOS : PhoneGapRunConfigurationEditor.PLATFORM_ANDROID);
     runConfiguration.setCommand(PhoneGapCommandLine.COMMAND_EMULATE);
-    runManager.addConfiguration(configuration, false);
+    runManager.addConfiguration(configuration);
     runManager.setSelectedConfiguration(configuration);
   }
 
