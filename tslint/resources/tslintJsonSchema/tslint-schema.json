@@ -439,6 +439,10 @@
           "description": "Enforces blank line before return when not the only line in the block",
           "type": "boolean"
         },
+        "newline-per-chained-call": {
+          "description": "Requires that chained method calls be broken apart onto separate lines",
+          "type": "boolean"
+        },
         "no-angle-bracket-type-assertion": {
           "description": "Requires the use of as Type for type assertions instead of <Type>",
           "type": "boolean"
@@ -507,6 +511,10 @@
         },
         "no-duplicate-variable": {
           "description": "Disallows duplicate variable declarations in the same block scope",
+          "type": "boolean"
+        },
+        "no-dynamic-delete": {
+          "description": "Bans usage of the delete operator with computed key expressions",
           "type": "boolean"
         },
         "no-empty": {
@@ -1016,6 +1024,24 @@
         "prefer-const": {
           "description": "Requires that variable declarations use const instead of let if possible",
           "type": "boolean"
+        },
+        "prefer-readonly": {
+          "description": "Requires that private variables are marked as readonly if they’re never modified outside of the constructor",
+          "oneOf": [
+            {"type": "boolean"},
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {"type": "boolean", "enum": [true]},
+                  {
+                    "type": "string",
+                    "enum": ["only-inline-lambdas"]
+                  }
+                ]
+              }
+            }
+          ]
         },
         "prefer-for-of": {
           "description": "Recommends a ‘for-of’ loop over a standard ‘for’ loop if the index is only used to access the array being iterated",
