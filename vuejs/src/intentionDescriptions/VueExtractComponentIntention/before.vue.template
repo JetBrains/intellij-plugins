@@ -1,0 +1,17 @@
+<template>
+    Participants:<br/>
+    <spot><div v-for="item in items" :key="item.id">
+        Name: {{ item.name }}
+    </div></spot>
+</template>
+
+<script>
+    export default {
+        props: {
+            items: [
+                { id: 123, name: "John Doe" },
+                { id: 789, name: "Jane Smith" }
+            ]
+        }
+    };
+</script>
