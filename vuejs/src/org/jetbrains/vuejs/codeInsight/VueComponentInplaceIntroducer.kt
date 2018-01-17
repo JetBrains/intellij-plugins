@@ -1,5 +1,6 @@
 package org.jetbrains.vuejs.codeInsight
 
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.application.ex.ApplicationManagerEx
@@ -43,7 +44,6 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
   InplaceRefactoring(editor, elementToRename, elementToRename.project) {
   private val commandName = VueBundle.message("vue.template.intention.extract.component")
   private val containingFile = myElementToRename.containingFile
-  private val rangeMarker = editor.document.createRangeMarker(elementToRename.textRange)
   private val oldCaret = editor.caretModel.currentCaret.offset
   private var isCanceled = false
 
@@ -91,8 +91,17 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
 
   override fun performCleanup() {
     try {
+      // it is called two times on "no" selected in confirmation popup
+      if (isCanceled) return
       isCanceled = true
-      WriteAction.run<RuntimeException> { myEditor.document.replaceString(rangeMarker.startOffset, rangeMarker.endOffset, oldText) }
+      WriteAction.run<RuntimeException> {
+        val tag = findTagBeingRenamed() ?: return@run
+        // for the case with pug
+        val embedded = PsiTreeUtil.getParentOfType(tag, JSEmbeddedContent::class.java)
+        val offset = embedded?.textRange?.startOffset ?: 0
+        myEditor.document.replaceString(offset + tag.textRange.startOffset, offset + tag.textRange.endOffset, oldText)
+        myEditor.caretModel.currentCaret.moveToOffset(oldCaret)
+      }
     } finally {
       FinishMarkAction.finish(myProject, myEditor, myMarkAction)
     }

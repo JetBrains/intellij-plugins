@@ -441,6 +441,36 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 """, null, 1, "dd")
   }
 
+  fun testCleanupPugIfNameIsUsed() {
+    doExtractTest(
+      """<template lang="pug">
+    <caret>div(v-if="items()")
+        div(v-for="item in items()")
+            p Id: {{ item.id }}, name: {{ item.name }}
+</template>
+<script>
+    export default {
+        props: {
+            items: {}
+        }
+    }
+</script>
+""",
+      """<template lang="pug">
+    <caret>div(v-if="items()")
+        div(v-for="item in items()")
+            p Id: {{ item.id }}, name: {{ item.name }}
+</template>
+<script>
+    export default {
+        props: {
+            items: {}
+        }
+    }
+</script>
+""", null, 1, "dd")
+  }
+
   fun testFindImport() {
     myFixture.configureByText("OtherName.vue",
 """
@@ -589,7 +619,9 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     JSTestUtils.testES6<Exception>(project, {
       myFixture.configureByText(getTestName(false) + ".vue", existing)
 
-      val context = VueExtractComponentIntention.getContext(myFixture.editor, myFixture.elementAtCaret)
+      val element = myFixture.file.findElementAt(myFixture.editor.caretModel.currentCaret.offset)
+      TestCase.assertNotNull(element)
+      val context = VueExtractComponentIntention.getContext(myFixture.editor, element!!)
       TestCase.assertNotNull(context)
       TestCase.assertEquals(numTags, context!!.size)
 
