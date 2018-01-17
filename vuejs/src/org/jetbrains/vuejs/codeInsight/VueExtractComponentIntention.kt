@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.lang.javascript.intentions.JavaScriptIntention
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
@@ -24,6 +25,7 @@ class VueExtractComponentIntention : JavaScriptIntention() {
   }
 
   override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
+    if (!Registry.`is`("vue.extract.component.intention", false)) return false
     editor ?: return false
     if (VueFileType.INSTANCE != element.containingFile?.fileType) return false
     return Companion.getContext(editor, element) != null
