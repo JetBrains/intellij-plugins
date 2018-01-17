@@ -110,6 +110,7 @@ URL_PREFIX_DOMAIN={U}{R}{L}|{U}{R}{L}-{P}{R}{E}{F}{I}{X}|{D}{O}{M}{A}{I}{N}
 <YYINITIAL> "%" { return CssElementTypes.CSS_PERCENT; }
 <YYINITIAL> "." { return CssElementTypes.CSS_PERIOD; }
 <YYINITIAL> ">" { return CssElementTypes.CSS_GT; }
+<YYINITIAL> ">>>" { return CssElementTypes.CSS_GT_GT_GT; }
 <YYINITIAL> "/"{CSS_IDENT}"/" { return CssElementTypes.CSS_SLASHED_COMBINATOR; }
 <YYINITIAL> "+" { return CssElementTypes.CSS_PLUS; }
 <YYINITIAL> "*" { return CssElementTypes.CSS_ASTERISK; }
