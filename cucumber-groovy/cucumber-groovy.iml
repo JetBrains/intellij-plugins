@@ -18,7 +18,18 @@
     <orderEntry type="module" module-name="java-psi-api" />
     <orderEntry type="module" module-name="testFramework" scope="TEST" />
     <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
-    <orderEntry type="library" name="cucumber-groovy" level="project" />
+    <orderEntry type="module-library">
+      <library name="cucumber-groovy" type="repository">
+        <properties include-transitive-deps="false" maven-id="info.cukes:cucumber-groovy:1.2.4" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-groovy/1.2.4/cucumber-groovy-1.2.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-groovy/1.2.4/cucumber-groovy-1.2.4-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
     <orderEntry type="library" name="Groovy" level="project" />
     <orderEntry type="module" module-name="java-impl" />
     <orderEntry type="library" name="cucumber-core" level="project" />
