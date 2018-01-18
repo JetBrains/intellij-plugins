@@ -83,4 +83,26 @@ public class FunctionSymbol extends RTypedSyntheticSymbol implements MotionSymbo
     }
     return result;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+
+    FunctionSymbol symbol = (FunctionSymbol)o;
+
+    if (!myModule.equals(symbol.myModule)) return false;
+    if (!myFunction.equals(symbol.myFunction)) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + myModule.hashCode();
+    result = 31 * result + myFunction.hashCode();
+    return result;
+  }
 }
