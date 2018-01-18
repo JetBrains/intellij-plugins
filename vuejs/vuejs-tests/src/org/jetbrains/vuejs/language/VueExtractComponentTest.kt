@@ -212,6 +212,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script lang="ts">
     import OtherComp from './OtherComp'
+
     export default {
         name: 'new-component',
         components: {OtherComp},
