@@ -10,9 +10,6 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaBundle;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 public class CucumberJavaStepDefClassInDefaultPackageInspection extends BaseLocalInspectionTool {
-  public boolean isEnabledByDefault() {
-    return true;
-  }
 
   @Nls
   @NotNull

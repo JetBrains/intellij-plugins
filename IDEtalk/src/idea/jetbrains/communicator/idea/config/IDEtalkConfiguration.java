@@ -108,10 +108,6 @@ public class IDEtalkConfiguration implements Configurable {
   }
 
 
-  public void disposeUIResources() {
-  }
-
-
   public boolean isModified() {
     for (Pair<JCheckBox, OptionFlag> option : myFlags) {
       if (option.getSecond().isSet() ^ option.getFirst().isSelected()) {
