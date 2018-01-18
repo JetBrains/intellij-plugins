@@ -83,8 +83,13 @@ public class RubyMotionCodeInsightTest extends RubyMotionLightFixtureTestCase {
 
   public void testCompletion() throws Throwable {
     defaultConfigure();
-    assertInCompletionList("<caret>UIView", false, "UIBarButtonItem", "KCFDateFormatterVeryShortMonthSymbols", "KCFGregorianUnitsHours",
-                           "CFNetServiceClientContext", "animationDidStart", "animationDidStop:finished:");
+    assertInCompletionList("<caret>UIView", false, "animationDidStart", "animationDidStop:finished:");
+  }
+
+  public void testStricterCompletion() {
+    List<String> variants = myFixture.getCompletionVariants("app/app_delegate_completion.rb");
+    assertContainsElements(variants, "KCFDateFormatterVeryShortMonthSymbols", "KCFGregorianUnitsHours");
+    // "UIBarButtonItem", "CFNetServiceClientContext"  // filtered out by too many elements
   }
 
   public void testRakefileCompletion() throws Throwable {
