@@ -50,7 +50,7 @@ class DescriptorUtil {
     for (Mixin mixin : mixins) {
       ContainerUtil.addAll(listResult, getAttributeDescriptors(mixin, null));
     }
-    return listResult.toArray(new XmlAttributeDescriptor[listResult.size()]);
+    return listResult.toArray(XmlAttributeDescriptor.EMPTY);
   }
 
   private static XmlAttributeDescriptor[] getAttributeDescriptorsImpl(XmlTag context) {

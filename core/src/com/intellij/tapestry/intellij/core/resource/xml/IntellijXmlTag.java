@@ -51,7 +51,7 @@ public class IntellijXmlTag implements XmlTag {
         for (com.intellij.psi.xml.XmlAttribute attribute : _xmlTag.getAttributes())
             attributes.add(new IntellijXmlAttribute(attribute));
 
-        return attributes.toArray(new XmlAttribute[attributes.size()]);
+        return attributes.toArray(new XmlAttribute[0]);
     }
 
     public XmlAttribute getAttribute(String name, String namespace) {

@@ -2,10 +2,10 @@ package com.intellij.tapestry.intellij.view.nodes;
 
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.openapi.module.Module;
-import com.intellij.ui.treeStructure.SimpleNode;
 import com.intellij.tapestry.core.model.Library;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.util.PathUtils;
+import com.intellij.ui.treeStructure.SimpleNode;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,7 +39,7 @@ public abstract class AbstractPresentationNode extends TapestryNode {
                 children.add(newChildNode(element, _module, _treeBuilder));
             }
 
-        return children.toArray(new SimpleNode[children.size()]);
+        return children.toArray(new SimpleNode[0]);
     }
 
     /**

@@ -62,7 +62,7 @@ public class Page extends PresentationLibraryElement implements ExternalizableTo
                 templates.add(template);
         }
 
-        _templateCache = templates.toArray(new IResource[templates.size()]);
+        _templateCache = templates.toArray(IResource.EMPTY_ARRAY);
 
         return _templateCache;
     }

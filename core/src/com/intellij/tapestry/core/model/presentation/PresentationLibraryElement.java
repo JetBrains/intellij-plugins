@@ -168,7 +168,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
         }
       }
 
-      _messageCatalogCache = catalogs.toArray(new IResource[catalogs.size()]);
+      _messageCatalogCache = catalogs.toArray(IResource.EMPTY_ARRAY);
 
       return _messageCatalogCache;
     }

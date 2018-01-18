@@ -3,8 +3,8 @@ package com.intellij.tapestry.intellij.view.nodes;
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.treeStructure.SimpleNode;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
+import com.intellij.ui.treeStructure.SimpleNode;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class RootNode extends SimpleNode {
             newNodes.add(new ModuleNode(module, _treeBuilder));
 
 
-        return newNodes.toArray(new AbstractModuleNode[newNodes.size()]);
+        return newNodes.toArray(new AbstractModuleNode[0]);
     }
 
     /**

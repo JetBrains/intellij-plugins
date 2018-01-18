@@ -61,7 +61,7 @@ public class Component extends ParameterReceiverElement implements Externalizabl
       for (IResource template : resources) {
         templates.add(template);
       }
-      _templateCache = templates.toArray(new IResource[templates.size()]);
+      _templateCache = templates.toArray(IResource.EMPTY_ARRAY);
     }
     else {
       _templateCache = IResource.EMPTY_ARRAY;

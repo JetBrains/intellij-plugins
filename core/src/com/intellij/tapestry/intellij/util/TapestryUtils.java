@@ -65,7 +65,7 @@ public class TapestryUtils {
       }
     }
 
-    return result.toArray(new Module[result.size()]);
+    return result.toArray(Module.EMPTY_ARRAY);
   }
 
   /**

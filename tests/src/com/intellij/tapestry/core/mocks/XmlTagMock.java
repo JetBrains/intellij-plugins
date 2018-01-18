@@ -73,7 +73,7 @@ public class XmlTagMock implements XmlTag {
 
     @Override
     public  XmlAttribute[] getAttributes() {
-        return _attributes.toArray(new XmlAttribute[_attributes.size()]);
+        return _attributes.toArray(new XmlAttribute[0]);
     }
 
     public XmlTagMock addAttribute(XmlAttribute attribute) {

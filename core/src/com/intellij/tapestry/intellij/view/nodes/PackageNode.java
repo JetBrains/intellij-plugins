@@ -96,7 +96,7 @@ public class PackageNode extends TapestryNode {
             }
         }
 
-        return children.toArray(new TapestryNode[children.size()]);
+        return children.toArray(new TapestryNode[0]);
     }
 
   @Nullable

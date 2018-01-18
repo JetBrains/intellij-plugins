@@ -55,6 +55,6 @@ public class ModuleNode extends AbstractModuleNode {
             children.add(new LibrariesNode(_module, _treeBuilder));
         }
 
-        return children.toArray(new TapestryNode[children.size()]);
+        return children.toArray(new TapestryNode[0]);
     }
 }

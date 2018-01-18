@@ -60,7 +60,7 @@ public class TapestryTagDescriptor extends BasicTapestryTagDescriptor {
     for (Mixin mixin : myMixins) {
       ContainerUtil.addAll(result, DescriptorUtil.getAttributeDescriptors(mixin, null));
     }
-    return result.toArray(new XmlAttributeDescriptor[result.size()]);
+    return result.toArray(XmlAttributeDescriptor.EMPTY);
   }
 
   public XmlAttributeDescriptor getAttributeDescriptor(@NonNls String attributeName, @Nullable XmlTag context) {
