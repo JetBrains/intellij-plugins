@@ -18,7 +18,6 @@
     <orderEntry type="module" module-name="xml" />
     <orderEntry type="module" module-name="CSS" />
     <orderEntry type="module" module-name="testFramework-JavaScript" scope="TEST" />
-    <orderEntry type="module" module-name="htmltools" scope="TEST" />
     <orderEntry type="module" module-name="graph-openapi" />
     <orderEntry type="module" module-name="diagram-api" />
     <orderEntry type="module" module-name="graph" />
