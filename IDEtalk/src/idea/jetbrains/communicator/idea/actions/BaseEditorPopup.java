@@ -25,10 +25,10 @@ import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserModel;
 import org.jetbrains.annotations.NotNull;
 
-import static jetbrains.communicator.idea.actions.ActionUtil.*;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import static jetbrains.communicator.idea.actions.ActionUtil.*;
 
 /**
  * @author Kir
@@ -86,14 +86,14 @@ public abstract class BaseEditorPopup extends ActionGroup implements DumbAware {
         result.add(actionGroup);
       }
     }
-    return result.toArray(new AnAction[result.size()]);
+    return result.toArray(AnAction.EMPTY_ARRAY);
   }
 
   private ActionGroup createGroupWithUsersActionGroup(final String group, final UserModel userModel, final VirtualFile file, final Editor editor) {
     List<AnAction> users = new ArrayList<>();
     User[] groupUsers = userModel.getUsers(group);
     fillWithUserActions(groupUsers, users, file, editor);
-    final AnAction[] actions = users.toArray(new AnAction[users.size()]);
+    final AnAction[] actions = users.toArray(AnAction.EMPTY_ARRAY);
 
     return new ActionGroup(group, true) {
       @NotNull

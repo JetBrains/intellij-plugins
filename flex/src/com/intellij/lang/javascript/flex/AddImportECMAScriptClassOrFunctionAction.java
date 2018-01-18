@@ -189,7 +189,7 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
 
     if (candidates.size() > 1) {
       NavigationUtil.getPsiElementPopup(
-          candidates.toArray(new JSQualifiedNamedElement[candidates.size()]),
+          candidates.toArray(new JSQualifiedNamedElement[0]),
           new JSQualifiedNamedElementRenderer(),
         JSBundle.message("choose.class.to.import.title"),
         new PsiElementProcessor<JSQualifiedNamedElement>() {

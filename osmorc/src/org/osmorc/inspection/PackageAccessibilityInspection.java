@@ -92,7 +92,7 @@ public class PackageAccessibilityInspection extends AbstractBaseJavaLocalInspect
         }
       }
     }, DependencyVisitorFactory.VisitorOptions.SKIP_IMPORTS);
-    return problems.isEmpty() ? null : problems.toArray(new ProblemDescriptor[problems.size()]);
+    return problems.isEmpty() ? null : problems.toArray(ProblemDescriptor.EMPTY_ARRAY);
   }
 
   private static class Problem {

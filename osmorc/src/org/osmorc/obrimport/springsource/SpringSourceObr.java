@@ -136,7 +136,7 @@ public class SpringSourceObr implements Obr {
         result.add(new ObrMavenResult(groupId, artifactId, version, classifier, this));
       }
       indicator.setText("Done. " + result.size() + " artifacts found.");
-      return result.toArray(new ObrMavenResult[result.size()]);
+      return result.toArray(new ObrMavenResult[0]);
     }
     catch (ProcessCanceledException ignored) {
       indicator.setText("Canceled.");

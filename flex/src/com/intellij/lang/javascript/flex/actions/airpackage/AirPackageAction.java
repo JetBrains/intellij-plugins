@@ -88,7 +88,7 @@ public class AirPackageAction extends DumbAwareAction {
     }
 
     final CompilerManager compilerManager = CompilerManager.getInstance(project);
-    final CompileScope compileScope = compilerManager.createModulesCompileScope(modules.toArray(new Module[modules.size()]), false);
+    final CompileScope compileScope = compilerManager.createModulesCompileScope(modules.toArray(Module.EMPTY_ARRAY), false);
     FlexResourceBuildTargetScopeProvider.setBCsToCompileForPackaging(compileScope, modulesAndBCs);
 
     compilerManager.make(compileScope, new CompileStatusNotification() {

@@ -445,7 +445,7 @@ public class FlexSdkUtils {
     else {
       final Collection<Sdk> sdks =
         ProjectStructureConfigurable.getInstance(currentEditor.getProject()).getProjectJdksModel().getProjectSdks().values();
-      return sdks.toArray(new Sdk[sdks.size()]);
+      return sdks.toArray(new Sdk[0]);
     }
   }
 

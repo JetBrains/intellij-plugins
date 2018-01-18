@@ -83,7 +83,7 @@ public class ViewGeneratedManifestGroup extends ActionGroup {
         }
 
         if (actions != null) {
-          return actions.toArray(new AnAction[actions.size()]);
+          return actions.toArray(AnAction.EMPTY_ARRAY);
         }
       }
     }

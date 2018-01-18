@@ -78,7 +78,7 @@ public class EventBroadcasterImpl implements EventBroadcaster {
 
   @TestOnly
   IDEtalkListener[] getListeners() {
-    return myListeners.toArray(new IDEtalkListener[myListeners.size()]);
+    return myListeners.toArray(new IDEtalkListener[0]);
   }
 
   @TestOnly

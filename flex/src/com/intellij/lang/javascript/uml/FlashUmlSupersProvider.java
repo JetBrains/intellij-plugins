@@ -1,14 +1,14 @@
 package com.intellij.lang.javascript.uml;
 
+import com.intellij.diagram.extras.providers.SupersProvider;
+import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
-import com.intellij.lang.javascript.JSBundle;
 import com.intellij.openapi.project.Project;
-import com.intellij.diagram.extras.providers.SupersProvider;
 import com.intellij.psi.PsiElement;
 
-import java.util.Comparator;
 import java.util.Collection;
+import java.util.Comparator;
 
 public class FlashUmlSupersProvider extends SupersProvider<Object> {
 
@@ -19,7 +19,7 @@ public class FlashUmlSupersProvider extends SupersProvider<Object> {
 
   public Object[] getElements(Object element, Project project) {
     final Collection<JSClass> supers = JSInheritanceUtil.findAllParentsForClass((JSClass)element, true);
-    return supers.toArray(new JSClass[supers.size()]);
+    return supers.toArray(JSClass.EMPTY_ARRAY);
   }
 
   public boolean isEnabledOn(Object element) {

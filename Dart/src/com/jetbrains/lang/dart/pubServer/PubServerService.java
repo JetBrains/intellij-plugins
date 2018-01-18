@@ -206,7 +206,7 @@ final class PubServerService extends NetService {
     ClientInfo[] list;
     try {
       Collection<ClientInfo> clientInfos = serverToClientChannel.values();
-      list = clientInfos.toArray(new ClientInfo[clientInfos.size()]);
+      list = clientInfos.toArray(new ClientInfo[0]);
       for (ServerInfo serverInstanceInfo : servedDirToSocketAddress.values()) {
         serverInstanceInfo.freeServerChannels.clear();
       }

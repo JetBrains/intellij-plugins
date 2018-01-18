@@ -134,7 +134,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
           result.addAll(Arrays.asList(sdk.getRootProvider().getFiles(rootType)));
           return true;
         });
-        return result.toArray(new VirtualFile[result.size()]);
+        return result.toArray(VirtualFile.EMPTY_ARRAY);
       }
 
       @Override
@@ -190,13 +190,13 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
     else {
       final Collection<Sdk> sdks =
         ProjectStructureConfigurable.getInstance(currentEditor.getProject()).getProjectJdksModel().getProjectSdks().values();
-      allSdks = sdks.toArray(new Sdk[sdks.size()]);
+      allSdks = sdks.toArray(new Sdk[0]);
       cache = false;
     }
 
     List<Sdk> result = ContainerUtil.findAll(allSdks, sdk -> ArrayUtil.contains(sdk.getName(), myNames));
 
-    Sdk[] resultArray = result.toArray(new Sdk[result.size()]);
+    Sdk[] resultArray = result.toArray(new Sdk[0]);
     if (cache) {
       mySdks = resultArray;
     }

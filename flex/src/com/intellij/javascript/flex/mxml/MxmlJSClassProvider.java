@@ -54,7 +54,7 @@ public class MxmlJSClassProvider extends XmlBackedJSClassProvider {
                 return true;
               }
             }, null);
-            return new Result<>(result.toArray(new XmlTag[result.size()]), tag);
+            return new Result<>(result.toArray(XmlTag.EMPTY), tag);
           }
         }, false);
       }

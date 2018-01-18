@@ -101,7 +101,7 @@ public class ProjectsData {
     for (List fileData : files) {
       result.add(VFile.createFromList(fileData));
     }
-    return result.toArray(new VFile[result.size()]);
+    return result.toArray(new VFile[0]);
   }
 
   public void addNonProjectFile(VFile fileInfo) {

@@ -79,7 +79,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     // These actions are effectively added only to the Run tool window. For Debug see DartCommandLineDebugProcess.registerAdditionalActions()
     final List<AnAction> actions = new ArrayList<>(Arrays.asList(super.createActions(console, processHandler, executor)));
     addObservatoryActions(actions, processHandler);
-    return actions.toArray(new AnAction[actions.size()]);
+    return actions.toArray(AnAction.EMPTY_ARRAY);
   }
 
   protected void addObservatoryActions(List<AnAction> actions, final ProcessHandler processHandler) {

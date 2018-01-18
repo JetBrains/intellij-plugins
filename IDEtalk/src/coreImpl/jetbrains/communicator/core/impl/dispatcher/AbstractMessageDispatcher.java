@@ -103,7 +103,7 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
   public User[] getUsersWithMessages() {
     synchronized(myUser2MessagesLock) {
       Set<User> users = myUser2Messages.keySet();
-      return users.toArray(new User[users.size()]);
+      return users.toArray(new User[0]);
     }
   }
 
@@ -114,7 +114,7 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
         return new Message[0];
       }
 
-      return messages.toArray(new Message[messages.size()]);
+      return messages.toArray(new Message[0]);
     }
   }
 

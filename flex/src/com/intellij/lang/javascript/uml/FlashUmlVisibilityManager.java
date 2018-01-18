@@ -1,12 +1,12 @@
 package com.intellij.lang.javascript.uml;
 
+import com.intellij.diagram.AbstractUmlVisibilityManager;
+import com.intellij.diagram.VisibilityLevel;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
-import com.intellij.diagram.AbstractUmlVisibilityManager;
-import com.intellij.diagram.VisibilityLevel;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 
@@ -38,7 +38,7 @@ public class FlashUmlVisibilityManager extends AbstractUmlVisibilityManager {
   //}
 
   public VisibilityLevel[] getVisibilityLevels() {
-    return predefinedLevels.toArray(new VisibilityLevel[predefinedLevels.size()]);
+    return predefinedLevels.toArray(new VisibilityLevel[0]);
   }
 
   public VisibilityLevel getVisibilityLevel(Object element) {

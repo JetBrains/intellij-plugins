@@ -1500,7 +1500,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       actions.add(new AddBuildConfigurationDependencyAction(actionIndex++));
       actions.add(new AddFilesAction(actionIndex++));
       actions.add(new AddSharedLibraryAction(actionIndex++));
-      myPopupActions = actions.toArray(new AddItemPopupAction[actions.size()]);
+      myPopupActions = actions.toArray(new AddItemPopupAction[0]);
     }
   }
 
@@ -1802,7 +1802,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     @NotNull
     public Library[] getLibraries() {
       List<Library> filtered = ContainerUtil.filter(myDelegate.getLibraries(), myLibraryFilter);
-      return filtered.toArray(new Library[filtered.size()]);
+      return filtered.toArray(Library.EMPTY_ARRAY);
     }
 
     @Override
@@ -1859,7 +1859,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         }
         return liveLibrary;
       });
-      return filtered.toArray(new Library[filtered.size()]);
+      return filtered.toArray(Library.EMPTY_ARRAY);
     }
   }
 

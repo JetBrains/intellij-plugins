@@ -209,7 +209,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
       }
     }
     
-    return configList.toArray(new FlexBuildConfigurationImpl[configList.size()]);
+    return configList.toArray(new FlexBuildConfigurationImpl[0]);
   }
 
   private static List<String> generateUniqueNames(List<String> names) {

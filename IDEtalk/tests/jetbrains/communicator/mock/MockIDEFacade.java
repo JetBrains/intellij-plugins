@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.mock;
 
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.diff.Diff;
 import jetbrains.communicator.commands.FindUsersCommand;
 import jetbrains.communicator.commands.SendMessageInvoker;
@@ -48,7 +49,7 @@ public class MockIDEFacade implements IDEFacade {
   private String myLog = "";
   private FindUsersCommand.UsersInfo myUsersInfo = new FindUsersCommand.UsersInfo();
   private LocalMessage myMessageToReturn;
-  private String[] myProjects = new String[0];
+  private String[] myProjects = ArrayUtil.EMPTY_STRING_ARRAY;
   private final Map<Cloneable,String> myFileText = new HashMap<>();
   private String myMessage;
   private String myProjectId;
@@ -129,7 +130,7 @@ public class MockIDEFacade implements IDEFacade {
       result.add(new MyChangeAdapter(change));
       change = change.link;
     }
-    return result.toArray(new Change[result.size()]);
+    return result.toArray(new Change[0]);
   }
 
   @Override

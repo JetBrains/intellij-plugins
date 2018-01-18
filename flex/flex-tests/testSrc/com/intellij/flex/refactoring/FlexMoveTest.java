@@ -227,7 +227,7 @@ public class FlexMoveTest extends JSMoveTestBase {
           targetDir = myPsiManager.findDirectory(f);
           assertNotNull(targetDir);
         }
-        new MoveDirectoryWithClassesProcessor(myProject, dirsToMove.toArray(new PsiDirectory[dirsToMove.size()]), targetDir, true, true,
+        new MoveDirectoryWithClassesProcessor(myProject, dirsToMove.toArray(PsiDirectory.EMPTY_ARRAY), targetDir, true, true,
                                               false, null) {
           @Override
           protected String getTargetName() {

@@ -83,7 +83,7 @@ public class JabberUserFinderImpl implements JabberUserFinder {
         LOG.debug(e.getMessage(), e);
       }
     }
-    return users.toArray(new User[users.size()]);
+    return users.toArray(new User[0]);
   }
 
   @Override

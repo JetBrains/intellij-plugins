@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner.libraries;
 import com.intellij.flex.uiDesigner.libraries.Definition.ResolvedState;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.xml.NanoXmlUtil.IXMLBuilderAdapter;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -74,7 +75,7 @@ class CatalogXmlBuilder extends IXMLBuilderAdapter {
           definition.dependency = dependencies.get(0);
         }
         else {
-          definition.dependencies = dependencies.toArray(new String[dependencies.size()]);
+          definition.dependencies = dependencies.toArray(ArrayUtil.EMPTY_STRING_ARRAY);
         }
 
         dependencies.clear();

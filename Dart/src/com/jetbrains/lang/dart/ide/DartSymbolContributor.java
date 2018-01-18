@@ -26,6 +26,6 @@ public class DartSymbolContributor implements ChooseByNameContributor {
                                          final boolean includeNonProjectItems) {
     final GlobalSearchScope scope = includeNonProjectItems ? GlobalSearchScope.allScope(project) : GlobalSearchScope.projectScope(project);
     final Collection<DartComponentName> result = DartSymbolIndex.getItemsByName(name, project, scope);
-    return result.toArray(new NavigationItem[result.size()]);
+    return result.toArray(NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY);
   }
 }

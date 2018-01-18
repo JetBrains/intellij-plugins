@@ -103,6 +103,6 @@ public final class DartServerTypeHierarchyTreeStructure extends HierarchyTreeStr
       }
       superIndex = superItem.getSuperclass();
     }
-    return superClasses.toArray(new DartClass[superClasses.size()]);
+    return superClasses.toArray(new DartClass[0]);
   }
 }

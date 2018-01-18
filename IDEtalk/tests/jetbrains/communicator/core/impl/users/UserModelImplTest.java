@@ -251,7 +251,7 @@ public class UserModelImplTest extends BaseTestCase {
     }
 
     public IDEtalkEvent[] getEvents() {
-      return myEvents.toArray(new IDEtalkEvent[myEvents.size()]);
+      return myEvents.toArray(new IDEtalkEvent[0]);
     }
 
     @Override

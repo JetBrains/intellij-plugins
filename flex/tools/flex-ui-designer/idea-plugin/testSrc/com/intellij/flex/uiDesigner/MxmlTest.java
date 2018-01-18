@@ -3,19 +3,16 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
-import com.intellij.util.TripleFunction;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 
 @SuppressWarnings("TestMethodWithIncorrectSignature")
 @Flex(version="4.5")
@@ -116,8 +113,8 @@ public class MxmlTest extends MxmlTestBase {
       collectMxmlFiles(files, auxFiles, root);
     }
 
-    final VirtualFile[] list = files.toArray(new VirtualFile[files.size()]);
-    final VirtualFile[] auxList = auxFiles.toArray(new VirtualFile[auxFiles.size()]);
+    final VirtualFile[] list = files.toArray(VirtualFile.EMPTY_ARRAY);
+    final VirtualFile[] auxList = auxFiles.toArray(VirtualFile.EMPTY_ARRAY);
 
     final VirtualFileComparator virtualFileComparator = new VirtualFileComparator();
     Arrays.sort(list, virtualFileComparator);

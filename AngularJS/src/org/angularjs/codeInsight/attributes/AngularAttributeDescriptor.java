@@ -93,7 +93,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
         }
         return true;
       });
-      return result.toArray(new XmlAttributeDescriptor[result.size()]);
+      return result.toArray(XmlAttributeDescriptor.EMPTY);
     }
     if (declaration.getContainingFile() instanceof JsonFile) {
       return getCompiledFieldBasedDescriptors(declaration, decorator, factory);

@@ -104,7 +104,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
     }
     TextOccurrencesUtil.findNonCodeUsages(myElement, myElement.getName(), mySearchInComments, mySearchTextOccurences,
                                           StringUtil.getQualifiedName(myPackageName, myClassName), result);
-    return UsageViewUtil.removeDuplicatedUsages(result.toArray(new UsageInfo[result.size()]));
+    return UsageViewUtil.removeDuplicatedUsages(result.toArray(UsageInfo.EMPTY_ARRAY));
   }
 
   @Override
@@ -193,7 +193,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
 
     JSChangeVisibilityUtil.setVisibility((JSAttributeListOwner)newClass,
                                    makePublic ? JSAttributeList.AccessType.PUBLIC : JSAttributeList.AccessType.PACKAGE_LOCAL);
-    myNonCodeUsages = nonCodeUsages.toArray(new NonCodeUsageInfo[nonCodeUsages.size()]);
+    myNonCodeUsages = nonCodeUsages.toArray(new NonCodeUsageInfo[0]);
 
     if (myMoveCallback != null) {
       myMoveCallback.refactoringCompleted();

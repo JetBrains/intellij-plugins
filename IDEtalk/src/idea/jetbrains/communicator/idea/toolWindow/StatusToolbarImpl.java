@@ -16,8 +16,9 @@
 package jetbrains.communicator.idea.toolWindow;
 
 import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.util.ArrayUtil;
 import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.ide.StatusToolbar;
 import jetbrains.communicator.idea.actions.BaseAction;
@@ -26,8 +27,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.WeakHashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * @author Kir
@@ -70,7 +71,7 @@ public class StatusToolbarImpl implements StatusToolbar {
 
   Class<? extends NamedUserCommand>[] getToolbarActions() {
     //noinspection unchecked
-    return myToolbarCommands.toArray(new Class[myToolbarCommands.size()]);
+    return myToolbarCommands.toArray(ArrayUtil.EMPTY_CLASS_ARRAY);
   }
 
 

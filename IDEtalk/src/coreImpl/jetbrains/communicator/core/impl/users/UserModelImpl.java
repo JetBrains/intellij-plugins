@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.core.impl.users;
 
+import com.intellij.util.ArrayUtil;
 import jetbrains.communicator.core.*;
 import jetbrains.communicator.core.transport.TransportEvent;
 import jetbrains.communicator.core.users.*;
@@ -105,7 +106,7 @@ public class UserModelImpl implements UserModel, Disposable {
         result.add(lastGroup);
       }
     }
-    return result.toArray(new String[result.size()]);
+    return result.toArray(ArrayUtil.EMPTY_STRING_ARRAY);
   }
 
   @Override
@@ -116,7 +117,7 @@ public class UserModelImpl implements UserModel, Disposable {
         result.add(user);
       }
     }
-    return result.toArray(new User[result.size()]);
+    return result.toArray(new User[0]);
   }
 
   @NotNull
@@ -260,7 +261,7 @@ public class UserModelImpl implements UserModel, Disposable {
 
   private User[] getUsersList() {
     synchronized (myUsersGroupsLock) {
-      return myUsers.toArray(new User[myUsers.size()]);
+      return myUsers.toArray(new User[0]);
     }
   }
 

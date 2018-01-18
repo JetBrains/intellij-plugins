@@ -113,7 +113,7 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
         }
       }
     }
-    return result.toArray(new PsiReference[result.size()]);
+    return result.toArray(PsiReference.EMPTY_ARRAY);
   }
 
   private static final FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl> ourPropertyInfoProvider =

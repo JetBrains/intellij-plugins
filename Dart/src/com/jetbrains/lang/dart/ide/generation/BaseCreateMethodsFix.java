@@ -128,7 +128,7 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
   @NotNull
   public Set<T> getElementsToProcess() {
     //noinspection unchecked,SuspiciousToArrayCall
-    final T[] objects = (T[])elementsToProcess.toArray(new DartComponent[elementsToProcess.size()]);
+    final T[] objects = (T[])elementsToProcess.toArray(new DartComponent[0]);
     final Comparator<T> tComparator = Comparator.comparingInt(o -> o.getTextRange().getStartOffset());
 
     final int size = elementsToProcess.size();

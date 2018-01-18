@@ -31,7 +31,7 @@ public class JSChangeInfo implements ChangeInfo {
   @NotNull
   @Override
   public JSParameterInfo[] getNewParameters() {
-    return myNewParameters.toArray(new JSParameterInfo[myNewParameters.size()]);
+    return myNewParameters.toArray(JSParameterInfo.EMPTY_ARRAY);
   }
 
   @Override

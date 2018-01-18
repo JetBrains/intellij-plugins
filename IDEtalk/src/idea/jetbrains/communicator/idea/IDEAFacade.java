@@ -116,7 +116,7 @@ public class IDEAFacade implements IDEFacade {
 
     if (dialog.showAndGet()) {
       Set<User> selectedUsers = dialog.getSelectedUsers();
-      return new FindUsersCommand.UsersInfo(selectedUsers.toArray(new User[selectedUsers.size()]), dialog.getGroup());
+      return new FindUsersCommand.UsersInfo(selectedUsers.toArray(new User[0]), dialog.getGroup());
     }
 
     return new FindUsersCommand.UsersInfo();
@@ -311,7 +311,7 @@ public class IDEAFacade implements IDEFacade {
       result.add(new MyChangeAdapter(change));
       change = change.link;
     }
-    return result.toArray(new Change[result.size()]);
+    return result.toArray(new Change[0]);
   }
 
   @Override

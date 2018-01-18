@@ -157,9 +157,9 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
     final Map<Usage, String> usageToEditIdMap = new THashMap<>();
     fillTargetsAndUsageToEditIdMap(usageTargets, usageToEditIdMap);
 
-    final UsageTarget[] targets = usageTargets.toArray(new UsageTarget[usageTargets.size()]);
+    final UsageTarget[] targets = usageTargets.toArray(UsageTarget.EMPTY_ARRAY);
     final Set<Usage> usageSet = usageToEditIdMap.keySet();
-    final Usage[] usages = usageSet.toArray(new Usage[usageSet.size()]);
+    final Usage[] usages = usageSet.toArray(Usage.EMPTY_ARRAY);
 
     final UsageView usageView = UsageViewManager.getInstance(myProject).showUsages(targets, usages, presentation);
 

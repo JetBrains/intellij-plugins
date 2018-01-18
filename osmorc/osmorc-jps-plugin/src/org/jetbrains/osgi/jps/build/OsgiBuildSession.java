@@ -136,7 +136,7 @@ public class OsgiBuildSession implements Reporter {
         }
       }
     }
-    myClasses = classes.isEmpty() ? ArrayUtil.EMPTY_FILE_ARRAY : classes.toArray(new File[classes.size()]);
+    myClasses = classes.isEmpty() ? ArrayUtil.EMPTY_FILE_ARRAY : classes.toArray(new File[0]);
 
     List<File> sources = ContainerUtil.newSmartList();
     for (JpsModuleSourceRoot sourceRoot : myModule.getSourceRoots()) {
@@ -145,7 +145,7 @@ public class OsgiBuildSession implements Reporter {
         sources.add(sourceDir);
       }
     }
-    mySources = sources.isEmpty() ? ArrayUtil.EMPTY_FILE_ARRAY : sources.toArray(new File[sources.size()]);
+    mySources = sources.isEmpty() ? ArrayUtil.EMPTY_FILE_ARRAY : sources.toArray(new File[0]);
 
     myBndWrapper = new BndWrapper(this);
   }

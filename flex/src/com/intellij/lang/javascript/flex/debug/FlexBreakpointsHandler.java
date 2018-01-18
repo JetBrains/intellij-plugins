@@ -94,7 +94,7 @@ public class FlexBreakpointsHandler {
   }
 
   public XBreakpointHandler<?>[] getBreakpointHandlers() {
-    return myBreakpointHandlers.toArray(new XBreakpointHandler[myBreakpointHandlers.size()]);
+    return myBreakpointHandlers.toArray(XBreakpointHandler.EMPTY_ARRAY);
   }
 
   XLineBreakpoint<XBreakpointProperties> getBreakpointByIndex(int breakpointId) {

@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex.refactoring.extractSuper;
 
+import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
@@ -14,7 +15,6 @@ import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
-import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSConvertReferencesToSuperUtil;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractSuperMode;
 import com.intellij.lang.javascript.refactoring.memberPullUp.JSPullUpConflictsUtil;
@@ -140,7 +140,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
       JSRefactoringUtil.addConstructorUsages(mySourceClass, result);
     }
 
-    return result.toArray(new UsageInfo[result.size()]);
+    return result.toArray(UsageInfo.EMPTY_ARRAY);
   }
 
 
@@ -312,7 +312,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
     for (JSElement memberAfterMove : myMembersAfterMove) {
       findUsagesAfterMove(memberAfterMove, usagesInMovedMembers, variablesResults, util);
     }
-    bindRefsToTarget(usagesInMovedMembers.toArray(new UsageInfo[usagesInMovedMembers.size()]), formatters
+    bindRefsToTarget(usagesInMovedMembers.toArray(UsageInfo.EMPTY_ARRAY), formatters
     );
   }
 

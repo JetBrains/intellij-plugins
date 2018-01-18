@@ -60,7 +60,7 @@ public abstract class RubyMotionSimulatorDebugProcess extends IPhoneSimulatorDeb
   public XBreakpointHandler<?>[] getBreakpointHandlers() {
     final List<XBreakpointHandler<?>> handlerList = ContainerUtil.filter(super.getBreakpointHandlers(),
                                                                          handler -> !(handler instanceof CidrSymbolicBreakpointHandler));
-    return handlerList.toArray(new XBreakpointHandler[handlerList.size()]);
+    return handlerList.toArray(XBreakpointHandler.EMPTY_ARRAY);
   }
 
   @NotNull

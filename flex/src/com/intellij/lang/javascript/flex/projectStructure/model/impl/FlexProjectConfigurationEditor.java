@@ -181,7 +181,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
     return new ProjectModifiableModelProvider() {
       public Module[] getModules() {
         final Set<Module> modules = moduleToModifiableModel.keySet();
-        return modules.toArray(new Module[modules.size()]);
+        return modules.toArray(Module.EMPTY_ARRAY);
       }
 
       public ModifiableRootModel getModuleModifiableModel(final Module module) {
@@ -253,7 +253,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
       addEditorsForModule(module);
       editors = myModule2Editors.get(module);
     }
-    return editors.toArray(new ModifiableFlexBuildConfiguration[editors.size()]);
+    return editors.toArray(new ModifiableFlexBuildConfiguration[0]);
   }
 
   private void assertAlive() {

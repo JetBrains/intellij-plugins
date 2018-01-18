@@ -52,7 +52,7 @@ public class JstdConfigFileReferenceContributor extends PsiReferenceContributor 
           if (basePath != null) {
             List<PsiReference> references = Lists.newArrayList();
             addReferencesForKeyValueWithInnerFileSequence(basePathInfo, keyValue, references);
-            return references.toArray(new PsiReference[references.size()]);
+            return references.toArray(PsiReference.EMPTY_ARRAY);
           }
         }
         return PsiReference.EMPTY_ARRAY;

@@ -279,7 +279,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
       }
     }
 
-    return modules.toArray(new Module[modules.size()]);
+    return modules.toArray(Module.EMPTY_ARRAY);
   }
 
   @NotNull

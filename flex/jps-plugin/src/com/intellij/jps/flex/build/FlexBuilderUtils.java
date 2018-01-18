@@ -8,6 +8,7 @@ import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtilRt;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
@@ -357,7 +358,7 @@ public class FlexBuilderUtils {
       ContainerUtil.addIfNotNull(result, extensionId);
     }
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(ArrayUtil.EMPTY_STRING_ARRAY);
   }
 
   @Nullable

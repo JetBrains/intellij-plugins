@@ -997,7 +997,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
       }
     }
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(ArrayUtil.EMPTY_STRING_ARRAY);
   }
 
   private static String lowercaseStart(final String s) {

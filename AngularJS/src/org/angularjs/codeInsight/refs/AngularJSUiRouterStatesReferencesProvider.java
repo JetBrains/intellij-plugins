@@ -1,7 +1,5 @@
 package org.angularjs.codeInsight.refs;
 
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
-import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.resolve.CachingPolyReferenceBase;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.openapi.util.text.StringUtil;
@@ -52,7 +50,7 @@ public class AngularJSUiRouterStatesReferencesProvider extends PsiReferenceProvi
                                       list.add(new JSResolveResult(element));
                                       return true;
                                     });
-      return list.toArray(new ResolveResult[list.size()]);
+      return list.toArray(ResolveResult.EMPTY_ARRAY);
     }
 
     @Override

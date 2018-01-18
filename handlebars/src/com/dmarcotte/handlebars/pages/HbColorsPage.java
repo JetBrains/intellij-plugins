@@ -20,7 +20,7 @@ public class HbColorsPage implements ColorSettingsPage {
   static {
     ATTRS = new AttributesDescriptor[HbHighlighter.DISPLAY_NAMES.size()];
     Set<TextAttributesKey> textAttributesKeys = HbHighlighter.DISPLAY_NAMES.keySet();
-    TextAttributesKey[] keys = textAttributesKeys.toArray(new TextAttributesKey[textAttributesKeys.size()]);
+    TextAttributesKey[] keys = textAttributesKeys.toArray(new TextAttributesKey[0]);
     for (int i = 0; i < keys.length; i++) {
       TextAttributesKey key = keys[i];
       String name = HbHighlighter.DISPLAY_NAMES.get(key).getFirst();

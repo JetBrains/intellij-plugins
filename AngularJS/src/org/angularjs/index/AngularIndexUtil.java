@@ -144,7 +144,7 @@ public class AngularIndexUtil {
       }
     }
     final List<ResolveResult> list = ContainerUtil.map(elements, JS_IMPLICIT_TO_RESOLVE_RESULT);
-    return list.toArray(new ResolveResult[list.size()]);
+    return list.toArray(ResolveResult.EMPTY_ARRAY);
   }
 
   public static Collection<String> getAllKeys(final ID<String, ?> index, final Project project) {

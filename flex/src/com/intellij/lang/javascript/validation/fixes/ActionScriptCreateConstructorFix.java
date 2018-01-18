@@ -162,7 +162,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
                                  attributeList != null ? attributeList.getAccessType() : JSAttributeList.AccessType.PACKAGE_LOCAL,
                                  myClass.getName(),
                                  "",
-                                 paramInfos.toArray(new JSParameterInfo[paramInfos.size()]), Collections.emptySet());
+                                 paramInfos.toArray(JSParameterInfo.EMPTY_ARRAY), Collections.emptySet());
         }
       }.invoke(project, editor, file);
     }
@@ -221,7 +221,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
       List<JSParameterInfo> parameters = getParameters();
       return new MyProcessor(myMethod.getMethod(),
                              JSAttributeList.AccessType.valueOf(getVisibility()), myClass.getName(), "",
-                             parameters.toArray(new JSParameterInfo[parameters.size()]),
+                             parameters.toArray(JSParameterInfo.EMPTY_ARRAY),
                              myMethodsToPropagateParameters != null
                              ? myMethodsToPropagateParameters
                              : Collections.emptySet());
@@ -299,7 +299,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
       findPropagationUsages(declarations, usages);
       Collection<UsageInfo> result = new ArrayList<>(declarations);
       result.addAll(usages);
-      return result.toArray(new UsageInfo[result.size()]);
+      return result.toArray(UsageInfo.EMPTY_ARRAY);
     }
 
     @Override
