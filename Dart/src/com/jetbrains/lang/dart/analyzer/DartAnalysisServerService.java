@@ -37,6 +37,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
@@ -121,6 +122,7 @@ public class DartAnalysisServerService implements Disposable {
   // Do not wait for server response under lock. Do not take read/write action under lock.
   private final Object myLock = new Object();
   @Nullable private AnalysisServer myServer;
+  @NotNull Disposable myIntentionsDisposable = Disposer.newDisposable();
   @Nullable private StdioServerSocket myServerSocket;
 
   @NotNull private String myServerVersion = "";
@@ -1799,6 +1801,7 @@ public class DartAnalysisServerService implements Disposable {
           }
           Uninterruptibles.sleepUninterruptibly(CHECK_CANCELLED_PERIOD, TimeUnit.MILLISECONDS);
         }
+        deregisterIntentions();
       }
 
       stopShowingServerProgress();
@@ -1924,15 +1927,23 @@ public class DartAnalysisServerService implements Disposable {
     }, ModalityState.NON_MODAL);
   }
 
+
+  private void deregisterIntentions() {
+    Disposer.dispose(myIntentionsDisposable);
+    myIntentionsDisposable = Disposer.newDisposable();
+  }
+
   /**
    * see {@link DartQuickAssistIntention}
    */
-  private static void registerQuickAssistIntentions() {
+  private void registerQuickAssistIntentions() {
+    deregisterIntentions();
     final IntentionManager intentionManager = IntentionManager.getInstance();
     final QuickAssistSet quickAssistSet = new QuickAssistSet();
-    for (int i = 0; i < 20; i++) {
-      final DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i);
+    for (int i = 0; i<20; i++) {
+      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i);
       intentionManager.addAction(intention);
+      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
     }
   }
 
