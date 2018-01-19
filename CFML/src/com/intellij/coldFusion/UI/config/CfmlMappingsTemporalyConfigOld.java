@@ -38,7 +38,7 @@ public class CfmlMappingsTemporalyConfigOld implements Cloneable {
 
   @NotNull
   @Property(surroundWithTag = false)
-  @XMap(surroundKeyWithTag = false, keyAttributeName = "logical_path", entryTagName = "mapping", valueAttributeName = "directory")
+  @XMap(keyAttributeName = "logical_path", entryTagName = "mapping", valueAttributeName = "directory")
   public Map<String, String> getServerMappings() {
     return serverMappings;
   }
