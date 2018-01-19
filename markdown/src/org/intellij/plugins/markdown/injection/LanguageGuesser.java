@@ -5,7 +5,7 @@ import com.intellij.lexer.EmbeddedTokenTypesProvider;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.ClearableLazyValue;
 import com.intellij.openapi.util.NotNullLazyValue;
-import com.intellij.util.containers.HashMap;
+import java.util.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;

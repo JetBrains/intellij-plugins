@@ -14,7 +14,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.containers.HashMap;
+import java.util.HashMap;
 import icons.JavaScriptPsiIcons;
 import org.jetbrains.annotations.Nullable;
 

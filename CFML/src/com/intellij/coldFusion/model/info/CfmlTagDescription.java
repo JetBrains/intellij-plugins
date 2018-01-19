@@ -15,7 +15,7 @@
  */
 package com.intellij.coldFusion.model.info;
 
-import com.intellij.util.containers.HashSet;
+import java.util.HashSet;
 
 import java.util.Collection;
 import java.util.LinkedList;

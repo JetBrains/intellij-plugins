@@ -34,7 +34,6 @@ import com.intellij.refactoring.changeSignature.MemberNodeBase;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Consumer;
-import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -256,7 +255,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
         return true;
       });
 
-      Set<JSFunction> result = new java.util.HashSet<>();
+      Set<JSFunction> result = new HashSet<>();
       for (PsiReference reference : refs) {
         addCallExpression((JSNewExpression)reference.getElement().getParent(), result);
       }

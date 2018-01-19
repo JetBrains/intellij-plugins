@@ -8,7 +8,7 @@ import com.intellij.psi.impl.source.codeStyle.SemanticEditorPosition;
 import com.intellij.psi.impl.source.codeStyle.lineIndent.IndentCalculator;
 import com.intellij.psi.impl.source.codeStyle.lineIndent.JavaLikeLangLineIndentProvider;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.containers.HashMap;
+import java.util.HashMap;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
