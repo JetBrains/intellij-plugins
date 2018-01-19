@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.ReferenceSupport;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexComponentFix;
 import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
-import com.intellij.lang.javascript.psi.util.JSUtils;
+import com.intellij.lang.javascript.refactoring.util.ActionScriptRefactoringUtil;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -68,7 +68,7 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
             @Nullable
             @Override
             public LocalQuickFix[] getQuickFixes() {
-              if (!JSUtils.isValidClassName(value, true)) {
+              if (!ActionScriptRefactoringUtil.isValidClassName(value, true)) {
                 return LocalQuickFix.EMPTY_ARRAY;
               }
 

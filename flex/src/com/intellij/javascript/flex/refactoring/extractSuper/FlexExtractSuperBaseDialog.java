@@ -19,9 +19,9 @@ import com.intellij.ide.util.PlatformPackageUtil;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
-import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractSuperMode;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
+import com.intellij.lang.javascript.refactoring.util.ActionScriptRefactoringUtil;
 import com.intellij.lang.javascript.refactoring.util.JSMemberInfo;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.module.Module;
@@ -90,7 +90,7 @@ public abstract class FlexExtractSuperBaseDialog extends ExtractSuperBaseDialog<
     if (name != null && name.isEmpty()) {
       return RefactoringBundle.message("no.destination.class.specified");
     }
-    if (!JSUtils.isValidClassName(name, false)) {
+    if (!ActionScriptRefactoringUtil.isValidClassName(name, false)) {
       return JSBundle.message("0.is.not.a.legal.name", name);
     }
     return null;
