@@ -7,7 +7,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.lang.TmlFileType;
-import com.intellij.util.containers.HashSet;
+import java.util.HashSet;
 import com.intellij.xml.XmlSchemaProvider;
 import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NonNls;
