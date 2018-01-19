@@ -27,7 +27,7 @@ public class CucumberJavaRunConfigurationType extends ApplicationConfigurationTy
       }
 
       @NotNull
-      public RunConfiguration createTemplateConfiguration(Project project) {
+      public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new CucumberJavaRunConfiguration(getDisplayName(), project, this);
       }
 

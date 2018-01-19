@@ -28,10 +28,8 @@ public class CucumberJavaUtil {
     else if (name.startsWith(CUCUMBER_STEP_ANNOTATION_PREFIX_1_1)) {
       return name.substring(CUCUMBER_STEP_ANNOTATION_PREFIX_1_1.length());
     } else {
-      name = "";
+      return "";
     }
-
-    return name;
   }
 
   public static String getCucumberPendingExceptionFqn(@NotNull final PsiElement context) {
@@ -61,12 +59,7 @@ public class CucumberJavaUtil {
     if (annotationSuffix.contains(".")) {
       return true;
     }
-    for (String providedAnnotations : CucumberJavaAnnotationProvider.getCucumberStepAnnotations()) {
-      if (providedAnnotations.equals(annotationName)) {
-        return true;
-      }
-    }
-    return false;
+    return CucumberJavaAnnotationProvider.STEP_MARKERS.contains(annotationName);
   }
 
   public static boolean isCucumberHookAnnotation(@NotNull final PsiAnnotation annotation) {
@@ -74,12 +67,7 @@ public class CucumberJavaUtil {
     if (annotationName == null) return false;
 
     final String annotationSuffix = getCucumberAnnotationSuffix(annotationName);
-    for (String providedAnnotations : CucumberJavaAnnotationProvider.getCucumberHookAnnotations()) {
-      if (providedAnnotations.equals(annotationSuffix)) {
-        return true;
-      }
-    }
-    return false;
+    return CucumberJavaAnnotationProvider.HOOK_MARKERS.contains(annotationSuffix);
   }
 
   @Nullable

@@ -8,7 +8,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class CucumberJavaInjector implements MultiHostInjector {
@@ -16,6 +16,9 @@ public class CucumberJavaInjector implements MultiHostInjector {
 
   @Override
   public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement element) {
+    if (regexpLanguage == null) {
+      return;
+    }
     if (element instanceof PsiLiteralExpression && element instanceof PsiLanguageInjectionHost) {
       final PsiElement firstChild = element.getFirstChild();
       if (firstChild != null && firstChild.getNode().getElementType() == JavaTokenType.STRING_LITERAL) {
@@ -32,6 +35,6 @@ public class CucumberJavaInjector implements MultiHostInjector {
   @NotNull
   @Override
   public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
-    return Arrays.asList(PsiLiteralExpression.class);
+    return Collections.singletonList(PsiLiteralExpression.class);
   }
 }
