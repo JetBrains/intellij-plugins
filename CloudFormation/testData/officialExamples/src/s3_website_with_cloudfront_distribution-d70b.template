@@ -19,6 +19,7 @@
       "us-west-2"      : { "Suffix": ".s3-website-us-west-2.amazonaws.com" },
       "eu-west-1"      : { "Suffix": ".s3-website-eu-west-1.amazonaws.com" },
       "eu-west-2"      : { "Suffix": ".s3-website-eu-west-2.amazonaws.com" },
+      "eu-west-3"      : { "Suffix": ".s3-website-eu-west-3.amazonaws.com" },
       "ap-northeast-1" : { "Suffix": ".s3-website-ap-northeast-1.amazonaws.com" },
       "ap-northeast-2" : { "Suffix": ".s3-website-ap-northeast-2.amazonaws.com" },
       "ap-southeast-1" : { "Suffix": ".s3-website-ap-southeast-1.amazonaws.com" },
@@ -28,6 +29,7 @@
       "ca-central-1"   : { "Suffix": ".s3-website-ca-central-1.amazonaws.com" },
       "sa-east-1"      : { "Suffix": ".s3-website-sa-east-1.amazonaws.com" },
       "cn-north-1"     : { "Suffix": ".s3-website.cn-north-1.amazonaws.com.cn" },
+      "cn-northwest-1" : { "Suffix": ".s3-website.cn-northwest-1.amazonaws.com.cn" },
       "eu-central-1"   : { "Suffix": ".s3-website-eu-central-1.amazonaws.com" }
     }
 
