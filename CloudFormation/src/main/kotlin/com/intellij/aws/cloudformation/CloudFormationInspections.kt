@@ -1,4 +1,4 @@
-@file:Suppress("IfThenToSafeAccess")
+@file:Suppress("IfThenToSafeAccess", "RedundantUnitExpression")
 
 package com.intellij.aws.cloudformation
 
@@ -392,8 +392,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
       val propertyName = property.name?.value?.trim() ?: return@forEach
       val typedPropertyName = CloudFormationParameterProperty.values().singleOrNull { it.id == propertyName }
 
-      @Suppress("UNUSED_VARIABLE")
-      val _used_to_enforce_exhaustive_check: Unit = when (typedPropertyName) {
+      when (typedPropertyName) {
         null -> {
           addProblem(parameter, "Unknown parameter property: " + propertyName)
         }
@@ -482,7 +481,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
         }
 
         CloudFormationParameterProperty.Type -> Unit
-      }
+      }.let {  } // enforce exhaustive check
     }
   }
 
