@@ -73,7 +73,7 @@ public class TapestryModuleSupportLoader
   /**
    * {@inheritDoc}
    */
-  public void loadState(ModuleConfiguration state) {
+  public void loadState(@NotNull ModuleConfiguration state) {
     _configuration = state;
   }
 
