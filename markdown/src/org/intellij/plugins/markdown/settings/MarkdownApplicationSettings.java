@@ -45,7 +45,7 @@ public class MarkdownApplicationSettings implements PersistentStateComponent<Mar
   }
 
   @Override
-  public void loadState(State state) {
+  public void loadState(@NotNull State state) {
     XmlSerializerUtil.copyBean(state, myState);
   }
 

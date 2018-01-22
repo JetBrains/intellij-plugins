@@ -5,6 +5,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import org.jetbrains.annotations.NotNull;
 
 @State(name = "DartCodeFoldingSettings", storages = @Storage("editor.codeinsight.xml"))
 public class DartCodeFoldingSettings implements PersistentStateComponent<DartCodeFoldingSettings> {
@@ -21,7 +22,7 @@ public class DartCodeFoldingSettings implements PersistentStateComponent<DartCod
   }
 
   @Override
-  public void loadState(final DartCodeFoldingSettings state) {
+  public void loadState(@NotNull final DartCodeFoldingSettings state) {
     XmlSerializerUtil.copyBean(state, this);
   }
 

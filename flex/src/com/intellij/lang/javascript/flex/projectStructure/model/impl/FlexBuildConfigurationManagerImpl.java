@@ -154,7 +154,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
     return state;
   }
 
-  public void loadState(final State state) {
+  public void loadState(@NotNull final State state) {
     if (myModule == null) {
       throw new IllegalStateException("Cannot load state of a dummy config manager instance");
     }

@@ -47,7 +47,7 @@ public class ActionScriptProfileSettings implements PersistentStateComponent<Ele
   }
 
   @Override
-  public void loadState(Element state) {
+  public void loadState(@NotNull Element state) {
     setPortFromString(state.getAttributeValue(PORT_ATTR_NAME));
     setHostFromString(state.getAttributeValue(HOST_ATTR_NAME));
     setPathFromString(state.getAttributeValue(PATH_ATTR_NAME));

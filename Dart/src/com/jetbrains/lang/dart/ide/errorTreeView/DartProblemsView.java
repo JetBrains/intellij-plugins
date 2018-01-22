@@ -256,7 +256,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   }
 
   @Override
-  public void loadState(DartProblemsViewSettings state) {
+  public void loadState(@NotNull DartProblemsViewSettings state) {
     myPresentationHelper.setSettings(state);
     if (myPanel != null) {
       myPanel.fireGroupingOrFilterChanged();

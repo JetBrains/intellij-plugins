@@ -21,7 +21,7 @@ public class ErrorProneCompilerConfiguration implements PersistentStateComponent
     return mySettings;
   }
 
-  public void loadState(JpsJavaCompilerOptions state) {
+  public void loadState(@NotNull JpsJavaCompilerOptions state) {
     XmlSerializerUtil.copyBean(state, mySettings);
   }
 

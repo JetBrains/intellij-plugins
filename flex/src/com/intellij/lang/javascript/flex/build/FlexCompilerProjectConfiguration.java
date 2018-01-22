@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 @State(
   name = "FlexCompilerConfiguration", // do not rename it for compatibility
@@ -30,7 +31,7 @@ public class FlexCompilerProjectConfiguration implements PersistentStateComponen
     return this;
   }
 
-  public void loadState(final FlexCompilerProjectConfiguration state) {
+  public void loadState(@NotNull final FlexCompilerProjectConfiguration state) {
     GENERATE_FLEXMOJOS_CONFIGS = state.GENERATE_FLEXMOJOS_CONFIGS;
 
     USE_BUILT_IN_COMPILER = state.USE_BUILT_IN_COMPILER;

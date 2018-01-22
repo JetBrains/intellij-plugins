@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Transient;
+import org.jetbrains.annotations.NotNull;
 
 @State(
   name = "AirPackageProjectParameters",
@@ -107,7 +108,7 @@ public class AirPackageProjectParameters implements PersistentStateComponent<Air
     return this;
   }
 
-  public void loadState(final AirPackageProjectParameters state) {
+  public void loadState(@NotNull final AirPackageProjectParameters state) {
     XmlSerializerUtil.copyBean(state, this);
   }
 

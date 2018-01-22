@@ -113,7 +113,7 @@ public final class PhoneGapSettings implements PersistentStateComponent<PhoneGap
   }
 
   @Override
-  public void loadState(State state) {
+  public void loadState(@NotNull State state) {
     myState = state;
   }
 

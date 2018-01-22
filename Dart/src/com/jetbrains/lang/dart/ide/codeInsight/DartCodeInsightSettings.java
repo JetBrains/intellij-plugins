@@ -22,6 +22,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.intellij.lang.annotations.MagicConstant;
+import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.codeInsight.CodeInsightSettings.*;
 
@@ -44,7 +45,7 @@ public class DartCodeInsightSettings implements PersistentStateComponent<DartCod
   }
 
   @Override
-  public void loadState(DartCodeInsightSettings state) {
+  public void loadState(@NotNull DartCodeInsightSettings state) {
     XmlSerializerUtil.copyBean(state, this);
   }
 }
