@@ -118,6 +118,7 @@ public class ActionScriptUnusedImportsPassFactory extends AbstractProjectCompone
       myFile = file;
     }
 
+    @Override
     public void doCollectInformation(@NotNull final ProgressIndicator progress) {
       if (myFile instanceof JSExpressionCodeFragment) {
         importStatements = Collections.emptyList();
@@ -130,6 +131,7 @@ public class ActionScriptUnusedImportsPassFactory extends AbstractProjectCompone
       }
     }
 
+    @Override
     public void doApplyInformationToEditor() {
       UpdateHighlightersUtil.setHighlightersToEditor(myProject, myDocument, 0, myFile.getTextLength(), getHighlights(), getColorsScheme(), getId());
     }
