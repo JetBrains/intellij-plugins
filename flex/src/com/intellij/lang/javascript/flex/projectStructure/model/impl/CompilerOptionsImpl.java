@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
-import com.intellij.lang.javascript.flex.build.FlexCompilerHandler;
 import com.intellij.flex.model.bc.CompilerOptionInfo;
+import com.intellij.lang.javascript.flex.build.FlexCompilerHandler;
 import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptionsListener;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModuleOrProjectCompilerOptions;
@@ -182,7 +182,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
   @Tag("compiler-options")
   public static class State {
     @Property(surroundWithTag = false)
-    @MapAnnotation(surroundKeyWithTag = false, surroundValueWithTag = false)
+    @MapAnnotation
     public Map<String, String> options = new THashMap<>();
     public ResourceFilesMode resourceFilesMode = ResourceFilesMode.All;
     public String filesToIncludeInSWC = "";

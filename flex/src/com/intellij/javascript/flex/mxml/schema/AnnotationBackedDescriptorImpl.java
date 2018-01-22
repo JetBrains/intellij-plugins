@@ -32,7 +32,6 @@ import com.intellij.psi.ResolveState;
 import com.intellij.psi.xml.*;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformIcons;
-import com.intellij.util.containers.HashSet;
 import com.intellij.util.text.StringTokenizer;
 import com.intellij.xml.*;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
@@ -45,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;

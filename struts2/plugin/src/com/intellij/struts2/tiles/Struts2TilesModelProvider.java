@@ -39,7 +39,7 @@ import com.intellij.struts.psi.TilesModelImpl;
 import com.intellij.tiles.TilesConstants;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.HashSet;
+import java.util.HashSet;
 import com.intellij.util.xml.DomFileElement;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;

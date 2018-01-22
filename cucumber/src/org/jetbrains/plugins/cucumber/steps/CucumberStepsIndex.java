@@ -10,7 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.containers.HashMap;
+import java.util.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.BDDFrameworkType;
@@ -84,12 +84,12 @@ public class CucumberStepsIndex {
 
   /**
    * Searches for step definition.
-   * More info is available in {@link #findStepDefinitions(com.intellij.psi.PsiFile, org.jetbrains.plugins.cucumber.psi.GherkinStep)} doc
+   * More info is available in {@link #findStepDefinitions(PsiFile, GherkinStep)} doc
    *
    * @param featureFile file with steps
    * @param step        step itself
    * @return definition or null if not found
-   * @see #findStepDefinitions(com.intellij.psi.PsiFile, org.jetbrains.plugins.cucumber.psi.GherkinStep)
+   * @see #findStepDefinitions(PsiFile, GherkinStep)
    */
   @Nullable
   public AbstractStepDefinition findStepDefinition(@NotNull final PsiFile featureFile, @NotNull final GherkinStep step) {
@@ -117,7 +117,7 @@ public class CucumberStepsIndex {
     }
 
     Map<Class<? extends AbstractStepDefinition>, AbstractStepDefinition> definitionsByClass =
-      new java.util.HashMap<>();
+      new HashMap<>();
     List<AbstractStepDefinition> allSteps = loadStepsFor(featureFile, module);
 
     for (AbstractStepDefinition stepDefinition : allSteps) {

@@ -33,13 +33,13 @@ import com.intellij.struts2.graph.beans.ActionNode;
 import com.intellij.struts2.graph.beans.BasicStrutsEdge;
 import com.intellij.struts2.graph.beans.BasicStrutsNode;
 import com.intellij.struts2.graph.beans.ResultNode;
-import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 

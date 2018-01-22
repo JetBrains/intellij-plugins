@@ -24,7 +24,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.HashMap;
+import java.util.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.*;
@@ -83,7 +83,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
             assert file != null;
 
             CucumberStepsIndex stepsIndex = CucumberStepsIndex.getInstance(psiFile.getProject());
-            StepDefinitionCreator stepDefinitionCreator = stepsIndex.getExtensionMap().get(value.getBDDFrameworkType()).getStepDefinitionCreator();
+            StepDefinitionCreator stepDefinitionCreator = stepsIndex.getExtensionMap().get(value.getFrameworkType()).getStepDefinitionCreator();
             return stepDefinitionCreator.getStepDefinitionFilePath(psiFile);
           }
 
@@ -114,7 +114,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     CucumberStepsIndex index = CucumberStepsIndex.getInstance(featureFile.getProject());
     final Set<CucumberStepDefinitionCreationContext> result = index.getStepDefinitionContainers(featureFile);
     for (CucumberStepDefinitionCreationContext item : result) {
-      if (index.getExtensionMap().get(item.getBDDFrameworkType()) == null) {
+      if (index.getExtensionMap().get(item.getFrameworkType()) == null) {
         result.remove(item);
       }
     }
@@ -132,7 +132,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     }
     String filePath = FileUtil.toSystemDependentName(model.getFilePath());
     final BDDFrameworkType frameworkType = model.getSelectedFileType();
-    context.setBDDFrameworkType(frameworkType);
+    context.setFrameworkType(frameworkType);
 
     // show error if file already exists
     Project project = step.getProject();
@@ -163,7 +163,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
   }
 
   protected void createFileOrStepDefinition(final GherkinStep step, @NotNull final CucumberStepDefinitionCreationContext context) {
-    if (context.getBDDFrameworkType() == null) {
+    if (context.getFrameworkType() == null) {
       createStepDefinitionFile(step, context);
     }
     else {
@@ -209,7 +209,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
 
   private static void createStepDefinition(GherkinStep step, @NotNull final CucumberStepDefinitionCreationContext context) {
     CucumberStepsIndex stepsIndex = CucumberStepsIndex.getInstance(step.getProject());
-    StepDefinitionCreator stepDefCreator = stepsIndex.getExtensionMap().get(context.getBDDFrameworkType()).getStepDefinitionCreator();
+    StepDefinitionCreator stepDefCreator = stepsIndex.getExtensionMap().get(context.getFrameworkType()).getStepDefinitionCreator();
     PsiFile file = context.getPsiFile();
     WriteCommandAction.runWriteCommandAction(step.getProject(), null, null, () -> stepDefCreator.createStepDefinition(step, file), file);
   }

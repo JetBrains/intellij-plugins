@@ -15,9 +15,9 @@
  */
 package com.intellij.coldFusion.UI.config;
 
-import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
+import com.intellij.util.xmlb.annotations.XMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -37,8 +37,7 @@ public class CfmlMappingsConfig implements Cloneable {
 
   @NotNull
   @Property(surroundWithTag = false)
-  @MapAnnotation(surroundWithTag = false, surroundKeyWithTag = false, keyAttributeName = "logical_path",
-                 entryTagName = "mapping", valueAttributeName = "directory", surroundValueWithTag = false)
+  @XMap(keyAttributeName = "logical_path", entryTagName = "mapping", valueAttributeName = "directory")
   public Map<String, String> getServerMappings() {
     return serverMappings;
   }

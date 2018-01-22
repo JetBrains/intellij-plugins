@@ -132,8 +132,12 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
 
   @Override
   public boolean isConfigurationFromContext(CucumberJavaRunConfiguration runConfiguration, ConfigurationContext context) {
-    final Location location = JavaExecutionUtil.stepIntoSingleClass(context.getLocation());
+    Location location = context.getLocation();
     if (location == null) {
+      return false;
+    }
+    final Location classLocation = JavaExecutionUtil.stepIntoSingleClass(location);
+    if (classLocation == null) {
       return false;
     }
 
@@ -151,7 +155,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     }
 
     final Module configurationModule = runConfiguration.getConfigurationModule().getModule();
-    if (!Comparing.equal(location.getModule(), configurationModule)) {
+    if (!Comparing.equal(classLocation.getModule(), configurationModule)) {
       return false;
     }
 
@@ -183,7 +187,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     return packages;
   }
 
-  private static Set<String> addPackagesOfMethods(final Collection<PsiMethod> psiMethods, final Set<String> packages) {
+  private static void addPackagesOfMethods(final Collection<PsiMethod> psiMethods, final Set<String> packages) {
     for (final PsiMethod psiMethod : psiMethods) {
       final PsiClassOwner file = (PsiClassOwner)psiMethod.getContainingFile();
       final String packageName = file.getPackageName();
@@ -191,6 +195,5 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
         CucumberJavaUtil.addGlue(packageName, packages);
       }
     }
-    return packages;
   }
 }

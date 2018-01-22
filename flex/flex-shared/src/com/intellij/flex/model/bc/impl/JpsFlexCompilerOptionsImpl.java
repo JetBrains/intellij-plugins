@@ -132,7 +132,7 @@ public class JpsFlexCompilerOptionsImpl extends JpsElementBase<JpsFlexCompilerOp
   @Tag("compiler-options")
   public static class State {
     @Property(surroundWithTag = false)
-    @MapAnnotation(surroundKeyWithTag = false, surroundValueWithTag = false)
+    @MapAnnotation
     public Map<String, String> options = new THashMap<>();
     public ResourceFilesMode resourceFilesMode = ResourceFilesMode.All;
     public String filesToIncludeInSWC = "";

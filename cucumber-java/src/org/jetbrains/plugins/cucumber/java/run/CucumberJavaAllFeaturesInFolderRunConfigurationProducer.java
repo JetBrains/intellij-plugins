@@ -26,7 +26,7 @@ public class CucumberJavaAllFeaturesInFolderRunConfigurationProducer extends Cuc
       final CucumberJvmExtensionPoint[] extensions = Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME);
 
       return new NullableComputable<String>() {
-        @Nullable
+        @NotNull
         @Override
         public String compute() {
           dir.accept(new PsiElementVisitor() {
