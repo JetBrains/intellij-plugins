@@ -5,4 +5,4 @@ interface IFoo {
 var v:IFoo;
 const aConst = 2;
 ++<error>aConst</error>;
-v.<error descr="Attempt to assign to const variable"><weak_warning descr="Unresolved write property">foo</weak_warning></error>++;
+v.<error descr="Attempt to assign to const variable">foo</error>++;
