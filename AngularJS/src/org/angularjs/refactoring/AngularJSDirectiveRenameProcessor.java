@@ -29,12 +29,12 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
 
   @Nullable
   @Override
-  public PsiElement substituteElementToRename(PsiElement element, @Nullable Editor editor) {
+  public PsiElement substituteElementToRename(@NotNull PsiElement element, @Nullable Editor editor) {
     return DirectiveUtil.getDirective(element);
   }
 
   @Override
-  public void renameElement(PsiElement element, String newName, UsageInfo[] usages, @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
+  public void renameElement(@NotNull PsiElement element, @NotNull String newName, @NotNull UsageInfo[] usages, @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
     final boolean isAngular2 = DirectiveUtil.isAngular2Directive(element);
     final PsiNamedElement directive = (PsiNamedElement)element;
     final String attributeName = isAngular2 ? newName : DirectiveUtil.getAttributeName(newName);
@@ -57,8 +57,9 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
     }
   }
 
+  @NotNull
   @Override
-  public RenameDialog createRenameDialog(Project project, final PsiElement element, PsiElement nameSuggestionContext, Editor editor) {
+  public RenameDialog createRenameDialog(@NotNull Project project, @NotNull final PsiElement element, PsiElement nameSuggestionContext, Editor editor) {
     final String directiveName = DirectiveUtil.attributeToDirective(element, ((PsiNamedElement)element).getName());
     return new RenameDialog(project, element, nameSuggestionContext, editor) {
       @Override

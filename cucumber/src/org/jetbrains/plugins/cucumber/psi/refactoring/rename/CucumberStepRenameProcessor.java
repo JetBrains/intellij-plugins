@@ -128,7 +128,7 @@ public class CucumberStepRenameProcessor extends RenamePsiElementProcessor {
   }
 
   @Override
-  public void renameElement(PsiElement element, String newName, UsageInfo[] usages, @Nullable RefactoringElementListener listener)
+  public void renameElement(@NotNull PsiElement element, @NotNull String newName, @NotNull UsageInfo[] usages, @Nullable RefactoringElementListener listener)
     throws IncorrectOperationException {
 
     final CucumberStepReference reference = getCucumberStepReference(element);
@@ -165,7 +165,7 @@ public class CucumberStepRenameProcessor extends RenamePsiElementProcessor {
 
   @NotNull
   @Override
-  public Collection<PsiReference> findReferences(PsiElement element, boolean searchInCommentsAndStrings) {
+  public Collection<PsiReference> findReferences(@NotNull PsiElement element, boolean searchInCommentsAndStrings) {
     return Arrays.asList(element.getReferences());
   }
 }

@@ -1,11 +1,11 @@
 package com.intellij.javascript.flex;
 
+import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.findUsages.SuperMethodUtil;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
-import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -31,9 +31,10 @@ public class FlexRenameHandler extends RenamePsiElementProcessor {
   }
 
   @Override
-  public void renameElement(final PsiElement element,
-                            final String newName,
-                            final UsageInfo[] usages, @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
+  public void renameElement(@NotNull final PsiElement element,
+                            @NotNull final String newName,
+                            @NotNull final UsageInfo[] usages,
+                            @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
     super.renameElement(element, newName, usages, listener);
     if (element instanceof JSFile) {
       // rename invalidates file, so we need to get actual one
@@ -43,7 +44,7 @@ public class FlexRenameHandler extends RenamePsiElementProcessor {
   }
 
   @Override
-  public PsiElement substituteElementToRename(final PsiElement element, final Editor editor) {
+  public PsiElement substituteElementToRename(@NotNull final PsiElement element, final Editor editor) {
     if (element instanceof JSFunction) {
       return SuperMethodUtil.checkSuperMethod((JSFunction)element, RefactoringBundle.message("rename.title"),
                                               RefactoringBundle.message("to.rename"));
@@ -52,10 +53,10 @@ public class FlexRenameHandler extends RenamePsiElementProcessor {
   }
 
   @Override
-  public void prepareRenaming(final PsiElement element,
-                              final String newName,
-                              final Map<PsiElement, String> allRenames,
-                              final SearchScope scope) {
+  public void prepareRenaming(@NotNull final PsiElement element,
+                              @NotNull final String newName,
+                              @NotNull final Map<PsiElement, String> allRenames,
+                              @NotNull final SearchScope scope) {
     if (!(element instanceof JSFunction)) {
       return;
     }
