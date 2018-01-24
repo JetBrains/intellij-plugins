@@ -18,7 +18,6 @@ import com.intellij.openapi.graph.layout.Layouter;
 import com.intellij.openapi.graph.layout.ParallelEdgeLayouter;
 import com.intellij.openapi.graph.layout.organic.SmartOrganicLayouter;
 import com.intellij.openapi.graph.settings.GraphSettings;
-import com.intellij.openapi.graph.settings.GraphSettingsProvider;
 import com.intellij.openapi.graph.view.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Trinity;
@@ -467,12 +466,9 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         return null;
       }
 
-      @Nullable
+      @NotNull
       @Override
-      public Layouter getCustomLayouter(Graph2D graph, Project project) {
-        final GraphSettingsProvider settingsProvider = GraphSettingsProvider.getInstance(project);
-        final GraphSettings settings = settingsProvider.getSettings(graph);
-
+      public Layouter getCustomLayouter(GraphSettings settings, Project project) {
         final SmartOrganicLayouter layouter = settings.getOrganicLayouter();
         layouter.setNodeEdgeOverlapAvoided(true);
 
