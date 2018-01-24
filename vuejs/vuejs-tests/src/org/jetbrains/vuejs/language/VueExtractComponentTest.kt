@@ -37,6 +37,39 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     }
 </script>""")
 
+  fun testExtractSingleTagWithName() = doExtractTest(
+"""<template>
+<selection><p>Paragraph!</p></selection>
+</template>
+<script>
+    export default {
+        name: 'Hello'
+    }
+</script>
+""",
+
+"""<template>
+    <new-component/>
+</template>
+<script>
+    import NewComponent from "./NewComponent";
+
+    export default {
+        name: 'Hello',
+        components: {NewComponent}
+    }
+</script>
+""",
+
+"""<template>
+    <p>Paragraph!</p>
+</template>
+<script>
+    export default {
+        name: 'new-component'
+    }
+</script>""")
+
   fun testExtractTwoTagsWithProp() = doExtractTest(
     """<template>
 <selection><p>Paragraph! {{ one + 1 }}</p>
