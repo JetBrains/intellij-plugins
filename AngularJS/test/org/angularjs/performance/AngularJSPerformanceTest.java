@@ -16,7 +16,7 @@ public class AngularJSPerformanceTest extends LightPlatformCodeInsightFixtureTes
 
   public void testManyInjectionsHighlighting() {
     myFixture.configureByFiles("manyInjections.highlight.html", "angular.js", "custom.js");
-    PlatformTestUtil.startPerformanceTest(getTestName(false), 60000, () -> myFixture.checkHighlighting()).attempts(1).usesAllCPUCores().assertTiming();
+    PlatformTestUtil.startPerformanceTest(getTestName(false), 100_000, () -> myFixture.checkHighlighting()).attempts(1).usesAllCPUCores().assertTiming();
   }
 
 }
