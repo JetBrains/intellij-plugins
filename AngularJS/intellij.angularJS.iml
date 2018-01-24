@@ -10,19 +10,19 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="indexing-api" />
-    <orderEntry type="module" module-name="xml-psi-impl" />
-    <orderEntry type="module" module-name="lang-api" />
-    <orderEntry type="module" module-name="lang-impl" />
-    <orderEntry type="module" module-name="JavaScriptLanguage" />
-    <orderEntry type="module" module-name="xml" />
-    <orderEntry type="module" module-name="CSS" />
-    <orderEntry type="module" module-name="testFramework-JavaScript" scope="TEST" />
-    <orderEntry type="module" module-name="graph-openapi" />
-    <orderEntry type="module" module-name="diagram-api" />
-    <orderEntry type="module" module-name="graph" />
-    <orderEntry type="module" module-name="diagram-impl" />
+    <orderEntry type="module" module-name="intellij.platform.indexing" />
+    <orderEntry type="module" module-name="intellij.xml.psi.impl" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.javascript.impl" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.css.impl" />
+    <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.graph" />
+    <orderEntry type="module" module-name="intellij.diagram" />
+    <orderEntry type="module" module-name="intellij.platform.graph.impl" />
+    <orderEntry type="module" module-name="intellij.diagram.impl" />
     <orderEntry type="library" name="gson" level="project" />
-    <orderEntry type="module" module-name="JSIntentionPowerPack" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.intentions" scope="TEST" />
   </component>
 </module>

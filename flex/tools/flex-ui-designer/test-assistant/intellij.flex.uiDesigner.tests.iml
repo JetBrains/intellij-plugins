@@ -7,15 +7,14 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="flex" />
-    <orderEntry type="module" module-name="lang-api" />
-    <orderEntry type="module" module-name="JavaScriptLanguage" />
-    <orderEntry type="module" module-name="xml-openapi" />
-    <orderEntry type="module" module-name="core-impl" />
-    <orderEntry type="module" module-name="idea" />
-    <orderEntry type="module" module-name="idea-ui" />
-    <orderEntry type="module" module-name="execution-openapi" />
+    <orderEntry type="module" module-name="intellij.flex" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.javascript.impl" />
+    <orderEntry type="module" module-name="intellij.xml" />
+    <orderEntry type="module" module-name="intellij.platform.core.impl" />
+    <orderEntry type="module" module-name="intellij.tools.content" />
+    <orderEntry type="module" module-name="intellij.java.ui" />
+    <orderEntry type="module" module-name="intellij.java.execution" />
     <orderEntry type="library" name="Guava" level="project" />
   </component>
 </module>
-

@@ -10,35 +10,35 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="struts2-dom-api" />
-    <orderEntry type="module" module-name="javaee-impl" />
-    <orderEntry type="module" module-name="util" />
-    <orderEntry type="module" module-name="dom-openapi" />
-    <orderEntry type="module" module-name="CSS" />
-    <orderEntry type="module" module-name="dom-impl" />
-    <orderEntry type="module" module-name="web-openapi" />
-    <orderEntry type="module" module-name="web-impl" />
-    <orderEntry type="module" module-name="graph-openapi" />
-    <orderEntry type="module" module-name="JavaScriptLanguage" />
-    <orderEntry type="module" module-name="struts-api" />
-    <orderEntry type="module" module-name="StrutsAssistant" />
-    <orderEntry type="module" module-name="properties" />
+    <orderEntry type="module" module-name="intellij.struts2.dom" />
+    <orderEntry type="module" module-name="intellij.javaee.impl" />
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="module" module-name="intellij.xml.dom" />
+    <orderEntry type="module" module-name="intellij.css.impl" />
+    <orderEntry type="module" module-name="intellij.xml.dom.impl" />
+    <orderEntry type="module" module-name="intellij.javaee.web" />
+    <orderEntry type="module" module-name="intellij.javaee.web.impl" />
+    <orderEntry type="module" module-name="intellij.platform.graph" />
+    <orderEntry type="module" module-name="intellij.javascript.impl" />
+    <orderEntry type="module" module-name="intellij.struts" />
+    <orderEntry type="module" module-name="intellij.struts.impl" />
+    <orderEntry type="module" module-name="intellij.properties" />
     <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
-    <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
-    <orderEntry type="module" module-name="freemarker" />
-    <orderEntry type="module" module-name="velocity" />
-    <orderEntry type="module" module-name="spellchecker" />
-    <orderEntry type="module" module-name="java-impl" />
-    <orderEntry type="module" module-name="jsp-openapi" />
-    <orderEntry type="module" module-name="jsp-spi" />
-    <orderEntry type="module" module-name="ognl" />
-    <orderEntry type="module" module-name="css-api" />
-    <orderEntry type="module" module-name="dom-tests" scope="TEST" />
-    <orderEntry type="module" module-name="spring-api" />
-    <orderEntry type="module" module-name="properties-psi-api" />
-    <orderEntry type="module" module-name="properties-psi-impl" />
-    <orderEntry type="module" module-name="groovy-psi" />
-    <orderEntry type="module" module-name="xml-structure-view-impl" />
-    <orderEntry type="module" module-name="xml" />
+    <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.freemarker" />
+    <orderEntry type="module" module-name="intellij.velocity" />
+    <orderEntry type="module" module-name="intellij.spellchecker" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
+    <orderEntry type="module" module-name="intellij.jsp" />
+    <orderEntry type="module" module-name="intellij.jsp.spi" />
+    <orderEntry type="module" module-name="intellij.struts2.ognl" />
+    <orderEntry type="module" module-name="intellij.css" />
+    <orderEntry type="module" module-name="intellij.xml.dom.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.spring" />
+    <orderEntry type="module" module-name="intellij.properties.psi" />
+    <orderEntry type="module" module-name="intellij.properties.psi.impl" />
+    <orderEntry type="module" module-name="intellij.groovy.psi" />
+    <orderEntry type="module" module-name="intellij.xml.structureView.impl" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
   </component>
 </module>

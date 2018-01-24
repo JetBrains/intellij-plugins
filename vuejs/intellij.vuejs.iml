@@ -9,25 +9,25 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="platform-api" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
-    <orderEntry type="module" module-name="xml-psi-api" />
-    <orderEntry type="module" module-name="lang-api" />
-    <orderEntry type="module" module-name="lang-impl" />
-    <orderEntry type="module" module-name="xml-psi-impl" />
-    <orderEntry type="module" module-name="core-impl" />
-    <orderEntry type="module" module-name="core-api" />
-    <orderEntry type="module" module-name="analysis-impl" />
-    <orderEntry type="module" module-name="javascript-psi-impl" />
-    <orderEntry type="module" module-name="indexing-impl" />
-    <orderEntry type="module" module-name="JavaScriptLanguage" />
-    <orderEntry type="module" module-name="JavaScriptDebugger" />
-    <orderEntry type="module" module-name="css-psi-impl" />
-    <orderEntry type="module" module-name="script-debugger-ui" />
-    <orderEntry type="module" module-name="xdebugger-api" />
-    <orderEntry type="module" module-name="xml" />
-    <orderEntry type="module" module-name="spellchecker" />
-    <orderEntry type="module" module-name="css-analysis-impl" />
-    <orderEntry type="module" module-name="css-api" />
+    <orderEntry type="module" module-name="intellij.xml.psi" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.xml.psi.impl" />
+    <orderEntry type="module" module-name="intellij.platform.core.impl" />
+    <orderEntry type="module" module-name="intellij.platform.core" />
+    <orderEntry type="module" module-name="intellij.platform.analysis.impl" />
+    <orderEntry type="module" module-name="intellij.javascript.psi.impl" />
+    <orderEntry type="module" module-name="intellij.platform.indexing.impl" />
+    <orderEntry type="module" module-name="intellij.javascript.impl" />
+    <orderEntry type="module" module-name="intellij.javascript.debugger" />
+    <orderEntry type="module" module-name="intellij.css.psi" />
+    <orderEntry type="module" module-name="intellij.platform.scriptDebugger.ui" />
+    <orderEntry type="module" module-name="intellij.platform.debugger" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.spellchecker" />
+    <orderEntry type="module" module-name="intellij.css.analysis" />
+    <orderEntry type="module" module-name="intellij.css" />
   </component>
 </module>

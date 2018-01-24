@@ -9,22 +9,21 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="JsTestDriver" level="project" />
-    <orderEntry type="module" module-name="lang-impl" />
-    <orderEntry type="module" module-name="JavaScriptLanguage" />
-    <orderEntry type="module" module-name="yaml" />
-    <orderEntry type="module" module-name="xdebugger-api" />
-    <orderEntry type="module" module-name="smRunner" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.javascript.impl" />
+    <orderEntry type="module" module-name="intellij.yaml" />
+    <orderEntry type="module" module-name="intellij.platform.debugger" />
+    <orderEntry type="module" module-name="intellij.platform.smRunner" />
     <orderEntry type="library" name="jcip" level="project" />
-    <orderEntry type="module" module-name="xml" />
-    <orderEntry type="module" module-name="coverage-common" />
-    <orderEntry type="module" module-name="JsTestDriver-common" />
-    <orderEntry type="module" module-name="JsTestDriver-rt" />
-    <orderEntry type="module" module-name="JavaScriptDebugger" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.platform.coverage" />
+    <orderEntry type="module" module-name="intellij.jsTestDriver.common" />
+    <orderEntry type="module" module-name="intellij.jsTestDriver.rt" />
+    <orderEntry type="module" module-name="intellij.javascript.debugger" />
     <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="library" name="gson" level="project" />
-    <orderEntry type="module" module-name="js-test-common" />
-    <orderEntry type="module" module-name="webide-impl" />
-    <orderEntry type="module" module-name="script-debugger-ui" />
+    <orderEntry type="module" module-name="intellij.javascript.testing" />
+    <orderEntry type="module" module-name="intellij.platform.webide.impl" />
+    <orderEntry type="module" module-name="intellij.platform.scriptDebugger.ui" />
   </component>
 </module>
-

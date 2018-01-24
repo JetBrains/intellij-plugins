@@ -12,35 +12,35 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="flex-shared" exported="" />
-    <orderEntry type="module" module-name="compiler-openapi" />
-    <orderEntry type="module" module-name="lang-api" />
-    <orderEntry type="module" module-name="JavaScriptLanguage" />
-    <orderEntry type="module" module-name="platform-impl" />
-    <orderEntry type="module" module-name="xdebugger-api" />
-    <orderEntry type="module" module-name="execution-openapi" />
-    <orderEntry type="module" module-name="lang-impl" />
-    <orderEntry type="module" module-name="xml-openapi" />
-    <orderEntry type="module" module-name="openapi" />
-    <orderEntry type="module" module-name="idea" />
-    <orderEntry type="module" module-name="xml" />
-    <orderEntry type="module" module-name="CSS" />
-    <orderEntry type="module" module-name="testRunner" />
-    <orderEntry type="module" module-name="execution-impl" />
-    <orderEntry type="module" module-name="smRunner" />
-    <orderEntry type="module" module-name="css-api" exported="" />
-    <orderEntry type="module" module-name="idea-ui" />
-    <orderEntry type="module" module-name="maven" />
-    <orderEntry type="module" module-name="ant" />
-    <orderEntry type="module" module-name="copyright" />
-    <orderEntry type="module" module-name="jps-builders" />
+    <orderEntry type="module" module-name="intellij.flex.shared" exported="" />
+    <orderEntry type="module" module-name="intellij.java.compiler" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.javascript.impl" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.platform.debugger" />
+    <orderEntry type="module" module-name="intellij.java.execution" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.xml" />
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.tools.content" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.css.impl" />
+    <orderEntry type="module" module-name="intellij.platform.testRunner" />
+    <orderEntry type="module" module-name="intellij.java.execution.impl" />
+    <orderEntry type="module" module-name="intellij.platform.smRunner" />
+    <orderEntry type="module" module-name="intellij.css" exported="" />
+    <orderEntry type="module" module-name="intellij.java.ui" />
+    <orderEntry type="module" module-name="intellij.maven" />
+    <orderEntry type="module" module-name="intellij.ant" />
+    <orderEntry type="module" module-name="intellij.copyright" />
+    <orderEntry type="module" module-name="intellij.platform.jps.build" />
     <orderEntry type="library" name="Velocity" level="project" />
-    <orderEntry type="module" module-name="properties" />
-    <orderEntry type="module" module-name="webide-api" />
-    <orderEntry type="module" module-name="properties-psi-api" />
-    <orderEntry type="module" module-name="script-debugger-ui" />
-    <orderEntry type="module" module-name="diagram-api" />
-    <orderEntry type="module" module-name="graph-openapi" />
-    <orderEntry type="module" module-name="flex-jps-plugin" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.properties" />
+    <orderEntry type="module" module-name="intellij.platform.webide" />
+    <orderEntry type="module" module-name="intellij.properties.psi" />
+    <orderEntry type="module" module-name="intellij.platform.scriptDebugger.ui" />
+    <orderEntry type="module" module-name="intellij.diagram" />
+    <orderEntry type="module" module-name="intellij.platform.graph" />
+    <orderEntry type="module" module-name="intellij.flex.jps" scope="RUNTIME" />
   </component>
 </module>

@@ -7,10 +7,9 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="module" module-name="flex-shared" />
-    <orderEntry type="module" module-name="jps-builders" />
-    <orderEntry type="module" module-name="jps-model-api" />
-    <orderEntry type="module" module-name="jps-model-serialization" />
+    <orderEntry type="module" module-name="intellij.flex.shared" />
+    <orderEntry type="module" module-name="intellij.platform.jps.build" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model.serialization" />
   </component>
 </module>
-

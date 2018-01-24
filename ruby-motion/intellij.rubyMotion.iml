@@ -9,14 +9,14 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="ruby" />
-    <orderEntry type="module" module-name="ruby-ext" />
-    <orderEntry type="module" module-name="cidr-debugger" />
-    <orderEntry type="module" module-name="ruby-psi-api" />
-    <orderEntry type="module" module-name="ruby-core" />
-    <orderEntry type="module" module-name="ruby-tests" scope="TEST" />
-    <orderEntry type="module" module-name="testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="cocoa-common" />
+    <orderEntry type="module" module-name="intellij.ruby" />
+    <orderEntry type="module" module-name="intellij.ruby.ext" />
+    <orderEntry type="module" module-name="intellij.cidr.debugger" />
+    <orderEntry type="module" module-name="intellij.ruby.psi" />
+    <orderEntry type="module" module-name="intellij.ruby.core" />
+    <orderEntry type="module" module-name="intellij.ruby.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.cidr.cocoaCommon" />
     <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="library" name="ASM" level="project" />
   </component>

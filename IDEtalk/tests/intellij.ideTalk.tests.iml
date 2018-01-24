@@ -7,24 +7,24 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="idetalk-jabber-idea" />
-    <orderEntry type="module" module-name="idetalk-p2p" />
-    <orderEntry type="module" module-name="idetalk-core-impl" />
-    <orderEntry type="module" module-name="idetalk-jabber" />
-    <orderEntry type="module" module-name="idetalk-idea" />
-    <orderEntry type="module" module-name="execution-openapi" />
-    <orderEntry type="module" module-name="openapi" />
-    <orderEntry type="module" module-name="platform-impl" />
-    <orderEntry type="module" module-name="idea" />
-    <orderEntry type="module" module-name="idetalk-core" />
-    <orderEntry type="module" module-name="testFramework" />
-    <orderEntry type="module" module-name="resources" />
-    <orderEntry type="module" module-name="resources-en" />
-    <orderEntry type="module" module-name="platform-resources" />
-    <orderEntry type="module" module-name="platform-resources-en" />
-    <orderEntry type="module" module-name="platform-ultimate" />
-    <orderEntry type="module" module-name="platform-tests" />
-    <orderEntry type="module" module-name="ultimate-resources" />
+    <orderEntry type="module" module-name="intellij.ideTalk.jabber" />
+    <orderEntry type="module" module-name="intellij.ideTalk.p2p" />
+    <orderEntry type="module" module-name="intellij.ideTalk.impl" />
+    <orderEntry type="module" module-name="intellij.ideTalk.jabber.core" />
+    <orderEntry type="module" module-name="intellij.ideTalk" />
+    <orderEntry type="module" module-name="intellij.java.execution" />
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.tools.content" />
+    <orderEntry type="module" module-name="intellij.ideTalk.core" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" />
+    <orderEntry type="module" module-name="intellij.java.resources" />
+    <orderEntry type="module" module-name="intellij.java.resources.en" />
+    <orderEntry type="module" module-name="intellij.platform.resources" />
+    <orderEntry type="module" module-name="intellij.platform.resources.en" />
+    <orderEntry type="module" module-name="intellij.platform.commercial" />
+    <orderEntry type="module" module-name="intellij.platform.tests" />
+    <orderEntry type="module" module-name="intellij.ideaUltimate.resources" />
     <orderEntry type="library" scope="TEST" name="JUnit3" level="project" />
     <orderEntry type="module-library" scope="TEST">
       <library>

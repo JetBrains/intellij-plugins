@@ -8,21 +8,21 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="lang-impl" />
-    <orderEntry type="module" module-name="JavaScriptLanguage" />
-    <orderEntry type="module" module-name="smRunner" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.javascript.impl" />
+    <orderEntry type="module" module-name="intellij.platform.smRunner" />
     <orderEntry type="library" name="Guava" level="project" />
-    <orderEntry type="module" module-name="js-test-common" />
+    <orderEntry type="module" module-name="intellij.javascript.testing" />
     <orderEntry type="library" name="gson" level="project" />
-    <orderEntry type="module" module-name="JavaScriptDebugger" />
-    <orderEntry type="module" module-name="xml" />
-    <orderEntry type="module" module-name="xdebugger-api" />
-    <orderEntry type="module" module-name="coverage-common" />
-    <orderEntry type="module" module-name="webide-impl" />
+    <orderEntry type="module" module-name="intellij.javascript.debugger" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.platform.debugger" />
+    <orderEntry type="module" module-name="intellij.platform.coverage" />
+    <orderEntry type="module" module-name="intellij.platform.webide.impl" />
     <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
-    <orderEntry type="module" module-name="wip-backend" />
-    <orderEntry type="module" module-name="wip-protocol" />
-    <orderEntry type="module" module-name="script-debugger-ui" />
-    <orderEntry type="module" module-name="script-debugger-backend" />
+    <orderEntry type="module" module-name="intellij.javascript.wip.backend" />
+    <orderEntry type="module" module-name="intellij.javascript.wip.protocol" />
+    <orderEntry type="module" module-name="intellij.platform.scriptDebugger.ui" />
+    <orderEntry type="module" module-name="intellij.platform.scriptDebugger.backend" />
   </component>
 </module>

@@ -7,17 +7,17 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="javascript-openapi" scope="TEST" />
-    <orderEntry type="module" module-name="vuejs" scope="TEST" />
-    <orderEntry type="module" module-name="javascript-psi-impl" scope="TEST" />
-    <orderEntry type="module" module-name="testFramework-JavaScript" scope="TEST" />
-    <orderEntry type="module" module-name="JavaScriptLanguage" scope="TEST" />
-    <orderEntry type="module" module-name="css-psi-impl" scope="TEST" />
-    <orderEntry type="module" module-name="copyright" scope="TEST" />
-    <orderEntry type="module" module-name="JavaScript-tests" scope="TEST" />
-    <orderEntry type="module" module-name="sass" scope="TEST" />
-    <orderEntry type="module" module-name="Jade" scope="TEST" />
-    <orderEntry type="module" module-name="postcss" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.vuejs" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.psi.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.css.psi" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.copyright" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.sass" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.jade" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.postcss" scope="TEST" />
   </component>
 </module>

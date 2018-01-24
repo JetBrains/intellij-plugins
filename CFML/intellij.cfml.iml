@@ -11,25 +11,25 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="platform-api" />
-    <orderEntry type="module" module-name="sql-impl" />
-    <orderEntry type="module" module-name="platform-impl" />
-    <orderEntry type="module" module-name="xml" />
-    <orderEntry type="module" module-name="lang-api" />
-    <orderEntry type="module" module-name="lang-impl" />
-    <orderEntry type="module" module-name="openapi" />
-    <orderEntry type="module" module-name="idea" />
-    <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
-    <orderEntry type="module" module-name="smRunner" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.database.sql.impl" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.tools.content" />
+    <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.smRunner" />
     <orderEntry type="library" name="http-client-3.1" level="project" />
-    <orderEntry type="module" module-name="database-impl" scope="TEST" />
-    <orderEntry type="module" module-name="idea-tests" scope="TEST" />
-    <orderEntry type="module" module-name="platform-ultimate" scope="RUNTIME" />
-    <orderEntry type="module" module-name="spellchecker" />
-    <orderEntry type="module" module-name="IntelliLang" />
-    <orderEntry type="module" module-name="sql-tests" scope="TEST" />
-    <orderEntry type="module" module-name="sql-dialects" scope="TEST" />
-    <orderEntry type="module" module-name="testExtensions" scope="TEST" />
-    <orderEntry type="module" module-name="coverage_javaee" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.database.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.ideaUltimate.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.commercial" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.spellchecker" />
+    <orderEntry type="module" module-name="intellij.platform.langInjection" />
+    <orderEntry type="module" module-name="intellij.database.sql.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.database.sql.dialects" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.testExtensions" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javaee.coverage" scope="RUNTIME" />
   </component>
 </module>

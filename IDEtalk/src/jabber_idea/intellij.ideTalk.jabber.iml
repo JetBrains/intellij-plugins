@@ -7,10 +7,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="idetalk-idea" />
-    <orderEntry type="module" module-name="idetalk-jabber" />
-    <orderEntry type="module" module-name="platform-api" />
-    <orderEntry type="module" module-name="idetalk-core" />
+    <orderEntry type="module" module-name="intellij.ideTalk" />
+    <orderEntry type="module" module-name="intellij.ideTalk.jabber.core" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.ideTalk.core" />
   </component>
 </module>
-

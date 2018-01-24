@@ -9,15 +9,15 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="gherkin" />
-    <orderEntry type="module" module-name="core-api" />
-    <orderEntry type="module" module-name="lang-api" />
-    <orderEntry type="module" module-name="lang-impl" />
-    <orderEntry type="module" module-name="jetgroovy" />
-    <orderEntry type="module" module-name="java-psi-impl" />
-    <orderEntry type="module" module-name="java-psi-api" />
-    <orderEntry type="module" module-name="testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.gherkin" />
+    <orderEntry type="module" module-name="intellij.platform.core" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.groovy" />
+    <orderEntry type="module" module-name="intellij.java.psi.impl" />
+    <orderEntry type="module" module-name="intellij.java.psi" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
     <orderEntry type="module-library">
       <library name="cucumber-groovy" type="repository">
         <properties include-transitive-deps="false" maven-id="info.cukes:cucumber-groovy:1.2.4" />
@@ -31,8 +31,8 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="Groovy" level="project" />
-    <orderEntry type="module" module-name="java-impl" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
     <orderEntry type="library" name="cucumber-core" level="project" />
-    <orderEntry type="module" module-name="cucumber-java" />
+    <orderEntry type="module" module-name="intellij.cucumber.java" />
   </component>
 </module>
