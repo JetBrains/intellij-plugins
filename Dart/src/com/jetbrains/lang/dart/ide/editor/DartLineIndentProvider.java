@@ -57,8 +57,8 @@ public class DartLineIndentProvider extends JavaLikeLangLineIndentProvider {
   }
 
   @Override
-  protected Indent.Type getIndentTypeInBrackets() {
-    return Indent.Type.NORMAL;
+  protected Indent getIndentTypeInBrackets() {
+    return getIndentFromType(Indent.Type.NORMAL);
   }
 
   @Nullable
