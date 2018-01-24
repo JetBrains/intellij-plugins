@@ -10,16 +10,16 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="platform-api" />
-    <orderEntry type="module" module-name="lang-api" />
-    <orderEntry type="module" module-name="lang-impl" />
-    <orderEntry type="module" module-name="css-api" />
-    <orderEntry type="module" module-name="css-psi-impl" />
-    <orderEntry type="module" module-name="css-analysis-impl" />
-    <orderEntry type="module" module-name="core-impl" />
-    <orderEntry type="module" module-name="xml" exported="" />
-    <orderEntry type="module" module-name="testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="CSS" />
-    <orderEntry type="module" module-name="copyright" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.css" />
+    <orderEntry type="module" module-name="intellij.css.psi" />
+    <orderEntry type="module" module-name="intellij.css.analysis" />
+    <orderEntry type="module" module-name="intellij.platform.core.impl" />
+    <orderEntry type="module" module-name="intellij.xml.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.css.impl" />
+    <orderEntry type="module" module-name="intellij.copyright" scope="TEST" />
   </component>
 </module>
