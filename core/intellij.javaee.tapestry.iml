@@ -38,17 +38,17 @@
     </orderEntry>
     <orderEntry type="library" exported="" name="Velocity" level="project" />
     <orderEntry type="library" exported="" name="CGLIB" level="project" />
-    <orderEntry type="module" module-name="platform-api" exported="" />
-    <orderEntry type="module" module-name="lang-api" exported="" />
-    <orderEntry type="module" module-name="openapi" exported="" />
-    <orderEntry type="module" module-name="web-openapi" exported="" />
-    <orderEntry type="module" module-name="compiler-openapi" exported="" />
-    <orderEntry type="module" module-name="javaee-impl" exported="" />
-    <orderEntry type="module" module-name="idea" exported="" />
-    <orderEntry type="module" module-name="xml" exported="" />
-    <orderEntry type="module" module-name="web-impl" />
-    <orderEntry type="module" module-name="compiler-impl" />
-    <orderEntry type="module" module-name="properties" />
-    <orderEntry type="module" module-name="css-psi-impl" />
+    <orderEntry type="module" module-name="intellij.platform.ide" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.lang" exported="" />
+    <orderEntry type="module" module-name="intellij.java" exported="" />
+    <orderEntry type="module" module-name="intellij.javaee.web" exported="" />
+    <orderEntry type="module" module-name="intellij.java.compiler" exported="" />
+    <orderEntry type="module" module-name="intellij.javaee.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.tools.content" exported="" />
+    <orderEntry type="module" module-name="intellij.xml.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.javaee.web.impl" />
+    <orderEntry type="module" module-name="intellij.java.compiler.impl" />
+    <orderEntry type="module" module-name="intellij.properties" />
+    <orderEntry type="module" module-name="intellij.css.psi" />
   </component>
 </module>
