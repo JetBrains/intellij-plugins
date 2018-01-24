@@ -320,7 +320,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   }
 
   private static void addDeclaredIn(StringBuilder builder, DocumentationElement docElement) {
-    builder.append(DocumentationMarkup.SECTION_START);
+    builder.append(DocumentationMarkup.SECTION_HEADER_START);
     builder.append("Declared in:");
     builder.append(DocumentationMarkup.SECTION_SEPARATOR);
     builder.append("<p>");
