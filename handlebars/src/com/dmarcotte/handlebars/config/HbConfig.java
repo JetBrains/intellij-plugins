@@ -73,7 +73,7 @@ public class HbConfig {
   }
 
   private static String getStringPropertyValue(Property property, Project project) {
-    return new PropertyAccessor(getProperties(project)).getPropertyValue(property);
+    return getProperties(project).getValue(property.getStringName(), property.getDefault());
   }
 
   @NotNull
@@ -81,11 +81,9 @@ public class HbConfig {
     return project == null ? PropertiesComponent.getInstance() : PropertiesComponent.getInstance(project);
   }
 
-
   private static void setStringPropertyValue(@NotNull Property property, @Nullable String value, @Nullable Project project) {
-    new PropertyAccessor(getProperties(project)).setPropertyValue(property, value);
+    getProperties(project).setValue(property.getStringName(), value, property.getDefault());
   }
-
 
   private static String getStringPropertyValue(Property property) {
     return getStringPropertyValue(property, null);
