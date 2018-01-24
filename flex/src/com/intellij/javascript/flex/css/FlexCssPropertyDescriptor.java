@@ -3,6 +3,7 @@ package com.intellij.javascript.flex.css;
 import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
+import com.intellij.lang.documentation.DocumentationMarkup;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
@@ -41,7 +42,6 @@ import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.containers.ContainerUtil;
-import java.util.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -300,13 +300,32 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     StringBuilder builder = new StringBuilder();
     for (int i = 0, n = docElements.size(); i < n; i++) {
       DocumentationElement docElement = docElements.get(i);
-      builder.append("<b>").append(docElement.header).append("</b>").append("<br>\n");
-      builder.append(docElement.documentation);
+      int sectionsStart = docElement.documentation.indexOf(DocumentationMarkup.SECTIONS_START);
+      if (sectionsStart < 0) {
+        builder.append(docElement.documentation);
+        builder.append(DocumentationMarkup.SECTIONS_START);
+        addDeclaredIn(builder, docElement);
+        builder.append(DocumentationMarkup.SECTIONS_END);
+      } else {
+        sectionsStart += DocumentationMarkup.SECTIONS_START.length();
+        builder.append(docElement.documentation.substring(0, sectionsStart));
+        addDeclaredIn(builder, docElement);
+        builder.append(docElement.documentation.substring(sectionsStart));
+      }
       if (i != n - 1) {
         builder.append("<br><br>\n\n");
       }
     }
     return builder.toString();
+  }
+
+  private static void addDeclaredIn(StringBuilder builder, DocumentationElement docElement) {
+    builder.append(DocumentationMarkup.SECTION_START);
+    builder.append("Declared in:");
+    builder.append(DocumentationMarkup.SECTION_SEPARATOR);
+    builder.append("<p>");
+    builder.append(docElement.header);
+    builder.append(DocumentationMarkup.SECTION_END);
   }
 
   @NotNull
