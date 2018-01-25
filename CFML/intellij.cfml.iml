@@ -23,7 +23,7 @@
     <orderEntry type="module" module-name="intellij.platform.smRunner" />
     <orderEntry type="library" name="http-client-3.1" level="project" />
     <orderEntry type="module" module-name="intellij.database.impl" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.ideaUltimate.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.commercial" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.spellchecker" />
     <orderEntry type="module" module-name="intellij.platform.langInjection" />

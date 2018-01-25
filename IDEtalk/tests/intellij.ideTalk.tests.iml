@@ -24,7 +24,7 @@
     <orderEntry type="module" module-name="intellij.platform.resources.en" />
     <orderEntry type="module" module-name="intellij.platform.commercial" />
     <orderEntry type="module" module-name="intellij.platform.tests" />
-    <orderEntry type="module" module-name="intellij.ideaUltimate.resources" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.resources" />
     <orderEntry type="library" scope="TEST" name="JUnit3" level="project" />
     <orderEntry type="module-library" scope="TEST">
       <library>

@@ -11,7 +11,7 @@
     <orderEntry type="module" module-name="intellij.jsTestDriver" />
     <orderEntry type="module" module-name="intellij.javascript.impl" />
     <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.ideaUltimate.tests" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.tests" />
     <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
     <orderEntry type="module" module-name="intellij.javascript.tests" />
     <orderEntry type="module" module-name="intellij.jsTestDriver.rt" />
