@@ -1,7 +1,7 @@
-@ngdoc directive<BR>
- @param {expression} ngController Name of a globally accessible constructor function or an<BR>
-     <a href="psi_element://guide/expression">expression</a> that on the current scope evaluates to a<BR>
-     constructor function. The controller instance can be published into a scope property<BR>
-     by specifying `as propertyName`.
+<div class='definition'><pre>ng-controller</pre></div><div class='content'><p> @ngdoc directive<p>
+ @param {expression} ngController Name of a globally accessible constructor function or an<p>
+     <a href="psi_element://guide/expression">expression</a> that on the current scope evaluates to a<p>
+     constructor function. The controller instance can be published into a scope property<p>
+     by specifying `as propertyName`.</div><table class='sections'></table>
 ---
 http://docs.angularjs.org/api/ng/directive/ngController
