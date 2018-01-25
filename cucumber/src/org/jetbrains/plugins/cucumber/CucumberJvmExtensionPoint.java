@@ -49,7 +49,7 @@ public interface CucumberJvmExtensionPoint {
   StepDefinitionCreator getStepDefinitionCreator();
 
   /**
-   * Provide resolving of step
+   * Resolves the step to list of psi element that are step definitions
    * @param step to be resolved
    * @return list of elements where step is resolved
    */

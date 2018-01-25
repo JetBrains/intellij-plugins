@@ -1269,11 +1269,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  protected boolean isConstAssignable(@NotNull JSReferenceExpression lExpr, PsiElement resolved) {
-    return false;
-  }
-
-  @Override
   protected boolean isConstNeedInitializer(JSVariable var) {
     return true;
   }

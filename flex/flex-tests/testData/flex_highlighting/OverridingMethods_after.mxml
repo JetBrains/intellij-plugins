@@ -9,7 +9,7 @@
 
       [Inspectable(category="General")]
       override public function set layout(s:String) {
-          return super.layout = s;
+          super.layout = s;
       }
 
       [Inspectable(category="General")]

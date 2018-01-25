@@ -18,6 +18,8 @@ import com.intellij.openapi.util.Trinity
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
+import com.intellij.psi.css.impl.CssElementTypes
+import com.intellij.psi.css.inspections.CssUnusedSymbolUtils.optimizeStyles
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
@@ -29,6 +31,7 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
   private val scriptTag = if (containingFile is XmlFile) findScriptTag(containingFile) else null
   private val scriptLanguage = detectLanguage(scriptTag)
   private val templateLanguage = detectLanguage(findTemplate())
+  private val styleTags = findStyles(containingFile)
 
   private val importsToCopy: MutableMap<String, ES6ImportDeclaration> = mutableMapOf()
   private val refDataMap: MutableMap<XmlTag, MutableList<RefData>> = calculateProps()
@@ -69,7 +72,7 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
       return@firstOrNull byName != null
     } as? ES6ImportDeclaration ?: return
 
-    importsToCopy.put(toAsset(ref.nameElement.text).capitalize(), foundImport)
+    importsToCopy[toAsset(ref.nameElement.text).capitalize()] = foundImport
   }
 
   private fun gatherReferences(): List<RefData> {
@@ -140,12 +143,14 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
           hasDirectUsageSet.add(refName)
           true
         } else {
-          hasReplaceMap.put(refName, state)
+          hasReplaceMap[refName] = state
           false
         }
       }
     }
-    val newText =
+
+    var newText =
+
 """<template${langAttribute(templateLanguage)}>
 ${generateNewTemplateContents(hasDirectUsageSet)}
 </template>
@@ -153,11 +158,42 @@ ${generateNewTemplateContents(hasDirectUsageSet)}
 export default {
   name: '$newComponentName'${generateDescriptorMembers(hasDirectUsageSet)}
 }
-</script>"""
-    val dummyFile = PsiFileFactory.getInstance(containingFile.project).createFileFromText("forFormat.vue", VueFileType.INSTANCE, newText)
-    VueInsertHandler.reformatElement(dummyFile)
+</script>${copyStyles()}"""
+
+    newText = psiOperationOnText(newText, { optimizeAndRemoveEmptyStyles(it) })
+    newText = psiOperationOnText(newText, { VueInsertHandler.reformatElement(it) })
+
+    return newText
+  }
+
+  private fun psiOperationOnText(text: String, operation: (PsiFile) -> Unit): String {
+    val dummyFile = PsiFileFactory.getInstance(containingFile.project).createFileFromText("a.vue", VueFileType.INSTANCE, text)
+    operation(dummyFile)
     return dummyFile.text
   }
+
+  private fun copyStyles(): String {
+    if (styleTags.isEmpty()) return ""
+    return "\n" + styleTags.joinToString("\n") { it.text }
+  }
+
+  private fun findStyles(file: PsiFile): List<XmlTag> {
+    val xmlFile = file as? XmlFile ?: return emptyList()
+    val document = xmlFile.document ?: return emptyList()
+    return document.children.filter { "style" == (it as? XmlTag)?.name }.map { it as XmlTag }
+  }
+
+  private fun optimizeAndRemoveEmptyStyles(file: PsiFile) {
+    optimizeStyles(file)
+    val toDelete = findStyles(file).filter { styleTag ->
+      styleTag.isValid &&
+      PsiTreeUtil.processElements(styleTag, { !(CssElementTypes.CSS_RULESET_LIST == it.node.elementType && hasMeaningfulChildren(it)) })
+    }
+    toDelete.forEach { styleTag -> styleTag.delete() }
+  }
+
+  private fun hasMeaningfulChildren(element: PsiElement) =
+    !PsiTreeUtil.processElements({ !(it !is PsiWhiteSpace && it !is PsiComment) }, element.children)
 
   private fun langAttribute(lang: String?) = if (lang == null) "" else " lang=\"" + lang + "\""
 
@@ -219,6 +255,8 @@ export default {
       components.filter { it.name != null && names.contains(toAsset(it.name!!).capitalize()) }.forEach { it.delete() }
       ES6CreateImportUtil.optimizeImports(file)
     }
+
+    optimizeAndRemoveEmptyStyles(file)
   }
 
   private fun generateProps(): String {

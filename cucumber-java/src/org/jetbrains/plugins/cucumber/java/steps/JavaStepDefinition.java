@@ -16,21 +16,23 @@ public class JavaStepDefinition extends AbstractJavaStepDefinition {
   @Nullable
   @Override
   protected String getCucumberRegexFromElement(PsiElement element) {
-    if (element instanceof PsiMethod) {
-      final PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation((PsiMethod)element, myAnnotationClassName);
-      if (stepAnnotation == null) {
-        return null;
-      }
-      final PsiElement annotationValue = CucumberJavaUtil.getAnnotationValue(stepAnnotation);
-      if (annotationValue != null) {
-        final PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(element.getProject()).getConstantEvaluationHelper();
-        final Object constantValue = evaluationHelper.computeConstantExpression(annotationValue, false);
-        if (constantValue != null) {
-          String patternText = constantValue.toString();
-          if (patternText.length() > 1) {
-            return patternText.replace("\\\\", "\\").replace("\\\"", "\"");
-          }
-        }
+    if (!(element instanceof PsiMethod)) {
+      return null;
+    }
+    final PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation((PsiMethod)element, myAnnotationClassName);
+    if (stepAnnotation == null) {
+      return null;
+    }
+    final PsiElement annotationValue = CucumberJavaUtil.getAnnotationValue(stepAnnotation);
+    if (annotationValue == null) {
+      return null;
+    }
+    final PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(element.getProject()).getConstantEvaluationHelper();
+    final Object constantValue = evaluationHelper.computeConstantExpression(annotationValue, false);
+    if (constantValue != null) {
+      String patternText = constantValue.toString();
+      if (patternText.length() > 1) {
+        return patternText.replace("\\\\", "\\").replace("\\\"", "\"");
       }
     }
 

@@ -29,7 +29,7 @@ public class Flexmojos4ImporterTest extends FlexmojosImporterTestBase {
     // Flexmojos4 config generator can't run on IDEA's default Maven 3.3.9 because of https://issues.apache.org/jira/browse/MNG-5958
     final File maven3Home = MavenServerManager.getMavenHomeFile(MavenServerManager.BUNDLED_MAVEN_3); // 3.3.9
     // switch to Maven 3.0.5
-    getMavenGeneralSettings().setMavenHome(StringUtil.replace(maven3Home.getPath(), "maven3-server-impl", "maven30-server-impl"));
+    getMavenGeneralSettings().setMavenHome(StringUtil.replace(maven3Home.getPath(), "intellij.maven.server.m3.impl", "intellij.maven.server.m30.impl"));
   }
 
   @Override
