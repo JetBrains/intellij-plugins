@@ -41,6 +41,10 @@ public class CucumberJava8Extension extends AbstractCucumberJavaExtension {
     String[] keywords = new String[] {"Given", "And", "Then", "But", "When"};
     for (String method : keywords) {
       PsiSearchHelper.SERVICE.getInstance(module.getProject()).processElementsWithWord((element, offsetInElement) -> {
+        if (PsiTreeUtil.getParentOfType(element, PsiMethodCallExpression.class) == null) {
+          return true;
+        }
+
         final PsiElement parent = element.getParent();
         if (parent != null) {
           final PsiReference[] references = parent.getReferences();
