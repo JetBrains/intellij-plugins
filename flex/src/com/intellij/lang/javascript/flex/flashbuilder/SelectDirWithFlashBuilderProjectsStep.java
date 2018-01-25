@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.CommonBundle;
@@ -25,6 +38,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardStep {
   private JPanel myMainPanel;
@@ -123,8 +137,8 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
       if (isArchive) {
         myExtractPathComponent.setText(multiProjectArchive ? FlexBundle.message("folder.to.unzip.several.FB.projects")
                                                            : FlexBundle.message("folder.to.unzip.one.FB.project"));
-        final String extractPath = multiProjectArchive ? getWizardContext().getProject().getBaseDir().getPath()
-                                                       : getWizardContext().getProject().getBaseDir().getPath()
+        final String extractPath = multiProjectArchive ? getWizardContext().getProject().getBasePath()
+                                                       : getWizardContext().getProject().getBasePath()
                                                          + "/" + file.getNameWithoutExtension();
         myExtractPathComponent.getComponent().setText(FileUtil.toSystemDependentName(extractPath));
       }
@@ -192,7 +206,7 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
         final File dir = new File(getWizardContext().isCreatingNewProject()
                                   ? myProjectLocationComponent.getComponent().getText().trim()
                                   : myExtractPathComponent.getComponent().getText().trim());
-        if (dir.isDirectory() && dir.list().length > 0) {
+        if (dir.isDirectory() && Objects.requireNonNull(dir.list()).length > 0) {
           final String title = StringUtil.capitalizeWords(
             ProjectBundle.message("project.new.wizard.import.title", getWizardContext().getPresentationName()), true);
           if (Messages.YES !=
