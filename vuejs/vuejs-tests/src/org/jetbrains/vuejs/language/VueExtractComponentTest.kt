@@ -648,6 +648,411 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     )
   }
 
+  fun testExtractWithStyle() {
+    doExtractTest(
+"""
+<style scoped>
+    .example {
+        color: red;
+    }
+</style>
+<style>
+    .other {}
+</style>
+
+<template>
+    <caret><div class="example">hi</div>
+</template>
+
+<script>
+    export default {
+        name: "styled"
+    }
+</script>
+""",
+"""<template>
+    <new-component/>
+</template>
+
+<script>
+    import NewComponent from "./NewComponent";
+
+    export default {
+        name: "styled",
+        components: {NewComponent}
+    }
+</script>
+""",
+"""<template>
+    <div class="example">hi</div>
+</template>
+<script>
+    export default {
+        name: 'new-component'
+    }
+</script>
+<style scoped>
+    .example {
+        color: red;
+    }
+</style>
+"""
+    )
+  }
+
+  fun testExtractWithStylusStyle() {
+    doExtractTest(
+"""
+<template>
+  <transition>
+    <caret><svg class="spinner" :class="{ show: show }" v-show="show" width="44px" height="44px" viewBox="0 0 44 44">
+      <circle class="path" fill="none" stroke-width="4" stroke-linecap="round" cx="22" cy="22" r="20"></circle>
+    </svg>
+  </transition>
+</template>
+
+<script>
+    export default {
+        name: 'spinner',
+        props: ['show'],
+        serverCacheKey: props => props.show
+    }
+</script>
+
+<style lang="stylus">
+${'$'}offset = 126
+${'$'}duration = 1.4s
+
+.notUsed
+  transition opacity .15s ease
+
+.spinner
+  transition opacity .15s ease
+  animation rotator ${'$'}duration linear infinite
+  animation-play-state paused
+  &.show
+    animation-play-state running
+  &.v-enter, &.v-leave-active
+    opacity 0
+  &.v-enter-active, &.v-leave
+    opacity 1
+
+@keyframes rotator
+  0%
+    transform scale(0.5) rotate(0deg)
+  100%
+    transform scale(0.5) rotate(270deg)
+
+.spinner .path
+  stroke #ff6600
+  stroke-dasharray ${'$'}offset
+  stroke-dashoffset 0
+  transform-origin center
+  animation dash ${'$'}duration ease-in-out infinite
+
+@keyframes dash
+  0%
+    stroke-dashoffset ${'$'}offset
+  50%
+    stroke-dashoffset (${'$'}offset/2)
+    transform rotate(135deg)
+  100%
+    stroke-dashoffset ${'$'}offset
+    transform rotate(450deg)
+</style>
+""",
+"""
+<template>
+  <transition>
+      <new-component :show="show"/>
+  </transition>
+</template>
+
+<script>
+    import NewComponent from "./NewComponent";
+
+    export default {
+        name: 'spinner',
+        components: {NewComponent},
+        props: ['show'],
+        serverCacheKey: props => props.show
+    }
+</script>
+
+<style lang="stylus">
+${'$'}offset = 126
+${'$'}duration = 1.4s
+
+@keyframes rotator
+  0%
+    transform scale(0.5) rotate(0deg)
+  100%
+    transform scale(0.5) rotate(270deg)
+
+@keyframes dash
+  0%
+    stroke-dashoffset ${'$'}offset
+  50%
+    stroke-dashoffset (${'$'}offset/2)
+    transform rotate(135deg)
+  100%
+    stroke-dashoffset ${'$'}offset
+    transform rotate(450deg)
+</style>
+""",
+"""<template>
+    <svg class="spinner" :class="{ show: show }" v-show="show" width="44px" height="44px" viewBox="0 0 44 44">
+        <circle class="path" fill="none" stroke-width="4" stroke-linecap="round" cx="22" cy="22" r="20"></circle>
+    </svg>
+</template>
+<script>
+    export default {
+        name: 'new-component',
+        props: {
+            show: {}
+        }
+    }
+</script>
+<style lang="stylus">
+    ${'$'}offset = 126
+    ${'$'}duration = 1.4s
+
+    .spinner
+        transition opacity .15s ease
+        animation rotator ${'$'}duration linear infinite
+        animation-play-state paused
+
+    @keyframes rotator
+        0%
+            transform scale(0.5) rotate(0deg)
+        100%
+            transform scale(0.5) rotate(270deg)
+
+    .spinner .path
+        stroke #ff6600
+        stroke-dasharray ${'$'}offset
+        stroke-dashoffset 0
+        transform-origin center
+        animation dash ${'$'}duration ease-in-out infinite
+
+    @keyframes dash
+        0%
+            stroke-dashoffset ${'$'}offset
+        50%
+            stroke-dashoffset (${'$'}offset/ 2)
+            transform rotate(135deg)
+        100%
+            stroke-dashoffset ${'$'}offset
+            transform rotate(450deg)
+</style>""")
+  }
+
+  fun testExtractWithScss() {
+    doExtractTest(
+"""
+<template>
+    <caret><header class="">
+        <h1>TEXT <a class="t-btn" @click="showTools"><span></span></a></h1>
+    </header>
+</template>
+<script>
+    export default {
+        methods: {
+            showTools(){
+                this.${'$'}emit('tools');
+            }
+        }
+    }
+</script>
+
+<style lang="scss" rel="stylesheet/scss">
+    header{
+    	position:relative;
+        width:100%;
+        height:70px;
+        z-index:100;
+        h1{
+            position: relative;
+            width:100%;
+            max-width:800px;
+            margin:0 auto;
+            line-height: 70px;
+            text-align: center;
+            color: #fff;
+            a.t-btn{
+                position: absolute;
+                right:10px;
+                top:22px;
+                width:30px;
+                height:26px;
+                cursor: pointer;
+            }
+            span,span:before,span:after{
+                position: absolute;
+                left:0;
+                width:30px;
+                height:4px;
+                content: '';
+                background: #fff;
+            }
+            span{
+                top:11px;
+                &:before{
+                    top:0;
+                    transform: translateY(-7px);
+                    transition: all .3s;
+                }
+                &:after{
+                    transform: translateY(7px);
+                    transition: all .3s;
+                }
+            }
+        }
+    }
+</style>
+""",
+"""
+<template>
+    <new-component :show-tools="showTools"/>
+</template>
+<script>
+    import NewComponent from "./NewComponent";
+
+    export default {
+        components: {NewComponent},
+        methods: {
+            showTools(){
+                this.${'$'}emit('tools');
+            }
+        }
+    }
+</script>
+
+<style lang="scss" rel="stylesheet/scss">
+    header{
+    	position:relative;
+        width:100%;
+        height:70px;
+        z-index:100;
+        h1{
+            position: relative;
+            width:100%;
+            max-width:800px;
+            margin:0 auto;
+            line-height: 70px;
+            text-align: center;
+            color: #fff;
+            span,span:before,span:after{
+                position: absolute;
+                left:0;
+                width:30px;
+                height:4px;
+                content: '';
+                background: #fff;
+            }
+            span{
+                top:11px;
+                &:before{
+                    top:0;
+                    transform: translateY(-7px);
+                    transition: all .3s;
+                }
+                &:after{
+                    transform: translateY(7px);
+                    transition: all .3s;
+                }
+            }
+        }
+    }
+</style>
+""",
+"""<template>
+    <header class="">
+        <h1>TEXT <a class="t-btn" @click="showTools"><span></span></a></h1>
+    </header>
+</template>
+<script>
+    export default {
+        name: 'new-component',
+        props: {
+            showTools: {}
+        }
+    }
+</script>
+<style lang="scss" rel="stylesheet/scss">
+    header {
+        position: relative;
+        width: 100%;
+        height: 70px;
+        z-index: 100;
+        h1 {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 70px;
+            text-align: center;
+            color: #fff;
+            span, span:before, span:after {
+                position: absolute;
+                left: 0;
+                width: 30px;
+                height: 4px;
+                content: '';
+                background: #fff;
+            }
+            span {
+                top: 11px;
+                &:before {
+                    top: 0;
+                    transform: translateY(-7px);
+                    transition: all .3s;
+                }
+                &:after {
+                    transform: translateY(7px);
+                    transition: all .3s;
+                }
+            }
+        }
+    }
+</style>"""
+      )
+  }
+
+  fun testExtractSingleTagWithImportInStyle() = doExtractTest(
+    """<template>
+<selection><p>Paragraph!</p></selection>
+</template>
+<style lang="stylus">
+  @import './stylus/main'
+</style>""",
+
+"""<template>
+    <new-component/>
+</template>
+<style lang="stylus">
+  @import './stylus/main'
+</style>
+<script>
+    import NewComponent from "./NewComponent";
+
+    export default {
+        components: {NewComponent}
+    }
+</script>""",
+
+    """<template>
+    <p>Paragraph!</p>
+</template>
+<script>
+    export default {
+        name: 'new-component'
+    }
+</script>
+<style lang="stylus">
+    @import './stylus/main'
+</style>""")
+
   private fun doExtractTest(existing: String, modified: String, newText: String?, numTags: Int = 1,
                             newCompName: String = "new-component") {
     JSTestUtils.testES6<Exception>(project, {

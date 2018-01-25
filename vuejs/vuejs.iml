@@ -27,5 +27,7 @@
     <orderEntry type="module" module-name="xdebugger-api" />
     <orderEntry type="module" module-name="xml" />
     <orderEntry type="module" module-name="spellchecker" />
+    <orderEntry type="module" module-name="css-analysis-impl" />
+    <orderEntry type="module" module-name="css-api" />
   </component>
 </module>
