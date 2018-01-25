@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.intellij.javascript.flex.maven;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
@@ -36,7 +49,7 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
 
   public static String getCompilerConfigsDir(final Project project) {
     //noinspection ConstantConditions
-    return project.getBaseDir().getPath() + "/.idea/flexmojos";
+    return project.getBasePath() + "/.idea/flexmojos";
   }
 
   @Override
@@ -68,7 +81,7 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
 
     final List<RLMInfo> result = new ArrayList<>();
     //noinspection unchecked
-    for (final Element moduleElement : (Iterable<Element>)modulesElement.getChildren()) {
+    for (final Element moduleElement : modulesElement.getChildren()) {
       if (moduleElement.getChildren().size() > 0) {
         final String mainClassRelativePath = moduleElement.getChildTextNormalize("sourceFile", moduleElement.getNamespace());
         final String finalName = moduleElement.getChildTextNormalize("finalName", moduleElement.getNamespace());
