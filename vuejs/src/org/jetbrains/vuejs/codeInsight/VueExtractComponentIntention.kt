@@ -41,6 +41,13 @@ class VueExtractComponentIntention : JavaScriptIntention() {
 
   companion object {
     fun getContext(editor: Editor?, element: PsiElement): List<XmlTag>? {
+      val selectedTags = getSelectedTags(element, editor)
+      return if (selectedTags == null || selectedTags.any{ PsiTreeUtil.getParentOfType(it, XmlTag::class.java) == null }) return null
+      else selectedTags
+    }
+
+    private fun getSelectedTags(element: PsiElement,
+                                editor: Editor?): List<XmlTag>? {
       val file = element.containingFile
       if (file == null) return null
       if (editor == null || !editor.selectionModel.hasSelection()) {
