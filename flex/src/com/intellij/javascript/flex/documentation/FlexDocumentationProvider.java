@@ -5,6 +5,7 @@ import com.intellij.codeInsight.documentation.DocumentationManagerProtocol;
 import com.intellij.codeInsight.documentation.PlatformDocumentationUtil;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
+import com.intellij.lang.documentation.DocumentationMarkup;
 import com.intellij.lang.javascript.documentation.JSDocumentationBuilder;
 import com.intellij.lang.javascript.documentation.JSDocumentationProvider;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -119,7 +120,11 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
       }
       
       if (prev instanceof XmlComment) {
-        return doGetCommentTextFromComment((PsiComment)prev, originalElement);
+        final String textFromComment = doGetCommentTextFromComment((PsiComment)prev, originalElement);
+        return DocumentationMarkup.DEFINITION_START +
+               (_element instanceof PsiNamedElement ?  ((PsiNamedElement)_element).getName() : _element.getText()) +
+               DocumentationMarkup.DEFINITION_END +
+               textFromComment;
       }
     }
     
