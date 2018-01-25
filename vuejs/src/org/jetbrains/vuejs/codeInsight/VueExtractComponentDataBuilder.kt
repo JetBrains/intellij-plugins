@@ -109,7 +109,6 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
       val tagStart = tag.textRange.startOffset
       val replaces = refDataMap[tag]?.mapNotNull {
         if (mapHasDirectUsage.contains(it.getRefName())) return@mapNotNull null
-        (it.ref as PsiElement).textRange
         val absRange = it.getReplaceRange() ?: return@mapNotNull null
         Trinity(absRange.startOffset - tagStart, absRange.endOffset - tagStart, it.getRefName())
       }?.sortedByDescending { it.first }
