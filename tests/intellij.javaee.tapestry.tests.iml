@@ -24,7 +24,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="intellij.ideaUltimate.resources" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.resources" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.database.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.java.langInjection" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.xml.langInjection" scope="RUNTIME" />
