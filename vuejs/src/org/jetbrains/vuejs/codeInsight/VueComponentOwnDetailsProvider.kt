@@ -95,6 +95,6 @@ class VueComponentOwnDetailsProvider {
       }.map { VueAttributeDescriptor(it.name!!, it) }
 
     private fun readPropsFromArray(holder: PsiElement, filter: (String, PsiElement) -> Boolean): List<VueAttributeDescriptor> =
-      getStringLiteralsFromInitializerArray(holder, filter).map { VueAttributeDescriptor(it.value as String, it) }
+      getStringLiteralsFromInitializerArray(holder, filter).map { VueAttributeDescriptor(it.stringValue as String, it) }
   }
 }

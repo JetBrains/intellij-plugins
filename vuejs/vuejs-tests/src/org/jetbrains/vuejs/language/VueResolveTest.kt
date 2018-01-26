@@ -957,7 +957,7 @@ Vue.component('global-comp-literal', {
       val literal = reference!!.resolve()
       TestCase.assertNotNull(literal)
       TestCase.assertTrue(literal is JSLiteralExpression)
-      TestCase.assertEquals("oneTwo", (literal as JSLiteralExpression).value)
+      TestCase.assertEquals("oneTwo", (literal as JSLiteralExpression).stringValue)
       TestCase.assertTrue(literal.parent is JSArrayLiteralExpression)
     })
   }
@@ -985,7 +985,7 @@ const props = ['oneTwo']
       val literal = reference!!.resolve()
       TestCase.assertNotNull(literal)
       TestCase.assertTrue(literal is JSLiteralExpression)
-      TestCase.assertEquals("oneTwo", (literal as JSLiteralExpression).value)
+      TestCase.assertEquals("oneTwo", (literal as JSLiteralExpression).stringValue)
       TestCase.assertTrue(literal.parent is JSArrayLiteralExpression)
     })
   }
@@ -1022,7 +1022,7 @@ const props = ['oneTwo']
     val literal = reference!!.resolve()
     TestCase.assertNotNull(literal)
     TestCase.assertTrue(literal is JSLiteralExpression)
-    TestCase.assertEquals("seeMe", (literal as JSLiteralExpression).value)
+    TestCase.assertEquals("seeMe", (literal as JSLiteralExpression).stringValue)
     TestCase.assertEquals("compUI.vue", literal.containingFile.name)
     TestCase.assertTrue(literal.parent is JSArrayLiteralExpression)
   }
@@ -1193,7 +1193,7 @@ const props = {seeMe: {}}
         val literal = reference!!.resolve()
         TestCase.assertNotNull(literal)
         TestCase.assertTrue(literal is JSLiteralExpression)
-        TestCase.assertEquals(propName, (literal as JSLiteralExpression).value)
+        TestCase.assertEquals(propName, (literal as JSLiteralExpression).stringValue)
         TestCase.assertTrue(literal.parent.parent is JSProperty)
         TestCase.assertEquals("props", (literal.parent.parent as JSProperty).name)
         TestCase.assertEquals(file, literal.containingFile.name)
@@ -1354,7 +1354,7 @@ const props = {seeMe: {}}
     TestCase.assertNotNull(callExpression)
     // unstub for test
     TestCase.assertNotNull(callExpression!!.text)
-    TestCase.assertEquals("focus", ((callExpression as JSCallExpression).arguments[0] as JSLiteralExpression).value)
+    TestCase.assertEquals("focus", ((callExpression as JSCallExpression).arguments[0] as JSLiteralExpression).stringValue)
     TestCase.assertEquals("CustomDirectives.js", callExpression.containingFile.name)
   }
 
@@ -1382,7 +1382,7 @@ const props = {seeMe: {}}
       TestCase.assertEquals(fileName, property.containingFile.name)
     } else if (property is JSCallExpression) {
       TestCase.assertNotNull(property.text)
-      TestCase.assertEquals(directive, (property.arguments[0] as JSLiteralExpression).value)
+      TestCase.assertEquals(directive, (property.arguments[0] as JSLiteralExpression).stringValue)
       TestCase.assertEquals(fileName, property.containingFile.name)
     } else {
       TestCase.assertTrue(false)

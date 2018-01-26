@@ -79,7 +79,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
           tryProcessComponentInVue(obj, property, out)
         }
       } else if (((obj.parent as? JSProperty) == null) && isDescriptorOfLinkedInstanceDefinition(obj)) {
-        val binding = (obj.findProperty("el")?.value as? JSLiteralExpression)?.value as? String
+        val binding = (obj.findProperty("el")?.value as? JSLiteralExpression)?.stringValue
         out.addImplicitElement(createImplicitElement(binding ?: "", property, VueOptionsIndex.JS_KEY))
       }
     }
@@ -182,7 +182,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   private fun tryProcessComponentInVue(obj: JSObjectLiteralExpression, property: JSProperty,
                                        outData: JSElementIndexingData) {
-    val compName = (obj.findProperty("name")?.value as? JSLiteralExpression)?.value as? String
+    val compName = (obj.findProperty("name")?.value as? JSLiteralExpression)?.stringValue
                    ?: FileUtil.getNameWithoutExtension(obj.containingFile.name)
     outData.addImplicitElement(createImplicitElement(compName, property, VueComponentsIndex.JS_KEY))
   }

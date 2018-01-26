@@ -660,7 +660,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
   @Nullable
   static String unquote(PsiElement value) {
-    return (String)((JSLiteralExpression)value).getValue();
+    return ((JSLiteralExpression)value).getStringValue();
   }
 
   private static boolean bindingsProcessor(JSProperty property, JSElementIndexingData data) {

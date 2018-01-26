@@ -27,8 +27,6 @@ import com.intellij.xml.XmlAttributeDescriptor
 import com.intellij.xml.XmlElementDescriptor
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import com.intellij.xml.XmlTagNameProvider
-import com.intellij.xml.util.HtmlUtil
-import com.intellij.xml.util.XmlUtil
 import icons.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.getBoundName
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isNotInLibrary
@@ -103,7 +101,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     val nameProperty = component.findProperty("name")
     val nameValue = nameProperty?.value as? JSLiteralExpression
     if (nameValue != null && nameValue.isQuotedLiteral) {
-      val name = nameValue.value as? String
+      val name = nameValue.stringValue
       if (name != null) {
         processor.invoke(name, JSImplicitElementImpl(name, nameProperty))
       }

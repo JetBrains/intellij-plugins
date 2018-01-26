@@ -112,7 +112,7 @@ class VueComponentsCalculation {
 
         val property = descriptor.findProperty(parts[1])
         if (property != null) {
-          val alias = (property.value as? JSLiteralExpression)?.value as? String ?: ""
+          val alias = (property.value as? JSLiteralExpression)?.stringValue ?: ""
           val realName = if ("name" == parts[1]) alias else propStrVal(descriptor, "name") ?: alias
           return SingleGlobalRegistration(realName, alias, descriptor)
         }
@@ -123,13 +123,13 @@ class VueComponentsCalculation {
       if (resolved is JSVariable) resolved = resolved.initializerOrStub
       val strLiteral = resolved as? JSLiteralExpression
       if (strLiteral != null && strLiteral.isQuotedLiteral) {
-        return SingleGlobalRegistration(propStrVal(descriptor, "name") ?: "", strLiteral.value as? String ?: "", descriptor)
+        return SingleGlobalRegistration(propStrVal(descriptor, "name") ?: "", strLiteral.stringValue ?: "", descriptor)
       }
       return null
     }
 
     private fun propStrVal(descriptor: JSObjectLiteralExpression, name: String) : String? =
-      (descriptor.findProperty(name)?.value as? JSLiteralExpression)?.value as? String
+      (descriptor.findProperty(name)?.value as? JSLiteralExpression)?.stringValue
 
     private fun createLocalResolveScope(element: PsiElement): PsiElement =
       PsiTreeUtil.getContextOfType(element, JSCatchBlock::class.java, JSClass::class.java, JSExecutionScope::class.java)
