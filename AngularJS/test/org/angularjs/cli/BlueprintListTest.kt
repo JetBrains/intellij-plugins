@@ -10,18 +10,7 @@ import java.util.*
  */
 class BlueprintListTest : LightPlatformTestCase() {
   fun testList() {
-    val output = DEFAULT_OUTPUT
-    val blueprints = BlueprintParser().parse(output)
-    val requiredBlueprints = Arrays.asList("class", "component", "module", "service")
-    val existingBlueprints = ContainerUtil.filter(blueprints) { requiredBlueprints.contains(it.name) }
-    TestCase.assertEquals(requiredBlueprints.size, existingBlueprints.size)
-    TestCase.assertEquals(listOf("--flat", "--inline-template", "--inline-style", "--prefix", "--spec", "--view-encapsulation",
-                                 "--change-detection", "--skip-import", "--module", "--export", "--app"),
-                          existingBlueprints[1].args)
-
-    val blacklistedBlueprints = Arrays.asList("aliases:")
-    val nonBlueprints = ContainerUtil.filter(blueprints) { blacklistedBlueprints.contains(it.name) }
-    TestCase.assertEquals(0, nonBlueprints.size)
+    throw RuntimeException()
   }
 
   fun testNewList() {
