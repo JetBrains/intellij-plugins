@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package org.jetbrains.vuejs.language
 
 import com.intellij.lang.javascript.JSTestUtils
@@ -18,7 +31,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>""",
 
 """<template>
-    <new-component/>
+    <NewComponent/>
 </template>
 <script>
     import NewComponent from "./NewComponent";
@@ -33,7 +46,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     export default {
-        name: 'new-component'
+        name: 'NewComponent'
     }
 </script>""")
 
@@ -49,7 +62,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 """,
 
 """<template>
-    <new-component/>
+    <NewComponent/>
 </template>
 <script>
     import NewComponent from "./NewComponent";
@@ -66,7 +79,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     export default {
-        name: 'new-component'
+        name: 'NewComponent'
     }
 </script>""")
 
@@ -85,7 +98,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </script>""",
 
     """<template>
-    <new-component :one="one"/>
+    <NewComponent :one="one"/>
 </template>
 <script>
     import NewComponent from "./NewComponent";
@@ -105,7 +118,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     export default {
-        name: 'new-component',
+        name: 'NewComponent',
         props: {
             one: {}
         }
@@ -128,7 +141,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </script>""",
 
     """<template>
-    <new-component :comp-method="compMethod()" :one="one"/>
+    <NewComponent :comp-method="compMethod()" :one="one"/>
 </template>
 <script>
     import NewComponent from "./NewComponent";
@@ -149,7 +162,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     export default {
-        name: 'new-component',
+        name: 'NewComponent',
         props: {
             compMethod: {},
             one: {}
@@ -176,7 +189,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 """.trimMargin(),
 
 """<template>
-    <new-component :prop="prop"/>
+    <NewComponent :prop="prop"/>
 </template>
 <script>
     import NewComponent from "./NewComponent";
@@ -196,7 +209,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 <script>
     import OtherComp from './OtherComp'
     export default {
-        name: 'new-component',
+        name: 'NewComponent',
         components: {OtherComp},
         props: {
             prop: {}
@@ -225,7 +238,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 """.trimMargin(),
 
 """<template>
-    <new-component :prop="prop"/>
+    <NewComponent :prop="prop"/>
 </template>
 <script lang="ts">
     import NewComponent from "./NewComponent";
@@ -247,7 +260,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     import OtherComp from './OtherComp'
 
     export default {
-        name: 'new-component',
+        name: 'NewComponent',
         components: {OtherComp},
         props: {
             prop: {}
@@ -276,7 +289,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 
 """<template>
     <div v-for="item in items">
-        <new-component :item="item"/>
+        <NewComponent :item="item"/>
     </div>
 </template>
 
@@ -299,7 +312,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     export default {
-        name: 'new-component',
+        name: 'NewComponent',
         props: {
             item: {}
         }
@@ -327,7 +340,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 
 """<template lang ="pug">
     div(v-for="item in items")
-        new-component(:data1="data1" :item="item")
+        NewComponent(:data1="data1" :item="item")
 </template>
 
 <script>
@@ -350,7 +363,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     export default {
-        name: 'new-component',
+        name: 'NewComponent',
         props: {
             data1: {},
             item: {}
@@ -376,7 +389,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 """,
 
 """<template>
-    <new-component :one-more="oneMore"/>
+    <NewComponent :one-more="oneMore"/>
 </template>
 <script>
     import NewComponent from "./NewComponent";
@@ -398,7 +411,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     export default {
-        name: 'new-component',
+        name: 'NewComponent',
         props: {
             oneMore: {type: Function}
         }
@@ -420,7 +433,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 """,
 
 """<template>
-    <new-component :prop-with-camel="propWithCamel"/>
+    <NewComponent :prop-with-camel="propWithCamel"/>
 </template>
 <script>
     import NewComponent from "./NewComponent";
@@ -440,7 +453,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     export default {
-        name: 'new-component',
+        name: 'NewComponent',
         props: {
             propWithCamel: {}
         }
@@ -529,7 +542,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 ,
 """
 <template>
-    <new-component/>
+    <NewComponent/>
 </template>
 <script>
     import NewComponent from "./NewComponent";
@@ -549,7 +562,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 <script>
     import CoolStuck from './OtherName'
     export default {
-        name: 'new-component',
+        name: 'NewComponent',
         components: {CoolStuck}
     }
 </script>""")
@@ -575,7 +588,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
       ,
       """
 <template>
-    <new-component/>
+    <NewComponent/>
 </template>
 <script>
     import NewComponent from "./NewComponent";
@@ -595,7 +608,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 <script>
     import CoolStuck from './OtherName'
     export default {
-        name: 'new-component',
+        name: 'NewComponent',
         components: {CoolStuck}
     }
 </script>""")
@@ -619,7 +632,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 """,
 """
 <template>
-    <new-component :item="item"/>
+    <NewComponent :item="item"/>
 </template>
 <script>
     import NewComponent from "./NewComponent";
@@ -639,7 +652,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     export default {
-        name: 'new-component',
+        name: 'NewComponent',
         props: {
             item: {}
         }
@@ -671,7 +684,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </script>
 """,
 """<template>
-    <new-component/>
+    <NewComponent/>
 </template>
 
 <script>
@@ -688,7 +701,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     export default {
-        name: 'new-component'
+        name: 'NewComponent'
     }
 </script>
 <style scoped>
@@ -764,7 +777,7 @@ ${'$'}duration = 1.4s
 """
 <template>
   <transition>
-      <new-component :show="show"/>
+      <NewComponent :show="show"/>
   </transition>
 </template>
 
@@ -807,7 +820,7 @@ ${'$'}duration = 1.4s
 </template>
 <script>
     export default {
-        name: 'new-component',
+        name: 'NewComponent',
         props: {
             show: {}
         }
@@ -913,7 +926,7 @@ ${'$'}duration = 1.4s
 """,
 """
 <template>
-    <new-component :show-tools="showTools"/>
+    <NewComponent :show-tools="showTools"/>
 </template>
 <script>
     import NewComponent from "./NewComponent";
@@ -973,7 +986,7 @@ ${'$'}duration = 1.4s
 </template>
 <script>
     export default {
-        name: 'new-component',
+        name: 'NewComponent',
         props: {
             showTools: {}
         }
@@ -1028,7 +1041,7 @@ ${'$'}duration = 1.4s
 </style>""",
 
 """<template>
-    <new-component/>
+    <NewComponent/>
 </template>
 <style lang="stylus">
   @import './stylus/main'
@@ -1046,7 +1059,7 @@ ${'$'}duration = 1.4s
 </template>
 <script>
     export default {
-        name: 'new-component'
+        name: 'NewComponent'
     }
 </script>
 <style lang="stylus">
@@ -1054,7 +1067,7 @@ ${'$'}duration = 1.4s
 </style>""")
 
   private fun doExtractTest(existing: String, modified: String, newText: String?, numTags: Int = 1,
-                            newCompName: String = "new-component") {
+                            newCompName: String = "NewComponent") {
     JSTestUtils.testES6<Exception>(project, {
       myFixture.configureByText(getTestName(false) + ".vue", existing)
 
