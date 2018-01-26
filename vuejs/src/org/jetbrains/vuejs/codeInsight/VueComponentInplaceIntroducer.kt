@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
@@ -85,7 +98,7 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
 
   override fun performInplaceRefactoring(nameSuggestions: LinkedHashSet<String>?): Boolean {
     nameIdentifier ?: return false
-    myEditor!!.caretModel.moveToOffset(nameIdentifier!!.textRange.endOffset - 1)
+    myEditor!!.caretModel.moveToOffset(nameIdentifier!!.textRange.endOffset)
     return super.performInplaceRefactoring(nameSuggestions)
   }
 
@@ -139,7 +152,7 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
             reformatElement(myElementToRename)
           }
 
-          positionOldEditor(myEditor, myElementToRename)
+          positionOldEditor()
           if (newPsiFile != null) {
             FileEditorManager.getInstance(myProject).openFile(newPsiFile!!.viewProvider.virtualFile, true)
           }
@@ -214,11 +227,14 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
     listPopup.showInBestPositionFor(myEditor)
   }
 
-  private fun positionOldEditor(editor: Editor?, newlyAdded: PsiElement?) {
-    if (editor != null) {
-      editor.caretModel.moveToOffset(newlyAdded!!.textRange.startOffset)
-      editor.selectionModel.setSelection(0, 0)
-      editor.scrollingModel.scrollToCaret(ScrollType.RELATIVE)
+  private fun positionOldEditor() {
+    if (myEditor != null) {
+      val tag = findTagBeingRenamed()
+      if (tag != null) {
+        myEditor.caretModel.moveToOffset(tag.textRange.startOffset)
+      }
+      myEditor.selectionModel.setSelection(0, 0)
+      myEditor.scrollingModel.scrollToCaret(ScrollType.RELATIVE)
     }
   }
 }
