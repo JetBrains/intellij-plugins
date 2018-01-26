@@ -422,6 +422,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     doTest(getTestName(false), "as");
   }
 
+  @Bombed(month = Calendar.JANUARY, day = 29, user = "denofevil", description = BombReason.MULTI_DOC)
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testClassInheritDoc2() {
     String testName = getTestName(false);
