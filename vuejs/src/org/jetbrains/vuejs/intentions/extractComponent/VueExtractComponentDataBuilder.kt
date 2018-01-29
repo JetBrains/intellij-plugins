@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.jetbrains.vuejs.codeInsight
+package org.jetbrains.vuejs.intentions.extractComponent
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
@@ -40,6 +40,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.VueFileType
+import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.language.VueJSLanguage
 
 class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
@@ -85,7 +86,10 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
     val foundImport = declarations.firstOrNull { declaration ->
       val importDeclaration = declaration as ES6ImportDeclaration
       val byName = importDeclaration.importedBindings.firstOrNull { !it.isNamespaceImport && it.name != null &&
-                                                                    fromAsset(ref.nameElement.text) == fromAsset(it.name!!)}
+                                                                    fromAsset(
+                                                                      ref.nameElement.text) == fromAsset(
+        it.name!!)
+      }
       return@firstOrNull byName != null
     } as? ES6ImportDeclaration ?: return
 
@@ -116,7 +120,9 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
   }
 
   private fun addElementReferences(element: PsiElement, tag: XmlTag, offset: Int): List<RefData> {
-    return element.references.filter { it != null && (it as? PsiElement)?.parent !is PsiReference }.map { RefData(it, tag, offset) }
+    return element.references.filter { it != null && (it as? PsiElement)?.parent !is PsiReference }.map {
+      RefData(it, tag, offset)
+    }
   }
 
   private fun generateNewTemplateContents(mapHasDirectUsage: MutableSet<String>): String {

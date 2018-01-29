@@ -1,9 +1,21 @@
-package org.jetbrains.vuejs.codeInsight
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+package org.jetbrains.vuejs.intentions.extractComponent
 
 import com.intellij.lang.javascript.intentions.JavaScriptIntention
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
@@ -25,15 +37,15 @@ class VueExtractComponentIntention : JavaScriptIntention() {
   }
 
   override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
-    if (!Registry.`is`("vue.extract.component.intention", false)) return false
     editor ?: return false
     if (VueFileType.INSTANCE != element.containingFile?.fileType) return false
-    return Companion.getContext(editor, element) != null
+    return getContext(editor, element) != null
   }
 
   override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
     editor ?: return
-    val context = Companion.getContext(editor, element) ?: return
+    val context = getContext(editor, element)
+                  ?: return
     VueExtractComponentRefactoring(project, context, editor).perform()
   }
 
@@ -41,7 +53,8 @@ class VueExtractComponentIntention : JavaScriptIntention() {
 
   companion object {
     fun getContext(editor: Editor?, element: PsiElement): List<XmlTag>? {
-      val selectedTags = getSelectedTags(element, editor)
+      val selectedTags = getSelectedTags(element,
+                                                                                                                                editor)
       return if (selectedTags == null || selectedTags.any{ PsiTreeUtil.getParentOfType(it, XmlTag::class.java) == null }) return null
       else selectedTags
     }

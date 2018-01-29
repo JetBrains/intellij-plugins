@@ -45,7 +45,7 @@
                      enabledByDefault="true" level="WARNING"
                      implementationClass="org.jetbrains.vuejs.inspections.DuplicateTagInspection"/>
     <intentionAction>
-      <className>org.jetbrains.vuejs.codeInsight.VueExtractComponentIntention</className>
+      <className>org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentIntention</className>
       <category>VueJS</category>
     </intentionAction>
 

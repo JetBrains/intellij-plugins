@@ -20,8 +20,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
-import org.jetbrains.vuejs.codeInsight.VueExtractComponentIntention
-import org.jetbrains.vuejs.codeInsight.VueExtractComponentRefactoring
+import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentIntention
+import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentRefactoring
 
 /**
  * @author Irina.Chernushina on 12/19/2017.
@@ -1078,7 +1078,8 @@ ${'$'}duration = 1.4s
         TestCase.assertNotNull(context)
         TestCase.assertEquals(numTags, context!!.size)
 
-        VueExtractComponentRefactoring(myFixture.project, context, myFixture.editor).perform(newCompName)
+        VueExtractComponentRefactoring(myFixture.project, context,
+                                                                                       myFixture.editor).perform(newCompName)
 
         myFixture.checkResult(modified)
 

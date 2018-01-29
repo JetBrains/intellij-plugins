@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.jetbrains.vuejs.codeInsight
+package org.jetbrains.vuejs.intentions.extractComponent
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.application.WriteAction
@@ -26,7 +26,10 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.PathUtilRt
 import com.intellij.xml.DefaultXmlExtension
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.codeInsight.VueComponentInplaceIntroducer.Companion.GROUP_ID
+import org.jetbrains.vuejs.codeInsight.VueTagProvider
+import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.intentions.extractComponent.VueComponentInplaceIntroducer.Companion.GROUP_ID
 
 /**
  * @author Irina.Chernushina on 12/14/2017.
@@ -55,7 +58,9 @@ class VueExtractComponentRefactoring(private val project: Project,
         startMarkAction!!.isGlobal = true
         newlyAdded = data.replaceWithNewTag(defaultName ?: "NewComponent") as? XmlTag
       }
-      VueComponentInplaceIntroducer(newlyAdded!!, editor, data, oldText, validator::validate, startMarkAction!!).performInplaceRefactoring(linkedSetOf())
+      VueComponentInplaceIntroducer(newlyAdded!!, editor, data, oldText,
+                                                                                    validator::validate,
+                                                                                    startMarkAction!!).performInplaceRefactoring(linkedSetOf())
 
     }, refactoringName, GROUP_ID)
   }

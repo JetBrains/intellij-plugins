@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.jetbrains.vuejs.codeInsight
+package org.jetbrains.vuejs.intentions.extractComponent
 
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.openapi.application.ApplicationManager
@@ -175,7 +175,8 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
                     onYes = {
                       hijackCommand()
                       commandProcessor.executeCommand(myProject, {
-                        VueComponentInplaceIntroducer(tag, myEditor, data, oldText, validator, startMarkAction)
+                        VueComponentInplaceIntroducer(tag, myEditor, data, oldText,
+                                                                                                      validator, startMarkAction)
                           .performInplaceRefactoring(linkedSetOf())
                       }, commandName, getGroupId())
                     },
