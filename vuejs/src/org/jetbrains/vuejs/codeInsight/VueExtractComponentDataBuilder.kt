@@ -31,6 +31,7 @@ import com.intellij.openapi.util.Trinity
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.css.CssSelectorSuffix
 import com.intellij.psi.css.impl.CssElementTypes
 import com.intellij.psi.css.inspections.CssUnusedSymbolUtils.getUnusedStyles
@@ -176,7 +177,7 @@ export default {
 </script>${copyStyles()}"""
 
     newText = psiOperationOnText(newText, { optimizeAndRemoveEmptyStyles(it) })
-    newText = psiOperationOnText(newText, { VueInsertHandler.reformatElement(it) })
+    newText = psiOperationOnText(newText, { CodeStyleManager.getInstance(containingFile.project).reformatText(it, 0, it.textRange.endOffset) })
 
     return newText
   }

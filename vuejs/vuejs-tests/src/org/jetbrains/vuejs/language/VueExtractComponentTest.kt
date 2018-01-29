@@ -13,7 +13,9 @@
 // limitations under the License.
 package org.jetbrains.vuejs.language
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
@@ -35,7 +37,6 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     import NewComponent from "./NewComponent";
-
     export default {
         components: {NewComponent}
     }
@@ -66,7 +67,6 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     import NewComponent from "./NewComponent";
-
     export default {
         name: 'Hello',
         components: {NewComponent}
@@ -102,7 +102,6 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     import NewComponent from "./NewComponent";
-
     export default {
         name: 'existing',
         components: {NewComponent},
@@ -145,7 +144,6 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     import NewComponent from "./NewComponent";
-
     export default {
         components: {NewComponent},
         props: {
@@ -193,7 +191,6 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     import NewComponent from "./NewComponent";
-
     export default {
         name: 'current-comp',
         components: {NewComponent},
@@ -295,7 +292,6 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 
 <script>
     import NewComponent from "./NewComponent";
-
     export default {
         name: "test-v-for",
         components: {NewComponent},
@@ -345,7 +341,6 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 
 <script>
     import NewComponent from "./NewComponent";
-
     export default {
         name: "test-v-for",
         components: {NewComponent},
@@ -393,7 +388,6 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     import NewComponent from "./NewComponent";
-
     export default {
         components: {NewComponent},
         methods: {
@@ -437,7 +431,6 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     import NewComponent from "./NewComponent";
-
     export default {
         components: {NewComponent},
         props: {
@@ -546,7 +539,6 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     import NewComponent from "./NewComponent";
-
     export default {
       components: {NewComponent}
     }
@@ -592,7 +584,6 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     import NewComponent from "./NewComponent";
-
     export default {
       components: {NewComponent}
     }
@@ -636,7 +627,6 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </template>
 <script>
     import NewComponent from "./NewComponent";
-
     export default {
         components: {NewComponent},
         props: { item: {} }
@@ -693,7 +683,6 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 
 <script>
     import NewComponent from "./NewComponent";
-
     export default {
         name: "styled",
         components: {NewComponent}
@@ -787,7 +776,6 @@ ${'$'}duration = 1.4s
 
 <script>
     import NewComponent from "./NewComponent";
-
     export default {
         name: 'spinner',
         components: {NewComponent},
@@ -937,7 +925,6 @@ ${'$'}duration = 1.4s
 </template>
 <script>
     import NewComponent from "./NewComponent";
-
     export default {
         components: {NewComponent},
         methods: {
@@ -1055,7 +1042,6 @@ ${'$'}duration = 1.4s
 </style>
 <script>
     import NewComponent from "./NewComponent";
-
     export default {
         components: {NewComponent}
     }
@@ -1076,24 +1062,36 @@ ${'$'}duration = 1.4s
   private fun doExtractTest(existing: String, modified: String, newText: String?, numTags: Int = 1,
                             newCompName: String = "NewComponent") {
     JSTestUtils.testES6<Exception>(project, {
-      myFixture.configureByText(getTestName(false) + ".vue", existing)
+      val currentSettings = CodeStyle.getSettings(myFixture.project).getCommonSettings(JavascriptLanguage.INSTANCE)
+      val before = currentSettings.BLANK_LINES_BEFORE_IMPORTS
+      val after = currentSettings.BLANK_LINES_AFTER_IMPORTS
 
-      val element = myFixture.file.findElementAt(myFixture.editor.caretModel.currentCaret.offset)
-      TestCase.assertNotNull(element)
-      val context = VueExtractComponentIntention.getContext(myFixture.editor, element!!)
-      TestCase.assertNotNull(context)
-      TestCase.assertEquals(numTags, context!!.size)
+      try {
+        currentSettings.BLANK_LINES_BEFORE_IMPORTS = 0
+        currentSettings.BLANK_LINES_AFTER_IMPORTS = 0
 
-      VueExtractComponentRefactoring(myFixture.project, context, myFixture.editor).perform(newCompName)
+        myFixture.configureByText(getTestName(false) + ".vue", existing)
 
-      myFixture.checkResult(modified)
+        val element = myFixture.file.findElementAt(myFixture.editor.caretModel.currentCaret.offset)
+        TestCase.assertNotNull(element)
+        val context = VueExtractComponentIntention.getContext(myFixture.editor, element!!)
+        TestCase.assertNotNull(context)
+        TestCase.assertEquals(numTags, context!!.size)
 
-      if (newText != null) {
-        FileDocumentManager.getInstance().saveAllDocuments()
-        val created = myFixture.file.parent!!.findFile("NewComponent.vue")
-        TestCase.assertNotNull(created)
-        myFixture.configureByText("NewComponent2.vue", VfsUtil.loadText(created!!.viewProvider.virtualFile))
-        myFixture.checkResult(newText)
+        VueExtractComponentRefactoring(myFixture.project, context, myFixture.editor).perform(newCompName)
+
+        myFixture.checkResult(modified)
+
+        if (newText != null) {
+          FileDocumentManager.getInstance().saveAllDocuments()
+          val created = myFixture.file.parent!!.findFile("NewComponent.vue")
+          TestCase.assertNotNull(created)
+          myFixture.configureByText("NewComponent2.vue", VfsUtil.loadText(created!!.viewProvider.virtualFile))
+          myFixture.checkResult(newText)
+        }
+      } finally {
+        currentSettings.BLANK_LINES_BEFORE_IMPORTS = before
+        currentSettings.BLANK_LINES_AFTER_IMPORTS = after
       }
     })
   }
