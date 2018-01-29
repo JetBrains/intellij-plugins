@@ -683,7 +683,11 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     }
 </script>
 """,
-"""<template>
+"""<style>
+    .other {}
+</style>
+
+<template>
     <NewComponent/>
 </template>
 
@@ -795,6 +799,9 @@ ${'$'}duration = 1.4s
 <style lang="stylus">
 ${'$'}offset = 126
 ${'$'}duration = 1.4s
+
+.notUsed
+  transition opacity .15s ease
 
 @keyframes rotator
   0%

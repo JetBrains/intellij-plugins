@@ -31,8 +31,10 @@ import com.intellij.openapi.util.Trinity
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
+import com.intellij.psi.css.CssSelectorSuffix
 import com.intellij.psi.css.impl.CssElementTypes
-import com.intellij.psi.css.inspections.CssUnusedSymbolUtils.optimizeStyles
+import com.intellij.psi.css.inspections.CssUnusedSymbolUtils.getUnusedStyles
+import com.intellij.psi.css.inspections.RemoveUnusedSymbolIntentionAction
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
@@ -45,6 +47,7 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
   private val scriptLanguage = detectLanguage(scriptTag)
   private val templateLanguage = detectLanguage(findTemplate())
   private val styleTags = findStyles(containingFile)
+  private var unusedStylesInExistingComponent: List<CssSelectorSuffix> = emptyList()
 
   private val importsToCopy: MutableMap<String, ES6ImportDeclaration> = mutableMapOf()
   private val refDataMap: MutableMap<XmlTag, MutableList<RefData>> = calculateProps()
@@ -196,7 +199,9 @@ export default {
   }
 
   private fun optimizeAndRemoveEmptyStyles(file: PsiFile) {
-    optimizeStyles(file)
+    val currentlyUnused = getUnusedStyles(file)
+    currentlyUnused.removeAll(unusedStylesInExistingComponent)
+    currentlyUnused.forEach { suffix -> RemoveUnusedSymbolIntentionAction.removeUnused(file.project, suffix, false) }
     val toDelete = findStyles(file).filter { styleTag ->
       styleTag.isValid &&
       PsiTreeUtil.processElements(styleTag, { !(CssElementTypes.CSS_RULESET_LIST == it.node.elementType && hasMeaningfulChildren(it)) })
@@ -232,6 +237,8 @@ export default {
   }
 
   fun replaceWithNewTag(replaceName: String): PsiElement {
+    unusedStylesInExistingComponent = getUnusedStyles(containingFile)
+
     val leader = list[0]
     val newTagName = toAsset(replaceName).capitalize() // Pascal case
     val replaceText = if (templateLanguage in setOf("pug", "jade"))
