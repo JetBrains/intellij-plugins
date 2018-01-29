@@ -1,17 +1,34 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package org.jetbrains.vuejs.language.parser
 
 import com.intellij.javascript.HtmlInlineJSScriptTokenTypesProvider
+import com.intellij.javascript.JSScriptContentProvider
 import com.intellij.lang.LanguageHtmlInlineScriptTokenTypesProvider
 import com.intellij.lang.LanguageHtmlScriptContentProvider
 import com.intellij.lang.LanguageParserDefinitions
 import com.intellij.lang.MetaLanguage
 import com.intellij.lang.ecmascript6.ES6ScriptContentProvider
+import com.intellij.lang.javascript.JSSyntaxHighlighterFactory
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.dialects.ECMA6SyntaxHighlighterFactory
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
+import com.intellij.lang.javascript.dialects.TypeScriptJSXSyntaxHighlighterFactory
 import com.intellij.lang.javascript.dialects.TypeScriptSyntaxHighlighterFactory
 import com.intellij.lang.typescript.TypeScriptContentProvider
+import com.intellij.lang.typescript.TypeScriptJsxContentProvider
 import com.intellij.lexer.EmbeddedTokenTypesProvider
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.extensions.ExtensionPoint
@@ -84,11 +101,19 @@ open class VueLexerTest : LexerTestCase() {
   }
 
   fun registerScriptTokens() {
+    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavascriptLanguage.INSTANCE, JSScriptContentProvider())
+    addExplicitExtension(SyntaxHighlighterFactory.LANGUAGE_FACTORY, JavascriptLanguage.INSTANCE, JSSyntaxHighlighterFactory())
+
     addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavaScriptSupportLoader.ECMA_SCRIPT_6, ES6ScriptContentProvider())
     addExplicitExtension(SyntaxHighlighterFactory.LANGUAGE_FACTORY, JavaScriptSupportLoader.ECMA_SCRIPT_6, ECMA6SyntaxHighlighterFactory())
 
     addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavaScriptSupportLoader.TYPESCRIPT, TypeScriptContentProvider())
     addExplicitExtension(SyntaxHighlighterFactory.LANGUAGE_FACTORY, JavaScriptSupportLoader.TYPESCRIPT, TypeScriptSyntaxHighlighterFactory())
+
+    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavaScriptSupportLoader.TYPESCRIPT_JSX,
+                         TypeScriptJsxContentProvider())
+    addExplicitExtension(SyntaxHighlighterFactory.LANGUAGE_FACTORY, JavaScriptSupportLoader.TYPESCRIPT_JSX,
+                         TypeScriptJSXSyntaxHighlighterFactory())
 
     addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JadeLanguage.INSTANCE, JadeScriptContentProvider())
   }
@@ -112,6 +137,7 @@ open class VueLexerTest : LexerTestCase() {
   fun testVFor() = doFileTest("vue")
   fun testLangTag() = doFileTest("vue")
   fun testAttributeValuesEmbedded() = doFileTest("vue")
+  fun testTsxLang() = doFileTest("vue")
 
   override fun createLexer(): Lexer = org.jetbrains.vuejs.language.VueLexer(JSLanguageLevel.ES6)
   override fun getDirPath() = "/contrib/vuejs/vuejs-tests/testData/lexer"
