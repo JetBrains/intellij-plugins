@@ -684,6 +684,8 @@ Vue.component('global-comp-literal', {
 """
 <template>
   <test-empty-tags/>
+  <test-empty-tags></test-empty-tags>
+
   <warning descr="Empty tag doesn't work in some browsers"><div/></warning>
   <warning descr="Empty tag doesn't work in some browsers"><h1/></warning>
   <img src="aaa.jpg"/>
