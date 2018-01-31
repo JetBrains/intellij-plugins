@@ -176,7 +176,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
                                JSReferenceExpression referenceExpression,
                                boolean staticContext,
                                PsiFile file,
-                               PsiElement anchorParent) {
+                               PsiElement anchorParent, PsiElement originalElement) {
     if (constructorShouldBePublic()) {
       template.addTextSegment("public ");
     }

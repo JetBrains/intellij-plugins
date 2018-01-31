@@ -80,7 +80,7 @@ public class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory 
 
         JSClass directive = AngularJS2IndexingHandler.findDirectiveClass(referenceExpression);
         if (directive != null) {
-          quickFixes.add(new CreateJSVariableIntentionAction(referenceExpression.getReferencedName(), true, false) {
+          quickFixes.add(new CreateJSVariableIntentionAction(referenceExpression.getReferencedName(), true, false, null) {
             @Override
             protected void applyFix(Project project, PsiElement psiElement, PsiFile file, Editor editor) {
               JSClass directive = AngularJS2IndexingHandler.findDirectiveClass(psiElement);

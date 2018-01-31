@@ -11,7 +11,7 @@ public class CreateFieldByMxmlAttributeFix extends CreateJSVariableIntentionActi
   private final String myAttributeValue;
 
   public CreateFieldByMxmlAttributeFix(final String referencedName, final String attributeValue) {
-    super(referencedName, true, false);
+    super(referencedName, true, false, null);
     myAttributeValue = attributeValue;
   }
 
@@ -20,7 +20,7 @@ public class CreateFieldByMxmlAttributeFix extends CreateJSVariableIntentionActi
                                final JSReferenceExpression referenceExpression,
                                final boolean staticContext,
                                final PsiFile file,
-                               final PsiElement anchorParent) {
+                               final PsiElement anchorParent, PsiElement originalElement) {
     template.addTextSegment("public ");
     template.addTextSegment(VAR_STATEMENT_START);
     template.addTextSegment(myReferencedName);
