@@ -187,9 +187,9 @@ public class HbTypedHandler extends TypedHandlerDelegate {
     }
 
     PsiElement elementAtCaret = provider.findElementAt(offset - 1, HbLanguage.class);
-    PsiElement closeOrSimpleInverseParent = PsiTreeUtil.findFirstParent(elementAtCaret, true, element -> element != null
-                                                                                                     && (element instanceof HbSimpleInverse
-               || element instanceof HbCloseBlockMustache));
+    PsiElement closeOrSimpleInverseParent = PsiTreeUtil.findFirstParent(elementAtCaret, true, element -> (element instanceof HbSimpleInverse
+                                                                                                          ||
+                                                                                                          element instanceof HbCloseBlockMustache));
 
     // run the formatter if the user just completed typing a SIMPLE_INVERSE or a CLOSE_BLOCK_STACHE
     if (closeOrSimpleInverseParent != null) {

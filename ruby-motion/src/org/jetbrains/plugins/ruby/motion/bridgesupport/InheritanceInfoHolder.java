@@ -38,31 +38,27 @@ public class InheritanceInfoHolder {
   }
 
   public InheritanceInfoHolder() {
-    final String path = RubyUtil.getScriptFullPath("rb/motion");
-    final File file = new File(path);
-    if (file.exists() && file.isDirectory()) {
-      for (File child : file.listFiles()) {
-        final String name = child.getName();
-        if (name.endsWith(".yaml") && name.startsWith("inheritance.")) {
+    //noinspection ConstantConditions
+    for (File child : FrameworkDependencyResolver.getScriptsDir().listFiles()) {
+      final String name = child.getName();
+      if (name.endsWith(".yaml") && name.startsWith("inheritance.")) {
+        try {
+          final FileInputStream is = new FileInputStream(child);
           try {
-            final FileInputStream is = new FileInputStream(child);
-            try {
-              final Map map = RubyUtil.loadYaml(is);
-              final Map<String, String> result = new HashMap<>();
-              for (Object key : map.keySet()) {
-                result.put(key.toString(), map.get(key).toString());
-              }
-              myInheritanceInfo.put(name.replaceAll("inheritance.", "").replaceAll(".yaml", ""), result);
-            } finally {
-              is.close();
+            final Map map = RubyUtil.loadYaml(is);
+            final Map<String, String> result = new HashMap<>();
+            for (Object key : map.keySet()) {
+              result.put(key.toString(), map.get(key).toString());
             }
-          } catch (IOException e) {
-            LOG.error(e);
+            myInheritanceInfo.put(name.replaceAll("inheritance.", "").replaceAll(".yaml", ""), result);
+          } finally {
+            is.close();
           }
+        } catch (IOException e) {
+          LOG.error(e);
         }
       }
     }
-
   }
 
   @Nullable

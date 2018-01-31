@@ -72,7 +72,7 @@ public class FlexUnitHighlightingTest extends ActionScriptDaemonAnalyzerTestCase
         fail(e.getMessage());
       }
     }
-    return tools.toArray(new LocalInspectionTool[tools.size()]);
+    return tools.toArray(LocalInspectionTool.EMPTY_ARRAY);
   }
 
   @Override

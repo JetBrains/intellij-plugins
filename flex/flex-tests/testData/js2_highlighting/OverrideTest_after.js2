@@ -5,6 +5,6 @@ class ClassA {
 class ClassB extends ClassA {
 
     override function bar() {
-        return super.bar();
+        super.bar();
     }
 }

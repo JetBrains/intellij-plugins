@@ -27,7 +27,6 @@ import com.intellij.util.ObjectUtils;
 import cucumber.runtime.snippets.CamelCaseConcatenator;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.SnippetGenerator;
-import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Step;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.AbstractStepDefinitionCreator;

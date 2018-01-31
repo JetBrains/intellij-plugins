@@ -29,6 +29,6 @@ class ClassB implements IA, IB {
     }
 
     public function get baz():Param {
-        return null;
+        return undefined;
     }
 }

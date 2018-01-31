@@ -14,7 +14,7 @@ class DelegateMethods {
      }
 
      public function zzz() {
-         return foobar.zzz();
+         foobar.zzz();
      }
 
     public function get prop1():EventDispatcher {

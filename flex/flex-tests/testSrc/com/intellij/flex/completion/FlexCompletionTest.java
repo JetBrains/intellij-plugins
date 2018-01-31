@@ -111,6 +111,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     return JSTestUtils.getTestMethod(getClass(), getTestName(false)).getAnnotation(NeedsJavaModule.class) != null;
   }
 
+  @Override
   protected void setUpJdk() {
     if (!needsJavaModule()) {
       FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());

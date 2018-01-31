@@ -51,6 +51,6 @@ public class FindUsersAction extends ActionGroup {
   @Override
   @NotNull
   public AnAction[] getChildren(AnActionEvent e) {
-    return myActions.toArray(new AnAction[myActions.size()]);
+    return myActions.toArray(AnAction.EMPTY_ARRAY);
   }
 }

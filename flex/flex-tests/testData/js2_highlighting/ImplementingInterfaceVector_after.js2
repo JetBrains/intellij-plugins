@@ -3,7 +3,7 @@ import foo.IDummy;
 class Dummy implements IDummy {
 
     public function abc(p:Vector.<String>):Vector.<foo.IDummy> {
-        return null;
+        return undefined;
     }
 }
 }

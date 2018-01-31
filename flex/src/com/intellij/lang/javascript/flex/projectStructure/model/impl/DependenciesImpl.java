@@ -51,7 +51,7 @@ class DependenciesImpl implements ModifiableDependencies {
 
   @Override
   public DependencyEntry[] getEntries() {
-    return myEntries.toArray(new DependencyEntry[myEntries.size()]);
+    return myEntries.toArray(new DependencyEntry[0]);
   }
 
   @Override
@@ -139,7 +139,7 @@ class DependenciesImpl implements ModifiableDependencies {
     state.TARGET_PLAYER = myTargetPlayer;
     state.COMPONENT_SET = myComponentSet;
     state.FRAMEWORK_LINKAGE = myFrameworkLinkage.getSerializedText();
-    state.ENTRIES = ContainerUtil.mapNotNull(myEntries.toArray(new ModifiableDependencyEntry[myEntries.size()]),
+    state.ENTRIES = ContainerUtil.mapNotNull(myEntries.toArray(new ModifiableDependencyEntry[0]),
                                              entry -> {
                                                if (entry instanceof StatefulDependencyEntry) {
                                                  return ((StatefulDependencyEntry)entry).getState();

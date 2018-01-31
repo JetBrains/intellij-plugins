@@ -198,7 +198,7 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
 
   private static class DartLibraryScope extends LibraryScopeBase {
     public DartLibraryScope(@NotNull final Project project, @NotNull final Set<VirtualFile> roots) {
-      super(project, roots.toArray(new VirtualFile[roots.size()]), VirtualFile.EMPTY_ARRAY);
+      super(project, roots.toArray(VirtualFile.EMPTY_ARRAY), VirtualFile.EMPTY_ARRAY);
     }
   }
 }

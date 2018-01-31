@@ -254,7 +254,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   public User[] findUsers(ProgressIndicator progressIndicator) {
     myUserMonitorThread.findNow(progressIndicator);
 
-    return myOnlineUsers.toArray(new User[myOnlineUsers.size()]);
+    return myOnlineUsers.toArray(new User[0]);
   }
 
   @Override

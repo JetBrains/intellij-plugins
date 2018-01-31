@@ -93,6 +93,6 @@ public abstract class BaseLocalMessage implements LocalMessage {
         result.add(messagesWindow);
       }
     }
-    return result.toArray(new IDEtalkMessagesWindow[result.size()]);
+    return result.toArray(new IDEtalkMessagesWindow[0]);
   }
 }

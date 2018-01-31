@@ -74,4 +74,26 @@ public class ConstantSymbol extends RTypedSyntheticSymbol implements MotionSymbo
   public Constant getConstant() {
     return myConstant;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+
+    ConstantSymbol symbol = (ConstantSymbol)o;
+
+    if (!myModule.equals(symbol.myModule)) return false;
+    if (!myConstant.equals(symbol.myConstant)) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + myModule.hashCode();
+    result = 31 * result + myConstant.hashCode();
+    return result;
+  }
 }

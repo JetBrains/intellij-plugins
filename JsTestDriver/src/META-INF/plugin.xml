@@ -77,9 +77,8 @@
         />
 
     <languageInjector implementation="com.google.jstestdriver.idea.assertFramework.jstd.JstdFixtureHtmlLanguageInjector"/>
-    <codeInsight.lineMarkerProvider language="JavaScript" implementationClass="com.google.jstestdriver.idea.assertFramework.jstd.JstdAssertionFrameworkLineMarkerProvider"/>
+    <!--<codeInsight.lineMarkerProvider language="JavaScript" implementationClass="com.google.jstestdriver.idea.assertFramework.jstd.JstdAssertionFrameworkLineMarkerProvider"/>-->
     <implicitUsageProvider implementation="com.google.jstestdriver.idea.assertFramework.jstd.JstdImplicitUsageProvider"/>
-    <project.converterProvider implementation="com.google.jstestdriver.idea.execution.JstdRunConfigurationConverterProvider"/>
   </extensions>
 
   <actions>

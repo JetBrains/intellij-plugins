@@ -57,7 +57,7 @@ public class ProjectsDataFiller {
       }
     }
     result.setProjectFiles(openProject.getName(),
-        fileInfos.toArray(new VFile[fileInfos.size()]));
+        fileInfos.toArray(new VFile[0]));
   }
 
 }

@@ -73,6 +73,7 @@ abstract class DomElementListCellRenderer<T extends DomElement> extends PsiEleme
     return getAdditionalLocation(domElement) + containingFile;
   }
 
+  @Override
   protected int getIconFlags() {
     return 0;
   }

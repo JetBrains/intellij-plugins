@@ -20,7 +20,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.util.containers.HashSet;
+import java.util.HashSet;
 import jetbrains.communicator.OptionFlag;
 import jetbrains.communicator.commands.ClearHistoryCommand;
 import jetbrains.communicator.core.IDEtalkOptions;
@@ -105,10 +105,6 @@ public class IDEtalkConfiguration implements Configurable {
 
   public JComponent createComponent() {
     return myPanel;
-  }
-
-
-  public void disposeUIResources() {
   }
 
 

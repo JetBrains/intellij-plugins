@@ -91,7 +91,7 @@ public class UserMonitorThread extends Thread {
     for (InetAddress selfAddress : NetworkUtil.getSelfAddresses()) {
       result.add(new MulticastPingThread(selfAddress, client.getIdeFacade(), client));
     }
-    return result.toArray(new MulticastPingThread[result.size()]);
+    return result.toArray(new MulticastPingThread[0]);
   }
 
   public void shutdown() {

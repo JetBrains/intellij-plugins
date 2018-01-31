@@ -1,7 +1,6 @@
 package org.intellij.plugins.markdown.ui.preview;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
-import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
@@ -239,12 +238,6 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   @Nullable
   @Override
   public FileEditorLocation getCurrentLocation() {
-    return null;
-  }
-
-  @Nullable
-  @Override
-  public StructureViewBuilder getStructureViewBuilder() {
     return null;
   }
 

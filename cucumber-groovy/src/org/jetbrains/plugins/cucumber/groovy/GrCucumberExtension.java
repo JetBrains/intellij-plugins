@@ -60,7 +60,7 @@ public class GrCucumberExtension extends NotIndexedCucumberExtension {
 
   @Nullable
   private String getGlue(PsiElement stepDefinition) {
-    if (stepDefinition != null && stepDefinition instanceof GrMethodCall) {
+    if (stepDefinition instanceof GrMethodCall) {
       GroovyFile groovyFile = (GroovyFile)stepDefinition.getContainingFile();
       VirtualFile vfile = groovyFile.getVirtualFile();
       if (vfile != null) {

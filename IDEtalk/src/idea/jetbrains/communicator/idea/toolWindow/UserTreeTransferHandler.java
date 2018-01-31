@@ -153,7 +153,7 @@ public class UserTreeTransferHandler extends TransferHandler {
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
 
       if (flavor == getMyDataFlavor()) {
-        return myUsers.toArray(new User[myUsers.size()]);
+        return myUsers.toArray(new User[0]);
       }
       else if (flavor == DataFlavor.stringFlavor) {
         StringBuffer sb = new StringBuffer(10 * myUsers.size());

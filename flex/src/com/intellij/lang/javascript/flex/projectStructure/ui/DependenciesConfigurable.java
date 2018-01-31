@@ -61,7 +61,6 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
 import com.intellij.ui.components.editors.JBComboBoxTableCellEditorComponent;
-import com.intellij.ui.navigation.History;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.PlatformIcons;
@@ -1501,7 +1500,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       actions.add(new AddBuildConfigurationDependencyAction(actionIndex++));
       actions.add(new AddFilesAction(actionIndex++));
       actions.add(new AddSharedLibraryAction(actionIndex++));
-      myPopupActions = actions.toArray(new AddItemPopupAction[actions.size()]);
+      myPopupActions = actions.toArray(new AddItemPopupAction[0]);
     }
   }
 
@@ -1708,10 +1707,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   }
 
   @Override
-  public void setHistory(final History history) {
-  }
-
-  @Override
   public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
     if (place != null) {
       final Object location = place.getPath(FlexBCConfigurable.LOCATION_ON_TAB);
@@ -1737,10 +1732,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       }
     }
     return ActionCallback.DONE;
-  }
-
-  @Override
-  public void queryPlace(@NotNull final Place place) {
   }
 
   public void libraryReplaced(@NotNull final Library library, @Nullable final Library replacement) {
@@ -1811,7 +1802,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     @NotNull
     public Library[] getLibraries() {
       List<Library> filtered = ContainerUtil.filter(myDelegate.getLibraries(), myLibraryFilter);
-      return filtered.toArray(new Library[filtered.size()]);
+      return filtered.toArray(Library.EMPTY_ARRAY);
     }
 
     @Override
@@ -1868,7 +1859,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         }
         return liveLibrary;
       });
-      return filtered.toArray(new Library[filtered.size()]);
+      return filtered.toArray(Library.EMPTY_ARRAY);
     }
   }
 

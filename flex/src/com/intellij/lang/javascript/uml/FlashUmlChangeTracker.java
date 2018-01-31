@@ -223,7 +223,7 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
         result.add(new RelationshipInfo(sourceClass.getQualifiedName(), targetClass.getQualifiedName(), edgeType, map.get(expression)));
       }
     }
-    return result.toArray(new RelationshipInfo[result.size()]);
+    return result.toArray(RelationshipInfo.EMPTY);
   }
 
   @Override

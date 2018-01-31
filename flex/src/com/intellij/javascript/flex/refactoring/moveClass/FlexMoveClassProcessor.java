@@ -57,6 +57,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
     return new FlexMoveClassUsageViewDescriptor();
   }
 
+  @NotNull
   @Override
   protected String getCommandName() {
     StringBuilder s = new StringBuilder();
@@ -83,7 +84,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
       TextOccurrencesUtil.findNonCodeUsages(element, element.getQualifiedName(), mySearchInComments, mySearchInNonJavaFiles,
                                             StringUtil.getQualifiedName(myTargetPackage, element.getName()), result);
     }
-    return result.toArray(new UsageInfo[result.size()]);
+    return result.toArray(UsageInfo.EMPTY_ARRAY);
   }
 
   @Override

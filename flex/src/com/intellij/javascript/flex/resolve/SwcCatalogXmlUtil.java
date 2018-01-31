@@ -296,7 +296,7 @@ public class SwcCatalogXmlUtil {
     catch (IOException ignored) {/*ignore*/}
 
 
-    return result.toArray(new ComponentFromCatalogXml[result.size()]);
+    return result.toArray(new ComponentFromCatalogXml[0]);
   }
 
   public static void processManifestFile(final VirtualFile manifestFile, final Consumer<ComponentFromManifest> consumer) {
@@ -356,6 +356,6 @@ public class SwcCatalogXmlUtil {
     }
     catch (IOException ignored) {/*ignore*/}
 
-    return result.toArray(new ComponentFromManifest[result.size()]);
+    return result.toArray(new ComponentFromManifest[0]);
   }
 }

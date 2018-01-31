@@ -22,7 +22,6 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.PropertyUtil;
 import com.intellij.psi.util.PropertyUtilBase;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
@@ -128,8 +127,7 @@ final class ActionUtil {
 
       // return type "java.lang.String" or "com.opensymphony.xwork2.Result"
       final PsiType type = psiMethod.getReturnType();
-      if (type != null &&
-          type instanceof PsiClassType &&
+      if (type instanceof PsiClassType &&
           (type.equals(stringType) || type.equals(resultType))) {
 
         // stop on first hit when searching for name

@@ -104,7 +104,7 @@ public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
     return Collections.singletonList(new RemoveConfigurableHandler<ModifiableFlexBuildConfiguration>(CompositeConfigurable.class) {
       @Override
       public boolean canBeRemoved(@NotNull Collection<ModifiableFlexBuildConfiguration> configurations) {
-        return myConfigurator.canBeRemoved(configurations.toArray(new ModifiableFlexBuildConfiguration[configurations.size()]));
+        return myConfigurator.canBeRemoved(configurations.toArray(new ModifiableFlexBuildConfiguration[0]));
       }
 
       @Override

@@ -93,7 +93,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
         }
         return true;
       });
-      return result.toArray(new XmlAttributeDescriptor[result.size()]);
+      return result.toArray(XmlAttributeDescriptor.EMPTY);
     }
     if (declaration.getContainingFile() instanceof JsonFile) {
       return getCompiledFieldBasedDescriptors(declaration, decorator, factory);
@@ -137,8 +137,8 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
                 JSSymbolUtil.isAccurateReferenceExpressionName((JSReferenceExpression)expression, name)) {
               JSExpression[] arguments = ((JSCallExpression)child).getArguments();
               if (arguments.length > 0 && arguments[0] instanceof JSLiteralExpression) {
-                Object value = ((JSLiteralExpression)arguments[0]).getValue();
-                if (value instanceof String) return (String)value;
+                String value = ((JSLiteralExpression)arguments[0]).getStringValue();
+                if (value != null) return value;
               }
               return field.getName();
             }

@@ -30,7 +30,7 @@ class FlexCssValueValidator extends CssValueValidatorImpl {
       return term != null && isValidString(term) && super.isValid(term, valueDescriptor);
     }
     else if (valueDescriptor instanceof CssLengthValue) {
-      return term != null && term instanceof CssTerm && 
+      return term instanceof CssTerm &&
              (super.isValid(term, valueDescriptor) || isValidLength((CssTerm)term));
     }
 

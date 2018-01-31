@@ -19,7 +19,7 @@ def guessHome(Script script) {
 
 def execute(home, sandbox, targetFolder) {
   if (isDefined("pluginFilter")) {
-    if (!pluginFilter.contains("flex-profiler")) return
+    if (!pluginFilter.contains("intellij.flex.profiler")) return
   }
   projectBuilder.stage("building Flex library for flex-profiler plugin")
   doExecute(home, sandbox, targetFolder)

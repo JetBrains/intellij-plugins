@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -114,7 +113,7 @@ class MessageHistory {
     loadHistorySince(since);
 
     List<LocalMessage> list = filterHistoryByDate(user, since);
-    return list.toArray(new LocalMessage[list.size()]);
+    return list.toArray(new LocalMessage[0]);
   }
 
   private List<LocalMessage> filterHistoryByDate(User user, Date since) {

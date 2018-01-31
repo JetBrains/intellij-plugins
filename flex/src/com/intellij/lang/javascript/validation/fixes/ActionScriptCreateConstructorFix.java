@@ -34,7 +34,6 @@ import com.intellij.refactoring.changeSignature.MemberNodeBase;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Consumer;
-import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -162,7 +161,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
                                  attributeList != null ? attributeList.getAccessType() : JSAttributeList.AccessType.PACKAGE_LOCAL,
                                  myClass.getName(),
                                  "",
-                                 paramInfos.toArray(new JSParameterInfo[paramInfos.size()]), Collections.emptySet());
+                                 paramInfos.toArray(JSParameterInfo.EMPTY_ARRAY), Collections.emptySet());
         }
       }.invoke(project, editor, file);
     }
@@ -221,7 +220,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
       List<JSParameterInfo> parameters = getParameters();
       return new MyProcessor(myMethod.getMethod(),
                              JSAttributeList.AccessType.valueOf(getVisibility()), myClass.getName(), "",
-                             parameters.toArray(new JSParameterInfo[parameters.size()]),
+                             parameters.toArray(JSParameterInfo.EMPTY_ARRAY),
                              myMethodsToPropagateParameters != null
                              ? myMethodsToPropagateParameters
                              : Collections.emptySet());
@@ -256,7 +255,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
         return true;
       });
 
-      Set<JSFunction> result = new java.util.HashSet<>();
+      Set<JSFunction> result = new HashSet<>();
       for (PsiReference reference : refs) {
         addCallExpression((JSNewExpression)reference.getElement().getParent(), result);
       }
@@ -299,7 +298,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
       findPropagationUsages(declarations, usages);
       Collection<UsageInfo> result = new ArrayList<>(declarations);
       result.addAll(usages);
-      return result.toArray(new UsageInfo[result.size()]);
+      return result.toArray(UsageInfo.EMPTY_ARRAY);
     }
 
     @Override
@@ -334,6 +333,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
       super.performRefactoring(usageInfos);
     }
 
+    @NotNull
     @Override
     protected String getCommandName() {
       return getName();

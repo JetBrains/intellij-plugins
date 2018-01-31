@@ -154,7 +154,7 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
   @NotNull
   private static Type[] getAvailableTypes() {
     List<Type> types = ContainerUtil.filter(Type.values(), type -> type.isAvailable());
-    return types.toArray(new Type[types.size()]);
+    return types.toArray(new Type[0]);
   }
 
   private static void execute(@NotNull Executor executor, @NotNull final PsiElement element) {

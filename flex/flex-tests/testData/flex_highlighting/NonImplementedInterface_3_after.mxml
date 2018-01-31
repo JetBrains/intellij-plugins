@@ -9,6 +9,6 @@
         }
 
         public function bar():MyClass {
-            return null;
+            return undefined;
         }</mx:Script>
 </mx:Application>

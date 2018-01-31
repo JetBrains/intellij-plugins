@@ -67,6 +67,6 @@ abstract class BaseSendCommand  implements UserCommand {
       selectedUsers.add(myDefaultTargetUser);
     }
     
-    return (User[]) selectedUsers.toArray(new User[selectedUsers.size()]);
+    return (User[]) selectedUsers.toArray(new User[0]);
   }
 }

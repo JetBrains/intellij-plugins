@@ -24,7 +24,6 @@ import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.PathUtil;
 import com.intellij.util.TimeoutUtil;
-import com.intellij.util.containers.HashSet;
 import com.intellij.xdebugger.*;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;

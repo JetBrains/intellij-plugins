@@ -247,7 +247,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
 
     settings.setName(params.suggestUniqueName(existingConfigurations));
     settings.setTemporary(false);
-    runManager.addConfiguration(settings, false);
+    runManager.addConfiguration(settings);
     runManager.setSelectedConfiguration(settings);
   }
 

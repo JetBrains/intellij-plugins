@@ -6,17 +6,17 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.containers.HashMap;
+import java.util.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.OptionalStepDefinitionExtensionPoint;
+import org.jetbrains.plugins.cucumber.inspections.CucumberStepDefinitionCreationContext;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
@@ -84,12 +84,12 @@ public class CucumberStepsIndex {
 
   /**
    * Searches for step definition.
-   * More info is available in {@link #findStepDefinitions(com.intellij.psi.PsiFile, org.jetbrains.plugins.cucumber.psi.GherkinStep)} doc
+   * More info is available in {@link #findStepDefinitions(PsiFile, GherkinStep)} doc
    *
    * @param featureFile file with steps
    * @param step        step itself
    * @return definition or null if not found
-   * @see #findStepDefinitions(com.intellij.psi.PsiFile, org.jetbrains.plugins.cucumber.psi.GherkinStep)
+   * @see #findStepDefinitions(PsiFile, GherkinStep)
    */
   @Nullable
   public AbstractStepDefinition findStepDefinition(@NotNull final PsiFile featureFile, @NotNull final GherkinStep step) {
@@ -117,7 +117,7 @@ public class CucumberStepsIndex {
     }
 
     Map<Class<? extends AbstractStepDefinition>, AbstractStepDefinition> definitionsByClass =
-      new java.util.HashMap<>();
+      new HashMap<>();
     List<AbstractStepDefinition> allSteps = loadStepsFor(featureFile, module);
 
     for (AbstractStepDefinition stepDefinition : allSteps) {
@@ -195,8 +195,8 @@ public class CucumberStepsIndex {
     return result;
   }
 
-  public Set<Pair<PsiFile, BDDFrameworkType>> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
-    Set<Pair<PsiFile, BDDFrameworkType>> result = new HashSet<>();
+  public Set<CucumberStepDefinitionCreationContext> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
+    Set<CucumberStepDefinitionCreationContext> result = new HashSet<>();
     for (CucumberJvmExtensionPoint ep : myExtensionMap.values()) {
       // Skip if framework file creation support is optional
       if ((ep instanceof OptionalStepDefinitionExtensionPoint) &&
@@ -206,7 +206,7 @@ public class CucumberStepsIndex {
       final Collection<? extends PsiFile> psiFiles = ep.getStepDefinitionContainers(featureFile);
       final BDDFrameworkType frameworkType = ep.getStepFileType();
       for (final PsiFile psiFile : psiFiles) {
-        result.add(Pair.create(psiFile, frameworkType));
+        result.add(new CucumberStepDefinitionCreationContext(psiFile, frameworkType));
       }
     }
     return result;

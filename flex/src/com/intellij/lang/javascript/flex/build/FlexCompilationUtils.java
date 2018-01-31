@@ -24,7 +24,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -46,6 +45,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
@@ -568,7 +568,7 @@ public class FlexCompilationUtils {
       final String extensionId = getExtensionId(aneFile);
       ContainerUtil.addIfNotNull(extensionIDs, extensionId);
     }
-    return extensionIDs.toArray(new String[extensionIDs.size()]);
+    return extensionIDs.toArray(ArrayUtil.EMPTY_STRING_ARRAY);
   }
 
   @Nullable

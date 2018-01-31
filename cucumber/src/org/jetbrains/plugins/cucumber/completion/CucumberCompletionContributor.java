@@ -137,7 +137,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
 
   private static PsiElement getPreviousElement(PsiElement element) {
     PsiElement prevElement = element.getPrevSibling();
-    if (prevElement != null && prevElement instanceof PsiWhiteSpace) {
+    if (prevElement instanceof PsiWhiteSpace) {
       prevElement = prevElement.getPrevSibling();
     }
     return prevElement;

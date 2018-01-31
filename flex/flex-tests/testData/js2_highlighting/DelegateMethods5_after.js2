@@ -10,7 +10,7 @@ package {
 
 
      public function def() {
-         return zzz.def();
+         zzz.def();
      }
  }
 }

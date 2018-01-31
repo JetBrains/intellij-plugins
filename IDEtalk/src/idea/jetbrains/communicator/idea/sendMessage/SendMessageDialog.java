@@ -87,7 +87,7 @@ public class SendMessageDialog extends IdeaDialog {
 
   private User[] getUsers() {
     List list = Arrays.asList(myRecipients.getSelectedValues());
-    return (User[]) list.toArray(new User[list.size()]);
+    return (User[]) list.toArray(new User[0]);
   }
 
   private String getComment() {

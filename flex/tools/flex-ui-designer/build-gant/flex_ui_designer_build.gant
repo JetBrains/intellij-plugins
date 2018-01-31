@@ -1,4 +1,4 @@
-// this script should be executed *after* project compiled, as it uses classes of 'flex-ui-designer' module
+// this script should be executed *after* project compiled, as it uses classes of 'intellij.flex.uiDesigner' module
 
 // this is called to build artifacts to be used when running from sources
 target('default': "Build Flex UI Designer artifacts") {
@@ -18,7 +18,7 @@ def guessHome(Script script) {
 
 def execute(home, sandbox, targetFolder) {
   if (isDefined("pluginFilter")) {
-    if (!pluginFilter.contains("flex-ui-designer")) return
+    if (!pluginFilter.contains("intellij.flex.uiDesigner")) return
   }
   projectBuilder.stage("building Flex library for flex-ui-designer plugin")
   doExecute(home, sandbox, targetFolder)

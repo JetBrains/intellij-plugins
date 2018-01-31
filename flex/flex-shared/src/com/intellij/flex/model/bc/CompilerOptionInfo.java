@@ -341,7 +341,7 @@ public class CompilerOptionInfo {
         infos.add(info);
       }
 
-      ourRootInfos = infos.toArray(new CompilerOptionInfo[infos.size()]);
+      ourRootInfos = infos.toArray(new CompilerOptionInfo[0]);
     }
     catch (Exception e) {
       LOG.error(e);
@@ -384,7 +384,7 @@ public class CompilerOptionInfo {
       infos.add(info);
     }
 
-    final CompilerOptionInfo[] infosArray = infos.toArray(new CompilerOptionInfo[infos.size()]);
+    final CompilerOptionInfo[] infosArray = infos.toArray(new CompilerOptionInfo[0]);
     return new CompilerOptionInfo(displayName, advanced, since, okForAir, okForPureAS, okForSWF, okForSWC, infosArray);
   }
 
@@ -449,7 +449,7 @@ public class CompilerOptionInfo {
     }
 
     assert !result.isEmpty() : element.getName();
-    return result.toArray(new ListElement[result.size()]);
+    return result.toArray(new ListElement[0]);
   }
 
   public String toString() {

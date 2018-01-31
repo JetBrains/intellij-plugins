@@ -33,7 +33,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
-import com.intellij.ui.navigation.History;
 import com.intellij.ui.navigation.Place;
 import com.intellij.ui.treeStructure.treetable.ListTreeTableModel;
 import com.intellij.ui.treeStructure.treetable.TreeTable;
@@ -987,9 +986,6 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     }
   }
 
-  public void setHistory(final History history) {
-  }
-
   public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
     if (place != null) {
       final Object location = place.getPath(FlexBCConfigurable.LOCATION_ON_TAB);
@@ -1025,9 +1021,6 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       }
     }
     return ActionCallback.DONE;
-  }
-
-  public void queryPlace(@NotNull final Place place) {
   }
 }
 

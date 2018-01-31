@@ -51,7 +51,7 @@ public class BCCombo extends JComboBox {
         }
       }
     }
-    myAllConfigs = allConfigs.toArray(new FlexBuildConfiguration[allConfigs.size()]);
+    myAllConfigs = allConfigs.toArray(new FlexBuildConfiguration[0]);
 
     setRenderer(new ColoredListCellRendererWrapper() {
       @Override

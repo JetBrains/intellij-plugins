@@ -52,8 +52,8 @@ public class CfmlFoldingBuilder implements FoldingBuilder, DumbAware {
       final PsiElement[] children = file.getChildren();
       Collection<FoldingDescriptor> result = new LinkedList<>();
       for (PsiElement child : children) {
-        if (child != null && (child instanceof CfmlCompositeElement ||
-                              child instanceof PsiComment)) {
+        if ((child instanceof CfmlCompositeElement ||
+             child instanceof PsiComment)) {
           List<FoldingDescriptor> descriptors = new ArrayList<>();
           addFoldingDescriptors(descriptors, child, document);
           result.addAll(descriptors);

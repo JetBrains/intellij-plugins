@@ -234,7 +234,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
         }
       }
     }
-    return resultList.toArray(new XmlElementDescriptor[resultList.size()]);
+    return resultList.toArray(XmlElementDescriptor.EMPTY_ARRAY);
   }
 
   private static boolean isContainerClass(final ClassBackedElementDescriptor descriptor) {
@@ -476,7 +476,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     else if (myPredefinedDescriptors != null) {
       descriptors.addAll(myPredefinedDescriptors.values());
     }
-    return descriptors.toArray(new XmlAttributeDescriptor[descriptors.size()]);
+    return descriptors.toArray(XmlAttributeDescriptor.EMPTY);
   }
 
   public void addPredefinedMemberDescriptor(@NotNull AnnotationBackedDescriptor descriptor) {
@@ -825,7 +825,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
           collectLowerCasedElements(elements, tag.getSubTags());
 
           XmlUtil.doDuplicationCheckForElements(
-            elements.toArray(new XmlElement[elements.size()]),
+            elements.toArray(XmlElement.EMPTY_ARRAY),
             new THashMap<>(elements.size()), myDuplicationInfoProvider,
             host
           );
@@ -969,7 +969,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       }
     }
 
-    return result.toArray(new XmlElementDescriptor[result.size()]);
+    return result.toArray(XmlElementDescriptor.EMPTY_ARRAY);
   }
 
   @Nullable

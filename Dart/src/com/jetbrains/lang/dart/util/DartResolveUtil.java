@@ -567,7 +567,7 @@ public class DartResolveUtil {
 
   public static DartComponentName[] getComponentNameArray(List<? extends DartComponent> components) {
     final List<DartComponentName> names = getComponentNames(components);
-    return names.toArray(new DartComponentName[names.size()]);
+    return names.toArray(new DartComponentName[0]);
   }
 
   @NotNull

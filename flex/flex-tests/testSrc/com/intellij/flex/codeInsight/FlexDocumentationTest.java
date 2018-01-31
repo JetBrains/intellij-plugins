@@ -1,8 +1,9 @@
 package com.intellij.flex.codeInsight;
 
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.javascript.flex.FlexDocumentationProvider;
+import com.intellij.idea.Bombed;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
+import com.intellij.javascript.flex.documentation.FlexDocumentationProvider;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.javascript.JSAbstractDocumentationTest;
@@ -25,6 +26,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.descriptor.CssPropertyDescriptorStub;
 import com.intellij.psi.css.impl.util.CssDocumentationProvider;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Calendar;
 
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
@@ -176,6 +179,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     assertInstanceOf(docElement, JSClass.class);
   }
 
+  @Bombed(month = Calendar.JANUARY, day = 29, user = "denofevil", description = BombReason.MULTI_DOC)
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexCssSelectorMultiDocumentation() {
     myAfterCommitRunnable =
@@ -199,6 +203,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     doTest(new String[]{s + ".css", s + ".mxml"}, testName, false, Check.Content);
   }
 
+  @Bombed(month = Calendar.JANUARY, day = 29, user = "denofevil", description = BombReason.MULTI_DOC)
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testFlexMetadataStyleMultidoc() {
     String testName = getTestName(false);
@@ -213,6 +218,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     assertInstanceOf(docElement, JSAttributeNameValuePair.class);
   }
 
+  @Bombed(month = Calendar.JANUARY, day = 29, user = "denofevil", description = BombReason.MULTI_DOC)
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexCssPropertyMultiDocumentation() {
     doTest(getTestName(false), "css");
@@ -230,45 +236,45 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
 
   public void testQuickNavigateInfo() throws Exception {
     final String testName = getTestName(false);
-    doNavigateTest(testName, "js2", "xxx\npublic class AAA extends ZZZ\n" + "implements yyy.XXX");
+    doNavigateTest(testName, "js2", "public class xxx.AAA extends ZZZ\n" + "implements yyy.XXX");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testQuickNavigateInfoWithMxml() throws Exception {
-    doNavigateTest(getTestName(false), "mxml", "flash.display.Sprite\n" + "Event mouseDown");
+    doNavigateTest(getTestName(false), "mxml", "flash.display.Sprite\n" + "Event mouseDown" + file("MockFlex.as"));
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
   public void testQuickNavigateInfoWithMxml2() throws Exception {
-    doNavigateTest(getTestName(false), "mxml", "id xxx");
+    doNavigateTest(getTestName(false), "mxml", "id xxx", false);
   }
 
   public void testQuickNavigateInfo_2() throws Exception {
-    doNavigateTest(getTestName(false), "js2", "xxx.AAA\n" + "public var ttt:* = new Object");
+    doNavigateTest(getTestName(false), "js2", "public var xxx.AAA.ttt:* = new Object");
   }
 
   public void testQuickNavigateInfo_3() throws Exception {
-    doNavigateTest(getTestName(false), "js2", "xxx.AAA\n" + "public static function yyy(p:Object):AAA");
+    doNavigateTest(getTestName(false), "js2", "public static function xxx.AAA.yyy(p:Object):AAA");
   }
 
   public void testQuickNavigateInfo_4() throws Exception {
-    doNavigateTest(getTestName(false), "js2", "xxx.AAA\n" + "public static property yyy:Object");
+    doNavigateTest(getTestName(false), "js2", "(property) public static function xxx.AAA.yyy:Object");
   }
 
   public void testQuickNavigateInfo_5() throws Exception {
-    doNavigateTest(getTestName(false), "js2", "xxx\n" + "public function getTimer()");
+    doNavigateTest(getTestName(false), "js2", "public function xxx.getTimer()");
   }
 
   public void testQuickNavigateInfo_5_2() throws Exception {
-    doNavigateTest(getTestName(false), "js2", "xxx\n" + "public function getTimer()");
+    doNavigateTest(getTestName(false), "js2", "public function xxx.getTimer()");
   }
 
   public void testQuickNavigateInfo_6() throws Exception {
-    doNavigateTest(getTestName(false), "js2", "testData.documentation\n" + "namespace XXX = \"\"");
+    doNavigateTest(getTestName(false), "js2", "testData.documentation\n" + "namespace XXX = \"\"", false);
   }
 
   public void testQuickNavigateInfo_7() throws Exception {
-    doNavigateTest(getTestName(false), "js2", "Foo\n" + "xxx static const XXX = &quot;111&quot;");
+    doNavigateTest(getTestName(false), "js2", "xxx static const Foo.XXX = &quot;111&quot;");
   }
 
   public void testQuickNavigateInfo_9() throws Exception {
@@ -283,7 +289,6 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
 
   public void testQuickNavigateInfo_11() throws Exception {
     doNavigateTest(getTestName(false), "js2",
-                   "QuickNavigateInfo_11.js2\n" +
                    "function foo():Vector.&lt;int&gt;");
   }
 
@@ -411,11 +416,13 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     doTest(testName, "as", testName, false, Check.Null);
   }
 
+  @Bombed(month = Calendar.JANUARY, day = 29, user = "denofevil", description = BombReason.MULTI_DOC)
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testClassInheritDoc1() {
     doTest(getTestName(false), "as");
   }
 
+  @Bombed(month = Calendar.JANUARY, day = 29, user = "denofevil", description = BombReason.MULTI_DOC)
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testClassInheritDoc2() {
     String testName = getTestName(false);
@@ -462,7 +469,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     myAfterCommitRunnable =
       () -> FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", null);
     final String testName = getTestName(false);
-    doNavigateTest(testName, "js2", "LibraryMain\npublic function someMethod(param:int):int");
+    doNavigateTest(testName, "js2", "public function LibraryMain.someMethod(param:int):int" + file("LibraryMain.as"));
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})

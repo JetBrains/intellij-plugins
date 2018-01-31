@@ -29,6 +29,6 @@ public class FlexXmlBackedSymbolContributor implements ChooseByNameContributor {
         result.add(item);
       }
     }
-    return result.toArray(new NavigationItem[result.size()]);
+    return result.toArray(NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY);
   }
 }

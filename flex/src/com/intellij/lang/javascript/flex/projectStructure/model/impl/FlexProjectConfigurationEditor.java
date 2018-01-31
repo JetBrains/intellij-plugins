@@ -35,7 +35,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.HashMap;
+import java.util.HashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -181,7 +181,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
     return new ProjectModifiableModelProvider() {
       public Module[] getModules() {
         final Set<Module> modules = moduleToModifiableModel.keySet();
-        return modules.toArray(new Module[modules.size()]);
+        return modules.toArray(Module.EMPTY_ARRAY);
       }
 
       public ModifiableRootModel getModuleModifiableModel(final Module module) {
@@ -253,7 +253,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
       addEditorsForModule(module);
       editors = myModule2Editors.get(module);
     }
-    return editors.toArray(new ModifiableFlexBuildConfiguration[editors.size()]);
+    return editors.toArray(new ModifiableFlexBuildConfiguration[0]);
   }
 
   private void assertAlive() {

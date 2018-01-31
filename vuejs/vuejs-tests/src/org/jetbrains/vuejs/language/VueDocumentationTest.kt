@@ -26,6 +26,6 @@ class VueDocumentationTest : LightPlatformCodeInsightFixtureTestCase() {
     val inlineDoc = documentationProvider.generateDoc(elementAtCaret, elementAtCaret)
 
     TestCase.assertNotNull(inlineDoc)
-    TestCase.assertTrue(inlineDoc!!.trim().startsWith("Fictive mixins comment"))
+    TestCase.assertTrue(inlineDoc!!.trim().contains("Fictive mixins comment"))
   }
 }

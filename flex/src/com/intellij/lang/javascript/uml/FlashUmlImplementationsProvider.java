@@ -2,16 +2,16 @@ package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.extras.providers.ImplementationsProvider;
 import com.intellij.lang.javascript.JSBundle;
-import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Processor;
 import gnu.trove.THashSet;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Collection;
 
 public class FlashUmlImplementationsProvider extends ImplementationsProvider<Object> {
 
@@ -28,7 +28,7 @@ public class FlashUmlImplementationsProvider extends ImplementationsProvider<Obj
     if (clazz.isInterface()) {
       JSClassSearch.searchInterfaceImplementations(clazz, true).forEach(p);
     }
-    return inheritors.toArray(new PsiElement[inheritors.size()]);
+    return inheritors.toArray(PsiElement.EMPTY_ARRAY);
   }
 
   public boolean isEnabledOn(Object element) {

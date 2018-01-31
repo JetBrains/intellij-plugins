@@ -169,7 +169,7 @@ public class DeleteCommandTest extends BaseTestCase {
       nodes.add("group" + i);
     }
 
-    Object[] selectedNodes = nodes.toArray(new Object[nodes.size()]);
+    Object[] selectedNodes = nodes.toArray(ArrayUtil.EMPTY_OBJECT_ARRAY);
     assertMessage(msg, selectedNodes);
   }
 

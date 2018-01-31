@@ -5,7 +5,7 @@ import com.intellij.ide.actions.CreateFileFromTemplateDialog;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.WebModuleTypeBase;
+import com.intellij.openapi.module.ModuleTypeWithWebFeatures;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.search.FileTypeIndex;
@@ -25,7 +25,7 @@ public class CreateDartFileAction extends CreateFileFromTemplateAction {
     return super.isAvailable(dataContext) &&
            module != null &&
            (FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, module.getModuleContentScope()) ||
-            DartSdk.getDartSdk(module.getProject()) != null && WebModuleTypeBase.isWebModule(module));
+            DartSdk.getDartSdk(module.getProject()) != null && ModuleTypeWithWebFeatures.isAvailable(module));
   }
 
   @Override

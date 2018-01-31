@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.generation;
 
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -13,6 +12,6 @@ public abstract class ActionScriptBaseJSGenerateAction extends BaseJSGenerateAct
   @Override
   protected boolean isApplicableForMemberContainer(@NotNull PsiElement jsClass, PsiFile psiFile, @NotNull Editor editor) {
     return super.isApplicableForMemberContainer(jsClass, psiFile, editor) &&
-           JavaScriptSupportLoader.ECMA_SCRIPT_L4 == DialectDetector.languageOfElement(jsClass);
+           DialectDetector.isActionScript(jsClass);
   }
 }

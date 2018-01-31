@@ -82,7 +82,7 @@ public final class DartServerSupertypesHierarchyTreeStructure extends HierarchyT
     finally {
       stackItems.remove(item);
     }
-    descriptor.setCachedChildren(superDescriptors.toArray(new HierarchyNodeDescriptor[superDescriptors.size()]));
+    descriptor.setCachedChildren(superDescriptors.toArray(new HierarchyNodeDescriptor[0]));
   }
 
   private static void addSuperClassNode(@NotNull final Set<TypeHierarchyItem> stackItems,

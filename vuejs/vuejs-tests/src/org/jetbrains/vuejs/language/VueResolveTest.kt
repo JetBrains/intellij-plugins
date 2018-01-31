@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.Trinity
 import com.intellij.psi.xml.XmlAttribute
@@ -882,6 +883,34 @@ export default {
     TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
   }
 
+  fun testGlobalComponentNameInReference() {
+    myFixture.configureByText("WiseComp.vue",
+"""
+<script>export default { name: 'wise-comp', props: {} }</script>
+""")
+    myFixture.configureByText("register.es6",
+"""
+import WiseComp from 'WiseComp'
+const alias = 'wise-comp-alias'
+Vue.component(alias, WiseComp)
+""")
+    myFixture.configureByText("use.vue",
+"""
+<template><<caret>wise-comp-alias</template>
+""")
+    doResolveAliasIntoLibraryComponent("wise-comp", "WiseComp.vue")
+  }
+
+  private fun doResolveAliasIntoLibraryComponent(compName: String, fileName: String) {
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val target = reference!!.resolve()
+    TestCase.assertNotNull(target)
+    TestCase.assertEquals(fileName, target!!.containingFile.name)
+    TestCase.assertTrue(target.parent is JSObjectLiteralExpression)
+    TestCase.assertEquals("$compName", (target as JSImplicitElement).name)
+  }
+
   fun testGlobalComponentLiteral() {
     myFixture.configureByText("index.js", """
 Vue.component('global-comp-literal', {
@@ -928,7 +957,7 @@ Vue.component('global-comp-literal', {
       val literal = reference!!.resolve()
       TestCase.assertNotNull(literal)
       TestCase.assertTrue(literal is JSLiteralExpression)
-      TestCase.assertEquals("oneTwo", (literal as JSLiteralExpression).value)
+      TestCase.assertEquals("oneTwo", (literal as JSLiteralExpression).stringValue)
       TestCase.assertTrue(literal.parent is JSArrayLiteralExpression)
     })
   }
@@ -956,7 +985,7 @@ const props = ['oneTwo']
       val literal = reference!!.resolve()
       TestCase.assertNotNull(literal)
       TestCase.assertTrue(literal is JSLiteralExpression)
-      TestCase.assertEquals("oneTwo", (literal as JSLiteralExpression).value)
+      TestCase.assertEquals("oneTwo", (literal as JSLiteralExpression).stringValue)
       TestCase.assertTrue(literal.parent is JSArrayLiteralExpression)
     })
   }
@@ -993,7 +1022,7 @@ const props = ['oneTwo']
     val literal = reference!!.resolve()
     TestCase.assertNotNull(literal)
     TestCase.assertTrue(literal is JSLiteralExpression)
-    TestCase.assertEquals("seeMe", (literal as JSLiteralExpression).value)
+    TestCase.assertEquals("seeMe", (literal as JSLiteralExpression).stringValue)
     TestCase.assertEquals("compUI.vue", literal.containingFile.name)
     TestCase.assertTrue(literal.parent is JSArrayLiteralExpression)
   }
@@ -1164,7 +1193,7 @@ const props = {seeMe: {}}
         val literal = reference!!.resolve()
         TestCase.assertNotNull(literal)
         TestCase.assertTrue(literal is JSLiteralExpression)
-        TestCase.assertEquals(propName, (literal as JSLiteralExpression).value)
+        TestCase.assertEquals(propName, (literal as JSLiteralExpression).stringValue)
         TestCase.assertTrue(literal.parent.parent is JSProperty)
         TestCase.assertEquals("props", (literal.parent.parent as JSProperty).name)
         TestCase.assertEquals(file, literal.containingFile.name)
@@ -1325,7 +1354,7 @@ const props = {seeMe: {}}
     TestCase.assertNotNull(callExpression)
     // unstub for test
     TestCase.assertNotNull(callExpression!!.text)
-    TestCase.assertEquals("focus", ((callExpression as JSCallExpression).arguments[0] as JSLiteralExpression).value)
+    TestCase.assertEquals("focus", ((callExpression as JSCallExpression).arguments[0] as JSLiteralExpression).stringValue)
     TestCase.assertEquals("CustomDirectives.js", callExpression.containingFile.name)
   }
 
@@ -1353,7 +1382,7 @@ const props = {seeMe: {}}
       TestCase.assertEquals(fileName, property.containingFile.name)
     } else if (property is JSCallExpression) {
       TestCase.assertNotNull(property.text)
-      TestCase.assertEquals(directive, (property.arguments[0] as JSLiteralExpression).value)
+      TestCase.assertEquals(directive, (property.arguments[0] as JSLiteralExpression).stringValue)
       TestCase.assertEquals(fileName, property.containingFile.name)
     } else {
       TestCase.assertTrue(false)
@@ -1452,6 +1481,201 @@ export default DatePicker;
 </template>
 """)
     doResolveIntoLibraryComponent("ElDatePicker", "date-picker.js")
+  }
+
+  fun testResolveSimpleObjectMemberComponent() {
+    myFixture.configureByText("a.vue", "")
+    myFixture.configureByText("lib-comp.es6",
+"""
+export default {
+  name: 'lib-comp',
+  template: '',
+  render() {}
+}
+""")
+    myFixture.configureByText("lib.es6",
+"""
+import LibComp from './lib-comp';
+const obj = { LibComp };
+
+Object.keys(obj).forEach(key => {
+        Vue.component(key, obj[key]);
+    });
+""")
+    myFixture.configureByText("ResolveSimpleObjectMemberComponent.vue",
+"""<template><<caret>lib-comp/></template>""")
+    doResolveIntoLibraryComponent("lib-comp", "lib-comp.es6")
+  }
+
+  fun testResolveAliasedObjectMemberComponent() {
+    myFixture.configureByText("a.vue", "")
+    myFixture.configureByText("lib-comp-for-alias.es6",
+"""
+export default {
+  name: 'lib-comp',
+  template: '',
+  render() {}
+}
+""")
+    myFixture.configureByText("libAlias.es6",
+"""
+import Alias from './lib-comp-for-alias';
+const obj = { Alias };
+
+Object.keys(obj).forEach(key => {
+        Vue.component(key, obj[key]);
+    });
+""")
+    myFixture.configureByText("ResolveAliasedObjectMemberComponent.vue",
+"""<template><<caret>alias/></template>""")
+
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val target = reference!!.resolve()
+    TestCase.assertNotNull(target)
+    TestCase.assertEquals("lib-comp-for-alias.es6", target!!.containingFile.name)
+    TestCase.assertTrue(target.parent is JSObjectLiteralExpression)
+  }
+
+  fun testResolveObjectWithSpreadComponent() {
+    myFixture.configureByText("a.vue", "")
+    myFixture.configureByText("lib-spread.es6",
+                              """
+export default {
+  name: 'lib-spread',
+  template: '',
+  render() {}
+}
+""")
+    myFixture.configureByText("lib-register-spread.es6",
+                              """
+import LibSpread from './lib-spread';
+const obj = { LibSpread };
+const other = {...obj};
+
+Object.keys(other).forEach(key => {
+        Vue.component(key, other[key]);
+    });
+""")
+    myFixture.configureByText("ResolveObjectWithSpreadComponent.vue",
+                              """<template><<caret>lib-spread/></template>""")
+    doResolveIntoLibraryComponent("lib-spread", "lib-spread.es6")
+  }
+
+  fun testResolveObjectWithSpreadComponentAliased() {
+    myFixture.configureByText("a.vue", "")
+    myFixture.configureByText("lib-spread.es6",
+                              """
+export default {
+  name: 'lib-spread',
+  template: '',
+  render() {}
+}
+""")
+    myFixture.configureByText("lib-register-spread.es6",
+                              """
+import LibSpreadAlias from './lib-spread';
+const obj = { LibSpreadAlias };
+const other = {...obj};
+
+Object.keys(other).forEach(key => {
+        Vue.component(key, other[key]);
+    });
+""")
+    myFixture.configureByText("ResolveObjectWithSpreadComponentAliased.vue",
+                              """<template><<caret>lib-spread-alias/></template>""")
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val target = reference!!.resolve()
+    TestCase.assertNotNull(target)
+    TestCase.assertEquals("lib-spread.es6", target!!.containingFile.name)
+    TestCase.assertTrue(target.parent is JSObjectLiteralExpression)
+  }
+
+  fun testResolveObjectWithSpreadLiteralComponent() {
+    myFixture.configureByText("a.vue", "")
+    myFixture.configureByText("lib-spread.es6",
+                              """
+export default {
+  name: 'lib-spread',
+  template: '',
+  render() {}
+}
+""")
+    myFixture.configureByText("lib-register-spread.es6",
+                              """
+import LibSpread from './lib-spread';
+const other = {...{ LibSpread }};
+
+Object.keys(other).forEach(key => {
+        Vue.component(key, other[key]);
+    });
+""")
+    myFixture.configureByText("ResolveObjectWithSpreadLiteralComponent.vue",
+                              """<template><<caret>lib-spread/></template>""")
+    doResolveIntoLibraryComponent("lib-spread", "lib-spread.es6")
+  }
+
+  fun testResolveWithExplicitForInComponentsBindingEs6() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      myFixture.configureByText("a.vue", "")
+      myFixture.configureByText("CompForForIn.es6",
+                                """export default {
+name: 'compForForIn',
+template: '',
+render() {}""")
+      myFixture.configureByText("register.es6", """
+import CompForForIn from './CompForForIn';
+
+      const components = {
+        CompForForIn
+      }
+
+components.install = (Vue, options = {}) => {
+    for (const componentName in components) {
+        const component = components[componentName]
+
+        if (component && componentName !== 'install') {
+            Vue.component(component.name, component)
+        }
+    }
+}
+""")
+      myFixture.configureByText("ResolveWithExplicitForInComponentsBinding.vue",
+                                """<template><<caret>CompForForIn/></template>""")
+      doResolveIntoLibraryComponent("compForForIn", "CompForForIn.es6")
+    })
+  }
+
+  fun testResolveWithExplicitForInComponentsBinding() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      myFixture.configureByText("a.vue", "")
+      myFixture.configureByText("CompForForIn.vue",
+                                """<script>export default {
+name: 'compForForIn',
+template: '',
+render() {}</script>""")
+      myFixture.configureByText("register.es6", """
+import CompForForIn from './CompForForIn';
+
+      const components = {
+        CompForForIn
+      }
+
+components.install = (Vue, options = {}) => {
+    for (const componentName in components) {
+        const component = components[componentName]
+
+        if (component && componentName !== 'install') {
+            Vue.component(component.name, component)
+        }
+    }
+}
+""")
+      myFixture.configureByText("ResolveWithExplicitForInComponentsBinding.vue",
+                                """<template><<caret>CompForForIn/></template>""")
+      doResolveIntoLibraryComponent("compForForIn", "CompForForIn.vue")
+    })
   }
 
   private fun doResolveIntoLibraryComponent(compName: String, fileName: String) {

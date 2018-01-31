@@ -13,6 +13,7 @@ import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveDirectoryWithClassesProcessor;
 import com.intellij.refactoring.rename.DirectoryAsPackageRenameHandlerBase;
 import com.intellij.util.Query;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author ksafonov
@@ -62,6 +63,7 @@ public class FlexDirectoryAsPackageRenameHandler extends DirectoryAsPackageRenam
         return newQName;
       }
 
+      @NotNull
       @Override
       protected String getCommandName() {
         return RefactoringBundle.message(dirsToRename.length == 1 ? "rename.directory.command.name" : "rename.directories.command.name");

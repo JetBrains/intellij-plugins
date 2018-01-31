@@ -26,7 +26,7 @@ public class CucumberJavaAllFeaturesInFolderRunConfigurationProducer extends Cuc
       final CucumberJvmExtensionPoint[] extensions = Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME);
 
       return new NullableComputable<String>() {
-        @Nullable
+        @NotNull
         @Override
         public String compute() {
           dir.accept(new PsiElementVisitor() {
@@ -68,7 +68,7 @@ public class CucumberJavaAllFeaturesInFolderRunConfigurationProducer extends Cuc
   @Override
   protected VirtualFile getFileToRun(ConfigurationContext context) {
     final PsiElement element = context.getPsiLocation();
-    if (element != null && element instanceof PsiDirectory) {
+    if (element instanceof PsiDirectory) {
       return ((PsiDirectory) element).getVirtualFile();
     }
     return null;

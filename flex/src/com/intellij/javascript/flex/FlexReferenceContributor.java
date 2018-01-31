@@ -126,7 +126,7 @@ public class FlexReferenceContributor {
           return getCanonicalText();
         }
       });
-      return result.toArray(new ResolveResult[result.size()]);
+      return result.toArray(ResolveResult.EMPTY_ARRAY);
     }
 
     interface StateProcessor {

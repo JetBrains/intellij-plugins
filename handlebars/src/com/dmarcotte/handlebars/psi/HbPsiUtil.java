@@ -1,6 +1,5 @@
 package com.dmarcotte.handlebars.psi;
 
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 
@@ -18,8 +17,7 @@ public class HbPsiUtil {
    * @return An ancestor of type {@link HbOpenBlockMustache} or null if none exists
    */
   public static HbOpenBlockMustache findParentOpenTagElement(PsiElement element) {
-    return (HbOpenBlockMustache)PsiTreeUtil.findFirstParent(element, true, element1 -> element1 != null
-                                                                                       && element1 instanceof HbOpenBlockMustache);
+    return (HbOpenBlockMustache)PsiTreeUtil.findFirstParent(element, true, element1 -> element1 instanceof HbOpenBlockMustache);
   }
 
   /**
@@ -34,16 +32,14 @@ public class HbPsiUtil {
    * @return An ancestor of type {@link HbCloseBlockMustache} or null if none exists
    */
   public static HbCloseBlockMustache findParentCloseTagElement(PsiElement element) {
-    return (HbCloseBlockMustache)PsiTreeUtil.findFirstParent(element, true, element1 -> element1 != null
-                                                                                        && element1 instanceof HbCloseBlockMustache);
+    return (HbCloseBlockMustache)PsiTreeUtil.findFirstParent(element, true, element1 -> element1 instanceof HbCloseBlockMustache);
   }
 
   /**
    * Tests to see if the given element is not the "root" statements expression of the grammar
    */
   public static boolean isNonRootStatementsElement(PsiElement element) {
-    PsiElement statementsParent = PsiTreeUtil.findFirstParent(element, true, element1 -> element1 != null
-                                                                                         && element1 instanceof HbStatements);
+    PsiElement statementsParent = PsiTreeUtil.findFirstParent(element, true, element1 -> element1 instanceof HbStatements);
 
     // we're a non-root statements if we're of type statements, and we have a statements parent
     return element instanceof HbStatements

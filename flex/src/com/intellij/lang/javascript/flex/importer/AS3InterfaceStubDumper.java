@@ -174,7 +174,8 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
       List<String> keysByValue = parentTraits.usedNamespacesToNamesMap.getKeysByValue(ns);
       resolvedNs = keysByValue != null && keysByValue.size() > 0 ? keysByValue.get(0) : null;
     }
-    parents.add(new ActionScriptAttributeListStubImpl(parents.getLast(), ns, resolvedNs, accessType, modifiers.toArray(new JSAttributeList.ModifierType[modifiers.size()])));
+    parents.add(new ActionScriptAttributeListStubImpl(parents.getLast(), ns, resolvedNs, accessType, modifiers.toArray(
+      new JSAttributeList.ModifierType[0])));
     super.processModifierList(memberInfo, attr, indent);
     parents.removeLast();
   }

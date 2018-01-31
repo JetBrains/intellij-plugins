@@ -61,12 +61,6 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
     originalConfiguration.setModified();
   }
 
-  public void reset() {
-  }
-
-  public void disposeUIResources() {
-  }
-
   @Override
   public String getHelpTopic() {
     return "reference.settings.project.structure.facets.struts2.facet";

@@ -1,0 +1,641 @@
+--- 
+XgridFoundation: 
+- CoreFoundation
+- CoreServices
+- IOKit
+- Kerberos
+- Security
+- SystemConfiguration
+- XgridFoundation
+PreferencePanes: 
+- ApplicationServices
+- Carbon
+- CoreFoundation
+- CoreServices
+- IOKit
+- PreferencePanes
+- Security
+- SecurityFoundation
+- SecurityInterface
+CoreFoundation: 
+- CoreFoundation
+InstantMessage: 
+- AddressBook
+- ApplicationServices
+- CoreFoundation
+- CoreVideo
+- InstantMessage
+- OpenGL
+- QTKit
+- QuartzComposer
+- QuartzCore
+LatentSemanticMapping: 
+- Accelerate
+- CoreFoundation
+- CoreServices
+- LatentSemanticMapping
+- SpeechRecognition
+Cocoa: 
+- Cocoa
+- CoreData
+AppKit: 
+- ApplicationServices
+- AudioToolbox
+- AudioUnit
+- CoreAudio
+- CoreData
+- CoreFoundation
+- CoreServices
+- DiskArbitration
+- HIToolbox
+- IOKit
+- OpenGL
+- QuartzCore
+- Security
+- SpeechRecognition
+TWAIN: 
+- ApplicationServices
+- Carbon
+- Cocoa
+- CoreFoundation
+- CoreServices
+- TWAIN
+Tcl: 
+- CoreFoundation
+Quartz: 
+- Cocoa
+- ImageKit
+- PDFKit
+- Quartz
+- QuartzComposer
+- QuartzCore
+- QuartzFilters
+- QuickLookUI
+Carbon: 
+- ApplicationServices
+- Carbon
+- CommonPanels
+- HIToolbox
+- Help
+- ImageCapture
+- Ink
+- OpenScripting
+- Print
+- SecurityHI
+- SpeechRecognition
+NetFS: 
+- CoreFoundation
+- DiskArbitration
+- NetFS
+- SystemConfiguration
+AppleTalk: 
+- AppleTalk
+Collaboration: 
+- AddressBook
+- Cocoa
+- Collaboration
+- CoreFoundation
+- CoreServices
+- OpenDirectory
+- SecurityInterface
+- SystemConfiguration
+IMServicePlugIn: 
+- CoreFoundation
+- IMServicePlugIn
+- IMServicePlugInSupport
+SyncServices: 
+- Carbon
+- CoreData
+- CoreFoundation
+- CoreServices
+- SyncServices
+GLUT: 
+- ApplicationServices
+- CoreFoundation
+- GLUT
+- IOKit
+- OpenGL
+- QTKit
+CoreLocation: 
+- CoreFoundation
+- CoreLocation
+- CoreServices
+- IOKit
+CoreMIDI: 
+- CoreFoundation
+- CoreMIDI
+- IOKit
+RubyCocoa: 
+- RubyCocoa
+AVFoundation: 
+- AVFoundation
+- ApplicationServices
+- AudioToolbox
+- CoreAudio
+- CoreFoundation
+- CoreMedia
+- CoreMediaIO
+- CoreServices
+- CoreVideo
+- QuartzCore
+- Security
+InputMethodKit: 
+- ApplicationServices
+- Carbon
+- CoreFoundation
+- CoreServices
+- IOKit
+- InputMethodKit
+SecurityInterface: 
+- ApplicationServices
+- CoreAudio
+- CoreFoundation
+- CoreServices
+- Security
+- SecurityFoundation
+- SecurityInterface
+SecurityFoundation: 
+- CoreFoundation
+- Security
+- SecurityFoundation
+- SystemConfiguration
+AppleScriptObjC: 
+- AppleScriptObjC
+- ApplicationServices
+- Carbon
+- CoreFoundation
+- CoreServices
+DirectoryService: 
+- CFOpenDirectory
+- CoreFoundation
+- DirectoryService
+AppleShareClientCore: 
+- AppleShareClientCore
+- CoreFoundation
+- CoreServices
+- GSS
+- Kerberos
+- Security
+CoreVideo: 
+- ApplicationServices
+- CoreFoundation
+- CoreServices
+- CoreVideo
+- IOKit
+- IOSurface
+- OpenGL
+VideoDecodeAcceleration: 
+- CoreFoundation
+- CoreMedia
+- CoreVideo
+- VideoDecodeAcceleration
+QuartzCore: 
+- Accelerate
+- ApplicationServices
+- CoreFoundation
+- CoreImage
+- CoreVideo
+- IOKit
+- IOSurface
+- OpenGL
+- QuartzCore
+- ScalableUserInterface
+CoreMedia: 
+- CoreAudio
+- CoreFoundation
+- CoreMedia
+- CoreVideo
+JavaScriptCore: 
+- CoreFoundation
+- CoreServices
+- JavaScriptCore
+CoreData: 
+- CoreData
+- CoreFoundation
+ApplicationServices: 
+- ATS
+- ApplicationServices
+- ColorSync
+- CoreGraphics
+- CoreServices
+- CoreText
+- HIServices
+- ImageIO
+- LangAnalysis
+- PrintCore
+- QD
+- SpeechSynthesis
+AppleScriptKit: 
+- AppleScriptKit
+- ApplicationServices
+- Carbon
+- Cocoa
+- CoreFoundation
+- CoreServices
+- OSAKit
+Accelerate: 
+- Accelerate
+- libvDSP.dylib
+- vImage
+- vecLib
+SystemConfiguration: 
+- CoreFoundation
+- SystemConfiguration
+ServiceManagement: 
+- CoreFoundation
+- CoreServices
+- Security
+- ServiceManagement
+AGL: 
+- AGL
+- ApplicationServices
+- Carbon
+- CoreFoundation
+- OpenGL
+AddressBook: 
+- AddressBook
+- ApplicationServices
+- Cocoa
+- CoreData
+- CoreFoundation
+- CoreServices
+- DirectoryService
+- LDAP
+- NetFS
+- OpenDirectory
+- OpenGL
+- Quartz
+- QuartzCore
+- Security
+- SecurityFoundation
+- SecurityInterface
+- SystemConfiguration
+AppKitScripting: 
+- AppKitScripting
+Automator: 
+- AppleScriptObjC
+- ApplicationServices
+- Automator
+- Carbon
+- Cocoa
+- CoreFoundation
+- CoreServices
+- OSAKit
+- QTKit
+- Quartz
+- QuartzCore
+- ScriptingBridge
+- Security
+- SystemConfiguration
+Security: 
+- CoreFoundation
+- Security
+Scripting: 
+- CoreFoundation
+- Scripting
+OSAKit: 
+- ApplicationServices
+- Carbon
+- Cocoa
+- CoreFoundation
+- CoreServices
+- OSAKit
+CoreWLAN: 
+- CoreFoundation
+- CoreServices
+- CoreWLAN
+- IOKit
+- Security
+- SecurityFoundation
+- SystemConfiguration
+OpenDirectory: 
+- CFOpenDirectory
+- CoreFoundation
+- OpenDirectory
+AudioToolbox: 
+- AudioToolbox
+- CoreAudio
+- CoreFoundation
+- CoreServices
+- IOKit
+- vecLib
+Kerberos: 
+- CoreFoundation
+- Kerberos
+- Security
+Tk: 
+- ApplicationServices
+- Carbon
+- Cocoa
+- CoreFoundation
+- CoreServices
+- IOKit
+IOKit: 
+- CoreFoundation
+- IOKit
+DVComponentGlue: 
+- Carbon
+- CoreServices
+- DVComponentGlue
+ScriptingBridge: 
+- ApplicationServices
+- Carbon
+- CoreFoundation
+- CoreServices
+- ScriptingBridge
+QTKit: 
+- ApplicationServices
+- AudioToolbox
+- Carbon
+- CoreAudio
+- CoreFoundation
+- CoreMedia
+- CoreMediaIO
+- CoreServices
+- CoreVideo
+- IOKit
+- IOSurface
+- OpenGL
+- QTKit
+- QuartzCore
+ImageCaptureCore: 
+- ApplicationServices
+- CoreFoundation
+- CoreServices
+- ImageCaptureCore
+PCSC: 
+- CoreFoundation
+- PCSC
+ForceFeedback: 
+- CoreFoundation
+- ForceFeedback
+- IOKit
+Message: 
+- AddressBook
+- ApplicationServices
+- AudioToolbox
+- CalendarStore
+- Cocoa
+- CoreAudio
+- CoreData
+- CoreFoundation
+- CoreServices
+- LDAP
+- LatentSemanticMapping
+- PubSub
+- Security
+- SystemConfiguration
+- WebKit
+PubSub: 
+- CoreFoundation
+- CoreServices
+- IOKit
+- JavaScriptCore
+- PubSub
+- Security
+- SystemConfiguration
+DiscRecording: 
+- AudioToolbox
+- CoreFoundation
+- CoreServices
+- DiscRecording
+- DiskArbitration
+- IOKit
+- Security
+DVDPlayback: 
+- ApplicationServices
+- AudioToolbox
+- AudioUnit
+- CoreAudio
+- CoreFoundation
+- CoreServices
+- CoreVideo
+- DVDPlayback
+- IOKit
+- IOSurface
+- OpenGL
+- QuartzCore
+- Security
+- vecLib
+ICADevices: 
+- AVFoundation
+- ApplicationServices
+- Carbon
+- Cocoa
+- CoreFoundation
+- CoreMedia
+- CoreServices
+- DiskArbitration
+- ICADevices
+- IOBluetooth
+- IOKit
+- QuickLook
+OpenAL: 
+- AudioToolbox
+- AudioUnit
+- CoreAudio
+- CoreFoundation
+- CoreServices
+- OpenAL
+CoreServices: 
+- AE
+- CFNetwork
+- CarbonCore
+- CoreFoundation
+- CoreServices
+- DictionaryServices
+- LaunchServices
+- Metadata
+- OSServices
+- SearchKit
+vecLib: 
+- libBLAS.dylib
+- libLAPACK.dylib
+- libvDSP.dylib
+- libvMisc.dylib
+- vecLib
+StoreKit: 
+- CoreFoundation
+- StoreKit
+CalendarStore: 
+- AddressBook
+- CalendarStore
+- CoreData
+- CoreFoundation
+- CoreServices
+- Security
+- ServerNotification
+- SyncServices
+- SystemConfiguration
+CoreMIDIServer: 
+- CoreMIDI
+- CoreMIDIServer
+JavaVM: 
+- CoreFoundation
+- JavaVM
+DrawSprocket: 
+- ApplicationServices
+- Carbon
+- CoreFoundation
+- CoreServices
+- DrawSprocket
+ServerNotification: 
+- CoreFoundation
+- Security
+- ServerNotification
+ScreenSaver: 
+- ApplicationServices
+- CoreFoundation
+- CoreServices
+- IOKit
+- PubSub
+- Quartz
+- QuartzCore
+- ScreenSaver
+- Security
+- SecurityInterface
+ExceptionHandling: 
+- CoreFoundation
+- ExceptionHandling
+InstallerPlugins: 
+- CoreFoundation
+- IOKit
+- InstallerPlugins
+IOBluetooth: 
+- AudioToolbox
+- AudioUnit
+- CoreAudio
+- CoreBluetooth
+- CoreFoundation
+- CoreServices
+- IOBluetooth
+- IOKit
+- Security
+- SystemConfiguration
+OpenCL: 
+- ApplicationServices
+- CoreFoundation
+- IOKit
+- IOSurface
+- OpenCL
+- OpenGL
+QuickTime: 
+- Accelerate
+- ApplicationServices
+- AudioToolbox
+- AudioUnit
+- CarbonSound
+- CoreAudio
+- CoreData
+- CoreFoundation
+- CoreServices
+- HIToolbox
+- IOKit
+- NavigationServices
+- QuickTime
+- Security
+- SystemConfiguration
+IOSurface: 
+- CoreFoundation
+- IOKit
+- IOSurface
+IOBluetoothUI: 
+- ApplicationServices
+- Cocoa
+- CoreFoundation
+- CoreServices
+- IOBluetooth
+- IOBluetoothUI
+GSS: 
+- CoreFoundation
+- GSS
+- OpenDirectory
+- SystemConfiguration
+LDAP: 
+- CoreFoundation
+- LDAP
+- Security
+- SystemConfiguration
+CoreAudioKit: 
+- AudioToolbox
+- AudioUnit
+- Cocoa
+- CoreAudioKit
+- CoreFoundation
+- CoreServices
+DiscRecordingUI: 
+- ApplicationServices
+- AudioToolbox
+- Carbon
+- CoreFoundation
+- CoreServices
+- DiscRecording
+- DiscRecordingUI
+CoreAudio: 
+- CoreAudio
+- CoreFoundation
+- IOKit
+- Security
+AudioUnit: 
+- AudioToolbox
+- AudioUnit
+WebKit: 
+- ApplicationServices
+- Carbon
+- Cocoa
+- CoreFoundation
+- CoreServices
+- IOKit
+- JavaScriptCore
+- OpenGL
+- QuartzCore
+- Security
+- WebCore
+- WebKit
+CoreMediaIO: 
+- ApplicationServices
+- AudioToolbox
+- CoreAudio
+- CoreFoundation
+- CoreMedia
+- CoreMediaIO
+- CoreServices
+- CoreVideo
+- IOKit
+- OpenGL
+- Security
+DiskArbitration: 
+- CoreFoundation
+- DiskArbitration
+- IOKit
+- Security
+FWAUserLib: 
+- CoreFoundation
+- FWAUserLib
+- IOKit
+Foundation: 
+- CFNetwork
+- CoreFoundation
+- CoreServices
+- IOKit
+- Security
+- SystemConfiguration
+JavaFrameEmbedding: 
+- Cocoa
+- CoreFoundation
+- JavaFrameEmbedding
+- JavaNativeFoundation
+- JavaVM
+QuickLook: 
+- ApplicationServices
+- CoreFoundation
+- CoreServices
+- IOKit
+- QuickLook
+OpenGL: 
+- ApplicationServices
+- CoreFoundation
+- CoreServices
+- IOKit
+- IOSurface
+- OpenGL

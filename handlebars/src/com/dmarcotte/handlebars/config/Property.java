@@ -94,8 +94,6 @@ enum Property {
     }
   };
 
-
-
   public static final String ENABLED = "enabled";
   public static final String DISABLED = "disabled";
 

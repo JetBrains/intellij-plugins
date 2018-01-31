@@ -1,0 +1,33 @@
+<template>
+    Participants:<br/>
+    <names-list :items="items"/>
+</template>
+
+<script>
+    import NamesList from "./NamesList";
+
+    export default {
+        components: {NamesList},
+        props: {
+            items: [
+                { id: 123, name: "John Doe" },
+                { id: 789, name: "Jane Smith" }
+            ]
+        }
+    };
+</script>
+
+<!-- NamesList.vue -->
+<template>
+    <div v-for="item in items" :key="item.id">
+        Name: {{ item.name }}
+    </div>
+</template>
+<script>
+    export default {
+        name: 'names-list',
+        props: {
+            items: {}
+        }
+    };
+</script>

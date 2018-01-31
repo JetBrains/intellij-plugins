@@ -35,7 +35,7 @@ public class ActionScriptQualifiedElementRenameProcessor extends JSDefaultRename
   }
 
   @Override
-  public PsiElement substituteElementToRename(PsiElement element, Editor editor) {
+  public PsiElement substituteElementToRename(@NotNull PsiElement element, Editor editor) {
     if (element instanceof JSFileImpl) {
       JSNamedElement mainDeclaredElement = ActionScriptResolveUtil.findMainDeclaredElement((JSFileImpl)element);
       if (mainDeclaredElement != null) return mainDeclaredElement;
@@ -47,7 +47,7 @@ public class ActionScriptQualifiedElementRenameProcessor extends JSDefaultRename
   }
 
   @Override
-  public void prepareRenaming(PsiElement element, String newName, Map<PsiElement, String> allRenames) {
+  public void prepareRenaming(@NotNull PsiElement element, @NotNull String newName, @NotNull Map<PsiElement, String> allRenames) {
     if (element instanceof JSClass) {
       JSFunction constructor = ((JSClass)element).getConstructor();
       if (constructor != null) {

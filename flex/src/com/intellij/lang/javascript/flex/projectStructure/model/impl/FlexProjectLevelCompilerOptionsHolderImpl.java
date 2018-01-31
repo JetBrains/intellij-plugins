@@ -8,6 +8,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.annotations.Property;
+import org.jetbrains.annotations.NotNull;
 
 @State(
   name = "FlexIdeProjectLevelCompilerOptionsHolder",
@@ -38,7 +39,7 @@ public class FlexProjectLevelCompilerOptionsHolderImpl extends FlexProjectLevelC
     return myModel;
   }
 
-  public void loadState(final FlexProjectLevelCompilerOptionsHolderImpl.State state) {
+  public void loadState(@NotNull final FlexProjectLevelCompilerOptionsHolderImpl.State state) {
     myModel.loadState(state.compilerOptions);
   }
 

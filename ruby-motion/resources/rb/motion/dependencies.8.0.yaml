@@ -1,0 +1,594 @@
+---
+Accelerate:
+- Accelerate
+- libvDSP.dylib
+- vImage
+- vecLib
+Accounts:
+- Accounts
+- CoreData
+- CoreFoundation
+- Foundation
+- Security
+- SystemConfiguration
+AddressBook:
+- Accounts
+- AddressBook
+- CoreFoundation
+- CoreGraphics
+- Foundation
+- ImageIO
+- MobileCoreServices
+- Security
+AddressBookUI:
+- AVFoundation
+- Accounts
+- AddressBook
+- AddressBookUI
+- CoreFoundation
+- CoreGraphics
+- Foundation
+- MobileCoreServices
+- QuartzCore
+- QuickLook
+- UIKit
+AdSupport:
+- AdSupport
+- Foundation
+- MobileCoreServices
+AssetsLibrary:
+- AVFoundation
+- AssetsLibrary
+- CoreFoundation
+- CoreGraphics
+- CoreLocation
+- Foundation
+- ImageIO
+- MobileCoreServices
+AudioToolbox:
+- Accelerate
+- AudioToolbox
+- CoreAudio
+- CoreFoundation
+- CoreMedia
+- Foundation
+- MobileCoreServices
+- Security
+AVFoundation:
+- AVFoundation
+- AudioToolbox
+- CoreFoundation
+- CoreGraphics
+- CoreMedia
+- CoreVideo
+- Foundation
+- ImageIO
+- MediaToolbox
+- MobileCoreServices
+- QuartzCore
+- Security
+- VideoToolbox
+- libAVFAudio.dylib
+AVKit:
+- AVFoundation
+- AVKit
+- CoreAudio
+- CoreFoundation
+- CoreGraphics
+- CoreMedia
+- Foundation
+- ImageIO
+- MediaAccessibility
+- MediaPlayer
+- QuartzCore
+- UIKit
+CFNetwork:
+- CFNetwork
+- CoreFoundation
+- Security
+- SystemConfiguration
+CloudKit:
+- Accounts
+- CloudKit
+- CoreFoundation
+- CoreLocation
+- Foundation
+CoreAudio:
+- Accelerate
+- CoreAudio
+- CoreFoundation
+CoreAudioKit:
+- AVFoundation
+- AudioToolbox
+- CoreAudioKit
+- CoreBluetooth
+- CoreFoundation
+- CoreGraphics
+- CoreMIDI
+- Foundation
+- QuartzCore
+- UIKit
+CoreAuthentication:
+- CoreAuthentication
+- CoreFoundation
+- Foundation
+- LocalAuthentication
+- SharedInternals
+CoreBluetooth:
+- CoreBluetooth
+- CoreFoundation
+- Foundation
+CoreData:
+- CoreData
+- CoreFoundation
+- Foundation
+- Security
+CoreFoundation:
+- CoreFoundation
+CoreGraphics:
+- Accelerate
+- CoreFoundation
+- CoreGraphics
+CoreImage:
+- Accelerate
+- CoreFoundation
+- CoreGraphics
+- CoreImage
+- CoreMedia
+- CoreVideo
+- Foundation
+- ImageIO
+- OpenGLES
+- VideoToolbox
+CoreLocation:
+- CFNetwork
+- CoreBluetooth
+- CoreFoundation
+- CoreLocation
+- Foundation
+CoreMedia:
+- CoreAudio
+- CoreFoundation
+- CoreGraphics
+- CoreMedia
+- CoreVideo
+- Foundation
+- ImageIO
+- Security
+CoreMIDI:
+- CoreFoundation
+- CoreMIDI
+- Foundation
+CoreMotion:
+- CFNetwork
+- CoreFoundation
+- CoreMotion
+- Foundation
+CoreTelephony:
+- CoreFoundation
+- CoreTelephony
+- Foundation
+- Security
+CoreText:
+- CoreFoundation
+- CoreGraphics
+- CoreText
+- Foundation
+- ImageIO
+- MobileCoreServices
+CoreVideo:
+- CoreFoundation
+- CoreVideo
+- Foundation
+- Metal
+- OpenGLES
+EventKit:
+- AddressBook
+- CoreData
+- CoreFoundation
+- CoreGraphics
+- CoreLocation
+- EventKit
+- Foundation
+EventKitUI:
+- Accounts
+- AddressBook
+- CoreFoundation
+- CoreGraphics
+- CoreText
+- EventKit
+- EventKitUI
+- Foundation
+- MobileCoreServices
+- QuartzCore
+- UIKit
+ExternalAccessory:
+- CoreBluetooth
+- CoreFoundation
+- ExternalAccessory
+- Foundation
+- UIKit
+Foundation:
+- CFNetwork
+- CoreFoundation
+- Foundation
+- Security
+- SystemConfiguration
+GameController:
+- CoreBluetooth
+- CoreFoundation
+- CoreMotion
+- Foundation
+- GameController
+- MobileCoreServices
+GameKit:
+- Foundation
+- GameKit
+GLKit:
+- Accelerate
+- CoreFoundation
+- CoreGraphics
+- Foundation
+- GLKit
+- ImageIO
+- OpenGLES
+- QuartzCore
+- UIKit
+GSS:
+- CoreFoundation
+- GSS
+- Security
+- SystemConfiguration
+HealthKit:
+- CoreFoundation
+- Foundation
+- HealthKit
+- Security
+HomeKit:
+- CoreFoundation
+- Foundation
+- HomeKit
+iAd:
+- AVKit
+- AdSupport
+- CoreFoundation
+- CoreGraphics
+- CoreMedia
+- Foundation
+- MediaPlayer
+- QuartzCore
+- Security
+- UIKit
+- iAd
+ImageIO:
+- Accelerate
+- CoreFoundation
+- CoreGraphics
+- ImageIO
+IOKit:
+- CoreFoundation
+- IOKit
+JavaScriptCore:
+- CoreFoundation
+- Foundation
+- JavaScriptCore
+LocalAuthentication:
+- CoreFoundation
+- Foundation
+- LocalAuthentication
+- SharedInternals
+MapKit:
+- AddressBook
+- AddressBookUI
+- CoreFoundation
+- CoreGraphics
+- CoreLocation
+- CoreText
+- Foundation
+- ImageIO
+- MapKit
+- MobileCoreServices
+- QuartzCore
+- SystemConfiguration
+- UIKit
+MediaAccessibility:
+- CoreFoundation
+- CoreGraphics
+- CoreText
+- MediaAccessibility
+MediaPlayer:
+- AVFoundation
+- AudioToolbox
+- CoreFoundation
+- CoreGraphics
+- CoreMedia
+- CoreText
+- Foundation
+- ImageIO
+- MediaPlayer
+- MobileCoreServices
+- QuartzCore
+- Security
+- SystemConfiguration
+- UIKit
+MediaToolbox:
+- AudioToolbox
+- CFNetwork
+- CoreAudio
+- CoreFoundation
+- CoreGraphics
+- CoreMedia
+- CoreText
+- CoreVideo
+- Foundation
+- MediaAccessibility
+- MediaToolbox
+- MobileCoreServices
+- OpenGLES
+- QuartzCore
+- Security
+- SystemConfiguration
+- VideoToolbox
+MessageUI:
+- AVFoundation
+- AddressBook
+- AddressBookUI
+- AudioToolbox
+- CloudKit
+- CoreFoundation
+- CoreGraphics
+- CoreMedia
+- CoreText
+- CoreVideo
+- EventKit
+- Foundation
+- ImageIO
+- MessageUI
+- MobileCoreServices
+- QuartzCore
+- QuickLook
+- Security
+- UIKit
+- VideoToolbox
+- WebKit
+Metal:
+- CoreFoundation
+- Foundation
+- Metal
+- libCoreFSCache.dylib
+MobileCoreServices:
+- CFNetwork
+- CoreFoundation
+- Foundation
+- MobileCoreServices
+- Security
+- SystemConfiguration
+MultipeerConnectivity:
+- CFNetwork
+- CoreFoundation
+- Foundation
+- MultipeerConnectivity
+- QuartzCore
+- Security
+- SystemConfiguration
+- UIKit
+NetworkExtension:
+- CoreFoundation
+- Foundation
+- NetworkExtension
+- Security
+- SystemConfiguration
+NewsstandKit:
+- CoreFoundation
+- Foundation
+- NewsstandKit
+- UIKit
+NotificationCenter:
+- CoreFoundation
+- CoreGraphics
+- Foundation
+- NotificationCenter
+- QuartzCore
+- UIKit
+OpenAL:
+- AudioToolbox
+- CoreFoundation
+- OpenAL
+OpenGLES:
+- CoreFoundation
+- Foundation
+- OpenGLES
+- libGFXShared.dylib
+PassKit:
+- AVFoundation
+- Accelerate
+- Accounts
+- AddressBook
+- AddressBookUI
+- CoreFoundation
+- CoreGraphics
+- CoreImage
+- CoreLocation
+- Foundation
+- ImageIO
+- MessageUI
+- MobileCoreServices
+- PassKit
+- QuartzCore
+- Security
+- StoreKit
+- UIKit
+Photos:
+- AVFoundation
+- CoreData
+- CoreFoundation
+- CoreGraphics
+- CoreImage
+- CoreLocation
+- CoreMedia
+- Foundation
+- ImageIO
+- MobileCoreServices
+- Photos
+- UIKit
+PhotosUI:
+- AVFoundation
+- Accounts
+- AddressBook
+- AddressBookUI
+- CoreData
+- CoreFoundation
+- CoreGraphics
+- CoreImage
+- CoreLocation
+- CoreMedia
+- Foundation
+- GLKit
+- MediaPlayer
+- MobileCoreServices
+- OpenGLES
+- Photos
+- PhotosUI
+- QuartzCore
+- Security
+- Social
+- UIKit
+PushKit:
+- CoreFoundation
+- Foundation
+- PushKit
+QuartzCore:
+- Accelerate
+- CoreFoundation
+- CoreGraphics
+- CoreText
+- CoreVideo
+- Foundation
+- ImageIO
+- Metal
+- OpenGLES
+- QuartzCore
+- Security
+QuickLook:
+- AVFoundation
+- CoreFoundation
+- CoreGraphics
+- CoreMedia
+- CoreText
+- Foundation
+- ImageIO
+- MediaPlayer
+- MobileCoreServices
+- QuartzCore
+- QuickLook
+- UIKit
+- WebKit
+SafariServices:
+- CoreFoundation
+- Foundation
+- SafariServices
+SceneKit:
+- AVFoundation
+- Accelerate
+- CoreFoundation
+- CoreGraphics
+- CoreImage
+- CoreMedia
+- CoreText
+- Foundation
+- ImageIO
+- JavaScriptCore
+- OpenGLES
+- QuartzCore
+- SceneKit
+- UIKit
+Security:
+- CoreFoundation
+- Security
+Social:
+- AVFoundation
+- Accounts
+- AssetsLibrary
+- CFNetwork
+- CoreData
+- CoreFoundation
+- CoreGraphics
+- CoreLocation
+- CoreMedia
+- Foundation
+- ImageIO
+- MobileCoreServices
+- QuartzCore
+- Security
+- Social
+- SystemConfiguration
+- UIKit
+SpriteKit:
+- AVFoundation
+- AudioToolbox
+- CoreFoundation
+- CoreGraphics
+- CoreImage
+- CoreText
+- CoreVideo
+- Foundation
+- GLKit
+- ImageIO
+- MobileCoreServices
+- OpenAL
+- OpenGLES
+- QuartzCore
+- SpriteKit
+- UIKit
+StoreKit:
+- CoreFoundation
+- CoreGraphics
+- Foundation
+- StoreKit
+- UIKit
+SystemConfiguration:
+- CoreFoundation
+- SystemConfiguration
+Twitter:
+- CoreFoundation
+- Foundation
+- Social
+- Twitter
+- UIKit
+UIKit:
+- Accelerate
+- CFNetwork
+- CoreFoundation
+- CoreGraphics
+- CoreImage
+- CoreText
+- CoreVideo
+- Foundation
+- ImageIO
+- MobileCoreServices
+- OpenGLES
+- QuartzCore
+- Security
+- UIKit
+- VideoToolbox
+VideoToolbox:
+- Accelerate
+- CoreFoundation
+- CoreGraphics
+- CoreMedia
+- CoreVideo
+- VideoToolbox
+WebKit:
+- CFNetwork
+- CoreFoundation
+- CoreGraphics
+- CoreText
+- Foundation
+- ImageIO
+- JavaScriptCore
+- MobileCoreServices
+- OpenGLES
+- QuartzCore
+- Security
+- UIKit
+- WebKit

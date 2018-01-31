@@ -22,6 +22,7 @@
     <psi.referenceContributor language="Vue" implementation="org.jetbrains.vuejs.codeInsight.VueReferenceContributor"/>
 
     <lang.syntaxHighlighterFactory language="Vue" implementationClass="org.jetbrains.vuejs.language.VueSyntaxHighlighterFactory" />
+    <highlightErrorFilter implementation="org.jetbrains.vuejs.codeInsight.VueHighlightErrorFilter"/>
     <xml.attributeDescriptorsProvider implementation="org.jetbrains.vuejs.codeInsight.VueAttributesProvider" />
     <xml.xmlExtension implementation="org.jetbrains.vuejs.codeInsight.VueXmlExtension"/>
     <xml.tagNameProvider implementation="org.jetbrains.vuejs.codeInsight.VueTagProvider" />
@@ -43,6 +44,11 @@
     <localInspection language="Vue" groupName="Vue" displayName="Duplicate template/script tag" shortName="VueDuplicateTag"
                      enabledByDefault="true" level="WARNING"
                      implementationClass="org.jetbrains.vuejs.inspections.DuplicateTagInspection"/>
+    <intentionAction>
+      <className>org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentIntention</className>
+      <category>VueJS</category>
+    </intentionAction>
+
     <multiHostInjector implementation="org.jetbrains.vuejs.language.VueInjector" id="vue"/>
 
     <internalFileTemplate name="Vue Single File Component"/>

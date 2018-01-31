@@ -12,10 +12,7 @@ import com.intellij.lang.javascript.refactoring.extractMethod.*;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-
-import java.util.List;
 
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
@@ -40,18 +37,12 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
-  protected JSExtractFunctionHandler createMockHandler(DefaultJSExtractFunctionSettings extractFunctionSettings,
-                                                       Function<List<JSExtractFunctionHandler.IntroductionScope>,
-                                                         JSExtractFunctionHandler.IntroductionScope> scopeSelector) {
-    return new MockJSExtractFunctionHandler(extractFunctionSettings, scopeSelector);
-  }
-
   public void testExpressionInClass() throws Exception {
     ecmaL4Test();
   }
 
   private void ecmaL4Test() throws Exception {
-    doTest("created", getTestName(false), "js2", true);
+    doTest("created", "js2");
   }
 
   public void testLeavingReturn() throws Exception {
@@ -71,7 +62,7 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
   }
 
   public void testMethodInClass() throws Exception {
-    doTest("addHello", getTestName(false), "js2", true);
+    doTest("addHello", "js2");
   }
 
   public void testSelectEntireLine() throws Exception {
@@ -83,14 +74,8 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
         parametersInfo.variables.add(var);
         parametersInfo.variableOptions.put(var, new JSExtractFunctionSettings.ParameterInfo(var.getName() + "2", true, null, 0));
 
-        return new MockJSExtractFunctionHandler.MyJSExtractFunctionSettings(
-          "created",
-          true,
-          false,
-          JSAttributeList.AccessType.PUBLIC, parametersInfo
-        );
+        return new DefaultJSExtractFunctionSettings("created", true, false, JSAttributeList.AccessType.PUBLIC, parametersInfo, null);
       },
-      getTestName(false),
       "js2"
     );
   }
@@ -164,22 +149,22 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
   }
 
   private void failedEcmaTest() throws Exception {
-    doTest("created", getTestName(false), "js2", false);
+    assertFails(() -> doTest("created", "js2"));
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
   public void testMxml() throws Exception {
-    doTest("created", getTestName(false), "mxml", true);
+    doTest("created", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
   public void testMxml2() throws Exception {
-    doTest("created", getTestName(false), "mxml", true);
+    doTest("created", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
   public void testMxml3() throws Exception {
-    doTest("created", getTestName(false), "mxml", true);
+    doTest("created", "mxml");
   }
 
   public void testScopeOptions3() throws Exception {

@@ -2,7 +2,6 @@
 
 # IDEA project files
 .idea/
-*.iml
 
 ## Gradle.gitignore
 

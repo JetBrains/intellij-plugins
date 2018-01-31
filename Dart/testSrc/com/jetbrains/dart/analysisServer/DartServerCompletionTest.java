@@ -113,6 +113,12 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     doTest();
   }
 
+  public void testInsideIncompleteListLiteral() {
+    myFixture.configureByFile(getTestName(false) + ".dart");
+    myFixture.complete(CompletionType.BASIC);
+    assertNotNull(myFixture.getLookup());
+  }
+
   public void testUriCompletionByTab() {
     final String testName = getTestName(false);
     myFixture.copyDirectoryToProject(testName, testName);

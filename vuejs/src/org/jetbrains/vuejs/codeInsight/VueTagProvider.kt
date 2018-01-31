@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.completion.CompletionUtilCore
@@ -6,15 +19,14 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
-import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
 import com.intellij.psi.impl.source.xml.XmlDocumentImpl
@@ -28,53 +40,64 @@ import com.intellij.xml.XmlAttributeDescriptor
 import com.intellij.xml.XmlElementDescriptor
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import com.intellij.xml.XmlTagNameProvider
-import com.intellij.xml.util.HtmlUtil
-import com.intellij.xml.util.XmlUtil
 import icons.VuejsIcons
-import org.jetbrains.vuejs.GLOBAL_BINDING_MARK
+import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.getBoundName
-import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isGlobal
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isNotInLibrary
-import org.jetbrains.vuejs.index.VueComponentsIndex
-import org.jetbrains.vuejs.index.hasVue
-import org.jetbrains.vuejs.index.resolve
+import org.jetbrains.vuejs.index.*
 
 class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
     if (tag != null && hasVue(tag.project)) {
       val name = tag.name
-      // do not perform additional work for html tags
-      if (XmlUtil.isTagDefinedByNamespace(tag)) {
-        return null
-      }
 
-      val localComponents = mutableListOf<JSImplicitElement>()
-      processLocalComponents(tag, { foundName, element ->
-        if (foundName == name || foundName == toAsset(name) || foundName == toAsset(name).capitalize()) {
-          localComponents.add(element)
-        }
-        return@processLocalComponents true
-      })
-
+      val localComponents = findLocalComponents(name, tag)
       if (!localComponents.isEmpty()) return multiDefinitionDescriptor(localComponents)
 
-      val fromAsset = fromAsset(name)
-      val variants = nameVariantsWithPossiblyGlobalMark(name)
-      @Suppress("LoopToCallChain") // by performance reasons
-      for (variant in variants) {
-        val resolved = resolve(variant, GlobalSearchScope.allScope(tag.project), VueComponentsIndex.KEY) ?: continue
-        val global = if (VUE_FRAMEWORK_COMPONENTS.contains(fromAsset)) resolved
-        else resolved.filter { isGlobal(it) || VueComponents.isGlobalLibraryComponent(variant, it) }
-        if (global.isEmpty()) continue
+      val normalized = fromAsset(name)
+      val globalComponents = findGlobalComponents(normalized, tag)
+      if (!globalComponents.isEmpty()) return multiDefinitionDescriptor(globalComponents)
 
-        return multiDefinitionDescriptor(global)
-      }
       // keep this last in case in future we would be able to normally resolve into these components
-      if (VUE_FRAMEWORK_UNRESOLVABLE_COMPONENTS.contains(fromAsset)) {
-        return VueElementDescriptor(JSImplicitElementImpl(fromAsset, tag))
+      if (VUE_FRAMEWORK_UNRESOLVABLE_COMPONENTS.contains(normalized)) {
+        return VueElementDescriptor(JSImplicitElementImpl(normalized, tag))
       }
     }
     return null
+  }
+
+  private fun findLocalComponents(name: String, tag: XmlTag): List<JSImplicitElement> {
+    val localComponents = mutableListOf<JSImplicitElement>()
+    processLocalComponents(tag, { foundName, element ->
+      if (foundName == name || foundName == toAsset(name) || foundName == toAsset(name).capitalize()) {
+        localComponents.add(element)
+      }
+      return@processLocalComponents true
+    })
+    return localComponents
+  }
+
+  private fun findGlobalComponents(normalized: String, tag: XmlTag): Collection<JSImplicitElement> {
+    val resolvedVariants = resolve(normalized, GlobalSearchScope.allScope(tag.project), VueComponentsIndex.KEY)
+    if (resolvedVariants != null) {
+      return if (VUE_FRAMEWORK_COMPONENTS.contains(normalized)) resolvedVariants
+      else {
+        // if global component was defined with literal name, that's the "source of true"
+        val globalExact = resolvedVariants.filter { isGlobalExact(it) }
+        if (!globalExact.isEmpty()) globalExact
+        else {
+          // prefer library definitions of components for resolve
+          // i.e. prefer the place where the name is defined, not the place where it is registered with Vue.component
+          val libDef = resolvedVariants.filter { VueComponentsCache.isGlobalLibraryComponent(it) }
+          if (libDef.isEmpty()) resolvedVariants.filter { isGlobal(it) }
+          else libDef
+        }
+      }
+    }
+    val globalAliased = VueComponentsCache.findGlobalLibraryComponent(tag.project, normalized) ?: return emptyList()
+
+    return setOf(globalAliased.second as? JSImplicitElement ?:
+                 JSLocalImplicitElementImpl(globalAliased.first, null, globalAliased.second, null))
   }
 
   private fun nameVariantsWithPossiblyGlobalMark(name: String): MutableSet<String> {
@@ -84,7 +107,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   }
 
   private fun processLocalComponents(tag: XmlTag, processor: (String?, JSImplicitElement) -> Boolean): Boolean {
-    val content = findScriptContent(tag.containingFile as? HtmlFileImpl) ?: return true
+    val content = findModule(tag) ?: return true
     val defaultExport = ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment ?: return true
     val component = defaultExport.stubSafeElement as? JSObjectLiteralExpression ?: return true
 
@@ -92,7 +115,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     val nameProperty = component.findProperty("name")
     val nameValue = nameProperty?.value as? JSLiteralExpression
     if (nameValue != null && nameValue.isQuotedLiteral) {
-      val name = nameValue.value as? String
+      val name = nameValue.stringValue
       if (name != null) {
         processor.invoke(name, JSImplicitElementImpl(name, nameProperty))
       }
@@ -120,30 +143,52 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   }
 
   override fun addTagNameVariants(elements: MutableList<LookupElement>?, tag: XmlTag, prefix: String?) {
+    elements ?: return
     val files:MutableList<PsiFile> = mutableListOf()
+    val localLookups = mutableListOf<LookupElement>()
     processLocalComponents(tag, { foundName, element ->
-      elements?.add(PrioritizedLookupElement.withPriority(createVueLookup(element, foundName!!, false).bold(), 100.0))
+      addLookupVariants(localLookups, tag, element, foundName!!, false)
       files.add(element.containingFile)
       return@processLocalComponents true
     })
-    val namePrefix = tag.name.substringBefore(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, tag.name)
+    elements.addAll(localLookups.map { PrioritizedLookupElement.withPriority((it as LookupElementBuilder).bold(), 100.0) })
 
-    val variants = nameVariantsWithPossiblyGlobalMark(namePrefix)
-    val allComponents = VueComponents.getAllComponents(tag.project, { key -> variants.any { key.startsWith(it, true) } }, false)
-    val components = allComponents.map.keys
-      .filter { !files.contains(allComponents.map[it]!!.first.containingFile) }
-      .map {
-        val value = allComponents.map[it]!!
-        createVueLookup(value.first, fromAsset(it), value.second)
+    if (hasVue(tag.project)) {
+      val namePrefix = tag.name.substringBefore(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, tag.name)
+      val variants = nameVariantsWithPossiblyGlobalMark(namePrefix)
+      val allComponents = VueComponentsCache.getAllComponentsGroupedByModules(tag.project, { key -> variants.any { key.contains(it, true) } }, false)
+      for (entry in allComponents) {
+        entry.value.keys
+          .filter { !files.contains(entry.value[it]!!.first.containingFile) }
+          .forEach {
+            val value = entry.value[it]!!
+            addLookupVariants(elements, tag, value.first, it, value.second, entry.key)
+          }
       }
-
-    elements?.addAll(components)
+      elements.addAll(VUE_FRAMEWORK_COMPONENTS.map {
+        LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vue", true)
+      })
+    }
   }
 
-  private fun createVueLookup(element: PsiElement, name: String, isGlobal: Boolean) =
-    LookupElementBuilder.create(element, fromAsset(name)).
+  private fun addLookupVariants(elements: MutableList<LookupElement>,
+                                contextTag: XmlTag,
+                                element: PsiElement,
+                                name: String,
+                                isGlobal: Boolean,
+                                comment: String = "") {
+    if (VueFileType.INSTANCE == contextTag.containingFile.fileType) {
+      // Pascal case is allowed (and recommended for 90%)
+      elements.add(createVueLookup(element, toAsset(name).capitalize(), isGlobal, comment))
+    }
+    elements.add(createVueLookup(element, fromAsset(name), isGlobal, comment))
+  }
+
+  private fun createVueLookup(element: PsiElement, name: String, isGlobal: Boolean, comment: String = "") =
+    LookupElementBuilder.create(element, name).
       withInsertHandler(if (isGlobal) null else VueInsertHandler.INSTANCE).
-      withIcon(VuejsIcons.Vue)
+      withIcon(VuejsIcons.Vue).
+      withTypeText(comment, true)
 
   companion object {
     private val VUE_FRAMEWORK_COMPONENTS = setOf(
@@ -233,10 +278,4 @@ class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JS
   override fun getContentType() = CONTENT_TYPE_ANY
   override fun getDefaultValue() = null
   override fun getDependences(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY!!
-}
-
-fun findScriptContent(file: HtmlFileImpl?): JSEmbeddedContent? {
-  return PsiTreeUtil.getChildrenOfType(file?.document, XmlTag::class.java)?.
-    firstOrNull { HtmlUtil.isScriptTag(it) }?.children?.
-    firstOrNull { it is JSEmbeddedContent } as? JSEmbeddedContent
 }

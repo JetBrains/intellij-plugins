@@ -5,6 +5,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiSearchHelper;
+import com.intellij.psi.search.TextOccurenceProcessor;
 import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CucumberJava8Extension extends AbstractCucumberJavaExtension {
+  private static final String[] KEYWORDS = {"Given", "And", "Then", "But", "When"};
+  private static final String CUCUMBER_API_JAVA8_PACKAGE = "cucumber.api.java8";
+
   @NotNull
   @Override
   public BDDFrameworkType getStepFileType() {
@@ -38,30 +42,44 @@ public class CucumberJava8Extension extends AbstractCucumberJavaExtension {
     final GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
     final GlobalSearchScope javaFiles = GlobalSearchScope.getScopeRestrictedByFileTypes(dependenciesScope, JavaFileType.INSTANCE);
 
-    String[] keywords = new String[] {"Given", "And", "Then", "But", "When"};
-    for (String method : keywords) {
-      PsiSearchHelper.SERVICE.getInstance(module.getProject()).processElementsWithWord((element, offsetInElement) -> {
-        final PsiElement parent = element.getParent();
-        if (parent != null) {
-          final PsiReference[] references = parent.getReferences();
-          for (PsiReference ref : references) {
-            PsiElement resolved = ref.resolve();
-            PsiClass psiClass = PsiTreeUtil.getParentOfType(resolved, PsiClass.class);
-            if (psiClass != null) {
-              final String fqn = psiClass.getQualifiedName();
-              if (fqn != null && fqn.startsWith("cucumber.api.java8")) {
-                final PsiMethodCallExpression methodCallExpression = PsiTreeUtil.getParentOfType(element, PsiMethodCallExpression.class);
-                if (methodCallExpression != null) {
-                  result.add(new Java8StepDefinition(methodCallExpression));
-                }
-              }
+    for (String method : KEYWORDS) {
+      CucumberJava8TextOccurenceProcessor occurenceProcessor = new CucumberJava8TextOccurenceProcessor(result);
+      PsiSearchHelper.SERVICE.getInstance(module.getProject()).processElementsWithWord(occurenceProcessor, javaFiles, method,
+                                                                                       UsageSearchContext.IN_CODE, true);
+    }
+    return result;
+  }
+
+  private static class CucumberJava8TextOccurenceProcessor implements TextOccurenceProcessor {
+    private List<AbstractStepDefinition> myResult;
+
+    public CucumberJava8TextOccurenceProcessor(List<AbstractStepDefinition> result) {
+      myResult = result;
+    }
+
+    @Override
+    public boolean execute(@NotNull PsiElement element, int offsetInElement) {
+      PsiElement parent = element.getParent();
+      if (PsiTreeUtil.getParentOfType(element, PsiMethodCallExpression.class) == null || parent == null) {
+        return true;
+      }
+
+      final PsiReference[] references = parent.getReferences();
+      for (PsiReference ref : references) {
+        PsiElement resolved = ref.resolve();
+        PsiClass psiClass = PsiTreeUtil.getParentOfType(resolved, PsiClass.class);
+        if (psiClass != null) {
+          final String fqn = psiClass.getQualifiedName();
+          if (fqn != null && fqn.startsWith(CUCUMBER_API_JAVA8_PACKAGE)) {
+            final PsiMethodCallExpression methodCallExpression = PsiTreeUtil.getParentOfType(element, PsiMethodCallExpression.class);
+            if (methodCallExpression != null) {
+              myResult.add(new Java8StepDefinition(methodCallExpression));
             }
           }
         }
+      }
 
-        return true;
-      }, javaFiles, method, UsageSearchContext.IN_CODE, true);
+      return true;
     }
-    return result;
   }
 }

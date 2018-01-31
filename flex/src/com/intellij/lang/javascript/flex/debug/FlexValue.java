@@ -24,6 +24,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.xdebugger.XDebuggerUtil;
+import com.intellij.xdebugger.XExpression;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.*;
@@ -377,8 +378,9 @@ class FlexValue extends XValue {
   public XValueModifier getModifier() {
     return new XValueModifier() {
       @Override
-      public void setValue(@NotNull String _expression, @NotNull final XModificationCallback callback) {
-        FlexStackFrame.EvaluateCommand command = myFlexStackFrame.new EvaluateCommand(myExpression + "=" + _expression, null) {
+      public void setValue(@NotNull XExpression _expression, @NotNull final XModificationCallback callback) {
+        FlexStackFrame.EvaluateCommand command =
+          myFlexStackFrame.new EvaluateCommand(myExpression + "=" + _expression.getExpression(), null) {
           @Override
           protected void dispatchResult(String s) {
             super.dispatchResult(s);

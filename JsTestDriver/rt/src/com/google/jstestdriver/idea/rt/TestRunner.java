@@ -325,7 +325,7 @@ public class TestRunner {
   @SuppressWarnings("SSBasedInspection")
   @NotNull
   private static String[] toStringArray(@NotNull List<String> list) {
-    return list.toArray(new String[list.size()]);
+    return list.toArray(new String[0]);
   }
 
   private static class DependenciesTouchFix implements PluginInitializer {

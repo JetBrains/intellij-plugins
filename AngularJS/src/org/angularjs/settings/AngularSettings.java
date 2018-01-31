@@ -6,6 +6,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -32,7 +33,7 @@ public class AngularSettings implements
   }
 
   @Override
-  public void loadState(AngularSettings.Settings state) {
+  public void loadState(@NotNull AngularSettings.Settings state) {
     myState = state;
   }
 

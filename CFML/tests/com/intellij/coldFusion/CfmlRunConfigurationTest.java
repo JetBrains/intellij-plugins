@@ -78,7 +78,7 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
     clonedConfiguration.getRunnerParameters().setUrl("http://4.4.4.4/src/index.cfm");
     final RunnerAndConfigurationSettings runnerAndConfigurationSettings = RunManager.getInstance(getProject())
       .createConfiguration(clonedConfiguration, CfmlRunConfigurationType.getInstance().getConfigurationFactories()[0]);
-    RunManager.getInstance(getProject()).addConfiguration(runnerAndConfigurationSettings, false);
+    RunManager.getInstance(getProject()).addConfiguration(runnerAndConfigurationSettings);
   }
 
 

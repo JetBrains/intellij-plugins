@@ -84,15 +84,15 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
               }
             }
             if (bundleExpression instanceof JSLiteralExpression) {
-              final Object expressionValue = ((JSLiteralExpression)bundleExpression).getValue();
-              if (expressionValue instanceof String) {
+              final String expressionValue = ((JSLiteralExpression)bundleExpression).getStringValue();
+              if (expressionValue != null) {
                 provider = new FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl>() {
                   public TextRange getReferenceRange(JSLiteralExpressionImpl element) {
                     return getValueRange(element);
                   }
 
                   public String getBundleName(JSLiteralExpressionImpl element) {
-                    return (String)expressionValue;
+                    return expressionValue;
                   }
 
                   public boolean isSoft(JSLiteralExpressionImpl element) {
@@ -113,7 +113,7 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
         }
       }
     }
-    return result.toArray(new PsiReference[result.size()]);
+    return result.toArray(PsiReference.EMPTY_ARRAY);
   }
 
   private static final FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl> ourPropertyInfoProvider =

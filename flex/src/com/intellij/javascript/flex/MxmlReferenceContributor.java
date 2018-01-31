@@ -21,8 +21,8 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
 import com.intellij.lang.javascript.psi.impl.JSTextReference;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.resolve.ResultSink;
-import com.intellij.lang.javascript.validation.fixes.CreateClassIntentionWithCallback;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
+import com.intellij.lang.javascript.validation.fixes.CreateClassIntentionWithCallback;
 import com.intellij.lang.javascript.validation.fixes.CreateFlexMobileViewIntentionAndFix;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -39,7 +39,10 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.AttributeVa
 import com.intellij.psi.meta.PsiMetaData;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.*;
-import com.intellij.util.*;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.Function;
+import com.intellij.util.ProcessingContext;
+import com.intellij.util.SmartList;
 import com.intellij.util.text.StringTokenizer;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.util.XmlTagUtil;
@@ -117,7 +120,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
                 references.add(new FlexColorReference(element, new TextRange(start + 1, end + 1)));
               }
             }.process(text);
-            return references.toArray(new PsiReference[references.size()]);
+            return references.toArray(PsiReference.EMPTY_ARRAY);
           }
           else {
             // inside quotes
@@ -547,6 +550,6 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
       refs.add(new FlexReferenceContributor.StateReference(element, new TextRange(1 + end - val.length(), 1 + end), stateGroupsOnly));
     }
 
-    return refs.toArray(new PsiReference[refs.size()]);
+    return refs.toArray(PsiReference.EMPTY_ARRAY);
   }
 }

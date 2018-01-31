@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex.refactoring.extractSuper;
 
+import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
@@ -14,7 +15,6 @@ import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
-import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSConvertReferencesToSuperUtil;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractSuperMode;
 import com.intellij.lang.javascript.refactoring.memberPullUp.JSPullUpConflictsUtil;
@@ -49,7 +49,7 @@ import com.intellij.refactoring.util.RefactoringDescriptionLocation;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageViewDescriptor;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.containers.HashSet;
+import java.util.HashSet;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -140,7 +140,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
       JSRefactoringUtil.addConstructorUsages(mySourceClass, result);
     }
 
-    return result.toArray(new UsageInfo[result.size()]);
+    return result.toArray(UsageInfo.EMPTY_ARRAY);
   }
 
 
@@ -312,7 +312,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
     for (JSElement memberAfterMove : myMembersAfterMove) {
       findUsagesAfterMove(memberAfterMove, usagesInMovedMembers, variablesResults, util);
     }
-    bindRefsToTarget(usagesInMovedMembers.toArray(new UsageInfo[usagesInMovedMembers.size()]), formatters
+    bindRefsToTarget(usagesInMovedMembers.toArray(UsageInfo.EMPTY_ARRAY), formatters
     );
   }
 
@@ -507,6 +507,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
     myMembersAfterMove = new JSPullUpHelper(myTargetClass, mySourceClass, myMembersToMove, myDocCommentPolicy).moveMembersToBase(formatters);
   }
 
+  @NotNull
   @Override
   protected String getCommandName() {
     if (myMode == JSExtractSuperMode.RenameImplementation) {

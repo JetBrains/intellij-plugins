@@ -53,7 +53,7 @@ fun getStringLiteralsFromInitializerArray(holder: PsiElement,
 
 fun getTextIfLiteral(holder: PsiElement?): String? {
   if (holder != null && holder is JSLiteralExpression && holder.isQuotedLiteral) {
-    return holder.value as? String
+    return holder.stringValue
   }
   return null
 }

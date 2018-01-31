@@ -3,8 +3,8 @@ package com.intellij.flex.codeInsight;
 import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.javascript.flex.FlexDocumentationProvider;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
+import com.intellij.javascript.flex.documentation.FlexDocumentationProvider;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -117,7 +117,7 @@ public class FlexNavigationTest extends CodeInsightTestCase {
 
     Collection<PsiElement> elementsToCheck;
     GlobalSearchScope scope;
-    if (clazz == null || !(clazz instanceof JSQualifiedNamedElement)) {
+    if (!(clazz instanceof JSQualifiedNamedElement)) {
       PsiReference reference = TargetElementUtil.findReference(editor);
       assertNotNull(reference);
       elementsToCheck = TargetElementUtil.getInstance().getTargetCandidates(reference);

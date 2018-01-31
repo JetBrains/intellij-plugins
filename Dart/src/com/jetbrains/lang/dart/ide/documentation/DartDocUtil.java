@@ -212,7 +212,7 @@ public class DartDocUtil {
     }
 
     if (!siblingComments.isEmpty()) {
-      return getSingleLineDocCommentsText(siblingComments.toArray(new PsiComment[siblingComments.size()]));
+      return getSingleLineDocCommentsText(siblingComments.toArray(new PsiComment[0]));
     }
 
     return null;

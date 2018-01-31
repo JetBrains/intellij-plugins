@@ -83,7 +83,7 @@ public class TreeState {
       }
     }
 
-    tree.setSelectionPaths(selectedPaths.toArray(new TreePath[selectedPaths.size()]));
+    tree.setSelectionPaths(selectedPaths.toArray(new TreePath[0]));
   }
 
   private Object getObject(TreePath path) {

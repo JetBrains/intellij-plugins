@@ -184,6 +184,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     return needsJavaModule() ? StdModuleTypes.JAVA : FlexModuleType.getInstance();
   }
 
+  @Override
   protected void setUpJdk() {
     if (!needsJavaModule()) {
       FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());

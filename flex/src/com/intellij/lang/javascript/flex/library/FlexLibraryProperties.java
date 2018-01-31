@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.library;
 import com.intellij.openapi.roots.libraries.LibraryProperties;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.util.xmlb.annotations.Attribute;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class FlexLibraryProperties extends LibraryProperties<FlexLibraryProperties> {
@@ -23,7 +24,7 @@ public class FlexLibraryProperties extends LibraryProperties<FlexLibraryProperti
   }
 
   @Override
-  public void loadState(FlexLibraryProperties state) {
+  public void loadState(@NotNull FlexLibraryProperties state) {
     myId = state.myId;
   }
 

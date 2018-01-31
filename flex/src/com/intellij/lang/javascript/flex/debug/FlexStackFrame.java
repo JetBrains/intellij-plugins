@@ -164,7 +164,7 @@ public class FlexStackFrame extends XStackFrame {
     }
 
     myDebugProcess.sendCommand(
-      new CompositeDebuggerCommand(node, commands.toArray(new DebuggerCommand[commands.size()])) {
+      new CompositeDebuggerCommand(node, commands.toArray(new DebuggerCommand[0])) {
         @Override
         protected void obsolete() {
           super.obsolete();

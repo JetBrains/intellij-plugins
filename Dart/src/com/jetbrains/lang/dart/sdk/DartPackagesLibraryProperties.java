@@ -33,7 +33,7 @@ public class DartPackagesLibraryProperties extends LibraryProperties<DartPackage
     return this;
   }
 
-  public void loadState(final DartPackagesLibraryProperties state) {
+  public void loadState(@NotNull final DartPackagesLibraryProperties state) {
     XmlSerializerUtil.copyBean(state, this);
   }
 

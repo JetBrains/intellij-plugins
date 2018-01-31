@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package org.jetbrains.vuejs.language
 
 import com.intellij.codeInsight.CodeInsightSettings
@@ -90,8 +103,8 @@ import compUI from 'compUI.vue'
 <to<caret>
 </template>
 <script>
-export default {
-}
+  export default {
+  }
 </script>
 """)
 
@@ -104,13 +117,77 @@ export default {
 <to-import<caret>
 </template>
 <script>
-import ToImport from "./toImport";
-
-export default {
-    components: {ToImport}
-}
+  import ToImport from "./toImport";
+  export default {
+      components: {ToImport}
+  }
 </script>
 """)
+    })
+  }
+
+  fun testCompleteWithImportCreateExport() {
+    myFixture.configureByText("toImport.vue", """
+<script>
+  export default {
+    name: 'toImport'
+  }
+</script>
+""")
+    myFixture.configureByText("CompleteWithImportCreateExport.vue", """
+<template>
+<To<caret>
+</template>
+<script>
+</script>
+""")
+
+    noAutoComplete(Runnable {
+      myFixture.completeBasic()
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "ToImport")
+      myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+      myFixture.checkResult("""
+<template>
+<ToImport<caret>
+</template>
+<script>
+    import ToImport from "./toImport";
+    export default {
+        components: {ToImport}
+    }
+</script>
+""")
+    })
+  }
+
+  fun testCompleteWithImportCreateScript() {
+    myFixture.configureByText("toImport.vue", """
+<script>
+  export default {
+    name: 'toImport'
+  }
+</script>
+""")
+    myFixture.configureByText("CompleteWithImportCreateScript.vue", """
+<template>
+<to<caret>
+</template>
+""")
+
+    noAutoComplete(Runnable {
+      myFixture.completeBasic()
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
+      myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+      myFixture.checkResult("""
+<template>
+<to-import
+</template>
+<script>
+    import ToImport from "./toImport";
+    export default {
+        components: {ToImport}
+    }
+</script>""")
     })
   }
 
@@ -710,6 +787,17 @@ $script""")
                                                                 "v-list-tile-sub-title", "v-list-tile-title"))
   }
 
+  fun testIviewCompletion() {
+    createPackageJsonWithVueDependency(myFixture, "\"iview\": \"2.8.0\"")
+    myFixture.copyDirectoryToProject("../libs/iview/node_modules", "./node_modules")
+    myFixture.configureByText("IviewCompletion.vue",
+"""
+<template><a<caret></template>
+""")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, listOf("affix", "alert", "auto-complete", "avatar"))
+  }
+
   fun testWrongPropsNotInCompletion() {
     myFixture.configureByText("WrongPropsNotInCompletion.vue", """
 <template>
@@ -727,6 +815,18 @@ $script""")
     assertContainsElements(myFixture.lookupElementStrings!!, "aaa", ":aaa", "v-for", "ddd", "sss")
     // actually the test is against exception, which occurred on completion
     UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "123", "true")
+  }
+
+  fun testBuefyCompletion() {
+    createPackageJsonWithVueDependency(myFixture, "\"buefy\": \"0.6.2\"")
+    myFixture.copyDirectoryToProject("../libs/buefy/node_modules", "./node_modules")
+    myFixture.configureByText("BuefyCompletion.vue",
+                              """
+<template><b-<caret></template>
+""")
+    myFixture.completeBasic()
+    UsefulTestCase.assertSameElements(myFixture.lookupElementStrings!!, listOf("b-autocomplete", "b-checkbox",
+                                                                               "b-checkbox-button", "b-radio", "b-radio-button"))
   }
 }
 

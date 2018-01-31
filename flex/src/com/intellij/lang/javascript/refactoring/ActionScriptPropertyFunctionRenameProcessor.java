@@ -20,7 +20,7 @@ public class ActionScriptPropertyFunctionRenameProcessor extends JSDefaultRename
   }
 
   @Override
-  public void prepareRenaming(PsiElement element, final String newName, final Map<PsiElement, String> allRenames) {
+  public void prepareRenaming(@NotNull PsiElement element, @NotNull final String newName, @NotNull final Map<PsiElement, String> allRenames) {
     JSClass containingClass = JSUtils.getMemberContainingClass(element);
     if (containingClass != null) {
       allRenames.putAll(JSGetterSetterRenameUtil.getRelatedElementsInClass(element, containingClass, newName));

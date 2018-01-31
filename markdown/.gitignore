@@ -10,7 +10,6 @@
 .idea/libraries/
 .idea/.name
 .idea/*.png
-*.iml
 
 /out
 

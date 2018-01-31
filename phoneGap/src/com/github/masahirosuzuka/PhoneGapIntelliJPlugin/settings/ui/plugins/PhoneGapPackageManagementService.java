@@ -162,11 +162,6 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
   }
 
   @Override
-  public boolean shouldFetchLatestVersionsForOnlyInstalledPackages() {
-    return true;
-  }
-
-  @Override
   public void fetchLatestVersion(@NotNull InstalledPackage pkg, @NotNull CatchingConsumer<String, Exception> consumer) {
     PhoneGapPluginsList.PhoneGapRepoPackage aPackage = PhoneGapPluginsList.getPackage(pkg.getName());
 

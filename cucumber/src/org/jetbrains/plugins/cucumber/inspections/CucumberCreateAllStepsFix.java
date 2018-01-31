@@ -1,12 +1,9 @@
 package org.jetbrains.plugins.cucumber.inspections;
 
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinFeature;
@@ -28,7 +25,7 @@ public class CucumberCreateAllStepsFix extends CucumberCreateStepFixBase {
   }
 
   @Override
-  protected void createStepOrSteps(GherkinStep sourceStep, @Nullable final Pair<PsiFile, BDDFrameworkType> fileAndFrameworkType) {
+  protected void createStepOrSteps(GherkinStep sourceStep, @NotNull final CucumberStepDefinitionCreationContext fileAndFrameworkType) {
     final PsiFile probableGherkinFile = sourceStep.getContainingFile();
     if (!(probableGherkinFile instanceof GherkinFile)) {
       return;
