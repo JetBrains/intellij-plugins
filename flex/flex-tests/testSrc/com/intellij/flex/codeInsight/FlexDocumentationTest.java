@@ -179,7 +179,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     assertInstanceOf(docElement, JSClass.class);
   }
 
-  @Bombed(month = Calendar.JANUARY, day = 29, user = "denofevil", description = BombReason.MULTI_DOC)
+  @Bombed(month = Calendar.FEBRUARY, day = 10, user = "denofevil", description = BombReason.MULTI_DOC)
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexCssSelectorMultiDocumentation() {
     myAfterCommitRunnable =
@@ -203,7 +203,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     doTest(new String[]{s + ".css", s + ".mxml"}, testName, false, Check.Content);
   }
 
-  @Bombed(month = Calendar.JANUARY, day = 29, user = "denofevil", description = BombReason.MULTI_DOC)
+  @Bombed(month = Calendar.FEBRUARY, day = 10, user = "denofevil", description = BombReason.MULTI_DOC)
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testFlexMetadataStyleMultidoc() {
     String testName = getTestName(false);
@@ -218,7 +218,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     assertInstanceOf(docElement, JSAttributeNameValuePair.class);
   }
 
-  @Bombed(month = Calendar.JANUARY, day = 29, user = "denofevil", description = BombReason.MULTI_DOC)
+  @Bombed(month = Calendar.FEBRUARY, day = 10, user = "denofevil", description = BombReason.MULTI_DOC)
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexCssPropertyMultiDocumentation() {
     doTest(getTestName(false), "css");
@@ -416,13 +416,13 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     doTest(testName, "as", testName, false, Check.Null);
   }
 
-  @Bombed(month = Calendar.JANUARY, day = 29, user = "denofevil", description = BombReason.MULTI_DOC)
+  @Bombed(month = Calendar.FEBRUARY, day = 10, user = "denofevil", description = BombReason.MULTI_DOC)
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testClassInheritDoc1() {
     doTest(getTestName(false), "as");
   }
 
-  @Bombed(month = Calendar.JANUARY, day = 29, user = "denofevil", description = BombReason.MULTI_DOC)
+  @Bombed(month = Calendar.FEBRUARY, day = 10, user = "denofevil", description = BombReason.MULTI_DOC)
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testClassInheritDoc2() {
     String testName = getTestName(false);
