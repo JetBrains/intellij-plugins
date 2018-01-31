@@ -99,7 +99,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
   @Override
   public String generateDoc(PsiElement _element, PsiElement originalElement) {
     String doc = super.generateDoc(_element, originalElement);
-    if (doc != null) {
+    if (doc != null && doc.contains(DocumentationMarkup.CONTENT_START)) {
       return doc;
     }
 
@@ -274,7 +274,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
         //try next url
       }
     }
-    return null;
+    return doc;
   }
 
   @NotNull
