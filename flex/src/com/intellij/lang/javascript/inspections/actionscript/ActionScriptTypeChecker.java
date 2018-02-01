@@ -142,16 +142,16 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
   }
 
   @Override
-  protected void registerExpressionNotAssignableToType(JSExpression expr,
+  protected void registerExpressionNotAssignableToType(PsiElement expr,
                                                        PsiElement typeOwner,
                                                        String message,
                                                        ProblemHighlightType problemHighlightType,
                                                        LocalQuickFix... fixes) {
-    if (typeOwner != null &&
+    if (typeOwner != null && expr instanceof JSExpression &&
         typeOwner.getParent() instanceof JSParameterList &&
         expr.getParent() instanceof JSArgumentList) {
       JSFunction method = (JSFunction)typeOwner.getParent().getParent();
-      if (!(JSResolveUtil.getExpressionJSType(expr) instanceof JSVoidType)) {
+      if (!(JSResolveUtil.getExpressionJSType((JSExpression)expr) instanceof JSVoidType)) {
         JSFunction topMethod = JSInheritanceUtil.findTopMethods(method).iterator().next();
         fixes = ArrayUtil.append(fixes, new ChangeSignatureFix(topMethod, (JSArgumentList)expr.getParent()));
       }
