@@ -46,7 +46,7 @@ public class FlexUnitMethodReturnTypeInspection extends FlexUnitMethodInspection
 
         LocalQuickFix[] fix = canFix(method)
                               ? new LocalQuickFix[]{
-          new ChangeTypeFix(method, "void", "javascript.fix.set.method.return.type")} : LocalQuickFix.EMPTY_ARRAY;
+          new ChangeTypeFix(method, "void", "javascript.fix.set.method.return.type", null)} : LocalQuickFix.EMPTY_ARRAY;
         holder.registerProblem(nameIdentifier.getPsi(), FlexBundle.message("flexunit.inspection.testmethodreturntype.message"),
                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fix);
       }

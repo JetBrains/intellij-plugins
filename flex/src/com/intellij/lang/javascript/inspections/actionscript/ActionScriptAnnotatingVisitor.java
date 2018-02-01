@@ -355,7 +355,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
             reportingClient.reportError(
               implementationReturnTypeExpr != null ? implementationReturnTypeExpr.getNode() : implementationFunction.findNameIdentifier(),
               msg, ErrorReportingClient.ProblemKind.ERROR,
-              new ChangeTypeFix(implementationFunction, interfaceReturnType, "javascript.fix.message.change.return.type.to.expected"),
+              new ChangeTypeFix(implementationFunction, interfaceReturnType, "javascript.fix.message.change.return.type.to.expected", null),
               createChangeBaseMethodSignatureFix(interfaceFunction, implementationFunction));
           }
           else if (incompatibleSignature == SignatureMatchResult.FUNCTION_KIND_DIFFERS) {
@@ -525,7 +525,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
             final Annotation annotation =
               myHolder.createErrorAnnotation(returnTypeExpr != null ? returnTypeExpr.getNode() : node.findNameIdentifier(), msg);
             annotation.registerFix(new ChangeTypeFix(node, baseReturnType,
-                                                     "javascript.fix.message.change.return.type.to.expected"));
+                                                     "javascript.fix.message.change.return.type.to.expected", null));
             annotation.registerFix(createChangeBaseMethodSignatureFix(override, node));
           }
           else if (incompatibleSignature == SignatureMatchResult.FUNCTION_KIND_DIFFERS) {
