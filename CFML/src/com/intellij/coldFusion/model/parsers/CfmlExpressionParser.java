@@ -819,13 +819,11 @@ public class CfmlExpressionParser {
 
     if (tokenType == CfmlTokenTypes.STRING_TEXT) {
       advance();
-      parseStringText();
     }
     else {/*if (tokenType == OPENSHARP) {*/
       parseSharpExpr();
-
-      parseStringText();
     }
+    parseStringText();
   }
 
   /*

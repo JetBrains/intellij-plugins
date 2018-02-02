@@ -141,12 +141,11 @@ public abstract class CfmlVariantsProcessor<T> implements PsiScopeProcessor {
           myWasConstructorFound = true;
           if (!methodClass.equals(myInitialClass) && !myIsForCompletion) {
             addIfNotNull(myResult, execute(myInitialClass, false));
-            return true;
           }
           else {
             addIfNotNull(myResult, execute(method, myMethods.getResolveError() == JavaMethodResolveHelper.ErrorType.RESOLVE));
-            return true;
           }
+          return true;
         }
       }
     }
