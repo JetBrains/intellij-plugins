@@ -1,9 +1,11 @@
 package com.jetbrains.lang.dart.flutter;
 
 import com.intellij.ide.plugins.PluginManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
@@ -16,14 +18,67 @@ import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Properties;
 
 public class FlutterUtil {
+
+  private static final Logger LOG = Logger.getInstance(FlutterUtil.class);
 
   private static final String FLUTTER_MODULE_TYPE_ID = "FLUTTER_MODULE_TYPE";
   private static final String DART_SDK_SUFFIX = "/bin/cache/dart-sdk";
   private static final boolean FLUTTER_PLUGIN_INSTALLED = PluginManager.isPluginInstalled(PluginId.getId("io.flutter"));
+
+  private static final Properties colors;
+
+  static {
+    colors = new Properties();
+
+    try {
+      colors.load(FlutterUtil.class.getResourceAsStream("/flutter/colors.properties"));
+    }
+    catch (IOException e) {
+      LOG.warn(e);
+    }
+  }
+
+  private static final Properties materialIcons;
+
+  static {
+    materialIcons = new Properties();
+
+    try {
+      materialIcons.load(FlutterUtil.class.getResourceAsStream("/flutter/icons.properties"));
+    }
+    catch (IOException e) {
+      LOG.warn(e);
+    }
+  }
+
+  /**
+   * @return the AWT color corresponding to the given Flutter color name.
+   */
+  @Nullable
+  public static Color getColor(@NotNull String name) {
+    try {
+      final String hexValue = colors.getProperty(name);
+      if (hexValue == null) {
+        return null;
+      }
+
+      // argb to r, g, b, a
+      final long value = Long.parseLong(hexValue, 16);
+
+      //noinspection UseJBColor
+      return new Color((int)(value >> 16) & 0xFF, (int)(value >> 8) & 0xFF, (int)value & 0xFF, (int)(value >> 24) & 0xFF);
+    }
+    catch (IllegalArgumentException e) {
+      return null;
+    }
+  }
 
   /**
    * @return the Flutter SDK root relative to the given Dart SDK or {@code null}
@@ -31,6 +86,18 @@ public class FlutterUtil {
   @Nullable
   public static String getFlutterRoot(@NotNull final String dartSdkPath) {
     return dartSdkPath.endsWith(DART_SDK_SUFFIX) ? dartSdkPath.substring(0, dartSdkPath.length() - DART_SDK_SUFFIX.length()) : null;
+  }
+
+  /**
+   * @return the corresponding Material icon.
+   */
+  @Nullable
+  public static Icon getMaterialIcon(@NotNull String name) {
+    final String path = materialIcons.getProperty(name);
+    if (path == null) {
+      return null;
+    }
+    return IconLoader.findIcon(path, FlutterUtil.class);
   }
 
   public static boolean isFlutterModule(@NotNull final Module module) {
