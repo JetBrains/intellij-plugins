@@ -29,7 +29,6 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.JavaCommandLineState;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -96,78 +95,76 @@ public class OsgiRunState extends JavaCommandLineState {
       public void run(@NotNull ProgressIndicator progressIndicator) {
         progressIndicator.setIndeterminate(false);
 
-        AccessToken token = ApplicationManager.getApplication().acquireReadActionLock();
-        try {
-          Set<SelectedBundle> selectedBundles = new HashSet<>();
-          // the bundles are module names, by now we try to find jar files in the output directory which we can then install
-          ModuleManager moduleManager = ModuleManager.getInstance(myRunConfiguration.getProject());
-          BundleCompiler bundleCompiler = new BundleCompiler(progressIndicator);
-          int bundleCount = myRunConfiguration.getBundlesToDeploy().size();
-          for (int i = 0; i < bundleCount; i++) {
-            progressIndicator.setFraction((double)i / bundleCount);
+        ApplicationManager.getApplication().runReadAction(() -> {
+          try {
+            Set<SelectedBundle> selectedBundles = new HashSet<>();
+            // the bundles are module names, by now we try to find jar files in the output directory which we can then install
+            ModuleManager moduleManager = ModuleManager.getInstance(myRunConfiguration.getProject());
+            BundleCompiler bundleCompiler = new BundleCompiler(progressIndicator);
+            int bundleCount = myRunConfiguration.getBundlesToDeploy().size();
+            for (int i = 0; i < bundleCount; i++) {
+              progressIndicator.setFraction((double)i / bundleCount);
 
-            SelectedBundle selectedBundle = myRunConfiguration.getBundlesToDeploy().get(i);
-            if (selectedBundle.isModule()) {
-              // use the output jar name if it is a module
-              String name = selectedBundle.getName();
-              Module module = moduleManager.findModuleByName(name);
-              if (module == null) {
-                throw new CantRunException("Module '" + name + "' no longer exists. Please check your run configuration.");
+              SelectedBundle selectedBundle = myRunConfiguration.getBundlesToDeploy().get(i);
+              if (selectedBundle.isModule()) {
+                // use the output jar name if it is a module
+                String name = selectedBundle.getName();
+                Module module = moduleManager.findModuleByName(name);
+                if (module == null) {
+                  throw new CantRunException("Module '" + name + "' no longer exists. Please check your run configuration.");
+                }
+                OsmorcFacet facet = OsmorcFacet.getInstance(module);
+                if (facet == null) {
+                  throw new CantRunException("Module '" + name + "' has no OSGi facet. Please check your run configuration.");
+                }
+                selectedBundle.setBundlePath(facet.getConfiguration().getJarFileLocation());
+                selectedBundles.add(selectedBundle);
+                // add all the library dependencies of the bundle
+                List<String> paths = bundleCompiler.bundlifyLibraries(module);
+                for (String path : paths) {
+                  selectedBundles.add(new SelectedBundle(SelectedBundle.BundleType.PlainLibrary, "Dependency", path));
+                }
               }
-              OsmorcFacet facet = OsmorcFacet.getInstance(module);
-              if (facet == null) {
-                throw new CantRunException("Module '" + name + "' has no OSGi facet. Please check your run configuration.");
-              }
-              selectedBundle.setBundlePath(facet.getConfiguration().getJarFileLocation());
-              selectedBundles.add(selectedBundle);
-              // add all the library dependencies of the bundle
-              List<String> paths = bundleCompiler.bundlifyLibraries(module);
-              for (String path : paths) {
-                selectedBundles.add(new SelectedBundle(SelectedBundle.BundleType.PlainLibrary, "Dependency", path));
+              else {
+                if (selectedBundles.contains(selectedBundle)) {
+                  // if the user selected a dependency as runnable library, we need to replace the dependency with
+                  // the runnable library part
+                  selectedBundles.remove(selectedBundle);
+                }
+                selectedBundles.add(selectedBundle);
               }
             }
-            else {
-              if (selectedBundles.contains(selectedBundle)) {
-                // if the user selected a dependency as runnable library, we need to replace the dependency with
-                // the runnable library part
-                selectedBundles.remove(selectedBundle);
+
+            // filter out bundles which have the same symbolic name
+            Map<String, SelectedBundle> filteredBundles = new HashMap<>();
+            for (SelectedBundle selectedBundle : selectedBundles) {
+              String path = selectedBundle.getBundlePath();
+              if (path != null) {
+                String name = CachingBundleInfoProvider.getBundleSymbolicName(path);
+                String version = CachingBundleInfoProvider.getBundleVersion(path);
+                String key = name + version;
+                if (!filteredBundles.containsKey(key)) {
+                  filteredBundles.put(key, selectedBundle);
+                }
               }
-              selectedBundles.add(selectedBundle);
             }
+
+            List<SelectedBundle> sortedBundles = ContainerUtil.newArrayList(filteredBundles.values());
+            Collections.sort(sortedBundles, START_LEVEL_COMPARATOR);
+            result.set(sortedBundles);
           }
-
-          // filter out bundles which have the same symbolic name
-          Map<String, SelectedBundle> filteredBundles = new HashMap<>();
-          for (SelectedBundle selectedBundle : selectedBundles) {
-            String path = selectedBundle.getBundlePath();
-            if (path != null) {
-              String name = CachingBundleInfoProvider.getBundleSymbolicName(path);
-              String version = CachingBundleInfoProvider.getBundleVersion(path);
-              String key = name + version;
-              if (!filteredBundles.containsKey(key)) {
-                filteredBundles.put(key, selectedBundle);
-              }
-            }
+          catch (CantRunException e) {
+            error.set(e);
           }
-
-          List<SelectedBundle> sortedBundles = ContainerUtil.newArrayList(filteredBundles.values());
-          Collections.sort(sortedBundles, START_LEVEL_COMPARATOR);
-          result.set(sortedBundles);
-        }
-        catch (CantRunException e) {
-          error.set(e);
-        }
-        catch (OsgiBuildException e) {
-          LOG.warn(e);
-          error.set(new CantRunException(e.getMessage()));
-        }
-        catch (Throwable t) {
-          LOG.error(t);
-          error.set(new CantRunException("Internal error: " + t.getMessage()));
-        }
-        finally {
-          token.finish();
-        }
+          catch (OsgiBuildException e) {
+            LOG.warn(e);
+            error.set(new CantRunException(e.getMessage()));
+          }
+          catch (Throwable t) {
+            LOG.error(t);
+            error.set(new CantRunException("Internal error: " + t.getMessage()));
+          }
+        });
       }
     });
 

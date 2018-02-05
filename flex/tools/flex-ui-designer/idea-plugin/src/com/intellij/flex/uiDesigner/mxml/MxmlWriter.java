@@ -19,7 +19,6 @@ import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -79,65 +78,65 @@ public class MxmlWriter {
   @Nullable
   public Pair<ProjectComponentReferenceCounter, List<RangeMarker>> write(XmlFile psiFile) throws IOException {
     document = MxmlUtil.getDocumentAndWaitIfNotCommitted(psiFile);
-    final AccessToken token = ReadAction.start();
-    try {
-      VirtualFile virtualFile = psiFile.getVirtualFile();
-      LOG.assertTrue(virtualFile != null);
-      problemsHolder.setCurrentFile(virtualFile);
-
-      XmlTag tag = psiFile.getRootTag();
-      XmlElementDescriptor untypedDescriptor = tag == null ? null : tag.getDescriptor();
-      final ClassBackedElementDescriptor descriptor;
-      if (untypedDescriptor instanceof ClassBackedElementDescriptor) {
-        descriptor = (ClassBackedElementDescriptor)untypedDescriptor;
-      }
-      else {
-        return null;
-      }
-
-      final Trinity<Integer, String, Condition<AnnotationBackedDescriptor>> effectiveClassInfo;
+    return ReadAction.compute(()-> {
       try {
-        PsiElement declaration = descriptor.getDeclaration();
-        if (declaration == null) {
+        VirtualFile virtualFile = psiFile.getVirtualFile();
+        LOG.assertTrue(virtualFile != null);
+        problemsHolder.setCurrentFile(virtualFile);
+
+        XmlTag tag = psiFile.getRootTag();
+        XmlElementDescriptor untypedDescriptor = tag == null ? null : tag.getDescriptor();
+        final ClassBackedElementDescriptor descriptor;
+        if (untypedDescriptor instanceof ClassBackedElementDescriptor) {
+          descriptor = (ClassBackedElementDescriptor)untypedDescriptor;
+        }
+        else {
           return null;
         }
-        effectiveClassInfo = MxmlUtil.computeEffectiveClass(tag, declaration, projectComponentReferenceCounter, true);
-      }
-      catch (InvalidPropertyException e) {
-        problemsHolder.add(e);
-        return null;
-      }
 
-      if (effectiveClassInfo.first == -1) {
-        out.write(Amf3Types.OBJECT);
-        writer.mxmlObjectHeader(effectiveClassInfo.second == null ? descriptor.getQualifiedName() : effectiveClassInfo.second);
-      }
-      else {
-        writer.documentReference(effectiveClassInfo.first);
-        out.allocateClearShort();
-      }
+        final Trinity<Integer, String, Condition<AnnotationBackedDescriptor>> effectiveClassInfo;
+        try {
+          PsiElement declaration = descriptor.getDeclaration();
+          if (declaration == null) {
+            return null;
+          }
+          effectiveClassInfo = MxmlUtil.computeEffectiveClass(tag, declaration, projectComponentReferenceCounter, true);
+        }
+        catch (InvalidPropertyException e) {
+          problemsHolder.add(e);
+          return null;
+        }
 
-      processElements(tag, null, false, -1, out.size() - 2, true, effectiveClassInfo.third);
+        if (effectiveClassInfo.first == -1) {
+          out.write(Amf3Types.OBJECT);
+          writer.mxmlObjectHeader(effectiveClassInfo.second == null ? descriptor.getQualifiedName() : effectiveClassInfo.second);
+        }
+        else {
+          writer.documentReference(effectiveClassInfo.first);
+          out.allocateClearShort();
+        }
 
-      writer.endObject();
+        processElements(tag, null, false, -1, out.size() - 2, true, effectiveClassInfo.third);
 
-      if (stateWriter != null) {
-        stateWriter.write();
-        hasStates = false;
+        writer.endObject();
+
+        if (stateWriter != null) {
+          stateWriter.write();
+          hasStates = false;
+        }
+        else {
+          out.write(0);
+        }
+
+        injectedASWriter.write();
+        writer.writeMessageHeader(projectComponentReferenceCounter);
+        return Pair.create(projectComponentReferenceCounter, rangeMarkers);
       }
-      else {
-        out.write(0);
+      finally {
+        problemsHolder.setCurrentFile(null);
+        writer.resetAfterMessage();
       }
-
-      injectedASWriter.write();
-      writer.writeMessageHeader(projectComponentReferenceCounter);
-      return Pair.create(projectComponentReferenceCounter, rangeMarkers);
-    }
-    finally {
-      token.finish();
-      problemsHolder.setCurrentFile(null);
-      writer.resetAfterMessage();
-    }
+    });
   }
 
   @SuppressWarnings("StatementWithEmptyBody")

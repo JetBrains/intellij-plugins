@@ -7,7 +7,6 @@ import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.text.StringUtil;
@@ -183,14 +182,7 @@ class ExpressionBinding extends Binding {
       checkQualifier(expression);
     }
 
-    final AccessToken token = ReadAction.start();
-    final PsiElement element;
-    try {
-      element = expression.resolve();
-    }
-    finally {
-      token.finish();
-    }
+    final PsiElement element = ReadAction.compute(() -> expression.resolve());
 
     if (element == null) {
       throw new InvalidPropertyException(expression, "unresolved.variable.or.type", expression.getReferencedName());

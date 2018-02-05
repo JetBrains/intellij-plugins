@@ -7,7 +7,6 @@ import com.intellij.lang.Language;
 import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -75,11 +74,6 @@ public class AngularJSCompletionContributor extends CompletionContributor {
   }
 
   static Language getElementLanguage(final CompletionParameters parameters) {
-    final AccessToken l = ReadAction.start();
-    try {
-      return PsiUtilCore.getLanguageAtOffset(parameters.getPosition().getContainingFile(), parameters.getOffset());
-    } finally {
-      l.finish();
-    }
+    return ReadAction.compute(()->PsiUtilCore.getLanguageAtOffset(parameters.getPosition().getContainingFile(), parameters.getOffset()));
   }
 }

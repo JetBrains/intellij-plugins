@@ -13,7 +13,6 @@ import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.module.Module;
@@ -563,27 +562,23 @@ public class Client implements Disposable {
                                        Module module,
                                        XmlFile psiFile,
                                        ProblemsHolder problemsHolder) throws IOException {
-    final AccessToken token = ReadAction.start();
-    final int flags;
-    try {
+    final int flags=
+      ReadAction.compute(()->{
       final JSClass jsClass = XmlBackedJSClassFactory.getXmlBackedClass(psiFile);
       assert jsClass != null;
       out.writeAmfUtf(jsClass.getQualifiedName());
 
       if (ActionScriptClassResolver.isParentClass(jsClass, FlexCommonTypeNames.SPARK_APPLICATION) ||
           ActionScriptClassResolver.isParentClass(jsClass, FlexCommonTypeNames.MX_APPLICATION)) {
-        flags = 1;
+        return  1;
       }
       else if (ActionScriptClassResolver.isParentClass(jsClass, FlexCommonTypeNames.IUI_COMPONENT)) {
-        flags = 0;
+        return 0;
       }
       else {
-        flags = 2;
+        return 2;
       }
-    }
-    finally {
-      token.finish();
-    }
+    });
 
     out.write(flags);
 
