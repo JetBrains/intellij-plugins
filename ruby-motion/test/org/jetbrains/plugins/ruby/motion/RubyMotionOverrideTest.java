@@ -60,7 +60,7 @@ public class RubyMotionOverrideTest extends RubyMotionLightFixtureTestCase {
 
 
   private void doTest(@NotNull final String name, @NotNull final String result) {
-    final Symbol controller = SymbolUtil.findClassModuleSymbol(getProject(), Type.CLASS, "TestController", null);
+    final Symbol controller = SymbolUtil.findConstantByFQN(getProject(), Type.CLASS, "TestController", null);
     assertNotNull(controller);
     final List<ClassMember> list = RubyOverrideHandler.createOverrideMembers(controller, myFixture.getFile());
     final StringBuilder namesInClass = new StringBuilder();
