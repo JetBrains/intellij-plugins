@@ -8,6 +8,7 @@ import com.intellij.lang.Language;
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.css.CssDialect;
 import com.intellij.lang.css.CssDialectMappings;
+import com.intellij.lang.documentation.DocumentationMarkup;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -534,10 +535,13 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
         DocumentationProvider provider = DocumentationManager.getProviderFromElement(jsClass);
         String docForDeclaration = provider.generateDoc(jsClass, jsClass);
         if (docForDeclaration != null) {
-          builder.append(docForDeclaration);
-          if (i != n - 1) {
-            builder.append("<br><br>\n\n");
+          if (i > 0) {
+            int definitionEnd = docForDeclaration.indexOf(DocumentationMarkup.DEFINITION_END);
+            if (definitionEnd > 0) {
+              docForDeclaration = docForDeclaration.substring(definitionEnd + DocumentationMarkup.DEFINITION_END.length());
+            }
           }
+          builder.append(docForDeclaration);
         }
       }
     }

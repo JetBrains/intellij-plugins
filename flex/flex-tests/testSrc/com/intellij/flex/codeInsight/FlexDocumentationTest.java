@@ -1,7 +1,6 @@
 package com.intellij.flex.codeInsight;
 
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.idea.Bombed;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.documentation.FlexDocumentationProvider;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
@@ -26,8 +25,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.descriptor.CssPropertyDescriptorStub;
 import com.intellij.psi.css.impl.util.CssDocumentationProvider;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Calendar;
 
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
@@ -179,7 +176,6 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     assertInstanceOf(docElement, JSClass.class);
   }
 
-  @Bombed(month = Calendar.FEBRUARY, day = 10, user = "denofevil", description = BombReason.MULTI_DOC)
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexCssSelectorMultiDocumentation() {
     myAfterCommitRunnable =
@@ -203,7 +199,6 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     doTest(new String[]{s + ".css", s + ".mxml"}, testName, false, Check.Content);
   }
 
-  @Bombed(month = Calendar.FEBRUARY, day = 10, user = "denofevil", description = BombReason.MULTI_DOC)
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testFlexMetadataStyleMultidoc() {
     String testName = getTestName(false);
@@ -218,7 +213,6 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     assertInstanceOf(docElement, JSAttributeNameValuePair.class);
   }
 
-  @Bombed(month = Calendar.FEBRUARY, day = 10, user = "denofevil", description = BombReason.MULTI_DOC)
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexCssPropertyMultiDocumentation() {
     doTest(getTestName(false), "css");
@@ -416,13 +410,11 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     doTest(testName, "as", testName, false, Check.Null);
   }
 
-  @Bombed(month = Calendar.FEBRUARY, day = 10, user = "denofevil", description = BombReason.MULTI_DOC)
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testClassInheritDoc1() {
     doTest(getTestName(false), "as");
   }
 
-  @Bombed(month = Calendar.FEBRUARY, day = 10, user = "denofevil", description = BombReason.MULTI_DOC)
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testClassInheritDoc2() {
     String testName = getTestName(false);
