@@ -47,7 +47,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
   private final JSCallExpression myNode;
 
   private ActionScriptCreateConstructorFix(@NotNull JSClass clazz, JSReferenceExpression refExpr, JSCallExpression node) {
-    super(clazz.getName(), true);
+    super(clazz.getName(), true, false);
     myClass = clazz;
     myRefExpr = refExpr;
     myNode = node;

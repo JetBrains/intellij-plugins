@@ -163,7 +163,7 @@ public class ActionScriptReferenceChecker extends TypedJSReferenceChecker {
 
       if (!inTypeContext && JSReadWriteAccessDetector.ourInstance.getExpressionAccess(node) == ReadWriteAccessDetector.Access.Read) {
         canHaveTypeFix = true;
-        fixes.add(new CreateJSFunctionIntentionAction(referencedName, true));
+        fixes.add(new CreateJSFunctionIntentionAction(referencedName, true, false));
       }
 
       if (canHaveTypeFix) fixes.add(new AddImportECMAScriptClassOrFunctionAction(null, node));
@@ -184,7 +184,7 @@ public class ActionScriptReferenceChecker extends TypedJSReferenceChecker {
     }
     if (!(node instanceof JSNewExpression)) {
       //foo() -> AS methods are callable without this -> method
-      quickFixes.add(JSFixFactory.getInstance().createJSFunctionIntentionAction(referenceExpression.getReferenceName(), true));
+      quickFixes.add(JSFixFactory.getInstance().createJSFunctionIntentionAction(referenceExpression.getReferenceName(), true, false));
     }
 
     super.addCreateFromUsageFixesForCall(node, referenceExpression, resolveResults, quickFixes);
