@@ -59,6 +59,7 @@ import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
+import java.nio.file.Files
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -180,6 +181,16 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
     }
   }
 
+  override fun checkValid(): Boolean {
+    val text = myLocationField.textField.text.trim()
+    if (Files.exists(Paths.get(text))) {
+      setErrorText("Project directory already exists. Please select other directory.")
+      return false
+    }
+    return super.checkValid()
+  }
+
+  // this is separate since we mostly check project parent directory *creation* here - can not be done on typing
   private fun validateProjectLocation(projectLocation: String): Path? {
     var location: Path? = null
     var error: String? = null

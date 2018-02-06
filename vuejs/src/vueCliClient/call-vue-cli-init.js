@@ -22,7 +22,8 @@ var port = parseInt(process.argv[process.argv.length - 1], 10);
 var rpcServer = rpcNode.connect(port, {
     "vue-create-project": {
         "answer": function(answer) {
-            var validation = currentQuestion["validate"](answer);
+            var validator = currentQuestion["validate"];
+            var validation = validator == null || validator(answer);
             if (validation !== true) {
                 sendQuestion(currentQuestion, validation);
             } else {
