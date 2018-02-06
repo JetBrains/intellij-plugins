@@ -16,6 +16,7 @@ package org.jetbrains.vuejs.cli
 import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.util.projectWizard.*
 import com.intellij.internal.statistic.UsageTrigger
+import com.intellij.javascript.nodejs.packageJson.PackageJsonDependenciesExternalUpdateManager
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.settings.JSRootConfiguration
@@ -159,8 +160,11 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
                 RecentProjectsManager.getInstance().lastProjectCreationLocation =
                   PathUtil.toSystemIndependentName(location.parent.normalize().toString())
                 UsageTrigger.trigger("AbstractNewProjectStep." + projectGenerator.name)
-                PlatformProjectOpenProcessor.doOpenProject(projectVFolder, null, -1, { project, _ -> createListeningProgress(project) },
-                                                           EnumSet.noneOf(PlatformProjectOpenProcessor.Option::class.java))
+                PlatformProjectOpenProcessor.doOpenProject(projectVFolder, null, -1, {
+                  project, _ ->
+                  val doneCallback = PackageJsonDependenciesExternalUpdateManager.getInstance(project).externalUpdateStarted(null, null)
+                  createListeningProgress(project, doneCallback)
+                }, EnumSet.noneOf(PlatformProjectOpenProcessor.Option::class.java))
               }
             }
             ApplicationManager.getApplication().invokeLater(function, ModalityState.NON_MODAL)
@@ -222,7 +226,7 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
     process!!.cancel()
   }
 
-  internal fun createListeningProgress(project: Project) {
+  internal fun createListeningProgress(project: Project, doneCallback: Runnable) {
     if (process == null) return
     val task = object: Task.Backgroundable(project, "Generating Vue project...", false, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
       override fun run(indicator: ProgressIndicator) {
@@ -230,6 +234,7 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
       }
 
       override fun onFinished() {
+        doneCallback.run()
         JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
       }
     }
