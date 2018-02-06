@@ -41,24 +41,27 @@ import com.intellij.platform.PlatformProjectOpenProcessor
 import com.intellij.platform.ProjectGeneratorPeer
 import com.intellij.ui.AncestorListenerAdapter
 import com.intellij.ui.ListCellRendererWrapper
-import com.intellij.ui.components.*
+import com.intellij.ui.RelativeFont
+import com.intellij.ui.components.JBLabel
+import com.intellij.ui.components.JBRadioButton
+import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.components.JBTextField
 import com.intellij.util.PathUtil
 import com.intellij.util.io.exists
+import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.SwingHelper
 import com.intellij.util.ui.UIUtil
 import icons.VuejsIcons
 import java.awt.BorderLayout
+import java.awt.FlowLayout
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.nio.file.Paths
 import java.util.*
-import javax.swing.ButtonGroup
-import javax.swing.JComponent
-import javax.swing.JList
-import javax.swing.JPanel
+import javax.swing.*
 import javax.swing.event.AncestorEvent
 
 class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Settings>(),
@@ -126,11 +129,13 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
   private var questionUi: QuestioningPanel? = null
 
   private fun initQuestioning(mainPanel: JPanel) {
-    questionUi = QuestioningPanel(replacePanel(mainPanel), {
+    val settings = peer.settings
+    val templateName = settings.getUserData(VueCliProjectGenerator.TEMPLATE_KEY)!!
+
+    questionUi = QuestioningPanel(replacePanel(mainPanel), templateName, {
       if (state == VueProjectCreationState.User) myCreateButton.isEnabled = it
     })
 
-    val settings = peer.settings
     val location = Paths.get(projectLocation).normalize()
     val parentFolder = location.parent
     val folderNotExists = !parentFolder.exists() && !parentFolder.toFile().mkdirs() // todo check for non-empty folder?
@@ -141,9 +146,8 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
       myCreateButton.isEnabled = true
       return
     }
-    process = VueCreateProjectProcess(parentFolder, location.fileName.toString(),
-                                      settings.getUserData(VueCliProjectGenerator.TEMPLATE_KEY)!!,
-                                      settings.myInterpreterRef, settings.myPackagePath)
+    process = VueCreateProjectProcess(parentFolder, location.fileName.toString(), templateName, settings.myInterpreterRef,
+                                      settings.myPackagePath)
     process!!.listener = {
       ApplicationManager.getApplication().invokeLater(
         Runnable {
@@ -250,8 +254,14 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
   }
 
   private fun replacePanel(mainPanel: JPanel): JPanel {
-    val newMainPanel = JBPanelWithEmptyText(BorderLayout())
-    newMainPanel.emptyText.text = "Running generator..."
+    val newMainPanel = JPanel(BorderLayout())
+    val wrapper = JPanel(FlowLayout(FlowLayout.LEFT, 0, 0))
+    val progressLabel = JBLabel("Starting generation service...")
+    progressLabel.font = UIUtil.getLabelFont()
+    RelativeFont.ITALIC.install<JLabel>(progressLabel)
+    wrapper.add(progressLabel)
+    wrapper.add(AsyncProcessIcon(""))
+    newMainPanel.add(wrapper, BorderLayout.NORTH)
     val scrollPane = (mainPanel.layout as BorderLayout).getLayoutComponent(BorderLayout.CENTER) as JBScrollPane
     scrollPane.setViewportView(newMainPanel)
     mainPanel.revalidate()
@@ -265,7 +275,7 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
   }
 }
 
-class QuestioningPanel(private val panel: JPanel, private val validationListener: (Boolean) -> Unit) {
+class QuestioningPanel(private val panel: JPanel, private val generatorName: String, private val validationListener: (Boolean) -> Unit) {
   private var currentControl: (() -> String)? = null
 
   private fun addInput(message: String, defaultValue: String): () -> String {
@@ -289,10 +299,14 @@ class QuestioningPanel(private val panel: JPanel, private val validationListener
   private fun questionHeader(message: String): FormBuilder {
     panel.removeAll()
     val formBuilder = FormBuilder.createFormBuilder()
+    val titleLabel = JLabel(String.format("Running vue-init with %s template", generatorName))
+    titleLabel.font = UIUtil.getLabelFont()
+    RelativeFont.ITALIC.install<JLabel>(titleLabel)
+    formBuilder.addComponent(titleLabel)
+    formBuilder.addVerticalGap(5)
     val label = JBLabel(message)
     label.ui = MultiLineLabelUI()
     formBuilder.addComponent(label)
-    formBuilder.addVerticalGap(5)
     return formBuilder
   }
 
