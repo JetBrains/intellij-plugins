@@ -16,8 +16,6 @@
     <lang.parserDefinition language="VueJS" implementationClass="org.jetbrains.vuejs.language.VueJSParserDefinition" />
     <typedHandler implementation="org.jetbrains.vuejs.language.VueJSBracesInterpolationTypedHandler"/>
     <lang.braceMatcher language="VueJS" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
-    <completion.contributor language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSCompletionContributor"
-     order="last"/>
     <psi.referenceContributor language="JavaScript" implementation="org.jetbrains.vuejs.codeInsight.VueInsideScriptReferenceContributor"/>
     <psi.referenceContributor language="Vue" implementation="org.jetbrains.vuejs.codeInsight.VueReferenceContributor"/>
 
@@ -81,5 +79,6 @@
     <frameworkSpecificHandlersFactory language="JavaScript"
                                       implementationClass="org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandlersFactory"/>
     <analysisHandlersFactory implementationClass="org.jetbrains.vuejs.codeInsight.VueAnalysisHandlersFactory" language="VueJS"/>
+    <smartCompletionContributor language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSCompletionContributor"/>
   </extensions>
 </idea-plugin>
