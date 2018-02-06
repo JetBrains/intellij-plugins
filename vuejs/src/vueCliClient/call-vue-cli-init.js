@@ -27,9 +27,9 @@ var rpcServer = rpcNode.connect(port, {
             if (validation !== true) {
                 sendQuestion(currentQuestion, validation);
             } else {
-                if (currentQuestion["type"] === "confirm" && answer === "Yes") {
+                if (currentQuestion["type"] === "confirm") {
                     var resConfirm = {};
-                    resConfirm[currentQuestion["name"]] = true;
+                    resConfirm[currentQuestion["name"]] = answer === "Yes";
                     currentResolve(resConfirm);
                 } else {
                     var res = {};
