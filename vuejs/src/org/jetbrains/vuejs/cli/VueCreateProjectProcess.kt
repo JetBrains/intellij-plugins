@@ -20,6 +20,7 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.KillableProcessHandler
 import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
+import com.intellij.execution.process.ProcessOutputType
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
@@ -82,7 +83,10 @@ class VueCreateProjectProcess(private val folder: Path,
         processState = ProcessState.Working
         val question = deserializeQuestion(serializedObject, validationError)
         if (question == null) {
-          LOG.info("Vue Create Project: Erroneous question: " + serializedObject)
+          LOG.info("Vue Create Project: Can not parse question: " + serializedObject)
+          error = "Can not parse question: " + serializedObject
+          processState = ProcessState.Error
+          listener?.invoke()
           return
         }
         questionRef.set(question)
@@ -130,12 +134,14 @@ class VueCreateProjectProcess(private val folder: Path,
     val type = obj["type"]?.asString ?: return null
     val questionType = QuestionType.read(type) ?: return null
     val choicesList = mutableListOf<Choice>()
-    val choices = obj["choices"]?.asJsonArray ?: return null
-    for (i in 0 until choices.size()) {
-      val choice = choices[i] as? JsonObject ?: return null
-      val name = choice["name"]?.asString ?: return null
-      val value = choice["value"]?.asString ?: return null
-      choicesList.add(Choice(name, value))
+    val choices = obj["choices"]?.asJsonArray
+    if (choices != null) {
+      for (i in 0 until choices.size()) {
+        val choice = choices[i] as? JsonObject ?: return null
+        val name = choice["name"]?.asString ?: return null
+        val value = choice["value"]?.asString ?: return null
+        choicesList.add(Choice(name, value))
+      }
     }
     val message = obj["message"]?.asString ?: return null
     val defaultVal = obj["default"]?.asString ?: ""
@@ -143,8 +149,9 @@ class VueCreateProjectProcess(private val folder: Path,
     return Question(questionType, message, defaultVal, choicesList, validationError)
   }
 
-  private fun logProgress(message: String) {
-    LOG.debug("From service: " + message)
+  private fun logProgress(message: String, error: Boolean = false) {
+    if (error) LOG.info("From service: " + message)
+    else LOG.debug("From service: " + message)
   }
 
   fun waitForProcessTermination(indicator: ProgressIndicator) {
@@ -178,7 +185,7 @@ class VueCreateProjectProcess(private val folder: Path,
         if (event.text.any { Character.isLetter(it) }) {
           lastMessage = event.text
         }
-        logProgress(event.text)
+        logProgress(event.text, ProcessOutputType.isStderr(outputType))
       }
 
       override fun processTerminated(event: ProcessEvent) {
