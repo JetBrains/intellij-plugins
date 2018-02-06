@@ -1,29 +1,27 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.assists;
 
 import com.intellij.CommonBundle;
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.codeInsight.intention.IntentionManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.psi.DartFile;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +32,7 @@ import java.util.List;
 /**
  * This intention is registered in plugin.xml to make sure that it appears in Preferences (Settings) UI and can be switched on/off.
  * But the instance created this way (using default constructor) always says that it is not available.
- * Real intentions are added dynamically in {@link DartAnalysisServerService#registerQuickAssistIntentions()}.
+ * Real intentions are added dynamically in {@link #DartQuickAssistIntention()}.
  * We need to register them not via plugin.xml for 2 reasons:
  * <ul>
  * <li>intentions amount, text and behavior are loaded dynamically</li>
@@ -51,6 +49,35 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
   public DartQuickAssistIntention() {
     quickAssistSet = null;
     index = -1;
+
+
+    final IntentionManager intentionManager = IntentionManager.getInstance();
+    final QuickAssistSet qaSet = new QuickAssistSet();
+    int i = 0;
+
+    // a little moronic way to tell IntentionManager these intentions are all different
+    //@formatter:off
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    intentionManager.addAction(new DartQuickAssistIntention(qaSet, i++) {/**/});
+    //@formatter:on
   }
 
   public DartQuickAssistIntention(@NotNull final QuickAssistSet quickAssistSet, final int index) {

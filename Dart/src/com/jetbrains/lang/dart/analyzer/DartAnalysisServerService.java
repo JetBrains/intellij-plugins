@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.EvictingQueue;
@@ -37,7 +50,6 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
@@ -122,7 +134,6 @@ public class DartAnalysisServerService implements Disposable {
   // Do not wait for server response under lock. Do not take read/write action under lock.
   private final Object myLock = new Object();
   @Nullable private AnalysisServer myServer;
-  @NotNull Disposable myIntentionsDisposable = Disposer.newDisposable();
   @Nullable private StdioServerSocket myServerSocket;
 
   @NotNull private String myServerVersion = "";
@@ -1700,7 +1711,6 @@ public class DartAnalysisServerService implements Disposable {
           registerFileEditorManagerListener();
           registerDocumentListener();
           setDasLogger();
-          registerQuickAssistIntentions();
         }
 
         startedServer.addAnalysisServerListener(myAnalysisServerListener);
@@ -1801,7 +1811,6 @@ public class DartAnalysisServerService implements Disposable {
           }
           Uninterruptibles.sleepUninterruptibly(CHECK_CANCELLED_PERIOD, TimeUnit.MILLISECONDS);
         }
-        deregisterIntentions();
       }
 
       stopShowingServerProgress();
@@ -1925,142 +1934,6 @@ public class DartAnalysisServerService implements Disposable {
     ApplicationManager.getApplication().invokeLater(() -> {
       DartPostfixTemplateProvider.initializeTemplates(this);
     }, ModalityState.NON_MODAL);
-  }
-
-
-  private void deregisterIntentions() {
-    Disposer.dispose(myIntentionsDisposable);
-    myIntentionsDisposable = Disposer.newDisposable();
-  }
-
-  /**
-   * see {@link DartQuickAssistIntention}
-   */
-  private void registerQuickAssistIntentions() {
-    deregisterIntentions();
-    final IntentionManager intentionManager = IntentionManager.getInstance();
-    final QuickAssistSet quickAssistSet = new QuickAssistSet();
-    int i = 0;
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
-    {
-      @SuppressWarnings("EmptyClass") // a little moronic way to tell IntentionManager these intentions are all different
-      DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i++) {};
-      intentionManager.addAction(intention);
-      Disposer.register(myIntentionsDisposable, ()-> intentionManager.unregisterIntention(intention));
-    }
   }
 
   public interface CompletionSuggestionConsumer {
