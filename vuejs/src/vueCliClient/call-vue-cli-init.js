@@ -35,9 +35,9 @@ var rpcServer = rpcNode.connect(port, {
                     res[currentQuestion["name"]] = answer;
                     currentResolve(res);
                 }
+                currentReject = null;
+                currentResolve = null;
             }
-            currentReject = null;
-            currentResolve = null;
         },
         "start": function(pathToVueCli, projectTemplate, projectName) {
             startCreation(pathToVueCli, projectTemplate, projectName);

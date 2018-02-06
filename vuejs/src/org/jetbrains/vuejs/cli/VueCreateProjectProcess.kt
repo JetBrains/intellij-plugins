@@ -44,17 +44,20 @@ class TestAction: DumbAwareAction("Start rpc server") {
   override fun actionPerformed(e: AnActionEvent?) {
     VueCreateProjectProcess(Paths.get("D:\\testProjects\\cl111"), "test", "webpack",
                             NodeJsLocalInterpreter("D:\\node894\\bin\\node.exe", null).toRef(),
-                            "C:\\Users\\Irina.Chernushina\\AppData\\Roaming\\npm\\node_modules\\vue-cli", true)
+                            "C:\\Users\\Irina.Chernushina\\AppData\\Roaming\\npm\\node_modules\\vue-cli", true, null)
   }
 }
 
 /**
  * @author Irina.Chernushina on 1/26/2018.
  */
-class VueCreateProjectProcess(private val folder: Path, private val projectName: String,
+class VueCreateProjectProcess(private val folder: Path,
+                              private val projectName: String,
                               private val templateName: String,
                               private val interpreterRef: NodeJsInterpreterRef,
-                              private val packagePath: String, isTest: Boolean = false) : Disposable {
+                              private val packagePath: String,
+                              isTest: Boolean = false,
+                              parentDisposable: Disposable?) : Disposable {
   companion object {
     private const val DOMAIN = "vue-create-project"
     val LOG: Logger = Logger.getInstance(VueCreateProjectProcess::class.java)
@@ -70,6 +73,7 @@ class VueCreateProjectProcess(private val folder: Path, private val projectName:
   @Volatile var listener: (() -> Unit)? = null
 
   init {
+    if (parentDisposable != null) Disposer.register(parentDisposable, this)
     Disposer.register(this, serverDisposer)
     rpcServer = RpcBinaryRequestHandler.getRpcServerInstance()
     rpcServer.registerDomain(DOMAIN, NotNullLazyValue.createConstantValue(object {
@@ -226,8 +230,10 @@ class VueCreateProjectProcess(private val folder: Path, private val projectName:
 
   override fun dispose() {
     logProgress("Dispose called")
-    val handler = processHandlerRef.get()
-    handler?.destroyProcess()
+    if (processState != ProcessState.QuestionsFinished) {
+      val handler = processHandlerRef.get()
+      handler?.destroyProcess()
+    }
   }
 
   class State(val processState: ProcessState, val globalProblem: String?, val question: Question?)

@@ -39,7 +39,6 @@ import com.intellij.openapi.wm.impl.welcomeScreen.AbstractActionWithPanel
 import com.intellij.platform.DirectoryProjectGenerator
 import com.intellij.platform.PlatformProjectOpenProcessor
 import com.intellij.platform.ProjectGeneratorPeer
-import com.intellij.ui.AncestorListenerAdapter
 import com.intellij.ui.ListCellRendererWrapper
 import com.intellij.ui.RelativeFont
 import com.intellij.ui.components.JBLabel
@@ -59,10 +58,11 @@ import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
+import java.nio.file.InvalidPathException
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 import javax.swing.*
-import javax.swing.event.AncestorEvent
 
 class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Settings>(),
                                CustomStepProjectGenerator<NpmPackageProjectGenerator.Settings> {
@@ -128,7 +128,7 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
   private var process: VueCreateProjectProcess? = null
   private var questionUi: QuestioningPanel? = null
 
-  private fun initQuestioning(mainPanel: JPanel) {
+  private fun initQuestioning(mainPanel: JPanel, location: Path) {
     val settings = peer.settings
     val templateName = settings.getUserData(VueCliProjectGenerator.TEMPLATE_KEY)!!
 
@@ -136,18 +136,8 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
       if (state == VueProjectCreationState.User) myCreateButton.isEnabled = it
     })
 
-    val location = Paths.get(projectLocation).normalize()
-    val parentFolder = location.parent
-    val folderNotExists = !parentFolder.exists() && !parentFolder.toFile().mkdirs() // todo check for non-empty folder?
-    if (folderNotExists) {
-      setErrorText(String.format("Can not create project directory: %s", location))
-      myCreateButton.text = "Close"
-      state = VueProjectCreationState.Error
-      myCreateButton.isEnabled = true
-      return
-    }
-    process = VueCreateProjectProcess(parentFolder, location.fileName.toString(), templateName, settings.myInterpreterRef,
-                                      settings.myPackagePath)
+    process = VueCreateProjectProcess(location.parent, location.fileName.toString(), templateName, settings.myInterpreterRef,
+                                      settings.myPackagePath, false, this)
     process!!.listener = {
       ApplicationManager.getApplication().invokeLater(
         Runnable {
@@ -165,7 +155,7 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
                 VueCreateProjectProcess.LOG.info(String.format("Create Vue Project: can not find project directory in '%s'", location.toString()))
               } else {
                 RecentProjectsManager.getInstance().lastProjectCreationLocation =
-                  PathUtil.toSystemIndependentName(parentFolder.normalize().toString())
+                  PathUtil.toSystemIndependentName(location.parent.normalize().toString())
                 PlatformProjectOpenProcessor.doOpenProject(projectVFolder, null, -1, { project, _ -> createListeningProgress(project) },
                                                            EnumSet.noneOf(PlatformProjectOpenProcessor.Option::class.java))
               }
@@ -186,6 +176,28 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
           }
         }, ModalityState.any(), Condition<Boolean> { state == VueProjectCreationState.QuestionsFinished || state == VueProjectCreationState.Error })
     }
+  }
+
+  private fun validateProjectLocation(projectLocation: String): Path? {
+    var location: Path? = null
+    var error: String? = null
+    try {
+      location = Paths.get(projectLocation).normalize()
+      val parentFolder = location.parent
+      if (!parentFolder.exists() && !parentFolder.toFile().mkdirs()) {
+        error = "Can not create project directory: %s"
+      }
+    } catch (e: InvalidPathException) {
+      error = "Invalid project path: %s"
+    }
+    if (error != null) {
+      setErrorText(String.format(error, projectLocation))
+      myCreateButton.text = "Close"
+      state = VueProjectCreationState.Error
+      myCreateButton.isEnabled = true
+      return null
+    }
+    return location
   }
 
   private fun onError(errorText: String) {
@@ -214,30 +226,27 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
 
   override fun createPanel(): JPanel {
     val mainPanel = super.createPanel()
-    mainPanel.addAncestorListener(object: AncestorListenerAdapter() {
-      override fun ancestorRemoved(event: AncestorEvent?) {
-        if (state != VueProjectCreationState.Error &&
-            state != VueProjectCreationState.QuestionsFinished &&
-            state != VueProjectCreationState.Finished) {
-          process?.cancel()
-        }
-      }
-    })
     mainPanel.add(WebProjectTemplate.createTitlePanel(), BorderLayout.NORTH)
 
     myCreateButton.text = "Next"
     removeActionListeners()
     myCreateButton.addActionListener {
       if (state == VueProjectCreationState.Init) {
-        initQuestioning(mainPanel)
-        state = VueProjectCreationState.Process
-        myCreateButton.isEnabled = false
+        val location = validateProjectLocation(projectLocation)
+        if (location == null) {
+          UIUtil.setEnabled((mainPanel.layout as BorderLayout).getLayoutComponent(BorderLayout.CENTER), false, true)
+        } else {
+          initQuestioning(mainPanel, location)
+          state = VueProjectCreationState.Process
+          myCreateButton.isEnabled = false
+        }
       }
       else if (state == VueProjectCreationState.Process) {
         assert(false, { "should be waiting for process" })
       }
       else if (state == VueProjectCreationState.User) {
         assert(currentQuestion != null)
+        setErrorText("")
         val answer = questionUi!!.getAnswer()!!
         process!!.answer(answer)
         state = VueProjectCreationState.Process
