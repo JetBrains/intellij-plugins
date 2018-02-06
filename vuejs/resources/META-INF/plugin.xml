@@ -33,8 +33,8 @@
     <stubIndex implementation="org.jetbrains.vuejs.index.VueGlobalDirectivesIndex" />
     <stubIndex implementation="org.jetbrains.vuejs.index.VueLocalDirectivesIndex" />
     <stubElementTypeHolder class="org.jetbrains.vuejs.language.VueElementTypes" />
-    <!--<directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.VueCliProjectGeneraator"/>-->
-    <!--<projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueTemplateFactory"/>-->
+    <directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>
+    <projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueTemplateFactory"/>
 
     <localInspection language="Vue" groupName="Vue" displayName="Data Function" shortName="VueDataFunction"
                      enabledByDefault="true" level="WARNING"
@@ -67,6 +67,7 @@
     <action class="org.jetbrains.vuejs.CreateVueSingleFileComponentAction" id="CreateVueSingleFileComp">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
+    <action class="org.jetbrains.vuejs.cli.TestAction" id="TestRpcServer" text="Start rpc server"/>
   </actions>
   <extensions defaultExtensionNs="JavaScript">
     <elementScopeProvider implementation="org.jetbrains.vuejs.VueElementResolveScopeProvider" />
