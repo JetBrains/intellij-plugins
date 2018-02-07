@@ -22,6 +22,7 @@ import com.google.dart.server.internal.remote.DebugPrintStream;
 import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
 import com.google.dart.server.utilities.logging.Logging;
+import com.google.gson.JsonObject;
 import com.intellij.codeInsight.intention.IntentionManager;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.Disposable;
@@ -183,6 +184,7 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   @NotNull private final List<AnalysisServerListener> myAdditionalServerListeners = new SmartList<>();
+  @NotNull private final List<ResponseListener> myResponseListeners = new SmartList<>();
 
   private static final String ENABLE_ANALYZED_FILES_SUBSCRIPTION_KEY =
     "com.jetbrains.lang.dart.analyzer.DartAnalysisServerService.enableAnalyzedFilesSubscription";
@@ -562,6 +564,24 @@ public class DartAnalysisServerService implements Disposable {
     myAdditionalServerListeners.remove(serverListener);
     if (myServer != null) {
       myServer.removeAnalysisServerListener(serverListener);
+    }
+  }
+
+  @SuppressWarnings("unused") // for Flutter plugin
+  public void addResponseListener(@NotNull final ResponseListener responseListener) {
+    if (!myResponseListeners.contains(responseListener)) {
+      myResponseListeners.add(responseListener);
+      if (myServer != null && isServerProcessActive()) {
+        myServer.addResponseListener(responseListener);
+      }
+    }
+  }
+
+  @SuppressWarnings("unused") // for Flutter plugin
+  public void removeResponseListener(@NotNull final ResponseListener responseListener) {
+    myResponseListeners.remove(responseListener);
+    if (myServer != null) {
+      myServer.removeResponseListener(responseListener);
     }
   }
 
@@ -1719,6 +1739,9 @@ public class DartAnalysisServerService implements Disposable {
         for (AnalysisServerListener listener : myAdditionalServerListeners) {
           startedServer.addAnalysisServerListener(listener);
         }
+        for (ResponseListener listener : myResponseListeners) {
+          startedServer.addResponseListener(listener);
+        }
 
         myHaveShownInitialProgress = false;
         startedServer.addStatusListener(isAlive -> {
@@ -1806,6 +1829,9 @@ public class DartAnalysisServerService implements Disposable {
         myServer.removeAnalysisServerListener(myAnalysisServerListener);
         for (AnalysisServerListener listener : myAdditionalServerListeners) {
           myServer.removeAnalysisServerListener(listener);
+        }
+        for (ResponseListener listener : myResponseListeners) {
+          myServer.removeResponseListener(listener);
         }
 
         myServer.server_shutdown();
@@ -2087,5 +2113,39 @@ public class DartAnalysisServerService implements Disposable {
 
   public void removeOutlineListener(@NotNull final DartServerData.OutlineListener listener) {
     myServerData.removeOutlineListener(listener);
+  }
+
+  /**
+   * Generate and return a unique {@link String} id to be used to sent requests.
+   */
+  @SuppressWarnings("unused") // for Flutter plugin
+  public String generateUniqueId() {
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return null;
+    }
+    return server.generateUniqueId();
+  }
+
+  /**
+   * Send the request for which the client that does not expect a response.
+   */
+  @SuppressWarnings("unused") // for Flutter plugin
+  public void sendRequest(String id, JsonObject request) {
+    final AnalysisServer server = myServer;
+    if (server != null) {
+      server.sendRequestToServer(id, request);
+    }
+  }
+
+  /**
+   * Send the request and associate it with the passed {@link com.google.dart.server.Consumer}.
+   */
+  @SuppressWarnings("unused") // for Flutter plugin
+  public void sendRequestToServer(String id, JsonObject request, com.google.dart.server.Consumer consumer) {
+    final AnalysisServer server = myServer;
+    if (server != null) {
+      server.sendRequestToServer(id, request, consumer);
+    }
   }
 }
