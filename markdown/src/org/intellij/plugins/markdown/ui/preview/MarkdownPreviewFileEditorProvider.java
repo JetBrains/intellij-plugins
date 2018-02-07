@@ -8,8 +8,6 @@ import com.intellij.openapi.fileEditor.FileEditorPolicy;
 import com.intellij.openapi.fileEditor.WeighedFileEditorProvider;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectLocator;
-import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.intellij.plugins.markdown.lang.MarkdownFileType;
 import org.intellij.plugins.markdown.lang.MarkdownLanguage;
@@ -28,16 +26,7 @@ public class MarkdownPreviewFileEditorProvider extends WeighedFileEditorProvider
   @NotNull
   @Override
   public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-    MarkdownPreviewFileEditor markdownPreviewFileEditor = new MarkdownPreviewFileEditor(file);
-    try {
-      return ProjectLocator
-        .computeWithPreferredProject(file, project, (ThrowableComputable<FileEditor, Throwable>)() -> markdownPreviewFileEditor);
-    }
-    catch (Throwable throwable) {
-      LOG.error(throwable);
-    }
-
-    return markdownPreviewFileEditor;
+    return new MarkdownPreviewFileEditor(file);
   }
 
   @NotNull
