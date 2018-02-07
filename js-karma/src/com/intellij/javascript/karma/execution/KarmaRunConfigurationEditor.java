@@ -10,7 +10,6 @@ import com.intellij.javascript.nodejs.util.NodePackageField;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.ex.SingleConfigurableEditor;
 import com.intellij.openapi.project.Project;
@@ -25,6 +24,7 @@ import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.components.fields.ExpandableTextField;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.*;
+import com.intellij.webcore.ui.PathShortener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,6 +57,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     myNodeOptionsEditor = createNodeOptionsEditor();
     myKarmaPackageField = new NodePackageField(myNodeInterpreterField, KarmaUtil.NODE_PACKAGE_NAME);
     myConfigPathField = createConfigurationFileTextField(project);
+    PathShortener.enablePathShortening(myConfigPathField.getChildComponent().getTextEditor(), null);
     myEnvVarsComponent = new EnvironmentVariablesTextFieldWithBrowseButton();
     myBrowsers = createBrowsersTextField();
     JComponent browsersDescription = createBrowsersDescription();
@@ -240,7 +241,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   @Override
   protected void applyEditorTo(@NotNull KarmaRunConfiguration runConfiguration) {
     KarmaRunSettings.Builder builder = new KarmaRunSettings.Builder();
-    builder.setConfigPath(myConfigPathField.getChildComponent().getText());
+    builder.setConfigPath(PathShortener.getAbsolutePath(myConfigPathField.getChildComponent().getTextEditor()));
     builder.setBrowsers(StringUtil.notNullize(myBrowsers.getText()));
     builder.setInterpreterRef(myNodeInterpreterField.getInterpreterRef());
     builder.setNodeOptions(myNodeOptionsEditor.getText());
