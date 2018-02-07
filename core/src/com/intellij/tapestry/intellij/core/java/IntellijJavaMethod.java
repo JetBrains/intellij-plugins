@@ -11,8 +11,8 @@ import java.util.Collection;
 
 public class IntellijJavaMethod implements IJavaMethod {
 
-    private Module _module;
-    private PsiMethod _psiMethod;
+    private final Module _module;
+    private final PsiMethod _psiMethod;
 
     public IntellijJavaMethod(Module module, PsiMethod psiMethod) {
         _module = module;

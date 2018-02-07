@@ -11,7 +11,7 @@ import java.util.Map;
 public class JavaAnnotationMock implements IJavaAnnotation {
 
     private String _fullyQualifiedName;
-    private Map<String, String[]> _parameters = new HashMap<>();
+    private final Map<String, String[]> _parameters = new HashMap<>();
 
     public JavaAnnotationMock() {
     }

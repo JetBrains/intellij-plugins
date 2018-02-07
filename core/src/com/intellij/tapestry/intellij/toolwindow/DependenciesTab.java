@@ -38,8 +38,8 @@ public class DependenciesTab {
     private JSplitPane _splitPane;
     private JTextPane _documentationPane;
     private JToolBar _toolbar;
-    private NavigateToElementAction _navigateToElementAction;
-    private NavigateToUsageAction _navigateToUsageAction;
+    private final NavigateToElementAction _navigateToElementAction;
+    private final NavigateToUsageAction _navigateToUsageAction;
 
     public DependenciesTab() {
         _splitPane.setDividerLocation(0.5);

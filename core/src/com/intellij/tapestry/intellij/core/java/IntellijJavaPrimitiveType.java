@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class IntellijJavaPrimitiveType extends IntellijJavaType implements IJavaPrimitiveType {
 
-    private PsiPrimitiveType _psiPrimitiveType;
+    private final PsiPrimitiveType _psiPrimitiveType;
 
     public IntellijJavaPrimitiveType(PsiPrimitiveType psiPrimitiveType) {
         _psiPrimitiveType = psiPrimitiveType;

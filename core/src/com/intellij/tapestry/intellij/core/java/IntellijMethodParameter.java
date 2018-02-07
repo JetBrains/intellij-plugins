@@ -9,8 +9,8 @@ import com.intellij.tapestry.core.java.IMethodParameter;
 
 public class IntellijMethodParameter implements IMethodParameter {
 
-    private Module _module;
-    private PsiParameter _psiParameter;
+    private final Module _module;
+    private final PsiParameter _psiParameter;
 
     public IntellijMethodParameter(Module module, PsiParameter psiParameter) {
         _module = module;

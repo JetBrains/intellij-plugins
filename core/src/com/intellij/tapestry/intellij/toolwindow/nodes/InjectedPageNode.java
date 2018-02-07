@@ -8,7 +8,7 @@ public class InjectedPageNode extends DefaultMutableTreeNode {
 
     private static final long serialVersionUID = -937413784681186436L;
 
-    private transient InjectedElement _injectedPage;
+    private final transient InjectedElement _injectedPage;
 
     public InjectedPageNode(InjectedElement injectedPage) {
         super(injectedPage);

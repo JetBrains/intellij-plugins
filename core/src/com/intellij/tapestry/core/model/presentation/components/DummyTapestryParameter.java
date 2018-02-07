@@ -50,8 +50,8 @@ public class DummyTapestryParameter extends TapestryParameter {
    */
   static class DummyJavaField implements IJavaField {
 
-    private String _name;
-    private IJavaClassType _type;
+    private final String _name;
+    private final IJavaClassType _type;
 
     public DummyJavaField(String name, IJavaClassType type) {
       _name = name;

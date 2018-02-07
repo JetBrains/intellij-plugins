@@ -23,7 +23,7 @@ public class IntellijJavaTypeCreator implements IJavaTypeCreator {
 
     private final static Logger _logger = Logger.getInstance(IntellijJavaTypeCreator.class.getName());
 
-    private Module _module;
+    private final Module _module;
 
     public IntellijJavaTypeCreator(Module module) {
         _module = module;

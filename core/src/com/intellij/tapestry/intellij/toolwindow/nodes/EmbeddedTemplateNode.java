@@ -10,7 +10,7 @@ import java.util.List;
 public class EmbeddedTemplateNode extends DefaultMutableTreeNode {
 
     private transient IResource _resource;
-    private List<InjectedElement> _embeddedTemplateNodes = new ArrayList<>();
+    private final List<InjectedElement> _embeddedTemplateNodes = new ArrayList<>();
 
     public EmbeddedTemplateNode(IResource resource, PresentationLibraryElement element) {
         super(resource);

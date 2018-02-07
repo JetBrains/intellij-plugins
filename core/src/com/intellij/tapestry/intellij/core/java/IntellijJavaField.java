@@ -14,8 +14,8 @@ import java.util.Map;
 
 public class IntellijJavaField implements IJavaField {
 
-    private Module _module;
-    private PsiField _psiField;
+    private final Module _module;
+    private final PsiField _psiField;
 
     public IntellijJavaField(Module module, PsiField psiField) {
         _module = module;

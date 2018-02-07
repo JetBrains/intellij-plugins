@@ -8,7 +8,7 @@ public class EmbeddedComponentNode extends DefaultMutableTreeNode {
 
     private static final long serialVersionUID = 8480011580669274491L;
 
-    private transient InjectedElement _injectedComponent;
+    private final transient InjectedElement _injectedComponent;
 
     public EmbeddedComponentNode(InjectedElement injectedComponent) {
         super(injectedComponent);

@@ -1,11 +1,11 @@
 package com.intellij.tapestry.core.mocks;
 
+import com.intellij.tapestry.core.java.IJavaAnnotation;
 import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.java.IJavaType;
-import com.intellij.tapestry.core.java.IJavaAnnotation;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Utility class for easy creation of IJavaField mocks.
@@ -17,7 +17,7 @@ public class JavaFieldMock implements IJavaField {
     private String _name;
     private IJavaType _type;
     private boolean _private;
-    private Map<String, IJavaAnnotation> _annotations = new HashMap<>();
+    private final Map<String, IJavaAnnotation> _annotations = new HashMap<>();
     private String _documentation;
     private String _stringRepresentation;
 

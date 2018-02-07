@@ -18,13 +18,16 @@ import com.intellij.tapestry.intellij.util.IdeaUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class IntellijJavaClassType extends IntellijJavaType implements IJavaClassType {
   @NotNull
   private final String _classFilePath;
   private PsiClassType _psiClassType;
-  private Module _module;
+  private final Module _module;
   private Boolean _supportInformalParameters;
 
   public IntellijJavaClassType(Module module, PsiFile psiFile) {

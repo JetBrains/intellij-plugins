@@ -8,7 +8,7 @@ import java.util.List;
 
 public class IntellijXmlTag implements XmlTag {
 
-    private com.intellij.psi.xml.XmlTag _xmlTag;
+    private final com.intellij.psi.xml.XmlTag _xmlTag;
 
     public IntellijXmlTag(com.intellij.psi.xml.XmlTag xmlTag) {
         _xmlTag = xmlTag;

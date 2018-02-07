@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class IntellijJavaArrayType extends IntellijJavaType implements IJavaArrayType {
 
-    private Module _module;
-    private PsiArrayType _psiArrayType;
+    private final Module _module;
+    private final PsiArrayType _psiArrayType;
 
     public IntellijJavaArrayType(Module module, PsiArrayType psiArrayType) {
         _module = module;

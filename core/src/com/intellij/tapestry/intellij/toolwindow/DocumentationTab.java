@@ -47,7 +47,7 @@ public class DocumentationTab {
 //    private HtmlPanel _htmlPanel;
     private JButton _classButton;
 //    private SimpleHtmlRendererContext _renderContext;
-    private Project _project;
+    private final Project _project;
     private Object _element;
 
     public DocumentationTab(Project project) {

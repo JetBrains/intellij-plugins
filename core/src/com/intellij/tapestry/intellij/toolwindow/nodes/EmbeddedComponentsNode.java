@@ -10,7 +10,7 @@ import java.util.List;
 public class EmbeddedComponentsNode extends DefaultMutableTreeNode {
 
     private static final long serialVersionUID = -3375981384098659628L;
-    private List<InjectedElement> _embeddedComponentNodes = new ArrayList<>();
+    private final List<InjectedElement> _embeddedComponentNodes = new ArrayList<>();
 
     public EmbeddedComponentsNode(Object userObject) {
         super(userObject);

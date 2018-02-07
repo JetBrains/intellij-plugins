@@ -13,7 +13,7 @@ import java.io.File;
 
 public class IntellijResource implements IResource {
 
-    private PsiFile _psiFile;
+    private final PsiFile _psiFile;
 
     public IntellijResource(@NotNull PsiFile psiFile) {
         _psiFile = psiFile;

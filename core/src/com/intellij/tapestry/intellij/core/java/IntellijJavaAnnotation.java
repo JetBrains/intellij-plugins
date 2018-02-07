@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 public class IntellijJavaAnnotation implements IJavaAnnotation {
-    private PsiAnnotation _psiAnnotation;
+    private final PsiAnnotation _psiAnnotation;
   
     private static final Key<CachedValue<Map<String, String[]>>> ourParametersMapKey = Key.create("parameters.map");
     private static final UserDataCache<CachedValue<Map<String, String[]>>,PsiAnnotation, Object> ourParametersMapCache = new UserDataCache<CachedValue<Map<String, String[]>>,PsiAnnotation, Object>() {

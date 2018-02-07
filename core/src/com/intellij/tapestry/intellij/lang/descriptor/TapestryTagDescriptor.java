@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class TapestryTagDescriptor extends BasicTapestryTagDescriptor {
   private final PresentationLibraryElement myComponent;
-  private List<Mixin> myMixins;
+  private final List<Mixin> myMixins;
 
   public TapestryTagDescriptor(@NotNull PresentationLibraryElement component,
                                @Nullable String prefix,

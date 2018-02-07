@@ -21,7 +21,7 @@ public class Library implements Comparable {
   private final String _basePackage;
   private final TapestryProject _project;
   @Nullable
-  private String myShortName;
+  private final String myShortName;
 
   public Library(String id, String basePackage, TapestryProject project) {
     this(id, basePackage, project, null);

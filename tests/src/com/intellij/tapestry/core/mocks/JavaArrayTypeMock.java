@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  * Utility class for easy creation of IJavaArrayType mocks.
  */
 public class JavaArrayTypeMock implements IJavaArrayType {
-    private String _name;
+    private final String _name;
 
     public JavaArrayTypeMock(String name) {
         _name = name;

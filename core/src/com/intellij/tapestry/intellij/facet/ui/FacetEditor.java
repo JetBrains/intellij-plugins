@@ -19,7 +19,7 @@ public class FacetEditor extends FacetEditorTab {
     private JTextField _filterName;
     private JTextField _applicationPackage;
     private JPanel _descriptionPanel;
-    private TapestryFacetConfiguration _configuration;
+    private final TapestryFacetConfiguration _configuration;
 
     public FacetEditor(TapestryFacet facet, TapestryFacetConfiguration configuration) {
         _configuration = configuration;

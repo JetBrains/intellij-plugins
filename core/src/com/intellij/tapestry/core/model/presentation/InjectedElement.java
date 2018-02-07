@@ -18,7 +18,7 @@ import java.util.Map;
 public class InjectedElement implements Comparable {
 
   private transient IJavaField _field;
-  private transient PresentationLibraryElement _element;
+  private final transient PresentationLibraryElement _element;
   private XmlTag _tag;
 
   public InjectedElement(@NotNull IJavaField field, PresentationLibraryElement element) {

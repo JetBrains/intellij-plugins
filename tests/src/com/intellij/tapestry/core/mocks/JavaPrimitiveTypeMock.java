@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  * Utility class for easy creation of JavaPrimitiveType mocks.
  */
 public class JavaPrimitiveTypeMock implements IJavaPrimitiveType {
-    private String _name;
+    private final String _name;
 
     public JavaPrimitiveTypeMock(String name) {
         _name = name;

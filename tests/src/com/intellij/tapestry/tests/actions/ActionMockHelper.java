@@ -20,14 +20,14 @@ import static org.easymock.EasyMock.*;
 
 public class ActionMockHelper {
 
-    private AnActionEvent _event;
-  private InputEvent _inputEventMock;
-    private DataContext _dataContextMock;
-    private Module _moduleMock;
-    private Project _projectMock;
-    private PsiManager _psiManagerMock;
-    private TapestryModuleSupportLoader _TapestryModuleSupportLoaderMock;
-    private TapestryProject _tapestryProjectMock;
+    private final AnActionEvent _event;
+  private final InputEvent _inputEventMock;
+    private final DataContext _dataContextMock;
+    private final Module _moduleMock;
+    private final Project _projectMock;
+    private final PsiManager _psiManagerMock;
+    private final TapestryModuleSupportLoader _TapestryModuleSupportLoaderMock;
+    private final TapestryProject _tapestryProjectMock;
     private FacetManager _facetManagerMock = EasyMock.createMock(FacetManager.class);
 
     public ActionMockHelper() {

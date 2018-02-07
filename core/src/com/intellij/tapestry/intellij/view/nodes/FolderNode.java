@@ -9,8 +9,8 @@ import icons.TapestryIcons;
 
 public class FolderNode extends TapestryNode {
 
-    private Class _classToCreate;
-    private Library _library;
+    private final Class _classToCreate;
+    private final Library _library;
 
     public FolderNode(String folder, Library library, Class classToCreate, Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);

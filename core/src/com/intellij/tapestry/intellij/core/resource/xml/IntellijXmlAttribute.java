@@ -4,7 +4,7 @@ import com.intellij.tapestry.core.resource.xml.XmlAttribute;
 
 public class IntellijXmlAttribute implements XmlAttribute {
 
-    private com.intellij.psi.xml.XmlAttribute _xmlAttribute;
+    private final com.intellij.psi.xml.XmlAttribute _xmlAttribute;
 
     public IntellijXmlAttribute(com.intellij.psi.xml.XmlAttribute xmlAttribute) {
         _xmlAttribute = xmlAttribute;

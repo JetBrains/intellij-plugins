@@ -19,10 +19,10 @@ public class JavaClassTypeMock implements IJavaClassType {
   private boolean _interface;
   private boolean _public;
   private boolean _defaultConstructor;
-  private Collection<IJavaMethod> _publicMethods = new ArrayList<>();
-  private Collection<IJavaMethod> _allMethods = new ArrayList<>();
-  private Collection<IJavaAnnotation> _annotations = new ArrayList<>();
-  private Map<String, IJavaField> _fields = new HashMap<>();
+  private final Collection<IJavaMethod> _publicMethods = new ArrayList<>();
+  private final Collection<IJavaMethod> _allMethods = new ArrayList<>();
+  private final Collection<IJavaAnnotation> _annotations = new ArrayList<>();
+  private final Map<String, IJavaField> _fields = new HashMap<>();
   private String _documentation;
   private IResource _file;
   private IJavaClassType _superClassType;

@@ -23,7 +23,7 @@ import java.util.TreeSet;
 
 public class PackageNode extends TapestryNode {
 
-    private Library _library;
+    private final Library _library;
 
     public PackageNode(Library library, PsiDirectory psiDirectory, Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);

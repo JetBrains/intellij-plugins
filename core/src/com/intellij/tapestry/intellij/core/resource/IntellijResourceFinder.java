@@ -20,7 +20,7 @@ import java.util.List;
 
 public class IntellijResourceFinder implements IResourceFinder {
 
-    private Module _module;
+    private final Module _module;
 
     public IntellijResourceFinder(Module module) {
         _module = module;
