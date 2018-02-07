@@ -17,28 +17,33 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.process.KillableProcessHandler
-import com.intellij.execution.process.ProcessAdapter
-import com.intellij.execution.process.ProcessEvent
-import com.intellij.execution.process.ProcessOutputType
+import com.intellij.execution.process.*
+import com.intellij.javascript.nodejs.NodeCommandLineUtil
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.PerformInBackgroundOption
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.NotNullLazyValue
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.ide.BuiltInServerManager
 import org.jetbrains.io.jsonRpc.JsonRpcServer
 import org.jetbrains.io.jsonRpc.socket.RpcBinaryRequestHandler
+import java.io.File
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
 class TestAction: DumbAwareAction("Start rpc server") {
@@ -117,15 +122,18 @@ class VueCreateProjectProcess(private val folder: Path,
     }), false, serverDisposer)
 
     if (!isTest) {
-      ApplicationManager.getApplication().executeOnPooledThread {
-        val handler = createPeerVueCliProcess()
-        if (handler == null) {
-          // if no peer, stop rpc server
-          Disposer.dispose(serverDisposer)
-        } else {
-          processHandlerRef.set(handler)
+      ProgressManager.getInstance().run(object: Task.Backgroundable(null, "Preparing Vue project generation service...",
+                                                                    false, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
+        override fun run(indicator: ProgressIndicator) {
+          val handler = createPeerVueCliProcess(indicator)
+          if (handler == null) {
+            // if no peer, stop rpc server
+            Disposer.dispose(serverDisposer)
+          } else {
+            processHandlerRef.set(handler)
+          }
         }
-      }
+      })
     }
   }
 
@@ -167,20 +175,44 @@ class VueCreateProjectProcess(private val folder: Path,
     handler.waitFor()
   }
 
-  private fun createPeerVueCliProcess(): KillableProcessHandler? {
-    val commandLine = createCommandLine()
+  private fun createPeerVueCliProcess(indicator: ProgressIndicator): KillableProcessHandler? {
+    val path = Paths.get(PathManager.getSystemPath(), "projectGenerators", "vue")
+    val folder = path.toFile()
+    if (Files.exists(path)) {
+      indicator.text = "Clearing Vue project generation service folder..."
+      FileUtil.delete(folder)
+    }
+    if (!FileUtil.createDirectory(folder)) {
+      return reportError("Can not create service directory " + path)
+    }
+    val interpreter = interpreterRef.resolveAsLocal(ProjectManager.getInstance().defaultProject)
+    val interpreterPath = interpreter.interpreterSystemDependentPath
+
+    indicator.text = "Installing Vue project generation packages..."
+    val installCommandLine = NodeCommandLineUtil.createNpmCommandLine(folder, interpreter, listOf("i", "ij-rpc-client"))
+    val output = CapturingProcessHandler(installCommandLine).runProcess(TimeUnit.MINUTES.toMillis(5).toInt(), true)
+    if (output.exitCode != 0) {
+      return reportError("Can not install 'ij-rpc-client': " + output.stderr)
+    }
+
+    indicator.text = "Starting Vue project generation service..."
+    val commandLine = createCommandLine(folder, interpreterPath) ?: return reportError("Can not run Vue project generation service")
     val processHandler: KillableProcessHandler?
     try {
       processHandler = KillableProcessHandler(commandLine)
     }
     catch (e: ExecutionException) {
-      error = e.message
-      processState = ProcessState.Error
-      listener?.invoke()
-      return null
+      return reportError(e.message)
     }
 
-    processHandler.addProcessListener(object: ProcessAdapter() {
+    attachGenerationProcessListener(processHandler)
+
+    processHandler.startNotify()
+    return processHandler
+  }
+
+  private fun attachGenerationProcessListener(processHandler: KillableProcessHandler) {
+    processHandler.addProcessListener(object : ProcessAdapter() {
       override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
         val isError = ProcessOutputType.isStderr(outputType)
         if (processState == ProcessState.Starting && isError) {
@@ -200,18 +232,26 @@ class VueCreateProjectProcess(private val folder: Path,
         Disposer.dispose(this@VueCreateProjectProcess)
       }
     })
-
-    processHandler.startNotify()
-    return processHandler
   }
 
-  private fun createCommandLine(): GeneralCommandLine {
+  private fun reportError(message: String?): Nothing? {
+    error = message
+    processState = ProcessState.Error
+    listener?.invoke()
+    return null
+  }
+
+  private fun createCommandLine(folder: File, interpreterPath: String): GeneralCommandLine? {
     val serviceFolder = JSLanguageServiceUtil.getPluginDirectory(this.javaClass, "vueCliClient")
-    val interpreter = interpreterRef.resolveAsLocal(ProjectManager.getInstance().defaultProject).interpreterSystemDependentPath
-    val commandLine = GeneralCommandLine(interpreter)
-    commandLine.workDirectory = folder.toFile()
+    val targetName = "call-vue-cli-init.js"
+    val targetPath = Paths.get(serviceFolder.path, targetName)
+    if (!Files.exists(targetPath)) return null
+    val copy = File(folder, targetName)
+    FileUtil.copyFileOrDir(targetPath.toFile(), copy)
+    val commandLine = GeneralCommandLine(interpreterPath)
+    commandLine.workDirectory = this.folder.toFile()
 //    commandLine.addParameter("--inspect-brk=61389")
-    commandLine.addParameter(Paths.get(serviceFolder.path, "call-vue-cli-init.js").normalize().toString())
+    commandLine.addParameter(FileUtil.toSystemDependentName(copy.path))
     commandLine.addParameter(BuiltInServerManager.getInstance().port.toString())
     return commandLine
   }
