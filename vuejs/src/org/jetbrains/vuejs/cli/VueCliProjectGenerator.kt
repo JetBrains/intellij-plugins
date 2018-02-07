@@ -32,6 +32,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.*
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.impl.welcomeScreen.AbstractActionWithPanel
@@ -227,7 +228,7 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
     try {
       location = Paths.get(projectLocation).normalize()
       val parentFolder = location.parent
-      if (!parentFolder.exists() && !parentFolder.toFile().mkdirs()) {
+      if (!parentFolder.exists() && !FileUtil.createDirectory(parentFolder.toFile())) {
         error = "Can not create project directory: %s"
       }
     } catch (e: InvalidPathException) {
