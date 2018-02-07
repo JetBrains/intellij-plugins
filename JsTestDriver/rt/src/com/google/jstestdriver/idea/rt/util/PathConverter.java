@@ -10,8 +10,8 @@ import java.net.URI;
  */
 public class PathConverter {
 
-  private static char UNIX_SEPARATOR = '/';
-  private static String UNIX_SEPARATOR_STR = String.valueOf(UNIX_SEPARATOR);
+  private static final char UNIX_SEPARATOR = '/';
+  private static final String UNIX_SEPARATOR_STR = String.valueOf(UNIX_SEPARATOR);
 
   private PathConverter() {}
 

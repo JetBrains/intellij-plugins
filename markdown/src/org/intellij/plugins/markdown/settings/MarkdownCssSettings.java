@@ -13,15 +13,15 @@ public final class MarkdownCssSettings {
   public static final MarkdownCssSettings DARCULA = new MarkdownCssSettings(true);
 
   @Attribute("UriEnabled")
-  private boolean myUriEnabled;
+  private final boolean myUriEnabled;
   @Attribute("StylesheetUri")
   @NotNull
-  private String myStylesheetUri;
+  private final String myStylesheetUri;
   @Attribute("TextEnabled")
-  private boolean myTextEnabled;
+  private final boolean myTextEnabled;
   @Attribute("StylesheetText")
   @NotNull
-  private String myStylesheetText;
+  private final String myStylesheetText;
 
   private MarkdownCssSettings() {
     this(UIUtil.isUnderDarcula());

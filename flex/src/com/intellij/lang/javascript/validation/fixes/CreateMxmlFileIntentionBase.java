@@ -33,7 +33,7 @@ public abstract class CreateMxmlFileIntentionBase implements CreateClassIntentio
   protected PsiElement myElement;
   protected String myPackageName;
   protected String myClassName;
-  private boolean myIdentifierIsValid;
+  private final boolean myIdentifierIsValid;
   private Consumer<String> myCreatedClassFqnConsumer;
 
   public CreateMxmlFileIntentionBase(final String classFqn, final @NotNull PsiElement element) {

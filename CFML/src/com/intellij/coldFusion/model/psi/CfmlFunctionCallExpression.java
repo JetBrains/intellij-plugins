@@ -58,7 +58,7 @@ public class CfmlFunctionCallExpression extends CfmlCompositeElement implements 
   }
 
   public class PsiClassStaticType extends PsiClassReferenceType {
-    private String myClassName;
+    private final String myClassName;
 
     public PsiClassStaticType(final PsiJavaCodeReferenceElement reference, String className) {
       super(reference, null);

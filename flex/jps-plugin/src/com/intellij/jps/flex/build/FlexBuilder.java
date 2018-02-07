@@ -44,7 +44,7 @@ import java.util.List;
 
 public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTarget> {
 
-  private static Logger LOG = Logger.getInstance(FlexBuilder.class.getName());
+  private static final Logger LOG = Logger.getInstance(FlexBuilder.class.getName());
   private JpsBuiltInFlexCompilerHandler myBuiltInCompilerHandler;
 
   private enum Status {Ok, Failed, Cancelled}

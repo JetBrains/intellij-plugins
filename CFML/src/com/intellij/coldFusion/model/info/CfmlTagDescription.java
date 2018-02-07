@@ -15,9 +15,8 @@
  */
 package com.intellij.coldFusion.model.info;
 
-import java.util.HashSet;
-
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -26,11 +25,11 @@ import java.util.Set;
  */
 public class CfmlTagDescription {
   private String myDescription = "";
-  private Collection<CfmlAttributeDescription> myAttributes = new LinkedList<>();
-  private Set<String> myAttributesNames = new HashSet<>();
+  private final Collection<CfmlAttributeDescription> myAttributes = new LinkedList<>();
+  private final Set<String> myAttributesNames = new HashSet<>();
   private boolean myIsSingle = false;
   private boolean myIsEndTagRequired = true;
-  private String myName;
+  private final String myName;
 
   public CfmlTagDescription(String name, boolean isSingle, boolean isEndTagRequired) {
     myIsSingle = isSingle;

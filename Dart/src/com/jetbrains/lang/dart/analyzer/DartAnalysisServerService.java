@@ -1987,7 +1987,7 @@ public class DartAnalysisServerService implements Disposable {
    */
   private class InteractiveErrorReporter {
 
-    @NotNull private QueueProcessor<Runnable> myErrorReporter = QueueProcessor.createRunnableQueueProcessor();
+    @NotNull private final QueueProcessor<Runnable> myErrorReporter = QueueProcessor.createRunnableQueueProcessor();
     private long myPreviousTime;
     @NotNull private String myPreviousMessage = "";
     private int myDisruptionCount = 0;

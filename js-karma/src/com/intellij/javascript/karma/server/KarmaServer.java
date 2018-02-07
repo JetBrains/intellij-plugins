@@ -337,7 +337,7 @@ public class KarmaServer {
 
   private class MyDisposable implements Disposable {
 
-    private volatile boolean myDisposed = false;
+    private final boolean myDisposed = false;
 
     @Override
     public void dispose() {

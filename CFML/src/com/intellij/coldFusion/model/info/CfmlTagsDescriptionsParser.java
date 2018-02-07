@@ -38,11 +38,11 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
   private boolean myIsFunctionHelpSection = false;
   private Map<String, CfmlTagDescription> myTags;
   private Map<String, CfmlFunctionDescription> myFunctions;
-  private Map<String, Integer> myPredefinedVariables = new HashMap<>();
+  private final Map<String, Integer> myPredefinedVariables = new HashMap<>();
   private CfmlTagDescription myCurrentTag = null;
   private CfmlFunctionDescription myCurrentFunction = null;
   private CfmlAttributeDescription myCurrentAttribute = null;
-  private List<String> myFunctionUpperCased = new LinkedList<>();
+  private final List<String> myFunctionUpperCased = new LinkedList<>();
   private String myCurrentScope = "";
 
   private static final int TAG_STATE = 0;

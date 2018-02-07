@@ -20,7 +20,7 @@ import java.util.*;
 
 public class DartClassIndex extends ScalarIndexExtension<String> {
   public static final ID<String, Void> DART_CLASS_INDEX = ID.create("DartClassIndex");
-  private DataIndexer<String, Void, FileContent> myDataIndexer = new MyDataIndexer();
+  private final DataIndexer<String, Void, FileContent> myDataIndexer = new MyDataIndexer();
 
   @NotNull
   @Override

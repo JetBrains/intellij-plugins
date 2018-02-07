@@ -22,10 +22,10 @@ import java.util.List;
  * @author vnikolaenko
  */
 public class CfmlFunctionDescription {
-  private String myName;
-  private String myReturnType;
+  private final String myName;
+  private final String myReturnType;
   private String myDescription;
-  private List<CfmlParameterDescription> myParameters = new LinkedList<>();
+  private final List<CfmlParameterDescription> myParameters = new LinkedList<>();
 
   public CfmlFunctionDescription(String name, String returnType) {
     myName = name;
@@ -57,9 +57,9 @@ public class CfmlFunctionDescription {
   }
 
   public static class CfmlParameterDescription {
-    private String myName;
-    private String myType;
-    private boolean myIsRequired;
+    private final String myName;
+    private final String myType;
+    private final boolean myIsRequired;
     private String myDescription;
 
     public CfmlParameterDescription(String name, String type, boolean isRequired) {

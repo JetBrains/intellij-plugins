@@ -14,7 +14,7 @@ import java.util.*;
  * @author Roman.Chernyatchik
  */
 public class GherkinKeywordTable {
-  private Map<IElementType, Collection<String>> myType2KeywordsTable = new HashMap<>();
+  private final Map<IElementType, Collection<String>> myType2KeywordsTable = new HashMap<>();
 
   public GherkinKeywordTable() {
     for (IElementType type : GherkinTokenTypes.KEYWORDS.getTypes()) {

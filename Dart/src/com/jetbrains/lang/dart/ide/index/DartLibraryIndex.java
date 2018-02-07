@@ -33,7 +33,7 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
 
   private static final Key<Pair<Long, BidirectionalMap<String, String>>> LIBRARIES_TIME_AND_MAP_KEY = Key.create("dart.internal.libraries");
 
-  private DataIndexer<String, Void, FileContent> myDataIndexer = new MyDataIndexer();
+  private final DataIndexer<String, Void, FileContent> myDataIndexer = new MyDataIndexer();
 
   @NotNull
   @Override

@@ -51,7 +51,7 @@ public class CucumberJava8Extension extends AbstractCucumberJavaExtension {
   }
 
   private static class CucumberJava8TextOccurenceProcessor implements TextOccurenceProcessor {
-    private List<AbstractStepDefinition> myResult;
+    private final List<AbstractStepDefinition> myResult;
 
     public CucumberJava8TextOccurenceProcessor(List<AbstractStepDefinition> result) {
       myResult = result;

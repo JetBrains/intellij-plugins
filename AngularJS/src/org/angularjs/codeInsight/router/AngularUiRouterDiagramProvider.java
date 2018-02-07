@@ -58,9 +58,9 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
   public static final StrokeBorder WARNING_BORDER = new StrokeBorder(DOTTED_STROKE, JBColor.red);
   public static final Border ERROR_BORDER = JBUI.Borders.customLine(JBColor.red);
   public static final Border NORMAL_BORDER = JBUI.Borders.customLine(Gray._190);
-  private DiagramVfsResolver<DiagramObject> myResolver;
-  private AbstractDiagramElementManager<DiagramObject> myElementManager;
-  private DiagramColorManagerBase myColorManager;
+  private final DiagramVfsResolver<DiagramObject> myResolver;
+  private final AbstractDiagramElementManager<DiagramObject> myElementManager;
+  private final DiagramColorManagerBase myColorManager;
 
   public AngularUiRouterDiagramProvider() {
     myResolver = new DiagramVfsResolver<DiagramObject>() {
@@ -267,7 +267,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         return realizer;
       }
 
-      private Map<Integer, Integer> myEdgesPositions = new HashMap<>();
+      private final Map<Integer, Integer> myEdgesPositions = new HashMap<>();
       private final Set<AngularUiRouterEdge> myVisibleEdges = new HashSet<>();
 
       @Override

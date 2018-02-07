@@ -171,7 +171,7 @@ public class BridgeSupportReader {
 
   private static class AndroidSignatureVisitor extends SignatureVisitor {
     private final Function myFunction;
-    private StringBuilder typeBuilder;
+    private final StringBuilder typeBuilder;
     private int arrayLevel;
 
     public AndroidSignatureVisitor(Function function) {

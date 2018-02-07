@@ -6,7 +6,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Function;
 import gnu.trove.THashMap;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
@@ -36,7 +35,7 @@ public class JpsBuiltInFlexCompilerHandler {
   private DataOutputStream myDataOutputStream;
 
   private int commandNumber = 1;
-  private Map<String, Listener> myActiveListeners = new THashMap<>();
+  private final Map<String, Listener> myActiveListeners = new THashMap<>();
 
   public interface Listener {
     void textAvailable(String text);

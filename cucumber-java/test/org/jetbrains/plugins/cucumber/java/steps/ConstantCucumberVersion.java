@@ -12,7 +12,7 @@ public class ConstantCucumberVersion extends CucumberVersionProvider {
     return new ConstantCucumberVersion("1.0");
   }
 
-  private String version;
+  private final String version;
 
   public ConstantCucumberVersion(String version) {
     this.version = version;

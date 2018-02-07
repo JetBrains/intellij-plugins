@@ -58,7 +58,7 @@ public class OsmorcBuildTargetType extends ModuleBasedBuildTargetType<OsmorcBuil
   }
 
   private static class Loader extends BuildTargetLoader<OsmorcBuildTarget> {
-    private Map<String, OsmorcBuildTarget> myTargets;
+    private final Map<String, OsmorcBuildTarget> myTargets;
 
     public Loader(JpsModel model) {
       myTargets = ContainerUtil.newHashMap();

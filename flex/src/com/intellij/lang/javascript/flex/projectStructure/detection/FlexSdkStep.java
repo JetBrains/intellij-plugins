@@ -28,7 +28,7 @@ public class FlexSdkStep extends ModuleWizardStep {
   private JPanel myContentPane;
   private FlexSdkComboBoxWithBrowseButton mySdkCombo;
   private JLabel mySdkLabel;
-  private WizardContext myContext;
+  private final WizardContext myContext;
 
   public FlexSdkStep(WizardContext context) {
     myContext = context;

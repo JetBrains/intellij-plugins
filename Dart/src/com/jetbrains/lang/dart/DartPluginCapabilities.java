@@ -10,7 +10,7 @@ import java.util.Set;
  */
 @SuppressWarnings("unused")
 public class DartPluginCapabilities {
-  private static Set<String> capabilities = new HashSet<>();
+  private static final Set<String> capabilities = new HashSet<>();
 
   static {
     capabilities.add("supports.pausePostRequest");

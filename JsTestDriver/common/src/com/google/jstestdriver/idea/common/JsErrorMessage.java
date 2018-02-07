@@ -10,7 +10,7 @@ public class JsErrorMessage {
   private static final String UNCAUGHT_PREFIX = "Uncaught ";
 
   private final File myFileWithError;
-  private int myLineNumber;
+  private final int myLineNumber;
   private final Integer myColumnNumber;
   private final boolean myErrorNameWithUncaughtPrefix;
   private final String myParsedErrorName;

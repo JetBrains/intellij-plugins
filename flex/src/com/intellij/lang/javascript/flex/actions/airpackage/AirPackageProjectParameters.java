@@ -94,7 +94,7 @@ public class AirPackageProjectParameters implements PersistentStateComponent<Air
   private boolean myPackagingInProgress = false;
 
   @Transient
-  private PasswordStore myPasswordStore = new PasswordStore();
+  private final PasswordStore myPasswordStore = new PasswordStore();
 
   public static AirPackageProjectParameters getInstance(final Project project) {
     return ServiceManager.getService(project, AirPackageProjectParameters.class);

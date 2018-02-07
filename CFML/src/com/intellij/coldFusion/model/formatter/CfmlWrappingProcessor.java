@@ -28,7 +28,7 @@ import com.intellij.psi.tree.IElementType;
 
 public class CfmlWrappingProcessor extends CfmlFormatterUtil {
   private final CommonCodeStyleSettings mySettings;
-  private ASTNode myNode;
+  private final ASTNode myNode;
 
   CfmlWrappingProcessor(ASTNode node, CommonCodeStyleSettings settings) {
     myNode = node;

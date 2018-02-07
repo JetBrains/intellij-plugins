@@ -31,7 +31,7 @@ import java.util.Map;
  */
 public class InheritanceInfoHolder {
   private static final Logger LOG = Logger.getInstance(InheritanceInfoHolder.class);
-  private Map<String, Map<String, String>> myInheritanceInfo = new HashMap<>();
+  private final Map<String, Map<String, String>> myInheritanceInfo = new HashMap<>();
 
   public static InheritanceInfoHolder getInstance() {
     return ServiceManager.getService(InheritanceInfoHolder.class);

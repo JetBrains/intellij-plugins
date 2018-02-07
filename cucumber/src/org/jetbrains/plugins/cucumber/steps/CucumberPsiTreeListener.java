@@ -5,14 +5,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiTreeChangeAdapter;
 import com.intellij.psi.PsiTreeChangeEvent;
 import com.intellij.psi.util.PsiTreeUtil;
-import java.util.HashMap;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class CucumberPsiTreeListener extends PsiTreeChangeAdapter {
 
-  private Map<PsiElement, ChangesWatcher> changesWatchersMap;
+  private final Map<PsiElement, ChangesWatcher> changesWatchersMap;
 
   public CucumberPsiTreeListener() {
     changesWatchersMap = new HashMap<>();

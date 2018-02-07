@@ -24,7 +24,7 @@ import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGa
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor.PLATFORM_IOS;
 
 public abstract class PhoneGapTargets {
-  private static Logger LOGGER = Logger.getInstance(PhoneGapTargets.class);
+  private static final Logger LOGGER = Logger.getInstance(PhoneGapTargets.class);
 
   @Nullable
   public static PhoneGapTargets createTargetsList(@NotNull Project project, @Nullable String platform) {

@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class PhoneGapConfigurationProvider extends ConfigurableProvider {
 
-  private Project myProject;
+  private final Project myProject;
 
   public PhoneGapConfigurationProvider(Project project) {
     myProject = project;

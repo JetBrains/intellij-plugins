@@ -42,7 +42,7 @@ import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 public class DartProjectComponent extends AbstractProjectComponent {
 
-  private SimpleModificationTracker myProjectRootsModificationTracker = new SimpleModificationTracker();
+  private final SimpleModificationTracker myProjectRootsModificationTracker = new SimpleModificationTracker();
 
   protected DartProjectComponent(@NotNull final Project project) {
     super(project);

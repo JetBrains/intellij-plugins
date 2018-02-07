@@ -21,10 +21,8 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.WindowManager;
-import com.intellij.util.Consumer;
 import com.intellij.util.concurrency.Semaphore;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,9 +30,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -43,7 +39,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.intellij.flex.uiDesigner.AdlUtil.*;
 
 public class DesignerApplicationLauncher extends DocumentTask {
-  private boolean debug;
+  private final boolean debug;
   private Future<ProjectComponentReferenceCounter> initializeTask;
 
   private final Semaphore semaphore = new Semaphore();

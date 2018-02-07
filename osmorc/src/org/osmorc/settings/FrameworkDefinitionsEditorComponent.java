@@ -60,7 +60,7 @@ import java.util.stream.Stream;
 public class FrameworkDefinitionsEditorComponent {
   private JPanel myMainPanel;
   private JPanel myFrameworkInstancesPanel;
-  private JBList myFrameworkInstances;
+  private final JBList myFrameworkInstances;
   private JLabel myFrameworkIntegrator;
   private JLabel myHomeDir;
   private JLabel myFrameworkInstanceName;

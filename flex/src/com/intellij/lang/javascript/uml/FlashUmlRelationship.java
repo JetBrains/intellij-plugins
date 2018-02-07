@@ -64,7 +64,7 @@ public interface FlashUmlRelationship extends DiagramRelationshipInfo {
       private final boolean myAllowMultipleLinks;
 
       @Nullable
-      private SmartPsiElementPointer<PsiElement> myElementPointer;
+      private final SmartPsiElementPointer<PsiElement> myElementPointer;
 
       public Impl(@NotNull final String type,
                   final DiagramLineType lineType,

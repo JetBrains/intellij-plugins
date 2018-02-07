@@ -32,7 +32,7 @@ import javax.swing.*;
  * Created by Lera Nikolaenko
  */
 public class CfmlRunConfigurationType implements ConfigurationType {
-  private ConfigurationFactory myConfigurationFactory;
+  private final ConfigurationFactory myConfigurationFactory;
 
   public CfmlRunConfigurationType() {
     myConfigurationFactory = new ConfigurationFactory(this) {

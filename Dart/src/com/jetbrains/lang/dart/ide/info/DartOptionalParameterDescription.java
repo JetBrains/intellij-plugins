@@ -17,7 +17,7 @@ public class DartOptionalParameterDescription {
   private final String myText;
   @Nullable
   private final String myValue;
-  private boolean myIsPositional;
+  private final boolean myIsPositional;
 
   public DartOptionalParameterDescription(@NotNull String text, @Nullable String value, boolean isPositional) {
     myText = text;

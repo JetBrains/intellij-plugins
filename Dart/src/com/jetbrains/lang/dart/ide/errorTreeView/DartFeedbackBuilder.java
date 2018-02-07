@@ -33,7 +33,7 @@ public abstract class DartFeedbackBuilder {
   private static final NotificationGroup NOTIFICATION_GROUP =
     new NotificationGroup("Dart Analyzer Error", NotificationDisplayType.NONE, true);
 
-  private static ExtensionPointName<DartFeedbackBuilder> EP_NAME = ExtensionPointName.create("Dart.feedbackBuilder");
+  private static final ExtensionPointName<DartFeedbackBuilder> EP_NAME = ExtensionPointName.create("Dart.feedbackBuilder");
 
   @NotNull
   public static DartFeedbackBuilder getFeedbackBuilder() {

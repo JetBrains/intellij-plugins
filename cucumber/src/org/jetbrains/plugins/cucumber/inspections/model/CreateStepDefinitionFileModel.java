@@ -22,7 +22,7 @@ public class CreateStepDefinitionFileModel {
 
   private PsiDirectory myDirectory;
 
-  private Project myProject;
+  private final Project myProject;
 
   public CreateStepDefinitionFileModel(@NotNull final Project project, @NotNull final Map<BDDFrameworkType, String> fileTypeToDefaultNameMap, @NotNull final Map<BDDFrameworkType, PsiDirectory> fileTypeToDefaultDirectoryMap) {
     myProject = project;

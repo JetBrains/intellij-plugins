@@ -82,7 +82,7 @@ class ResolutionSucceedDialog extends DialogWrapper {
   private static class MyTreeModel extends AbstractTreeModel {
     private final Map<Resource, List<Wire>> myResolveResult;
     private final List<Resource> myResolveRoots;
-    private DefaultMutableTreeNode myRoot;
+    private final DefaultMutableTreeNode myRoot;
 
     public MyTreeModel(Map<Resource, List<Wire>> resolveResult) {
       super();

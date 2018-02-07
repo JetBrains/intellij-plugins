@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DartClosingLabelManager {
-  private EventDispatcher<PreferenceChangeListener> myEventDispatcher = EventDispatcher.create(PreferenceChangeListener.class);
+  private final EventDispatcher<PreferenceChangeListener> myEventDispatcher = EventDispatcher.create(PreferenceChangeListener.class);
 
   interface PreferenceChangeListener extends EventListener {
     void closingLabelPreferenceChanged();
@@ -160,7 +160,7 @@ public class DartClosingLabelManager {
 }
 
 class TextLabelCustomElementRenderer implements EditorCustomElementRenderer {
-  private static TextAttributesKey TEXT_ATTRIBUTES = DefaultLanguageHighlighterColors.LINE_COMMENT;
+  private static final TextAttributesKey TEXT_ATTRIBUTES = DefaultLanguageHighlighterColors.LINE_COMMENT;
 
   private final String label;
 

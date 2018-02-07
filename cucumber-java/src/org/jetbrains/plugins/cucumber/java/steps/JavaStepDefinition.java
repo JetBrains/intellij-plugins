@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 public class JavaStepDefinition extends AbstractJavaStepDefinition {
-  private String myAnnotationClassName;
+  private final String myAnnotationClassName;
 
   public JavaStepDefinition(@NotNull PsiElement stepDef, @NotNull String annotationClassName) {
     super(stepDef);

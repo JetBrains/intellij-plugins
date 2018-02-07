@@ -37,7 +37,7 @@ public class AngularUiRouterDiagramBuilder {
   private final Map<VirtualFile, Template> myTemplatesMap;
   private final Map<VirtualFile, RootTemplate> myRootTemplates;
   @NotNull private final Project myProject;
-  private SmartPointerManager mySmartPointerManager;
+  private final SmartPointerManager mySmartPointerManager;
   private final Map<PsiFile, Set<VirtualFile>> myModuleRecursiveDependencies;
   private Map<VirtualFile, Map<String, UiRouterState>> myRootTemplates2States;
   private Map<VirtualFile, Map<String, UiRouterState>> myDefiningFiles2States;

@@ -11,7 +11,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinPsiElement;
 
 public class GherkinSimpleReference implements PsiReference {
 
-  private GherkinPsiElement myElement;
+  private final GherkinPsiElement myElement;
 
   public GherkinSimpleReference(GherkinPsiElement element) {
     myElement = element;

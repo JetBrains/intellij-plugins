@@ -66,9 +66,9 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
   // GUI components -----------------------
   private JPanel myPanel;
 
-  private SimpleTree myTree;
-  private AnActionButton myRemoveButton;
-  private AnActionButton myEditButton;
+  private final SimpleTree myTree;
+  private final AnActionButton myRemoveButton;
+  private final AnActionButton myEditButton;
   private JPanel myTreePanel;
 
   // GUI helpers

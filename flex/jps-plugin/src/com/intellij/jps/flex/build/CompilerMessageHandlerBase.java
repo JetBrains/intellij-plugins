@@ -17,7 +17,7 @@ import java.util.regex.Matcher;
 
 public abstract class CompilerMessageHandlerBase {
   private static final String ERROR_PREFIX = "Error: ";
-  private static Logger LOG = Logger.getInstance(CompilerMessageHandlerBase.class.getName());
+  private static final Logger LOG = Logger.getInstance(CompilerMessageHandlerBase.class.getName());
 
   private final CompileContext myContext;
   private final boolean myAsc20;

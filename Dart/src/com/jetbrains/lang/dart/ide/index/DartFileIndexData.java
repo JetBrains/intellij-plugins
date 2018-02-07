@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Map;
 
 public class DartFileIndexData {
-  private List<String> myClassNames = new ArrayList<>();
-  private List<DartImportOrExportInfo> myImportAndExportInfos = new ArrayList<>();
-  private Map<String, DartComponentInfo> myComponentInfoMap = new THashMap<>();
+  private final List<String> myClassNames = new ArrayList<>();
+  private final List<DartImportOrExportInfo> myImportAndExportInfos = new ArrayList<>();
+  private final Map<String, DartComponentInfo> myComponentInfoMap = new THashMap<>();
   private String myLibraryName;
-  private List<String> myPartUris = new ArrayList<>();
-  private List<String> mySymbols = new ArrayList<>();
+  private final List<String> myPartUris = new ArrayList<>();
+  private final List<String> mySymbols = new ArrayList<>();
   private boolean myIsPart;
 
   public List<String> getClassNames() {

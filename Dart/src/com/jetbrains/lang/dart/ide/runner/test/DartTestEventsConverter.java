@@ -90,10 +90,10 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private String myLocation;
   private Key myCurrentOutputType;
   private ServiceMessageVisitor myCurrentVisitor;
-  private TIntLongHashMap myTestIdToTimestamp;
-  private Map<Integer, Test> myTestData;
-  private Map<Integer, Group> myGroupData;
-  private Map<Integer, Suite> mySuiteData;
+  private final TIntLongHashMap myTestIdToTimestamp;
+  private final Map<Integer, Test> myTestData;
+  private final Map<Integer, Group> myGroupData;
+  private final Map<Integer, Suite> mySuiteData;
   private int mySuitCount;
 
   public DartTestEventsConverter(@NotNull final String testFrameworkName,
