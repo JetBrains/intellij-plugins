@@ -182,10 +182,16 @@ class VueCreateProjectProcess(private val folder: Path,
 
     processHandler.addProcessListener(object: ProcessAdapter() {
       override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
+        val isError = ProcessOutputType.isStderr(outputType)
+        if (processState == ProcessState.Starting && isError) {
+          error = event.text
+          processState = ProcessState.Error
+          listener?.invoke()
+        }
         if (event.text.any { Character.isLetter(it) }) {
           lastMessage = event.text
         }
-        logProgress(event.text, ProcessOutputType.isStderr(outputType))
+        logProgress(event.text, isError)
       }
 
       override fun processTerminated(event: ProcessEvent) {

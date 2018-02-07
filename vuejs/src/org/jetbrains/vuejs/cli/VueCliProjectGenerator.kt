@@ -29,10 +29,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.ComboBox
-import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.ui.LabeledComponent
-import com.intellij.openapi.ui.MultiLineLabelUI
+import com.intellij.openapi.ui.*
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -56,10 +53,7 @@ import com.intellij.util.ui.UIUtil
 import icons.VuejsIcons
 import java.awt.BorderLayout
 import java.awt.FlowLayout
-import java.awt.event.ActionEvent
-import java.awt.event.ActionListener
-import java.awt.event.KeyAdapter
-import java.awt.event.KeyEvent
+import java.awt.event.*
 import java.nio.file.Files
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
@@ -78,8 +72,8 @@ class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Set
     return VueCliProjectSettingsStep(projectGenerator, callback)
   }
 
-  override fun createPeer(): ProjectGeneratorPeer<NpmPackageProjectGenerator.Settings> =
-    object: NpmPackageProjectGenerator.NpmPackageGeneratorPeer("vue-cli", "vue-cli", { null }) {
+  override fun createPeer(): ProjectGeneratorPeer<NpmPackageProjectGenerator.Settings> {
+    return object : NpmPackageProjectGenerator.NpmPackageGeneratorPeer("vue-cli", "vue-cli", { null }) {
       var template: ComboBox<*>? = null
 
       override fun createPanel(): JPanel {
@@ -87,11 +81,41 @@ class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Set
         // todo comments to the project templates
         template = ComboBox(arrayOf("browserify", "browserify-simple", "pwa", "simple", "webpack", "webpack-simple"))
         template!!.selectedItem = "webpack"
+        template!!.isEditable = true
         val component = LabeledComponent.create(template!!, "Project template")
         component.labelLocation = BorderLayout.WEST
         component.anchor = panel.getComponent(0) as JComponent
         panel.add(component)
         return panel
+      }
+
+      @Suppress("OverridingDeprecatedMember", "DEPRECATION")
+      override fun addSettingsStateListener(listener: SettingsStateListener) {
+        super.addSettingsStateListener(listener)
+        template!!.editor.editorComponent.addKeyListener(object: KeyAdapter() {
+          override fun keyReleased(e: KeyEvent?) {
+            listener.stateChanged(validate() == null)
+          }
+        })
+        template!!.editor.editorComponent.addInputMethodListener(object: InputMethodListener {
+          override fun caretPositionChanged(event: InputMethodEvent?) {
+          }
+
+          override fun inputMethodTextChanged(event: InputMethodEvent?) {
+            listener.stateChanged(validate() == null)
+          }
+        })
+        template!!.addItemListener { listener.stateChanged(validate() == null) }
+      }
+
+      override fun validate(): ValidationInfo? {
+        val validate = super.validate()
+        if (validate == null) {
+          if (template!!.editor.item.toString().isBlank()) {
+            return ValidationInfo("Please enter project template", template!!)
+          }
+        }
+        return validate
       }
 
       override fun buildUI(settingsStep: SettingsStep) {
@@ -108,6 +132,7 @@ class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Set
         return settings
       }
     }
+  }
 
   override fun generateProject(project: Project, baseDir: VirtualFile, settings: NpmPackageProjectGenerator.Settings, module: Module) {
     assert(false, { "Should not be called" })
@@ -148,6 +173,7 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
 
           val processState = process!!.getState()
           if (VueCreateProjectProcess.ProcessState.Error == processState.processState) {
+            questionUi!!.error()
             onError(processState.globalProblem ?: "")
           } else if (VueCreateProjectProcess.ProcessState.QuestionsFinished == processState.processState) {
             state = VueProjectCreationState.QuestionsFinished
@@ -369,6 +395,13 @@ class QuestioningPanel(private val panel: JPanel, private val generatorName: Str
     formBuilder.addComponent(noBtn)
     panel.add(SwingHelper.wrapWithHorizontalStretch(formBuilder.panel), BorderLayout.CENTER)
     return { if (yesBtn.isSelected) "Yes" else "no" }
+  }
+
+  fun error() {
+    panel.removeAll()
+    panel.add(SwingHelper.wrapWithHorizontalStretch(JBLabel("Generation service error")), BorderLayout.CENTER)
+    panel.revalidate()
+    panel.repaint()
   }
 
   fun question(question: VueCreateProjectProcess.Question) {
