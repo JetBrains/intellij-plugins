@@ -30,9 +30,12 @@ import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.RowIcon;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
+import com.intellij.util.ui.ColorIcon;
+import com.intellij.util.ui.JBUI;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.flutter.FlutterUtil;
 import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -44,7 +47,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.List;
+import java.util.Objects;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.PlatformPatterns.psiFile;
@@ -270,11 +275,32 @@ public class DartServerCompletionContributor extends CompletionContributor {
       if (parameters != null) {
         lookup = lookup.appendTailText(parameters, false);
       }
-      // append return type
+      // append return type name, color or material icon
       final String returnType = element.getReturnType();
       if (!StringUtils.isEmpty(returnType)) {
-        lookup = lookup.withTypeText(returnType, true);
+        Icon icon = null;
+        final String name = element.getName();
+        final String declaringType = suggestion.getDeclaringType();
+        if (name != null && Objects.equals(declaringType, "Colors")) {
+          Color color = FlutterUtil.getColor(name);
+          if (color == null) {
+            color = FlutterUtil.getColor(name + ".primary");
+          }
+          if (color != null) {
+            icon = JBUI.scale(new ColorIcon(15, color));
+          }
+        } else if (Objects.equals(declaringType, "Icons")) {
+          icon = FlutterUtil.getMaterialIcon(name);
+        }
+
+        if (icon != null) {
+          lookup = lookup.withTypeText("", icon, false).withTypeIconRightAligned(true);
+        }
+        else {
+          lookup = lookup.withTypeText(returnType, true);
+        }
       }
+
       // icon
       Icon icon = getBaseImage(element);
       if (icon != null) {
