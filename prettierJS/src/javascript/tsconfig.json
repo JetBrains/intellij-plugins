@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "noUnusedLocals": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "outDir": "../../gen/prettierLanguageService"
+  },
+  "compileOnSave": false
+}

@@ -1,0 +1,7 @@
+{
+  "name": "prettier-idea",
+  "version": "0.0.1",
+  "dependencies": {
+    "@types/prettier": "^1.10.0"
+  }
+}

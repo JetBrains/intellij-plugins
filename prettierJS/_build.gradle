@@ -1,0 +1,37 @@
+buildscript {
+  repositories {
+    mavenCentral()
+    maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+  }
+}
+
+plugins {
+  id "org.jetbrains.intellij" version "0.1.10"
+}
+
+version '1.0-SNAPSHOT'
+
+sourceSets {
+  main {
+    java {
+      srcDirs 'src'
+      srcDirs 'gen'
+    }
+    resources {
+      srcDirs 'resources'
+    }
+  }
+  test {
+    java {
+      srcDirs 'test'
+    }
+  }
+}
+
+intellij {
+  version 'IU-LATEST-TRUNK-SNAPSHOT'
+  pluginName 'intellij.prettierJS'
+  downloadSources false
+  updateSinceUntilBuild false
+  plugins = ['JavaScriptLanguage']
+}
