@@ -12,16 +12,23 @@ public final class MarkdownCssSettings {
   public static final MarkdownCssSettings DEFAULT = new MarkdownCssSettings(false);
   public static final MarkdownCssSettings DARCULA = new MarkdownCssSettings(true);
 
+  @SuppressWarnings("FieldMayBeFinal")
   @Attribute("UriEnabled")
-  private final boolean myUriEnabled;
+  private boolean myUriEnabled;
+
+  @SuppressWarnings("FieldMayBeFinal")
   @Attribute("StylesheetUri")
   @NotNull
-  private final String myStylesheetUri;
+  private String myStylesheetUri;
+
+  @SuppressWarnings("FieldMayBeFinal")
   @Attribute("TextEnabled")
-  private final boolean myTextEnabled;
+  private boolean myTextEnabled;
+
+  @SuppressWarnings("FieldMayBeFinal")
   @Attribute("StylesheetText")
   @NotNull
-  private final String myStylesheetText;
+  private String myStylesheetText;
 
   private MarkdownCssSettings() {
     this(UIUtil.isUnderDarcula());
