@@ -3,7 +3,7 @@ import {EventEmitter} from "events";
 
 @Component({selector: 'todo-cmp,[todo-cmp]'})
 export class TodoCmp {
-    @Input() model: object;
+    @Input() model: Object;
     @Input() oneTime: string;
     @Input() oneTimeList: FloatPlaceholderType;
     @Input() id: string;
