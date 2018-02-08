@@ -20,17 +20,14 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.*
 import com.intellij.javascript.nodejs.NodeCommandLineUtil
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef
-import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.PerformInBackgroundOption
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
-import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
@@ -46,14 +43,6 @@ import java.nio.file.Paths
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
-class TestAction: DumbAwareAction("Start rpc server") {
-  override fun actionPerformed(e: AnActionEvent?) {
-    VueCreateProjectProcess(Paths.get("D:\\testProjects\\cl111"), "test", "webpack",
-                            NodeJsLocalInterpreter("D:\\node894\\bin\\node.exe", null).toRef(),
-                            "C:\\Users\\Irina.Chernushina\\AppData\\Roaming\\npm\\node_modules\\vue-cli", true, null)
-  }
-}
-
 /**
  * @author Irina.Chernushina on 1/26/2018.
  */
@@ -62,7 +51,6 @@ class VueCreateProjectProcess(private val folder: Path,
                               private val templateName: String,
                               private val interpreterRef: NodeJsInterpreterRef,
                               private val packagePath: String,
-                              isTest: Boolean = false,
                               parentDisposable: Disposable?) : Disposable {
   companion object {
     private const val DOMAIN = "vue-create-project"
@@ -121,20 +109,19 @@ class VueCreateProjectProcess(private val folder: Path,
       }
     }), false, serverDisposer)
 
-    if (!isTest) {
-      ProgressManager.getInstance().run(object: Task.Backgroundable(null, "Preparing Vue project generation service...",
-                                                                    false, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
-        override fun run(indicator: ProgressIndicator) {
-          val handler = createPeerVueCliProcess(indicator)
-          if (handler == null) {
-            // if no peer, stop rpc server
-            Disposer.dispose(serverDisposer)
-          } else {
-            processHandlerRef.set(handler)
-          }
+    ProgressManager.getInstance().run(object : Task.Backgroundable(null, "Preparing Vue project generation service...",
+                                                                   false, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
+      override fun run(indicator: ProgressIndicator) {
+        val handler = createPeerVueCliProcess(indicator)
+        if (handler == null) {
+          // if no peer, stop rpc server
+          Disposer.dispose(serverDisposer)
         }
-      })
-    }
+        else {
+          processHandlerRef.set(handler)
+        }
+      }
+    })
   }
 
   private fun deserializeQuestion(serializedObject: String, validationError: String?): Question? {

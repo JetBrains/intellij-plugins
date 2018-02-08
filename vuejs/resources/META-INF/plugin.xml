@@ -67,7 +67,6 @@
     <action class="org.jetbrains.vuejs.CreateVueSingleFileComponentAction" id="CreateVueSingleFileComp">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
-    <action class="org.jetbrains.vuejs.cli.TestAction" id="TestRpcServer" text="Start rpc server"/>
   </actions>
   <extensions defaultExtensionNs="JavaScript">
     <elementScopeProvider implementation="org.jetbrains.vuejs.VueElementResolveScopeProvider" />

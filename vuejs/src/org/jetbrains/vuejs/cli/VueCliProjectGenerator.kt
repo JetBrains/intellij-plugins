@@ -39,8 +39,10 @@ import com.intellij.openapi.wm.impl.welcomeScreen.AbstractActionWithPanel
 import com.intellij.platform.DirectoryProjectGenerator
 import com.intellij.platform.PlatformProjectOpenProcessor
 import com.intellij.platform.ProjectGeneratorPeer
+import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.ListCellRendererWrapper
 import com.intellij.ui.RelativeFont
+import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBRadioButton
 import com.intellij.ui.components.JBScrollPane
@@ -66,6 +68,14 @@ class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Set
                                CustomStepProjectGenerator<NpmPackageProjectGenerator.Settings> {
   companion object {
     internal val TEMPLATE_KEY = Key.create<String>("create.vue.app.project.template")
+    private val TEMPLATES = mapOf(
+      Pair("browserify", "A full-featured Browserify + vueify setup with hot-reload, linting & unit testing"),
+      Pair("browserify-simple", "A simple Browserify + vueify setup for quick prototyping"),
+      Pair("pwa", "PWA template for vue-cli based on the webpack template"),
+      Pair("simple", "The simplest possible Vue setup in a single HTML file"),
+      Pair("webpack", "A full-featured Webpack + vue-loader setup with hot reload, linting, testing & css extraction"),
+      Pair("webpack-simple", "A simple Webpack + vue-loader setup for quick prototyping")
+    )
   }
 
   override fun createStep(projectGenerator: DirectoryProjectGenerator<NpmPackageProjectGenerator.Settings>?,
@@ -79,10 +89,19 @@ class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Set
 
       override fun createPanel(): JPanel {
         val panel = super.createPanel()
-        // todo comments to the project templates
-        template = ComboBox(arrayOf("browserify", "browserify-simple", "pwa", "simple", "webpack", "webpack-simple"))
+        template = ComboBox(TEMPLATES.keys.toTypedArray())
         template!!.selectedItem = "webpack"
         template!!.isEditable = true
+        template!!.renderer = object: ColoredListCellRenderer<Any?>() {
+          override fun customizeCellRenderer(list: JList<out Any?>, value: Any?, index: Int, selected: Boolean, hasFocus: Boolean) {
+            if (value is String) {
+              append(value)
+              val comment = TEMPLATES[value] ?: return
+              append(" ")
+              append(comment, SimpleTextAttributes.GRAYED_ATTRIBUTES)
+            }
+          }
+        }
         val component = LabeledComponent.create(template!!, "Project template")
         component.labelLocation = BorderLayout.WEST
         component.anchor = panel.getComponent(0) as JComponent
@@ -166,7 +185,7 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
     })
 
     process = VueCreateProjectProcess(location.parent, location.fileName.toString(), templateName, settings.myInterpreterRef,
-                                      settings.myPackagePath, false, this)
+                                      settings.myPackagePath, this)
     process!!.listener = {
       ApplicationManager.getApplication().invokeLater(
         Runnable {
