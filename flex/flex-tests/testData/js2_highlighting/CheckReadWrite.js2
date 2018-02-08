@@ -4,5 +4,5 @@ interface IFoo {
 
 var v:IFoo;
 const aConst = 2;
-++<error>aConst</error>;
-v.<error descr="Attempt to assign to const variable">foo</error>++;
+++<error descr="Attempt to assign to const or readonly variable">aConst</error>;
+v.<error descr="Attempt to assign to const or readonly variable">foo</error>++;
