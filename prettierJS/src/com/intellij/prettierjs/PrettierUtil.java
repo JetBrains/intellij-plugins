@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.intellij.json.psi.JsonFile;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfigLangSubstitutor;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -53,7 +54,7 @@ public class PrettierUtil {
   }
 
   public static boolean isEnabled() {
-    return Registry.is("prettierjs.enabled");
+    return ApplicationManager.getApplication().isUnitTestMode() || Registry.is("prettierjs.enabled");
   }
 
   public static boolean isConfigFile(@NotNull PsiElement element) {

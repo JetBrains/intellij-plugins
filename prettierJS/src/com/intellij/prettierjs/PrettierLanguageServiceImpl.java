@@ -79,6 +79,15 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     public void dispose() {
 
     }
+
+    @Nullable
+    @Override
+    protected String getNodeInterpreter() {
+      return JSLanguageServiceUtil.getInterpreterPathIfValid(
+        PrettierConfiguration.getInstance(myProject)
+                             .getOrDetectInterpreterRef()
+                             .resolve(myProject));
+    }
   }
 
   public static class ReformatFileCommand implements JSLanguageServiceObject, JSLanguageServiceSimpleCommand {

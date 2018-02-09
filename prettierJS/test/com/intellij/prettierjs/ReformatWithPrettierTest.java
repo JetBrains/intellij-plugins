@@ -24,7 +24,6 @@ public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
     myFixture.setTestDataPath(PrettierJSTestUtil.getTestDataPath() + "reformat");
 
     myTestPackagePaths = ensureNpmPackage("prettier");
-    String npmPath = myTestPackagePaths.getNpmPath().toString();
     NodeJsLocalInterpreter interpreter = new NodeJsLocalInterpreter(myTestPackagePaths.getNodePath().toString());
     NodeJsInterpreterManager.getInstance(myFixture.getProject()).setInterpreterRef(interpreter.toRef());
     PrettierConfiguration.getInstance(getProject()).update(interpreter, new NodePackage(myTestPackagePaths.getPackagePath().toString()));
