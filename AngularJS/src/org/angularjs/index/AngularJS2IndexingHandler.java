@@ -309,7 +309,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Override
-  public boolean addTypeFromResolveResult(JSTypeEvaluator evaluator, PsiElement result, boolean hasSomeType) {
+  public boolean addTypeFromResolveResult(JSTypeEvaluator evaluator, PsiElement result) {
     if (!(result instanceof JSImplicitElement) || !AngularJSProcessor.$EVENT.equals(((JSImplicitElement)result).getName())) {
       return false;
     }

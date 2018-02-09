@@ -566,9 +566,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Override
-  public boolean addTypeFromResolveResult(JSTypeEvaluator evaluator,
-                                          PsiElement resolveResult,
-                                          boolean hasSomeType) {
+  public boolean addTypeFromResolveResult(JSTypeEvaluator evaluator, PsiElement resolveResult) {
     if (!AngularIndexUtil.hasAngularJS(resolveResult.getProject())) return false;
 
     if (resolveResult instanceof JSDefinitionExpression && resolveResult.getLanguage() instanceof AngularJSLanguage) {
