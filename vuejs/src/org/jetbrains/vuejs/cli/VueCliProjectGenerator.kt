@@ -187,6 +187,49 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
   private var process: VueCreateProjectProcess? = null
   private var questionUi: QuestioningPanel? = null
 
+  override fun createPanel(): JPanel {
+    val mainPanel = super.createPanel()
+    mainPanel.add(WebProjectTemplate.createTitlePanel(), BorderLayout.NORTH)
+
+    myCreateButton.text = "Next"
+    removeActionListeners()
+    myCreateButton.addActionListener {
+      if (state == VueProjectCreationState.Init) {
+        val location = validateProjectLocation(projectLocation)
+        if (location == null) {
+          UIUtil.setEnabled((mainPanel.layout as BorderLayout).getLayoutComponent(BorderLayout.CENTER), false, true)
+        } else {
+          initQuestioning(mainPanel, location)
+          state = VueProjectCreationState.Process
+          myCreateButton.isEnabled = false
+        }
+      }
+      else if (state == VueProjectCreationState.Process) {
+        assert(false, { "should be waiting for process" })
+      }
+      else if (state == VueProjectCreationState.User) {
+        assert(currentQuestion != null)
+        setErrorText("")
+        if (currentQuestion!!.type == VueCreateProjectProcess.QuestionType.Checkbox) {
+          val answer = questionUi!!.getCheckboxAnswer()!!
+          process!!.answer(answer)
+        } else {
+          val answer = questionUi!!.getAnswer()!!
+          process!!.answer(answer)
+        }
+        state = VueProjectCreationState.Process
+        questionUi!!.waitForNextQuestion()
+        myCreateButton.isEnabled = false
+      }
+      else if (state == VueProjectCreationState.QuestionsFinished || state == VueProjectCreationState.Error) {
+        DialogWrapper.findInstance(myCreateButton)?.close(DialogWrapper.OK_EXIT_CODE)
+      }
+      else assert(false, { "Unknown state" })
+    }
+
+    return mainPanel
+  }
+
   private fun initQuestioning(mainPanel: JPanel, location: Path) {
     val settings = peer.settings
     val templateName = settings.getUserData(VueCliProjectGenerator.TEMPLATE_KEY)!!
@@ -210,22 +253,7 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
           } else if (VueCreateProjectProcess.ProcessState.QuestionsFinished == processState.processState) {
             state = VueProjectCreationState.QuestionsFinished
             DialogWrapper.findInstance(myCreateButton)?.close(DialogWrapper.OK_EXIT_CODE)
-            val function = Runnable {
-              val projectVFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(location.toString())
-              if (projectVFolder == null) {
-                VueCreateProjectProcess.LOG.info(String.format("Create Vue Project: can not find project directory in '%s'", location.toString()))
-              } else {
-                RecentProjectsManager.getInstance().lastProjectCreationLocation =
-                  PathUtil.toSystemIndependentName(location.parent.normalize().toString())
-                UsageTrigger.trigger("AbstractNewProjectStep." + projectGenerator.name)
-                PlatformProjectOpenProcessor.doOpenProject(projectVFolder, null, -1, {
-                  project, _ ->
-                  val doneCallback = PackageJsonDependenciesExternalUpdateManager.getInstance(project).externalUpdateStarted(null, null)
-                  createListeningProgress(project, doneCallback)
-                }, EnumSet.noneOf(PlatformProjectOpenProcessor.Option::class.java))
-              }
-            }
-            ApplicationManager.getApplication().invokeLater(function, ModalityState.NON_MODAL)
+            openNewProjectAttachGenerationProgress(location)
           } else if (VueCreateProjectProcess.ProcessState.Working == processState.processState) {
             currentQuestion = processState.question
             val error = processState.question?.validationError
@@ -241,6 +269,25 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
           }
         }, ModalityState.any(), Condition<Boolean> { state == VueProjectCreationState.QuestionsFinished || state == VueProjectCreationState.Error })
     }
+  }
+
+  private fun openNewProjectAttachGenerationProgress(location: Path) {
+    val function = Runnable {
+      val projectVFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(location.toString())
+      if (projectVFolder == null) {
+        VueCreateProjectProcess.LOG.info(String.format("Create Vue Project: can not find project directory in '%s'", location.toString()))
+      }
+      else {
+        RecentProjectsManager.getInstance().lastProjectCreationLocation =
+          PathUtil.toSystemIndependentName(location.parent.normalize().toString())
+        UsageTrigger.trigger("AbstractNewProjectStep." + projectGenerator.name)
+        PlatformProjectOpenProcessor.doOpenProject(projectVFolder, null, -1, { project, _ ->
+          val doneCallback = PackageJsonDependenciesExternalUpdateManager.getInstance(project).externalUpdateStarted(null, null)
+          createListeningProgress(project, doneCallback)
+        }, EnumSet.noneOf(PlatformProjectOpenProcessor.Option::class.java))
+      }
+    }
+    ApplicationManager.getApplication().invokeLater(function, ModalityState.NON_MODAL)
   }
 
   override fun checkValid(): Boolean {
@@ -298,49 +345,6 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
     }
     val indicator = BackgroundableProcessIndicator(task)
     ProgressManager.getInstance().runProcessWithProgressAsynchronously(task, indicator)
-  }
-
-  override fun createPanel(): JPanel {
-    val mainPanel = super.createPanel()
-    mainPanel.add(WebProjectTemplate.createTitlePanel(), BorderLayout.NORTH)
-
-    myCreateButton.text = "Next"
-    removeActionListeners()
-    myCreateButton.addActionListener {
-      if (state == VueProjectCreationState.Init) {
-        val location = validateProjectLocation(projectLocation)
-        if (location == null) {
-          UIUtil.setEnabled((mainPanel.layout as BorderLayout).getLayoutComponent(BorderLayout.CENTER), false, true)
-        } else {
-          initQuestioning(mainPanel, location)
-          state = VueProjectCreationState.Process
-          myCreateButton.isEnabled = false
-        }
-      }
-      else if (state == VueProjectCreationState.Process) {
-        assert(false, { "should be waiting for process" })
-      }
-      else if (state == VueProjectCreationState.User) {
-        assert(currentQuestion != null)
-        setErrorText("")
-        if (currentQuestion!!.type == VueCreateProjectProcess.QuestionType.Checkbox) {
-          val answer = questionUi!!.getCheckboxAnswer()!!
-          process!!.answer(answer)
-        } else {
-          val answer = questionUi!!.getAnswer()!!
-          process!!.answer(answer)
-        }
-        state = VueProjectCreationState.Process
-        questionUi!!.waitForNextQuestion()
-        myCreateButton.isEnabled = false
-      }
-      else if (state == VueProjectCreationState.QuestionsFinished || state == VueProjectCreationState.Error) {
-        DialogWrapper.findInstance(myCreateButton)?.close(DialogWrapper.OK_EXIT_CODE)
-      }
-      else assert(false, { "Unknown state" })
-    }
-
-    return mainPanel
   }
 
   private fun replacePanel(mainPanel: JPanel): JPanel {
