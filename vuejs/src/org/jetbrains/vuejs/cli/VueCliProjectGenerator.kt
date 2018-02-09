@@ -43,10 +43,7 @@ import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.ListCellRendererWrapper
 import com.intellij.ui.RelativeFont
 import com.intellij.ui.SimpleTextAttributes
-import com.intellij.ui.components.JBLabel
-import com.intellij.ui.components.JBRadioButton
-import com.intellij.ui.components.JBScrollPane
-import com.intellij.ui.components.JBTextField
+import com.intellij.ui.components.*
 import com.intellij.util.PathUtil
 import com.intellij.util.io.exists
 import com.intellij.util.ui.AsyncProcessIcon
@@ -56,7 +53,10 @@ import com.intellij.util.ui.UIUtil
 import icons.VuejsIcons
 import java.awt.BorderLayout
 import java.awt.FlowLayout
-import java.awt.event.*
+import java.awt.event.InputMethodEvent
+import java.awt.event.InputMethodListener
+import java.awt.event.KeyAdapter
+import java.awt.event.KeyEvent
 import java.nio.file.Files
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
@@ -84,7 +84,8 @@ class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Set
   }
 
   override fun createPeer(): ProjectGeneratorPeer<NpmPackageProjectGenerator.Settings> {
-    return object : NpmPackageProjectGenerator.NpmPackageGeneratorPeer("vue-cli", "vue-cli", { null }) {
+    return object : NpmPackageProjectGenerator.NpmPackageGeneratorPeer(Arrays.asList("vue-cli", "@vue/cli"),
+                                                                       "vue-cli or @vue/cli", { null }) {
       var template: ComboBox<*>? = null
 
       override fun createPanel(): JPanel {
@@ -106,6 +107,11 @@ class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Set
         component.labelLocation = BorderLayout.WEST
         component.anchor = panel.getComponent(0) as JComponent
         panel.add(component)
+
+        myPackageField.addSelectionListener {
+          val isOldPackage = myPackageField.selected.name != "cli"
+          UIUtil.setEnabled(component, isOldPackage, true)
+        }
         return panel
       }
 
@@ -160,7 +166,7 @@ class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Set
 
   override fun getName() = "Vue.js"
   override fun getDescription() = "vue-cli based project generator"
-  override fun getIcon() = VuejsIcons.Vue
+  override fun getIcon() = VuejsIcons.Vue!!
 }
 
 enum class VueProjectCreationState {
@@ -179,12 +185,13 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
   private fun initQuestioning(mainPanel: JPanel, location: Path) {
     val settings = peer.settings
     val templateName = settings.getUserData(VueCliProjectGenerator.TEMPLATE_KEY)!!
+    val projectName = location.fileName.toString()
 
-    questionUi = QuestioningPanel(replacePanel(mainPanel), templateName, {
-      if (state == VueProjectCreationState.User) myCreateButton.isEnabled = it
-    })
+    val isOldPackage = Paths.get(settings.myPackagePath).fileName.toString() == "vue-cli"
+    questionUi = QuestioningPanel(replacePanel(mainPanel), isOldPackage, templateName, projectName,
+                                  { if (state == VueProjectCreationState.User) myCreateButton.isEnabled = it })
 
-    process = VueCreateProjectProcess(location.parent, location.fileName.toString(), templateName, settings.myInterpreterRef,
+    process = VueCreateProjectProcess(location.parent, projectName, templateName, settings.myInterpreterRef,
                                       settings.myPackagePath, this)
     process!!.listener = {
       ApplicationManager.getApplication().invokeLater(
@@ -272,7 +279,7 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
     process!!.cancel()
   }
 
-  internal fun createListeningProgress(project: Project, doneCallback: Runnable) {
+  private fun createListeningProgress(project: Project, doneCallback: Runnable) {
     if (process == null) return
     val task = object: Task.Backgroundable(project, "Generating Vue project...", false, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
       override fun run(indicator: ProgressIndicator) {
@@ -311,8 +318,13 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
       else if (state == VueProjectCreationState.User) {
         assert(currentQuestion != null)
         setErrorText("")
-        val answer = questionUi!!.getAnswer()!!
-        process!!.answer(answer)
+        if (currentQuestion!!.type == VueCreateProjectProcess.QuestionType.Checkbox) {
+          val answer = questionUi!!.getCheckboxAnswer()!!
+          process!!.answer(answer)
+        } else {
+          val answer = questionUi!!.getAnswer()!!
+          process!!.answer(answer)
+        }
         state = VueProjectCreationState.Process
         questionUi!!.waitForNextQuestion()
         myCreateButton.isEnabled = false
@@ -348,8 +360,11 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
   }
 }
 
-class QuestioningPanel(private val panel: JPanel, private val generatorName: String, private val validationListener: (Boolean) -> Unit) {
+class QuestioningPanel(private val panel: JPanel, private val isOldPackage: Boolean,
+                       private val generatorName: String, private val projectName: String,
+                       private val validationListener: (Boolean) -> Unit) {
   private var currentControl: (() -> String)? = null
+  private var currentCheckboxControl: (() -> List<String>)? = null
 
   private fun addInput(message: String, defaultValue: String): () -> String {
     val formBuilder = questionHeader(message)
@@ -359,11 +374,7 @@ class QuestioningPanel(private val panel: JPanel, private val generatorName: Str
         validationListener.invoke(field.text.isNotBlank())
       }
     })
-    field.addActionListener(object: ActionListener {
-      override fun actionPerformed(e: ActionEvent?) {
-        validationListener.invoke(field.text.isNotBlank())
-      }
-    })
+    field.addActionListener { validationListener.invoke(field.text.isNotBlank()) }
     formBuilder.addComponent(field)
     panel.add(SwingHelper.wrapWithHorizontalStretch(formBuilder.panel), BorderLayout.CENTER)
     return { field.text }
@@ -372,7 +383,9 @@ class QuestioningPanel(private val panel: JPanel, private val generatorName: Str
   private fun questionHeader(message: String): FormBuilder {
     panel.removeAll()
     val formBuilder = FormBuilder.createFormBuilder()
-    val titleLabel = JLabel(String.format("Running vue-init with %s template", generatorName))
+    val progressText = if (isOldPackage) String.format("Running vue-init with %s template", generatorName)
+      else "Running @vue/cli create " + projectName
+    val titleLabel = JLabel(progressText)
     titleLabel.font = UIUtil.getLabelFont()
     RelativeFont.ITALIC.install<JLabel>(titleLabel)
     formBuilder.addComponent(titleLabel)
@@ -383,7 +396,6 @@ class QuestioningPanel(private val panel: JPanel, private val generatorName: Str
     return formBuilder
   }
 
-  // todo implementation can be further zipped
   private fun addChoices(message: String, choices: List<VueCreateProjectProcess.Choice>): () -> String {
     val formBuilder = questionHeader(message)
     val box = ComboBox<VueCreateProjectProcess.Choice>(choices.toTypedArray())
@@ -398,6 +410,22 @@ class QuestioningPanel(private val panel: JPanel, private val generatorName: Str
     formBuilder.addComponent(box)
     panel.add(SwingHelper.wrapWithHorizontalStretch(formBuilder.panel), BorderLayout.CENTER)
     return { (box.selectedItem as? VueCreateProjectProcess.Choice)?.value ?: "" }
+  }
+
+  private fun addCheckboxes(message: String, choices: List<VueCreateProjectProcess.Choice>): () -> List<String> {
+    val formBuilder = questionHeader(message)
+    val selectors = mutableListOf<(MutableList<String>) -> Unit>()
+    choices.forEach {
+      val box = JBCheckBox(it.name)
+      formBuilder.addComponent(box)
+      selectors.add({ list -> if (box.isSelected) list.add(it.value) })
+    }
+    panel.add(SwingHelper.wrapWithHorizontalStretch(formBuilder.panel), BorderLayout.CENTER)
+    return {
+      val list = mutableListOf<String>()
+      selectors.forEach { it.invoke(list) }
+      list
+    }
   }
 
   private fun addConfirm(message: String): () -> String {
@@ -431,9 +459,15 @@ class QuestioningPanel(private val panel: JPanel, private val generatorName: Str
       currentControl = addConfirm(question.message)
     } else if (question.type == VueCreateProjectProcess.QuestionType.List) {
       currentControl = addChoices(question.message, question.choices)
+    } else if (question.type == VueCreateProjectProcess.QuestionType.Checkbox) {
+      currentCheckboxControl = addCheckboxes(question.message, question.choices)
     }
     panel.revalidate()
     panel.repaint()
+  }
+
+  fun getCheckboxAnswer(): List<String>? {
+    return currentCheckboxControl?.invoke()
   }
 
   fun getAnswer(): String? {

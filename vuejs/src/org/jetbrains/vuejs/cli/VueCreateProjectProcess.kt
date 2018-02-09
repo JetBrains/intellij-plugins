@@ -105,7 +105,8 @@ class VueCreateProjectProcess(private val folder: Path,
       @Suppress("unused")
       fun notifyStarted() {
         logProgress("notify started")
-        rpcServer.send(DOMAIN, "start", Paths.get(packagePath).parent.normalize().toString(), templateName, projectName)
+        val packagePath = Paths.get(packagePath)
+        rpcServer.send(DOMAIN, "start", packagePath.parent.normalize().toString(), packagePath.fileName.toString(), templateName, projectName)
       }
     }), false, serverDisposer)
 
@@ -259,6 +260,11 @@ class VueCreateProjectProcess(private val folder: Path,
     rpcServer.send(DOMAIN, "answer", answer)
   }
 
+  fun answer(answer: List<String>) {
+    assert(questionRef.get() != null)
+    rpcServer.send(DOMAIN, "answerCheckbox", answer.toTypedArray())
+  }
+
   fun cancel() {
     sendCancel()
     Disposer.dispose(this)
@@ -287,13 +293,14 @@ class VueCreateProjectProcess(private val folder: Path,
   }
 
   enum class QuestionType {
-    Input, Confirm, List;
+    Input, Confirm, List, Checkbox;
 
     companion object {
       fun read(value: String): QuestionType? {
         if ("input" == value) return Input
         if ("confirm" == value) return Confirm
         if ("list" == value) return List
+        if ("checkbox" == value) return Checkbox
         return null
       }
     }

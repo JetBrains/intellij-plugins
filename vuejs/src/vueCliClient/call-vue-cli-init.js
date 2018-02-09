@@ -16,101 +16,131 @@ var DOMAIN = "vue-create-project";
 var rpcNode = require("ij-rpc-client");
 var currentResolve;
 var currentReject;
-var currentQuestion;
+var questions;
+var idx = 0;
+var answers = {};
+var isOldCli = false;
 
 var port = parseInt(process.argv[process.argv.length - 1], 10);
 var rpcServer = rpcNode.connect(port, {
-    "vue-create-project": {
-        "answer": function(answer) {
-            var validator = currentQuestion["validate"];
-            var validation = validator == null || validator(answer);
-            if (validation !== true) {
-                sendQuestion(currentQuestion, validation);
-            } else {
-                if (currentQuestion["type"] === "confirm") {
-                    var resConfirm = {};
-                    resConfirm[currentQuestion["name"]] = answer === "Yes";
-                    currentResolve(resConfirm);
-                } else {
-                    var res = {};
-                    res[currentQuestion["name"]] = answer;
-                    currentResolve(res);
-                }
-                currentReject = null;
-                currentResolve = null;
-            }
-        },
-        "start": function(pathToVueCli, projectTemplate, projectName) {
-            startCreation(pathToVueCli, projectTemplate, projectName);
-        },
-        "cancel": function() {
-            if (currentReject != null) {
-                currentReject("cancelled");
-            }
-            if (rpcServer != null) {
-                rpcNode.close(rpcServer);
-                rpcServer = null;
-            }
+  "vue-create-project": {
+    answer: function (answer) {
+      var current = questions[idx];
+      var validator = current["validate"];
+      var validation = validator == null || validator(answer);
+      if (validation !== true) {
+        sendQuestion(current, validation);
+      }
+      else {
+        if (current["type"] === "confirm") {
+          answers[current["name"]] = answer === "Yes";
         }
+        else {
+          answers[current["name"]] = answer;
+        }
+        ++idx;
+        while (questions[idx] != null && idx < questions.length &&
+               questions[idx].when != null && !questions[idx].when(answers)) {
+          ++idx;
+        }
+        if (idx === questions.length) {
+          currentResolve(answers);
+          currentReject = null;
+          currentResolve = null;
+          if (!isOldCli) {
+            rpcServer.send(DOMAIN, "questionsFinished");
+          }
+        }
+        else {
+          sendQuestion(questions[idx], null);
+        }
+      }
+    },
+    answerCheckbox: function (answerArray) {
+      this.answer(answerArray);
+    },
+    "start": function (pathToVueCli, packageName, projectTemplate, projectName) {
+      isOldCli = packageName === "vue-cli";
+      startCreation(pathToVueCli, packageName, projectTemplate, projectName);
+    },
+    "cancel": function () {
+      if (currentReject != null) {
+        currentReject("cancelled");
+      }
+      if (rpcServer != null) {
+        rpcNode.close(rpcServer);
+        rpcServer = null;
+      }
     }
+  }
 });
 
 function sendQuestion(obj, error) {
-    if (rpcServer != null) rpcServer.send(DOMAIN, "question", JSON.stringify(obj), error);
+  if (rpcServer != null) rpcServer.send(DOMAIN, "question", JSON.stringify(obj), error);
 }
 
 function calcBasicPath(path) {
-    if (path.charAt(path.length - 1) !== '/' &&
-        path.charAt(path.length - 1) !== '\\') {
-        path = path + '/';
-    }
-    path = path.split("\\").join("/");
-    return path
+  if (path.charAt(path.length - 1) !== '/' &&
+      path.charAt(path.length - 1) !== '\\') {
+    path = path + '/';
+  }
+  path = path.split("\\").join("/");
+  return path
 }
 
-function startCreation(pathToVueCli, projectTemplate, projectName) {
+function startCreation(pathToVueCli, packageName, projectTemplate, projectName) {
+  if (isOldCli) {
     process.argv[1] = "init";
     process.argv[2] = projectTemplate; //type
     process.argv[3] = projectName; // default name
+  }
 
-    pathToVueCli = calcBasicPath(pathToVueCli);
+  pathToVueCli = calcBasicPath(pathToVueCli);
 
-    var fs = require("fs");
-    var inquirer;
-    if (fs.existsSync(pathToVueCli + "inquirer")) {
-        inquirer = require(pathToVueCli + "inquirer");
-    } else if (fs.existsSync(pathToVueCli + "vue-cli/node_modules/inquirer")) {
-        inquirer = require(pathToVueCli + "vue-cli/node_modules/inquirer");
-    } else {
-        rpcServer.send(DOMAIN, "error", "Can not find inquirer!");
-        return;
+  var fs = require("fs");
+  var inquirer;
+  if (fs.existsSync(pathToVueCli + packageName + "/node_modules/inquirer")) {
+    inquirer = require(pathToVueCli + packageName + "/node_modules/inquirer");
+  }
+  else if (fs.existsSync(pathToVueCli + "inquirer")) {
+    inquirer = require(pathToVueCli + "inquirer");
+  }
+  else {
+    rpcServer.send(DOMAIN, "error", "Can not find inquirer!");
+    return;
+  }
+
+  inquirer.prompt = function () {
+    if (arguments[0] == null) {
+      rpcServer.send(DOMAIN, "error", "Can not parse question: " + JSON.stringify(arguments[0]));
+      reject("parsing error");
+      return;
     }
+    questions = arguments[0];
+    idx = 0;
+    answers = {};
 
-    inquirer.prompt = function () {
-        var obj = arguments[0][0];
-        if (obj == null) {
-            rpcServer.send(DOMAIN, "error", "Can not parse question: " + JSON.stringify(arguments[0]));
-            reject("parsing error");
-            return;
-        }
-        currentQuestion = obj;
-
-        return new Promise(function(resolve, reject) {
-            currentResolve = resolve;
-            currentReject = reject;
-            sendQuestion(obj, null);
-        });
-    };
+    return new Promise(function (resolve, reject) {
+      currentResolve = resolve;
+      currentReject = reject;
+      sendQuestion(questions[idx], null);
+    });
+  };
+  if (isOldCli) {
     var logger = require(pathToVueCli + "vue-cli/lib/logger");
     var oldSuccess = logger.success;
-    logger.success = function() {
-        if (arguments.length > 0 && arguments[0].startsWith("Generated")) {
-          rpcServer.send(DOMAIN, "questionsFinished");
-          logger.success = oldSuccess;
-        }
-        Object.apply(oldSuccess, arguments);
+    logger.success = function () {
+      if (arguments.length > 0 && arguments[0].startsWith("Generated")) {
+        rpcServer.send(DOMAIN, "questionsFinished");
+        logger.success = oldSuccess;
+      }
+      Object.apply(oldSuccess, arguments);
     };
     var vue_init = require(pathToVueCli + "vue-cli/bin/vue-init");
+  }
+  else {
+    var vue_create = require(pathToVueCli + packageName + "/lib/create")(projectName);
+  }
 }
 
 rpcServer.send(DOMAIN, "notifyStarted");
