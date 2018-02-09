@@ -49,6 +49,9 @@ function performFormat(api, text, path, rangeStart, rangeEnd) {
     if (config == null) {
         config = { filepath: path };
     }
+    if (config.filepath == null) {
+        config.filepath = path;
+    }
     config.rangeStart = rangeStart;
     config.rangeEnd = rangeEnd;
     return api.formatFn(text, config);

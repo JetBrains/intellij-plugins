@@ -57,6 +57,11 @@ public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
     //test that parser is autodetected
     doReformatFile("ts");
   }
+  
+  public void testTypeScriptWithEmptyConfig() {
+    //test that parser is autodetected
+    doReformatFile("ts");
+  }
 
   public void testWithPackageJsonConfig() {
     doReformatFile("js");

@@ -71,10 +71,14 @@ export class PrettierPlugin implements LanguagePlugin {
 }
 
 function performFormat(api: PrettierApi, text: string, path: string, rangeStart?: number, rangeEnd?: number) {
-    let config = api.resolveConfigFn(path, {useCache:false, editorconfig: true});
+    let config = api.resolveConfigFn(path, {useCache: false, editorconfig: true});
     if (config == null) {
         config = {filepath: path};
     }
+    if (config.filepath == null) {
+        config.filepath = path
+    }
+    
     config.rangeStart = rangeStart;
     config.rangeEnd = rangeEnd;
     return api.formatFn(text, config);
