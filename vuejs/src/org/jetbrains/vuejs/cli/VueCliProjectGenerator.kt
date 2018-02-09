@@ -33,10 +33,12 @@ import com.intellij.openapi.ui.*
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.impl.welcomeScreen.AbstractActionWithPanel
 import com.intellij.platform.DirectoryProjectGenerator
+import com.intellij.platform.HideableProjectGenerator
 import com.intellij.platform.PlatformProjectOpenProcessor
 import com.intellij.platform.ProjectGeneratorPeer
 import com.intellij.ui.ColoredListCellRenderer
@@ -65,7 +67,8 @@ import java.util.*
 import javax.swing.*
 
 class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Settings>(),
-                               CustomStepProjectGenerator<NpmPackageProjectGenerator.Settings> {
+                               CustomStepProjectGenerator<NpmPackageProjectGenerator.Settings>,
+                               HideableProjectGenerator {
   companion object {
     internal val TEMPLATE_KEY = Key.create<String>("create.vue.app.project.template")
     private val TEMPLATES = mapOf(
@@ -77,6 +80,8 @@ class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Set
       Pair("webpack-simple", "A simple Webpack + vue-loader setup for quick prototyping")
     )
   }
+
+  override fun isHidden() = !Registry.`is`("webstorm.vue.project.generator", false)
 
   override fun createStep(projectGenerator: DirectoryProjectGenerator<NpmPackageProjectGenerator.Settings>?,
                           callback: AbstractNewProjectStep.AbstractCallback<NpmPackageProjectGenerator.Settings>?): AbstractActionWithPanel {
