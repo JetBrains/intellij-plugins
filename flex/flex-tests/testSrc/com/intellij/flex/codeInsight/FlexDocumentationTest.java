@@ -407,7 +407,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testDocsInsideClass() {
     String testName = getTestName(false);
-    doTest(testName, "as", testName, false, Check.Null);
+    doTest(testName, "as", testName, false, Check.Content);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
