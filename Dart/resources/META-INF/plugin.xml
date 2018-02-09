@@ -21,7 +21,6 @@
   <project-components>
     <component>
       <implementation-class>com.jetbrains.lang.dart.DartProjectComponent</implementation-class>
-      <skipForDefaultProject/>
     </component>
   </project-components>
 
