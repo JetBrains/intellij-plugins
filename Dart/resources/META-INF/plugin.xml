@@ -29,6 +29,7 @@
 
   <extensionPoints>
     <extensionPoint name="feedbackBuilder" interface="com.jetbrains.lang.dart.ide.errorTreeView.DartFeedbackBuilder" />
+    <extensionPoint name="completionExtension" interface="com.jetbrains.lang.dart.ide.completion.DartCompletionExtension" />
   </extensionPoints>
 
   <extensions defaultExtensionNs="Dart">
