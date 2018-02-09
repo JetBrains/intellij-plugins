@@ -17,6 +17,7 @@ import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.util.projectWizard.*
 import com.intellij.internal.statistic.UsageTrigger
 import com.intellij.javascript.nodejs.packageJson.PackageJsonDependenciesExternalUpdateManager
+import com.intellij.lang.javascript.boilerplate.NpmPackageGeneratorPeerExtensible
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.settings.JSRootConfiguration
@@ -40,7 +41,6 @@ import com.intellij.openapi.wm.impl.welcomeScreen.AbstractActionWithPanel
 import com.intellij.platform.DirectoryProjectGenerator
 import com.intellij.platform.HideableProjectGenerator
 import com.intellij.platform.PlatformProjectOpenProcessor
-import com.intellij.platform.ProjectGeneratorPeer
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.ListCellRendererWrapper
 import com.intellij.ui.RelativeFont
@@ -88,8 +88,8 @@ class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Set
     return VueCliProjectSettingsStep(projectGenerator, callback)
   }
 
-  override fun createPeer(): ProjectGeneratorPeer<NpmPackageProjectGenerator.Settings> {
-    return object : NpmPackageProjectGenerator.NpmPackageGeneratorPeer(Arrays.asList("vue-cli", "@vue/cli"),
+  override fun createPeer(): GeneratorPeer<NpmPackageProjectGenerator.Settings> {
+    return object : NpmPackageGeneratorPeerExtensible(Arrays.asList("vue-cli", "@vue/cli"),
                                                                        "vue-cli or @vue/cli", { null }) {
       var template: ComboBox<*>? = null
 
