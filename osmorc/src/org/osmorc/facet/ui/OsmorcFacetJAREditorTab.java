@@ -80,8 +80,8 @@ import static org.jetbrains.osgi.jps.model.OutputPathType.*;
  */
 public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   private JPanel myRoot;
-  private JTable myAdditionalJARContentsTable;
-  private EditorTextField myIgnoreFilePatternTextField;
+  private final JTable myAdditionalJARContentsTable;
+  private final EditorTextField myIgnoreFilePatternTextField;
   private JCheckBox myAlwaysRebuildBundleJARCheckBox;
   private JLabel myFileIgnorePatternLabel;
   private JPanel myIgnoreFilePatternPanel;

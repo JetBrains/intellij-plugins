@@ -18,7 +18,6 @@ import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileScope;
-import com.intellij.openapi.compiler.CompilerFilter;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -152,7 +151,6 @@ public class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider {
 
   @NotNull
   public List<TargetTypeBuildScope> getBuildTargetScopes(@NotNull final CompileScope baseScope,
-                                                         @NotNull final CompilerFilter filter,
                                                          @NotNull final Project project,
                                                          boolean forceBuild) {
     final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(baseScope);

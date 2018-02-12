@@ -1,0 +1,39 @@
+<idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/prettierJS">
+  <id>intellij.prettierJS</id>
+  <name>Prettier</name>
+  <description>
+    Support for prettier - the opinionated pretty printer
+  </description>
+  <vendor>JetBrains</vendor>
+
+  <depends>JavaScript</depends>
+  <depends>com.intellij.modules.platform</depends>
+  <resource-bundle>PrettierBundle</resource-bundle>
+
+
+  <extensions defaultExtensionNs="com.intellij">
+    <projectService serviceInterface="com.intellij.prettierjs.PrettierLanguageService"
+                    serviceImplementation="com.intellij.prettierjs.PrettierLanguageServiceImpl"/>
+    <projectService serviceImplementation="com.intellij.prettierjs.PrettierConfiguration"/>
+    <projectConfigurable
+        parentId="Settings.JavaScript"
+        id="settings.javascript.prettier"
+        displayName="Prettier"
+        instance="com.intellij.prettierjs.PrettierConfigurable"
+        provider="com.intellij.prettierjs.PrettierConfigurable$Provider"/>
+
+    <fileTypeFactory implementation="com.intellij.prettierjs.config.PrettierConfigFileTypeFactory"/>
+    <iconProvider implementation="com.intellij.prettierjs.config.PrettierConfigIconProvider"/>
+    <editorNotificationProvider implementation="com.intellij.prettierjs.PrettierCodeStyleEditorNotificationProvider"/>
+  </extensions>
+  <actions>
+    <action id="com.intellij.prettierjs.ReformatWithPrettierAction"
+            class="com.intellij.prettierjs.ReformatWithPrettierAction" text="Reformat with Prettier"
+            description="Reformat with Prettier">
+    </action>
+  </actions>
+  <extensions defaultExtensionNs="JavaScript.JsonSchema">
+    <ProviderFactory implementation="com.intellij.prettierjs.config.PrettierConfigJsonSchemaProviderFactory"/>
+  </extensions>
+
+</idea-plugin>

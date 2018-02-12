@@ -1,8 +1,8 @@
 package com.intellij.lang.javascript.flex.importer;
 
-import com.intellij.lang.javascript.dialects.ECMAL4LanguageDialect;
 import com.intellij.lang.javascript.JSFlexAdapter;
 import com.intellij.lang.javascript.JSTokenTypes;
+import com.intellij.lang.javascript.dialects.ECMAL4LanguageDialect;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
@@ -30,7 +30,7 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
     t.dump(abc, indent, "", this);
   }
 
-  private static Lexer ourLexer = new JSFlexAdapter(ECMAL4LanguageDialect.DIALECT_OPTION_HOLDER);
+  private static final Lexer ourLexer = new JSFlexAdapter(ECMAL4LanguageDialect.DIALECT_OPTION_HOLDER);
   
   public boolean doDumpMember(final @NotNull MemberInfo memberInfo) {
     if (memberInfo.name == null) return false;

@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
  * @author vnikolaenko
  */
 public class CfmlTypesInfo {
-  private static String[] ourTypeNames = {
+  private static final String[] ourTypeNames = {
     "string",
     "numeric",
     "boolean",

@@ -4,7 +4,6 @@ import com.intellij.compiler.impl.BuildTargetScopeProvider;
 import com.intellij.flex.build.FlexResourceBuildTargetType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.openapi.compiler.CompileScope;
-import com.intellij.openapi.compiler.CompilerFilter;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -37,7 +36,6 @@ public class FlexResourceBuildTargetScopeProvider extends BuildTargetScopeProvid
 
   @NotNull
   public List<TargetTypeBuildScope> getBuildTargetScopes(@NotNull final CompileScope baseScope,
-                                                         @NotNull final CompilerFilter filter,
                                                          @NotNull final Project project,
                                                          boolean forceBuild) {
     List<String> moduleNames = new ArrayList<>();

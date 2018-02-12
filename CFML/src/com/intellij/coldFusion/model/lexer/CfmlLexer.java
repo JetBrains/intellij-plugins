@@ -31,7 +31,7 @@ public class CfmlLexer extends MergingLexerAdapter {
   private static final int LEXER_STATE_LIMIT = 0xFFFF;
   private Lexer myCfscriptLexer = null;
   private int myStartPosition = 0;
-  private Project myProject;
+  private final Project myProject;
   private final _CfmlLexer.CfmlLexerConfiguration myConfiguration;
 
   private static final TokenSet TOKENS_TO_MERGE =

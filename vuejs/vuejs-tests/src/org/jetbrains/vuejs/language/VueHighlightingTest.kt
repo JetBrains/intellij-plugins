@@ -684,6 +684,8 @@ Vue.component('global-comp-literal', {
 """
 <template>
   <test-empty-tags/>
+  <test-empty-tags></test-empty-tags>
+
   <warning descr="Empty tag doesn't work in some browsers"><div/></warning>
   <warning descr="Empty tag doesn't work in some browsers"><h1/></warning>
   <img src="aaa.jpg"/>
@@ -782,7 +784,6 @@ Vue.component('global-comp-literal', {
     myFixture.configureByText("TsxIsNormallyParsed.vue",
 """
 <script lang="tsx">
-    let a = 1;
     export default {
         name: "with-tsx",
         render() {
@@ -791,7 +792,15 @@ Vue.component('global-comp-literal', {
     }
 </script>
 """)
-    // todo should fail
-    myFixture.doHighlighting()
+    myFixture.checkHighlighting(true, false, true, false)
+  }
+
+  fun testJadeWithVueShortcutAttributes() {
+    myFixture.configureByText("JadeWithVueShortcutAttributes.vue", """
+<template lang="pug">
+    div(v-if="items" @fff="4" :click="onClick" class="someName")
+</template>
+""")
+    myFixture.checkHighlighting(true, false, true, false)
   }
 }

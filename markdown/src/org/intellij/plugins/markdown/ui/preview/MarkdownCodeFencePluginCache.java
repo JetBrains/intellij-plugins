@@ -28,7 +28,7 @@ import static com.intellij.util.ArrayUtilRt.EMPTY_FILE_ARRAY;
 public class MarkdownCodeFencePluginCache implements Disposable {
   public static final String MARKDOWN_FILE_PATH_KEY = "markdown-md5-file-path";
 
-  @NotNull private Alarm myAlarm = new Alarm(this);
+  @NotNull private final Alarm myAlarm = new Alarm(this);
 
   @NotNull private final Collection<MarkdownCodeFencePluginCacheProvider> myCodeFencePluginCaches = ContainerUtil.newConcurrentSet();
   @NotNull private final Collection<File> myAdditionalCacheToDelete = ContainerUtil.newConcurrentSet();

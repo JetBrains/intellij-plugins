@@ -5,7 +5,7 @@ class SelectionInfo {
   ns const moveSpeed2:Number = 1;
 
   function SelectionInfo(o:Object, x:Boolean, y:Number) {
-      this.<error descr="Attempt to assign to const variable">moveSpeed</error> = 1;
-      this.<error descr="Attempt to assign to const variable">moveSpeed2</error> = 1;
+      this.<error descr="Attempt to assign to const or readonly variable">moveSpeed</error> = 1;
+      this.<error descr="Attempt to assign to const or readonly variable">moveSpeed2</error> = 1;
   }
 }

@@ -26,7 +26,6 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
@@ -34,7 +33,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
-import com.intellij.util.Function;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashMap;
@@ -59,7 +57,7 @@ public class FlashBuilderModuleImporter {
                                                             : "/Library/Application Support/Adobe/Flash Builder/Themes";
 
   private final Project myIdeaProject;
-  private FlexProjectConfigurationEditor myFlexConfigEditor;
+  private final FlexProjectConfigurationEditor myFlexConfigEditor;
   private final Collection<FlashBuilderProject> myAllFBProjects;
   private final FlashBuilderSdkFinder mySdkFinder;
   private final Set<String> myPathVariables;

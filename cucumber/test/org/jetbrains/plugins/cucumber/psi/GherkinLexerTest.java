@@ -152,7 +152,7 @@ public class GherkinLexerTest extends TestCase {
   }
 
   private static class MockGherkinKeywordProvider extends PlainGherkinKeywordProvider {
-    private List<String> myLolcatKeywords = Arrays.asList("OH HAI", "I CAN HAZ", "MISHUN", "MISHUN SRSLY");
+    private final List<String> myLolcatKeywords = Arrays.asList("OH HAI", "I CAN HAZ", "MISHUN", "MISHUN SRSLY");
 
     private MockGherkinKeywordProvider() {
       super();

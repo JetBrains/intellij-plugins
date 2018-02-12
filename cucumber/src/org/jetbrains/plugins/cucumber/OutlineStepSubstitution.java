@@ -5,8 +5,8 @@ import com.intellij.openapi.util.Pair;
 import java.util.List;
 
 public class OutlineStepSubstitution {
-  private String substitution;
-  private List<Pair<Integer, Integer>> offsets;
+  private final String substitution;
+  private final List<Pair<Integer, Integer>> offsets;
 
   public OutlineStepSubstitution(String substitution) {
     this(substitution, null);

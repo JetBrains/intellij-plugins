@@ -42,7 +42,7 @@ public class CssWriter {
   private final CustomVectorWriter declarationVectorWriter = new CustomVectorWriter();
 
   protected final StringRegistry.StringWriter stringWriter;
-  private ProblemsHolder problemsHolder;
+  private final ProblemsHolder problemsHolder;
   private final AssetCounter assetCounter;
 
   public CssWriter(StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder, AssetCounter assetCounter) {

@@ -44,14 +44,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class CfmlBlock extends TemplateLanguageBlock {
-  private Indent myIndent;
+  private final Indent myIndent;
   private Wrap myChildWrap;
-  private CommonCodeStyleSettings mySettings;
-  private CodeStyleSettings superSettings;
-  private CfmlIndentProcessor myIndentProcessor;
-  private CfmlWrappingProcessor myWrappingProcessor;
-  private CfmlSpacingProcessor mySpacingProcessor;
-  private CfmlAlignmentProcessor myAlignmentProcessor;
+  private final CommonCodeStyleSettings mySettings;
+  private final CodeStyleSettings superSettings;
+  private final CfmlIndentProcessor myIndentProcessor;
+  private final CfmlWrappingProcessor myWrappingProcessor;
+  private final CfmlSpacingProcessor mySpacingProcessor;
+  private final CfmlAlignmentProcessor myAlignmentProcessor;
   private final TextRange myTextRange;
 
   public CfmlBlock(ASTNode node,

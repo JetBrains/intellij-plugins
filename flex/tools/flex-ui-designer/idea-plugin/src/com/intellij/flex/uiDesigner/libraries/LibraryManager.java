@@ -12,7 +12,7 @@ import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.AccessToken;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.module.Module;
@@ -102,13 +102,7 @@ public class LibraryManager implements Disposable {
     final LibraryCollector libraryCollector = new LibraryCollector(this, new LibraryStyleInfoCollector(assetCounter, problemsHolder, module, stringWriter), module);
     final Client client;
     try {
-      final AccessToken token = ReadAction.start();
-      try {
-        libraryCollector.collect(module);
-      }
-      finally {
-        token.finish();
-      }
+      ApplicationManager.getApplication().runReadAction(() -> libraryCollector.collect(module));
 
       client = Client.getInstance();
       if (stringWriter.hasChanges()) {
@@ -348,12 +342,6 @@ public class LibraryManager implements Disposable {
   }
 
   private static PropertiesFile virtualFileToProperties(Project project, VirtualFile file) {
-    final AccessToken token = ReadAction.start();
-    try {
-      return (PropertiesFile)PsiManager.getInstance(project).findFile(file);
-    }
-    finally {
-      token.finish();
-    }
+    return ReadAction.compute(() -> (PropertiesFile)PsiManager.getInstance(project).findFile(file));
   }
 }

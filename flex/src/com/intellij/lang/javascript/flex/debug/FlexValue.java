@@ -37,7 +37,7 @@ import javax.swing.*;
 import java.util.*;
 
 class FlexValue extends XValue {
-  private FlexStackFrame myFlexStackFrame;
+  private final FlexStackFrame myFlexStackFrame;
   private final FlexDebugProcess myDebugProcess;
   private final @Nullable XSourcePosition mySourcePosition;
 

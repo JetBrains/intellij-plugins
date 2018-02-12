@@ -60,7 +60,7 @@ public class ProjectSettingsEditorComponent {
   private JButton myApplyToAllButton;
   private JBCheckBox myBndAutoImport;
 
-  private Project myProject;
+  private final Project myProject;
   private ProjectSettings mySettings;
   private boolean myModified;
 

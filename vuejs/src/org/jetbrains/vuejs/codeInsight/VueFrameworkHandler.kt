@@ -192,7 +192,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     return false
   }
 
-  override fun addTypeFromResolveResult(evaluator: JSTypeEvaluator?, result: PsiElement?, hasSomeType: Boolean): Boolean {
+  override fun addTypeFromResolveResult(evaluator: JSTypeEvaluator?, result: PsiElement?): Boolean {
     if (result == null || evaluator == null || !org.jetbrains.vuejs.index.hasVue(result.project)) return false
     if (result is JSVariable && result.language is VueJSLanguage) {
       val vFor = result.parent as? VueVForExpression ?: result.parent.parent as? VueVForExpression

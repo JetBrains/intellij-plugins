@@ -39,7 +39,7 @@ public class FlexReferenceContributor {
   public static class StateReference extends BasicAttributeValueReference implements EmptyResolveMessageProvider, PsiPolyVariantReference {
     private static final String DUMMY_STATE_GROUP_TAG = "DummyStateGroupTag";
 
-    private static FileBasedUserDataCache<Map<String, XmlTag>> statesCache = new FileBasedUserDataCache<Map<String, XmlTag>>() {
+    private static final FileBasedUserDataCache<Map<String, XmlTag>> statesCache = new FileBasedUserDataCache<Map<String, XmlTag>>() {
       public Key<CachedValue<Map<String, XmlTag>>> ourDataKey = Key.create("mx.states");
 
       @Override

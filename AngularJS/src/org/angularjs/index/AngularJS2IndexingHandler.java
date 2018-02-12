@@ -26,6 +26,7 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
+import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -251,7 +252,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     if (context instanceof JSReferenceExpression && ((JSReferenceExpression)context).getQualifier() == null) {
       final JSQualifiedName directiveNamespace = findDirective(context);
       if (directiveNamespace != null) {
-        info.addType(new JSNamespaceImpl(directiveNamespace, JSContext.INSTANCE, true), true);
+        info.addType(JSNamedTypeFactory.createNamespace(directiveNamespace, JSContext.INSTANCE, null, true), true);
       }
     }
   }
@@ -308,7 +309,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Override
-  public boolean addTypeFromResolveResult(JSTypeEvaluator evaluator, PsiElement result, boolean hasSomeType) {
+  public boolean addTypeFromResolveResult(JSTypeEvaluator evaluator, PsiElement result) {
     if (!(result instanceof JSImplicitElement) || !AngularJSProcessor.$EVENT.equals(((JSImplicitElement)result).getName())) {
       return false;
     }

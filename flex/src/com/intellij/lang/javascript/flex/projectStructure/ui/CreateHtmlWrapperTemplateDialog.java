@@ -234,11 +234,8 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
                   continue;
                 }
               }
-              file.copy(this, folder, file.getName());
             }
-            else {
-              file.copy(this, folder, file.getName());
-            }
+            file.copy(this, folder, file.getName());
           }
         }
         catch (IOException e) {

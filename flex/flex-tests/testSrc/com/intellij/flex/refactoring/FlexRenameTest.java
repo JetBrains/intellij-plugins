@@ -15,7 +15,7 @@ import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSImportStatement;
-import com.intellij.lang.javascript.refactoring.JSInplaceRenameHandler;
+import com.intellij.lang.javascript.refactoring.rename.JSInplaceRenameHandler;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.VirtualFile;

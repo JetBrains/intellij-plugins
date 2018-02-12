@@ -13,8 +13,7 @@ import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
-import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
@@ -192,8 +191,7 @@ public class FlexAutoImportsTest extends CodeInsightFixtureTestCase<FlexModuleFi
     List<IntentionAction> list = ContainerUtil.findAll(myFixture.getAvailableIntentions(fileName),
                                                        intentionAction -> intentionAction.getText().startsWith(hint));
 
-    final AccessToken l = ReadAction.start();
-    try {
+    ApplicationManager.getApplication().runReadAction(() -> {
       Document document = myFixture.getEditor().getDocument();
       int offset = myFixture.getEditor().getCaretModel().getOffset();
       int line = document.getLineNumber(offset);
@@ -204,10 +202,7 @@ public class FlexAutoImportsTest extends CodeInsightFixtureTestCase<FlexModuleFi
         fail(
           "Auto import fix not found: " + DaemonCodeAnalyzerImpl.getHighlights(document, HighlightSeverity.INFORMATION, getProject()));
       }
-    }
-    finally {
-      l.finish();
-    }
+    });
 
     return list;
   }

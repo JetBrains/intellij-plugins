@@ -118,7 +118,7 @@ public class MarkdownColorSettingsPage implements ColorSettingsPage {
   private enum AttributeDescriptorsHolder {
     INSTANCE;
 
-    private Map<String, TextAttributesKey> myMap = new HashMap<>();
+    private final Map<String, TextAttributesKey> myMap = new HashMap<>();
 
     AttributeDescriptorsHolder() {
       put("markdown.editor.colors.text", MarkdownHighlighterColors.TEXT_ATTR_KEY);

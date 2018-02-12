@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
  * @author vnikolaenko
  */
 public class CfmlScopesInfo {
-  private static String[] ourTypeNames = {
+  private static final String[] ourTypeNames = {
     "application",
     "arguments",
     "attributes",

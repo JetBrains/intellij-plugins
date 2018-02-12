@@ -47,7 +47,7 @@ import java.util.EventListener;
  */
 @State(name = "Osmorc")
 public class ProjectSettings implements PersistentStateComponent<ProjectSettings> {
-  private EventDispatcher<ProjectSettingsListener> myDispatcher = EventDispatcher.create(ProjectSettingsListener.class);
+  private final EventDispatcher<ProjectSettingsListener> myDispatcher = EventDispatcher.create(ProjectSettingsListener.class);
 
   private String myFrameworkInstanceName;
   private String myDefaultManifestFileLocation = "META-INF/MANIFEST.MF";

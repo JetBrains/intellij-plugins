@@ -4,7 +4,6 @@ import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
@@ -195,16 +194,9 @@ class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<Lis
         continue;
       }
 
-      final XmlFile psiFile;
-      final AccessToken token = ReadAction.start();
-      try {
-        psiFile = (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(document);
-        if (psiFile == null) {
-          continue;
-        }
-      }
-      finally {
-        token.finish();
+      final XmlFile psiFile = ReadAction.compute(() -> (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(document));
+      if (psiFile == null) {
+        continue;
       }
 
       if (client.updateDocumentFactory(info.getId(), module, psiFile, reportProblems)) {

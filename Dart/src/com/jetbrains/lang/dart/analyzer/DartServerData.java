@@ -29,7 +29,7 @@ public class DartServerData {
 
   private final DartAnalysisServerService myService;
 
-  private EventDispatcher<OutlineListener> myEventDispatcher = EventDispatcher.create(OutlineListener.class);
+  private final EventDispatcher<OutlineListener> myEventDispatcher = EventDispatcher.create(OutlineListener.class);
 
   private final Map<String, List<DartError>> myErrorData = Collections.synchronizedMap(new THashMap<>());
   private final Map<String, List<DartHighlightRegion>> myHighlightData = Collections.synchronizedMap(new THashMap<>());

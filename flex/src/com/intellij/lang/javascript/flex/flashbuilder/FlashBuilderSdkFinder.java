@@ -40,7 +40,7 @@ public class FlashBuilderSdkFinder {
   private final List<FlashBuilderProject> myAllProjects;
 
   private String myWorkspacePath;
-  private Map<String, String> mySdkNameToRootPath = new HashMap<>();
+  private final Map<String, String> mySdkNameToRootPath = new HashMap<>();
   private String myAirSdkHome;
   private Sdk mySdk;
   private boolean myDialogWasShown = false;

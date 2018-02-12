@@ -285,8 +285,8 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
   }
 
   private static class ParentDirWithLastComponentPrefix {
-    private VirtualFile myParent;
-    private String myLastComponentPrefix;
+    private final VirtualFile myParent;
+    private final String myLastComponentPrefix;
 
     private ParentDirWithLastComponentPrefix(@NotNull VirtualFile parent, @NotNull String lastComponentPrefix) {
       myParent = parent;

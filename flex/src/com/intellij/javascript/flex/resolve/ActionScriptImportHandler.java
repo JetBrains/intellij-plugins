@@ -39,7 +39,7 @@ import java.util.Map;
  * @author Konstantin.Ulitin
  */
 public class ActionScriptImportHandler extends JSImportHandler {
-  private static ActionScriptImportHandler INSTANCE = new ActionScriptImportHandler();
+  private static final ActionScriptImportHandler INSTANCE = new ActionScriptImportHandler();
 
   protected ActionScriptImportHandler() {}
 

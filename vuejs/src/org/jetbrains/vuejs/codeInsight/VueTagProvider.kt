@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.completion.CompletionUtilCore
@@ -28,6 +41,7 @@ import com.intellij.xml.XmlElementDescriptor
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import com.intellij.xml.XmlTagNameProvider
 import icons.VuejsIcons
+import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.getBoundName
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isNotInLibrary
 import org.jetbrains.vuejs.index.*
@@ -129,34 +143,49 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   }
 
   override fun addTagNameVariants(elements: MutableList<LookupElement>?, tag: XmlTag, prefix: String?) {
+    elements ?: return
     val files:MutableList<PsiFile> = mutableListOf()
+    val localLookups = mutableListOf<LookupElement>()
     processLocalComponents(tag, { foundName, element ->
-      elements?.add(PrioritizedLookupElement.withPriority(createVueLookup(element, foundName!!, false).bold(), 100.0))
+      addLookupVariants(localLookups, tag, element, foundName!!, false)
       files.add(element.containingFile)
       return@processLocalComponents true
     })
+    elements.addAll(localLookups.map { PrioritizedLookupElement.withPriority((it as LookupElementBuilder).bold(), 100.0) })
 
     if (hasVue(tag.project)) {
       val namePrefix = tag.name.substringBefore(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, tag.name)
       val variants = nameVariantsWithPossiblyGlobalMark(namePrefix)
       val allComponents = VueComponentsCache.getAllComponentsGroupedByModules(tag.project, { key -> variants.any { key.contains(it, true) } }, false)
       for (entry in allComponents) {
-        val components = entry.value.keys
+        entry.value.keys
           .filter { !files.contains(entry.value[it]!!.first.containingFile) }
-          .map {
+          .forEach {
             val value = entry.value[it]!!
-            createVueLookup(value.first, fromAsset(it), value.second, entry.key)
+            addLookupVariants(elements, tag, value.first, it, value.second, entry.key)
           }
-        elements?.addAll(components)
       }
-      elements?.addAll(VUE_FRAMEWORK_COMPONENTS.map {
+      elements.addAll(VUE_FRAMEWORK_COMPONENTS.map {
         LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vue", true)
       })
     }
   }
 
+  private fun addLookupVariants(elements: MutableList<LookupElement>,
+                                contextTag: XmlTag,
+                                element: PsiElement,
+                                name: String,
+                                isGlobal: Boolean,
+                                comment: String = "") {
+    if (VueFileType.INSTANCE == contextTag.containingFile.fileType) {
+      // Pascal case is allowed (and recommended for 90%)
+      elements.add(createVueLookup(element, toAsset(name).capitalize(), isGlobal, comment))
+    }
+    elements.add(createVueLookup(element, fromAsset(name), isGlobal, comment))
+  }
+
   private fun createVueLookup(element: PsiElement, name: String, isGlobal: Boolean, comment: String = "") =
-    LookupElementBuilder.create(element, fromAsset(name)).
+    LookupElementBuilder.create(element, name).
       withInsertHandler(if (isGlobal) null else VueInsertHandler.INSTANCE).
       withIcon(VuejsIcons.Vue).
       withTypeText(comment, true)

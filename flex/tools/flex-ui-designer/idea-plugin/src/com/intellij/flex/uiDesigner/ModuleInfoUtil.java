@@ -13,7 +13,6 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.search.JSClassSearch;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
@@ -65,19 +64,14 @@ public final class ModuleInfoUtil {
       semaphore.waitFor();
     }
 
-    final AccessToken token = ReadAction.start();
-    try {
+    return ReadAction.compute(()->{
       if (moduleInfo.isApp()) {
         return collectApplicationLocalStyle(moduleInfo.getModule(), flexSdkVersion, problemsHolder, stringWriter, projectComponentReferenceCounter,
                                      assetCounter);
       }
       else {
         return collectLibraryLocalStyle(moduleInfo.getModule(), stringWriter, problemsHolder, projectComponentReferenceCounter, assetCounter);
-      }
-    }
-    finally {
-      token.finish();
-    }
+      }});
   }
 
   @Nullable

@@ -15,7 +15,7 @@ public class FlexDocumentationBuilder extends JSDocumentationBuilder {
   }
 
   @Override
-  public boolean addEvaluatedType() {
+  public boolean fillEvaluatedType() {
     return false;
   }
 }

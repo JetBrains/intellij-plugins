@@ -23,7 +23,7 @@ import java.util.Map;
  * @author Dennis.Ushakov
  */
 public class Struct extends Sealable {
-  private Map<String, String> myFields = new LinkedHashMap<>();
+  private final Map<String, String> myFields = new LinkedHashMap<>();
   private final String myName;
 
   public Struct(String name) {

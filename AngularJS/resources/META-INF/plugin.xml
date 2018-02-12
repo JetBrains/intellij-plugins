@@ -104,6 +104,7 @@
                      groupName="AngularJS" enabledByDefault="true" level="WARNING" language="HTML"/>
     <diagram.Provider implementation="org.angularjs.codeInsight.router.AngularUiRouterDiagramProvider"/>
     <javascript.module.provider implementation="org.angularjs.codeInsight.attributes.AngularModulesProvider"/>
+    <fileTypeFactory implementation="org.angularjs.AngularTypeScriptConfigFileTypeFactory"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

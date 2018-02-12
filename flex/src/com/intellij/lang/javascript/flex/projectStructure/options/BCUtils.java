@@ -39,12 +39,12 @@ import java.util.List;
  */
 public class BCUtils {
 
-  private static LinkageType[] FLEX_LIB_LINKAGES = {LinkageType.Default, LinkageType.Merged, LinkageType.External};
-  private static LinkageType[] FLEX_MOBILE_APP_LINKAGES = {LinkageType.Default};
-  private static LinkageType[] FLEX_WEB_OR_DESKTOP_APP_LINKAGES = {LinkageType.Default, LinkageType.Merged, LinkageType.RSL};
-  private static LinkageType[] AS_LINKAGES = {LinkageType.Default};
+  private static final LinkageType[] FLEX_LIB_LINKAGES = {LinkageType.Default, LinkageType.Merged, LinkageType.External};
+  private static final LinkageType[] FLEX_MOBILE_APP_LINKAGES = {LinkageType.Default};
+  private static final LinkageType[] FLEX_WEB_OR_DESKTOP_APP_LINKAGES = {LinkageType.Default, LinkageType.Merged, LinkageType.RSL};
+  private static final LinkageType[] AS_LINKAGES = {LinkageType.Default};
 
-  private static Logger LOG = Logger.getInstance(BCUtils.class);
+  private static final Logger LOG = Logger.getInstance(BCUtils.class);
 
   public static boolean isTransitiveDependency(final LinkageType linkageType) {
     return linkageType == LinkageType.Include;

@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 
 public class CreateSetterByMxmlAttributeFix extends CreateJSPropertyAccessorIntentionAction {
-  private String myReferencedName;
+  private final String myReferencedName;
   private final String myAttributeValue;
 
   public CreateSetterByMxmlAttributeFix(final String referencedName, final String attributeValue) {

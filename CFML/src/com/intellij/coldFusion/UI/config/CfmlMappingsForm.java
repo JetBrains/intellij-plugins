@@ -40,7 +40,7 @@ public class CfmlMappingsForm {
   private JPanel myTablePanel;
   private JComboBox myLanguageLevel;
   private JLabel myMessageLabel;
-  private ValidatingTableEditor<Item> myTableEditor;
+  private final ValidatingTableEditor<Item> myTableEditor;
   private final Project myProject;
 
 

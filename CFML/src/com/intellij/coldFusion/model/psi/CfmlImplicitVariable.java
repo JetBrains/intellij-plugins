@@ -36,7 +36,7 @@ public class CfmlImplicitVariable extends RenameableFakePsiElement implements Cf
   private final PsiComment myComment;
   private final String myName;
   private String myType;
-  private String myText;
+  private final String myText;
 
   public CfmlImplicitVariable(@NotNull final PsiFile containingFile,
                               final PsiComment comment,

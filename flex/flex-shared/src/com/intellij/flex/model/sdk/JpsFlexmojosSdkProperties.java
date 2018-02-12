@@ -6,7 +6,7 @@ import java.util.Collections;
 
 public class JpsFlexmojosSdkProperties {
 
-  private Collection<String> myFlexCompilerClasspath = new ArrayList<>();
+  private final Collection<String> myFlexCompilerClasspath = new ArrayList<>();
   private String myAdlPath = "";
   private String myAirRuntimePath = "";
 

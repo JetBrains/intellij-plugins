@@ -300,20 +300,24 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     StringBuilder builder = new StringBuilder();
     for (int i = 0, n = docElements.size(); i < n; i++) {
       DocumentationElement docElement = docElements.get(i);
-      int sectionsStart = docElement.documentation.indexOf(DocumentationMarkup.SECTIONS_START);
+      String documentation = docElement.documentation;
+      if (i > 0) {
+        int definitionEnd = documentation.indexOf(DocumentationMarkup.DEFINITION_END);
+        if (definitionEnd > 0) {
+          documentation = documentation.substring(definitionEnd + DocumentationMarkup.DEFINITION_END.length());
+        }
+      }
+      int sectionsStart = documentation.indexOf(DocumentationMarkup.SECTIONS_START);
       if (sectionsStart < 0) {
-        builder.append(docElement.documentation);
+        builder.append(documentation);
         builder.append(DocumentationMarkup.SECTIONS_START);
         addDeclaredIn(builder, docElement);
         builder.append(DocumentationMarkup.SECTIONS_END);
       } else {
         sectionsStart += DocumentationMarkup.SECTIONS_START.length();
-        builder.append(docElement.documentation.substring(0, sectionsStart));
+        builder.append(documentation.substring(0, sectionsStart));
         addDeclaredIn(builder, docElement);
-        builder.append(docElement.documentation.substring(sectionsStart));
-      }
-      if (i != n - 1) {
-        builder.append("<br><br>\n\n");
+        builder.append(documentation.substring(sectionsStart));
       }
     }
     return builder.toString();

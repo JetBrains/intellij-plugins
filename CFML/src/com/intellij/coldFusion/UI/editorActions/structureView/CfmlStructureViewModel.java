@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * Created by Lera Nikolaenko
  */
 public class CfmlStructureViewModel extends TextEditorBasedStructureViewModel {
-  private StructureViewTreeElement myRoot;
+  private final StructureViewTreeElement myRoot;
   private final Class[] myClasses = {CfmlFunction.class};
 
   protected CfmlStructureViewModel(@NotNull PsiFile psiFile, @Nullable Editor editor) {

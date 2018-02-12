@@ -36,7 +36,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CfmlStackTraceFilterProvider implements Filter {
-  private Project myProject;
+  private final Project myProject;
 
   public CfmlStackTraceFilterProvider(Project project) {
     myProject = project;
@@ -51,9 +51,9 @@ public class CfmlStackTraceFilterProvider implements Filter {
   public static final String EXT_PATTERN = "\\.[\\p{Graph}^:/\\\\\\?]+";
   private static final String LINE_NUM_PATTERN = "(\\d+)";
   private static final String PATTERN = "(?:/|\\\\)[^:]*" + FILENAME_PATTERN + "(?:" + EXT_PATTERN + ")?";
-  private static Pattern WIN_MXUNIT_PATTERN_ERROR =
+  private static final Pattern WIN_MXUNIT_PATTERN_ERROR =
     Pattern.compile("\\s*((" + DISK_PATTERN + PATTERN + ")[(](" + LINE_NUM_PATTERN + ")[)])[^\n]*\n");
-  private static Pattern UNIX_MXUNIT_PATTERN_ERROR =
+  private static final Pattern UNIX_MXUNIT_PATTERN_ERROR =
     Pattern.compile("\\s*((" + PATTERN + ")[(](" + LINE_NUM_PATTERN + ")[)])[^\n]*\n");
 
   public Result applyFilter(String line, int entireLength) {

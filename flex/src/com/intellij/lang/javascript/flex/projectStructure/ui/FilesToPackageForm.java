@@ -40,7 +40,7 @@ public class FilesToPackageForm {
   private JBTable myFilesToPackageTable;
 
   private final Project myProject;
-  private List<FilePathAndPathInPackage> myFilesToPackage = new ArrayList<>();
+  private final List<FilePathAndPathInPackage> myFilesToPackage = new ArrayList<>();
 
   private enum Column {
     Path("Path to file or folder", String.class) {

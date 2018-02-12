@@ -36,7 +36,7 @@ public class PasswordStore {
    * key is either keystorePath or keystorePath + "*" + keyAlias
    */
   @Transient
-  private Map<String, String> myStoredPasswords = new THashMap<>();
+  private final Map<String, String> myStoredPasswords = new THashMap<>();
 
   public static PasswordStore getInstance(final Project project) {
     return AirPackageProjectParameters.getPasswordStore(project);

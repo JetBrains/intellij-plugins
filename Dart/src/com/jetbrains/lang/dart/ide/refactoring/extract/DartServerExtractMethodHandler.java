@@ -74,10 +74,10 @@ public class DartServerExtractMethodHandler implements RefactoringActionHandler 
 
 class DartServerExtractMethodDialog extends ServerRefactoringDialog<ServerExtractMethodRefactoring> {
   @NotNull final ServerExtractMethodRefactoring myRefactoring;
-  private JTextField myMethodNameField = new JTextField();
-  private JCheckBox myAllCheckBox = new JCheckBox("Extract all occurrences");
-  private JCheckBox myGetterCheckBox = new JCheckBox("Extract getter");
-  private JLabel mySignatureLabel = new JLabel();
+  private final JTextField myMethodNameField = new JTextField();
+  private final JCheckBox myAllCheckBox = new JCheckBox("Extract all occurrences");
+  private final JCheckBox myGetterCheckBox = new JCheckBox("Extract getter");
+  private final JLabel mySignatureLabel = new JLabel();
 
   public DartServerExtractMethodDialog(@NotNull Project project,
                                        @Nullable Editor editor,

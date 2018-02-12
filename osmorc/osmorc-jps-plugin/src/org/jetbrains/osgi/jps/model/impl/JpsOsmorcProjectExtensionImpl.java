@@ -22,14 +22,14 @@ import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.ex.JpsElementBase;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.java.JpsJavaProjectExtension;
-import org.jetbrains.osgi.jps.model.JpsOsmorcProjectExtension;
 import org.jetbrains.jps.util.JpsPathUtil;
+import org.jetbrains.osgi.jps.model.JpsOsmorcProjectExtension;
 
 /**
  * @author michael.golubev
  */
 public class JpsOsmorcProjectExtensionImpl extends JpsElementBase<JpsOsmorcProjectExtensionImpl> implements JpsOsmorcProjectExtension {
-  private OsmorcProjectExtensionProperties myProperties;
+  private final OsmorcProjectExtensionProperties myProperties;
 
   public JpsOsmorcProjectExtensionImpl(OsmorcProjectExtensionProperties properties) {
     myProperties = properties;

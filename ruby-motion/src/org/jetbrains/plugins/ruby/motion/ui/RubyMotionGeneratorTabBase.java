@@ -45,7 +45,7 @@ public class RubyMotionGeneratorTabBase extends RubyFacetEditorTab {
   private JPanel mySettingsPane;
   private ComboBox myProjectType;
   private JLabel myProjectTypeLabel;
-  private RubySdkPanel mySdkPanel;
+  private final RubySdkPanel mySdkPanel;
 
   public RubyMotionGeneratorTabBase(final RubyMotionSettingsHolder settingsHolder) {
     super(settingsHolder);
