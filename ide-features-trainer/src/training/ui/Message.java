@@ -50,6 +50,9 @@ public class Message {
                 MessageType type = MessageType.TEXT_REGULAR;
                 String text = outputter.outputString(((Element)content).getContent());
                 switch (((Element)content).getName()) {
+                    case "icon":
+                        type = MessageType.ICON;
+                        break;
                     case "code":
                         type = MessageType.CODE;
                         break;
@@ -78,7 +81,7 @@ public class Message {
         return ContainerUtil.toArray(list, new Message[0]);
     }
 
-    public enum MessageType {TEXT_REGULAR, TEXT_BOLD, SHORTCUT, CODE, LINK, CHECK}
+    public enum MessageType {TEXT_REGULAR, TEXT_BOLD, SHORTCUT, CODE, LINK, CHECK, ICON}
     @NotNull
     private String messageText;
     private int startOffset;
