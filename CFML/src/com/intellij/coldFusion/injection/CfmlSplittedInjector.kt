@@ -102,7 +102,7 @@ class CfmlSplittedInjector(val myConfiguration: Configuration,
       if (host.nextSibling != null
           && host.nextSibling is CfmlTagImpl) {
         val nextSibling = host.nextSibling as CfmlTagImpl
-        when(nextSibling.name.toLowerCase()) {
+        when(nextSibling.name?.toLowerCase()) {
           "cfqueryparam" -> return "'parameter from <cfqueryparam>'"
           "cfif" -> return "'parameter from <cfif>'"
         }

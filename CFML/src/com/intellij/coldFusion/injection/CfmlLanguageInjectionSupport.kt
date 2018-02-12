@@ -14,7 +14,7 @@ class CfmlLanguageInjectionSupport : AbstractLanguageInjectionSupport() {
 
   override fun getPatternClasses() = arrayOf(CfmlPatterns::class.java)
 
-  override fun isApplicableTo(host: PsiLanguageInjectionHost) = (host is CfmlTagImpl && host.name != null && host.name.toLowerCase() == "cfquery")
+  override fun isApplicableTo(host: PsiLanguageInjectionHost) = (host is CfmlTagImpl && host.name != null && host.name?.toLowerCase() == "cfquery")
 
   override fun useDefaultInjector(host: PsiLanguageInjectionHost): Boolean = false
 

@@ -43,7 +43,7 @@ open class CfmlTagImpl : CfmlCompositeElement, CfmlTag, PsiLanguageInjectionHost
     return tagName?.text?.toLowerCase() ?: ""
   }
 
-  override fun getName() = tagName
+  override fun getName(): String? = tagName
 
   override fun getDeclarativeElement(): PsiNamedElement? {
     if ("cfset" == name) {
