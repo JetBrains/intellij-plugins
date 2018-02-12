@@ -3,7 +3,7 @@
     <mx:Script><![CDATA[
         public static function foo():void {
             for (var i:int = 0; i < arguments.length; i++) {
-                var i1:int = arguments[i];
+                var argument:int = arguments[i];
                 <caret>
             }
         }

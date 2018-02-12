@@ -5,7 +5,7 @@ public class FunctionSignatureMismatchAddParam2 {
     foo(msg, "ff");
   }
 
-  public function foo(msg:String, s:String):void {
+  public function foo(msg:String, ff:String):void {
   }
 }
 }

@@ -5,7 +5,7 @@ public class PickVectorTypeInFlexIter {
     public function foo() {
         var o:Object;
 
-        for each (var service:AbstractWebService in bar) {
+        for each (var abstractWebService:AbstractWebService in bar) {
             <caret>
         }
     }

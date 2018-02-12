@@ -12,7 +12,7 @@ public class FlexItar{
         for (var l:int = 0; ;) {}
 
         for (var l:int = 0; l < object.length; l++) {
-            var object1:Object = object[l];
+            var objectElement:Object = object[l];
             <caret>
         }
     }
