@@ -31,6 +31,8 @@
     <action id="com.intellij.prettierjs.ReformatWithPrettierAction"
             class="com.intellij.prettierjs.ReformatWithPrettierAction" text="Reformat with Prettier"
             description="Reformat with Prettier">
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
     </action>
   </actions>
   <extensions defaultExtensionNs="JavaScript.JsonSchema">

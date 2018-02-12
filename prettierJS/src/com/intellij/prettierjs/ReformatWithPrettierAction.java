@@ -65,11 +65,16 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   @Override
   public void update(AnActionEvent e) {
     Project project = e.getProject();
-    e.getPresentation().setVisible(project != null && PrettierUtil.isEnabled());
+    e.getPresentation().setEnabledAndVisible(project != null
+                                   && PrettierUtil.isEnabled()
+                                   && PrettierConfiguration.getInstance(project).getPackage() != null
+                                   && isAcceptableFileContext(e));
+  }
+
+  private static boolean isAcceptableFileContext(AnActionEvent e) {
     Editor editor = e.getData(CommonDataKeys.EDITOR);
-    boolean isEnabled = (editor != null && isAcceptableFile(e.getData(CommonDataKeys.PSI_FILE)))
+    return (editor != null && isAcceptableFile(e.getData(CommonDataKeys.PSI_FILE)))
                         || (editor == null && !(ArrayUtil.isEmpty(e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY))));
-    e.getPresentation().setEnabled(isEnabled);
   }
 
   @Override
@@ -284,7 +289,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   }
 
   private static boolean isAcceptableFile(@Nullable PsiFile file) {
-    return file != null && file.isPhysical() && file instanceof JSFile || file instanceof CssFile;
+    return file != null && file.isPhysical() && (file instanceof JSFile || file instanceof CssFile);
   }
 
   private static HyperlinkListener toHyperLinkListener(Runnable runnable) {

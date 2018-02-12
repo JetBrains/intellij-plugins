@@ -30,11 +30,16 @@ public class PrettierConfiguration implements PersistentStateComponent<PrettierC
     myPackage.readOrDetect();
     return myPackage.getInterpreter();
   }
+  
+  @Nullable
+  public NodePackage getPackage() {
+    return new NodePackage(myPackage.getPackagePath());
+  }
 
   @Nullable
   public NodePackage getOrDetectNodePackage() {
     myPackage.readOrDetect();
-    return new NodePackage(myPackage.getPackagePath());
+    return getPackage();
   }
 
   @Nullable
@@ -50,6 +55,7 @@ public class PrettierConfiguration implements PersistentStateComponent<PrettierC
 
   @Override
   public void loadState(@NotNull PrettierConfiguration.State state) {
+    myPackage.readOrDetect();
   }
 
   public static class State {
