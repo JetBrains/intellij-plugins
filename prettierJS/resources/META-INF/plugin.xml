@@ -25,6 +25,7 @@
     <fileTypeFactory implementation="com.intellij.prettierjs.config.PrettierConfigFileTypeFactory"/>
     <iconProvider implementation="com.intellij.prettierjs.config.PrettierConfigIconProvider"/>
     <editorNotificationProvider implementation="com.intellij.prettierjs.PrettierCodeStyleEditorNotificationProvider"/>
+    <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierCompatibleCodeStyleInstaller"/>
   </extensions>
   <actions>
     <action id="com.intellij.prettierjs.ReformatWithPrettierAction"

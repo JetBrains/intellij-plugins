@@ -9,6 +9,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -89,6 +91,16 @@ public class PrettierUtil {
     }
     return false;
   }
+  
+  @Nullable
+  public static VirtualFile findConfigInContentRoots(@NotNull Project project) {
+    List<VirtualFile> configs = ContainerUtil.newSmartList();
+    for (VirtualFile dir : ProjectRootManager.getInstance(project).getContentRoots()) {
+      configs.addAll(CONFIG_FILE_NAMES.stream().map(el -> dir.findChild(el)).filter(el -> el != null).collect(Collectors.toList()));
+    }
+
+    return configs.size() == 1 ? ContainerUtil.getFirstItem(configs) : null;
+  }
 
   @Nullable
   private static VirtualFile lookupConfigFile(@NotNull VirtualFile fileToProcess) {
@@ -111,18 +123,18 @@ public class PrettierUtil {
    * (or self for config or package.json)
    */
   @Nullable
-  public static Config lookupConfiguration(@NotNull PsiFile file) {
+  public static Pair<Config, VirtualFile> lookupConfiguration(@NotNull PsiFile file) {
     return ReadAction.compute(() -> CachedValuesManager.getCachedValue(file, () -> {
-      Config result = lookupConfigurationWithoutCache(file.getProject(), file.getVirtualFile());
+      Pair<Config, VirtualFile> result = lookupConfigurationWithoutCache(file.getProject(), file.getVirtualFile());
       return new CachedValueProvider.Result<>(result, file);
     }));
   }
 
   @Nullable
-  private static Config lookupConfigurationWithoutCache(@NotNull Project project,
-                                                        @NotNull VirtualFile virtualFile) {
+  private static Pair<Config, VirtualFile> lookupConfigurationWithoutCache(@NotNull Project project,
+                                                                           @NotNull VirtualFile virtualFile) {
     if (isConfigFileOrPackageJson(virtualFile)) {
-      return parseConfig(project, virtualFile);
+      return Pair.create(parseConfig(project, virtualFile), virtualFile);
     }
     VirtualFile packageJson = PackageJsonUtil.findUpPackageJson(virtualFile);
     if (packageJson != null) {
@@ -131,14 +143,18 @@ public class PrettierUtil {
       }
       VirtualFile configFile = lookupConfigFile(virtualFile);
       if (configFile != null) {
-        return parseConfig(project, configFile);
+        return Pair.create(parseConfig(project, configFile), configFile);
       }
-      return parseConfig(project, packageJson);
+      return Pair.create(parseConfig(project, packageJson), packageJson);
     }
-    return Config.DEFAULT;
+    return null;
   }
 
 
+  /**
+   * returns config parsed from config file or package.json
+   * returns null if package.json does not contain a dependency
+   */
   @Nullable
   public static Config parseConfig(@NotNull Project project, @NotNull VirtualFile virtualFile) {
     return ReadAction.compute(() -> {

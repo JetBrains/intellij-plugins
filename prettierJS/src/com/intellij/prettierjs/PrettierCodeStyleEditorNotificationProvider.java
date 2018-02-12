@@ -10,6 +10,7 @@ import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -24,7 +25,7 @@ public class PrettierCodeStyleEditorNotificationProvider
   implements DumbAware {
 
   private static final Key<EditorNotificationPanel> KEY = Key.create("prettier.codestyle.notification.panel");
-  private static String NOTIFICATION_DISMISSED_KEY = "prettier.import.notification.dismissed";
+  private static final String NOTIFICATION_DISMISSED_KEY = "prettier.import.notification.dismissed";
   private final PropertiesComponent myPropertiesComponent;
   private final EditorNotifications myEditorNotifications;
 
@@ -75,11 +76,11 @@ public class PrettierCodeStyleEditorNotificationProvider
       return null;
     }
 
-    PrettierUtil.Config config = PrettierUtil.lookupConfiguration(psiFile);
-    if (config == null) {
+    Pair<PrettierUtil.Config, VirtualFile> config = PrettierUtil.lookupConfiguration(psiFile);
+    if (config == null || config.first == null || config.second == null) {
       return null;
     }
-    if (PrettierCompatibleCodeStyleInstaller.isInstalled(project, config)) {
+    if (PrettierCompatibleCodeStyleInstaller.isInstalled(project, config.first)) {
       return null;
     }
     final EditorNotificationPanel panel = new EditorNotificationPanel(EditorColors.GUTTER_BACKGROUND);
@@ -87,7 +88,8 @@ public class PrettierCodeStyleEditorNotificationProvider
 
     panel.createActionLabel(PrettierBundle.message("editor.notification.yes.text"),
                             () -> {
-                              PrettierCompatibleCodeStyleInstaller.install(project, config);
+                              PrettierCompatibleCodeStyleInstaller.install(project, config.first);
+                              PrettierNotificationUtil.reportCodeStyleSettingsImported(project, config.second, null);
                               myEditorNotifications.updateNotifications(file);
                             });
     panel.createActionLabel(PrettierBundle.message("editor.notification.no.text"), () -> {
