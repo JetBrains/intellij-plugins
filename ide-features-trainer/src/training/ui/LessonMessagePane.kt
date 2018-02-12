@@ -27,6 +27,7 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.geom.RoundRectangle2D
 import java.util.*
+import javax.swing.Icon
 import javax.swing.JTextPane
 import javax.swing.text.BadLocationException
 import javax.swing.text.SimpleAttributeSet
@@ -120,6 +121,14 @@ class LessonMessagePane : JTextPane() {
           Message.MessageType.CODE -> document.insertString(document.length, message.text, CODE)
           Message.MessageType.CHECK -> document.insertString(document.length, message.text, ROBOTO)
           Message.MessageType.LINK -> appendLink(message)
+          Message.MessageType.ICON -> {
+            val icon = iconFromPath(message)
+            var placeholder = " "
+            while (this.getFontMetrics(this.font).stringWidth(placeholder) < icon.iconWidth){
+              placeholder += " "
+            }
+            placeholder += " "
+            document.insertString(document.length, placeholder, REGULAR)}
         }
         message.endOffset = document.endPosition.offset
       }
@@ -179,7 +188,7 @@ class LessonMessagePane : JTextPane() {
 
   override fun paintComponent(g: Graphics) {
     try {
-      paintShortcutBackground(g)
+      paintMessages(g)
     }
     catch (e: BadLocationException) {
       e.printStackTrace()
@@ -212,7 +221,7 @@ class LessonMessagePane : JTextPane() {
   }
 
   @Throws(BadLocationException::class)
-  private fun paintShortcutBackground(g: Graphics) {
+  private fun paintMessages(g: Graphics) {
     val g2d = g as Graphics2D
     for (lessonMessage in lessonMessages) {
       val myMessages = lessonMessage.myMessages
@@ -237,9 +246,20 @@ class LessonMessagePane : JTextPane() {
                                           arc.toDouble(), arc.toDouble())
           g2d.fill(r2d)
           g2d.color = color
+        }else if (myMessage.type == Message.MessageType.ICON){
+          val rect = modelToView(myMessage.startOffset)
+          val icon = iconFromPath(myMessage)
+          icon.paintIcon(this, g2d, rect.x, rect.y)
         }
       }
     }
+  }
+
+  private fun iconFromPath(myMessage: Message): Icon {
+    val iconName = myMessage.text.substringAfterLast(".")
+    val path = myMessage.text.substringBeforeLast(".")
+    val fullPath = "com.intellij.icons.${path.replace(".", "$")}"
+    return Class.forName(fullPath).getField(iconName).get(null) as Icon
   }
 
   companion object {
