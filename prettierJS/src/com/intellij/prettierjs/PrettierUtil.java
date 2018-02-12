@@ -1,6 +1,7 @@
 package com.intellij.prettierjs;
 
 import com.google.gson.JsonObject;
+import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.json.psi.JsonFile;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfigLangSubstitutor;
@@ -90,7 +91,7 @@ public class PrettierUtil {
   }
 
   @Nullable
-  public static VirtualFile lookupConfigFile(@NotNull VirtualFile fileToProcess) {
+  private static VirtualFile lookupConfigFile(@NotNull VirtualFile fileToProcess) {
     VirtualFile dir = fileToProcess.getParent();
     while (dir != null) {
       for (String name : CONFIG_FILE_NAMES) {
@@ -106,6 +107,7 @@ public class PrettierUtil {
 
   /**
    * returns configuration from nearest config or package.json for file to reformat
+   * returns null if prettier should not be used for this file
    * (or self for config or package.json)
    */
   @Nullable
@@ -140,19 +142,27 @@ public class PrettierUtil {
   @Nullable
   public static Config parseConfig(@NotNull Project project, @NotNull VirtualFile virtualFile) {
     return ReadAction.compute(() -> {
+      if (!isConfigFileOrPackageJson(virtualFile)) {
+        return null;
+      }
       final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
       if (psiFile == null) {
         return null;
       }
 
-      return CachedValuesManager.getCachedValue(psiFile, () -> CachedValueProvider.Result.create(parseConfigInternal(psiFile), psiFile));
+      return CachedValuesManager
+        .getCachedValue(psiFile, () -> CachedValueProvider.Result.create(parseConfigInternal(virtualFile, psiFile), psiFile));
     });
   }
 
   @Nullable
-  private static Config parseConfigInternal(@NotNull PsiFile file) {
+  private static Config parseConfigInternal(@NotNull VirtualFile virtualFile, @NotNull PsiFile file) {
     try {
       if (PackageJsonUtil.FILE_NAME.equals(file.getName())) {
+        PackageJsonData packageJsonData = PackageJsonUtil.getOrCreateData(virtualFile);
+        if (!packageJsonData.isDependencyOfAnyType(PACKAGE_NAME)) {
+          return null;
+        }
         JsonObject object = JsonUtil.tryParseJsonObject(file.getText());
         return parseConfigFromJsonObject(JsonUtil.getChildAsObject(object, PACKAGE_NAME));
       }
@@ -182,6 +192,9 @@ public class PrettierUtil {
       LOG.info(String.format("Could not read config data from file [%s]", file.getVirtualFile().getPath()), e);
       return null;
     }
+    if (map == null) {
+      return Config.DEFAULT;
+    }
     return new Config(
       getBooleanValue(map, JSX_BRACKET_SAME_LINE),
       getBooleanValue(map, BRACKET_SPACING),
@@ -194,12 +207,12 @@ public class PrettierUtil {
     );
   }
 
-  private static Boolean getBooleanValue(Map<String, Object> map, String key) {
+  private static Boolean getBooleanValue(@NotNull Map<String, Object> map, String key) {
     Boolean value = ObjectUtils.tryCast(map.get(key), Boolean.class);
     return value == null ? null : value.booleanValue();
   }
 
-  private static Integer getIntValue(Map<String, Object> map, String key) {
+  private static Integer getIntValue(@NotNull Map<String, Object> map, String key) {
     Integer value = ObjectUtils.tryCast(map.get(key), Integer.class);
     return value == null ? null : value.intValue();
   }

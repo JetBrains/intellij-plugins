@@ -6,10 +6,19 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 
 public class PrettierConfigParsingTest extends LightPlatformCodeInsightFixtureTestCase {
   
-  public void testEmptyConfigs() {
-    doTest(PrettierUtil.Config.DEFAULT, "package.json", "{\"prettier\":{}}");
+  public void testDefaultConfigs() {
+    doTest(PrettierUtil.Config.DEFAULT, "package.json", "{\n" +
+                                                        "  \"devDependencies\":{\n" +
+                                                        "    \"prettier\":\"latest\"\n" +
+                                                        "  },\n" +
+                                                        "  \"prettier\": {}\n" +
+                                                        "}");
     doTest(PrettierUtil.Config.DEFAULT, ".prettierrc.json", "{}");
-    doTest(PrettierUtil.Config.DEFAULT, ".prettierrc.yaml", "");
+    doTest(PrettierUtil.Config.DEFAULT, ".prettierrc.yml", "#comment");
+  }
+
+  public void testNoConfigIfPackageNotInDependencies() {
+    doTest(null, "package.json", "{}");
   }
 
   public void testJsonConfig() {
@@ -32,6 +41,9 @@ public class PrettierConfigParsingTest extends LightPlatformCodeInsightFixtureTe
     doTest(new PrettierUtil.Config(true, false, 120, false, true, 3, "all", true),
            "package.json",
            "{\n" +
+           "  \"devDependencies\": {\n" +
+           "    \"prettier\": \"latest\"\n" +
+           "  },\n" +
            "  \"prettier\": {\n" +
            "    \"semi\": false,\n" +
            "    \"bracketSpacing\": false,\n" +
@@ -63,6 +75,10 @@ public class PrettierConfigParsingTest extends LightPlatformCodeInsightFixtureTe
   }
 
   private static void assertSameConfig(PrettierUtil.Config expected, PrettierUtil.Config actual) {
+    if (expected == null || actual == null) {
+      assertEquals(expected, actual);
+      return;
+    }
     assertEquals(JSLanguageServiceQueue.GSON.toJson(expected), JSLanguageServiceQueue.GSON.toJson(actual));
   }
 
