@@ -218,7 +218,7 @@ public class PrettierUtil {
       getBooleanValue(map, SEMI),
       getBooleanValue(map, SINGLE_QUOTE),
       getIntValue(map, TAB_WIDTH),
-      ObjectUtils.tryCast(map.get(TRAILING_COMMA), String.class),
+      parseTrailingCommaValue(ObjectUtils.tryCast(map.get(TRAILING_COMMA), String.class)),
       getBooleanValue(map, USE_TABS)
     );
   }
@@ -245,9 +245,20 @@ public class PrettierUtil {
       JsonUtil.getChildAsBooleanObj(obj, SEMI),
       JsonUtil.getChildAsBooleanObj(obj, SINGLE_QUOTE),
       JsonUtil.getChildAsIntegerObj(obj, TAB_WIDTH),
-      JsonUtil.getChildAsString(obj, TRAILING_COMMA),
+      parseTrailingCommaValue(JsonUtil.getChildAsString(obj, TRAILING_COMMA)),
       JsonUtil.getChildAsBooleanObj(obj, USE_TABS)
     );
+  }
+
+  @Nullable
+  private static TrailingCommaOption parseTrailingCommaValue(@Nullable String string) {
+    return string == null ? null : StringUtil.parseEnum(string, null, TrailingCommaOption.class);
+  }
+
+  public enum TrailingCommaOption {
+    none,
+    all, 
+    es5
   }
   
   public static class Config {
@@ -258,28 +269,28 @@ public class PrettierUtil {
     public final boolean semi;
     public final boolean singleQuote;
     public final int tabWidth;
-    public final String trailingComma;
+    public final TrailingCommaOption trailingComma;
     public final boolean useTabs;
 
     private Config() {
       this(null, null, null, null, null, null, null, null);
     }
 
-    public Config(Boolean jsxBracketSameLine,
-                  Boolean bracketSpacing,
-                  Integer printWidth,
-                  Boolean semi,
-                  Boolean singleQuote,
-                  Integer tabWidth,
-                  String trailingComma,
-                  Boolean useTabs) {
+    public Config(@Nullable Boolean jsxBracketSameLine,
+                  @Nullable Boolean bracketSpacing,
+                  @Nullable Integer printWidth,
+                  @Nullable Boolean semi,
+                  @Nullable Boolean singleQuote,
+                  @Nullable Integer tabWidth,
+                  @Nullable TrailingCommaOption trailingComma,
+                  @Nullable Boolean useTabs) {
       this.jsxBracketSameLine = ObjectUtils.coalesce(jsxBracketSameLine, false);
       this.bracketSpacing = ObjectUtils.coalesce(bracketSpacing, true);
       this.printWidth = ObjectUtils.coalesce(printWidth, 80);
       this.semi = ObjectUtils.coalesce(semi, true);
       this.singleQuote = ObjectUtils.coalesce(singleQuote, false);
       this.tabWidth = ObjectUtils.coalesce(tabWidth, 2);
-      this.trailingComma = trailingComma;
+      this.trailingComma = ObjectUtils.coalesce(trailingComma, TrailingCommaOption.none);
       this.useTabs = ObjectUtils.coalesce(useTabs, false);
     }
 

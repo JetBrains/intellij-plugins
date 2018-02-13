@@ -68,19 +68,17 @@ public class PrettierCodeStyleEditorNotificationProvider
     if (!file.isWritable() || JSProjectUtil.isInLibrary(file, project) || JSLibraryUtil.isProbableLibraryFile(file)) {
       return null;
     }
-    boolean isAcceptableFileFromNotification = JSUtils.isJavaScriptFile(file) || PrettierUtil.isConfigFileOrPackageJson(file);
-    final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-    if (psiFile == null
-        || !isAcceptableFileFromNotification
-        || alreadyDismissed()) {
+    if (alreadyDismissed()) {
       return null;
     }
 
-    Pair<PrettierUtil.Config, VirtualFile> config = PrettierUtil.lookupConfiguration(psiFile);
-    if (config == null || config.first == null || config.second == null) {
+    PrettierUtil.Config config = PrettierUtil.isConfigFileOrPackageJson(file)
+                                 ? PrettierUtil.parseConfig(project, file)
+                                 : null;
+    if (config == null) {
       return null;
     }
-    if (PrettierCompatibleCodeStyleInstaller.isInstalled(project, config.first)) {
+    if (PrettierCompatibleCodeStyleInstaller.isInstalled(project, config)) {
       return null;
     }
     final EditorNotificationPanel panel = new EditorNotificationPanel(EditorColors.GUTTER_BACKGROUND);
@@ -88,8 +86,8 @@ public class PrettierCodeStyleEditorNotificationProvider
 
     panel.createActionLabel(PrettierBundle.message("editor.notification.yes.text"),
                             () -> {
-                              PrettierCompatibleCodeStyleInstaller.install(project, config.first);
-                              PrettierNotificationUtil.reportCodeStyleSettingsImported(project, config.second, null);
+                              PrettierCompatibleCodeStyleInstaller.install(project, config);
+                              PrettierNotificationUtil.reportCodeStyleSettingsImported(project, file, null);
                               myEditorNotifications.updateNotifications(file);
                             });
     panel.createActionLabel(PrettierBundle.message("editor.notification.no.text"), () -> {

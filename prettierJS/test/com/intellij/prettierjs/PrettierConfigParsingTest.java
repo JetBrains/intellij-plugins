@@ -22,7 +22,7 @@ public class PrettierConfigParsingTest extends LightPlatformCodeInsightFixtureTe
   }
 
   public void testJsonConfig() {
-    doTest(new PrettierUtil.Config(true, false, 120, false, true, 3, "all", true),
+    doTest(new PrettierUtil.Config(true, false, 120, false, true, 3, PrettierUtil.TrailingCommaOption.all, true),
            ".prettierrc.json",
            "{\n" +
            "  \"semi\": false,\n" +
@@ -38,7 +38,7 @@ public class PrettierConfigParsingTest extends LightPlatformCodeInsightFixtureTe
   }
 
   public void testPackageJsonConfig() {
-    doTest(new PrettierUtil.Config(true, false, 120, false, true, 3, "all", true),
+    doTest(new PrettierUtil.Config(true, false, 120, false, true, 3, PrettierUtil.TrailingCommaOption.all, true),
            "package.json",
            "{\n" +
            "  \"devDependencies\": {\n" +
@@ -60,7 +60,7 @@ public class PrettierConfigParsingTest extends LightPlatformCodeInsightFixtureTe
   }
 
   public void testYamlConfig() {
-    doTest(new PrettierUtil.Config(true, false, 120, false, true, 3, "all", true),
+    doTest(new PrettierUtil.Config(true, false, 120, false, true, 3, PrettierUtil.TrailingCommaOption.es5, true),
            ".prettierrc.yml",
            "semi: false\n" +
            "bracketSpacing: false\n" +
@@ -69,7 +69,7 @@ public class PrettierConfigParsingTest extends LightPlatformCodeInsightFixtureTe
            "singleQuote: true\n" +
            "tabWidth: 3\n" +
            "useTabs: true\n" +
-           "trailingComma: all\n" +
+           "trailingComma: es5\n" +
            "parser: babylon");
 
   }
