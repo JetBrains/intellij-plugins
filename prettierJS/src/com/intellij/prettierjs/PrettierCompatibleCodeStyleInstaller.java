@@ -19,7 +19,10 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class PrettierCompatibleCodeStyleInstaller implements DirectoryProjectConfigurator {
 
@@ -77,14 +80,19 @@ public class PrettierCompatibleCodeStyleInstaller implements DirectoryProjectCon
     if (indentOptions == null) {
       return false;
     }
+    List<Integer> softMargins = settings.getSoftMargins(language);
     return indentOptions.INDENT_SIZE == config.tabWidth &&
            indentOptions.CONTINUATION_INDENT_SIZE == config.tabWidth &&
            indentOptions.USE_TAB_CHARACTER == config.useTabs &&
            customSettings.USE_DOUBLE_QUOTES == (!config.singleQuote) &&
+           softMargins.size() == 1 && softMargins.get(0) == config.printWidth &&
+           customSettings.FORCE_QUOTE_STYlE &&
            customSettings.USE_SEMICOLON_AFTER_STATEMENT == config.semi &&
+           customSettings.FORCE_SEMICOLON_STYLE &&
            customSettings.SPACES_WITHIN_OBJECT_LITERAL_BRACES == config.bracketSpacing &&
            customSettings.SPACES_WITHIN_OBJECT_TYPE_BRACES == config.bracketSpacing &&
-           customSettings.SPACES_WITHIN_IMPORTS == config.bracketSpacing;
+           customSettings.SPACES_WITHIN_IMPORTS == config.bracketSpacing &&
+           customSettings.ENFORCE_TRAILING_COMMA == convertTrailingCommaOption(config.trailingComma);
   }
 
   private static void installJSDialectSettings(@NotNull CodeStyleSettings settings,
@@ -101,11 +109,28 @@ public class PrettierCompatibleCodeStyleInstaller implements DirectoryProjectCon
       indentOptions.USE_TAB_CHARACTER = config.useTabs;
     }
     customSettings.USE_DOUBLE_QUOTES = !config.singleQuote;
+    customSettings.FORCE_QUOTE_STYlE = true;
     customSettings.USE_SEMICOLON_AFTER_STATEMENT = config.semi;
+    customSettings.FORCE_SEMICOLON_STYLE = true;
     customSettings.SPACES_WITHIN_OBJECT_LITERAL_BRACES = config.bracketSpacing;
     customSettings.SPACES_WITHIN_OBJECT_TYPE_BRACES = config.bracketSpacing;
     customSettings.SPACES_WITHIN_IMPORTS = config.bracketSpacing;
-    
-    customSettings.SPACE_BEFORE_FUNCTION_LEFT_PARENTH = false; 
+    customSettings.ENFORCE_TRAILING_COMMA = convertTrailingCommaOption(config.trailingComma);
+
+    customSettings.SPACE_BEFORE_FUNCTION_LEFT_PARENTH = false;
+    settings.setSoftMargins(language, ContainerUtil.list(config.printWidth));
+  }
+
+  @NotNull
+  private static JSCodeStyleSettings.TrailingCommaOption convertTrailingCommaOption(@NotNull PrettierUtil.TrailingCommaOption option) {
+    switch (option) {
+      case none:
+        return JSCodeStyleSettings.TrailingCommaOption.Remove;
+      case all:
+        return JSCodeStyleSettings.TrailingCommaOption.WhenMultiline;
+      case es5:
+        return JSCodeStyleSettings.TrailingCommaOption.WhenMultiline;
+    }
+    return JSCodeStyleSettings.TrailingCommaOption.Remove;
   }
 }
