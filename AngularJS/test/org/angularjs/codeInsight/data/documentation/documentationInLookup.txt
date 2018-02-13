@@ -2,6 +2,6 @@
  @param {expression} ngController Name of a globally accessible constructor function or an<p>
      <a href="psi_element://guide/expression">expression</a> that on the current scope evaluates to a<p>
      constructor function. The controller instance can be published into a scope property<p>
-     by specifying `as propertyName`.</div><table class='sections'></table>
+     by specifying <code>as propertyName</code>.</div><table class='sections'></table>
 ---
 http://docs.angularjs.org/api/ng/directive/ngController
