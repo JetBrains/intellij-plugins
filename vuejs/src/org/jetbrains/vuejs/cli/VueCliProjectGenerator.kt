@@ -13,62 +13,64 @@
 // limitations under the License.
 package org.jetbrains.vuejs.cli
 
-import com.intellij.ide.RecentProjectsManager
-import com.intellij.ide.util.projectWizard.*
-import com.intellij.internal.statistic.UsageTrigger
-import com.intellij.javascript.nodejs.packageJson.PackageJsonDependenciesExternalUpdateManager
+import com.intellij.ide.util.projectWizard.AbstractNewProjectStep
+import com.intellij.ide.util.projectWizard.CustomStepProjectGenerator
+import com.intellij.ide.util.projectWizard.SettingsStep
+import com.intellij.ide.util.projectWizard.WebProjectTemplate
 import com.intellij.lang.javascript.boilerplate.NpmPackageGeneratorPeerExtensible
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
-import com.intellij.lang.javascript.dialects.JSLanguageLevel
-import com.intellij.lang.javascript.settings.JSRootConfiguration
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.progress.PerformInBackgroundOption
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task
-import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.*
-import com.intellij.openapi.util.Condition
+import com.intellij.openapi.ui.ComboBox
+import com.intellij.openapi.ui.LabeledComponent
+import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.impl.welcomeScreen.AbstractActionWithPanel
 import com.intellij.platform.DirectoryProjectGenerator
 import com.intellij.platform.HideableProjectGenerator
-import com.intellij.platform.PlatformProjectOpenProcessor
+import com.intellij.platform.WebProjectGenerator
 import com.intellij.ui.ColoredListCellRenderer
-import com.intellij.ui.ListCellRendererWrapper
-import com.intellij.ui.RelativeFont
 import com.intellij.ui.SimpleTextAttributes
-import com.intellij.ui.components.*
-import com.intellij.util.PathUtil
-import com.intellij.util.io.exists
-import com.intellij.util.ui.AsyncProcessIcon
-import com.intellij.util.ui.FormBuilder
-import com.intellij.util.ui.SwingHelper
 import com.intellij.util.ui.UIUtil
 import icons.VuejsIcons
 import java.awt.BorderLayout
-import java.awt.FlowLayout
 import java.awt.event.InputMethodEvent
 import java.awt.event.InputMethodListener
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
-import java.nio.file.Files
-import java.nio.file.InvalidPathException
-import java.nio.file.Path
-import java.nio.file.Paths
 import java.util.*
-import javax.swing.*
+import javax.swing.JComponent
+import javax.swing.JList
+import javax.swing.JPanel
 
 class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Settings>(),
                                CustomStepProjectGenerator<NpmPackageProjectGenerator.Settings>,
                                HideableProjectGenerator {
+
+  override fun isHidden() = !Registry.`is`("webstorm.vue.project.generator", false)
+
+  override fun createStep(projectGenerator: DirectoryProjectGenerator<NpmPackageProjectGenerator.Settings>?,
+                          callback: AbstractNewProjectStep.AbstractCallback<NpmPackageProjectGenerator.Settings>?): AbstractActionWithPanel {
+    return VueCliProjectSettingsStep(projectGenerator, callback)
+  }
+
+  override fun createPeer(): GeneratorPeer<NpmPackageProjectGenerator.Settings> {
+    return VueCliGeneratorSettingsPeer()
+  }
+
+  override fun generateProject(project: Project, baseDir: VirtualFile, settings: NpmPackageProjectGenerator.Settings, module: Module) {
+    assert(false, { "Should not be called" })
+  }
+
+  override fun getName() = "Vue.js"
+  override fun getDescription() = "vue-cli based project generator"
+  override fun getIcon() = VuejsIcons.Vue!!
+}
+
+class VueCliGeneratorSettingsPeer : NpmPackageGeneratorPeerExtensible(Arrays.asList("vue-cli", "@vue/cli"),
+                                                                      "vue-cli or @vue/cli", { null }) {
   companion object {
     internal val TEMPLATE_KEY = Key.create<String>("create.vue.app.project.template")
     private val TEMPLATES = mapOf(
@@ -81,413 +83,75 @@ class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Set
     )
   }
 
-  override fun isHidden() = !Registry.`is`("webstorm.vue.project.generator", false)
-
-  override fun createStep(projectGenerator: DirectoryProjectGenerator<NpmPackageProjectGenerator.Settings>?,
-                          callback: AbstractNewProjectStep.AbstractCallback<NpmPackageProjectGenerator.Settings>?): AbstractActionWithPanel {
-    return VueCliProjectSettingsStep(projectGenerator, callback)
-  }
-
-  override fun createPeer(): GeneratorPeer<NpmPackageProjectGenerator.Settings> {
-    return object : NpmPackageGeneratorPeerExtensible(Arrays.asList("vue-cli", "@vue/cli"),
-                                                                       "vue-cli or @vue/cli", { null }) {
-      var template: ComboBox<*>? = null
-
-      override fun createPanel(): JPanel {
-        val panel = super.createPanel()
-        template = ComboBox(TEMPLATES.keys.toTypedArray())
-        template!!.selectedItem = "webpack"
-        template!!.isEditable = true
-        template!!.renderer = object: ColoredListCellRenderer<Any?>() {
-          override fun customizeCellRenderer(list: JList<out Any?>, value: Any?, index: Int, selected: Boolean, hasFocus: Boolean) {
-            if (value is String) {
-              append(value)
-              val comment = TEMPLATES[value] ?: return
-              append(" ")
-              append(comment, SimpleTextAttributes.GRAYED_ATTRIBUTES)
-            }
-          }
-        }
-        val component = LabeledComponent.create(template!!, "Project template")
-        component.labelLocation = BorderLayout.WEST
-        component.anchor = panel.getComponent(0) as JComponent
-        panel.add(component)
-
-        myPackageField.addSelectionListener {
-          val isOldPackage = myPackageField.selected.name != "cli"
-          UIUtil.setEnabled(component, isOldPackage, true)
-        }
-        return panel
-      }
-
-      @Suppress("OverridingDeprecatedMember", "DEPRECATION")
-      override fun addSettingsStateListener(listener: SettingsStateListener) {
-        super.addSettingsStateListener(listener)
-        template!!.editor.editorComponent.addKeyListener(object: KeyAdapter() {
-          override fun keyReleased(e: KeyEvent?) {
-            listener.stateChanged(validate() == null)
-          }
-        })
-        template!!.editor.editorComponent.addInputMethodListener(object: InputMethodListener {
-          override fun caretPositionChanged(event: InputMethodEvent?) {
-          }
-
-          override fun inputMethodTextChanged(event: InputMethodEvent?) {
-            listener.stateChanged(validate() == null)
-          }
-        })
-        template!!.addItemListener { listener.stateChanged(validate() == null) }
-      }
-
-      override fun validate(): ValidationInfo? {
-        val validate = super.validate()
-        if (validate == null) {
-          if (template!!.editor.item.toString().isBlank()) {
-            return ValidationInfo("Please enter project template", template!!)
-          }
-        }
-        return validate
-      }
-
-      override fun buildUI(settingsStep: SettingsStep) {
-        super.buildUI(settingsStep)
-        settingsStep.addSettingsField("Project template", template!!)
-      }
-
-      override fun getSettings(): NpmPackageProjectGenerator.Settings {
-        val settings = super.getSettings()
-        val text = template!!.selectedItem as? String
-        if (text != null) {
-          settings.putUserData<String>(TEMPLATE_KEY, text)
-        }
-        return settings
-      }
-    }
-  }
-
-  override fun generateProject(project: Project, baseDir: VirtualFile, settings: NpmPackageProjectGenerator.Settings, module: Module) {
-    assert(false, { "Should not be called" })
-  }
-
-  override fun getName() = "Vue.js"
-  override fun getDescription() = "vue-cli based project generator"
-  override fun getIcon() = VuejsIcons.Vue!!
-}
-
-enum class VueProjectCreationState {
-  Init, Process, User, Error, QuestionsFinished, Finished
-}
-
-class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmPackageProjectGenerator.Settings>?,
-                                callback: AbstractNewProjectStep.AbstractCallback<NpmPackageProjectGenerator.Settings>?)
-  : ProjectSettingsStepBase<NpmPackageProjectGenerator.Settings>(projectGenerator, callback) {
-  // checked in disposed condition
-  @Volatile private var state: VueProjectCreationState = VueProjectCreationState.Init
-  private var currentQuestion: VueCreateProjectProcess.Question? = null
-  private var process: VueCreateProjectProcess? = null
-  private var questionUi: QuestioningPanel? = null
+  var template: ComboBox<*>? = null
 
   override fun createPanel(): JPanel {
-    val mainPanel = super.createPanel()
-    mainPanel.add(WebProjectTemplate.createTitlePanel(), BorderLayout.NORTH)
-
-    myCreateButton.text = "Next"
-    removeActionListeners()
-    myCreateButton.addActionListener {
-      if (state == VueProjectCreationState.Init) {
-        val location = validateProjectLocation(projectLocation)
-        if (location == null) {
-          UIUtil.setEnabled((mainPanel.layout as BorderLayout).getLayoutComponent(BorderLayout.CENTER), false, true)
-        } else {
-          initQuestioning(mainPanel, location)
-          state = VueProjectCreationState.Process
-          myCreateButton.isEnabled = false
+    val panel = super.createPanel()
+    template = ComboBox(TEMPLATES.keys.toTypedArray())
+    template!!.selectedItem = "webpack"
+    template!!.isEditable = true
+    template!!.renderer = object : ColoredListCellRenderer<Any?>() {
+      override fun customizeCellRenderer(list: JList<out Any?>, value: Any?, index: Int, selected: Boolean, hasFocus: Boolean) {
+        if (value is String) {
+          append(value)
+          val comment = TEMPLATES[value] ?: return
+          append(" ")
+          append(comment, SimpleTextAttributes.GRAYED_ATTRIBUTES)
         }
       }
-      else if (state == VueProjectCreationState.Process) {
-        assert(false, { "should be waiting for process" })
-      }
-      else if (state == VueProjectCreationState.User) {
-        assert(currentQuestion != null)
-        setErrorText("")
-        if (currentQuestion!!.type == VueCreateProjectProcess.QuestionType.Checkbox) {
-          val answer = questionUi!!.getCheckboxAnswer()!!
-          process!!.answer(answer)
-        } else {
-          val answer = questionUi!!.getAnswer()!!
-          process!!.answer(answer)
-        }
-        state = VueProjectCreationState.Process
-        questionUi!!.waitForNextQuestion()
-        myCreateButton.isEnabled = false
-      }
-      else if (state == VueProjectCreationState.QuestionsFinished || state == VueProjectCreationState.Error) {
-        DialogWrapper.findInstance(myCreateButton)?.close(DialogWrapper.OK_EXIT_CODE)
-      }
-      else assert(false, { "Unknown state" })
     }
+    val component = LabeledComponent.create(template!!, "Project template")
+    component.labelLocation = BorderLayout.WEST
+    component.anchor = panel.getComponent(0) as JComponent
+    panel.add(component)
 
-    return mainPanel
-  }
-
-  private fun initQuestioning(mainPanel: JPanel, location: Path) {
-    val settings = peer.settings
-    val templateName = settings.getUserData(VueCliProjectGenerator.TEMPLATE_KEY)!!
-    val projectName = location.fileName.toString()
-
-    val isOldPackage = Paths.get(settings.myPackagePath).fileName.toString() == "vue-cli"
-    questionUi = QuestioningPanel(replacePanel(mainPanel), isOldPackage, templateName, projectName,
-                                  { if (state == VueProjectCreationState.User) myCreateButton.isEnabled = it })
-
-    process = VueCreateProjectProcess(location.parent, projectName, templateName, settings.myInterpreterRef,
-                                      settings.myPackagePath, this)
-    process!!.listener = {
-      ApplicationManager.getApplication().invokeLater(
-        Runnable {
-          if (state != VueProjectCreationState.Process) return@Runnable
-
-          val processState = process!!.getState()
-          if (VueCreateProjectProcess.ProcessState.Error == processState.processState) {
-            questionUi!!.error()
-            onError(processState.globalProblem ?: "")
-          } else if (VueCreateProjectProcess.ProcessState.QuestionsFinished == processState.processState) {
-            state = VueProjectCreationState.QuestionsFinished
-            DialogWrapper.findInstance(myCreateButton)?.close(DialogWrapper.OK_EXIT_CODE)
-            openNewProjectAttachGenerationProgress(location)
-          } else if (VueCreateProjectProcess.ProcessState.Working == processState.processState) {
-            currentQuestion = processState.question
-            val error = processState.question?.validationError
-            if (error != null) {
-              setErrorText(error)
-              questionUi!!.activateUi()
-            } else {
-              setErrorText("")
-              questionUi!!.question(processState.question!!)
-            }
-            state = VueProjectCreationState.User
-            myCreateButton.isEnabled = true
-          }
-        }, ModalityState.any(), Condition<Boolean> { state == VueProjectCreationState.QuestionsFinished || state == VueProjectCreationState.Error })
+    myPackageField.addSelectionListener {
+      val isOldPackage = myPackageField.selected.name != "cli"
+      UIUtil.setEnabled(component, isOldPackage, true)
     }
+    return panel
   }
 
-  private fun openNewProjectAttachGenerationProgress(location: Path) {
-    val function = Runnable {
-      val projectVFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(location.toString())
-      if (projectVFolder == null) {
-        VueCreateProjectProcess.LOG.info(String.format("Create Vue Project: can not find project directory in '%s'", location.toString()))
-      }
-      else {
-        RecentProjectsManager.getInstance().lastProjectCreationLocation =
-          PathUtil.toSystemIndependentName(location.parent.normalize().toString())
-        UsageTrigger.trigger("AbstractNewProjectStep." + projectGenerator.name)
-        PlatformProjectOpenProcessor.doOpenProject(projectVFolder, null, -1, { project, _ ->
-          val doneCallback = PackageJsonDependenciesExternalUpdateManager.getInstance(project).externalUpdateStarted(null, null)
-          createListeningProgress(project, doneCallback)
-        }, EnumSet.noneOf(PlatformProjectOpenProcessor.Option::class.java))
-      }
-    }
-    ApplicationManager.getApplication().invokeLater(function, ModalityState.NON_MODAL)
-  }
-
-  override fun checkValid(): Boolean {
-    val text = myLocationField.textField.text.trim()
-    if (Files.exists(Paths.get(text))) {
-      setErrorText("Project directory already exists. Please select other directory.")
-      return false
-    }
-    return super.checkValid()
-  }
-
-  // this is separate since we mostly check project parent directory *creation* here - can not be done on typing
-  private fun validateProjectLocation(projectLocation: String): Path? {
-    var location: Path? = null
-    var error: String? = null
-    try {
-      location = Paths.get(projectLocation).normalize()
-      val parentFolder = location.parent
-      if (!parentFolder.exists() && !FileUtil.createDirectory(parentFolder.toFile())) {
-        error = "Can not create project directory: %s"
-      }
-    } catch (e: InvalidPathException) {
-      error = "Invalid project path: %s"
-    }
-    if (error != null) {
-      setErrorText(String.format(error, projectLocation))
-      myCreateButton.text = "Close"
-      state = VueProjectCreationState.Error
-      myCreateButton.isEnabled = true
-      return null
-    }
-    return location
-  }
-
-  private fun onError(errorText: String) {
-    setErrorText("Error: " + errorText)
-    myCreateButton.text = "Close"
-    state = VueProjectCreationState.Error
-    myCreateButton.isEnabled = true
-    process!!.listener = null
-    process!!.cancel()
-  }
-
-  private fun createListeningProgress(project: Project, doneCallback: Runnable) {
-    if (process == null) return
-    val task = object: Task.Backgroundable(project, "Generating Vue project...", false, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
-      override fun run(indicator: ProgressIndicator) {
-        process!!.waitForProcessTermination(indicator)
-      }
-
-      override fun onFinished() {
-        doneCallback.run()
-        JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
-      }
-    }
-    val indicator = BackgroundableProcessIndicator(task)
-    ProgressManager.getInstance().runProcessWithProgressAsynchronously(task, indicator)
-  }
-
-  private fun replacePanel(mainPanel: JPanel): JPanel {
-    val newMainPanel = JPanel(BorderLayout())
-    val wrapper = JPanel(FlowLayout(FlowLayout.LEFT, 0, 0))
-    val progressLabel = JBLabel("Starting generation service...")
-    progressLabel.font = UIUtil.getLabelFont()
-    RelativeFont.ITALIC.install<JLabel>(progressLabel)
-    wrapper.add(progressLabel)
-    wrapper.add(AsyncProcessIcon(""))
-    newMainPanel.add(wrapper, BorderLayout.NORTH)
-    val scrollPane = (mainPanel.layout as BorderLayout).getLayoutComponent(BorderLayout.CENTER) as JBScrollPane
-    scrollPane.setViewportView(newMainPanel)
-    mainPanel.revalidate()
-    mainPanel.repaint()
-    return newMainPanel
-  }
-
-  private fun removeActionListeners() {
-    val actionListeners = myCreateButton.actionListeners
-    actionListeners.forEach { myCreateButton.removeActionListener(it) }
-  }
-}
-
-class QuestioningPanel(private val panel: JPanel, private val isOldPackage: Boolean,
-                       private val generatorName: String, private val projectName: String,
-                       private val validationListener: (Boolean) -> Unit) {
-  private var currentControl: (() -> String)? = null
-  private var currentCheckboxControl: (() -> List<String>)? = null
-
-  private fun addInput(message: String, defaultValue: String): () -> String {
-    val formBuilder = questionHeader(message)
-    val field = JBTextField(defaultValue)
-    field.addKeyListener(object: KeyAdapter() {
+  @Suppress("OverridingDeprecatedMember", "DEPRECATION")
+  override fun addSettingsStateListener(listener: WebProjectGenerator.SettingsStateListener) {
+    super.addSettingsStateListener(listener)
+    template!!.editor.editorComponent.addKeyListener(object : KeyAdapter() {
       override fun keyReleased(e: KeyEvent?) {
-        validationListener.invoke(field.text.isNotBlank())
+        listener.stateChanged(validate() == null)
       }
     })
-    field.addActionListener { validationListener.invoke(field.text.isNotBlank()) }
-    formBuilder.addComponent(field)
-    panel.add(SwingHelper.wrapWithHorizontalStretch(formBuilder.panel), BorderLayout.CENTER)
-    return { field.text }
+    template!!.editor.editorComponent.addInputMethodListener(object : InputMethodListener {
+      override fun caretPositionChanged(event: InputMethodEvent?) {
+      }
+
+      override fun inputMethodTextChanged(event: InputMethodEvent?) {
+        listener.stateChanged(validate() == null)
+      }
+    })
+    template!!.addItemListener { listener.stateChanged(validate() == null) }
   }
 
-  private fun questionHeader(message: String): FormBuilder {
-    panel.removeAll()
-    val formBuilder = FormBuilder.createFormBuilder()
-    val progressText = if (isOldPackage) String.format("Running vue-init with %s template", generatorName)
-      else "Running @vue/cli create " + projectName
-    val titleLabel = JLabel(progressText)
-    titleLabel.font = UIUtil.getLabelFont()
-    RelativeFont.ITALIC.install<JLabel>(titleLabel)
-    formBuilder.addComponent(titleLabel)
-    formBuilder.addVerticalGap(5)
-    val label = JBLabel(message)
-    label.ui = MultiLineLabelUI()
-    formBuilder.addComponent(label)
-    return formBuilder
-  }
-
-  private fun addChoices(message: String, choices: List<VueCreateProjectProcess.Choice>): () -> String {
-    val formBuilder = questionHeader(message)
-    val box = ComboBox<VueCreateProjectProcess.Choice>(choices.toTypedArray())
-    box.renderer = object: ListCellRendererWrapper<VueCreateProjectProcess.Choice?>() {
-      override fun customize(list: JList<*>?, value: VueCreateProjectProcess.Choice?, index: Int, selected: Boolean, hasFocus: Boolean) {
-        if (value != null) {
-          setText(value.name)
-        }
+  override fun validate(): ValidationInfo? {
+    val validate = super.validate()
+    if (validate == null) {
+      if (template!!.editor.item.toString().isBlank()) {
+        return ValidationInfo("Please enter project template", template!!)
       }
     }
-    box.isEditable = false
-    formBuilder.addComponent(box)
-    panel.add(SwingHelper.wrapWithHorizontalStretch(formBuilder.panel), BorderLayout.CENTER)
-    return { (box.selectedItem as? VueCreateProjectProcess.Choice)?.value ?: "" }
+    return validate
   }
 
-  private fun addCheckboxes(message: String, choices: List<VueCreateProjectProcess.Choice>): () -> List<String> {
-    val formBuilder = questionHeader(message)
-    val selectors = mutableListOf<(MutableList<String>) -> Unit>()
-    choices.forEach {
-      val box = JBCheckBox(it.name)
-      formBuilder.addComponent(box)
-      selectors.add({ list -> if (box.isSelected) list.add(it.value) })
+  override fun buildUI(settingsStep: SettingsStep) {
+    super.buildUI(settingsStep)
+    settingsStep.addSettingsField("Project template", template!!)
+  }
+
+  override fun getSettings(): NpmPackageProjectGenerator.Settings {
+    val settings = super.getSettings()
+    val text = template!!.selectedItem as? String
+    if (text != null) {
+      settings.putUserData<String>(TEMPLATE_KEY, text)
     }
-    panel.add(SwingHelper.wrapWithHorizontalStretch(formBuilder.panel), BorderLayout.CENTER)
-    return {
-      val list = mutableListOf<String>()
-      selectors.forEach { it.invoke(list) }
-      list
-    }
-  }
-
-  private fun addConfirm(message: String): () -> String {
-    val formBuilder = questionHeader(message)
-
-    val yesBtn = JBRadioButton("yes")
-    val noBtn = JBRadioButton("no")
-    val buttonGroup = ButtonGroup()
-    buttonGroup.add(yesBtn)
-    buttonGroup.add(noBtn)
-    yesBtn.isSelected = true
-    noBtn.isSelected = false
-
-    formBuilder.addComponent(yesBtn)
-    formBuilder.addComponent(noBtn)
-    panel.add(SwingHelper.wrapWithHorizontalStretch(formBuilder.panel), BorderLayout.CENTER)
-    return { if (yesBtn.isSelected) "Yes" else "no" }
-  }
-
-  fun error() {
-    panel.removeAll()
-    panel.add(SwingHelper.wrapWithHorizontalStretch(JBLabel("Generation service error")), BorderLayout.CENTER)
-    panel.revalidate()
-    panel.repaint()
-  }
-
-  fun question(question: VueCreateProjectProcess.Question) {
-    if (question.type == VueCreateProjectProcess.QuestionType.Input) {
-      currentControl = addInput(question.message, question.defaultVal)
-    } else if (question.type == VueCreateProjectProcess.QuestionType.Confirm) {
-      currentControl = addConfirm(question.message)
-    } else if (question.type == VueCreateProjectProcess.QuestionType.List) {
-      currentControl = addChoices(question.message, question.choices)
-    } else if (question.type == VueCreateProjectProcess.QuestionType.Checkbox) {
-      currentCheckboxControl = addCheckboxes(question.message, question.choices)
-    }
-    panel.revalidate()
-    panel.repaint()
-  }
-
-  fun getCheckboxAnswer(): List<String>? {
-    return currentCheckboxControl?.invoke()
-  }
-
-  fun getAnswer(): String? {
-    return currentControl?.invoke()
-  }
-
-  fun activateUi() {
-    UIUtil.setEnabled(panel, true, true)
-  }
-
-  fun waitForNextQuestion() {
-    UIUtil.setEnabled(panel, false, true)
+    return settings
   }
 }
