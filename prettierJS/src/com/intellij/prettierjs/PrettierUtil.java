@@ -10,7 +10,6 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -93,63 +92,26 @@ public class PrettierUtil {
   }
   
   @Nullable
-  public static VirtualFile findConfigInContentRoots(@NotNull Project project) {
+  public static VirtualFile findSingleConfigInContentRoots(@NotNull Project project) {
     List<VirtualFile> configs = ContainerUtil.newSmartList();
     for (VirtualFile dir : ProjectRootManager.getInstance(project).getContentRoots()) {
-      configs.addAll(CONFIG_FILE_NAMES.stream().map(el -> dir.findChild(el)).filter(el -> el != null).collect(Collectors.toList()));
+      VirtualFile found = findSingleConfigInDirectory(dir);
+      if (found != null) {
+        configs.add(found);
+      }
     }
 
     return configs.size() == 1 ? ContainerUtil.getFirstItem(configs) : null;
   }
 
   @Nullable
-  private static VirtualFile lookupConfigFile(@NotNull VirtualFile fileToProcess) {
-    VirtualFile dir = fileToProcess.getParent();
-    while (dir != null) {
-      for (String name : CONFIG_FILE_NAMES) {
-        VirtualFile file = dir.findChild(name);
-        if (file != null && file.isValid() && !file.isDirectory()) {
-          return file;
-        }
-      }
-      dir = dir.getParent();
+  public static VirtualFile findSingleConfigInDirectory(@NotNull VirtualFile dir) {
+    if (!dir.isDirectory()) {
+      return null;
     }
-    return null;
+    List<VirtualFile> configs = ContainerUtil.mapNotNull(CONFIG_FILE_NAMES, name -> dir.findChild(name));
+    return configs.size() == 1 ? configs.get(0) : null;
   }
-
-  /**
-   * returns configuration from nearest config or package.json for file to reformat
-   * returns null if prettier should not be used for this file
-   * (or self for config or package.json)
-   */
-  @Nullable
-  public static Pair<Config, VirtualFile> lookupConfiguration(@NotNull PsiFile file) {
-    return ReadAction.compute(() -> CachedValuesManager.getCachedValue(file, () -> {
-      Pair<Config, VirtualFile> result = lookupConfigurationWithoutCache(file.getProject(), file.getVirtualFile());
-      return new CachedValueProvider.Result<>(result, file);
-    }));
-  }
-
-  @Nullable
-  private static Pair<Config, VirtualFile> lookupConfigurationWithoutCache(@NotNull Project project,
-                                                                           @NotNull VirtualFile virtualFile) {
-    if (isConfigFileOrPackageJson(virtualFile)) {
-      return Pair.create(parseConfig(project, virtualFile), virtualFile);
-    }
-    VirtualFile packageJson = PackageJsonUtil.findUpPackageJson(virtualFile);
-    if (packageJson != null) {
-      if (!PackageJsonUtil.getOrCreateData(packageJson).isDependencyOfAnyType(PACKAGE_NAME)) {
-        return null;
-      }
-      VirtualFile configFile = lookupConfigFile(virtualFile);
-      if (configFile != null) {
-        return Pair.create(parseConfig(project, configFile), configFile);
-      }
-      return Pair.create(parseConfig(project, packageJson), packageJson);
-    }
-    return null;
-  }
-
 
   /**
    * returns config parsed from config file or package.json

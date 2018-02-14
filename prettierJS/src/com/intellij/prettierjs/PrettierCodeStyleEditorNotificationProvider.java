@@ -1,16 +1,15 @@
 package com.intellij.prettierjs;
 
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.lang.javascript.psi.util.JSProjectUtil;
-import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -72,9 +71,7 @@ public class PrettierCodeStyleEditorNotificationProvider
       return null;
     }
 
-    PrettierUtil.Config config = PrettierUtil.isConfigFileOrPackageJson(file)
-                                 ? PrettierUtil.parseConfig(project, file)
-                                 : null;
+    PrettierUtil.Config config = findConfigForFile(file, project);
     if (config == null) {
       return null;
     }
@@ -96,6 +93,22 @@ public class PrettierCodeStyleEditorNotificationProvider
     });
 
     return panel;
+  }
+
+  @Nullable
+  private static PrettierUtil.Config findConfigForFile(@NotNull VirtualFile file, Project project) {
+    if (PrettierUtil.isConfigFile(file)) {
+      return PrettierUtil.parseConfig(project, file);
+    }
+    if (PackageJsonUtil.isPackageJsonFile(file)) {
+      //if package.json is currently opened, but there is a neighboring config file
+      VirtualFile config = PrettierUtil.findSingleConfigInDirectory(file.getParent());
+      if (config != null) {
+        return PrettierUtil.parseConfig(project, config);
+      }
+      return PrettierUtil.parseConfig(project, file);
+    }
+    return null;
   }
 
   private boolean alreadyDismissed() {
