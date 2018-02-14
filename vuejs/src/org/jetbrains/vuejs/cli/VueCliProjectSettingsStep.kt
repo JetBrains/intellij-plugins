@@ -46,10 +46,7 @@ import java.awt.event.KeyEvent
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
-import javax.swing.ButtonGroup
-import javax.swing.JLabel
-import javax.swing.JList
-import javax.swing.JPanel
+import javax.swing.*
 
 class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmPackageProjectGenerator.Settings>?,
                                 callback: AbstractNewProjectStep.AbstractCallback<NpmPackageProjectGenerator.Settings>?)
@@ -159,6 +156,7 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
                                       private val generatorName: String,
                                       private val projectName: String,
                                       private val validationListener: (Boolean) -> Unit) {
+  private var currentPrefferdFocusOwner: JComponent? = null
   private var currentControl: (() -> String)? = null
   private var currentCheckboxControl: (() -> List<String>)? = null
   val panel: JPanel = JPanel(BorderLayout())
@@ -182,6 +180,7 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
       }
     })
     field.addActionListener { validationListener.invoke(field.text.isNotBlank()) }
+    currentPrefferdFocusOwner = field
     formBuilder.addComponent(field)
     panel.add(SwingHelper.wrapWithHorizontalStretch(formBuilder.panel), BorderLayout.CENTER)
     return { field.text }
@@ -214,6 +213,7 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
       }
     }
     box.isEditable = false
+    currentPrefferdFocusOwner = box
     formBuilder.addComponent(box)
     panel.add(SwingHelper.wrapWithHorizontalStretch(formBuilder.panel), BorderLayout.CENTER)
     return { (box.selectedItem as? VueCreateProjectProcess.Choice)?.value ?: "" }
@@ -222,8 +222,10 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
   private fun addCheckboxes(message: String, choices: List<VueCreateProjectProcess.Choice>): () -> List<String> {
     val formBuilder = questionHeader(message)
     val selectors = mutableListOf<(MutableList<String>) -> Unit>()
+    currentPrefferdFocusOwner = null
     choices.forEach {
       val box = JBCheckBox(it.name)
+      if (currentPrefferdFocusOwner == null) currentPrefferdFocusOwner = box
       formBuilder.addComponent(box)
       selectors.add({ list -> if (box.isSelected) list.add(it.value) })
     }
@@ -246,6 +248,7 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
     yesBtn.isSelected = true
     noBtn.isSelected = false
 
+    currentPrefferdFocusOwner = yesBtn
     formBuilder.addComponent(yesBtn)
     formBuilder.addComponent(noBtn)
     panel.add(SwingHelper.wrapWithHorizontalStretch(formBuilder.panel), BorderLayout.CENTER)
@@ -270,6 +273,7 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
     } else if (question.type == VueCreateProjectProcess.QuestionType.Checkbox) {
       currentCheckboxControl = addCheckboxes(question.message, question.choices)
     }
+    if (currentPrefferdFocusOwner != null) currentPrefferdFocusOwner!!.requestFocus()
     panel.revalidate()
     panel.repaint()
   }
@@ -284,6 +288,7 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
 
   fun activateUi() {
     UIUtil.setEnabled(panel, true, true)
+    if (currentPrefferdFocusOwner != null) currentPrefferdFocusOwner!!.requestFocus()
   }
 
   fun waitForNextQuestion() {
