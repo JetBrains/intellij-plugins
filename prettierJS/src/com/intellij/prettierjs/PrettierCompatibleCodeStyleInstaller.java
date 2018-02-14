@@ -36,7 +36,7 @@ public class PrettierCompatibleCodeStyleInstaller implements DirectoryProjectCon
     if (!PrettierUtil.isEnabled()) {
       return;
     }
-    VirtualFile aConfig = ObjectUtils.coalesce(PrettierUtil.findConfigInContentRoots(project),
+    VirtualFile aConfig = ObjectUtils.coalesce(PrettierUtil.findSingleConfigInContentRoots(project),
                                                 project.getBaseDir().findChild(PackageJsonUtil.FILE_NAME));
     if (aConfig != null) {
       PrettierUtil.Config config = PrettierUtil.parseConfig(project, aConfig);
