@@ -190,6 +190,6 @@ interface VueRunningGeneratorListener {
   fun enableNext()
   fun disableNext(validationError: String?)
   fun error(validationError: String?)
-  fun finishedQuestionsCloseUI(param: (Project) -> Unit)
+  fun finishedQuestionsCloseUI(callback: (Project) -> Unit)
   fun cancelCloseUI()
 }
