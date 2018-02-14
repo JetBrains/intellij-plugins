@@ -13,21 +13,30 @@
 // limitations under the License.
 package org.jetbrains.vuejs.cli
 
+import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.util.projectWizard.AbstractNewProjectStep
 import com.intellij.ide.util.projectWizard.ProjectSettingsStepBase
 import com.intellij.ide.util.projectWizard.WebProjectTemplate
+import com.intellij.internal.statistic.UsageTrigger
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.MultiLineLabelUI
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.platform.DirectoryProjectGenerator
+import com.intellij.platform.PlatformProjectOpenProcessor
 import com.intellij.ui.ListCellRendererWrapper
 import com.intellij.ui.RelativeFont
 import com.intellij.ui.components.*
+import com.intellij.util.PathUtil
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.SwingHelper
 import com.intellij.util.ui.UIUtil
+import org.jetbrains.vuejs.VueBundle
 import java.awt.BorderLayout
 import java.awt.FlowLayout
 import java.awt.event.ActionEvent
@@ -36,6 +45,7 @@ import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.*
 import javax.swing.ButtonGroup
 import javax.swing.JLabel
 import javax.swing.JList
@@ -70,11 +80,35 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
             onError(validationError ?: "")
           }
 
-          override fun closeUI() {
+          override fun cancelCloseUI() {
             DialogWrapper.findInstance(myCreateButton)?.close(DialogWrapper.OK_EXIT_CODE)
           }
+
+          override fun finishedQuestionsCloseUI(param: (Project) -> Unit) {
+            DialogWrapper.findInstance(myCreateButton)?.close(DialogWrapper.OK_EXIT_CODE)
+            val function = Runnable {
+              val projectVFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(projectLocation.toString())
+              if (projectVFolder == null) {
+                VueCreateProjectProcess.LOG.info(String.format("Create Vue Project: can not find project directory in '%s'", projectLocation.toString()))
+              }
+              else {
+                RecentProjectsManager.getInstance().lastProjectCreationLocation = PathUtil.toSystemIndependentName(
+                  Paths.get(projectLocation).parent.normalize().toString())
+                UsageTrigger.trigger("AbstractNewProjectStep.Vue.js")
+                PlatformProjectOpenProcessor.doOpenProject(projectVFolder, null, -1,
+                                                           { project, _ ->
+                                                             if (project != null) {
+                                                               param.invoke(project)
+                                                             }
+                                                           },
+                                                           EnumSet.noneOf(PlatformProjectOpenProcessor.Option::class.java))
+              }
+            }
+            ApplicationManager.getApplication().invokeLater(function, ModalityState.NON_MODAL)
+          }
         }
-        val controller = createVueRunningGeneratorController(projectLocation, peer!!.settings, listener)
+        val controller = createVueRunningGeneratorController(projectLocation,
+                                                             peer!!.settings, listener, this@VueCliProjectSettingsStep)
         if (controller != null) {
           replacePanel(mainPanel, controller.getPanel())
           myCreateButton.removeActionListener(this)
@@ -92,7 +126,7 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
   override fun checkValid(): Boolean {
     val text = myLocationField.textField.text.trim()
     if (Files.exists(Paths.get(text))) {
-      setErrorText("Project directory already exists. Please select other directory.")
+      setErrorText(VueBundle.message("vue.project.generator.project.location.already.exists"))
       return false
     }
     return super.checkValid()
@@ -258,5 +292,5 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
 }
 
 enum class VueProjectCreationState {
-  Init, Process, User, Error, QuestionsFinished, Finished
+  Init, Process, User, Error, QuestionsFinished
 }

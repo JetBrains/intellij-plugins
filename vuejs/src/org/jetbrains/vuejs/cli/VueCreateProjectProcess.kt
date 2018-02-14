@@ -267,6 +267,7 @@ class VueCreateProjectProcess(private val folder: Path,
 
   fun cancel() {
     sendCancel()
+    stopProcess()
     Disposer.dispose(this)
   }
 
@@ -276,9 +277,14 @@ class VueCreateProjectProcess(private val folder: Path,
 
   override fun dispose() {
     logProgress("Dispose called")
-    if (processState != ProcessState.QuestionsFinished) {
+    stopProcess()
+  }
+
+  private fun stopProcess() {
+    if (processState != ProcessState.QuestionsFinished && processState != ProcessState.Finished) {
       val handler = processHandlerRef.get()
       handler?.destroyProcess()
+      processState = ProcessState.Finished
     }
   }
 
