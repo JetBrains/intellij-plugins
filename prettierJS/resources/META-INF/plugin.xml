@@ -28,11 +28,14 @@
     <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierCompatibleCodeStyleInstaller"/>
   </extensions>
   <actions>
-    <action id="com.intellij.prettierjs.ReformatWithPrettierAction"
+    <action id="ReformatWithPrettierAction"
             class="com.intellij.prettierjs.ReformatWithPrettierAction" text="Reformat with Prettier"
             description="Reformat with Prettier">
       <add-to-group group-id="EditorPopupMenu" anchor="last"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+      <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift P"/>
+      <keyboard-shortcut keymap="Mac OS X" first-keystroke="meta alt shift P" />
+      <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="meta alt shift P"/>
     </action>
   </actions>
   <extensions defaultExtensionNs="JavaScript.JsonSchema">
