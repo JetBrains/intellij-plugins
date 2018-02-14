@@ -108,11 +108,12 @@ class VueCliGeneratorSettingsPeer : NpmPackageGeneratorPeerExtensible(Arrays.asL
     panel.add(component)
 
     myPackageField.addSelectionListener {
-      val isOldPackage = myPackageField.selected.name != "cli"
-      UIUtil.setEnabled(component, isOldPackage, true)
+      UIUtil.setEnabled(component, isOldPackage(), true)
     }
     return panel
   }
+
+  private fun isOldPackage() = myPackageField.selected.name != "cli"
 
   @Suppress("OverridingDeprecatedMember", "DEPRECATION")
   override fun addSettingsStateListener(listener: WebProjectGenerator.SettingsStateListener) {
@@ -135,7 +136,7 @@ class VueCliGeneratorSettingsPeer : NpmPackageGeneratorPeerExtensible(Arrays.asL
 
   override fun validate(): ValidationInfo? {
     val validate = super.validate()
-    if (validate == null) {
+    if (validate == null && isOldPackage()) {
       if (template!!.editor.item.toString().isBlank()) {
         return ValidationInfo("Please enter project template", template!!)
       }
