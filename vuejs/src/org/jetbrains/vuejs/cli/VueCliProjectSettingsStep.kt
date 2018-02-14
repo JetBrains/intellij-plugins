@@ -84,7 +84,7 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
             DialogWrapper.findInstance(myCreateButton)?.close(DialogWrapper.OK_EXIT_CODE)
           }
 
-          override fun finishedQuestionsCloseUI(param: (Project) -> Unit) {
+          override fun finishedQuestionsCloseUI(callback: (Project) -> Unit) {
             DialogWrapper.findInstance(myCreateButton)?.close(DialogWrapper.OK_EXIT_CODE)
             val function = Runnable {
               val projectVFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(projectLocation.toString())
@@ -98,7 +98,7 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
                 PlatformProjectOpenProcessor.doOpenProject(projectVFolder, null, -1,
                                                            { project, _ ->
                                                              if (project != null) {
-                                                               param.invoke(project)
+                                                               callback.invoke(project)
                                                              }
                                                            },
                                                            EnumSet.noneOf(PlatformProjectOpenProcessor.Option::class.java))
