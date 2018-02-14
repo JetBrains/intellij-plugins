@@ -14,7 +14,6 @@
   <project-components>
     <component>
       <implementation-class>com.intellij.flex.uiDesigner.preview.MxmlPreviewToolWindowManager</implementation-class>
-      <skipForDefaultProject/>
     </component>
   </project-components>
 
