@@ -13,8 +13,6 @@
 // limitations under the License.
 package org.jetbrains.vuejs.cli
 
-import com.intellij.ide.RecentProjectsManager
-import com.intellij.internal.statistic.UsageTrigger
 import com.intellij.javascript.nodejs.packageJson.PackageJsonDependenciesExternalUpdateManager
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
@@ -22,30 +20,30 @@ import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.progress.PerformInBackgroundOption
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.Condition
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.platform.PlatformProjectOpenProcessor
-import com.intellij.util.PathUtil
 import com.intellij.util.io.exists
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.*
 import javax.swing.JPanel
 
 /**
  * @author Irina.Chernushina on 2/12/2018.
  */
-class VueCliRunningGeneratorController internal constructor (private val projectLocation: Path,
+class VueCliRunningGeneratorController internal constructor (generationLocation: Path,
                                                              settings: NpmPackageProjectGenerator.Settings,
-                                                             private val listener: VueRunningGeneratorListener): Disposable {
+                                                             private val listener: VueRunningGeneratorListener,
+                                                             parentDisposable: Disposable): Disposable {
   // checked in disposed condition
   @Volatile private var state: VueProjectCreationState = VueProjectCreationState.Init
   private var currentQuestion: VueCreateProjectProcess.Question? = null
@@ -53,9 +51,10 @@ class VueCliRunningGeneratorController internal constructor (private val project
   private var questionUi: VueCliGeneratorQuestioningPanel? = null
 
   init {
+    Disposer.register(parentDisposable, this)
     state = VueProjectCreationState.Process
     val templateName = settings.getUserData(VueCliGeneratorSettingsPeer.TEMPLATE_KEY)!!
-    val projectName = projectLocation.fileName.toString()
+    val projectName = generationLocation.fileName.toString()
 
     val isOldPackage = Paths.get(settings.myPackagePath).fileName.toString() == "vue-cli"
     questionUi = VueCliGeneratorQuestioningPanel(isOldPackage, templateName, projectName,
@@ -63,7 +62,7 @@ class VueCliRunningGeneratorController internal constructor (private val project
                                                    if (it) listener.enableNext()
                                                    else listener.disableNext(null)
                                                  } })
-    process = VueCreateProjectProcess(projectLocation.parent, projectName, templateName, settings.myInterpreterRef,
+    process = VueCreateProjectProcess(generationLocation.parent, projectName, templateName, settings.myInterpreterRef,
                                       settings.myPackagePath, this)
     process!!.listener = {
       ApplicationManager.getApplication().invokeLater(
@@ -79,8 +78,11 @@ class VueCliRunningGeneratorController internal constructor (private val project
             process!!.cancel()
           } else if (VueCreateProjectProcess.ProcessState.QuestionsFinished == processState.processState) {
             state = VueProjectCreationState.QuestionsFinished
-            listener.closeUI()
-            openNewProjectAttachGenerationProgress(projectLocation)
+            listener.finishedQuestionsCloseUI(
+              { project ->
+                val doneCallback = PackageJsonDependenciesExternalUpdateManager.getInstance(project).externalUpdateStarted(null, null)
+                StartupManager.getInstance(project).runWhenProjectIsInitialized { createListeningProgress(project, doneCallback) }
+              })
           } else if (VueCreateProjectProcess.ProcessState.Working == processState.processState) {
             currentQuestion = processState.question
             val error = processState.question?.validationError
@@ -98,26 +100,6 @@ class VueCliRunningGeneratorController internal constructor (private val project
     }
   }
 
-  private fun openNewProjectAttachGenerationProgress(location: Path) {
-    val function = Runnable {
-      val projectVFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(location.toString())
-      if (projectVFolder == null) {
-        VueCreateProjectProcess.LOG.info(String.format("Create Vue Project: can not find project directory in '%s'", location.toString()))
-      }
-      else {
-        RecentProjectsManager.getInstance().lastProjectCreationLocation =
-          PathUtil.toSystemIndependentName(location.parent.normalize().toString())
-        UsageTrigger.trigger("AbstractNewProjectStep.Vue.js")
-        PlatformProjectOpenProcessor.doOpenProject(projectVFolder, null, -1, { project, _ ->
-          val doneCallback = PackageJsonDependenciesExternalUpdateManager.getInstance(
-            project).externalUpdateStarted(null, null)
-          createListeningProgress(project, doneCallback)
-        }, EnumSet.noneOf(PlatformProjectOpenProcessor.Option::class.java))
-      }
-    }
-    ApplicationManager.getApplication().invokeLater(function, ModalityState.NON_MODAL)
-  }
-
   private fun createListeningProgress(project: Project, doneCallback: Runnable) {
     if (process == null) return
     val task = object: Task.Backgroundable(project, "Generating Vue project...", false,
@@ -127,12 +109,19 @@ class VueCliRunningGeneratorController internal constructor (private val project
       }
 
       override fun onFinished() {
-        doneCallback.run()
-        JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+        ReadAction.run<RuntimeException> {
+          if (project.isDisposed) return@run
+          doneCallback.run()
+          JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+        }
       }
     }
     val indicator = BackgroundableProcessIndicator(task)
     ProgressManager.getInstance().runProcessWithProgressAsynchronously(task, indicator)
+  }
+
+  fun isFinished(): Boolean {
+    return state == VueProjectCreationState.QuestionsFinished || state == VueProjectCreationState.Error
   }
 
   fun getPanel(): JPanel {
@@ -156,21 +145,23 @@ class VueCliRunningGeneratorController internal constructor (private val project
       state = VueProjectCreationState.Process
       questionUi!!.waitForNextQuestion()
     }
-    else if (state == VueProjectCreationState.QuestionsFinished || state == VueProjectCreationState.Error) {
-      listener.closeUI()
+    else if (state == VueProjectCreationState.QuestionsFinished) {
+      listener.cancelCloseUI()
     }
     else assert(false, { "Unknown state" })
   }
 
   override fun dispose() {
-    process?.cancel() //??
+    if (state != VueProjectCreationState.QuestionsFinished) process?.cancel()
   }
 }
 
-fun createVueRunningGeneratorController(projectLocation: String, settings: NpmPackageProjectGenerator.Settings,
-                                        listener: VueRunningGeneratorListener): VueCliRunningGeneratorController? {
-  val location = validateProjectLocation(projectLocation)
-  return if (location.first != null) VueCliRunningGeneratorController(location.first!!, settings, listener)
+fun createVueRunningGeneratorController(generationLocation: String,
+                                        settings: NpmPackageProjectGenerator.Settings,
+                                        listener: VueRunningGeneratorListener,
+                                        parentDisposable: Disposable): VueCliRunningGeneratorController? {
+  val location = validateProjectLocation(generationLocation)
+  return if (location.first != null) VueCliRunningGeneratorController(location.first!!, settings, listener, parentDisposable)
   else {
     listener.disableNext(location.second)
     null
@@ -199,5 +190,6 @@ interface VueRunningGeneratorListener {
   fun enableNext()
   fun disableNext(validationError: String?)
   fun error(validationError: String?)
-  fun closeUI()
+  fun finishedQuestionsCloseUI(param: (Project) -> Unit)
+  fun cancelCloseUI()
 }
