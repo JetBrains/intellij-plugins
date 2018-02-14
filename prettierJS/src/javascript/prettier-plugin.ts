@@ -43,7 +43,7 @@ export class PrettierPlugin implements LanguagePlugin {
                     args.end)
             }
             catch (e) {
-                response.error = `${args.path}: ${e.stack && e.stack.left > 0 ? e.stack : e.message}`;
+                response.error = `${args.path}: ${e.stack && e.stack.length > 0 ? e.stack : e.message}`;
             }
         }
         catch (e) {
