@@ -1,0 +1,10 @@
+<!-- "Create Field 'name2'" "true" -->
+<script lang="ts">
+    class MyClass {
+        name: String;
+        name2: String;
+        Foo() {
+            this.name = this.name2;
+        }
+    }
+</script>
