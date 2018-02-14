@@ -18,7 +18,7 @@ var PrettierPlugin = /** @class */ (function () {
                 response.formatted = performFormat(prettierApi, args.content, args.path, args.start, args.end);
             }
             catch (e) {
-                response.error = args.path + ": " + (e.stack && e.stack.left > 0 ? e.stack : e.message);
+                response.error = args.path + ": " + (e.stack && e.stack.length > 0 ? e.stack : e.message);
             }
         }
         catch (e) {
