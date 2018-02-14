@@ -46,7 +46,6 @@ public class DartServerExtractMethodHandler implements RefactoringActionHandler 
   @Override
   public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext dataContext) {
     final SelectionModel selectionModel = editor.getSelectionModel();
-    if (!selectionModel.hasSelection()) selectionModel.selectLineAtCaret();
 
     final int offset = selectionModel.getSelectionStart();
     final int length = selectionModel.getSelectionEnd() - offset;
