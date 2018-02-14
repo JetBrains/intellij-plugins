@@ -13,10 +13,7 @@
 // limitations under the License.
 package org.jetbrains.vuejs.cli
 
-import com.intellij.ide.util.projectWizard.AbstractNewProjectStep
-import com.intellij.ide.util.projectWizard.CustomStepProjectGenerator
-import com.intellij.ide.util.projectWizard.SettingsStep
-import com.intellij.ide.util.projectWizard.WebProjectTemplate
+import com.intellij.ide.util.projectWizard.*
 import com.intellij.lang.javascript.boilerplate.NpmPackageGeneratorPeerExtensible
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.openapi.module.Module
@@ -35,6 +32,7 @@ import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.util.ui.UIUtil
 import icons.VuejsIcons
+import org.jetbrains.vuejs.VueBundle
 import java.awt.BorderLayout
 import java.awt.event.InputMethodEvent
 import java.awt.event.InputMethodListener
@@ -56,21 +54,25 @@ class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Set
     return VueCliProjectSettingsStep(projectGenerator, callback)
   }
 
+  override fun createModuleBuilder(): ModuleBuilder {
+    return VueCreateProjectModuleBuilder(this)
+  }
+
+  @Suppress("DEPRECATION")
   override fun createPeer(): GeneratorPeer<NpmPackageProjectGenerator.Settings> {
     return VueCliGeneratorSettingsPeer()
   }
 
   override fun generateProject(project: Project, baseDir: VirtualFile, settings: NpmPackageProjectGenerator.Settings, module: Module) {
-    assert(false, { "Should not be called" })
   }
 
   override fun getName() = "Vue.js"
-  override fun getDescription() = "vue-cli based project generator"
+  override fun getDescription() = VueBundle.message("vue.project.generator.description")
   override fun getIcon() = VuejsIcons.Vue!!
 }
 
 class VueCliGeneratorSettingsPeer : NpmPackageGeneratorPeerExtensible(Arrays.asList("vue-cli", "@vue/cli"),
-                                                                      "vue-cli or @vue/cli", { null }) {
+                                                                        "vue-cli or @vue/cli", { null }) {
   companion object {
     internal val TEMPLATE_KEY = Key.create<String>("create.vue.app.project.template")
     private val TEMPLATES = mapOf(
