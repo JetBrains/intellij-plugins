@@ -12,10 +12,14 @@ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
+import com.intellij.lang.javascript.linter.JSLinterGuesser;
 import com.intellij.lang.javascript.linter.JsqtProcessOutputViewer;
 import com.intellij.lang.javascript.modules.InstallNodeLocalDependenciesAction;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -48,6 +52,7 @@ import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.LightweightHint;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.NullableFunction;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,6 +62,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ReformatWithPrettierAction extends AnAction implements DumbAware {
@@ -151,11 +157,8 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       return;
     }
     if (!StringUtil.isEmpty(result.error)) {
-      showHintLater(project, editor, PrettierBundle.message("error.while.reformatting.message"), true, toHyperLinkListener(() -> {
-        ProcessOutput output = new ProcessOutput();
-        output.appendStderr(result.error);
-        JsqtProcessOutputViewer.show(project, PrettierUtil.PACKAGE_NAME, PrettierUtil.ICON, null, null, output);
-      }));
+      showHintLater(project, editor, PrettierBundle.message("error.while.reformatting.message"), true,
+                    toHyperLinkListener(() -> showErrorDetails(project, result.error)));
     }
     else {
       runWriteCommandAction(project, () -> document.replaceString(0, document.getTextLength(), result.result));
@@ -187,11 +190,11 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   private static void processFileIterator(@NotNull Project project,
                                           @NotNull final FileTreeIterator fileIterator,
                                           @NotNull NodePackage nodePackage) {
-    Map<PsiFile, String> fileToFormattedText = executeUnderProgress(project, indicator -> {
-      Map<PsiFile, String> reformattedResults = new HashMap<>();
+    Map<PsiFile, PrettierLanguageService.FormatResult> results = executeUnderProgress(project, indicator -> {
+      Map<PsiFile, PrettierLanguageService.FormatResult> reformattedResults = new HashMap<>();
 
       while (fileIterator.hasNext()) {
-        PsiFile currentFile = fileIterator.next();
+        PsiFile currentFile = ReadAction.compute(() -> fileIterator.next());
         if (!isAcceptableFile(currentFile)) {
           continue;
         }
@@ -200,29 +203,32 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
         if (result == null) {
           continue;
         }
-        if (!StringUtil.isEmpty(result.error)) {
-          return null;
-        }
-        reformattedResults.put(currentFile, result.result);
+        reformattedResults.put(currentFile, result);
       }
       return reformattedResults;
     });
-    if (fileToFormattedText == null) {
-      return;
-    }
+
     runWriteCommandAction(project, () -> {
-      for (Map.Entry<PsiFile, String> entry : fileToFormattedText.entrySet()) {
+      for (Map.Entry<PsiFile, PrettierLanguageService.FormatResult> entry : results.entrySet()) {
         VirtualFile virtualFile = entry.getKey().getVirtualFile();
         if (virtualFile == null) {
           continue;
         }
         Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-        if (document == null) {
-          continue;
+        if (document != null && StringUtil.isEmpty(entry.getValue().error)) {
+          document.setText(entry.getValue().result);
         }
-        document.setText(entry.getValue());
       }
     });
+    List<String> errors = ContainerUtil.mapNotNull(results.entrySet(), t -> t.getValue().error);
+    if (errors.size() > 0) {
+      JSLinterGuesser.NOTIFICATION_GROUP
+        .createNotification("",
+                            "Prettier: failed to reformat " + errors.size() + " files<br><a href=''>Details</a>",
+                            NotificationType.ERROR,
+                            toNotificationListener(() -> showErrorDetails(project, StringUtil.join(errors, "\n")))
+        ).notify(project);
+    }
   }
 
   @Nullable
@@ -277,6 +283,12 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
   }
 
+  private static void showErrorDetails(@NotNull Project project, String text) {
+    ProcessOutput output = new ProcessOutput();
+    output.appendStderr(text);
+    JsqtProcessOutputViewer.show(project, PrettierUtil.PACKAGE_NAME, PrettierUtil.ICON, null, null, output);
+  }
+
   private static void editSettings(@NotNull Project project, @NotNull DataContext dataContext) {
     PrettierConfigurable configurable = new PrettierConfigurable(project);
     Settings settings = Settings.KEY.getData(dataContext);
@@ -292,7 +304,18 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     return file != null && file.isPhysical() && (file instanceof JSFile || file instanceof CssFile);
   }
 
-  private static HyperlinkListener toHyperLinkListener(Runnable runnable) {
+  @NotNull
+  private static NotificationListener toNotificationListener(@NotNull Runnable runnable) {
+    return new NotificationListener.Adapter() {
+      @Override
+      protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
+        runnable.run();
+      }
+    };
+  }
+
+  @NotNull
+  private static HyperlinkListener toHyperLinkListener(@NotNull Runnable runnable) {
     return new HyperlinkAdapter() {
       @Override
       protected void hyperlinkActivated(HyperlinkEvent e) {
