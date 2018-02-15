@@ -110,6 +110,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     val popup = builder.createPopup()
     list.addKeyListener(object: KeyAdapter() {
       override fun keyPressed(e: KeyEvent?) {
+        if (list.selectedValue == null) return
         if (e?.keyCode == KeyEvent.VK_ENTER) {
           e?.consume()
           askOptions(project, popup, list.selectedValue as Blueprint, cli, workingDir(editor, file))
