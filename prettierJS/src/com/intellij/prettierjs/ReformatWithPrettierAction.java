@@ -251,7 +251,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
 
   private static void showError(@NotNull Project project,
                                 @Nullable Editor editor,
-                                String text,
+                                @NotNull String text,
                                 @Nullable Runnable onLinkClick) {
     if (editor != null) {
       showHintLater(editor, "Prettier: " + text, true, toHyperLinkListener(onLinkClick));
@@ -262,7 +262,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   }
 
   private static void showErrorNotification(@NotNull Project project,
-                                            String text,
+                                            @NotNull String text,
                                             @Nullable NotificationListener notificationListener) {
     JSLinterGuesser.NOTIFICATION_GROUP
       .createNotification("Prettier", text, NotificationType.ERROR, notificationListener)
@@ -270,7 +270,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   }
 
   private static void showHintLater(@NotNull Editor editor,
-                                    String text,
+                                    @NotNull String text,
                                     boolean isError,
                                     @Nullable HyperlinkListener hyperlinkListener) {
     ApplicationManager.getApplication().invokeLater(() -> {
@@ -290,7 +290,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
   }
 
-  private static void showErrorDetails(@NotNull Project project, String text) {
+  private static void showErrorDetails(@NotNull Project project, @NotNull String text) {
     ProcessOutput output = new ProcessOutput();
     output.appendStderr(text);
     JsqtProcessOutputViewer.show(project, PrettierUtil.PACKAGE_NAME, PrettierUtil.ICON, null, null, output);
