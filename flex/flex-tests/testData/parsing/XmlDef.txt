@@ -144,6 +144,8 @@ JSFile:XmlDef.js2
           PsiElement(JS:NAMESPACE_KEYWORD)('namespace')
           PsiElement(JS:COLON)(':')
           ActionScriptFunctionExpression
+            ActionScriptAttributeList
+              <empty list>
             PsiElement(JS:FUNCTION_KEYWORD)('function')
             JSParameterList
               PsiElement(JS:LPAR)('(')
