@@ -20,7 +20,7 @@ JSFile:ObjectLiteral.js2
             PsiElement(JS:NUMERIC_LITERAL)('1')
         PsiElement(JS:COMMA)(',')
         PsiWhiteSpace('\n  ')
-        ES6FunctionProperty
+        JSFunctionProperty
           ActionScriptAttributeList
             PsiElement(JS:GET_KEYWORD)('get')
           PsiWhiteSpace(' ')
@@ -42,7 +42,7 @@ JSFile:ObjectLiteral.js2
             PsiElement(JS:RBRACE)('}')
         PsiElement(JS:COMMA)(',')
         PsiWhiteSpace('\n  ')
-        ES6FunctionProperty
+        JSFunctionProperty
           ActionScriptAttributeList
             PsiElement(JS:SET_KEYWORD)('set')
           PsiWhiteSpace(' ')
