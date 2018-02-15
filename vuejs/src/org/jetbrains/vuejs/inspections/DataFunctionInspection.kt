@@ -4,7 +4,6 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.LocalQuickFixOnPsiElement
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.lang.ecmascript6.psi.ES6FunctionProperty
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
@@ -27,7 +26,7 @@ class DataFunctionInspection : LocalInspectionTool() {
         }
       }
 
-      override fun visitES6FunctionProperty(functionProperty: ES6FunctionProperty?) {
+      override fun visitJSFunctionProperty(functionProperty: JSFunctionProperty?) {
         return
       }
     }
