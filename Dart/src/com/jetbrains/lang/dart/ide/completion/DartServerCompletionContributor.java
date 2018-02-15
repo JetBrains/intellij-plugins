@@ -280,16 +280,20 @@ public class DartServerCompletionContributor extends CompletionContributor {
       if (element.isDeprecated()) {
         lookup = lookup.strikeout();
       }
-      // append type parameters
-      final String typeParameters = element.getTypeParameters();
-      if (typeParameters != null) {
-        lookup = lookup.appendTailText(typeParameters, false);
+
+      if (StringUtil.isEmpty(suggestion.getDisplayText())) {
+        // append type parameters
+        final String typeParameters = element.getTypeParameters();
+        if (typeParameters != null) {
+          lookup = lookup.appendTailText(typeParameters, false);
+        }
+        // append parameters
+        final String parameters = element.getParameters();
+        if (parameters != null) {
+          lookup = lookup.appendTailText(parameters, false);
+        }
       }
-      // append parameters
-      final String parameters = element.getParameters();
-      if (parameters != null) {
-        lookup = lookup.appendTailText(parameters, false);
-      }
+
       // append return type
       final String returnType = element.getReturnType();
       if (!StringUtils.isEmpty(returnType)) {
