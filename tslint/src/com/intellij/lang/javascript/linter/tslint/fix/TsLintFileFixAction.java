@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.intellij.lang.javascript.linter.tslint.fix;
 
 
@@ -14,6 +27,7 @@ import com.intellij.lang.javascript.linter.tslint.execution.TsLinterError;
 import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.lang.javascript.service.ResultWithError;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -33,6 +47,12 @@ public class TsLintFileFixAction extends JSLinterFixAction {
   public TsLintFileFixAction() {
     super(TsLintBundle.message("tslint.framework.title"),
           TsLintBundle.message("tslint.action.fix.all.problem.title"), null);
+  }
+
+  @Override
+  public void update(AnActionEvent e) {
+    super.update(e);
+    e.getPresentation().setText(JSBundle.message("javascript.linter.action.fix.problems.file.text", TsLintBundle.message("tslint.framework.title")));
   }
 
   @NotNull
