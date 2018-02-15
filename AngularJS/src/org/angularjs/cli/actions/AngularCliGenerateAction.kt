@@ -42,9 +42,6 @@ import java.awt.event.KeyEvent
 import java.awt.event.MouseEvent
 import javax.swing.*
 
-/**
- * @author Dennis.Ushakov
- */
 class AngularCliGenerateAction : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
@@ -111,7 +108,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     list.addKeyListener(object: KeyAdapter() {
       override fun keyPressed(e: KeyEvent?) {
         if (e?.keyCode == KeyEvent.VK_ENTER) {
-          e?.consume()
+          e.consume()
           askOptions(project, popup, list.selectedValue as Blueprint, cli, workingDir(editor, file))
         }
       }
