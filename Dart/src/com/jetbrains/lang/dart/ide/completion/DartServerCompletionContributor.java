@@ -248,14 +248,6 @@ public class DartServerCompletionContributor extends CompletionContributor {
     return base;
   }
 
-  private static Icon applyVisibility(Icon base, boolean isPrivate) {
-    RowIcon result = new RowIcon(2);
-    result.setIcon(base, 0);
-    Icon visibility = isPrivate ? PlatformIcons.PRIVATE_ICON : PlatformIcons.PUBLIC_ICON;
-    result.setIcon(visibility, 1);
-    return result;
-  }
-
   @NotNull
   public static LookupElementBuilder createLookupElement(@NotNull final Project project, @NotNull final CompletionSuggestion suggestion) {
     final Element element = suggestion.getElement();
@@ -264,6 +256,10 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
     final String lookupString = suggestion.getCompletion();
     LookupElementBuilder lookup = LookupElementBuilder.create(lookupObject, lookupString);
+
+    if (suggestion.getDisplayText() != null) {
+      lookup = lookup.withPresentableText(suggestion.getDisplayText());
+    }
 
     // keywords are bold
     if (suggestion.getKind().equals(CompletionSuggestionKind.KEYWORD)) {
@@ -299,14 +295,22 @@ public class DartServerCompletionContributor extends CompletionContributor {
       if (!StringUtils.isEmpty(returnType)) {
         lookup = lookup.withTypeText(returnType, true);
       }
+
       // icon
       Icon icon = getBaseImage(element);
       if (icon != null) {
-        icon = applyVisibility(icon, element.isPrivate());
-        icon = applyOverlay(icon, element.isFinal(), AllIcons.Nodes.FinalMark);
-        icon = applyOverlay(icon, element.isConst(), AllIcons.Nodes.FinalMark);
+        if (suggestion.getKind().equals(CompletionSuggestionKind.OVERRIDE)) {
+          icon = new RowIcon(icon, AllIcons.Gutter.OverridingMethod);
+        }
+        else {
+          icon = new RowIcon(icon, element.isPrivate() ? PlatformIcons.PRIVATE_ICON : PlatformIcons.PUBLIC_ICON);
+          icon = applyOverlay(icon, element.isFinal(), AllIcons.Nodes.FinalMark);
+          icon = applyOverlay(icon, element.isConst(), AllIcons.Nodes.FinalMark);
+        }
+
         lookup = lookup.withIcon(icon);
       }
+
       // Prepare for typing arguments, if any.
       if (CompletionSuggestionKind.INVOCATION.equals(suggestion.getKind())) {
         shouldSetSelection = false;

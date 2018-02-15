@@ -1,15 +1,7 @@
 /*
- * Copyright (c) 2015, the Dart project authors.
- *
- * Licensed under the Eclipse Public License v1.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- *
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
+ * Copyright (c) 2018, the Dart project authors.  Please see the AUTHORS file
+ * for details. All rights reserved. Use of this source code is governed by a
+ * BSD-style license that can be found in the LICENSE file.
  *
  * This file has been automatically generated.  Please do not edit it manually.
  * To regenerate the file, use the script "pkg/analysis_server/tool/spec/generate_files".
@@ -34,14 +26,14 @@ public class CompletionSuggestionKind {
 
   /**
    * The element identifier should be inserted at the completion location. For example "someMethod"
-   * in import 'myLib.dart' show someMethod; . For suggestions of this kind, the element attribute is
+   * in import 'myLib.dart' show someMethod;. For suggestions of this kind, the element attribute is
    * defined and the completion field is the element's identifier.
    */
   public static final String IDENTIFIER = "IDENTIFIER";
 
   /**
-   * The element is being invoked at the completion location. For example, "someMethod" in
-   * x.someMethod(); . For suggestions of this kind, the element attribute is defined and the
+   * The element is being invoked at the completion location. For example, 'someMethod' in
+   * x.someMethod();. For suggestions of this kind, the element attribute is defined and the
    * completion field is the element's identifier.
    */
   public static final String INVOCATION = "INVOCATION";
@@ -52,12 +44,17 @@ public class CompletionSuggestionKind {
   public static final String KEYWORD = "KEYWORD";
 
   /**
-   * A named argument for the current callsite is being suggested. For suggestions of this kind, the
-   * completion is the named argument identifier including a trailing ':' and space.
+   * A named argument for the current call site is being suggested. For suggestions of this kind, the
+   * completion is the named argument identifier including a trailing ':' and a space.
    */
   public static final String NAMED_ARGUMENT = "NAMED_ARGUMENT";
 
   public static final String OPTIONAL_ARGUMENT = "OPTIONAL_ARGUMENT";
+
+  /**
+   * An overriding implementation of a class member is being suggested.
+   */
+  public static final String OVERRIDE = "OVERRIDE";
 
   public static final String PARAMETER = "PARAMETER";
 
