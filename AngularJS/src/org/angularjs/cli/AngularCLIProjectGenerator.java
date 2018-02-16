@@ -1,6 +1,7 @@
 package org.angularjs.cli;
 
 import com.intellij.execution.filters.Filter;
+import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
@@ -63,10 +64,10 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
     return new Filter[] {new AngularCLIFilter(project, baseDir.getPath())};
   }
 
-  @Override
   @NotNull
-  protected String executable(String path) {
-    return ng(path);
+  @Override
+  protected String executable(@NotNull NodePackage pkg) {
+    return ng(pkg.getSystemDependentPath());
   }
 
   @NotNull
