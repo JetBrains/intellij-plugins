@@ -7,6 +7,7 @@ import com.intellij.util.ui.tree.TreeUtil;
 import org.intellij.plugins.markdown.MarkdownTestingUtil;
 
 import javax.swing.*;
+import javax.swing.tree.TreePath;
 
 public class MarkdownStructureViewTest extends LightPlatformCodeInsightFixtureTestCase {
 
@@ -23,7 +24,7 @@ public class MarkdownStructureViewTest extends LightPlatformCodeInsightFixtureTe
       PlatformTestUtil.waitForPromise(svc.select(svc.getTreeModel().getCurrentEditorElement(), false));
       assertSameLinesWithFile(
         getTestDataPath() + '/' + getTestName(true) + ".txt",
-        PlatformTestUtil.print(tree, tree.getModel().getRoot(), new Queryable.PrintInfo(null, null), true));
+        PlatformTestUtil.print(tree, new TreePath(tree.getModel().getRoot()), new Queryable.PrintInfo(null, null), true));
     });
   }
 
