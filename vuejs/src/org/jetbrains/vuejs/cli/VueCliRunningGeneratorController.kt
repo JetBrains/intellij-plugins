@@ -130,7 +130,8 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
 
   fun onNext() {
     if (state == VueProjectCreationState.Process) {
-      assert(false, { "should be waiting for process" })
+      // we do not control Next button in the wizard so good by now - just skip it
+      //assert(false, { "should be waiting for process" })
     }
     else if (state == VueProjectCreationState.User) {
       assert(currentQuestion != null)
