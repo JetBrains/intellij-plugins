@@ -134,8 +134,10 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
     myCreateButton.text = "Close"
     state = VueProjectCreationState.Error
     myCreateButton.isEnabled = true
-    process!!.listener = null
-    process!!.cancel()
+    if (process != null) {
+      process!!.listener = null
+      process!!.cancel()
+    }
   }
 
   private fun replacePanel(mainPanel: JPanel, questioningPanel: JPanel) {
