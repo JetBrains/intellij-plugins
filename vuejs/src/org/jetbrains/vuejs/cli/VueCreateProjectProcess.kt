@@ -231,9 +231,15 @@ class VueCreateProjectProcess(private val folder: Path,
 
   private fun createCommandLine(folder: File, interpreterPath: String): GeneralCommandLine? {
     val serviceFolder = JSLanguageServiceUtil.getPluginDirectory(this.javaClass, "vueCliClient")
+    if (serviceFolder == null) {
+      LOG.info("Can not find generator script parent folder")
+    }
     val targetName = "call-vue-cli-init.js"
     val targetPath = Paths.get(serviceFolder.path, targetName)
-    if (!Files.exists(targetPath)) return null
+    if (!Files.exists(targetPath)) {
+      LOG.info("Can not find generator script")
+      return null
+    }
     val copy = File(folder, targetName)
     FileUtil.copyFileOrDir(targetPath.toFile(), copy)
     val commandLine = GeneralCommandLine(interpreterPath)
