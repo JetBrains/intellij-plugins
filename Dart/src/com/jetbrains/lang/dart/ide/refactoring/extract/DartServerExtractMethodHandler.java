@@ -1,24 +1,23 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.ide.refactoring.extract;
 
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -67,7 +66,24 @@ public class DartServerExtractMethodHandler implements RefactoringActionHandler 
       }
     }
 
+    final TextRange range = findRangeContainingCaret(offset, refactoring.getOccurrencesOffsets(), refactoring.getOccurrencesLengths());
+    if (range != null) {
+      selectionModel.setSelection(range.getStartOffset(), range.getEndOffset());
+    }
+
     new DartServerExtractMethodDialog(project, editor, refactoring).show();
+  }
+
+  @Nullable
+  private static TextRange findRangeContainingCaret(int caretOffset, int[] offsets, int[] lengths) {
+    for (int i = 0; i < offsets.length; i++) {
+      int offset1 = offsets[i];
+      int length1 = lengths[i];
+      if (caretOffset >= offset1 && caretOffset <= offset1 + length1) {
+        return TextRange.create(offset1, offset1 + length1);
+      }
+    }
+    return null;
   }
 }
 
@@ -99,9 +115,9 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog<ServerExtrac
       }
     });
 
-    if (myRefactoring.getOccurrences() != 1) {
+    if (myRefactoring.getOccurrencesCount() != 1) {
       myAllCheckBox.setSelected(true);
-      myAllCheckBox.setText("Extract all " + myRefactoring.getOccurrences() + " occurrences");
+      myAllCheckBox.setText("Extract all " + myRefactoring.getOccurrencesCount() + " occurrences");
       myAllCheckBox.addActionListener(e -> myRefactoring.setExtractAll(myAllCheckBox.isSelected()));
     }
     else {
