@@ -70,7 +70,7 @@ public class DartServerRenameHandler implements RenameHandler, TitledHandler {
   }
 
   @Override
-  public boolean isRenaming(DataContext dataContext) {
+  public boolean isRenaming(@NotNull DataContext dataContext) {
     return isAvailableOnDataContext(dataContext);
   }
 
