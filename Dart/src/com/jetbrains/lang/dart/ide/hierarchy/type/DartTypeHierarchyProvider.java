@@ -35,7 +35,7 @@ public class DartTypeHierarchyProvider implements HierarchyProvider {
 
   @NotNull
   @Override
-  public HierarchyBrowser createHierarchyBrowser(final PsiElement target) {
+  public HierarchyBrowser createHierarchyBrowser(@NotNull PsiElement target) {
     return new DartTypeHierarchyBrowser(target.getProject(), (DartClass)target);
   }
 
