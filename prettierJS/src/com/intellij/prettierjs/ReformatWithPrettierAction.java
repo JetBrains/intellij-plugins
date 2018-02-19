@@ -69,17 +69,10 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   @Override
   public void update(AnActionEvent e) {
     Project project = e.getProject();
-    if (project == null) {
-      e.getPresentation().setEnabledAndVisible(false);
-      return;
-    }
-    PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
-    boolean isEnabled =
-      PrettierUtil.isEnabled()
-      && configuration.getPackage() != null
-      && !configuration.getPackage().isEmptyPath()
-      && isAcceptableFileContext(e);
-    e.getPresentation().setEnabledAndVisible(isEnabled);
+    e.getPresentation().setEnabledAndVisible(project != null
+                                   && PrettierUtil.isEnabled()
+                                   && PrettierConfiguration.getInstance(project).getPackage() != null
+                                   && isAcceptableFileContext(e));
   }
 
   private static boolean isAcceptableFileContext(AnActionEvent e) {
