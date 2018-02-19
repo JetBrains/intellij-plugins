@@ -10,6 +10,8 @@ import com.intellij.execution.process.ProcessOutput;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.lang.javascript.DialectDetector;
+import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.JSLinterGuesser;
 import com.intellij.lang.javascript.linter.JsqtProcessOutputViewer;
@@ -308,10 +310,17 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   }
 
   private static boolean isAcceptableFile(@Nullable PsiFile file) {
-    return file != null && file.isPhysical() && (file instanceof JSFile || file instanceof CssFile);
+    if (file == null || (!file.isPhysical())) {
+      return false;
+    }
+    if (file instanceof JSFile) {
+      DialectOptionHolder optionHolder = DialectDetector.dialectOfElement(file);
+      return optionHolder == null || (!optionHolder.isCoffeeScript && !optionHolder.isECMA4);
+    }
+    return false;
   }
 
-  @NotNull
+  @Nullable
   private static NotificationListener toNotificationListener(@Nullable Runnable runnable) {
     if (runnable == null) return null;
     return new NotificationListener.Adapter() {
