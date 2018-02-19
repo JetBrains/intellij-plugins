@@ -156,7 +156,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
         fixes = ArrayUtil.append(fixes, new ChangeSignatureFix(topMethod, (JSArgumentList)expr.getParent()));
       }
     }
-    myReporter.registerProblem(expr, message, problemHighlightType, getValidateTypesInspectionId(), fixes);
+    //myReporter.registerProblem(expr, message, problemHighlightType, getValidateTypesInspectionId(), fixes);
   }
 
   private static boolean isAddEventListenerMethod(final JSFunction method) {
