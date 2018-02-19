@@ -3,6 +3,7 @@ package org.angularjs.cli;
 import com.intellij.execution.filters.Filter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator;
+import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -15,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Dennis.Ushakov
@@ -85,6 +88,12 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
   @NotNull
   protected String presentablePackageName() {
     return "Angular &CLI:";
+  }
+
+  @NotNull
+  @Override
+  protected List<NpxPackageDescriptor.NpxCommand> getNpxCommands() {
+    return Collections.singletonList(new NpxPackageDescriptor.NpxCommand(PACKAGE_NAME, "ng"));
   }
 
   @Override
