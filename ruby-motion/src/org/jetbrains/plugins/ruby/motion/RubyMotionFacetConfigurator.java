@@ -102,11 +102,7 @@ public class RubyMotionFacetConfigurator implements DirectoryProjectConfigurator
       //configuration.setLibPath(libFolder.getPath());
     }
     RubyMotionFacet.updateMotionLibrary(rootModel);
-    IdeaInternalUtil.runInsideWriteAction(new ActionRunner.InterruptibleRunnable() {
-      public void run() throws Exception {
-        rootModel.commit();
-      }
-    });
+    WriteAction.run(() -> rootModel.commit());
     RubyMotionFacet facet = facetManager.createFacet(facetType, facetType.getDefaultFacetName(), configuration, null);
     model.addFacet(facet);
     new WriteAction() {
