@@ -161,8 +161,10 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
                     toHyperLinkListener(() -> showErrorDetails(project, result.error)));
     }
     else {
-      runWriteCommandAction(project, () -> document.replaceString(0, document.getTextLength(), result.result));
-      caretVisualPositionKeeper.restoreOriginalLocation(true);
+      if (!StringUtil.equals(textBefore, result.result)) {
+        runWriteCommandAction(project, () -> document.setText(result.result));
+        caretVisualPositionKeeper.restoreOriginalLocation(true);
+      }
       showHintLater(editor, buildNotificationMessage(document, textBefore), false, null);
     }
   }
@@ -216,7 +218,10 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
         }
         Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
         if (document != null && StringUtil.isEmpty(entry.getValue().error)) {
-          document.setText(entry.getValue().result);
+          CharSequence textBefore = document.getCharsSequence();
+          if (!StringUtil.equals(textBefore, entry.getValue().result)) {
+            document.setText(entry.getValue().result);
+          }
         }
       }
     });
