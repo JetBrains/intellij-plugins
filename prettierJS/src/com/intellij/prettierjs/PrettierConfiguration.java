@@ -28,9 +28,14 @@ public class PrettierConfiguration implements PersistentStateComponent<PrettierC
   @NotNull
   public NodeJsInterpreterRef getOrDetectInterpreterRef() {
     myPackage.readOrDetect();
+    return getInterpreterRef();
+  }
+
+  @NotNull
+  public NodeJsInterpreterRef getInterpreterRef() {
     return myPackage.getInterpreter();
   }
-  
+
   @Nullable
   public NodePackage getPackage() {
     return new NodePackage(myPackage.getPackagePath());
