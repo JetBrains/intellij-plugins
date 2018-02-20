@@ -9,7 +9,6 @@ import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.FormBuilder;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,9 +49,6 @@ public class PrettierConfigurable implements SearchableConfigurable {
   public JComponent createComponent() {
     JPanel mainPanel = FormBuilder.createFormBuilder()
                               .setAlignLabelOnRight(true)
-                              .setHorizontalGap(UIUtil.DEFAULT_HGAP)
-                              .setVerticalGap(UIUtil.DEFAULT_VGAP)
-                              .setFormLeftIndent(UIUtil.DEFAULT_HGAP)
                               .addLabeledComponent("&Node interpreter:", myNodeInterpreterField)
                               .addLabeledComponent("&Prettier package:", myPackageField)
                               .getPanel();
@@ -65,8 +61,8 @@ public class PrettierConfigurable implements SearchableConfigurable {
   @Override
   public boolean isModified() {
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(myProject);
-    return configuration.getOrDetectInterpreterRef() != myNodeInterpreterField.getInterpreterRef()
-           || myPackageField.getSelected() != configuration.getOrDetectNodePackage();
+    return !configuration.getInterpreterRef().equals(myNodeInterpreterField.getInterpreterRef())
+           || !myPackageField.getSelected().equals(configuration.getPackage());
   }
 
   @Override
