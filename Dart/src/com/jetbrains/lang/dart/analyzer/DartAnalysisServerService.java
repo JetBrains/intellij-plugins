@@ -170,7 +170,6 @@ public class DartAnalysisServerService implements Disposable {
   // errors hash is tracked to optimize error notification listener: do not handle equal notifications more than once
   @NotNull private final TObjectIntHashMap<String> myFilePathToErrorsHash = new TObjectIntHashMap<>();
 
-  public long maxMillisToWaitForServerResponse = 0L;
   @NotNull private final InteractiveErrorReporter myErrorReporter = new InteractiveErrorReporter();
 
   @NotNull private final EvictingQueue<String> myDebugLog = EvictingQueue.create(DEBUG_LOG_CAPACITY);
@@ -813,7 +812,7 @@ public class DartAnalysisServerService implements Disposable {
 
       final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
 
-      // some documents in myChangedDocuments may be updated by external change, suxh as switch branch, that's why we track them,
+      // some documents in myChangedDocuments may be updated by external change, such as switch branch, that's why we track them,
       // getUnsavedDocuments() is not enough, we must make sure that overlaid content is sent for for myChangedDocuments as well (to trigger DAS notifications)
       final Set<Document> documents = new THashSet<>(myChangedDocuments);
       myChangedDocuments.clear();
@@ -1748,6 +1747,15 @@ public class DartAnalysisServerService implements Disposable {
           if (!isAlive) {
             synchronized (myLock) {
               if (startedServer == myServer) {
+                // Show a notification on the dart analysis tool window.
+                ApplicationManager.getApplication().invokeLater(
+                  () -> {
+                    final DartProblemsView problemsView = DartProblemsView.getInstance(myProject);
+                    problemsView.showErrorNotificationTerse("Analysis server has terminated");
+                  },
+                  ModalityState.NON_MODAL
+                );
+
                 stopServer();
               }
             }
@@ -1759,6 +1767,16 @@ public class DartAnalysisServerService implements Disposable {
         startedServer.analysis_updateOptions(new AnalysisOptions(true, true, true, true, true, false, true, false));
 
         myServer = startedServer;
+
+        // Clear any dart view notifications.
+        ApplicationManager.getApplication().invokeLater(
+          () -> {
+            final DartProblemsView problemsView = DartProblemsView.getInstance(myProject);
+            problemsView.clearNotifications();
+          },
+          ModalityState.NON_MODAL
+        );
+
         // This must be done after myServer is set, and should be done each time the server starts.
         registerPostfixCompletionTemplates();
 
@@ -1778,21 +1796,6 @@ public class DartAnalysisServerService implements Disposable {
     synchronized (myLock) {
       return myServer != null && myServer.isSocketOpen();
     }
-  }
-
-  public boolean isServerResponsive() {
-    if (maxMillisToWaitForServerResponse == 0L) return true; // UI has not finished initialization yet.
-    if (!(myAnalysisInProgress || myPubListInProgress)) return true;
-    long responseMillis, requestMillis;
-    synchronized (myLock) {
-      if (myServer == null) return false;
-      responseMillis = myServer.getLastResponseMillis();
-      requestMillis = myServer.getLastRequestMillis();
-    }
-    if (responseMillis == 0L) return true; // Allow UI to start in good state even if it becomes unknown later.
-    if (requestMillis <= responseMillis) return true;
-    long delta = System.currentTimeMillis() - requestMillis;
-    return delta > maxMillisToWaitForServerResponse;
   }
 
   public boolean serverReadyForRequest(@NotNull final Project project) {
