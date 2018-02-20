@@ -35,7 +35,6 @@ import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.intellij.util.ui.JBUI;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.jetbrains.annotations.NonNls;
@@ -54,9 +53,6 @@ import java.util.Locale;
 import java.util.Map;
 
 public class DartProblemsViewPanel extends SimpleToolWindowPanel implements DataProvider, CopyProvider {
-
-  private static final long DEFAULT_SERVER_WAIT_MILLIS = 5000L; // Switch to UNKNOWN after 5s with no response.
-
   private static final LayeredIcon DART_ERRORS_ICON;
   private static final LayeredIcon DART_WARNINGS_ICON;
 
@@ -86,8 +82,6 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     myTable = createTable();
     setToolbar(createToolbar());
     setContent(createCenterPanel());
-
-    DartAnalysisServerService.getInstance(project).maxMillisToWaitForServerResponse = DEFAULT_SERVER_WAIT_MILLIS;
   }
 
   @NotNull

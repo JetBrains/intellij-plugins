@@ -77,18 +77,6 @@ public abstract class DartFeedbackBuilder {
   public abstract void sendFeedback(@NotNull Project project, @Nullable String errorMessage, @Nullable String serverLog);
 
   /**
-   * Display a standard query dialog and return the user's response.
-   *
-   * @param message optional, an additional message to display before the prompt
-   */
-  public boolean showQuery(@Nullable String message) {
-    return (MessageDialogBuilder.yesNo(title(), message == null ? prompt() : message + "\n" + prompt())
-              .icon(Messages.getQuestionIcon())
-              .yesText(label())
-              .show() == Messages.YES);
-  }
-
-  /**
    * Show a notification that allows the user to submit a feedback issue.
    *
    * @param message      an additional message to display before the prompt

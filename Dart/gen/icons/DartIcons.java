@@ -20,6 +20,7 @@ public class DartIcons {
   public static final Icon Dart_test = load("/icons/dart_test.png"); // 16x16
   public static final Icon Dart_warning = load("/icons/dart_warning.png"); // 16x16
   public static final Icon Dart_web = load("/icons/dart_web.png"); // 16x16
+  public static final Icon Feedback = load("/icons/feedback.png"); // 16x16
   public static final Icon Observatory = load("/icons/observatory.png"); // 16x16
   public static final Icon Restart_server = load("/icons/restart_server.png"); // 16x16
   public static final Icon TestNode = load("/icons/testNode.png"); // 16x16
