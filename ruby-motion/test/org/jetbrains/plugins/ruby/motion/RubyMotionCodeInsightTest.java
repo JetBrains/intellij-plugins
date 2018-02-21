@@ -83,7 +83,7 @@ public class RubyMotionCodeInsightTest extends RubyMotionLightFixtureTestCase {
 
   public void testCompletion() throws Throwable {
     defaultConfigure();
-    assertInCompletionList("<caret>UIView", false, "animationDidStart", "animationDidStop:finished:");
+    assertInCompletionList("<caret>UIView", "animationDidStart", "animationDidStop:finished:");
   }
 
   public void testStricterCompletion() {
@@ -94,7 +94,7 @@ public class RubyMotionCodeInsightTest extends RubyMotionLightFixtureTestCase {
 
   public void testRakefileCompletion() throws Throwable {
     myFixture.configureByFiles("Rakefile", "app/app_delegate.rb");
-    assertInCompletionList("app.<caret>name", false, "status_bar_style=", "codesign_certificate");
+    assertInCompletionList("app.<caret>name", "status_bar_style=", "codesign_certificate");
   }
 
   public void testContextCompletion() throws Throwable {
