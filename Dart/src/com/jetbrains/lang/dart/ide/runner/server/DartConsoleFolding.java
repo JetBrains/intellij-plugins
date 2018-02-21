@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ConsoleFolding;
 import com.intellij.execution.configurations.CommandLineTokenizer;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -24,7 +25,7 @@ public class DartConsoleFolding extends ConsoleFolding {
   private int myFrameCount = 0;
 
   @Override
-  public boolean shouldFoldLine(@NotNull final String line) {
+  public boolean shouldFoldLine(@NotNull Project project, @NotNull final String line) {
     // check for a stack trace
     if (isFrameLine(line)) {
       myFrameCount++;
@@ -47,7 +48,7 @@ public class DartConsoleFolding extends ConsoleFolding {
 
   @Nullable
   @Override
-  public String getPlaceholderText(@NotNull final List<String> lines) {
+  public String getPlaceholderText(@NotNull Project project, @NotNull final List<String> lines) {
     // C:\dart-sdk\bin\dart.exe --checked --pause_isolates_on_start --enable-vm-service:55465 C:\dart_projects\DartSample\bin\file1.dart arg
     // is collapsed to "dart file1.dart arg"
 
