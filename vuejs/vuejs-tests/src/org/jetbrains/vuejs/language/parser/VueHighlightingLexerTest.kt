@@ -20,7 +20,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileTypes.FileTypeManager
-import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.util.Getter
 import com.intellij.psi.codeStyle.*
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2
@@ -31,7 +30,7 @@ class VueHighlightingLexerTest : VueLexerTest() {
     super.setUp()
     val instance = MockApplicationEx(testRootDisposable)
     ApplicationManager.setApplication(instance,
-                                      Getter<FileTypeRegistry> { FileTypeManager.getInstance() },
+                                      Getter { FileTypeManager.getInstance() },
                                       testRootDisposable)
     instance.registerService(CssElementDescriptorFactory2::class.java, CssElementDescriptorFactory2(null))
     instance.registerService(FileTypeManager::class.java, MockFileTypeManager(VueFileType.INSTANCE))
