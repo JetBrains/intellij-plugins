@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.ide.BrowserUtil;
@@ -22,11 +35,11 @@ public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
 
   public void sendFeedback(@NotNull Project project, @Nullable String errorMessage, @Nullable String serverLog) {
     final ApplicationInfoEx appInfo = ApplicationInfoEx.getInstanceEx();
-    boolean eap = appInfo.isEAP();
-    String ijBuild = eap ? appInfo.getBuild().asStringWithoutProductCode() : appInfo.getBuild().asString();
-    String sdkVsn = getSdkVersion(project);
-    String platDescr = StringUtil.replace(SendFeedbackAction.getDescription(), ";", " ").trim();
-    String template = DartBundle.message("dart.feedback.url.template", ijBuild, sdkVsn, platDescr);
+    boolean isEAP = appInfo.isEAP();
+    String ijBuild = isEAP ? appInfo.getBuild().asStringWithoutProductCode() : appInfo.getBuild().asString();
+    String sdkVersion = getSdkVersion(project);
+    String platformDescription = StringUtil.replace(SendFeedbackAction.getDescription(), ";", " ").trim();
+    String urlTemplate = DartBundle.message("dart.feedback.url.template", ijBuild, sdkVersion, platformDescription);
     if (errorMessage != null) {
       errorMessage = "```\n" + errorMessage + "```";
       try {
@@ -37,14 +50,14 @@ public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
           FileUtil.writeToFile(file, "\n\n" + serverLog, true);
         }
         String potentialTemplate =
-          template + "\n\n" + DartBundle.message("dart.error.file.instructions", file.getAbsolutePath()) + "\n\n" + errorMessage;
-        template = potentialTemplate.substring(0, Math.min(potentialTemplate.length(), MAX_URL_LENGTH));
+          urlTemplate + "\n\n" + DartBundle.message("dart.error.file.instructions", file.getAbsolutePath()) + "\n\n" + errorMessage;
+        urlTemplate = potentialTemplate.substring(0, Math.min(potentialTemplate.length(), MAX_URL_LENGTH));
       }
       catch (IOException e) {
         // ignore it
       }
     }
-    openBrowserOnFeedbackForm(template, project);
+    openBrowserOnFeedbackForm(urlTemplate, project);
   }
 
   public static void openBrowserOnFeedbackForm(@NotNull String urlTemplate, @Nullable Project project) {
