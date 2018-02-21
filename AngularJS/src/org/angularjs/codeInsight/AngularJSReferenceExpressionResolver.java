@@ -69,7 +69,7 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
       }
       JSClass clazz = myRef.getQualifier() == null ? AngularJS2IndexingHandler.findDirectiveClass(myRef) : null;
       if (clazz != null && DialectDetector.isTypeScript(clazz)) {
-        final TypeScriptResolveProcessor localProcessor = new TypeScriptResolveProcessor(myReferencedName, myContainingFile, myRef, incompleteCode);
+        final TypeScriptResolveProcessor localProcessor = new TypeScriptResolveProcessor(myReferencedName, myContainingFile, myRef);
         localProcessor.setToProcessHierarchy(true);
         JSReferenceExpressionImpl.doProcessLocalDeclarations(clazz, myQualifier, localProcessor, false, false, null);
 
