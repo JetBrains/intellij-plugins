@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
 import com.intellij.lang.javascript.validation.JSProblemReporter;
 import com.intellij.lang.javascript.validation.JSTypeChecker;
+import com.intellij.lang.javascript.validation.ValidateTypesUtil;
 import com.intellij.lang.javascript.validation.fixes.ChangeSignatureFix;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
@@ -31,7 +32,8 @@ import org.jetbrains.annotations.PropertyKey;
 
 import java.util.Map;
 
-import static com.intellij.lang.javascript.psi.JSCommonTypeNames.FUNCTION_CLASS_NAME;
+import static com.intellij.lang.javascript.psi.JSCommonTypeNames.*;
+import static com.intellij.lang.javascript.validation.ValidateTypesUtil.getHighlightTypeForTypeOrSignatureProblem;
 
 /**
  * @author Konstantin.Ulitin
@@ -232,4 +234,78 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
     return null;
   }
 
+  @Override
+  public void checkTypesInForIn(@NotNull JSForInStatement node) {
+    if (!node.isForEach()) {
+      final JSVarStatement statement = node.getDeclarationStatement();
+
+      if (statement != null) {
+        final PsiFile containingFile = node.getContainingFile();
+        final JSExpression collectionExpression = node.getCollectionExpression();
+        final String expressionType = JSResolveUtil.getQualifiedExpressionType(collectionExpression, containingFile);
+
+        if (JSResolveUtil.isAssignableType(ValidateTypesUtil.FLASH_UTILS_DICTIONARY, expressionType, containingFile)) {
+          return;
+        }
+
+        for (JSVariable var : statement.getVariables()) {
+          final PsiElement typeElement = var.getTypeElement();
+          final String typeElementText = typeElement == null ? null : typeElement.getText();
+
+          if (typeElementText != null &&
+              isValidArrayIndexType(typeElementText) &&
+              JSResolveUtil.isAssignableType("Array", expressionType, containingFile)) {
+            continue;
+          }
+
+          if (typeElement != null &&
+              (OBJECT_CLASS_NAME.equals(typeElementText) ||
+               ANY_TYPE.equals(typeElementText) ||
+               OBJECT_CLASS_NAME.equals(expressionType) && !STRING_CLASS_NAME.equals(typeElementText))) {
+            myReporter.registerProblem(typeElement, JSBundle.message("javascript.incorrect.array.type.in.for-in"),
+                                     ProblemHighlightType.WEAK_WARNING);
+            continue;
+          }
+
+          checkTypeIs(typeElement, typeElement, "XMLList".equals(expressionType) ? "XML" : "String",
+                      "javascript.incorrect.variable.type.mismatch");
+        }
+      }
+    }
+  }
+
+  private static boolean isValidArrayIndexType(final String type) {
+    return "String".equals(type) ||
+           "int".equals(type) ||
+           "uint".equals(type) ||
+           "Number".equals(type);
+  }
+
+  private void checkTypeIs(PsiElement type, PsiElement node, String typeName, String key) {
+    if (type instanceof JSReferenceExpression) {
+      checkTypeIs((JSExpression)type, node, typeName, key);
+    }
+    else if (type != null) {
+      myReporter.registerProblem(node, JSBundle.message(key, typeName, type.getText()),
+                               getHighlightTypeForTypeOrSignatureProblem(node));
+    }
+  }
+
+  private void checkTypeIs(JSExpression rOperand, PsiElement node, String typeName, String key) {
+    String expressionType = JSResolveUtil.getQualifiedExpressionType(rOperand, rOperand.getContainingFile());
+    if (!typeName.equals(expressionType) && !ANY_TYPE.equals(expressionType)) {
+      myReporter.registerProblem(node, JSBundle.message(key, typeName, expressionType),
+                                 getHighlightTypeForTypeOrSignatureProblem(node));
+    }
+  }
+
+  @Override
+  public void checkIfProperTypeReference(JSExpression rOperand) {
+    checkTypeIs(
+      rOperand,
+      rOperand,
+      "Class",
+      "javascript.binary.operand.type.mismatch"
+    );
+  }
 }
