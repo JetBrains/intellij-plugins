@@ -67,6 +67,15 @@ import java.util.Map;
 
 public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   private static final int REQUEST_TIMEOUT = 3000;
+  private final ErrorHandler myErrorHandler;
+
+  public ReformatWithPrettierAction(ErrorHandler errorHandler) {
+    myErrorHandler = errorHandler;
+  }
+
+  public ReformatWithPrettierAction() {
+    this(ErrorHandler.DEFAULT);
+  }
 
   @Override
   public void update(AnActionEvent e) {
@@ -103,25 +112,25 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       NodeJsLocalInterpreter.castAndValidate(interpreter);
     }
     catch (ExecutionException e1) {
-      showError(project, editor, PrettierBundle.message("error.invalid.interpreter"),
+      myErrorHandler.showError(project, editor, PrettierBundle.message("error.invalid.interpreter"),
                 () -> editSettings(project, e.getDataContext()));
       return;
     }
 
     NodePackage nodePackage = configuration.getOrDetectNodePackage();
     if (nodePackage == null || nodePackage.isEmptyPath()) {
-      showError(project, editor, PrettierBundle.message("error.no.valid.package"),
+      myErrorHandler.showError(project, editor, PrettierBundle.message("error.no.valid.package"),
                 () -> editSettings(project, e.getDataContext()));
       return;
     }
     if (!nodePackage.isValid()) {
-      showError(project, editor, PrettierBundle.message("error.package.is.not.installed"),
+      myErrorHandler.showError(project, editor, PrettierBundle.message("error.package.is.not.installed"),
                 () -> installPackage(project));
       return;
     }
     SemVer nodePackageVersion = nodePackage.getVersion();
     if (nodePackageVersion != null && !nodePackageVersion.isGreaterOrEqualThan(1, 7, 0)) {
-      showError(project, editor, PrettierBundle.message("error.unsupported.version"), null);
+      myErrorHandler.showError(project, editor, PrettierBundle.message("error.unsupported.version"), null);
       return;
     }
 
@@ -136,7 +145,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
   }
 
-  private static void processFileInEditor(@NotNull Project project, @NotNull Editor editor, @NotNull NodePackage nodePackage) {
+  private void processFileInEditor(@NotNull Project project, @NotNull Editor editor, @NotNull NodePackage nodePackage) {
     PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
     if (file == null) {
       return;
@@ -161,8 +170,8 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       return;
     }
     if (!StringUtil.isEmpty(result.error)) {
-      showHintLater(editor, PrettierBundle.message("error.while.reformatting.message"), true,
-                    toHyperLinkListener(() -> showErrorDetails(project, result.error)));
+      myErrorHandler.showErrorWithDetails(project, editor,
+                                          PrettierBundle.message("error.while.reformatting.message"), result.error);
     }
     else {
       if (!StringUtil.equals(textBefore, result.result)) {
@@ -173,7 +182,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
   }
 
-  private static void processVirtualFiles(@NotNull Project project,
+  private void processVirtualFiles(@NotNull Project project,
                                           @NotNull VirtualFile[] virtualFiles,
                                           @NotNull NodePackage nodePackage) {
     ReadonlyStatusHandler.OperationStatus readonlyStatus = ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(virtualFiles);
@@ -193,7 +202,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
   }
 
-  private static void processFileIterator(@NotNull Project project,
+  private void processFileIterator(@NotNull Project project,
                                           @NotNull final FileTreeIterator fileIterator,
                                           @NotNull NodePackage nodePackage) {
     Map<PsiFile, PrettierLanguageService.FormatResult> results = executeUnderProgress(project, indicator -> {
@@ -231,8 +240,9 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     });
     List<String> errors = ContainerUtil.mapNotNull(results.entrySet(), t -> t.getValue().error);
     if (errors.size() > 0) {
-      showError(project, null, "Failed to reformat " + errors.size() + " files<br><a href=''>Details</a>",
-                () -> showErrorDetails(project, StringUtil.join(errors, "\n")));
+      myErrorHandler.showErrorWithDetails(project, null,
+                                          "Failed to reformat " + errors.size() + " files<br><a href=''>Details</a>",
+                                          StringUtil.join(errors, "\n"));
     }
   }
 
@@ -258,26 +268,6 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   private static String buildNotificationMessage(@NotNull Document document, @NotNull CharSequence textBefore) {
     int number = FormatChangedTextUtil.getInstance().calculateChangedLinesNumber(document, textBefore);
     return "Prettier: " + (number > 0 ? "Reformatted " + number + " lines" : "No lines changed. Content is already properly formatted");
-  }
-
-  private static void showError(@NotNull Project project,
-                                @Nullable Editor editor,
-                                @NotNull String text,
-                                @Nullable Runnable onLinkClick) {
-    if (editor != null) {
-      showHintLater(editor, "Prettier: " + text, true, toHyperLinkListener(onLinkClick));
-    }
-    else {
-      showErrorNotification(project, text, toNotificationListener(onLinkClick));
-    }
-  }
-
-  private static void showErrorNotification(@NotNull Project project,
-                                            @NotNull String text,
-                                            @Nullable NotificationListener notificationListener) {
-    JSLinterGuesser.NOTIFICATION_GROUP
-      .createNotification("Prettier", text, NotificationType.ERROR, notificationListener)
-      .notify(project);
   }
 
   private static void showHintLater(@NotNull Editor editor,
@@ -358,25 +348,63 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     return false;
   }
 
-  @Nullable
-  private static NotificationListener toNotificationListener(@Nullable Runnable runnable) {
-    if (runnable == null) return null;
-    return new NotificationListener.Adapter() {
-      @Override
-      protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
-        runnable.run();
-      }
-    };
+  
+
+  public interface ErrorHandler {
+    ErrorHandler DEFAULT = new DefaultErrorHandler();
+
+    void showError(@NotNull Project project,
+                   @Nullable Editor editor,
+                   @NotNull String text,
+                   @Nullable Runnable onLinkClick);
+    
+    default void showErrorWithDetails(@NotNull Project project,
+                                      @Nullable Editor editor,
+                                      @NotNull String text,
+                                      @NotNull String details) {
+      showError(project, editor, text, () -> showErrorDetails(project, details));
+    }
   }
 
-  @Nullable
-  private static HyperlinkListener toHyperLinkListener(@Nullable Runnable runnable) {
-    if (runnable == null) return null;
-    return new HyperlinkAdapter() {
-      @Override
-      protected void hyperlinkActivated(HyperlinkEvent e) {
-        runnable.run();
+  private static class DefaultErrorHandler implements ErrorHandler {
+    @Override
+    public void showError(@NotNull Project project, @Nullable Editor editor, @NotNull String text, @Nullable Runnable onLinkClick) {
+      if (editor != null) {
+        showHintLater(editor, "Prettier: " + text, true, toHyperLinkListener(onLinkClick));
       }
-    };
+      else {
+        showErrorNotification(project, text, toNotificationListener(onLinkClick));
+      }
+    }
+
+    private static void showErrorNotification(@NotNull Project project,
+                                              @NotNull String text,
+                                              @Nullable NotificationListener notificationListener) {
+      JSLinterGuesser.NOTIFICATION_GROUP
+        .createNotification("Prettier", text, NotificationType.ERROR, notificationListener)
+        .notify(project);
+    }
+
+    @Nullable
+    private static NotificationListener toNotificationListener(@Nullable Runnable runnable) {
+      if (runnable == null) return null;
+      return new NotificationListener.Adapter() {
+        @Override
+        protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
+          runnable.run();
+        }
+      };
+    }
+
+    @Nullable
+    private static HyperlinkListener toHyperLinkListener(@Nullable Runnable runnable) {
+      if (runnable == null) return null;
+      return new HyperlinkAdapter() {
+        @Override
+        protected void hyperlinkActivated(HyperlinkEvent e) {
+          runnable.run();
+        }
+      };
+    }
   }
 }
