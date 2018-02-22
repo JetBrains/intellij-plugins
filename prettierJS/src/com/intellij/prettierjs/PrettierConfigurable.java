@@ -82,6 +82,7 @@ public class PrettierConfigurable implements SearchableConfigurable {
   @Override
   public void apply() {
     PrettierConfiguration.getInstance(myProject).update(myNodeInterpreterField.getInterpreter(), myPackageField.getSelected());
+    PrettierLanguageService.getInstance(myProject).terminateStartedProcess(false);
   }
 
   public static class Provider extends ConfigurableProvider {

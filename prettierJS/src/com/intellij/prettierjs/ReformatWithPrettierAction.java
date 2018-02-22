@@ -10,6 +10,7 @@ import com.intellij.execution.process.ProcessOutput;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
@@ -46,7 +47,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.css.CssFile;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.LightweightHint;
@@ -74,13 +74,17 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     e.getPresentation().setEnabledAndVisible(project != null
                                    && PrettierUtil.isEnabled()
                                    && PrettierConfiguration.getInstance(project).getPackage() != null
-                                   && isAcceptableFileContext(e));
+                                   && isAcceptableFileContext(e, project));
   }
 
-  private static boolean isAcceptableFileContext(AnActionEvent e) {
+  private static boolean isAcceptableFileContext(@NotNull AnActionEvent e, @NotNull Project project) {
     Editor editor = e.getData(CommonDataKeys.EDITOR);
-    return (editor != null && isAcceptableFile(e.getData(CommonDataKeys.PSI_FILE)))
-                        || (editor == null && !(ArrayUtil.isEmpty(e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY))));
+    if (editor != null && isAcceptableFile(e.getData(CommonDataKeys.PSI_FILE))) {
+      return true;
+    }
+    VirtualFile[] virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
+    return !ArrayUtil.isEmpty(virtualFiles) 
+           && ContainerUtil.or(virtualFiles, v -> v.isDirectory() || isAcceptableFile(v, project));
   }
 
   @Override
@@ -314,13 +318,42 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
   }
 
+  private static boolean isAcceptableFile(@NotNull VirtualFile file, @NotNull Project project) {
+    return isDetectedAcceptableFile(file, project) || isDefaultAcceptableFile(PsiManager.getInstance(project).findFile(file));
+  }
+
   private static boolean isAcceptableFile(@Nullable PsiFile file) {
     if (file == null || (!file.isPhysical())) {
       return false;
     }
+    return isDetectedAcceptableFile(file.getVirtualFile(), file.getProject()) || isDefaultAcceptableFile(file);
+  }
+
+  private static boolean isDefaultAcceptableFile(@Nullable PsiFile file) {
     if (file instanceof JSFile) {
       DialectOptionHolder optionHolder = DialectDetector.dialectOfElement(file);
       return optionHolder == null || (!optionHolder.isCoffeeScript && !optionHolder.isECMA4);
+    }
+    //HTML is not officially supported, but running from console formats fine for some reason
+    if (file != null && file.getLanguage() instanceof HTMLLanguage) {
+      return true;
+    }
+    return false;
+  }
+
+  private static boolean isDetectedAcceptableFile(@Nullable VirtualFile virtualFile, @NotNull Project project) {
+    if (virtualFile == null) {
+      return false;
+    }
+    PrettierLanguageService.SupportedFilesInfo supportedFiles = PrettierLanguageService.getInstance(project).getSupportedFiles();
+    if (supportedFiles != null) {
+      
+      String nameWithoutExtension = virtualFile.getNameWithoutExtension();
+      if (StringUtil.isEmpty(nameWithoutExtension)) {
+        nameWithoutExtension = virtualFile.getName();
+      }
+      return supportedFiles.fileNames.contains(nameWithoutExtension)
+             || supportedFiles.extensions.contains(virtualFile.getExtension());
     }
     return false;
   }

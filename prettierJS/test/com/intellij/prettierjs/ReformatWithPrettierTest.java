@@ -7,7 +7,9 @@ import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.linter.InstallNpmModules;
 import com.intellij.lang.javascript.linter.NodeLinterPackageTestPaths;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
+import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.util.containers.ContainerUtil;
 import org.apache.log4j.Level;
@@ -26,7 +28,10 @@ public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
     myTestPackagePaths = ensureNpmPackage("prettier");
     NodeJsLocalInterpreter interpreter = new NodeJsLocalInterpreter(myTestPackagePaths.getNodePath().toString());
     NodeJsInterpreterManager.getInstance(myFixture.getProject()).setInterpreterRef(interpreter.toRef());
-    PrettierConfiguration.getInstance(getProject()).update(interpreter, new NodePackage(myTestPackagePaths.getPackagePath().toString()));
+    NodePackage nodePackage = new NodePackage(myTestPackagePaths.getPackagePath().toString());
+    PrettierConfiguration.getInstance(getProject()).update(interpreter, nodePackage);
+    PrettierLanguageServiceImpl languageService = PrettierLanguageService.getInstance(getProject());
+    JSLanguageServiceUtil.awaitLanguageService(languageService.initSupportedFiles(nodePackage), languageService);
     boolean debug = JSLanguageServiceQueue.LOGGER.isDebugEnabled();
     JSLanguageServiceQueue.LOGGER.setLevel(Level.TRACE);
     Disposer.register(getTestRootDisposable(),
@@ -75,12 +80,25 @@ public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
     doReformatFile("js");
   }
 
+  public void testJsonFileDetectedByExtension() {
+    doReformatFile("json");
+  }
+
+  public void testJsonFileDetectedByName() {
+    doReformatFile(".babelrc", "");
+  }
+
   private void doReformatFile(final String extension) {
+    doReformatFile("toReformat", extension);
+  }
+
+  private void doReformatFile(final String fileNamePrefix, final String extension) {
     String dirName = getTestName(true);
     myFixture.copyDirectoryToProject(dirName, "");
-    myFixture.configureByFile("toReformat." + extension);
+    String extensionWithDot = StringUtil.isEmpty(extension) ? "" : "." + extension;
+    myFixture.configureByFile(fileNamePrefix + extensionWithDot);
     myFixture.testAction(new ReformatWithPrettierAction());
-    myFixture.checkResultByFile(dirName + "/toReformat_after." + extension);
+    myFixture.checkResultByFile(dirName + "/" + fileNamePrefix + "_after" + extensionWithDot);
   }
 
   private NodeLinterPackageTestPaths ensureNpmPackage(String packageName) {
