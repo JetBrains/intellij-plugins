@@ -1,11 +1,18 @@
 package com.intellij.prettierjs;
 
+import com.intellij.ProjectTopics;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.service.*;
 import com.intellij.lang.javascript.service.protocol.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootEvent;
+import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.newvfs.BulkFileListener;
+import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
@@ -16,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.Future;
 
 import static com.intellij.lang.javascript.service.JSLanguageServiceQueue.LOGGER;
@@ -23,9 +31,27 @@ import static com.intellij.lang.javascript.service.JSLanguageServiceQueue.LOGGER
 public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implements PrettierLanguageService {
   @Nullable
   private volatile SupportedFilesInfo mySupportedFiles;
+  private volatile boolean myFlushConfigCache;
 
   public PrettierLanguageServiceImpl(@NotNull Project project) {
     super(project);
+    project.getMessageBus().connect().subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
+      @Override
+      public void after(@NotNull List<? extends VFileEvent> events) {
+        for (VFileEvent event : events) {
+          if (!(event instanceof VFileContentChangeEvent) || PrettierUtil.isConfigFileOrPackageJson(event.getFile())) {
+            myFlushConfigCache = true;
+          }
+        }
+      }
+    });
+
+    project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
+      @Override
+      public void rootsChanged(ModuleRootEvent event) {
+        myFlushConfigCache = true;
+      }
+    });
   }
 
   @NotNull
@@ -36,9 +62,9 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     if (process == null || !process.isValid()) {
       return new FixedFuture<>(FormatResult.error(PrettierBundle.message("service.not.started.message")));
     }
-    return
-      process.execute(new ReformatFileCommand(file.getVirtualFile().getPath(), prettierPackagePath, file.getText(), range),
-                      (ignored, response) -> parseReformatResponse(response));
+    ReformatFileCommand command = new ReformatFileCommand(file.getVirtualFile().getPath(), prettierPackagePath, file.getText(), range, myFlushConfigCache);
+    return process.execute(command, (ignored, response) -> parseReformatResponse(response))
+                  .whenComplete((f, g) -> myFlushConfigCache = false);
   }
 
   @Nullable
@@ -152,14 +178,17 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     public final String content;
     public Integer start;
     public Integer end;
+    public final boolean flushConfigCache;
 
     public ReformatFileCommand(@NotNull String filePath,
                                @NotNull String prettierPath,
                                @NotNull String content,
-                               @Nullable TextRange range) {
-      path = filePath;
+                               @Nullable TextRange range, 
+                               boolean flushConfigCache) {
+      this.path = filePath;
       this.prettierPath = prettierPath;
       this.content = content;
+      this.flushConfigCache = flushConfigCache;
       if (range != null) {
         start = range.getStartOffset();
         end = range.getEndOffset();

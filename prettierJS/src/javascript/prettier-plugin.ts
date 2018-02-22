@@ -13,7 +13,8 @@ type FormatArguments = {
     end?: number,
     path: string,
     prettierPath: string,
-    content: string
+    content: string,
+    flushConfigCache: boolean
 }
 
 type SupportedFilesArguments = {
@@ -54,11 +55,7 @@ export class PrettierPlugin implements LanguagePlugin {
         let prettierApi = this.requirePrettierApi(args.prettierPath);
 
         try {
-            return {
-                formatted: performFormat(prettierApi, args.content, args.path,
-                    args.start,
-                    args.end)
-            }
+            return {formatted: performFormat(prettierApi, args)}
         }
         catch (e) {
             return {error: `${args.path}: ${e.stack && e.stack.length > 0 ? e.stack : e.message}`};
@@ -98,16 +95,19 @@ function flatten<T>(arr: T[][]): T[] {
     return arr.reduce((previousValue, currentValue) => previousValue.concat(currentValue))
 }
 
-function performFormat(api: PrettierApi, text: string, path: string, rangeStart?: number, rangeEnd?: number) {
-    let config = api.resolveConfig.sync(path, {useCache: false, editorconfig: true});
+function performFormat(api: PrettierApi, args: FormatArguments) {
+    if (args.flushConfigCache) {
+        api.clearConfigCache()
+    }
+    let config = api.resolveConfig.sync(args.path, {useCache: true, editorconfig: true});
     if (config == null) {
-        config = {filepath: path};
+        config = {filepath: args.path};
     }
     if (config.filepath == null) {
-        config.filepath = path
+        config.filepath = args.path
     }
-    
-    config.rangeStart = rangeStart;
-    config.rangeEnd = rangeEnd;
-    return api.format(text, config);
+
+    config.rangeStart = args.start;
+    config.rangeEnd = args.end;
+    return api.format(args.content, config);
 }

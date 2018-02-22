@@ -26,9 +26,7 @@ var PrettierPlugin = /** @class */ (function () {
     PrettierPlugin.prototype.handleReformatCommand = function (args) {
         var prettierApi = this.requirePrettierApi(args.prettierPath);
         try {
-            return {
-                formatted: performFormat(prettierApi, args.content, args.path, args.start, args.end)
-            };
+            return { formatted: performFormat(prettierApi, args) };
         }
         catch (e) {
             return { error: args.path + ": " + (e.stack && e.stack.length > 0 ? e.stack : e.message) };
@@ -65,15 +63,18 @@ function withoutPrefix(e, prefix) {
 function flatten(arr) {
     return arr.reduce(function (previousValue, currentValue) { return previousValue.concat(currentValue); });
 }
-function performFormat(api, text, path, rangeStart, rangeEnd) {
-    var config = api.resolveConfig.sync(path, { useCache: false, editorconfig: true });
+function performFormat(api, args) {
+    if (args.flushConfigCache) {
+        api.clearConfigCache();
+    }
+    var config = api.resolveConfig.sync(args.path, { useCache: true, editorconfig: true });
     if (config == null) {
-        config = { filepath: path };
+        config = { filepath: args.path };
     }
     if (config.filepath == null) {
-        config.filepath = path;
+        config.filepath = args.path;
     }
-    config.rangeStart = rangeStart;
-    config.rangeEnd = rangeEnd;
-    return api.format(text, config);
+    config.rangeStart = args.start;
+    config.rangeEnd = args.end;
+    return api.format(args.content, config);
 }
