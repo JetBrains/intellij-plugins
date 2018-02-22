@@ -115,9 +115,4 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
       }
     }
   }
-
-  @Override
-  protected JSType reapplyGenericsIfNeeded(int paramIndex, JSFunctionItem matchedFunction, JSExpression methodExpr, JSType itemType) {
-    return itemType;
-  }
 }
