@@ -8,11 +8,17 @@ import com.intellij.lang.javascript.linter.InstallNpmModules;
 import com.intellij.lang.javascript.linter.NodeLinterPackageTestPaths;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.util.containers.ContainerUtil;
 import org.apache.log4j.Level;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.junit.Assert;
 
 import java.util.Collections;
 
@@ -88,6 +94,10 @@ public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
     doReformatFile(".babelrc", "");
   }
 
+  public void testInvalidConfigErrorReported() {
+    assertError((s) -> s.contains("tabWidth"), () -> doReformatFile("js"));
+  }
+
   private void doReformatFile(final String extension) {
     doReformatFile("toReformat", extension);
   }
@@ -97,7 +107,19 @@ public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
     myFixture.copyDirectoryToProject(dirName, "");
     String extensionWithDot = StringUtil.isEmpty(extension) ? "" : "." + extension;
     myFixture.configureByFile(fileNamePrefix + extensionWithDot);
-    myFixture.testAction(new ReformatWithPrettierAction());
+    myFixture.testAction(new ReformatWithPrettierAction((new ReformatWithPrettierAction.ErrorHandler() {
+      @Override
+      public void showError(@NotNull Project project, @Nullable Editor editor, 
+                            @NotNull String text, @Nullable Runnable onLinkClick) {
+        throw new RuntimeException(text);
+      }
+
+      @Override
+      public void showErrorWithDetails(@NotNull Project project, @Nullable Editor editor,
+                                       @NotNull String text, @NotNull String details) {
+        throw new RuntimeException(text + " " + details);
+      }
+    })));
     myFixture.checkResultByFile(dirName + "/" + fileNamePrefix + "_after" + extensionWithDot);
   }
 
@@ -114,5 +136,16 @@ public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
     catch (Throwable throwable) {
       throw new RuntimeException(throwable);
     }
+  }
+
+  private static void assertError(Condition<String> checkException, Runnable runnable) {
+    try {
+      runnable.run();
+      Assert.fail("Expected exception but was none");
+    }
+    catch (Exception e) {
+      Assert.assertTrue("Expected condition to be valid for exception: " + e.getMessage(), checkException.value(e.getMessage()));
+    }
+
   }
 }
