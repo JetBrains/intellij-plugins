@@ -8,7 +8,9 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Consumer;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.concurrency.FixedFuture;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +21,9 @@ import java.util.concurrent.Future;
 import static com.intellij.lang.javascript.service.JSLanguageServiceQueue.LOGGER;
 
 public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implements PrettierLanguageService {
+  @Nullable
+  private volatile SupportedFilesInfo mySupportedFiles;
+
   public PrettierLanguageServiceImpl(@NotNull Project project) {
     super(project);
   }
@@ -33,16 +38,41 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     }
     return
       process.execute(new ReformatFileCommand(file.getVirtualFile().getPath(), prettierPackagePath, file.getText(), range),
-                      (ignored, response) -> parseResponse(response));
+                      (ignored, response) -> parseReformatResponse(response));
+  }
+
+  @Nullable
+  @Override
+  public SupportedFilesInfo getSupportedFiles() {
+    return mySupportedFiles;
+  }
+
+  @Override
+  @NotNull
+  public Future<Void> initSupportedFiles(@NotNull NodePackage prettierPackage) {
+    String prettierPackagePath = JSLanguageServiceUtil.normalizeNameAndPath(prettierPackage.getSystemDependentPath());
+    JSLanguageServiceQueue process = getProcess();
+    if (process == null || !process.isValid()) {
+      return new FixedFuture<>(null);
+    }
+    return process.execute(new GetSupportedFilesCommand(prettierPackagePath), (ignored, response) -> parseGetSupportedFilesResponse(response))
+                  .thenAccept((f) -> mySupportedFiles = f);
   }
 
   @NotNull
-  private static FormatResult parseResponse(JSLanguageServiceAnswer response) {
+  private static FormatResult parseReformatResponse(JSLanguageServiceAnswer response) {
     final String error = JsonUtil.getChildAsString(response.getElement(), "error");
     if (!StringUtil.isEmpty(error)) {
       return FormatResult.error(error);
     }
     return FormatResult.formatted(JsonUtil.getChildAsString(response.getElement(), "formatted"));
+  }
+
+  @NotNull
+  private static SupportedFilesInfo parseGetSupportedFilesResponse(@NotNull JSLanguageServiceAnswer response) {
+    return new SupportedFilesInfo(
+      ObjectUtils.coalesce(JsonUtil.getChildAsStringList(response.getElement(), "fileNames"), ContainerUtil.emptyList()),
+      ObjectUtils.coalesce(JsonUtil.getChildAsStringList(response.getElement(), "extensions"), ContainerUtil.emptyList()));
   }
 
   @Nullable
@@ -90,7 +120,33 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     }
   }
 
-  public static class ReformatFileCommand implements JSLanguageServiceObject, JSLanguageServiceSimpleCommand {
+  private static class GetSupportedFilesCommand implements JSLanguageServiceObject, JSLanguageServiceSimpleCommand {
+    public final String prettierPath;
+
+    private GetSupportedFilesCommand(String path) {
+      prettierPath = path;
+    }
+
+    @NotNull
+    @Override
+    public JSLanguageServiceObject toSerializableObject() {
+      return this;
+    }
+
+    @NotNull
+    @Override
+    public String getCommand() {
+      return "getSupportedFiles";
+    }
+
+    @Nullable
+    @Override
+    public String getPresentableText(@NotNull Project project) {
+      return "getSupportedFiles";
+    }
+  }
+
+  private static class ReformatFileCommand implements JSLanguageServiceObject, JSLanguageServiceSimpleCommand {
     public final String path;
     public final String prettierPath;
     public final String content;

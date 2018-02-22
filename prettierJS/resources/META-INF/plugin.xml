@@ -26,6 +26,7 @@
     <iconProvider implementation="com.intellij.prettierjs.config.PrettierConfigIconProvider"/>
     <editorNotificationProvider implementation="com.intellij.prettierjs.PrettierCodeStyleEditorNotificationProvider"/>
     <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierCompatibleCodeStyleInstaller"/>
+    <postStartupActivity implementation="com.intellij.prettierjs.PrettierStartupActivity"/>
   </extensions>
   <actions>
     <action id="ReformatWithPrettierAction"
