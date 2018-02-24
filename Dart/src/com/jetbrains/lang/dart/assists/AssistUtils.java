@@ -98,8 +98,19 @@ public class AssistUtils {
         }
       }
 
-      if (withLinkedEdits && sourceEditInfos != null) {
-        runLinkedEdits(project, sourceChange, linkedEditTarget, sourceEditInfos);
+      if (withLinkedEdits) {
+        if (sourceEditInfos != null) {
+          runLinkedEdits(project, sourceChange, linkedEditTarget, sourceEditInfos);
+        }
+        else if (sourceChange.getSelection() != null) {
+          final Position selection = sourceChange.getSelection();
+          final VirtualFile file = findVirtualFile(selection.getFile());
+          if (file != null) {
+            int offset = selection.getOffset();
+            offset = DartAnalysisServerService.getInstance(project).getConvertedOffset(file, offset);
+            navigate(project, file, offset);
+          }
+        }
       }
     }, sourceChange.getMessage(), null);
   }
@@ -182,7 +193,7 @@ public class AssistUtils {
       if (!positions.isEmpty()) {
         final Position position = positions.get(0);
         // find VirtualFile
-        VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(position.getFile()));
+        VirtualFile virtualFile = findVirtualFile(position.getFile());
         if (virtualFile == null) {
           return null;
         }
@@ -240,7 +251,13 @@ public class AssistUtils {
 
   @Nullable
   public static VirtualFile findVirtualFile(@NotNull final SourceFileEdit fileEdit) {
-    return LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(fileEdit.getFile()));
+    final String path = fileEdit.getFile();
+    return findVirtualFile(path);
+  }
+
+  @Nullable
+  public static VirtualFile findVirtualFile(@NotNull final String path) {
+    return LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(path));
   }
 
   private static boolean isInContent(@NotNull Project project, @NotNull VirtualFile file) {
