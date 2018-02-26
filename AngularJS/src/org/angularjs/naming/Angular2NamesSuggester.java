@@ -93,7 +93,7 @@ public class Angular2NamesSuggester implements JSNamesSuggester {
 
   @Nullable
   @Override
-  public String suggestFileName(JSClass jsClass) {
+  public String suggestFileName(@NotNull JSClass jsClass) {
     PsiFile file = jsClass.getContainingFile();
     if (file == null) return null;
 
