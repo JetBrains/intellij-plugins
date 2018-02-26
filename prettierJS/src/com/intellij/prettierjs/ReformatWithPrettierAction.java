@@ -116,14 +116,14 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
     catch (ExecutionException e1) {
       myErrorHandler.showError(project, editor, PrettierBundle.message("error.invalid.interpreter"),
-                () -> editSettings(project, e.getDataContext()));
+                () -> editSettings(project));
       return;
     }
 
     NodePackage nodePackage = configuration.getOrDetectNodePackage();
     if (nodePackage == null || nodePackage.isEmptyPath()) {
       myErrorHandler.showError(project, editor, PrettierBundle.message("error.no.valid.package"),
-                () -> editSettings(project, e.getDataContext()));
+                () -> editSettings(project));
       return;
     }
     if (!nodePackage.isValid()) {
@@ -312,15 +312,8 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     JsqtProcessOutputViewer.show(project, PrettierUtil.PACKAGE_NAME, PrettierUtil.ICON, null, null, output);
   }
 
-  private static void editSettings(@NotNull Project project, @NotNull DataContext dataContext) {
-    PrettierConfigurable configurable = new PrettierConfigurable(project);
-    Settings settings = Settings.KEY.getData(dataContext);
-    if (settings == null) {
-      configurable.showEditDialog();
-    }
-    else {
-      settings.select(settings.find(configurable.getId()));
-    }
+  private static void editSettings(@NotNull Project project) {
+    new PrettierConfigurable(project).showEditDialog();
   }
 
   private static boolean isAcceptableFile(@Nullable PsiFile file, @NotNull NodePackage nodePackage) {
