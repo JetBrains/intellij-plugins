@@ -19,6 +19,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiReference;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.XSourcePosition;
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess;
@@ -65,6 +66,12 @@ class MotionDebuggerTypesHelper extends CidrDebuggerTypesHelper {
     return item;
   }
 
+  @Nullable
+  @Override
+  protected PsiReference createReferenceFromText(@NotNull LLValue var, @NotNull PsiElement context) {
+    return null;
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -75,7 +82,7 @@ class MotionDebuggerTypesHelper extends CidrDebuggerTypesHelper {
   }
 
   @Override
-  public XSourcePosition computeSourcePosition(CidrMemberValue value) {
+  public XSourcePosition computeSourcePosition(@NotNull CidrMemberValue value) {
     return null;
   }
 

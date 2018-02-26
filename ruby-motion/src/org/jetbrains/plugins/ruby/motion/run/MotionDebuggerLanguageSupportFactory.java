@@ -48,7 +48,7 @@ public class MotionDebuggerLanguageSupportFactory extends CidrDebuggerLanguageSu
 
   @Nullable
   @Override
-  public XDebuggerEditorsProvider createEditor(XBreakpoint<? extends XBreakpointProperties> breakpoint) {
+  public XDebuggerEditorsProvider createEditor(@NotNull XBreakpoint<? extends XBreakpointProperties> breakpoint) {
     if (breakpoint instanceof XLineBreakpoint) {
       final String extension = FileUtilRt.getExtension(((XLineBreakpoint)breakpoint).getShortFilePath());
       if (FileTypeManager.getInstance().getFileTypeByExtension(extension) == RubyFileType.RUBY) {
@@ -58,14 +58,20 @@ public class MotionDebuggerLanguageSupportFactory extends CidrDebuggerLanguageSu
     return null;
   }
 
+  @NotNull
   @Override
-  public CidrDebuggerTypesHelper createTypesHelper(CidrDebugProcess process) {
+  protected CidrDebuggerTypesHelper createTypesHelper(@NotNull CidrDebugProcess process) {
     return new MotionDebuggerTypesHelper(process);
   }
 
   @Nullable
   @Override
-  public CidrEvaluator createEvaluator(@NotNull CidrStackFrame frame) {
+  protected CidrEvaluator createEvaluator(@NotNull CidrStackFrame frame) {
     return null;
+  }
+
+  @Override
+  protected boolean isFrameLanguageReliable(@Nullable RunProfile profile) {
+    return !(profile instanceof AbstractRubyRunConfiguration);
   }
 }
