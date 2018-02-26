@@ -45,7 +45,7 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
                                                              private val listener: VueRunningGeneratorListener,
                                                              parentDisposable: Disposable): Disposable {
   // checked in disposed condition
-  @Volatile private var state: VueProjectCreationState = VueProjectCreationState.Init
+  @Volatile private var state: VueProjectCreationState = VueProjectCreationState.Starting
   private var currentQuestion: VueCreateProjectProcess.Question? = null
   private var process: VueCreateProjectProcess? = null
   private var questionUi: VueCliGeneratorQuestioningPanel? = null
@@ -70,20 +70,21 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
           if (state != VueProjectCreationState.Process) return@Runnable
 
           val processState = process!!.getState()
-          if (VueCreateProjectProcess.ProcessState.Error == processState.processState) {
+          if (VueProjectCreationState.Error == processState.processState) {
             questionUi!!.error()
             listener.error(processState.globalProblem)
             state = VueProjectCreationState.Error
             process!!.listener = null
             process!!.cancel()
-          } else if (VueCreateProjectProcess.ProcessState.QuestionsFinished == processState.processState) {
+          } else if (VueProjectCreationState.QuestionsFinished == processState.processState ||
+                     VueProjectCreationState.Finished == processState.processState) {
             state = VueProjectCreationState.QuestionsFinished
             listener.finishedQuestionsCloseUI(
               { project ->
                 val doneCallback = PackageJsonDependenciesExternalUpdateManager.getInstance(project).externalUpdateStarted(null, null)
                 StartupManager.getInstance(project).runWhenProjectIsInitialized { createListeningProgress(project, doneCallback) }
               })
-          } else if (VueCreateProjectProcess.ProcessState.Working == processState.processState) {
+          } else if (VueProjectCreationState.Process == processState.processState) {
             currentQuestion = processState.question
             val error = processState.question?.validationError
             if (error != null) {
@@ -129,6 +130,7 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
   }
 
   fun onNext() {
+    @Suppress("CascadeIf")
     if (state == VueProjectCreationState.Process) {
       // we do not control Next button in the wizard so good by now - just skip it
       //assert(false, { "should be waiting for process" })

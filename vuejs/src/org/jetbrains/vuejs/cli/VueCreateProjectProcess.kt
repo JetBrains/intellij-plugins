@@ -59,7 +59,7 @@ class VueCreateProjectProcess(private val folder: Path,
   private val processHandlerRef = AtomicReference<KillableProcessHandler>()
   private val questionRef = AtomicReference<Question>()
   @Volatile private var error: String? = null
-  @Volatile var processState = ProcessState.Starting
+  @Volatile private var processState = VueProjectCreationState.Starting
 
   private val serverDisposer = Disposable {}
   private val rpcServer: JsonRpcServer
@@ -73,12 +73,12 @@ class VueCreateProjectProcess(private val folder: Path,
     rpcServer.registerDomain(DOMAIN, NotNullLazyValue.createConstantValue(object {
       @Suppress("unused")
       fun question(serializedObject: String, validationError: String?) {
-        processState = ProcessState.Working
+        processState = VueProjectCreationState.Process
         val question = deserializeQuestion(serializedObject, validationError)
         if (question == null) {
           LOG.info("Vue Create Project: Can not parse question: " + serializedObject)
           error = "Can not parse question: " + serializedObject
-          processState = ProcessState.Error
+          processState = VueProjectCreationState.Error
           listener?.invoke()
           return
         }
@@ -89,14 +89,14 @@ class VueCreateProjectProcess(private val folder: Path,
       @Suppress("unused")
       fun error(message: String) {
         error = message
-        processState = ProcessState.Error
+        processState = VueProjectCreationState.Error
         listener?.invoke()
       }
 
       @Suppress("unused")
       fun questionsFinished() {
         logProgress("questions finished")
-        processState = ProcessState.QuestionsFinished
+        processState = VueProjectCreationState.QuestionsFinished
         sendCancel()
         Disposer.dispose(serverDisposer)
         listener?.invoke()
@@ -203,9 +203,9 @@ class VueCreateProjectProcess(private val folder: Path,
     processHandler.addProcessListener(object : ProcessAdapter() {
       override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
         val isError = ProcessOutputType.isStderr(outputType)
-        if (processState == ProcessState.Starting && isError) {
+        if (processState == VueProjectCreationState.Starting && isError) {
           error = event.text
-          processState = ProcessState.Error
+          processState = VueProjectCreationState.Error
           listener?.invoke()
         }
         if (event.text.any { Character.isLetter(it) }) {
@@ -215,7 +215,7 @@ class VueCreateProjectProcess(private val folder: Path,
       }
 
       override fun processTerminated(event: ProcessEvent) {
-        processState = ProcessState.Finished
+        processState = VueProjectCreationState.Finished
         listener?.invoke()
         Disposer.dispose(this@VueCreateProjectProcess)
       }
@@ -224,7 +224,7 @@ class VueCreateProjectProcess(private val folder: Path,
 
   private fun reportError(message: String?): Nothing? {
     error = message
-    processState = ProcessState.Error
+    processState = VueProjectCreationState.Error
     listener?.invoke()
     return null
   }
@@ -252,12 +252,14 @@ class VueCreateProjectProcess(private val folder: Path,
 
   fun getState(): State {
     val currentProcessState = processState
-    if (ProcessState.Starting == currentProcessState || ProcessState.Finished == currentProcessState)
+
+    assert(currentProcessState != VueProjectCreationState.User)
+
+    if (VueProjectCreationState.Starting == currentProcessState ||
+        VueProjectCreationState.Finished == currentProcessState ||
+        VueProjectCreationState.QuestionsFinished == currentProcessState)
       return VueCreateProjectProcess.State(currentProcessState, null, null)
-    if (ProcessState.QuestionsFinished == currentProcessState) {
-      return VueCreateProjectProcess.State(currentProcessState, null, null)
-    }
-    if (ProcessState.Error == currentProcessState) return State(currentProcessState, error, null)
+    if (VueProjectCreationState.Error == currentProcessState) return State(currentProcessState, error, null)
     return State(currentProcessState, null, questionRef.get())
   }
 
@@ -287,22 +289,18 @@ class VueCreateProjectProcess(private val folder: Path,
   }
 
   private fun stopProcess() {
-    if (processState != ProcessState.QuestionsFinished && processState != ProcessState.Finished) {
+    if (processState != VueProjectCreationState.QuestionsFinished && processState != VueProjectCreationState.Finished) {
       val handler = processHandlerRef.get()
       handler?.destroyProcess()
-      processState = ProcessState.Finished
+      processState = VueProjectCreationState.Finished
     }
   }
 
-  class State(val processState: ProcessState, val globalProblem: String?, val question: Question?)
+  class State(val processState: VueProjectCreationState, val globalProblem: String?, val question: Question?)
 
   class Question(val type: QuestionType, val message: String, val defaultVal: String, val choices: List<Choice>, val validationError: String?)
 
   class Choice(val name: String, val value: String)
-
-  enum class ProcessState {
-    Starting, Error, Working, QuestionsFinished, Finished
-  }
 
   enum class QuestionType {
     Input, Confirm, List, Checkbox;
@@ -317,4 +315,8 @@ class VueCreateProjectProcess(private val folder: Path,
       }
     }
   }
+}
+
+enum class VueProjectCreationState {
+  Starting, Process, User, Error, QuestionsFinished, Finished
 }
