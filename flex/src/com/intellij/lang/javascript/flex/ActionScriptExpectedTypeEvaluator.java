@@ -10,6 +10,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.lang.javascript.psi.types.JSTypeSource.EMPTY;
+import static com.intellij.openapi.util.text.StringUtil.notNullize;
+
 /**
  * @author yole
  */
@@ -39,14 +42,18 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
     PsiElement element = JSResolveUtil.findParent(fun);
 
     JSType classType = element instanceof JSClass ?
-                       JSNamedType.createType(((JSClass)element).getQualifiedName(), JSTypeSource.EMPTY, JSContext.INSTANCE) :
+                       JSNamedTypeFactory.createType(notNullize(((JSClass)element).getQualifiedName()), EMPTY, JSContext.INSTANCE) :
                        null;
     if (classType != null && JSTypeUtils.isActionScriptVectorType(classType)) {
       String name = fun.getName();
       JSType qualifiedExpressionType = null;
 
-      JSExpression methodExpression =
-        ((JSCallExpression)JSTypeUtils.getScopeInOriginalTree(myGrandParent).getParent()).getMethodExpression();
+      PsiElement originalElement = JSTypeUtils.getScopeInOriginalTree(myGrandParent);
+      if (originalElement == null) return;
+      PsiElement originalElementParent = originalElement.getParent();
+      if (!(originalElementParent instanceof JSCallExpression)) return;
+      
+      JSExpression methodExpression = ((JSCallExpression)originalElementParent).getMethodExpression();
       if (methodExpression instanceof JSReferenceExpression) {
         JSExpression qualifier = ((JSReferenceExpression)methodExpression).getQualifier();
         if (qualifier != null) {
