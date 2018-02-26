@@ -1,12 +1,9 @@
 package com.intellij.prettierjs;
 
-import com.intellij.ProjectTopics;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.service.*;
 import com.intellij.lang.javascript.service.protocol.*;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootEvent;
-import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -42,13 +39,6 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
             myFlushConfigCache = true;
           }
         }
-      }
-    });
-
-    project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
-      @Override
-      public void rootsChanged(ModuleRootEvent event) {
-        myFlushConfigCache = true;
       }
     });
   }
