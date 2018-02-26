@@ -22,7 +22,6 @@ import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.impl.welcomeScreen.AbstractActionWithPanel
 import com.intellij.platform.DirectoryProjectGenerator
@@ -47,7 +46,7 @@ class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Set
                                CustomStepProjectGenerator<NpmPackageProjectGenerator.Settings>,
                                HideableProjectGenerator {
 
-  override fun isHidden() = !Registry.`is`("webstorm.vue.project.generator", false)
+  override fun isHidden() = false
 
   override fun createStep(projectGenerator: DirectoryProjectGenerator<NpmPackageProjectGenerator.Settings>?,
                           callback: AbstractNewProjectStep.AbstractCallback<NpmPackageProjectGenerator.Settings>?): AbstractActionWithPanel {
