@@ -1,4 +1,4 @@
-package org.angularjs.codeInsight;
+package org.angularjs.refactoring;
 
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -16,7 +16,7 @@ public class RenameTest extends LightPlatformCodeInsightFixtureTestCase {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "rename";
   }
 
-  public void testRenameClassFromStringUsage() throws IOException {
+  public void testRenameComponentFromStringUsage() throws IOException {
     JSTestUtils.testES6(getProject(), () -> doMultiFileTest("test.component.html", "newName"));
   }
 
