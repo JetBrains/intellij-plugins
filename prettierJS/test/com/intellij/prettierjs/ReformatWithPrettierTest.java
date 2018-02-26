@@ -36,8 +36,6 @@ public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
     NodeJsInterpreterManager.getInstance(myFixture.getProject()).setInterpreterRef(interpreter.toRef());
     NodePackage nodePackage = new NodePackage(myTestPackagePaths.getPackagePath().toString());
     PrettierConfiguration.getInstance(getProject()).update(interpreter, nodePackage);
-    PrettierLanguageServiceImpl languageService = PrettierLanguageService.getInstance(getProject());
-    JSLanguageServiceUtil.awaitLanguageService(languageService.initSupportedFiles(nodePackage), languageService);
     boolean debug = JSLanguageServiceQueue.LOGGER.isDebugEnabled();
     JSLanguageServiceQueue.LOGGER.setLevel(Level.TRACE);
     Disposer.register(getTestRootDisposable(),

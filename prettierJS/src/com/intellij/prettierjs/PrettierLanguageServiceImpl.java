@@ -41,22 +41,17 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
                       (ignored, response) -> parseReformatResponse(response));
   }
 
-  @Nullable
-  @Override
-  public SupportedFilesInfo getSupportedFiles() {
-    return mySupportedFiles;
-  }
 
   @Override
-  @NotNull
-  public Future<Void> initSupportedFiles(@NotNull NodePackage prettierPackage) {
+  @Nullable
+  public Future<SupportedFilesInfo> getSupportedFiles(@NotNull NodePackage prettierPackage) {
     String prettierPackagePath = JSLanguageServiceUtil.normalizeNameAndPath(prettierPackage.getSystemDependentPath());
     JSLanguageServiceQueue process = getProcess();
     if (process == null || !process.isValid()) {
       return new FixedFuture<>(null);
     }
-    return process.execute(new GetSupportedFilesCommand(prettierPackagePath), (ignored, response) -> parseGetSupportedFilesResponse(response))
-                  .thenAccept((f) -> mySupportedFiles = f);
+    return process.execute(new GetSupportedFilesCommand(prettierPackagePath), 
+                           (ignored, response) -> parseGetSupportedFilesResponse(response));
   }
 
   @NotNull
