@@ -1753,7 +1753,8 @@ public class DartAnalysisServerService implements Disposable {
                     final DartProblemsView problemsView = DartProblemsView.getInstance(myProject);
                     problemsView.showErrorNotificationTerse("Analysis server has terminated");
                   },
-                  ModalityState.NON_MODAL
+                  ModalityState.NON_MODAL,
+                  myProject.getDisposed()
                 );
 
                 stopServer();
@@ -1774,7 +1775,8 @@ public class DartAnalysisServerService implements Disposable {
             final DartProblemsView problemsView = DartProblemsView.getInstance(myProject);
             problemsView.clearNotifications();
           },
-          ModalityState.NON_MODAL
+          ModalityState.NON_MODAL,
+          myProject.getDisposed()
         );
 
         // This must be done after myServer is set, and should be done each time the server starts.
