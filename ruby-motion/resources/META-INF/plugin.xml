@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
   <name>RubyMotion support</name>
   <id>org.jetbrains.plugins.ruby.motion</id>
   <description><![CDATA[
@@ -9,6 +9,9 @@
 
   <depends>com.intellij.modules.ultimate</depends>
   <depends>com.intellij.modules.ruby</depends>
+
+  <xi:include href="/META-INF/CocoaCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/CidrDebuggerPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceInterface="org.jetbrains.plugins.ruby.motion.RubyMotionUtil"
