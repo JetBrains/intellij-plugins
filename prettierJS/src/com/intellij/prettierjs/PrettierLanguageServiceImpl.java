@@ -24,13 +24,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import static com.intellij.lang.javascript.service.JSLanguageServiceQueue.LOGGER;
 
 public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implements PrettierLanguageService {
-  @Nullable
-  private volatile SupportedFilesInfo mySupportedFiles;
   private volatile boolean myFlushConfigCache;
 
   public PrettierLanguageServiceImpl(@NotNull Project project) {
@@ -54,7 +53,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     });
   }
 
-  @NotNull
+  @Nullable
   @Override
   public Future<FormatResult> format(@NotNull PsiFile file, @NotNull NodePackage prettierPackage, @Nullable TextRange range) {
     String prettierPackagePath = JSLanguageServiceUtil.normalizeNameAndPath(prettierPackage.getSystemDependentPath());
@@ -62,27 +61,26 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     if (process == null || !process.isValid()) {
       return new FixedFuture<>(FormatResult.error(PrettierBundle.message("service.not.started.message")));
     }
-    ReformatFileCommand command = new ReformatFileCommand(file.getVirtualFile().getPath(), prettierPackagePath, file.getText(), range, myFlushConfigCache);
-    return process.execute(command, (ignored, response) -> parseReformatResponse(response))
-                  .whenComplete((f, g) -> myFlushConfigCache = false);
+    ReformatFileCommand command =
+      new ReformatFileCommand(file.getVirtualFile().getPath(), prettierPackagePath, file.getText(), range, myFlushConfigCache);
+    CompletableFuture<FormatResult> future = process.execute(command, (ignored, response) -> parseReformatResponse(response));
+    if (future == null) {
+      return null;
+    }
+    return future.whenComplete((f, g) -> myFlushConfigCache = false);
   }
 
+
+  @Override
   @Nullable
-  @Override
-  public SupportedFilesInfo getSupportedFiles() {
-    return mySupportedFiles;
-  }
-
-  @Override
-  @NotNull
-  public Future<Void> initSupportedFiles(@NotNull NodePackage prettierPackage) {
+  public Future<SupportedFilesInfo> getSupportedFiles(@NotNull NodePackage prettierPackage) {
     String prettierPackagePath = JSLanguageServiceUtil.normalizeNameAndPath(prettierPackage.getSystemDependentPath());
     JSLanguageServiceQueue process = getProcess();
     if (process == null || !process.isValid()) {
       return new FixedFuture<>(null);
     }
-    return process.execute(new GetSupportedFilesCommand(prettierPackagePath), (ignored, response) -> parseGetSupportedFilesResponse(response))
-                  .thenAccept((f) -> mySupportedFiles = f);
+    return process.execute(new GetSupportedFilesCommand(prettierPackagePath), 
+                           (ignored, response) -> parseGetSupportedFilesResponse(response));
   }
 
   @NotNull
