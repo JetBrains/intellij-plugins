@@ -17,19 +17,9 @@ import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.openapi.module.WebModuleBuilder
 import com.intellij.platform.ProjectTemplate
 import com.intellij.platform.ProjectTemplatesFactory
-import icons.VuejsIcons
-import javax.swing.Icon
 
 class VueTemplateFactory : ProjectTemplatesFactory() {
-  override fun getGroups() = arrayOf("Vue.js")
-
-  override fun getGroupIcon(group: String?): Icon {
-    return VuejsIcons.Vue
-  }
-
-  override fun getParentGroup(group: String?): String {
-    return WebModuleBuilder.GROUP_NAME
-  }
+  override fun getGroups() = arrayOf(WebModuleBuilder.GROUP_NAME)
 
   override fun createTemplates(group: String?, context: WizardContext): Array<ProjectTemplate> {
     return arrayOf(VueCliProjectGenerator())
