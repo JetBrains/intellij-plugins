@@ -51,8 +51,6 @@ import javax.swing.*
 class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmPackageProjectGenerator.Settings>?,
                                 callback: AbstractNewProjectStep.AbstractCallback<NpmPackageProjectGenerator.Settings>?)
   : ProjectSettingsStepBase<NpmPackageProjectGenerator.Settings>(projectGenerator, callback) {
-  // checked in disposed condition
-  @Volatile private var state: VueProjectCreationState = VueProjectCreationState.Init
   private var process: VueCreateProjectProcess? = null
 
   override fun createPanel(): JPanel {
@@ -132,7 +130,6 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
   private fun onError(errorText: String) {
     setErrorText("Error: " + errorText)
     myCreateButton.text = "Close"
-    state = VueProjectCreationState.Error
     myCreateButton.isEnabled = true
     if (process != null) {
       process!!.listener = null
@@ -296,8 +293,4 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
   fun waitForNextQuestion() {
     UIUtil.setEnabled(panel, false, true)
   }
-}
-
-enum class VueProjectCreationState {
-  Init, Process, User, Error, QuestionsFinished
 }
