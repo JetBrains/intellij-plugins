@@ -13,13 +13,7 @@ public class PrettierStartupActivity implements StartupActivity {
     Application application = ApplicationManager.getApplication();
 
     if (!application.isUnitTestMode()) {
-      application.executeOnPooledThread(() -> {
-        NodePackage nodePackage = PrettierConfiguration.getInstance(project).getOrDetectNodePackage();
-
-        if (nodePackage != null && !nodePackage.isEmptyPath() && nodePackage.isValid()) {
-          PrettierLanguageService.getInstance(project).initSupportedFiles(nodePackage);
-        }
-      });
+      application.executeOnPooledThread(() -> application.runReadAction(() -> PrettierConfiguration.getInstance(project).detectPackage()));
     }
   }
 }

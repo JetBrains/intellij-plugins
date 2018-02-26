@@ -79,11 +79,7 @@ public class PrettierConfigurable implements SearchableConfigurable {
   public void apply() {
     NodePackage selectedPackage = myPackageField.getSelected();
     PrettierConfiguration.getInstance(myProject).update(myNodeInterpreterField.getInterpreter(), selectedPackage);
-    PrettierLanguageServiceImpl service = PrettierLanguageService.getInstance(myProject);
-    service.terminateStartedProcess(false);
-    if (!selectedPackage.isEmptyPath() && selectedPackage.isValid()) {
-      service.initSupportedFiles(selectedPackage);
-    }
+    PrettierLanguageService.getInstance(myProject).terminateStartedProcess(false);
   }
 
   public static class Provider extends ConfigurableProvider {

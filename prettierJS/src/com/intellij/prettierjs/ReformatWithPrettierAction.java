@@ -87,13 +87,16 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   }
 
   private static boolean isAcceptableFileContext(@NotNull AnActionEvent e, @NotNull Project project) {
+    NodePackage nodePackage = PrettierConfiguration.getInstance(project).getPackage();
+    if (nodePackage == null || nodePackage.isEmptyPath() || !nodePackage.isValid()) {
+      return false;
+    }
     Editor editor = e.getData(CommonDataKeys.EDITOR);
-    if (editor != null && isAcceptableFile(e.getData(CommonDataKeys.PSI_FILE))) {
+    if (editor != null) {
       return true;
     }
     VirtualFile[] virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
-    return !ArrayUtil.isEmpty(virtualFiles) 
-           && ContainerUtil.or(virtualFiles, v -> v.isDirectory() || isAcceptableFile(v, project));
+    return !ArrayUtil.isEmpty(virtualFiles);
   }
 
   @Override
@@ -164,7 +167,13 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     FileDocumentManager.getInstance().saveAllDocuments();
     PrettierLanguageService.FormatResult result = ProgressManager
       .getInstance()
-      .runProcessWithProgressSynchronously(() -> processFileWithService(file, nodePackage, range),
+      .runProcessWithProgressSynchronously(() -> {
+                                             if (!isAcceptableFile(file, nodePackage)) {
+                                               myErrorHandler.showError(project, editor, PrettierBundle.message("not.supported.file", file.getName()), null);
+                                               return null;
+                                             }
+                                             return processFileWithService(file, nodePackage, range);
+                                           },
                                            PrettierBundle.message("progress.title"), true, project);
     if (result == null) {
       return;
@@ -195,22 +204,28 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       if (psiDirectory == null) {
         return;
       }
-      processFileIterator(project, new FileTreeIterator(psiDirectory), nodePackage);
+      processFileIterator(project, new FileTreeIterator(psiDirectory), nodePackage, false);
     }
     else {
-      processFileIterator(project, new FileTreeIterator(PsiUtilCore.toPsiFiles(psiManager, Arrays.asList(virtualFiles))), nodePackage);
+      processFileIterator(project, new FileTreeIterator(PsiUtilCore.toPsiFiles(psiManager, Arrays.asList(virtualFiles))), 
+                          nodePackage, true);
     }
   }
 
   private void processFileIterator(@NotNull Project project,
-                                          @NotNull final FileTreeIterator fileIterator,
-                                          @NotNull NodePackage nodePackage) {
+                                   @NotNull final FileTreeIterator fileIterator,
+                                   @NotNull NodePackage nodePackage, 
+                                   boolean reportUnsupported) {
     Map<PsiFile, PrettierLanguageService.FormatResult> results = executeUnderProgress(project, indicator -> {
       Map<PsiFile, PrettierLanguageService.FormatResult> reformattedResults = new HashMap<>();
 
       while (fileIterator.hasNext()) {
         PsiFile currentFile = ReadAction.compute(() -> fileIterator.next());
-        if (!isAcceptableFile(currentFile)) {
+        if (!isAcceptableFile(currentFile, nodePackage)) {
+          if (reportUnsupported) {
+            reformattedResults.put(currentFile,
+                                   PrettierLanguageService.FormatResult.error(PrettierBundle.message("not.supported.file", currentFile.getName())));
+          }
           continue;
         }
         indicator.setText("Processing " + currentFile.getName());
@@ -308,15 +323,11 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
   }
 
-  private static boolean isAcceptableFile(@NotNull VirtualFile file, @NotNull Project project) {
-    return isDetectedAcceptableFile(file, project) || isDefaultAcceptableFile(PsiManager.getInstance(project).findFile(file));
-  }
-
-  private static boolean isAcceptableFile(@Nullable PsiFile file) {
+  private static boolean isAcceptableFile(@Nullable PsiFile file, @NotNull NodePackage nodePackage) {
     if (file == null || (!file.isPhysical())) {
       return false;
     }
-    return isDetectedAcceptableFile(file.getVirtualFile(), file.getProject()) || isDefaultAcceptableFile(file);
+    return isDetectedAcceptableFile(file.getVirtualFile(), file.getProject(), nodePackage) || isDefaultAcceptableFile(file);
   }
 
   private static boolean isDefaultAcceptableFile(@Nullable PsiFile file) {
@@ -331,11 +342,14 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     return false;
   }
 
-  private static boolean isDetectedAcceptableFile(@Nullable VirtualFile virtualFile, @NotNull Project project) {
+  private static boolean isDetectedAcceptableFile(@Nullable VirtualFile virtualFile,
+                                                  @NotNull Project project,
+                                                  @NotNull NodePackage nodePackage) {
     if (virtualFile == null) {
       return false;
     }
-    PrettierLanguageService.SupportedFilesInfo supportedFiles = PrettierLanguageService.getInstance(project).getSupportedFiles();
+    PrettierLanguageServiceImpl languageService = PrettierLanguageService.getInstance(project);
+    PrettierLanguageService.SupportedFilesInfo supportedFiles = JSLanguageServiceUtil.awaitFuture(languageService.getSupportedFiles(nodePackage), REQUEST_TIMEOUT);
     if (supportedFiles != null) {
       
       String nameWithoutExtension = virtualFile.getNameWithoutExtension();

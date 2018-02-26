@@ -12,17 +12,11 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 public interface PrettierLanguageService {
-  @NotNull
+  @Nullable
   Future<FormatResult> format(@NotNull PsiFile file, @NotNull NodePackage prettierPackage, @Nullable TextRange range);
 
-  /**
-   * returns null if service not started or initSupportedFiles not called
-   */
   @Nullable
-  SupportedFilesInfo getSupportedFiles();
-
-  @NotNull
-  Future<Void> initSupportedFiles(NodePackage prettierPackage);
+  Future<SupportedFilesInfo> getSupportedFiles(@NotNull NodePackage prettierPackage);
 
   @NotNull
   static PrettierLanguageServiceImpl getInstance(@NotNull Project project) {

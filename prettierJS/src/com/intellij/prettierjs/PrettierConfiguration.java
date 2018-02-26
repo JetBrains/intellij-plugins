@@ -4,15 +4,12 @@ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.javascript.nodejs.util.JSLinterPackage;
 import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.components.State;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@State(name = "PrettierConfiguration")
-public class PrettierConfiguration implements PersistentStateComponent<PrettierConfiguration.State> {
+public class PrettierConfiguration {
   @NotNull
   private final JSLinterPackage myPackage;
 
@@ -27,7 +24,7 @@ public class PrettierConfiguration implements PersistentStateComponent<PrettierC
 
   @NotNull
   public NodeJsInterpreterRef getOrDetectInterpreterRef() {
-    myPackage.readOrDetect();
+    detectPackage();
     return getInterpreterRef();
   }
 
@@ -43,14 +40,8 @@ public class PrettierConfiguration implements PersistentStateComponent<PrettierC
 
   @Nullable
   public NodePackage getOrDetectNodePackage() {
-    myPackage.readOrDetect();
+    detectPackage();
     return getPackage();
-  }
-
-  @Nullable
-  @Override
-  public PrettierConfiguration.State getState() {
-    return null;
   }
 
   public void update(@Nullable NodeJsInterpreter nodeInterpreter, @Nullable NodePackage nodePackage) {
@@ -58,11 +49,7 @@ public class PrettierConfiguration implements PersistentStateComponent<PrettierC
                     nodePackage != null ? nodePackage.getSystemDependentPath() : null);
   }
 
-  @Override
-  public void loadState(@NotNull PrettierConfiguration.State state) {
+  public void detectPackage() {
     myPackage.readOrDetect();
-  }
-
-  public static class State {
   }
 }
