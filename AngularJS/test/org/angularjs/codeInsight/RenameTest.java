@@ -21,18 +21,33 @@ public class RenameTest extends LightPlatformCodeInsightFixtureTestCase {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "rename";
   }
 
+  @Override
+  protected void tearDown() throws Exception {
+    try {
+      Messages.setTestDialog(TestDialog.DEFAULT);
+    }
+    finally {
+      super.tearDown();
+    }
+  }
+
   public void testRenameComponentFromStringUsage() throws IOException {
     doMultiFileTest("test.component.html", "newName");
   }
 
   public void testComponentWithContainingFile() throws Exception {
-    try {
-      Messages.setTestDialog(TestDialog.OK);
-      doMultiFileTest("foo-bar.component.ts", "NewNameComponent");
-    }
-    finally {
-      Messages.setTestDialog(TestDialog.DEFAULT);
-    }
+    Messages.setTestDialog(TestDialog.OK);
+    doMultiFileTest("foo-bar.component.ts", "NewNameComponent");
+  }
+
+  public void testComponentToNonComponentName() throws IOException {
+    Messages.setTestDialog(TestDialog.OK);
+    doMultiFileTest("foo-bar.component.ts", "NewNameSomething");
+  }
+
+  public void testModuleToNameWithoutPrefix() throws IOException {
+    Messages.setTestDialog(TestDialog.OK);
+    doMultiFileTest("foo.module.ts", "Module");
   }
 
   private void doMultiFileTest(String mainFile, String newName) throws IOException {

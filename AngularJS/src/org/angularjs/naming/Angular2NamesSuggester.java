@@ -29,10 +29,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class Angular2NamesSuggester implements JSNamesSuggester {
   private static final HashMap<String, String> AngularDecoratorEntityMap = ContainerUtil.newHashMap();
@@ -43,6 +40,7 @@ public class Angular2NamesSuggester implements JSNamesSuggester {
     AngularDecoratorEntityMap.put("Directive", "Directive");
     AngularDecoratorEntityMap.put("NgModule", "Module");
     AngularDecoratorEntityMap.put("Injectable", "Service");
+    AngularDecoratorEntityMap.put("Pipe", "Pipe");
   }
 
   @Nullable
@@ -87,17 +85,14 @@ public class Angular2NamesSuggester implements JSNamesSuggester {
       return null;
     }
 
-    for (Map.Entry<String, String> entity: AngularDecoratorEntityMap.entrySet()) {
-      if (entity.getKey().equals(referenceName)) {
-        String value = entity.getValue();
-        String name = newElementName;
-        if (StringUtil.endsWith(newElementName, value)) {
-          name = newElementName.substring(0, newElementName.length() - value.length());
-        }
-
+    String entityName = AngularDecoratorEntityMap.get(referenceName);
+    if (entityName != null) {
+      if (StringUtil.endsWith(newElementName, entityName)) {
+        String name = newElementName.substring(0, newElementName.length() - entityName.length());
         String[] parts = name.split(SPLIT_BY_CAMEL_CASE_REGEX);
         String finalName = StringUtil.join(parts, StringUtil::toLowerCase, "-");
-        return finalName + "." + StringUtil.toLowerCase(value) + "." + fileExtension;
+        return (StringUtil.isEmpty(finalName) ? "" : finalName + ".")
+               + StringUtil.toLowerCase(entityName) + "." + fileExtension;
       }
     }
 

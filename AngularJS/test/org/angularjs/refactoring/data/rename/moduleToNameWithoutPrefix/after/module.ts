@@ -1,0 +1,2 @@
+@NgModule({})
+export class Module { }
