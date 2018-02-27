@@ -22,12 +22,10 @@ import com.intellij.javascript.nodejs.NodeCommandLineUtil
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.progress.PerformInBackgroundOption
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task
+import com.intellij.openapi.progress.*
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
@@ -110,8 +108,12 @@ class VueCreateProjectProcess(private val folder: Path,
       }
     }), false, serverDisposer)
 
-    ProgressManager.getInstance().run(object : Task.Backgroundable(null, "Preparing Vue project generation service...",
-                                                                   false, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
+    startProcess()
+  }
+
+  private fun startProcess() {
+    val task: Task.Backgroundable = object : Task.Backgroundable(null, "Preparing Vue project generation service...",
+                                                                 false, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
       override fun run(indicator: ProgressIndicator) {
         val handler = createPeerVueCliProcess(indicator)
         if (handler == null) {
@@ -122,7 +124,12 @@ class VueCreateProjectProcess(private val folder: Path,
           processHandlerRef.set(handler)
         }
       }
-    })
+    }
+    if (ProjectManager.getInstance().openProjects.isEmpty()) {
+      ApplicationManager.getApplication().executeOnPooledThread { task.run(EmptyProgressIndicator()) }
+    } else {
+      ProgressManager.getInstance().run(task)
+    }
   }
 
   private fun deserializeQuestion(serializedObject: String, validationError: String?): Question? {
