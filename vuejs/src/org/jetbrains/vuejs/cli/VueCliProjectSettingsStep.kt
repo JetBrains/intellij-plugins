@@ -28,6 +28,7 @@ import com.intellij.openapi.ui.MultiLineLabelUI
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.platform.DirectoryProjectGenerator
 import com.intellij.platform.PlatformProjectOpenProcessor
+import com.intellij.ui.AncestorListenerAdapter
 import com.intellij.ui.ListCellRendererWrapper
 import com.intellij.ui.RelativeFont
 import com.intellij.ui.components.*
@@ -47,75 +48,103 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
 import javax.swing.*
+import javax.swing.event.AncestorEvent
 
 class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmPackageProjectGenerator.Settings>?,
                                 callback: AbstractNewProjectStep.AbstractCallback<NpmPackageProjectGenerator.Settings>?)
   : ProjectSettingsStepBase<NpmPackageProjectGenerator.Settings>(projectGenerator, callback) {
   private var process: VueCreateProjectProcess? = null
+  private var mainPanel: JPanel? = null
 
   override fun createPanel(): JPanel {
     val mainPanel = super.createPanel()
     mainPanel.add(WebProjectTemplate.createTitlePanel(), BorderLayout.NORTH)
 
     myCreateButton.text = "Next"
+    setFirstStepActionListener(mainPanel)
+
+    this.mainPanel = mainPanel
+    return mainPanel
+  }
+
+  private fun setFirstStepActionListener(mainPanel: JPanel) {
     removeActionListeners()
-    myCreateButton.addActionListener(object: ActionListener {
+    myCreateButton.addActionListener(object : ActionListener {
       override fun actionPerformed(e: ActionEvent?) {
-        val listener = object : VueRunningGeneratorListener {
-          override fun enableNext() {
-            myCreateButton.isEnabled = true
-          }
-
-          override fun disableNext(validationError: String?) {
-            setErrorText(validationError)
-            myCreateButton.isEnabled = false
-          }
-
-          override fun error(validationError: String?) {
-            onError(validationError ?: "")
-          }
-
-          override fun cancelCloseUI() {
-            DialogWrapper.findInstance(myCreateButton)?.close(DialogWrapper.OK_EXIT_CODE)
-          }
-
-          override fun finishedQuestionsCloseUI(callback: (Project) -> Unit) {
-            DialogWrapper.findInstance(myCreateButton)?.close(DialogWrapper.OK_EXIT_CODE)
-            val function = Runnable {
-              val projectVFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(projectLocation.toString())
-              if (projectVFolder == null) {
-                VueCreateProjectProcess.LOG.info(String.format("Create Vue Project: can not find project directory in '%s'", projectLocation.toString()))
-              }
-              else {
-                RecentProjectsManager.getInstance().lastProjectCreationLocation = PathUtil.toSystemIndependentName(
-                  Paths.get(projectLocation).parent.normalize().toString())
-                UsageTrigger.trigger("AbstractNewProjectStep.Vue.js")
-                PlatformProjectOpenProcessor.doOpenProject(projectVFolder, null, -1,
-                                                           { project, _ ->
-                                                             if (project != null) {
-                                                               callback.invoke(project)
-                                                             }
-                                                           },
-                                                           EnumSet.noneOf(PlatformProjectOpenProcessor.Option::class.java))
-              }
-            }
-            ApplicationManager.getApplication().invokeLater(function, ModalityState.NON_MODAL)
-          }
-        }
-        val controller = createVueRunningGeneratorController(projectLocation,
-                                                             peer!!.settings, listener, this@VueCliProjectSettingsStep)
-        if (controller != null) {
-          replacePanel(mainPanel, controller.getPanel())
-          myCreateButton.removeActionListener(this)
-          myCreateButton.addActionListener { controller.onNext() }
-        }
-        else {
-          UIUtil.setEnabled((mainPanel.layout as BorderLayout).getLayoutComponent(BorderLayout.CENTER), false, true)
-        }
+        startGeneration(mainPanel)
       }
     })
+  }
 
-    return mainPanel
+  private fun ActionListener.startGeneration(mainPanel: JPanel) {
+    val controller = createVueRunningGeneratorController(projectLocation, peer!!.settings, MyVueRunningGeneratorListener(),
+                                                         this@VueCliProjectSettingsStep)
+    if (controller != null) {
+      val newPanel = controller.getPanel()
+      replacePanel(mainPanel, newPanel)
+
+      newPanel.addAncestorListener(object : AncestorListenerAdapter() {
+        override fun ancestorRemoved(event: AncestorEvent) {
+          // restore panel; see similar panel restoring in {@link YeomanProjectGeneratorPanel#dispose}
+          // we need this code because the main panel is cached by the outside code;
+          // it is needed for heavy welcome screen ui, like settings
+          controller.stopProcess()
+          val settingsPanel = createPanel()
+          val scrollPane = (settingsPanel.layout as BorderLayout).getLayoutComponent(BorderLayout.CENTER) as JBScrollPane
+          replacePanel(mainPanel, scrollPane.viewport.view as JPanel)
+          setFirstStepActionListener(mainPanel)
+        }
+      })
+
+      myCreateButton.removeActionListener(this)
+      myCreateButton.addActionListener { controller.onNext() }
+    }
+    else {
+      UIUtil.setEnabled((mainPanel.layout as BorderLayout).getLayoutComponent(BorderLayout.CENTER), false, true)
+    }
+  }
+
+  inner class MyVueRunningGeneratorListener : VueRunningGeneratorListener {
+    override fun enableNext() {
+      myCreateButton.isEnabled = true
+    }
+
+    override fun disableNext(validationError: String?) {
+      setErrorText(validationError)
+      myCreateButton.isEnabled = false
+    }
+
+    override fun error(validationError: String?) {
+      onError(validationError ?: "")
+    }
+
+    override fun cancelCloseUI() {
+      DialogWrapper.findInstance(myCreateButton)?.close(DialogWrapper.OK_EXIT_CODE)
+    }
+
+    override fun finishedQuestionsCloseUI(callback: (Project) -> Unit) {
+      DialogWrapper.findInstance(myCreateButton)?.close(DialogWrapper.OK_EXIT_CODE)
+      val function = Runnable {
+        val projectVFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(projectLocation.toString())
+        if (projectVFolder == null) {
+          VueCreateProjectProcess.LOG.info(
+            String.format("Create Vue Project: can not find project directory in '%s'", projectLocation.toString()))
+        }
+        else {
+          RecentProjectsManager.getInstance().lastProjectCreationLocation = PathUtil.toSystemIndependentName(
+            Paths.get(projectLocation).parent.normalize().toString())
+          UsageTrigger.trigger("AbstractNewProjectStep.Vue.js")
+          PlatformProjectOpenProcessor.doOpenProject(projectVFolder, null, -1,
+                                                     { project, _ ->
+                                                       if (project != null) {
+                                                         callback.invoke(project)
+                                                       }
+                                                     },
+                                                     EnumSet.noneOf(PlatformProjectOpenProcessor.Option::class.java))
+        }
+      }
+      ApplicationManager.getApplication().invokeLater(function, ModalityState.NON_MODAL)
+    }
   }
 
   override fun checkValid(): Boolean {
@@ -138,8 +167,7 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
   }
 
   private fun replacePanel(mainPanel: JPanel, questioningPanel: JPanel) {
-    val scrollPane = (mainPanel.layout as BorderLayout).getLayoutComponent(
-      BorderLayout.CENTER) as JBScrollPane
+    val scrollPane = (mainPanel.layout as BorderLayout).getLayoutComponent(BorderLayout.CENTER) as JBScrollPane
     scrollPane.setViewportView(questioningPanel)
     mainPanel.revalidate()
     mainPanel.repaint()

@@ -155,6 +155,10 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
   }
 
   override fun dispose() {
+    stopProcess()
+  }
+
+  fun stopProcess() {
     if (state != VueProjectCreationState.QuestionsFinished) process?.cancel()
   }
 }
