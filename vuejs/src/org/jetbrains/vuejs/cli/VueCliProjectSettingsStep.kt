@@ -77,7 +77,9 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
   }
 
   private fun ActionListener.startGeneration(mainPanel: JPanel) {
-    val controller = createVueRunningGeneratorController(projectLocation, peer!!.settings, MyVueRunningGeneratorListener(),
+    val generationLocation = projectLocation
+    val controller = createVueRunningGeneratorController(generationLocation, peer!!.settings,
+                                                         MyVueRunningGeneratorListener(generationLocation),
                                                          this@VueCliProjectSettingsStep)
     if (controller != null) {
       val newPanel = controller.getPanel()
@@ -104,7 +106,7 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
     }
   }
 
-  inner class MyVueRunningGeneratorListener : VueRunningGeneratorListener {
+  inner class MyVueRunningGeneratorListener(private val generationLocation: String) : VueRunningGeneratorListener {
     override fun enableNext() {
       myCreateButton.isEnabled = true
     }
@@ -125,14 +127,14 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
     override fun finishedQuestionsCloseUI(callback: (Project) -> Unit) {
       DialogWrapper.findInstance(myCreateButton)?.close(DialogWrapper.OK_EXIT_CODE)
       val function = Runnable {
-        val projectVFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(projectLocation.toString())
+        val projectVFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(generationLocation)
         if (projectVFolder == null) {
           VueCreateProjectProcess.LOG.info(
-            String.format("Create Vue Project: can not find project directory in '%s'", projectLocation.toString()))
+            String.format("Create Vue Project: can not find project directory in '%s'", generationLocation))
         }
         else {
           RecentProjectsManager.getInstance().lastProjectCreationLocation = PathUtil.toSystemIndependentName(
-            Paths.get(projectLocation).parent.normalize().toString())
+            Paths.get(generationLocation).parent.normalize().toString())
           UsageTrigger.trigger("AbstractNewProjectStep.Vue.js")
           PlatformProjectOpenProcessor.doOpenProject(projectVFolder, null, -1,
                                                      { project, _ ->
