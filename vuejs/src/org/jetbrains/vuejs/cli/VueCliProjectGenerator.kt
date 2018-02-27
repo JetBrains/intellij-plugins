@@ -109,6 +109,7 @@ class VueCliGeneratorSettingsPeer : NpmPackageGeneratorPeerExtensible(Arrays.asL
     myPackageField.addSelectionListener {
       UIUtil.setEnabled(component, isOldPackage(), true)
     }
+    UIUtil.setEnabled(component, isOldPackage(), true)
     return panel
   }
 
