@@ -159,15 +159,22 @@ class VueCreateProjectProcess(private val folder: Path,
 
   fun waitForProcessTermination(indicator: ProgressIndicator) {
     val handler = processHandlerRef.get() ?: return
-    if (lastMessage != null) indicator.text = lastMessage
+    val lastMessageCopy = lastMessage
+    if (lastMessageCopy != null) indicator.text = filterProgressText(lastMessageCopy)
     handler.addProcessListener(object: ProcessAdapter() {
       override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
         if (event.text.any { Character.isLetter(it) }) {
-          indicator.text = event.text
+          indicator.text = filterProgressText(event.text)
         }
       }
     })
     handler.waitFor()
+  }
+
+  private fun filterProgressText(text: String): String {
+    val sb = StringBuilder()
+    text.forEach { if (it.toInt() <= 255) sb.append(it) }
+    return sb.toString().trim()
   }
 
   private fun createPeerVueCliProcess(indicator: ProgressIndicator): KillableProcessHandler? {
