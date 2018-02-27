@@ -239,8 +239,8 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
   private fun addConfirm(message: String): () -> String {
     val formBuilder = questionHeader(message)
 
-    val yesBtn = JBRadioButton("yes")
-    val noBtn = JBRadioButton("no")
+    val yesBtn = JBRadioButton("Yes")
+    val noBtn = JBRadioButton("No")
     val buttonGroup = ButtonGroup()
     buttonGroup.add(yesBtn)
     buttonGroup.add(noBtn)
