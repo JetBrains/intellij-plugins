@@ -1,7 +1,8 @@
 package org.angularjs.codeInsight;
 
 import com.intellij.codeInsight.TargetElementUtil;
-import com.intellij.lang.javascript.refactoring.JSContainingFileFromElementRenamerFactory;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.TestDialog;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
@@ -25,7 +26,13 @@ public class RenameTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testComponentWithContainingFile() throws Exception {
-    doMultiFileTest("foo-bar.component.ts", "NewNameComponent");
+    try {
+      Messages.setTestDialog(TestDialog.OK);
+      doMultiFileTest("foo-bar.component.ts", "NewNameComponent");
+    }
+    finally {
+      Messages.setTestDialog(TestDialog.DEFAULT);
+    }
   }
 
   private void doMultiFileTest(String mainFile, String newName) throws IOException {
@@ -37,7 +44,6 @@ public class RenameTest extends LightPlatformCodeInsightFixtureTestCase {
                                                                                           | TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED);
     targetElement = RenamePsiElementProcessor.forElement(targetElement).substituteElementToRename(targetElement, myFixture.getEditor());
     RenameProcessor renameProcessor = new RenameProcessor(myFixture.getProject(), targetElement, newName, true, true);
-    renameProcessor.addRenamerFactory(new JSContainingFileFromElementRenamerFactory());
     renameProcessor.run();
     String afterPath = getTestDataPath() + "/" + testName + "/after";
     VirtualFile dirAfter = LocalFileSystem.getInstance().findFileByPath(afterPath);
