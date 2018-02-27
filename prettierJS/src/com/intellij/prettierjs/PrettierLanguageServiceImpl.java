@@ -53,11 +53,10 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     }
     ReformatFileCommand command =
       new ReformatFileCommand(file.getVirtualFile().getPath(), prettierPackagePath, file.getText(), range, myFlushConfigCache);
-    CompletableFuture<FormatResult> future = process.execute(command, (ignored, response) -> parseReformatResponse(response));
-    if (future == null) {
-      return null;
-    }
-    return future.whenComplete((f, g) -> myFlushConfigCache = false);
+    return process.execute(command, (ignored, response) -> {
+      myFlushConfigCache = false;
+      return parseReformatResponse(response);
+    });
   }
 
 
@@ -85,8 +84,8 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
   @NotNull
   private static SupportedFilesInfo parseGetSupportedFilesResponse(@NotNull JSLanguageServiceAnswer response) {
     return new SupportedFilesInfo(
-      ObjectUtils.coalesce(JsonUtil.getChildAsStringList(response.getElement(), "fileNames"), ContainerUtil.emptyList()),
-      ObjectUtils.coalesce(JsonUtil.getChildAsStringList(response.getElement(), "extensions"), ContainerUtil.emptyList()));
+      ContainerUtil.notNullize(JsonUtil.getChildAsStringList(response.getElement(), "fileNames")),
+      ContainerUtil.notNullize(JsonUtil.getChildAsStringList(response.getElement(), "extensions")));
   }
 
   @Nullable
@@ -135,9 +134,10 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
   }
 
   private static class GetSupportedFilesCommand implements JSLanguageServiceObject, JSLanguageServiceSimpleCommand {
+    @NotNull
     public final String prettierPath;
 
-    private GetSupportedFilesCommand(String path) {
+    private GetSupportedFilesCommand(@NotNull String path) {
       prettierPath = path;
     }
 

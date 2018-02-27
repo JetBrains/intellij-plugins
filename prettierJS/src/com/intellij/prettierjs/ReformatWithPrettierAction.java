@@ -69,7 +69,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   private static final int REQUEST_TIMEOUT = 3000;
   private final ErrorHandler myErrorHandler;
 
-  public ReformatWithPrettierAction(ErrorHandler errorHandler) {
+  public ReformatWithPrettierAction(@NotNull ErrorHandler errorHandler) {
     myErrorHandler = errorHandler;
   }
 
