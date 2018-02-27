@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.ide.completion;
 
 import com.intellij.openapi.project.Project;
@@ -7,7 +20,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.psi.DartComponentName;
@@ -16,8 +28,7 @@ import org.dartlang.analysis.server.protocol.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-// this class implements ResolveResult in order to be able to calculate corresponding PsiElement, see com.intellij.codeInsight.lookup.LookupElement#getPsiElement()
-public class DartLookupObject implements ResolveResult {
+public class DartLookupObject {
   @NotNull private final Project myProject;
   @Nullable private final Location myLocation;
 
@@ -26,9 +37,10 @@ public class DartLookupObject implements ResolveResult {
     myLocation = location;
   }
 
-  @Nullable
-  @Override
-  public PsiElement getElement() {
+  /**
+   * This method may parse source code, so use it responsibly: do not call it for all DartLookupObjects from the completion list.
+   */
+  public PsiElement findPsiElement() {
     final String filePath = myLocation == null ? null : FileUtil.toSystemIndependentName(myLocation.getFile());
     final VirtualFile vFile = filePath == null ? null : LocalFileSystem.getInstance().findFileByPath(filePath);
     final PsiFile psiFile = vFile == null ? null : PsiManager.getInstance(myProject).findFile(vFile);
@@ -46,10 +58,5 @@ public class DartLookupObject implements ResolveResult {
       }
     }
     return null;
-  }
-
-  @Override
-  public boolean isValidResult() {
-    return true;
   }
 }

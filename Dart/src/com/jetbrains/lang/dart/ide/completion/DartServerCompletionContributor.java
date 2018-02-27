@@ -334,10 +334,8 @@ public class DartServerCompletionContributor extends CompletionContributor {
               final ParenthesesInsertHandler<LookupElement> handler =
                 ParenthesesInsertHandler.getInstance(true, false, false, needRightParenth, false);
               handler.handleInsert(context, item);
-              // Show parameters popup.
-              final Editor editor = context.getEditor();
-              final PsiElement psiElement = lookupObject.getElement();
 
+              final Editor editor = context.getEditor();
 
               if (DartCodeInsightSettings.getInstance().INSERT_DEFAULT_ARG_VALUES) {
                 // Insert argument defaults if provided.
@@ -380,7 +378,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
                 }
               }
 
-              AutoPopupController.getInstance(project).autoPopupParameterInfo(editor, psiElement);
+              AutoPopupController.getInstance(project).autoPopupParameterInfo(editor, lookupObject.findPsiElement());
             }
           });
         }

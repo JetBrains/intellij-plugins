@@ -165,6 +165,7 @@
 
     <completion.contributor language="Dart" implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionContributor"/>
     <completion.contributor language="HTML" implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionContributor"/>
+    <gotoDeclarationHandler implementation="com.jetbrains.lang.dart.ide.completion.DartGotoDeclarationHandler"/>
     <lookup.charFilter implementation="com.jetbrains.lang.dart.ide.completion.DartCharFilter"/>
     <lang.smartEnterProcessor language="Dart"
                               implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerStatementCompletionProcessor"/>
