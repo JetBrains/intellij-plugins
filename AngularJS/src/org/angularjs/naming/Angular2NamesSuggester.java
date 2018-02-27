@@ -46,6 +46,20 @@ public class Angular2NamesSuggester implements JSNamesSuggester {
   }
 
   @Nullable
+  @Override
+  public String suggestFileName(@NotNull JSNamedElement namedElement, @NotNull String newElementName) {
+    PsiFile file = namedElement.getContainingFile();
+    if (file == null) return null;
+
+    VirtualFile virtualFile = file.getVirtualFile();
+    if (virtualFile == null) return null;
+    String fileExtension = virtualFile.getExtension();
+    if (fileExtension == null) return null;
+    if (!(namedElement instanceof JSClass)) return null;
+    return getAngularSpecificFileName((JSClass)namedElement, fileExtension, newElementName);
+  }
+
+  @Nullable
   private static String getAngularSpecificFileName(@NotNull JSClass jsClass, @NotNull String fileExtension, @NotNull String newElementName) {
     JSAttributeList attributeList = jsClass.getAttributeList();
     if (attributeList == null) {
@@ -88,19 +102,5 @@ public class Angular2NamesSuggester implements JSNamesSuggester {
     }
 
     return null;
-  }
-
-  @Nullable
-  @Override
-  public String suggestFileName(@NotNull JSNamedElement namedElement, @NotNull String newElementName) {
-    PsiFile file = namedElement.getContainingFile();
-    if (file == null) return null;
-
-    VirtualFile virtualFile = file.getVirtualFile();
-    if (virtualFile == null) return null;
-    String fileExtension = virtualFile.getExtension();
-    if (fileExtension == null) return null;
-    if (!(namedElement instanceof JSClass)) return null;
-    return getAngularSpecificFileName((JSClass)namedElement, fileExtension, newElementName);
   }
 }
