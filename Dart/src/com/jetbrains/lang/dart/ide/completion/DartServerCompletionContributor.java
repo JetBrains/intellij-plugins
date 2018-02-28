@@ -19,6 +19,7 @@ import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.codeInsight.lookup.LookupElementWeigher;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
 import com.intellij.codeInsight.template.TemplateBuilderImpl;
 import com.intellij.codeInsight.template.impl.TextExpression;
@@ -100,10 +101,11 @@ public class DartServerCompletionContributor extends CompletionContributor {
                final String completionId = das.completion_getSuggestions(file, offset);
                if (completionId == null) return;
 
+               final CompletionSorter sorter = createSorter(parameters, originalResultSet.getPrefixMatcher());
                final String uriPrefix = getPrefixIfCompletingUri(parameters);
                final CompletionResultSet resultSet = uriPrefix != null
-                                                     ? originalResultSet.withPrefixMatcher(uriPrefix)
-                                                     : originalResultSet;
+                                                     ? originalResultSet.withRelevanceSorter(sorter).withPrefixMatcher(uriPrefix)
+                                                     : originalResultSet.withRelevanceSorter(sorter);
 
                das.addCompletions(file, completionId, (replacementOffset, replacementLength, suggestion) -> {
                  final CompletionResultSet updatedResultSet;
@@ -131,10 +133,23 @@ public class DartServerCompletionContributor extends CompletionContributor {
                    lookupElement = createLookupElement(project, suggestion);
                  }
 
-                 updatedResultSet.addElement(PrioritizedLookupElement.withPriority(lookupElement, suggestion.getRelevance()));
+                 updatedResultSet.addElement(lookupElement);
                });
              }
            });
+  }
+
+  private static CompletionSorter createSorter(@NotNull final CompletionParameters parameters, @NotNull final PrefixMatcher prefixMatcher) {
+    final LookupElementWeigher dartWeigher = new LookupElementWeigher("dartRelevance", true, false) {
+      @Override
+      public Integer weigh(@NotNull LookupElement element) {
+        final Object lookupObject = element.getObject();
+        return lookupObject instanceof DartLookupObject ? ((DartLookupObject)lookupObject).getRelevance() : 0;
+      }
+    };
+
+    final CompletionSorter defaultSorter = CompletionSorter.defaultSorter(parameters, prefixMatcher);
+    return defaultSorter.weighBefore("liftShorter", dartWeigher);
   }
 
   @Nullable
@@ -252,7 +267,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
   public static LookupElementBuilder createLookupElement(@NotNull final Project project, @NotNull final CompletionSuggestion suggestion) {
     final Element element = suggestion.getElement();
     final Location location = element == null ? null : element.getLocation();
-    final DartLookupObject lookupObject = new DartLookupObject(project, location);
+    final DartLookupObject lookupObject = new DartLookupObject(project, location, suggestion.getRelevance());
 
     final String lookupString = suggestion.getCompletion();
     LookupElementBuilder lookup = LookupElementBuilder.create(lookupObject, lookupString);
