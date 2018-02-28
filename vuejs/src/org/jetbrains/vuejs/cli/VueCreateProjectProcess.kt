@@ -112,7 +112,7 @@ class VueCreateProjectProcess(private val folder: Path,
   }
 
   private fun startProcess() {
-    val task: Task.Backgroundable = object : Task.Backgroundable(null, "Preparing Vue project generation service...",
+    val task: Task.Backgroundable = object : Task.Backgroundable(null, "Starting Vue CLI...",
                                                                  false, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
       override fun run(indicator: ProgressIndicator) {
         val handler = createPeerVueCliProcess(indicator)
@@ -181,7 +181,6 @@ class VueCreateProjectProcess(private val folder: Path,
     val path = Paths.get(PathManager.getSystemPath(), "projectGenerators", "vue")
     val folder = path.toFile()
     if (Files.exists(path)) {
-      indicator.text = "Clearing Vue project generation service folder..."
       FileUtil.delete(folder)
     }
     if (!FileUtil.createDirectory(folder)) {
@@ -190,14 +189,14 @@ class VueCreateProjectProcess(private val folder: Path,
     val interpreter = interpreterRef.resolveAsLocal(ProjectManager.getInstance().defaultProject)
     val interpreterPath = interpreter.interpreterSystemDependentPath
 
-    indicator.text = "Installing Vue project generation packages..."
+    indicator.text = "Installing packages to create a new Vue project..."
     val installCommandLine = NodeCommandLineUtil.createNpmCommandLine(folder, interpreter, listOf("i", "ij-rpc-client"))
     val output = CapturingProcessHandler(installCommandLine).runProcess(TimeUnit.MINUTES.toMillis(5).toInt(), true)
     if (output.exitCode != 0) {
       return reportError("Can not install 'ij-rpc-client': " + output.stderr)
     }
 
-    indicator.text = "Starting Vue project generation service..."
+    indicator.text = "Starting Vue CLI..."
     val commandLine = createCommandLine(folder, interpreterPath) ?: return reportError("Can not run Vue project generation service")
     val processHandler: KillableProcessHandler?
     try {
