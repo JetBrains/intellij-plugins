@@ -197,7 +197,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
     val filter = AngularCLIFilter(project, cli.path)
     AngularCLIProjectGenerator.generate(node, NodePackage(module.virtualFile?.path!!),
-                                        Function<NodePackage, String> { pkg -> pkg.systemDependentPath},
+                                        Function<NodePackage, String> { pkg -> pkg.findBinFile()?.absolutePath },
                                         cli, VfsUtilCore.virtualToIoFile(workingDir ?: cli), project,
                                         null, arrayOf(filter), "generate", blueprint.name, *arguments)
   }
