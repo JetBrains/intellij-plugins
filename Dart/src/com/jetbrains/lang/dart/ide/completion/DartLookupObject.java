@@ -31,10 +31,16 @@ import org.jetbrains.annotations.Nullable;
 public class DartLookupObject {
   @NotNull private final Project myProject;
   @Nullable private final Location myLocation;
+  private final int myRelevance;
 
-  public DartLookupObject(@NotNull final Project project, @Nullable Location location) {
+  public DartLookupObject(@NotNull final Project project, @Nullable final Location location, final int relevance) {
     myProject = project;
     myLocation = location;
+    myRelevance = relevance;
+  }
+
+  public int getRelevance() {
+    return myRelevance;
   }
 
   /**
