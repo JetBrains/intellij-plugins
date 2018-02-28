@@ -8,7 +8,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.PopupChooserBuilder;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -21,6 +21,7 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.PathUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -176,21 +177,15 @@ public class FlexStackTraceFilter implements Filter {
         final JList list = new JBList(PsiUtilCore.toPsiFileArray(psiFiles));
         list.setCellRenderer(new DefaultPsiElementCellRenderer());
 
-        final PopupChooserBuilder builder = new PopupChooserBuilder(list);
-
-        final JBPopup popup = builder
-          .setItemChoosenCallback(() -> {
-            final Object[] selectedElements = list.getSelectedValues();
-            if (selectedElements != null && selectedElements.length == 1 && selectedElements[0] instanceof PsiFile) {
-              final VirtualFile file = ((PsiFile)selectedElements[0]).getVirtualFile();
-              if (file != null) {
-                FileEditorManager.getInstance(project)
-                  .openTextEditor(new OpenFileDescriptor(project, file, myLine, 0), true);
-              }
+        JBPopup popup = JBPopupFactory.getInstance()
+          .createPopupChooserBuilder(ContainerUtil.newArrayList(PsiUtilCore.toPsiFileArray(psiFiles)))
+          .setItemChoosenCallback((selectedElement) -> {
+            final VirtualFile file = selectedElement.getVirtualFile();
+            if (file != null) {
+              FileEditorManager.getInstance(project)
+                .openTextEditor(new OpenFileDescriptor(project, file, myLine, 0), true);
             }
-          })
-          .createPopup();
-
+          }).createPopup();
         final JFrame frame = WindowManager.getInstance().getFrame(project);
         final Point mousePosition = frame.getMousePosition();
         if (mousePosition != null) {

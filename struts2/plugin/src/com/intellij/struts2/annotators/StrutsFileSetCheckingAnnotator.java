@@ -191,7 +191,7 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
         };
       JBPopupFactory.getInstance()
         .createListPopup(step)
-        .showInBestPositionFor(DataManager.getInstance().getDataContext(editor.getComponent()));
+        .showInBestPositionFor(editor);
     }
   }
 }
