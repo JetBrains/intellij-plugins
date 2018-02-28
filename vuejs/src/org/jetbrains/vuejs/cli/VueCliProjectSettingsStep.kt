@@ -192,7 +192,7 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
 
   init {
     val wrapper = JPanel(FlowLayout(FlowLayout.LEFT, 0, 0))
-    val progressLabel = JBLabel("Starting generation service...")
+    val progressLabel = JBLabel("Starting Vue CLI...")
     progressLabel.font = UIUtil.getLabelFont()
     RelativeFont.ITALIC.install<JLabel>(progressLabel)
     wrapper.add(progressLabel)
@@ -218,8 +218,8 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
   private fun questionHeader(message: String): FormBuilder {
     panel.removeAll()
     val formBuilder = FormBuilder.createFormBuilder()
-    val progressText = if (isOldPackage) String.format("Running vue-init with %s template", generatorName)
-      else "Running @vue/cli create " + projectName
+    val progressText = if (isOldPackage) "Running \"vue-init\" with the \"$generatorName\" template"
+      else "Running \"vue create\""
     val titleLabel = JLabel(progressText)
     titleLabel.font = UIUtil.getLabelFont()
     RelativeFont.ITALIC.install<JLabel>(titleLabel)
@@ -286,7 +286,7 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
 
   fun error() {
     panel.removeAll()
-    panel.add(SwingHelper.wrapWithHorizontalStretch(JBLabel("Generation service error")),
+    panel.add(SwingHelper.wrapWithHorizontalStretch(JBLabel("Vue CLI error")),
               BorderLayout.CENTER)
     panel.revalidate()
     panel.repaint()
