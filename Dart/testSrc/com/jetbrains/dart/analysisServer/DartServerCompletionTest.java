@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.codeInsight.completion.CompletionType;
@@ -138,5 +151,19 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
 
   public void testIncompleteTernary() {
     doTest();
+  }
+
+  public void testSorting() {
+    myFixture.configureByText("foo.dart",
+                              "enum AXX {one, two}\n" +
+                              "enum AXB {three, four}\n" +
+                              "void foo({AXX x}) {}\n" +
+                              "main() {\n" +
+                              "  foo(x: <caret>);\n" +
+                              "}");
+    myFixture.completeBasic();
+    myFixture.assertPreferredCompletionItems(0, "AXX.one", "AXX.two", "main", "const", "false", "new", "null", "true",
+                                             "AbstractClassInstantiationError", "ArgumentError", "AssertionError", "AXB", "AXB.four",
+                                             "AXB.three", "AXX", "BidirectionalIterator");
   }
 }

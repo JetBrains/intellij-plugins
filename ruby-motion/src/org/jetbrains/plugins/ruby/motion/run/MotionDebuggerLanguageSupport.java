@@ -23,7 +23,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess;
-import com.jetbrains.cidr.execution.debugger.CidrDebuggerLanguageSupportFactory;
+import com.jetbrains.cidr.execution.debugger.CidrDebuggerLanguageSupport;
 import com.jetbrains.cidr.execution.debugger.CidrEvaluator;
 import com.jetbrains.cidr.execution.debugger.CidrStackFrame;
 import com.jetbrains.cidr.execution.debugger.backend.DebuggerDriver;
@@ -40,7 +40,7 @@ import java.util.Set;
 /**
  * @author Dennis.Ushakov
  */
-public class MotionDebuggerLanguageSupportFactory extends CidrDebuggerLanguageSupportFactory {
+public class MotionDebuggerLanguageSupport extends CidrDebuggerLanguageSupport {
   @Nullable
   @Override
   public XDebuggerEditorsProvider createEditor(RunProfile profile) {
