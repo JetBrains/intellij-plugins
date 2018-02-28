@@ -26,12 +26,16 @@ import com.jetbrains.cidr.execution.debugger.CidrDebugProcess;
 import com.jetbrains.cidr.execution.debugger.CidrDebuggerLanguageSupportFactory;
 import com.jetbrains.cidr.execution.debugger.CidrEvaluator;
 import com.jetbrains.cidr.execution.debugger.CidrStackFrame;
+import com.jetbrains.cidr.execution.debugger.backend.DebuggerDriver;
 import com.jetbrains.cidr.execution.debugger.evaluation.CidrDebuggerTypesHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.ruby.ruby.debugger.impl.RubyDebuggerEditorsProvider;
 import org.jetbrains.plugins.ruby.ruby.lang.RubyFileType;
 import org.jetbrains.plugins.ruby.ruby.run.configuration.AbstractRubyRunConfiguration;
+
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * @author Dennis.Ushakov
@@ -71,7 +75,12 @@ public class MotionDebuggerLanguageSupportFactory extends CidrDebuggerLanguageSu
   }
 
   @Override
-  protected boolean isFrameLanguageReliable(@Nullable RunProfile profile) {
+  protected boolean useFrameLanguageFromDebugger(@Nullable RunProfile profile) {
     return !(profile instanceof AbstractRubyRunConfiguration);
+  }
+
+  @Override
+  public Set<DebuggerDriver.DebuggerLanguage> getSupportedDebuggerLanguages() {
+    return Collections.emptySet();
   }
 }
