@@ -62,7 +62,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="cidr.debugger">
-    <languageSupportFactory language="ruby" implementationClass="org.jetbrains.plugins.ruby.motion.run.MotionDebuggerLanguageSupportFactory" />
+    <languageSupport language="ruby" implementationClass="org.jetbrains.plugins.ruby.motion.run.MotionDebuggerLanguageSupport" />
     <valueRendererFactory implementation="org.jetbrains.plugins.ruby.motion.run.renderers.MotionValueRendererFactory"/>
   </extensions>
 </idea-plugin>
