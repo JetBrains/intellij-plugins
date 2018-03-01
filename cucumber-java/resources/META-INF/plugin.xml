@@ -19,7 +19,6 @@
         </ul>
       ]]>
    </description>
-  <version>999.999</version>
   <depends>gherkin</depends>
   <idea-version since-build="136.0"/>
   <vendor>JetBrains</vendor>
