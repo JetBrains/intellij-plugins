@@ -785,7 +785,7 @@ class FlexValue extends XValue {
         type = inQuotes.substring(0, atIndex);
         final int spaceIndex = inQuotes.indexOf(" ", atIndex);
         if (spaceIndex != -1) {
-          additionalInfo = inQuotes.substring(spaceIndex, inQuotes.length());
+          additionalInfo = inQuotes.substring(spaceIndex);
         }
       }
       else {

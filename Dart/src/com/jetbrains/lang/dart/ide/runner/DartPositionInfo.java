@@ -83,7 +83,7 @@ public class DartPositionInfo {
     final int pathStartIndexInUrl = type == Type.FILE
                                     ? colonIndexInUrl + 1 + getPathStartIndex(url.substring(colonIndexInUrl + 1))
                                     : colonIndexInUrl + 1;
-    final String path = url.substring(pathStartIndexInUrl, url.length());
+    final String path = url.substring(pathStartIndexInUrl);
 
     final int line = lineAndColumn == null ? -1 : lineAndColumn.first >= 0 ? lineAndColumn.first - 1 : lineAndColumn.first;
     final int column = lineAndColumn == null ? -1 : lineAndColumn.second >= 0 ? lineAndColumn.second - 1 : lineAndColumn.second;

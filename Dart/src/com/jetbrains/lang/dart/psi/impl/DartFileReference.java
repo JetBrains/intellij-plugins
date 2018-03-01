@@ -120,7 +120,7 @@ public class DartFileReference implements PsiPolyVariantReference {
   private PsiElement updateUri(@NotNull final String newUri) {
     final String uriElementText = myUriElement.getText();
     final String startQuote = uriElementText.substring(0, myRange.getStartOffset());
-    final String endQuote = uriElementText.substring(myRange.getEndOffset(), uriElementText.length());
+    final String endQuote = uriElementText.substring(myRange.getEndOffset());
     final String text = "import " + startQuote + newUri + endQuote + ";";
     final PsiFile fileFromText = PsiFileFactory.getInstance(myUriElement.getProject()).createFileFromText(DartLanguage.INSTANCE, text);
 

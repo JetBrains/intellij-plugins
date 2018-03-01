@@ -566,7 +566,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       final StringBuilder b = new StringBuilder();
       for (String entry : StringUtil.split(rawValue, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR)) {
         if (b.length() > 0) b.append(", ");
-        b.append(entry.substring(0, entry.indexOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)));
+        b.append(entry, 0, entry.indexOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR));
       }
 
       return b.toString();

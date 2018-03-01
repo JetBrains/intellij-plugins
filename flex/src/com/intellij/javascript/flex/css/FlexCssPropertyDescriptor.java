@@ -315,7 +315,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
         builder.append(DocumentationMarkup.SECTIONS_END);
       } else {
         sectionsStart += DocumentationMarkup.SECTIONS_START.length();
-        builder.append(documentation.substring(0, sectionsStart));
+        builder.append(documentation, 0, sectionsStart);
         addDeclaredIn(builder, docElement);
         builder.append(documentation.substring(sectionsStart));
       }

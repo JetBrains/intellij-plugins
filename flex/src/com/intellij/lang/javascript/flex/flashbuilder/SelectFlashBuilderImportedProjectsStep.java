@@ -15,8 +15,8 @@ public class SelectFlashBuilderImportedProjectsStep extends SelectImportedProjec
     final StringBuilder builder = new StringBuilder();
     builder.append(FlashBuilderProjectLoadUtil.readProjectName(dotProjectFilePath));
     builder.append(" [");
-    builder.append(FileUtil.toSystemDependentName(dotProjectFilePath).substring(0, dotProjectFilePath.length() -
-                                                                                   (1 + FlashBuilderImporter.DOT_PROJECT).length()));
+    builder.append(FileUtil.toSystemDependentName(dotProjectFilePath), 0, dotProjectFilePath.length() -
+                                                                          (1 + FlashBuilderImporter.DOT_PROJECT).length());
     builder.append("]");
     return builder.toString();
   }
