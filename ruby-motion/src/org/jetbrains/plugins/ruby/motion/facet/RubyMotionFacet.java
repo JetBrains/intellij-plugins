@@ -30,7 +30,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiTreeChangeAdapter;
 import com.intellij.psi.PsiTreeChangeEvent;
-import com.intellij.util.ActionRunner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.ruby.gem.GemModificationUtil;
@@ -38,7 +37,6 @@ import org.jetbrains.plugins.ruby.motion.RubyMotionUtil;
 import org.jetbrains.plugins.ruby.motion.paramdefs.RubyMotionParamdefsProvider;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.RFile;
 import org.jetbrains.plugins.ruby.tasks.rake.RakeUtilBase;
-import org.jetbrains.plugins.ruby.utils.IdeaInternalUtil;
 import org.jetbrains.plugins.ruby.utils.VirtualFileUtil;
 
 /**
