@@ -20,7 +20,6 @@
     <psi.referenceContributor language="Vue" implementation="org.jetbrains.vuejs.codeInsight.VueReferenceContributor"/>
 
     <lang.syntaxHighlighterFactory language="Vue" implementationClass="org.jetbrains.vuejs.language.VueSyntaxHighlighterFactory" />
-    <highlightErrorFilter implementation="org.jetbrains.vuejs.codeInsight.VueHighlightErrorFilter"/>
     <xml.attributeDescriptorsProvider implementation="org.jetbrains.vuejs.codeInsight.VueAttributesProvider" />
     <xml.xmlExtension implementation="org.jetbrains.vuejs.codeInsight.VueXmlExtension"/>
     <xml.tagNameProvider implementation="org.jetbrains.vuejs.codeInsight.VueTagProvider" />
