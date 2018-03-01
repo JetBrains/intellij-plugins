@@ -410,13 +410,13 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testReportAccessorProblems2() throws Exception {
     final Collection<HighlightInfo> infoCollection = doTestFor(true, getTestName(false) + ".as");
-    findAndInvokeActionWithExpectedCheck(JSBundle.message("javascript.fix.set.element.visibility", "getter foo", "internal"), "as",
+    findAndInvokeActionWithExpectedCheck(JSBundle.message("javascript.fix.set.element.visibility", "property foo", "internal"), "as",
                                          infoCollection);
   }
 
   public void testReportAccessorProblems3() throws Exception {
     final Collection<HighlightInfo> infoCollection = doTestFor(true, getTestName(false) + ".as");
-    findAndInvokeActionWithExpectedCheck(JSBundle.message("javascript.fix.set.element.visibility", "setter foo", "public"), "as",
+    findAndInvokeActionWithExpectedCheck(JSBundle.message("javascript.fix.set.element.visibility", "property foo", "public"), "as",
                                          infoCollection);
   }
 
