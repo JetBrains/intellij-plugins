@@ -37,14 +37,11 @@ public class PostCssIncrementalParserTest extends PostCssFixtureTestCase {
   }
 
   private void type(@NotNull final String insertString) {
-    new WriteCommandAction(getProject()) {
-      @Override
-      protected void run(@NotNull Result result) {
-        Document document = myFixture.getEditor().getDocument();
-        document.insertString(myFixture.getCaretOffset(), insertString);
-        PsiDocumentManager.getInstance(getProject()).commitDocument(document);
-      }
-    }.execute();
+    WriteCommandAction.runWriteCommandAction(getProject(), () -> {
+      Document document = myFixture.getEditor().getDocument();
+      document.insertString(myFixture.getCaretOffset(), insertString);
+      PsiDocumentManager.getInstance(getProject()).commitDocument(document);
+    });
   }
 
   @NotNull
