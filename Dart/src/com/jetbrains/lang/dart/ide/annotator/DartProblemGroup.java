@@ -16,8 +16,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 
 public class DartProblemGroup implements SuppressableProblemGroup {
-  @NotNull private String myErrorCode;
-  @NotNull private String myErrorSeverity;
+  @NotNull private final String myErrorCode;
+  @NotNull private final String myErrorSeverity;
 
   public DartProblemGroup(@NotNull final String errorCode, @NotNull final String errorSeverity) {
     myErrorCode = errorCode;

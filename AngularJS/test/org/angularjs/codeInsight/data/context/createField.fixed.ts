@@ -3,5 +3,5 @@
     template: `<div>{{todo}}</div>`,
 })
 export class TodoCmp {
-    todo: ;
+    todo: any;
 }

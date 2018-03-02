@@ -20,49 +20,51 @@ JSFile:ObjectLiteral.js2
             PsiElement(JS:NUMERIC_LITERAL)('1')
         PsiElement(JS:COMMA)(',')
         PsiWhiteSpace('\n  ')
-        JSProperty
-          ActionScriptFunctionExpression
+        JSFunctionProperty
+          ActionScriptAttributeList
             PsiElement(JS:GET_KEYWORD)('get')
-            PsiWhiteSpace(' ')
-            PsiElement(JS:IDENTIFIER)('bbb')
-            JSParameterList
-              PsiElement(JS:LPAR)('(')
-              PsiElement(JS:RPAR)(')')
-            PsiWhiteSpace(' ')
-            JSBlockStatement
-              PsiElement(JS:LBRACE)('{')
-              PsiWhiteSpace('\n    ')
-              JSReturnStatement
-                PsiElement(JS:RETURN_KEYWORD)('return')
-                PsiWhiteSpace(' ')
-                JSLiteralExpression
-                  PsiElement(JS:NUMERIC_LITERAL)('1')
-                PsiElement(JS:SEMICOLON)(';')
-              PsiWhiteSpace('\n  ')
-              PsiElement(JS:RBRACE)('}')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:IDENTIFIER)('bbb')
+          JSParameterList
+            PsiElement(JS:LPAR)('(')
+            PsiElement(JS:RPAR)(')')
+          PsiWhiteSpace(' ')
+          JSBlockStatement
+            PsiElement(JS:LBRACE)('{')
+            PsiWhiteSpace('\n    ')
+            JSReturnStatement
+              PsiElement(JS:RETURN_KEYWORD)('return')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('1')
+              PsiElement(JS:SEMICOLON)(';')
+            PsiWhiteSpace('\n  ')
+            PsiElement(JS:RBRACE)('}')
         PsiElement(JS:COMMA)(',')
         PsiWhiteSpace('\n  ')
-        JSProperty
-          ActionScriptFunctionExpression
+        JSFunctionProperty
+          ActionScriptAttributeList
             PsiElement(JS:SET_KEYWORD)('set')
-            PsiWhiteSpace(' ')
-            PsiElement(JS:IDENTIFIER)('bbb')
-            JSParameterList
-              PsiElement(JS:LPAR)('(')
-              JSParameter
-                PsiElement(JS:IDENTIFIER)('a')
-              PsiElement(JS:RPAR)(')')
-            PsiWhiteSpace(' ')
-            JSBlockStatement
-              PsiElement(JS:LBRACE)('{')
-              PsiWhiteSpace('\n  ')
-              PsiElement(JS:RBRACE)('}')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:IDENTIFIER)('bbb')
+          JSParameterList
+            PsiElement(JS:LPAR)('(')
+            JSParameter
+              PsiElement(JS:IDENTIFIER)('a')
+            PsiElement(JS:RPAR)(')')
+          PsiWhiteSpace(' ')
+          JSBlockStatement
+            PsiElement(JS:LBRACE)('{')
+            PsiWhiteSpace('\n  ')
+            PsiElement(JS:RBRACE)('}')
         PsiElement(JS:COMMA)(',')
         PsiWhiteSpace('\n  ')
         JSProperty
           PsiElement(JS:IDENTIFIER)('aaa')
           PsiElement(JS:COLON)(':')
           ActionScriptFunctionExpression
+            ActionScriptAttributeList
+              <empty list>
             PsiElement(JS:FUNCTION_KEYWORD)('function')
             JSParameterList
               PsiElement(JS:LPAR)('(')

@@ -34,7 +34,7 @@ class CfmlLeafElementType(s: String) : CfmlElementType(s), ILeafElementType {
 
 class CfmlLeafPsiElement(cfmlLeafElementType: CfmlLeafElementType, leafText: CharSequence) : LeafPsiElement(cfmlLeafElementType, leafText), PsiLanguageInjectionHost {
 
-  override fun isValidHost() = (this.parent is CfmlTagImpl && (this.parent as CfmlTagImpl).name.toLowerCase() == "cfquery")
+  override fun isValidHost() = (this.parent is CfmlTagImpl && (this.parent as CfmlTagImpl).name?.toLowerCase() == "cfquery")
 
   override fun updateText(text: String) = replaceWithText(text) as PsiLanguageInjectionHost
 

@@ -41,16 +41,16 @@ public class CfmlUnitRunConfigurationForm extends SettingsEditor<CfmlUnitRunConf
   private JLabel myMethodLabel;
   private JTextField myWebPathTextField;
   private JPanel myPanel;
-  private ChangeListener myScopeChangeListener = new ChangeListener() {
+  private final ChangeListener myScopeChangeListener = new ChangeListener() {
     public void stateChanged(ChangeEvent e) {
       updateOnScopeChange();
     }
   };
 
-  private Project myProject;
+  private final Project myProject;
 
-  private ComponentWithBrowseButton.BrowseFolderActionListener<JTextField> myFileChooser;
-  private ComponentWithBrowseButton.BrowseFolderActionListener<JTextField> myDirectoryChooser;
+  private final ComponentWithBrowseButton.BrowseFolderActionListener<JTextField> myFileChooser;
+  private final ComponentWithBrowseButton.BrowseFolderActionListener<JTextField> myDirectoryChooser;
 
   public CfmlUnitRunConfigurationForm(Project project) {
     myProject = project;

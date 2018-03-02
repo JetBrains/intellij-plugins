@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.properties.IProperty;
 import com.intellij.lang.properties.PropertiesFileType;
 import com.intellij.lang.properties.psi.PropertiesFile;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.WriteAction;
@@ -245,15 +244,9 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
   @NotNull
   private static XmlFile virtualFileToXmlFile(Project project, VirtualFile virtualFile) {
-    final AccessToken token = ReadAction.start();
-    try {
-      XmlFile psiFile = (XmlFile)PsiManager.getInstance(project).findFile(virtualFile);
-      assert psiFile != null;
-      return psiFile;
-    }
-    finally {
-      token.finish();
-    }
+    XmlFile psiFile = ReadAction.compute(() -> (XmlFile)PsiManager.getInstance(project).findFile(virtualFile));
+    assert psiFile != null;
+    return psiFile;
   }
 
   private void setProperty() throws IOException {
@@ -284,16 +277,9 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
         throw new IllegalArgumentException("unknown value type");
     }
 
-    final XmlTag tag;
-    final AccessToken token = ReadAction.start();
-    try {
-      tag = PsiTreeUtil.getParentOfType(rootTag.findElementAt(offset), XmlTag.class);
-      assert tag != null;
-    }
-    finally {
-      token.finish();
-    }
-    
+    final XmlTag tag = ReadAction.compute(() -> PsiTreeUtil.getParentOfType(rootTag.findElementAt(offset), XmlTag.class));
+    assert tag != null;
+
     ApplicationManager.getApplication().invokeLater(() -> {
       WriteAction.run(() -> tag.setAttribute(name, value));
 
@@ -407,21 +393,16 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       }
     }
 
-    @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
-    final FileOutputStream fileOut = new FileOutputStream(resultFile);
-    final AccessToken token = ReadAction.start();
-    try {
-      writeResourceBundle(resourceBundle, fileOut, sourceId);
-    }
-    finally {
-      token.finish();
-      fileOut.close();
+    try (FileOutputStream fileOut = new FileOutputStream(resultFile)) {
+      int finalSourceId = sourceId;
+      PropertiesFile finalResourceBundle = resourceBundle;
+      ReadAction.run(() -> writeResourceBundle(finalResourceBundle, fileOut, finalSourceId));
     }
   }
 
   private static PropertiesFile getResourceBundleFromModuleSource(Module module, final String bundleName) {
-    final AccessToken token = ReadAction.start();
-    try {
+
+    return ReadAction.compute(()->{
       final PsiManager psiManager = PsiManager.getInstance(module.getProject());
       final List<VirtualFile> result = new ArrayList<>();
       FileTypeIndex.processFiles(PropertiesFileType.INSTANCE, file -> {
@@ -450,10 +431,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       }
 
       return defaultResourceBundle;
-    }
-    finally {
-      token.finish();
-    }
+    });
   }
 
   private static void writeResourceBundle(PropertiesFile file, OutputStream out, int sourceId) throws IOException {

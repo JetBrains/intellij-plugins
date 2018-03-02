@@ -1,18 +1,16 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.execution.runners.ExecutionUtil;
@@ -126,7 +124,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
       myToolWindow.getContentManager().addContent(content);
 
       ToolWindowEx toolWindowEx = (ToolWindowEx)myToolWindow;
-      toolWindowEx.setTitleActions(new AnalysisServerStatusAction());
+      toolWindowEx.setTitleActions(new AnalysisServerFeedbackAction());
       ArrayList<AnAction> gearActions = new ArrayList<>();
       gearActions.add(new AnalysisServerDiagnosticsAction());
       toolWindowEx.setAdditionalGearActions(new DefaultActionGroup(gearActions));
@@ -184,11 +182,15 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
   @SuppressWarnings("unused")
   public void showWarningNotification(@NotNull String title, @Nullable String content, @Nullable Icon icon) {
-    showNotification(NotificationType.WARNING, title, content, icon);
+    showNotification(NotificationType.WARNING, title, content, icon, false);
+  }
+
+  public void showErrorNotificationTerse(@NotNull String title) {
+    showNotification(NotificationType.ERROR, title, null, null, true);
   }
 
   public void showErrorNotification(@NotNull String title, @Nullable String content, @Nullable Icon icon) {
-    showNotification(NotificationType.ERROR, title, content, icon);
+    showNotification(NotificationType.ERROR, title, content, icon, false);
   }
 
   public void clearNotifications() {
@@ -203,15 +205,18 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   private void showNotification(@NotNull NotificationType notificationType,
                                 @NotNull String title,
                                 @Nullable String content,
-                                @Nullable Icon icon) {
+                                @Nullable Icon icon,
+                                boolean terse) {
     clearNotifications();
 
     if (myDisabledForSession) return;
 
     content = StringUtil.notNullize(content);
-    if (!content.endsWith("<br>")) content += "<br>";
-    content += "<br><a href='disable.for.session'>Don't show for this session</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
-               "<a href='never.show.again'>Never show again</a>";
+    if (!terse) {
+      if (!content.endsWith("<br>")) content += "<br>";
+      content += "<br><a href='disable.for.session'>Don't show for this session</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+                 "<a href='never.show.again'>Never show again</a>";
+    }
 
     myNotification = NOTIFICATION_GROUP.createNotification(title, content, notificationType, new NotificationListener.Adapter() {
       @Override

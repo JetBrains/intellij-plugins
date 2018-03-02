@@ -33,7 +33,7 @@ public class CompilerMessagesBuffer {
 
   private final List<CompilerMessage> messages;
   private final CompileContext compileContext;
-  private boolean bufferingEnabled;
+  private final boolean bufferingEnabled;
 
   private static final String OUT_OF_MEMORY = "java.lang.OutOfMemoryError";
 

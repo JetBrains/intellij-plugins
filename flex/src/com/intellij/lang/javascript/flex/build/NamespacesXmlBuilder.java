@@ -17,11 +17,11 @@ public class NamespacesXmlBuilder extends NanoXmlUtil.BaseXmlBuilder {
   private static final String NAMESPACE_URI_LOCATION = NanoXmlUtil.createLocation(FlexCompilerConfigFileUtilBase.FLEX_CONFIG, FlexCompilerConfigFileUtilBase.COMPILER, NAMESPACES, NAMESPACE, URI);
   private static final String MANIFEST_LOCATION = NanoXmlUtil.createLocation(FlexCompilerConfigFileUtilBase.FLEX_CONFIG, FlexCompilerConfigFileUtilBase.COMPILER, NAMESPACES, NAMESPACE, MANIFEST);
 
-  private Collection<String> myIncludedNamespaces = new ArrayList<>();
-  private Collection<Pair<String, String>> myNamespacesAndManifests = new ArrayList<>();
+  private final Collection<String> myIncludedNamespaces = new ArrayList<>();
+  private final Collection<Pair<String, String>> myNamespacesAndManifests = new ArrayList<>();
 
-  private StringBuilder myNamespaceUri = new StringBuilder();
-  private StringBuilder myManifest = new StringBuilder();
+  private final StringBuilder myNamespaceUri = new StringBuilder();
+  private final StringBuilder myManifest = new StringBuilder();
 
   public void startElement(final String name, final String nsPrefix, final String nsURI, final String systemID, final int lineNr)
     throws Exception {

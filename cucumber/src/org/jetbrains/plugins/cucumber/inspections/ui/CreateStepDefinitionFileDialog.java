@@ -34,9 +34,9 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
   private JPanel myContentPanel;
   private TextFieldWithBrowseButton myDirectoryTextField;
 
-  private InputValidator myValidator;
+  private final InputValidator myValidator;
 
-  private CreateStepDefinitionFileModel myModel;
+  private final CreateStepDefinitionFileModel myModel;
 
   public CreateStepDefinitionFileDialog(@NotNull final Project project, @NotNull final CreateStepDefinitionFileModel model,
                                         @NotNull final InputValidator validator) {

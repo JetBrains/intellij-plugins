@@ -42,7 +42,7 @@ import java.util.*;
 public class DartCommandLineRunningState extends CommandLineState {
   protected final @NotNull DartCommandLineRunnerParameters myRunnerParameters;
   private int myObservatoryPort = -1;
-  private Collection<Consumer<String>> myObservatoryUrlConsumers = new ArrayList<>();
+  private final Collection<Consumer<String>> myObservatoryUrlConsumers = new ArrayList<>();
 
   public DartCommandLineRunningState(final @NotNull ExecutionEnvironment env) throws ExecutionException {
     super(env);

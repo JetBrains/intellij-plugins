@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class DartPartUriIndex extends FileBasedIndexExtension<String, List<String>> {
   public static final ID<String, List<String>> DART_PATH_INDEX = ID.create("DartPathIndex");
-  private DataIndexer<String, List<String>, FileContent> myDataIndexer = new MyDataIndexer();
+  private final DataIndexer<String, List<String>, FileContent> myDataIndexer = new MyDataIndexer();
 
   @NotNull
   @Override

@@ -33,7 +33,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
   public interface Listener {
@@ -54,7 +57,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
 
   private final Condition<Sdk> mySdkFilter;
 
-  private BCSdk myBCSdk = new BCSdk();
+  private final BCSdk myBCSdk = new BCSdk();
   private boolean myShowBCSdk = false;
 
   public FlexSdkComboBoxWithBrowseButton() {
@@ -293,7 +296,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
 
   private static class NonCommittingWrapper extends ProjectSdksModel {
     private final ProjectSdksModel myOriginal;
-    private JdkListConfigurable myConfigurable;
+    private final JdkListConfigurable myConfigurable;
 
     public NonCommittingWrapper(final ProjectSdksModel original, JdkListConfigurable configurable) {
       myOriginal = original;

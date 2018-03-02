@@ -35,7 +35,7 @@ public class FlexHighlightingPerformanceTest extends ActionScriptDaemonAnalyzerT
     final boolean doProfiling = false;
     if (doProfiling) ProfilingUtil.startCPUProfiling();
     try {
-      PlatformTestUtil.startPerformanceTest("Mxml highlighting", 20_000,
+      PlatformTestUtil.startPerformanceTest("Mxml highlighting", 25_000,
                                             () -> doTestFor(true, getTestName(false) + ".mxml", "UsingSwcStubs2.swc"))
         .usesAllCPUCores().assertTiming();
     }

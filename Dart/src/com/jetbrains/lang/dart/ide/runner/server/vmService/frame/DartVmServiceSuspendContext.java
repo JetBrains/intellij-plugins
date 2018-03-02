@@ -19,7 +19,7 @@ public class DartVmServiceSuspendContext extends XSuspendContext {
   @NotNull private final DartVmServiceExecutionStack myActiveExecutionStack;
 
   private List<XExecutionStack> myExecutionStacks;
-  private boolean myAtAsyncSuspension;
+  private final boolean myAtAsyncSuspension;
 
   public DartVmServiceSuspendContext(@NotNull final DartVmServiceDebugProcess debugProcess,
                                      @NotNull final IsolateRef isolateRef,

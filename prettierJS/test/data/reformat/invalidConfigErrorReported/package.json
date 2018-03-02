@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "prettier": "latest"
+  },
+  "prettier": {
+    "tabWidth": "invalid"
+  }
+}

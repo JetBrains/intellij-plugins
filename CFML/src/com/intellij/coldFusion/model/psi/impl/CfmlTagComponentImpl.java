@@ -41,10 +41,11 @@ public CfmlTagComponentImpl(ASTNode astNode) {
   }
 
   @Override
+  @NotNull
   public String getName() {
     final String name = CfmlPsiUtil.getPureAttributeValue(this, "name");
     final String nameFromFile = CfmlUtil.getFileName(this);
-    return !StringUtil.isEmpty(nameFromFile) ? nameFromFile : name != null ? name : "";
+    return !StringUtil.isEmpty(nameFromFile) ? nameFromFile : (name != null ? name : "");
   }
 
   public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {

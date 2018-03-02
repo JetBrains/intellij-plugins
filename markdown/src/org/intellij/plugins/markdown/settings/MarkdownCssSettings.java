@@ -12,13 +12,20 @@ public final class MarkdownCssSettings {
   public static final MarkdownCssSettings DEFAULT = new MarkdownCssSettings(false);
   public static final MarkdownCssSettings DARCULA = new MarkdownCssSettings(true);
 
+  @SuppressWarnings("FieldMayBeFinal")
   @Attribute("UriEnabled")
   private boolean myUriEnabled;
+
+  @SuppressWarnings("FieldMayBeFinal")
   @Attribute("StylesheetUri")
   @NotNull
   private String myStylesheetUri;
+
+  @SuppressWarnings("FieldMayBeFinal")
   @Attribute("TextEnabled")
   private boolean myTextEnabled;
+
+  @SuppressWarnings("FieldMayBeFinal")
   @Attribute("StylesheetText")
   @NotNull
   private String myStylesheetText;

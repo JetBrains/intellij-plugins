@@ -11,6 +11,7 @@ import org.angularjs.index.AngularDirectiveCommentParsingTest;
 import org.angularjs.inspections.EmptyEventHandlerInspectionTest;
 import org.angularjs.lang.lexer.AngularJSLexerTest;
 import org.angularjs.refactoring.DirectiveRenameTest;
+import org.angularjs.refactoring.RenameTest;
 
 public class AngularJSTestSuite {
 

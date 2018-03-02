@@ -11,7 +11,7 @@ public class CreateFieldByMxmlAttributeFix extends CreateJSVariableIntentionActi
   private final String myAttributeValue;
 
   public CreateFieldByMxmlAttributeFix(final String referencedName, final String attributeValue) {
-    super(referencedName, true, false, null);
+    super(referencedName, true, false, false, null);
     myAttributeValue = attributeValue;
   }
 

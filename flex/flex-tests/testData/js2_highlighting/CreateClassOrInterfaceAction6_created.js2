@@ -1,6 +1,6 @@
 package foo {
 public class Abc {
-    public function Abc(i:int, i2:int, s:String, b:Boolean, createClassOrInterfaceAction6:CreateClassOrInterfaceAction6) {
+    public function Abc(i:int, i2:int, hello:String, b:Boolean, createClassOrInterfaceAction6:CreateClassOrInterfaceAction6) {
     }
 }
 }

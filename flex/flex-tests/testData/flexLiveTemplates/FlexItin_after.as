@@ -1,7 +1,7 @@
 package {
 public class FlexItin{
     private function someFunction():void{
-        for (var string:String in arguments) {
+        for (var argumentsKey:String in arguments) {
             <caret>
         }
     }

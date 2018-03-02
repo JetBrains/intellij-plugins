@@ -16,8 +16,8 @@ import org.jetbrains.annotations.NotNull;
 public class PhoneGapRunProfileState extends CommandLineState {
 
   @SuppressWarnings({"UnusedDeclaration", "FieldCanBeLocal"})
-  private ExecutionEnvironment env;
-  private PhoneGapRunConfiguration phoneGapRunConfiguration;
+  private final ExecutionEnvironment env;
+  private final PhoneGapRunConfiguration phoneGapRunConfiguration;
   private final Project myProject;
 
   public PhoneGapRunProfileState(Project project,

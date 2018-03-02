@@ -42,7 +42,7 @@ class StateWriter {
 
   private final ArrayList<State> states = new ArrayList<>();
   private final Map<String, List<State>> nameToState = new THashMap<>();
-  private BaseWriter writer;
+  private final BaseWriter writer;
 
   private SetPropertyOrStyle pendingFirstSetProperty;
 

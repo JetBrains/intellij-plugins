@@ -19,6 +19,7 @@ import com.intellij.facet.Facet;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetType;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
@@ -29,7 +30,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiTreeChangeAdapter;
 import com.intellij.psi.PsiTreeChangeEvent;
-import com.intellij.util.ActionRunner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.ruby.gem.GemModificationUtil;
@@ -37,7 +37,6 @@ import org.jetbrains.plugins.ruby.motion.RubyMotionUtil;
 import org.jetbrains.plugins.ruby.motion.paramdefs.RubyMotionParamdefsProvider;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.RFile;
 import org.jetbrains.plugins.ruby.tasks.rake.RakeUtilBase;
-import org.jetbrains.plugins.ruby.utils.IdeaInternalUtil;
 import org.jetbrains.plugins.ruby.utils.VirtualFileUtil;
 
 /**
@@ -101,28 +100,26 @@ public class RubyMotionFacet extends Facet<RubyMotionFacetConfiguration> {
   }
 
   public static void updateMotionLibrary(final ModifiableRootModel model) {
-    IdeaInternalUtil.runInsideWriteAction(new ActionRunner.InterruptibleRunnable() {
-      public void run() throws Exception {
-        boolean librarySeen = false;
-        for (OrderEntry entry : model.getOrderEntries()) {
-          if (entry instanceof LibraryOrderEntry) {
-            final String libraryName = ((LibraryOrderEntry)entry).getLibraryName();
-            if (RubyMotionUtil.RUBY_MOTION_LIBRARY.equals(libraryName)) {
-              librarySeen = true;
-              break;
-            }
+    WriteAction.run(() -> {
+      boolean librarySeen = false;
+      for (OrderEntry entry : model.getOrderEntries()) {
+        if (entry instanceof LibraryOrderEntry) {
+          final String libraryName = ((LibraryOrderEntry)entry).getLibraryName();
+          if (RubyMotionUtil.RUBY_MOTION_LIBRARY.equals(libraryName)) {
+            librarySeen = true;
+            break;
           }
         }
-        if (!librarySeen) {
-          Library library = LibraryTablesRegistrar.getInstance().getLibraryTable().getLibraryByName(RubyMotionUtil.RUBY_MOTION_LIBRARY);
-          if (library == null) {
-            // we just create new project library
-            library = createLibrary();
-          }
-          if (library != null) {
-            final LibraryOrderEntry libraryOrderEntry = model.addLibraryEntry(library);
-            libraryOrderEntry.setScope(DependencyScope.PROVIDED);
-          }
+      }
+      if (!librarySeen) {
+        Library library = LibraryTablesRegistrar.getInstance().getLibraryTable().getLibraryByName(RubyMotionUtil.RUBY_MOTION_LIBRARY);
+        if (library == null) {
+          // we just create new project library
+          library = createLibrary();
+        }
+        if (library != null) {
+          final LibraryOrderEntry libraryOrderEntry = model.addLibraryEntry(library);
+          libraryOrderEntry.setScope(DependencyScope.PROVIDED);
         }
       }
     });

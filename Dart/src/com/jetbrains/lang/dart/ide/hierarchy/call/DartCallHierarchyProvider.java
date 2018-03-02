@@ -18,7 +18,7 @@ public class DartCallHierarchyProvider implements HierarchyProvider {
 
   @NotNull
   @Override
-  public HierarchyBrowser createHierarchyBrowser(PsiElement target) {
+  public HierarchyBrowser createHierarchyBrowser(@NotNull PsiElement target) {
     return new DartCallHierarchyBrowser(target.getProject(), target);
   }
 

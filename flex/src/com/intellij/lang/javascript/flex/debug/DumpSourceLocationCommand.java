@@ -3,7 +3,7 @@ package com.intellij.lang.javascript.flex.debug;
 import org.jetbrains.annotations.NonNls;
 
 class DumpSourceLocationCommand extends DebuggerCommand {
-  private FlexDebugProcess myFlexDebugProcess;
+  private final FlexDebugProcess myFlexDebugProcess;
 
   public DumpSourceLocationCommand(FlexDebugProcess flexDebugProcess) {
     super("bt", CommandOutputProcessingType.SPECIAL_PROCESSING);

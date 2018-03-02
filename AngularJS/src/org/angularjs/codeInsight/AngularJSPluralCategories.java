@@ -11,7 +11,7 @@ public enum AngularJSPluralCategories {
   many(2),
   other(0);
 
-  private int myCompletionOrder;
+  private final int myCompletionOrder;
 
   AngularJSPluralCategories(int completionOrder) {
     myCompletionOrder = completionOrder;

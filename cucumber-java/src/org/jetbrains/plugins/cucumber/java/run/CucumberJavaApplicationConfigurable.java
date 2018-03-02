@@ -43,7 +43,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
   private LabeledComponent<TextFieldWithBrowseButton> myFeatureOrFolder;
   private CommonJavaParametersPanel myCommonProgramParameters;
 
-  private Module myModuleContext;
+  private final Module myModuleContext;
 
   public CucumberJavaApplicationConfigurable(Project project) {
     myProject = project;

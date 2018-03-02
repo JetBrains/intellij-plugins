@@ -84,7 +84,7 @@ public class InterceptorRefInStackParamNameCustomConverter extends ParamNameConv
       return ArrayUtil.toObjectArray(customReferences, PsiReference.class);
     }
 
-    final String propertyText = text.substring(idx + 1, text.length());
+    final String propertyText = text.substring(idx + 1);
     final PsiClass paramsClass = resolvedInterceptorRef.getParamsClass();
     final BeanPropertyPathReferenceSet beanPropertyPathReferenceSet =
         new BeanPropertyPathReferenceSet(propertyText, nameAttributeValue, idx + 2, '.', paramsClass, false);

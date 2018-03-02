@@ -92,7 +92,7 @@ public class MotionClassSymbol extends SymbolImpl implements MotionSymbol {
       }
     }
 
-    return ancestor != null ? SymbolUtil.findSymbol(getProject(), Type.CLASS, ancestor, invocationPoint) : null;
+    return ancestor != null ? SymbolUtil.findConstantByFQN(getProject(), Type.CLASS, ancestor, invocationPoint) : null;
   }
 
   @Override

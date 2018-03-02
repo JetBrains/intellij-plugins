@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "prettier": "latest"
+  },
+  "prettier": {
+  }
+}

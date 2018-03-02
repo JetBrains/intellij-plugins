@@ -634,7 +634,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   }
 
   private static final TableCellRenderer LINKAGE_TYPE_RENDERER = new DefaultTableCellRenderer() {
-    private ComboBoxTableRenderer<LinkageType> myComboBoxTableRenderer = new ComboBoxTableRenderer<>(null);
+    private final ComboBoxTableRenderer<LinkageType> myComboBoxTableRenderer = new ComboBoxTableRenderer<>(null);
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
       final Object tableItem = ((EditableTreeTable)table).getItemAt(row);

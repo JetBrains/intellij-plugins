@@ -3,7 +3,7 @@ import flash.events.Event;
 
 public class SuperClass {
 
-     public function SuperClass(i:int, i2:int, s:String, event:Event) {
+     public function SuperClass(i:int, i1:int, foo:String, event:Event) {
      }
  }
 }

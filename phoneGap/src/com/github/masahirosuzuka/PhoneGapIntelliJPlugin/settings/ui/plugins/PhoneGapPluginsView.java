@@ -25,8 +25,8 @@ import java.io.File;
 public class PhoneGapPluginsView {
   private final PhoneGapInstalledPluginsPanel myPanel;
   private final JPanel myComponent;
-  private PackagesNotificationPanel packagesNotificationPanel;
-  private Project myProject;
+  private final PackagesNotificationPanel packagesNotificationPanel;
+  private final Project myProject;
 
   public PhoneGapPluginsView(@NotNull Project project) {
     myProject = project;

@@ -1,6 +1,6 @@
 package {
     public class FunctionSignatureMismatch2 {
-        function foo(i:int, i2:int, s:String, functionSignatureMismatch2:FunctionSignatureMismatch2) {}
+        function foo(i:int, i1:int, abc:String, functionSignatureMismatch2:FunctionSignatureMismatch2) {}
 
         function bar() {
             foo(1, 2, "abc", this);

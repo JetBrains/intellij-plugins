@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class HbConfigurationProvider extends ConfigurableProvider {
 
-  private Project myProject;
+  private final Project myProject;
 
   public HbConfigurationProvider(Project project) {
     myProject = project;

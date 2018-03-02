@@ -1,6 +1,6 @@
 package foo {
 public class Abc {
-    public function Abc(s:String) {
+    public function Abc(zz:String) {
     }
 }
 }

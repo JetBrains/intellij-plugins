@@ -37,7 +37,7 @@ import javax.swing.*;
 import java.util.*;
 
 class FlexValue extends XValue {
-  private FlexStackFrame myFlexStackFrame;
+  private final FlexStackFrame myFlexStackFrame;
   private final FlexDebugProcess myDebugProcess;
   private final @Nullable XSourcePosition mySourcePosition;
 
@@ -785,7 +785,7 @@ class FlexValue extends XValue {
         type = inQuotes.substring(0, atIndex);
         final int spaceIndex = inQuotes.indexOf(" ", atIndex);
         if (spaceIndex != -1) {
-          additionalInfo = inQuotes.substring(spaceIndex, inQuotes.length());
+          additionalInfo = inQuotes.substring(spaceIndex);
         }
       }
       else {

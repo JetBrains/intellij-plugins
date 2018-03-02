@@ -35,7 +35,7 @@ import java.util.*;
  */
 public class FrameworkDependencyResolver {
   private static final Logger LOG = Logger.getInstance(InheritanceInfoHolder.class);
-  private Map<String, Map<String, List<String>>> myDependencyInfo = new HashMap<>();
+  private final Map<String, Map<String, List<String>>> myDependencyInfo = new HashMap<>();
   private final BridgeSupportLoader myLoader;
 
   public static FrameworkDependencyResolver getInstance() {

@@ -24,11 +24,11 @@ import java.util.regex.Pattern;
  * @author vnikolaenko
  */
 public class CfmlAttributeDescription implements Comparable<CfmlAttributeDescription> {
-  private Pattern myNamePattern;
+  private final Pattern myNamePattern;
   // private String myName;
-  private int myType;
-  private boolean myRequired;
-  private String myDescription;
+  private final int myType;
+  private final boolean myRequired;
+  private final String myDescription;
   private String myCompletionExample = null;
   private String[] myValues = null;
 

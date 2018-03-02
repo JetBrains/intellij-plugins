@@ -1,7 +1,7 @@
 package org.angularjs.codeInsight.refs;
 
 import com.intellij.lang.javascript.psi.JSParameter;
-import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver;
+import com.intellij.lang.javascript.psi.resolve.JSIndexBasedResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.WalkUpResolveProcessor;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.psi.*;
@@ -43,7 +43,7 @@ public class AngularJSDIReferencesProvider extends PsiReferenceProvider {
       );
       processor.allowPartialResults();
 
-      JSReferenceExpressionResolver.processAllSymbols(processor);
+      JSIndexBasedResolveUtil.processAllSymbols(processor);
 
       final ResolveResult[] results = processor.getResults();
       return results.length == 1 ? results[0].getElement() : null;

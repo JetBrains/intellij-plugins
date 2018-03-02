@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.ide.completion;
 
 import com.intellij.codeInsight.AutoPopupController;
@@ -6,6 +19,7 @@ import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.codeInsight.lookup.LookupElementWeigher;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
 import com.intellij.codeInsight.template.TemplateBuilderImpl;
 import com.intellij.codeInsight.template.impl.TextExpression;
@@ -87,10 +101,11 @@ public class DartServerCompletionContributor extends CompletionContributor {
                final String completionId = das.completion_getSuggestions(file, offset);
                if (completionId == null) return;
 
+               final CompletionSorter sorter = createSorter(parameters, originalResultSet.getPrefixMatcher());
                final String uriPrefix = getPrefixIfCompletingUri(parameters);
                final CompletionResultSet resultSet = uriPrefix != null
-                                                     ? originalResultSet.withPrefixMatcher(uriPrefix)
-                                                     : originalResultSet;
+                                                     ? originalResultSet.withRelevanceSorter(sorter).withPrefixMatcher(uriPrefix)
+                                                     : originalResultSet.withRelevanceSorter(sorter);
 
                das.addCompletions(file, completionId, (replacementOffset, replacementLength, suggestion) -> {
                  final CompletionResultSet updatedResultSet;
@@ -107,11 +122,34 @@ public class DartServerCompletionContributor extends CompletionContributor {
                    }
                  }
 
-                 final LookupElement lookupElement = createLookupElement(project, suggestion);
+                 LookupElementBuilder lookupElement = null;
+
+                 for (DartCompletionExtension extension : DartCompletionExtension.getExtensions()) {
+                   lookupElement = extension.createLookupElement(project, suggestion);
+                   if (lookupElement != null) break;
+                 }
+
+                 if (lookupElement == null) {
+                   lookupElement = createLookupElement(project, suggestion);
+                 }
+
                  updatedResultSet.addElement(lookupElement);
                });
              }
            });
+  }
+
+  private static CompletionSorter createSorter(@NotNull final CompletionParameters parameters, @NotNull final PrefixMatcher prefixMatcher) {
+    final LookupElementWeigher dartWeigher = new LookupElementWeigher("dartRelevance", true, false) {
+      @Override
+      public Integer weigh(@NotNull LookupElement element) {
+        final Object lookupObject = element.getObject();
+        return lookupObject instanceof DartLookupObject ? ((DartLookupObject)lookupObject).getRelevance() : 0;
+      }
+    };
+
+    final CompletionSorter defaultSorter = CompletionSorter.defaultSorter(parameters, prefixMatcher);
+    return defaultSorter.weighBefore("liftShorter", dartWeigher);
   }
 
   @Nullable
@@ -225,21 +263,18 @@ public class DartServerCompletionContributor extends CompletionContributor {
     return base;
   }
 
-  private static Icon applyVisibility(Icon base, boolean isPrivate) {
-    RowIcon result = new RowIcon(2);
-    result.setIcon(base, 0);
-    Icon visibility = isPrivate ? PlatformIcons.PRIVATE_ICON : PlatformIcons.PUBLIC_ICON;
-    result.setIcon(visibility, 1);
-    return result;
-  }
-
-  private static LookupElement createLookupElement(@NotNull final Project project, @NotNull final CompletionSuggestion suggestion) {
+  @NotNull
+  public static LookupElementBuilder createLookupElement(@NotNull final Project project, @NotNull final CompletionSuggestion suggestion) {
     final Element element = suggestion.getElement();
     final Location location = element == null ? null : element.getLocation();
-    final DartLookupObject lookupObject = new DartLookupObject(project, location);
+    final DartLookupObject lookupObject = new DartLookupObject(project, location, suggestion.getRelevance());
 
     final String lookupString = suggestion.getCompletion();
     LookupElementBuilder lookup = LookupElementBuilder.create(lookupObject, lookupString);
+
+    if (suggestion.getDisplayText() != null) {
+      lookup = lookup.withPresentableText(suggestion.getDisplayText());
+    }
 
     // keywords are bold
     if (suggestion.getKind().equals(CompletionSuggestionKind.KEYWORD)) {
@@ -260,29 +295,41 @@ public class DartServerCompletionContributor extends CompletionContributor {
       if (element.isDeprecated()) {
         lookup = lookup.strikeout();
       }
-      // append type parameters
-      final String typeParameters = element.getTypeParameters();
-      if (typeParameters != null) {
-        lookup = lookup.appendTailText(typeParameters, false);
+
+      if (StringUtil.isEmpty(suggestion.getDisplayText())) {
+        // append type parameters
+        final String typeParameters = element.getTypeParameters();
+        if (typeParameters != null) {
+          lookup = lookup.appendTailText(typeParameters, false);
+        }
+        // append parameters
+        final String parameters = element.getParameters();
+        if (parameters != null) {
+          lookup = lookup.appendTailText(parameters, false);
+        }
       }
-      // append parameters
-      final String parameters = element.getParameters();
-      if (parameters != null) {
-        lookup = lookup.appendTailText(parameters, false);
-      }
+
       // append return type
       final String returnType = element.getReturnType();
       if (!StringUtils.isEmpty(returnType)) {
         lookup = lookup.withTypeText(returnType, true);
       }
+
       // icon
       Icon icon = getBaseImage(element);
       if (icon != null) {
-        icon = applyVisibility(icon, element.isPrivate());
-        icon = applyOverlay(icon, element.isFinal(), AllIcons.Nodes.FinalMark);
-        icon = applyOverlay(icon, element.isConst(), AllIcons.Nodes.FinalMark);
+        if (suggestion.getKind().equals(CompletionSuggestionKind.OVERRIDE)) {
+          icon = new RowIcon(icon, AllIcons.Gutter.OverridingMethod);
+        }
+        else {
+          icon = new RowIcon(icon, element.isPrivate() ? PlatformIcons.PRIVATE_ICON : PlatformIcons.PUBLIC_ICON);
+          icon = applyOverlay(icon, element.isFinal(), AllIcons.Nodes.FinalMark);
+          icon = applyOverlay(icon, element.isConst(), AllIcons.Nodes.FinalMark);
+        }
+
         lookup = lookup.withIcon(icon);
       }
+
       // Prepare for typing arguments, if any.
       if (CompletionSuggestionKind.INVOCATION.equals(suggestion.getKind())) {
         shouldSetSelection = false;
@@ -302,10 +349,8 @@ public class DartServerCompletionContributor extends CompletionContributor {
               final ParenthesesInsertHandler<LookupElement> handler =
                 ParenthesesInsertHandler.getInstance(true, false, false, needRightParenth, false);
               handler.handleInsert(context, item);
-              // Show parameters popup.
-              final Editor editor = context.getEditor();
-              final PsiElement psiElement = lookupObject.getElement();
 
+              final Editor editor = context.getEditor();
 
               if (DartCodeInsightSettings.getInstance().INSERT_DEFAULT_ARG_VALUES) {
                 // Insert argument defaults if provided.
@@ -348,7 +393,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
                 }
               }
 
-              AutoPopupController.getInstance(project).autoPopupParameterInfo(editor, psiElement);
+              AutoPopupController.getInstance(project).autoPopupParameterInfo(editor, lookupObject.findPsiElement());
             }
           });
         }
@@ -368,7 +413,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
       });
     }
 
-    return PrioritizedLookupElement.withPriority(lookup, suggestion.getRelevance());
+    return lookup;
   }
 
   private static Icon getBaseImage(Element element) {

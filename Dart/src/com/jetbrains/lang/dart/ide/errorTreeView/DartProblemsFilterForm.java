@@ -36,7 +36,7 @@ public class DartProblemsFilterForm {
 
   private HoverHyperlinkLabel myResetFilterHyperlink;
 
-  private List<FilterListener> myListeners = new ArrayList<>();
+  private final List<FilterListener> myListeners = new ArrayList<>();
 
   private void createUIComponents() {
     myResetFilterHyperlink = new HoverHyperlinkLabel(DartBundle.message("reset.filter"));

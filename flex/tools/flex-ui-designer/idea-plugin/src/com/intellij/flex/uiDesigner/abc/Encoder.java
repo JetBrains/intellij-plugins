@@ -26,7 +26,8 @@ public class Encoder {
 
   protected IndexHistory history;
 
-  private int majorVersion, minorVersion;
+  private final int majorVersion;
+  private final int minorVersion;
   protected int decoderIndex;
   protected int opcodePass;
   private int exPass;

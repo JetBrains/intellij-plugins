@@ -2,7 +2,7 @@ package {
 import flash.events.Event;
 
 public class Foo {
-    public function Foo(s:String, b:Boolean, v:Event) {
+    public function Foo(a:String, b:Boolean, v:Event) {
         <caret>
     }
 

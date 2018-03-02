@@ -803,4 +803,22 @@ Vue.component('global-comp-literal', {
 """)
     myFixture.checkHighlighting(true, false, true, false)
   }
+
+  fun testColVueComponent() {
+    myFixture.configureByText("ColVueComponent.vue", """
+<template>
+    <col>
+    <Col></Col>
+    <Col>
+<error descr="Element Col is not closed"><</error>/template>
+<script lang="es6">
+  export default {
+    components: {
+      Col: {}
+    }
+  }
+</script>
+""")
+    myFixture.checkHighlighting()
+  }
 }

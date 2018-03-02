@@ -38,7 +38,7 @@ import java.util.regex.Matcher;
  */
 public class CfmlJavaLoaderClassType extends PsiType {
   private GlobalSearchScope mySearchScope;
-  private Project myProject;
+  private final Project myProject;
 
   private class JarFileScope extends GlobalSearchScope {
     private final VirtualFile myVirtualFile;

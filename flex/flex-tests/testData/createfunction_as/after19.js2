@@ -1,6 +1,6 @@
 // "Create Method 'create'" "true"
 class Interface {
-    internal static function create(interface2:Interface):void {
+    internal static function create(interface1:Interface):void {
         <caret>
     }
 }

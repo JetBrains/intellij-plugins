@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FileTypeIndex;
@@ -100,7 +99,7 @@ public class KarmaUtil {
     if (file == null || !file.isValid()) {
       return false;
     }
-    VirtualFile contentRoot = ProjectFileIndex.getInstance(project).getContentRootForFile(file, false);
+    VirtualFile contentRoot = JSLibraryUtil.getContentRootForFile(project, file);
     return contentRoot != null;
   }
 

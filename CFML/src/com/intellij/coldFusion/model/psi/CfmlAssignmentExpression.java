@@ -91,7 +91,7 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
   }
 
   public class AssignedVariable extends RenameableFakePsiElement implements CfmlVariable, CfmlScopeProvider {
-    private boolean myIsDefinition;
+    private final boolean myIsDefinition;
 
     public AssignedVariable(boolean isDefinition) {
       super(CfmlAssignmentExpression.this.getContainingFile());
@@ -112,7 +112,7 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
       final String variableName = expression.getText();
       final String scopeName = getScopeName();
       if (scopeName != null && variableName != null && variableName.startsWith(scopeName + ".")) {
-        return variableName.substring((scopeName + ".").length(), variableName.length());
+        return variableName.substring((scopeName + ".").length());
       }
       return variableName != null ? expression.getText() : "";
     }

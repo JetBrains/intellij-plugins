@@ -257,8 +257,8 @@ public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlComme
   }
 
   static class MyCommenterData extends CommenterDataHolder {
-    private boolean myIsWithinCfscript;
-    private int myStartOffset;
+    private final boolean myIsWithinCfscript;
+    private final int myStartOffset;
 
     private MyCommenterData(boolean isWithinCfscript, int startOffset) {
       myIsWithinCfscript = isWithinCfscript;

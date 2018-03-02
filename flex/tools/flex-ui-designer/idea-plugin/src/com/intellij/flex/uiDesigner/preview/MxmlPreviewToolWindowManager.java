@@ -3,7 +3,6 @@ package com.intellij.flex.uiDesigner.preview;
 import com.intellij.flex.uiDesigner.*;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.ProjectComponent;
@@ -322,14 +321,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     @Override
     public void run() {
       waitingForSmartMode = false;
-      final Editor selectedTextEditor;
-      final AccessToken token = ReadAction.start();
-      try {
-        selectedTextEditor = fileEditorManager.getSelectedTextEditor();
-      }
-      finally {
-        token.finish();
-      }
+      final Editor selectedTextEditor = ReadAction.compute(() -> fileEditorManager.getSelectedTextEditor());
 
       if (selectedTextEditor != null && isApplicableEditor(selectedTextEditor)) {
         processFileEditorChange(selectedTextEditor);

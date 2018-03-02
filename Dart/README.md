@@ -42,7 +42,7 @@ Prerequisites:
 
 4. Open intellij-community project, compile it.
    Open File | Project Structure | Modules | [+] | Import Module, select intellij-plugins/Dart/Dart-community.iml.
-   In the same Project Structure dialog open the Dependencies tab of the community-main module,
+   In the same Project Structure dialog open the Dependencies tab of the intellij.idea.community.main module,
    click [+] at the bottom (Mac) or right (Win/Linux) to add a module dependency on the Dart-community module.
 
 5. Open Settings (Preferences) | Version Control and make sure that intellij-plugins is configured as a 4th Git root.
@@ -67,11 +67,11 @@ Prerequisites:
 
 9. Enjoy! All tests should pass. All functionality (except debugging in browser) should work.
    Zero mandatory local changes in intellij-plugins repository.
-   Only 3 files locally changed in intellij-community repository, just keep them in a separate '~never commit' changelist
-   and do not worry about them:
-     - intellij-community/community-main.iml
-     - intellij-community/.idea/modules.xml
-     - intellij-community/.idea/vcs.xml
+   There should be 3 locally changed files in intellij-community repository, each having exactly one added line,
+   just keep these files in a separate '~never commit' changelist and do not worry about them:
+     - intellij-community/community-main.iml (line `<orderEntry type="module" module-name="Dart-community" />`)
+     - intellij-community/.idea/modules.xml (line `<module fileurl="file://$PROJECT_DIR$/../intellij-plugins/Dart/Dart-community.iml" ... />`)
+     - intellij-community/.idea/vcs.xml (line `<mapping directory="$PROJECT_DIR$/../intellij-plugins" vcs="Git" />`)
 
 ---
 

@@ -23,8 +23,8 @@ import org.jdom.Element;
  * @author Kir
  */
 public class MockXmlMessage implements XmlMessage {
-  private String myTagName;
-  private String myNamespace;
+  private final String myTagName;
+  private final String myNamespace;
   private boolean myShouldWaitForResponse;
 
   public MockXmlMessage() {

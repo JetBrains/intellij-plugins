@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class CfmlOperatorTokenType extends IElementType {
 
-  private CfmlExpressionTypeCalculator myTypeCalculator;
+  private final CfmlExpressionTypeCalculator myTypeCalculator;
 
   public CfmlOperatorTokenType(@NotNull String debugName, CfmlExpressionTypeCalculator typeCalculator) {
     super(debugName, CfmlLanguage.INSTANCE);

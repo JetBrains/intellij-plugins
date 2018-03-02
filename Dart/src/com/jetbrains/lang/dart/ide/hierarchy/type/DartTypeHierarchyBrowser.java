@@ -25,7 +25,7 @@ public class DartTypeHierarchyBrowser extends TypeHierarchyBrowserBase {
     super(project, dartClass);
   }
 
-  protected boolean isInterface(PsiElement psiElement) {
+  protected boolean isInterface(@NotNull PsiElement psiElement) {
     return false;
   }
 

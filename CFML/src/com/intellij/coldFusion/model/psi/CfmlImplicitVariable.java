@@ -36,7 +36,7 @@ public class CfmlImplicitVariable extends RenameableFakePsiElement implements Cf
   private final PsiComment myComment;
   private final String myName;
   private String myType;
-  private String myText;
+  private final String myText;
 
   public CfmlImplicitVariable(@NotNull final PsiFile containingFile,
                               final PsiComment comment,
@@ -50,7 +50,7 @@ public class CfmlImplicitVariable extends RenameableFakePsiElement implements Cf
   private String cutScope(String name) {
     final int i = name.indexOf(".");
     if (i != -1 && CfmlScopesInfo.getScopeByString(name.substring(0, i)) != CfmlScopesInfo.DEFAULT_SCOPE) {
-      return name.substring(i + 1, name.length());
+      return name.substring(i + 1);
     }
     return name;
   }

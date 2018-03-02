@@ -23,7 +23,7 @@ import java.util.*;
 
 public class DartSymbolIndex extends ScalarIndexExtension<String> {
   public static final ID<String, Void> DART_SYMBOL_INDEX = ID.create("DartSymbolIndex");
-  private DataIndexer<String, Void, FileContent> myDataIndexer = new MyDataIndexer();
+  private final DataIndexer<String, Void, FileContent> myDataIndexer = new MyDataIndexer();
 
   @NotNull
   @Override

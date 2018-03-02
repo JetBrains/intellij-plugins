@@ -21,7 +21,7 @@ import java.util.List;
 
 public class PhoneGapPackageManagementService extends PackageManagementServiceEx {
   private final PhoneGapCommandLine myCommands;
-  private PhoneGapConfigurable.RepositoryStore myRepositoryStore;
+  private final PhoneGapConfigurable.RepositoryStore myRepositoryStore;
 
   public PhoneGapPackageManagementService(@NotNull PhoneGapCommandLine commandLine,
                                           @NotNull PhoneGapConfigurable.RepositoryStore repositoryStore) {

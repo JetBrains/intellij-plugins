@@ -28,7 +28,10 @@ import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
 import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
 import com.intellij.lang.javascript.ui.JSFormatUtil;
-import com.intellij.lang.javascript.validation.*;
+import com.intellij.lang.javascript.validation.ActionScriptImplementedMethodProcessor;
+import com.intellij.lang.javascript.validation.DuplicatesCheckUtil;
+import com.intellij.lang.javascript.validation.JSAnnotatorProblemReporter;
+import com.intellij.lang.javascript.validation.TypedJSAnnotatingVisitor;
 import com.intellij.lang.javascript.validation.fixes.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -39,7 +42,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttributeValue;
@@ -1174,40 +1176,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
   }
 
-  @Override
-  public void visitJSBinaryExpression(JSBinaryExpression node) {
-    super.visitJSBinaryExpression(node);
-
-    IElementType sign = node.getOperationSign();
-    JSExpression lOperand = node.getLOperand();
-    if (lOperand == null) return;
-    final JSExpression rOperand = node.getROperand();
-    if (rOperand == null) return;
-
-    if (sign == JSTokenTypes.AS_KEYWORD || sign == JSTokenTypes.IS_KEYWORD) {
-      if (rOperand instanceof JSReferenceExpression) {
-        ResolveResult[] results = ((JSReferenceExpression)rOperand).multiResolve(false);
-        PsiElement resolve;
-        if (results.length > 0 && ((resolve=results[0].getElement()) instanceof JSVariable || resolve instanceof JSFunction)) {
-          checkIfProperTypeReference(rOperand);
-        }
-      }
-      else {
-        checkIfProperTypeReference(rOperand);
-      }
-    }
-  }
-
-  private void checkIfProperTypeReference(JSExpression rOperand) {
-    ValidateTypesUtil.checkTypeIs(
-      rOperand,
-      rOperand,
-      myProblemReporter,
-      "Class",
-      "javascript.binary.operand.type.mismatch"
-    );
-  }
-
   public void visitJSThisExpression(final JSThisExpression node) {
     checkClassReferenceInStaticContext(node, "javascript.validation.message.this.referenced.from.static.context");
   }
@@ -1260,12 +1228,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
          myHolder.createErrorAnnotation(returnedExpr, message);
        }
     }
-  }
-
-  @Override
-  public void visitJSForInStatement(JSForInStatement node) {
-    super.visitJSForInStatement(node);
-    ValidateTypesUtil.checkTypesInForIn(node, myProblemReporter);
   }
 
   @Override

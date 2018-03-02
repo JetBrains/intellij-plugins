@@ -1,7 +1,7 @@
 {
   "rules": {
     "whitespace": [<warning descr="Value should be one of: [true, \"check-branch\", \"check-decl\", \"check-operator\", \"check-module\", \"check-separator\", \"check-type\", \"check-typecast\", \"check-preblock\"]">false</warning>,
-    <warning descr="Type is not allowed">115</warning>,
+    <warning descr="Type is not allowed. Expected: boolean.">115</warning>,
     <warning descr="Value should be one of: [true, \"check-branch\", \"check-decl\", \"check-operator\", \"check-module\", \"check-separator\", \"check-type\", \"check-typecast\", \"check-preblock\"]">"check-"</warning>
   ]
   }

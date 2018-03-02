@@ -152,6 +152,8 @@ JSFile:Generics.js2
       JSArgumentList
         PsiElement(JS:LPAR)('(')
         ActionScriptFunctionExpression
+          ActionScriptAttributeList
+            <empty list>
           PsiElement(JS:FUNCTION_KEYWORD)('function')
           JSParameterList
             PsiElement(JS:LPAR)('(')

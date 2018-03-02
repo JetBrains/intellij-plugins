@@ -1,7 +1,6 @@
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.index.JSNamespaceEvaluationResult;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -122,7 +121,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   }
 
   @Override
-  protected boolean addTypeFromElementResolveResult(PsiElement resolveResult, boolean hasSomeType) {
+  protected boolean addTypeFromElementResolveResult(@Nullable PsiElement resolveResult) {
     if (resolveResult instanceof JSOffsetBasedImplicitElement && JavaScriptSupportLoader.isFlexMxmFile(resolveResult.getContainingFile())) {
       resolveResult = ((JSOffsetBasedImplicitElement)resolveResult).getElementAtOffset();
     }
@@ -160,9 +159,10 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
             }
         }
       }
-      return hasSomeType;
+      return true;
     }
-    return super.addTypeFromElementResolveResult(resolveResult, hasSomeType);
+
+    return super.addTypeFromElementResolveResult(resolveResult);
   }
 
   private static boolean isInsideRepeaterTag(@NotNull final XmlTag xmlTag) {
@@ -192,7 +192,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
 
   @Nullable
   @Override
-  protected JSNamespaceEvaluationResult evaluateNamespaceLocally(@NotNull JSReferenceExpression expression) {
+  protected JSNamespace evaluateNamespaceLocally(@NotNull JSReferenceExpression expression) {
     return null;
   }
 }

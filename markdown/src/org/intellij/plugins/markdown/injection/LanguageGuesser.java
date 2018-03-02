@@ -5,7 +5,6 @@ import com.intellij.lexer.EmbeddedTokenTypesProvider;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.ClearableLazyValue;
 import com.intellij.openapi.util.NotNullLazyValue;
-import java.util.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -15,7 +14,7 @@ import java.util.*;
 public enum LanguageGuesser {
   INSTANCE;
 
-  private NotNullLazyValue<List<EmbeddedTokenTypesProvider>> embeddedTokenTypeProviders =
+  private final NotNullLazyValue<List<EmbeddedTokenTypesProvider>> embeddedTokenTypeProviders =
     new NotNullLazyValue<List<EmbeddedTokenTypesProvider>>() {
       @NotNull
       @Override
@@ -24,7 +23,7 @@ public enum LanguageGuesser {
       }
     };
 
-  private ClearableLazyValue<List<CodeFenceLanguageProvider>> codeFenceLanguageProviders =
+  private final ClearableLazyValue<List<CodeFenceLanguageProvider>> codeFenceLanguageProviders =
     new ClearableLazyValue<List<CodeFenceLanguageProvider>>() {
       @NotNull
       @Override
@@ -33,7 +32,7 @@ public enum LanguageGuesser {
       }
     };
 
-  private NotNullLazyValue<Map<String, Language>> langIdToLanguage = new NotNullLazyValue<Map<String, Language>>() {
+  private final NotNullLazyValue<Map<String, Language>> langIdToLanguage = new NotNullLazyValue<Map<String, Language>>() {
     @NotNull
     @Override
     protected Map<String, Language> compute() {

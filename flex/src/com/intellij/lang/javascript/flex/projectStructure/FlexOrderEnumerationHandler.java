@@ -45,7 +45,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
   // TODO our special handling for myWithoutJdk, myWithoutLibraries
 
   private static class ModuleData {
-    private Set<FlexBuildConfiguration> bcs = new HashSet<>();
+    private final Set<FlexBuildConfiguration> bcs = new HashSet<>();
     private boolean accessibleInProduction = false; // true if this module accessible by non-test dependency types
 
     public void addBc(FlexBuildConfiguration bc, boolean production) {

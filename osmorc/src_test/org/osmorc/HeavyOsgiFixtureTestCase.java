@@ -15,7 +15,6 @@
  */
 package org.osmorc;
 
-import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -26,7 +25,6 @@ import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.JavaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TempDirTestFixture;
-import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 
@@ -61,19 +59,16 @@ public abstract class HeavyOsgiFixtureTestCase {
 
   private static void loadModules(String projectName, final Project project, String projectDirPath) throws Exception {
     final File projectDir = OsgiTestUtil.extractProject(projectName, projectDirPath);
-    new WriteAction() {
-      @Override
-      protected void run(@NotNull Result result) throws Throwable {
-        VirtualFile virtualDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(projectDir);
-        assertNotNull(projectDir.getPath(), virtualDir);
-        for (File moduleDir : projectDir.listFiles(VISIBLE_DIR_FILTER)) {
-          File moduleFile = new File(moduleDir, moduleDir.getName() + ".iml");
-          if (moduleFile.exists()) {
-            LocalFileSystem.getInstance().refreshAndFindFileByIoFile(moduleFile);
-            ModuleManager.getInstance(project).loadModule(moduleFile.getPath());
-          }
+    WriteAction.runAndWait(() -> {
+      VirtualFile virtualDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(projectDir);
+      assertNotNull(projectDir.getPath(), virtualDir);
+      for (File moduleDir : projectDir.listFiles(VISIBLE_DIR_FILTER)) {
+        File moduleFile = new File(moduleDir, moduleDir.getName() + ".iml");
+        if (moduleFile.exists()) {
+          LocalFileSystem.getInstance().refreshAndFindFileByIoFile(moduleFile);
+          ModuleManager.getInstance(project).loadModule(moduleFile.getPath());
         }
       }
-    }.execute();
+    });
   }
 }

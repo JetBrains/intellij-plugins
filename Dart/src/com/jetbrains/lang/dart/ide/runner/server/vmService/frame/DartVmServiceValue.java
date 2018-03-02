@@ -31,13 +31,13 @@ public class DartVmServiceValue extends XNamedValue {
     new LayeredIcon(AllIcons.Nodes.Field, AllIcons.Nodes.StaticMark, AllIcons.Nodes.FinalMark);
 
   @NotNull private final DartVmServiceDebugProcess myDebugProcess;
-  @NotNull private String myIsolateId;
+  @NotNull private final String myIsolateId;
   @NotNull private final InstanceRef myInstanceRef;
   @Nullable private final LocalVarSourceLocation myLocalVarSourceLocation;
   @Nullable private final FieldRef myFieldRef;
   private final boolean myIsException;
 
-  private Ref<Integer> myCollectionChildrenAlreadyShown = new Ref<>(0);
+  private final Ref<Integer> myCollectionChildrenAlreadyShown = new Ref<>(0);
 
   public DartVmServiceValue(@NotNull final DartVmServiceDebugProcess debugProcess,
                             @NotNull final String isolateId,

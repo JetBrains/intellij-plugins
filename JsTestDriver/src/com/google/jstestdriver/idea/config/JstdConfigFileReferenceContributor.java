@@ -114,7 +114,7 @@ public class JstdConfigFileReferenceContributor extends PsiReferenceContributor 
 
   private static class MyPsiReference implements PsiReference {
 
-    private PsiElementFragment<YAMLKeyValue> myYamlKeyValueFragment;
+    private final PsiElementFragment<YAMLKeyValue> myYamlKeyValueFragment;
     private final BasePathInfo myBasePathInfo;
     private final String myRelativePath;
 

@@ -24,11 +24,11 @@ import java.util.List;
  * @author Dennis.Ushakov
  */
 public class Function extends Sealable {
-  private String myName;
+  private final String myName;
   private final boolean myVariadic;
   private final boolean myClassMethod;
   private String myReturnValue;
-  private List<Pair<String, String>> myArguments = new ArrayList<>();
+  private final List<Pair<String, String>> myArguments = new ArrayList<>();
 
   public Function(final String name, final boolean isVariadic, final boolean isClassMethod) {
     myName = name;

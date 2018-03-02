@@ -61,7 +61,7 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
   private TextFieldWithBrowseButton myBundleActivator;
   private JTextField myBundleVersion;
   private JPanel myEditorPanel;
-  private ManifestEditor myAdditionalPropertiesEditor;
+  private final ManifestEditor myAdditionalPropertiesEditor;
   private boolean myModified;
 
   public OsmorcFacetManifestGenerationEditorTab(FacetEditorContext editorContext) {

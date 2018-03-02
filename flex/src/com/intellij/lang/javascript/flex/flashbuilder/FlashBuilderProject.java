@@ -12,10 +12,10 @@ import java.util.*;
 public class FlashBuilderProject {
 
   private String myName = FlexBundle.message("unnamed");
-  private Map<String, String> myLinkedResources = new THashMap<>();
-  private Set<String> myUsedPathVariables = new THashSet<>();
+  private final Map<String, String> myLinkedResources = new THashMap<>();
+  private final Set<String> myUsedPathVariables = new THashSet<>();
   private String myProjectRootPath = "";
-  private Collection<String> mySourcePaths = new ArrayList<>();
+  private final Collection<String> mySourcePaths = new ArrayList<>();
   private String myOutputFolderPath = "";
   private boolean mySdkUsed;
   private String mySdkName = FlashBuilderSdkFinder.DEFAULT_SDK_NAME;
@@ -30,18 +30,18 @@ public class FlashBuilderProject {
   private String myIOSCertPath;
   private String myIOSProvisioningPath;
   private String myMainAppClassName = "";
-  private Collection<String> myApplicationClassNames = new ArrayList<>();
+  private final Collection<String> myApplicationClassNames = new ArrayList<>();
   private String myTargetPlayerVersion;
   private String myAdditionalCompilerOptions = "";
   private boolean myUseHtmlWrapper = false;
-  private Map<String, Collection<String>> myLibraryPathsAndSources = new LinkedHashMap<>();
-  private Collection<Pair<String, String>> myNamespacesAndManifestPaths = new ArrayList<>(1);
-  private Collection<String> myFilesIncludedInSwc = new ArrayList<>();
-  private Collection<FBRLMInfo> myModules = new ArrayList<>();
-  private Collection<String> myCssFilesToCompile = new ArrayList<>();
-  private Collection<String> myPathsExcludedFromDesktopPackaging = new ArrayList<>();
-  private Collection<String> myPathsExcludedFromAndroidPackaging = new ArrayList<>();
-  private Collection<String> myPathsExcludedFromIOSPackaging = new ArrayList<>();
+  private final Map<String, Collection<String>> myLibraryPathsAndSources = new LinkedHashMap<>();
+  private final Collection<Pair<String, String>> myNamespacesAndManifestPaths = new ArrayList<>(1);
+  private final Collection<String> myFilesIncludedInSwc = new ArrayList<>();
+  private final Collection<FBRLMInfo> myModules = new ArrayList<>();
+  private final Collection<String> myCssFilesToCompile = new ArrayList<>();
+  private final Collection<String> myPathsExcludedFromDesktopPackaging = new ArrayList<>();
+  private final Collection<String> myPathsExcludedFromAndroidPackaging = new ArrayList<>();
+  private final Collection<String> myPathsExcludedFromIOSPackaging = new ArrayList<>();
   private String myThemeDirPathRaw;
 
   public static class FBRLMInfo {

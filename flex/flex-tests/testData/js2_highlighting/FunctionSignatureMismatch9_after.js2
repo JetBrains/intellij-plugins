@@ -1,6 +1,6 @@
 package {
     public class FunctionSignatureMismatch9 {
-        public function foo(p:int, q:int, s:String) {}
+        public function foo(p:int, q:int, abc:String) {}
 
         function zzz() {
             foo(1, 2, "abc");

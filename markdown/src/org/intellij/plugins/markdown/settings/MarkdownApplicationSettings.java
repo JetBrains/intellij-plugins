@@ -24,7 +24,7 @@ public class MarkdownApplicationSettings implements PersistentStateComponent<Mar
                                                     MarkdownCssSettings.Holder,
                                                     MarkdownPreviewSettings.Holder {
 
-  private State myState = new State();
+  private final State myState = new State();
 
   public MarkdownApplicationSettings() {
     final MarkdownLAFListener lafListener = new MarkdownLAFListener();

@@ -20,8 +20,8 @@ import java.util.Map;
  * @author Konstantin.Ulitin
  */
 public class ActionScriptTypeHelper extends JSTypeHelper {
-  private static Key<PsiElement> ourResolvedTypeKey = Key.create("resolved.type");
-  private static JSTypeHelper ourTypeHelper = new ActionScriptTypeHelper();
+  private static final Key<PsiElement> ourResolvedTypeKey = Key.create("resolved.type");
+  private static final JSTypeHelper ourTypeHelper = new ActionScriptTypeHelper();
 
   protected ActionScriptTypeHelper() {
   }

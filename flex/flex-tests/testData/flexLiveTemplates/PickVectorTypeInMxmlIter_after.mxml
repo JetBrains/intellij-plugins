@@ -5,7 +5,7 @@
         internal static var vec:Vector.<mx.rpc.soap.AbstractWebService>
 
         private function foo():void {
-            for each (var service:AbstractWebService in vec) {
+            for each (var abstractWebService:AbstractWebService in vec) {
                 <caret>
             }
         }

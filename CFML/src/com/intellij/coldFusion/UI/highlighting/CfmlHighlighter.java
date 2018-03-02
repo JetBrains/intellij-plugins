@@ -54,8 +54,8 @@ public class CfmlHighlighter extends LayeredLexerEditorHighlighter {
   }
 
   static class CfmlFileHighlighter extends SyntaxHighlighterBase {
-    private static Map<IElementType, TextAttributesKey> keys2;
-    private Project myProject;
+    private static final Map<IElementType, TextAttributesKey> keys2;
+    private final Project myProject;
 
     CfmlFileHighlighter(Project project) {
       myProject = project;

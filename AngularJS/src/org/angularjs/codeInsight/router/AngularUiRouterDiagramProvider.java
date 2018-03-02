@@ -18,7 +18,6 @@ import com.intellij.openapi.graph.layout.Layouter;
 import com.intellij.openapi.graph.layout.ParallelEdgeLayouter;
 import com.intellij.openapi.graph.layout.organic.SmartOrganicLayouter;
 import com.intellij.openapi.graph.settings.GraphSettings;
-import com.intellij.openapi.graph.settings.GraphSettingsProvider;
 import com.intellij.openapi.graph.view.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Trinity;
@@ -58,9 +57,9 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
   public static final StrokeBorder WARNING_BORDER = new StrokeBorder(DOTTED_STROKE, JBColor.red);
   public static final Border ERROR_BORDER = JBUI.Borders.customLine(JBColor.red);
   public static final Border NORMAL_BORDER = JBUI.Borders.customLine(Gray._190);
-  private DiagramVfsResolver<DiagramObject> myResolver;
-  private AbstractDiagramElementManager<DiagramObject> myElementManager;
-  private DiagramColorManagerBase myColorManager;
+  private final DiagramVfsResolver<DiagramObject> myResolver;
+  private final AbstractDiagramElementManager<DiagramObject> myElementManager;
+  private final DiagramColorManagerBase myColorManager;
 
   public AngularUiRouterDiagramProvider() {
     myResolver = new DiagramVfsResolver<DiagramObject>() {
@@ -267,7 +266,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         return realizer;
       }
 
-      private Map<Integer, Integer> myEdgesPositions = new HashMap<>();
+      private final Map<Integer, Integer> myEdgesPositions = new HashMap<>();
       private final Set<AngularUiRouterEdge> myVisibleEdges = new HashSet<>();
 
       @Override
@@ -467,12 +466,9 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         return null;
       }
 
-      @Nullable
+      @NotNull
       @Override
-      public Layouter getCustomLayouter(Graph2D graph, Project project) {
-        final GraphSettingsProvider settingsProvider = GraphSettingsProvider.getInstance(project);
-        final GraphSettings settings = settingsProvider.getSettings(graph);
-
+      public Layouter getCustomLayouter(GraphSettings settings, Project project) {
         final SmartOrganicLayouter layouter = settings.getOrganicLayouter();
         layouter.setNodeEdgeOverlapAvoided(true);
 

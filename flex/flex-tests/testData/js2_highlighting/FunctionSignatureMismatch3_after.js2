@@ -1,11 +1,11 @@
 package {
     public class Base {
-        internal function foo(i:int, i2:int, s:String, p:*) {}
+        internal function foo(i:int, i1:int, abc:String, p:*) {}
     }
 }
 package {
     public class FunctionSignatureMismatch3 extends Base {
-        internal override function foo(i:int, i2:int, s:String, p:*) {}
+        internal override function foo(i:int, i1:int, abc:String, p:*) {}
 
         function bar() {
             foo(1, 2, "abc", null);

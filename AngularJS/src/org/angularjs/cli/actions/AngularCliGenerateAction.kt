@@ -6,6 +6,7 @@ import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
+import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditor
@@ -26,6 +27,7 @@ import com.intellij.ui.ScrollPaneFactory
 import com.intellij.ui.TextFieldWithAutoCompletion
 import com.intellij.ui.components.JBList
 import com.intellij.ui.speedSearch.ListWithFilter
+import com.intellij.util.Function
 import com.intellij.util.gist.GistManager
 import com.intellij.util.gist.GistManagerImpl
 import com.intellij.util.ui.EmptyIcon
@@ -40,9 +42,6 @@ import java.awt.event.KeyEvent
 import java.awt.event.MouseEvent
 import javax.swing.*
 
-/**
- * @author Dennis.Ushakov
- */
 class AngularCliGenerateAction : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
@@ -108,8 +107,9 @@ class AngularCliGenerateAction : DumbAwareAction() {
     val popup = builder.createPopup()
     list.addKeyListener(object: KeyAdapter() {
       override fun keyPressed(e: KeyEvent?) {
+        if (list.selectedValue == null) return
         if (e?.keyCode == KeyEvent.VK_ENTER) {
-          e?.consume()
+          e.consume()
           askOptions(project, popup, list.selectedValue as Blueprint, cli, workingDir(editor, file))
         }
       }
@@ -184,7 +184,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
   }
 
   private fun runGenerator(project: Project, blueprint: Blueprint, arguments: Array<String>, cli: VirtualFile, workingDir: VirtualFile?) {
-    val interpreter = NodeJsInterpreterManager.getInstance(project).default
+    val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter
     val node = NodeJsLocalInterpreter.tryCast(interpreter) ?: return
 
     val modules:MutableList<CompletionModuleInfo> = mutableListOf()
@@ -193,7 +193,8 @@ class AngularCliGenerateAction : DumbAwareAction() {
     val module = modules.firstOrNull() ?: return
 
     val filter = AngularCLIFilter(project, cli.path)
-    AngularCLIProjectGenerator.generate(node, AngularCLIProjectGenerator.ng(module.virtualFile?.path!!),
+    AngularCLIProjectGenerator.generate(node, NodePackage(module.virtualFile?.path!!),
+                                        Function<NodePackage, String> { pkg -> pkg.findBinFile()?.absolutePath },
                                         cli, VfsUtilCore.virtualToIoFile(workingDir ?: cli), project,
                                         null, arrayOf(filter), "generate", blueprint.name, *arguments)
   }

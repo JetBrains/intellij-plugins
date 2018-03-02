@@ -59,10 +59,10 @@ import static com.intellij.lang.javascript.psi.types.JSNamedType.createType;
 public class ActionScriptSmartCompletionContributor extends JSSmartCompletionContributor {
   @Nullable
   @Override
-  public List<?> getSmartCompletionVariants(final @NotNull JSReferenceExpression location) {
+  public List<LookupElement> getSmartCompletionVariants(final @NotNull JSReferenceExpression location) {
     final PsiElement parent = location.getParent();
 
-    List<Object> variants = new ArrayList<>();
+    List<LookupElement> variants = new ArrayList<>();
     if (parent instanceof JSArgumentList &&
         ((JSArgumentList)parent).getArguments()[0] == location &&
         location.getQualifier() == null
@@ -219,7 +219,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
     }
   }
 
-  private static void addAllClassesFromQuery(List<Object> variants,
+  private static void addAllClassesFromQuery(List<LookupElement> variants,
                                              Query<JSClass> query,
                                              PsiElement place,
                                              Set<String> processedCandidateNames) {
@@ -328,7 +328,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
   protected int processContextClass(@NotNull JSReferenceExpression location,
                                     JSType expectedType,
                                     PsiElement parent,
-                                    List<Object> variants,
+                                    List<LookupElement> variants,
                                     int qualifiedStaticVariantsStart,
                                     SinkResolveProcessor<?> processor,
                                     JSClass ourClass) {
@@ -364,11 +364,11 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
   private static class MyEventSubclassesProcessor extends ResolveProcessor {
     private final JavaScriptIndex index;
     private final PsiElement myExpr;
-    private final List<Object> myVariants;
+    private final List<LookupElement> myVariants;
     private final ResolveState state = new ResolveState();
     private Map<String, String> myEventsMap = new THashMap<>();
 
-    public MyEventSubclassesProcessor(final PsiElement expr, final List<Object> variants) {
+    public MyEventSubclassesProcessor(final PsiElement expr, final List<LookupElement> variants) {
       super(null);
       myExpr = expr;
       myVariants = variants;
@@ -432,19 +432,14 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
 
       final PsiElement eventClass1 = ActionScriptClassResolver
         .findClassByQName(FlexCommonTypeNames.FLASH_EVENT_FQN, index, ModuleUtilCore.findModuleForPsiElement(expression));
-      if ((eventClass1 instanceof JSClass)) {
-        setToProcessMembers(true);
-        setTypeContext(false);
-
-        final Set<String> visited = new THashSet<>();
-        for (JSClass cls : JSClassSearch.searchClassInheritors((JSClass)eventClass1, true, expression.getResolveScope()).findAll()) {
-          if (!visited.add(cls.getQualifiedName())) continue;
-          process(cls);
-        }
-      }
+      addElementsFromClass(expression, eventClass1);
 
       final PsiElement eventClass2 = ActionScriptClassResolver
         .findClassByQName(FlexCommonTypeNames.STARLING_EVENT_FQN, index, ModuleUtilCore.findModuleForPsiElement(expression));
+      addElementsFromClass(expression, eventClass2);
+    }
+
+    private void addElementsFromClass(JSReferenceExpression expression, PsiElement eventClass2) {
       if ((eventClass2 instanceof JSClass)) {
         setToProcessMembers(true);
         setTypeContext(false);

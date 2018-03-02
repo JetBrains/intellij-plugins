@@ -4,7 +4,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class JpsFlexLibraryProperties {
 
-  private @Nullable String myLibraryId;
+  private @Nullable final String myLibraryId;
 
   public JpsFlexLibraryProperties(final JpsFlexLibraryProperties properties) {
     myLibraryId = properties.myLibraryId;

@@ -260,7 +260,7 @@ public class CfmlUtil {
           .toLowerCase());
   }
 
-  private static String[] EMPTY_STRING_ARRAY = ArrayUtil.EMPTY_STRING_ARRAY;
+  private static final String[] EMPTY_STRING_ARRAY = ArrayUtil.EMPTY_STRING_ARRAY;
 
   @NotNull
   public static String[] getAttributeValues(String tagName, String attributeName, Project project) {

@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2014, the Dart project authors.
- * 
+ *
  * Licensed under the Eclipse Public License v1.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -14,6 +14,7 @@
 package com.google.dart.server.internal.remote;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.dart.server.*;
 import com.google.dart.server.generated.AnalysisServer;
@@ -97,6 +98,8 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
    */
   private final BroadcastAnalysisServerListener listener = new BroadcastAnalysisServerListener();
 
+  private final List<ResponseListener> responseListenerList = new ArrayList<>();
+
   private final List<AnalysisServerStatusListener> statusListenerList = new ArrayList<AnalysisServerStatusListener>();
 
   /**
@@ -153,6 +156,15 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   @Override
   public void addAnalysisServerListener(AnalysisServerListener listener) {
     this.listener.addListener(listener);
+  }
+
+  @Override
+  public void addResponseListener(ResponseListener listener) {
+    synchronized (responseListenerList) {
+      if (!responseListenerList.contains(listener)) {
+        responseListenerList.add(listener);
+      }
+    }
   }
 
   @Override
@@ -385,6 +397,13 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
+  public void removeResponseListener(ResponseListener listener) {
+    synchronized (responseListenerList) {
+      responseListenerList.remove(listener);
+    }
+  }
+
+  @Override
   public void search_findElementReferences(String file, int offset, boolean includePotential, FindElementReferencesConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateSearchFindElementReferences(id, file, offset, includePotential), consumer);
@@ -472,7 +491,8 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
    *
    * @return a unique {@link String} id to be used in the requests sent to the analysis server
    */
-  private String generateUniqueId() {
+  @Override
+  public String generateUniqueId() {
     return Integer.toString(nextId.getAndIncrement());
   }
 
@@ -558,6 +578,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   private void processResponse(JsonObject response) throws Exception {
+    notifyResponseListeners(response);
     // handle notification
     if (processNotification(response)) {
       return;
@@ -692,9 +713,21 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     else if (consumer instanceof BasicConsumer) {
       ((BasicConsumer)consumer).received();
     }
+    else if (consumer instanceof JsonConsumer) {
+      ((JsonConsumer)consumer).onResponse(resultObject, requestError);
+    }
 
     synchronized (consumerMapLock) {
       consumerMap.remove(idString);
+    }
+  }
+
+  private void notifyResponseListeners(JsonObject response) {
+    synchronized (responseListenerList) {
+      List<ResponseListener> listeners = ImmutableList.copyOf(responseListenerList);
+      for (ResponseListener listener : listeners) {
+        listener.onResponse(response);
+      }
     }
   }
 
@@ -705,7 +738,8 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
    * @param id      the identifier of the request
    * @param request the request to send
    */
-  private void sendRequestToServer(String id, JsonObject request) {
+  @Override
+  public void sendRequestToServer(String id, JsonObject request) {
     sendRequestToServer(id, request, new LocalConsumer(request));
   }
 
@@ -716,7 +750,8 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
    * @param request  the request to send
    * @param consumer the {@link Consumer} to process a response
    */
-  private void sendRequestToServer(String id, JsonObject request, Consumer consumer) {
+  @Override
+  public void sendRequestToServer(String id, JsonObject request, Consumer consumer) {
     synchronized (consumerMapLock) {
       consumerMap.put(id, consumer);
     }
