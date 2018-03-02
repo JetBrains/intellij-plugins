@@ -28,16 +28,14 @@ public class AddTapestrySupportUtil {
                                                     final boolean generateStartupApplication,
                                                     final boolean generatePom) {
     if (configuration.getApplicationPackage() == null) return;
-    new WriteCommandAction.Simple(module.getProject()) {
-      protected void run() throws Throwable {
-        try {
-          addSupport(module, configuration, generateStartupApplication, generatePom);
-        }
-        catch (Exception ex) {
-          _logger.error(ex);
-        }
+    WriteCommandAction.writeCommandAction(module.getProject()).run(() -> {
+      try {
+        addSupport(module, configuration, generateStartupApplication, generatePom);
       }
-    }.execute();
+      catch (Exception ex) {
+        _logger.error(ex);
+      }
+    });
   }
 
   private static void addSupport(final Module module,

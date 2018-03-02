@@ -1,10 +1,9 @@
 package com.intellij.tapestry.tests;
 
 import com.intellij.facet.FacetManager;
-import com.intellij.openapi.application.Result;
-import com.intellij.openapi.application.RunResult;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -83,27 +82,20 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
   }
 
   protected TapestryFacet createFacet() {
-    final RunResult<TapestryFacet> runResult = new WriteCommandAction<TapestryFacet>(myFixture.getProject()) {
-      @Override
-      protected void run(@NotNull final Result<TapestryFacet> result) {
+    return WriteCommandAction.runWriteCommandAction(myFixture.getProject(), (Computable<TapestryFacet>)() -> {
         final TapestryFacetType facetType = TapestryFacetType.getInstance();
         final FacetManager facetManager = FacetManager.getInstance(myModule);
         final TapestryFacet facet = facetManager.addFacet(facetType, facetType.getPresentableName(), null);
         facet.getConfiguration().setApplicationPackage(TEST_APPLICATION_PACKAGE);
-        result.setResult(facet);
         Assert.assertNotNull(facetManager.getFacetByType(TapestryFacetType.ID));
-      }
-    }.execute();
-    if (runResult.hasException()) {
-      throw new RuntimeException(runResult.getThrowable());
-    }
-    Assert.assertTrue("Not Tapestry module", TapestryUtils.isTapestryModule(myModule));
-    Assert.assertNotNull("No TapestryModuleSupportLoader", TapestryModuleSupportLoader.getInstance(myModule));
-    final TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(myModule);
-    Assert.assertNotNull("No TapestryProject", tapestryProject);
-    Assert.assertNotNull(tapestryProject.getApplicationRootPackage());
-    Assert.assertNotNull(tapestryProject.getApplicationLibrary());
-    return runResult.getResultObject();
+        Assert.assertTrue("Not Tapestry module", TapestryUtils.isTapestryModule(myModule));
+        Assert.assertNotNull("No TapestryModuleSupportLoader", TapestryModuleSupportLoader.getInstance(myModule));
+        final TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(myModule);
+        Assert.assertNotNull("No TapestryProject", tapestryProject);
+        Assert.assertNotNull(tapestryProject.getApplicationRootPackage());
+        Assert.assertNotNull(tapestryProject.getApplicationLibrary());
+        return facet;
+      });
   }
 
   protected void configureModule(JavaModuleFixtureBuilder moduleBuilder) {
