@@ -27,7 +27,6 @@ package org.osmorc.maven.inspection;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.codeInspection.XmlSuppressableInspectionTool;
-import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -36,7 +35,6 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.XmlElementVisitor;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
@@ -129,51 +127,49 @@ public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionT
       if (result == null) return;
 
       final PsiFile psiFile = problemDescriptor.getPsiElement().getContainingFile();
-      new WriteCommandAction(project, psiFile) {
-        @Override
-        protected void run(@NotNull Result _result) throws Throwable {
-          MavenDomProjectModel model = MavenDomUtil.getMavenDomProjectModel(getProject(), psiFile.getVirtualFile());
-          if (model == null) return;
+      WriteCommandAction.writeCommandAction(project, psiFile).run(() -> {
+        MavenDomProjectModel model = MavenDomUtil.getMavenDomProjectModel(project, psiFile.getVirtualFile());
+        if (model == null) return;
 
-          // replace dependency element
+        // replace dependency element
 
-          MavenDomDependency dummy = model.getDependencies().addDependency();
-          dummy.getGroupId().setStringValue(result.getGroupId());
-          dummy.getArtifactId().setStringValue(result.getArtifactId());
-          dummy.getVersion().setStringValue(result.getVersion());
-          String scope = dependency.getScope().getStringValue();
-          if (!StringUtil.isEmpty(scope)) {
-            dummy.getScope().setStringValue(scope);
-          }
+        MavenDomDependency dummy = model.getDependencies().addDependency();
+        dummy.getGroupId().setStringValue(result.getGroupId());
+        dummy.getArtifactId().setStringValue(result.getArtifactId());
+        dummy.getVersion().setStringValue(result.getVersion());
+        String scope = dependency.getScope().getStringValue();
+        if (!StringUtil.isEmpty(scope)) {
+          dummy.getScope().setStringValue(scope);
+        }
 
-          PsiElement newDep = dummy.getXmlElement();
-          PsiElement oldDep = dependency.getXmlElement();
-          assert newDep != null : dummy;
-          assert oldDep != null : dependency;
-          oldDep.replace(newDep.copy());
-          newDep.delete();
+        PsiElement newDep = dummy.getXmlElement();
+        PsiElement oldDep = dependency.getXmlElement();
+        assert newDep != null : dummy;
+        assert oldDep != null : dependency;
+        oldDep.replace(newDep.copy());
+        newDep.delete();
 
-          // add new repository if needed
+        // add new repository if needed
 
-          Set<String> projectRepositoryUrls = ContainerUtil.map2Set(model.getRepositories().getRepositories(), repository -> repository.getUrl().getStringValue());
+        Set<String> projectRepositoryUrls =
+          ContainerUtil.map2Set(model.getRepositories().getRepositories(), repository -> repository.getUrl().getStringValue());
 
-          List<MavenRepository> newRepositories = ContainerUtil.newSmartList(result.getBundleRepository().getMavenRepositories());
+        List<MavenRepository> newRepositories = ContainerUtil.newSmartList(result.getBundleRepository().getMavenRepositories());
 
-          for (Iterator<MavenRepository> i = newRepositories.iterator(); i.hasNext(); ) {
-            MavenRepository repository = i.next();
-            if (projectRepositoryUrls.contains(repository.getRepositoryUrl())) {
-              i.remove();
-            }
-          }
-
-          for (MavenRepository repository : newRepositories) {
-            MavenDomRepository added = model.getRepositories().addRepository();
-            added.getId().setStringValue(repository.getRepositoryId());
-            added.getUrl().setStringValue(repository.getRepositoryUrl());
-            added.getName().setStringValue(repository.getRepositoryDescription());
+        for (Iterator<MavenRepository> i = newRepositories.iterator(); i.hasNext(); ) {
+          MavenRepository repository = i.next();
+          if (projectRepositoryUrls.contains(repository.getRepositoryUrl())) {
+            i.remove();
           }
         }
-      }.execute();
+
+        for (MavenRepository repository : newRepositories) {
+          MavenDomRepository added = model.getRepositories().addRepository();
+          added.getId().setStringValue(repository.getRepositoryId());
+          added.getUrl().setStringValue(repository.getRepositoryUrl());
+          added.getName().setStringValue(repository.getRepositoryDescription());
+        }
+      });
     }
   }
 }

@@ -6,7 +6,6 @@ import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Document;
@@ -385,14 +384,16 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
   private SmartPsiElementPointer<PsiElement> performReplace(@NotNull final PsiElement declaration, final DartIntroduceOperation operation) {
     final DartExpression expression = operation.getInitializer();
     final Project project = operation.getProject();
-    return new WriteCommandAction<SmartPsiElementPointer<PsiElement>>(project, expression.getContainingFile()) {
-      protected void run(@NotNull final Result<SmartPsiElementPointer<PsiElement>> result) throws Throwable {
+    return WriteCommandAction.writeCommandAction(project, expression.getContainingFile()).compute(() -> {
         final PsiElement createdDeclaration = addDeclaration(operation, declaration);
-        if (createdDeclaration != null) {
-          result.setResult(SmartPointerManager.getInstance(project).createSmartPsiElementPointer(createdDeclaration));
+      SmartPsiElementPointer<PsiElement> result;
+      if (createdDeclaration != null) {
+          result = (SmartPointerManager.getInstance(project).createSmartPsiElementPointer(createdDeclaration));
           modifyDeclaration(createdDeclaration);
         }
-
+        else {
+        result = null;
+      }
         PsiElement newExpression = createExpression(project, operation.getName());
 
         if (operation.isReplaceAll()) {
@@ -411,8 +412,8 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
         }
 
         postRefactoring(operation.getElement());
-      }
-    }.execute().getResultObject();
+        return result;
+      });
   }
 
   protected void modifyDeclaration(@NotNull PsiElement declaration) {

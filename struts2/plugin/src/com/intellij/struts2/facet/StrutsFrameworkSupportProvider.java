@@ -142,31 +142,29 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
 
 
           // create filter & mapping in web.xml (if present)
-          new WriteCommandAction.Simple(modifiableRootModel.getProject()) {
-            protected void run() throws Throwable {
-              final WebFacet webFacet = strutsFacet.getWebFacet();
+          WriteCommandAction.writeCommandAction(modifiableRootModel.getProject()).run(() -> {
+            final WebFacet webFacet = strutsFacet.getWebFacet();
 
-              final ConfigFile configFile = webFacet.getWebXmlDescriptor();
-              if (configFile == null) return;
+            final ConfigFile configFile = webFacet.getWebXmlDescriptor();
+            if (configFile == null) return;
 
-              final XmlFile webXmlFile = configFile.getXmlFile();
-              final WebApp webApp = JamCommonUtil.getRootElement(webXmlFile, WebApp.class, null);
-              if (webApp == null) return;
-              if (!FileModificationService.getInstance().prepareFileForWrite(webXmlFile)) return;
+            final XmlFile webXmlFile = configFile.getXmlFile();
+            final WebApp webApp = JamCommonUtil.getRootElement(webXmlFile, WebApp.class, null);
+            if (webApp == null) return;
+            if (!FileModificationService.getInstance().prepareFileForWrite(webXmlFile)) return;
 
-              final Filter strutsFilter = webApp.addFilter();
-              strutsFilter.getFilterName().setStringValue("struts2");
+            final Filter strutsFilter = webApp.addFilter();
+            strutsFilter.getFilterName().setStringValue("struts2");
 
-              @NonNls final String filterClass = templateProvider.is21orNewer() ?
-                                                 StrutsConstants.STRUTS_2_1_FILTER_CLASS :
-                                                 StrutsConstants.STRUTS_2_0_FILTER_CLASS;
-              strutsFilter.getFilterClass().setStringValue(filterClass);
+            @NonNls final String filterClass = templateProvider.is21orNewer() ?
+                                               StrutsConstants.STRUTS_2_1_FILTER_CLASS :
+                                               StrutsConstants.STRUTS_2_0_FILTER_CLASS;
+            strutsFilter.getFilterClass().setStringValue(filterClass);
 
-              final FilterMapping filterMapping = webApp.addFilterMapping();
-              filterMapping.getFilterName().setValue(strutsFilter);
-              filterMapping.addUrlPattern().setStringValue("/*");
-            }
-          }.execute();
+            final FilterMapping filterMapping = webApp.addFilterMapping();
+            filterMapping.getFilterName().setValue(strutsFilter);
+            filterMapping.addUrlPattern().setStringValue("/*");
+          });
 
 
           final NotificationListener showFacetSettingsListener = new NotificationListener() {

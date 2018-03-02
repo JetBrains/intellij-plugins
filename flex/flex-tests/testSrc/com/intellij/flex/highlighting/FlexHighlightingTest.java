@@ -1875,16 +1875,13 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testAddingModuleDependencyAffectsHighlighting() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml");
-    new WriteCommandAction.Simple(getProject()) {
-      @Override
-      protected void run() throws Throwable {
-        final Module otherModule =
-          createModuleFromTestData(getTestDataPath() + getBasePath() + "/" + testName + "_other_module", "OtherModule",
-                                   FlexModuleType.getInstance(), true);
-        FlexTestUtils.addFlexModuleDependency(myModule, otherModule);
-        Disposer.register(getTestRootDisposable(), otherModule);
-      }
-    }.execute().throwException();
+    WriteCommandAction.writeCommandAction(getProject()).run(() -> {
+      final Module otherModule =
+        createModuleFromTestData(getTestDataPath() + getBasePath() + "/" + testName + "_other_module", "OtherModule",
+                                 FlexModuleType.getInstance(), true);
+      FlexTestUtils.addFlexModuleDependency(myModule, otherModule);
+      Disposer.register(getTestRootDisposable(), otherModule);
+    });
     assertEmpty(doHighlighting());
   }
 
