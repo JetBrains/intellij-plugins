@@ -26,45 +26,39 @@ package org.osmorc.facet;
 
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
-import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
+
+import java.io.IOException;
 
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class AddFacetTest extends JavaCodeInsightFixtureTestCase {
-  public void testAddFacetAfterCreatingManifest() {
-    new WriteAction() {
-      @Override
-      protected void run(@NotNull Result result) throws Throwable {
-        VirtualFile[] roots = ModuleRootManager.getInstance(myModule).getContentRoots();
-        VirtualFile metaInf = roots[0].createChildDirectory(this, "META-INF");
-        VirtualFile manifest = metaInf.createChildData(this, "MANIFEST.MF");
-        VfsUtil.saveText(manifest, "Manifest-Version: 1.0\n" +
-                                   "Bundle-ManifestVersion: 2\n" +
-                                   "Bundle-Name: Test\n" +
-                                   "Bundle-SymbolicName: test\n" +
-                                   "Bundle-Version: 1.0.0\n");
-        PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
-      }
-    }.execute();
+  public void testAddFacetAfterCreatingManifest() throws IOException {
+    WriteAction.runAndWait(() -> {
+      VirtualFile[] roots = ModuleRootManager.getInstance(myModule).getContentRoots();
+      VirtualFile metaInf = roots[0].createChildDirectory(this, "META-INF");
+      VirtualFile manifest = metaInf.createChildData(this, "MANIFEST.MF");
+      VfsUtil.saveText(manifest, "Manifest-Version: 1.0\n" +
+                                 "Bundle-ManifestVersion: 2\n" +
+                                 "Bundle-Name: Test\n" +
+                                 "Bundle-SymbolicName: test\n" +
+                                 "Bundle-Version: 1.0.0\n");
+      PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+    });
 
-    new WriteAction() {
-      @Override
-      protected void run(@NotNull Result result) {
-        ModifiableFacetModel model = FacetManager.getInstance(myModule).createModifiableModel();
-        OsmorcFacet facet = new OsmorcFacet(myModule);
-        facet.getConfiguration().setManifestGenerationMode(ManifestGenerationMode.Manually);
-        model.addFacet(facet);
-        model.commit();
-      }
-    }.execute();
+    WriteAction.runAndWait(() -> {
+      ModifiableFacetModel model = FacetManager.getInstance(myModule).createModifiableModel();
+      OsmorcFacet facet = new OsmorcFacet(myModule);
+      facet.getConfiguration().setManifestGenerationMode(ManifestGenerationMode.Manually);
+      model.addFacet(facet);
+      model.commit();
+    });
   }
 }

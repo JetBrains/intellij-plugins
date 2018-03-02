@@ -31,8 +31,6 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   public String myFilePath;
 
-  public String GLUE;
-
   public String myNameFilter;
 
   public String myGeneratedName;
@@ -133,18 +131,27 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
     super.checkConfiguration();
   }
 
+  @Override
+  protected CucumberJavaConfigurationOptions getOptions() {
+    return (CucumberJavaConfigurationOptions)super.getOptions();
+  }
+
+  @Override
+  protected Class<? extends ModuleBasedConfigurationOptions> getOptionsClass() {
+    return CucumberJavaConfigurationOptions.class;
+  }
+
   @Nullable
   public String getGlue() {
     if (glueInitializer != null) {
-      GLUE = glueInitializer.compute();
-      glueInitializer = null;
+      setGlue(glueInitializer.compute());
     }
 
-    return GLUE;
+    return getOptions().getGlue();
   }
 
   public void setGlue(String value) {
-    GLUE = value;
+    getOptions().setGlue(value);
     glueInitializer = null;
   }
 

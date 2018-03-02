@@ -634,8 +634,7 @@ public class AirPackageUtil {
         if (device.DEVICE_NAME != null) {
           presentableName.append('\'').append(device.DEVICE_NAME).append("' ");
         }
-        presentableName.append('(').append(device.DEVICE_ID.substring(0, 6)).append("...").append(device.DEVICE_ID.substring(36))
-          .append(')');
+        presentableName.append('(').append(device.DEVICE_ID, 0, 6).append("...").append(device.DEVICE_ID.substring(36)).append(')');
 
         if (device.DEVICE_ID.equals(preferredId)) {
           preferredPresentableName = presentableName.toString();

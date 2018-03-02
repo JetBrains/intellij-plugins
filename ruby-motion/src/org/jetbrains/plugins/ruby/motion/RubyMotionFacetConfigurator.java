@@ -18,7 +18,6 @@ package org.jetbrains.plugins.ruby.motion;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.facet.ProjectFacetManager;
-import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -33,7 +32,6 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.DirectoryProjectConfigurator;
-import com.intellij.util.ActionRunner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.ruby.motion.facet.RubyMotionFacet;
 import org.jetbrains.plugins.ruby.motion.facet.RubyMotionFacetConfiguration;
@@ -41,7 +39,6 @@ import org.jetbrains.plugins.ruby.motion.facet.RubyMotionFacetType;
 import org.jetbrains.plugins.ruby.remote.RubyRemoteInterpreterManager;
 import org.jetbrains.plugins.ruby.ruby.sdk.RubySdkType;
 import org.jetbrains.plugins.ruby.ruby.sdk.RubySdkUtil;
-import org.jetbrains.plugins.ruby.utils.IdeaInternalUtil;
 
 /**
  * @author Dennis.Ushakov
@@ -70,12 +67,7 @@ public class RubyMotionFacetConfigurator implements DirectoryProjectConfigurator
       for (final Sdk newSdk : ProjectJdkTable.getInstance().getSdksOfType(RubySdkType.getInstance())) {
         if (RubySdkUtil.isNativeRuby19(newSdk) && !RubySdkUtil.isNativeRuby20(newSdk) &&
             !RubyRemoteInterpreterManager.getInstance().isRemoteSdk(newSdk)) {
-          new WriteAction() {
-            @Override
-            protected void run(@NotNull Result result) throws Throwable {
-              ProjectRootManager.getInstance(project).setProjectSdk(newSdk);
-            }
-          }.execute();
+          WriteAction.runAndWait(() -> ProjectRootManager.getInstance(project).setProjectSdk(newSdk));
         }
       }
     }
@@ -105,11 +97,7 @@ public class RubyMotionFacetConfigurator implements DirectoryProjectConfigurator
     WriteAction.run(() -> rootModel.commit());
     RubyMotionFacet facet = facetManager.createFacet(facetType, facetType.getDefaultFacetName(), configuration, null);
     model.addFacet(facet);
-    new WriteAction() {
-      protected void run(@NotNull final Result result) throws Throwable {
-        model.commit();
-      }
-    }.execute();
+    WriteAction.run(() -> model.commit());
     RubyMotionUtilExt.createMotionRunConfiguration(module);
   }
 

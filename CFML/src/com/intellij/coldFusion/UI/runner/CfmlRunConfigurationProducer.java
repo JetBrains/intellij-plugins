@@ -95,7 +95,7 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
       params.setUrl(serverUrl + path);
     }
     else if (StringUtil.endsWith(serverUrl, "/") && StringUtil.startsWith(path, "/")) {
-      params.setUrl(serverUrl + path.substring(1, path.length()));
+      params.setUrl(serverUrl + path.substring(1));
     }
 
     configuration.setName(generateName(containingFile));

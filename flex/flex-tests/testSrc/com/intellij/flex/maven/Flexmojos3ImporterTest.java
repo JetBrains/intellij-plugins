@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
-import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -19,7 +18,6 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.util.PathUtil;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.model.*;
 import org.jetbrains.idea.maven.project.MavenEmbeddersManager;
 import org.jetbrains.idea.maven.project.MavenProject;
@@ -105,12 +103,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
 
   public void testMainCassAndFinalName() throws Exception {
     final VirtualFile file = createProjectSubFile("src/main/flex/SomeClass.mxml");
-    new WriteAction() {
-      @Override
-      protected void run(@NotNull Result result) throws Throwable {
-        VfsUtil.saveText(file, "<mx:Application xmlns:mx=\"http://www.adobe.com/2006/mxml\"/>");
-      }
-    }.execute().throwException();
+    WriteAction.runAndWait(() -> VfsUtil.saveText(file, "<mx:Application xmlns:mx=\"http://www.adobe.com/2006/mxml\"/>"));
 
     PsiDocumentManager.getInstance(myProject).commitAllDocuments();
     importProject(mavenProjectDescription("project", "swf") +

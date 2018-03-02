@@ -1173,7 +1173,7 @@ public class FlexCommonUtils {
       if (path.contains(" ")) {
         result.append("\"");
       }
-      result.append(path.substring(0, path.length() - ".xml".length()));
+      result.append(path, 0, path.length() - ".xml".length());
       result.append("-").append(postfix);
       result.append(path.substring(path.length() - ".xml".length()));
       if (path.contains(" ")) {
