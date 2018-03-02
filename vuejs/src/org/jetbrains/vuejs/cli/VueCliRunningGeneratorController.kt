@@ -31,6 +31,7 @@ import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.util.io.exists
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
@@ -79,11 +80,13 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
           } else if (VueProjectCreationState.QuestionsFinished == processState.processState ||
                      VueProjectCreationState.Finished == processState.processState) {
             state = VueProjectCreationState.QuestionsFinished
-            listener.finishedQuestionsCloseUI(
-              { project ->
-                val doneCallback = PackageJsonDependenciesExternalUpdateManager.getInstance(project).externalUpdateStarted(null, null)
-                StartupManager.getInstance(project).runWhenProjectIsInitialized { createListeningProgress(project, doneCallback) }
-              })
+            val callback: (Project) -> Unit = { project ->
+              val doneCallback = PackageJsonDependenciesExternalUpdateManager.getInstance(project).externalUpdateStarted(null, null)
+              StartupManager.getInstance(project).runWhenProjectIsInitialized {
+                createListeningProgress(project, doneCallback, generationLocation)
+              }
+            }
+            listener.finishedQuestionsCloseUI(callback)
           } else if (VueProjectCreationState.Process == processState.processState) {
             currentQuestion = processState.question
             val error = processState.question?.validationError
@@ -101,7 +104,9 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
     }
   }
 
-  private fun createListeningProgress(project: Project, doneCallback: Runnable) {
+  private fun createListeningProgress(project: Project,
+                                      doneCallback: Runnable,
+                                      generationLocation: Path) {
     if (process == null) return
     val task = object: Task.Backgroundable(project, "Generating Vue project...", false,
                                            PerformInBackgroundOption.ALWAYS_BACKGROUND) {
@@ -114,6 +119,7 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
           if (project.isDisposed) return@run
           doneCallback.run()
           JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+          LocalFileSystem.getInstance().refreshIoFiles(listOf(generationLocation.toFile()), true, true, null)
         }
       }
     }
