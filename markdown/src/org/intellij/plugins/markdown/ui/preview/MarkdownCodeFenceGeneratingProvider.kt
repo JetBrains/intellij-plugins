@@ -65,5 +65,5 @@ internal class MarkdownCodeFenceGeneratingProvider(private val pluginCacheProvid
   }
 
   private fun codeFenceRawText(text: String, node: ASTNode): CharSequence =
-    if (node.type != MarkdownTokenTypes.BLOCK_QUOTE) node.getTextInNode(text) else ""
+    if (node.type != MarkdownTokenTypes.BLOCK_QUOTE) HtmlGenerator.leafText(text, node, false) else ""
 }
