@@ -11,10 +11,6 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.testFramework.PlatformTestCase
-import kotlin.collections.forEach
-import kotlin.text.endsWith
-import kotlin.text.substringAfterLast
-import kotlin.text.substringBeforeLast
 
 /**
  * @author Irina.Chernushina on 10/24/2017.
@@ -637,7 +633,8 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
     return super.doHighlightingWithInvokeFixAndCheckResult(fixName, ext, *files)
   }
 
-  override fun doTestFor(checkWeakWarnings: Boolean, vararg fileNames: String?): MutableCollection<HighlightInfo> {
+  override fun doTestWithExplicitAssertOnRecursion(assertOnRecursion: Boolean, 
+                                                   checkWeakWarnings: Boolean, vararg fileNames: String?): MutableCollection<HighlightInfo> {
     LOG.info("Running overridden code for vue")
     if (skipTest()) {
       LOG.info("Skipping muted test")
@@ -654,7 +651,7 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
 
     val rollback = ContextCreator().createContext(project)
     try {
-      return super.doTestFor(checkWeakWarnings, *fileNames)
+      return super.doTestWithExplicitAssertOnRecursion(false, checkWeakWarnings, *fileNames)
     }
     finally {
       rollback()
