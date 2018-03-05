@@ -1,4 +1,4 @@
-package org.angularjs.codeInsight;
+package org.angularjs.refactoring;
 
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.openapi.ui.Messages;
