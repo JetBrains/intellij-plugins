@@ -139,7 +139,7 @@ public class MarkdownCodeFenceImpl extends CompositePsiElement implements PsiLan
     @Override
     public MarkdownCodeFenceImpl handleContentChange(@NotNull MarkdownCodeFenceImpl element, @NotNull TextRange range, String newContent)
       throws IncorrectOperationException {
-      return null;
+      return null; // TODO WTF?
     }
   }
 }
