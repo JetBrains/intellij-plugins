@@ -19,12 +19,15 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
+import com.intellij.lang.javascript.DialectDetector
+import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl
@@ -144,10 +147,11 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
 
   override fun addTagNameVariants(elements: MutableList<LookupElement>?, tag: XmlTag, prefix: String?) {
     elements ?: return
+    val scriptLanguage = detectVueScriptLanguage(tag.containingFile)
     val files:MutableList<PsiFile> = mutableListOf()
     val localLookups = mutableListOf<LookupElement>()
     processLocalComponents(tag, { foundName, element ->
-      addLookupVariants(localLookups, tag, element, foundName!!, false)
+      addLookupVariants(localLookups, tag, scriptLanguage, element, foundName!!, false)
       files.add(element.containingFile)
       return@processLocalComponents true
     })
@@ -162,7 +166,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
           .filter { !files.contains(entry.value[it]!!.first.containingFile) }
           .forEach {
             val value = entry.value[it]!!
-            addLookupVariants(elements, tag, value.first, it, value.second, entry.key)
+            addLookupVariants(elements, tag, scriptLanguage, value.first, it, value.second, entry.key)
           }
       }
       elements.addAll(VUE_FRAMEWORK_COMPONENTS.map {
@@ -173,22 +177,40 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
 
   private fun addLookupVariants(elements: MutableList<LookupElement>,
                                 contextTag: XmlTag,
+                                scriptLanguage: String?,
                                 element: PsiElement,
                                 name: String,
                                 isGlobal: Boolean,
                                 comment: String = "") {
     if (VueFileType.INSTANCE == contextTag.containingFile.fileType) {
       // Pascal case is allowed (and recommended for 90%)
-      elements.add(createVueLookup(element, toAsset(name).capitalize(), isGlobal, comment))
+      elements.add(createVueLookup(element, toAsset(name).capitalize(), isGlobal, comment, scriptLanguage))
     }
-    elements.add(createVueLookup(element, fromAsset(name), isGlobal, comment))
+    elements.add(createVueLookup(element, fromAsset(name), isGlobal, comment, scriptLanguage))
   }
 
-  private fun createVueLookup(element: PsiElement, name: String, isGlobal: Boolean, comment: String = "") =
-    LookupElementBuilder.create(element, name).
-      withInsertHandler(if (isGlobal) null else VueInsertHandler.INSTANCE).
-      withIcon(VuejsIcons.Vue).
-      withTypeText(comment, true)
+  private fun createVueLookup(element: PsiElement,
+                              name: String,
+                              isGlobal: Boolean,
+                              comment: String = "",
+                              scriptLanguage: String?): LookupElement {
+    val builder = LookupElementBuilder.create(element, name).withIcon(VuejsIcons.Vue).withTypeText(comment, true)
+    if (isGlobal) {
+      return builder
+    }
+    val settings = JSApplicationSettings.getInstance()
+    if (scriptLanguage != null && "ts" == scriptLanguage ||
+        DialectDetector.isTypeScript(element) && !JSLibraryUtil.isProbableLibraryFile(element.containingFile.viewProvider.virtualFile)) {
+      if (settings.hasTSImportCompletionEffective(element.getProject())) {
+        return builder.withInsertHandler(VueInsertHandler.INSTANCE)
+      }
+    } else {
+      if (settings.isUseJavaScriptAutoImport) {
+        return builder.withInsertHandler(VueInsertHandler.INSTANCE)
+      }
+    }
+    return builder
+  }
 
   companion object {
     private val VUE_FRAMEWORK_COMPONENTS = setOf(

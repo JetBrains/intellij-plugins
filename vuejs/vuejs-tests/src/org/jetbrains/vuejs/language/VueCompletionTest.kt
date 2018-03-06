@@ -19,6 +19,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
+import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.WriteAction.run
 import com.intellij.openapi.vfs.VfsUtil
@@ -89,24 +90,7 @@ import compUI from 'compUI.vue'
   }
 
   fun testCompleteWithImport() {
-    myFixture.configureByText("toImport.vue", """
-<template>text here</template>
-<script>
-  export default {
-    name: 'toImport',
-    props: ['strangeCase']
-  }
-</script>
-""")
-    myFixture.configureByText("CompleteWithImport.vue", """
-<template>
-<to<caret>
-</template>
-<script>
-  export default {
-  }
-</script>
-""")
+    configureTextsForCompleteLocalComponent()
 
     noAutoComplete(Runnable {
       myFixture.completeBasic()
@@ -124,6 +108,77 @@ import compUI from 'compUI.vue'
 </script>
 """)
     })
+  }
+
+  private fun configureTextsForCompleteLocalComponent(tsLang: Boolean = false) {
+    myFixture.configureByText("toImport.vue", """
+<template>text here</template>
+<script>
+  export default {
+    name: 'toImport',
+    props: ['strangeCase']
+  }
+</script>
+""")
+    myFixture.configureByText(getTestName(false) + ".vue", """
+<template>
+<to<caret>
+</template>
+<script${if (tsLang) " lang=\"ts\"" else ""}>
+  export default {
+  }
+</script>
+""")
+  }
+
+  fun testCompleteNoImportIfSettingIsOffJs() {
+    configureTextsForCompleteLocalComponent()
+    val jsApplicationSettings = JSApplicationSettings.getInstance()
+    val before = jsApplicationSettings.isUseJavaScriptAutoImport
+    jsApplicationSettings.isUseJavaScriptAutoImport = false
+    try {
+      noAutoComplete(Runnable {
+        myFixture.completeBasic()
+        UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
+        myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+        myFixture.checkResult("""
+<template>
+<to-import<caret>
+</template>
+<script>
+  export default {
+  }
+</script>
+""")
+      })
+    } finally {
+      jsApplicationSettings.isUseJavaScriptAutoImport = before
+    }
+  }
+
+  fun testCompleteNoImportIfSettingIsOffTs() {
+    configureTextsForCompleteLocalComponent(true)
+    val jsApplicationSettings = JSApplicationSettings.getInstance()
+    val before = jsApplicationSettings.isUseTypeScriptAutoImport
+    jsApplicationSettings.isUseTypeScriptAutoImport = false
+    try {
+      noAutoComplete(Runnable {
+        myFixture.completeBasic()
+        UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
+        myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+        myFixture.checkResult("""
+<template>
+<to-import<caret>
+</template>
+<script lang="ts">
+  export default {
+  }
+</script>
+""")
+      })
+    } finally {
+      jsApplicationSettings.isUseTypeScriptAutoImport = before
+    }
   }
 
   fun testCompleteWithImportCreateExport() {
