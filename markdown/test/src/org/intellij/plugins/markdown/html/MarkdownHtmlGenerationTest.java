@@ -40,6 +40,10 @@ public class MarkdownHtmlGenerationTest extends LightPlatformCodeInsightFixtureT
     doTestPlantUML();
   }
 
+  public void testXmlTags() {
+    doTestByHtmlFile();
+  }
+
   void doTestPlantUML() {
     doTest("<img src=\"file:" + PathManager.getSystemPath());
   }
