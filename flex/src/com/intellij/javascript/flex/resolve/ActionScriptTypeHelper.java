@@ -12,7 +12,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -32,9 +31,9 @@ public class ActionScriptTypeHelper extends JSTypeHelper {
   }
 
   @Override
-  public boolean isAssignableToNamedType(@NotNull JSTypeImpl lOpType, @NotNull JSType rOpType, @Nullable ProcessingContext processingContext) {
+  public boolean isAssignableToNamedType(@NotNull JSTypeImpl lOpType, @NotNull JSType rOpType, @NotNull ProcessingContext processingContext) {
     //noinspection unchecked
-    Map<Key, Object> cachesMap = processingContext != null ? (Map<Key, Object>)processingContext.get(this) : null;
+    Map<Key, Object> cachesMap = (Map<Key, Object>)processingContext.get(this);
 
     PsiElement type = ourResolvedTypeKey.get(cachesMap);
     JSClass clazz = null;
