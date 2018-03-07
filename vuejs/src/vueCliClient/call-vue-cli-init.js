@@ -76,7 +76,12 @@ var rpcServer = rpcNode.connect(port, {
 });
 
 function sendQuestion(obj, error) {
-  if (rpcServer != null) rpcServer.send(DOMAIN, "question", JSON.stringify(obj), error);
+  var copy = obj;
+  if (obj.choices instanceof Function) {
+    copy = JSON.parse(JSON.stringify(obj));
+    copy.choices = obj.choices(answers);
+  }
+  if (rpcServer != null) rpcServer.send(DOMAIN, "question", JSON.stringify(copy), error);
 }
 
 function calcBasicPath(path) {

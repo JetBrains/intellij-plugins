@@ -142,12 +142,9 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
           @Override
           public PopupStep onChosen(final Action selectedValue, final boolean finalChoice) {
             final String path = selectedValue.getName().getStringValue();
-            new WriteCommandAction<Void>(project) {
-              @Override
-              protected void run(@NotNull final Result<Void> result) throws Throwable {
-                createValidationXml(project, actionClass, path);
-              }
-            }.execute();
+            WriteCommandAction.writeCommandAction(project).run(() -> {
+              createValidationXml(project, actionClass, path);
+            });
             return FINAL_CHOICE;
           }
         };

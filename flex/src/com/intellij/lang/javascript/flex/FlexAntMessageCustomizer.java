@@ -48,7 +48,7 @@ public class FlexAntMessageCustomizer extends AntMessageCustomizer {
               int column = 1;
               final int colIndex = infoAndPosition.indexOf(COL_MARKER, lineCloseBraceIndex);
               if (colIndex > 0 && colIndex < infoAndPosition.length() - COL_MARKER.length() - 1) {
-                final String colString = infoAndPosition.substring(colIndex + COL_MARKER.length(), infoAndPosition.length());
+                final String colString = infoAndPosition.substring(colIndex + COL_MARKER.length());
                 column = Integer.parseInt(colString);
               }
 

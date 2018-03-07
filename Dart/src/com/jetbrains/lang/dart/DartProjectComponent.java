@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart;
 
 import com.intellij.ProjectTopics;
@@ -16,6 +29,7 @@ import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.SimpleModificationTracker;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -212,6 +226,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
         final String rootUrl = root.getUrl();
 
         public boolean value(final String url) {
+          if (url.equals(rootUrl + "/.dart_tool")) return true;
           if (url.equals(rootUrl + "/.pub")) return true;
           if (url.equals(rootUrl + "/build")) return true;
           if (url.equals(rootUrl + "/packages")) return true;
@@ -243,6 +258,11 @@ public class DartProjectComponent extends AbstractProjectComponent {
                                                         @NotNull final VirtualFile pubspecYamlFile) {
     final THashSet<String> newExcludedPackagesUrls = new THashSet<>();
     final VirtualFile root = pubspecYamlFile.getParent();
+
+    final DartSdk sdk = DartSdk.getDartSdk(module.getProject());
+    if (sdk != null && StringUtil.compareVersionNumbers(sdk.getVersion(), "2.0") >= 0) {
+      newExcludedPackagesUrls.add(root.getUrl() + "/.dart_tool");
+    }
 
     newExcludedPackagesUrls.add(root.getUrl() + "/.pub");
     newExcludedPackagesUrls.add(root.getUrl() + "/build");

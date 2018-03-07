@@ -4,7 +4,6 @@ import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
 import com.intellij.lang.Language;
-import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -33,6 +32,7 @@ import org.jetbrains.plugins.cucumber.AbstractStepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
@@ -159,14 +159,17 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
           final String path = sourceRoot != null ? sourceRoot.getPath() : directory.getPath();
           // ToDo: I shouldn't create directories, only create VirtualFile object.
           final Ref<PsiDirectory> resultRef = new Ref<>();
-          new WriteAction() {
-            protected void run(@NotNull Result result) throws Throwable {
+          try {
+            WriteAction.runAndWait(() -> {
               final VirtualFile packageFile = VfsUtil.createDirectoryIfMissing(path + '/' + packagePath);
               if (packageFile != null) {
                 resultRef.set(PsiDirectoryFactory.getInstance(project).createDirectory(packageFile));
               }
-            }
-          }.execute();
+            });
+          }
+          catch (IOException ignored) {
+
+          }
           return resultRef.get();
         }
       }

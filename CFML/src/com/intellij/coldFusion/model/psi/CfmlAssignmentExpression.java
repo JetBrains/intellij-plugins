@@ -112,7 +112,7 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
       final String variableName = expression.getText();
       final String scopeName = getScopeName();
       if (scopeName != null && variableName != null && variableName.startsWith(scopeName + ".")) {
-        return variableName.substring((scopeName + ".").length(), variableName.length());
+        return variableName.substring((scopeName + ".").length());
       }
       return variableName != null ? expression.getText() : "";
     }

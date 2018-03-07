@@ -136,13 +136,10 @@ public class StrutsHighlightingSpringTest extends StrutsLightHighlightingTestCas
       return springFacet;
     }
 
-    return new WriteCommandAction<SpringFacet>(myFixture.getProject()) {
-      @Override
-      protected void run(@NotNull final Result<SpringFacet> result) {
-        final SpringFacet facet = FacetManager.getInstance(myModule)
-          .addFacet(SpringFacet.getSpringFacetType(), "spring", null);
-        result.setResult(facet);
-      }
-    }.execute().throwException().getResultObject();
+    return WriteCommandAction.writeCommandAction(myFixture.getProject()).compute(() -> {
+      final SpringFacet facet = FacetManager.getInstance(myModule)
+                                            .addFacet(SpringFacet.getSpringFacetType(), "spring", null);
+      return facet;
+    });
   }
 }

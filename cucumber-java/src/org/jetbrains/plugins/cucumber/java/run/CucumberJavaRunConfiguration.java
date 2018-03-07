@@ -29,14 +29,6 @@ import java.io.File;
 public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
   private NullableComputable<String> glueInitializer = null;
 
-  public String myFilePath;
-
-  public String GLUE;
-
-  public String myNameFilter;
-
-  public String myGeneratedName;
-
   protected CucumberJavaRunConfiguration(String name, Project project, ConfigurationFactory factory) {
     super(name, project, factory);
   }
@@ -81,13 +73,14 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
           }
         }
 
-        File f = new File(myFilePath);
+        String filePath = getFilePath();
+        File f = new File(filePath);
         if (!f.isDirectory()) {
           f = f.getParentFile();
         }
         params.getVMParametersList().addParametersString("-Dorg.jetbrains.run.directory=\"" + f.getAbsolutePath() + "\"");
 
-        params.getProgramParametersList().addParametersString("\"" + myFilePath + "\"");
+        params.getProgramParametersList().addParametersString("\"" + filePath + "\"");
         return params;
       }
 
@@ -116,9 +109,10 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
-    if (myFilePath == null) {
+    String filePath = getFilePath();
+    if (filePath == null) {
       throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.specify.file"));
-    } else if (!(new File(myFilePath)).exists()) {
+    } else if (!(new File(filePath)).exists()) {
       throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.file.doesnt.exist"));
     }
     else if (StringUtil.isEmpty(getGlue())) {
@@ -133,18 +127,27 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
     super.checkConfiguration();
   }
 
+  @Override
+  protected CucumberJavaConfigurationOptions getOptions() {
+    return (CucumberJavaConfigurationOptions)super.getOptions();
+  }
+
+  @Override
+  protected Class<? extends ModuleBasedConfigurationOptions> getOptionsClass() {
+    return CucumberJavaConfigurationOptions.class;
+  }
+
   @Nullable
   public String getGlue() {
     if (glueInitializer != null) {
-      GLUE = glueInitializer.compute();
-      glueInitializer = null;
+      setGlue(glueInitializer.compute());
     }
 
-    return GLUE;
+    return getOptions().getGlue();
   }
 
   public void setGlue(String value) {
-    GLUE = value;
+    getOptions().setGlue(value);
     glueInitializer = null;
   }
 
@@ -153,25 +156,29 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
   }
 
   public String getFilePath() {
-    return myFilePath;
+    return getOptions().getFilePath();
   }
 
   public void setFilePath(String filePath) {
-    myFilePath = filePath;
+    getOptions().setFilePath(filePath);
   }
 
   public String getNameFilter() {
-    return myNameFilter;
+    return getOptions().getNameFilter();
   }
 
   public void setNameFilter(String nameFilter) {
-    myNameFilter = nameFilter;
+    getOptions().setNameFilter(nameFilter);
   }
 
   @Nullable
   @Override
   public String suggestedName() {
-    return myGeneratedName;
+    return getOptions().getSuggestedName();
+  }
+
+  public void setSuggestedName(String suggestedName) {
+    getOptions().setSuggestedName(suggestedName);
   }
 
   @Override

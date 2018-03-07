@@ -24,7 +24,6 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.ui.MultiLineLabelUI
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.platform.DirectoryProjectGenerator
 import com.intellij.platform.PlatformProjectOpenProcessor
@@ -192,7 +191,7 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
 
   init {
     val wrapper = JPanel(FlowLayout(FlowLayout.LEFT, 0, 0))
-    val progressLabel = JBLabel("Starting generation service...")
+    val progressLabel = JBLabel("Starting Vue CLI...")
     progressLabel.font = UIUtil.getLabelFont()
     RelativeFont.ITALIC.install<JLabel>(progressLabel)
     wrapper.add(progressLabel)
@@ -218,16 +217,19 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
   private fun questionHeader(message: String): FormBuilder {
     panel.removeAll()
     val formBuilder = FormBuilder.createFormBuilder()
-    val progressText = if (isOldPackage) String.format("Running vue-init with %s template", generatorName)
-      else "Running @vue/cli create " + projectName
+    val progressText = if (isOldPackage) "Running \"vue-init\" with the \"$generatorName\" template"
+      else "Running \"vue create\""
     val titleLabel = JLabel(progressText)
-    titleLabel.font = UIUtil.getLabelFont()
     RelativeFont.ITALIC.install<JLabel>(titleLabel)
     formBuilder.addComponent(titleLabel)
     formBuilder.addVerticalGap(5)
-    val label = JBLabel(message)
-    label.ui = MultiLineLabelUI()
-    formBuilder.addComponent(label)
+    val label = JTextArea(message)
+    label.lineWrap = true
+    label.isEditable = false
+    label.background = UIUtil.getLabelBackground()
+    label.font = UIUtil.getLabelFont()
+    label.wrapStyleWord = true
+    formBuilder.addComponentFillVertically(label, 0)
     return formBuilder
   }
 
@@ -286,7 +288,7 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
 
   fun error() {
     panel.removeAll()
-    panel.add(SwingHelper.wrapWithHorizontalStretch(JBLabel("Generation service error")),
+    panel.add(SwingHelper.wrapWithHorizontalStretch(JBLabel("Vue CLI error")),
               BorderLayout.CENTER)
     panel.revalidate()
     panel.repaint()

@@ -19,7 +19,6 @@
         </ul>
       ]]>
    </description>
-  <version>999.999</version>
   <depends>gherkin</depends>
   <depends>org.intellij.groovy</depends>
   <depends>cucumber-java</depends>

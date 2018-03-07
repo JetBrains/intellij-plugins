@@ -32,15 +32,12 @@ public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
 
     final Ref<String> createdMethodName = new Ref<>();
 
-    new WriteCommandAction(getProject(), psiFile) {
-      @Override
-      protected void run(@NotNull final Result result) {
-        final PsiElementFactory factory = JavaPsiFacade.getInstance(getProject()).getElementFactory();
-        final PsiMethod method = factory.createMethodFromText(stepDef, psiClass);
-        psiClass.add(method);
-        createdMethodName.set(method.getName());
-      }
-    }.execute();
+    WriteCommandAction.writeCommandAction(getProject(), psiFile).run(() -> {
+      final PsiElementFactory factory = JavaPsiFacade.getInstance(getProject()).getElementFactory();
+      final PsiMethod method = factory.createMethodFromText(stepDef, psiClass);
+      psiClass.add(method);
+      createdMethodName.set(method.getName());
+    });
 
     return createdMethodName.get();
   }
@@ -49,18 +46,14 @@ public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
     final PsiClass psiClass = getStepDefClass();
     final PsiFile psiFile = psiClass.getContainingFile();
 
-    new WriteCommandAction(getProject(), psiFile) {
-      @Override
-      protected void run(@NotNull Result result) {
-
-        for (PsiMethod method : psiClass.getAllMethods()) {
-          if (method.getName().equals(stepDefName)) {
-            method.delete();
-            break;
-          }
+    WriteCommandAction.writeCommandAction(getProject(), psiFile).run(() -> {
+      for (PsiMethod method : psiClass.getAllMethods()) {
+        if (method.getName().equals(stepDefName)) {
+          method.delete();
+          break;
         }
       }
-    }.execute();
+    });
   }
 
   private void doTestCreation(@NotNull final String folder, @NotNull final String step, @NotNull final String stepDefinitionContent) {
