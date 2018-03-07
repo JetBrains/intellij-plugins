@@ -883,6 +883,36 @@ $script""")
     UsefulTestCase.assertSameElements(myFixture.lookupElementStrings!!, listOf("b-autocomplete", "b-checkbox",
                                                                                "b-checkbox-button", "b-radio", "b-radio-button"))
   }
+
+  fun testClassComponentCompletion() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+    createTwoClassComponents(myFixture)
+    myFixture.configureByText("ClassComponentCompletion.vue",
+"""
+<template>
+  <<caret>
+</template>
+""")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!,
+                                          listOf("ShortComponent", "LongVue", "short-component", "long-vue"))
+    })
+  }
+
+  fun testClassComponentCompletionTs() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+    createTwoClassComponents(myFixture, true)
+    myFixture.configureByText("ClassComponentCompletionTs.vue",
+"""
+<template>
+  <<caret>
+</template>
+""")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!,
+                                          listOf("ShortComponent", "LongVue", "short-component", "long-vue"))
+    })
+  }
 }
 
 fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,
