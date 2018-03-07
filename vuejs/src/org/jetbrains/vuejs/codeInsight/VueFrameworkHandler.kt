@@ -1,6 +1,21 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
+import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSStubElementTypes
@@ -8,6 +23,8 @@ import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
@@ -76,7 +93,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     if (firstProperty == property) {
       if (obj.parent is JSExportAssignment) {
         if (obj.containingFile.fileType == VueFileType.INSTANCE || obj.containingFile is JSFile && hasComponentIndicatorProperties(obj)) {
-          tryProcessComponentInVue(obj, property, out)
+          out.addImplicitElement(createImplicitElement(getComponentNameFromDescriptor(obj), property, VueComponentsIndex.JS_KEY))
         }
       } else if (((obj.parent as? JSProperty) == null) && isDescriptorOfLinkedInstanceDefinition(obj)) {
         val binding = (obj.findProperty("el")?.value as? JSLiteralExpression)?.stringValue
@@ -84,6 +101,25 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       }
     }
     return if (out.isEmpty) outData else out
+  }
+
+  override fun processDecorator(decorator: ES6Decorator, data: JSElementIndexingDataImpl?): JSElementIndexingDataImpl? {
+    val callExpression = decorator.expression as? JSCallExpression
+    if (callExpression != null) {
+      if ("Component" != (callExpression.methodExpression as? JSReferenceExpression)?.referenceName) return data
+    } else {
+      val reference = decorator.expression as? JSReferenceExpression
+      if ("Component" != reference?.referenceName) return data
+    }
+    val exportAssignment = (decorator.parent as? JSAttributeList)?.parent as? ES6ExportDefaultAssignment ?: return data
+    val classExpression = exportAssignment.stubSafeElement as? JSClassExpression<*> ?: return data
+
+    val nameProperty = VueComponents.getDescriptorFromDecorator(decorator)?.findProperty("name")
+    val name = getTextIfLiteral(nameProperty?.value) ?:
+               FileUtil.getNameWithoutExtension(decorator.containingFile.name)
+    val outData = data ?: JSElementIndexingDataImpl()
+    outData.addImplicitElement(createImplicitElement(name, classExpression, VueComponentsIndex.JS_KEY, null, null, false))
+    return outData
   }
 
   override fun shouldCreateStubForCallExpression(node: ASTNode?): Boolean {
@@ -180,11 +216,9 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     return ref.getChildren(TokenSet.create(JSTokenTypes.IDENTIFIER)).filter { it.text in VUE_DESCRIPTOR_OWNERS}.any()
   }
 
-  private fun tryProcessComponentInVue(obj: JSObjectLiteralExpression, property: JSProperty,
-                                       outData: JSElementIndexingData) {
-    val compName = (obj.findProperty("name")?.value as? JSLiteralExpression)?.stringValue
-                   ?: FileUtil.getNameWithoutExtension(obj.containingFile.name)
-    outData.addImplicitElement(createImplicitElement(compName, property, VueComponentsIndex.JS_KEY))
+  private fun getComponentNameFromDescriptor(obj: JSObjectLiteralExpression): String {
+    return ((obj.findProperty("name")?.value as? JSLiteralExpression)?.stringValue
+     ?: FileUtil.getNameWithoutExtension(obj.containingFile.name))
   }
 
   override fun indexImplicitElement(element: JSImplicitElementStructure, sink: IndexSink?): Boolean {
