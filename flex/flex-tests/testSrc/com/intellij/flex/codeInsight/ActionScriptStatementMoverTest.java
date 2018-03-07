@@ -4,9 +4,8 @@ import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.JSStatementMoverTestBase;
 import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
+import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
@@ -19,44 +18,41 @@ public class ActionScriptStatementMoverTest extends JSStatementMoverTestBase {
     super.setUp();
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("statementMover/");
   }
 
-  @Override
-  protected ModuleType getModuleType() {
-    return FlexModuleType.getInstance();
-  }
-
-  public void testMoveStatement7() throws Exception {
+  public void testMoveStatement7() {
     doMoveStatementTest("js2");
   }
 
-  public void testMoveStatementInMxml() throws Exception {
-    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), this.getClass(), getTestRootDisposable());
+  public void testMoveStatementInMxml() {
+    FlexTestUtils.setupFlexSdk(myFixture.getModule(), getTestName(false), this.getClass(), getTestRootDisposable());
     JSTestUtils.initJSIndexes(getProject());
 
+    myFixture.setCaresAboutInjection(false);
     doMoveStatementTest("mxml");
   }
 
-  public void testMoveFunctionInClass() throws Exception {
+  public void testMoveFunctionInClass() {
     doMoveStatementTest("js2");
   }
 
-  public void testMoveAttribute() throws Exception {
+  public void testMoveAttribute() {
     doMoveStatementTest("js2");
   }
 
-  public void testIdea_70049() throws Exception {
+  public void testIdea_70049() {
     doMoveStatementTest("as");
   }
 
-  public void testMoveStatement11() throws Exception {
+  public void testMoveStatement11() {
     doMoveStatementTest("js2");
   }
 
-  public void testMoveStatement13() throws Exception {
+  public void testMoveStatement13() {
     doMoveStatementTest("js2");
   }
 }
