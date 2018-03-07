@@ -1,8 +1,26 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package org.jetbrains.vuejs.codeInsight
 
+import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
+import com.intellij.lang.ecmascript6.psi.JSClassExpression
+import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.resolve.ES6QualifiedNameResolver
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -33,7 +51,7 @@ class VueComponents {
       val parent = element.parent
       if (parent is JSCallExpression) {
         val reference = getVueIndexData(element).descriptorRef ?: return null
-        return resolveReferenceToObjectLiteral(element, reference)
+        return resolveReferenceToVueComponent(element, reference)?.obj
       }
       return (parent as? JSProperty)?.context as? JSObjectLiteralExpression
     }
@@ -41,9 +59,9 @@ class VueComponents {
     fun vueMixinDescriptorFinder(implicitElement: JSImplicitElement): JSObjectLiteralExpression? {
       val typeString = getVueIndexData(implicitElement).descriptorRef
       if (!StringUtil.isEmptyOrSpaces(typeString)) {
-        val expression = resolveReferenceToObjectLiteral(implicitElement, typeString!!)
-        if (expression != null) {
-          return expression
+        val expression = resolveReferenceToVueComponent(implicitElement, typeString!!)
+        if (expression?.obj != null) {
+          return expression.obj
         }
       }
       val mixinObj = (implicitElement.parent as? JSProperty)?.parent as? JSObjectLiteralExpression
@@ -57,28 +75,64 @@ class VueComponents {
       return null
     }
 
-    private fun resolveReferenceToObjectLiteral(element: JSImplicitElement, reference: String): JSObjectLiteralExpression? {
+    private fun resolveReferenceToVueComponent(element: PsiElement, reference: String): VueComponentDescriptor? {
       val scope = createLocalResolveScope(element)
 
       val resolvedLocally = JSStubBasedPsiTreeUtil.resolveLocally(reference, scope)
       if (resolvedLocally != null) {
-        return getLiteralFromResolve(listOf(resolvedLocally))
+        val literalFromResolve = getVueComponentFromResolve(listOf(resolvedLocally))
+        if (literalFromResolve != null) {
+          return literalFromResolve
+        }
       }
 
       val elements = ES6QualifiedNameResolver(scope).resolveQualifiedName(reference)
-      return getLiteralFromResolve(elements)
+      return getVueComponentFromResolve(elements)
     }
 
     private fun createLocalResolveScope(element: PsiElement): PsiElement =
       PsiTreeUtil.getContextOfType(element, JSCatchBlock::class.java, JSClass::class.java, JSExecutionScope::class.java)
       ?: element.containingFile
 
-    private fun getLiteralFromResolve(result: Collection<PsiElement>): JSObjectLiteralExpression? {
-      return result.mapNotNull(fun(it: PsiElement): JSObjectLiteralExpression? {
+    private fun getVueComponentFromResolve(result: Collection<PsiElement>): VueComponentDescriptor? {
+      return result.mapNotNull(fun(it: PsiElement): VueComponentDescriptor? {
         val element: PsiElement? = (it as? JSVariable)?.initializerOrStub ?: it
-        if (element is JSObjectLiteralExpression) return element
-        return JSStubBasedPsiTreeUtil.calculateMeaningfulElement(element!!) as? JSObjectLiteralExpression
+        if (element is JSObjectLiteralExpression) return VueComponentDescriptor(obj = element)
+        if (element is JSClassExpression<*>) {
+          val parentExport = element.parent as? ES6ExportDefaultAssignment ?: return null
+          return getExportedDescriptor(parentExport)
+        }
+        val objLiteral = JSStubBasedPsiTreeUtil.calculateMeaningfulElement(element!!) as? JSObjectLiteralExpression
+                         ?: return null
+        return VueComponentDescriptor(obj = objLiteral)
       }).firstOrNull()
     }
+
+    fun getExportedDescriptor(defaultExport: JSExportAssignment): VueComponentDescriptor? {
+      val exportedObjectLiteral = defaultExport.stubSafeElement as? JSObjectLiteralExpression
+      if (exportedObjectLiteral != null) return VueComponentDescriptor(obj = exportedObjectLiteral)
+      val attrList = PsiTreeUtil.getChildOfType(defaultExport, JSAttributeList::class.java) ?: return null
+      val decorator = PsiTreeUtil.getChildOfType(attrList, ES6Decorator::class.java) ?: return null
+      return VueComponentDescriptor(obj = VueComponents.getDescriptorFromDecorator(decorator),
+                                    clazz = defaultExport.stubSafeElement as? JSClassExpression<*>)
+    }
+
+    fun getDescriptorFromDecorator(decorator: ES6Decorator): JSObjectLiteralExpression? {
+      val callExpression = decorator.expression as? JSCallExpression ?: return null
+      if ("Component" != (callExpression.methodExpression as? JSReferenceExpression)?.referenceName) return null
+
+      val arguments = callExpression.arguments
+      if (arguments.size == 1) {
+        return arguments[0] as? JSObjectLiteralExpression
+      }
+      return null
+    }
+  }
+}
+
+class VueComponentDescriptor(val obj: JSObjectLiteralExpression? = null,
+                             val clazz: JSClassExpression<*>? = null) {
+  init {
+    assert(obj != null || clazz != null)
   }
 }
