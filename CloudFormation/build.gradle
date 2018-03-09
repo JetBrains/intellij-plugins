@@ -5,12 +5,18 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.github.viswaramamoorthy:gradle-util-plugins:0.1.0-RELEASE"
     }
 }
 
 plugins {
     id "org.jetbrains.intellij" version "0.2.17"
 }
+
+// Workaround too long command line for JavaExec
+// https://github.com/viswaramamoorthy/gradle-util-plugins
+// https://github.com/gradle/gradle/issues/1989
+apply plugin: 'ManifestClasspath'
 
 intellij {
     version idea_version
