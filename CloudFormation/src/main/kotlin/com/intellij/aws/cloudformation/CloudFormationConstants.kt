@@ -1,10 +1,7 @@
 package com.intellij.aws.cloudformation
 
-import com.intellij.util.containers.HashSet
-import java.util.Arrays
-
 object CloudFormationConstants {
-  val SupportedTemplateFormatVersions: Set<String> = HashSet(Arrays.asList("2010-09-09"))
+  val SupportedTemplateFormatVersions = setOf("2010-09-09")
 
   // from https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html
   val ParameterDescriptionLimit = 4000

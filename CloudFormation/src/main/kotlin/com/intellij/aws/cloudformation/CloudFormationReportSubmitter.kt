@@ -14,9 +14,9 @@ import com.intellij.openapi.diagnostic.SubmittedReportInfo
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.Consumer
-import com.intellij.util.SystemProperties
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.text.DateFormatUtil
 import java.awt.Component
@@ -83,9 +83,8 @@ class CloudFormationReportSubmitter : ErrorReportSubmitter() {
     builder.appendln("app.product.code = ${appInfo.build.productCode}")
 
     builder.appendln()
-    builder.appendln("os.name = ${SystemProperties.getOsName()}")
-    builder.appendln("java.version = ${SystemProperties.getJavaVersion()}")
-    builder.appendln("java.vm.vendor = ${SystemProperties.getJavaVmVendor()}")
+    builder.appendln("os.name = ${SystemInfo.getOsNameAndVersion()}")
+    builder.appendln("java.version = ${SystemInfo.JAVA_VERSION}")
 
     return builder.toString()
   }
