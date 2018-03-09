@@ -377,7 +377,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
     val typeValue = type?.value
     val typeName = (typeValue as? CfnScalarValueNode)?.value?.trim()
-    if (type == null || typeName == null || typeValue == null) {
+    if (type == null || typeName == null) {
       addProblem(parameter, "Required property Type is missing or empty")
       return
     }
