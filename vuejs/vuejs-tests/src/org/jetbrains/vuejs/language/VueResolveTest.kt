@@ -1,5 +1,19 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package org.jetbrains.vuejs.language
 
+import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
@@ -908,7 +922,7 @@ Vue.component(alias, WiseComp)
     TestCase.assertNotNull(target)
     TestCase.assertEquals(fileName, target!!.containingFile.name)
     TestCase.assertTrue(target.parent is JSObjectLiteralExpression)
-    TestCase.assertEquals("$compName", (target as JSImplicitElement).name)
+    TestCase.assertEquals(compName, (target as JSImplicitElement).name)
   }
 
   fun testGlobalComponentLiteral() {
@@ -1676,6 +1690,71 @@ components.install = (Vue, options = {}) => {
                                 """<template><<caret>CompForForIn/></template>""")
       doResolveIntoLibraryComponent("compForForIn", "CompForForIn.vue")
     })
+  }
+
+  fun testResolveWithClassComponent() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      createTwoClassComponents(myFixture)
+      myFixture.configureByText("ResolveWithClassComponent.vue",
+                                """
+<template>
+  <<caret>ShortVue/>
+  <LongComponent/>
+</template>
+<script>
+import { Component, Vue } from 'vue-property-decorator';
+import ShortComponent from './ShortComponent';
+import LongComponent from './LongComponent';
+
+@Component({
+  components: {
+    shortVue: ShortComponent,
+    LongComponent
+  }
+})
+export default class UsageComponent extends Vue {
+}
+</script>
+""")
+      doResolveIntoClassComponent("ShortComponent.vue")
+    })
+  }
+
+  fun testResolveWithClassComponentTs() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      createTwoClassComponents(myFixture, true)
+      myFixture.configureByText("ResolveWithClassComponentTs.vue",
+                                """
+<template>
+  <ShortVue/>
+  <<caret>LongComponent/>
+</template>
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+import ShortComponent from './ShortComponent';
+import LongComponent from './LongComponent';
+
+@Component({
+  components: {
+    shortVue: ShortComponent,
+    LongComponent
+  }
+})
+export default class UsageComponent extends Vue {
+}
+</script>
+""")
+      doResolveIntoLibraryComponent("long-vue", "LongComponent.vue")
+    })
+  }
+
+  private fun doResolveIntoClassComponent(fileName: String) {
+    val reference = myFixture.getReferenceAtCaretPosition()
+    TestCase.assertNotNull(reference)
+    val target = reference!!.resolve()
+    TestCase.assertNotNull(target)
+    TestCase.assertEquals(fileName, target!!.containingFile.name)
+    TestCase.assertTrue(target.parent is JSClassExpression<*>)
   }
 
   private fun doResolveIntoLibraryComponent(compName: String, fileName: String) {

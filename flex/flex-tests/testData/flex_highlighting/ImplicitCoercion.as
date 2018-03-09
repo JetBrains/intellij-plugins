@@ -11,7 +11,7 @@ public class ImplicitCoercion {
         var a:Array;
 
         s = (condition() ? <error descr="Expression type Object is implicitly coerced to unrelated type String">b</error> : <error descr="Expression type Number is implicitly coerced to unrelated type String">c</error>); // red
-        s = "" + (((condition() ? b : condition() ? 1 : false)));
+        s = "" + (((condition() ? b : condition() ? <error descr="Expression type int is implicitly coerced to unrelated type String | Object">1</error> : <error descr="Expression type Boolean is implicitly coerced to unrelated type String | Object">false</error>)));
         s = (condition() ? b : c) + "";
         s = "" + (condition() ? 1 : 2.5) ;
         s = "" + (condition() ? true : c);

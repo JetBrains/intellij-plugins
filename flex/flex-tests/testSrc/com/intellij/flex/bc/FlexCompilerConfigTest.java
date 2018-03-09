@@ -178,15 +178,12 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
   @Override
   protected Module createMainModule() throws IOException {
     final Module module = super.createMainModule();
-    new WriteCommandAction.Simple(myProject) {
-      @Override
-      protected void run() throws Throwable {
-        VirtualFile moduleDir = module.getModuleFile().getParent();
-        VirtualFile src = moduleDir.createChildDirectory(this, "src");
-        PsiTestUtil.addContentRoot(module, moduleDir);
-        PsiTestUtil.addSourceRoot(module, src);
-      }
-    }.execute();
+    WriteCommandAction.writeCommandAction(myProject).run(() -> {
+      VirtualFile moduleDir = module.getModuleFile().getParent();
+      VirtualFile src = moduleDir.createChildDirectory(this, "src");
+      PsiTestUtil.addContentRoot(module, moduleDir);
+      PsiTestUtil.addSourceRoot(module, src);
+    });
     return module;
   }
 

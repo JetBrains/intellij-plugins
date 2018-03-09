@@ -142,8 +142,6 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
 
   private fun findTemplate(): XmlTag? = PsiTreeUtil.findFirstParent(list[0], { "template" == (it as? XmlTag)?.name }) as? XmlTag
 
-  private fun detectLanguage(tag: XmlTag?): String? = tag?.getAttribute("lang")?.value
-
   fun createNewComponent(newComponentName: String): VirtualFile? {
     val newText = generateNewComponentText(newComponentName) ?: return null
     val folder: PsiDirectory = containingFile.parent ?: return null

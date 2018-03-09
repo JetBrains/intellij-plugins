@@ -11,22 +11,4 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.jetbrains.plugins.cucumber.java.run
-
-import com.intellij.execution.application.ApplicationConfigurationOptions
-import com.intellij.util.xmlb.annotations.OptionTag
-
-open class CucumberJavaConfigurationOptions: ApplicationConfigurationOptions() {
-  @get:OptionTag("GLUE")
-  open var glue by string()
-
-  @get:OptionTag("FILE_PATH")
-  open var filePath by string()
-
-  @get:OptionTag("NAME_FILTER")
-  open var nameFilter by string()
-
-  @get:OptionTag("SUGGESTED_NAME")
-  open var suggestedName by string()
-
-}
+for while

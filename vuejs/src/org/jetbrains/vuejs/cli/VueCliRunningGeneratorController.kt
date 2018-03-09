@@ -13,6 +13,7 @@
 // limitations under the License.
 package org.jetbrains.vuejs.cli
 
+import com.intellij.ide.file.BatchFileChangeListener
 import com.intellij.javascript.nodejs.packageJson.PackageJsonDependenciesExternalUpdateManager
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
@@ -26,12 +27,15 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator
+import com.intellij.openapi.progress.util.BackgroundTaskUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.util.io.exists
+import org.jetbrains.vuejs.VueBundle
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -79,11 +83,18 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
           } else if (VueProjectCreationState.QuestionsFinished == processState.processState ||
                      VueProjectCreationState.Finished == processState.processState) {
             state = VueProjectCreationState.QuestionsFinished
-            listener.finishedQuestionsCloseUI(
-              { project ->
-                val doneCallback = PackageJsonDependenciesExternalUpdateManager.getInstance(project).externalUpdateStarted(null, null)
-                StartupManager.getInstance(project).runWhenProjectIsInitialized { createListeningProgress(project, doneCallback) }
-              })
+            val callback: (Project) -> Unit = { project ->
+              val publisher = BackgroundTaskUtil.syncPublisher(BatchFileChangeListener.TOPIC)
+              publisher.batchChangeStarted(project, VueBundle.message("vue.project.generator.progress.task.name"));
+              val doneCallback = PackageJsonDependenciesExternalUpdateManager.getInstance(project).externalUpdateStarted(null, null)
+              StartupManager.getInstance(project).runWhenProjectIsInitialized {
+                createListeningProgress(project, Runnable {
+                  publisher.batchChangeCompleted(project)
+                  doneCallback.run()
+                }, generationLocation)
+              }
+            }
+            listener.finishedQuestionsCloseUI(callback)
           } else if (VueProjectCreationState.Process == processState.processState) {
             currentQuestion = processState.question
             val error = processState.question?.validationError
@@ -101,9 +112,11 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
     }
   }
 
-  private fun createListeningProgress(project: Project, doneCallback: Runnable) {
+  private fun createListeningProgress(project: Project,
+                                      doneCallback: Runnable,
+                                      generationLocation: Path) {
     if (process == null) return
-    val task = object: Task.Backgroundable(project, "Generating Vue project...", false,
+    val task = object: Task.Backgroundable(project, VueBundle.message("vue.project.generator.progress.task.name.dots"), false,
                                            PerformInBackgroundOption.ALWAYS_BACKGROUND) {
       override fun run(indicator: ProgressIndicator) {
         process!!.waitForProcessTermination(indicator)
@@ -114,6 +127,7 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
           if (project.isDisposed) return@run
           doneCallback.run()
           JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+          LocalFileSystem.getInstance().refreshIoFiles(listOf(generationLocation.toFile()), true, true, null)
         }
       }
     }

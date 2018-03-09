@@ -17,14 +17,19 @@ import com.intellij.codeInsight.completion.CompletionUtilCore
 import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
+import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
+import com.intellij.lang.javascript.DialectDetector
+import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl
@@ -36,13 +41,12 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ArrayUtil
-import com.intellij.xml.XmlAttributeDescriptor
-import com.intellij.xml.XmlElementDescriptor
+import com.intellij.xml.*
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
-import com.intellij.xml.XmlTagNameProvider
 import icons.VuejsIcons
 import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.getBoundName
+import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.getExportedDescriptor
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isNotInLibrary
 import org.jetbrains.vuejs.index.*
 
@@ -68,8 +72,9 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
 
   private fun findLocalComponents(name: String, tag: XmlTag): List<JSImplicitElement> {
     val localComponents = mutableListOf<JSImplicitElement>()
+    val decapitalized = name.decapitalize()
     processLocalComponents(tag, { foundName, element ->
-      if (foundName == name || foundName == toAsset(name) || foundName == toAsset(name).capitalize()) {
+      if (foundName == decapitalized || foundName == toAsset(decapitalized) || foundName == toAsset(decapitalized).capitalize()) {
         localComponents.add(element)
       }
       return@processLocalComponents true
@@ -109,7 +114,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   private fun processLocalComponents(tag: XmlTag, processor: (String?, JSImplicitElement) -> Boolean): Boolean {
     val content = findModule(tag) ?: return true
     val defaultExport = ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment ?: return true
-    val component = defaultExport.stubSafeElement as? JSObjectLiteralExpression ?: return true
+    val component = getExportedDescriptor(defaultExport)?.obj ?: return true
 
     // recursive usage case
     val nameProperty = component.findProperty("name")
@@ -123,8 +128,19 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
 
     val components = component.findProperty("components")?.objectLiteralExpressionInitializer ?: return true
     for (property in components.properties) {
-      val obj = JSStubBasedPsiTreeUtil.calculateMeaningfulElement(property) as? JSObjectLiteralExpression
       val propName = property.name ?: continue
+      val meaningfulElement = JSStubBasedPsiTreeUtil.calculateMeaningfulElement(property)
+      var obj = meaningfulElement as? JSObjectLiteralExpression
+      var clazz: JSClassExpression<*>? = null
+      if (obj == null) {
+        val compDefaultExport = meaningfulElement.parent as? ES6ExportDefaultAssignment
+        if (compDefaultExport != null) {
+          val descriptor = VueComponents.getExportedDescriptor(compDefaultExport)
+          obj = descriptor?.obj
+          clazz = descriptor?.clazz
+        }
+      }
+
       if (obj != null) {
         val elements = findProperty(obj, "name")?.indexingData?.implicitElements?.filter { it.userString == VueComponentsIndex.JS_KEY }
         if (elements != null && !elements.isEmpty()) {
@@ -136,6 +152,9 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
           if (!processor.invoke(propName, JSImplicitElementImpl(propName, first))) return false
           continue
         }
+      } else if (clazz != null) {
+        if (!processor.invoke(propName, JSImplicitElementImpl(propName, clazz))) return false
+        continue
       }
       if (!processor.invoke(propName, JSImplicitElementImpl(propName, property.nameIdentifier))) return false
     }
@@ -144,10 +163,11 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
 
   override fun addTagNameVariants(elements: MutableList<LookupElement>?, tag: XmlTag, prefix: String?) {
     elements ?: return
+    val scriptLanguage = detectVueScriptLanguage(tag.containingFile)
     val files:MutableList<PsiFile> = mutableListOf()
     val localLookups = mutableListOf<LookupElement>()
     processLocalComponents(tag, { foundName, element ->
-      addLookupVariants(localLookups, tag, element, foundName!!, false)
+      addLookupVariants(localLookups, tag, scriptLanguage, element, foundName!!, false)
       files.add(element.containingFile)
       return@processLocalComponents true
     })
@@ -162,7 +182,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
           .filter { !files.contains(entry.value[it]!!.first.containingFile) }
           .forEach {
             val value = entry.value[it]!!
-            addLookupVariants(elements, tag, value.first, it, value.second, entry.key)
+            addLookupVariants(elements, tag, scriptLanguage, value.first, it, value.second, entry.key)
           }
       }
       elements.addAll(VUE_FRAMEWORK_COMPONENTS.map {
@@ -173,22 +193,40 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
 
   private fun addLookupVariants(elements: MutableList<LookupElement>,
                                 contextTag: XmlTag,
+                                scriptLanguage: String?,
                                 element: PsiElement,
                                 name: String,
                                 isGlobal: Boolean,
                                 comment: String = "") {
     if (VueFileType.INSTANCE == contextTag.containingFile.fileType) {
       // Pascal case is allowed (and recommended for 90%)
-      elements.add(createVueLookup(element, toAsset(name).capitalize(), isGlobal, comment))
+      elements.add(createVueLookup(element, toAsset(name).capitalize(), isGlobal, comment, scriptLanguage))
     }
-    elements.add(createVueLookup(element, fromAsset(name), isGlobal, comment))
+    elements.add(createVueLookup(element, fromAsset(name), isGlobal, comment, scriptLanguage))
   }
 
-  private fun createVueLookup(element: PsiElement, name: String, isGlobal: Boolean, comment: String = "") =
-    LookupElementBuilder.create(element, name).
-      withInsertHandler(if (isGlobal) null else VueInsertHandler.INSTANCE).
-      withIcon(VuejsIcons.Vue).
-      withTypeText(comment, true)
+  private fun createVueLookup(element: PsiElement,
+                              name: String,
+                              isGlobal: Boolean,
+                              comment: String = "",
+                              scriptLanguage: String?): LookupElement {
+    val builder = LookupElementBuilder.create(element, name).withIcon(VuejsIcons.Vue).withTypeText(comment, true)
+    if (isGlobal) {
+      return builder
+    }
+    val settings = JSApplicationSettings.getInstance()
+    if (scriptLanguage != null && "ts" == scriptLanguage ||
+        DialectDetector.isTypeScript(element) && !JSLibraryUtil.isProbableLibraryFile(element.containingFile.viewProvider.virtualFile)) {
+      if (settings.hasTSImportCompletionEffective(element.project)) {
+        return builder.withInsertHandler(VueInsertHandler.INSTANCE)
+      }
+    } else {
+      if (settings.isUseJavaScriptAutoImport) {
+        return builder.withInsertHandler(VueInsertHandler.INSTANCE)
+      }
+    }
+    return builder
+  }
 
   companion object {
     private val VUE_FRAMEWORK_COMPONENTS = setOf(
@@ -273,9 +311,9 @@ class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JS
 
   override fun getAttributeDescriptor(attribute: XmlAttribute?) = getAttributeDescriptor(attribute?.name, attribute?.parent)
 
-  override fun getNSDescriptor() = null
-  override fun getTopGroup() = null
+  override fun getNSDescriptor(): XmlNSDescriptor? = null
+  override fun getTopGroup(): XmlElementsGroup? = null
   override fun getContentType() = CONTENT_TYPE_ANY
-  override fun getDefaultValue() = null
+  override fun getDefaultValue(): String? = null
   override fun getDependences(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY!!
 }

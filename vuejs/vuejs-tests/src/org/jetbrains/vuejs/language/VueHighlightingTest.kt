@@ -24,6 +24,7 @@ import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspectio
 import com.intellij.openapi.application.PathManager
 import com.intellij.spellchecker.inspections.SpellCheckingInspection
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.util.ThrowableRunnable
 import com.intellij.xml.util.CheckEmptyTagInspection
@@ -821,4 +822,91 @@ Vue.component('global-comp-literal', {
 """)
     myFixture.checkHighlighting()
   }
+
+  fun testClassComponentAnnotationWithLocalComponent() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      createTwoClassComponents(myFixture)
+      myFixture.configureByText("ClassComponentAnnotationWithLocalComponent.vue",
+                                """
+<template>
+  <LongVue/>
+  <ShortComponent/>
+  <warning descr="Empty tag doesn't work in some browsers"><<warning descr="Unknown html tag UnknownComponent">UnknownComponent</warning>/></warning>
+  <UsageComponent/>
+</template>
+<script>
+import { Component, Vue } from 'vue-property-decorator';
+import LongComponent from './LongComponent';
+import ShortComponent from './ShortComponent';
+@Component({
+  name: "UsageComponent",
+  components: {
+    "LongVue": LongComponent,
+    ShortComponent
+  }
+})
+export default class UsageComponent extends Vue {
+}
+</script>
+""")
+      myFixture.checkHighlighting()
+    })
+  }
+
+  fun testClassComponentAnnotationWithLocalComponentTs() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      myFixture.configureByText("vue.d.ts", "export interface Vue {}")
+      createTwoClassComponents(myFixture, true)
+      myFixture.configureByText("ClassComponentAnnotationWithLocalComponentTs.vue",
+                                """
+<template>
+  <LongVue/>
+  <ShortComponent/>
+  <warning descr="Empty tag doesn't work in some browsers"><<warning descr="Unknown html tag UnknownComponent">UnknownComponent</warning>/></warning>
+  <UsageComponent/>
+</template>
+<script lang="ts">
+import { Component } from 'vue-property-decorator';
+// just for test
+import { Vue } from 'vue.d.ts';
+import LongComponent from './LongComponent';
+import ShortComponent from './ShortComponent';
+@Component({
+  name: "UsageComponent",
+  components: {
+    "LongVue": LongComponent,
+    ShortComponent
+  }
+})
+export default class UsageComponent extends Vue {
+}
+</script>
+""")
+      myFixture.checkHighlighting()
+    })
+  }
+}
+
+fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
+  val lang = if (tsLang) " lang=\"ts\"" else ""
+  fixture.configureByText("LongComponent.vue",
+                            """
+  <script$lang>
+  import { Component, Vue } from 'vue-property-decorator';
+  @Component({
+    name: 'long-vue'
+  })
+  export default class LongComponent extends Vue {
+  }
+  </script>
+  """)
+  fixture.configureByText("ShortComponent.vue",
+                            """
+  <script$lang>
+  import { Component, Vue } from 'vue-property-decorator';
+  @Component
+  export default class ShortComponent extends Vue {
+  }
+  </script>
+  """)
 }

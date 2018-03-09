@@ -55,14 +55,14 @@ public abstract class CfmlComponentElementType extends CfmlStubElementType<CfmlC
 
   @NotNull
   public CfmlComponentStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-    String name = StringRef.toString(dataStream.readName());
+    String name = dataStream.readNameString();
     boolean isInterface = dataStream.readBoolean();
-    String superclass = StringRef.toString(dataStream.readName());
+    String superclass = dataStream.readNameString();
 
     byte supersNumber = dataStream.readByte();
     String[] interfaces = new String[supersNumber];
     for (int i = 0; i < supersNumber; i++) {
-      interfaces[i] = StringRef.toString(dataStream.readName());
+      interfaces[i] = dataStream.readNameString();
     }
     return new CfmlComponentStubImpl(parentStub, this, name, isInterface, superclass, interfaces);
   }

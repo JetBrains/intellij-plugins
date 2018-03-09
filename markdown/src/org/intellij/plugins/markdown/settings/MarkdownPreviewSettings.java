@@ -1,6 +1,10 @@
 package org.intellij.plugins.markdown.settings;
 
 import com.intellij.util.xmlb.annotations.Attribute;
+import com.intellij.util.xmlb.annotations.Property;
+import com.intellij.util.xmlb.annotations.Tag;
+import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelProvider;
+import org.intellij.plugins.markdown.ui.preview.javafx.JavaFxHtmlPanelProvider;
 import org.intellij.plugins.markdown.ui.split.SplitFileEditor;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,6 +14,11 @@ public final class MarkdownPreviewSettings {
   @Attribute("DefaultSplitLayout")
   @NotNull
   private SplitFileEditor.SplitEditorLayout mySplitEditorLayout = SplitFileEditor.SplitEditorLayout.SPLIT;
+
+  @Tag("HtmlPanelProviderInfo")
+  @Property(surroundWithTag = false)
+  @NotNull
+  private MarkdownHtmlPanelProvider.ProviderInfo myHtmlPanelProviderInfo = new JavaFxHtmlPanelProvider().getProviderInfo();
 
   @Attribute("UseGrayscaleRendering")
   private boolean myUseGrayscaleRendering = false;
@@ -21,9 +30,11 @@ public final class MarkdownPreviewSettings {
   }
 
   public MarkdownPreviewSettings(@NotNull SplitFileEditor.SplitEditorLayout splitEditorLayout,
+                                 @NotNull MarkdownHtmlPanelProvider.ProviderInfo htmlPanelProviderInfo,
                                  boolean useGrayscaleRendering,
                                  boolean isAutoScrollPreview) {
     mySplitEditorLayout = splitEditorLayout;
+    myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myUseGrayscaleRendering = useGrayscaleRendering;
     myIsAutoScrollPreview = isAutoScrollPreview;
   }
@@ -31,6 +42,11 @@ public final class MarkdownPreviewSettings {
   @NotNull
   public SplitFileEditor.SplitEditorLayout getSplitEditorLayout() {
     return mySplitEditorLayout;
+  }
+
+  @NotNull
+  public MarkdownHtmlPanelProvider.ProviderInfo getHtmlPanelProviderInfo() {
+    return myHtmlPanelProviderInfo;
   }
 
   public boolean isUseGrayscaleRendering() {
@@ -51,6 +67,7 @@ public final class MarkdownPreviewSettings {
     if (myUseGrayscaleRendering != settings.myUseGrayscaleRendering) return false;
     if (myIsAutoScrollPreview != settings.myIsAutoScrollPreview) return false;
     if (mySplitEditorLayout != settings.mySplitEditorLayout) return false;
+    if (!myHtmlPanelProviderInfo.equals(settings.myHtmlPanelProviderInfo)) return false;
 
     return true;
   }
@@ -58,6 +75,7 @@ public final class MarkdownPreviewSettings {
   @Override
   public int hashCode() {
     int result = mySplitEditorLayout.hashCode();
+    result = 31 * result + myHtmlPanelProviderInfo.hashCode();
     result = 31 * result + (myUseGrayscaleRendering ? 1 : 0);
     result = 31 * result + (myIsAutoScrollPreview ? 1 : 0);
     return result;

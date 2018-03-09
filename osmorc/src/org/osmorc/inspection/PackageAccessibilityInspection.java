@@ -198,12 +198,9 @@ public class PackageAccessibilityInspection extends AbstractBaseJavaLocalInspect
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
       ManifestFile manifestFile = getVerifiedManifestFile(descriptor.getPsiElement());
       if (manifestFile != null) {
-        new WriteCommandAction.Simple(project, manifestFile) {
-          @Override
-          protected void run() throws Throwable {
-            OsgiPsiUtil.appendToHeader(manifestFile, Constants.IMPORT_PACKAGE, myPackageToImport);
-          }
-        }.execute();
+        WriteCommandAction.writeCommandAction(project, manifestFile).run(() -> {
+          OsgiPsiUtil.appendToHeader(manifestFile, Constants.IMPORT_PACKAGE, myPackageToImport);
+        });
       }
     }
   }

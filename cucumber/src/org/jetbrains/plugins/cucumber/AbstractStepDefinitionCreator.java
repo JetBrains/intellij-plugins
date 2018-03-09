@@ -63,14 +63,11 @@ public abstract class AbstractStepDefinitionCreator implements StepDefinitionCre
       assert featureParentDir != null;
 
       final Ref<PsiDirectory> dirRef = new Ref<>();
-      new WriteCommandAction.Simple(step.getProject(),
-                                    CucumberBundle.message("cucumber.quick.fix.create.step.command.name.add")) {
-        @Override
-        protected void run() throws Throwable {
-          // create steps_definitions directory
-          dirRef.set(featureParentDir.createSubdirectory(CucumberUtil.STEP_DEFINITIONS_DIR_NAME));
-        }
-      }.execute();
+      WriteCommandAction.writeCommandAction(step.getProject())
+                        .withName(CucumberBundle.message("cucumber.quick.fix.create.step.command.name.add")).run(() -> {
+        // create steps_definitions directory
+        dirRef.set(featureParentDir.createSubdirectory(CucumberUtil.STEP_DEFINITIONS_DIR_NAME));
+      });
 
       return dirRef.get();
     }

@@ -496,18 +496,14 @@ public class FlexTestUtils {
   }
 
   public static void addFlexModuleDependency(final Module dependent, final Module dependency) {
-    new WriteCommandAction.Simple(null) {
-      public void run() {
-        modifyConfigs(dependency.getProject(), editor -> {
-          final ModifiableFlexBuildConfiguration dependentBc = editor.getConfigurations(dependent)[0];
-          final ModifiableFlexBuildConfiguration dependencyBc = editor.getConfigurations(dependency)[0];
-          dependencyBc.setOutputType(OutputType.Library);
-          final ModifiableBuildConfigurationEntry dependencyEntry =
-            editor.createBcEntry(dependentBc.getDependencies(), dependencyBc, null);
-          dependentBc.getDependencies().getModifiableEntries().add(dependencyEntry);
-        });
-      }
-    }.execute().throwException();
+    WriteCommandAction.writeCommandAction(null).run(() -> modifyConfigs(dependency.getProject(), editor -> {
+      final ModifiableFlexBuildConfiguration dependentBc = editor.getConfigurations(dependent)[0];
+      final ModifiableFlexBuildConfiguration dependencyBc = editor.getConfigurations(dependency)[0];
+      dependencyBc.setOutputType(OutputType.Library);
+      final ModifiableBuildConfigurationEntry dependencyEntry =
+        editor.createBcEntry(dependentBc.getDependencies(), dependencyBc, null);
+      dependentBc.getDependencies().getModifiableEntries().add(dependencyEntry);
+    }));
   }
 
   public static void checkFlashRunConfig(final RunManager runManager,
