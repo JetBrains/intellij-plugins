@@ -108,6 +108,23 @@ class VueComponents {
       }).firstOrNull()
     }
 
+    fun isComponentDecorator(decorator: ES6Decorator): Boolean {
+      val callExpression = decorator.expression as? JSCallExpression
+      if (callExpression != null) {
+        return "Component" == (callExpression.methodExpression as? JSReferenceExpression)?.referenceName
+      } else {
+        val reference = decorator.expression as? JSReferenceExpression
+        return "Component" == reference?.referenceName
+      }
+    }
+
+    fun getElementComponentDecorator(element: PsiElement): ES6Decorator? {
+      val attrList = PsiTreeUtil.getChildOfType(element, JSAttributeList::class.java) ?: return null
+      val decorator = PsiTreeUtil.getChildOfType(attrList, ES6Decorator::class.java) ?: return null
+      if (!isComponentDecorator(decorator)) return null
+      return decorator
+    }
+
     fun getExportedDescriptor(defaultExport: JSExportAssignment): VueComponentDescriptor? {
       val exportedObjectLiteral = defaultExport.stubSafeElement as? JSObjectLiteralExpression
       if (exportedObjectLiteral != null) return VueComponentDescriptor(obj = exportedObjectLiteral)

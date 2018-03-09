@@ -1,6 +1,20 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package org.jetbrains.vuejs.index
 
 import com.intellij.javascript.nodejs.packageJson.PackageJsonDependencies
+import com.intellij.javascript.nodejs.packages.NodePackageUtil
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
 import com.intellij.lang.javascript.psi.JSIndexedPropertyAccessExpression
@@ -13,7 +27,9 @@ import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
+import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
@@ -31,6 +47,7 @@ const val LOCAL = "local"
 const val MIXINS = "mixins"
 const val DIRECTIVES = "directives"
 const val GLOBAL_BINDING_MARK = "*"
+const val VUE_CLASS_COMPONENT = "vue-class-component"
 private const val INDEXED_ACCESS_HINT = "[]"
 private const val DELIMITER = "#"
 
@@ -81,6 +98,23 @@ fun hasVue(project: Project): Boolean {
       val result = FileTypeIndex.containsFileOfType(VueFileType.INSTANCE, GlobalSearchScope.projectScope(project))
       CachedValueProvider.Result.create(result, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, ProjectRootModificationTracker.getInstance(project))
     }
+  })
+}
+
+fun hasVueClassComponentLibrary(project: Project): Boolean {
+  if (DumbService.isDumb(project)) return false
+  return CachedValuesManager.getManager(project).getCachedValue(project, {
+    val packageJsonFiles = FilenameIndex.getVirtualFilesByName(project, PackageJsonUtil.FILE_NAME, GlobalSearchScope.projectScope(project))
+
+    var recordedDependency = packageJsonFiles.any { PackageJsonUtil.getOrCreateData(it).isDependencyOfAnyType(VUE_CLASS_COMPONENT) }
+    if (!recordedDependency) {
+      val psiManager = PsiManager.getInstance(project)
+      recordedDependency = packageJsonFiles.any {
+        val psiFile = psiManager.findFile(it) ?: return@any false
+        NodePackageUtil.hasAnyOfPluginsInstalled(psiFile, listOf(VUE_CLASS_COMPONENT))
+      }
+    }
+    CachedValueProvider.Result(recordedDependency, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, ProjectRootModificationTracker.getInstance(project))
   })
 }
 
