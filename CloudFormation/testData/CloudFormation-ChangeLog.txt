@@ -2,6 +2,7 @@ Menu
 [Amazon Web Services] <http://aws.amazon.com>
 Sign In to the Console <https://console.aws.amazon.com/console/home>
 <http://www.amazon.com/dp/B07641FR9Q>
+<https://github.com/awsdocs/aws-cloudformation-user-guide/tree/master/doc_source/ReleaseHistory.md>
 AWS CloudFormation
 User Guide (API Version 2010-05-15)
 
@@ -179,6 +180,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::ApiGateway::Stage
                 + AWS::ApiGateway::UsagePlan
                 + AWS::ApiGateway::UsagePlanKey
+                + AWS::ApiGateway::VpcLink
                 + AWS::ApplicationAutoScaling::ScalableTarget
                 + AWS::ApplicationAutoScaling::ScalingPolicy
                 + AWS::Athena::NamedQuery
@@ -315,6 +317,8 @@ User Guide (API Version 2010-05-15)
                 + AWS::Glue::Table
                 + AWS::Glue::Trigger
                 + AWS::GuardDuty::Detector
+                + AWS::GuardDuty::Master
+                + AWS::GuardDuty::Member
                 + AWS::GuardDuty::IPSet
                 + AWS::GuardDuty::ThreatIntelSet
                 + AWS::IAM::AccessKey
@@ -383,6 +387,12 @@ User Guide (API Version 2010-05-15)
                 + AWS::ServiceDiscovery::PrivateDnsNamespace
                 + AWS::ServiceDiscovery::PublicDnsNamespace
                 + AWS::ServiceDiscovery::Service
+                + AWS::SES::ConfigurationSet
+                + AWS::SES::ConfigurationSetEventDestination
+                + AWS::SES::ReceiptFilter
+                + AWS::SES::ReceiptRule
+                + AWS::SES::ReceiptRuleSet
+                + AWS::SES::Template
                 + AWS::SNS::Subscription
                 + AWS::SNS::Topic
                 + AWS::SNS::TopicPolicy
@@ -508,6 +518,7 @@ User Guide (API Version 2010-05-15)
                 + AWS CodeBuild Project ProjectCache
                 + AWS CodeBuild Project Source
                 + AWS CodeBuild Project SourceAuth
+                + AWS CodeBuild Project ProjectTriggers
                 + AWS CodeBuild Project VpcConfig
                 + AWS CodeCommit Repository Trigger
                 + AWS CodeDeploy DeploymentConfig MinimumHealthyHosts
@@ -583,12 +594,15 @@ User Guide (API Version 2010-05-15)
                 + DynamoDB Table LocalSecondaryIndex
                 + DynamoDB Table Projection
                 + DynamoDB Table ProvisionedThroughput
+                + DynamoDB SSESpecification
                 + DynamoDB Table StreamSpecification
                 + DynamoDB Table TimeToLiveSpecification
                 + Amazon EC2 Block Device Mapping Property
                 + Amazon Elastic Block Store Block Device Property
-                + Amazon EC2 Instance SsmAssociations
+                + Amazon EC2 Instance CreditSpecification
+                + Amazon EC2 Instance ElasticGpuSpecification
                 + Amazon EC2 Instance SsmAssociations AssociationParameters
+                + Amazon EC2 Instance SsmAssociations
                 + EC2 MountPoint
                 + EC2 Network Interface
                 + EC2 NetworkAclEntry Icmp
@@ -597,24 +611,16 @@ User Guide (API Version 2010-05-15)
                 + EC2 Network Interface Private IP Specification
                 + EC2 Security Group Rule
                 + Amazon EC2 SpotFleet SpotFleetRequestConfigData
-                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
-                  LaunchSpecifications
-                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
-                  LaunchSpecifications BlockDeviceMappings
-                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
-                  LaunchSpecifications BlockDeviceMappings Ebs
-                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
-                  LaunchSpecifications IamInstanceProfile
-                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
-                  LaunchSpecifications Monitoring
-                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
-                  LaunchSpecifications NetworkInterfaces
-                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
-                  LaunchSpecifications NetworkInterfaces PrivateIpAddresses
-                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
-                  LaunchSpecifications Placement
-                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
-                  LaunchSpecifications SecurityGroups
+                + Amazon EC2 SpotFleet LaunchSpecifications
+                + Amazon EC2 SpotFleet BlockDeviceMappings
+                + Amazon EC2 SpotFleet Ebs
+                + Amazon EC2 SpotFleet IamInstanceProfile
+                + Amazon EC2 SpotFleet Monitoring
+                + Amazon EC2 SpotFleet NetworkInterfaces
+                + Amazon EC2 SpotFleet PrivateIpAddresses
+                + Amazon EC2 SpotFleet Placement
+                + Amazon EC2 SpotFleet SecurityGroups
+                + Amazon EC2 SpotFleet SpotFleetTagSpecification
                 + EC2 VPNConnection VpnTunnelOptionsSpecification
                 + Amazon ECS Service AwsVpcConfiguration
                 + Amazon ECR Repository LifecyclePolicy
@@ -768,6 +774,7 @@ User Guide (API Version 2010-05-15)
                 + AWS IoT TopicRule SqsAction
                 + AWS IoT Thing AttributePayload
                 + AWS IoT TopicRule TopicRulePayload
+                + Kinesis StreamEncryption
                 + Kinesis Data Analytics Application CSVMappingParameters
                 + Kinesis Data Analytics Application Input
                 + Kinesis Data Analytics Application InputLambdaProcessor
@@ -787,6 +794,7 @@ User Guide (API Version 2010-05-15)
                   KinesisFirehoseOutput
                 + Kinesis Data Analytics ApplicationOutput
                   KinesisStreamsOutput
+                + Kinesis Data Analytics ApplicationOutput LambdaOutput
                 + Kinesis Data Analytics ApplicationOutput Output
                 + Kinesis Data Analytics ApplicationReferenceDataSource
                   CSVMappingParameters
@@ -859,20 +867,23 @@ User Guide (API Version 2010-05-15)
                 + RDS Security Group Rule
                 + Route 53 AliasTarget Property
                 + Route 53 Record Set GeoLocation Property
-                + Route 53 HealthCheckConfig
-                + Amazon Route 53 AlarmIdentifier
-                + Amazon Route 53 HealthCheckTags
+                + Route 53 HealthCheck HealthCheckConfig
+                + Route 53 HealthCheck AlarmIdentifier
+                + Route 53 HealthCheck HealthCheckTags
                 + Route 53 HostedZoneConfig Property
                 + Amazon Route 53 HostedZoneTags
                 + Route 53 QueryLoggingConfig
                 + Route 53 HostedZoneVPCs
                 + Amazon S3 Bucket AbortIncompleteMultipartUpload
                 + Amazon S3 Bucket AccelerateConfiguration
+                + Amazon S3 Bucket AccessControlTranslation
                 + Amazon S3 Bucket AnalyticsConfiguration
+                + Amazon EC2 Bucket BucketEncryption
                 + Amazon S3 Bucket CorsConfiguration
                 + Amazon S3 Bucket CorsRule
                 + Amazon S3 Bucket DataExport
                 + Amazon S3 Bucket Destination
+                + Amazon S3 EncryptionConfiguration
                 + Amazon S3 Bucket FilterRule
                 + Amazon S3 Bucket InventoryConfiguration
                 + Amazon S3 Bucket LambdaConfiguration
@@ -888,6 +899,10 @@ User Guide (API Version 2010-05-15)
                 + Amazon S3 Bucket ReplicationRule
                 + Amazon S3 Bucket Rule
                 + Amazon S3 Bucket S3KeyFilter
+                + Amazon EC2 Bucket ServerSideEncryptionRule
+                + Amazon EC2 Bucket ServerSideEncryptionByDefault
+                + Amazon S3 Bucket SseKmsEncryptedObjects
+                + Amazon S3 Bucket SourceSelectionCriteria
                 + Amazon S3 Bucket StorageClassAnalysis
                 + Amazon S3 Bucket TagFilter
                 + Amazon S3 Bucket TopicConfiguration
@@ -904,6 +919,26 @@ User Guide (API Version 2010-05-15)
                 + Amazon Route 53 ServiceDiscovery DnsConfig
                 + Amazon Route 53 ServiceDiscovery DnsRecord
                 + Amazon Route 53 ServiceDiscovery HealthCheckConfig
+                + Amazon SES ConfigurationSetEventDestination
+                  CloudWatchDestination
+                + Amazon SES ConfigurationSetEventDestination
+                  DimensionConfiguration
+                + Amazon SES ConfigurationSetEventDestination
+                  EventDestination
+                + Amazon SES ConfigurationSetEventDestination
+                  KinesisFirehoseDestination
+                + Amazon SES ReceiptFilter Filter
+                + Amazon SES ReceiptFilter IpFilter
+                + Amazon SES ReceiptRule Action
+                + Amazon SES ReceiptRule AddHeaderAction
+                + Amazon SES ReceiptRule BounceAction
+                + Amazon SES ReceiptRule LambdaAction
+                + Amazon SES ReceiptRule Rule
+                + Amazon SES ReceiptRule S3Action
+                + Amazon SES ReceiptRule SNSAction
+                + Amazon SES ReceiptRule StopAction
+                + Amazon SES ReceiptRule WorkmailAction
+                + Amazon SES Template Template
                 + SSM Association Targets
                 + SSM MaintenanceWindowTarget Targets
                 + SSM MaintenanceWindowTask LoggingInfo
@@ -968,6 +1003,7 @@ User Guide (API Version 2010-05-15)
                 + Fn::FindInMap
                 + Fn::GetAtt
                 + Fn::GetAZs
+                + Fn::GetCidr
                 + Fn::ImportValue
                 + Fn::Join
                 + Fn::Select
@@ -1041,6 +1077,7 @@ User Guide (API Version 2010-05-15)
     * Troubleshooting
     * Release History
           o Supported AWS Services
+          o Release History for Helper Scripts
     * AWS Glossary
     *  <http://www.amazon.com/dp/B07641FR9Q>
 AWS Documentation <http://aws.amazon.com/documentation> » AWS 
@@ -1054,6 +1091,261 @@ The following table describes the important changes to the documentation
 since the preceding release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
+
+New Fn::GetCidr intrinsic function
+
+March 6, 2018
+
+Returns the specified Cidr address block. For more information, see 
+Fn::GetCidr.
+
+2010-05-15
+
+New resources
+
+March 6, 2018
+
+AWS::ApiGateway::VpcLink
+
+    Use the AWS::ApiGateway::VpcLink resource to specify an API Gateway VPC
+    link for a AWS::ApiGateway::RestApi to access resources in an Amazon
+    Virtual Private Cloud (VPC).
+
+AWS::GuardDuty::Master
+
+    Use the AWS::GuardDuty::Master resource to create a GuardDuty master
+    account.
+
+AWS::GuardDuty::Member
+
+    Use the AWS::GuardDuty::Member resource to create a GuardDuty member
+    account.
+
+AWS::SES::ConfigurationSet
+
+    Use the AWS::SES::ConfigurationSet resource to to create groups of
+    rules that you can apply to the emails you send.
+
+AWS::SES::ConfigurationSetEventDestination
+
+    Use the AWS::SES::ConfigurationSetEventDestination resource to specify
+    a configuration set event destination.
+
+AWS::SES::ReceiptFilter
+
+    Use the AWS::SES::ReceiptFilter resource to specify whether to accept
+    or reject mail originating from an IP address or range of IP addresses.
+
+AWS::SES::ReceiptRule
+
+    Use the AWS::SES::ReceiptRule resource to specify which actions Amazon
+    SES should take when it receives mail on behalf of one or more email
+    addresses or domains that you own.
+
+AWS::SES::ReceiptRuleSet
+
+    Use the AWS::SES::ReceiptRuleSet resource to specify an empty rule set
+    for Amazon SES.
+
+AWS::SES::Template
+
+    Use the AWS::SES::Template resource to to specify the content of the
+    email, composed of a subject line, an HTML part, and a text-only part.
+
+2010-05-15
+
+Updated resources
+
+March 6, 2018
+
+AWS::AutoScaling::AutoScalingGroup
+
+    Use the AutoScalingGroup property to specify the name of the Auto
+    Scaling group.
+
+AWS::ApiGateway::RestApi
+
+    Use the ApiKeySourceType property to specify the source of the API key
+    for metering requests according to a usage plan.
+
+    Use the MinimumCompressionSize property to specify a nullable integer
+    that is used to enable compression or disable compression on an API.
+
+AWS::ApplicationAutoScaling::ScalingPolicy
+
+    In the Application Auto Scaling ScalingPolicy
+    TargetTrackingScalingPolicyConfiguration property type, use the 
+    DisableScaleIn property to specify whether scale in by the target
+    tracking policy is disabled.
+
+AWS::EC2::SpotFleet
+
+    In the Amazon EC2 SpotFleet LaunchSpecifications property type, use the 
+    TagSpecifications property to specify the tags to apply during
+    SpotFleet creation.
+
+AWS::Elasticsearch::Domain
+
+    Use the Arn attribute to have Fn::GetAtt return the Amazon Resource
+    Name (ARN) of the domain.
+
+    The DomainArn attribute of Fn::GetAtt has been deprecated.
+
+AWS::RDS::DBCluster
+
+    Use the DBClusterIdentifier property to specify the DB cluster
+    identifier.
+
+AWS::Redshift::Cluster
+
+    Use the ClusterIdentifier property to specify the unique identifier of
+    the cluster.
+
+AWS::Route53::HealthCheck
+
+    In the Route 53 HealthCheck HealthCheckConfig property type, use the 
+    Regions property to specify the regions from which you want Route 53
+    health checkers to check the specified endpoint.
+
+AWS::SSM::Document
+
+    Use the Tags property to specify the AWS CloudFormation resource tags
+    to apply to the document.
+
+2010-05-15
+
+Updated resource
+
+February 19, 2018
+
+AWS::CodeBuild::Project
+
+    Use the Triggers property to configure a webhook for the project to
+    begin to automatically rebuild the source code every time a code change
+    is pushed to the repository. This is available only for GitHub projects
+    in AWS CloudFormation. It is not available for GitHub Enterprise
+    projects.
+
+2010-05-15
+
+Updated resource
+
+February 8, 2018
+
+AWS::DynamoDB::Table
+
+    Use the SSESpecification property to specify the settings to enable
+    server-side encryption.
+
+2010-05-15
+
+Updated resource
+
+February 5, 2018
+
+AWS::CodeBuild::Project
+
+    In the AWS CodeBuild Project Source property type:
+
+        * Use the GitCloneDepth property to specify the depth of history to
+          download.
+
+        * Use the InsecureSsl property to specify whether to ignore SSL
+          warnings while connecting to your GitHub Enterprise project
+          repository.
+
+2010-05-15
+
+Updated resources
+
+January 23, 2018
+
+AWS::AutoScaling::LifecycleHook
+
+    Use the LifecycleHookName property to specify the name of the lifecycle
+    hook.
+
+AWS::DynamoDB::Table
+
+    The AttributeDefinitions property now requires replacement when
+    updated.
+
+AWS::EC2::Instance
+
+    Use the CreditSpecification property to specify the credit option for
+    CPU usage of a T2 instance.
+
+    Use the ElasticGpuSpecifications property to specify Elastic GPUs, GPU
+    resources that you can attach to your instance to accelerate the
+    graphics performance of your applications.
+
+AWS::EC2::VPC
+
+    The InstanceTenancy property now requires no interruption when updated
+    from "dedicated" to "default".
+
+AWS::ECS::Service
+
+    Use the HealthCheckGracePeriodSeconds property to specify the period of
+    time, in seconds, that the Amazon ECS service scheduler ignores
+    unhealthy Elastic Load Balancing target health checks after a task has
+    first started.
+
+AWS::IoT::TopicRule
+
+    In the DynamoDBAction property type, the RangeKeyField and 
+    RangeKeyValue properties are no longer required.
+
+AWS::KinesisAnalytics::ApplicationOutput
+
+    In the ApplicationOutput property type, use the LambdaOutput property
+    to identify a Lambda function as the destination when configuring
+    application output.
+
+AWS::Kinesis::Stream
+
+    Use the StreamEncryption property to enable or update server-side
+    encryption using an AWS KMS key for a specified stream.
+
+AWS::Lambda::Function
+
+    Use the ReservedConcurrentExecutions property to specify the maximum of
+    concurrent executions you want reserved for the function.
+
+AWS::RDS::DBSubnetGroup
+
+    Use the DBSubnetGroupName property to specify the name for the DB
+    Subnet Group.
+
+AWS::S3::Bucket
+
+    Use the BucketEncryption property to specify default encryption for a
+    bucket using server-side encryption with Amazon S3-managed keys SSE-S3
+    or AWS KMS-managed Keys (SSE-KMS) bucket.
+
+    In the ReplicationRule property type, use the SourceSelectionCriteria 
+    property to specify additional filters in identifying source objects
+    that you want to replicate.
+
+    In the ReplicationDestination property type:
+
+        * Use the AccessControlTranslation property to specify replica
+          ownership of the AWS account that owns the destination bucket.
+
+        * Use the Account property to specify destination bucket owner
+          account ID.
+
+        * Use the EncryptionConfiguration property to specify
+          encryption-related information for a bucket that is a destination
+          for replicated objects.
+
+AWS::SSM::Association
+
+    Use the AssociationName property to specify the name of the association
+    between an SSM document and EC2 instances that contain a configuration
+    agent to process the document.
+
+2010-05-15
 
 Rollback triggers added to the AWS CloudFormation console.
 
@@ -1086,7 +1378,7 @@ December 5, 2017
 
 AWS::Inspector::AssessmentTarget
 
-    Use the AWS::Inspector::AssessmentTarget resource to create an Amazon
+    Use the AWS::Inspector::AsssmentTarget resource to create an Amazon
     Inspector assessment target.
 
 AWS::Inspector::AssessmentTemplate
@@ -1408,6 +1700,8 @@ For more information on AWS CloudFormation limits, see AWS CloudFormation
 Limits.
 
 2010-05-15
+
+>>>>>>> mainline
 
 New resources
 
@@ -2492,8 +2786,8 @@ AWS::Lambda::Function
 AWS::Route53::HealthCheck
 
     There are seven new resource subproperty types for the Route 53
-    HealthCheckConfig HealthCheckConfig property: AlarmIdentifier, 
-    ChildHealthChecks, EnableSNI, HealthThreshold, 
+    HealthCheck HealthCheckConfig HealthCheckConfig property: 
+    AlarmIdentifier, ChildHealthChecks, EnableSNI, HealthThreshold, 
     InsufficientDataHealthStatus, Inverted, and MeasureLatency.
 
 AWS::SQS::Queue
@@ -4939,8 +5233,9 @@ This is the initial public release of AWS CloudFormation.
 Document Conventions
 « Previous Next »
 © 2018, Amazon Web Services, Inc. or its affiliates. All rights reserved.
-Terms of Use <http://aws.amazon.com/terms> | © 2018, Amazon Web Services, 
-Inc. or its affiliates. All rights reserved.
+Terms of Use <http://aws.amazon.com/terms> | Privacy
+<http://aws.amazon.com/privacy> | © 2018, Amazon Web Services, Inc. or its 
+affiliates. All rights reserved.
 Have a question? Try the Forums.
 <http://forums.aws.amazon.com/forum.jspa?forumID=92>
 Did this page help you?

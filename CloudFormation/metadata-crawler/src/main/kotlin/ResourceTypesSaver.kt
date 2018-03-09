@@ -255,6 +255,8 @@ object ResourceTypesSaver {
             type = "String"
           } else if (resourceTypeName == "AWS::Cognito::IdentityPool" && name == "SupportedLoginProviders") {
             type = "String"
+          } else if (resourceTypeName == "AWS::ApiGateway::VpcLink" && name == "TargetArns") {
+            type = "List of String"
           } else if (resourceTypeName == "AWS::SNS::TopicPolicy" && name == "PolicyDocument") {
             type = "JSON or YAML"
           } else {
