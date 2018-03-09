@@ -310,9 +310,15 @@ object ResourceTypesSaver {
             properties[additionalProperty.name] = Pair(additionalProperty, descriptionValue)
           }
 
-          // Most likely a documentation bugs, it contradicts examples in the same article
+          // Most likely a documentation bug, it contradicts examples in the same article
           // see https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-batch-jobdefinition.html
           if (resourceTypeName == "AWS::Batch::JobDefinition" && name == "Parameters") {
+            required = false
+          }
+
+          // Most likely a documentation bug, this property was introduced later
+          // and will break existing code if it is mandatory
+          if (resourceTypeName == "AWS::Kinesis::Stream" && name == "StreamEncryption") {
             required = false
           }
 
