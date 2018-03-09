@@ -38,6 +38,7 @@ class YamlExamplesTest : LightPlatformCodeInsightTestCase() {
 
   fun testFindInMapBroken() = runTest("findinmap_broken.yaml")
   fun testFnSplit() = runTest("fn-split.yaml")
+  fun testFnGetCidr() = runTest("fn-getcidr.yaml")
   fun testFnJoinCommaDelimitedList() = runTest("fn-join-commadelimitedlist.yaml")
   fun testRefSingleQuotes() = runTest("ref_single_quotes.yaml")
 

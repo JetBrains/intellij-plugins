@@ -1,0 +1,7 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  myEC2Instance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: !GetCidr [ !GetCidr [ "a", 100 ], 100, 22 ]
+      InstanceType: !GetCidr [ "a" ]

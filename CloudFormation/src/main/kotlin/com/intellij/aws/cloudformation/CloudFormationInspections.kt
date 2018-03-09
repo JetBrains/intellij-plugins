@@ -211,6 +211,14 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
         Unit
       }
 
+      CloudFormationIntrinsicFunction.FnGetCidr -> {
+        if (function.args.size != 2 && function.args.size != 3) {
+          addProblem(function, "GetCidr expects two or three arguments")
+        }
+
+        Unit
+      }
+
       CloudFormationIntrinsicFunction.FnImportValue -> {
         if (function.args.size != 1) {
           addProblem(function, "ImportValue expects one argument")
