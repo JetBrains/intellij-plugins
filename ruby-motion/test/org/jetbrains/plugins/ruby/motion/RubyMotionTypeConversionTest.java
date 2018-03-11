@@ -140,7 +140,7 @@ public class RubyMotionTypeConversionTest extends RubyMotionLightFixtureTestCase
   }
 
   private void assertHasMembers(final String className, final String... members) {
-    final RType type = RTypeFactory.createTypeByFQN(getProject(), className, Context.MIXED_PRIVATE);
+    final RType type = RTypeFactory.createTypeByFQN(getProject(), className, Context.INSTANCE_PRIVATE);
     for (String member : members) {
       assertNotNull("Does not have member " + member, type.getMemberForName(member, SymbolFilterFactory.EMPTY_FILTER, myFixture.getFile()));
     }
