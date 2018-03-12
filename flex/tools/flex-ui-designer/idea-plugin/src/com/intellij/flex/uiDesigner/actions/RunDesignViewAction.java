@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner.actions;
 
 import com.intellij.flex.uiDesigner.DebugPathManager;
 import com.intellij.flex.uiDesigner.DesignerApplicationManager;
-import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -37,7 +36,6 @@ public class RunDesignViewAction extends DumbAwareAction {
     assert psiFile != null;
 
     if (!DebugPathManager.IS_DEV) {
-      UsageTrigger.trigger(usageTriggerFeature);
     }
 
     DesignerApplicationManager.getInstance().openDocument(psiFile,

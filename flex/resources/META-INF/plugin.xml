@@ -162,9 +162,6 @@
 
     <resolveScopeProvider implementation="com.intellij.lang.javascript.flex.ActionScriptResolveScopeProvider"/>
 
-    <statistics.usagesCollector
-        implementation="com.intellij.lang.javascript.flex.projectStructure.FlashBuildConfigurationsUsagesCollector"/>
-
     <indexedRootsProvider implementation="com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor"/>
 
     <localInspection language="ECMA Script Level 4" shortName="FlexUnitClassInProductSourceInspection"
