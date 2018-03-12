@@ -43,6 +43,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.VueFileType
+import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isComponentDecorator
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.language.VueJSLanguage
 import org.jetbrains.vuejs.language.VueVForExpression
@@ -104,13 +105,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   override fun processDecorator(decorator: ES6Decorator, data: JSElementIndexingDataImpl?): JSElementIndexingDataImpl? {
-    val callExpression = decorator.expression as? JSCallExpression
-    if (callExpression != null) {
-      if ("Component" != (callExpression.methodExpression as? JSReferenceExpression)?.referenceName) return data
-    } else {
-      val reference = decorator.expression as? JSReferenceExpression
-      if ("Component" != reference?.referenceName) return data
-    }
+    if (!isComponentDecorator(decorator)) return data
+
     val exportAssignment = (decorator.parent as? JSAttributeList)?.parent as? ES6ExportDefaultAssignment ?: return data
     val classExpression = exportAssignment.stubSafeElement as? JSClassExpression<*> ?: return data
 

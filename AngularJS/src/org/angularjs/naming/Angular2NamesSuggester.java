@@ -13,6 +13,7 @@
 // limitations under the License.
 package org.angularjs.naming;
 
+import com.intellij.lang.javascript.names.JSNameSuggestionsUtil;
 import com.intellij.lang.javascript.names.JSNamesSuggester;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSExpression;
@@ -33,7 +34,6 @@ import java.util.HashMap;
 
 public class Angular2NamesSuggester implements JSNamesSuggester {
   private static final HashMap<String, String> AngularDecoratorEntityMap = ContainerUtil.newHashMap();
-  private static final String SPLIT_BY_CAMEL_CASE_REGEX = "(?<!^)(?=[A-Z])";
 
   static {
     AngularDecoratorEntityMap.put("Component", "Component");
@@ -87,13 +87,19 @@ public class Angular2NamesSuggester implements JSNamesSuggester {
 
     String entityName = AngularDecoratorEntityMap.get(referenceName);
     if (entityName != null) {
+      String name;
       if (StringUtil.endsWith(newElementName, entityName)) {
-        String name = newElementName.substring(0, newElementName.length() - entityName.length());
-        String[] parts = name.split(SPLIT_BY_CAMEL_CASE_REGEX);
-        String finalName = StringUtil.join(parts, StringUtil::toLowerCase, "-");
-        return (StringUtil.isEmpty(finalName) ? "" : finalName + ".")
-               + StringUtil.toLowerCase(entityName) + "." + fileExtension;
+        name = newElementName.substring(0, newElementName.length() - entityName.length());
       }
+      else {
+        name = newElementName;
+      }
+
+      String[] parts = name.split(JSNameSuggestionsUtil.SPLIT_BY_CAMEL_CASE_REGEX);
+      String finalName = StringUtil.join(parts, StringUtil::toLowerCase, "-");
+      return (StringUtil.isEmpty(finalName) ? "" : finalName + ".")
+             + StringUtil.toLowerCase(entityName) + "." + fileExtension;
+
     }
 
     return null;

@@ -44,8 +44,7 @@ class VueExtractComponentIntention : JavaScriptIntention() {
 
   override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
     editor ?: return
-    val context = getContext(editor, element)
-                  ?: return
+    val context = getContext(editor, element) ?: return
     VueExtractComponentRefactoring(project, context, editor).perform()
   }
 
@@ -53,8 +52,7 @@ class VueExtractComponentIntention : JavaScriptIntention() {
 
   companion object {
     fun getContext(editor: Editor?, element: PsiElement): List<XmlTag>? {
-      val selectedTags = getSelectedTags(element,
-                                                                                                                                editor)
+      val selectedTags = getSelectedTags(element, editor)
       return if (selectedTags == null || selectedTags.any{ PsiTreeUtil.getParentOfType(it, XmlTag::class.java) == null }) return null
       else selectedTags
     }
@@ -82,8 +80,11 @@ class VueExtractComponentIntention : JavaScriptIntention() {
         while (file.findElementAt(start) is PsiWhiteSpace && start < end) start++
         if (start == end) break
         val tag = PsiTreeUtil.findElementOfClassAtOffset(file, start, XmlTag::class.java, true) ?: return null
+        val textRange = tag.textRange
+        if (textRange.startOffset !in start..(end - 1)) break
+        if (textRange.endOffset > end) return null
         list.add(tag)
-        start = tag.textRange.endOffset
+        start = textRange.endOffset
       }
       if (list.isEmpty()) return null
       return list

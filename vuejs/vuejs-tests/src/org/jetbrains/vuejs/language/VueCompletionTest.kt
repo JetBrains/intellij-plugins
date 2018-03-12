@@ -913,6 +913,128 @@ $script""")
                                           listOf("ShortComponent", "LongVue", "short-component", "long-vue"))
     })
   }
+
+  fun testComponentInsertion() {
+    val data = listOf(
+Pair("""<template>
+  <Sho<caret>
+</template>
+""", """<template>
+  <ShortComponent
+</template>
+<script>
+    import Vue from "vue";
+    import {Component} from "vue-class-component";
+    import ShortComponent from "./ShortComponent";
+    @Component({
+        components: {ShortComponent}
+    })
+    export default class ComponentInsertion extends Vue {
+    }
+</script>"""),
+Pair("""<template>
+  <Sho<caret>
+</template>
+<script></script>
+""", """<template>
+  <ShortComponent
+</template>
+<script>
+    import Vue from "vue";
+    import {Component} from "vue-class-component";
+    import ShortComponent from "./ShortComponent";
+    @Component({
+        components: {ShortComponent}
+    })
+    export default class ComponentInsertion extends Vue {
+    }
+</script>
+"""),
+Pair("""<template>
+  <Sho<caret>
+</template>
+<script>
+    import Vue from "vue";
+</script>
+""", """<template>
+  <ShortComponent
+</template>
+<script>
+    import Vue from "vue";
+    import {Component} from "vue-class-component";
+    import ShortComponent from "./ShortComponent";
+    @Component({
+        components: {ShortComponent}
+    })
+    export default class ComponentInsertion extends Vue {
+    }
+
+</script>
+"""),
+Pair("""<template>
+  <Sho<caret>
+</template>
+<script>
+    import {Component} from "vue-class-component";
+</script>
+""", """<template>
+  <ShortComponent
+</template>
+<script>
+    import {Component} from "vue-class-component";
+    import Vue from "vue";
+    import ShortComponent from "./ShortComponent";
+    @Component({
+        components: {ShortComponent}
+    })
+    export default class ComponentInsertion extends Vue {
+    }
+
+</script>
+"""),
+Pair("""<template>
+  <Sho<caret>
+</template>
+<script>
+    import Vue from "vue";
+    import {Component} from "vue-class-component";
+    @Component({
+        name: "a123"
+    })
+    export default class ComponentInsertion extends Vue {
+    }
+</script>
+""", """<template>
+  <ShortComponent
+</template>
+<script>
+    import Vue from "vue";
+    import {Component} from "vue-class-component";
+    import ShortComponent from "./ShortComponent";
+    @Component({
+        name: "a123",
+        components: {ShortComponent}
+    })
+    export default class ComponentInsertion extends Vue {
+    }
+</script>
+""")
+    )
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      myFixture.configureByText("package.json", """{
+          dependencies: {
+            "vue-class-component" : "latest"
+          }
+        }""")
+      createTwoClassComponents(myFixture, true)
+      data.forEach {
+        println("*")
+        myFixture.configureByText("ComponentInsertion.vue", it.first)
+        myFixture.completeBasic()
+        myFixture.checkResult(it.second)
+      }
+    })
+  }
 }
 
 fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,
