@@ -1748,6 +1748,15 @@ export default class UsageComponent extends Vue {
     })
   }
 
+  fun testLocalComponentsExtendsResolve() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      createLocalComponentsExtendsData(myFixture, false)
+      myFixture.type("prop-from-a=\"\"")
+      myFixture.editor.caretModel.moveToOffset(myFixture.editor.caretModel.offset - 5)
+      doTestResolveIntoProperty("propFromA")
+    })
+  }
+
   private fun doResolveIntoClassComponent(fileName: String) {
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)

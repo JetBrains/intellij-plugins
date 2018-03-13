@@ -29,6 +29,7 @@
     <stubIndex implementation="org.jetbrains.vuejs.index.VueComponentsIndex" />
     <stubIndex implementation="org.jetbrains.vuejs.index.VueOptionsIndex" />
     <stubIndex implementation="org.jetbrains.vuejs.index.VueMixinBindingIndex" />
+    <stubIndex implementation="org.jetbrains.vuejs.index.VueExtendsBindingIndex" />
     <stubIndex implementation="org.jetbrains.vuejs.index.VueGlobalDirectivesIndex" />
     <stubIndex implementation="org.jetbrains.vuejs.index.VueLocalDirectivesIndex" />
     <stubElementTypeHolder class="org.jetbrains.vuejs.language.VueElementTypes" />
