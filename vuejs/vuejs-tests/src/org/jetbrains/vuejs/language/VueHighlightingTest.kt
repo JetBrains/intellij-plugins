@@ -923,6 +923,92 @@ export default class UsageComponent extends Vue {
       myFixture.checkHighlighting()
     })
   }
+
+  fun testLocalComponentExtendsInClassSyntax() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      myFixture.configureByText("CompAForClass.vue", """
+<template>
+    <div>{{ propFromA1 }}</div>
+</template>
+
+<script>
+    export default {
+        name: "CompAForClass",
+        props: {
+            propFromA1: {
+                required: true
+            }
+        }
+    }
+</script>
+""")
+      myFixture.configureByText("LocalComponentExtendsInClassSyntax.vue", """
+<template>
+    <<warning descr="Element ClassA doesn't have required attribute prop-from-a1">ClassA</warning> />
+</template>
+
+<script>
+    import { Vue, Component } from 'vue-property-decorator'
+    import CompAForClass from './CompAForClass'
+
+    @Component({
+        name: "ClassA",
+        extends: CompAForClass
+    })
+    export default class ClassA extends Vue {
+    }
+</script>
+""")
+      myFixture.checkHighlighting()
+    })
+  }
+
+  fun testLocalComponentInClassSyntax() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      myFixture.configureByText("CompForClass.vue", """
+<template>
+    <div>{{ propFromA2 }}</div>
+</template>
+
+<script>
+    export default {
+        name: "CompForClass",
+        props: {
+            propFromA2: {
+                required: true
+            }
+        }
+    }
+</script>
+""")
+      myFixture.configureByText("OtherCompForClass.vue", """
+<script>
+    export default {
+        name: "OtherCompForClass"
+    }
+</script>
+""")
+      myFixture.configureByText("LocalComponentExtendsInClassSyntax.vue", """
+<template>
+    <<warning descr="Element CompForClass doesn't have required attribute prop-from-a2">CompForClass</warning> />
+    <warning descr="Empty tag doesn't work in some browsers"><<warning descr="Unknown html tag OtherCompForClass">OtherCompForClass</warning>/></warning>
+</template>
+
+<script>
+    import { Vue, Component } from 'vue-property-decorator'
+    import CompForClass from './CompForClass'
+
+    @Component({
+        name: "ClassA",
+        components: { CompForClass }
+    })
+    export default class ClassAB extends Vue {
+    }
+</script>
+""")
+      myFixture.checkHighlighting()
+    })
+  }
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
