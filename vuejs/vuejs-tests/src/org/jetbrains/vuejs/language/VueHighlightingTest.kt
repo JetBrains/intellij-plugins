@@ -288,6 +288,37 @@ const props = {seeMe: {}}
     })
   }
 
+  fun testRequiredAttributeWithModifierTest() {
+    JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("Definition.vue", """
+<script>
+  export default {
+    props: {
+      propC: { type: String, required: true }
+    }
+  }
+</script>""")
+      myFixture.configureByText("RequiredAttributeWithModifierTest.vue", """
+<template>
+  <<warning descr="Element Definition doesn't have required attribute prop-c">Definition</warning>/>
+  <Definition :propC.sync="smtg"/>
+</template>
+<script>
+  import Definition from './Definition';
+  export default {
+    components: { Definition },
+    data: function() {
+      return {
+        smtg() {}
+      };
+    }
+  }
+</script>
+""")
+      myFixture.checkHighlighting()
+    })
+  }
+
   fun testVueAttributeInCustomTag() {
     JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
       myFixture.configureByText("VueAttributeInCustomTag.vue", """
