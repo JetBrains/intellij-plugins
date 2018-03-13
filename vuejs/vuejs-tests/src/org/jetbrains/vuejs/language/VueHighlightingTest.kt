@@ -916,6 +916,13 @@ export default class UsageComponent extends Vue {
       myFixture.checkHighlighting()
     })
   }
+
+  fun testLocalComponentExtends() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      createLocalComponentsExtendsData(myFixture)
+      myFixture.checkHighlighting()
+    })
+  }
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
@@ -938,6 +945,39 @@ fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = 
   @Component
   export default class ShortComponent extends Vue {
   }
+  </script>
+  """)
+}
+
+fun createLocalComponentsExtendsData(fixture: CodeInsightTestFixture, withMarkup: Boolean = true) {
+  fixture.configureByText("CompA.vue", """
+  <template>
+      <div>{{ propFromA }}</div>
+  </template>
+
+  <script>
+      export default {
+          name: "CompA",
+          props: {
+              propFromA: {
+                  required: true
+              }
+          }
+      }
+  </script>
+  """)
+  val nameWithMarkup = if (withMarkup) "<warning descr=\"Element CompB doesn't have required attribute prop-from-a\">CompB</warning>" else "CompB"
+  fixture.configureByText("CompB.vue", """
+  <template>
+      <$nameWithMarkup <caret>/>
+  </template>
+
+  <script>
+      import CompA from 'CompA'
+      export default {
+          name: "CompB",
+          extends: CompA
+      }
   </script>
   """)
 }

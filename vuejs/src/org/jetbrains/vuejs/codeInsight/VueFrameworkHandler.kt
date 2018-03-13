@@ -72,10 +72,13 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         .forEach {
           if (it is JSReferenceExpression) {
             recordMixin(out, property, it, false)
-          } else if (it is JSObjectLiteralExpression && it.firstProperty != null) {
+          }
+          else if (it is JSObjectLiteralExpression && it.firstProperty != null) {
             recordMixin(out, it.firstProperty!!, null, false)
           }
         }
+    } else if (EXTENDS == property.name && property.value is JSReferenceExpression) {
+      recordExtends(out, property, property.value, false)
     } else if (DIRECTIVES == property.name) {
       (property.value as? JSObjectLiteralExpression)?.properties?.forEach {
           directive ->
@@ -169,6 +172,14 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                           descriptorRef: PsiElement?,
                           isGlobal: Boolean) {
     outData.addImplicitElement(createImplicitElement(if (isGlobal) GLOBAL else LOCAL, provider, VueMixinBindingIndex.JS_KEY, null,
+                                                     descriptorRef, isGlobal))
+  }
+
+  private fun recordExtends(outData: JSElementIndexingData,
+                          provider: JSImplicitElementProvider,
+                          descriptorRef: PsiElement?,
+                          isGlobal: Boolean) {
+    outData.addImplicitElement(createImplicitElement(if (isGlobal) GLOBAL else LOCAL, provider, VueExtendsBindingIndex.JS_KEY, null,
                                                      descriptorRef, isGlobal))
   }
 

@@ -1116,6 +1116,14 @@ Pair("""<template>
                                                                   "valueOf"))
     })
   }
+
+  fun testLocalComponentsExtendsCompletion() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      createLocalComponentsExtendsData(myFixture, false)
+      myFixture.completeBasic()
+      assertContainsElements(myFixture.lookupElementStrings!!, "prop-from-a")
+    })
+  }
 }
 
 fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,

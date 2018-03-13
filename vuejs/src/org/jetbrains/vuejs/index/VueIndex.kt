@@ -45,6 +45,7 @@ val INDICES:MutableMap<StubIndexKey<String, JSImplicitElementProvider>, String> 
 const val GLOBAL = "global"
 const val LOCAL = "local"
 const val MIXINS = "mixins"
+const val EXTENDS = "extends"
 const val DIRECTIVES = "directives"
 const val GLOBAL_BINDING_MARK = "*"
 const val VUE_CLASS_COMPONENT = "vue-class-component"

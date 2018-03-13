@@ -14,14 +14,20 @@
 package org.jetbrains.vuejs.index
 
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
-import com.intellij.psi.stubs.StringStubIndexExtension
+import com.intellij.psi.stubs.StubIndexKey
 
 /**
- * @author Irina.Chernushina on 7/19/2017.
+ * @author Irina.Chernushina on 3/13/2018.
  */
-abstract class VueIndexBase : StringStubIndexExtension<JSImplicitElementProvider>() {
-  private val VERSION = 24
-  override fun getVersion(): Int {
-    return VERSION
+class VueExtendsBindingIndex: VueIndexBase() {
+  init {
+    INDICES[KEY] = JS_KEY
   }
+
+  companion object {
+    val KEY = StubIndexKey.createIndexKey<String, JSImplicitElementProvider>("vue.extends.binding.index")
+    val JS_KEY = KEY.name.split(".").map { it.subSequence(0, 1) }.joinToString("")
+  }
+
+  override fun getKey(): StubIndexKey<String, JSImplicitElementProvider> = KEY
 }
