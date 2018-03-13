@@ -1035,6 +1035,95 @@ Pair("""<template>
       }
     })
   }
+
+  fun testTypescriptVForItemCompletion() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      myFixture.configureByText("TypescriptVForItemCompletion.vue", """
+<template>
+    <ul>
+        <li v-for="item in goodTypes">{{item.<caret>}}</li>
+    </ul>
+</template>
+
+<script lang="ts">
+    import { Component, Prop, Vue } from 'vue-property-decorator';
+
+    function getArr() : Promise<Array<string>> {
+        return new Promise<Array<string>>(resolve => {
+            return resolve(['1','2','3','4']);
+        })
+    }
+
+    @Component
+    export default class HelloWorld extends Vue {
+        @Prop() private msg!: string;
+        goodTypes: Array<string> = [];
+        async created (){
+            this.goodTypes = await getArr()
+        }
+    }
+</script>
+""")
+      myFixture.completeBasic()
+
+      assertSameElements(myFixture.lookupElementStrings!!, listOf("[Symbol.iterator]",
+                                                                  "anchor",
+                                                                  "big",
+                                                                  "blink",
+                                                                  "bold",
+                                                                  "charAt",
+                                                                  "charCodeAt",
+                                                                  "codePointAt",
+                                                                  "concat",
+                                                                  "constructor",
+                                                                  "endsWith",
+                                                                  "fixed",
+                                                                  "fontcolor",
+                                                                  "fontsize",
+                                                                  "hasOwnProperty",
+                                                                  "includes",
+                                                                  "indexOf",
+                                                                  "isPrototypeOf",
+                                                                  "italics",
+                                                                  "lastIndexOf",
+                                                                  "length",
+                                                                  "link",
+                                                                  "localeCompare",
+                                                                  "match",
+                                                                  "normalize",
+                                                                  "padEnd",
+                                                                  "padStart",
+                                                                  "propertyIsEnumerable",
+                                                                  "repeat",
+                                                                  "replace",
+                                                                  "search",
+                                                                  "slice",
+                                                                  "small",
+                                                                  "split",
+                                                                  "startsWith",
+                                                                  "strike",
+                                                                  "sub",
+                                                                  "substr",
+                                                                  "substring",
+                                                                  "sup",
+                                                                  "toLocaleLowerCase",
+                                                                  "toLocaleString",
+                                                                  "toLocaleUpperCase",
+                                                                  "toLowerCase",
+                                                                  "toString",
+                                                                  "toUpperCase",
+                                                                  "trim",
+                                                                  "valueOf"))
+    })
+  }
+
+  fun testLocalComponentsExtendsCompletion() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      createLocalComponentsExtendsData(myFixture, false)
+      myFixture.completeBasic()
+      assertContainsElements(myFixture.lookupElementStrings!!, "prop-from-a")
+    })
+  }
 }
 
 fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,

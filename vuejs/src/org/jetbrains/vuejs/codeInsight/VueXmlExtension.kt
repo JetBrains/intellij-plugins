@@ -18,7 +18,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.xml.SchemaPrefix
 import com.intellij.psi.impl.source.xml.TagNameReference
-import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.HtmlXmlExtension
 import org.jetbrains.vuejs.VueLanguage
@@ -43,15 +42,11 @@ class VueXmlExtension : HtmlXmlExtension() {
 
   override fun isRequiredAttributeImplicitlyPresent(tag: XmlTag?, attrName: String?): Boolean {
     if (attrName == null) return false
-    val otherCase = if (attrName.contains('-')) toAsset(attrName) else fromAsset(attrName)
-    val predicate: (XmlAttribute) -> Boolean
-    if (otherCase == attrName) {
-      predicate = { it.name == "v-bind:" + attrName || it.name == ":" + attrName || it.name == attrName}
-    } else {
-      predicate = { it.name == "v-bind:" + attrName || it.name == ":" + attrName || it.name == attrName ||
-                    it.name == "v-bind:" + otherCase || it.name == ":" + otherCase || it.name == otherCase }
-    }
-    tag?.attributes?.filter(predicate)?.forEach { return true }
+    val normalized = fromAsset(attrName)
+    if (tag?.attributes?.filter {
+        val extractedName = VueComponentDetailsProvider.getBoundName(it.name) ?: it.name
+        return@filter normalized == fromAsset(extractedName)
+      }?.any() == true) return true
     return super.isRequiredAttributeImplicitlyPresent(tag, attrName)
   }
 
