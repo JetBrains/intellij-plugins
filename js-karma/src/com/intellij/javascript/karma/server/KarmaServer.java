@@ -54,7 +54,7 @@ public class KarmaServer {
 
   public KarmaServer(@NotNull Project project, @NotNull KarmaServerSettings serverSettings) throws IOException {
     myServerSettings = serverSettings;
-    myKarmaJsSourcesLocator = new KarmaJsSourcesLocator(serverSettings.getKarmaPackage());
+    myKarmaJsSourcesLocator = new KarmaJsSourcesLocator();
     myCoveragePeer = serverSettings.isWithCoverage() ? new KarmaCoveragePeer() : null;
     KillableColoredProcessHandler processHandler = startServer(serverSettings, myKarmaJsSourcesLocator, myCoveragePeer);
     myProcessHashCode = System.identityHashCode(processHandler.getProcess());
