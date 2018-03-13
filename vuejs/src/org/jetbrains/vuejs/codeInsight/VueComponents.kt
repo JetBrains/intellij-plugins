@@ -130,8 +130,10 @@ class VueComponents {
       if (exportedObjectLiteral != null) return VueComponentDescriptor(obj = exportedObjectLiteral)
       val attrList = PsiTreeUtil.getChildOfType(defaultExport, JSAttributeList::class.java) ?: return null
       val decorator = PsiTreeUtil.getChildOfType(attrList, ES6Decorator::class.java) ?: return null
-      return VueComponentDescriptor(obj = VueComponents.getDescriptorFromDecorator(decorator),
-                                    clazz = defaultExport.stubSafeElement as? JSClassExpression<*>)
+      val objectDescriptor = VueComponents.getDescriptorFromDecorator(decorator)
+      val classDescriptor = defaultExport.stubSafeElement as? JSClassExpression<*>
+      if (objectDescriptor == null && classDescriptor == null) return null
+      return VueComponentDescriptor(objectDescriptor, classDescriptor)
     }
 
     fun getDescriptorFromDecorator(decorator: ES6Decorator): JSObjectLiteralExpression? {
