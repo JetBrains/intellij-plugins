@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.BuildOutputConsumer;
 import org.jetbrains.jps.incremental.CompileContext;
-import org.jetbrains.jps.incremental.ProjectBuildException;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.model.JpsEncodingConfigurationService;
@@ -33,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -48,7 +48,7 @@ public class FlexBuilderUtils {
   public static void performPostCompileActions(final CompileContext context,
                                                final @NotNull JpsFlexBuildConfiguration bc,
                                                final Collection<String> dirtyFilePaths,
-                                               final BuildOutputConsumer outputConsumer) throws ProjectBuildException {
+                                               final BuildOutputConsumer outputConsumer) {
     final JpsSdk<?> sdk = bc.getSdk();
     assert sdk != null;
 
@@ -364,16 +364,12 @@ public class FlexBuilderUtils {
   @Nullable
   private static String getExtensionId(final File aneFile) {
     try {
-      final ZipFile zipFile = new ZipFile((aneFile));
-      try {
+      try (ZipFile zipFile = new ZipFile((aneFile))) {
         final ZipEntry entry = zipFile.getEntry("META-INF/ANE/extension.xml");
         if (entry != null) {
           final InputStream is = zipFile.getInputStream(entry);
           return FlexCommonUtils.findXMLElement(is, "<extension><id>");
         }
-      }
-      finally {
-        zipFile.close();
       }
     }
     catch (IOException e) {/**/}
@@ -423,7 +419,7 @@ public class FlexBuilderUtils {
       final String descriptorFileName = bc.isTempBCForCompilation() ? FlexCommonUtils.getGeneratedAirDescriptorName(bc, packagingOptions)
                                                                     : descriptorTemplateFile.getName();
       final File outputFile = new File(outputFolder, descriptorFileName);
-      FileUtil.writeToFile(outputFile, content.getBytes("UTF-8"));
+      FileUtil.writeToFile(outputFile, content.getBytes(StandardCharsets.UTF_8));
       outputConsumer.registerOutputFile(outputFile, Collections.singletonList(descriptorTemplateFile.getPath()));
     }
     catch (IOException e) {

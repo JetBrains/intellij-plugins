@@ -15,8 +15,13 @@ import com.intellij.util.Consumer;
 import com.intellij.util.xml.NanoXmlUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -67,37 +72,35 @@ public class FlexModuleInsight extends ModuleInsight {
   }
 
   protected boolean isLibraryFile(final String fileName) {
-    return fileName.toLowerCase().endsWith(".swc");
+    return fileName.toLowerCase(Locale.ENGLISH).endsWith(".swc");
   }
 
   protected void scanLibraryForDeclaredPackages(final File file, final Consumer<String> result) throws IOException {
-    FileInputStream in = null;
-    try {
-      in = new FileInputStream(file);
+    try (FileInputStream in = new FileInputStream(file)) {
       ZipInputStream zip = new ZipInputStream(in);
       ZipEntry e;
       while ((e = zip.getNextEntry()) != null) {
         if (!e.isDirectory() && "catalog.xml".equals(e.getName())) {
-          InputStreamReader reader = new InputStreamReader(zip, "UTF-8");
+          InputStreamReader reader = new InputStreamReader(zip, StandardCharsets.UTF_8);
           NanoXmlUtil.parse(reader, new NanoXmlUtil.IXMLBuilderAdapter() {
             private boolean processingDef;
 
             @Override
-            public void startElement(String name, String nsPrefix, String nsURI, String systemID, int lineNr) throws Exception {
+            public void startElement(String name, String nsPrefix, String nsURI, String systemID, int lineNr) {
               if (name.equals("def")) {
                 processingDef = true;
               }
             }
 
             @Override
-            public void endElement(String name, String nsPrefix, String nsURI) throws Exception {
+            public void endElement(String name, String nsPrefix, String nsURI) {
               if (name.equals("def")) {
                 processingDef = false;
               }
             }
 
             @Override
-            public void addAttribute(String name, String nsPrefix, String nsURI, String value, String type) throws Exception {
+            public void addAttribute(String name, String nsPrefix, String nsURI, String value, String type) {
               if (processingDef && name.equals("id")) {
                 String fqn = value.replace(':', '.');
                 String packageName = StringUtil.getPackageName(fqn);
@@ -107,15 +110,6 @@ public class FlexModuleInsight extends ModuleInsight {
               }
             }
           });
-        }
-      }
-    }
-    finally {
-      if (in != null) {
-        try {
-          in.close();
-        }
-        catch (IOException ignored) {
         }
       }
     }
