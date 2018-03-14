@@ -128,7 +128,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     protected String getNodeInterpreter() {
       return JSLanguageServiceUtil.getInterpreterPathIfValid(
         PrettierConfiguration.getInstance(myProject)
-                             .getOrDetectInterpreterRef()
+                             .getInterpreterRef()
                              .resolve(myProject));
     }
   }
