@@ -7,7 +7,6 @@ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.modules.NodeModuleUtil;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
@@ -24,11 +23,13 @@ import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.platform.DirectoryProjectConfigurator;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.Producer;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 public class PrettierConfiguration {
   @NotNull
@@ -37,18 +38,16 @@ public class PrettierConfiguration {
   private static final String NODE_INTERPRETER_PROPERTY_KEY = "prettierjs.PrettierConfiguration.NodeInterpreter";
   private static final String PACKAGE_PROPERTY_KEY = "prettierjs.PrettierConfiguration.Package";
 
-  public PrettierConfiguration(@NotNull Project project,
-                               @NotNull PropertiesComponent component,
-                               @NotNull Application application) {
+  public PrettierConfiguration(@NotNull Project project, @NotNull PropertiesComponent component) {
     myProject = project;
     myPropertiesComponent = component;
-
+    ExecutorService threadPoolExecutor = AppExecutorUtil.createBoundedApplicationPoolExecutor("prettier.packageJsonUpdater", 1);
     project.getMessageBus().connect().subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
       @Override
       public void after(@NotNull List<? extends VFileEvent> events) {
         for (VFileEvent event : events) {
           if (PackageJsonUtil.isPackageJsonFile(event.getFile())) {
-            application.executeOnPooledThread(() -> ReadAction.run(PrettierConfiguration.this::detectLocalPackage));
+            threadPoolExecutor.submit(() -> ReadAction.run(PrettierConfiguration.this::detectLocalPackage));
           }
         }
       }
@@ -62,11 +61,7 @@ public class PrettierConfiguration {
 
   @NotNull
   public NodeJsInterpreterRef getInterpreterRef() {
-    final String interpreterRefName = myPropertiesComponent.getValue(NODE_INTERPRETER_PROPERTY_KEY);
-    if (interpreterRefName != null) {
-      return NodeJsInterpreterRef.create(interpreterRefName);
-    }
-    return NodeJsInterpreterRef.createProjectRef();
+    return NodeJsInterpreterRef.create(myPropertiesComponent.getValue(NODE_INTERPRETER_PROPERTY_KEY));
   }
   
   @Nullable
@@ -75,7 +70,7 @@ public class PrettierConfiguration {
   }
 
   public void update(@Nullable NodeJsInterpreter nodeInterpreter, @Nullable NodePackage nodePackage) {
-    myPropertiesComponent.setValue(NODE_INTERPRETER_PROPERTY_KEY, nodeInterpreter != null ? nodeInterpreter.getReferenceName() : null);
+    myPropertiesComponent.setValue(NODE_INTERPRETER_PROPERTY_KEY, nodeInterpreter != null ? nodeInterpreter.toRef().getReferenceName() : null);
     myPropertiesComponent.setValue(PACKAGE_PROPERTY_KEY, nodePackage != null ? nodePackage.getSystemDependentPath() : null);
   }
 
