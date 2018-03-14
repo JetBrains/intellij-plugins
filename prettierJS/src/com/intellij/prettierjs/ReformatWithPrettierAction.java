@@ -326,10 +326,6 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       DialectOptionHolder optionHolder = DialectDetector.dialectOfElement(file);
       return optionHolder == null || (!optionHolder.isCoffeeScript && !optionHolder.isECMA4);
     }
-    //HTML is not officially supported, but running from console formats fine for some reason
-    if (file != null && file.getLanguage() instanceof HTMLLanguage) {
-      return true;
-    }
     return false;
   }
 
