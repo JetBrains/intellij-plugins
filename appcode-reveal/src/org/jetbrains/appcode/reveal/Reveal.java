@@ -11,7 +11,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.cidr.AppleScript;
 import com.jetbrains.cidr.xcode.frameworks.ApplePlatform;
 import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
-import com.jetbrains.cidr.xcode.plist.Plist;
+import com.intellij.util.plist.Plist;
 import com.jetbrains.cidr.xcode.plist.PlistDriver;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

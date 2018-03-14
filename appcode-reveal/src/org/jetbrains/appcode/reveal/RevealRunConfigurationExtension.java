@@ -31,7 +31,7 @@ import com.jetbrains.cidr.execution.*;
 import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
 import com.jetbrains.cidr.xcode.frameworks.buildSystem.BuildSettingNames;
 import com.jetbrains.cidr.xcode.model.*;
-import com.jetbrains.cidr.xcode.plist.Plist;
+import com.intellij.util.plist.Plist;
 import com.jetbrains.cidr.xcode.plist.PlistDriver;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
