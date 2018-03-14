@@ -25,7 +25,6 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
@@ -34,7 +33,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ex.util.CaretVisualPositionKeeper;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.options.ex.Settings;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
@@ -80,17 +78,17 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   @Override
   public void update(AnActionEvent e) {
     Project project = e.getProject();
-    e.getPresentation().setEnabledAndVisible(project != null
-                                   && PrettierUtil.isEnabled()
-                                   && PrettierConfiguration.getInstance(project).getPackage() != null
-                                   && isAcceptableFileContext(e, project));
+    if (project == null) {
+      e.getPresentation().setEnabledAndVisible(false);
+      return;
+    }
+    NodePackage nodePackage = PrettierConfiguration.getInstance(project).getPackage();
+    e.getPresentation().setEnabledAndVisible(PrettierUtil.isEnabled()
+                                             && nodePackage != null && !nodePackage.isEmptyPath()
+                                             && isAcceptableFileContext(e));
   }
 
-  private static boolean isAcceptableFileContext(@NotNull AnActionEvent e, @NotNull Project project) {
-    NodePackage nodePackage = PrettierConfiguration.getInstance(project).getPackage();
-    if (nodePackage == null || nodePackage.isEmptyPath() || !nodePackage.isValid()) {
-      return false;
-    }
+  private static boolean isAcceptableFileContext(@NotNull AnActionEvent e) {
     Editor editor = e.getData(CommonDataKeys.EDITOR);
     if (editor != null) {
       return true;
@@ -110,7 +108,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       return;
     }
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
-    NodeJsInterpreter interpreter = configuration.getOrDetectInterpreterRef().resolve(project);
+    NodeJsInterpreter interpreter = configuration.getInterpreterRef().resolve(project);
     try {
       NodeJsLocalInterpreter.castAndValidate(interpreter);
     }
@@ -120,7 +118,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       return;
     }
 
-    NodePackage nodePackage = configuration.getOrDetectNodePackage();
+    NodePackage nodePackage = configuration.getPackage();
     if (nodePackage == null || nodePackage.isEmptyPath()) {
       myErrorHandler.showError(project, editor, PrettierBundle.message("error.no.valid.package"),
                 () -> editSettings(project));
