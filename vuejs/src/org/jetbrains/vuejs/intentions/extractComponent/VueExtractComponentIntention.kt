@@ -61,6 +61,7 @@ class VueExtractComponentIntention : JavaScriptIntention() {
                                 editor: Editor?): List<XmlTag>? {
       val file = element.containingFile
       if (file == null) return null
+      element.node ?: return null
       if (editor == null || !editor.selectionModel.hasSelection()) {
         val type = element.node.elementType
         val parent = element.parent as? XmlTag
