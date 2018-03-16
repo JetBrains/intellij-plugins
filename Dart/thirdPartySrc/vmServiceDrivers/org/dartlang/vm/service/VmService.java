@@ -18,10 +18,10 @@ package org.dartlang.vm.service;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import java.util.List;
+import java.util.Map;
 import org.dartlang.vm.service.consumer.*;
 import org.dartlang.vm.service.element.*;
-
-import java.util.Map;
 
 /**
  * {@link VmService} allows control of and access to information in a running
@@ -66,6 +66,8 @@ public class VmService extends VmServiceBase {
   public static final String TIMELINE_STREAM_ID = "Timeline";
 
   public static final String VM_STREAM_ID = "VM";
+
+  public static final String SERVICE_STREAM_ID = "_Service";
 
   /**
    * The major version number of the protocol supported by this client.
@@ -142,6 +144,34 @@ public class VmService extends VmServiceBase {
   }
 
   /**
+   * @undocumented
+   */
+  public void clearCpuProfile(String isolateId, SuccessConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    request("_clearCpuProfile", params, consumer);
+  }
+
+  /**
+   * @undocumented
+   */
+  public void clearVMTimeline(SuccessConsumer consumer) {
+    JsonObject params = new JsonObject();
+    request("_clearVMTimeline", params, consumer);
+  }
+
+  /**
+   * Trigger a full GC, collecting all unreachable or weakly reachable objects.
+   *
+   * @undocumented
+   */
+  public void collectAllGarbage(String isolateId, SuccessConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    request("_collectAllGarbage", params, consumer);
+  }
+
+  /**
    * The [evaluate] RPC is used to evaluate an expression in the context of some target.
    */
   public void evaluate(String isolateId, String targetId, String expression, EvaluateConsumer consumer) {
@@ -193,6 +223,46 @@ public class VmService extends VmServiceBase {
     params.addProperty("expression", expression);
     if (scope != null) params.add("scope", convertMapToJsonObject(scope));
     request("evaluateInFrame", params, consumer);
+  }
+
+  /**
+   * Valid values for [gc] are 'full'.
+   *
+   * @undocumented
+   */
+  public void getAllocationProfile(String isolateId, AllocationProfileConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    request("_getAllocationProfile", params, consumer);
+  }
+
+  /**
+   * Valid values for [gc] are 'full'.
+   *
+   * @undocumented
+   *
+   *
+   * @param gc This parameter is optional and may be null.
+   * @param reset This parameter is optional and may be null.
+   */
+  public void getAllocationProfile(String isolateId, String gc, Boolean reset, AllocationProfileConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    if (gc != null) params.addProperty("gc", gc);
+    if (reset != null) params.addProperty("reset", reset);
+    request("_getAllocationProfile", params, consumer);
+  }
+
+  /**
+   * [tags] is one of UserVM, UserOnly, VMUser, VMOnly, or None.
+   *
+   * @undocumented
+   */
+  public void getCpuProfile(String isolateId, String tags, CpuProfileConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    params.addProperty("tags", tags);
+    request("_getCpuProfile", params, consumer);
   }
 
   /**
@@ -288,6 +358,14 @@ public class VmService extends VmServiceBase {
   }
 
   /**
+   * @undocumented
+   */
+  public void getVMTimeline(ResponseConsumer consumer) {
+    JsonObject params = new JsonObject();
+    request("_getVMTimeline", params, consumer);
+  }
+
+  /**
    * The [getVersion] RPC is used to determine what version of the Service Protocol is served by a
    * VM.
    */
@@ -304,6 +382,16 @@ public class VmService extends VmServiceBase {
     JsonObject params = new JsonObject();
     params.addProperty("isolateId", isolateId);
     request("pause", params, consumer);
+  }
+
+  /**
+   * @undocumented
+   */
+  public void registerService(String service, String alias, SuccessConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("service", service);
+    params.addProperty("alias", alias);
+    request("_registerService", params, consumer);
   }
 
   /**
@@ -341,6 +429,19 @@ public class VmService extends VmServiceBase {
     params.addProperty("isolateId", isolateId);
     params.addProperty("breakpointId", breakpointId);
     request("removeBreakpoint", params, consumer);
+  }
+
+  /**
+   * [roots] is one of User or VM. The results are returned as a stream of [_Graph] events.
+   *
+   * @undocumented
+   */
+  public void requestHeapSnapshot(String isolateId, String roots, boolean collectGarbage, SuccessConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    params.addProperty("roots", roots);
+    params.addProperty("collectGarbage", collectGarbage);
+    request("_requestHeapSnapshot", params, consumer);
   }
 
   /**
@@ -409,6 +510,15 @@ public class VmService extends VmServiceBase {
   }
 
   /**
+   * @undocumented
+   */
+  public void setVMTimelineFlags(List<String> recordedStreams, SuccessConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.add("recordedStreams", convertIterableToJsonArray(recordedStreams));
+    request("_setVMTimelineFlags", params, consumer);
+  }
+
+  /**
    * The [streamCancel] RPC cancels a stream subscription in the VM.
    */
   public void streamCancel(String streamId, SuccessConsumer consumer) {
@@ -445,9 +555,21 @@ public class VmService extends VmServiceBase {
 
   @Override
   void forwardResponse(Consumer consumer, String responseType, JsonObject json) {
+    if (consumer instanceof AllocationProfileConsumer) {
+      if (responseType.equals("AllocationProfile")) {
+        ((AllocationProfileConsumer) consumer).received(new AllocationProfile(json));
+        return;
+      }
+    }
     if (consumer instanceof BreakpointConsumer) {
       if (responseType.equals("Breakpoint")) {
         ((BreakpointConsumer) consumer).received(new Breakpoint(json));
+        return;
+      }
+    }
+    if (consumer instanceof CpuProfileConsumer) {
+      if (responseType.equals("_CpuProfile")) {
+        ((CpuProfileConsumer) consumer).received(new CpuProfile(json));
         return;
       }
     }
@@ -560,6 +682,196 @@ public class VmService extends VmServiceBase {
     if (consumer instanceof ReloadReportConsumer) {
       if (responseType.equals("ReloadReport")) {
         ((ReloadReportConsumer) consumer).received(new ReloadReport(json));
+        return;
+      }
+    }
+    if (consumer instanceof ResponseConsumer) {
+      if (responseType.equals("AllocationProfile")) {
+        ((ResponseConsumer) consumer).received(new AllocationProfile(json));
+        return;
+      }
+      if (responseType.equals("Breakpoint")) {
+        ((ResponseConsumer) consumer).received(new Breakpoint(json));
+        return;
+      }
+      if (responseType.equals("ClassHeapStats")) {
+        ((ResponseConsumer) consumer).received(new ClassHeapStats(json));
+        return;
+      }
+      if (responseType.equals("ClassList")) {
+        ((ResponseConsumer) consumer).received(new ClassList(json));
+        return;
+      }
+      if (responseType.equals("Class")) {
+        ((ResponseConsumer) consumer).received(new ClassObj(json));
+        return;
+      }
+      if (responseType.equals("@Class")) {
+        ((ResponseConsumer) consumer).received(new ClassRef(json));
+        return;
+      }
+      if (responseType.equals("Code")) {
+        ((ResponseConsumer) consumer).received(new Code(json));
+        return;
+      }
+      if (responseType.equals("@Code")) {
+        ((ResponseConsumer) consumer).received(new CodeRef(json));
+        return;
+      }
+      if (responseType.equals("Context")) {
+        ((ResponseConsumer) consumer).received(new Context(json));
+        return;
+      }
+      if (responseType.equals("@Context")) {
+        ((ResponseConsumer) consumer).received(new ContextRef(json));
+        return;
+      }
+      if (responseType.equals("Error")) {
+        ((ResponseConsumer) consumer).received(new ErrorObj(json));
+        return;
+      }
+      if (responseType.equals("@Error")) {
+        ((ResponseConsumer) consumer).received(new ErrorRef(json));
+        return;
+      }
+      if (responseType.equals("Event")) {
+        ((ResponseConsumer) consumer).received(new Event(json));
+        return;
+      }
+      if (responseType.equals("Field")) {
+        ((ResponseConsumer) consumer).received(new Field(json));
+        return;
+      }
+      if (responseType.equals("@Field")) {
+        ((ResponseConsumer) consumer).received(new FieldRef(json));
+        return;
+      }
+      if (responseType.equals("FlagList")) {
+        ((ResponseConsumer) consumer).received(new FlagList(json));
+        return;
+      }
+      if (responseType.equals("Frame")) {
+        ((ResponseConsumer) consumer).received(new Frame(json));
+        return;
+      }
+      if (responseType.equals("Function")) {
+        ((ResponseConsumer) consumer).received(new Func(json));
+        return;
+      }
+      if (responseType.equals("@Function")) {
+        ((ResponseConsumer) consumer).received(new FuncRef(json));
+        return;
+      }
+      if (responseType.equals("HeapSpace")) {
+        ((ResponseConsumer) consumer).received(new HeapSpace(json));
+        return;
+      }
+      if (responseType.equals("Instance")) {
+        ((ResponseConsumer) consumer).received(new Instance(json));
+        return;
+      }
+      if (responseType.equals("@Instance")) {
+        ((ResponseConsumer) consumer).received(new InstanceRef(json));
+        return;
+      }
+      if (responseType.equals("Isolate")) {
+        ((ResponseConsumer) consumer).received(new Isolate(json));
+        return;
+      }
+      if (responseType.equals("@Isolate")) {
+        ((ResponseConsumer) consumer).received(new IsolateRef(json));
+        return;
+      }
+      if (responseType.equals("Library")) {
+        ((ResponseConsumer) consumer).received(new Library(json));
+        return;
+      }
+      if (responseType.equals("@Library")) {
+        ((ResponseConsumer) consumer).received(new LibraryRef(json));
+        return;
+      }
+      if (responseType.equals("Message")) {
+        ((ResponseConsumer) consumer).received(new Message(json));
+        return;
+      }
+      if (responseType.equals("Null")) {
+        ((ResponseConsumer) consumer).received(new Null(json));
+        return;
+      }
+      if (responseType.equals("@Null")) {
+        ((ResponseConsumer) consumer).received(new NullRef(json));
+        return;
+      }
+      if (responseType.equals("Object")) {
+        ((ResponseConsumer) consumer).received(new Obj(json));
+        return;
+      }
+      if (responseType.equals("@Object")) {
+        ((ResponseConsumer) consumer).received(new ObjRef(json));
+        return;
+      }
+      if (responseType.equals("ReloadReport")) {
+        ((ResponseConsumer) consumer).received(new ReloadReport(json));
+        return;
+      }
+      if (responseType.equals("Response")) {
+        ((ResponseConsumer) consumer).received(new Response(json));
+        return;
+      }
+      if (responseType.equals("Script")) {
+        ((ResponseConsumer) consumer).received(new Script(json));
+        return;
+      }
+      if (responseType.equals("@Script")) {
+        ((ResponseConsumer) consumer).received(new ScriptRef(json));
+        return;
+      }
+      if (responseType.equals("Sentinel")) {
+        ((ResponseConsumer) consumer).received(new Sentinel(json));
+        return;
+      }
+      if (responseType.equals("SourceLocation")) {
+        ((ResponseConsumer) consumer).received(new SourceLocation(json));
+        return;
+      }
+      if (responseType.equals("SourceReport")) {
+        ((ResponseConsumer) consumer).received(new SourceReport(json));
+        return;
+      }
+      if (responseType.equals("Stack")) {
+        ((ResponseConsumer) consumer).received(new Stack(json));
+        return;
+      }
+      if (responseType.equals("Success")) {
+        ((ResponseConsumer) consumer).received(new Success(json));
+        return;
+      }
+      if (responseType.equals("TypeArguments")) {
+        ((ResponseConsumer) consumer).received(new TypeArguments(json));
+        return;
+      }
+      if (responseType.equals("@TypeArguments")) {
+        ((ResponseConsumer) consumer).received(new TypeArgumentsRef(json));
+        return;
+      }
+      if (responseType.equals("UnresolvedSourceLocation")) {
+        ((ResponseConsumer) consumer).received(new UnresolvedSourceLocation(json));
+        return;
+      }
+      if (responseType.equals("VM")) {
+        ((ResponseConsumer) consumer).received(new VM(json));
+        return;
+      }
+      if (responseType.equals("@VM")) {
+        ((ResponseConsumer) consumer).received(new VMRef(json));
+        return;
+      }
+      if (responseType.equals("Version")) {
+        ((ResponseConsumer) consumer).received(new Version(json));
+        return;
+      }
+      if (responseType.equals("_CpuProfile")) {
+        ((ResponseConsumer) consumer).received(new CpuProfile(json));
         return;
       }
     }
