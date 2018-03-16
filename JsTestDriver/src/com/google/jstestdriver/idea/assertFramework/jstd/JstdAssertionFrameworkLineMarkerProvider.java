@@ -134,10 +134,8 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
       })
       .setMovable(true)
       .setItemChoosenCallback((type) -> {
-        if (type != null) {
-          if (psiElement.isValid()) {
-            execute(type.getExecutor(), psiElement);
-          }
+        if (psiElement.isValid()) {
+          execute(type.getExecutor(), psiElement);
         }
       }).createPopup().show(new RelativePoint(e));
   }
