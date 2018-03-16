@@ -1,5 +1,6 @@
 package com.intellij.flex.highlighting;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -27,6 +28,7 @@ import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
+import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.highlighting.JavaScriptLineMarkerProvider;
 import com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection;
@@ -671,7 +673,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testPropertyPrefix() throws Exception {
-    JSCodeStyleSettings jsCodeStyleSettings = CodeStyleSettingsManager.getSettings(myProject).getCustomSettings(JSCodeStyleSettings.class);
+    JSCodeStyleSettings jsCodeStyleSettings = CodeStyle.getSettings(getProject()).getCustomSettings(ECMA4CodeStyleSettings.class);
     String prefix = jsCodeStyleSettings.PROPERTY_PREFIX;
     jsCodeStyleSettings.PROPERTY_PREFIX = "prop";
     try {
