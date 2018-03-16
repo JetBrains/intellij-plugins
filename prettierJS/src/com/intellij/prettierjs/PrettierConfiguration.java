@@ -23,7 +23,7 @@ import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.platform.DirectoryProjectConfigurator;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.Producer;
-import com.intellij.util.concurrency.AppExecutorUtil;
+import com.intellij.util.concurrency.SequentialTaskExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +41,7 @@ public class PrettierConfiguration {
   public PrettierConfiguration(@NotNull Project project, @NotNull PropertiesComponent component) {
     myProject = project;
     myPropertiesComponent = component;
-    ExecutorService threadPoolExecutor = AppExecutorUtil.createBoundedApplicationPoolExecutor("prettier.packageJsonUpdater", 1);
+    ExecutorService threadPoolExecutor = SequentialTaskExecutor.createSequentialApplicationPoolExecutor("Prettier.PackageJsonUpdater");
     project.getMessageBus().connect().subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
       @Override
       public void after(@NotNull List<? extends VFileEvent> events) {
