@@ -1009,6 +1009,136 @@ export default class UsageComponent extends Vue {
       myFixture.checkHighlighting()
     })
   }
+
+  fun testLocalComponentInMixin() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      myFixture.configureByText("b-component.vue", """
+<template>
+    <div>Hello</div>
+</template>
+
+<script>
+    export default {
+        name: 'b-component',
+        props: {
+            fromB: {
+                required: true
+            }
+        }
+    }
+</script>
+""")
+      myFixture.configureByText("a-component.js", """
+import B from 'b-component'
+
+export default {
+    name: 'a-component',
+    components: { 'b-comp': B }
+}
+""")
+      myFixture.configureByText("c-component.vue", """
+<template>
+    <<warning descr="Element b-comp doesn't have required attribute from-b">b-comp</warning>>
+    </<warning descr="Element b-comp doesn't have required attribute from-b">b-comp</warning>>
+</template>
+
+<script>
+    import A from 'a-component'
+    export default {
+        mixins: [ A ]
+    }
+</script>
+""")
+      myFixture.checkHighlighting()
+    })
+  }
+
+  fun testLocalComponentInMixinRecursion() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      myFixture.configureByText("hidden-component.vue", """
+<script>
+    export default {
+        name: "hidden-component",
+        props: {
+            fromHidden: {
+                required: true
+            }
+        }
+    }
+</script>
+      """)
+      myFixture.configureByText("d-component.vue", """
+<template>
+    <hidden-component/>
+</template>
+
+<script>
+    import HiddenComponent from "./hidden-component";
+    export default {
+        name: "d-component",
+        components: {HiddenComponent},
+        props: {
+            fromD: {
+                required: true
+            }
+        }
+    }
+</script>
+      """)
+      myFixture.configureByText("b-component.vue", """
+<template>
+    <div>Hello</div>
+</template>
+
+<script>
+    import DComponent from 'd-component'
+    export default {
+        name: 'b-component',
+        props: {
+            fromB: {
+                required: true
+            }
+        },
+        mixins: [ DComponent ]
+    }
+</script>""")
+      myFixture.configureByText("e-component.js", """
+import BComponent from 'b-component'
+    export default {
+        name: "e-component",
+        mixins: [ BComponent ]
+    }
+""")
+      myFixture.configureByText("c-component.vue", """
+<template>
+    <<warning descr="Unknown html tag b-comp">b-comp</warning>>
+    </<warning descr="Unknown html tag b-comp">b-comp</warning>>
+    <<warning descr="Element hidden-component doesn't have required attribute from-hidden">hidden-component</warning>/>
+</template>
+
+<script>
+    import E from 'e-component'
+    export default {
+        mixins: [ E ]
+    }
+</script>
+""")
+      myFixture.checkHighlighting()
+    })
+  }
+
+  fun testRecursiveMixedMixins() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      defineRecursiveMixedMixins(myFixture)
+      myFixture.configureByText("RecursiveMixedMixins.vue", """
+        <template>
+          <<warning descr="Element HiddenComponent doesn't have required attribute from-d"><warning descr="Element HiddenComponent doesn't have required attribute from-hidden">HiddenComponent</warning></warning>/>
+          <<warning descr="Element OneMoreComponent doesn't have required attribute from-d"><warning descr="Element OneMoreComponent doesn't have required attribute from-one-m-ore">OneMoreComponent</warning></warning>/>
+        </template>
+      """)
+      myFixture.checkHighlighting()
+    })
+  }
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
@@ -1066,4 +1196,59 @@ fun createLocalComponentsExtendsData(fixture: CodeInsightTestFixture, withMarkup
       }
   </script>
   """)
+}
+
+fun defineRecursiveMixedMixins(fixture: CodeInsightTestFixture) {
+  fixture.configureByText("hidden-component.vue", """
+  <script>
+      export default {
+          name: "hidden-component",
+          props: {
+              fromHidden: {
+                  required: true
+              }
+          }
+      }
+  </script>
+        """)
+  fixture.configureByText("d-component.vue", """
+  <template>
+      <hidden-component/>
+  </template>
+
+  <script>
+      import HiddenComponent from "./hidden-component";
+      export default {
+          name: "d-component",
+          components: {HiddenComponent},
+          props: {
+              fromD: {
+                  required: true
+              }
+          }
+      }
+  </script>
+        """)
+  fixture.configureByText("OneMoreComponent.vue", """
+          <script>
+            @Component({
+              props: {
+                fromOneMOre: {
+                  required: true
+                }
+              }
+            })
+            export default class Kuku extends Vue {
+
+            }
+          </script>
+        """)
+  fixture.configureByText("GlobalMixin.js", """
+          import OneMoreComponent from './OneMoreComponent.vue'
+          import DComponent from './d-component.vue'
+          Vue.mixin({
+            components: { OneMoreComponent },
+            mixins: [ DComponent ]
+          })
+        """)
 }
