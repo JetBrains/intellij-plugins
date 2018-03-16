@@ -248,7 +248,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 }
 
 fun findModule(element: PsiElement?): JSEmbeddedContent? {
-  val file = element?.containingFile as? XmlFile
+  val file = element as? XmlFile ?: element?.containingFile as? XmlFile
   if (file != null && file.fileType == VueFileType.INSTANCE) {
     val script = findScriptTag(file)
     if (script != null) {

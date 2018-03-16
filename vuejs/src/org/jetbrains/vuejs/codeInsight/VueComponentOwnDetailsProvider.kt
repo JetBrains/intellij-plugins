@@ -27,12 +27,13 @@ class VueComponentOwnDetailsProvider {
     private val FUNCTION_FILTER = { element: PsiElement ->
       element is JSFunctionProperty || element is JSProperty && element.value is JSFunction
     }
+    private val DETAILS_COMPONENTS = listOf(CompMember.Props, CompMember.Computed, CompMember.Methods, CompMember.Data)
 
     fun getDetails(descriptor: JSObjectLiteralExpression,
                    filter: (String, PsiElement) -> Boolean,
                    onlyPublic: Boolean,
                    onlyFirst: Boolean): List<VueAttributeDescriptor> {
-      val detailsList = CompMember.values().filter { !onlyPublic || it.isPublic }
+      val detailsList = DETAILS_COMPONENTS.filter { !onlyPublic || it.isPublic }
       val result = mutableListOf<VueAttributeDescriptor>()
       // since Kotlin "streams" seems to be not lazy
       for (compMember in detailsList) {
@@ -40,6 +41,15 @@ class VueComponentOwnDetailsProvider {
         if (onlyFirst && !details.isEmpty()) return details
         result.addAll((details))
       }
+      return result
+    }
+
+    fun getLocalComponents(descriptor: JSObjectLiteralExpression, filter: (String, PsiElement) -> Boolean, onlyFirst: Boolean): List<VueAttributeDescriptor> {
+      val result = mutableListOf<VueAttributeDescriptor>()
+      // since Kotlin "streams" seems to be not lazy
+        val details = CompMember.Components.readMembers(descriptor, filter)
+        if (onlyFirst && !details.isEmpty()) return details
+        result.addAll((details))
       return result
     }
   }
@@ -51,6 +61,7 @@ class VueComponentOwnDetailsProvider {
     Props("props", true, false, true),
     Computed("computed", false, true, false),
     Methods("methods", false, true, false),
+    Components("components", false, false, false),
     Data("data", false, false, false) {
       override fun getObjectLiteralFromResolved(resolved: PsiElement): JSObjectLiteralExpression? = findReturnedObjectLiteral(resolved)
 
@@ -84,11 +95,9 @@ class VueComponentOwnDetailsProvider {
 
       var propsObject = property.objectLiteralExpressionInitializer ?: getObjectLiteral(property)
       if (propsObject == null && property.initializerReference != null) {
-        val resolved = JSStubBasedPsiTreeUtil.resolveLocally(property.initializerReference!!,
-                                                             property)
+        val resolved = JSStubBasedPsiTreeUtil.resolveLocally(property.initializerReference!!, property)
         if (resolved != null) {
-          propsObject = JSStubBasedPsiTreeUtil.findDescendants(resolved,
-                                                               JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
+          propsObject = JSStubBasedPsiTreeUtil.findDescendants(resolved, JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
                           .find { it.context == resolved } ?: getObjectLiteralFromResolved(resolved)
           if (propsObject == null && canBeArray) {
             return readPropsFromArray(resolved, detailsFilter)
