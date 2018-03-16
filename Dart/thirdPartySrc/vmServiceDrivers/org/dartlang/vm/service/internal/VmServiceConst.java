@@ -27,4 +27,34 @@ public interface VmServiceConst {
   public static final String RESULT = "result";
   public static final String STREAM_ID = "streamId";
   public static final String TYPE = "type";
+  public static final String JSONRPC = "jsonrpc";
+  public static final String JSONRPC_VERSION = "2.0";
+  public static final String DATA = "data";
+
+  /**
+   * Parse error	Invalid JSON was received by the server.
+   * An error occurred on the server while parsing the JSON text.
+   */
+  public static final int PARSE_ERROR = -32700;
+
+  /**
+   * Invalid Request	The JSON sent is not a valid Request object.
+   */
+  public static final int INVALID_REQUEST = -32600;
+
+  /**
+   * Method not found	The method does not exist / is not available.
+   */
+  public static final int METHOD_NOT_FOUND = -32601;
+
+  /**
+   * Invalid params	Invalid method parameter(s).
+   */
+  public static final int INVALID_PARAMS = -32602;
+
+  /**
+   * Server error	Reserved for implementation-defined server-errors.
+   * -32000 to -32099
+   */
+  public static final int SERVER_ERROR = -32000;
 }
