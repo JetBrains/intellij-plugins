@@ -24,5 +24,6 @@
     <orderEntry type="module" module-name="intellij.javascript.wip.protocol" />
     <orderEntry type="module" module-name="intellij.platform.scriptDebugger.ui" />
     <orderEntry type="module" module-name="intellij.platform.scriptDebugger.backend" />
+    <orderEntry type="module" module-name="intellij.javascript.chrome.connector" />
   </component>
 </module>

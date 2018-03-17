@@ -16,10 +16,7 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.ide.browsers.BrowserFamily;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.WebBrowserManager;
-import com.intellij.javascript.debugger.DebuggableFileFinder;
-import com.intellij.javascript.debugger.JavaScriptDebugEngine;
-import com.intellij.javascript.debugger.JavaScriptDebugProcess;
-import com.intellij.javascript.debugger.RemoteDebuggingFileFinder;
+import com.intellij.javascript.debugger.*;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
@@ -39,6 +36,8 @@ import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
+import com.jetbrains.debugger.wip.BrowserChromeDebugProcess;
+import com.jetbrains.debugger.wip.WipRemoteVmConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.concurrency.Promise;
 import org.jetbrains.concurrency.Promises;
@@ -46,6 +45,7 @@ import org.jetbrains.debugger.connection.VmConnection;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 
 public class KarmaDebugProgramRunner extends AsyncProgramRunner {
   private static final Logger LOG = Logger.getInstance(KarmaDebugProgramRunner.class);
@@ -114,13 +114,8 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
         @Override
         @NotNull
         public XDebugProcess start(@NotNull XDebugSession session) {
-          JavaScriptDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
-          WebBrowser browser = debuggableWebBrowser.getWebBrowser();
-          // If a capturing page was open, but not connected (e.g. it happens after karma server restart),
-          // reload it to capture. Otherwise (no capturing page was open), reloading shouldn't harm.
-          boolean reloadPage = !karmaServer.areBrowsersReady();
           JavaScriptDebugProcess<? extends VmConnection> debugProcess =
-            debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, reloadPage);
+            createDebugProcess(session, karmaServer, fileFinder, executionResult, debuggableWebBrowser, url);
           debugProcess.setScriptsCanBeReloaded(true);
           debugProcess.addFirstLineBreakpointPattern("\\.browserify$");
           debugProcess.setElementsInspectorEnabled(false);
@@ -137,6 +132,29 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
     return session.getRunContentDescriptor();
   }
 
+  @NotNull
+  private static JavaScriptDebugProcess<? extends VmConnection> createDebugProcess(@NotNull XDebugSession session,
+                                                                                   @NotNull KarmaServer karmaServer,
+                                                                                   @NotNull DebuggableFileFinder fileFinder,
+                                                                                   @NotNull ExecutionResult executionResult,
+                                                                                   @NotNull DebuggableWebBrowser debuggableWebBrowser,
+                                                                                   @NotNull Url url) {
+    KarmaConfig karmaConfig = karmaServer.getKarmaConfig();
+    if (karmaConfig != null && karmaConfig.getRemoteDebuggingPort() > 0) {
+      WipRemoteVmConnection connection = new WipRemoteVmConnection();
+      BrowserChromeDebugProcess debugProcess = new BrowserChromeDebugProcess(session, fileFinder, connection, executionResult);
+      connection.open(new InetSocketAddress(karmaConfig.getHostname(), karmaConfig.getRemoteDebuggingPort()));
+      return debugProcess;
+    }
+    JavaScriptDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
+    WebBrowser browser = debuggableWebBrowser.getWebBrowser();
+    // If a capturing page was open, but not connected (e.g. it happens after karma server restart),
+    // reload it to capture. Otherwise (no capturing page was open), reloading shouldn't harm.
+    boolean reloadPage = !karmaServer.areBrowsersReady();
+    return debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, reloadPage);
+  }
+
+  @NotNull
   private static DebuggableFileFinder getDebuggableFileFinder(@NotNull KarmaServer karmaServer) {
     BiMap<String, VirtualFile> mappings = HashBiMap.create();
     KarmaConfig karmaConfig = karmaServer.getKarmaConfig();

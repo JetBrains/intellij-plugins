@@ -146,8 +146,13 @@ public class KarmaServer {
     List<String> nodeOptionList = ParametersListUtil.parse(serverSettings.getNodeOptions().trim());
     commandLine.addParameters(nodeOptionList);
     File serverFile = sourcesLocator.getServerAppFile();
-    //NodeCommandLineUtil.addNodeOptionsForDebugging(commandLine, Collections.emptyList(), 34598, true,
-    //                                               serverSettings.getNodeInterpreter(), true);
+    //try {
+    //  NodeCommandLineUtil.addNodeOptionsForDebugging(commandLine, Collections.emptyList(), 34598, true,
+    //                                                 serverSettings.getNodeInterpreter(), true);
+    //}
+    //catch (ExecutionException e) {
+    //  throw new IOException(e);
+    //}
     commandLine.addParameter(serverFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + serverSettings.getKarmaPackage().getSystemDependentPath());
     commandLine.addParameter("--configFile=" + serverSettings.getConfigurationFilePath());

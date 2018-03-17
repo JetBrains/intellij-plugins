@@ -15,20 +15,13 @@ function configureDebug(config) {
   // By default, browserNoActivityTimeout=10000 ms, not enough for suspended execution.
   // https://github.com/karma-runner/karma/blob/master/docs/config/01-configuration-file.md#browsernoactivitytimeout
   config.browserNoActivityTimeout = null;
-  if (intellijUtil.isString(config.browserForDebugging)) {
-    config.browsers = [config.browserForDebugging];
-    console.info('intellij: set config.browsers to ' + JSON.stringify(config.browsers));
-  }
-  else if (Array.isArray(config.browsers) && config.browsers.length > 0) {
-    config.browsers = [];
-    console.info('intellij: a browser for tests debugging will be captured automatically');
-  }
+  const intellijDebug = require('./karma-intellij-debug');
   (function fixMochaTimeout() {
     var client = config.client;
     if (typeof client === 'undefined') {
       config.client = client = {};
     }
-    require('./karma-intellij-debug').initCustomContextFile(config);
+    intellijDebug.initCustomContextFile(config);
     if (client === Object(client)) {
       var mocha = client.mocha;
       if (typeof mocha === 'undefined') {
@@ -45,6 +38,7 @@ function configureDebug(config) {
       console.error('intellij: config.client is not an object')
     }
   })();
+  return intellijDebug.configureBrowsers(config);
 }
 
 module.exports = function (config) {
@@ -71,8 +65,9 @@ module.exports = function (config) {
   config.reporters = filteredReporters;
 
   IntellijCoverageReporter.configureCoverage(config);
+  var debugInfo;
   if (cli.isDebug()) {
-    configureDebug(config);
+    debugInfo = configureDebug(config);
   }
 
   var plugins = config.plugins || [];
@@ -115,7 +110,8 @@ module.exports = function (config) {
       urlRoot: config.urlRoot || '/',
       protocol: config.protocol || 'http:',
       webpack: intellijUtil.isPreprocessorSpecified(config.preprocessors, 'webpack') ||
-               intellijUtil.isPreprocessorSpecified(config.preprocessors, 'angular-cli')
+               intellijUtil.isPreprocessorSpecified(config.preprocessors, 'angular-cli'),
+      debugInfo: debugInfo
     }
   );
 };
