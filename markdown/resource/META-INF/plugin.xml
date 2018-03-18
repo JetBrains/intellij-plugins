@@ -52,6 +52,7 @@
                             implementationClass="org.intellij.plugins.markdown.injection.LanguageListCompletionContributor"/>
 
     <fileEditorProvider implementation="org.intellij.plugins.markdown.ui.preview.MarkdownSplitEditorProvider"/>
+    <fileEditorProvider implementation="org.intellij.plugins.markdown.ui.preview.MarkdownTextFileEditorProvider"/>
 
     <spellchecker.support language="Markdown"
                           implementationClass="org.intellij.plugins.markdown.spellchecking.MarkdownSpellcheckingStrategy"/>
