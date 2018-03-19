@@ -8,8 +8,6 @@ import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import static org.intellij.plugins.markdown.ui.split.MarkdownEditorUtil.getBuilderFromEditorProvider;
-
 public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider, DumbAware {
 
   private static final String FIRST_EDITOR = "first_editor";
@@ -119,5 +117,22 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
   @Override
   public FileEditorPolicy getPolicy() {
     return FileEditorPolicy.HIDE_DEFAULT_EDITOR;
+  }
+
+  @NotNull
+  public static Builder getBuilderFromEditorProvider(@NotNull final FileEditorProvider provider,
+                                                     @NotNull final Project project,
+                                                     @NotNull final VirtualFile file) {
+    if (provider instanceof AsyncFileEditorProvider) {
+      return ((AsyncFileEditorProvider)provider).createEditorAsync(project, file);
+    }
+    else {
+      return new Builder() {
+        @Override
+        public FileEditor build() {
+          return provider.createEditor(project, file);
+        }
+      };
+    }
   }
 }
