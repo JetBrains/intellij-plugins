@@ -32,7 +32,6 @@ public class CucumberJavaRunConfigurationTest extends CucumberJavaCodeInsightTes
     runConfiguration.setProgramParameters("--plugin pretty");
     CucumberJavaFeatureRunConfigurationProducer producer = new CucumberJavaFeatureRunConfigurationProducer();
     final DataContext dataContext = DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent());
-    LangDataKeys.MODULE.getData(dataContext);
     ConfigurationContext configurationContext = ConfigurationContext.getFromContext(dataContext);
 
     PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
