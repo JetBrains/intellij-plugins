@@ -43,16 +43,19 @@ class VueComponentDetailsProvider {
     }
 
     fun getBoundName(attributeName : String): String? {
-      return PREFIX_VARIANTS.map {
+      return PREFIX_VARIANTS.mapNotNull {
         val after = attributeName.substringAfter(it.key, "")
-        if (!after.isEmpty()) {
-          if (it.value.contains("*")) {
-            return after.substringBefore(".", after)
-          }
-          return@map it.value.map { after.substringBefore(it, "") }.firstOrNull { !it.isEmpty() } ?: after
+        if (after.isNotEmpty()) {
+          return after.substringBefore(".", after)
         }
-        return@map ""
-      }.firstOrNull { !it.isEmpty() }
+        return@mapNotNull null
+      }.firstOrNull() ?:
+        if (attributeName.contains('.')) {
+          // without prefix, but might be with postfix
+          attributeName.substringBefore(".", "")
+        } else
+          // if just attribute name should be used, return null
+          null
     }
 
     fun nameVariantsFilter(attributeName : String) : (String, PsiElement) -> Boolean {
