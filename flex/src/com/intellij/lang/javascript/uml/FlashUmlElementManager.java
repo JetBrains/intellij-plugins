@@ -21,6 +21,8 @@ import com.intellij.diagram.presentation.DiagramState;
 import com.intellij.javascript.flex.resolve.FlexResolveHelper;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.presentable.JSFormatUtil;
+import com.intellij.lang.javascript.presentable.JSNamedElementPresenter;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
@@ -31,7 +33,6 @@ import com.intellij.lang.javascript.psi.impl.JSFunctionImpl;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.util.JSUtils;
-import com.intellij.lang.javascript.ui.JSFormatUtil;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -56,7 +57,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FlashUmlElementManager extends AbstractDiagramElementManager<Object> {
@@ -310,9 +312,9 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
 
   public String getNodeTooltip(Object element) {
     if (element instanceof JSClass) {
-      return "<html><b>" + JSFormatUtil.formatClass((JSClass)element, JSFormatUtil.SHOW_FQ_NAME) + "</b></html>";
+      return "<html><b>" + new JSNamedElementPresenter((JSClass)element).describeWithQualifiedName() + "</b></html>";
     }
-    return "<html><b>" + getPackageDisplayName((String)element) + "</b></html>";
+    return "<html><b>" + JSFormatUtil.formatPackage((String)element) + "</b></html>";
   }
 
   @Override
@@ -324,7 +326,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     if (element instanceof JSFunction) {
       JSFunction method = (JSFunction)element;
       if (method.getKind() == JSFunction.FunctionKind.GETTER || method.getKind() == JSFunction.FunctionKind.SETTER) {
-        final Icon propertyIcon = JSFormatUtil.getPropertyIcon(method, true);
+        final Icon propertyIcon = JSFormatUtil.getPropertyIcon(method);
         return ElementBase.buildRowIcon(propertyIcon, method.getAttributeList().getAccessType().getIcon());
       }
       else if (method.getKind() == JSFunction.FunctionKind.CONSTRUCTOR) {

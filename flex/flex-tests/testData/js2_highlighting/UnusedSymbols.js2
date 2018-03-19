@@ -26,7 +26,7 @@ class XXX extends Sprite {
     override public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {}
 }
 
-class <warning descr="Unused class InvalidUnusedSymbol">InvalidUnusedSymbol</warning> {
+class <warning descr="Unused inner class InvalidUnusedSymbol">InvalidUnusedSymbol</warning> {
     private var s:String;
     public function InvalidUnusedSymbol() {
         this.s = "test";

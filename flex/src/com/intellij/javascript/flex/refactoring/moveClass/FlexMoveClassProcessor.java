@@ -1,18 +1,17 @@
 package com.intellij.javascript.flex.refactoring.moveClass;
 
-import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.presentable.Capitalization;
+import com.intellij.lang.javascript.presentable.JSFormatUtil;
+import com.intellij.lang.javascript.presentable.JSNamedElementPresenter;
 import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
-import com.intellij.lang.javascript.psi.resolve.JSNamedElementKind;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringConflictsUtil;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
-import com.intellij.lang.javascript.ui.JSFormatUtil;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
@@ -65,9 +64,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
       if (s.length() > 0) {
         s.append(", ");
       }
-      s.append(FlexBundle.message("moved.element.description",
-                                  StringUtil.decapitalize(JSBundle.message(JSNamedElementKind.kind(element).humanReadableKey())),
-                                  element.getQualifiedName()));
+      s.append(new JSNamedElementPresenter(element).describeWithQualifiedName());
     }
     return FlexBundle.message("move.command.name", s, JSFormatUtil.formatPackage(myTargetPackage));
   }
@@ -171,7 +168,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
     public String getProcessedElementsHeader() {
       if (getElements().length == 1) {
         return FlexBundle.message("element.to.be.moved.to",
-                                  JSBundle.message(JSNamedElementKind.kind((JSNamedElement)getElements()[0]).humanReadableKey()),
+                                  new JSNamedElementPresenter(getElements()[0], Capitalization.UpperCase).describeElementKind(),
                                   JSFormatUtil.formatPackage(myTargetPackage));
       }
       else {

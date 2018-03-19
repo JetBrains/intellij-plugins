@@ -1,9 +1,9 @@
 package com.intellij.javascript.flex.refactoring.moveClass;
 
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
-import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.ImportUtils;
+import com.intellij.lang.javascript.presentable.JSNamedElementPresenter;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSVarStatement;
@@ -13,7 +13,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
-import com.intellij.lang.javascript.psi.resolve.JSNamedElementKind;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.lang.javascript.refactoring.JSChangeVisibilityUtil;
@@ -208,8 +207,8 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
   @Override
   protected String getCommandName() {
     return FlexBundle.message("move.to.upper.level.command.name",
-                              StringUtil.decapitalize(JSBundle.message(JSNamedElementKind.kind(myElement).humanReadableKey())),
-                              myElement.getName(), StringUtil.getQualifiedName(myPackageName, myClassName));
+                              new JSNamedElementPresenter(myElement).describeWithShortName(),
+                              StringUtil.getQualifiedName(myPackageName, myClassName));
   }
 
   @Override
@@ -253,7 +252,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
     @Override
     public String getProcessedElementsHeader() {
       return FlexBundle.message("element.to.be.moved.to.upper.level",
-                                StringUtil.decapitalize(JSBundle.message(JSNamedElementKind.kind(myElement).humanReadableKey())),
+                                new JSNamedElementPresenter(myElement).describeElementKind(),
                                 StringUtil.getQualifiedName(myPackageName, myClassName));
     }
 
