@@ -179,7 +179,7 @@ public class FlexStackTraceFilter implements Filter {
 
         JBPopup popup = JBPopupFactory.getInstance()
           .createPopupChooserBuilder(ContainerUtil.newArrayList(PsiUtilCore.toPsiFileArray(psiFiles)))
-          .setItemChoosenCallback((selectedElement) -> {
+          .setItemChosenCallback((selectedElement) -> {
             final VirtualFile file = selectedElement.getVirtualFile();
             if (file != null) {
               FileEditorManager.getInstance(project)

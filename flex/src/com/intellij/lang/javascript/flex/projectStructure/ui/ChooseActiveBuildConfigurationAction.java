@@ -14,12 +14,12 @@ import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.popup.ListPopup;
-import com.intellij.openapi.util.Condition;
 import com.intellij.ui.RowIcon;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleColoredText;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.navigation.Place;
+import com.intellij.ui.popup.ActionPopupStep;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.popup.list.PopupListElementRenderer;
 import com.intellij.util.PlatformIcons;
@@ -30,7 +30,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.Arrays;
-import java.util.Comparator;
 
 public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
 
@@ -100,7 +99,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
             MyPanel p = (MyPanel)myComponent;
             p.clear();
 
-            PopupFactoryImpl.ActionItem actionItem = (PopupFactoryImpl.ActionItem)value;
+            ActionPopupStep.ActionItem actionItem = (ActionPopupStep.ActionItem)value;
             AnAction anAction = actionItem.getAction();
             SimpleColoredText text;
             Icon icon;
