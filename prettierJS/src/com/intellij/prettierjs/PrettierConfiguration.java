@@ -69,8 +69,8 @@ public class PrettierConfiguration {
     return new NodePackage(myPropertiesComponent.getValue(PACKAGE_PROPERTY_KEY, ""));
   }
 
-  public void update(@Nullable NodeJsInterpreter nodeInterpreter, @Nullable NodePackage nodePackage) {
-    myPropertiesComponent.setValue(NODE_INTERPRETER_PROPERTY_KEY, nodeInterpreter != null ? nodeInterpreter.toRef().getReferenceName() : null);
+  public void update(@NotNull NodeJsInterpreterRef interpreterRef, @Nullable NodePackage nodePackage) {
+    myPropertiesComponent.setValue(NODE_INTERPRETER_PROPERTY_KEY, interpreterRef.getReferenceName());
     myPropertiesComponent.setValue(PACKAGE_PROPERTY_KEY, nodePackage != null ? nodePackage.getSystemDependentPath() : null);
   }
 

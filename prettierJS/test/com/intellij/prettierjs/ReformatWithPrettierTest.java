@@ -7,7 +7,6 @@ import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.linter.InstallNpmModules;
 import com.intellij.lang.javascript.linter.NodeLinterPackageTestPaths;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
-import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
@@ -35,7 +34,7 @@ public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
     NodeJsLocalInterpreter interpreter = new NodeJsLocalInterpreter(myTestPackagePaths.getNodePath().toString());
     NodeJsInterpreterManager.getInstance(myFixture.getProject()).setInterpreterRef(interpreter.toRef());
     NodePackage nodePackage = new NodePackage(myTestPackagePaths.getPackagePath().toString());
-    PrettierConfiguration.getInstance(getProject()).update(interpreter, nodePackage);
+    PrettierConfiguration.getInstance(getProject()).update(interpreter.toRef(), nodePackage);
     boolean debug = JSLanguageServiceQueue.LOGGER.isDebugEnabled();
     JSLanguageServiceQueue.LOGGER.setLevel(Level.TRACE);
     Disposer.register(getTestRootDisposable(),

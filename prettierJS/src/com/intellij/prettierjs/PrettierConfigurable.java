@@ -78,7 +78,7 @@ public class PrettierConfigurable implements SearchableConfigurable {
   @Override
   public void apply() {
     NodePackage selectedPackage = myPackageField.getSelected();
-    PrettierConfiguration.getInstance(myProject).update(myNodeInterpreterField.getInterpreter(), selectedPackage);
+    PrettierConfiguration.getInstance(myProject).update(myNodeInterpreterField.getInterpreterRef(), selectedPackage);
     PrettierLanguageService.getInstance(myProject).terminateStartedProcess(false);
   }
 
