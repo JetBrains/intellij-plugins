@@ -38,7 +38,7 @@ public class RenameTest extends LightPlatformCodeInsightFixtureTestCase {
     doMultiFileTest("test.component.html", "newName");
   }
 
-  public void testComponentWithContainingFile() throws Exception {
+  public void testComponentWithRelatedFiles() throws Exception {
     Messages.setTestDialog(TestDialog.OK);
     JSTestUtils.testWithTempCodeStyleSettings(getProject(), t -> {
       t.getCustomSettings(TypeScriptCodeStyleSettings.class).FILE_NAME_STYLE = JSCodeStyleSettings.JSFileNameStyle.PASCAL_CASE;
