@@ -26,10 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.swing.*;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.*;
 
 public class PrettierUtil {
 
@@ -39,9 +36,15 @@ public class PrettierUtil {
   public static final String RC_FILE_NAME = ".prettierrc";
   public static final String JS_CONFIG_FILE_NAME = "prettier.config.js";
 
-  public static final List<String> CONFIG_FILE_NAMES = Stream.concat(CONFIG_FILE_EXTENSIONS.stream().map(ext -> RC_FILE_NAME + ext),
-                                                                     Stream.of(JS_CONFIG_FILE_NAME, RC_FILE_NAME))
-                                                             .collect(Collectors.toList());
+  public static final List<String> CONFIG_FILE_NAMES =
+    ContainerUtil.append(
+      ContainerUtil.map(CONFIG_FILE_EXTENSIONS, ext -> RC_FILE_NAME + ext),
+      JS_CONFIG_FILE_NAME, RC_FILE_NAME
+    );
+  
+  public static final List<String> CONFIG_FILE_NAMES_WITH_PACKAGE_JSON =
+    ContainerUtil.append(CONFIG_FILE_NAMES, PackageJsonUtil.FILE_NAME);
+  
   private static final Logger LOG = Logger.getInstance(PrettierUtil.class);
   public static final String BRACKET_SPACING = "bracketSpacing";
   public static final String PRINT_WIDTH = "printWidth";
@@ -90,7 +93,36 @@ public class PrettierUtil {
     }
     return false;
   }
-  
+
+  @NotNull
+  public static Collection<VirtualFile> lookupPossibleConfigFiles(@NotNull VirtualFile[] from, @NotNull Project project) {
+    HashSet<VirtualFile> results = new HashSet<>();
+    VirtualFile baseDir = project.getBaseDir();
+    if (baseDir == null) {
+      return results;
+    }
+    for (VirtualFile file : from) {
+      addPossibleConfigsForFile(file, results, baseDir);
+    }
+    return results;
+  }
+
+  private static void addPossibleConfigsForFile(@NotNull VirtualFile from, @NotNull Set<VirtualFile> result, @NotNull VirtualFile baseDir) {
+    VirtualFile current = from.getParent();
+    while (current != null && current.isValid() && current.isDirectory()) {
+      for (String name : CONFIG_FILE_NAMES_WITH_PACKAGE_JSON) {
+        VirtualFile file = current.findChild(name);
+        if (file != null && file.isValid() && !file.isDirectory()) {
+          result.add(file);
+        }
+      }
+      if (current.equals(baseDir)) {
+        return;
+      }
+      current = current.getParent();
+    }
+  }
+
   @Nullable
   public static VirtualFile findSingleConfigInContentRoots(@NotNull Project project) {
     List<VirtualFile> configs = ContainerUtil.newSmartList();
@@ -163,8 +195,7 @@ public class PrettierUtil {
     Map<String, Object> map;
 
     try {
-      //noinspection unchecked
-      map = (Map<String, Object>)new Yaml().load(file.getText());
+      map = new Yaml().load(file.getText());
     }
     catch (Exception e) {
       LOG.info(String.format("Could not read config data from file [%s]", file.getVirtualFile().getPath()), e);

@@ -10,7 +10,6 @@ import com.intellij.execution.process.ProcessOutput;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
@@ -58,10 +57,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   private static final int REQUEST_TIMEOUT = 3000;
@@ -162,7 +158,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     Document document = editor.getDocument();
     CharSequence textBefore = document.getImmutableCharSequence();
     CaretVisualPositionKeeper caretVisualPositionKeeper = new CaretVisualPositionKeeper(document);
-    FileDocumentManager.getInstance().saveAllDocuments();
+    ensureConfigsSaved(new VirtualFile[]{file.getVirtualFile()}, project);
     PrettierLanguageService.FormatResult result = ProgressManager
       .getInstance()
       .runProcessWithProgressSynchronously(() -> {
@@ -189,13 +185,28 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
   }
 
+  private static void ensureConfigsSaved(@NotNull VirtualFile[] virtualFiles, @NotNull Project project) {
+    Collection<VirtualFile> configs = PrettierUtil.lookupPossibleConfigFiles(virtualFiles, project);
+    FileDocumentManager documentManager = FileDocumentManager.getInstance();
+    
+    ApplicationManager.getApplication().invokeLater(() -> {
+      for (VirtualFile config : configs) {
+        Document document = documentManager.getCachedDocument(config);
+        if (document != null && documentManager.isDocumentUnsaved(document)) {
+          documentManager.saveDocument(document);
+        }
+      }
+    }, project.getDisposed());
+  }
+
   private void processVirtualFiles(@NotNull Project project,
-                                          @NotNull VirtualFile[] virtualFiles,
-                                          @NotNull NodePackage nodePackage) {
+                                   @NotNull VirtualFile[] virtualFiles,
+                                   @NotNull NodePackage nodePackage) {
     ReadonlyStatusHandler.OperationStatus readonlyStatus = ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(virtualFiles);
     if (readonlyStatus.hasReadonlyFiles()) {
       return;
     }
+    ensureConfigsSaved(virtualFiles, project);
     PsiManager psiManager = PsiManager.getInstance(project);
     if (virtualFiles.length == 1 && virtualFiles[0].isDirectory()) {
       PsiDirectory psiDirectory = psiManager.findDirectory(virtualFiles[0]);
