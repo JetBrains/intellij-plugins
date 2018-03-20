@@ -85,7 +85,7 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
             state = VueProjectCreationState.QuestionsFinished
             val callback: (Project) -> Unit = { project ->
               val publisher = BackgroundTaskUtil.syncPublisher(BatchFileChangeListener.TOPIC)
-              publisher.batchChangeStarted(project, VueBundle.message("vue.project.generator.progress.task.name"));
+              publisher.batchChangeStarted(project, VueBundle.message("vue.project.generator.progress.task.name"))
               val doneCallback = PackageJsonDependenciesExternalUpdateManager.getInstance(project).externalUpdateStarted(null, null)
               StartupManager.getInstance(project).runWhenProjectIsInitialized {
                 createListeningProgress(project, Runnable {
@@ -165,7 +165,6 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
     else if (state == VueProjectCreationState.QuestionsFinished) {
       listener.cancelCloseUI()
     }
-    else assert(false, { "Unknown state" })
   }
 
   override fun dispose() {
