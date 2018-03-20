@@ -54,7 +54,6 @@
     <annotator language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSMessageFormatAnnotator"/>
     <annotator language="AngularJS" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
     <fileTypeFactory implementation="org.angularjs.AngularJSFileFactory"/>
-    <javascript.names.suggester implementation="org.angularjs.naming.Angular2NamesSuggester"/>
 
     <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector" id="angular"/>
     <multiHostInjector implementation="org.angularjs.editor.Angular2Injector" order="first" id="angular2"/>
@@ -106,6 +105,8 @@
     <diagram.Provider implementation="org.angularjs.codeInsight.router.AngularUiRouterDiagramProvider"/>
     <javascript.module.provider implementation="org.angularjs.codeInsight.attributes.AngularModulesProvider"/>
     <fileTypeFactory implementation="org.angularjs.AngularTypeScriptConfigFileTypeFactory"/>
+    <javascript.names.suggester implementation="org.angularjs.naming.Angular2NamesSuggester"/>
+    <javascript.rename.extension implementation="org.angularjs.refactoring.Angular2RenameExtension"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
