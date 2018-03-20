@@ -1,6 +1,9 @@
 package org.angularjs.refactoring;
 
 import com.intellij.codeInsight.TargetElementUtil;
+import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
+import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TestDialog;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -37,7 +40,10 @@ public class RenameTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testComponentWithContainingFile() throws Exception {
     Messages.setTestDialog(TestDialog.OK);
-    doMultiFileTest("foo-bar.component.ts", "NewNameComponent");
+    JSTestUtils.testWithTempCodeStyleSettings(getProject(), t -> {
+      t.getCustomSettings(TypeScriptCodeStyleSettings.class).FILE_NAME_STYLE = JSCodeStyleSettings.JSFileNameStyle.PASCAL_CASE;
+      doMultiFileTest("foo-bar.component.ts", "NewNameComponent");
+    });
   }
 
   public void testComponentToNonComponentName() throws IOException {
