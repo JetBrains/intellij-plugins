@@ -186,17 +186,13 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   }
 
   private static void ensureConfigsSaved(@NotNull VirtualFile[] virtualFiles, @NotNull Project project) {
-    Collection<VirtualFile> configs = PrettierUtil.lookupPossibleConfigFiles(virtualFiles, project);
     FileDocumentManager documentManager = FileDocumentManager.getInstance();
-    
-    ApplicationManager.getApplication().invokeLater(() -> {
-      for (VirtualFile config : configs) {
-        Document document = documentManager.getCachedDocument(config);
-        if (document != null && documentManager.isDocumentUnsaved(document)) {
-          documentManager.saveDocument(document);
-        }
+    for (VirtualFile config : PrettierUtil.lookupPossibleConfigFiles(virtualFiles, project)) {
+      Document document = documentManager.getCachedDocument(config);
+      if (document != null && documentManager.isDocumentUnsaved(document)) {
+        documentManager.saveDocument(document);
       }
-    }, project.getDisposed());
+    }
   }
 
   private void processVirtualFiles(@NotNull Project project,
