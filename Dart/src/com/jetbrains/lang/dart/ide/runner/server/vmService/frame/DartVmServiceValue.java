@@ -31,13 +31,13 @@ public class DartVmServiceValue extends XNamedValue {
     new LayeredIcon(AllIcons.Nodes.Field, AllIcons.Nodes.StaticMark, AllIcons.Nodes.FinalMark);
 
   @NotNull private final DartVmServiceDebugProcess myDebugProcess;
-  @NotNull private String myIsolateId;
+  @NotNull private final String myIsolateId;
   @NotNull private final InstanceRef myInstanceRef;
   @Nullable private final LocalVarSourceLocation myLocalVarSourceLocation;
   @Nullable private final FieldRef myFieldRef;
   private final boolean myIsException;
 
-  private Ref<Integer> myCollectionChildrenAlreadyShown = new Ref<>(0);
+  private final Ref<Integer> myCollectionChildrenAlreadyShown = new Ref<>(0);
 
   public DartVmServiceValue(@NotNull final DartVmServiceDebugProcess debugProcess,
                             @NotNull final String isolateId,
@@ -377,7 +377,12 @@ public class DartVmServiceValue extends XNamedValue {
     });
   }
 
-  private void addListChildren(@NotNull final XCompositeNode node, @NotNull final ElementList<InstanceRef> listElements) {
+  private void addListChildren(@NotNull final XCompositeNode node, @Nullable final ElementList<InstanceRef> listElements) {
+    if (listElements == null) {
+      node.addChildren(XValueChildrenList.EMPTY, true);
+      return;
+    }
+
     final XValueChildrenList childrenList = new XValueChildrenList(listElements.size());
     int index = myCollectionChildrenAlreadyShown.get();
     for (InstanceRef listElement : listElements) {

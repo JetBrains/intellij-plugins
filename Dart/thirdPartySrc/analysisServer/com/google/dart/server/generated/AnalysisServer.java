@@ -17,6 +17,7 @@
 package com.google.dart.server.generated;
 
 import com.google.dart.server.*;
+import com.google.gson.JsonObject;
 import org.dartlang.analysis.server.protocol.*;
 
 import java.util.List;
@@ -37,6 +38,12 @@ public interface AnalysisServer {
    * @param listener the listener to be added
    */
   public void addAnalysisServerListener(AnalysisServerListener listener);
+
+  /**
+   * Add the given listener to the list of listeners that will receive every response from
+   * the analysis server.
+   */
+  public void addResponseListener(ResponseListener listener);
 
   /**
    * Add the given listener to the list of listeners that will receive notification when the server
@@ -562,6 +569,14 @@ public interface AnalysisServer {
   public void execution_setSubscriptions(List<String> subscriptions);
 
   /**
+   * Generate and return a unique {@link String} id to be used in the requests sent to the analysis
+   * server.
+   *
+   * @return a unique {@link String} id to be used in the requests sent to the analysis server
+   */
+  public String generateUniqueId();
+
+  /**
    * Return {@code true} if the socket is open.
    */
   public boolean isSocketOpen();
@@ -573,6 +588,12 @@ public interface AnalysisServer {
    * @param listener the listener to be removed
    */
   public void removeAnalysisServerListener(AnalysisServerListener listener);
+
+  /**
+   * Remove the given listener from the list of listeners that will receive every response from
+   * the analysis server.
+   */
+  public void removeResponseListener(ResponseListener listener);
 
   /**
    * {@code search.findElementReferences}
@@ -589,6 +610,16 @@ public interface AnalysisServer {
    * @param includePotential True if potential matches are to be included in the results.
    */
   public void search_findElementReferences(String file, int offset, boolean includePotential, FindElementReferencesConsumer consumer);
+
+  /**
+   * Send the request for which the client that does not expect a response.
+   */
+  public void sendRequestToServer(String id, JsonObject request);
+
+  /**
+   * Send the request and associate it with the passed {@link Consumer}.
+   */
+  public void sendRequestToServer(String id, JsonObject request, Consumer consumer);
 
   /**
    * {@code search.findMemberDeclarations}

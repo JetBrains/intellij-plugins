@@ -2,9 +2,9 @@ package com.jetbrains.lang.dart.injection;
 
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
 import com.intellij.lang.Language;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.DebugUtil;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.testFramework.ParsingTestCase;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
@@ -23,8 +23,8 @@ public class DartInjectionTest extends LightQuickFixTestCase {
   }
 
   private static String toParseTreeText(PsiFile file) {
-    return DebugUtil.psiToString(file, false, false, (psiElement, consumer) -> InjectedLanguageUtil
-      .enumerate(psiElement, (injectedPsi, places) -> consumer.consume(injectedPsi)));
+    return DebugUtil.psiToString(file, false, false, (psiElement, consumer) -> InjectedLanguageManager
+      .getInstance(getProject()).enumerate(psiElement, (injectedPsi, places) -> consumer.consume(injectedPsi)));
   }
 
   public void testHtmlInStrings() throws Exception {

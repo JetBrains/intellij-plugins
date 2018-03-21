@@ -1,10 +1,25 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.ide.structure;
 
 import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.structureView.TextEditorBasedStructureViewModel;
 import com.intellij.ide.structureView.impl.common.PsiTreeElementBase;
+import com.intellij.ide.util.treeView.smartTree.Sorter;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
@@ -55,22 +70,37 @@ class DartStructureViewModel extends TextEditorBasedStructureViewModel implement
     final Outline outline = service.getOutline(getPsiFile().getVirtualFile());
     if (outline == null) return null;
 
-    final Outline result = findDeepestOutlineForOffset(getEditor().getCaretModel().getOffset(), outline.getChildren());
-    return result != null ? DartStructureViewElement.getValue(result) : null;
+    final Outline result = findDeepestOutlineForOffset(getEditor().getCaretModel().getOffset(), outline);
+    return DartStructureViewElement.getValue(result);
   }
 
-  @Nullable
-  private Outline findDeepestOutlineForOffset(final int offset, @NotNull final List<Outline> outlines) {
+  /**
+   * The offset is the the given outline. Return the deepest child, or return the outline.
+   */
+  @NotNull
+  private Outline findDeepestOutlineForOffset(final int offset, @NotNull final Outline outline) {
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance(getPsiFile().getProject());
-    for (Outline outline : outlines) {
-      final int startOffset = service.getConvertedOffset(getPsiFile().getVirtualFile(), outline.getOffset());
-      final int endOffset = service.getConvertedOffset(getPsiFile().getVirtualFile(), outline.getOffset() + outline.getLength());
-      if (offset >= startOffset && offset <= endOffset) {
-        final Outline deeperOutline = findDeepestOutlineForOffset(offset, outline.getChildren());
-        return deeperOutline != null ? deeperOutline : outline;
+    final VirtualFile file = getPsiFile().getVirtualFile();
+    final List<Outline> children = outline.getChildren();
+    if (children != null) {
+      for (int i = 0; i < children.size(); i++) {
+        Outline child = children.get(i);
+        final int startOffset = service.getConvertedOffset(file, child.getOffset());
+        final int endOffset = service.getConvertedOffset(file, child.getOffset() + child.getLength());
+        if (offset >= startOffset && offset <= endOffset) {
+          return findDeepestOutlineForOffset(offset, child);
+        }
+
+        // If we are between children, return the next.
+        if (offset > endOffset && i != children.size() - 1) {
+          final Outline next = children.get(i + 1);
+          if (offset < service.getConvertedOffset(file, next.getOffset())) {
+            return next;
+          }
+        }
       }
     }
-    return null;
+    return outline;
   }
 
   @Override
@@ -81,6 +111,12 @@ class DartStructureViewModel extends TextEditorBasedStructureViewModel implement
   @Override
   public boolean isAlwaysLeaf(StructureViewTreeElement element) {
     return false;
+  }
+
+  @NotNull
+  @Override
+  public Sorter[] getSorters() {
+    return new Sorter[]{Sorter.ALPHA_SORTER};
   }
 
   private static class DartStructureViewRootElement extends PsiTreeElementBase<PsiFile> {

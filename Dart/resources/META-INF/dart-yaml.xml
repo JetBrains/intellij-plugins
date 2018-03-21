@@ -6,5 +6,6 @@
     <psi.referenceContributor language="yaml" implementation="com.jetbrains.lang.dart.psi.PubspecYamlReferenceContributor" order="last"/>
     <fileTypeFactory implementation="com.jetbrains.lang.dart.DartYamlFileTypeFactory"/>
     <completion.contributor language="yaml" implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionContributor"/>
+    <annotator language="yaml" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartAnnotator"/>
   </extensions>
 </idea-plugin>

@@ -1,18 +1,16 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.assists;
 
 import com.google.common.collect.Maps;
@@ -98,8 +96,19 @@ public class AssistUtils {
         }
       }
 
-      if (withLinkedEdits && sourceEditInfos != null) {
-        runLinkedEdits(project, sourceChange, linkedEditTarget, sourceEditInfos);
+      if (withLinkedEdits) {
+        if (sourceEditInfos != null) {
+          runLinkedEdits(project, sourceChange, linkedEditTarget, sourceEditInfos);
+        }
+        else if (sourceChange.getSelection() != null) {
+          final Position selection = sourceChange.getSelection();
+          final VirtualFile file = findVirtualFile(selection.getFile());
+          if (file != null) {
+            int offset = selection.getOffset();
+            offset = DartAnalysisServerService.getInstance(project).getConvertedOffset(file, offset);
+            navigate(project, file, offset);
+          }
+        }
       }
     }, sourceChange.getMessage(), null);
   }
@@ -182,7 +191,7 @@ public class AssistUtils {
       if (!positions.isEmpty()) {
         final Position position = positions.get(0);
         // find VirtualFile
-        VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(position.getFile()));
+        VirtualFile virtualFile = findVirtualFile(position.getFile());
         if (virtualFile == null) {
           return null;
         }
@@ -240,7 +249,13 @@ public class AssistUtils {
 
   @Nullable
   public static VirtualFile findVirtualFile(@NotNull final SourceFileEdit fileEdit) {
-    return LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(fileEdit.getFile()));
+    final String path = fileEdit.getFile();
+    return findVirtualFile(path);
+  }
+
+  @Nullable
+  public static VirtualFile findVirtualFile(@NotNull final String path) {
+    return LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(path));
   }
 
   private static boolean isInContent(@NotNull Project project, @NotNull VirtualFile file) {
