@@ -1,17 +1,30 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package org.angularjs.codeInsight.tags;
 
-import com.intellij.html.impl.DelegatingRelaxedHtmlElementDescriptor;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl;
-import com.intellij.psi.impl.source.xml.XmlDocumentImpl;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.impl.source.xml.XmlDescriptorUtil;
 import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.xml.*;
+import com.intellij.xml.XmlAttributeDescriptor;
+import com.intellij.xml.XmlElementDescriptor;
+import com.intellij.xml.XmlElementsGroup;
+import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.codeInsight.attributes.AngularAttributeDescriptor;
@@ -45,30 +58,12 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
 
   @Override
   public XmlElementDescriptor[] getElementsDescriptors(XmlTag context) {
-    XmlDocumentImpl xmlDocument = PsiTreeUtil.getParentOfType(context, XmlDocumentImpl.class);
-    if (xmlDocument == null) return EMPTY_ARRAY;
-    return ContainerUtil.map2Array(xmlDocument.getRootTagNSDescriptor().getRootElementsDescriptors(xmlDocument),
-      XmlElementDescriptor.class, descriptor -> wrapInDelegating(descriptor));
+    return XmlDescriptorUtil.getElementsDescriptors(context);
   }
 
   @Override
   public XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
-    final XmlDocument document = PsiTreeUtil.getParentOfType(contextTag, XmlDocument.class);
-    if (document == null) {
-      return null;
-    }
-    final XmlNSDescriptor nsDescriptor = document.getDefaultNSDescriptor(childTag.getNamespace(), true);
-    if (nsDescriptor instanceof XmlNSDescriptorEx) {
-      XmlElementDescriptor descriptor = ((XmlNSDescriptorEx)nsDescriptor).getElementDescriptor(childTag.getLocalName(), childTag.getNamespace());
-      return descriptor != null ? wrapInDelegating(descriptor) : null;
-    }
-    return null;
-  }
-
-  @NotNull
-  public DelegatingRelaxedHtmlElementDescriptor wrapInDelegating(XmlElementDescriptor descriptor) {
-    return descriptor instanceof DelegatingRelaxedHtmlElementDescriptor ? (DelegatingRelaxedHtmlElementDescriptor)descriptor :
-           new DelegatingRelaxedHtmlElementDescriptor(descriptor);
+    return XmlDescriptorUtil.getElementDescriptor(childTag, contextTag);
   }
 
   @Override
