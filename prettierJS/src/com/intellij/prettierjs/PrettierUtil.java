@@ -195,7 +195,8 @@ public class PrettierUtil {
     Map<String, Object> map;
 
     try {
-      map = new Yaml().load(file.getText());
+      //noinspection unchecked
+      map = (Map<String, Object>)new Yaml().load(file.getText());
     }
     catch (Exception e) {
       LOG.info(String.format("Could not read config data from file [%s]", file.getVirtualFile().getPath()), e);
