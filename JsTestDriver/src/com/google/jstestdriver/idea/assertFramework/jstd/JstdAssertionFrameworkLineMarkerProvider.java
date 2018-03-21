@@ -25,14 +25,12 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.PopupChooserBuilder;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.ui.components.JBList;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
@@ -125,30 +123,21 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
   }
 
   private static void showPopup(@NotNull MouseEvent e, @NotNull final PsiElement psiElement, final String displayName) {
-    final JBList list = new JBList(getAvailableTypes());
-    list.setCellRenderer(new ListCellRendererWrapper<Type>() {
-      @Override
-      public void customize(JList list, Type value, int index, boolean selected, boolean hasFocus) {
-        setIcon(value.getIcon());
-        setText(value.getTitle(displayName));
-      }
-    });
-    PopupChooserBuilder builder = new PopupChooserBuilder(list);
-    JBPopup popup = builder.
-      setMovable(true).
-      setItemChoosenCallback(() -> {
-        int[] ids = list.getSelectedIndices();
-        if (ids.length == 0) return;
-        Type type = ObjectUtils.tryCast(list.getSelectedValue(), Type.class);
-        if (type != null) {
-          if (psiElement.isValid()) {
-            execute(type.getExecutor(), psiElement);
-          }
+    JBPopupFactory.getInstance()
+      .createPopupChooserBuilder(ContainerUtil.newArrayList(getAvailableTypes()))
+      .setRenderer(new ListCellRendererWrapper<Type>() {
+        @Override
+        public void customize(JList list, Type value, int index, boolean selected, boolean hasFocus) {
+          setIcon(value.getIcon());
+          setText(value.getTitle(displayName));
         }
-      }).
-      createPopup();
-
-    popup.show(new RelativePoint(e));
+      })
+      .setMovable(true)
+      .setItemChosenCallback((type) -> {
+        if (psiElement.isValid()) {
+          execute(type.getExecutor(), psiElement);
+        }
+      }).createPopup().show(new RelativePoint(e));
   }
 
   @NotNull

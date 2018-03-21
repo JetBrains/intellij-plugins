@@ -18,7 +18,6 @@ package com.intellij.struts2.annotators;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
-import com.intellij.ide.DataManager;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
@@ -191,7 +190,7 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
         };
       JBPopupFactory.getInstance()
         .createListPopup(step)
-        .showInBestPositionFor(DataManager.getInstance().getDataContext(editor.getComponent()));
+        .showInBestPositionFor(editor);
     }
   }
 }
