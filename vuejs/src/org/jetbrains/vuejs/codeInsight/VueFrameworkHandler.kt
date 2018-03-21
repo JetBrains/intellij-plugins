@@ -30,12 +30,12 @@ import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
-import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlDocument
@@ -49,11 +49,26 @@ import org.jetbrains.vuejs.language.VueJSLanguage
 import org.jetbrains.vuejs.language.VueVForExpression
 
 class VueFrameworkHandler : FrameworkIndexingHandler() {
-  init {
-    INDICES.values.forEach { JSImplicitElementImpl.ourUserStringsRegistry.registerUserString(it) }
-  }
+  // 1 here we are just mapping the constants, no lifecycle needed
+  // 2 not lazy structure -> no synchronization needed
+  // what to do, indexing is done on background thread, component initialization on EDT
+  // either we synchronize (but then every access would have penalty)
+  // or we are using the static structure
+  // here there are only 6 indexes...
+  private val VUE_INDEXES = mapOf(
+    record(VueComponentsIndex.KEY),
+    record(VueExtendsBindingIndex.KEY),
+    record(VueGlobalDirectivesIndex.KEY),
+    record(VueLocalDirectivesIndex.KEY),
+    record(VueMixinBindingIndex.KEY),
+    record(VueOptionsIndex.KEY)
+  )
 
   companion object {
+    private fun record(key: StubIndexKey<String, JSImplicitElementProvider>): Pair<String, StubIndexKey<String, JSImplicitElementProvider>> {
+      return Pair(VueIndexBase.createJSKey(key), key)
+    }
+
     const val VUE = "Vue"
     private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE, "mixin", "component", "extends", "directive", "delimiters")
     private val COMPONENT_INDICATOR_PROPS = setOf("template", "render", "mixins", "components", "props")
@@ -229,7 +244,10 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   override fun indexImplicitElement(element: JSImplicitElementStructure, sink: IndexSink?): Boolean {
-    INDICES.filter { it.value == element.userString }.forEach { sink?.occurrence(it.key, element.name); return true }
+    val index = VUE_INDEXES[element.userString]
+    if (index != null) {
+      sink?.occurrence(index, element.name)
+    }
     return false
   }
 
