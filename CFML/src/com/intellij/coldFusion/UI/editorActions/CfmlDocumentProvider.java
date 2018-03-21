@@ -47,8 +47,7 @@ public class CfmlDocumentProvider implements DocumentationProvider {
         return CfmlUtil.getTagDescription(name, element.getProject());
       }
     }
-    return "No documentation provided for " +
-           element.getText();
+    return null;
   }
 
   public PsiElement getDocumentationElementForLookupItem(PsiManager psiManager, Object object, PsiElement element) {
