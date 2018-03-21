@@ -9,6 +9,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
+import com.intellij.javascript.nodejs.npm.NpmManager;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.DialectOptionHolder;
@@ -121,8 +122,9 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       return;
     }
     if (!nodePackage.isValid()) {
-      myErrorHandler.showError(project, editor, PrettierBundle.message("error.package.is.not.installed"),
-                () -> installPackage(project));
+      String message = PrettierBundle.message("error.package.is.not.installed",
+                                              NpmManager.getInstance(project).getNpmInstallPresentableText());
+      myErrorHandler.showError(project, editor, message, () -> installPackage(project));
       return;
     }
     SemVer nodePackageVersion = nodePackage.getVersion();
