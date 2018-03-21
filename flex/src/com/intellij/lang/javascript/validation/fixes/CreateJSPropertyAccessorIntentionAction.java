@@ -46,7 +46,7 @@ public class CreateJSPropertyAccessorIntentionAction extends CreateJSFunctionInt
   protected void addBody(Template template, JSReferenceExpression refExpr, PsiFile file) {
     String varName = refExpr.getReferencedName();
     String paramName = varName;
-    varName = JSRefactoringUtil.transformAccessorNameToPropertyName(varName, file.getProject());
+    varName = JSRefactoringUtil.transformAccessorNameToPropertyName(varName, file);
 
     if (varName.equals(paramName)) {
       varName = StringUtil.fixVariableNameDerivedFromPropertyName(varName);

@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.openapi.projectRoots.Sdk;
@@ -7,6 +20,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.testFramework.assertions.Assertions;
 import org.flyti.roboflest.Roboflest;
 import org.flyti.roboflest.Roboflest.Assert;
 
@@ -16,7 +30,7 @@ import java.io.IOException;
 
 import static com.intellij.flex.uiDesigner.MatcherAssert.assertThat;
 import static com.intellij.flex.uiDesigner.TestSocketInputHandler.MessageHandler;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
 
 @Flex(version="4.5")
 public class UITest extends MxmlTestBase {
@@ -25,16 +39,16 @@ public class UITest extends MxmlTestBase {
   private static Roboflest roboflest;
 
   private static Reader reader;
-  
+
   @Override
   protected String getSourceBasePath() {
     return getName().equals("testStyleNavigationToSkinClass") ? "css" : super.getSourceBasePath();
   }
-  
+
   @Override
   protected void modifySdk(Sdk sdk, SdkModificator sdkModificator) {
     super.modifySdk(sdk, sdkModificator);
-    
+
     sdkModificator.addRoot(LocalFileSystem.getInstance().findFileByPath(flexSdkRootPath + "/src"), OrderRootType.SOURCES);
   }
 
@@ -73,8 +87,8 @@ public class UITest extends MxmlTestBase {
           assertThat(client.getModule(reader.readUnsignedShort()), equalTo(myModule));
 
           XmlAttribute attribute = (XmlAttribute)new ResolveExternalInlineStyleSourceAction(reader, myModule).find();
-          assertThat(attribute.getDisplayValue(), "spark.skins.spark.ButtonBarLastButtonSkin");
-          assertThat(attribute.getTextOffset(), 2186);
+          Assertions.assertThat(attribute.getDisplayValue()).isEqualTo("spark.skins.spark.ButtonBarLastButtonSkin");
+          org.assertj.core.api.Assertions.assertThat(attribute.getTextOffset()).isEqualTo(2186);
         }
       }) {
       }, SPARK_COMPONENTS_FILE);
@@ -85,8 +99,8 @@ public class UITest extends MxmlTestBase {
         @Override
         public void process() throws IOException {
           assertMyProject();
-          assertThat(reader.readUTF(), file.getUrl());
-          assertThat(reader.readInt(), 96);
+          Assertions.assertThat(reader.readUTF()).isEqualTo(file.getUrl());
+          org.assertj.core.api.Assertions.assertThat(reader.readInt()).isEqualTo(96);
         }
       }) {
       }, "ComponentWithCustomSkin.mxml", "CustomSkin.mxml");
@@ -100,7 +114,7 @@ public class UITest extends MxmlTestBase {
     testFile(new MyTester("closeDocument", new UIMessageHandler(ServerMethod.UNREGISTER_DOCUMENT_FACTORIES) {
       @Override
       public void process() throws IOException {
-        assertThat(reader.readIntArray(), DocumentFactoryManager.getInstance().getId(file));
+        org.assertj.core.api.Assertions.assertThat(reader.readIntArray()).containsExactly(DocumentFactoryManager.getInstance().getId(file));
         assertNotAvailable();
         assertClient();
       }
@@ -115,15 +129,15 @@ public class UITest extends MxmlTestBase {
     catch (InterruptedException e) {
       fail(e.getMessage());
     }
-    
-    assertThat(reader.available(), 0);
+
+    org.assertj.core.api.Assertions.assertThat(reader.available()).isEqualTo(0);
   }
 
   @SuppressWarnings({"UnusedDeclaration"})
   private void interact(final Assert... asserts) throws Exception {
     interact(getTestName(true), asserts);
   }
-  
+
   private static void interact(String scriptName, final Assert... asserts) throws Exception {
     roboflest.test(new File(DesignerTests.getTestDataPath() + "/roboflest/" + scriptName + ".txt"), asserts);
   }

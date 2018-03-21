@@ -1,14 +1,14 @@
 package {
 class UnusedSymbols2 {
   private var <warning descr="Unused field xxx">xxx</warning>:int;
-  private const <warning descr="Unused constant xxx2">xxx2</warning>:int = 1;
+  private const <warning descr="Unused constant field xxx2">xxx2</warning>:int = 1;
   private function <warning descr="Unused method someFunction">someFunction</warning>():void {
     var <warning descr="Unused local variable unusedVariableName">unusedVariableName</warning>:String = "test";
   }
 }
 }
 
-class <warning descr="Unused class Test">Test</warning>
+class <warning descr="Unused inner class Test">Test</warning>
 {
         [Embed(fontName="SegoeUI")]
         private static const f1:Class;

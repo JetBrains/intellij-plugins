@@ -43,6 +43,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.VueFileType
+import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isComponentDecorator
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.language.VueJSLanguage
 import org.jetbrains.vuejs.language.VueVForExpression
@@ -71,10 +72,13 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         .forEach {
           if (it is JSReferenceExpression) {
             recordMixin(out, property, it, false)
-          } else if (it is JSObjectLiteralExpression && it.firstProperty != null) {
+          }
+          else if (it is JSObjectLiteralExpression && it.firstProperty != null) {
             recordMixin(out, it.firstProperty!!, null, false)
           }
         }
+    } else if (EXTENDS == property.name && property.value is JSReferenceExpression) {
+      recordExtends(out, property, property.value, false)
     } else if (DIRECTIVES == property.name) {
       (property.value as? JSObjectLiteralExpression)?.properties?.forEach {
           directive ->
@@ -104,13 +108,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   override fun processDecorator(decorator: ES6Decorator, data: JSElementIndexingDataImpl?): JSElementIndexingDataImpl? {
-    val callExpression = decorator.expression as? JSCallExpression
-    if (callExpression != null) {
-      if ("Component" != (callExpression.methodExpression as? JSReferenceExpression)?.referenceName) return data
-    } else {
-      val reference = decorator.expression as? JSReferenceExpression
-      if ("Component" != reference?.referenceName) return data
-    }
+    if (!isComponentDecorator(decorator)) return data
+
     val exportAssignment = (decorator.parent as? JSAttributeList)?.parent as? ES6ExportDefaultAssignment ?: return data
     val classExpression = exportAssignment.stubSafeElement as? JSClassExpression<*> ?: return data
 
@@ -173,6 +172,14 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                           descriptorRef: PsiElement?,
                           isGlobal: Boolean) {
     outData.addImplicitElement(createImplicitElement(if (isGlobal) GLOBAL else LOCAL, provider, VueMixinBindingIndex.JS_KEY, null,
+                                                     descriptorRef, isGlobal))
+  }
+
+  private fun recordExtends(outData: JSElementIndexingData,
+                          provider: JSImplicitElementProvider,
+                          descriptorRef: PsiElement?,
+                          isGlobal: Boolean) {
+    outData.addImplicitElement(createImplicitElement(if (isGlobal) GLOBAL else LOCAL, provider, VueExtendsBindingIndex.JS_KEY, null,
                                                      descriptorRef, isGlobal))
   }
 
@@ -241,7 +248,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 }
 
 fun findModule(element: PsiElement?): JSEmbeddedContent? {
-  val file = element?.containingFile as? XmlFile
+  val file = element as? XmlFile ?: element?.containingFile as? XmlFile
   if (file != null && file.fileType == VueFileType.INSTANCE) {
     val script = findScriptTag(file)
     if (script != null) {

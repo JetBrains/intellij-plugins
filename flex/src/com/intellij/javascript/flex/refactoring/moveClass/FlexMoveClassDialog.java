@@ -5,9 +5,10 @@ import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.presentable.Capitalization;
+import com.intellij.lang.javascript.presentable.JSNamedElementPresenter;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
-import com.intellij.lang.javascript.psi.resolve.JSNamedElementKind;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
@@ -79,7 +80,7 @@ public class FlexMoveClassDialog extends RefactoringDialog {
       LOG.assertTrue(myElements.size() == 1);
       myClassNameLabel.setVisible(true);
       myClassNameLabel.setText(
-        FlexBundle.message("element.name", JSBundle.message(JSNamedElementKind.kind(firstElement).humanReadableKey())));
+        FlexBundle.message("element.name", new JSNamedElementPresenter(firstElement, Capitalization.UpperCase).describeElementKind()));
       myClassNameField.setVisible(true);
       myClassNameField.setText(myElements.iterator().next().getName());
       myClassNameField.selectAll();
@@ -96,7 +97,7 @@ public class FlexMoveClassDialog extends RefactoringDialog {
 
     if (elements.size() == 1) {
       labelText = FlexBundle.message(myFileLocal ? "move.file.local.0" : "move.0",
-                                     StringUtil.decapitalize(JSBundle.message(JSNamedElementKind.kind(firstElement).humanReadableKey())),
+                                     new JSNamedElementPresenter(firstElement).describeElementKind(),
                                      firstElement.getQualifiedName());
     }
     else {
@@ -138,12 +139,12 @@ public class FlexMoveClassDialog extends RefactoringDialog {
       final String className = myClassNameField.getText();
       if (StringUtil.isEmpty(className)) {
         throw new ConfigurationException(FlexBundle.message("element.name.empty",
-                                                            JSBundle.message(
-                                                              JSNamedElementKind.kind(myElements.iterator().next()).humanReadableKey())));
+                    new JSNamedElementPresenter(myElements.iterator().next(), Capitalization.UpperCase).describeElementKind()));
       }
       if (!namesValidator.isIdentifier(className, myProject)) {
-        throw new ConfigurationException(FlexBundle.message("invalid.element.name", StringUtil
-          .decapitalize(JSBundle.message(JSNamedElementKind.kind(myElements.iterator().next()).humanReadableKey())), className));
+        throw new ConfigurationException(FlexBundle.message("invalid.element.name",
+                    new JSNamedElementPresenter(myElements.iterator().next(), Capitalization.UpperCase).describeElementKind(),
+                    className));
       }
     }
 

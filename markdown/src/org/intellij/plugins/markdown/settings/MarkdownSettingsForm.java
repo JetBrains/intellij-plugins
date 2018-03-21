@@ -138,7 +138,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   }
 
   private static boolean isMultipleProviders() {
-    return MarkdownHtmlPanelProvider.getProviders().length > 2;
+    return MarkdownHtmlPanelProvider.getProviders().length > 1;
   }
 
   public void validate() throws ConfigurationException {

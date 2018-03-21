@@ -40,6 +40,24 @@
       <option name="HTML" value="true" />
     </context>
   </template>
+  <template name="a-formControlName" value="formControlName=&quot;$control$&quot;" description="Angular formControlName" toReformat="true" toShortenFQNames="true">
+    <variable name="control" expression="" defaultValue="&quot;control&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="HTML" value="true" />
+    </context>
+  </template>
+  <template name="a-formGroup" value="[formGroup]=&quot;$form$&quot;" description="Angular formGroup" toReformat="true" toShortenFQNames="true">
+    <variable name="form" expression="" defaultValue="&quot;form&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="HTML" value="true" />
+    </context>
+  </template>
+  <template name="a-formGroupName" value="[formGroupName]=&quot;$name$&quot;" description="Angular formGroupName" toReformat="true" toShortenFQNames="true">
+    <variable name="name" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="HTML" value="true" />
+    </context>
+  </template>
   <template name="a-ngIf" value="*ngIf=&quot;$expression$&quot;" description="Angular *ngIf" toReformat="true" toShortenFQNames="true">
     <variable name="expression" expression="" defaultValue="&quot;expression&quot;" alwaysStopAt="true" />
     <context>
@@ -61,15 +79,17 @@
       <option name="HTML" value="true" />
     </context>
   </template>
-  <template name="a-routerLink" value="[routerLink]=&quot;[&apos;/$routePath$&apos;]&quot;$END$" description="Angular routerLink" toReformat="true" toShortenFQNames="true">
+  <template name="a-routerLink" value="[routerLink]=&quot;[&apos;/$routePath$&apos;]&quot; routerLinkActive=&quot;$router_link-active$&quot; $END$" description="Angular routerLink" toReformat="true" toShortenFQNames="true">
     <variable name="routePath" expression="" defaultValue="&quot;routePath&quot;" alwaysStopAt="true" />
+    <variable name="router_link-active" expression="" defaultValue="&quot;router-link-active&quot;" alwaysStopAt="true" />
     <context>
       <option name="HTML" value="true" />
     </context>
   </template>
-  <template name="a-routerLink-param" value="[routerLink]=&quot;[&apos;$routePath$&apos;, $routeParameterValue$$END$]&quot;" description="Angular routerLink with a route parameter" toReformat="true" toShortenFQNames="true">
+  <template name="a-routerLink-param" value="[routerLink]=&quot;[&apos;$routePath$&apos;, $routeParameterValue$]&quot;&#10;routerLinkActive=&quot;$router_link-active$&quot;$END$" description="Angular routerLink with a route parameter" toReformat="true" toShortenFQNames="true">
     <variable name="routePath" expression="" defaultValue="&quot;routePath&quot;" alwaysStopAt="true" />
     <variable name="routeParameterValue" expression="" defaultValue="&quot;routeParameterValue&quot;" alwaysStopAt="true" />
+    <variable name="router_link-active" expression="" defaultValue="&quot;router-link-active&quot;" alwaysStopAt="true" />
     <context>
       <option name="HTML" value="true" />
     </context>
@@ -105,8 +125,8 @@
       <option name="HTML" value="true" />
     </context>
   </template>
-  <template name="a-prej" value="&lt;pre&gt;{{$1$ | json}}&lt;/pre&gt;$END$" description="Angular pre debug | json" toReformat="true" toShortenFQNames="true">
-    <variable name="1" expression="" defaultValue="&quot;1&quot;" alwaysStopAt="true" />
+  <template name="a-prej" value="&lt;pre&gt;{{$model$ | json}}&lt;/pre&gt;$END$" description="Angular pre debug | json" toReformat="true" toShortenFQNames="true">
+    <variable name="model" expression="" defaultValue="&quot;model&quot;" alwaysStopAt="true" />
     <context>
       <option name="HTML" value="true" />
     </context>
@@ -192,7 +212,7 @@
       <option name="TypeScript" value="true" />
     </context>
   </template>
-  <template name="a-service-httpclient" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { HttpClient } from &apos;@angular/common/http&apos;;&#10;&#10;@Injectable()&#10;export class $ServiceName$Service {&#10;	constructor(private httpClient: HttpClient) { }&#10;	$END$&#10;}" description="Angular service with HttpClient" toReformat="true" toShortenFQNames="true">
+  <template name="a-service-httpclient" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { HttpClient } from &apos;@angular/common/http&apos;;&#10;import { catchError } from &apos;rxjs/operators&apos;;&#10;&#10;@Injectable()&#10;export class $ServiceName$Service {&#10;	constructor(private httpClient: HttpClient) { }&#10;	$END$&#10;}" description="Angular service with HttpClient" toReformat="true" toShortenFQNames="true">
     <variable name="ServiceName" expression="" defaultValue="&quot;ServiceName&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
@@ -208,7 +228,7 @@
       <option name="TypeScript" value="true" />
     </context>
   </template>
-  <template name="a-http-interceptor-logging" value="import { HttpInterceptor, HttpHandler, HttpRequest, HttpEvent, HttpResponse } from &apos;@angular/common/http&apos;;&#10;import { Observable } from &apos;rxjs/Observable&apos;;&#10;import &apos;rxjs/add/operator/do&apos;;&#10;&#10;export class LogInterceptor implements HttpInterceptor {&#10;	constructor() {}&#10;&#10;	intercept(req: HttpRequest&lt;any&gt;, next: HttpHandler): Observable&lt;HttpEvent&lt;any&gt;&gt; {&#10;		const started = Date.now();&#10;		return next.handle(req).do(event =&gt; {&#10;			if (event instanceof HttpResponse) {&#10;				const elapsed = Date.now() - started;&#10;				console.log(`Request for \${req.urlWithParams} took \$elapsed$ ms.`);&#10;			}&#10;		});&#10;	}&#10;}" description="Angular HttpInterceptor for Logging HttpClient" toReformat="true" toShortenFQNames="true">
+  <template name="a-http-interceptor-logging" value="import { HttpInterceptor, HttpHandler, HttpRequest, HttpEvent, HttpResponse } from &apos;@angular/common/http&apos;;&#10;import { Observable } from &apos;rxjs/Observable&apos;;&#10;import { tap } from &apos;rxjs/operators&apos;;&#10;&#10;export class LogInterceptor implements HttpInterceptor {&#10;	constructor() {}&#10;&#10;	intercept(req: HttpRequest&lt;any&gt;, next: HttpHandler): Observable&lt;HttpEvent&lt;any&gt;&gt; {&#10;		const started = Date.now();&#10;		return next.handle(req).pipe(&#10;			tap(event =&gt; {&#10;				if (event instanceof HttpResponse) {&#10;					const elapsed = Date.now() - started;&#10;					console.log(`Request for \${req.urlWithParams} took \$elapsed$ ms.`);&#10;				}&#10;			})&#10;		);&#10;	}&#10;}" description="Angular HttpInterceptor for Logging HttpClient" toReformat="true" toShortenFQNames="true">
     <variable name="elapsed" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
@@ -256,6 +276,14 @@
       <option name="TypeScript" value="true" />
     </context>
   </template>
+  <template name="a-route-path-with-children" value="{&#10;	path: &apos;&apos;, &#10;	component: $Component$,&#10;	children: [&#10;		{ path: &apos;$childpath$&apos;, component: $ChildComponent$ }&#10;	]&#10;}$END$" description="Angular route path with children" toReformat="true" toShortenFQNames="true">
+    <variable name="Component" expression="" defaultValue="&quot;Component&quot;" alwaysStopAt="true" />
+    <variable name="childpath" expression="" defaultValue="&quot;childpath&quot;" alwaysStopAt="true" />
+    <variable name="ChildComponent" expression="" defaultValue="&quot;ChildComponent&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
   <template name="a-router-events" value="checkEvents() {&#10;	this.router.events.subscribe(event =&gt; {&#10;		switch (true) {&#10;			case event instanceof $eventName$:&#10;				$END$&#10;				break;&#10;&#10;			default:&#10;				break;&#10;		}&#10;	});&#10;}" description="Angular Router Events" toReformat="true" toShortenFQNames="true">
     <variable name="eventName" expression="" defaultValue="&quot;eventName&quot;" alwaysStopAt="true" />
     <context>
@@ -295,6 +323,11 @@
       <option name="TypeScript" value="true" />
     </context>
   </template>
+  <template name="a-route-params-subscribe" value="this.route.params&#10;	.pipe(map(params =&gt; params[&apos;id&apos;]), tap(id =&gt; (this.id = +id)))&#10;	.subscribe(id =&gt; ${1:function()}());&#10;$END$" description="Angular - subscribe to routing parameters" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
   <template name="rx-add-observable" value="import &apos;rxjs/add/observable/$of$&apos;;&#10;$END$" description="RxJS Add Observable import" toReformat="true" toShortenFQNames="true">
     <variable name="of" expression="" defaultValue="&quot;of&quot;" alwaysStopAt="true" />
     <context>
@@ -313,6 +346,12 @@
     </context>
   </template>
   <template name="rx-observable" value="import { Observable } from &apos;rxjs/Observable&apos;;&#10;$END$" description="RxJS Observable import" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="rx-operators" value="import { $map$ } from &apos;rxjs/operators&apos;;&#10;$END$" description="RxJS Operators import" toReformat="true" toShortenFQNames="true">
+    <variable name="map" expression="" defaultValue="&quot;map&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
     </context>

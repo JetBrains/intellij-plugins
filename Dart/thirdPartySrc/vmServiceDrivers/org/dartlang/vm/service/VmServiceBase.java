@@ -93,7 +93,7 @@ abstract class VmServiceBase implements VmServiceConst {
       public void onMessage(WebSocketMessage message) {
         Logging.getLogger().logInformation("VM message: " + message.getText());
         try {
-          vmService.processResponse(message.getText());
+          vmService.processMessage(message.getText());
         }
         catch (Exception e) {
           Logging.getLogger().logError(e.getMessage(), e);
@@ -200,6 +200,11 @@ abstract class VmServiceBase implements VmServiceConst {
   private final List<VmServiceListener> vmListeners = new ArrayList<VmServiceListener>();
 
   /**
+   * A list of objects to which {@link Event}s from the VM are forwarded.
+   */
+  private final Map<String, RemoteServiceRunner> remoteServiceRunners = Maps.newHashMap();
+
+  /**
    * The channel through which observatory requests are made.
    */
   RequestSink requestSink;
@@ -209,6 +214,27 @@ abstract class VmServiceBase implements VmServiceConst {
    */
   public void addVmServiceListener(VmServiceListener listener) {
     vmListeners.add(listener);
+  }
+
+  /**
+   * Remove the given listener from the VM.
+   */
+  public void removeVmServiceListener(VmServiceListener listener) {
+    vmListeners.remove(listener);
+  }
+
+  /**
+   * Add a VM RemoteServiceRunner.
+   */
+  public void addServiceRunner(String service, RemoteServiceRunner runner) {
+    remoteServiceRunners.put(service, runner);
+  }
+
+  /**
+   * Remove a VM RemoteServiceRunner.
+   */
+  public void removeServiceRunner(String service) {
+    remoteServiceRunners.remove(service);
   }
 
   /**
@@ -303,6 +329,8 @@ abstract class VmServiceBase implements VmServiceConst {
     // Assemble the request
     String id = Integer.toString(nextId.incrementAndGet());
     JsonObject request = new JsonObject();
+
+    request.addProperty(JSONRPC, JSONRPC_VERSION);
     request.addProperty(ID, id);
     request.addProperty(METHOD, method);
     request.add(PARAMS, params);
@@ -363,7 +391,7 @@ abstract class VmServiceBase implements VmServiceConst {
    * Process the response from the VM service and forward that response to the consumer associated
    * with the response id.
    */
-  void processResponse(String jsonText) {
+  void processMessage(String jsonText) {
     if (jsonText == null || jsonText.isEmpty()) {
       return;
     }
@@ -373,31 +401,153 @@ abstract class VmServiceBase implements VmServiceConst {
     try {
       json = (JsonObject) new JsonParser().parse(jsonText);
     } catch (Exception e) {
-      Logging.getLogger().logError("Parse response failed: " + jsonText, e);
+      Logging.getLogger().logError("Parse message failed: " + jsonText, e);
       return;
     }
 
-    // Forward events
-    JsonElement idElem = json.get(ID);
-    if (idElem == null) {
-      String method;
-      try {
-        method = json.get(METHOD).getAsString();
-      } catch (Exception e) {
-        Logging.getLogger().logError("Event missing " + METHOD, e);
+    if (json.has("method")) {
+      if (!json.has(PARAMS)) {
+        final String message = "Missing " + PARAMS;
+        Logging.getLogger().logError(message);
+        final JsonObject response = new JsonObject();
+        response.addProperty(JSONRPC, JSONRPC_VERSION);
+        final JsonObject error = new JsonObject();
+        error.addProperty(CODE, INVALID_REQUEST);
+        error.addProperty(MESSAGE, message);
+        response.add(ERROR, error);
+        requestSink.add(response);
         return;
       }
-      if (!"streamNotify".equals(method)) {
-        Logging.getLogger().logError("Unknown event " + METHOD + ": " + method);
-        return;
+      if (json.has("id")) {
+        processRequest(json);
+      } else {
+        processNotification(json);
       }
-      JsonObject params;
-      try {
-        params = json.get(PARAMS).getAsJsonObject();
-      } catch (Exception e) {
-        Logging.getLogger().logError("Event missing " + PARAMS, e);
-        return;
-      }
+    } else if (json.has("result") || json.has("error")) {
+      processResponse(json);
+    } else {
+        Logging.getLogger().logError("Malformed message");
+    }
+  }
+
+  void processRequest(JsonObject json) {
+    final JsonObject response = new JsonObject();
+    response.addProperty(JSONRPC, JSONRPC_VERSION);
+
+    // Get the consumer associated with this request
+    String id;
+    try {
+      id = json.get(ID).getAsString();
+    } catch (Exception e) {
+      final String message = "Request malformed " + ID;
+      Logging.getLogger().logError(message, e);
+      final JsonObject error = new JsonObject();
+      error.addProperty(CODE, INVALID_REQUEST);
+      error.addProperty(MESSAGE, message);
+      response.add(ERROR, error);
+      requestSink.add(response);
+      return;
+    }
+
+    response.addProperty(ID, id);
+
+    String method;
+    try {
+      method = json.get(METHOD).getAsString();
+    } catch (Exception e) {
+      final String message = "Request malformed " + METHOD;
+      Logging.getLogger().logError(message, e);
+      final JsonObject error = new JsonObject();
+      error.addProperty(CODE, INVALID_REQUEST);
+      error.addProperty(MESSAGE, message);
+      response.add(ERROR, error);
+      requestSink.add(response);
+      return;
+    }
+
+    JsonObject params;
+    try {
+      params = json.get(PARAMS).getAsJsonObject();
+    } catch (Exception e) {
+      final String message = "Request malformed " + METHOD;
+      Logging.getLogger().logError(message, e);
+      final JsonObject error = new JsonObject();
+      error.addProperty(CODE, INVALID_REQUEST);
+      error.addProperty(MESSAGE, message);
+      response.add(ERROR, error);
+      requestSink.add(response);
+      return;
+    }
+
+    if (!remoteServiceRunners.containsKey(method)) {
+      final String message = "Unknown service " + method;
+      Logging.getLogger().logError(message);
+      final JsonObject error = new JsonObject();
+      error.addProperty(CODE, METHOD_NOT_FOUND);
+      error.addProperty(MESSAGE, message);
+      response.add(ERROR, error);
+      requestSink.add(response);
+      return;
+    }
+
+    final RemoteServiceRunner runner = remoteServiceRunners.get(method);
+    try {
+      runner.run(params, new RemoteServiceCompleter() {
+          public void result(JsonObject result) {
+            response.add(RESULT, result);
+            requestSink.add(response);
+          }
+
+          public void error(int code, String message, JsonObject data) {
+            final JsonObject error = new JsonObject();
+            error.addProperty(CODE, code);
+            error.addProperty(MESSAGE, message);
+            if (data != null) {
+              error.add(DATA, data);
+            }
+            response.add(ERROR, error);
+            requestSink.add(response);
+          }
+      });
+    } catch (Exception e) {
+      final String message = "Internal Server Error";
+      Logging.getLogger().logError(message, e);
+      final JsonObject error = new JsonObject();
+      error.addProperty(CODE, SERVER_ERROR);
+      error.addProperty(MESSAGE, message);
+      response.add(ERROR, error);
+      requestSink.add(response);
+      return;
+    }
+  }
+
+  private static final RemoteServiceCompleter ignoreCallback =
+    new RemoteServiceCompleter() {
+        public void result(JsonObject result) {
+          // ignore
+        }
+
+        public void error(int code, String message, JsonObject data) {
+          // ignore
+        }
+    };
+
+  void processNotification(JsonObject json) {
+    String method;
+    try {
+      method = json.get(METHOD).getAsString();
+    } catch (Exception e) {
+      Logging.getLogger().logError("Request malformed " + METHOD, e);
+      return;
+    }
+    JsonObject params;
+    try {
+      params = json.get(PARAMS).getAsJsonObject();
+    } catch (Exception e) {
+      Logging.getLogger().logError("Event missing " + PARAMS, e);
+      return;
+    }
+    if ("streamNotify".equals(method)) {
       String streamId;
       try {
         streamId = params.get(STREAM_ID).getAsString();
@@ -413,6 +563,26 @@ abstract class VmServiceBase implements VmServiceConst {
         return;
       }
       forwardEvent(streamId, event);
+    } else {
+      if (!remoteServiceRunners.containsKey(method)) {
+        Logging.getLogger().logError("Unknown service " + method);
+        return;
+      }
+
+      final RemoteServiceRunner runner = remoteServiceRunners.get(method);
+      try {
+        runner.run(params, ignoreCallback);
+      } catch (Exception e) {
+        Logging.getLogger().logError("Internal Server Error", e);
+        return;
+      }
+    }
+  }
+
+  void processResponse(JsonObject json) {
+    JsonElement idElem = json.get(ID);
+    if (idElem == null) {
+      Logging.getLogger().logError("Response missing " + ID);
       return;
     }
 

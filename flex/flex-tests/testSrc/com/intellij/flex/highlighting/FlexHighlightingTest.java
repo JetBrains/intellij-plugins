@@ -2258,7 +2258,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     final Collection<HighlightInfo> infoCollection =
       doTestFor(true, new File(getTestDataPath() + BASE_PATH + "/" + prefix), (Runnable)null, prefix + "foo/" + testName + ".mxml",
                 secondFilePath);
-    findAndInvokeIntentionAction(infoCollection, "Make interface INonPublic public", myEditor, myFile);
+    findAndInvokeIntentionAction(infoCollection, "Make interface 'INonPublic' public", myEditor, myFile);
     FileDocumentManager.getInstance().saveAllDocuments();
     VirtualFile f = ContainerUtil.find(FileEditorManager.getInstance(myProject).getOpenFiles(),
                                        virtualFile -> virtualFile.getName().endsWith("as"));

@@ -203,7 +203,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
     if (defaultService.isServiceCreated()) {
       JSLanguageServiceQueue.LOGGER.info("Dispose default service by " + getProcessName());
       //dispose old service
-      TransactionGuard.submitTransaction(this, () -> defaultService.terminateStartedProcess(false));
+      TransactionGuard.submitTransaction(this, () -> defaultService.terminateStartedProcess(false, true));
     }
 
     return super.createLanguageServiceQueue();

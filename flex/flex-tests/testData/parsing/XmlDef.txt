@@ -141,7 +141,7 @@ JSFile:XmlDef.js2
         PsiElement(JS:LBRACE)('{')
         PsiWhiteSpace('\n  ')
         JSProperty
-          PsiElement(JS:NAMESPACE_KEYWORD)('namespace')
+          PsiElement(JS:IDENTIFIER)('namespace')
           PsiElement(JS:COLON)(':')
           ActionScriptFunctionExpression
             ActionScriptAttributeList

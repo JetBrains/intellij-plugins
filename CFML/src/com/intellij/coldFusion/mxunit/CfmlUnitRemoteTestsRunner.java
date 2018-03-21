@@ -1,18 +1,16 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.intellij.coldFusion.mxunit;
 
 import com.intellij.coldFusion.UI.editorActions.CfmlScriptNodeSuppressor;
@@ -21,20 +19,17 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ResourceUtil;
-import com.intellij.util.SystemProperties;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
+import com.intellij.util.io.HttpRequests;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
 
 public class CfmlUnitRemoteTestsRunner {
   private static final Logger LOG = Logger.getInstance(CfmlUnitRemoteTestsRunner.class.getName());
@@ -42,14 +37,14 @@ public class CfmlUnitRemoteTestsRunner {
   public static String getLauncherText(String resourcePath) {
     try {
       return ResourceUtil.loadText(CfmlUnitRunConfiguration.class.getResource(resourcePath))
-        .replaceFirst("\\Q/*system_delimiter*/\\E", ("" + File.separatorChar).replace("\\", "\\\\\\\\"));
+        .replaceFirst("\\Q/*system_delimiter*/\\E", (String.valueOf(File.separatorChar)).replace("\\", "\\\\\\\\"));
     }
     catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  public static void deleteFile(Project project, final VirtualFile file) throws ExecutionException {
+  public static void deleteFile(final VirtualFile file) throws ExecutionException {
     final Ref<IOException> error = new Ref<>();
 
     final Runnable runnable = new Runnable() {
@@ -76,7 +71,7 @@ public class CfmlUnitRemoteTestsRunner {
     }
   }
 
-  public static VirtualFile createFile(Project project, final VirtualFile directory, final String fileName, final String fileText)
+  public static void createFile(final VirtualFile directory, final String fileName, final String fileText)
     throws ExecutionException {
     LOG.assertTrue(directory != null);
     final Ref<IOException> error = new Ref<>();
@@ -102,24 +97,13 @@ public class CfmlUnitRemoteTestsRunner {
       //noinspection ThrowableResultOfMethodCallIgnored
       throw new ExecutionException(error.get().getMessage());
     }
-    return launcherFile.get();
-  }
-
-  private static String generateUniqueName(String prefix, Project project) {
-    return prefix +
-           "_" +
-           project.getName().replaceAll("[^\\p{Alnum}]", "_") +
-           "_" +
-           SystemProperties.getUserName().replaceAll("[^\\p{Alnum}]", "_") +
-           ".cfc";
   }
 
   public static void executeScript(final CfmlUnitRunnerParameters params,
                                    final ProcessHandler processHandler/*final String webPath,
                                    final String componentFilePath,
                                    final String methodName,
-                                   final ProcessHandler processHandler*/,
-                                   final Project project) throws ExecutionException {
+                                   final ProcessHandler processHandler*/) throws ExecutionException {
     final Ref<ExecutionException> ref = new Ref<>();
 
     ApplicationManager.getApplication().assertIsDispatchThread();
@@ -136,11 +120,11 @@ public class CfmlUnitRemoteTestsRunner {
         final VirtualFile directory = componentFile.getParent();
         final String launcherFileName = "mxunit-launcher.cfc";//generateUniqueName("mxunit-launcher", project);
         LOG.debug("Copying script file" + launcherFileName + " to component folder: " + directory);
-        createFile(project, directory, launcherFileName, getLauncherText("/scripts/mxunit-launcher.cfc"));
+        createFile(directory, launcherFileName, getLauncherText("/scripts/mxunit-launcher.cfc"));
 
         final String resultsFileName = "mxunit-result-capture.cfc";//generateUniqueName("mxunit-result-capture", project);
         LOG.debug("Copying results capture file " + resultsFileName + " to component folder: " + directory);
-        createFile(project, directory, resultsFileName, getLauncherText("/scripts/mxunit-result-capture.cfc"));
+        createFile(directory, resultsFileName, getLauncherText("/scripts/mxunit-result-capture.cfc"));
 
         // retrieving data through URL
         String webPath = params.getWebPath();
@@ -149,7 +133,6 @@ public class CfmlUnitRemoteTestsRunner {
         }
         String agentPath = webPath.substring(0, webPath.lastIndexOf('/')) + "/" + launcherFileName;
         LOG.debug("Retrieving data from coldfusion server by " + agentPath + " URL");
-        BufferedReader reader = null;
         String agentUrl;
         if (params.getScope() == CfmlUnitRunnerParameters.Scope.Directory) {
           agentUrl = agentPath + "?method=executeDirectory&directoryName=" + componentFile.getName();
@@ -160,7 +143,6 @@ public class CfmlUnitRemoteTestsRunner {
             agentUrl += "&methodName=" + params.getMethod();
           }
         }
-        HttpMethod method = null;
         try {
           LOG.debug("Retrieving test results from: " + agentUrl);
           /*
@@ -168,44 +150,32 @@ public class CfmlUnitRemoteTestsRunner {
 
           reader = new BufferedReader(new InputStreamReader(httpFile.getContent().getInputStream()));
           */
-          HttpClient client = new HttpClient();
-          method = new GetMethod(agentUrl);
-          int statusCode = client.executeMethod(method);
-          if (statusCode != HttpStatus.SC_OK) {
-            LOG.debug("Http request failed: " + method.getStatusLine());
-            processHandler.notifyTextAvailable("Http request failed: " + method.getStatusLine(), ProcessOutputTypes.SYSTEM);
-          }
-          final InputStream responseStream = method.getResponseBodyAsStream();
-          reader = new BufferedReader(new InputStreamReader(responseStream));
-          String line;
-          while (!processHandler.isProcessTerminating() && !processHandler.isProcessTerminated() && (line = reader.readLine()) != null) {
-            if (!StringUtil.isEmptyOrSpaces(line)) {
-              LOG.debug("MXUnit: " + line);
-              processHandler.notifyTextAvailable(line + "\n", ProcessOutputTypes.SYSTEM);
+          HttpRequests.request(agentUrl).connect(request -> {
+            BufferedReader reader = request.getReader();
+            String line;
+            while (!processHandler.isProcessTerminating() &&
+                   !processHandler.isProcessTerminated() &&
+                   (line = reader.readLine()) != null) {
+              if (!StringUtil.isEmptyOrSpaces(line)) {
+                LOG.debug("MXUnit: " + line);
+                processHandler.notifyTextAvailable(line + "\n", ProcessOutputTypes.SYSTEM);
+              }
             }
-          }
+            return null;
+          });
+        }
+        catch (HttpRequests.HttpStatusException e) {
+          LOG.debug("Http request failed: " + e.getMessage());
+          processHandler.notifyTextAvailable("Http request failed: " + e.getMessage(), ProcessOutputTypes.SYSTEM);
         }
         catch (IOException e) {
           LOG.warn(e);
           processHandler
             .notifyTextAvailable("Failed to retrieve test results from the server at " + agentUrl + "\n", ProcessOutputTypes.SYSTEM);
         }
-        finally {
-          if (method != null) {
-            method.releaseConnection();
-          }
-          if (reader != null) {
-            try {
-              reader.close();
-            }
-            catch (IOException e) {
-              // ignore
-            }
-          }
-        }
         LOG.debug("Cleaning temporary files");
-        deleteFile(project, directory.findChild(launcherFileName));
-        deleteFile(project, directory.findChild(resultsFileName));
+        deleteFile(directory.findChild(launcherFileName));
+        deleteFile(directory.findChild(resultsFileName));
         if (!processHandler.isProcessTerminated() && !processHandler.isProcessTerminating()) {
           processHandler.destroyProcess();
         }

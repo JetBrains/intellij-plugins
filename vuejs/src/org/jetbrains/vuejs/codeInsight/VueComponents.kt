@@ -108,13 +108,32 @@ class VueComponents {
       }).firstOrNull()
     }
 
+    fun isComponentDecorator(decorator: ES6Decorator): Boolean {
+      val callExpression = decorator.expression as? JSCallExpression
+      if (callExpression != null) {
+        return "Component" == (callExpression.methodExpression as? JSReferenceExpression)?.referenceName
+      } else {
+        val reference = decorator.expression as? JSReferenceExpression
+        return "Component" == reference?.referenceName
+      }
+    }
+
+    fun getElementComponentDecorator(element: PsiElement): ES6Decorator? {
+      val attrList = PsiTreeUtil.getChildOfType(element, JSAttributeList::class.java) ?: return null
+      val decorator = PsiTreeUtil.getChildOfType(attrList, ES6Decorator::class.java) ?: return null
+      if (!isComponentDecorator(decorator)) return null
+      return decorator
+    }
+
     fun getExportedDescriptor(defaultExport: JSExportAssignment): VueComponentDescriptor? {
       val exportedObjectLiteral = defaultExport.stubSafeElement as? JSObjectLiteralExpression
       if (exportedObjectLiteral != null) return VueComponentDescriptor(obj = exportedObjectLiteral)
       val attrList = PsiTreeUtil.getChildOfType(defaultExport, JSAttributeList::class.java) ?: return null
       val decorator = PsiTreeUtil.getChildOfType(attrList, ES6Decorator::class.java) ?: return null
-      return VueComponentDescriptor(obj = VueComponents.getDescriptorFromDecorator(decorator),
-                                    clazz = defaultExport.stubSafeElement as? JSClassExpression<*>)
+      val objectDescriptor = VueComponents.getDescriptorFromDecorator(decorator)
+      val classDescriptor = defaultExport.stubSafeElement as? JSClassExpression<*>
+      if (objectDescriptor == null && classDescriptor == null) return null
+      return VueComponentDescriptor(objectDescriptor, classDescriptor)
     }
 
     fun getDescriptorFromDecorator(decorator: ES6Decorator): JSObjectLiteralExpression? {

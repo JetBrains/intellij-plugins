@@ -2,9 +2,9 @@ package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.presentable.JSFormatUtil;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.ui.JSFormatUtil;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.psi.PsiDocumentManager;

@@ -1,6 +1,6 @@
 var ff:Function = function result():Boolean { return false; };
 var bb:Boolean = ff();
-function <warning descr="Unused function foo">foo</warning>(x:Function) {
+function <warning descr="Unused inner function foo">foo</warning>(x:Function) {
     var x2:String = x();
     if (true) x2, foo(x(new Main()));
 }

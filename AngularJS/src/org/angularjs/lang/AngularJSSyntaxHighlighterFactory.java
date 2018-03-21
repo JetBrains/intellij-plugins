@@ -28,7 +28,7 @@ public class AngularJSSyntaxHighlighterFactory extends SingleLazyInstanceSyntaxH
     private final Map<IElementType, TextAttributesKey> myKeysMap = new THashMap<>();
 
     public AngularJSSyntaxHighlighter() {
-      super(AngularJSLanguage.INSTANCE.getOptionHolder());
+      super(AngularJSLanguage.INSTANCE.getOptionHolder(), false);
       myKeysMap.put(JSTokenTypes.AS_KEYWORD, DefaultLanguageHighlighterColors.KEYWORD);
       myKeysMap.put(AngularJSTokenTypes.TRACK_BY_KEYWORD, DefaultLanguageHighlighterColors.KEYWORD);
     }

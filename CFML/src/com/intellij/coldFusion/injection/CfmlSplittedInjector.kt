@@ -17,15 +17,13 @@ import org.intellij.plugins.intelliLang.Configuration
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage
 import org.intellij.plugins.intelliLang.inject.InjectorUtils
 import org.intellij.plugins.intelliLang.inject.LanguageInjectionSupport
-import org.intellij.plugins.intelliLang.inject.TemporaryPlacesRegistry
 
 
 /**
  * @author Sergey Karashevich
  */
 class CfmlSplittedInjector(val myConfiguration: Configuration,
-                           val myProject: Project,
-                           val myTemporaryPlacesRegistry: TemporaryPlacesRegistry) : SplittedInjector {
+                           val myProject: Project) : SplittedInjector {
 
   private val mySupport: LanguageInjectionSupport = InjectorUtils.findNotNullInjectionSupport(CfmlLanguageInjectionSupport.SUPPORT_ID)
 

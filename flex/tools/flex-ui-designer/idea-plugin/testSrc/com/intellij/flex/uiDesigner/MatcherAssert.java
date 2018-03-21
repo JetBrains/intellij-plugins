@@ -1,10 +1,21 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.intellij.flex.uiDesigner;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
-import org.hamcrest.collection.IsArray;
-import org.hamcrest.core.IsEqual;
 
 @SuppressWarnings({"unchecked"})
 public final class MatcherAssert {
@@ -29,44 +40,5 @@ public final class MatcherAssert {
     if (!assertion) {
       throw new AssertionError(reason);
     }
-  }
-
-  public static void assertThat(int actual, int expected) {
-    assertThat(actual, new IsEqual<>(expected));
-  }
-
-  public static void assertThat(long actual, int expected) {
-    assertThat((int)actual, new IsEqual<>(expected));
-  }
-
-  public static void assertThat(String actual, String expected) {
-    assertThat(actual, new IsEqual<>(expected));
-  }
-
-  public static void assertThat(int[] actual, int... expected) {
-    IsEqual[] elementMatchers = new IsEqual[expected.length];
-    for (int i = 0, expectedLength = expected.length; i < expectedLength; i++) {
-      elementMatchers[i] = new IsEqual<>(expected[i]);
-    }
-
-    assertThat(toIntegerList(actual), new IsArray<>(elementMatchers));
-  }
-
-  private static Integer[] toIntegerList(int[] array) {
-    Integer[] list = new Integer[array.length];
-    for (int i = 0, arrayLength = array.length; i < arrayLength; i++) {
-      list[i]= array[i];
-    }
-
-    return list;
-  }
-
-  public static void assertThat(String[] actual, String... expected) {
-    IsEqual[] elementMatchers = new IsEqual[expected.length];
-    for (int i = 0, expectedLength = expected.length; i < expectedLength; i++) {
-      elementMatchers[i] = new IsEqual<>(expected[i]);
-    }
-
-    assertThat(actual, new IsArray<>(elementMatchers));
   }
 }

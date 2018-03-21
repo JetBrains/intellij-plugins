@@ -4,11 +4,13 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.util.Disposer;
 import org.intellij.plugins.markdown.MarkdownBundle;
+import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelProvider;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class MarkdownSettingsConfigurable implements SearchableConfigurable {
   @Nullable
@@ -32,14 +34,24 @@ public class MarkdownSettingsConfigurable implements SearchableConfigurable {
     return MarkdownBundle.message("markdown.settings.name");
   }
 
-  @NotNull
+  @Nullable
   @Override
   public JComponent createComponent() {
-    return getForm().getComponent();
+    MarkdownSettingsForm form = getForm();
+    if (form == null) {
+      JPanel panel = new JPanel(new BorderLayout());
+      panel.add(new JLabel(MarkdownBundle.message("markdown.settings.no.providers")), BorderLayout.NORTH);
+      return panel;
+    }
+    return form.getComponent();
   }
 
-  @NotNull
+  @Nullable
   public MarkdownSettingsForm getForm() {
+    if (!MarkdownHtmlPanelProvider.hasAvailableProviders()) {
+      return null;
+    }
+
     if (myForm == null) {
       myForm = new MarkdownSettingsForm();
     }
@@ -48,13 +60,21 @@ public class MarkdownSettingsConfigurable implements SearchableConfigurable {
 
   @Override
   public boolean isModified() {
-    return !getForm().getMarkdownCssSettings().equals(myMarkdownApplicationSettings.getMarkdownCssSettings()) ||
-           !getForm().getMarkdownPreviewSettings().equals(myMarkdownApplicationSettings.getMarkdownPreviewSettings());
+    MarkdownSettingsForm form = getForm();
+    if (form == null) {
+      return false;
+    }
+    return !form.getMarkdownCssSettings().equals(myMarkdownApplicationSettings.getMarkdownCssSettings()) ||
+           !form.getMarkdownPreviewSettings().equals(myMarkdownApplicationSettings.getMarkdownPreviewSettings());
   }
 
   @Override
   public void apply() throws ConfigurationException {
     final MarkdownSettingsForm form = getForm();
+    if (form == null) {
+      return;
+    }
+
     form.validate();
 
     myMarkdownApplicationSettings.setMarkdownCssSettings(form.getMarkdownCssSettings());
@@ -63,8 +83,12 @@ public class MarkdownSettingsConfigurable implements SearchableConfigurable {
 
   @Override
   public void reset() {
-    getForm().setMarkdownCssSettings(myMarkdownApplicationSettings.getMarkdownCssSettings());
-    getForm().setMarkdownPreviewSettings(myMarkdownApplicationSettings.getMarkdownPreviewSettings());
+    MarkdownSettingsForm form = getForm();
+    if (form == null) {
+      return;
+    }
+    form.setMarkdownCssSettings(myMarkdownApplicationSettings.getMarkdownCssSettings());
+    form.setMarkdownPreviewSettings(myMarkdownApplicationSettings.getMarkdownPreviewSettings());
   }
 
   @Override

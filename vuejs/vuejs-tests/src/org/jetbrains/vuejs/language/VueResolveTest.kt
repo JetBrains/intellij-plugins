@@ -22,6 +22,7 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.Trinity
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.util.ThrowableRunnable
@@ -1748,13 +1749,24 @@ export default class UsageComponent extends Vue {
     })
   }
 
-  private fun doResolveIntoClassComponent(fileName: String) {
+  fun testLocalComponentsExtendsResolve() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      createLocalComponentsExtendsData(myFixture, false)
+      myFixture.type("prop-from-a=\"\"")
+      myFixture.editor.caretModel.moveToOffset(myFixture.editor.caretModel.offset - 5)
+      doTestResolveIntoProperty("propFromA")
+    })
+  }
+
+  private fun doResolveIntoClassComponent(fileName: String, checkType: Boolean = true) {
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
     val target = reference!!.resolve()
     TestCase.assertNotNull(target)
     TestCase.assertEquals(fileName, target!!.containingFile.name)
-    TestCase.assertTrue(target.parent is JSClassExpression<*>)
+    if (checkType) {
+      TestCase.assertTrue(target.parent is JSClassExpression<*>)
+    }
   }
 
   private fun doResolveIntoLibraryComponent(compName: String, fileName: String) {
@@ -1764,7 +1776,25 @@ export default class UsageComponent extends Vue {
     TestCase.assertNotNull(target)
     TestCase.assertEquals(fileName, target!!.containingFile.name)
     TestCase.assertTrue(target.parent is JSProperty)
-    TestCase.assertEquals("'$compName'", (target.parent as JSProperty).value!!.text)
+    TestCase.assertEquals(compName, StringUtil.unquoteString((target.parent as JSProperty).value!!.text))
+  }
+
+  fun testResolveWithRecursiveMixins() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      defineRecursiveMixedMixins(myFixture)
+      myFixture.configureByText("ResolveWithRecursiveMixins.vue", """
+        <template>
+          <<caret>HiddenComponent/>
+        </template>
+      """)
+      doResolveIntoLibraryComponent("hidden-component", "hidden-component.vue")
+      myFixture.configureByText("ResolveWithRecursiveMixins2.vue", """
+        <template>
+          <<caret>OneMoreComponent/>
+        </template>
+      """)
+      doResolveIntoClassComponent("OneMoreComponent.vue", false)
+    })
   }
 }
 

@@ -85,10 +85,10 @@ public class PrettierCodeStyleEditorNotificationProvider
                             () -> {
                               PrettierCompatibleCodeStyleInstaller.install(project, config);
                               PrettierNotificationUtil.reportCodeStyleSettingsImported(project, file, null);
-                              myEditorNotifications.updateNotifications(file);
+                              myEditorNotifications.updateAllNotifications();
                             });
     panel.createActionLabel(PrettierBundle.message("editor.notification.no.text"), () -> {
-      myEditorNotifications.updateNotifications(file);
+      myEditorNotifications.updateAllNotifications();
       myPropertiesComponent.setValue(NOTIFICATION_DISMISSED_KEY, true);
     });
 

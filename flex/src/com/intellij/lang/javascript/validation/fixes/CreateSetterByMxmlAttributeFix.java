@@ -50,7 +50,7 @@ public class CreateSetterByMxmlAttributeFix extends CreateJSPropertyAccessorInte
   private void addBody(final Template template, final PsiFile file) {
     String varName = myReferencedName;
     String paramName = varName;
-    varName = JSRefactoringUtil.transformAccessorNameToPropertyName(varName, file.getProject());
+    varName = JSRefactoringUtil.transformAccessorNameToPropertyName(varName, file);
 
     if (varName.equals(paramName)) {
       varName = StringUtil.fixVariableNameDerivedFromPropertyName(varName);

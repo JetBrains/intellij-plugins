@@ -1,5 +1,6 @@
 package com.intellij.flex.highlighting;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -27,6 +28,7 @@ import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
+import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.highlighting.JavaScriptLineMarkerProvider;
 import com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection;
@@ -61,7 +63,6 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.*;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.spellchecker.quickfixes.RenameTo;
@@ -311,7 +312,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testPrivateMethodForInterfaceImplementation() throws Exception {
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Make method bar public");
+    doSimpleHighlightingWithInvokeFixAndCheckResult("Make method 'bar' public");
   }
 
   public void testDefaultProperty() throws Exception {
@@ -410,13 +411,13 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testReportAccessorProblems2() throws Exception {
     final Collection<HighlightInfo> infoCollection = doTestFor(true, getTestName(false) + ".as");
-    findAndInvokeActionWithExpectedCheck(JSBundle.message("javascript.fix.set.element.visibility", "property foo", "internal"), "as",
+    findAndInvokeActionWithExpectedCheck(JSBundle.message("javascript.fix.set.element.visibility", "property 'foo'", "internal"), "as",
                                          infoCollection);
   }
 
   public void testReportAccessorProblems3() throws Exception {
     final Collection<HighlightInfo> infoCollection = doTestFor(true, getTestName(false) + ".as");
-    findAndInvokeActionWithExpectedCheck(JSBundle.message("javascript.fix.set.element.visibility", "property foo", "public"), "as",
+    findAndInvokeActionWithExpectedCheck(JSBundle.message("javascript.fix.set.element.visibility", "property 'foo'", "public"), "as",
                                          infoCollection);
   }
 
@@ -671,7 +672,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testPropertyPrefix() throws Exception {
-    JSCodeStyleSettings jsCodeStyleSettings = CodeStyleSettingsManager.getSettings(myProject).getCustomSettings(JSCodeStyleSettings.class);
+    JSCodeStyleSettings jsCodeStyleSettings = CodeStyle.getSettings(getProject()).getCustomSettings(ECMA4CodeStyleSettings.class);
     String prefix = jsCodeStyleSettings.PROPERTY_PREFIX;
     jsCodeStyleSettings.PROPERTY_PREFIX = "prop";
     try {
@@ -918,7 +919,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   @JSTestOptions(JSTestOption.WithLineMarkers)
   public void testUnusedSymbols4() throws Exception {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Remove unused class 'Foo'");
+    doSimpleHighlightingWithInvokeFixAndCheckResult("Remove unused inner class 'Foo'");
   }
 
   public void testUnusedSymbols4_2() throws Exception {
@@ -1774,13 +1775,13 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testOverrideVisibility() throws Exception {
     final Collection<HighlightInfo> infoCollection = doTestFor(true, getTestName(false) + ".as", getTestName(false) + "_2.as");
-    findAndInvokeActionWithExpectedCheck(JSBundle.message("javascript.fix.set.element.visibility", "method foo", "protected"), "as",
+    findAndInvokeActionWithExpectedCheck(JSBundle.message("javascript.fix.set.element.visibility", "method 'foo'", "protected"), "as",
                                          infoCollection);
   }
 
   public void testOverrideVisibility2() throws Exception {
     final Collection<HighlightInfo> infoCollection = doTestFor(true, getTestName(false) + ".as", getTestName(false) + "_2.as");
-    findAndInvokeActionWithExpectedCheck(JSBundle.message("javascript.fix.set.element.visibility", "method foo", "public"), "as",
+    findAndInvokeActionWithExpectedCheck(JSBundle.message("javascript.fix.set.element.visibility", "method 'foo'", "public"), "as",
                                          infoCollection);
   }
 
@@ -2024,40 +2025,40 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   public void testInternalClassFromFileLocal() throws Exception {
     Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
     assertInaccessible(infos, "Create Method 'z'");
-    findAndInvokeActionWithExpectedCheck("Make method z public", "as", infos);
+    findAndInvokeActionWithExpectedCheck("Make method 'z' public", "as", infos);
   }
 
   public void testInternalClassFromFileLocal2() throws Exception {
     Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
-    findAndInvokeActionWithExpectedCheck("Make class InternalClassFromFileLocal2 public", "as", infos);
+    findAndInvokeActionWithExpectedCheck("Make class 'InternalClassFromFileLocal2' public", "as", infos);
   }
 
   public void testRelaxVisibilityFix() throws Exception {
     Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
     assertInaccessible(infos, "Create Field 'v'");
     assertInaccessible(infos, "Create Constant Field 'v'");
-    findAndInvokeActionWithExpectedCheck("Make field v internal", "as", infos);
+    findAndInvokeActionWithExpectedCheck("Make field 'v' internal", "as", infos);
   }
 
   public void testRelaxVisibilityFix2() throws Exception {
     Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
     assertInaccessible(infos, "Create Method 'foo'");
-    findAndInvokeActionWithExpectedCheck("Make method foo public", "as", infos);
+    findAndInvokeActionWithExpectedCheck("Make method 'foo' public", "as", infos);
   }
 
   public void testRelaxVisibilityFix3() throws Exception {
     Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
-    findAndInvokeActionWithExpectedCheck("Make field foo internal", "as", infos);
+    findAndInvokeActionWithExpectedCheck("Make field 'foo' internal", "as", infos);
   }
 
   public void testRelaxVisibilityFix4() throws Exception {
     Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
-    findAndInvokeActionWithExpectedCheck("Make field foo protected", "as", infos);
+    findAndInvokeActionWithExpectedCheck("Make field 'foo' protected", "as", infos);
   }
 
   public void testRelaxVisibilityFix5() throws Exception {
     Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
-    findAndInvokeActionWithExpectedCheck("Make field foo protected", "as", infos);
+    findAndInvokeActionWithExpectedCheck("Make field 'foo' protected", "as", infos);
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)

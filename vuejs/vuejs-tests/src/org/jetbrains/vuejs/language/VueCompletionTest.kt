@@ -913,6 +913,258 @@ $script""")
                                           listOf("ShortComponent", "LongVue", "short-component", "long-vue"))
     })
   }
+
+  fun testComponentInsertion() {
+    val data = listOf(
+Pair("""<template>
+  <Sho<caret>
+</template>
+""", """<template>
+  <ShortComponent
+</template>
+<script>
+    import Vue from "vue";
+    import {Component} from "vue-class-component";
+    import ShortComponent from "./ShortComponent";
+    @Component({
+        components: {ShortComponent}
+    })
+    export default class ComponentInsertion extends Vue {
+    }
+</script>"""),
+Pair("""<template>
+  <Sho<caret>
+</template>
+<script></script>
+""", """<template>
+  <ShortComponent
+</template>
+<script>
+    import Vue from "vue";
+    import {Component} from "vue-class-component";
+    import ShortComponent from "./ShortComponent";
+    @Component({
+        components: {ShortComponent}
+    })
+    export default class ComponentInsertion extends Vue {
+    }
+</script>
+"""),
+Pair("""<template>
+  <Sho<caret>
+</template>
+<script>
+    import Vue from "vue";
+</script>
+""", """<template>
+  <ShortComponent
+</template>
+<script>
+    import Vue from "vue";
+    import {Component} from "vue-class-component";
+    import ShortComponent from "./ShortComponent";
+    @Component({
+        components: {ShortComponent}
+    })
+    export default class ComponentInsertion extends Vue {
+    }
+
+</script>
+"""),
+Pair("""<template>
+  <Sho<caret>
+</template>
+<script>
+    import {Component} from "vue-class-component";
+</script>
+""", """<template>
+  <ShortComponent
+</template>
+<script>
+    import {Component} from "vue-class-component";
+    import Vue from "vue";
+    import ShortComponent from "./ShortComponent";
+    @Component({
+        components: {ShortComponent}
+    })
+    export default class ComponentInsertion extends Vue {
+    }
+
+</script>
+"""),
+Pair("""<template>
+  <Sho<caret>
+</template>
+<script>
+    import Vue from "vue";
+    import {Component} from "vue-class-component";
+    @Component({
+        name: "a123"
+    })
+    export default class ComponentInsertion extends Vue {
+    }
+</script>
+""", """<template>
+  <ShortComponent
+</template>
+<script>
+    import Vue from "vue";
+    import {Component} from "vue-class-component";
+    import ShortComponent from "./ShortComponent";
+    @Component({
+        name: "a123",
+        components: {ShortComponent}
+    })
+    export default class ComponentInsertion extends Vue {
+    }
+</script>
+""")
+    )
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      myFixture.configureByText("package.json", """{
+          dependencies: {
+            "vue-class-component" : "latest"
+          }
+        }""")
+      createTwoClassComponents(myFixture, true)
+      data.forEach {
+        println("*")
+        myFixture.configureByText("ComponentInsertion.vue", it.first)
+        myFixture.completeBasic()
+        myFixture.checkResult(it.second)
+      }
+    })
+  }
+
+  fun testTypescriptVForItemCompletion() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      myFixture.configureByText("TypescriptVForItemCompletion.vue", """
+<template>
+    <ul>
+        <li v-for="item in goodTypes">{{item.<caret>}}</li>
+    </ul>
+</template>
+
+<script lang="ts">
+    import { Component, Prop, Vue } from 'vue-property-decorator';
+
+    function getArr() : Promise<Array<string>> {
+        return new Promise<Array<string>>(resolve => {
+            return resolve(['1','2','3','4']);
+        })
+    }
+
+    @Component
+    export default class HelloWorld extends Vue {
+        @Prop() private msg!: string;
+        goodTypes: Array<string> = [];
+        async created (){
+            this.goodTypes = await getArr()
+        }
+    }
+</script>
+""")
+      myFixture.completeBasic()
+
+      assertSameElements(myFixture.lookupElementStrings!!, listOf("[Symbol.iterator]",
+                                                                  "anchor",
+                                                                  "big",
+                                                                  "blink",
+                                                                  "bold",
+                                                                  "charAt",
+                                                                  "charCodeAt",
+                                                                  "codePointAt",
+                                                                  "concat",
+                                                                  "constructor",
+                                                                  "endsWith",
+                                                                  "fixed",
+                                                                  "fontcolor",
+                                                                  "fontsize",
+                                                                  "hasOwnProperty",
+                                                                  "includes",
+                                                                  "indexOf",
+                                                                  "isPrototypeOf",
+                                                                  "italics",
+                                                                  "lastIndexOf",
+                                                                  "length",
+                                                                  "link",
+                                                                  "localeCompare",
+                                                                  "match",
+                                                                  "normalize",
+                                                                  "padEnd",
+                                                                  "padStart",
+                                                                  "propertyIsEnumerable",
+                                                                  "repeat",
+                                                                  "replace",
+                                                                  "search",
+                                                                  "slice",
+                                                                  "small",
+                                                                  "split",
+                                                                  "startsWith",
+                                                                  "strike",
+                                                                  "sub",
+                                                                  "substr",
+                                                                  "substring",
+                                                                  "sup",
+                                                                  "toLocaleLowerCase",
+                                                                  "toLocaleString",
+                                                                  "toLocaleUpperCase",
+                                                                  "toLowerCase",
+                                                                  "toString",
+                                                                  "toUpperCase",
+                                                                  "trim",
+                                                                  "valueOf"))
+    })
+  }
+
+  fun testLocalComponentsExtendsCompletion() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      createLocalComponentsExtendsData(myFixture, false)
+      myFixture.completeBasic()
+      assertContainsElements(myFixture.lookupElementStrings!!, "prop-from-a")
+    })
+  }
+
+  fun testCompletionWithRecursiveMixins() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      defineRecursiveMixedMixins(myFixture)
+      myFixture.configureByText("CompletionWithRecursiveMixins.vue", """
+        <template>
+          <<caret>
+        </template>
+      """)
+      myFixture.completeBasic()
+      assertContainsElements(myFixture.lookupElementStrings!!, listOf("hidden-component", "HiddenComponent",
+                                                                      "OneMoreComponent", "one-more-component"))
+      myFixture.configureByText("CompletionWithRecursiveMixins2.vue", """
+        <template>
+          <HiddenComponent <caret>/>
+        </template>
+      """)
+      myFixture.completeBasic()
+      assertContainsElements(myFixture.lookupElementStrings!!, listOf("from-d", "from-hidden"))
+    })
+  }
+
+  fun testNoImportInsertedForRecursivelyLocalComponent() {
+    noAutoComplete(Runnable {
+      defineRecursiveMixedMixins(myFixture)
+      myFixture.configureByText("CompletionWithRecursiveMixins.vue", """
+        <template>
+          <HiddenComponen<caret>
+        </template>
+      """)
+      myFixture.completeBasic()
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "HiddenComponent")
+      myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+      myFixture.checkResult("""
+        <template>
+          <HiddenComponent<caret>
+        </template>
+      """)
+    })
+
+  }
 }
 
 fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,

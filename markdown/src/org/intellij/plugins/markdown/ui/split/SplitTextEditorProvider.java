@@ -120,9 +120,9 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
   }
 
   @NotNull
-  private static Builder getBuilderFromEditorProvider(@NotNull final FileEditorProvider provider,
-                                                      @NotNull final Project project,
-                                                      @NotNull final VirtualFile file) {
+  public static Builder getBuilderFromEditorProvider(@NotNull final FileEditorProvider provider,
+                                                     @NotNull final Project project,
+                                                     @NotNull final VirtualFile file) {
     if (provider instanceof AsyncFileEditorProvider) {
       return ((AsyncFileEditorProvider)provider).createEditorAsync(project, file);
     }

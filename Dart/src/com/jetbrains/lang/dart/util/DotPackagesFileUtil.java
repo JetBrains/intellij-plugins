@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +49,7 @@ public class DotPackagesFileUtil {
     try {
       final List<String> lines;
       if (ApplicationManager.getApplication().isUnitTestMode()) {
-        lines = StringUtil.split(new String(dotPackagesFile.contentsToByteArray(), "UTF-8"), "\n");
+        lines = StringUtil.split(new String(dotPackagesFile.contentsToByteArray(), StandardCharsets.UTF_8), "\n");
       }
       else {
         lines = FileUtil.loadLines(dotPackagesFile.getPath(), "UTF-8");

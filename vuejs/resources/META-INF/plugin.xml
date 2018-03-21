@@ -29,6 +29,7 @@
     <stubIndex implementation="org.jetbrains.vuejs.index.VueComponentsIndex" />
     <stubIndex implementation="org.jetbrains.vuejs.index.VueOptionsIndex" />
     <stubIndex implementation="org.jetbrains.vuejs.index.VueMixinBindingIndex" />
+    <stubIndex implementation="org.jetbrains.vuejs.index.VueExtendsBindingIndex" />
     <stubIndex implementation="org.jetbrains.vuejs.index.VueGlobalDirectivesIndex" />
     <stubIndex implementation="org.jetbrains.vuejs.index.VueLocalDirectivesIndex" />
     <stubElementTypeHolder class="org.jetbrains.vuejs.language.VueElementTypes" />
@@ -65,6 +66,9 @@
   <actions>
     <action class="org.jetbrains.vuejs.CreateVueSingleFileComponentAction" id="CreateVueSingleFileComp">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
+    </action>
+    <action class="org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentAction" id="VueExtractComponentAction">
+      <add-to-group group-id="IntroduceActionsGroup" anchor="last"/>
     </action>
   </actions>
   <extensions defaultExtensionNs="JavaScript">
