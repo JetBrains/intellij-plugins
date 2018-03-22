@@ -11,7 +11,7 @@ import training.lang.LangManager
 import training.lang.LangSupport
 import training.learn.CourseManager
 import training.learn.LearnBundle
-import training.ui.LearnUISettings
+import training.ui.UISettings
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
@@ -51,8 +51,8 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
         add(mainPanel)
 
         //set LearnPanel UI
-        this.preferredSize = Dimension(LearnUISettings.getInstance().width, 100)
-        this.border = LearnUISettings.getInstance().emptyBorder
+        this.preferredSize = Dimension(UISettings.instance.width, 100)
+        this.border = UISettings.instance.emptyBorder
 
         revalidate()
         repaint()
@@ -63,9 +63,9 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
 
         caption = JLabel()
         caption!!.isOpaque = false
-        caption!!.font = LearnUISettings.getInstance().moduleNameFont
+        caption!!.font = UISettings.instance.moduleNameFont
 
-        description = MyJTextPane(LearnUISettings.getInstance().width)
+        description = MyJTextPane(UISettings.instance.width)
         description!!.isOpaque = false
         description!!.isEditable = false
         description!!.alignmentX = Component.LEFT_ALIGNMENT
@@ -95,13 +95,13 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
         }
 
 
-        StyleConstants.setFontFamily(REGULAR, LearnUISettings.getInstance().plainFont.family)
-        StyleConstants.setFontSize(REGULAR, LearnUISettings.getInstance().fontSize)
-        StyleConstants.setForeground(REGULAR, LearnUISettings.getInstance().questionColor)
+        StyleConstants.setFontFamily(REGULAR, UISettings.instance.plainFont.family)
+        StyleConstants.setFontSize(REGULAR, UISettings.instance.fontSize)
+        StyleConstants.setForeground(REGULAR, UISettings.instance.questionColor)
 
-        StyleConstants.setFontFamily(REGULAR_GRAY, LearnUISettings.getInstance().plainFont.family)
-        StyleConstants.setFontSize(REGULAR_GRAY, LearnUISettings.getInstance().fontSize)
-        StyleConstants.setForeground(REGULAR_GRAY, LearnUISettings.getInstance().descriptionColor)
+        StyleConstants.setFontFamily(REGULAR_GRAY, UISettings.instance.plainFont.family)
+        StyleConstants.setFontSize(REGULAR_GRAY, UISettings.instance.fontSize)
+        StyleConstants.setForeground(REGULAR_GRAY, UISettings.instance.descriptionColor)
 
         StyleConstants.setLeftIndent(PARAGRAPH_STYLE, 0.0f)
         StyleConstants.setRightIndent(PARAGRAPH_STYLE, 0f)
@@ -119,9 +119,9 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
         mainPanel!!.isFocusable = false
 
         mainPanel!!.add(caption)
-        mainPanel!!.add(Box.createVerticalStrut(LearnUISettings.getInstance().afterCaptionGap))
+        mainPanel!!.add(Box.createVerticalStrut(UISettings.instance.afterCaptionGap))
         mainPanel!!.add(description)
-        mainPanel!!.add(Box.createVerticalStrut(LearnUISettings.getInstance().groupGap))
+        mainPanel!!.add(Box.createVerticalStrut(UISettings.instance.groupGap))
 
         try {
             initSouthPanel()
@@ -162,7 +162,7 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
         }
         buttonGroup.setSelected(buttonGroup.elements.nextElement().model, true)
         mainPanel!!.add(radioButtonPanel)
-        mainPanel!!.add(Box.createVerticalStrut(LearnUISettings.getInstance().groupGap))
+        mainPanel!!.add(Box.createVerticalStrut(UISettings.instance.groupGap))
         if (myAddButton) mainPanel!!.add(gotoModulesViewButton)
     }
 
@@ -190,14 +190,14 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
     }
 
     override fun getPreferredSize(): Dimension {
-        return Dimension(mainPanel!!.minimumSize.getWidth().toInt() + (LearnUISettings.getInstance().westInset + LearnUISettings.getInstance().eastInset),
-                mainPanel!!.minimumSize.getHeight().toInt() + (LearnUISettings.getInstance().northInset + LearnUISettings.getInstance().southInset))
+        return Dimension(mainPanel!!.minimumSize.getWidth().toInt() + (UISettings.instance.westInset + UISettings.instance.eastInset),
+                mainPanel!!.minimumSize.getHeight().toInt() + (UISettings.instance.northInset + UISettings.instance.southInset))
     }
 
 
     override fun getBackground(): Color {
         if (!UIUtil.isUnderDarcula())
-            return LearnUISettings.getInstance().backgroundColor
+            return UISettings.instance.backgroundColor
         else
             return UIUtil.getPanelBackground()
     }

@@ -89,13 +89,13 @@ object UiManager {
   }
 
   fun initLessonOnLearnPanels(lesson: Lesson) {
-    learnPanelPerProject.values.forEach { it.modulePanel.init(lesson) }
+    learnPanelPerProject.values.forEach { it.modulePanel?.init(lesson) ?: LOG.warn("ModulePanel is null") }
     LOG.debug("initLessonOnLearnPanels")
   }
 
   fun setButtonSkipActionOnLearnPanels(runnable: Runnable?, text: String?, visible: Boolean) {
     learnPanelPerProject.values.forEach {
-      it.setButtonSkipAction(runnable, text, visible)
+      it.setButtonSkipActionAndText(runnable, text, visible)
       it.updateButtonUi()
     }
     LOG.debug("setButtonSkipActionOnLearnPanels")
@@ -133,7 +133,7 @@ object UiManager {
   }
 
   fun updateLessonsForPanels(lesson: Lesson) {
-    learnPanelPerProject.values.forEach { it.modulePanel.updateLessons(lesson) }
+    learnPanelPerProject.values.forEach { it.modulePanel?.updateLessons(lesson) ?: LOG.warn("ModulePanel is null") }
     LOG.debug("updateLessonsForPanels")
   }
 
