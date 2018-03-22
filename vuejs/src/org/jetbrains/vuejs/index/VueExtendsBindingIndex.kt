@@ -19,15 +19,9 @@ import com.intellij.psi.stubs.StubIndexKey
 /**
  * @author Irina.Chernushina on 3/13/2018.
  */
-class VueExtendsBindingIndex: VueIndexBase() {
-  init {
-    INDICES[KEY] = JS_KEY
-  }
-
+class VueExtendsBindingIndex: VueIndexBase(KEY, JS_KEY) {
   companion object {
     val KEY = StubIndexKey.createIndexKey<String, JSImplicitElementProvider>("vue.extends.binding.index")
-    val JS_KEY = KEY.name.split(".").map { it.subSequence(0, 1) }.joinToString("")
+    val JS_KEY = createJSKey(KEY)
   }
-
-  override fun getKey(): StubIndexKey<String, JSImplicitElementProvider> = KEY
 }

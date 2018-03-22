@@ -34,10 +34,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
-import com.intellij.psi.impl.source.xml.XmlDocumentImpl
+import com.intellij.psi.impl.source.xml.XmlDescriptorUtil
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ArrayUtil
@@ -274,15 +273,12 @@ class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JS
   override fun getQualifiedName() = name
   override fun getDefaultName() = name
 
-  override fun getElementsDescriptors(context: XmlTag?): Array<out XmlElementDescriptor> {
-    val xmlDocument = PsiTreeUtil.getParentOfType(context, XmlDocumentImpl::class.java) ?: return XmlElementDescriptor.EMPTY_ARRAY
-    return xmlDocument.rootTagNSDescriptor.getRootElementsDescriptors(xmlDocument)
+  override fun getElementsDescriptors(context: XmlTag): Array<XmlElementDescriptor> {
+    return XmlDescriptorUtil.getElementsDescriptors(context)
   }
 
-  override fun getElementDescriptor(childTag: XmlTag?, contextTag: XmlTag?): XmlElementDescriptor? {
-    val parent = contextTag?.parentTag ?: return null
-    val descriptor = parent.getNSDescriptor(childTag?.namespace, true)
-    return descriptor?.getElementDescriptor(childTag!!)
+  override fun getElementDescriptor(childTag: XmlTag, contextTag: XmlTag): XmlElementDescriptor? {
+    return XmlDescriptorUtil.getElementDescriptor(childTag, contextTag)
   }
 
   // it is better to use default attributes method since it is guaranteed to do not call any extension providers

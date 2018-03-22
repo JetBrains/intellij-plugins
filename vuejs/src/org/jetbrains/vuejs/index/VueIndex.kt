@@ -38,10 +38,10 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.Processor
 import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.index.VueIndexBase.Companion.createJSKey
 
 const val VUE = "vue"
 @Suppress("PropertyName")
-val INDICES:MutableMap<StubIndexKey<String, JSImplicitElementProvider>, String> = mutableMapOf()
 const val GLOBAL = "global"
 const val LOCAL = "local"
 const val MIXINS = "mixins"
@@ -60,7 +60,7 @@ fun getForAllKeys(scope:GlobalSearchScope, key:StubIndexKey<String, JSImplicitEl
 fun resolve(name:String, scope:GlobalSearchScope, key:StubIndexKey<String, JSImplicitElementProvider>): Collection<JSImplicitElement>? {
   if (DumbService.isDumb(scope.project!!)) return null
   val normalized = normalizeNameForIndex(name)
-  val indexKey = INDICES[key] ?: return null
+  val indexKey = createJSKey(key)
 
   val result = mutableListOf<JSImplicitElement>()
   StubIndex.getInstance().processElements(key, normalized, scope.project!!, scope, JSImplicitElementProvider::class.java, Processor {

@@ -115,6 +115,7 @@ public class FlexReferenceContributor {
               return t.getAttribute(FlexStateElementNames.NAME).getValueElement();
             }
 
+            @Override
             public boolean isValidResult() {
               return true;
             }
