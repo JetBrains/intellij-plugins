@@ -19,7 +19,6 @@ import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleColoredText;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.navigation.Place;
-import com.intellij.ui.popup.ActionPopupStep;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.popup.list.PopupListElementRenderer;
 import com.intellij.util.PlatformIcons;
@@ -99,7 +98,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
             MyPanel p = (MyPanel)myComponent;
             p.clear();
 
-            ActionPopupStep.ActionItem actionItem = (ActionPopupStep.ActionItem)value;
+            PopupFactoryImpl.ActionItem actionItem = (PopupFactoryImpl.ActionItem)value;
             AnAction anAction = actionItem.getAction();
             SimpleColoredText text;
             Icon icon;
