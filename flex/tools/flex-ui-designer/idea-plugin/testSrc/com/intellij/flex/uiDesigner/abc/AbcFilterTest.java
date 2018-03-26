@@ -1,6 +1,20 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.intellij.flex.uiDesigner.abc;
 
 import com.intellij.flex.uiDesigner.DesignerTests;
+import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,8 +22,6 @@ import org.junit.Test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-
-import static com.intellij.flex.uiDesigner.MatcherAssert.assertThat;
 
 public class AbcFilterTest {
   private File out;
@@ -31,13 +43,13 @@ public class AbcFilterTest {
   @Test
   public void replaceMainClass() throws IOException {
     filter.filter(new File(TEST_LIB_DIR, "libraryWithIncompatibleMxFlexModuleFactory.swf"), out, null);
-    assertThat(out.length(), 409003);
+    Assertions.assertThat((int)out.length()).isEqualTo(409003);
   }
 
   @Test
   public void merge() throws IOException {
     filter.filter(new File(TEST_LIB_DIR, "MinimalComps_0_9_10.swf"), out, null);
-    assertThat(out.length(), 252500);
+    Assertions.assertThat((int)out.length()).isEqualTo(252500);
   }
 
   @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")

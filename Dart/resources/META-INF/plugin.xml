@@ -8,16 +8,6 @@
   <depends optional="true" config-file="dart-copyright.xml">com.intellij.copyright</depends>
   <depends optional="true" config-file="dart-coverage.xml">com.intellij.modules.coverage</depends>
 
-  <change-notes>
-    <![CDATA[
-        <ul>
-          <li>Improvements and bug fixes</li>
-        </ul>
-      ]]>
-  </change-notes>
-
-  <application-components/>
-
   <project-components>
     <component>
       <implementation-class>com.jetbrains.lang.dart.DartProjectComponent</implementation-class>

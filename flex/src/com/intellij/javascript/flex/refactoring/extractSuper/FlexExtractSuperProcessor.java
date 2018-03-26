@@ -7,6 +7,8 @@ import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer;
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.presentable.JSFormatUtil;
+import com.intellij.lang.javascript.presentable.JSNamedElementPresenter;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
@@ -23,7 +25,6 @@ import com.intellij.lang.javascript.refactoring.util.JSInterfaceContainmentVerif
 import com.intellij.lang.javascript.refactoring.util.JSMemberInfo;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringConflictsUtil;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
-import com.intellij.lang.javascript.ui.JSFormatUtil;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -49,7 +50,6 @@ import com.intellij.refactoring.util.RefactoringDescriptionLocation;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageViewDescriptor;
 import com.intellij.util.IncorrectOperationException;
-import java.util.HashSet;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -512,12 +512,12 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
   protected String getCommandName() {
     if (myMode == JSExtractSuperMode.RenameImplementation) {
       return JSBundle.message("extract.subclass.command.name", StringUtil.getQualifiedName(myTargetPackage, myTargetName),
-                              JSFormatUtil.formatClass(mySourceClass, JSFormatUtil.SHOW_NAME));
+                              new JSNamedElementPresenter(mySourceClass).describeWithShortName());
     }
     else {
       return RefactoringBundle.message(myClassNotInterface ? "extract.superclass.command.name" : "extract.interface.command.name",
                                        StringUtil.getQualifiedName(myTargetPackage, myTargetName),
-                                       JSFormatUtil.formatClass(mySourceClass, JSFormatUtil.SHOW_NAME));
+                                       new JSNamedElementPresenter(mySourceClass).describeWithShortName());
     }
   }
 

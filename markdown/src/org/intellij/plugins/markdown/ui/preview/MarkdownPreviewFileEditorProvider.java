@@ -2,7 +2,6 @@ package org.intellij.plugins.markdown.ui.preview;
 
 import com.intellij.ide.scratch.ScratchFileType;
 import com.intellij.lang.LanguageUtil;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
 import com.intellij.openapi.fileEditor.WeighedFileEditorProvider;
@@ -14,13 +13,12 @@ import org.intellij.plugins.markdown.lang.MarkdownLanguage;
 import org.jetbrains.annotations.NotNull;
 
 public class MarkdownPreviewFileEditorProvider extends WeighedFileEditorProvider {
-  private static final Logger LOG = Logger.getInstance(MarkdownPreviewFileEditorProvider.class);
-
   @Override
   public boolean accept(@NotNull Project project, @NotNull VirtualFile file) {
     final FileType fileType = file.getFileType();
-    return fileType == MarkdownFileType.INSTANCE ||
-           fileType == ScratchFileType.INSTANCE && LanguageUtil.getLanguageForPsi(project, file) == MarkdownLanguage.INSTANCE;
+    return (fileType == MarkdownFileType.INSTANCE ||
+            fileType == ScratchFileType.INSTANCE && LanguageUtil.getLanguageForPsi(project, file) == MarkdownLanguage.INSTANCE)
+           && MarkdownHtmlPanelProvider.hasAvailableProviders();
   }
 
   @NotNull

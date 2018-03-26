@@ -30,6 +30,16 @@ public class Event extends Response {
   }
 
   /**
+   * The alias of the registered service.
+   *
+   * This is provided for the event kinds:
+   *  - ServiceRegistered
+   */
+  public String getAlias() {
+    return json.get("alias").getAsString();
+  }
+
+  /**
    * Is the isolate paused at an await, yield, or yield* statement?
    *
    * This is provided for the event kinds:
@@ -128,6 +138,17 @@ public class Event extends Response {
   }
 
   /**
+   * The RPC method that should be used to invoke the service.
+   *
+   * This is provided for the event kinds:
+   *  - ServiceRegistered
+   *  - ServiceUnregistered
+   */
+  public String getMethod() {
+    return json.get("method").getAsString();
+  }
+
+  /**
    * The list of breakpoints at which we are currently paused for a PauseBreakpoint event.
    *
    * This list may be empty. For example, while single-stepping, the VM sends a PauseBreakpoint
@@ -148,6 +169,17 @@ public class Event extends Response {
         return new Breakpoint(array.get(index).getAsJsonObject());
       }
     };
+  }
+
+  /**
+   * The service identifier.
+   *
+   * This is provided for the event kinds:
+   *  - ServiceRegistered
+   *  - ServiceUnregistered
+   */
+  public String getService() {
+    return json.get("service").getAsString();
   }
 
   /**

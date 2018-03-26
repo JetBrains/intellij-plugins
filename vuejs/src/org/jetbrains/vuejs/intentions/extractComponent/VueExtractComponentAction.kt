@@ -14,12 +14,12 @@
 package org.jetbrains.vuejs.intentions.extractComponent
 
 import com.intellij.lang.Language
-import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiUtilBase
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.actions.BaseRefactoringAction
 import icons.VuejsIcons
@@ -52,7 +52,7 @@ class VueExtractComponentAction: BaseRefactoringAction() {
     return object: RefactoringActionHandler {
       override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext?) {
         editor ?: return
-        val element = dataContext?.getData(CommonDataKeys.PSI_ELEMENT) ?: return
+        val element = PsiUtilBase.getElementAtCaret(editor) ?: return
         val context = VueExtractComponentIntention.getContext(editor, element) ?: return
         VueExtractComponentRefactoring(project, context, editor).perform()
       }

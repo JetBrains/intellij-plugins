@@ -25,7 +25,6 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.InvalidVirtualFileAccessException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
@@ -47,6 +46,7 @@ import org.osmorc.facet.OsmorcFacetConfiguration;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -191,7 +191,7 @@ public class BundleManifestCache {
 
   private static BundleManifest readManifest(ManifestFile manifestFile) {
     try {
-      ByteArrayInputStream stream = new ByteArrayInputStream(manifestFile.getText().getBytes(CharsetToolkit.UTF8));
+      ByteArrayInputStream stream = new ByteArrayInputStream(manifestFile.getText().getBytes(StandardCharsets.UTF_8));
       Attributes attributes = new Manifest(stream).getMainAttributes();
       Map<String, String> map = ContainerUtil.newHashMap();
       for (Object key : attributes.keySet()) {

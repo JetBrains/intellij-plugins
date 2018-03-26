@@ -1124,6 +1124,47 @@ Pair("""<template>
       assertContainsElements(myFixture.lookupElementStrings!!, "prop-from-a")
     })
   }
+
+  fun testCompletionWithRecursiveMixins() {
+    JSTestUtils.testES6<Exception>(myFixture.project, {
+      defineRecursiveMixedMixins(myFixture)
+      myFixture.configureByText("CompletionWithRecursiveMixins.vue", """
+        <template>
+          <<caret>
+        </template>
+      """)
+      myFixture.completeBasic()
+      assertContainsElements(myFixture.lookupElementStrings!!, listOf("hidden-component", "HiddenComponent",
+                                                                      "OneMoreComponent", "one-more-component"))
+      myFixture.configureByText("CompletionWithRecursiveMixins2.vue", """
+        <template>
+          <HiddenComponent <caret>/>
+        </template>
+      """)
+      myFixture.completeBasic()
+      assertContainsElements(myFixture.lookupElementStrings!!, listOf("from-d", "from-hidden"))
+    })
+  }
+
+  fun testNoImportInsertedForRecursivelyLocalComponent() {
+    noAutoComplete(Runnable {
+      defineRecursiveMixedMixins(myFixture)
+      myFixture.configureByText("CompletionWithRecursiveMixins.vue", """
+        <template>
+          <HiddenComponen<caret>
+        </template>
+      """)
+      myFixture.completeBasic()
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "HiddenComponent")
+      myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+      myFixture.checkResult("""
+        <template>
+          <HiddenComponent<caret>
+        </template>
+      """)
+    })
+
+  }
 }
 
 fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,

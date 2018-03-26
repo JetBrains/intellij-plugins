@@ -187,7 +187,7 @@ public class FlexMoveTest extends JSMoveTestBase {
       "Class Subj1 with internal visibility won't be accessible from class Usage1",
       "Class Subj1 with internal visibility won't be accessible from field Usage1.f",
       "Class Subj1 with internal visibility won't be accessible from constructor Usage1.Usage1(Subj1)",
-      "Class Subj2 with internal visibility won't be accessible from constant Usage1.c",
+      "Class Subj2 with internal visibility won't be accessible from constant field Usage1.c",
       "Class Subj2 with internal visibility won't be accessible from constructor Usage1.Usage1(Subj1)",
       "Class Subj2 with internal visibility won't be accessible from class Usage2",
       "Class Usage1 with internal visibility won't be accessible from class Subj1",

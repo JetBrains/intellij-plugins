@@ -43,14 +43,14 @@ ASTWrapperPsiElement(FILE)
       JSObjectLiteralExpression
         PsiElement(JS:LBRACE)('{')
         JSProperty
-          PsiElement(JS:FALSE_KEYWORD)('false')
+          PsiElement(JS:IDENTIFIER)('false')
           PsiElement(JS:COLON)(':')
           JSLiteralExpression
             PsiElement(JS:STRING_LITERAL)(''WC'')
         PsiElement(JS:COMMA)(',')
         PsiWhiteSpace(' ')
         JSProperty
-          PsiElement(JS:TRUE_KEYWORD)('true')
+          PsiElement(JS:IDENTIFIER)('true')
           PsiElement(JS:COLON)(':')
           JSLiteralExpression
             PsiElement(JS:STRING_LITERAL)(''CC'')

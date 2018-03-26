@@ -28,6 +28,7 @@ val TslintRulesSet = setOf(ImportDestructuringSpacingRule(),
                            WhitespaceMultplyOperatorRule(),
                            WhitespaceShiftOperatorRule(),
                            WhitespaceCommaRule(),
+                           WhitespaceImportsRule(),
                            MaxLineLengthRule(),
                            ImportBlacklistRule(),
                            IndentRule()
@@ -412,6 +413,19 @@ class WhitespaceCommaRule : MergedArrayRule("whitespace") {
   }
 
   override fun getCode(): String = "check-separator"
+}
+
+class WhitespaceImportsRule : MergedArrayRule("whitespace") {
+  override fun getCode() = "check-module"
+  override fun defaultValue() = true
+  
+  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
+    return codeStyleSettings.SPACES_WITHIN_IMPORTS
+  }
+
+  override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Boolean) {
+    codeStyleSettings.SPACES_WITHIN_IMPORTS = value
+  }
 }
 
 class IndentRule : TsLintSimpleRule<String>("indent") {

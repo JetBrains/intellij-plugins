@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.inspections.actionscript;
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.JSAnalysisHandlersFactory;
 import com.intellij.lang.javascript.validation.*;
 import com.intellij.psi.PsiElement;
@@ -18,7 +19,8 @@ public class ActionScriptAnalysisHandlersFactory extends JSAnalysisHandlersFacto
   }
 
   @Override
-  public JSKeywordHighlighterVisitor createKeywordHighlighterVisitor(@NotNull AnnotationHolder holder) {
+  public JSKeywordHighlighterVisitor createKeywordHighlighterVisitor(@NotNull AnnotationHolder holder,
+                                                                     @NotNull DialectOptionHolder dialectOptionHolder) {
     return new ActionScriptKeywordHighlighterVisitor(holder);
   }
 

@@ -20,11 +20,8 @@ import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -46,30 +43,43 @@ public class Angular2NamesSuggester implements JSNamesSuggester {
   @Nullable
   @Override
   public String suggestFileName(@NotNull JSNamedElement namedElement, @NotNull String newElementName) {
-    PsiFile file = namedElement.getContainingFile();
-    if (file == null) return null;
-
-    VirtualFile virtualFile = file.getVirtualFile();
-    if (virtualFile == null) return null;
-    String fileExtension = virtualFile.getExtension();
-    if (fileExtension == null) return null;
     if (!(namedElement instanceof JSClass)) return null;
-    return getAngularSpecificFileName((JSClass)namedElement, fileExtension, newElementName);
+    return getAngularSpecificFileName((JSClass)namedElement, newElementName);
   }
 
   @Nullable
-  private static String getAngularSpecificFileName(@NotNull JSClass jsClass, @NotNull String fileExtension, @NotNull String newElementName) {
-    JSAttributeList attributeList = jsClass.getAttributeList();
-    if (attributeList == null) {
+  private static String getAngularSpecificFileName(@NotNull JSClass jsClass, @NotNull String newElementName) {
+    ES6Decorator[] decorators = PsiTreeUtil.getChildrenOfType(jsClass.getAttributeList(), ES6Decorator.class);
+    if (decorators == null) {
       return null;
     }
 
-    ES6Decorator[] decorators = PsiTreeUtil.getChildrenOfType(attributeList, ES6Decorator.class);
-    if (decorators == null || decorators.length != 1) {
-      return null;
+    for (ES6Decorator decorator : decorators) {
+      String referenceName = getDecoratorName(decorator);
+      if (referenceName == null) return null;
+
+      String entityName = AngularDecoratorEntityMap.get(referenceName);
+      if (entityName != null) {
+        String name;
+        if (StringUtil.endsWith(newElementName, entityName)) {
+          name = newElementName.substring(0, newElementName.length() - entityName.length());
+        }
+        else {
+          name = newElementName;
+        }
+
+        String[] parts = name.split(JSNameSuggestionsUtil.SPLIT_BY_CAMEL_CASE_REGEX);
+        String finalName = StringUtil.join(parts, StringUtil::toLowerCase, "-");
+        return (StringUtil.isEmpty(finalName) ? "" : finalName + ".")
+               + StringUtil.toLowerCase(entityName);
+      }  
     }
 
-    ES6Decorator decorator = decorators[0];
+    return null;
+  }
+
+  @Nullable
+  private static String getDecoratorName(@NotNull ES6Decorator decorator) {
     JSExpression expression = decorator.getExpression();
     if (!(expression instanceof JSCallExpression)) {
       return null;
@@ -84,24 +94,6 @@ public class Angular2NamesSuggester implements JSNamesSuggester {
     if (referenceName == null) {
       return null;
     }
-
-    String entityName = AngularDecoratorEntityMap.get(referenceName);
-    if (entityName != null) {
-      String name;
-      if (StringUtil.endsWith(newElementName, entityName)) {
-        name = newElementName.substring(0, newElementName.length() - entityName.length());
-      }
-      else {
-        name = newElementName;
-      }
-
-      String[] parts = name.split(JSNameSuggestionsUtil.SPLIT_BY_CAMEL_CASE_REGEX);
-      String finalName = StringUtil.join(parts, StringUtil::toLowerCase, "-");
-      return (StringUtil.isEmpty(finalName) ? "" : finalName + ".")
-             + StringUtil.toLowerCase(entityName) + "." + fileExtension;
-
-    }
-
-    return null;
+    return referenceName;
   }
 }

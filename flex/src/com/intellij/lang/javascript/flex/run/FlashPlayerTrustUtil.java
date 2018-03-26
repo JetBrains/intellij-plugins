@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -109,7 +110,7 @@ public class FlashPlayerTrustUtil {
       }
     }
 
-    FileUtil.writeToFile(ideaCfgFile, buf.toString().getBytes("UTF-8"));
+    FileUtil.writeToFile(ideaCfgFile, buf.toString().getBytes(StandardCharsets.UTF_8));
   }
 
   private static String[] removeNestedPaths(final String[] paths) {

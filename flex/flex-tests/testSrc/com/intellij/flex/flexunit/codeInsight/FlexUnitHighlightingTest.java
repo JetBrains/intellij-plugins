@@ -131,33 +131,33 @@ public class FlexUnitHighlightingTest extends ActionScriptDaemonAnalyzerTestCase
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
   public void testNonPublicClass1() throws Exception {
-    doHighlightingWithInvokeFixAndCheckResult("Make class " + getTestName(false) + " public", "as", getTestName(false) + ".as");
+    doHighlightingWithInvokeFixAndCheckResult("Make class '" + getTestName(false) + "' public", "as", getTestName(false) + ".as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
   public void testNonPublicClass2() throws Exception {
-    doHighlightingWithInvokeFixAndCheckResult("Make class " + getTestName(false) + " public", "as", getTestName(false) + ".as");
+    doHighlightingWithInvokeFixAndCheckResult("Make class '" + getTestName(false) + "' public", "as", getTestName(false) + ".as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
   public void testNonPublicClass3() throws Exception {
-    doHighlightingWithInvokeFixAndCheckResult("Make class " + getTestName(false) + " public", "as", getTestName(false) + ".as");
+    doHighlightingWithInvokeFixAndCheckResult("Make class '" + getTestName(false) + "' public", "as", getTestName(false) + ".as");
   }
 
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
   public void testNonPublicMethod1() throws Exception {
-    doHighlightingWithInvokeFixAndCheckResult("Make method foo public", "as", getTestName(false) + ".as");
+    doHighlightingWithInvokeFixAndCheckResult("Make method 'foo' public", "as", getTestName(false) + ".as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
   public void testNonPublicMethod2() throws Exception {
-    doHighlightingWithInvokeFixAndCheckResult("Make method testFoo public", "as", getTestName(false) + ".as");
+    doHighlightingWithInvokeFixAndCheckResult("Make method 'testFoo' public", "as", getTestName(false) + ".as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
   public void testNonPublicMethod3() throws Exception {
-    doHighlightingWithInvokeFixAndCheckResult("Make method testFoo public", "as", getTestName(false) + ".as");
+    doHighlightingWithInvokeFixAndCheckResult("Make method 'testFoo' public", "as", getTestName(false) + ".as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})

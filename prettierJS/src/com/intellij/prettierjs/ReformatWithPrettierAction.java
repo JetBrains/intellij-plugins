@@ -9,8 +9,8 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
+import com.intellij.javascript.nodejs.npm.NpmManager;
 import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
@@ -25,7 +25,6 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
@@ -34,7 +33,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ex.util.CaretVisualPositionKeeper;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.options.ex.Settings;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
@@ -60,10 +58,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   private static final int REQUEST_TIMEOUT = 3000;
@@ -80,17 +75,17 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   @Override
   public void update(AnActionEvent e) {
     Project project = e.getProject();
-    e.getPresentation().setEnabledAndVisible(project != null
-                                   && PrettierUtil.isEnabled()
-                                   && PrettierConfiguration.getInstance(project).getPackage() != null
-                                   && isAcceptableFileContext(e, project));
+    if (project == null) {
+      e.getPresentation().setEnabledAndVisible(false);
+      return;
+    }
+    NodePackage nodePackage = PrettierConfiguration.getInstance(project).getPackage();
+    e.getPresentation().setEnabledAndVisible(PrettierUtil.isEnabled()
+                                             && nodePackage != null && !nodePackage.isEmptyPath()
+                                             && isAcceptableFileContext(e));
   }
 
-  private static boolean isAcceptableFileContext(@NotNull AnActionEvent e, @NotNull Project project) {
-    NodePackage nodePackage = PrettierConfiguration.getInstance(project).getPackage();
-    if (nodePackage == null || nodePackage.isEmptyPath() || !nodePackage.isValid()) {
-      return false;
-    }
+  private static boolean isAcceptableFileContext(@NotNull AnActionEvent e) {
     Editor editor = e.getData(CommonDataKeys.EDITOR);
     if (editor != null) {
       return true;
@@ -110,7 +105,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       return;
     }
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
-    NodeJsInterpreter interpreter = configuration.getOrDetectInterpreterRef().resolve(project);
+    NodeJsInterpreter interpreter = configuration.getInterpreterRef().resolve(project);
     try {
       NodeJsLocalInterpreter.castAndValidate(interpreter);
     }
@@ -120,15 +115,16 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       return;
     }
 
-    NodePackage nodePackage = configuration.getOrDetectNodePackage();
+    NodePackage nodePackage = configuration.getPackage();
     if (nodePackage == null || nodePackage.isEmptyPath()) {
       myErrorHandler.showError(project, editor, PrettierBundle.message("error.no.valid.package"),
                 () -> editSettings(project));
       return;
     }
     if (!nodePackage.isValid()) {
-      myErrorHandler.showError(project, editor, PrettierBundle.message("error.package.is.not.installed"),
-                () -> installPackage(project));
+      String message = PrettierBundle.message("error.package.is.not.installed",
+                                              NpmManager.getInstance(project).getNpmInstallPresentableText());
+      myErrorHandler.showError(project, editor, message, () -> installPackage(project));
       return;
     }
     SemVer nodePackageVersion = nodePackage.getVersion();
@@ -164,7 +160,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     Document document = editor.getDocument();
     CharSequence textBefore = document.getImmutableCharSequence();
     CaretVisualPositionKeeper caretVisualPositionKeeper = new CaretVisualPositionKeeper(document);
-    FileDocumentManager.getInstance().saveAllDocuments();
+    ensureConfigsSaved(new VirtualFile[]{file.getVirtualFile()}, project);
     PrettierLanguageService.FormatResult result = ProgressManager
       .getInstance()
       .runProcessWithProgressSynchronously(() -> {
@@ -191,13 +187,24 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
   }
 
+  private static void ensureConfigsSaved(@NotNull VirtualFile[] virtualFiles, @NotNull Project project) {
+    FileDocumentManager documentManager = FileDocumentManager.getInstance();
+    for (VirtualFile config : PrettierUtil.lookupPossibleConfigFiles(virtualFiles, project)) {
+      Document document = documentManager.getCachedDocument(config);
+      if (document != null && documentManager.isDocumentUnsaved(document)) {
+        documentManager.saveDocument(document);
+      }
+    }
+  }
+
   private void processVirtualFiles(@NotNull Project project,
-                                          @NotNull VirtualFile[] virtualFiles,
-                                          @NotNull NodePackage nodePackage) {
+                                   @NotNull VirtualFile[] virtualFiles,
+                                   @NotNull NodePackage nodePackage) {
     ReadonlyStatusHandler.OperationStatus readonlyStatus = ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(virtualFiles);
     if (readonlyStatus.hasReadonlyFiles()) {
       return;
     }
+    ensureConfigsSaved(virtualFiles, project);
     PsiManager psiManager = PsiManager.getInstance(project);
     if (virtualFiles.length == 1 && virtualFiles[0].isDirectory()) {
       PsiDirectory psiDirectory = psiManager.findDirectory(virtualFiles[0]);
@@ -327,10 +334,6 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     if (file instanceof JSFile) {
       DialectOptionHolder optionHolder = DialectDetector.dialectOfElement(file);
       return optionHolder == null || (!optionHolder.isCoffeeScript && !optionHolder.isECMA4);
-    }
-    //HTML is not officially supported, but running from console formats fine for some reason
-    if (file != null && file.getLanguage() instanceof HTMLLanguage) {
-      return true;
     }
     return false;
   }

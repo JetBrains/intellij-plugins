@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine;
 
 import com.intellij.execution.ExecutionException;
@@ -11,12 +24,12 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.ThreeState;
 import com.intellij.util.containers.ContainerUtil;
-import org.apache.commons.codec.Charsets;
 import org.intellij.lang.regexp.AsciiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -185,7 +198,7 @@ public class PhoneGapCommandLine {
   }
 
 
-  public void createNewProject(String name, @Nullable ProgressIndicator indicator) throws Exception {
+  public void createNewProject(String name, @Nullable ProgressIndicator indicator) {
     executeVoidCommand(indicator, getExecutor().createNewProjectCommands(name, null));
   }
 
@@ -338,7 +351,7 @@ public class PhoneGapCommandLine {
     commandLine.withWorkDirectory(myWorkDir);
     commandLine.withParentEnvironmentType(myPassParentEnv ? ParentEnvironmentType.CONSOLE : ParentEnvironmentType.NONE);
     commandLine.withEnvironment(myEnv);
-    commandLine.setCharset(Charsets.UTF_8);
+    commandLine.setCharset(StandardCharsets.UTF_8);
 
     OSProcessHandler processHandler = new ColoredProcessHandler(commandLine);
     final ProcessOutput output = new ProcessOutput();

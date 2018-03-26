@@ -17,7 +17,6 @@ package com.intellij.javascript.flex.refactoring;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
-import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.psi.JSNamespace;
 import com.intellij.lang.javascript.psi.JSQualifiedName;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -29,16 +28,14 @@ import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.DirectoryIndex;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.file.PsiPackageBase;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.usageView.UsageViewLongNameLocation;
-import com.intellij.usageView.UsageViewShortNameLocation;
-import com.intellij.usageView.UsageViewTypeLocation;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -129,26 +126,6 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
   @Override
   public JSContext getJSContext() {
     return JSContext.UNKNOWN;
-  }
-
-  public static class DescriptionProvider implements ElementDescriptionProvider {
-    @Override
-    @Nullable
-    public String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
-      if (!(element instanceof FlexPackageImpl)) {
-        return null;
-      }
-      if (location instanceof UsageViewLongNameLocation) {
-        return JSBundle.message("package.description", ((FlexPackageImpl)element).getQualifiedName());
-      }
-      else if (location instanceof UsageViewShortNameLocation) {
-        return StringUtil.notNullize(((FlexPackageImpl)element).getName());
-      }
-      else if (location instanceof UsageViewTypeLocation) {
-        return JSBundle.message("javascript.language.term.package");
-      }
-      return null;
-    }
   }
 
   @Nullable

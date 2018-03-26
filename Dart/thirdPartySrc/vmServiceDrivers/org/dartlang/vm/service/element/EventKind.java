@@ -125,6 +125,16 @@ public enum EventKind {
   ServiceExtensionAdded,
 
   /**
+   * Notification that a Service has been registered into the Service Protocol from another client.
+   */
+  ServiceRegistered,
+
+  /**
+   * Notification that a Service has been removed from the Service Protocol from another client.
+   */
+  ServiceUnregistered,
+
+  /**
    * Notification that VM identifying information has changed. Currently used to notify of changes
    * to the VM debugging name via setVMName.
    */

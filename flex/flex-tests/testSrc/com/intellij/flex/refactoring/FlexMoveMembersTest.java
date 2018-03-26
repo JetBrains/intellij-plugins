@@ -212,10 +212,10 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
   public void testConflicts1() {
     String[] conflicts = {"Field From.foo with private visibility won't be accessible from method move1()",
       "Method move1() with private visibility in the target class is not accessible from field From.foo",
-      "Constant move2 with protected visibility in the target class is not accessible from field From.bar",
+      "Constant field move2 with protected visibility in the target class is not accessible from field From.bar",
       "Field From.zzz with internal visibility won't be accessible from method move1()",
       "Inner class Aux won't be accessible from method move1()",
-      "Constant move3 with internal visibility in the target class is not accessible from field From.zzz",
+      "Constant field move3 with internal visibility in the target class is not accessible from field From.zzz",
       "Field From.bar with protected visibility won't be accessible from method move1()"};
     doTestConflicts("a.From", "b.To", VISIBILITY_AS_IS, new String[]{"move1", "move2", "move3"}, conflicts);
   }

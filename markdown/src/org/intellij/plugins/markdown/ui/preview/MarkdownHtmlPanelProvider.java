@@ -21,6 +21,7 @@ import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Arrays;
 
 public abstract class MarkdownHtmlPanelProvider {
 
@@ -60,6 +61,10 @@ public abstract class MarkdownHtmlPanelProvider {
       Logger.getInstance(MarkdownHtmlPanelProvider.class).error(e);
       return getProviders()[0];
     }
+  }
+
+  public static boolean hasAvailableProviders() {
+    return Arrays.stream(getProviders()).anyMatch(provider -> provider.isAvailable() == AvailabilityInfo.AVAILABLE);
   }
 
   public static class ProviderInfo {

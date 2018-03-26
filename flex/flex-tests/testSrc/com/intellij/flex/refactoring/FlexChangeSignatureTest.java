@@ -17,7 +17,6 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.testFramework.PsiTestUtil;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
@@ -120,12 +119,12 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
     String[] conflicts = new String[]{
       "There is already a parameter p1 in method From.foo(String, String). It will conflict with the new parameter.",
       "There is already a parameter p1 in the method From.foo(String, String). It will conflict with the renamed parameter.",
-      "There is already a variable p2 in method From.foo(String, String). It will conflict with the new parameter.",
-      "There is already a variable p3 in method FromEx.foo(String, String). It will conflict with the new parameter.",
-      "There is already a variable p1 in method From.pp(). It will conflict with the new parameter.",
-      "There is already a variable p2 in method From.pp(). It will conflict with the new parameter.",
-      "There is already a variable p3 in method From.pp(). It will conflict with the new parameter.",
-      "There is already a variable p1 in function pp2(). It will conflict with the new parameter.",
+      "There is already a local variable p2 in method From.foo(String, String). It will conflict with the new parameter.",
+      "There is already a local variable p3 in method FromEx.foo(String, String). It will conflict with the new parameter.",
+      "There is already a local variable p1 in method From.pp(). It will conflict with the new parameter.",
+      "There is already a local variable p2 in method From.pp(). It will conflict with the new parameter.",
+      "There is already a local variable p3 in method From.pp(). It will conflict with the new parameter.",
+      "There is already a local variable p1 in function pp2(). It will conflict with the new parameter.",
       "Class From already contains a method bar()",
       "Method FromEx.foo(String, String) with internal visibility won't be accessible from function zz()",
       "Method From.foo(String, String) with internal visibility won't be able to participate in hierarchy"
@@ -140,7 +139,7 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
 
   public void testConflicts2() {
     String[] conflicts = new String[]{
-      "There is already a variable value2 in the property From.prop. It will conflict with the renamed parameter.",
+      "There is already a local variable value2 in the property From.prop. It will conflict with the renamed parameter.",
       "Property From.prop with private visibility won't be accessible from function ttt()",
       "Class From already contains a field _prop2"
     };
