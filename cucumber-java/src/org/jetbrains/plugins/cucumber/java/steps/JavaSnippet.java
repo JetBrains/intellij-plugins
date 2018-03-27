@@ -25,7 +25,7 @@ class JavaSnippet implements Snippet {
   }
 
   public String template() {
-    return "@{0}(\"{1}\")\npublic void {2}({3}) throws Throwable \'{\'\n    // {4}\n{5}    throw new PendingException();\n\'}\'\n";
+    return "@{0}(\"{1}\")\npublic void {2}({3}) \'{\'\n    // {4}\n{5}    throw new PendingException();\n\'}\'\n";
   }
 
   public String tableHint() {
