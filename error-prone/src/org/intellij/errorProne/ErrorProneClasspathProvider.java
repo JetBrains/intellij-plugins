@@ -73,7 +73,7 @@ public class ErrorProneClasspathProvider extends BuildProcessParametersProvider 
         classpath.add(file.getAbsolutePath());
       }
       List<String> arguments = new ArrayList<>();
-      arguments.add("-Xbootclasspath/a:" + StringUtil.join(classpath, File.pathSeparator));
+      arguments.add("-Xbootclasspath/p:" + StringUtil.join(classpath, File.pathSeparator));
       StreamEx.of(jars).map(ErrorProneClasspathProvider::readVersion).nonNull().findFirst().ifPresent(
         version -> arguments.add("-D" + VERSION_PROPERTY + "=" + version)
       );
