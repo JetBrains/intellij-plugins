@@ -23,6 +23,7 @@ import com.intellij.openapi.command.impl.StartMarkAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.ListPopup
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
@@ -224,7 +225,7 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
     step.defaultOptionIndex = 0
 
     val app = ApplicationManagerEx.getApplicationEx()
-    val listPopup: ListPopup = if (app == null || !app.isUnitTestMode) ListPopupImpl(step) else MockConfirmation(step, yesText)
+    val listPopup: ListPopup = if (app == null || !app.isUnitTestMode) JBPopupFactory.getInstance().createListPopup(step) else MockConfirmation(step, yesText)
     listPopup.showInBestPositionFor(myEditor)
   }
 
