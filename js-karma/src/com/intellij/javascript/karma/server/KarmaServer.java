@@ -143,7 +143,7 @@ public class KarmaServer {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     serverSettings.getEnvData().configureCommandLine(commandLine, true);
     NodeCommandLineUtil.configureUsefulEnvironment(commandLine);
-    commandLine.withWorkDirectory(serverSettings.getConfigurationFile().getParentFile());
+    commandLine.withWorkDirectory(serverSettings.getWorkingDirectorySystemDependent());
     commandLine.setRedirectErrorStream(true);
     commandLine.setExePath(serverSettings.getNodeInterpreter().getInterpreterSystemDependentPath());
     List<String> nodeOptionList = ParametersListUtil.parse(serverSettings.getNodeOptions().trim());
