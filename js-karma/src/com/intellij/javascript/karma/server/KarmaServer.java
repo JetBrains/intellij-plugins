@@ -10,6 +10,7 @@ import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.coverage.KarmaCoveragePeer;
 import com.intellij.javascript.karma.execution.KarmaServerSettings;
 import com.intellij.javascript.karma.util.StreamEventListener;
+import com.intellij.javascript.nodejs.NodeCommandLineUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -28,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class KarmaServer {
 
@@ -140,6 +142,7 @@ public class KarmaServer {
                                                            @Nullable KarmaCoveragePeer coveragePeer) throws IOException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     serverSettings.getEnvData().configureCommandLine(commandLine, true);
+    NodeCommandLineUtil.configureUsefulEnvironment(commandLine);
     commandLine.withWorkDirectory(serverSettings.getConfigurationFile().getParentFile());
     commandLine.setRedirectErrorStream(true);
     commandLine.setExePath(serverSettings.getNodeInterpreter().getInterpreterSystemDependentPath());
@@ -337,26 +340,25 @@ public class KarmaServer {
 
   private class MyDisposable implements Disposable {
 
-    private final boolean myDisposed = false;
+    private final AtomicBoolean myDisposed = new AtomicBoolean(false);
 
     @Override
     public void dispose() {
-      if (myDisposed) {
-        return;
-      }
-      LOG.info("Disposing Karma server " + myProcessHashCode);
-      if (myCoveragePeer != null) {
-        FileUtil.asyncDelete(myCoveragePeer.getCoverageTempDir());
-      }
-      UIUtil.invokeLaterIfNeeded(() -> {
-        if (myOnPortBoundCallbacks != null) {
-          myOnPortBoundCallbacks.clear();
+      if (myDisposed.compareAndSet(false, true)) {
+        LOG.info("Disposing Karma server " + myProcessHashCode);
+        if (myCoveragePeer != null) {
+          FileUtil.asyncDelete(myCoveragePeer.getCoverageTempDir());
         }
-        if (myOnBrowsersReadyCallbacks != null) {
-          myOnBrowsersReadyCallbacks.clear();
-        }
-      });
-      shutdown();
+        UIUtil.invokeLaterIfNeeded(() -> {
+          if (myOnPortBoundCallbacks != null) {
+            myOnPortBoundCallbacks.clear();
+          }
+          if (myOnBrowsersReadyCallbacks != null) {
+            myOnBrowsersReadyCallbacks.clear();
+          }
+        });
+        shutdown();
+      }
     }
   }
 }
