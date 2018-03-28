@@ -377,7 +377,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   }
 
   public void testNamesValidator() {
-    final NamesValidator namesValidator = LanguageNamesValidation.INSTANCE.forLanguage(JSSupportLoader.getJsFileType().getLanguage());
+    final NamesValidator namesValidator = LanguageNamesValidation.INSTANCE.forLanguage(JavaScriptFileType.INSTANCE.getLanguage());
     assertTrue(namesValidator.isIdentifier("zzz", myProject));
 
     assertTrue(!namesValidator.isIdentifier("\"zzz\"", myProject));
