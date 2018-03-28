@@ -332,9 +332,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
       // Prepare for typing arguments, if any.
       if (CompletionSuggestionKind.INVOCATION.equals(suggestion.getKind())) {
-        shouldSetSelection = false;
         final List<String> parameterNames = suggestion.getParameterNames();
         if (parameterNames != null) {
+          shouldSetSelection = false;
           lookup = lookup.withInsertHandler((context, item) -> {
             // like in JavaCompletionUtil.insertParentheses()
             final boolean needRightParenth = CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET ||
