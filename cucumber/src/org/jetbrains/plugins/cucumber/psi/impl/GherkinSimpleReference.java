@@ -58,7 +58,7 @@ public class GherkinSimpleReference implements PsiReference {
     if (resolved == null) {
       resolved = element;
     }
-    return resolved != null && myResolved != null && resolved.equals(myResolved);
+    return myResolved != null && resolved.equals(myResolved);
   }
 
   @NotNull
