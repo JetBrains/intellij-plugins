@@ -110,7 +110,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
 
   public void onNewConfigurationCreated() {
     if (myRunSettings.getWorkingDirectorySystemDependent().isEmpty()) {
-      VirtualFile workingDir = JsTestRunConfigurationProducer.getWorkingDirectory(getProject(), myRunSettings.getConfigPathSystemDependent());
+      VirtualFile workingDir = JsTestRunConfigurationProducer.guessWorkingDirectory(getProject(), myRunSettings.getConfigPathSystemDependent());
       if (workingDir != null) {
         myRunSettings = myRunSettings.toBuilder().setWorkingDirectory(workingDir.getPath()).build();
       }

@@ -47,7 +47,7 @@ public class KarmaRunSettingsSerializationUtil {
 
     String workingDirPath = JDOMExternalizerUtil.readCustomField(element, WORKING_DIRECTORY);
     if (workingDirPath == null && !templateRunConfiguration) {
-      VirtualFile workingDir = JsTestRunConfigurationProducer.getWorkingDirectory(project, configPath);
+      VirtualFile workingDir = JsTestRunConfigurationProducer.guessWorkingDirectory(project, configPath);
       if (workingDir != null) {
         workingDirPath = workingDir.getPath();
       }
