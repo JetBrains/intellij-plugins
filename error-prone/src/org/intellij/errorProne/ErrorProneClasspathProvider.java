@@ -3,10 +3,12 @@ package org.intellij.errorProne;
 import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.compiler.CompilerConfigurationImpl;
 import com.intellij.compiler.impl.javaCompiler.BackendCompiler;
+import com.intellij.compiler.server.BuildManager;
 import com.intellij.compiler.server.BuildProcessParametersProvider;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.JavaSdkVersion;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileFilters;
 import com.intellij.openapi.util.text.StringUtil;
@@ -31,6 +33,7 @@ import java.util.*;
 public class ErrorProneClasspathProvider extends BuildProcessParametersProvider {
   private static final Logger LOG = Logger.getInstance(ErrorProneClasspathProvider.class);
   private static final String VERSION_PROPERTY = "idea.error.prone.version";//duplicates ErrorProneJavaCompilingTool.VERSION_PROPERTY
+  private static final String COMPILER_PATH_PROPERTY = "idea.error.prone.compiler.path";//duplicates ErrorProneJavaCompilingTool.COMPILER_PATH_PROPERTY
   private final Project myProject;
 
   public ErrorProneClasspathProvider(Project project) {
@@ -72,8 +75,19 @@ public class ErrorProneClasspathProvider extends BuildProcessParametersProvider 
       for (File file : jars) {
         classpath.add(file.getAbsolutePath());
       }
+      String classpathString = StringUtil.join(classpath, File.pathSeparator);
       List<String> arguments = new ArrayList<>();
-      arguments.add("-Xbootclasspath/a:" + StringUtil.join(classpath, File.pathSeparator));
+      if (BuildManager.getBuildProcessRuntimeSdk(myProject).second.isAtLeast(JavaSdkVersion.JDK_1_9)) {
+        //when running under Java 9 Error Prone should add special arguments to JVM command line, see http://errorprone.info/docs/installation#command-line
+        for (String packageName : Arrays.asList("api", "util", "tree", "main", "code", "processing", "parser", "comp")) {
+          arguments.add("--add-exports=jdk.compiler/com.sun.tools.javac." + packageName + "=ALL-UNNAMED");
+        }
+        arguments.add("--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED");
+        arguments.add("-D" + COMPILER_PATH_PROPERTY + "=" + classpathString);
+      }
+      else {
+        arguments.add("-Xbootclasspath/p:" + classpathString);
+      }
       StreamEx.of(jars).map(ErrorProneClasspathProvider::readVersion).nonNull().findFirst().ifPresent(
         version -> arguments.add("-D" + VERSION_PROPERTY + "=" + version)
       );

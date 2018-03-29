@@ -14,6 +14,7 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.ex.SingleConfigurableEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -42,6 +43,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   private final NodeJsInterpreterField myNodeInterpreterField;
   private final RawCommandLineEditor myNodeOptionsEditor;
   private final NodePackageField myKarmaPackageField;
+  private final TextFieldWithBrowseButton myWorkingDirComponent;
   private final TextFieldWithHistoryWithBrowseButton myConfigPathField;
   private final EnvironmentVariablesTextFieldWithBrowseButton myEnvVarsComponent;
   private final JTextField myBrowsers;
@@ -56,6 +58,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     myNodeInterpreterField = new NodeJsInterpreterField(project, false);
     myNodeOptionsEditor = createNodeOptionsEditor();
     myKarmaPackageField = new NodePackageField(myNodeInterpreterField, KarmaUtil.NODE_PACKAGE_NAME);
+    myWorkingDirComponent = createWorkingDirComponent(project);
     myConfigPathField = createConfigurationFileTextField(project);
     PathShortener.enablePathShortening(myConfigPathField.getChildComponent().getTextEditor(), null);
     myEnvVarsComponent = new EnvironmentVariablesTextFieldWithBrowseButton();
@@ -72,6 +75,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
       .addLabeledComponent(KarmaBundle.message("runConfiguration.node_interpreter.label"), myNodeInterpreterField, 8)
       .addLabeledComponent("Node o&ptions:", myNodeOptionsEditor)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.karma_package_dir.label"), myKarmaPackageField)
+      .addLabeledComponent("Working directory:", myWorkingDirComponent)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.environment.label"), myEnvVarsComponent)
       .addSeparator(8)
       .addComponent(scopeKindPanel)
@@ -98,6 +102,19 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     JPanel panel = SwingHelper.wrapWithHorizontalStretch(editorPane);
     panel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
     return panel;
+  }
+
+  @NotNull
+  private static TextFieldWithBrowseButton createWorkingDirComponent(@NotNull Project project) {
+    TextFieldWithBrowseButton textFieldWithBrowseButton = new TextFieldWithBrowseButton();
+    SwingHelper.installFileCompletionAndBrowseDialog(
+      project,
+      textFieldWithBrowseButton,
+      "Select Working Directory",
+      FileChooserDescriptorFactory.createSingleFolderDescriptor()
+    );
+    PathShortener.enablePathShortening(textFieldWithBrowseButton.getTextField(), null);
+    return textFieldWithBrowseButton;
   }
 
   @NotNull
@@ -245,8 +262,9 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     builder.setBrowsers(StringUtil.notNullize(myBrowsers.getText()));
     builder.setInterpreterRef(myNodeInterpreterField.getInterpreterRef());
     builder.setNodeOptions(myNodeOptionsEditor.getText());
-    builder.setEnvData(myEnvVarsComponent.getData());
     builder.setKarmaPackage(myKarmaPackageField.getSelected());
+    builder.setWorkingDirectory(PathShortener.getAbsolutePath(myWorkingDirComponent.getTextField()));
+    builder.setEnvData(myEnvVarsComponent.getData());
     KarmaScopeKind scopeKind = getScopeKind();
     if (scopeKind != null) {
       builder.setScopeKind(scopeKind);

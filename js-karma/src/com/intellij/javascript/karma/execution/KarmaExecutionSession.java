@@ -143,9 +143,7 @@ public class KarmaExecutionSession {
                                                @Nullable KarmaConfig config,
                                                @NotNull File clientAppFile) throws ExecutionException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
-    File configFile = new File(myRunSettings.getConfigPath());
-    // looks like it should work with any working directory
-    commandLine.setWorkDirectory(configFile.getParentFile());
+    commandLine.setWorkDirectory(myRunSettings.getWorkingDirectorySystemDependent());
     commandLine.setCharset(CharsetToolkit.UTF8_CHARSET);
     commandLine.setExePath(interpreter.getInterpreterSystemDependentPath());
     List<String> nodeOptionList = ParametersListUtil.parse(myRunSettings.getNodeOptions().trim());

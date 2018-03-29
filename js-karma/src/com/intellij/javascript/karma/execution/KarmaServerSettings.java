@@ -17,6 +17,7 @@ public class KarmaServerSettings {
   private final NodePackage myKarmaPackage;
   private final String myConfigFilePath;
   private final String myBrowsers;
+  private final String myWorkingDirectory;
   private final EnvironmentVariablesData myEnvData;
 
   private KarmaServerSettings(@NotNull Builder builder) {
@@ -27,6 +28,7 @@ public class KarmaServerSettings {
     myKarmaPackage = builder.myKarmaPackage;
     myConfigFilePath = FileUtil.toSystemDependentName(builder.myRunSettings.getConfigPath());
     myBrowsers = builder.myRunSettings.getBrowsers();
+    myWorkingDirectory = builder.myRunSettings.getWorkingDirectorySystemDependent();
     myEnvData = builder.myRunSettings.getEnvData();
   }
 
@@ -69,6 +71,11 @@ public class KarmaServerSettings {
   }
 
   @NotNull
+  public String getWorkingDirectorySystemDependent() {
+    return myWorkingDirectory;
+  }
+
+  @NotNull
   public EnvironmentVariablesData getEnvData() {
     return myEnvData;
   }
@@ -87,6 +94,7 @@ public class KarmaServerSettings {
            myKarmaPackage.equals(that.myKarmaPackage) &&
            myConfigFilePath.equals(that.myConfigFilePath) &&
            myBrowsers.equals(that.myBrowsers) &&
+           myWorkingDirectory.equals(that.myWorkingDirectory) &&
            myEnvData.equals(that.myEnvData);
   }
 
@@ -99,6 +107,7 @@ public class KarmaServerSettings {
     result = 31 * result + myKarmaPackage.hashCode();
     result = 31 * result + myConfigFilePath.hashCode();
     result = 31 * result + myBrowsers.hashCode();
+    result = 31 * result + myWorkingDirectory.hashCode();
     result = 31 * result + myEnvData.hashCode();
     return result;
   }
