@@ -203,8 +203,8 @@ public class KarmaRunSettings {
     }
 
     @NotNull
-    public Builder setWorkingDirectory(@NotNull String workingDirectory) {
-      myWorkingDirectory = workingDirectory;
+    public Builder setWorkingDirectory(@Nullable String workingDirectory) {
+      myWorkingDirectory = StringUtil.notNullize(workingDirectory);
       return this;
     }
 
