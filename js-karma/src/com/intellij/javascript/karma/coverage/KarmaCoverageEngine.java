@@ -22,6 +22,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.source.html.HtmlFileImpl;
 import com.intellij.rt.coverage.data.ProjectData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -94,7 +95,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
 
   @Override
   public boolean coverageEditorHighlightingApplicableTo(@NotNull PsiFile psiFile) {
-    return psiFile instanceof JSFile;
+    return psiFile instanceof JSFile || psiFile instanceof HtmlFileImpl;
   }
 
   @Override
