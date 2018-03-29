@@ -178,8 +178,6 @@
       <category>Dart</category>
     </intentionAction>
 
-    <applicationService serviceInterface="com.jetbrains.lang.dart.analyzer.FileOffsetsManager"
-                        serviceImplementation="com.jetbrains.lang.dart.analyzer.FileOffsetsManager"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"
                     serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.psi.DartClassResolveCache"
