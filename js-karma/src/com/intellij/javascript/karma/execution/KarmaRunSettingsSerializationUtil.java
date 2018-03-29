@@ -97,7 +97,7 @@ public class KarmaRunSettingsSerializationUtil {
   public static void writeXml(@NotNull Element element,
                               @NotNull KarmaRunSettings settings,
                               boolean templateRunConfiguration) {
-    JDOMExternalizerUtil.writeCustomField(element, CONFIG_FILE, settings.getConfigSystemIndependentPath());
+    JDOMExternalizerUtil.writeCustomField(element, CONFIG_FILE, settings.getConfigPathSystemIndependent());
     if (StringUtil.isNotEmpty(settings.getBrowsers())) {
       JDOMExternalizerUtil.writeCustomField(element, BROWSERS, settings.getBrowsers());
     }
@@ -131,7 +131,7 @@ public class KarmaRunSettingsSerializationUtil {
   }
 
   private static boolean shouldWriteWorkingDir(@NotNull KarmaRunSettings settings) {
-    String configFileDirPath = trimTrailingPathSeparator(PathUtil.getParentPath(settings.getConfigSystemIndependentPath()));
+    String configFileDirPath = trimTrailingPathSeparator(PathUtil.getParentPath(settings.getConfigPathSystemIndependent()));
     String workingDirPath = trimTrailingPathSeparator(settings.getWorkingDirectorySystemIndependent());
     return !configFileDirPath.equals(workingDirPath);
   }

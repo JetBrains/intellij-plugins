@@ -110,7 +110,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
 
   public void onNewConfigurationCreated() {
     if (myRunSettings.getWorkingDirectorySystemDependent().isEmpty()) {
-      VirtualFile workingDir = JsTestRunConfigurationProducer.getWorkingDirectory(getProject(), myRunSettings.getConfigPath());
+      VirtualFile workingDir = JsTestRunConfigurationProducer.getWorkingDirectory(getProject(), myRunSettings.getConfigPathSystemDependent());
       if (workingDir != null) {
         myRunSettings = myRunSettings.toBuilder().setWorkingDirectory(workingDir.getPath()).build();
       }
@@ -150,7 +150,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolve(getProject());
     NodeJsLocalInterpreter.checkForRunConfiguration(interpreter);
     karmaPackage.validateForRunConfiguration(KarmaUtil.NODE_PACKAGE_NAME);
-    validatePath("configuration file", myRunSettings.getConfigPath(), true);
+    validatePath("configuration file", myRunSettings.getConfigPathSystemDependent(), true);
     validatePath("working directory", myRunSettings.getWorkingDirectorySystemDependent(), false);
     if (myRunSettings.getScopeKind() == KarmaScopeKind.TEST_FILE) {
       validatePath("test file", myRunSettings.getTestFileSystemDependentPath(), true);
@@ -203,7 +203,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     KarmaRunSettings settings = myRunSettings;
     KarmaScopeKind scopeKind = settings.getScopeKind();
     if (scopeKind == KarmaScopeKind.ALL) {
-      return PathUtil.getFileName(settings.getConfigPath());
+      return PathUtil.getFileName(settings.getConfigPathSystemDependent());
     }
     if (scopeKind == KarmaScopeKind.TEST_FILE) {
       return PathUtil.getFileName(settings.getTestFileSystemDependentPath());
