@@ -118,7 +118,7 @@ public class KarmaRunConfigurationProducer extends JsTestRunConfigurationProduce
   private static KarmaRunSettings guessConfigFileIfNeeded(@NotNull KarmaRunSettings settings,
                                                           @NotNull VirtualFile contextFile,
                                                           @NotNull Project project) {
-    if (!settings.getConfigPath().isEmpty()) {
+    if (!settings.getConfigPathSystemDependent().isEmpty()) {
       return settings;
     }
     ProjectFileIndex fileIndex = ProjectFileIndex.getInstance(project);

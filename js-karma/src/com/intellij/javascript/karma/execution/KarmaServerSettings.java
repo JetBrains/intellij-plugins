@@ -3,7 +3,6 @@ package com.intellij.javascript.karma.execution;
 import com.intellij.execution.configuration.EnvironmentVariablesData;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -26,7 +25,7 @@ public class KarmaServerSettings {
     myNodeInterpreter = builder.myNodeInterpreter;
     myNodeOptions = builder.myRunSettings.getNodeOptions();
     myKarmaPackage = builder.myKarmaPackage;
-    myConfigFilePath = FileUtil.toSystemDependentName(builder.myRunSettings.getConfigPath());
+    myConfigFilePath = builder.myRunSettings.getConfigPathSystemDependent();
     myBrowsers = builder.myRunSettings.getBrowsers();
     myWorkingDirectory = builder.myRunSettings.getWorkingDirectorySystemDependent();
     myEnvData = builder.myRunSettings.getEnvData();
