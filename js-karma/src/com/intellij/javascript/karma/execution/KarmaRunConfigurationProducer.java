@@ -52,6 +52,7 @@ public class KarmaRunConfigurationProducer extends JsTestRunConfigurationProduce
       configuration.setRunSettings(pair.getFirst());
       sourceElement.set(pair.getSecond());
       configuration.setGeneratedName();
+      configuration.onNewConfigurationCreated();
       return true;
     }
     return false;
