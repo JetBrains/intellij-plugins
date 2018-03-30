@@ -48,7 +48,7 @@ public class MarkdownElementType extends IElementType {
     return MessageFormat.format("Markdown:{0}", super.toString());
   }
 
-  @Contract("!null -> !null")
+  @Contract("null -> null; !null -> !null")
   public synchronized static IElementType platformType(@Nullable org.intellij.markdown.IElementType markdownType) {
     if (markdownType == null) {
       return null;
