@@ -73,7 +73,7 @@ public class AngularBindingDescriptor extends AngularAttributeDescriptor {
   private static JSType expandStringLiteralTypes(@Nullable JSType type) {
     if (type == null) return null;
 
-    type = TypeScriptTypeRelations.expandTypeRecursive(type);
+    type = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type);
     return type.transformTypeHierarchy(toApply -> toApply instanceof JSStringLiteralTypeImpl ? STRING_TYPE : toApply);
   }
 
