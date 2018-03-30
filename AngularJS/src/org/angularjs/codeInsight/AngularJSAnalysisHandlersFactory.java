@@ -3,7 +3,6 @@ package org.angularjs.codeInsight;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.lang.javascript.JSAnalysisHandlersFactory;
-import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
@@ -28,15 +27,15 @@ public class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory 
   public JSReferenceChecker getReferenceChecker(@NotNull JSReferenceInspectionProblemReporter reporter) {
     return new JSReferenceChecker(reporter) {
       @Override
-      protected void addCreateFromUsageFixesForCall(@NotNull JSCallExpression node,
-                                                    @NotNull JSReferenceExpression referenceExpression,
+      protected void addCreateFromUsageFixesForCall(@NotNull JSReferenceExpression methodExpression,
+                                                    boolean isNewExpression,
                                                     @NotNull ResolveResult[] resolveResults,
                                                     @NotNull List<LocalQuickFix> quickFixes) {
-        if (referenceExpression.getQualifier() != null) return;
+        if (methodExpression.getQualifier() != null) return;
 
-        JSClass directive = AngularJS2IndexingHandler.findDirectiveClass(node);
+        JSClass directive = AngularJS2IndexingHandler.findDirectiveClass(methodExpression);
         if (directive != null) {
-          quickFixes.add(new CreateJSFunctionIntentionAction(referenceExpression.getReferencedName(), true, false) {
+          quickFixes.add(new CreateJSFunctionIntentionAction(methodExpression.getReferencedName(), true, false) {
             @Override
             protected void applyFix(Project project, PsiElement psiElement, PsiFile file, Editor editor) {
               JSClass directive = AngularJS2IndexingHandler.findDirectiveClass(psiElement);
@@ -47,7 +46,7 @@ public class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory 
             @NotNull
             @Override
             protected Pair<JSReferenceExpression, PsiElement> calculateAnchors(PsiElement psiElement) {
-              return Pair.create(referenceExpression, psiElement.getLastChild());
+              return Pair.create(methodExpression, psiElement.getLastChild());
             }
 
             @Override

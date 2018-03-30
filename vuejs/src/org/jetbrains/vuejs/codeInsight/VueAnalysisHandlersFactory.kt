@@ -23,8 +23,8 @@ class VueAnalysisHandlersFactory : JSAnalysisHandlersFactory() {
         return inTypeContext
       }
 
-      override fun addCreateFromUsageFixesForCall(node: JSCallExpression,
-                                                  referenceExpression: JSReferenceExpression,
+      override fun addCreateFromUsageFixesForCall(referenceExpression: JSReferenceExpression,
+                                                  isNewExpression: Boolean,
                                                   resolveResults: Array<out ResolveResult>,
                                                   quickFixes: MutableList<LocalQuickFix>) {
         quickFixes.add(JSFixFactory.getInstance().renameReferenceFix())

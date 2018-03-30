@@ -183,7 +183,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
 
     writeFunctionAndName(template, myClass.getName(), file, null, referenceExpression);
     template.addTextSegment("(");
-    addParameters(template, myNode.getArgumentList(), myNode, file);
+    addParameters(template, myNode.getArguments(), myNode, file);
     template.addTextSegment("){");
     addBody(template, referenceExpression, file);
     template.addTextSegment("}");
