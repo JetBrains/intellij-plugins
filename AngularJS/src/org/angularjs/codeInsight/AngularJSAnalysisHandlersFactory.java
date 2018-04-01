@@ -18,6 +18,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveResult;
 import org.angularjs.index.AngularJS2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -52,18 +53,17 @@ public class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory 
             @Override
             protected void writeFunctionAndName(Template template,
                                                 String createdMethodName,
-                                                PsiFile file,
-                                                PsiElement clazz,
+                                                @NotNull PsiElement anchorParent,
+                                                @Nullable PsiElement clazz,
                                                 JSReferenceExpression referenceExpression) {
-              template.addTextSegment(JSClassUtils.createClassFunctionName(createdMethodName, file));
+              template.addTextSegment(JSClassUtils.createClassFunctionName(createdMethodName, anchorParent));
             }
             
             @Override
             protected void addAccessModifier(Template template,
                                              JSReferenceExpression referenceExpression,
-                                             PsiFile file,
                                              boolean staticContext,
-                                             JSClass contextClass) {
+                                             @NotNull JSClass contextClass) {
             }
           });
         }
@@ -96,9 +96,8 @@ public class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory 
             @Override
             protected void addAccessModifier(Template template,
                                              JSReferenceExpression referenceExpression,
-                                             PsiFile file,
                                              boolean staticContext,
-                                             JSClass contextClass) {
+                                             @NotNull JSClass contextClass) {
             }
           });
         }

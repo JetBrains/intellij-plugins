@@ -54,7 +54,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
   }
 
   @Override
-  protected void appendFunctionBody(Template template, JSReferenceExpression refExpr, PsiFile file) {
+  protected void appendFunctionBody(Template template, JSReferenceExpression refExpr, PsiElement anchorParent) {
   }
 
   @Nullable
@@ -175,17 +175,16 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
   protected void buildTemplate(Template template,
                                JSReferenceExpression referenceExpression,
                                boolean staticContext,
-                               PsiFile file,
-                               PsiElement anchorParent) {
+                               @NotNull PsiElement anchorParent) {
     if (constructorShouldBePublic()) {
       template.addTextSegment("public ");
     }
 
-    writeFunctionAndName(template, myClass.getName(), file, null, referenceExpression);
+    writeFunctionAndName(template, myClass.getName(), myClass, myClass, referenceExpression);
     template.addTextSegment("(");
-    addParameters(template, myNode.getArguments(), myNode, file);
+    addParameters(template, myNode.getArguments(), myNode, myClass);
     template.addTextSegment("){");
-    addBody(template, referenceExpression, file);
+    addBody(template, referenceExpression, anchorParent);
     template.addTextSegment("}");
   }
 
