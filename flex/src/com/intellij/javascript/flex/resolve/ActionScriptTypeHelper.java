@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex.resolve;
 
+import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
@@ -12,6 +13,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -58,5 +60,11 @@ public class ActionScriptTypeHelper extends JSTypeHelper {
       return false;
     }
     return true;
+  }
+
+  @Nullable
+  @Override
+  public JSType getTypeForIndexing(@Nullable JSExpression expression, @NotNull PsiElement context) {
+    return null;
   }
 }
