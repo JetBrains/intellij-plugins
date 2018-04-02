@@ -29,6 +29,7 @@ public class TapestryProjectSelectInTarget extends ProjectViewSelectInTarget {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getMinorViewId() {
         return TapestryProjectViewPane.getInstance(myProject).getId();
     }
