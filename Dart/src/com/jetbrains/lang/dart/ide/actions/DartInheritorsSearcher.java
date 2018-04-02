@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.google.common.collect.Sets;
@@ -20,12 +33,12 @@ import com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import gnu.trove.THashSet;
 import org.dartlang.analysis.server.protocol.Element;
 import org.dartlang.analysis.server.protocol.Location;
 import org.dartlang.analysis.server.protocol.TypeHierarchyItem;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -49,9 +62,9 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
         return new CachedValueProvider.Result<>(items, PsiModificationTracker.MODIFICATION_COUNT);
       });
 
-      final List<DartComponent> components = componentTypeRef.get() == DartComponentType.CLASS
-                                             ? getSubClasses(parameters.getElement().getProject(), parameters.getScope(), hierarchyItems)
-                                             : getSubMembers(parameters.getElement().getProject(), parameters.getScope(), hierarchyItems);
+      final Set<DartComponent> components = componentTypeRef.get() == DartComponentType.CLASS
+                                            ? getSubClasses(parameters.getElement().getProject(), parameters.getScope(), hierarchyItems)
+                                            : getSubMembers(parameters.getElement().getProject(), parameters.getScope(), hierarchyItems);
       for (DartComponent component : components) {
         consumer.process(component);
       }
@@ -88,23 +101,23 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
   }
 
   @NotNull
-  public static List<DartComponent> getSubClasses(@NotNull final Project project,
-                                                  @NotNull final SearchScope scope,
-                                                  @NotNull final List<TypeHierarchyItem> hierarchyItems) {
-    if (hierarchyItems.isEmpty()) return Collections.emptyList();
+  public static Set<DartComponent> getSubClasses(@NotNull final Project project,
+                                                 @NotNull final SearchScope scope,
+                                                 @NotNull final List<TypeHierarchyItem> hierarchyItems) {
+    if (hierarchyItems.isEmpty()) return Collections.emptySet();
 
-    final List<DartComponent> result = new ArrayList<>(hierarchyItems.size());
+    final Set<DartComponent> result = new THashSet<>(hierarchyItems.size());
     addSubClasses(project, scope, Sets.newHashSet(), hierarchyItems, result, hierarchyItems.get(0), false);
     return result;
   }
 
   @NotNull
-  public static List<DartComponent> getSubMembers(@NotNull final Project project,
-                                                  @NotNull final SearchScope scope,
-                                                  @NotNull final List<TypeHierarchyItem> hierarchyItems) {
-    if (hierarchyItems.isEmpty()) return Collections.emptyList();
+  public static Set<DartComponent> getSubMembers(@NotNull final Project project,
+                                                 @NotNull final SearchScope scope,
+                                                 @NotNull final List<TypeHierarchyItem> hierarchyItems) {
+    if (hierarchyItems.isEmpty()) return Collections.emptySet();
 
-    final List<DartComponent> result = new ArrayList<>(hierarchyItems.size());
+    final Set<DartComponent> result = new THashSet<>(hierarchyItems.size());
     addSubMembers(project, scope, Sets.newHashSet(), hierarchyItems, result, hierarchyItems.get(0), false);
     return result;
   }
@@ -113,7 +126,7 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
                                     @NotNull final SearchScope scope,
                                     @NotNull final Set<TypeHierarchyItem> visited,
                                     @NotNull final List<TypeHierarchyItem> hierarchyItems,
-                                    @NotNull final List<DartComponent> components,
+                                    @NotNull final Set<DartComponent> components,
                                     @NotNull final TypeHierarchyItem currentItem,
                                     final boolean addItem) {
     if (!visited.add(currentItem)) {
@@ -137,7 +150,7 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
                                     @NotNull final SearchScope scope,
                                     @NotNull final Set<TypeHierarchyItem> visited,
                                     @NotNull final List<TypeHierarchyItem> hierarchyItems,
-                                    @NotNull final List<DartComponent> components,
+                                    @NotNull final Set<DartComponent> components,
                                     @NotNull final TypeHierarchyItem currentItem,
                                     final boolean addItem) {
     if (!visited.add(currentItem)) {
