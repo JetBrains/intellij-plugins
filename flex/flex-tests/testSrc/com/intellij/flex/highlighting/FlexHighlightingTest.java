@@ -2028,7 +2028,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   @SuppressWarnings({"ConstantConditions"})
   public void testDumbMode() throws Exception {
-
     DumbServiceImpl.getInstance(getProject()).setDumb(true);
     ((DaemonCodeAnalyzerImpl)DaemonCodeAnalyzer.getInstance(getProject())).mustWaitForSmartMode(false, getTestRootDisposable());
     XmlNSDescriptor nsDescriptor;
@@ -2037,7 +2036,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
       configureByFile(getBasePath() + "/dumbMode.mxml");
       nsDescriptor = ((XmlFile)getFile()).getDocument().getRootTagNSDescriptor();
       assertTrue(nsDescriptor.toString(), nsDescriptor instanceof FlexMxmlNSDescriptor);
-      doDoTest(true, true);
     }
     finally {
       DumbServiceImpl.getInstance(getProject()).setDumb(false);
