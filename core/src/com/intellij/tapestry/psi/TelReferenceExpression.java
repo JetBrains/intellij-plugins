@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 public class TelReferenceExpression extends TelCompositeElement implements TelReferenceQualifier {
 
   private final TelQualifiedReference myReference = new TelQualifiedReference(this) {
+    @NotNull
     public TextRange getRangeInElement() {
       final PsiElement element = getReferenceNameElement();
       if (element == null) return TextRange.from(0, getTextLength());
