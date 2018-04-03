@@ -23,7 +23,7 @@ public class TapestryMethodReferenceSearcher extends QueryExecutorBase<PsiRefere
   }
 
   @Override
-  public void processQuery(@NotNull MethodReferencesSearch.SearchParameters parameters, @NotNull Processor<PsiReference> consumer) {
+  public void processQuery(@NotNull MethodReferencesSearch.SearchParameters parameters, @NotNull Processor<? super PsiReference> consumer) {
     final PsiMethod method = parameters.getMethod();
     final String propName = TapestryPropertyNamingUtil.getPropertyNameFromAccessor(method);
 

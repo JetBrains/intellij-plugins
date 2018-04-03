@@ -21,7 +21,7 @@ public class TapestryPropertyReferenceSearcher extends QueryExecutorBase<PsiRefe
   }
 
   @Override
-  public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull Processor<PsiReference> consumer) {
+  public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull Processor<? super PsiReference> consumer) {
     final PsiElement refElement = queryParameters.getElementToSearch();
     if (!(refElement instanceof PsiField)) return;
     final String name = ((PsiField)refElement).getName();
