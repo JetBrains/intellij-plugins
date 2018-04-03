@@ -137,8 +137,8 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
 
       new ChangeSignatureFix(fakeFunction, myNode.getArgumentList()) {
         @Override
-        protected Pair<Boolean, List<JSParameterInfo>> handleCall(@NotNull JSFunction function, @NotNull JSExpression[] arguments, boolean dummy) {
-          List<JSParameterInfo> parameterInfos = super.handleCall(function, arguments, dummy).second;
+        protected Pair<Boolean, List<JSParameterInfo>> handleCall(@NotNull JSFunction function, @NotNull JSExpression[] arguments, boolean dryRun) {
+          List<JSParameterInfo> parameterInfos = super.handleCall(function, arguments, dryRun).second;
           return Pair.create(true, parameterInfos); // always show dialog
         }
 
