@@ -63,6 +63,7 @@ public class DartFileReference implements PsiPolyVariantReference {
     return myUriElement;
   }
 
+  @NotNull
   @Override
   public TextRange getRangeInElement() {
     return myRange;

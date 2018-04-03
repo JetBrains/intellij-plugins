@@ -285,10 +285,12 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
     return componentName.substring(i + 1);
   }
 
+  @NotNull
   public PsiElement getElement() {
     return myParent != null ? myParent : this;
   }
 
+  @NotNull
   public TextRange getRangeInElement() {
     int offset = 0;
     if (myParent != null) {

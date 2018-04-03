@@ -17,11 +17,13 @@ public class GherkinSimpleReference implements PsiReference {
     myElement = element;
   }
 
+  @NotNull
   @Override
   public PsiElement getElement() {
     return myElement;
   }
 
+  @NotNull
   @Override
   public TextRange getRangeInElement() {
     return new TextRange(0, myElement.getTextLength());

@@ -24,6 +24,7 @@ public class DartLibraryComponentReferenceExpressionBase extends DartExpressionI
     super(node);
   }
 
+  @NotNull
   @Override
   public PsiElement getElement() {
     return this;
@@ -34,6 +35,7 @@ public class DartLibraryComponentReferenceExpressionBase extends DartExpressionI
     return this;
   }
 
+  @NotNull
   @Override
   public TextRange getRangeInElement() {
     final TextRange textRange = getTextRange();

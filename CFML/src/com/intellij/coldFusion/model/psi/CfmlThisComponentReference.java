@@ -47,11 +47,13 @@ public class CfmlThisComponentReference extends CfmlCompositeElement implements 
     return new ResolveResult[]{new PsiElementResolveResult(resolveResult, false)};
   }
 
+  @NotNull
   @Override
   public PsiElement getElement() {
     return this;
   }
 
+  @NotNull
   @Override
   public TextRange getRangeInElement() {
     return new TextRange(0, getTextLength());

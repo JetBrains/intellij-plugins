@@ -2,6 +2,7 @@ package org.jetbrains.plugins.cucumber.psi.impl;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.*;
 
 public class GherkinStepParameterReference extends GherkinSimpleReference {
@@ -9,6 +10,7 @@ public class GherkinStepParameterReference extends GherkinSimpleReference {
     super(stepParameter);
   }
 
+  @NotNull
   @Override
   public GherkinStepParameter getElement() {
     return (GherkinStepParameter)super.getElement();

@@ -18,6 +18,7 @@ public class DartClassReferenceImpl extends DartExpressionImpl implements DartRe
     super(node);
   }
 
+  @NotNull
   @Override
   public PsiElement getElement() {
     return this;
@@ -28,6 +29,7 @@ public class DartClassReferenceImpl extends DartExpressionImpl implements DartRe
     return this;
   }
 
+  @NotNull
   @Override
   public TextRange getRangeInElement() {
     final TextRange textRange = getTextRange();

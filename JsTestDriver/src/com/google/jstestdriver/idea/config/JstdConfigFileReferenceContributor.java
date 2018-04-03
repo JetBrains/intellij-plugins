@@ -126,11 +126,13 @@ public class JstdConfigFileReferenceContributor extends PsiReferenceContributor 
       myRelativePath = relativePath;
     }
 
+    @NotNull
     @Override
     public PsiElement getElement() {
       return myYamlKeyValueFragment.getElement();
     }
 
+    @NotNull
     @Override
     public TextRange getRangeInElement() {
       return myYamlKeyValueFragment.getTextRangeInElement();
