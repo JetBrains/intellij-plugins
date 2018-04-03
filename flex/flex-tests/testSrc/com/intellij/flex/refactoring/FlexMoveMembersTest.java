@@ -13,9 +13,9 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
-import com.intellij.lang.javascript.refactoring.moveMembers.ActionScriptMoveMembersDialog;
+import com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersDialog;
 import com.intellij.lang.javascript.refactoring.moveMembers.JSMoveMembersOptions;
-import com.intellij.lang.javascript.refactoring.moveMembers.JSMoveMembersProcessor;
+import com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersProcessor;
 import com.intellij.lang.javascript.refactoring.util.JSMemberInfo;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.ModuleType;
@@ -100,7 +100,7 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
     JSMemberInfo.sortByOffset(memberInfos);
     memberInfos.forEach(memberInfo -> memberInfo.setChecked(true));
 
-    new JSMoveMembersProcessor(myProject, null, sourceClass, ActionScriptMoveMembersDialog.getScope(myProject), new JSMoveMembersOptions() {
+    new ActionScriptMoveMembersProcessor(myProject, null, sourceClass, ActionScriptMoveMembersDialog.getScope(myProject), new JSMoveMembersOptions() {
 
       @Override
       public JSAttributeListOwner[] getSelectedMembers() {

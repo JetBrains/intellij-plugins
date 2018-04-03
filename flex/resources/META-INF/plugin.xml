@@ -44,6 +44,7 @@
     <moveFileHandler implementation="com.intellij.javascript.flex.FlexMoveFileHandler"/>
     <refactoring.moveHandler implementation="com.intellij.javascript.flex.refactoring.moveClass.FlexMoveFileRefactoringHandler"
                              order="before moveFileOrDir, before moveJavaFileOrDir"/>
+    <refactoring.moveHandler implementation="com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersHandler"/>
     <fileTypeFactory implementation="com.intellij.javascript.flex.FlexApplicationComponent"/>
     <lang.parserDefinition language="Mxml" implementationClass="com.intellij.javascript.flex.MxmlParserDefinition"/>
     <todoIndexer filetype="MXML" implementationClass="com.intellij.javascript.flex.MxmlTodoIndexer"/>
