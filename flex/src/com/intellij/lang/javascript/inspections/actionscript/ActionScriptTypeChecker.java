@@ -19,7 +19,7 @@ import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterInfo;
 import com.intellij.lang.javascript.validation.JSProblemReporter;
 import com.intellij.lang.javascript.validation.JSTypeChecker;
 import com.intellij.lang.javascript.validation.ValidateTypesUtil;
-import com.intellij.lang.javascript.validation.fixes.ChangeSignatureFix;
+import com.intellij.lang.javascript.validation.fixes.JSChangeSignatureFix;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -130,12 +130,12 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
   }
 
   @NotNull
-  private static ChangeSignatureFix getChangeSignatureFixForEventListener(@NotNull JSFunction fun,
-                                                                          @NotNull JSExpression expr) {
+  private static JSChangeSignatureFix getChangeSignatureFixForEventListener(@NotNull JSFunction fun,
+                                                                            @NotNull JSExpression expr) {
     JSClass jsClass = calcNontrivialExpectedEventType(expr);
     String typeText = jsClass != null ? jsClass.getQualifiedName() : FlexCommonTypeNames.FLASH_EVENT_FQN;
     
-    return new ChangeSignatureFix(fun){
+    return new JSChangeSignatureFix(fun){
       @NotNull
       @Override
       protected Pair<List<JSParameterInfo>, Boolean> buildParameterInfos(@NotNull JSFunction function) {
@@ -163,7 +163,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
       JSFunction method = (JSFunction)typeOwner.getParent().getParent();
       if (!(JSResolveUtil.getExpressionJSType(expr) instanceof JSVoidType)) {
         JSFunction topMethod = JSInheritanceUtil.findTopMethods(method).iterator().next();
-        fixes = ArrayUtil.append(fixes, new ChangeSignatureFix(topMethod, (JSArgumentList)expr.getParent()));
+        fixes = ArrayUtil.append(fixes, new JSChangeSignatureFix(topMethod, (JSArgumentList)expr.getParent()));
       }
     }
     myReporter.registerProblem(expr, message, problemHighlightType, fixes);

@@ -135,7 +135,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
       JSFunction fakeFunction = (JSFunction)JSChangeUtil.createStatementFromText(project, text, JavaScriptSupportLoader.ECMA_SCRIPT_L4)
         .getPsi();
 
-      new ChangeSignatureFix(fakeFunction, myNode.getArgumentList()) {
+      new JSChangeSignatureFix(fakeFunction, myNode.getArgumentList()) {
         @Override
         protected Pair<Boolean, List<JSParameterInfo>> handleCall(@NotNull JSFunction function, @NotNull JSExpression[] arguments, boolean dryRun) {
           List<JSParameterInfo> parameterInfos = super.handleCall(function, arguments, dryRun).second;

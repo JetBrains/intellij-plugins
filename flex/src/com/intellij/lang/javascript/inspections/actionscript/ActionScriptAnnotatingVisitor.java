@@ -198,10 +198,10 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
   }
 
-  protected static ChangeSignatureFix createChangeBaseMethodSignatureFix(final JSFunction superMethod, final JSFunction override) {
+  protected static JSChangeSignatureFix createChangeBaseMethodSignatureFix(final JSFunction superMethod, final JSFunction override) {
     JSType type = override.getReturnType();
     String s = StringUtil.notNullize(type != null ? type.getResolvedTypeText() : null);
-    ChangeSignatureFix fix = new ChangeSignatureFix(superMethod);
+    JSChangeSignatureFix fix = new JSChangeSignatureFix(superMethod);
     fix.setReturnType(s);
     return fix;
   }
@@ -332,14 +332,14 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
             final JSParameterList parameterList = implementationFunction.getParameterList();
             final JSParameterList expectedParameterList = interfaceFunction.getParameterList();
 
-            ChangeSignatureFix changeSignatureFix = new ChangeSignatureFix(interfaceFunction, parameterList);
+            JSChangeSignatureFix changeSignatureFix = new JSChangeSignatureFix(interfaceFunction, parameterList);
             reportingClient.reportError(parameterList.getNode(),
                                         JSBundle.message(
                                           "javascript.validation.message.interface.method.invalid.signature",
                                           expectedParameterList != null ? expectedParameterList.getText() : "()"
                                         ),
                                         ErrorReportingClient.ProblemKind.ERROR,
-                                        new ChangeSignatureFix(implementationFunction, expectedParameterList, false) {
+                                        new JSChangeSignatureFix(implementationFunction, expectedParameterList, false) {
                                           @NotNull
                                           public String getText() {
                                             return JSBundle.message("javascript.fix.message.change.parameters.to.expected");
@@ -509,13 +509,13 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
               )
             );
 
-            annotation.registerFix(new ChangeSignatureFix(node, overrideParameterList, false) {
+            annotation.registerFix(new JSChangeSignatureFix(node, overrideParameterList, false) {
               @NotNull
               public String getText() {
                 return JSBundle.message("javascript.fix.message.change.parameters.to.expected");
               }
             });
-            annotation.registerFix(new ChangeSignatureFix(override, nodeParameterList));
+            annotation.registerFix(new JSChangeSignatureFix(override, nodeParameterList));
           }
           else if (incompatibleSignature == SignatureMatchResult.RETURN_TYPE_DIFFERS) {
             PsiElement returnTypeExpr = node.getReturnTypeElement();
