@@ -12,7 +12,6 @@ import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptFieldImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
-import com.intellij.util.ThrowableRunnable;
 import org.angularjs.AngularTestUtil;
 
 /**
@@ -24,13 +23,13 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "context";
   }
 
-  public void testInlineTemplateCompletion2TypeScript() throws Exception {
+  public void testInlineTemplateCompletion2TypeScript() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        (ThrowableRunnable<Exception>)() -> myFixture.testCompletion("component.ts", "component.after.ts", "angular2.js"));
+                                        () -> myFixture.testCompletion("component.ts", "component.after.ts", "angular2.js"));
   }
 
-  public void testInlineTemplateResolve2TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+  public void testInlineTemplateResolve2TypeScript() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("component.after.ts", "angular2.js");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("=\"onComple<caret>tedButton()", myFixture.getFile());
       PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
@@ -42,8 +41,8 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testInlineTemplateMethodResolve2TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+  public void testInlineTemplateMethodResolve2TypeScript() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("templateMethod.ts", "angular2.js", "customer.ts", "customer2.ts");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("ca<caret>ll()", myFixture.getFile());
       PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
@@ -55,13 +54,13 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testNonInlineTemplateCompletion2TypeScript() throws Exception {
+  public void testNonInlineTemplateCompletion2TypeScript() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        (ThrowableRunnable<Exception>)() -> myFixture.testCompletion("template.completion.html", "template.html", "angular2.js", "template.completion.ts"));
+                                        () -> myFixture.testCompletion("template.completion.html", "template.html", "angular2.js", "template.completion.ts"));
   }
 
-  public void testNonInlineTemplateResolve2TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+  public void testNonInlineTemplateResolve2TypeScript() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("template.html", "angular2.js", "template.ts");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("myCu<caret>", myFixture.getFile());
       PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
@@ -73,16 +72,16 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testNonInlineTemplateUsage2TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+  public void testNonInlineTemplateUsage2TypeScript() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.enableInspections(JSUnusedLocalSymbolsInspection.class, JSUnusedGlobalSymbolsInspection.class);
       myFixture.configureByFiles("template.usage.ts", "template.usage.html", "angular2.js");
       myFixture.checkHighlighting();
     });
   }
 
-  public void testNonInlineTemplateMethodResolve2TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+  public void testNonInlineTemplateMethodResolve2TypeScript() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("templateMethod.html", "angular2.js", "templateMethod.ts", "customer.ts", "customer2.ts");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("ca<caret>ll()", myFixture.getFile());
       PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
@@ -94,8 +93,8 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testNonInlineTemplateDefinitionResolve2TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+  public void testNonInlineTemplateDefinitionResolve2TypeScript() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("definition.html", "angular2.js", "definition.ts", "definition2.ts");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("tit<caret>le", myFixture.getFile());
       PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
@@ -107,8 +106,8 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testInlineTemplateDefinitionResolve2TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+  public void testInlineTemplateDefinitionResolve2TypeScript() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("definition.ts", "angular2.js", "definition2.ts");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("tit<caret>le", myFixture.getFile());
       PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
@@ -120,8 +119,8 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testNonInlineTemplatePropertyResolve2TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+  public void testNonInlineTemplatePropertyResolve2TypeScript() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("definition2.html", "angular2.js", "definition2.ts");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("check<caret>ed", myFixture.getFile());
       PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
@@ -133,8 +132,8 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testInlineTemplatePropertyResolve2TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+  public void testInlineTemplatePropertyResolve2TypeScript() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("definition2.ts", "angular2.js");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("check<caret>ed", myFixture.getFile());
       PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
@@ -146,8 +145,8 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testInlineTemplateCreateFunction2TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+  public void testInlineTemplateCreateFunction2TypeScript() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.enableInspections(JSUnresolvedFunctionInspection.class);
       myFixture.getAllQuickFixes("createFunction.ts", "angular2.js");
       myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
@@ -155,8 +154,8 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testInlineTemplateCreateFunctionWithParam2TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+  public void testInlineTemplateCreateFunctionWithParam2TypeScript() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.enableInspections(JSUnresolvedFunctionInspection.class);
       myFixture.getAllQuickFixes("createFunctionWithParam.ts", "angular2.js");
       myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
@@ -164,8 +163,8 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testInlineTemplateCreateFunctionEventEmitter2TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+  public void testInlineTemplateCreateFunctionEventEmitter2TypeScript() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.enableInspections(JSUnresolvedFunctionInspection.class);
       myFixture.getAllQuickFixes("createFunctionEventEmitter.ts", "angular2.js");
       myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
@@ -173,8 +172,8 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testInlineTemplateCreateFunctionWithType2TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+  public void testInlineTemplateCreateFunctionWithType2TypeScript() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.enableInspections(JSUnresolvedFunctionInspection.class);
       myFixture.getAllQuickFixes("createFunctionWithType.ts", "angular2.js");
       myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
@@ -182,8 +181,8 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testInlineTemplateCreateFunctionEventEmitterImplicit2TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+  public void testInlineTemplateCreateFunctionEventEmitterImplicit2TypeScript() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.enableInspections(JSUnresolvedFunctionInspection.class);
       myFixture.getAllQuickFixes("createFunctionEventEmitterImplicit.ts", "angular2.js");
       myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
@@ -191,8 +190,8 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testInlineTemplateCreateField2TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+  public void testInlineTemplateCreateField2TypeScript() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.enableInspections(JSUnresolvedVariableInspection.class);
       myFixture.getAllQuickFixes("createField.ts", "angular2.js");
       myFixture.launchAction(myFixture.findSingleIntention("Create Field 'todo'"));
@@ -200,8 +199,8 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testNonInlineTemplateCreateFunction2TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+  public void testNonInlineTemplateCreateFunction2TypeScript() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.enableInspections(JSUnresolvedFunctionInspection.class);
       myFixture.getAllQuickFixes("createFunction.html", "createFunction.ts", "angular2.js");
       myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
@@ -209,8 +208,8 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testNonInlineTemplateCreateField2TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+  public void testNonInlineTemplateCreateField2TypeScript() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.enableInspections(JSUnresolvedVariableInspection.class);
       myFixture.getAllQuickFixes("createField.html", "createField.ts", "angular2.js");
       myFixture.launchAction(myFixture.findSingleIntention("Create Field 'todo'"));
@@ -218,8 +217,8 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testNonInlineTemplateCreateFunctionDoubleClass2TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+  public void testNonInlineTemplateCreateFunctionDoubleClass2TypeScript() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.enableInspections(JSUnresolvedFunctionInspection.class);
       myFixture.getAllQuickFixes("createFunctionDoubleClass.html", "createFunctionDoubleClass.ts", "angular2.js");
       myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
