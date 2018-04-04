@@ -351,11 +351,11 @@ final class PubServerService extends NetService {
 
     @Override
     public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
-      if (outputType == ProcessOutputTypes.STDERR) {
-        final boolean error = event.getText().toLowerCase(Locale.US).contains("error");
+      final String text = event.getText().toLowerCase(Locale.US);
+      final boolean error = outputType == ProcessOutputTypes.STDERR && text.contains("error") ||
+                            text.contains("could not run in the current directory.");
 
-        ApplicationManager.getApplication().invokeLater(() -> showNotificationIfNeeded(error));
-      }
+      ApplicationManager.getApplication().invokeLater(() -> showNotificationIfNeeded(error));
     }
 
     private void showNotificationIfNeeded(final boolean isError) {
