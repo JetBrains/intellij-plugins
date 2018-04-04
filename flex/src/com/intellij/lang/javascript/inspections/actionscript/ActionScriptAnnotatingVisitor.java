@@ -27,7 +27,6 @@ import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSTypeImpl;
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
 import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
-import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
 import com.intellij.lang.javascript.validation.ActionScriptImplementedMethodProcessor;
 import com.intellij.lang.javascript.validation.DuplicatesCheckUtil;
 import com.intellij.lang.javascript.validation.JSAnnotatorProblemReporter;
@@ -202,8 +201,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   protected static ChangeSignatureFix createChangeBaseMethodSignatureFix(final JSFunction superMethod, final JSFunction override) {
     JSType type = override.getReturnType();
     String s = StringUtil.notNullize(type != null ? type.getResolvedTypeText() : null);
-    ChangeSignatureFix fix = new ChangeSignatureFix(superMethod, JSMethodDescriptor.getParameters(superMethod));
-    fix.setOverriddenReturnType(s);
+    ChangeSignatureFix fix = new ChangeSignatureFix(superMethod);
+    fix.setReturnType(s);
     return fix;
   }
 
@@ -333,7 +332,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
             final JSParameterList parameterList = implementationFunction.getParameterList();
             final JSParameterList expectedParameterList = interfaceFunction.getParameterList();
 
-            ChangeSignatureFix changeSignatureFix = new ChangeSignatureFix(interfaceFunction, parameterList, true);
+            ChangeSignatureFix changeSignatureFix = new ChangeSignatureFix(interfaceFunction, parameterList);
             reportingClient.reportError(parameterList.getNode(),
                                         JSBundle.message(
                                           "javascript.validation.message.interface.method.invalid.signature",
@@ -516,7 +515,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
                 return JSBundle.message("javascript.fix.message.change.parameters.to.expected");
               }
             });
-            annotation.registerFix(new ChangeSignatureFix(override, nodeParameterList, true));
+            annotation.registerFix(new ChangeSignatureFix(override, nodeParameterList));
           }
           else if (incompatibleSignature == SignatureMatchResult.RETURN_TYPE_DIFFERS) {
             PsiElement returnTypeExpr = node.getReturnTypeElement();

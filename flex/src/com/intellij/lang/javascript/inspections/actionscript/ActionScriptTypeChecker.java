@@ -6,7 +6,6 @@ import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSBundle;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.completion.ActionScriptSmartCompletionContributor;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -16,11 +15,12 @@ import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
+import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterInfo;
 import com.intellij.lang.javascript.validation.JSProblemReporter;
 import com.intellij.lang.javascript.validation.JSTypeChecker;
 import com.intellij.lang.javascript.validation.ValidateTypesUtil;
 import com.intellij.lang.javascript.validation.fixes.ChangeSignatureFix;
-import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.PropertyKey;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.intellij.lang.javascript.psi.JSCommonTypeNames.*;
@@ -82,21 +83,6 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
           }
         }
 
-        Computable.NotNullCachedComputable<JSParameterList> expectedParameterListForEventListener =
-          new Computable.NotNullCachedComputable<JSParameterList>() {
-            @NotNull
-            @Override
-            protected JSParameterList internalCompute() {
-              JSClass jsClass = calcNontrivialExpectedEventType(expr);
-              ASTNode treeFromText =
-                JSChangeUtil.createJSTreeFromText(
-                  expr.getProject(),
-                  "function f(event:" + (jsClass != null ? jsClass.getQualifiedName() : FlexCommonTypeNames.FLASH_EVENT_FQN) + ") {}",
-                  JavaScriptSupportLoader.ECMA_SCRIPT_L4
-                );
-              return ((JSFunction)treeFromText.getPsi()).getParameterList();
-            }
-          };
 
         if (invalidArgs) {
           PsiElement expr_;
@@ -110,7 +96,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
             expr_,
             JSBundle.message("javascript.callback.signature.mismatch"),
             ProblemHighlightType.WEAK_WARNING,
-            new ChangeSignatureFix(fun, expectedParameterListForEventListener)
+            getChangeSignatureFixForEventListener(fun, expr)
           );
         } else {
           final JSClass expectedEventClass = calcNontrivialExpectedEventType(expr);
@@ -124,7 +110,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
                 expr instanceof JSFunctionExpression ? parameters[0] : expr,
                 JSBundle.message("javascript.callback.signature.mismatch"),
                 ProblemHighlightType.WEAK_WARNING,
-                new ChangeSignatureFix(fun, expectedParameterListForEventListener)
+                getChangeSignatureFixForEventListener(fun, expr)
               );
             }
           }
@@ -134,13 +120,35 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
                 expr instanceof JSFunctionExpression ? parameters[0] : expr,
                 JSBundle.message("javascript.callback.signature.mismatch.event.class", expectedEventClass.getQualifiedName()),
                 ProblemHighlightType.WEAK_WARNING,
-                new ChangeSignatureFix(fun, expectedParameterListForEventListener)
+                getChangeSignatureFixForEventListener(fun, expr)
               );
             }
           }
         }
       }
     }
+  }
+
+  @NotNull
+  private static ChangeSignatureFix getChangeSignatureFixForEventListener(@NotNull JSFunction fun,
+                                                                          @NotNull JSExpression expr) {
+    JSClass jsClass = calcNontrivialExpectedEventType(expr);
+    String typeText = jsClass != null ? jsClass.getQualifiedName() : FlexCommonTypeNames.FLASH_EVENT_FQN;
+    
+    return new ChangeSignatureFix(fun){
+      @NotNull
+      @Override
+      protected Pair<List<JSParameterInfo>, Boolean> buildParameterInfos(@NotNull JSFunction function) {
+        ASTNode treeFromText =
+          JSChangeUtil.createStatementFromTextWithContext(
+            "function f(event:" + typeText + ") {}",
+            function
+          );
+        JSParameterList expectedParameterList = ((JSFunction)treeFromText.getPsi()).getParameterList();
+
+        return Pair.create(buildParameterInfosForExpected(function, expectedParameterList.getParameters()), false);
+      }
+    };
   }
 
   @Override
