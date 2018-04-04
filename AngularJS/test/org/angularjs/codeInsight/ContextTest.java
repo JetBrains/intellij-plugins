@@ -1,11 +1,9 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
-import com.intellij.lang.javascript.inspections.JSUnresolvedFunctionInspection;
-import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
-import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
-import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
+import com.intellij.lang.javascript.inspections.*;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptFieldImpl;
@@ -223,6 +221,16 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.getAllQuickFixes("createFunctionDoubleClass.html", "createFunctionDoubleClass.ts", "angular2.js");
       myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
       myFixture.checkResultByFile("createFunctionDoubleClass.ts", "createFunctionDoubleClass.fixed.ts", true);
+    });
+  }
+
+  public void testFixSignatureMismatchFromUsageInTemplate() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
+      myFixture.enableInspections(JSCheckFunctionSignaturesInspection.class);
+      myFixture.getAllQuickFixes("changeMethodSignature.html", "changeMethodSignature.ts", "angular2.js");
+      String fixTitle = JSBundle.message("change.method.signature.fix.text", "HeroDetailComponent.save()");
+      myFixture.launchAction(myFixture.findSingleIntention(fixTitle));
+      myFixture.checkResultByFile("changeMethodSignature.ts", "changeMethodSignature.fixed.ts", true);
     });
   }
 }
