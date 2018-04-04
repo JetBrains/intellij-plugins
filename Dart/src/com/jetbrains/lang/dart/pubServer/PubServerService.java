@@ -29,6 +29,7 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.Balloon;
@@ -185,10 +186,17 @@ final class PubServerService extends NetService {
 
     final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(firstServedDir.getParent().getPath());
     commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getPubPath(dartSdk)));
-    commandLine.addParameter("serve");
-    commandLine.addParameter(firstServedDir.getName());
-    commandLine.addParameter("--port=" + String.valueOf(port));
     commandLine.withEnvironment(DartPubActionBase.PUB_ENV_VAR_NAME, DartPubActionBase.getPubEnvValue());
+
+    if (DartWebdev.INSTANCE.useWebdev(dartSdk)) {
+      commandLine.addParameters("global", "run", "webdev", "serve");
+      commandLine.addParameter(firstServedDir.getName() + ":" + String.valueOf(port));
+    }
+    else {
+      commandLine.addParameter("serve");
+      commandLine.addParameter(firstServedDir.getName());
+      commandLine.addParameter("--port=" + String.valueOf(port));
+    }
 
     final OSProcessHandler processHandler = new OSProcessHandler(commandLine);
     processHandler.addProcessListener(new PubServeOutputListener(project));
@@ -201,6 +209,11 @@ final class PubServerService extends NetService {
                                   final int port,
                                   @NotNull final OSProcessHandler processHandler,
                                   @NotNull final Consumer<String> errorOutputConsumer) {
+
+    if (DartWebdev.INSTANCE.useWebdev(DartSdk.getDartSdk(getProject())) && !DartWebdev.INSTANCE.getActivated()) {
+      ApplicationManager.getApplication().invokeAndWait(() -> DartWebdev.INSTANCE.ensureWebdevActivated(getProject()), ModalityState.any());
+    }
+
     InetSocketAddress firstPubServerAddress = NetKt.loopbackSocketAddress(port);
     ServerInfo old = servedDirToSocketAddress.put(firstServedDir, new ServerInfo(firstPubServerAddress));
     LOG.assertTrue(old == null);
