@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.CommonBundle;
@@ -110,7 +123,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
   }
 
   @NotNull
-  protected abstract String getTitle(@NotNull final VirtualFile pubspecYamlFile);
+  protected abstract String getTitle(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile);
 
   @Nullable
   protected abstract String[] calculatePubParameters(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile);
@@ -132,7 +145,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     if (sdk == null && allowModalDialogs) {
       final int answer = Messages.showDialog(module.getProject(),
                                              DartBundle.message("dart.sdk.is.not.configured"),
-                                             getTitle(pubspecYamlFile),
+                                             getTitle(module.getProject(), pubspecYamlFile),
                                              new String[]{DartBundle.message("setup.dart.sdk"), CommonBundle.getCancelButtonText()},
                                              Messages.OK,
                                              Messages.getErrorIcon());
@@ -149,7 +162,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
       final int answer =
         Messages.showDialog(module.getProject(),
                             DartBundle.message("dart.sdk.bad.dartpub.path", pubFile.getPath()),
-                            getTitle(pubspecYamlFile),
+                            getTitle(module.getProject(), pubspecYamlFile),
                             new String[]{DartBundle.message("setup.dart.sdk"), CommonBundle.getCancelButtonText()},
                             Messages.OK,
                             Messages.getErrorIcon());
@@ -180,7 +193,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
       command.setExePath(pubFile.getPath());
       command.addParameters(pubParameters);
 
-      doPerformPubAction(module, pubspecYamlFile, command, getTitle(pubspecYamlFile));
+      doPerformPubAction(module, pubspecYamlFile, command, getTitle(module.getProject(), pubspecYamlFile));
     }
   }
 

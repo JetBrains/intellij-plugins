@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.ide.util.PropertiesComponent;
@@ -12,12 +25,16 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBRadioButton;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.pubServer.DartWebdev;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class DartPubBuildDialog extends DialogWrapper {
@@ -34,6 +51,7 @@ public class DartPubBuildDialog extends DialogWrapper {
   private static final String DEFAULT_OUTPUT_FOLDER = "build";
 
   private JPanel myMainPanel;
+  private JPanel myBuildModePanel;
   private JBRadioButton myReleaseRadioButton;
   private JBRadioButton myDebugRadioButton;
   private JBRadioButton myOtherRadioButton;
@@ -41,12 +59,15 @@ public class DartPubBuildDialog extends DialogWrapper {
   private TextFieldWithBrowseButton myOutputFolderField;
 
   private final @NotNull Project myProject;
+  private final boolean myUseWebdev;
 
   public DartPubBuildDialog(@NotNull final Project project, @NotNull final VirtualFile packageDir) {
     super(project);
     myProject = project;
 
-    setTitle(DartBundle.message("dart.pub.build.title"));
+    myUseWebdev = DartWebdev.INSTANCE.useWebdev(DartSdk.getDartSdk(project));
+    setTitle(DartBundle.message(myUseWebdev ? "dart.webdev.build.title" : "dart.pub.build.title"));
+    setOKButtonText("Build");
 
     final ActionListener listener = e -> updateControls();
     myReleaseRadioButton.addActionListener(listener);
@@ -91,18 +112,23 @@ public class DartPubBuildDialog extends DialogWrapper {
   private void reset() {
     final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(myProject);
 
-    final String mode = propertiesComponent.getValue(DART_PUB_BUILD_MODE_KEY, DEFAULT_MODE);
-    if (mode.equals(RELEASE_MODE)) {
-      myReleaseRadioButton.setSelected(true);
-    }
-    else if (mode.equals(DEBUG_MODE)) {
-      myDebugRadioButton.setSelected(true);
+    if (myUseWebdev) {
+      myBuildModePanel.setVisible(false);
     }
     else {
-      myOtherRadioButton.setSelected(true);
-    }
+      final String mode = propertiesComponent.getValue(DART_PUB_BUILD_MODE_KEY, DEFAULT_MODE);
+      if (mode.equals(RELEASE_MODE)) {
+        myReleaseRadioButton.setSelected(true);
+      }
+      else if (mode.equals(DEBUG_MODE)) {
+        myDebugRadioButton.setSelected(true);
+      }
+      else {
+        myOtherRadioButton.setSelected(true);
+      }
 
-    myOtherModeTextField.setText(propertiesComponent.getValue(DART_PUB_CUSTOM_BUILD_MODE_KEY, ""));
+      myOtherModeTextField.setText(propertiesComponent.getValue(DART_PUB_CUSTOM_BUILD_MODE_KEY, ""));
+    }
 
     myOutputFolderField.setText(propertiesComponent.getValue(DART_PUB_BUILD_OUTPUT_KEY, DEFAULT_OUTPUT_FOLDER));
 
@@ -140,13 +166,15 @@ public class DartPubBuildDialog extends DialogWrapper {
   private void saveDialogState() {
     final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(myProject);
 
-    final String mode = myReleaseRadioButton.isSelected() ? RELEASE_MODE
-                                                          : myDebugRadioButton.isSelected() ? DEBUG_MODE
-                                                                                            : OTHER_MODE;
-    propertiesComponent.setValue(DART_PUB_BUILD_MODE_KEY, mode, DEFAULT_MODE);
+    if (!myUseWebdev) {
+      final String mode = myReleaseRadioButton.isSelected() ? RELEASE_MODE
+                                                            : myDebugRadioButton.isSelected() ? DEBUG_MODE
+                                                                                              : OTHER_MODE;
+      propertiesComponent.setValue(DART_PUB_BUILD_MODE_KEY, mode, DEFAULT_MODE);
 
-    if (myOtherRadioButton.isSelected()) {
-      propertiesComponent.setValue(DART_PUB_CUSTOM_BUILD_MODE_KEY, myOtherModeTextField.getText().trim());
+      if (myOtherRadioButton.isSelected()) {
+        propertiesComponent.setValue(DART_PUB_CUSTOM_BUILD_MODE_KEY, myOtherModeTextField.getText().trim());
+      }
     }
 
     final String outputPath = StringUtil.nullize(myOutputFolderField.getText().trim());
