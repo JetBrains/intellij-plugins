@@ -35,3 +35,10 @@ class SubClass2 extends SuperClass {
         }
     }
 }
+class AnotherClass extends SuperClass {
+    function AnotherClass() {
+        if (true) {
+        }
+        super("")
+    }
+}
