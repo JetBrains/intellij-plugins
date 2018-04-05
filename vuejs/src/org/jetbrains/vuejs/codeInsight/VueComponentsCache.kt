@@ -5,6 +5,8 @@ import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FilenameIndex
@@ -71,16 +73,22 @@ class VueComponentsCache {
 
     private fun getModuleComponents(packageJson: VirtualFile, project: Project): ComponentsData? {
       if (packageJson.parent != null) {
-        val folder = PsiManager.getInstance(project).findDirectory(packageJson.parent)
-        if (folder != null) {
-          val provider = CachedValueProvider {
-            val scope = GlobalSearchScopesCore.directoryScope(project, packageJson.parent, true)
-            CachedValueProvider.Result(VueComponentsCalculation.calculateScopeComponents(scope), packageJson.parent)
-          }
-          return CachedValuesManager.getCachedValue(folder, provider)
+        val psiDirectory = PsiManager.getInstance(project).findDirectory(packageJson.parent)
+        if (psiDirectory != null) {
+          return getCachedComponentsData(psiDirectory)
         }
       }
       return null
+    }
+
+    private fun getCachedComponentsData(psiDirectory: PsiDirectory): ComponentsData? {
+      val provider = CachedValueProvider {
+        val directoryFile = psiDirectory.virtualFile
+        
+        val scope = GlobalSearchScopesCore.directoryScope(psiDirectory.project, directoryFile, true)
+        CachedValueProvider.Result(VueComponentsCalculation.calculateScopeComponents(scope), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+      }
+      return CachedValuesManager.getCachedValue(psiDirectory, provider)
     }
 
     private fun getOnlyProjectComponents(project: Project): ComponentsData {
