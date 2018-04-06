@@ -20,7 +20,7 @@ public class MxmlFileType extends XmlLikeFileType {
   @NotNull
   @Override
   public String getDescription() {
-    return "MXML files";
+    return "MXML";
   }
 
   @NotNull

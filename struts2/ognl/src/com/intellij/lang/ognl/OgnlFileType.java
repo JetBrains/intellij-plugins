@@ -57,7 +57,7 @@ public class OgnlFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getDescription() {
-    return "Object Graph Navigation Language";
+    return "Object Graph Navigation Language script";
   }
 
   @NotNull

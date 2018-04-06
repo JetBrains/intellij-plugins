@@ -22,7 +22,7 @@ public class GherkinFileType extends LanguageFileType {
 
   @NotNull
   public String getDescription() {
-    return "Cucumber scenario files";
+    return "Cucumber scenario";
   }
 
   @Override
