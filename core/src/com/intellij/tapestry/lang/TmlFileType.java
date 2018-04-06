@@ -25,7 +25,7 @@ public class TmlFileType extends XmlLikeFileType {
 
   @NotNull
   public String getDescription() {
-    return "Tapestry template file";
+    return "Tapestry template";
   }
 
   @Override
