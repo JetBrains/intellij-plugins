@@ -24,7 +24,7 @@ public class DartFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getDescription() {
-    return "Dart files";
+    return "Dart";
   }
 
   @NotNull

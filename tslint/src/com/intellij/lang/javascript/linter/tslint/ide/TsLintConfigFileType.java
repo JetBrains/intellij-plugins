@@ -28,7 +28,7 @@ public class TsLintConfigFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getDescription() {
-    return "TSLint configuration file";
+    return "TSLint configuration";
   }
 
   @NotNull
