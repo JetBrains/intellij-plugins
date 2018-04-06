@@ -411,7 +411,7 @@ public class DartAnalysisServerService implements Disposable {
   /**
    * Must use it right before sending any offsets and lengths to the AnalysisServer
    */
-  private int getOriginalOffset(@Nullable final VirtualFile file, final int convertedOffset) {
+  public int getOriginalOffset(@Nullable final VirtualFile file, final int convertedOffset) {
     if (file == null) return convertedOffset;
 
     return myFilePathWithOverlaidContentToTimestamp.containsKey(file.getPath())
