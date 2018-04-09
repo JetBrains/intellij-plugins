@@ -1796,6 +1796,17 @@ export default class UsageComponent extends Vue {
       doResolveIntoClassComponent("OneMoreComponent.vue", false)
     })
   }
+
+  fun testCssClassInPug() {
+    myFixture.configureByText("foo.vue", "<template lang='pug'>\n" +
+                                         "    .someClass\n" +
+                                         "</template>\n" +
+                                         "<style>\n" +
+                                         "    .someClass<caret> {}\n" +
+                                         "</style>")
+    val usages = myFixture.findUsages(myFixture.elementAtCaret)
+    assertEquals(2, usages.size)
+  }
 }
 
 fun globalMixinText(): String {

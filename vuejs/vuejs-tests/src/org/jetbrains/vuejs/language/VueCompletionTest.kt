@@ -1165,6 +1165,17 @@ Pair("""<template>
     })
 
   }
+
+  fun testCssClassInPug() {
+    myFixture.configureByText("foo.vue", "<template lang='pug'>\n" +
+                                         "    .<caret>\n" +
+                                         "</template>\n" +
+                                         "<style>\n" +
+                                         "    .someClass {}\n" +
+                                         "</style>")
+    myFixture.completeBasic()
+    myFixture.assertPreferredCompletionItems(0, "someClass")
+  }
 }
 
 fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,
