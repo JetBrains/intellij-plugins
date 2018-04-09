@@ -221,12 +221,17 @@ public class DartProjectComponent extends AbstractProjectComponent {
     //
     // the same can be seen in the pub tool source code: [repo root]/sdk/lib/_internal/pub/lib/src/entrypoint.dart
 
+    final DartSdk sdk = DartSdk.getDartSdk(module.getProject());
+
     final Collection<String> oldExcludedUrls =
       ContainerUtil.filter(ModuleRootManager.getInstance(module).getExcludeRootUrls(), new Condition<String>() {
         final String rootUrl = root.getUrl();
 
         public boolean value(final String url) {
-          if (url.equals(rootUrl + "/.dart_tool")) return true;
+          if (url.equals(rootUrl + "/.dart_tool") && sdk != null && StringUtil.compareVersionNumbers(sdk.getVersion(), "2.0") >= 0) {
+            return true;
+          }
+
           if (url.equals(rootUrl + "/.pub")) return true;
           if (url.equals(rootUrl + "/build")) return true;
           if (url.equals(rootUrl + "/packages")) return true;
