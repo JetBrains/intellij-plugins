@@ -30,7 +30,7 @@ public enum FrameKind {
   Regular,
 
   /**
-   * Represents a value returned by the VM but unknown to this client
+   * Represents a value returned by the VM but unknown to this client.
    */
   Unknown
 }
