@@ -20,14 +20,14 @@ internal class PlantUMLPluginGeneratingProvider(private var pluginCache: Markdow
   override fun getCacheRootPath(): String = "$markdownCachePath${File.separator}plantUML"
 
   override fun generateHtml(text: String): String {
-    val newDiagramPath = File("${getCacheRootPath()}${File.separator}" +
+    val newDiagramFile = File("${getCacheRootPath()}${File.separator}" +
                               "${MarkdownUtil.md5(pluginCache?.file?.path, MARKDOWN_FILE_PATH_KEY)}${File.separator}" +
-                              "${MarkdownUtil.md5(text, "plantUML-diagram")}.png").absolutePath
+                              "${MarkdownUtil.md5(text, "plantUML-diagram")}.png")
 
-    cacheDiagram(newDiagramPath, text)
-    pluginCache?.addAliveCachedFile(File(newDiagramPath))
+    cacheDiagram(newDiagramFile.absolutePath, text)
+    pluginCache?.addAliveCachedFile(newDiagramFile)
 
-    return "<img src=\"file:${newDiagramPath}\"/>"
+    return "<img src=\"${newDiagramFile.toURI()}\"/>"
   }
 
   private fun cacheDiagram(newDiagramPath: String, text: String) {
@@ -37,7 +37,7 @@ internal class PlantUMLPluginGeneratingProvider(private var pluginCache: Markdow
   @Throws(IOException::class)
   private fun generateDiagram(text: CharSequence, diagramPath: String) {
     var innerText: String = text.toString().trim()
-    if (!innerText.startsWith("@startuml")) innerText = "@startuml\n" + innerText
+    if (!innerText.startsWith("@startuml")) innerText = "@startuml\n$innerText"
     if (!innerText.endsWith("@enduml")) innerText += "\n@enduml"
 
     FileUtil.createParentDirs(File(diagramPath))
