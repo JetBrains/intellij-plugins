@@ -163,7 +163,7 @@ public class PrettierUtil {
         return null;
       }
       return CachedValuesManager.getManager(project).getParameterizedCachedValue(psiFile, CACHE_KEY, param ->
-        CachedValueProvider.Result.create(parseConfigInternal(param.getVirtualFile(), param), param), true, psiFile);
+        CachedValueProvider.Result.create(parseConfigInternal(param.getVirtualFile(), param), param), false, psiFile);
     });
   }
 
