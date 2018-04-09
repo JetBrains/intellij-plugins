@@ -92,7 +92,6 @@ public class VmService extends VmServiceBase {
 
   /**
    * The [addBreakpoint] RPC is used to add a breakpoint at a specific line of some script.
-   *
    * @param column This parameter is optional and may be null.
    */
   public void addBreakpoint(String isolateId, String scriptId, int line, Integer column, BreakpointConsumer consumer) {
@@ -131,7 +130,6 @@ public class VmService extends VmServiceBase {
    * The [addBreakpoint] RPC is used to add a breakpoint at a specific line of some script. This
    * RPC is useful when a script has not yet been assigned an id, for example, if a script is in a
    * deferred library which has not yet been loaded.
-   *
    * @param column This parameter is optional and may be null.
    */
   public void addBreakpointWithScriptUri(String isolateId, String scriptUri, int line, Integer column, BreakpointConsumer consumer) {
@@ -184,7 +182,6 @@ public class VmService extends VmServiceBase {
 
   /**
    * The [evaluate] RPC is used to evaluate an expression in the context of some target.
-   *
    * @param scope This parameter is optional and may be null.
    */
   public void evaluate(String isolateId, String targetId, String expression, Map<String, String> scope, EvaluateConsumer consumer) {
@@ -213,7 +210,6 @@ public class VmService extends VmServiceBase {
    * The [evaluateInFrame] RPC is used to evaluate an expression in the context of a particular
    * stack frame. [frameIndex] is the index of the desired Frame, with an index of [0] indicating
    * the top (most recent) frame.
-   *
    * @param scope This parameter is optional and may be null.
    */
   public void evaluateInFrame(String isolateId, int frameIndex, String expression, Map<String, String> scope, EvaluateInFrameConsumer consumer) {
@@ -240,7 +236,6 @@ public class VmService extends VmServiceBase {
    * Valid values for [gc] are 'full'.
    *
    * @undocumented
-   *
    *
    * @param gc This parameter is optional and may be null.
    * @param reset This parameter is optional and may be null.
@@ -295,7 +290,6 @@ public class VmService extends VmServiceBase {
 
   /**
    * The [getObject] RPC is used to lookup an [object] from some isolate by its [id].
-   *
    * @param offset This parameter is optional and may be null.
    * @param count This parameter is optional and may be null.
    */
@@ -312,7 +306,7 @@ public class VmService extends VmServiceBase {
    * The [getSourceReport] RPC is used to generate a set of reports tied to source locations in an
    * isolate.
    */
-  public void getSourceReport(String isolateId, ElementList<SourceReportKind> reports, SourceReportConsumer consumer) {
+  public void getSourceReport(String isolateId, List<SourceReportKind> reports, SourceReportConsumer consumer) {
     JsonObject params = new JsonObject();
     params.addProperty("isolateId", isolateId);
     params.add("reports", convertIterableToJsonArray(reports));
@@ -322,13 +316,12 @@ public class VmService extends VmServiceBase {
   /**
    * The [getSourceReport] RPC is used to generate a set of reports tied to source locations in an
    * isolate.
-   *
    * @param scriptId This parameter is optional and may be null.
    * @param tokenPos This parameter is optional and may be null.
    * @param endTokenPos This parameter is optional and may be null.
    * @param forceCompile This parameter is optional and may be null.
    */
-  public void getSourceReport(String isolateId, ElementList<SourceReportKind> reports, String scriptId, Integer tokenPos, Integer endTokenPos, Boolean forceCompile, SourceReportConsumer consumer) {
+  public void getSourceReport(String isolateId, List<SourceReportKind> reports, String scriptId, Integer tokenPos, Integer endTokenPos, Boolean forceCompile, SourceReportConsumer consumer) {
     JsonObject params = new JsonObject();
     params.addProperty("isolateId", isolateId);
     params.add("reports", convertIterableToJsonArray(reports));
@@ -396,7 +389,6 @@ public class VmService extends VmServiceBase {
 
   /**
    * The [reloadSources] RPC is used to perform a hot reload of an Isolate's sources.
-   *
    * @param force This parameter is optional and may be null.
    * @param pause This parameter is optional and may be null.
    * @param rootLibUri This parameter is optional and may be null.
@@ -446,7 +438,6 @@ public class VmService extends VmServiceBase {
 
   /**
    * The [resume] RPC is used to resume execution of a paused isolate.
-   *
    * @param step This parameter is optional and may be null.
    * @param frameIndex This parameter is optional and may be null.
    */
