@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "whitespace": [false,
+    <warning descr="Type is not allowed. Expected: string.">115</warning>,
+    <warning>"check-"</warning>
+  ]
+  }
+}
