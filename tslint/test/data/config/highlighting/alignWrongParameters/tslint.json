@@ -1,5 +1,5 @@
 {
   "rules": {
-    "align": [<warning descr="Value should be one of: [true, \\\"parameters\\\", \\\"arguments\\\", \\\"statements\\\"]">false</warning>, "parameters", <warning descr="Value should be one of: [true, \\\"parameters\\\", \\\"arguments\\\", \\\"statements\\\"]">"other"</warning>]
+    "align": [false, "parameters", <warning descr="Value should be one of: [\"arguments\", \"elements\", \"members\", \"parameters\", \"statements\"]">"other"</warning>]
   }
 }

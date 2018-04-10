@@ -40,15 +40,11 @@ public class TsLintConfigHighlightingTest extends LightPlatformCodeInsightFixtur
     doTest();
   }
 
-  public void testWrong() {
+  public void testWrongWhitespaceType() {
     doTest();
   }
 
   public void testAlignWrongParameters() {
-    doTest();
-  }
-
-  public void testCompletedDocs() {
     doTest();
   }
 
