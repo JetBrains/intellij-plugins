@@ -46,15 +46,15 @@ public class MarkdownUtil {
     final URI baseUri = parent != null ? new File(parent.getPath()).toURI() : null;
 
     final ASTNode parsedTree = new MarkdownParser(MarkdownParserManager.FLAVOUR).buildMarkdownTreeFromString(text);
-    MarkdownCodeFencePluginCacheProvider codeFencePluginCache = new MarkdownCodeFencePluginCacheProvider(file);
+    MarkdownCodeFencePluginCacheCollector cacheCollector = new MarkdownCodeFencePluginCacheCollector(file);
 
     Map<IElementType, GeneratingProvider> map = ContainerUtil.newHashMap(
       MarkdownParserManager.FLAVOUR.createHtmlGeneratingProviders(LinkMap.Builder.buildLinkMap(parsedTree, text), baseUri));
-    map.putAll(MarkdownParserManager.CODE_FENCE_PLUGIN_FLAVOUR.createHtmlGeneratingProviders(codeFencePluginCache));
+    map.putAll(MarkdownParserManager.CODE_FENCE_PLUGIN_FLAVOUR.createHtmlGeneratingProviders(cacheCollector));
 
     String html = new HtmlGenerator(text, parsedTree, map, true).generateHtml();
 
-    MarkdownCodeFencePluginCache.getInstance().registerCacheProvider(codeFencePluginCache);
+    MarkdownCodeFencePluginCache.getInstance().registerCacheProvider(cacheCollector);
 
     return html;
   }

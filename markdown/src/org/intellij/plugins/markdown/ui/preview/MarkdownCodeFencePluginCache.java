@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.Alarm;
 import com.intellij.util.containers.ContainerUtil;
+import org.intellij.plugins.markdown.extensions.MarkdownCodeFenceCacheablePluginGeneratingProvider;
 import org.intellij.plugins.markdown.extensions.MarkdownCodeFencePluginGeneratingProvider;
 import org.intellij.plugins.markdown.lang.MarkdownFileType;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,7 @@ public class MarkdownCodeFencePluginCache implements Disposable {
 
   @NotNull private final Alarm myAlarm = new Alarm(this);
 
-  @NotNull private final Collection<MarkdownCodeFencePluginCacheProvider> myCodeFencePluginCaches = ContainerUtil.newConcurrentSet();
+  @NotNull private final Collection<MarkdownCodeFencePluginCacheCollector> myCodeFencePluginCaches = ContainerUtil.newConcurrentSet();
   @NotNull private final Collection<File> myAdditionalCacheToDelete = ContainerUtil.newConcurrentSet();
   @NotNull private static final Collection<File> CODE_FENCE_PLUGIN_SYSTEM_PATHS = getPluginSystemPaths();
 
@@ -53,8 +54,10 @@ public class MarkdownCodeFencePluginCache implements Disposable {
 
   private static List<File> getPluginSystemPaths() {
     return Arrays.stream(MarkdownCodeFencePluginGeneratingProvider.Companion.getEP_NAME().getExtensions())
-      .map(provider -> new File(provider.getCacheRootPath()))
-      .collect(Collectors.toList());
+                 .filter(MarkdownCodeFenceCacheablePluginGeneratingProvider.class::isInstance)
+                 .map(MarkdownCodeFenceCacheablePluginGeneratingProvider.class::cast)
+                 .map(provider -> new File(provider.getCacheRootPath()))
+                 .collect(Collectors.toList());
   }
 
   public Collection<File> collectFilesToRemove() {
@@ -93,8 +96,8 @@ public class MarkdownCodeFencePluginCache implements Disposable {
     return sourceFileDir.getName().equals(MarkdownUtil.md5(sourceFile.getPath(), MARKDOWN_FILE_PATH_KEY));
   }
 
-  public void registerCacheProvider(@NotNull MarkdownCodeFencePluginCacheProvider pluginCacheProvider) {
-    myCodeFencePluginCaches.add(pluginCacheProvider);
+  public void registerCacheProvider(@NotNull MarkdownCodeFencePluginCacheCollector cacheCollector) {
+    myCodeFencePluginCaches.add(cacheCollector);
   }
 
   private void scheduleClearCache() {
