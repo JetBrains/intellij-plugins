@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package org.jetbrains.vuejs.language
 
 import com.intellij.lang.injection.MultiHostInjector
@@ -28,9 +41,6 @@ import org.jetbrains.vuejs.index.VueOptionsIndex
 import org.jetbrains.vuejs.index.resolve
 import java.util.*
 
-/**
- * @author Irina.Chernushina on 7/19/2017.
- */
 class VueInjector : MultiHostInjector {
   companion object {
     private val delimitersOptionHolders = setOf("Vue.config.delimiters", "Vue.options.delimiters")
@@ -78,7 +88,7 @@ class VueInjector : MultiHostInjector {
 
     // this supposed to work in <template lang="jade"> attribute values
     if (context is XmlAttributeValueImpl && !context.value.isNullOrBlank() && context.parent is XmlAttribute
-        && VueAttributesProvider.DEFAULT.contains((context.parent as XmlAttribute).name)) {
+        && VueAttributesProvider.HAVE_JS_AS_VALUE.contains((context.parent as XmlAttribute).name)) {
       val embedded = PsiTreeUtil.getChildOfType(context, JSEmbeddedContent::class.java)
       if (embedded != null && VueJSLanguage.INSTANCE != embedded.language) {
         val literal = PsiTreeUtil.getChildOfType(embedded, JSLiteralExpressionImpl::class.java)
