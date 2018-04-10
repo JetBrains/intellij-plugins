@@ -4,16 +4,17 @@ import com.intellij.openapi.util.io.FileUtil
 import net.sourceforge.plantuml.FileFormat
 import net.sourceforge.plantuml.FileFormatOption
 import net.sourceforge.plantuml.SourceStringReader
-import org.intellij.plugins.markdown.extensions.MarkdownCodeFencePluginGeneratingProvider
-import org.intellij.plugins.markdown.extensions.MarkdownCodeFencePluginGeneratingProvider.Companion.markdownCachePath
+import org.intellij.plugins.markdown.extensions.MarkdownCodeFenceCacheablePluginGeneratingProvider
+import org.intellij.plugins.markdown.extensions.MarkdownCodeFenceCacheablePluginGeneratingProvider.Companion.markdownCachePath
 import org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCache.MARKDOWN_FILE_PATH_KEY
-import org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCacheProvider
+import org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCacheCollector
 import org.intellij.plugins.markdown.ui.preview.MarkdownUtil
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
-internal class PlantUMLPluginGeneratingProvider(private var pluginCache: MarkdownCodeFencePluginCacheProvider?) : MarkdownCodeFencePluginGeneratingProvider {
+internal class PlantUMLPluginGeneratingProvider(private var cacheCollector: MarkdownCodeFencePluginCacheCollector?)
+  : MarkdownCodeFenceCacheablePluginGeneratingProvider {
   // this empty constructor is needed for the component initialization
   constructor() : this(null)
 
@@ -21,11 +22,11 @@ internal class PlantUMLPluginGeneratingProvider(private var pluginCache: Markdow
 
   override fun generateHtml(text: String): String {
     val newDiagramFile = File("${getCacheRootPath()}${File.separator}" +
-                              "${MarkdownUtil.md5(pluginCache?.file?.path, MARKDOWN_FILE_PATH_KEY)}${File.separator}" +
+                              "${MarkdownUtil.md5(cacheCollector?.file?.path, MARKDOWN_FILE_PATH_KEY)}${File.separator}" +
                               "${MarkdownUtil.md5(text, "plantUML-diagram")}.png")
 
     cacheDiagram(newDiagramFile.absolutePath, text)
-    pluginCache?.addAliveCachedFile(newDiagramFile)
+    cacheCollector?.addAliveCachedFile(newDiagramFile)
 
     return "<img src=\"${newDiagramFile.toURI()}\"/>"
   }
@@ -44,7 +45,7 @@ internal class PlantUMLPluginGeneratingProvider(private var pluginCache: Markdow
     storeDiagram(innerText, diagramPath)
   }
 
-  override fun isApplicable(language: String?): Boolean = language == "puml" || language == "plantuml"
+  override fun isApplicable(language: String): Boolean = language == "puml" || language == "plantuml"
 
   companion object {
     @Throws(IOException::class)

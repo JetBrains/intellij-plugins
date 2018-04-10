@@ -8,11 +8,11 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Objects;
 
-public class MarkdownCodeFencePluginCacheProvider {
+public class MarkdownCodeFencePluginCacheCollector {
   @NotNull private final VirtualFile myFile;
   @NotNull private final Collection<File> myAliveCachedFiles = ContainerUtil.newHashSet();
 
-  public MarkdownCodeFencePluginCacheProvider(@NotNull VirtualFile file) {
+  public MarkdownCodeFencePluginCacheCollector(@NotNull VirtualFile file) {
     myFile = file;
   }
 
@@ -35,8 +35,8 @@ public class MarkdownCodeFencePluginCacheProvider {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    MarkdownCodeFencePluginCacheProvider provider = (MarkdownCodeFencePluginCacheProvider)o;
-    return Objects.equals(myFile, provider.myFile);
+    MarkdownCodeFencePluginCacheCollector collector = (MarkdownCodeFencePluginCacheCollector)o;
+    return Objects.equals(myFile, collector.myFile);
   }
 
   @Override
