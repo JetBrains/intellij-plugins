@@ -124,6 +124,7 @@
     <library.type implementation="com.jetbrains.lang.dart.sdk.DartPackagesLibraryType"/>
 
     <treeStructureProvider implementation="com.jetbrains.lang.dart.projectView.DartTreeStructureProvider"/>
+    <projectViewNestingRulesProvider implementation="com.jetbrains.lang.dart.projectView.DartNestingRulesProvider"/>
     <iconProvider implementation="com.jetbrains.lang.dart.projectView.DartIconProvider" order="first" id="DartIconProvider"/>
     <projectViewNodeDecorator implementation="com.jetbrains.lang.dart.projectView.DartNodeDecorator"/>
 
