@@ -13,12 +13,13 @@
 // limitations under the License.
 package org.intellij.plugins.markdown.extensions
 
-import com.intellij.lang.xml.XMLLanguage
 import com.intellij.openapi.util.text.StringUtil
-import org.intellij.plugins.markdown.injection.LanguageGuesser
+import java.util.*
 
 internal class EscapingCodeFenceGeneratingProvider : MarkdownCodeFencePluginGeneratingProvider {
   override fun generateHtml(text: String): String = StringUtil.escapeXml(text)
 
-  override fun isApplicable(language: String): Boolean = (LanguageGuesser.INSTANCE.guessLanguage(language) is XMLLanguage)
+  override fun isApplicable(language: String): Boolean {
+    return Arrays.stream(MarkdownCodeFencePluginGeneratingProvider.EP_NAME.extensions).noneMatch({ it.isApplicable(language) })
+  }
 }
