@@ -19,7 +19,7 @@ import org.intellij.markdown.IElementType;
 import org.intellij.markdown.MarkdownElementTypes;
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor;
 import org.intellij.markdown.html.GeneratingProvider;
-import org.intellij.plugins.markdown.extensions.plantuml.PlantUMLPluginGeneratingProvider;
+import org.intellij.plugins.markdown.extensions.plantuml.PlantUMLProvider;
 import org.intellij.plugins.markdown.ui.preview.MarkdownCodeFenceGeneratingProvider;
 import org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCacheCollector;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +32,7 @@ public class CodeFencePluginFlavourDescriptor extends CommonMarkFlavourDescripto
     return ContainerUtil.newHashMap(Pair.create(MarkdownElementTypes.CODE_FENCE,
                                                 new MarkdownCodeFenceGeneratingProvider(
                                                   new MarkdownCodeFencePluginGeneratingProvider[]{
-                                                    new PlantUMLPluginGeneratingProvider(cacheCollector),
+                                                    new PlantUMLProvider(cacheCollector),
                                                     new EscapingCodeFenceGeneratingProvider()})));
   }
 }
