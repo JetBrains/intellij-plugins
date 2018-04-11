@@ -16,13 +16,9 @@ package org.intellij.plugins.markdown.extensions
 import com.intellij.openapi.application.PathManager
 import java.io.File
 
-interface MarkdownCodeFenceCacheablePluginGeneratingProvider : MarkdownCodeFencePluginGeneratingProvider {
+interface MarkdownCodeFenceCacheableProvider : MarkdownCodeFencePluginGeneratingProvider {
   /**
-   * Code fence plugin name; used for caching
+   * Code fence plugin cache path
    */
-  fun getCacheRootPath(): String
-
-  companion object {
-    val markdownCachePath = "${PathManager.getSystemPath()}${File.separator}markdown"
-  }
+  fun getCacheRootPath(): String = "${PathManager.getSystemPath()}${File.separator}markdown${File.separator}${javaClass.simpleName}"
 }

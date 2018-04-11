@@ -4,8 +4,7 @@ import com.intellij.openapi.util.io.FileUtil
 import net.sourceforge.plantuml.FileFormat
 import net.sourceforge.plantuml.FileFormatOption
 import net.sourceforge.plantuml.SourceStringReader
-import org.intellij.plugins.markdown.extensions.MarkdownCodeFenceCacheablePluginGeneratingProvider
-import org.intellij.plugins.markdown.extensions.MarkdownCodeFenceCacheablePluginGeneratingProvider.Companion.markdownCachePath
+import org.intellij.plugins.markdown.extensions.MarkdownCodeFenceCacheableProvider
 import org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCache.MARKDOWN_FILE_PATH_KEY
 import org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCacheCollector
 import org.intellij.plugins.markdown.ui.preview.MarkdownUtil
@@ -13,12 +12,9 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
-internal class PlantUMLPluginGeneratingProvider(private var cacheCollector: MarkdownCodeFencePluginCacheCollector?)
-  : MarkdownCodeFenceCacheablePluginGeneratingProvider {
+internal class PlantUMLProvider(private var cacheCollector: MarkdownCodeFencePluginCacheCollector?) : MarkdownCodeFenceCacheableProvider {
   // this empty constructor is needed for the component initialization
   constructor() : this(null)
-
-  override fun getCacheRootPath(): String = "$markdownCachePath${File.separator}plantUML"
 
   override fun generateHtml(text: String): String {
     val newDiagramFile = File("${getCacheRootPath()}${File.separator}" +
