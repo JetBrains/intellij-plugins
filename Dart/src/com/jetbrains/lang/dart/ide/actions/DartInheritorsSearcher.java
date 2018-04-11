@@ -46,7 +46,7 @@ import java.util.Set;
 public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, DefinitionsScopedSearch.SearchParameters> {
   @Override
   public void processQuery(@NotNull final DefinitionsScopedSearch.SearchParameters parameters,
-                           @NotNull final Processor<PsiElement> consumer) {
+                           @NotNull final Processor<? super PsiElement> consumer) {
     final Ref<VirtualFile> fileRef = Ref.create();
     final Ref<Integer> offsetRef = Ref.create();
     final Ref<DartComponentType> componentTypeRef = Ref.create();

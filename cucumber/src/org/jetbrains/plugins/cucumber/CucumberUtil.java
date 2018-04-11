@@ -88,7 +88,7 @@ public class CucumberUtil {
    */
   public static boolean findGherkinReferencesToElement(@NotNull final PsiElement stepDefinitionElement,
                                                        @NotNull final String regexp,
-                                                       @NotNull final Processor<PsiReference> consumer,
+                                                       @NotNull final Processor<? super PsiReference> consumer,
                                                        @NotNull final SearchScope effectiveSearchScope) {
     return findPossibleGherkinElementUsages(stepDefinitionElement, regexp,
                                             new MyReferenceCheckingProcessor(stepDefinitionElement, consumer),
@@ -217,10 +217,10 @@ public class CucumberUtil {
     @NotNull
     private final PsiElement myElementToFind;
     @NotNull
-    private final Processor<PsiReference> myConsumer;
+    private final Processor<? super PsiReference> myConsumer;
 
     private MyReferenceCheckingProcessor(@NotNull final PsiElement elementToFind,
-                                         @NotNull final Processor<PsiReference> consumer) {
+                                         @NotNull final Processor<? super PsiReference> consumer) {
       myElementToFind = elementToFind;
       myConsumer = consumer;
     }
