@@ -137,7 +137,7 @@ final class PubServerService extends NetService {
   @Override
   @NotNull
   protected Icon getConsoleToolWindowIcon() {
-    return DartIcons.Dart_13;
+    return DartIcons.PubServeToolWindow;
   }
 
   @NotNull
