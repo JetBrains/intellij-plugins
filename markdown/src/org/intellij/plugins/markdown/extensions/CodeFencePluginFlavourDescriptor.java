@@ -31,8 +31,6 @@ public class CodeFencePluginFlavourDescriptor extends CommonMarkFlavourDescripto
   public Map<IElementType, GeneratingProvider> createHtmlGeneratingProviders(@NotNull MarkdownCodeFencePluginCacheCollector cacheCollector) {
     return ContainerUtil.newHashMap(Pair.create(MarkdownElementTypes.CODE_FENCE,
                                                 new MarkdownCodeFenceGeneratingProvider(
-                                                  new MarkdownCodeFencePluginGeneratingProvider[]{
-                                                    new PlantUMLProvider(cacheCollector),
-                                                    new EscapingCodeFenceGeneratingProvider()})));
+                                                  new MarkdownCodeFencePluginGeneratingProvider[]{new PlantUMLProvider(cacheCollector)})));
   }
 }
