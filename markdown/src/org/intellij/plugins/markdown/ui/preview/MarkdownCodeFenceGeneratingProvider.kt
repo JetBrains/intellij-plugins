@@ -11,11 +11,11 @@ import java.util.*
 internal class MarkdownCodeFenceGeneratingProvider(private val pluginCacheProviders: Array<MarkdownCodeFencePluginGeneratingProvider>)
   : GeneratingProvider {
 
-  private fun pluginGeneratedHtml(language: String, codeFenceContent: String): String {
+  private fun pluginGeneratedHtml(language: String, codeFenceContent: String, codeFenceRawContent: String): String {
     return pluginCacheProviders
       .filter { it.isApplicable(language) }.stream()
       .findFirst()
-      .map { it.generateHtml(codeFenceContent) }
+      .map { it.generateHtml(codeFenceRawContent) }
       .orElse(codeFenceContent)
   }
 
@@ -35,10 +35,12 @@ internal class MarkdownCodeFenceGeneratingProvider(private val pluginCacheProvid
 
     val attributes = ArrayList<String>()
     var language: String? = null
+    val codeFenceRawContent = StringBuilder()
     val codeFenceContent = StringBuilder()
     for (child in childrenToConsider) {
       if (state == 1 && child.type in listOf(MarkdownTokenTypes.CODE_FENCE_CONTENT, MarkdownTokenTypes.EOL)) {
-        codeFenceContent.append(HtmlGenerator.trimIndents(codeFenceRawText(text, child), indentBefore))
+        codeFenceRawContent.append(HtmlGenerator.trimIndents(codeFenceRawText(text, child), indentBefore))
+        codeFenceContent.append(HtmlGenerator.trimIndents(codeFenceText(text, child), indentBefore))
         lastChildWasContent = child.type == MarkdownTokenTypes.CODE_FENCE_CONTENT
       }
       if (state == 0 && child.type == MarkdownTokenTypes.FENCE_LANG) {
@@ -52,7 +54,7 @@ internal class MarkdownCodeFenceGeneratingProvider(private val pluginCacheProvid
     }
 
     if (state == 1) {
-      visitor.consumeHtml(if (language != null) pluginGeneratedHtml(language, codeFenceContent.toString()) else codeFenceContent)
+      visitor.consumeHtml(if (language != null) pluginGeneratedHtml(language, codeFenceContent.toString(), codeFenceRawContent.toString()) else codeFenceContent)
     }
 
     if (state == 0) {
@@ -66,4 +68,7 @@ internal class MarkdownCodeFenceGeneratingProvider(private val pluginCacheProvid
 
   private fun codeFenceRawText(text: String, node: ASTNode): CharSequence =
     if (node.type != MarkdownTokenTypes.BLOCK_QUOTE) node.getTextInNode(text) else ""
+
+  private fun codeFenceText(text: String, node: ASTNode): CharSequence =
+    if (node.type != MarkdownTokenTypes.BLOCK_QUOTE) HtmlGenerator.leafText(text, node, false) else ""
 }
