@@ -1175,6 +1175,316 @@
       </ResourceType>
     </entry>
     <entry>
+      <string>AWS::AppSync::ApiKey</string>
+      <ResourceType>
+        <name>AWS::AppSync::ApiKey</name>
+        <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-apikey.html</url>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>Description</string>
+            <ResourceProperty>
+              <name>Description</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-apikey.html#cfn-appsync-apikey-description</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Expires</string>
+            <ResourceProperty>
+              <name>Expires</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: Number &lt;/p&gt;</type>
+              <required>true</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-apikey.html#cfn-appsync-apikey-expires</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>ApiId</string>
+            <ResourceProperty>
+              <name>ApiId</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-apikey.html#cfn-appsync-apikey-apiid</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="linked-hash-map"/>
+      </ResourceType>
+    </entry>
+    <entry>
+      <string>AWS::AppSync::DataSource</string>
+      <ResourceType>
+        <name>AWS::AppSync::DataSource</name>
+        <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-datasource.html</url>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>Type</string>
+            <ResourceProperty>
+              <name>Type</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>true</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-datasource.html#cfn-appsync-datasource-type</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Description</string>
+            <ResourceProperty>
+              <name>Description</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-datasource.html#cfn-appsync-datasource-description</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>ServiceRoleArn</string>
+            <ResourceProperty>
+              <name>ServiceRoleArn</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-datasource.html#cfn-appsync-datasource-servicerolearn</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>LambdaConfig</string>
+            <ResourceProperty>
+              <name>LambdaConfig</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-appsync-datasource-lambdaconfig.html&quot;&gt;AWS AppSync DataSource LambdaConfig&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-datasource.html#cfn-appsync-datasource-lambdaconfig</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>ApiId</string>
+            <ResourceProperty>
+              <name>ApiId</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>true</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-datasource.html#cfn-appsync-datasource-apiid</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Name</string>
+            <ResourceProperty>
+              <name>Name</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>true</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-datasource.html#cfn-appsync-datasource-name</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>DynamoDBConfig</string>
+            <ResourceProperty>
+              <name>DynamoDBConfig</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-appsync-datasource-dynamodbconfig.html&quot;&gt;AWS AppSync DataSource DynamoDBConfig&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-datasource.html#cfn-appsync-datasource-dynamodbconfig</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>ElasticsearchConfig</string>
+            <ResourceProperty>
+              <name>ElasticsearchConfig</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-appsync-datasource-elasticsearchconfig.html&quot;&gt;AWS AppSync DataSource ElasticsearchConfig&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-datasource.html#cfn-appsync-datasource-elasticsearchconfig</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="linked-hash-map"/>
+      </ResourceType>
+    </entry>
+    <entry>
+      <string>AWS::AppSync::GraphQLApi</string>
+      <ResourceType>
+        <name>AWS::AppSync::GraphQLApi</name>
+        <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-graphqlapi.html</url>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>UserPoolConfig</string>
+            <ResourceProperty>
+              <name>UserPoolConfig</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-appsync-graphqlapi-userpoolconfig.html&quot;&gt;AWS AppSync GraphQLApi UserPoolConfig&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-graphqlapi.html#cfn-appsync-graphqlapi-userpoolconfig</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Name</string>
+            <ResourceProperty>
+              <name>Name</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>true</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-graphqlapi.html#cfn-appsync-graphqlapi-name</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>AuthenticationType</string>
+            <ResourceProperty>
+              <name>AuthenticationType</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>true</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-graphqlapi.html#cfn-appsync-graphqlapi-authenticationtype</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>LogConfig</string>
+            <ResourceProperty>
+              <name>LogConfig</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-appsync-graphqlapi-logconfig.html&quot;&gt;AWS AppSync GraphQLApi LogConfig&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-graphqlapi.html#cfn-appsync-graphqlapi-logconfig</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="linked-hash-map"/>
+      </ResourceType>
+    </entry>
+    <entry>
+      <string>AWS::AppSync::GraphQLSchema</string>
+      <ResourceType>
+        <name>AWS::AppSync::GraphQLSchema</name>
+        <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-graphqlschema.html</url>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>Definition</string>
+            <ResourceProperty>
+              <name>Definition</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-graphqlschema.html#cfn-appsync-graphqlschema-definition</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>DefinitionS3Location</string>
+            <ResourceProperty>
+              <name>DefinitionS3Location</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-graphqlschema.html#cfn-appsync-graphqlschema-definitions3location</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>ApiId</string>
+            <ResourceProperty>
+              <name>ApiId</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>true</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-graphqlschema.html#cfn-appsync-graphqlschema-apiid</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="linked-hash-map"/>
+      </ResourceType>
+    </entry>
+    <entry>
+      <string>AWS::AppSync::Resolver</string>
+      <ResourceType>
+        <name>AWS::AppSync::Resolver</name>
+        <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-resolver.html</url>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>ResponseMappingTemplateS3Location</string>
+            <ResourceProperty>
+              <name>ResponseMappingTemplateS3Location</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-resolver.html#cfn-appsync-resolver-responsemappingtemplates3location</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>TypeName</string>
+            <ResourceProperty>
+              <name>TypeName</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>true</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-resolver.html#cfn-appsync-resolver-typename</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>DataSourceName</string>
+            <ResourceProperty>
+              <name>DataSourceName</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>true</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-resolver.html#cfn-appsync-resolver-datasourcename</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>RequestMappingTemplate</string>
+            <ResourceProperty>
+              <name>RequestMappingTemplate</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-resolver.html#cfn-appsync-resolver-requestmappingtemplate</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>ResponseMappingTemplate</string>
+            <ResourceProperty>
+              <name>ResponseMappingTemplate</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-resolver.html#cfn-appsync-resolver-responsemappingtemplate</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>RequestMappingTemplateS3Location</string>
+            <ResourceProperty>
+              <name>RequestMappingTemplateS3Location</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-resolver.html#cfn-appsync-resolver-requestmappingtemplates3location</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>ApiId</string>
+            <ResourceProperty>
+              <name>ApiId</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>true</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-resolver.html#cfn-appsync-resolver-apiid</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>FieldName</string>
+            <ResourceProperty>
+              <name>FieldName</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>true</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-resolver.html#cfn-appsync-resolver-fieldname</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="linked-hash-map"/>
+      </ResourceType>
+    </entry>
+    <entry>
       <string>AWS::ApplicationAutoScaling::ScalableTarget</string>
       <ResourceType>
         <name>AWS::ApplicationAutoScaling::ScalableTarget</name>
@@ -1477,6 +1787,16 @@
               <type>&lt;p&gt;&lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
               <required>false</required>
               <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html#cfn-as-group-launchconfigurationname</url>
+              <updateRequires>&lt;p&gt;&lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>LaunchTemplate</string>
+            <ResourceProperty>
+              <name>LaunchTemplate</name>
+              <type>&lt;p&gt;&lt;em&gt;Type&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-autoscaling-autoscalinggroup-launchtemplatespecification.html&quot;&gt;Auto Scaling AutoScalingGroup LaunchTemplateSpecification&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html#cfn-as-group-launchtemplate</url>
               <updateRequires>&lt;p&gt;&lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -2657,15 +2977,15 @@
       <string>AWS::CloudFront::Distribution</string>
       <ResourceType>
         <name>AWS::CloudFront::Distribution</name>
-        <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution.html</url>
+        <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cloudfront-distribution.html</url>
         <properties class="linked-hash-map">
           <entry>
             <string>DistributionConfig</string>
             <ResourceProperty>
               <name>DistributionConfig</name>
-              <type>&lt;p&gt;&lt;em&gt;Type&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distributionconfig.html&quot;&gt;DistributionConfig&lt;/a&gt; type &lt;/p&gt;</type>
+              <type>&lt;p&gt;&lt;em&gt;Type&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution-distributionconfig.html&quot;&gt;DistributionConfig&lt;/a&gt; type &lt;/p&gt;</type>
               <required>true</required>
-              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution.html#cfn-cloudfront-distribution-distributionconfig</url>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cloudfront-distribution.html#cfn-cloudfront-distribution-distributionconfig</url>
               <updateRequires>&lt;p&gt;&lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -2673,9 +2993,9 @@
             <string>Tags</string>
             <ResourceProperty>
               <name>Tags</name>
-              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: List of &lt;/p&gt;</type>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: List of &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-streamingdistribution-tag.html&quot;&gt;&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
-              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution.html#cfn-cloudfront-distribution-tags</url>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cloudfront-distribution.html#cfn-cloudfront-distribution-tags</url>
               <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -4243,6 +4563,36 @@
       </ResourceType>
     </entry>
     <entry>
+      <string>AWS::Config::AggregationAuthorization</string>
+      <ResourceType>
+        <name>AWS::Config::AggregationAuthorization</name>
+        <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-config-aggregationauthorization.html</url>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>AuthorizedAccountId</string>
+            <ResourceProperty>
+              <name>AuthorizedAccountId</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>true</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-config-aggregationauthorization.html#cfn-config-aggregationauthorization-authorizedaccountid</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>AuthorizedAwsRegion</string>
+            <ResourceProperty>
+              <name>AuthorizedAwsRegion</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>true</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-config-aggregationauthorization.html#cfn-config-aggregationauthorization-authorizedawsregion</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="linked-hash-map"/>
+      </ResourceType>
+    </entry>
+    <entry>
       <string>AWS::Config::ConfigRule</string>
       <ResourceType>
         <name>AWS::Config::ConfigRule</name>
@@ -4329,6 +4679,46 @@
             </ResourceAttribute>
           </entry>
         </attributes>
+      </ResourceType>
+    </entry>
+    <entry>
+      <string>AWS::Config::ConfigurationAggregator</string>
+      <ResourceType>
+        <name>AWS::Config::ConfigurationAggregator</name>
+        <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-config-configurationaggregator.html</url>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>AccountAggregationSources</string>
+            <ResourceProperty>
+              <name>AccountAggregationSources</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: List of &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-config-configurationaggregator-accountaggregationsource.html&quot;&gt;AWS Config ConfigurationAggregator AccountAggregationSource&lt;/a&gt; property types &lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-config-configurationaggregator.html#cfn-config-configurationaggregator-accountaggregationsources</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>OrganizationAggregationSource</string>
+            <ResourceProperty>
+              <name>OrganizationAggregationSource</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-config-configurationaggregator-organizationaggregationsource.html&quot;&gt;AWS Config ConfigurationAggregator OrganizationAggregationSource&lt;/a&gt; &lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-config-configurationaggregator.html#cfn-config-configurationaggregator-organizationaggregationsource</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>ConfigurationAggregatorName</string>
+            <ResourceProperty>
+              <name>ConfigurationAggregatorName</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>true</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-config-configurationaggregator.html#cfn-config-configurationaggregator-configurationaggregatorname</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="linked-hash-map"/>
       </ResourceType>
     </entry>
     <entry>
@@ -6325,6 +6715,36 @@
               <required>false</required>
               <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-internetgateway.html#cfn-ec2-internetgateway-tags</url>
               <updateRequires>&lt;p&gt;&lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="linked-hash-map"/>
+      </ResourceType>
+    </entry>
+    <entry>
+      <string>AWS::EC2::LaunchTemplate</string>
+      <ResourceType>
+        <name>AWS::EC2::LaunchTemplate</name>
+        <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-launchtemplate.html</url>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>LaunchTemplateName</string>
+            <ResourceProperty>
+              <name>LaunchTemplateName</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: String &lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-launchtemplate.html#cfn-ec2-launchtemplate-launchtemplatename</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt; &lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>LaunchTemplateData</string>
+            <ResourceProperty>
+              <name>LaunchTemplateData</name>
+              <type>&lt;p&gt; &lt;em&gt;Type&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-launchtemplate-launchtemplatedata.html&quot;&gt;Amazon EC2 LaunchTemplate LaunchTemplateData&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-launchtemplate.html#cfn-ec2-launchtemplate-launchtemplatedata</url>
+              <updateRequires>&lt;p&gt; &lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; &lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
         </properties>
@@ -16322,7 +16742,7 @@
             <string>BucketEncryption</string>
             <ResourceProperty>
               <name>BucketEncryption</name>
-              <type>&lt;p&gt;&lt;em&gt;Type&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-bucketencryption.html&quot;&gt;Amazon EC2 Bucket BucketEncryption&lt;/a&gt;&lt;/p&gt;</type>
+              <type>&lt;p&gt;&lt;em&gt;Type&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-bucketencryption.html&quot;&gt;Amazon S3 Bucket BucketEncryption&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
               <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#cfn-s3-bucket-bucketencryption</url>
               <updateRequires>&lt;p&gt;&lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -18653,7 +19073,7 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="kotlin.collections.EmptyMap" reference="../../../entry[262]/ResourceType/attributes"/>
+        <attributes class="kotlin.collections.EmptyMap" reference="../../../entry[270]/ResourceType/attributes"/>
       </ResourceType>
     </entry>
   </resourceTypes>

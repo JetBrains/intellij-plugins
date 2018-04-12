@@ -147,7 +147,7 @@ User Guide (API Version 2010-05-15)
           o Using CloudFormer to Create Templates
     * Working with AWS CloudFormation StackSets
           o StackSets Concepts
-          o Prerequisites
+          o Prerequisites: Granting Permissions for Stack Set Operations
           o Getting Started
                 + Create a New Stack Set
                 + Update Your Stack Set
@@ -183,6 +183,11 @@ User Guide (API Version 2010-05-15)
                 + AWS::ApiGateway::VpcLink
                 + AWS::ApplicationAutoScaling::ScalableTarget
                 + AWS::ApplicationAutoScaling::ScalingPolicy
+                + AWS::AppSync::ApiKey
+                + AWS::AppSync::DataSource
+                + AWS::AppSync::GraphQLApi
+                + AWS::AppSync::GraphQLSchema
+                + AWS::AppSync::Resolver
                 + AWS::Athena::NamedQuery
                 + AWS::AutoScaling::AutoScalingGroup
                 + AWS::AutoScaling::LaunchConfiguration
@@ -221,7 +226,9 @@ User Guide (API Version 2010-05-15)
                 + AWS::Cognito::UserPoolGroup
                 + AWS::Cognito::UserPoolUser
                 + AWS::Cognito::UserPoolUserToGroupAttachment
+                + AWS::Config::AggregationAuthorization
                 + AWS::Config::ConfigRule
+                + AWS::Config::ConfigurationAggregator
                 + AWS::Config::ConfigurationRecorder
                 + AWS::Config::DeliveryChannel
                 + AWS::DataPipeline::Pipeline
@@ -246,6 +253,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::EC2::Host
                 + AWS::EC2::Instance
                 + AWS::EC2::InternetGateway
+                + AWS::EC2::LaunchTemplate
                 + AWS::EC2::NatGateway
                 + AWS::EC2::NetworkAcl
                 + AWS::EC2::NetworkAclEntry
@@ -452,9 +460,15 @@ User Guide (API Version 2010-05-15)
                 + Application Auto Scaling ScalableTarget
                   ScalableTargetAction
                 + Application Auto Scaling ScalableTarget ScheduledAction
+                + AWS AppSync DataSource DynamoDBConfig
+                + AWS AppSync DataSource ElasticsearchConfig
+                + AWS AppSync DataSource LambdaConfig
+                + AWS AppSync GraphQLApi LogConfig
+                + AWS AppSync GraphQLApi UserPoolConfig
                 + AutoScaling Block Device Mapping
                 + AutoScaling EBS Block Device
                 + Auto Scaling AutoScalingGroup LifecycleHookSpecification
+                + Auto Scaling AutoScalingGroup LaunchTemplateSpecification
                 + Auto Scaling AutoScalingGroup MetricsCollection
                 + Auto Scaling AutoScalingGroup NotificationConfiguration
                 + Auto Scaling AutoScalingGroup TagProperty
@@ -480,21 +494,21 @@ User Guide (API Version 2010-05-15)
                 + AWS CloudFormation Interface ParameterLabel
                 + CloudFront CloudFrontOriginAccessIdentity
                   CloudFrontOriginAccessIdentityConfig
-                + CloudFront DistributionConfig
-                + CloudFront DistributionConfig CacheBehavior
-                + CloudFront DistributionConfig CustomErrorResponse
-                + CloudFront DefaultCacheBehavior
+                + CloudFront Distribution CacheBehavior
+                + CloudFront Distribution Cookies
+                + CloudFront Distribution CustomErrorResponse
+                + CloudFront Distribution CustomOriginConfig
+                + CloudFront Distribution DefaultCacheBehavior
+                + CloudFront Distribution DistributionConfig
+                + CloudFront Distribution ForwardedValues
+                + CloudFront Distribution GeoRestriction
                 + CloudFront Distribution LambdaFunctionAssociation
-                + CloudFront Logging
-                + CloudFront DistributionConfig Origin
-                + CloudFront DistributionConfig Origin CustomOriginConfig
-                + CloudFront DistributionConfig Origin OriginCustomHeader
-                + CloudFront DistributionConfig Origin S3Origin
-                + CloudFront DistributionConfiguration Restrictions
-                + CloudFront DistributionConfig Restrictions GeoRestriction
-                + CloudFront DistributionConfiguration ViewerCertificate
-                + CloudFront ForwardedValues
-                + CloudFront ForwardedValues Cookies
+                + CloudFront Distribution Logging
+                + CloudFront Distribution Origin
+                + CloudFront Distribution OriginCustomHeader
+                + CloudFront Distribution Restrictions
+                + CloudFront Distribution S3Origin
+                + CloudFront Distribution ViewerCertificate
                 + CloudFront StreamingDistribution Logging
                 + CloudFront StreamingDistribution S3Origin
                 + CloudFront StreamingDistribution
@@ -574,6 +588,10 @@ User Guide (API Version 2010-05-15)
                 + AWS Config ConfigRule Scope
                 + AWS Config ConfigRule Source
                 + AWS Config ConfigRule SourceDetails
+                + AWS Config ConfigurationAggregator
+                  AccountAggregationSource
+                + AWS Config ConfigurationAggregator
+                  OrganizationAggregationSource
                 + AWS Config ConfigurationRecorder RecordingGroup
                 + AWS Config DeliveryChannel
                   ConfigSnapshotDeliveryProperties
@@ -603,6 +621,20 @@ User Guide (API Version 2010-05-15)
                 + Amazon EC2 Instance ElasticGpuSpecification
                 + Amazon EC2 Instance SsmAssociations AssociationParameters
                 + Amazon EC2 Instance SsmAssociations
+                + Amazon EC2 LaunchTemplate BlockDeviceMapping
+                + Amazon EC2 LaunchTemplate CreditSpecification
+                + Amazon EC2 LaunchTemplate Ebs
+                + Amazon EC2 LaunchTemplate ElasticGpuSpecification
+                + Amazon EC2 LaunchTemplate IamInstanceProfile
+                + Amazon EC2 LaunchTemplate InstanceMarketOptions
+                + Amazon EC2 LaunchTemplate Ipv6Add
+                + Amazon EC2 LaunchTemplate LaunchTemplateData
+                + Amazon EC2 LaunchTemplate Monitoring
+                + Amazon EC2 LaunchTemplate NetworkInterface
+                + Amazon EC2 LaunchTemplate Placement
+                + Amazon EC2 LaunchTemplate PrivateIpAdd
+                + Amazon EC2 LaunchTemplate SpotOptions
+                + Amazon EC2 LaunchTemplate TagSpecification
                 + EC2 MountPoint
                 + EC2 Network Interface
                 + EC2 NetworkAclEntry Icmp
@@ -614,7 +646,10 @@ User Guide (API Version 2010-05-15)
                 + Amazon EC2 SpotFleet LaunchSpecifications
                 + Amazon EC2 SpotFleet BlockDeviceMappings
                 + Amazon EC2 SpotFleet Ebs
+                + Amazon EC2 SpotFleet FleetLaunchTemplateSpecification
                 + Amazon EC2 SpotFleet IamInstanceProfile
+                + Amazon EC2 SpotFleet LaunchTemplateConfig
+                + Amazon EC2 SpotFleet LaunchTemplateOverrides
                 + Amazon EC2 SpotFleet Monitoring
                 + Amazon EC2 SpotFleet NetworkInterfaces
                 + Amazon EC2 SpotFleet PrivateIpAddresses
@@ -878,7 +913,7 @@ User Guide (API Version 2010-05-15)
                 + Amazon S3 Bucket AccelerateConfiguration
                 + Amazon S3 Bucket AccessControlTranslation
                 + Amazon S3 Bucket AnalyticsConfiguration
-                + Amazon EC2 Bucket BucketEncryption
+                + Amazon S3 Bucket BucketEncryption
                 + Amazon S3 Bucket CorsConfiguration
                 + Amazon S3 Bucket CorsRule
                 + Amazon S3 Bucket DataExport
@@ -899,8 +934,8 @@ User Guide (API Version 2010-05-15)
                 + Amazon S3 Bucket ReplicationRule
                 + Amazon S3 Bucket Rule
                 + Amazon S3 Bucket S3KeyFilter
-                + Amazon EC2 Bucket ServerSideEncryptionRule
-                + Amazon EC2 Bucket ServerSideEncryptionByDefault
+                + Amazon S3 Bucket ServerSideEncryptionRule
+                + Amazon S3 Bucket ServerSideEncryptionByDefault
                 + Amazon S3 Bucket SseKmsEncryptedObjects
                 + Amazon S3 Bucket SourceSelectionCriteria
                 + Amazon S3 Bucket StorageClassAnalysis
@@ -998,12 +1033,12 @@ User Guide (API Version 2010-05-15)
                 + UpdatePolicy
           o Intrinsic Functions
                 + Fn::Base64
+                + Fn::Cidr
                 + Condition Functions
                       # Sample Templates
                 + Fn::FindInMap
                 + Fn::GetAtt
                 + Fn::GetAZs
-                + Fn::GetCidr
                 + Fn::ImportValue
                 + Fn::Join
                 + Fn::Select
@@ -1092,12 +1127,121 @@ since the preceding release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
 
-New Fn::GetCidr intrinsic function
+Stack set naming convention
+
+April 10, 2018
+
+AWS CloudFormation stacks created using stack sets now follow a new naming 
+convention, in which the stack name contains the stack set name.
+
+2010-05-15
+
+New resources
+
+April 10, 2018
+
+AWS::AppSync::ApiKey
+
+    Use the AWS::AppSync::ApiKey resource to create a unique key that you
+    can distribute to clients who are executing GraphQL operations with AWS
+    AppSync.
+
+AWS::AppSync::DataSource
+
+    Use the AWS::AppSync::DataSource resource to create data sources for
+    resolvers in AWS AppSync.
+
+AWS::AppSync::GraphQLApi
+
+    Use the AWS::AppSync::GraphQLApi resource to create a new AWS AppSync
+    GraphQL API.
+
+AWS::AppSync::GraphQLSchema
+
+    Use the AWS::AppSync::GraphQLSchema resource to create the data model
+    for your AWS AppSync GraphQL API.
+
+AWS::AppSync::Resolver
+
+    Use the AWS::AppSync::Resolver resource to define the logical GraphQL
+    resolver that you will attach to fields in a schema.
+
+2010-05-15
+
+Updated resource
+
+April 10, 2018
+
+AWS::Config::ConfigurationAggregator
+
+    Use the OrganizationAggregationSource property type to specify the
+    regions of AWS Config data to aggregate into an AWS Config
+    configuration aggregator and the IAM role to use to retrieve AWS
+    Organizations details.
+
+2010-05-15
+
+New resources
+
+April 4, 2018
+
+AWS::Config::AggregationAuthorization
+
+    Use the AWS::Config::AggregationAuthorization resource to grant
+    permission to an aggregator account to collect your AWS Config data.
+
+AWS::Config::ConfigurationAggregator
+
+    Use the AWS::Config::ConfigurationAggregator resource to create a
+    configuration aggregator for AWS Config.
+
+2010-05-15
+
+Stack sets now support customized administrator roles
+
+March 29, 2018
+
+Use customized administrator roles to control which users or groups can 
+manage specific stack sets within the same administrator account. For more 
+information, see Prerequisites: Granting Permissions for Stack Set 
+Operations.
+
+2010-05-15
+
+New resource
+
+March 29, 2018
+
+AWS::EC2::LaunchTemplate
+
+    Use the AWS::EC2::LaunchTemplate resource to create a launch template
+    for an Amazon EC2 instance.
+
+2010-05-15
+
+Updated resources
+
+March 29, 2018
+
+AWS::AutoScaling::AutoScalingGroup
+
+    Use the LaunchTemplate property to specify the launch template to use
+    to launch instances.
+
+AWS::EC2::SpotFleet
+
+    In the Amazon EC2 SpotFleet SpotFleetRequestConfigData property type,
+    use the LaunchTemplateConfigs property to describe a launch template
+    and overrides.
+
+2010-05-15
+
+New Fn::Cidr intrinsic function
 
 March 6, 2018
 
 Returns the specified Cidr address block. For more information, see 
-Fn::GetCidr.
+Fn::Cidr.
 
 2010-05-15
 
@@ -3060,11 +3204,11 @@ November 03, 2016
 
 AWS::CloudFront::Distribution
 
-    For the CloudFront DistributionConfig property, use the HttpVersion 
-    property to specify the latest HTTP version that viewers can use to
-    communicate with Amazon CloudFront.
+    For the CloudFront Distribution DistributionConfig property, use the 
+    HttpVersion property to specify the latest HTTP version that viewers
+    can use to communicate with Amazon CloudFront.
 
-    For the CloudFront ForwardedValues property, use the 
+    For the CloudFront Distribution ForwardedValues property, use the 
     QueryStringCacheKeys property to specify the query string parameters
     that CloudFront uses to determine which content to cache.
 
@@ -4325,7 +4469,7 @@ Amazon CloudFront forwarded values
 September 29, 2014
 
 For cache behaviors, you can forward headers to the origin. See CloudFront 
-ForwardedValues.
+Distribution ForwardedValues.
 
 2010-05-15
 
