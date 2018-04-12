@@ -1140,6 +1140,19 @@ import BComponent from 'b-component'
       myFixture.checkHighlighting()
     })
   }
+
+  fun testFlowJSEmbeddedContent() {
+    JSTestUtils.testWithinLanguageLevel<Exception>(JSLanguageLevel.FLOW, project) {
+      myFixture.configureByText("FlowJSEmbeddedContent.vue", """
+<script>
+    type Foo = { a: number }
+    const foo: Foo = { a: 1 }
+    console.log(foo);
+</script>
+""")
+      myFixture.checkHighlighting()
+    }
+  }
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
