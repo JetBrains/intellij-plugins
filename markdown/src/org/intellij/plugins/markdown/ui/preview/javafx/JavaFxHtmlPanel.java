@@ -260,7 +260,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
     public void openInExternalBrowser(@NotNull String link) {
       String fileURI = link;
-      String anchor = "";
+      String anchor = null;
       if (link.contains("#")) {
         fileURI = Objects.requireNonNull(StringUtil.substringBefore(link, "#"));
         anchor = Objects.requireNonNull(StringUtil.substringAfter(link, "#"));
