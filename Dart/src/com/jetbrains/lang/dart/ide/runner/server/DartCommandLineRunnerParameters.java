@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
@@ -22,7 +35,7 @@ import java.util.Map;
 public class DartCommandLineRunnerParameters implements Cloneable {
   private @Nullable String myFilePath = null;
   private @Nullable String myVMOptions = null;
-  private boolean myCheckedMode = true;
+  private boolean myCheckedModeOrEnableAsserts = true;
   private @Nullable String myArguments = null;
   private @Nullable String myWorkingDirectory = null;
   private @NotNull Map<String, String> myEnvs = new LinkedHashMap<>();
@@ -66,12 +79,19 @@ public class DartCommandLineRunnerParameters implements Cloneable {
     myVMOptions = vmOptions;
   }
 
-  public boolean isCheckedMode() {
-    return myCheckedMode;
+  /**
+   * For Dart 2 it means 'enable asserts' flag; for Dart 1 - 'checked mode' flag
+   */
+  @OptionTag("checkedMode") // compatibility
+  public boolean isCheckedModeOrEnableAsserts() {
+    return myCheckedModeOrEnableAsserts;
   }
 
-  public void setCheckedMode(final boolean checkedMode) {
-    myCheckedMode = checkedMode;
+  /**
+   * For Dart 2 it means 'enable asserts' flag; for Dart 1 - 'checked mode' flag
+   */
+  public void setCheckedModeOrEnableAsserts(final boolean checkedModeOrEnableAsserts) {
+    myCheckedModeOrEnableAsserts = checkedModeOrEnableAsserts;
   }
 
   @Nullable

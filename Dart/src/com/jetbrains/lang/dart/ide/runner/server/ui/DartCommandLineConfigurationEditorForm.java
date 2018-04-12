@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.ide.runner.server.ui;
 
 import com.intellij.execution.ExecutionBundle;
@@ -22,6 +35,7 @@ import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunnerParameters;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -31,7 +45,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
   private JLabel myDartFileLabel;
   private TextFieldWithBrowseButton myFileField;
   private RawCommandLineEditor myVMOptions;
-  private JBCheckBox myCheckedModeCheckBox;
+  private JBCheckBox myCheckedModeOrEnableAssertsCheckBox;
   private RawCommandLineEditor myArguments;
   private TextFieldWithBrowseButton myWorkingDirectory;
   private EnvironmentVariablesComponent myEnvironmentVariables;
@@ -41,6 +55,15 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
 
     myWorkingDirectory.addBrowseFolderListener(ExecutionBundle.message("select.working.directory.message"), null, project,
                                                FileChooserDescriptorFactory.createSingleFolderDescriptor());
+
+    final DartSdk sdk = DartSdk.getDartSdk(project);
+    if (sdk != null && StringUtil.compareVersionNumbers(sdk.getVersion(), "2") < 0) {
+      myCheckedModeOrEnableAssertsCheckBox.setText("Checked mode");
+      myCheckedModeOrEnableAssertsCheckBox.setMnemonic('c');
+    } else {
+      myCheckedModeOrEnableAssertsCheckBox.setText("Enable asserts");
+      myCheckedModeOrEnableAssertsCheckBox.setMnemonic('l');
+    }
 
     myVMOptions.setDialogCaption(DartBundle.message("config.vmoptions.caption"));
     myArguments.setDialogCaption(DartBundle.message("config.progargs.caption"));
@@ -82,7 +105,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
     myFileField.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getFilePath())));
     myArguments.setText(StringUtil.notNullize(parameters.getArguments()));
     myVMOptions.setText(StringUtil.notNullize(parameters.getVMOptions()));
-    myCheckedModeCheckBox.setSelected(parameters.isCheckedMode());
+    myCheckedModeOrEnableAssertsCheckBox.setSelected(parameters.isCheckedModeOrEnableAsserts());
     myWorkingDirectory.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getWorkingDirectory())));
     myEnvironmentVariables.setEnvs(parameters.getEnvs());
     myEnvironmentVariables.setPassParentEnvs(parameters.isIncludeParentEnvs());
@@ -95,7 +118,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
     parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText().trim()), true));
     parameters.setArguments(StringUtil.nullize(myArguments.getText(), true));
     parameters.setVMOptions(StringUtil.nullize(myVMOptions.getText(), true));
-    parameters.setCheckedMode(myCheckedModeCheckBox.isSelected());
+    parameters.setCheckedModeOrEnableAsserts(myCheckedModeOrEnableAssertsCheckBox.isSelected());
     parameters.setWorkingDirectory(StringUtil.nullize(FileUtil.toSystemIndependentName(myWorkingDirectory.getText().trim()), true));
     parameters.setEnvs(myEnvironmentVariables.getEnvs());
     parameters.setIncludeParentEnvs(myEnvironmentVariables.isPassParentEnvs());

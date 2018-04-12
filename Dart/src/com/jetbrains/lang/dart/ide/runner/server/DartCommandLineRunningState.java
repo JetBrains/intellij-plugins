@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ExecutionException;
@@ -19,6 +32,7 @@ import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
@@ -157,12 +171,13 @@ public class DartCommandLineRunningState extends CommandLineState {
     commandLine.getEnvironment().putAll(myRunnerParameters.getEnvs());
     commandLine
       .withParentEnvironmentType(myRunnerParameters.isIncludeParentEnvs() ? ParentEnvironmentType.CONSOLE : ParentEnvironmentType.NONE);
-    setupParameters(commandLine, overriddenMainFilePath);
+    setupParameters(sdk, commandLine, overriddenMainFilePath);
 
     return commandLine;
   }
 
-  private void setupParameters(@NotNull final GeneralCommandLine commandLine,
+  private void setupParameters(@NotNull final DartSdk sdk,
+                               @NotNull final GeneralCommandLine commandLine,
                                @Nullable final String overriddenMainFilePath) throws ExecutionException {
     int customObservatoryPort = -1;
 
@@ -188,8 +203,13 @@ public class DartCommandLineRunningState extends CommandLineState {
       }
     }
 
-    if (myRunnerParameters.isCheckedMode()) {
-      commandLine.addParameter(DartiumUtil.CHECKED_MODE_OPTION);
+    if (myRunnerParameters.isCheckedModeOrEnableAsserts()) {
+      if (StringUtil.compareVersionNumbers(sdk.getVersion(), "2") < 0) {
+        commandLine.addParameter(DartiumUtil.CHECKED_MODE_OPTION);
+      }
+      else {
+        commandLine.addParameter("--enable-asserts");
+      }
     }
 
     final VirtualFile dartFile;
