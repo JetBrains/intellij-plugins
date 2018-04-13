@@ -17,9 +17,10 @@
     <orderEntry type="module" module-name="intellij.platform.testFramework" exported="" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.testFramework" exported="" scope="TEST" />
     <orderEntry type="module-library" exported="">
-      <library>
+      <library type="repository">
+        <properties maven-id="org.jetbrains:markdown:0.1.28" />
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/intellij-markdown.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/markdown/0.1.28/markdown-0.1.28.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
