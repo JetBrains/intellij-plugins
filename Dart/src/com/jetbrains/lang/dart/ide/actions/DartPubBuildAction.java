@@ -61,7 +61,7 @@ public class DartPubBuildAction extends DartPubActionBase {
     if (DartWebdev.INSTANCE.useWebdev(sdk)) {
       if (!DartWebdev.INSTANCE.ensureWebdevActivated(project)) return null;
 
-      return new String[]{"global", "run", "webdev", "build", "--output=" + dialog.getOutputFolder()};
+      return new String[]{"global", "run", "webdev", "build", "--output=" + dialog.getInputFolder() + ":" + dialog.getOutputFolder()};
     }
 
     return new String[]{"build", "--mode=" + dialog.getPubBuildMode(), "--output=" + dialog.getOutputFolder()};
