@@ -1,7 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Schema for .prettierrc",
-  "id": "https://github.com/SchemaStore/schemastore/tree/master/src/schemas/json/prettierrc.json",
+
+  "id": "http://json.schemastore.org/prettierrc-1.8.2",
   "definitions": {
     "optionsDefinition": {
       "properties": {

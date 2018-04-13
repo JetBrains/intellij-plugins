@@ -5051,8 +5051,7 @@
                     },
                     {
                       "$ref": "#/definitions/tsRules/properties/prefer-readonly/definitions/options/items"
-                    }
-                  ]
+                    }]
                 },
                 "severity": {}
               },
