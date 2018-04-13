@@ -23,12 +23,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.ruby.motion.RubyMotionUtil;
 import org.jetbrains.plugins.ruby.ruby.RubyUtil;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.*;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * @author Dennis.Ushakov
@@ -45,13 +47,26 @@ public class FrameworkDependencyResolver {
   public FrameworkDependencyResolver(final BridgeSupportLoader loader) {
     myLoader = loader;
     //noinspection ConstantConditions
-    for (File child : getScriptsDir().listFiles()) {
-      final String name = child.getName();
+    final Stream<Path> childrenStream;
+    try {
+      childrenStream = Files.list(getScriptsDir());
+    }
+    catch (IOException e) {
+      LOG.error(e);
+      return;
+    }
+    
+    childrenStream.forEach((child) -> {
+      final String name = child.getFileName().toString();
       if (name.endsWith(".yaml") && name.startsWith("dependencies.")) {
         try {
-          final FileInputStream is = new FileInputStream(child);
+          final InputStream is = Files.newInputStream(child);
           try {
             final Map map = RubyUtil.loadYaml(is);
+            if (map == null) {
+              return;
+            }
+            
             final Map<String, List<String>> result = new HashMap<>();
             for (Object key : map.keySet()) {
               final ArrayList list = (ArrayList)map.get(key);
@@ -71,7 +86,7 @@ public class FrameworkDependencyResolver {
           LOG.error(e);
         }
       }
-    }
+    });
   }
 
   public Collection<Framework> getFrameworks(final Module module) {
@@ -107,16 +122,26 @@ public class FrameworkDependencyResolver {
   }
 
   @NotNull
-  static File getScriptsDir() {
+  static Path getScriptsDir() {
     URL dirUrl = FrameworkDependencyResolver.class.getResource("/rb/motion");
-    File dir;
+
+    final URI uri;
     try {
-      dir = new File(dirUrl.toURI());
+      uri = dirUrl.toURI();
     }
     catch (URISyntaxException e) {
       throw new AssertionError("Incorrect scripts dir uri");
     }
-    assert dir.exists();
-    return dir;
+
+    try {
+      FileSystems.newFileSystem(uri, new HashMap<>());
+    }
+    catch (IllegalArgumentException | FileSystemAlreadyExistsException | IOException ignore) {
+    }
+    
+    final Path path = Paths.get(uri);
+    
+    assert Files.exists(path);
+    return path;
   }
 }
