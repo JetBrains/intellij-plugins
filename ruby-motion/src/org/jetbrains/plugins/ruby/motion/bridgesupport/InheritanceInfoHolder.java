@@ -20,11 +20,15 @@ import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.ruby.ruby.RubyUtil;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
+
+import static org.jetbrains.plugins.ruby.motion.bridgesupport.FrameworkDependencyResolver.getScriptsDir;
 
 /**
  * @author Dennis.Ushakov
@@ -39,13 +43,26 @@ public class InheritanceInfoHolder {
 
   public InheritanceInfoHolder() {
     //noinspection ConstantConditions
-    for (File child : FrameworkDependencyResolver.getScriptsDir().listFiles()) {
-      final String name = child.getName();
+    final Stream<Path> childrenStream;
+    try {
+      childrenStream = Files.list(getScriptsDir());
+    }
+    catch (IOException e) {
+      LOG.error(e);
+      return;
+    }
+
+    childrenStream.forEach((child) -> {
+      final String name = child.getFileName().toString();
       if (name.endsWith(".yaml") && name.startsWith("inheritance.")) {
         try {
-          final FileInputStream is = new FileInputStream(child);
+          final InputStream is = Files.newInputStream(child);
           try {
             final Map map = RubyUtil.loadYaml(is);
+            if (map == null) {
+              return;
+            }
+            
             final Map<String, String> result = new HashMap<>();
             for (Object key : map.keySet()) {
               result.put(key.toString(), map.get(key).toString());
@@ -58,7 +75,7 @@ public class InheritanceInfoHolder {
           LOG.error(e);
         }
       }
-    }
+    });
   }
 
   @Nullable
