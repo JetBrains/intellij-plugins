@@ -17,7 +17,6 @@ package org.jetbrains.plugins.ruby.motion.symbols;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.module.Module;
-import com.jetbrains.cidr.CocoaDocumentationManagerImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.ruby.motion.bridgesupport.Constant;
@@ -56,11 +55,12 @@ public class ConstantSymbol extends RTypedSyntheticSymbol implements MotionSymbo
     return myConstant instanceof org.jetbrains.plugins.ruby.motion.bridgesupport.Enum ? AllIcons.Nodes.Enum : null;
   }
 
+  @NotNull
   @Override
-  public CocoaDocumentationManagerImpl.DocTokenType getInfoType() {
+  public MotionDocType getInfoType() {
     return myConstant instanceof org.jetbrains.plugins.ruby.motion.bridgesupport.Enum ?
-           CocoaDocumentationManagerImpl.DocTokenType.ENUM_CONSTANT :
-           CocoaDocumentationManagerImpl.DocTokenType.CLASS_CONSTANT;
+           MotionSymbol.MotionDocType.ENUM_CONSTANT :
+           MotionSymbol.MotionDocType.CLASS_CONSTANT;
   }
 
   @Override

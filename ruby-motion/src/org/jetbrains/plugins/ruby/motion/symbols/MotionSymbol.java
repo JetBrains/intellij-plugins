@@ -15,13 +15,24 @@
  */
 package org.jetbrains.plugins.ruby.motion.symbols;
 
-import com.jetbrains.cidr.CocoaDocumentationManagerImpl;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Dennis.Ushakov
  */
 public interface MotionSymbol {
-  CocoaDocumentationManagerImpl.DocTokenType getInfoType();
+  @NotNull
+  MotionDocType getInfoType();
 
   String getInfoName();
+
+  enum MotionDocType {
+    ENUM_CONSTANT,
+    CLASS_CONSTANT,
+    CLASS_METHOD,
+    INSTANCE_METHOD,
+    FUNCTION,
+    CLASS,
+    TYPEDEF
+  }
 }
