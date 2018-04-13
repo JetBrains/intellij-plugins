@@ -20,9 +20,6 @@
     <applicationService serviceInterface="org.jetbrains.plugins.ruby.motion.bridgesupport.FrameworkDependencyResolver"
                         serviceImplementation="org.jetbrains.plugins.ruby.motion.bridgesupport.FrameworkDependencyResolver"/>
 
-    <projectService serviceInterface="com.jetbrains.cidr.CocoaDocumentationManager"
-                    serviceImplementation="org.jetbrains.plugins.ruby.motion.MotionDocumentationManager"/>
-
     <moduleService serviceInterface="org.jetbrains.plugins.ruby.motion.symbols.MotionSymbolUtil$MotionTypeCache"
                    serviceImplementation="org.jetbrains.plugins.ruby.motion.symbols.MotionSymbolUtil$MotionTypeCache" />
     <moduleService serviceInterface="org.jetbrains.plugins.ruby.motion.symbols.MotionSymbolUtil$MotionSymbolsCache"
