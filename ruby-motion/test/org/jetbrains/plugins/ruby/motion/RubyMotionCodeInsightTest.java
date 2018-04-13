@@ -16,7 +16,12 @@
 package org.jetbrains.plugins.ruby.motion;
 
 import com.intellij.openapi.util.Trinity;
+import com.intellij.psi.PsiReference;
+import junit.framework.TestCase;
+import org.jetbrains.plugins.ruby.motion.symbols.FunctionSymbol;
+import org.jetbrains.plugins.ruby.motion.symbols.MotionClassSymbol;
 import org.jetbrains.plugins.ruby.motion.symbols.MotionSymbolUtil;
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Symbol;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolFilterFactory;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.RSymbolType;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.RType;
@@ -119,5 +124,12 @@ public class RubyMotionCodeInsightTest extends RubyMotionLightFixtureTestCase {
       MotionSymbolUtil.getSelectorNames(names, data.second, data.third);
       assertContainsElements(names, data.first);
     }
+  }
+
+  protected void checkResolveToObjC(final String signature, final String fqn) {
+    final PsiReference ref = findReferenceBySignature(signature);
+    final Symbol symbol = RubyTestUtil.resolveToSymbol(ref);
+    TestCase.assertTrue(symbol instanceof MotionClassSymbol || symbol instanceof FunctionSymbol);
+    TestCase.assertEquals(fqn, symbol.getFQNWithNesting().getFullPath());
   }
 }
