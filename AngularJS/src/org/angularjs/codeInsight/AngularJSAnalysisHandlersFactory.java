@@ -2,6 +2,7 @@ package org.angularjs.codeInsight;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JSAnalysisHandlersFactory;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -10,6 +11,7 @@ import com.intellij.lang.javascript.validation.JSReferenceChecker;
 import com.intellij.lang.javascript.validation.JSReferenceInspectionProblemReporter;
 import com.intellij.lang.javascript.validation.fixes.CreateJSFunctionIntentionAction;
 import com.intellij.lang.javascript.validation.fixes.CreateJSVariableIntentionAction;
+import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
@@ -64,6 +66,14 @@ public class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory 
                                              JSReferenceExpression referenceExpression,
                                              boolean staticContext,
                                              @NotNull JSClass contextClass) {
+              if (DialectDetector.isTypeScript(contextClass)) {
+                if (TypeScriptCodeStyleSettings.getTypeScriptSettings(contextClass.getProject()).USE_PUBLIC_MODIFIER) {
+                  template.addTextSegment("public ");
+                }
+                if (staticContext) {
+                  template.addTextSegment("static ");
+                }
+              }
             }
           });
         }
