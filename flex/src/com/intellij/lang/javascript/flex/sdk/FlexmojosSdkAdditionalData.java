@@ -33,16 +33,9 @@ public class FlexmojosSdkAdditionalData implements SdkAdditionalData {
   private static final String ADL_ARTIFACT_PATTERN = "{0}/com/adobe/flex/adl/{1}/adl-{1}.{2}";
   private static final String AIR_RUNTIME_ARTIFACT_PATTERN = "{0}/com/adobe/air/runtime/{1}/runtime-{1}-{2}.{3}";
 
-  private Collection<String> myFlexCompilerClasspath = new ArrayList<>();
+  private final Collection<String> myFlexCompilerClasspath = new ArrayList<>();
   private String myAdlPath = "";
   private String myAirRuntimePath = "";
-
-  @Override
-  public Object clone() throws CloneNotSupportedException {
-    final FlexmojosSdkAdditionalData copy = (FlexmojosSdkAdditionalData)super.clone();
-    copy.myFlexCompilerClasspath = new ArrayList<>(myFlexCompilerClasspath);
-    return copy;
-  }
 
   public Collection<String> getFlexCompilerClasspath() {
     return Collections.unmodifiableCollection(myFlexCompilerClasspath);
