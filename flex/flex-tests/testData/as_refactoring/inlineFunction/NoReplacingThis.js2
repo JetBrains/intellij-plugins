@@ -1,4 +1,3 @@
-import xxx.baz;
 class Some {
     function bar() {
         new Some().f<caret>oo();

@@ -4,6 +4,7 @@ public class TestInline
 {
     public function TestInline() {
         if (true) {
+
         }
     }
 }
