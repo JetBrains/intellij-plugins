@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import com.google.common.collect.Lists;
@@ -109,6 +122,12 @@ public class VmServiceWrapper implements Disposable {
                     public void received(final Isolate isolate) {
                       final Event event = isolate.getPauseEvent();
                       final EventKind eventKind = event.getKind();
+
+                      // Ignore isolates that are very early in their lifecycle. You can't set breakpoints on them
+                      // yet, and we'll get lifecycle events for them later.
+                      if (eventKind == EventKind.None) {
+                        return;
+                      }
 
                       // if event is not PauseStart it means that PauseStart event will follow later and will be handled by listener
                       handleIsolate(isolateRef, eventKind == EventKind.PauseStart);
@@ -351,7 +370,7 @@ public class VmServiceWrapper implements Disposable {
         @Override
         public void onError(RPCError error) {
           myDebugProcess.getSession().getConsoleView()
-            .print("Error from drop frame: " + error.getMessage() + "\n", ConsoleViewContentType.ERROR_OUTPUT);
+                        .print("Error from drop frame: " + error.getMessage() + "\n", ConsoleViewContentType.ERROR_OUTPUT);
         }
 
         @Override

@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import gnu.trove.THashMap;
@@ -6,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 public class IsolatesInfo {
@@ -17,7 +29,7 @@ public class IsolatesInfo {
     private boolean breakpointsSet = false;
     private boolean shouldInitialResume = false;
 
-    public IsolateInfo(@NotNull final String isolateId, @NotNull final String isolateName) {
+    private IsolateInfo(@NotNull final String isolateId, @NotNull final String isolateName) {
       myIsolateId = isolateId;
       myIsolateName = isolateName;
     }
@@ -29,29 +41,39 @@ public class IsolatesInfo {
     public String getIsolateName() {
       return myIsolateName;
     }
+
+    public String toString() {
+      return myIsolateId + ": breakpointsSet=" + breakpointsSet + ", shouldInitialResume=" + shouldInitialResume;
+    }
   }
 
-  private final Map<String, IsolateInfo> myIsolateIdToInfoMap = Collections.synchronizedMap(new THashMap<String, IsolateInfo>());
+  private final Map<String, IsolateInfo> myIsolateIdToInfoMap = new THashMap<>();
 
-  public boolean addIsolate(@NotNull final IsolateRef isolateRef) {
-    return myIsolateIdToInfoMap.put(isolateRef.getId(), new IsolateInfo(isolateRef.getId(), isolateRef.getName())) == null;
+  public synchronized boolean addIsolate(@NotNull final IsolateRef isolateRef) {
+    if (myIsolateIdToInfoMap.containsKey(isolateRef.getId())) {
+      return false;
+    }
+
+    myIsolateIdToInfoMap.put(isolateRef.getId(), new IsolateInfo(isolateRef.getId(), isolateRef.getName()));
+
+    return true;
   }
 
-  public void setBreakpointsSet(@NotNull final IsolateRef isolateRef) {
+  public synchronized void setBreakpointsSet(@NotNull final IsolateRef isolateRef) {
     IsolateInfo info = myIsolateIdToInfoMap.get(isolateRef.getId());
     if (info != null) {
       info.breakpointsSet = true;
     }
   }
 
-  public void setShouldInitialResume(@NotNull final IsolateRef isolateRef) {
+  public synchronized void setShouldInitialResume(@NotNull final IsolateRef isolateRef) {
     IsolateInfo info = myIsolateIdToInfoMap.get(isolateRef.getId());
     if (info != null) {
       info.shouldInitialResume = true;
     }
   }
 
-  public boolean getShouldInitialResume(@NotNull final IsolateRef isolateRef) {
+  public synchronized boolean getShouldInitialResume(@NotNull final IsolateRef isolateRef) {
     IsolateInfo info = myIsolateIdToInfoMap.get(isolateRef.getId());
     if (info != null) {
       return info.breakpointsSet && info.shouldInitialResume;
@@ -61,11 +83,11 @@ public class IsolatesInfo {
     }
   }
 
-  public void deleteIsolate(@NotNull final IsolateRef isolateRef) {
+  public synchronized void deleteIsolate(@NotNull final IsolateRef isolateRef) {
     myIsolateIdToInfoMap.remove(isolateRef.getId());
   }
 
-  public Collection<IsolateInfo> getIsolateInfos() {
+  public synchronized Collection<IsolateInfo> getIsolateInfos() {
     return new ArrayList<>(myIsolateIdToInfoMap.values());
   }
 }
