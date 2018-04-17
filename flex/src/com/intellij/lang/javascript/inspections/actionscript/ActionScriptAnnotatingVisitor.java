@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.highlighting.JSFixFactory;
 import com.intellij.lang.javascript.highlighting.JSSemanticHighlightingUtil;
 import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.index.JSTypeEvaluateManager;
+import com.intellij.lang.javascript.inspections.JSClosureCompilerSyntaxInspection;
 import com.intellij.lang.javascript.inspections.actionscript.fixes.ActionScriptConstructorChecker;
 import com.intellij.lang.javascript.presentable.JSFormatUtil;
 import com.intellij.lang.javascript.psi.*;
@@ -290,11 +291,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         if (node == null) return;
         if (implementMethodsFix == null) implementMethodsFix = new ImplementMethodsFix(myJsClass);
         implementMethodsFix.addElementToProcess(function);
-        String messageId = function.isGetProperty() ?
-                           "javascript.validation.message.interface.method.not.implemented2" :
-                           function.isSetProperty() ?
-                           "javascript.validation.message.interface.method.not.implemented3" :
-                           "javascript.validation.message.interface.method.not.implemented";
+        String messageId = JSClosureCompilerSyntaxInspection.getNotImplementedTextId(false, function.isGetProperty(),
+                           function.isSetProperty());
         String message = JSBundle.message(messageId,
                                           function.getName(),
                                           ((JSClass)JSResolveUtil.findParent(function)).getQualifiedName());
