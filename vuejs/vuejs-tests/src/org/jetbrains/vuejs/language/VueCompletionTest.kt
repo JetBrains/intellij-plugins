@@ -1176,6 +1176,57 @@ Pair("""<template>
     myFixture.completeBasic()
     myFixture.assertPreferredCompletionItems(0, "someClass")
   }
+
+  fun testEventsAfterAt() {
+    myFixture.configureByText("foo.vue", "<template> <MyComponent @<caret> </template>")
+    myFixture.completeBasic()
+    myFixture.assertPreferredCompletionItems(0, "@abort", "@autocomplete", "@autocompleteerror", "@blur", "@cancel", "@canplay",
+                                             "@canplaythrough", "@change", "@click")
+
+    myFixture.configureByText("foo.vue", "<template> <div @c<caret> </template>")
+    myFixture.completeBasic()
+    assertSameElements(myFixture.lookupElementStrings!!, "@cancel", "@click", "@canplaythrough", "@close", "@change", "@canplay",
+                       "@cuechange", "@contextmenu")
+  }
+
+  fun testEventsAfterVOn() {
+    myFixture.configureByText("foo.vue", "<template> <MyComponent v-on:cl<caret> </template>")
+    myFixture.completeBasic()
+    assertSameElements(myFixture.lookupElementStrings!!, "click", "close", "dblclick")
+
+    myFixture.configureByText("foo.vue", "<template> <div v-on:<caret> </template>")
+    myFixture.completeBasic()
+    myFixture.assertPreferredCompletionItems(0, "abort", "autocomplete", "autocompleteerror", "blur", "cancel", "canplay",
+                                             "canplaythrough", "change", "click")
+  }
+
+
+  fun testEventModifiers() {
+    // general modifiers only
+    myFixture.configureByText("foo.vue", "<template> <MyComponent @click123.<caret> </template>")
+    myFixture.completeBasic()
+    assertSameElements(myFixture.lookupElementStrings!!, "stop", "prevent", "capture", "self", "once", "passive")
+
+    // general modifiers (except already used) + key modifiers + system modifiers
+    myFixture.configureByText("foo.vue", "<template> <div v-on:keyup.stop.passive.<caret> </template>")
+    myFixture.completeBasic()
+    assertSameElements(myFixture.lookupElementStrings!!, "prevent", "capture", "self", "once",
+                       "enter", "tab", "delete", "esc", "space", "up", "down", "left", "right",
+                       "ctrl", "alt", "shift", "meta", "exact")
+
+    // general modifiers (except already used) + mouse button modifiers + system modifiers
+    myFixture.configureByText("foo.vue", "<template> <div @click.capture.<caret> </template>")
+    myFixture.completeBasic()
+    assertSameElements(myFixture.lookupElementStrings!!, "stop", "prevent", "self", "once", "passive",
+                       "left", "right", "middle",
+                       "ctrl", "alt", "shift", "meta", "exact")
+
+    // general modifiers + system modifiers
+    myFixture.configureByText("foo.vue", "<template> <div @drop.<caret> </template>")
+    myFixture.completeBasic()
+    assertSameElements(myFixture.lookupElementStrings!!, "stop", "prevent", "capture", "self", "once", "passive",
+                       "ctrl", "alt", "shift", "meta", "exact")
+  }
 }
 
 fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,
