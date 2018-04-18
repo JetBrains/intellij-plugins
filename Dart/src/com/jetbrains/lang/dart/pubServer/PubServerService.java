@@ -77,8 +77,8 @@ import static org.jetbrains.io.NettyUtil.nioClientBootstrap;
 final class PubServerService extends NetService {
   private static final Logger LOG = Logger.getInstance(PubServerService.class.getName());
 
-  private static final String PUB_SERVE = "Pub Serve";
-  private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.toolWindowGroup(PUB_SERVE, PUB_SERVE, false);
+  private static final String DART_DEV_SERVER = "Dart Dev Server";
+  private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.toolWindowGroup(DART_DEV_SERVER, DART_DEV_SERVER, false);
 
   private volatile VirtualFile firstServedDir;
 
@@ -131,7 +131,7 @@ final class PubServerService extends NetService {
   @Override
   @NotNull
   protected String getConsoleToolWindowId() {
-    return PUB_SERVE;
+    return DART_DEV_SERVER;
   }
 
   @Override
@@ -143,7 +143,7 @@ final class PubServerService extends NetService {
   @NotNull
   @Override
   public ActionGroup getConsoleToolWindowActions() {
-    return new DefaultActionGroup(ActionManager.getInstance().getAction("Dart.stop.pub.server"));
+    return new DefaultActionGroup(ActionManager.getInstance().getAction("Dart.stop.dart.dev.server"));
   }
 
   @Override
@@ -359,13 +359,13 @@ final class PubServerService extends NetService {
     }
 
     private void showNotificationIfNeeded(final boolean isError) {
-      if (ToolWindowManager.getInstance(myProject).getToolWindow(PUB_SERVE).isVisible()) {
+      if (ToolWindowManager.getInstance(myProject).getToolWindow(DART_DEV_SERVER).isVisible()) {
         return;
       }
 
       if (myNotification != null && !myNotification.isExpired()) {
         final Balloon balloon1 = myNotification.getBalloon();
-        final Balloon balloon2 = ToolWindowManager.getInstance(myProject).getToolWindowBalloon(PUB_SERVE);
+        final Balloon balloon2 = ToolWindowManager.getInstance(myProject).getToolWindowBalloon(DART_DEV_SERVER);
         if ((balloon1 != null || balloon2 != null) && (myNotificationAboutErrors || !isError)) {
           return; // already showing correct balloon
         }
@@ -375,13 +375,13 @@ final class PubServerService extends NetService {
       myNotificationAboutErrors = isError; // previous errors are already reported, so reset our flag
 
       final String message =
-        DartBundle.message(myNotificationAboutErrors ? "pub.serve.output.contains.errors" : "pub.serve.output.contains.warnings");
+        DartBundle.message(myNotificationAboutErrors ? "dart.dev.server.output.contains.errors" : "dart.dev.server.output.contains.warnings");
 
       myNotification = NOTIFICATION_GROUP.createNotification("", message, NotificationType.WARNING, new NotificationListener.Adapter() {
         @Override
         protected void hyperlinkActivated(@NotNull final Notification notification, @NotNull final HyperlinkEvent e) {
           notification.expire();
-          ToolWindowManager.getInstance(myProject).getToolWindow(PUB_SERVE).activate(null);
+          ToolWindowManager.getInstance(myProject).getToolWindow(DART_DEV_SERVER).activate(null);
         }
       });
 

@@ -34,7 +34,8 @@ public class DartPubBuildAction extends DartPubActionBase {
       e.getPresentation().setDescription("Run 'webdev build'");
     }
     else {
-      e.getPresentation().setText("Run 'pub build'");
+      e.getPresentation().setText("Pub: Build...");
+      e.getPresentation().setDescription("Run 'pub build'");
     }
   }
 

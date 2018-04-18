@@ -321,8 +321,8 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     info.rerunPubCommandAction = rerunPubCommandAction;
     actionGroup.addAction(rerunPubCommandAction);
 
-    final StopProcessAction stopProcessAction = new StopProcessAction(DartBundle.message("stop.pub.process.action"),
-                                                                      DartBundle.message("stop.pub.process.action"),
+    final StopProcessAction stopProcessAction = new StopProcessAction(DartBundle.message("stop.dart.dev.server.action"),
+                                                                      DartBundle.message("stop.dart.dev.server.action"),
                                                                       null);
     info.stopProcessAction = stopProcessAction;
     actionGroup.addAction(stopProcessAction);
