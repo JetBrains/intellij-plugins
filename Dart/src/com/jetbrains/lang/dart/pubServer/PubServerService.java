@@ -352,10 +352,15 @@ final class PubServerService extends NetService {
     @Override
     public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
       final String text = event.getText().toLowerCase(Locale.US);
-      final boolean error = outputType == ProcessOutputTypes.STDERR && text.contains("error") ||
-                            text.contains("could not run in the current directory.");
+      if (outputType == ProcessOutputTypes.STDERR) {
+        final boolean error = text.contains("error");
 
-      ApplicationManager.getApplication().invokeLater(() -> showNotificationIfNeeded(error));
+        ApplicationManager.getApplication().invokeLater(() -> showNotificationIfNeeded(error));
+      }
+      else if (text.contains("could not run in the current directory.") ||
+               text.contains("webdev could not run for this project.")) {
+        ApplicationManager.getApplication().invokeLater(() -> showNotificationIfNeeded(true));
+      }
     }
 
     private void showNotificationIfNeeded(final boolean isError) {
@@ -374,8 +379,8 @@ final class PubServerService extends NetService {
 
       myNotificationAboutErrors = isError; // previous errors are already reported, so reset our flag
 
-      final String message =
-        DartBundle.message(myNotificationAboutErrors ? "dart.dev.server.output.contains.errors" : "dart.dev.server.output.contains.warnings");
+      final String message = DartBundle.message(myNotificationAboutErrors ? "dart.dev.server.output.contains.errors"
+                                                                          : "dart.dev.server.output.contains.warnings");
 
       myNotification = NOTIFICATION_GROUP.createNotification("", message, NotificationType.WARNING, new NotificationListener.Adapter() {
         @Override
