@@ -99,6 +99,10 @@ public class DartVmServiceListener implements VmServiceListener {
         break;
       case ServiceExtensionAdded:
         break;
+      case ServiceRegistered:
+        break;
+      case ServiceUnregistered:
+        break;
       case VMUpdate:
         break;
       case WriteEvent:

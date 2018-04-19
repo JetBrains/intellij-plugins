@@ -3,6 +3,7 @@ package com.intellij.flex.codeInsight;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
+import com.intellij.lang.actionscript.psi.impl.ActionScriptVariableImpl;
 import com.intellij.lang.javascript.JSAbstractFindUsagesTest;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
@@ -121,7 +122,6 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
     String testName = getTestName(false);
     PsiReference[] references = findElementAtCaret(testName + ".js2", testName + ".mxml", testName + ".js");
     assertTrue(Arrays.stream(references).noneMatch(r -> r.getElement().getContainingFile().getName().endsWith(".js")));
-    assertEquals(5, references.length);
     });
   }
 
@@ -174,5 +174,11 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
   public void testASGenericsAndDollarsInName() throws Exception {
     PsiReference[] references = findElementAtCaret(getTestName(false) + ".as");
     assertEquals(1, references.length);
+  }
+
+  public void testUnrelatedUnqualifiedDefinition() throws Exception {
+    PsiReference[] references = findElementAtCaret(getTestName(false) + ".as"); // IDEA-189640
+    assertEquals(1, references.length);
+    assertInstanceOf(references[0].getElement().getParent(), ActionScriptVariableImpl.class);
   }
 }

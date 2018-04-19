@@ -45,6 +45,7 @@ class DartContributedReference implements PsiPolyVariantReference {
     return myNavigationRegion;
   }
 
+  @NotNull
   @Override
   public TextRange getRangeInElement() {
     return myRefRange;

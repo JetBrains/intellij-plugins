@@ -1,6 +1,5 @@
 package com.intellij.javascript.karma.execution;
 
-import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
@@ -14,6 +13,7 @@ import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.testFramework.PreferableRunConfiguration;
 import com.intellij.javascript.testFramework.util.JsTestFqn;
+import com.intellij.javascript.testing.JsTestRunConfigurationProducer;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
@@ -53,9 +53,10 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
   @Override
   public void readExternal(@NotNull Element element) throws InvalidDataException {
     super.readExternal(element);
-    myRunSettings = KarmaRunSettingsSerializationUtil.readXml(element);
+    boolean templateRunConfiguration = isTemplate(element);
+    myRunSettings = KarmaRunSettingsSerializationUtil.readXml(element, getProject(), templateRunConfiguration);
     NodePackage karmaPackage = myRunSettings.getKarmaPackage();
-    if ("true".equals(element.getAttributeValue("default")) && karmaPackage != null && karmaPackage.isEmptyPath()) {
+    if (templateRunConfiguration && karmaPackage != null && karmaPackage.isEmptyPath()) {
       myRunSettings = myRunSettings.toBuilder().setKarmaPackage(null).build();
     }
   }
@@ -63,7 +64,8 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
   @Override
   public void writeExternal(@NotNull Element element) throws WriteExternalException {
     super.writeExternal(element);
-    KarmaRunSettingsSerializationUtil.writeXml(element, myRunSettings);
+    boolean templateRunConfiguration = isTemplate(element);
+    KarmaRunSettingsSerializationUtil.writeXml(element, myRunSettings, templateRunConfiguration);
   }
 
   @NotNull
@@ -102,6 +104,19 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     return getTemplateRunConfiguration(getProject()) == this;
   }
 
+  private static boolean isTemplate(@NotNull Element element) {
+    return "true".equals(element.getAttributeValue("default"));
+  }
+
+  public void onNewConfigurationCreated() {
+    if (myRunSettings.getWorkingDirectorySystemDependent().isEmpty()) {
+      VirtualFile workingDir = JsTestRunConfigurationProducer.guessWorkingDirectory(getProject(), myRunSettings.getConfigPathSystemDependent());
+      if (workingDir != null) {
+        myRunSettings = myRunSettings.toBuilder().setWorkingDirectory(workingDir.getPath()).build();
+      }
+    }
+  }
+
   @Nullable
   private static KarmaRunConfiguration getTemplateRunConfiguration(@NotNull Project project) {
     if (project.isDisposed()) {
@@ -119,7 +134,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
 
   @Nullable
   @Override
-  public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
+  public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) {
     return new KarmaRunProfileState(getProject(),
                                     this,
                                     env,
@@ -135,19 +150,23 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolve(getProject());
     NodeJsLocalInterpreter.checkForRunConfiguration(interpreter);
     karmaPackage.validateForRunConfiguration(KarmaUtil.NODE_PACKAGE_NAME);
-    validatePath("configuration file", myRunSettings.getConfigPath());
+    validatePath("configuration file", myRunSettings.getConfigPathSystemDependent(), true);
+    validatePath("working directory", myRunSettings.getWorkingDirectorySystemDependent(), false);
     if (myRunSettings.getScopeKind() == KarmaScopeKind.TEST_FILE) {
-      validatePath("test file", myRunSettings.getTestFileSystemDependentPath());
+      validatePath("test file", myRunSettings.getTestFileSystemDependentPath(), true);
     }
   }
 
   private static void validatePath(@NotNull String pathLabelName,
-                                   @Nullable String path) throws RuntimeConfigurationException {
+                                   @Nullable String path,
+                                   boolean fileExpected) throws RuntimeConfigurationException {
     if (StringUtil.isEmptyOrSpaces(path)) {
       throw new RuntimeConfigurationError("Unspecified " + pathLabelName);
     }
     File file = new File(path);
-    if (!file.isAbsolute() || !file.isFile()) {
+    if (!file.isAbsolute() ||
+        (fileExpected && !file.isFile()) ||
+        (!fileExpected && !file.isDirectory())) {
       throw new RuntimeConfigurationError("No such " + pathLabelName);
     }
   }
@@ -184,7 +203,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     KarmaRunSettings settings = myRunSettings;
     KarmaScopeKind scopeKind = settings.getScopeKind();
     if (scopeKind == KarmaScopeKind.ALL) {
-      return PathUtil.getFileName(settings.getConfigPath());
+      return PathUtil.getFileName(settings.getConfigPathSystemDependent());
     }
     if (scopeKind == KarmaScopeKind.TEST_FILE) {
       return PathUtil.getFileName(settings.getTestFileSystemDependentPath());

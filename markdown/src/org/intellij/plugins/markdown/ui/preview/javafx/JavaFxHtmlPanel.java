@@ -19,6 +19,7 @@ import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.impl.http.HttpVirtualFile;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.PsiElement;
@@ -259,14 +260,14 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
     public void openInExternalBrowser(@NotNull String link) {
       String fileURI = link;
-      String anchor = "";
+      String anchor = null;
       if (link.contains("#")) {
         fileURI = Objects.requireNonNull(StringUtil.substringBefore(link, "#"));
         anchor = Objects.requireNonNull(StringUtil.substringAfter(link, "#"));
       }
 
       VirtualFile targetFile = VirtualFileManager.getInstance().findFileByUrl(fileURI);
-      if (targetFile == null) {
+      if (targetFile == null || targetFile instanceof HttpVirtualFile) {
         SafeOpener.openLink(link);
       }
       else {

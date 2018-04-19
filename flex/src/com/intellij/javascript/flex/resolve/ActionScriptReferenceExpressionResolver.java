@@ -156,7 +156,7 @@ public class ActionScriptReferenceExpressionResolver
   }
 
   @Override
-  protected void prepareProcessor(WalkUpResolveProcessor processor, @NotNull SinkResolveProcessor<ResolveResultSink> localProcessor) {
+  protected boolean prepareProcessor(WalkUpResolveProcessor processor, @NotNull SinkResolveProcessor<ResolveResultSink> localProcessor) {
     boolean inDefinition = false;
     boolean allowOnlyCompleteMatches = myUnqualifiedOrLocalResolve && localProcessor.isEncounteredDynamicClasses();
 
@@ -172,7 +172,7 @@ public class ActionScriptReferenceExpressionResolver
       processor.setAddOnlyCompleteMatches(allowOnlyCompleteMatches);
     }
     processor.setSkipDefinitions(inDefinition);
-    processor.addLocalResults(localProcessor);
+    return true;
   }
 
   @Override

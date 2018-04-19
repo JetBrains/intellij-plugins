@@ -11,6 +11,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
+import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -84,6 +85,7 @@ public final class TsLintOutputJsonParser {
       logError("no rule name for error object");
       return result;
     }
+    String severityStr = JsonUtil.getChildAsString(object, "ruleSeverity");
     final Pair<Integer, Integer> start = parseLineColumn(startPosition.getAsJsonObject());
     final Pair<Integer, Integer> end = parseLineColumn(endPosition.getAsJsonObject());
     if (start == null || end == null) return result;
@@ -98,6 +100,7 @@ public final class TsLintOutputJsonParser {
                                  end.getSecond(),
                                  failure.getAsString(),
                                  ruleName.getAsString(),
+                                 StringUtil.equalsIgnoreCase(severityStr, "warning"),
                                  createTsLintFixInfo(element)));
 
     return result;

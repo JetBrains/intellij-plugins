@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.linter.tslint.execution;
 
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.javascript.integration.JSAnnotationRangeError;
 import com.intellij.lang.javascript.linter.JSLinterError;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintFixInfo;
@@ -10,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
  * @author Irina.Chernushina on 6/4/2015.
  */
 public final class TsLinterError extends JSLinterError implements JSAnnotationRangeError {
-
   @Nullable
   private final String myPath;
   private final int myEndLine;
@@ -27,8 +27,9 @@ public final class TsLinterError extends JSLinterError implements JSAnnotationRa
                        int endColumn,
                        @NotNull String description,
                        @Nullable String code,
+                       boolean isWarning,
                        @Nullable TsLintFixInfo fixInfo) {
-    super(line, column, description, code);
+    super(line, column, description, code, isWarning ? HighlightSeverity.WARNING : HighlightSeverity.ERROR);
     myPath = path;
     myEndLine = endLine;
     myEndColumn = endColumn;

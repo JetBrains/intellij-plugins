@@ -175,19 +175,19 @@ public class ActionScriptReferenceChecker extends TypedJSReferenceChecker {
   }
 
   @Override
-  protected void addCreateFromUsageFixesForCall(@NotNull JSCallExpression node,
-                                                @NotNull JSReferenceExpression referenceExpression,
+  protected void addCreateFromUsageFixesForCall(@NotNull JSReferenceExpression methodExpression,
+                                                boolean isNewExpression,
                                                 @NotNull ResolveResult[] resolveResults,
                                                 @NotNull List<LocalQuickFix> quickFixes) {
     if (canHaveImportTo(resolveResults)) {
-      quickFixes.add(new AddImportECMAScriptClassOrFunctionAction(null, referenceExpression));
+      quickFixes.add(new AddImportECMAScriptClassOrFunctionAction(null, methodExpression));
     }
-    if (!(node instanceof JSNewExpression)) {
+    if (!(isNewExpression)) {
       //foo() -> AS methods are callable without this -> method
-      quickFixes.add(JSFixFactory.getInstance().createJSFunctionIntentionAction(referenceExpression.getReferenceName(), true, false));
+      quickFixes.add(JSFixFactory.getInstance().createJSFunctionIntentionAction(methodExpression.getReferenceName(), true, false));
     }
 
-    super.addCreateFromUsageFixesForCall(node, referenceExpression, resolveResults, quickFixes);
+    super.addCreateFromUsageFixesForCall(methodExpression, isNewExpression, resolveResults, quickFixes);
   }
 
   private static boolean canHaveImportTo(ResolveResult[] resolveResults) {

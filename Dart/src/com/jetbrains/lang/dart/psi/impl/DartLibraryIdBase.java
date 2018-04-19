@@ -23,6 +23,7 @@ public class DartLibraryIdBase extends DartExpressionImpl implements DartReferen
     super(node);
   }
 
+  @NotNull
   @Override
   public PsiElement getElement() {
     return this;
@@ -33,6 +34,7 @@ public class DartLibraryIdBase extends DartExpressionImpl implements DartReferen
     return this;
   }
 
+  @NotNull
   @Override
   public TextRange getRangeInElement() {
     final TextRange textRange = getTextRange();

@@ -52,7 +52,7 @@ public class JstdConfigFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getDescription() {
-    return "JsTestDriver configuration file";
+    return "JsTestDriver configuration";
   }
 
   @NotNull

@@ -150,8 +150,8 @@ public class RubyMotionSymbolProvider extends RubySymbolProviderBase {
       final RubyMotionSymbol symbol = isObject ? new RubyMotionSymbol((RFile)context.getContainingFile()) : null;
       final Symbol nsObject = SymbolUtil.findConstantByFQN(element.getProject(), Type.CLASS, getParentName(context), element);
       final List<Symbol> includes = isObject ? Collections.singletonList(symbol) : Collections.emptyList();
-      return new MotionEnabledClassModuleSymbol(context, includes, Collections.emptyList(),
-                                                Collections.singletonList(nsObject));
+      final List<Symbol> superclasses = nsObject != null ? Collections.singletonList(nsObject) : Collections.emptyList();
+      return new MotionEnabledClassModuleSymbol(context, includes, Collections.emptyList(), superclasses);
     }
     return null;
   }

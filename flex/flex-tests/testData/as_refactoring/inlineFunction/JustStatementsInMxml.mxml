@@ -1,18 +1,18 @@
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
-           xmlns:ui="com.adobe.empdir.ui.*" currentState="info"
+           currentState="info"
            horizontalScrollPolicy="off" verticalScrollPolicy="off" mouseDown="doMouseDown()">
 
   <mx:Script>
 <![CDATA[
-  private function foo(y) {
-    var x = 1 + y;
-    alert(x);
-  }
-
-  private function bar() {
-    f<caret>oo(2);
-    foo(3);
-  }
+    private function foo(y) {
+        var x = 1 + y;
+        alert(x);
+    }
+  
+    private function bar() {
+        f<caret>oo(2);
+        foo(3);
+    }
 ]]>
   </mx:Script>
   <mx:Canvas id="canvas" />

@@ -68,7 +68,7 @@ class TsLintConfigWrapper(config: JsonObject) {
     WriteAction.run<RuntimeException> {
       val settingsManager = CodeStyleSettingsManager.getInstance(project)
       if (!settingsManager.USE_PER_PROJECT_SETTINGS) {
-        settingsManager.PER_PROJECT_SETTINGS = settingsManager.currentSettings.clone()
+        settingsManager.mainProjectCodeStyle = settingsManager.currentSettings.clone()
         settingsManager.USE_PER_PROJECT_SETTINGS = true
       }
       val newSettings = settingsManager.currentSettings

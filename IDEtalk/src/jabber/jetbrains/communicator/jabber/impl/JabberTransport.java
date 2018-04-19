@@ -1,18 +1,16 @@
-/*
- * Copyright 2000-2006 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package jetbrains.communicator.jabber.impl;
 
 import com.intellij.util.ArrayUtil;
@@ -81,7 +79,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
 
   private final Map<User, UserPresence> myUser2Presence = new HashMap<>();
   private final Set<String> myIDEtalkUsers = new HashSet<>();
-  private final Map<String, String> myUser2Thread = Collections.synchronizedMap(new HashMap<String, String>());
+  private final Map<String, String> myUser2Thread = Collections.synchronizedMap(new HashMap<>());
 
   @NonNls
   private static final String RESPONSE = "response";
@@ -282,7 +280,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     }
   }
 
-  private Message doSendMessage(XmlMessage xmlMessage, User user, String threadId) {
+  private void doSendMessage(XmlMessage xmlMessage, User user, String threadId) {
     Element element = new Element(xmlMessage.getTagName(), xmlMessage.getTagNamespace());
     xmlMessage.fillRequest(element);
 
@@ -290,8 +288,6 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     message.setThread(threadId);
     message.addExtension(new JDOMExtension(element));
     myFacade.getConnection().sendPacket(message);
-
-    return message;
   }
 
   static Message createBaseMessage(User user, String message) {

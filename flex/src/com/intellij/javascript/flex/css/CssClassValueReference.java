@@ -68,11 +68,13 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
     return CssBundle.message("invalid.css.class");
   }
 
+  @NotNull
   @Override
   public PsiElement getElement() {
     return myElement;
   }
 
+  @NotNull
   @Override
   public TextRange getRangeInElement() {
     return new TextRange(myStart, myEnd);

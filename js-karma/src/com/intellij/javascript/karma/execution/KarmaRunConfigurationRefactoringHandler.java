@@ -1,6 +1,5 @@
 package com.intellij.javascript.karma.execution;
 
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiUtilBase;
@@ -9,9 +8,6 @@ import com.intellij.refactoring.listeners.UndoRefactoringElementAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaRunConfigurationRefactoringHandler {
 
   @Nullable
@@ -23,7 +19,7 @@ public class KarmaRunConfigurationRefactoringHandler {
     }
     KarmaRunSettings settings = configuration.getRunSettings();
     String path = fileAtElement.getPath();
-    String configPath = FileUtil.toSystemIndependentName(settings.getConfigPath());
+    String configPath = settings.getConfigPathSystemIndependent();
     if (configPath.equals(path)) {
       return new FilePathRefactoringElementListener(configuration);
     }

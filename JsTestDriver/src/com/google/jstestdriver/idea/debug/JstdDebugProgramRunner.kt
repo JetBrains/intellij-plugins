@@ -112,7 +112,7 @@ private fun startDebug(debugBrowserInfo: JstdDebugBrowserInfo, server: JstdServe
   })
 
   // must be here, after all breakpoints were queued
-  (session.debugProcess as JavaScriptDebugProcess<*>).connection.executeOnStart(Runnable {
+  (session.debugProcess as JavaScriptDebugProcess<*>).connection.executeOnStart( {
     val runnable = Runnable { resumeJstdClientRunning(executionResult.processHandler) }
 
     if (ApplicationManager.getApplication().isReadAccessAllowed) {

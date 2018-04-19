@@ -63,6 +63,10 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
     doTest("one", "one/one.ts", true, true, null);
   }
 
+  public void testWithWarningSeverity() {
+    doTest("withWarningSeverity", "withWarningSeverity/main.ts", true, true, null);
+  }
+
   public void testNoAdditionalDirectory() {
     doTest("noAdditionalDirectory", "noAdditionalDirectory/data.ts", true, true, null);
     myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("Could not find custom rule directory:", false, true);

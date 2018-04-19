@@ -234,8 +234,9 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     myNodeInterpreterField.setInterpreterRef(runSettings.getInterpreterRef());
     myNodeOptionsEditor.setText(runSettings.getNodeOptions());
     myKarmaPackageField.setSelected(runConfiguration.getKarmaPackage());
-    myConfigPathField.setTextAndAddToHistory(FileUtil.toSystemDependentName(runSettings.getConfigPath()));
+    myConfigPathField.setTextAndAddToHistory(runSettings.getConfigPathSystemDependent());
     myBrowsers.setText(runSettings.getBrowsers());
+    myWorkingDirComponent.setText(runSettings.getWorkingDirectorySystemDependent());
     myEnvVarsComponent.setData(runSettings.getEnvData());
     setScopeKind(runSettings.getScopeKind());
     KarmaScopeView view = getScopeKindView(runSettings.getScopeKind());

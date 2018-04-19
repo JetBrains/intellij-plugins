@@ -31,10 +31,12 @@ public class CucumberStepReference implements PsiPolyVariantReference {
     myRange = range;
   }
 
+  @NotNull
   public PsiElement getElement() {
     return myStep;
   }
 
+  @NotNull
   public TextRange getRangeInElement() {
     return myRange;
   }

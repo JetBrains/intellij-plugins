@@ -4,7 +4,6 @@ import com.intellij.codeInsight.template.Template;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 public class CreateFieldByMxmlAttributeFix extends CreateJSVariableIntentionAction {
@@ -19,15 +18,14 @@ public class CreateFieldByMxmlAttributeFix extends CreateJSVariableIntentionActi
   protected void buildTemplate(final Template template,
                                final JSReferenceExpression referenceExpression,
                                final boolean staticContext,
-                               final PsiFile file,
-                               final PsiElement anchorParent) {
+                               @NotNull final PsiElement anchorParent) {
     template.addTextSegment("public ");
     template.addTextSegment(VAR_STATEMENT_START);
     template.addTextSegment(myReferencedName);
     template.addEndVariable();
     template.addTextSegment(":");
     addTypeVariableByMxmlAttributeValue(template, myAttributeValue);
-    addSemicolonSegment(template, file);
+    addSemicolonSegment(template, anchorParent);
   }
 
   protected static void addTypeVariableByMxmlAttributeValue(final Template template, final String attributeValue) {

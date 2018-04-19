@@ -41,12 +41,12 @@ public class KarmaRunSettings {
   }
 
   @NotNull
-  public String getConfigPath() {
+  public String getConfigPathSystemDependent() {
     return myConfigPath;
   }
 
   @NotNull
-  public String getConfigSystemIndependentPath() {
+  public String getConfigPathSystemIndependent() {
     return FileUtil.toSystemIndependentName(myConfigPath);
   }
 
@@ -160,7 +160,7 @@ public class KarmaRunSettings {
     public Builder() {}
 
     public Builder(@NotNull KarmaRunSettings settings) {
-      myConfigPath = settings.getConfigPath();
+      myConfigPath = settings.getConfigPathSystemDependent();
       myKarmaPackage = settings.getKarmaPackage();
       myBrowsers = settings.getBrowsers();
       myInterpreterRef = settings.getInterpreterRef();
@@ -203,8 +203,8 @@ public class KarmaRunSettings {
     }
 
     @NotNull
-    public Builder setWorkingDirectory(@NotNull String workingDirectory) {
-      myWorkingDirectory = workingDirectory;
+    public Builder setWorkingDirectory(@Nullable String workingDirectory) {
+      myWorkingDirectory = StringUtil.notNullize(workingDirectory);
       return this;
     }
 

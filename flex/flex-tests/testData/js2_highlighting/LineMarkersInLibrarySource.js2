@@ -6,11 +6,11 @@ public interface <error><lineMarker descr="Has implementations">IFoo</lineMarker
 }
 
 public class <error><lineMarker descr="Has subclasses">Foo</lineMarker></error> implements <info>IFoo</info> {
-    public function <info><lineMarker descr="Is overridden"><lineMarker descr="Implementation of foo in IFoo">foo</lineMarker></lineMarker></info>() {}
+    public function <info><lineMarker descr="Is overridden"><lineMarker descr="Implements method 'foo' in IFoo">foo</lineMarker></lineMarker></info>() {}
 }
 
 public class <error>FooEx</error> extends <info>Foo</info> {
-    public override function <info><lineMarker descr="overrides method in Foo">foo</lineMarker></info>() {}
+    public override function <info><lineMarker descr="Overrides method 'foo' in Foo">foo</lineMarker></info>() {}
 }
 
 }

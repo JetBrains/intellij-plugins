@@ -14,7 +14,7 @@ class VueFileType : LanguageFileType(VueLanguage.INSTANCE) {
   }
 
   override fun getDescription(): String {
-    return "Vue.js templates"
+    return "Vue.js template"
   }
 
   override fun getDefaultExtension(): String {

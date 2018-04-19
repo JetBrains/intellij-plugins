@@ -19,7 +19,7 @@ import com.intellij.lang.javascript.refactoring.changeSignature.JSChangeSignatur
 import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterTableModel;
 import com.intellij.lang.javascript.refactoring.introduceConstant.JSIntroduceConstantDialog;
-import com.intellij.lang.javascript.refactoring.moveMembers.ActionScriptMoveMembersDialog;
+import com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersDialog;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
