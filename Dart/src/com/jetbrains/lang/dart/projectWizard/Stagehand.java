@@ -8,6 +8,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.SystemProperties;
+import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -64,12 +65,16 @@ public class Stagehand {
       myWorkingDirectory = workingDirectory.getCanonicalPath();
     }
 
-    ProcessOutput runSync(final @NotNull String sdkRoot, int timeoutInSeconds, String... pubParameters) throws StagehandException {
+    ProcessOutput runSync(final @NotNull String sdkRoot,
+                          int timeoutInSeconds,
+                          final @NotNull String pubEnvVarSuffix,
+                          String... pubParameters) throws StagehandException {
       final GeneralCommandLine command = new GeneralCommandLine().withWorkDirectory(myWorkingDirectory);
 
       final File pubFile = new File(DartSdkUtil.getPubPath(sdkRoot));
       command.setExePath(pubFile.getPath());
       command.addParameters(pubParameters);
+      command.withEnvironment(DartPubActionBase.PUB_ENV_VAR_NAME, DartPubActionBase.getPubEnvValue() + ".stagehand" + pubEnvVarSuffix);
 
       try {
         return new CapturingProcessHandler(command).runProcess(timeoutInSeconds * 1000, false);
@@ -84,7 +89,7 @@ public class Stagehand {
                            @NotNull final VirtualFile projectDirectory,
                            @NotNull final String templateId) throws StagehandException {
     final ProcessOutput output = new PubRunner(projectDirectory)
-      .runSync(sdkRoot, 30, "global", "run", "stagehand", "--author", SystemProperties.getUserName(), templateId);
+      .runSync(sdkRoot, 30, "", "global", "run", "stagehand", "--author", SystemProperties.getUserName(), templateId);
     if (output.getExitCode() != 0) {
       throw new StagehandException(output.getStderr());
     }
@@ -92,7 +97,7 @@ public class Stagehand {
 
   public List<StagehandDescriptor> getAvailableTemplates(@NotNull final String sdkRoot) {
     try {
-      final ProcessOutput output = new PubRunner().runSync(sdkRoot, 10, "global", "run", "stagehand", "--machine");
+      final ProcessOutput output = new PubRunner().runSync(sdkRoot, 10, "", "global", "run", "stagehand", "--machine");
       int exitCode = output.getExitCode();
 
       if (exitCode != 0) {
@@ -127,7 +132,7 @@ public class Stagehand {
 
   public void install(@NotNull final String sdkRoot) {
     try {
-      new PubRunner().runSync(sdkRoot, 60, "global", "activate", "stagehand");
+      new PubRunner().runSync(sdkRoot, 60, ".activate", "global", "activate", "stagehand");
     }
     catch (StagehandException e) {
       LOG.info(e);
