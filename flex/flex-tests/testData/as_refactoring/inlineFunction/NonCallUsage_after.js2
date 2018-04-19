@@ -1,0 +1,8 @@
+class Foo {
+    function bar() {
+        var t : IEventDispatcher;
+        t.addEventListener("aa", function () {
+            console.log('hello')
+        });
+    }
+}
