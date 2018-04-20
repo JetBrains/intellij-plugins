@@ -16,7 +16,6 @@ package com.intellij.struts2.structure;
 
 import com.intellij.struts2.BasicLightHighlightingTestCase;
 import com.intellij.testFramework.PlatformTestUtil;
-import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -34,8 +33,7 @@ public class ValidationStructureViewTest extends BasicLightHighlightingTestCase 
     myFixture.configureByFile("validation-structure.xml");
     myFixture.testStructureView(component -> {
       component.setActionActive(StructureViewTreeModel.HIDE_PARAMS_ID, false);
-      TreeUtil.expandAll(component.getTree());
-
+      PlatformTestUtil.expandAll(component.getTree());
       PlatformTestUtil.assertTreeEqual(component.getTree(),
                                        "-validation-structure.xml\n" +
                                        " -Validator\n" +
@@ -52,8 +50,7 @@ public class ValidationStructureViewTest extends BasicLightHighlightingTestCase 
     myFixture.configureByFile("validation-structure.xml");
     myFixture.testStructureView(component -> {
       component.setActionActive(StructureViewTreeModel.HIDE_PARAMS_ID, true);
-      TreeUtil.expandAll(component.getTree());
-
+      PlatformTestUtil.expandAll(component.getTree());
       PlatformTestUtil.assertTreeEqual(component.getTree(),
                                        "-validation-structure.xml\n" +
                                        " -Validator\n" +
