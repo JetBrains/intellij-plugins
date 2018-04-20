@@ -37,7 +37,7 @@ object DartWebdev {
     if (StringUtil.compareVersionNumbers(sdkVersion, "2") < 0) return false
     if (sdkVersion.startsWith("2.0.0-dev.")) {
       val devVersion = sdkVersion.substring("2.0.0-dev.".length)
-      return StringUtil.compareVersionNumbers(devVersion, "43") >= 0
+      return StringUtil.compareVersionNumbers(devVersion, "50") >= 0
     }
     return true
   }
