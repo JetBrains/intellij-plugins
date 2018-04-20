@@ -15,7 +15,7 @@ public class NavigateToElementAction extends AnAction {
     private final JTree _tree;
 
     public NavigateToElementAction(JTree tree) {
-        super("Navigate to Element", "Navigate to the selected element class", AllIcons.Actions.Browser_externalJavaDoc);
+        super("Navigate to Element", "Navigate to the selected element class", AllIcons.Actions.PreviousOccurence);
 
         _tree = tree;
     }
