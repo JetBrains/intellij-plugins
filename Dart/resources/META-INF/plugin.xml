@@ -8,16 +8,6 @@
   <depends optional="true" config-file="dart-copyright.xml">com.intellij.copyright</depends>
   <depends optional="true" config-file="dart-coverage.xml">com.intellij.modules.coverage</depends>
 
-  <change-notes>
-    <![CDATA[
-        <ul>
-          <li>Improvements and bug fixes</li>
-        </ul>
-      ]]>
-  </change-notes>
-
-  <application-components/>
-
   <project-components>
     <component>
       <implementation-class>com.jetbrains.lang.dart.DartProjectComponent</implementation-class>
@@ -240,7 +230,7 @@
   </extensions>
 
   <actions>
-    <action id="Dart.stop.pub.server" class="com.jetbrains.lang.dart.pubServer.StopPubServerAction" text="Stop Pub Serve"/>
+    <action id="Dart.stop.dart.dev.server" class="com.jetbrains.lang.dart.pubServer.StopDartDevServerAction" text="Stop Dart Dev Server"/>
     <action id="Dart.NewDartFile" class="com.jetbrains.lang.dart.ide.actions.CreateDartFileAction"
             text="Dart File" description="Create new Dart file">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
@@ -298,8 +288,8 @@
               description="Run 'pub get'"/>
       <action id="Dart.pub.upgrade" class="com.jetbrains.lang.dart.ide.actions.DartPubUpgradeAction" text="Pub: Upgrade Dependencies"
               description="Run 'pub upgrade'"/>
-      <action id="Dart.pub.build" class="com.jetbrains.lang.dart.ide.actions.DartPubBuildAction" text="Pub: Build..."
-              description="Run 'pub build'"/>
+      <action id="Dart.build" class="com.jetbrains.lang.dart.ide.actions.DartPubBuildAction" text="Pub: Build..."
+              description="Run 'webdev build' (Dart 2) or 'pub build' (Dart 1)"/>
       <separator/>
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
       <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>

@@ -249,12 +249,11 @@ public class AssistUtils {
 
   @Nullable
   public static VirtualFile findVirtualFile(@NotNull final SourceFileEdit fileEdit) {
-    final String path = fileEdit.getFile();
-    return findVirtualFile(path);
+    return findVirtualFile(fileEdit.getFile());
   }
 
   @Nullable
-  public static VirtualFile findVirtualFile(@NotNull final String path) {
+  private static VirtualFile findVirtualFile(@NotNull final String path) {
     return LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(path));
   }
 
