@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 import static com.intellij.icons.AllIcons.Debugger.Db_invalid_breakpoint;
-import static com.intellij.icons.AllIcons.Debugger.Db_verified_breakpoint;
+import static com.intellij.icons.AllIcons.Debugger.Db_set_breakpoint;
 
 public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>> {
 
@@ -91,7 +91,7 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
 
     // This can be null when the breakpoint has been set by another debugger client.
     if (xBreakpoint != null) {
-      myDebugProcess.getSession().updateBreakpointPresentation(xBreakpoint, Db_verified_breakpoint, null);
+      myDebugProcess.getSession().updateBreakpointPresentation(xBreakpoint, Db_set_breakpoint, null);
     }
   }
 

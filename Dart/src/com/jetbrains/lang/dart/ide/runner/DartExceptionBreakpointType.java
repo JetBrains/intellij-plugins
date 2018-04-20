@@ -45,7 +45,7 @@ public class DartExceptionBreakpointType
   @NotNull
   @Override
   public Icon getDisabledIcon() {
-    return AllIcons.Debugger.Db_disabled_exception_breakpoint;
+    return AllIcons.Debugger.Db_exception_breakpoint;
   }
 
   @Override
