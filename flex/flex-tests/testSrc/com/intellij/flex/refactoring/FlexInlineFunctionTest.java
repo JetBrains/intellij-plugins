@@ -140,8 +140,8 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
     shouldFail("Can not inline function defined in external library");
   }
 
-  public void testNonCallUsage() {
-    shouldFail("Can not inline non call usage");
+  public void testNonCallUsage() throws Exception {
+    defaultTest();
   }
 
   public void testConflicts1() {
