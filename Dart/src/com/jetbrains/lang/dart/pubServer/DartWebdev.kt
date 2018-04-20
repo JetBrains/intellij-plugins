@@ -21,6 +21,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
+import com.jetbrains.lang.dart.ide.actions.DartPubActionBase
 import com.jetbrains.lang.dart.sdk.DartSdk
 import com.jetbrains.lang.dart.sdk.DartSdkUtil
 import java.io.File
@@ -62,6 +63,7 @@ object DartWebdev {
       val pubFile = File(DartSdkUtil.getPubPath(sdk.homePath))
       command.exePath = pubFile.path
       command.addParameters("global", "activate", "webdev")
+      command.withEnvironment(DartPubActionBase.PUB_ENV_VAR_NAME, DartPubActionBase.getPubEnvValue() + ".webdev.activate")
 
       CapturingProcessHandler(command).runProcessWithProgressIndicator(indicator, 60 * 1000, false)
     }
