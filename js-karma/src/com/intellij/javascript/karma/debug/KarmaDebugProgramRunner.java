@@ -132,7 +132,7 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
             SingleAlarm alarm = new SingleAlarm(resumeTestRunning, 5000);
             alarm.request();
             debugProcess.getConnection().executeOnStart((vm) -> {
-              alarm.cancelAndRequest();
+              alarm.cancelAllRequests();
               resumeTestRunning.run();
               return Unit.INSTANCE;
             });
