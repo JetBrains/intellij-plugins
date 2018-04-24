@@ -61,7 +61,7 @@ public class FlexBreakpointType extends XLineBreakpointTypeBase {
 
   @Nullable
   @Override
-  public Icon getValidatingIcon() {
+  public Icon getPendingIcon() {
     return AllIcons.Debugger.Db_validate_breakpoint;
   }
 }
