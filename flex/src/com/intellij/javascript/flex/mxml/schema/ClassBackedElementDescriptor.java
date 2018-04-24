@@ -390,11 +390,8 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   }
 
   static boolean sameNs(final String childNs, final String namespace) {
-    final boolean b = childNs.equals(namespace);
-    if (!b) {
-      return JavaScriptSupportLoader.isLanguageNamespace(childNs) && JavaScriptSupportLoader.isLanguageNamespace(namespace);
-    }
-    return b;
+    if (childNs.equals(namespace)) return true;
+    return JavaScriptSupportLoader.isLanguageNamespace(childNs) && JavaScriptSupportLoader.isLanguageNamespace(namespace);
   }
 
   @Nullable
@@ -424,7 +421,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
         new AnnotationBackedDescriptorImpl(MxmlLanguageTagsUtil.NAME_ATTRIBUTE, this, true, null, null, null)};
     }
 
-    if (_context != null && MxmlLanguageTagsUtil.isComponentTag(_context)) {
+    if (MxmlLanguageTagsUtil.isComponentTag(_context)) {
       return new XmlAttributeDescriptor[]{
         new ClassNameAttributeDescriptor(this),
         new AnnotationBackedDescriptorImpl(FlexMxmlLanguageAttributeNames.ID, this, true, null, null, null)
@@ -952,8 +949,8 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     if (isFinalClass) {
       final String jsClassName = jsClass.getName();
       if (jsClassName != null) {
-        final XmlElementDescriptor descriptor = context.getElementDescriptor(jsClassName, jsClass.getQualifiedName());
-        if (descriptor instanceof ClassBackedElementDescriptor && CodeContext.checkDeclaration((ClassBackedElementDescriptor)descriptor)) {
+        final ClassBackedElementDescriptor descriptor = context.getElementDescriptor(jsClassName, jsClass.getQualifiedName());
+        if (descriptor != null && CodeContext.checkDeclaration(descriptor)) {
           result.add(descriptor);
         }
       }
