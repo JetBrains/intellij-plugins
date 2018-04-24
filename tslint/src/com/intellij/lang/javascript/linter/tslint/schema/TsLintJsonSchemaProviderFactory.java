@@ -16,7 +16,7 @@ public final class TsLintJsonSchemaProviderFactory implements JsonSchemaProvider
 
   @NotNull
   private static EmbeddedJsonSchemaFileProvider createProvider() {
-    return new EmbeddedJsonSchemaFileProvider(TSLINT_SCHEMA_JSON,
+    return new EmbeddedJsonSchemaFileProvider(TSLINT_SCHEMA_JSON, "TSLint", "http://json.schemastore.org/tslint",
                                               TsLintJsonSchemaProviderFactory.class, TSLINT_JSON_SCHEMA_DIR + '/', "tslint.json");
   }
 
