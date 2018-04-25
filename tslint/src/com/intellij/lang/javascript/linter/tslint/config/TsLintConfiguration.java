@@ -17,10 +17,6 @@ import org.jetbrains.annotations.Nullable;
  */
 @State(name = "TsLintConfiguration", storages = @Storage("jsLinters/tslint.xml"))
 public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
-
-  public static final String TSLINT_JSON = "tslint.json";
-
-  public static final String LOG_CATEGORY = "#com.intellij.lang.javascript.linter.tslint.TsLint";
   private static final String TSLINT_ELEMENT_NAME = "tslint";
   private static final String IS_CUSTOM_CONFIG_FILE_USED_ATTRIBUTE_NAME = "use-custom-config-file";
   private static final String CUSTOM_CONFIG_FILE_PATH_ATTRIBUTE_NAME = "custom-config-file-path";

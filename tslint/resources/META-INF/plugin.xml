@@ -23,7 +23,6 @@
     <projectService serviceImplementation="com.intellij.lang.javascript.linter.tslint.highlight.TsLintConfigFileChangeTracker"/>
     <projectService serviceImplementation="com.intellij.lang.javascript.linter.tslint.config.TsLintConfigWrapperCache"/>
     <JavaScript.linter.descriptor implementation="com.intellij.lang.javascript.linter.tslint.config.TsLintDescriptor"/>
-    <fileTypeFactory implementation="com.intellij.lang.javascript.linter.tslint.ide.TsLintConfigFileTypeFactory"/>
 
     <localInspection language="TypeScript"
                      bundle="messages.TsLintBundle"

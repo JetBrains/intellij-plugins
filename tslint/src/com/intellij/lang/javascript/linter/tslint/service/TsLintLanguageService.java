@@ -5,8 +5,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.intellij.idea.RareLogger;
+import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
-import com.intellij.lang.javascript.linter.tslint.execution.TsLintConfigFileSearcher;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLintOutputJsonParser;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLinterError;
 import com.intellij.lang.javascript.linter.tslint.service.commands.TsLintFixErrorsCommand;
@@ -32,18 +32,14 @@ import java.util.concurrent.Future;
 
 public final class TsLintLanguageService extends JSLanguageServiceBase {
   @NotNull private final static Logger LOG = RareLogger.wrap(Logger.getInstance("#com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService"), false);
-  @NotNull
-  private final TsLintConfigFileSearcher myConfigFileSearcher;
 
   @NotNull
   public static TsLintLanguageService getService(@NotNull Project project) {
     return ServiceManager.getService(project, TsLintLanguageService.class);
   }
 
-
   public TsLintLanguageService(@NotNull Project project) {
     super(project);
-    myConfigFileSearcher = new TsLintConfigFileSearcher();
   }
 
   @NotNull
@@ -68,7 +64,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
   }
 
   public final Future<List<TsLinterError>> highlightAndFix(@Nullable VirtualFile virtualFile, @NotNull TsLintState state) {
-    VirtualFile config = virtualFile == null ? null : myConfigFileSearcher.getConfig(state, virtualFile);
+    VirtualFile config = virtualFile == null ? null : TslintUtil.getConfig(state, virtualFile);
     final MyParameters parameters = MyParameters.checkParameters(virtualFile, config);
     if (parameters.getErrors() != null) return new FixedFuture<>(parameters.getErrors());
 

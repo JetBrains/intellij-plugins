@@ -8,10 +8,10 @@ import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.linter.*;
 import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
+import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintDescriptor;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
-import com.intellij.lang.javascript.linter.tslint.execution.TsLintConfigFileSearcher;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLinterError;
 import com.intellij.lang.javascript.linter.tslint.fix.TsLintErrorFixAction;
 import com.intellij.lang.javascript.linter.tslint.fix.TsLintFileFixAction;
@@ -51,9 +51,6 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
   private static final TsLintExternalAnnotator INSTANCE_FOR_BATCH_INSPECTION = new TsLintExternalAnnotator(false);
 
   @NotNull
-  private final TsLintConfigFileSearcher myConfigFileSearcher;
-
-  @NotNull
   public static TsLintExternalAnnotator getInstanceForBatchInspection() {
     return INSTANCE_FOR_BATCH_INSPECTION;
   }
@@ -65,7 +62,6 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
 
   public TsLintExternalAnnotator(boolean onTheFly) {
     super(onTheFly);
-    myConfigFileSearcher = new TsLintConfigFileSearcher();
   }
 
   @NotNull
@@ -101,7 +97,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
                                      Document document,
                                      String fileContent,
                                      EditorColorsScheme colorsScheme) {
-    VirtualFile config = myConfigFileSearcher.getConfig(state, psiFile.getVirtualFile());
+    VirtualFile config = TslintUtil.getConfig(state, psiFile.getVirtualFile());
     boolean skipProcessing = config != null && saveConfigFileAndReturnSkipProcessing(psiFile.getProject(), config);
     if (skipProcessing) {
       return null;

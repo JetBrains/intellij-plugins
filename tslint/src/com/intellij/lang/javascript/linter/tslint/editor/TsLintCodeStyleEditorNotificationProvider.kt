@@ -4,16 +4,17 @@ import com.intellij.lang.javascript.JSBundle
 import com.intellij.lang.javascript.linter.JSLinterUtil
 import com.intellij.lang.javascript.linter.LinterCodeStyleImportSourceTracker
 import com.intellij.lang.javascript.linter.tslint.TsLintBundle
+import com.intellij.lang.javascript.linter.tslint.TslintUtil
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfigWrapperCache
 import com.intellij.lang.javascript.linter.tslint.config.style.rules.TsLintConfigWrapper
 import com.intellij.lang.javascript.linter.tslint.config.style.rules.TsLintSimpleRule
-import com.intellij.lang.javascript.linter.tslint.ide.TsLintConfigFileType
 import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.ui.EditorNotificationPanel
@@ -23,7 +24,7 @@ private val KEY = Key.create<EditorNotificationPanel>("TsLint.Import.Code.Style.
 
 class TsLintCodeStyleEditorNotificationProvider(project: Project) : EditorNotifications.Provider<EditorNotificationPanel>() {
   private val mySourceTracker: LinterCodeStyleImportSourceTracker = LinterCodeStyleImportSourceTracker(
-    project, "tslint", { it.fileType == TsLintConfigFileType.INSTANCE })
+    project, "tslint", { StringUtil.equals(it.name, TslintUtil.TSLINT_JSON) })
 
   override fun getKey(): Key<EditorNotificationPanel> = KEY
 
@@ -43,7 +44,7 @@ class TsLintCodeStyleEditorNotificationProvider(project: Project) : EditorNotifi
     return object : EditorNotificationPanel(EditorColors.GUTTER_BACKGROUND) {
       init {
         setText(TsLintBundle.message("tslint.code.style.apply.message"))
-        val okAction: Runnable = Runnable {
+        val okAction = Runnable {
           runWriteActionAndUpdateNotifications(project, file, wrapper, rules)
         }
         createActionLabel(TsLintBundle.message("tslint.code.style.apply.text"), okAction)
