@@ -9,7 +9,8 @@ import org.junit.runners.Suite;
   TsLintHighlightingTest.class,
   TsLintConfigCompletionTest.class,
   TsLintConfigHighlightingTest.class,
-  TsLintResolveTest.class
+  TsLintResolveTest.class,
+  TslintCodeStyleImportTest.class
 })
 public class TsLintTestSuite {
 }
