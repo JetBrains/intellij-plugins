@@ -26,8 +26,7 @@ public class HbStructureViewTest extends LightPlatformCodeInsightFixtureTestCase
     doTestStructureView(myFixture.getFile(), composite -> {
       StructureViewComponent svc = (StructureViewComponent)composite.getSelectedStructureView();
       PlatformTestUtil.waitForPromise(svc.rebuildAndUpdate());
-      TreeUtil.expandAll(svc.getTree());
-      assertTreeEqual(svc.getTree(), expectedTree + "\n");
+      TreeUtil.expandAll(svc.getTree(), () -> assertTreeEqual(svc.getTree(), expectedTree + "\n"));
     });
   }
 
