@@ -16,18 +16,27 @@ package org.angularjs.codeInsight;
 import com.intellij.lang.javascript.frameworks.webpack.WebpackCssFileReferenceHelper;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFileSystemItem;
+import com.intellij.psi.PsiManager;
+import com.intellij.util.SmartList;
 import org.angularjs.cli.AngularCliJsonInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.Collections;
 
 public class AngularCssFileReferenceHelper extends WebpackCssFileReferenceHelper {
   @NotNull
   @Override
   public Collection<PsiFileSystemItem> getContexts(@NotNull final Project project, @NotNull final VirtualFile file) {
-    return Collections.singletonList(new AngularCliAwareCssFileReferenceResolver(project, file));
+    final Collection<PsiFileSystemItem> result = new SmartList<>(new AngularCliAwareCssFileReferenceResolver(project, file));
+    for (VirtualFile dir : AngularCliJsonInfo.getStylePreprocessorIncludeDirs(project, file)) {
+      final PsiDirectory psiDir = PsiManager.getInstance(project).findDirectory(dir);
+      if (psiDir != null) {
+        result.add(psiDir);
+      }
+    }
+    return result;
   }
 
   private static class AngularCliAwareCssFileReferenceResolver extends WebpackTildeFileReferenceResolver {

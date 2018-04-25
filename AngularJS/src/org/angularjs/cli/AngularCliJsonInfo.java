@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.io.JsonReaderEx;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -34,10 +35,14 @@ public class AngularCliJsonInfo {
 
   private final long myModStamp;
   @NotNull private final Collection<String> myRootPaths;
+  @NotNull private final Collection<String> myStylePreprocessorIncludePaths;
 
-  public AngularCliJsonInfo(final long modStamp, @NotNull final Collection<String> rootPaths) {
+  public AngularCliJsonInfo(final long modStamp,
+                            @NotNull final Collection<String> rootPaths,
+                            @NotNull final Collection<String> stylePreprocessorIncludePaths) {
     myModStamp = modStamp;
     myRootPaths = rootPaths;
+    myStylePreprocessorIncludePaths = stylePreprocessorIncludePaths;
   }
 
   /**
@@ -55,6 +60,28 @@ public class AngularCliJsonInfo {
     return ContainerUtil.mapNotNull(info.myRootPaths, s -> angularCliFolder.findFileByRelativePath(s));
   }
 
+  /**
+   * @return folders that are precessed as root folders by style preprocessor according to apps -> stylePreprocessorOptions -> includePaths in .angular-cli.json
+   */
+  @NotNull
+  public static Collection<VirtualFile> getStylePreprocessorIncludeDirs(@NotNull final Project project,
+                                                                        @NotNull final VirtualFile context) {
+    final VirtualFile angularCliFolder = BlueprintsLoaderKt.findAngularCliFolder(project, context);
+    final VirtualFile angularCliJson = angularCliFolder == null ? null : AngularJSProjectConfigurator.findCliJson(angularCliFolder);
+    if (angularCliJson == null) {
+      return Collections.emptyList();
+    }
+
+    final AngularCliJsonInfo info = getAngularCliJsonInfo(angularCliJson);
+    final Collection<VirtualFile> result = new ArrayList<>(info.myRootPaths.size() * info.myStylePreprocessorIncludePaths.size());
+    for (String rootPath : info.myRootPaths) {
+      for (String includePath : info.myStylePreprocessorIncludePaths) {
+        ContainerUtil.addIfNotNull(result, angularCliFolder.findFileByRelativePath(rootPath + "/" + includePath));
+      }
+    }
+    return result;
+  }
+
   @NotNull
   private static AngularCliJsonInfo getAngularCliJsonInfo(@NotNull final VirtualFile angularCliJson) {
     final Document cachedDocument = FileDocumentManager.getInstance().getCachedDocument(angularCliJson);
@@ -70,13 +97,14 @@ public class AngularCliJsonInfo {
       return newInfo;
     }
     catch (IOException e) {
-      return new AngularCliJsonInfo(-1, Collections.emptyList());
+      return new AngularCliJsonInfo(-1, Collections.emptyList(), Collections.emptyList());
     }
   }
 
   @NotNull
   private static AngularCliJsonInfo parseInfo(@NotNull final CharSequence text, final long modStamp) {
-    final Collection<String> result = new SmartList<>();
+    final Collection<String> rootPaths = new SmartList<>();
+    final Collection<String> includePaths = new SmartList<>();
     try (JsonReaderEx reader = new JsonReaderEx(text)) {
       reader.beginObject();
       while (reader.hasNext()) {
@@ -85,8 +113,12 @@ public class AngularCliJsonInfo {
           while (reader.hasNext()) {
             reader.beginObject();
             while (reader.hasNext()) {
-              if ("root".equals(reader.nextName())) {
-                result.add(reader.nextString());
+              final String nextName = reader.nextName();
+              if ("root".equals(nextName)) {
+                rootPaths.add(reader.nextString());
+              }
+              else if ("stylePreprocessorOptions".equals(nextName)) {
+                readIncludePaths(reader, includePaths);
               }
               else {
                 reader.skipValue();
@@ -103,6 +135,28 @@ public class AngularCliJsonInfo {
     }
     catch (IllegalStateException | JsonParseException ignore) {/* unlucky */}
 
-    return new AngularCliJsonInfo(modStamp, result);
+    return new AngularCliJsonInfo(modStamp, rootPaths, includePaths);
+  }
+
+  private static void readIncludePaths(@NotNull final JsonReaderEx reader, @NotNull final Collection<String> includePaths) {
+    try {
+      reader.beginObject();
+      while (reader.hasNext()) {
+        if ("includePaths".equals(reader.nextName())) {
+          reader.beginArray();
+          while (reader.hasNext()) {
+            includePaths.add(reader.nextString());
+          }
+          reader.endArray();
+        }
+        else {
+          reader.skipValue();
+        }
+      }
+      reader.endObject();
+    }
+    catch (IllegalStateException | JsonParseException ignore) {
+      reader.skipValue();
+    }
   }
 }
