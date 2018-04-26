@@ -456,7 +456,7 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
   }
 
   private String replaceMacros(String text, final Sdk sdk, @Nullable Map<String, String> additionalMacros) {
-    text = text.replace("$" + PathMacroUtil.MODULE_DIR_MACRO_NAME + "$", myModule.getModuleFile().getParent().getPath());
+    text = text.replace(PathMacroUtil.DEPRECATED_MODULE_DIR, myModule.getModuleFile().getParent().getPath());
     text = text.replace("$FLEX_SDK$", sdk.getHomePath());
     if (additionalMacros != null) {
       for (String key : additionalMacros.keySet()) {
