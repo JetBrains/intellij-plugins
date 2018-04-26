@@ -27,6 +27,7 @@ public class FlashModuleSourceItem extends PackagingSourceItem {
     return Collections.emptyList();
   }
 
+  @NotNull
   @Override
   public SourceItemPresentation createPresentation(final @NotNull ArtifactEditorContext context) {
     return new SourceItemPresentation() {
