@@ -2,7 +2,6 @@ package com.intellij.prettierjs;
 
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.javascript.nodejs.PackageJsonData;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
@@ -37,6 +36,8 @@ public class PrettierConfiguration {
   private final PropertiesComponent myPropertiesComponent;
   private static final String NODE_INTERPRETER_PROPERTY_KEY = "prettierjs.PrettierConfiguration.NodeInterpreter";
   private static final String PACKAGE_PROPERTY_KEY = "prettierjs.PrettierConfiguration.Package";
+  private static final String OLD_PACKAGE_PROPERTY = "node.js.selected.package.prettier";
+  private static final String OLD_INTERPRETER_PROPERTY = "node.js.path.for.package.prettier";
 
   public PrettierConfiguration(@NotNull Project project, @NotNull PropertiesComponent component) {
     myProject = project;
@@ -61,12 +62,16 @@ public class PrettierConfiguration {
 
   @NotNull
   public NodeJsInterpreterRef getInterpreterRef() {
-    return NodeJsInterpreterRef.create(myPropertiesComponent.getValue(NODE_INTERPRETER_PROPERTY_KEY));
+    return NodeJsInterpreterRef.create(ObjectUtils.coalesce(myPropertiesComponent.getValue(OLD_INTERPRETER_PROPERTY),
+                                                            myPropertiesComponent.getValue(NODE_INTERPRETER_PROPERTY_KEY)));
   }
 
   @Nullable
   public NodePackage getPackage() {
-    return new NodePackage(myPropertiesComponent.getValue(PACKAGE_PROPERTY_KEY, ""));
+    String value = ObjectUtils.coalesce(myPropertiesComponent.getValue(PACKAGE_PROPERTY_KEY),
+                                        myPropertiesComponent.getValue(OLD_PACKAGE_PROPERTY),
+                                        "");
+    return new NodePackage(value);
   }
 
   public void update(@NotNull NodeJsInterpreterRef interpreterRef, @Nullable NodePackage nodePackage) {
