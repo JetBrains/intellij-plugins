@@ -34,8 +34,8 @@ public class PrettierConfiguration {
   @NotNull
   private final Project myProject;
   private final PropertiesComponent myPropertiesComponent;
-  private static final String NODE_INTERPRETER_PROPERTY_KEY = "prettierjs.PrettierConfiguration.NodeInterpreter";
-  private static final String PACKAGE_PROPERTY_KEY = "prettierjs.PrettierConfiguration.Package";
+  private static final String NODE_INTERPRETER_PROPERTY = "prettierjs.PrettierConfiguration.NodeInterpreter";
+  private static final String PACKAGE_PROPERTY = "prettierjs.PrettierConfiguration.Package";
   private static final String OLD_PACKAGE_PROPERTY = "node.js.selected.package.prettier";
   private static final String OLD_INTERPRETER_PROPERTY = "node.js.path.for.package.prettier";
 
@@ -62,21 +62,21 @@ public class PrettierConfiguration {
 
   @NotNull
   public NodeJsInterpreterRef getInterpreterRef() {
-    return NodeJsInterpreterRef.create(ObjectUtils.coalesce(myPropertiesComponent.getValue(OLD_INTERPRETER_PROPERTY),
-                                                            myPropertiesComponent.getValue(NODE_INTERPRETER_PROPERTY_KEY)));
+    return NodeJsInterpreterRef.create(ObjectUtils.coalesce(myPropertiesComponent.getValue(NODE_INTERPRETER_PROPERTY),
+                                                            myPropertiesComponent.getValue(OLD_INTERPRETER_PROPERTY)));
   }
   
   @Nullable
   public NodePackage getPackage() {
-    String value = ObjectUtils.coalesce(myPropertiesComponent.getValue(PACKAGE_PROPERTY_KEY),
+    String value = ObjectUtils.coalesce(myPropertiesComponent.getValue(PACKAGE_PROPERTY),
                                         myPropertiesComponent.getValue(OLD_PACKAGE_PROPERTY),
                                         "");
     return new NodePackage(value);
   }
 
   public void update(@NotNull NodeJsInterpreterRef interpreterRef, @Nullable NodePackage nodePackage) {
-    myPropertiesComponent.setValue(NODE_INTERPRETER_PROPERTY_KEY, interpreterRef.getReferenceName());
-    myPropertiesComponent.setValue(PACKAGE_PROPERTY_KEY, nodePackage != null ? nodePackage.getSystemDependentPath() : null);
+    myPropertiesComponent.setValue(NODE_INTERPRETER_PROPERTY, interpreterRef.getReferenceName());
+    myPropertiesComponent.setValue(PACKAGE_PROPERTY, nodePackage != null ? nodePackage.getSystemDependentPath() : null);
   }
 
   private void detectLocalOrGlobalPackage() {
@@ -91,14 +91,14 @@ public class PrettierConfiguration {
     if (myProject.isDisposed() || myProject.isDefault()) {
       return;
     }
-    String stored = myPropertiesComponent.getValue(PACKAGE_PROPERTY_KEY, "");
+    String stored = myPropertiesComponent.getValue(PACKAGE_PROPERTY, "");
     if (!StringUtil.isEmpty(stored)) {
       return;
     }
 
     NodePackage detected = packageProducer.produce();
     if (detected != null) {
-      myPropertiesComponent.setValue(PACKAGE_PROPERTY_KEY, detected.getSystemDependentPath());
+      myPropertiesComponent.setValue(PACKAGE_PROPERTY, detected.getSystemDependentPath());
     }
   }
 
