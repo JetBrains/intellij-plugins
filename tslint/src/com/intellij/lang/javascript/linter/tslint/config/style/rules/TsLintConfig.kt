@@ -1,39 +1,22 @@
 package com.intellij.lang.javascript.linter.tslint.config.style.rules
 
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
+import com.google.gson.Gson
 import com.intellij.application.options.CodeStyle
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
+import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
-import com.intellij.webcore.util.JsonUtil
+import com.intellij.psi.util.*
+import org.yaml.snakeyaml.Yaml
 
-private val TO_PROCESS = arrayOf("rules", "jsRules")
+class TsLintConfigWrapper(private val options: Map<String, TslintJsonOption>) {
 
-class TsLintConfigWrapper(config: JsonObject) {
-
-  private val options: Map<String, TsLintConfigOption>
-
-  init {
-    val result = mutableMapOf<String, TsLintConfigOption>()
-
-    TO_PROCESS.forEach { name ->
-      if (config.has(name)) {
-        val jsRules = config[name]
-        if (jsRules.isJsonObject) {
-          jsRules.asJsonObject.entrySet().forEach { result[it.key] = TsLintConfigOption(it.value) }
-        }
-      }
-    }
-
-    options = result
-  }
-
-  fun getOption(name: String): TsLintConfigOption? = options[name]
+  fun getOption(name: String): TslintJsonOption? = options[name]
 
   fun getRulesToApply(project: Project): Collection<TsLintSimpleRule<*>> {
     ApplicationManager.getApplication().assertReadAccessAllowed()
@@ -78,55 +61,95 @@ class TsLintConfigWrapper(config: JsonObject) {
       val newJsCodeStyleSettings = custom(newSettings)
       rules.forEach { rule -> rule.apply(project, newLanguageSettings, newJsCodeStyleSettings, this) }
     }
+  }
 
+  companion object {
+    private val RULES_CACHE_KEY = Key.create<ParameterizedCachedValue<TsLintConfigWrapper, PsiFile>>("tslint.cache.key.config.json")
+
+    private val CACHED_VALUE_PROVIDER: ParameterizedCachedValueProvider<TsLintConfigWrapper, PsiFile> = ParameterizedCachedValueProvider {
+      if (it == null || PsiTreeUtil.hasErrorElements(it)) {
+        CachedValueProvider.Result.create(null, it)
+      }
+      CachedValueProvider.Result.create(parseConfigFile(it), it)
+    }
+
+    private fun parseConfigFile(it: PsiFile): TsLintConfigWrapper? {
+      val map = jsonAsMap(it) ?: yamlAsMap(it)
+      if (map != null) {
+        val rulesObject = map["rules"]
+        if (rulesObject is Map<*, *>) {
+          @Suppress("UNCHECKED_CAST")
+          val typed = rulesObject as Map<String, Any>
+          return TsLintConfigWrapper(typed.mapValues { TslintJsonOption(it.value) })
+        }
+      }
+      return null
+    }
+
+    private fun jsonAsMap(it: PsiFile): Map<String, Any>? {
+      return try {
+        Gson().fromJson<MutableMap<String, Any>>(it.text, MutableMap::class.java)
+      }
+      catch (e: Exception) {
+        null
+      }
+    }
+
+    private fun yamlAsMap(file: PsiFile): Map<String, Any>? {
+      return try {
+        Yaml().load<Map<String, Any>>(file.text)
+      }
+      catch (e: Exception) {
+        null
+      }
+    }
+
+    fun getConfigForFile(psiFile: PsiFile?): TsLintConfigWrapper? {
+      if (psiFile == null) return null
+      return CachedValuesManager.getManager(psiFile.project)
+               .getParameterizedCachedValue(psiFile, RULES_CACHE_KEY, CACHED_VALUE_PROVIDER, false, psiFile) ?: return null
+    }
   }
 }
 
-class TsLintConfigOption(val element: JsonElement) {
+class TslintJsonOption(private val element: Any?) {
   fun isEnabled(): Boolean {
-    if (element.isJsonPrimitive) {
-      return element.asBoolean
+    if (element is Boolean) {
+      return element
     }
-    if (element.isJsonArray) {
-      val jsonArray = element.asJsonArray
-      return jsonArray.count() > 0 && jsonArray[0].isJsonPrimitive && jsonArray[0].asBoolean
+    if (element is List<*> && element.size > 0 && element[0] is Boolean) {
+      return element[0] as Boolean
     }
-    if (element.isJsonObject) {
-      val jsonObject = element.asJsonObject
-      val severityValue = jsonObject.get("severity")
-      return severityValue != null
-             && severityValue.isJsonPrimitive
-             && !("none" == severityValue.asString || "off" == severityValue.asString)
+    if (element is Map<*, *>) {
+      val severityValue = element["severity"]
+      return !("none" == severityValue || "off" == severityValue)
     }
 
     return false
   }
 
   fun getStringValues(): Collection<String> {
-    if (element.isJsonArray) {
-      return element.asJsonArray.drop(1).mapNotNull { if (it.isJsonPrimitive) it.asString else null }
+    if (element is List<*>) {
+      return element.drop(1).mapNotNull { it as? String }
     }
-    if (element.isJsonObject) {
-      return asStringArrayOrSingleString(element.asJsonObject.get("options"))
+    if (element is Map<*, *>) {
+      return asStringArrayOrSingleString(element["options"])
     }
 
     return emptyList()
   }
 
   fun getNumberValue(): Int? {
-    if (element.isJsonArray) {
-      val jsonArray = element.asJsonArray
-      if (jsonArray.count() > 1 && jsonArray[1].isJsonPrimitive)
-        return jsonArray[1].asInt
-      return null
+    if (element is List<*> && element.size > 1 && element[1] is Number) {
+      return (element[1] as Number).toInt()
     }
-    if (element.isJsonObject) {
-      val optionsElement = element.asJsonObject.get("options")
-      if (optionsElement.isJsonPrimitive) {
-        return optionsElement.asInt
+    if (element is Map<*, *>) {
+      val optionsValue = element["options"]
+      if (optionsValue is Number) {
+        return optionsValue.toInt()
       }
-      if (optionsElement.isJsonArray && optionsElement.asJsonArray.size() > 0) {
-        return optionsElement.asJsonArray[0].asInt
+      if (optionsValue is List<*> && optionsValue.size > 0 && optionsValue[0] is Number) {
+        return (optionsValue[0] as Number).toInt()
       }
     }
 
@@ -134,43 +157,36 @@ class TsLintConfigOption(val element: JsonElement) {
   }
 
   fun getStringMapValue(): Map<String, String> {
-    if (element.isJsonArray) {
-      val jsonArray = element.asJsonArray
-      return if (jsonArray.count() > 1) asStringMap(jsonArray[1]) else emptyMap()
+    if (element is List<*> && element.size > 1) {
+      return asStringMap(element[1])
     }
-    if (element.isJsonObject) {
-      return asStringMap(element.asJsonObject.get("options"))
+    if (element is Map<*, *>) {
+      return asStringMap(element["options"])
     }
 
     return emptyMap()
   }
 
-  private fun asStringArrayOrSingleString(jsonObject: JsonElement?): List<String> {
-    if (jsonObject == null) {
-      return emptyList()
+  private fun asStringArrayOrSingleString(element: Any?): List<String> {
+    if (element is String) {
+      return listOf(element)
     }
-    if (jsonObject.isJsonPrimitive) {
-      return listOf(jsonObject.asString)
-    }
-    if (jsonObject.isJsonArray) {
-      return JsonUtil.getAsStringList(jsonObject) ?: emptyList()
+    if (element is List<*>) {
+      return element.mapNotNull { it as? String }
     }
     return emptyList()
   }
 
-  private fun asStringMap(first: JsonElement?): Map<String, String> {
-    if (first == null || !first.isJsonObject) {
-      return emptyMap()
-    }
-    val resultObject = first.asJsonObject
-    val result = mutableMapOf<String, String>()
-    resultObject.entrySet().forEach {
-      if (it.value.isJsonPrimitive) {
-        result[it.key] = it.value.asString
+  private fun asStringMap(element: Any?): Map<String, String> {
+    if (element is Map<*, *>) {
+      val result = mutableMapOf<String, String>()
+      element.forEach {
+        if (it.key is String && it.value is String) {
+          result[it.key as String] = it.value as String
+        }
       }
+      return result
     }
-
-    return result
+    return emptyMap()
   }
 }
-

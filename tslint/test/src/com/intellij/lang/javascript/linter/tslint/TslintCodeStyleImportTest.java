@@ -16,7 +16,6 @@ package com.intellij.lang.javascript.linter.tslint;
 import com.intellij.application.options.CodeStyle;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.linter.tslint.config.TsLintConfigWrapperCache;
 import com.intellij.lang.javascript.linter.tslint.config.style.rules.TsLintConfigWrapper;
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
 import com.intellij.psi.PsiFile;
@@ -145,10 +144,89 @@ public class TslintCodeStyleImportTest extends LightPlatformCodeInsightFixtureTe
     });
   }
 
+  public void testStringListRule() throws Exception {
+    doTestJson("{\n" +
+               "  \"rules\": {\n" +
+               "    \"import-blacklist\": [\n" +
+               "      true,\n" +
+               "      \"foojs\",\n" +
+               "      \"barjs\"\n" +
+               "    ]\n" +
+               "  }\n" +
+               "}\n", (settings) -> {
+      TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
+      assertEquals("foojs,barjs", tsSettings.BLACKLIST_IMPORTS);
+    });
+  }
+
+  public void testSimpleStringValueYaml() throws Exception {
+    doTestYaml("rules:\n" +
+               "    semicolon: [true, \"never\"]", settings -> {
+      Assert.assertFalse(settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_SEMICOLON_AFTER_STATEMENT);
+    });
+  }
+
+  public void testSimpleNumberValueYaml() throws Exception {
+    doTestYaml("rules:\n" +
+               "    semicolon: [true, \"never\"]\n" +
+               "    max-line-length: [true, 12]", settings -> {
+      CommonCodeStyleSettings tsSettings = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT);
+      assertEquals(12, tsSettings.RIGHT_MARGIN);
+    });
+  }
+
+  public void testStringValueFromOptionsYaml() throws Exception {
+    doTestYaml("rules:\n" +
+               "    semicolon:\n" +
+               "        options:\n" +
+               "            - never", settings -> {
+      Assert.assertFalse(settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_SEMICOLON_AFTER_STATEMENT);
+    });
+  }
+
+  public void testNumberValueFromOptionsYaml() throws Exception {
+    doTestYaml("rules:\n" +
+               "    max-line-length:\n" +
+               "        options: 12", settings -> {
+      CommonCodeStyleSettings tsSettings = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT);
+      assertEquals(12, tsSettings.RIGHT_MARGIN);
+    }); 
+  }
+
+  public void testNoneSeverityYaml() throws Exception {
+    doTestYaml("rules:\n" +
+               "    max-line-length:\n" +
+               "        severity: \"none\"\n" +
+               "        options: 12", settings -> {
+      CommonCodeStyleSettings tsSettings = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT);
+      assertEquals(-1, tsSettings.RIGHT_MARGIN);
+    });
+  }
+
+  public void testStringListRuleYaml() throws Exception {
+    doTestYaml("rules:\n" +
+               "    import-blacklist:\n" +
+               "        options:\n" +
+               "            - foojs\n" +
+               "            - barjs\n", settings -> {
+      TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
+      assertEquals("foojs,barjs", tsSettings.BLACKLIST_IMPORTS);
+    });
+  }
+
   private void doTestJson(@Language("JSON") String configText, Consumer<CodeStyleSettings> test) throws Exception {
+    doTest("tslint.json", configText, test);
+  }
+
+  private void doTestYaml(@Language("YAML") String configText, Consumer<CodeStyleSettings> test) throws Exception {
+    doTest("tslint.yaml", configText, test);
+  }
+
+  private void doTest(String configFileName, String configText, Consumer<CodeStyleSettings> test)
+    throws Exception {
     JSTestUtils.testWithTempCodeStyleSettings(getProject(), settings -> {
-      PsiFile configFile = myFixture.configureByText("tslint.json", configText);
-      TsLintConfigWrapper config = TsLintConfigWrapperCache.Companion.getService(getProject()).getWrapper(configFile);
+      PsiFile configFile = myFixture.configureByText(configFileName, configText);
+      TsLintConfigWrapper config = TsLintConfigWrapper.Companion.getConfigForFile(configFile);
       config.applyRules(getProject(), config.getRulesToApply(getProject()));
       test.consume(CodeStyle.getSettings(configFile));
     });

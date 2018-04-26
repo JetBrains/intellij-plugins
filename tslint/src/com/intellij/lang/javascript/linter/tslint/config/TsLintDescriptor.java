@@ -60,12 +60,11 @@ public final class TsLintDescriptor extends JSLinterDescriptor {
   @Override
   public void postEnable(@NotNull Project project, @NotNull JSLinterGuesser.EnableCase enableCase) {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    VirtualFile config = findDistinctConfigInContentRoots(project, Collections.singletonList(TslintUtil.TSLINT_JSON));
+    VirtualFile config = findDistinctConfigInContentRoots(project, Arrays.asList(TslintUtil.CONFIG_FILE_NAMES));
     if (config == null) return;
 
     PsiFile file = PsiManager.getInstance(project).findFile(config);
-    TsLintConfigWrapperCache service = TsLintConfigWrapperCache.Companion.getService(project);
-    TsLintConfigWrapper wrapper = service.getWrapper(file);
+    TsLintConfigWrapper wrapper = TsLintConfigWrapper.Companion.getConfigForFile(file);
     if (wrapper == null) return;
     Collection<TsLintSimpleRule<?>> rules = wrapper.getRulesToApply(project);
     if (rules.isEmpty()) return;
