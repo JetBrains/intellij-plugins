@@ -20,7 +20,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -28,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Angular2RenameExtension implements JSRenameExtension {
-  private static final String[] CANDIDATE_EXTENSIONS = new String[]{"css", "scss", "less", "styl", "html"};
+  private static final String[] CANDIDATE_EXTENSIONS = new String[]{"css", "scss", "less", "styl", "html", "spec.ts"};
 
   @NotNull
   @Override
