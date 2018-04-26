@@ -12,7 +12,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.Consumer;
-import com.intellij.util.ui.tree.TreeUtil;
 
 import static com.intellij.testFramework.PlatformTestUtil.assertTreeEqual;
 
@@ -26,7 +25,8 @@ public class HbStructureViewTest extends LightPlatformCodeInsightFixtureTestCase
     doTestStructureView(myFixture.getFile(), composite -> {
       StructureViewComponent svc = (StructureViewComponent)composite.getSelectedStructureView();
       PlatformTestUtil.waitForPromise(svc.rebuildAndUpdate());
-      TreeUtil.expandAll(svc.getTree(), () -> assertTreeEqual(svc.getTree(), expectedTree + "\n"));
+      PlatformTestUtil.expandAll(svc.getTree());
+      assertTreeEqual(svc.getTree(), expectedTree + "\n");
     });
   }
 
