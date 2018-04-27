@@ -8,7 +8,6 @@ import com.intellij.patterns.PlatformPatterns;
  */
 public class CfmlPatterns extends PlatformPatterns {
 
-
   public static CfmlTagImplPattern.Capture<CfmlTagImpl> sqlCapture() {
     return CfmlPatternsUtil.INSTANCE.sqlCapture();
   }
