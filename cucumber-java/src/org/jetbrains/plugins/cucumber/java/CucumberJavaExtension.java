@@ -23,6 +23,7 @@ import java.util.List;
 
 public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
   public static final String CUCUMBER_RUNTIME_JAVA_STEP_DEF_ANNOTATION = "cucumber.runtime.java.StepDefAnnotation";
+  public static final String ZUCHINI_RUNTIME_JAVA_STEP_DEF_ANNOTATION = "org.zuchini.annotations.StepAnnotation";
 
   @NotNull
   @Override
@@ -42,6 +43,10 @@ public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
 
     PsiClass stepDefAnnotationClass = JavaPsiFacade.getInstance(module.getProject()).findClass(CUCUMBER_RUNTIME_JAVA_STEP_DEF_ANNOTATION,
                                                                                                dependenciesScope);
+    if (stepDefAnnotationClass == null) {
+      stepDefAnnotationClass = JavaPsiFacade.getInstance(module.getProject()).findClass(ZUCHINI_RUNTIME_JAVA_STEP_DEF_ANNOTATION,
+                                                                                        dependenciesScope);
+    }
     if (stepDefAnnotationClass == null) {
       return Collections.emptyList();
     }

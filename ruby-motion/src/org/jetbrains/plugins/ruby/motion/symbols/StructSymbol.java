@@ -17,7 +17,6 @@ package org.jetbrains.plugins.ruby.motion.symbols;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.cidr.CocoaDocumentationManagerImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.ruby.motion.bridgesupport.Struct;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Type;
@@ -60,9 +59,10 @@ public class StructSymbol extends SymbolImpl implements MotionSymbol {
     };
   }
 
+  @NotNull
   @Override
-  public CocoaDocumentationManagerImpl.DocTokenType getInfoType() {
-    return CocoaDocumentationManagerImpl.DocTokenType.TYPEDEF;
+  public MotionDocType getInfoType() {
+    return MotionSymbol.MotionDocType.TYPEDEF;
   }
 
   @Override

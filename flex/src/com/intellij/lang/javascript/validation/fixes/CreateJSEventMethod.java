@@ -5,7 +5,8 @@ import com.intellij.codeInsight.template.Template;
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.util.Computable;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 
 public class CreateJSEventMethod extends CreateJSFunctionIntentionActionBase {
   private final Computable<String> myEventTypeGenerator;
@@ -16,7 +17,7 @@ public class CreateJSEventMethod extends CreateJSFunctionIntentionActionBase {
   }
 
   @Override
-  protected void addParameters(Template template, JSReferenceExpression refExpr, PsiFile file) {
+  protected void addParameters(Template template, JSReferenceExpression refExpr, @NotNull PsiElement anchorParent) {
     Expression expression = new MyExpression("event");
 
     template.addVariable("$event$", expression, expression, true);
@@ -27,12 +28,12 @@ public class CreateJSEventMethod extends CreateJSFunctionIntentionActionBase {
   }
 
   @Override
-  protected void addReturnType(Template template, JSReferenceExpression referenceExpression, PsiFile psifile) {
+  protected void addReturnType(Template template, JSReferenceExpression referenceExpression, @NotNull PsiElement anchorParent) {
     template.addTextSegment("void");
   }
 
   @Override
-  protected void addBody(Template template, JSReferenceExpression refExpr, PsiFile file) {
+  protected void addBody(Template template, JSReferenceExpression refExpr, @NotNull PsiElement anchorParent) {
     template.addTextSegment("\n");
     template.addEndVariable();
     template.addTextSegment("\n");

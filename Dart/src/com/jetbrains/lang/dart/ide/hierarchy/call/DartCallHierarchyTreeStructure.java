@@ -28,7 +28,7 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
     myScopeType = currentScopeType;
   }
 
-  @Nullable
+  @NotNull
   protected static FindUsagesHandler createFindUsageHandler(@NotNull final PsiElement element) {
     return new DartServerFindUsagesHandler(element);
   }
@@ -94,9 +94,9 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
       if (root instanceof DartHierarchyNodeDescriptor) {
         DartHierarchyNodeDescriptor rootElement = (DartHierarchyNodeDescriptor)root;
         PsiElement element = rootElement.getPsiElement();
-        PsiElement file = PsiTreeUtil.getParentOfType(element, DartFile.class);
+        DartFile file = PsiTreeUtil.getParentOfType(element, DartFile.class);
         if (file != null) {
-          return GlobalSearchScope.fileScope((DartFile)file);
+          return GlobalSearchScope.fileScope(file);
         }
       }
       return GlobalSearchScope.projectScope(myProject);

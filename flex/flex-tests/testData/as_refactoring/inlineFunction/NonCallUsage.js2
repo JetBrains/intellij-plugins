@@ -1,6 +1,6 @@
 class Foo {
     function fo<caret>o() {
-
+        console.log('hello')
     }
 
     function bar() {

@@ -2,9 +2,8 @@ package com.intellij.lang.javascript.linter.tslint.highlight;
 
 
 import com.google.gson.JsonElement;
-import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
+import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,13 +39,11 @@ public class TsLintFixInfo {
       }
     }
     catch (Exception e) {
-      LOG.debug(e.getMessage(), e);
+      TslintUtil.LOG.debug(e.getMessage(), e);
     }
 
     return null;
   }
-
-  private static final Logger LOG = Logger.getInstance(TsLintConfiguration.LOG_CATEGORY);
 
   public static class TsLintFixReplacements {
     public int innerStart; //0-based for tslint 4

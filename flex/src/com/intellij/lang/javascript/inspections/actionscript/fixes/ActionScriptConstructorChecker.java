@@ -59,7 +59,10 @@ public class ActionScriptConstructorChecker extends JSConstructorChecker {
         // awful compiler somehow allows to call super() only in one branch of 'if' statement. Example in Starling framework sources: class starling.display.Image
         final JSStatement then = ((JSIfStatement)statement).getThen();
         if (then instanceof JSBlockStatement) {
-          return findBaseConstructorCall((JSBlockStatement)then);
+          JSCallExpression call = findBaseConstructorCall((JSBlockStatement)then);
+          if (call != null) {
+            return call;
+          }
         }
       }
     }

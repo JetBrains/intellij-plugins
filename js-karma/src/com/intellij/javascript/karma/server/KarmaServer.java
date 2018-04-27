@@ -10,6 +10,7 @@ import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.coverage.KarmaCoveragePeer;
 import com.intellij.javascript.karma.execution.KarmaServerSettings;
 import com.intellij.javascript.karma.util.StreamEventListener;
+import com.intellij.javascript.nodejs.NodeCommandLineUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -18,6 +19,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.execution.ParametersListUtil;
 import com.intellij.util.ui.UIUtil;
@@ -140,7 +142,8 @@ public class KarmaServer {
                                                            @Nullable KarmaCoveragePeer coveragePeer) throws IOException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     serverSettings.getEnvData().configureCommandLine(commandLine, true);
-    commandLine.withWorkDirectory(serverSettings.getConfigurationFile().getParentFile());
+    NodeCommandLineUtil.configureUsefulEnvironment(commandLine);
+    commandLine.withWorkDirectory(serverSettings.getWorkingDirectorySystemDependent());
     commandLine.setRedirectErrorStream(true);
     commandLine.setExePath(serverSettings.getNodeInterpreter().getInterpreterSystemDependentPath());
     List<String> nodeOptionList = ParametersListUtil.parse(serverSettings.getNodeOptions().trim());
@@ -342,13 +345,7 @@ public class KarmaServer {
 
   private class MyDisposable implements Disposable {
 
-    private final boolean myDisposed = false;
-
-    @Override
-    public void dispose() {
-      if (myDisposed) {
-        return;
-      }
+    private final Runnable myRunnable = ConcurrencyUtil.once(() -> {
       LOG.info("Disposing Karma server " + myProcessHashCode);
       if (myCoveragePeer != null) {
         FileUtil.asyncDelete(myCoveragePeer.getCoverageTempDir());
@@ -362,6 +359,11 @@ public class KarmaServer {
         }
       });
       shutdown();
+    });
+
+    @Override
+    public void dispose() {
+      myRunnable.run();
     }
   }
 }

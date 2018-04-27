@@ -5,7 +5,8 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CreateJSPropertyAccessorIntentionAction extends CreateJSFunctionIntentionActionBase {
   private final boolean myIsGetter;
@@ -17,8 +18,7 @@ public class CreateJSPropertyAccessorIntentionAction extends CreateJSFunctionInt
   @Override
   protected void writeFunctionAndName(Template template,
                                       String referencedName,
-                                      PsiFile file,
-                                      PsiElement clazz,
+                                      @NotNull PsiElement anchorParent, @Nullable PsiElement clazz,
                                       JSReferenceExpression referenceExpression) {
     template.addTextSegment("function ");
     template.addTextSegment(myIsGetter ? "get ":"set ");
@@ -26,27 +26,27 @@ public class CreateJSPropertyAccessorIntentionAction extends CreateJSFunctionInt
   }
 
   @Override
-  protected void addParameters(Template template, JSReferenceExpression refExpr, PsiFile file) {
+  protected void addParameters(Template template, JSReferenceExpression refExpr, @NotNull PsiElement anchorParent) {
     if (!myIsGetter) {
       template.addTextSegment(refExpr.getReferencedName() +":");
-      guessTypeAndAddTemplateVariable(template, refExpr, file, false);
+      guessTypeAndAddTemplateVariable(template, refExpr, anchorParent, false);
     }
   }
 
   @Override
-  protected void addReturnType(Template template, JSReferenceExpression referenceExpression, PsiFile file) {
+  protected void addReturnType(Template template, JSReferenceExpression referenceExpression, @NotNull PsiElement anchorParent) {
     if (myIsGetter) {
-      guessTypeAndAddTemplateVariable(template, referenceExpression, file, false);
+      guessTypeAndAddTemplateVariable(template, referenceExpression, anchorParent, false);
     } else {
       template.addTextSegment("void");
     }
   }
 
   @Override
-  protected void addBody(Template template, JSReferenceExpression refExpr, PsiFile file) {
+  protected void addBody(Template template, JSReferenceExpression refExpr, @NotNull PsiElement anchorParent) {
     String varName = refExpr.getReferencedName();
     String paramName = varName;
-    varName = JSRefactoringUtil.transformAccessorNameToPropertyName(varName, file);
+    varName = JSRefactoringUtil.transformAccessorNameToPropertyName(varName, anchorParent);
 
     if (varName.equals(paramName)) {
       varName = StringUtil.fixVariableNameDerivedFromPropertyName(varName);
@@ -62,7 +62,7 @@ public class CreateJSPropertyAccessorIntentionAction extends CreateJSFunctionInt
       template.addEndVariable();
       template.addTextSegment(" = " + paramName);
     }
-    addSemicolonSegment(template, file);
+    addSemicolonSegment(template, anchorParent);
   }
 
   protected static void addVarName(Template template, String varName) {

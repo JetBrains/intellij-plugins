@@ -16,7 +16,10 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.ide.browsers.BrowserFamily;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.WebBrowserManager;
-import com.intellij.javascript.debugger.*;
+import com.intellij.javascript.debugger.DebuggableFileFinder;
+import com.intellij.javascript.debugger.JavaScriptDebugEngine;
+import com.intellij.javascript.debugger.JavaScriptDebugProcess;
+import com.intellij.javascript.debugger.RemoteDebuggingFileFinder;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
@@ -30,6 +33,8 @@ import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
+import com.intellij.util.ConcurrencyUtil;
+import com.intellij.util.SingleAlarm;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
 import com.intellij.xdebugger.XDebugProcess;
@@ -38,6 +43,7 @@ import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import com.jetbrains.debugger.wip.BrowserChromeDebugProcess;
 import com.jetbrains.debugger.wip.WipRemoteVmConnection;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.concurrency.Promise;
 import org.jetbrains.concurrency.Promises;
@@ -121,9 +127,15 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
           debugProcess.setElementsInspectorEnabled(false);
           debugProcess.setConsoleMessagesSupportEnabled(false);
           debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess));
-          //noinspection CodeBlock2Expr
           karmaServer.onBrowsersReady(() -> {
-            resumeTestRunning((OSProcessHandler)executionResult.getProcessHandler());
+            Runnable resumeTestRunning = ConcurrencyUtil.once(() -> resumeTestRunning((OSProcessHandler)executionResult.getProcessHandler()));
+            SingleAlarm alarm = new SingleAlarm(resumeTestRunning, 5000);
+            alarm.request();
+            debugProcess.getConnection().executeOnStart((vm) -> {
+              alarm.cancelAllRequests();
+              resumeTestRunning.run();
+              return Unit.INSTANCE;
+            });
           });
           return debugProcess;
         }

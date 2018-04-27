@@ -12,9 +12,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="picocontainer" level="project" />
-    <orderEntry type="module" module-name="intellij.platform.annotations.java5" exported="" />
-    <orderEntry type="library" exported="" name="Log4J" level="project" />
-    <orderEntry type="library" exported="" name="JDOM" level="project" />
+    <orderEntry type="library" name="Log4J" level="project" />
+    <orderEntry type="library" name="JDOM" level="project" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
@@ -26,7 +25,7 @@
     </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.util" />
     <orderEntry type="module" module-name="intellij.platform.ide" />
-    <orderEntry type="library" exported="" name="XStream" level="project" />
+    <orderEntry type="library" name="XStream" level="project" />
     <orderEntry type="library" name="Guava" level="project" />
   </component>
 </module>

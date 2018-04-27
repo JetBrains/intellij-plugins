@@ -5,7 +5,7 @@ This plugin provides support for the [Dart programming language](https://www.dar
 ## Installing and Getting Started
 
 See the
-[plugin documentation](https://www.jetbrains.com/help/idea/dart-support.html)
+[plugin documentation](https://www.jetbrains.com/help/idea/dart.html)
 for help getting started with Dart development and the IntelliJ IDEA plugin. 
 
 ## Reporting Issues
@@ -27,23 +27,24 @@ Prerequisites:
   Press 'Browse repositories...', find plugins and install them. Restart IDE.
 
 1. Clone the following 2 repositories to neighbor folders:
-     - git clone https://github.com/JetBrains/intellij-plugins,
-     - git clone https://github.com/JetBrains/intellij-community,
-   Run getPlugins.sh (getPlugins.bat on Win) from intellij-community/. If that fails because the
-   repos have already been cloned you can just update both of them using 'git pull'.
+     - `git clone https://github.com/JetBrains/intellij-plugins`
+     - `git clone https://github.com/JetBrains/intellij-community`
+     
+   Run getPlugins.sh (getPlugins.bat on Win) from `intellij-community/`. If that fails because the
+   repos have already been cloned you can just update both of them using `git pull`.
 
 2. Start IntelliJ IDEA Ultimate, on Welcome screen click Configure | Project Defaults | Project Structure | SDKs,
    click [+] and add JDK 1.8. Add [JDK]/lib/tools.jar to the SDK Classpath if it is not there. Rename SDK to 'IDEA jdk'.
    Click [+] to add one more JDK and provide path to JDK 1.8 once again . Leave default name "1.8". Make sure it contains [JDK]/lib/tools.jar
 
-3. On Welcome screen click Configure | Settings (Preferences), look for Path Variables and add the IDEA_ULTIMATE_PLUGINS 
-   variable pointing to [IntelliJ IDEA Ultimate Installation]/plugins (Linux, Windows) or 
-   [IntelliJ IDEA Ultimate Installation]/Contents/plugins (Mac)
+3. On Welcome screen click Configure | Settings (Preferences), look for Path Variables and add the `IDEA_ULTIMATE_PLUGINS`
+   variable pointing to `[IntelliJ IDEA Ultimate Installation]/plugins` (Linux, Windows) or 
+   `[IntelliJ IDEA Ultimate Installation]/Contents/plugins` (Mac)
 
 4. Open intellij-community project, compile it.
-   Open File | Project Structure | Modules | [+] | Import Module, select intellij-plugins/Dart/Dart-community.iml.
-   In the same Project Structure dialog open the Dependencies tab of the intellij.idea.community.main module,
-   click [+] at the bottom (Mac) or right (Win/Linux) to add a module dependency on the Dart-community module.
+   Open File | Project Structure | Modules | `[+]` | Import Module, select intellij-plugins/Dart/Dart-community.iml.
+   In the same Project Structure dialog open the Dependencies tab of the `intellij.idea.community.main` module,
+   click `[+]` at the bottom (Mac) or right (Win/Linux) to add a module dependency on the `Dart-community` module.
 
 5. Open Settings (Preferences) | Version Control and make sure that intellij-plugins is configured as a 4th Git root.
    If you previously worked with a single-module Dart-plugin project you may have unversioned
@@ -61,7 +62,7 @@ Prerequisites:
    - repeat the same with Working directory field - it must point to intellij-community/bin
 
 8. [Optional] To enable internal developer actions add "idea.is.internal=true"
-   to the [idea.properties](https://www.jetbrains.com/help/idea/file-idea-properties.html) file. The menu actions Tools ->
+   to the [idea.properties](https://www.jetbrains.com/help/idea/tuning-the-ide.html#configure-platform-properties) file. The menu actions Tools ->
    View PSI Structure... as well as the Tools -> Internal Actions should be
    visible after restarting.
 

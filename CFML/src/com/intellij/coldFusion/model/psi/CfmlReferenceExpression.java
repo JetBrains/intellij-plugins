@@ -232,6 +232,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
     return findChildByType(CfscriptTokenTypes.POINT);
   }
 
+  @NotNull
   @Override
   public TextRange getRangeInElement() {
     if (getScope() != null) {

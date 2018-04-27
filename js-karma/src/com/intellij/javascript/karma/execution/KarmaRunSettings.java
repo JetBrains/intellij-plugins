@@ -21,6 +21,7 @@ public class KarmaRunSettings {
   private final String myBrowsers;
   private final NodeJsInterpreterRef myInterpreterRef;
   private final String myNodeOptions;
+  private final String myWorkingDirectory;
   private final EnvironmentVariablesData myEnvData;
   private final KarmaScopeKind myScopeKind;
   private final String myTestFilePath;
@@ -32,6 +33,7 @@ public class KarmaRunSettings {
     myBrowsers = builder.myBrowsers;
     myInterpreterRef = builder.myInterpreterRef;
     myNodeOptions = builder.myNodeOptions;
+    myWorkingDirectory = FileUtil.toSystemDependentName(builder.myWorkingDirectory);
     myEnvData = builder.myEnvData;
     myScopeKind = builder.myScopeKind;
     myTestFilePath = FileUtil.toSystemDependentName(builder.myTestFilePath);
@@ -39,12 +41,12 @@ public class KarmaRunSettings {
   }
 
   @NotNull
-  public String getConfigPath() {
+  public String getConfigPathSystemDependent() {
     return myConfigPath;
   }
 
   @NotNull
-  public String getConfigSystemIndependentPath() {
+  public String getConfigPathSystemIndependent() {
     return FileUtil.toSystemIndependentName(myConfigPath);
   }
 
@@ -66,6 +68,16 @@ public class KarmaRunSettings {
   @NotNull
   public String getNodeOptions() {
     return myNodeOptions;
+  }
+
+  @NotNull
+  public String getWorkingDirectorySystemDependent() {
+    return myWorkingDirectory;
+  }
+
+  @NotNull
+  public String getWorkingDirectorySystemIndependent() {
+    return FileUtil.toSystemIndependentName(myWorkingDirectory);
   }
 
   @NotNull
@@ -105,6 +117,7 @@ public class KarmaRunSettings {
           myBrowsers.equals(that.myBrowsers) &&
           myInterpreterRef.getReferenceName().equals(that.myInterpreterRef.getReferenceName()) &&
           myNodeOptions.equals(that.myNodeOptions) &&
+          myWorkingDirectory.equals(that.myWorkingDirectory) &&
           myEnvData.equals(that.myEnvData) &&
           myScopeKind.equals(that.myScopeKind) &&
           myTestFilePath.equals(that.myTestFilePath) &&
@@ -118,6 +131,7 @@ public class KarmaRunSettings {
     result = 31 * result + myBrowsers.hashCode();
     result = 31 * result + myInterpreterRef.getReferenceName().hashCode();
     result = 31 * result + myNodeOptions.hashCode();
+    result = 31 * result + myWorkingDirectory.hashCode();
     result = 31 * result + myEnvData.hashCode();
     result = 31 * result + myScopeKind.hashCode();
     result = 31 * result + myTestFilePath.hashCode();
@@ -141,15 +155,17 @@ public class KarmaRunSettings {
     private KarmaScopeKind myScopeKind = KarmaScopeKind.ALL;
     private String myTestFilePath = "";
     private List<String> myTestNames = Collections.emptyList();
+    private String myWorkingDirectory = "";
 
     public Builder() {}
 
     public Builder(@NotNull KarmaRunSettings settings) {
-      myConfigPath = settings.getConfigPath();
+      myConfigPath = settings.getConfigPathSystemDependent();
       myKarmaPackage = settings.getKarmaPackage();
       myBrowsers = settings.getBrowsers();
       myInterpreterRef = settings.getInterpreterRef();
       myNodeOptions = settings.myNodeOptions;
+      myWorkingDirectory = settings.myWorkingDirectory;
       myEnvData = settings.myEnvData;
       myScopeKind = settings.myScopeKind;
       myTestFilePath = settings.myTestFilePath;
@@ -183,6 +199,12 @@ public class KarmaRunSettings {
     @NotNull
     public Builder setNodeOptions(@NotNull String nodeOptions) {
       myNodeOptions = nodeOptions;
+      return this;
+    }
+
+    @NotNull
+    public Builder setWorkingDirectory(@Nullable String workingDirectory) {
+      myWorkingDirectory = StringUtil.notNullize(workingDirectory);
       return this;
     }
 

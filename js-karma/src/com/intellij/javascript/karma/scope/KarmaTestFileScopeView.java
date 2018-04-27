@@ -18,7 +18,7 @@ public class KarmaTestFileScopeView extends KarmaScopeView {
 
   public KarmaTestFileScopeView(@NotNull Project project) {
     myTestFileTextFieldWithBrowseButton = new TextFieldWithBrowseButton();
-    PathShortener.enableShortenedPath(myTestFileTextFieldWithBrowseButton.getTextField(), null);
+    PathShortener.enablePathShortening(myTestFileTextFieldWithBrowseButton.getTextField(), null);
     SwingHelper.installFileCompletionAndBrowseDialog(
       project,
       myTestFileTextFieldWithBrowseButton,

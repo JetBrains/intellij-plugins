@@ -1,5 +1,6 @@
 package com.intellij.javascript.karma.execution;
 
+import com.intellij.execution.configuration.ConfigurationFactoryEx;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
@@ -13,7 +14,7 @@ public class KarmaConfigurationType extends ConfigurationTypeBase implements Dum
 
   public KarmaConfigurationType() {
     super("JavaScriptTestRunnerKarma", "Karma", "Karma", JSKarmaIcons.Karma2);
-    addFactory(new ConfigurationFactory(this) {
+    addFactory(new ConfigurationFactoryEx<KarmaRunConfiguration>(this) {
       @NotNull
       @Override
       public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
@@ -28,6 +29,11 @@ public class KarmaConfigurationType extends ConfigurationTypeBase implements Dum
       @Override
       public boolean canConfigurationBeSingleton() {
         return false;
+      }
+
+      @Override
+      public void onNewConfigurationCreated(@NotNull KarmaRunConfiguration configuration) {
+        configuration.onNewConfigurationCreated();
       }
     });
   }

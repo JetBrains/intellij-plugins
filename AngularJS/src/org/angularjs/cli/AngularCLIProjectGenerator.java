@@ -102,8 +102,8 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
     for (String segment : fileName.split("-")) {
       if (!segment.matches("[a-zA-Z][.0-9a-zA-Z]*(-[.0-9a-zA-Z]*)*")) {
         return XmlStringUtil.wrapInHtml(
-          "Project name " + fileName + " is not valid. New project names must<br>\n" +
-                "start with a letter, and must contain only alphanumeric characters or dashes.<br>\n" +
+          "Project name " + fileName + " is not valid. New project names must " +
+                "start with a letter, and must contain only alphanumeric characters or dashes. " +
                 "When adding a dash the segment after the dash must also start with a letter."
         );
       }

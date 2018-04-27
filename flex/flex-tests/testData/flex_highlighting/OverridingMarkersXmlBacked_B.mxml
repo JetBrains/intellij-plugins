@@ -3,11 +3,11 @@
 <<lineMarker descr="Has subclasses">OverridingMarkersXmlBacked_A</lineMarker> xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" implements="<inject><info>IMyInterface</info></inject>">
     <mx:Script><inject descr="null">
 
-    override function <lineMarker descr="Is overridden"><lineMarker descr="overrides method in OverridingMarkersXmlBacked_A"><info descr="instance method"><caret>foo</info></lineMarker></lineMarker>() : <info>String</info> {
+    override function <lineMarker descr="Is overridden"><lineMarker descr="Overrides method 'foo' in OverridingMarkersXmlBacked_A"><info descr="instance method"><caret>foo</info></lineMarker></lineMarker>() : <info>String</info> {
         return "B";
     }
 
-        public function <lineMarker descr="Implementation of bar in IMyInterface"><info descr="instance method">bar</info></lineMarker>(): <info>String</info> {
+        public function <lineMarker descr="Implements method 'bar' in IMyInterface"><info descr="instance method">bar</info></lineMarker>(): <info>String</info> {
             return "bar";
         }
 

@@ -15,7 +15,7 @@ public class IdetalkCoreIcons {
 
   public static final Icon CodePointer = load("/codePointer.png"); // 17x18
   public static final Icon EditSource = load("/editSource.png"); // 16x16
-  
+
   public static class IdeTalk {
     public static final Icon Away = load("/ideTalk/away.png"); // 16x16
     public static final Icon Jabber = load("/ideTalk/jabber.png"); // 16x16
@@ -28,7 +28,7 @@ public class IdetalkCoreIcons {
 
   }
   public static final Icon Message = load("/message.png"); // 17x18
-  
+
   public static class Nodes {
     public static final Icon Group_close = load("/nodes/group_close.png"); // 16x16
     public static final Icon Group_open = load("/nodes/group_open.png"); // 16x16

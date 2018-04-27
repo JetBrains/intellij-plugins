@@ -40,6 +40,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
+import com.intellij.openapi.fileEditor.impl.FileOffsetsManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -410,7 +411,7 @@ public class DartAnalysisServerService implements Disposable {
   /**
    * Must use it right before sending any offsets and lengths to the AnalysisServer
    */
-  private int getOriginalOffset(@Nullable final VirtualFile file, final int convertedOffset) {
+  public int getOriginalOffset(@Nullable final VirtualFile file, final int convertedOffset) {
     if (file == null) return convertedOffset;
 
     return myFilePathWithOverlaidContentToTimestamp.containsKey(file.getPath())

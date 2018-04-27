@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 
 public class CreateSetterByMxmlAttributeFix extends CreateJSPropertyAccessorIntentionAction {
   private final String myReferencedName;
@@ -22,10 +22,9 @@ public class CreateSetterByMxmlAttributeFix extends CreateJSPropertyAccessorInte
   protected void buildTemplate(final Template template,
                                final JSReferenceExpression referenceExpression,
                                final boolean staticContext,
-                               final PsiFile file,
-                               final PsiElement anchorParent) {
+                               @NotNull final PsiElement anchorParent) {
     template.addTextSegment("public ");
-    writeFunctionAndName(template, myReferencedName, file, null, referenceExpression);
+    writeFunctionAndName(template, myReferencedName, anchorParent, null, referenceExpression);
 
     template.addTextSegment("(");
     template.addTextSegment(myReferencedName + ":");
@@ -33,24 +32,24 @@ public class CreateSetterByMxmlAttributeFix extends CreateJSPropertyAccessorInte
     template.addTextSegment(")");
 
     template.addTextSegment(":");
-    addReturnType(template, referenceExpression, file);
+    addReturnType(template, referenceExpression, anchorParent);
 
     final PsiElement clazz = findClass(anchorParent);
     if (clazz == null || clazz instanceof JSClass && !((JSClass)clazz).isInterface()) {
       template.addTextSegment(" {");
-      addBody(template, file);
+      addBody(template, anchorParent);
       template.addTextSegment("}");
     }
     else {
-      addSemicolonSegment(template, file);
+      addSemicolonSegment(template, anchorParent);
       template.addEndVariable();
     }
   }
 
-  private void addBody(final Template template, final PsiFile file) {
+  private void addBody(final Template template, final PsiElement context) {
     String varName = myReferencedName;
     String paramName = varName;
-    varName = JSRefactoringUtil.transformAccessorNameToPropertyName(varName, file);
+    varName = JSRefactoringUtil.transformAccessorNameToPropertyName(varName, context);
 
     if (varName.equals(paramName)) {
       varName = StringUtil.fixVariableNameDerivedFromPropertyName(varName);
@@ -59,6 +58,6 @@ public class CreateSetterByMxmlAttributeFix extends CreateJSPropertyAccessorInte
     addVarName(template, varName);
     template.addEndVariable();
     template.addTextSegment(" = " + paramName);
-    addSemicolonSegment(template, file);
+    addSemicolonSegment(template, context);
   }
 }

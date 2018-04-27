@@ -1,15 +1,29 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package org.jetbrains.vuejs.language
 
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.openapi.application.PathManager
+import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.DebugUtil
+import com.intellij.testFramework.ParsingTestCase
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.VueLanguage
 
-/**
- * @author Irina.Chernushina on 7/21/2017.
- */
 class VueInjectionTest : LightPlatformCodeInsightFixtureTestCase() {
   private var oldAutoComplete = false
 
@@ -25,6 +39,8 @@ class VueInjectionTest : LightPlatformCodeInsightFixtureTestCase() {
     CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = oldAutoComplete
     super.tearDown()
   }
+
+  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/injection/"
 
   fun testSimpleInterpolationInHtml() {
     myFixture.configureByText("SimpleInterpolationInHtml.html", """<!DOCTYPE html>
@@ -178,8 +194,7 @@ new Vue({
     TestCase.assertNotNull(host)
     TestCase.assertEquals(text.replace("<caret>", ""), host!!.text)
     val expected = mutableSetOf("interpolation", "another", "two")
-    InjectedLanguageManager.getInstance(project).enumerate(host,
-                                                                              { injectedPsi, _ -> expected.remove(injectedPsi.text) })
+    InjectedLanguageManager.getInstance(project).enumerate(host, { injectedPsi, _ -> expected.remove(injectedPsi.text) })
     TestCase.assertEquals(emptySet<String>(), expected)
   }
 
@@ -195,12 +210,11 @@ another}}{{two}}"""
     TestCase.assertNotNull(host)
     TestCase.assertEquals(text.replace("<caret>", ""), host!!.text)
     val expected = mutableSetOf(
-"""interpolation
+      """interpolation
 
 """, """
 another""", "two")
-    InjectedLanguageManager.getInstance(project).enumerate(host,
-                                                                              { injectedPsi, _ -> expected.remove(injectedPsi.text) })
+    InjectedLanguageManager.getInstance(project).enumerate(host, { injectedPsi, _ -> expected.remove(injectedPsi.text) })
     TestCase.assertEquals(emptySet<String>(), expected)
   }
 
@@ -234,5 +248,16 @@ Vue.options.delimiters = ['<%', '%>']
 </script>
 """)
     TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
+  }
+
+  fun testAttrValueInjection() {
+    myFixture.configureByFile(getTestName(false) + ".vue")
+    ParsingTestCase.doCheckResult(testDataPath, getTestName(false) + "." + "txt", toParseTreeText(myFixture.file))
+  }
+
+  private fun toParseTreeText(file: PsiFile): String {
+    return DebugUtil.psiToString(file, false, false, { psiElement, consumer ->
+      InjectedLanguageManager.getInstance(project).enumerate(psiElement) { injectedPsi, _ -> consumer.consume(injectedPsi) }
+    })
   }
 }

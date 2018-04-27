@@ -10,6 +10,7 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -18,6 +19,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.ParameterizedCachedValue;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webcore.util.JsonUtil;
@@ -35,6 +37,7 @@ public class PrettierUtil {
   public static final List<String> CONFIG_FILE_EXTENSIONS = ContainerUtil.list(".yaml", ".yml", ".json", ".js");
   public static final String RC_FILE_NAME = ".prettierrc";
   public static final String JS_CONFIG_FILE_NAME = "prettier.config.js";
+  public static final Key<ParameterizedCachedValue<Config, PsiFile>> CACHE_KEY = new Key<>(PrettierUtil.class.getName() + ".config");
 
   public static final List<String> CONFIG_FILE_NAMES =
     ContainerUtil.append(
@@ -159,9 +162,8 @@ public class PrettierUtil {
       if (psiFile == null) {
         return null;
       }
-
-      return CachedValuesManager
-        .getCachedValue(psiFile, () -> CachedValueProvider.Result.create(parseConfigInternal(virtualFile, psiFile), psiFile));
+      return CachedValuesManager.getManager(project).getParameterizedCachedValue(psiFile, CACHE_KEY, param ->
+        CachedValueProvider.Result.create(parseConfigInternal(param.getVirtualFile(), param), param), false, psiFile);
     });
   }
 

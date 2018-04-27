@@ -52,11 +52,13 @@ public class CssPropertyValueReference extends PsiPolyVariantCachingReference im
     return ResolveResult.EMPTY_ARRAY;
   }
 
+  @NotNull
   @Override
   public PsiElement getElement() {
     return myElement;
   }
 
+  @NotNull
   @Override
   public TextRange getRangeInElement() {
     return new TextRange(myStart, myEnd);

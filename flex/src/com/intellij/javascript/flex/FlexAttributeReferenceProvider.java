@@ -282,10 +282,12 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
       myResolveOk = ArrayUtil.contains(myValue, allowedValues);
     }
 
+    @NotNull
     public PsiElement getElement() {
       return myElement;
     }
 
+    @NotNull
     public TextRange getRangeInElement() {
       return myRange;
     }

@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.highlighting.JSFixFactory;
 import com.intellij.lang.javascript.highlighting.JSSemanticHighlightingUtil;
 import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.index.JSTypeEvaluateManager;
+import com.intellij.lang.javascript.inspections.JSClosureCompilerSyntaxInspection;
 import com.intellij.lang.javascript.inspections.actionscript.fixes.ActionScriptConstructorChecker;
 import com.intellij.lang.javascript.presentable.JSFormatUtil;
 import com.intellij.lang.javascript.psi.*;
@@ -27,7 +28,6 @@ import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSTypeImpl;
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
 import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
-import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
 import com.intellij.lang.javascript.validation.ActionScriptImplementedMethodProcessor;
 import com.intellij.lang.javascript.validation.DuplicatesCheckUtil;
 import com.intellij.lang.javascript.validation.JSAnnotatorProblemReporter;
@@ -199,11 +199,11 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
   }
 
-  protected static ChangeSignatureFix createChangeBaseMethodSignatureFix(final JSFunction superMethod, final JSFunction override) {
+  protected static JSChangeSignatureFix createChangeBaseMethodSignatureFix(final JSFunction superMethod, final JSFunction override) {
     JSType type = override.getReturnType();
     String s = StringUtil.notNullize(type != null ? type.getResolvedTypeText() : null);
-    ChangeSignatureFix fix = new ChangeSignatureFix(superMethod, JSMethodDescriptor.getParameters(superMethod));
-    fix.setOverriddenReturnType(s);
+    JSChangeSignatureFix fix = new JSChangeSignatureFix(superMethod);
+    fix.setReturnType(s);
     return fix;
   }
 
@@ -291,11 +291,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         if (node == null) return;
         if (implementMethodsFix == null) implementMethodsFix = new ImplementMethodsFix(myJsClass);
         implementMethodsFix.addElementToProcess(function);
-        String messageId = function.isGetProperty() ?
-                           "javascript.validation.message.interface.method.not.implemented2" :
-                           function.isSetProperty() ?
-                           "javascript.validation.message.interface.method.not.implemented3" :
-                           "javascript.validation.message.interface.method.not.implemented";
+        String messageId = JSClosureCompilerSyntaxInspection.getNotImplementedTextId(false, function.isGetProperty(),
+                           function.isSetProperty());
         String message = JSBundle.message(messageId,
                                           function.getName(),
                                           ((JSClass)JSResolveUtil.findParent(function)).getQualifiedName());
@@ -333,14 +330,14 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
             final JSParameterList parameterList = implementationFunction.getParameterList();
             final JSParameterList expectedParameterList = interfaceFunction.getParameterList();
 
-            ChangeSignatureFix changeSignatureFix = new ChangeSignatureFix(interfaceFunction, parameterList, true);
+            JSChangeSignatureFix changeSignatureFix = new JSChangeSignatureFix(interfaceFunction, parameterList);
             reportingClient.reportError(parameterList.getNode(),
                                         JSBundle.message(
                                           "javascript.validation.message.interface.method.invalid.signature",
                                           expectedParameterList != null ? expectedParameterList.getText() : "()"
                                         ),
                                         ErrorReportingClient.ProblemKind.ERROR,
-                                        new ChangeSignatureFix(implementationFunction, expectedParameterList, false) {
+                                        new JSChangeSignatureFix(implementationFunction, expectedParameterList, false) {
                                           @NotNull
                                           public String getText() {
                                             return JSBundle.message("javascript.fix.message.change.parameters.to.expected");
@@ -510,13 +507,13 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
               )
             );
 
-            annotation.registerFix(new ChangeSignatureFix(node, overrideParameterList, false) {
+            annotation.registerFix(new JSChangeSignatureFix(node, overrideParameterList, false) {
               @NotNull
               public String getText() {
                 return JSBundle.message("javascript.fix.message.change.parameters.to.expected");
               }
             });
-            annotation.registerFix(new ChangeSignatureFix(override, nodeParameterList, true));
+            annotation.registerFix(new JSChangeSignatureFix(override, nodeParameterList));
           }
           else if (incompatibleSignature == SignatureMatchResult.RETURN_TYPE_DIFFERS) {
             PsiElement returnTypeExpr = node.getReturnTypeElement();

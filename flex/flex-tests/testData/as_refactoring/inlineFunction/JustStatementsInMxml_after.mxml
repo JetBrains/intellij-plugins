@@ -1,5 +1,5 @@
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
-           xmlns:ui="com.adobe.empdir.ui.*" currentState="info"
+           currentState="info"
            horizontalScrollPolicy="off" verticalScrollPolicy="off" mouseDown="doMouseDown()">
 
   <mx:Script>

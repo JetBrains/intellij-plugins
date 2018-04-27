@@ -110,6 +110,12 @@ public class VmServiceWrapper implements Disposable {
                       final Event event = isolate.getPauseEvent();
                       final EventKind eventKind = event.getKind();
 
+                      // Ignore isolates that are very early in their lifecycle. You can't set breakpoints on them
+                      // yet, and we'll get lifecycle events for them later.
+                      if (eventKind == EventKind.None) {
+                        return;
+                      }
+
                       // if event is not PauseStart it means that PauseStart event will follow later and will be handled by listener
                       handleIsolate(isolateRef, eventKind == EventKind.PauseStart);
 
@@ -351,7 +357,7 @@ public class VmServiceWrapper implements Disposable {
         @Override
         public void onError(RPCError error) {
           myDebugProcess.getSession().getConsoleView()
-            .print("Error from drop frame: " + error.getMessage() + "\n", ConsoleViewContentType.ERROR_OUTPUT);
+                        .print("Error from drop frame: " + error.getMessage() + "\n", ConsoleViewContentType.ERROR_OUTPUT);
         }
 
         @Override

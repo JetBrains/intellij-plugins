@@ -14,5 +14,6 @@
     <orderEntry type="library" name="XmlRPC" level="project" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="module" module-name="intellij.platform.builtInServer.impl" />
+    <orderEntry type="library" name="Log4J" level="project" />
   </component>
 </module>

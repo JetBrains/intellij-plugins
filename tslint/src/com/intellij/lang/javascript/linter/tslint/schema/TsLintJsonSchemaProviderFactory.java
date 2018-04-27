@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.linter.tslint.schema;
 
 import com.intellij.lang.javascript.EmbeddedJsonSchemaFileProvider;
+import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.jsonSchema.extension.JsonSchemaFileProvider;
 import com.jetbrains.jsonSchema.extension.JsonSchemaProviderFactory;
@@ -16,8 +17,8 @@ public final class TsLintJsonSchemaProviderFactory implements JsonSchemaProvider
 
   @NotNull
   private static EmbeddedJsonSchemaFileProvider createProvider() {
-    return new EmbeddedJsonSchemaFileProvider(TSLINT_SCHEMA_JSON,
-                                              TsLintJsonSchemaProviderFactory.class, TSLINT_JSON_SCHEMA_DIR + '/', "tslint.json");
+    return new EmbeddedJsonSchemaFileProvider(TSLINT_SCHEMA_JSON, "TSLint", "http://json.schemastore.org/tslint",
+                                              TsLintJsonSchemaProviderFactory.class, TSLINT_JSON_SCHEMA_DIR + '/', TslintUtil.TSLINT_JSON);
   }
 
   @NotNull

@@ -54,7 +54,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
   }
 
   @Override
-  protected void appendFunctionBody(Template template, JSReferenceExpression refExpr, PsiFile file) {
+  protected void appendFunctionBody(Template template, JSReferenceExpression refExpr, PsiElement anchorParent) {
   }
 
   @Nullable
@@ -135,10 +135,10 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
       JSFunction fakeFunction = (JSFunction)JSChangeUtil.createStatementFromText(project, text, JavaScriptSupportLoader.ECMA_SCRIPT_L4)
         .getPsi();
 
-      new ChangeSignatureFix(fakeFunction, myNode.getArgumentList()) {
+      new JSChangeSignatureFix(fakeFunction, myNode.getArgumentList()) {
         @Override
-        protected Pair<Boolean, List<JSParameterInfo>> handleCall(@NotNull JSFunction function, JSExpression[] arguments, boolean dummy) {
-          List<JSParameterInfo> parameterInfos = super.handleCall(function, arguments, dummy).second;
+        protected Pair<Boolean, List<JSParameterInfo>> handleCall(@NotNull JSFunction function, @NotNull JSExpression[] arguments, boolean dryRun) {
+          List<JSParameterInfo> parameterInfos = super.handleCall(function, arguments, dryRun).second;
           return Pair.create(true, parameterInfos); // always show dialog
         }
 
@@ -175,17 +175,16 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
   protected void buildTemplate(Template template,
                                JSReferenceExpression referenceExpression,
                                boolean staticContext,
-                               PsiFile file,
-                               PsiElement anchorParent) {
+                               @NotNull PsiElement anchorParent) {
     if (constructorShouldBePublic()) {
       template.addTextSegment("public ");
     }
 
-    writeFunctionAndName(template, myClass.getName(), file, null, referenceExpression);
+    writeFunctionAndName(template, myClass.getName(), myClass, myClass, referenceExpression);
     template.addTextSegment("(");
-    addParameters(template, myNode.getArgumentList(), myNode, file);
+    addParameters(template, myNode.getArguments(), myNode, myClass);
     template.addTextSegment("){");
-    addBody(template, referenceExpression, file);
+    addBody(template, referenceExpression, anchorParent);
     template.addTextSegment("}");
   }
 

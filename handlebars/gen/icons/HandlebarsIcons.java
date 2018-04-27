@@ -13,7 +13,7 @@ public class HandlebarsIcons {
     return IconLoader.getIcon(path, HandlebarsIcons.class);
   }
 
-  
+
   public static class Elements {
     public static final Icon OpenBlock = load("/icons/elements/openBlock.png"); // 16x16
     public static final Icon OpenInverse = load("/icons/elements/openInverse.png"); // 16x16

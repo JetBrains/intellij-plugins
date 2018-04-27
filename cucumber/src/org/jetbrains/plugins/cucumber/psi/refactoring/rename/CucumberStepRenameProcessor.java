@@ -50,7 +50,7 @@ public class CucumberStepRenameProcessor extends RenamePsiElementProcessor {
     final RegExpLexer lexer = new RegExpLexer(EnumSet.noneOf(RegExpCapability.class));
     lexer.start(source);
     IElementType previous = null;
-    final TokenSet toSkip = TokenSet.create(RegExpTT.CHARACTER, RegExpTT.CARET, RegExpTT.DOLLAR);
+    final TokenSet toSkip = TokenSet.create(RegExpTT.CHARACTER, RegExpTT.CARET, RegExpTT.DOLLAR, RegExpTT.REDUNDANT_ESCAPE);
 
     StringBuilder currentStaticText = new StringBuilder();
 

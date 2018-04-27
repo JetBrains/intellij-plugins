@@ -1,6 +1,31 @@
 <idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/AngularJS">
   <name>AngularJS</name>
-  <description>Support for AngularJS and Angular</description>
+  <description><![CDATA[
+<p>Support for <a href="https://angular.io/">Angular</a> and <a href="https://angularjs.org/">AngularJS</a> projects.</p>
+<h2>Getting started</h2>
+<ul>
+<li>Open your Angular or AngularJS project.</li>
+<li>Make sure that you have AngularJS or Angular library files in your project (for example, in the node_modules folder) – this is required for the IDE to enable Angular support for this project.</li>
+<li>Now, you will get Angular-specific code completion, navigation, and many other features.</li>
+</ul>
+<h2>Features</h2>
+<ul>
+<li>Code completion for Angular or AngularJS APIs in JavaScript or TypeScript files</li>
+<li>Completion for components, built-in and custom directives, and methods in templates</li>
+<li>Navigation from the component, custom directives and event handlers to their definition</li>
+<li>Collection of code snippets for Angular and AngularJS</li>
+<li>Create new projects from the IDE Welcome screen using Angular CLI or built-in template for AngularJS</li>
+<li>Generate new app elements using Angular CLI</li>
+<li>Integration with Angular Language Service</li>
+<li>For AngularJS apps that use ui-router, see state diagram</li>
+</ul>
+<p>Here you can find more information on using <a href="https://www.jetbrains.com/help/webstorm/angular.html">Angular</a> and <a href="https://www.jetbrains.com/help/webstorm/angularjs.html">AngularJS</a> in the IDE.</p>
+<h2>Limitations</h2>
+<ul>
+<li>It’s not possible to create new Angular project from the Welcome screen when using @angular/cli 1.7+ (see <a href="https://github.com/angular/angular-cli/issues/9655#issuecomment-370491452">angular-cli/9655</a>)</li>
+</ul>
+<p>Please report any issues on the <a href="https://youtrack.jetbrains.com/issues/WEB">tracker</a>.</p>
+  ]]></description>
   <vendor>johnlindquist, JetBrains</vendor>
 
   <depends>JavaScript</depends>

@@ -1,9 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "https://github.com/SchemaStore/schemastore/tree/master/src/schemas/json/prettierrc.json",
-  "title": "JSON schema for prettier configuration (.prettierrc or package.json)",
-  "description": "Prettier, the opinionated code formatter",
+  "title": "Schema for .prettierrc",
 
+  "id": "http://json.schemastore.org/prettierrc-1.8.2",
   "definitions": {
     "optionsDefinition": {
       "properties": {

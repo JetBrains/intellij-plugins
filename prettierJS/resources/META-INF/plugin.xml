@@ -1,9 +1,26 @@
 <idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/prettierJS">
   <id>intellij.prettierJS</id>
   <name>Prettier</name>
-  <description>
-    Support for prettier - the opinionated pretty printer
-  </description>
+  <description><![CDATA[This plugin adds support for Prettier (<a href="https://prettier.io">https://prettier.io</a>), an opinionated code formatter.
+  <br/>
+  <br/>
+To use it:
+<ul>
+  <li>Add prettier to your project with <em>npm install prettier --save-dev</em> or install it globally</li>
+  <li>Select the code or file you want to format using Prettier</li>
+  <li>Use the “Reformat with Prettier” action (Alt-Shift-Cmd-P on macOS or Alt-Shift-Ctrl-P on Windows and Linux) or find it using the “Find
+    Action” popup (Cmd/Ctrl-Shift-A)
+  </li>
+</ul>
+<br/>To run Prettier on save, please configure and use 
+  <a href="https://prettier.io/docs/en/webstorm.html#running-prettier-on-save-using-file-watcher">File Watchers</a>.
+<br/>
+<br/>
+This plugin is compatible with the IDE versions starting from 2018.1.
+<br/>
+<br/>
+Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/WEB">issue tracker</a>.
+]]></description>
   <vendor>JetBrains</vendor>
 
   <depends>JavaScript</depends>

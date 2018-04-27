@@ -6,8 +6,8 @@ class <lineMarker descr="Has subclasses"><info>AAA</info></lineMarker> {
 }
 
 class <info>BBB</info> extends <info>AAA</info> {
-  override function <lineMarker descr="overrides method in AAA"><info descr="instance method">b<caret>bb</info></lineMarker>() {}
-  override function <lineMarker descr="overrides method in AAA"><info descr="instance method">bbb2</info></lineMarker>(<info descr="parameter">x</info>) {  }
+  override function <lineMarker descr="Overrides method 'bbb' in AAA"><info descr="instance method">b<caret>bb</info></lineMarker>() {}
+  override function <lineMarker descr="Overrides method 'bbb2' in AAA"><info descr="instance method">bbb2</info></lineMarker>(<info descr="parameter">x</info>) {  }
   function <info descr="instance method">bbb3</info>() {}
   public static function <info descr="static method">instance</info>() {}
 }

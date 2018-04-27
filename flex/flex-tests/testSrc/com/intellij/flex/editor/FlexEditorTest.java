@@ -12,7 +12,6 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.formatter.xml.XmlCodeStyleSettings;
-import com.intellij.testFramework.EditorTestUtil;
 
 import java.util.concurrent.Callable;
 
@@ -51,19 +50,6 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
   protected void doTestWithJSSupportLoaderAndFlex(final Callable<Void> call) throws Exception {
     FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), this.getClass(), getTestRootDisposable());
     call.call();
-  }
-
-  private void performCopyRefAndPasteTest() throws Exception {
-    performCopyRefAndPasteTest("js2");
-  }
-
-  private void performCopyRefAndPasteTest(String ext) throws Exception {
-    String testName = getTestName(false);
-    configureByFile(testName + "_src." + ext);
-    EditorTestUtil.performReferenceCopy(getEditor());
-    configureByFile(testName + "." + ext);
-    EditorTestUtil.performPaste(getEditor());
-    checkResultByFile(testName + "_after." + ext);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})

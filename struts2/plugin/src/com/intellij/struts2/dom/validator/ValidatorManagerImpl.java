@@ -19,7 +19,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ResourceFileUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -31,7 +30,6 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.validator.config.ValidatorConfig;
 import com.intellij.struts2.dom.validator.config.ValidatorsConfig;
 import com.intellij.struts2.facet.ui.StrutsVersionDetector;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
@@ -69,12 +67,12 @@ public class ValidatorManagerImpl extends ValidatorManager {
   }
 
   public List<ValidatorConfig> getValidators(@NotNull final Module module) {
-    final PsiFile validatorsFile = getValidatorConfigFile(module);
+    final XmlFile validatorsFile = getValidatorConfigFile(module);
     if (validatorsFile == null) {
       return Collections.emptyList();
     }
 
-    final DomFileElement<ValidatorsConfig> validatorsConfigElement = getValidatorsConfigFileElement((XmlFile) validatorsFile);
+    final DomFileElement<ValidatorsConfig> validatorsConfigElement = getValidatorsConfigFileElement(validatorsFile);
     if (validatorsConfigElement == null) {
       return Collections.emptyList();
     }
@@ -149,7 +147,7 @@ public class ValidatorManagerImpl extends ValidatorManager {
           return StringUtil.startsWith(fileName, clazz.getName());
         });
 
-    return ContainerUtil.map(filtered, validatorsDomFileElement -> validatorsDomFileElement.getFile());
+    return ContainerUtil.map(filtered, DomFileElement::getFile);
   }
 
   /**

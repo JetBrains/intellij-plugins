@@ -36,7 +36,7 @@ public class FlexApplicationComponent extends FileTypeFactory implements MetaDat
 
     @NotNull
     public String getDescription() {
-      return "SWF file type";
+      return "Adobe Flash animation";
     }
 
     @Override

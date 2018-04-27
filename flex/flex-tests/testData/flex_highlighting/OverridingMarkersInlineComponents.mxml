@@ -7,7 +7,7 @@
                     <mx:Script><inject descr="null">
                         use namespace mx_internal;
 
-                        mx_internal override function <lineMarker descr="overrides method in mx.core.UIComponent"><info descr="instance method">update<caret>Callbacks</info></lineMarker>():void {
+                        mx_internal override function <lineMarker descr="Overrides method 'updateCallbacks' in mx.core.UIComponent"><info descr="instance method">update<caret>Callbacks</info></lineMarker>():void {
 
                         }
                         </inject></mx:Script>
@@ -22,7 +22,7 @@
                     <mx:Script><inject descr="null">
                         use namespace mx_internal;
 
-                      mx_internal override function <lineMarker descr="overrides method in mx.core.UIComponent"><info descr="instance method">updateCallbacks</info></lineMarker>():void {
+                      mx_internal override function <lineMarker descr="Overrides method 'updateCallbacks' in mx.core.UIComponent"><info descr="instance method">updateCallbacks</info></lineMarker>():void {
                             
                         }
                         </inject></mx:Script>

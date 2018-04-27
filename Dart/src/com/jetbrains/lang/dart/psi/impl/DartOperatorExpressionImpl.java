@@ -17,6 +17,7 @@ public class DartOperatorExpressionImpl extends DartExpressionImpl implements Da
     super(node);
   }
 
+  @NotNull
   @Override
   public PsiElement getElement() {
     return this;
@@ -27,6 +28,7 @@ public class DartOperatorExpressionImpl extends DartExpressionImpl implements Da
     return null;
   }
 
+  @NotNull
   @Override
   public TextRange getRangeInElement() {
     final TextRange textRange = getTextRange();

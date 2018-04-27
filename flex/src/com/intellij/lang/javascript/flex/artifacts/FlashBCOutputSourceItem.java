@@ -46,6 +46,7 @@ public class FlashBCOutputSourceItem extends PackagingSourceItem {
     return myBc.hashCode() + myType.hashCode() * 239;
   }
 
+  @NotNull
   public SourceItemPresentation createPresentation(final @NotNull ArtifactEditorContext context) {
     return new SourceItemPresentation() {
       public String getPresentableName() {

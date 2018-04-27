@@ -121,7 +121,7 @@ public class CucumberJavaUtil {
 
     for (PsiAnnotation annotation : annotations) {
       if (annotation != null &&
-          (annotationClassName == null ||annotationClassName.equals(annotation.getQualifiedName())) &&
+          (annotationClassName == null || annotationClassName.equals(annotation.getQualifiedName())) &&
           isCucumberStepAnnotation(annotation)) {
         return annotation;
       }

@@ -154,37 +154,9 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
       public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         final String trimmedText = StringUtil.unquoteString(element.getText());
         if (CodeContext.isPackageBackedNamespace(trimmedText)) {
-          final JSReferenceSet referenceSet = new JSReferenceSet(element, trimmedText, 1, false, false) {
-            @Override
-            protected JSTextReference createTextReference(String s, int offset) {
-              return new JSTextReference(this, s, offset) {
-                @NotNull
-                @Override
-                protected ResolveResult[] doResolve() {
-                  if ("*".equals(getCanonicalText())) {
-                    return new ResolveResult[]{new JSResolveResult(mySet.getElement())};
-                  }
-                  return super.doResolve();
-                }
-
-                @Override
-                protected MyResolveProcessor createResolveProcessor(String name, PsiElement place, ResultSink resultSink) {
-                  return new MyResolveProcessor(name, place, resultSink) {
-                    @Override
-                    public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
-                      if (!(element instanceof JSPackageWrapper)) return true;
-                      return super.execute(element, state);
-                    }
-                  };
-                }
-              };
-            }
-          };
-          return referenceSet.getReferences();
+          return new JSReferenceSet(element, trimmedText, 1, false, false).getReferences();
         }
-        else {
-          return PsiReference.EMPTY_ARRAY;
-        }
+        return PsiReference.EMPTY_ARRAY;
       }
     });
 

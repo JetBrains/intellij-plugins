@@ -15,11 +15,11 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.LineSeparator;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
 
 import java.io.File;
@@ -60,11 +60,19 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   }
 
   public void testOne() {
-    doTest("one", "one/one.ts", true, true, null);
+    doTest("one", "one/one.ts", null);
+  }
+
+  public void testWithYamlConfig() {
+    doTest("withYamlConfig", "withYamlConfig/main.ts", null);
+  }
+
+  public void testWithWarningSeverity() {
+    doTest("withWarningSeverity", "withWarningSeverity/main.ts", null);
   }
 
   public void testNoAdditionalDirectory() {
-    doTest("noAdditionalDirectory", "noAdditionalDirectory/data.ts", true, true, null);
+    doTest("noAdditionalDirectory", "noAdditionalDirectory/data.ts", null);
     myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("Could not find custom rule directory:", false, true);
   }
 
@@ -95,21 +103,21 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
 
   public void testLineSeparatorsWin() {
     if (!SystemInfo.isWindows) return;
-    doTest("lineSeparators", "lineSeparators/data.ts", true, true, LineSeparator.CRLF);
+    doTest("lineSeparators", "lineSeparators/data.ts", LineSeparator.CRLF);
   }
 
   public void testTimeout() {
     JSLanguageServiceUtil.TEST_TIMEOUT_MILLIS = 1;
     try {
       myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: " + JSLanguageServiceQueueImpl.LANGUAGE_SERVICE_EXECUTION_TIMEOUT, true, false);
-      doTest("clean", "clean/clean.ts", true, true, null);
+      doTest("clean", "clean/clean.ts", null);
     } finally {
       JSLanguageServiceUtil.TEST_TIMEOUT_MILLIS = JSLanguageServiceUtil.TIMEOUT_MILLS;
     }
   }
 
   public void testFix() {
-    doTest("fix", "fix/fix.ts", true, true, null);
+    doTest("fix", "fix/fix.ts", null);
     myFixture.launchAction(JSTestUtils.getSingleQuickFix(myFixture, "TSLint: Fix current file"));
     myFixture.checkResultByFile("fix/fix_after.ts");
   }
@@ -139,28 +147,24 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
     final List<String> newRules = fromDir.stream().filter(name -> !fromConfig.contains(name)).sorted().collect(Collectors.toList());
 
     if (!outdated.isEmpty() || !newRules.isEmpty()) {
-      Assert.assertTrue(String.format("Outdated: (%d)\n%s\nMissing: (%d)\n%s\n", outdated.size(), outdated, newRules.size(), newRules), false);
+      Assert.fail(String.format("Outdated: (%d)\n%s\nMissing: (%d)\n%s\n", outdated.size(), outdated, newRules.size(), newRules));
     }
   }
 
-  private void doTest(@NotNull String directoryToCopy, @NotNull String filePathToTest, boolean copyConfig,
-                      @SuppressWarnings("SameParameterValue") boolean useConfig, LineSeparator lineSeparator) {
-    runTest(copyConfig, useConfig, lineSeparator, filePathToTest, directoryToCopy + "/tslint.json");
-  }
-
-  private void runTest(boolean copyConfig, boolean useConfig, @Nullable LineSeparator lineSeparator,
-                       String... filePathToTest) {
-    final String[] paths = copyConfig ? filePathToTest : new String[]{filePathToTest[0]};
-    final PsiFile[] files = myFixture.configureByFiles(paths);
+  private void doTest(@NotNull String directoryToCopy, @NotNull String filePathToTest,
+                      LineSeparator lineSeparator) {
+    myFixture.copyDirectoryToProject(directoryToCopy, "");
+    PsiFile fileToHighlight = myFixture.configureByFile(filePathToTest);
     if (lineSeparator != null) {
-      Arrays.stream(files).forEach(file -> ensureLineSeparators(file.getVirtualFile(), lineSeparator.getSeparatorString()));
+      ensureLineSeparators(fileToHighlight.getVirtualFile(), lineSeparator.getSeparatorString());
     }
+    
+    VirtualFile configVirtualFile = TslintUtil.lookupConfig(fileToHighlight.getVirtualFile());
+    Assert.assertNotNull("Could not find config file", configVirtualFile);
     final TsLintConfiguration configuration = TsLintConfiguration.getInstance(getProject());
-    final TsLintState.Builder builder = new TsLintState.Builder(configuration.getExtendedState().getState());
-    if (useConfig) {
-      final String configPath = copyConfig ? FileUtil.toSystemDependentName(files[files.length - 1].getVirtualFile().getPath()) : "aaa";
-      builder.setCustomConfigFileUsed(true).setCustomConfigFilePath(configPath);
-    }
+    final TsLintState.Builder builder = new TsLintState.Builder(configuration.getExtendedState().getState())
+      .setCustomConfigFileUsed(true)
+      .setCustomConfigFilePath(configVirtualFile.getPath());
     configuration.setExtendedState(true, builder.build());
 
     myFixture.testHighlighting(true, false, true);

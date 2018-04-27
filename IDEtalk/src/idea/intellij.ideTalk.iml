@@ -12,5 +12,7 @@
     <orderEntry type="module" module-name="intellij.ideTalk.core" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="module" module-name="intellij.platform.diff" />
+    <orderEntry type="library" name="Log4J" level="project" />
+    <orderEntry type="library" name="XStream" level="project" />
   </component>
 </module>

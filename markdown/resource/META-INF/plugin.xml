@@ -79,12 +79,14 @@
     <lang.foldingBuilder language="Markdown" implementationClass="org.intellij.plugins.markdown.folding.MarkdownFoldingBuilder"/>
     <stubIndex implementation="org.intellij.plugins.markdown.lang.index.MarkdownHeadersIndex"/>
     <anchorReferenceProvider implementation="org.intellij.plugins.markdown.lang.references.MarkdownAnchorPathReferenceProvider"/>
+    <todoIndexer filetype="Markdown" implementationClass="org.intellij.plugins.markdown.highlighting.MarkdownTodoIndexer" />
+    <indexPatternBuilder implementation="org.intellij.plugins.markdown.highlighting.MarkdownIndexPatternBuilder" />
   </extensions>
 
   <extensions defaultExtensionNs="org.intellij.markdown">
     <html.panel.provider implementation="org.intellij.plugins.markdown.ui.preview.javafx.JavaFxHtmlPanelProvider" />
     <fenceLanguageProvider implementation="org.intellij.plugins.markdown.extensions.plantuml.PlantUMLCodeFenceLanguageProvider"/>
-    <codeFencePluginGeneratingProvider implementation="org.intellij.plugins.markdown.extensions.plantuml.PlantUMLPluginGeneratingProvider"/>
+    <codeFencePluginGeneratingProvider implementation="org.intellij.plugins.markdown.extensions.plantuml.PlantUMLProvider"/>
   </extensions>
 
   <actions>

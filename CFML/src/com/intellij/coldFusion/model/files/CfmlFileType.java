@@ -57,7 +57,7 @@ public class CfmlFileType extends LanguageFileType {
 
   @NotNull
   public String getDescription() {
-    return "Cold Fusion";
+    return "ColdFusion";
   }
 
   @Override

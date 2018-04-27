@@ -29,6 +29,7 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.Balloon;
@@ -76,8 +77,8 @@ import static org.jetbrains.io.NettyUtil.nioClientBootstrap;
 final class PubServerService extends NetService {
   private static final Logger LOG = Logger.getInstance(PubServerService.class.getName());
 
-  private static final String PUB_SERVE = "Pub Serve";
-  private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.toolWindowGroup(PUB_SERVE, PUB_SERVE, false);
+  private static final String DART_DEV_SERVER = "Dart Dev Server";
+  private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.toolWindowGroup(DART_DEV_SERVER, DART_DEV_SERVER, false);
 
   private volatile VirtualFile firstServedDir;
 
@@ -130,19 +131,19 @@ final class PubServerService extends NetService {
   @Override
   @NotNull
   protected String getConsoleToolWindowId() {
-    return PUB_SERVE;
+    return DART_DEV_SERVER;
   }
 
   @Override
   @NotNull
   protected Icon getConsoleToolWindowIcon() {
-    return DartIcons.Dart_13;
+    return DartIcons.PubServeToolWindow;
   }
 
   @NotNull
   @Override
   public ActionGroup getConsoleToolWindowActions() {
-    return new DefaultActionGroup(ActionManager.getInstance().getAction("Dart.stop.pub.server"));
+    return new DefaultActionGroup(ActionManager.getInstance().getAction("Dart.stop.dart.dev.server"));
   }
 
   @Override
@@ -185,10 +186,18 @@ final class PubServerService extends NetService {
 
     final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(firstServedDir.getParent().getPath());
     commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getPubPath(dartSdk)));
-    commandLine.addParameter("serve");
-    commandLine.addParameter(firstServedDir.getName());
-    commandLine.addParameter("--port=" + String.valueOf(port));
     commandLine.withEnvironment(DartPubActionBase.PUB_ENV_VAR_NAME, DartPubActionBase.getPubEnvValue());
+
+    if (DartWebdev.INSTANCE.useWebdev(dartSdk)) {
+      commandLine.addParameters("global", "run", "webdev", "serve");
+      commandLine.addParameter(firstServedDir.getName() + ":" + String.valueOf(port));
+      commandLine.withEnvironment(DartPubActionBase.PUB_ENV_VAR_NAME, DartPubActionBase.getPubEnvValue() + ".webdev");
+    }
+    else {
+      commandLine.addParameter("serve");
+      commandLine.addParameter(firstServedDir.getName());
+      commandLine.addParameter("--port=" + String.valueOf(port));
+    }
 
     final OSProcessHandler processHandler = new OSProcessHandler(commandLine);
     processHandler.addProcessListener(new PubServeOutputListener(project));
@@ -201,6 +210,11 @@ final class PubServerService extends NetService {
                                   final int port,
                                   @NotNull final OSProcessHandler processHandler,
                                   @NotNull final Consumer<String> errorOutputConsumer) {
+
+    if (DartWebdev.INSTANCE.useWebdev(DartSdk.getDartSdk(getProject())) && !DartWebdev.INSTANCE.getActivated()) {
+      ApplicationManager.getApplication().invokeAndWait(() -> DartWebdev.INSTANCE.ensureWebdevActivated(getProject()), ModalityState.any());
+    }
+
     InetSocketAddress firstPubServerAddress = NetKt.loopbackSocketAddress(port);
     ServerInfo old = servedDirToSocketAddress.put(firstServedDir, new ServerInfo(firstPubServerAddress));
     LOG.assertTrue(old == null);
@@ -338,21 +352,26 @@ final class PubServerService extends NetService {
 
     @Override
     public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
+      final String text = event.getText().toLowerCase(Locale.US);
       if (outputType == ProcessOutputTypes.STDERR) {
-        final boolean error = event.getText().toLowerCase(Locale.US).contains("error");
+        final boolean error = text.contains("error");
 
         ApplicationManager.getApplication().invokeLater(() -> showNotificationIfNeeded(error));
+      }
+      else if (text.contains("could not run in the current directory.") ||
+               text.contains("webdev could not run for this project.")) {
+        ApplicationManager.getApplication().invokeLater(() -> showNotificationIfNeeded(true));
       }
     }
 
     private void showNotificationIfNeeded(final boolean isError) {
-      if (ToolWindowManager.getInstance(myProject).getToolWindow(PUB_SERVE).isVisible()) {
+      if (ToolWindowManager.getInstance(myProject).getToolWindow(DART_DEV_SERVER).isVisible()) {
         return;
       }
 
       if (myNotification != null && !myNotification.isExpired()) {
         final Balloon balloon1 = myNotification.getBalloon();
-        final Balloon balloon2 = ToolWindowManager.getInstance(myProject).getToolWindowBalloon(PUB_SERVE);
+        final Balloon balloon2 = ToolWindowManager.getInstance(myProject).getToolWindowBalloon(DART_DEV_SERVER);
         if ((balloon1 != null || balloon2 != null) && (myNotificationAboutErrors || !isError)) {
           return; // already showing correct balloon
         }
@@ -361,14 +380,14 @@ final class PubServerService extends NetService {
 
       myNotificationAboutErrors = isError; // previous errors are already reported, so reset our flag
 
-      final String message =
-        DartBundle.message(myNotificationAboutErrors ? "pub.serve.output.contains.errors" : "pub.serve.output.contains.warnings");
+      final String message = DartBundle.message(myNotificationAboutErrors ? "dart.dev.server.output.contains.errors"
+                                                                          : "dart.dev.server.output.contains.warnings");
 
       myNotification = NOTIFICATION_GROUP.createNotification("", message, NotificationType.WARNING, new NotificationListener.Adapter() {
         @Override
         protected void hyperlinkActivated(@NotNull final Notification notification, @NotNull final HyperlinkEvent e) {
           notification.expire();
-          ToolWindowManager.getInstance(myProject).getToolWindow(PUB_SERVE).activate(null);
+          ToolWindowManager.getInstance(myProject).getToolWindow(DART_DEV_SERVER).activate(null);
         }
       });
 

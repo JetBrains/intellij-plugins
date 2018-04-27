@@ -4,7 +4,7 @@ import org.intellij.markdown.MarkdownElementTypes;
 import org.intellij.markdown.ast.ASTNode;
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor;
 import org.intellij.markdown.parser.MarkdownParser;
-import org.intellij.plugins.markdown.extensions.plantuml.CodeFencePluginFlavourDescriptor;
+import org.intellij.plugins.markdown.extensions.CodeFencePluginFlavourDescriptor;
 import org.jetbrains.annotations.NotNull;
 
 public class MarkdownParserManager {
