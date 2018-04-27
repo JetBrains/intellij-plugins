@@ -114,11 +114,11 @@ class CloudFormationReportSubmitter : ErrorReportSubmitter() {
                 con.allowUserInteraction = false
                 con.setRequestProperty("Content-Type", "text/xml")
                 con.setFixedLengthStreamingMode(reportBytes.size)
-              }.connect {
-                val os = it.connection.outputStream
+
+                val os = con.outputStream
                 os.write(reportBytes)
                 os.close()
-
+              }.connect {
                 val response = it.connection.inputStream.readBytes()
                 try {
                   LOG.info("Reporting endpoint answered: ${response.toString(Charsets.UTF_8)}")
