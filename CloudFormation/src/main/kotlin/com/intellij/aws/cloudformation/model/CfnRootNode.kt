@@ -11,4 +11,8 @@ class CfnRootNode(
 ) : CfnNode() {
   val transformStringValue
     get() = transformNode?.value?.value
+
+  companion object {
+    fun empty() = CfnRootNode(null, null, null, null, null, null, null)
+  }
 }

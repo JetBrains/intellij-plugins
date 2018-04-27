@@ -510,24 +510,30 @@ class YamlCloudFormationParser private constructor () {
 
     val yamlFile = psiFile as? YAMLFile ?: error("Not a YAML file")
     if (yamlFile.documents.isEmpty()) {
-      error("YAML file is empty to parse")
+      return CfnRootNode.empty().registerNode(yamlFile)
     }
 
     for (doc in yamlFile.documents.drop(1)) {
-      addProblem(doc, "Unexpected YAML document")
+      if (doc.topLevelValue != null) {
+        addProblem(doc, "Unexpected YAML document")
+      }
     }
 
-    val yamlDocument = yamlFile.documents.single()
+    val yamlDocument = yamlFile.documents.first()
+
     val topLevelValue = yamlDocument.topLevelValue
     if (topLevelValue == null) {
-      addProblem(yamlDocument, "Expected non-empty YAML document")
-      return CfnRootNode(null, null, null, null, null, null, null).registerNode(yamlDocument)
+      if (!yamlDocument.textRange.isEmpty) {
+        addProblem(yamlDocument, "Expected top-level value")
+      }
+
+      return CfnRootNode.empty().registerNode(yamlDocument)
     }
 
     val yamlMapping = topLevelValue as? YAMLMapping
     if (yamlMapping == null) {
       addProblem(topLevelValue, "Expected YAML mapping")
-      return CfnRootNode(null, null, null, null, null, null, null).registerNode(topLevelValue)
+      return CfnRootNode.empty().registerNode(topLevelValue)
     }
 
     return root(yamlMapping)

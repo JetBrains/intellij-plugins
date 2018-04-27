@@ -596,7 +596,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
   }
 
   override fun root(root: CfnRootNode) {
-    if (root.resourcesNode == null) {
+    if (root.resourcesNode == null && !parsed.getPsiElement(root).textRange.isEmpty) {
       addProblem(root, "Resources section is missing")
     }
 
