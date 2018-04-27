@@ -21,6 +21,6 @@ class CfmlLanguageInjectionSupport : AbstractLanguageInjectionSupport() {
   override fun getHelpId(): String? = null
 
   companion object {
-    val SUPPORT_ID = "cfml"
+    const val SUPPORT_ID = "cfml"
   }
 }
