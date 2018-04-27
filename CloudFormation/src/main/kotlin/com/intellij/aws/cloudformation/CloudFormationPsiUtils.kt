@@ -5,6 +5,7 @@ import com.intellij.aws.cloudformation.model.CfnNamedNode
 import com.intellij.aws.cloudformation.model.CfnNode
 import com.intellij.aws.cloudformation.model.CfnScalarValueNode
 import com.intellij.json.JsonFileType
+import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonObject
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.psi.PsiDocumentManager
@@ -72,6 +73,9 @@ fun YAMLValue.getFirstTag() = when {
 object CloudFormationPsiUtils {
   fun isCloudFormationFile(element: PsiElement): Boolean {
     val psiFile = element.containingFile
+    if (psiFile !is JsonFile && psiFile !is YAMLFile) {
+      return false
+    }
 
     val fileType = psiFile.viewProvider.fileType
 
