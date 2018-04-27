@@ -15,6 +15,7 @@
  */
 package com.intellij.coldFusion.model.psi;
 
+import com.intellij.coldFusion.model.files.CfmlFileType;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -47,7 +48,7 @@ public class CfmlAttributeValueManipulator extends AbstractElementManipulator<Cf
     if (parent != null && parent.getNode().getElementType() == CfmlElementTypes.INCLUDEEXPRESSION) {
       templateText = "<cfscript> cfinclude \"";
       psiFile =
-        PsiFileFactory.getInstance(expr.getContainingFile().getProject()).createFileFromText("newElementFile.cfml",
+        PsiFileFactory.getInstance(expr.getContainingFile().getProject()).createFileFromText("newElementFile.cfml", CfmlFileType.INSTANCE,
                                                                                              templateText + newText + "\"; </cfscript>");
     }
 
@@ -56,7 +57,7 @@ public class CfmlAttributeValueManipulator extends AbstractElementManipulator<Cf
       if (parent != null) {
         templateText = "<cfinclude template=\"";
         psiFile =
-          PsiFileFactory.getInstance(expr.getContainingFile().getProject()).createFileFromText("newElementFile.cfml",
+          PsiFileFactory.getInstance(expr.getContainingFile().getProject()).createFileFromText("newElementFile.cfml", CfmlFileType.INSTANCE,
                                                                                                templateText + newText + "\">");
       }
     }
