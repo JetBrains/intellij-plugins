@@ -63,4 +63,18 @@ object CloudFormationConstants {
       "List<AWS::EC2::VPC::Id>",
       "List<AWS::Route53::HostedZone::Id>"
   )
+
+  // tests: Unknown AWS-specific parameter type in AWS::SSM::Parameter::Value<
+  // tests: Un in AWS::SSM::Parameter::Value<List<
+  //AWS::SSM::Parameter::Value<List<AWS::EC2::KeyPair::KeyPairName>>
+
+  val SsmParameterTypes = listOf(
+      "AWS::SSM::Parameter::Name",
+      "AWS::SSM::Parameter::Value<String>",
+      "AWS::SSM::Parameter::Value<List<String>>",
+      "AWS::SSM::Parameter::Value<CommaDelimitedList>") +
+      AwsSpecificParameterTypes.map { "AWS::SSM::Parameter::Value<$it>" } +
+      AwsSpecificParameterTypes.map { "AWS::SSM::Parameter::Value<List<$it>>" }
+
+  val allParameterTypes = (CloudFormationParameterType.allIds + AwsSpecificParameterTypes + SsmParameterTypes).sorted()
 }

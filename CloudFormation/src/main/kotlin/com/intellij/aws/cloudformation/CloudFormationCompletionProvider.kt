@@ -95,8 +95,7 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
 
             val parameterTypeMatch = ParameterTypeValueMatch.match(parent, parsed)
             if (parameterTypeMatch != null) {
-              val allTypes = CloudFormationParameterType.allIds + CloudFormationConstants.AwsSpecificParameterTypes.sorted()
-              allTypes.forEach { rs.addElement(createLookupElement(it, quote)) }
+              CloudFormationConstants.allParameterTypes.forEach { rs.addElement(createLookupElement(it, quote)) }
               return
             }
 

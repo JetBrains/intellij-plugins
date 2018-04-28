@@ -390,9 +390,8 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
       return
     }
 
-    if (!CloudFormationParameterType.allIds.contains(typeName) &&
-        !CloudFormationConstants.AwsSpecificParameterTypes.contains(typeName)) {
-        addProblem(type.value, "Unknown parameter type: " + typeName)
+    if (!CloudFormationConstants.allParameterTypes.contains(typeName)) {
+        addProblem(type.value, "Unknown parameter type: $typeName")
       return
     }
 
@@ -452,7 +451,8 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
             }
 
             if (typeName != CloudFormationParameterType.String.id &&
-                !CloudFormationConstants.AwsSpecificParameterTypes.contains(typeName)) {
+                !CloudFormationConstants.AwsSpecificParameterTypes.contains(typeName) &&
+                !CloudFormationConstants.SsmParameterTypes.contains(typeName)) {
               addProblem(property, "$propertyName property is valid for ${CloudFormationParameterType.String.id} type only")
             }
           }

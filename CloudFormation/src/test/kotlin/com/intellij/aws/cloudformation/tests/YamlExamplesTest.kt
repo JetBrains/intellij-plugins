@@ -35,6 +35,7 @@ class YamlExamplesTest : LightPlatformCodeInsightTestCase() {
   fun testParameters5() = runTest("parameters5.yaml")
   fun testParameters6() = runTest("parameters6.yaml")
   fun testParameters7() = runTest("parameters7.yaml")
+  fun testParametersSsmTypes() = runTest("parameters-ssm-types.yaml")
 
   fun testFindInMapBroken() = runTest("findinmap_broken.yaml")
   fun testFnSplit() = runTest("fn-split.yaml")

@@ -2,7 +2,6 @@ package com.intellij.aws.cloudformation.tests
 
 import com.intellij.aws.cloudformation.CloudFormationConstants
 import com.intellij.aws.cloudformation.CloudFormationMetadataProvider
-import com.intellij.aws.cloudformation.CloudFormationParameterType
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
@@ -34,10 +33,11 @@ class YamlCompletionTests : LightCodeInsightFixtureTestCase() {
   fun testParameterProperty() = checkBasicCompletion("parameter_property.yaml",
       "AllowedPattern", "AllowedValues", "ConstraintDescription",
       "Default", "MaxLength", "MaxValue", "MinLength", "MinValue", "NoEcho")
-  fun testParameterType() = checkBasicCompletion("parameter_type.yaml", "String", "List<String>")
+  fun testParameterType() = checkBasicCompletion("parameter_type.yaml",
+      "AWS::SSM::Parameter::Value<List<String>>",
+      "AWS::SSM::Parameter::Value<String>", "String", "List<String>")
   fun testParameterType2() = checkBasicCompletion("parameter_type_2.yaml",
-      *(CloudFormationParameterType.allIds +
-          CloudFormationConstants.AwsSpecificParameterTypes.sorted()).toTypedArray())
+      *CloudFormationConstants.allParameterTypes.toTypedArray())
   fun testParameterType3() = checkBasicCompletion("parameter_type_3.yaml")
 
   fun testServerless1() = checkBasicCompletion("serverless_1.yaml",
