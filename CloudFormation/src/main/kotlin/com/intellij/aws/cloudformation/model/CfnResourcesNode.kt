@@ -2,7 +2,7 @@ package com.intellij.aws.cloudformation.model
 
 class CfnMetadataNode(name: CfnScalarValueNode?, val value: CfnObjectValueNode?): CfnNamedNode(name)
 
-class CfnTransformNode(name: CfnScalarValueNode?, val value: CfnScalarValueNode?): CfnNamedNode(name)
+class CfnTransformNode(name: CfnScalarValueNode?, val transforms: List<CfnScalarValueNode>): CfnNamedNode(name)
 
 class CfnResourcesNode(name: CfnScalarValueNode?, val resources: List<CfnResourceNode>) : CfnNamedNode(name)
 

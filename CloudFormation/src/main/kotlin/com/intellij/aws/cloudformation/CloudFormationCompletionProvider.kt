@@ -56,7 +56,8 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
             val resourceTypeValuePositionMatch = ResourceTypeValueMatch.match(parent, parsed)
             if (resourceTypeValuePositionMatch != null) {
               CloudFormationMetadataProvider.METADATA.resourceTypes.values.forEach { resourceType ->
-                if (resourceType.transform == null || resourceType.transform == parsed.root.transformStringValue) {
+                if (resourceType.transform == null ||
+                    parsed.root.transformValues.any { resourceType.transform == it }) {
                   rs.addElement(createLookupElement(resourceType.name, quote))
                 }
               }

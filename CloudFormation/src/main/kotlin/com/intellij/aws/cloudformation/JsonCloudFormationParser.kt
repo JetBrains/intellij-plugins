@@ -141,8 +141,8 @@ class JsonCloudFormationParser private constructor () {
   }
 
   private fun transform(transform: JsonProperty): CfnTransformNode {
-    val element = checkAndGetStringElement(transform.value)
-    return CfnTransformNode(keyName(transform), element).registerNode(transform)
+    val values = checkAndGetStringOrStringArray(transform)
+    return CfnTransformNode(keyName(transform), values).registerNode(transform)
   }
 
   private fun conditions(conditions: JsonProperty): CfnConditionsNode = parseNameValues(
@@ -237,24 +237,8 @@ class JsonCloudFormationParser private constructor () {
   }
 
   private fun resourceDependsOn(property: JsonProperty): CfnResourceDependsOnNode {
-    val expectedMessage = "Expected a string or an array of strings"
-
-    val value = property.value
-    val valuesNodes = when(value) {
-      null -> emptyList()
-      is JsonArray -> value.valueList.mapNotNull { checkAndGetStringElement(it) }
-      is JsonStringLiteral -> listOf(CfnScalarValueNode(value.value).registerNode(value))
-      is JsonReferenceExpression -> {
-        addProblemOnNameElement(property, expectedMessage)
-        listOf(CfnScalarValueNode(value.text).registerNode(value))
-      }
-      else -> {
-        addProblemOnNameElement(property, expectedMessage)
-        emptyList()
-      }
-    }
-
-    return CfnResourceDependsOnNode(keyName(property), valuesNodes).registerNode(property)
+    val values = checkAndGetStringOrStringArray(property)
+    return CfnResourceDependsOnNode(keyName(property), values).registerNode(property)
   }
 
   private fun resourceCondition(property: JsonProperty): CfnResourceConditionNode =
@@ -338,6 +322,24 @@ class JsonCloudFormationParser private constructor () {
         keyName(typeProperty),
         checkAndGetStringElement(typeProperty.value)
     ).registerNode(typeProperty)
+  }
+
+  private fun checkAndGetStringOrStringArray(property: JsonProperty?): List<CfnScalarValueNode> {
+    val expectedMessage = "Expected a string or an array of strings"
+    val value = property?.value
+    return when (value) {
+      null -> emptyList()
+      is JsonArray -> value.valueList.mapNotNull { checkAndGetStringElement(it) }
+      is JsonStringLiteral -> listOf(CfnScalarValueNode(value.value).registerNode(value))
+      is JsonReferenceExpression -> {
+        addProblemOnNameElement(property, expectedMessage)
+        listOf(CfnScalarValueNode(value.text).registerNode(value))
+      }
+      else -> {
+        addProblemOnNameElement(property, expectedMessage)
+        emptyList()
+      }
+    }
   }
 
   private fun checkAndGetObject(expression: JsonValue?): JsonObject? {

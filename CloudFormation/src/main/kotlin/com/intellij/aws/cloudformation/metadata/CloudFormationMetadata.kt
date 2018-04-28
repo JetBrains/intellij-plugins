@@ -9,7 +9,8 @@ data class CloudFormationMetadata(
 
   fun findResourceType(name: String, context: CfnRootNode): CloudFormationResourceType? {
     val resourceType = resourceTypes[name]
-    if (resourceType?.transform != null && resourceType.transform != context.transformStringValue) {
+    if (resourceType?.transform != null &&
+        context.transformValues.all { resourceType.transform != it }) {
       return null
     }
 

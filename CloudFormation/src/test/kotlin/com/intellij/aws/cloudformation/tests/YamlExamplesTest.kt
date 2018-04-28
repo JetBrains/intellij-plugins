@@ -27,6 +27,7 @@ class YamlExamplesTest : LightPlatformCodeInsightTestCase() {
   fun test16() = runTest("serverless-swagger-cors.yaml")
   fun test17() = runTest("serverless-kinesis-stream.yaml")
   fun test18() = runTest("serverless-iot-backend.yaml")
+  fun test19() = runTest("serverless-multiple-transforms.yaml")
 
   fun testParameters1() = runTest("parameters1.yaml")
   fun testParameters2() = runTest("parameters2.yaml")

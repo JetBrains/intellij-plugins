@@ -65,7 +65,7 @@ class YamlCloudFormationParser private constructor () {
     assert(!node2psi.containsKey(this)) { "Nodes map already has $psiElement" }
 
     psi2node.put(psiElement, this)
-    node2psi.put(this, psiElement)
+    node2psi[this] = psiElement
 
     return this
   }
@@ -128,8 +128,8 @@ class YamlCloudFormationParser private constructor () {
   }
 
   private fun transform(transform: CfnKeyValue): CfnTransformNode {
-    val element = checkAndGetStringElement(transform.value)
-    return CfnTransformNode(keyName(transform), element).registerNode(transform.owner)
+    val values = checkAndGetStringOrStringArray(transform)
+    return CfnTransformNode(keyName(transform), values).registerNode(transform.owner)
   }
 
   private fun conditions(conditions: CfnKeyValue): CfnConditionsNode = parseNameValues(
@@ -236,7 +236,7 @@ class YamlCloudFormationParser private constructor () {
         }
       }
 
-      topLevelProperties.put(propertyKey, node)
+      topLevelProperties[propertyKey] = node
     }
 
     val properties: Collection<CfnNode> = topLevelProperties.values
@@ -251,18 +251,8 @@ class YamlCloudFormationParser private constructor () {
   }
 
   private fun resourceDependsOn(property: CfnKeyValue): CfnResourceDependsOnNode {
-    val value = property.value
-    val valuesNodes = when(value) {
-      null -> emptyList()
-      is YAMLSequence -> value.items.mapNotNull { checkAndGetStringElement(it.value) }
-      is YAMLScalar -> checkAndGetStringElement(value)?.let { listOf(it) } ?: emptyList()
-      else -> {
-        addProblemOnNameElement(property.owner, "Expected a string or an array of strings")
-        emptyList()
-      }
-    }
-
-    return CfnResourceDependsOnNode(keyName(property), valuesNodes).registerNode(property.owner)
+    val values = checkAndGetStringOrStringArray(property)
+    return CfnResourceDependsOnNode(keyName(property), values).registerNode(property.owner)
   }
 
   private class CfnKeyValue(
@@ -451,6 +441,19 @@ class YamlCloudFormationParser private constructor () {
 
     val valueNode = CfnScalarValueNode(value).registerNode(typeProperty.value!!)
     return CfnResourceTypeNode(nameNode, valueNode).registerNode(typeProperty.owner)
+  }
+
+  private fun checkAndGetStringOrStringArray(property: CfnKeyValue): List<CfnScalarValueNode> {
+    val value = property.value
+    return when(value) {
+      null -> emptyList()
+      is YAMLSequence -> value.items.mapNotNull { checkAndGetStringElement(it.value) }
+      is YAMLScalar -> checkAndGetStringElement(value)?.let { listOf(it) } ?: emptyList()
+      else -> {
+        addProblemOnNameElement(property.owner, "Expected a string or an array of strings")
+        emptyList()
+      }
+    }
   }
 
   private fun checkAndGetMapping(expression: YAMLValue?): YAMLMapping? {
