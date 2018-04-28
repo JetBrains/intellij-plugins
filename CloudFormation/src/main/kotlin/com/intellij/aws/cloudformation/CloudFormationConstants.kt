@@ -24,6 +24,7 @@ object CloudFormationConstants {
   val PropertiesPropertyName = "Properties"
   val CreationPolicyPropertyName = "CreationPolicy"
   val DeletionPolicyPropertyName = "DeletionPolicy"
+  val DescriptionPropertyName = "Description"
   val DependsOnPropertyName = "DependsOn"
   val MetadataPropertyName = "Metadata"
   val UpdatePolicyPropertyName = "UpdatePolicy"
@@ -34,6 +35,7 @@ object CloudFormationConstants {
       TypePropertyName,
       PropertiesPropertyName,
       CreationPolicyPropertyName,
+      DescriptionPropertyName,
       DeletionPolicyPropertyName,
       DependsOnPropertyName,
       MetadataPropertyName,
