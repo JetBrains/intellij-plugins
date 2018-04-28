@@ -50,7 +50,11 @@ abstract class BaseInspectionTestCase(val folder: String) : LightCodeInsightFixt
     Assert.assertTrue("Is not a directory: $testsPath", testsPath.isDirectory)
 
     val list = (testsPath.listFiles() ?: emptyArray())
-        .filter { !it.isDirectory && !it.name.endsWith(".expected")}
+        .filter {
+          !it.isDirectory &&
+            !it.name.endsWith(".expected") &&
+            !it.name.endsWith("swagger.yaml")
+        }
     Assert.assertTrue("No files in $testsPath", list.isNotEmpty())
 
     val allPsiFiles = myFixture.configureByFiles(*list.map { it.name }.toTypedArray())
