@@ -40,11 +40,23 @@ object TestUtil {
   fun nodeToString(node: CfnNode): String = MyToStringStyle.toString(node, arrayOf("allTopLevelProperties", "functionId"))
 
   fun checkContent(expectFile: File, actualContent: String) {
-    val actualNormalized = StringUtil.trimEnd(StringUtil.convertLineSeparators(actualContent), '\n') + '\n'
+    val normalizedLines = actualContent
+        .lines()
+        .map { it.trimEnd() }
+        .joinToString(separator = "\n")
+
+    val actualNormalized = normalizedLines.trimEnd('\n') + '\n'
+
+    if (actualNormalized.isBlank()) {
+      if (expectFile.exists()) {
+        TestCase.fail("Actual content is empty (i.e. no problems) => expect file $expectFile should not exist")
+      }
+
+      return
+    }
 
     if (!expectFile.exists()) {
-      expectFile.writeText(actualNormalized)
-      TestCase.fail("Wrote ${expectFile.path} with actual content")
+      expectFile.writeText("")
     }
 
     val expectText: String
@@ -75,7 +87,7 @@ object TestUtil {
 
   fun renderProblems(file: PsiFile, problems: List<CloudFormationProblem>): String {
     if (problems.isEmpty()) {
-      return "No problems"
+      return ""
     }
 
     val writer = StringWriter()
