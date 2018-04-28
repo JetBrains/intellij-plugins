@@ -1,4 +1,5 @@
 {
+    "AWSTemplateFormatVersion": "2010-09-09",
     "Description" : "This is a sample template for lambda-backed custom resource. Runtime for Lambda function is NodeJs",
     "Parameters" : {
         "Base" : {
