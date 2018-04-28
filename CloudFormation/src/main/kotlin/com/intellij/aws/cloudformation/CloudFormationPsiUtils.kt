@@ -88,7 +88,11 @@ object CloudFormationPsiUtils {
         val yamlFile = psiFile as? YAMLFile
         val yamlDoc = yamlFile?.documents?.firstOrNull()
         val topLevelYamlMapping = yamlDoc?.topLevelValue as? YAMLMapping
-        topLevelYamlMapping?.getKeyValueByKey(CloudFormationSection.FormatVersion.id) != null
+
+        val formatVersion = topLevelYamlMapping?.getKeyValueByKey(CloudFormationSection.FormatVersion.id)
+        val transform = topLevelYamlMapping?.getKeyValueByKey(CloudFormationSection.Transform.id)
+
+        formatVersion != null || transform?.valueText?.trim() == CloudFormationConstants.awsServerless20161031TransformName
       }
       else -> false
     }

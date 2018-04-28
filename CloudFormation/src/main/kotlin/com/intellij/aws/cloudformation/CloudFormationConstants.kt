@@ -3,6 +3,8 @@ package com.intellij.aws.cloudformation
 object CloudFormationConstants {
   val SupportedTemplateFormatVersions = setOf("2010-09-09")
 
+  val awsServerless20161031TransformName = "AWS::Serverless-2016-10-31"
+
   // from https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html
   val ParameterDescriptionLimit = 4000
   val ParameterTypePropertyName = "Type"

@@ -21,7 +21,6 @@ data class CloudFormationManualResourceAttribute(
 )
 
 // from https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md
-val awsServerless20161031TransformName = "AWS::Serverless-2016-10-31"
 val awsServerless20161031ResourceTypes = listOf(
     CloudFormationManualResourceType(
         name = "AWS::Serverless::Function",

@@ -1,5 +1,6 @@
 @file:Suppress("LoopToCallChain", "Destructure")
 
+import com.intellij.aws.cloudformation.CloudFormationConstants.awsServerless20161031TransformName
 import com.intellij.aws.cloudformation.metadata.CloudFormationLimits
 import com.intellij.aws.cloudformation.metadata.CloudFormationMetadata
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceAttribute
