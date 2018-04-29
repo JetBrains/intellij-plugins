@@ -81,7 +81,7 @@ class YamlCloudFormationParser private constructor () {
 
   private fun root(root: YAMLMapping): CfnRootNode {
     val sections = root.cfnKeyValues().mapNotNull { property ->
-      val name = property.keyText
+      val name = property.keyText.trim()
       val value = property.value
 
       if (name.isEmpty() || value == null) {

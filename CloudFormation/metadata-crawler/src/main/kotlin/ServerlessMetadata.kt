@@ -68,7 +68,10 @@ val awsServerless20161031ResourceTypes = listOf(
             CloudFormationManualResourceProperty(name = "Tags", type = "Map of string to string", description = "A map (string to string) that specifies the tags to be added to this function. Keys and values are limited to alphanumeric characters. Keys can be 1 to 127 Unicode characters in length and cannot be prefixed with aws:. Values can be 1 to 255 Unicode characters in length. When the stack is created, SAM will automatically add a lambda:createdBy:SAM tag to this Lambda function."),
             CloudFormationManualResourceProperty(name = "Tracing", type = "string", description = "String that specifies the function's X-Ray tracing mode. Accepted values are Active and PassThrough"),
             CloudFormationManualResourceProperty(name = "KmsKeyArn", type = "string", description = "The Amazon Resource Name (ARN) of an AWS Key Management Service (AWS KMS) key that Lambda uses to encrypt and decrypt your function's environment variables."),
-            CloudFormationManualResourceProperty(name = "DeadLetterQueue", type = "map | DeadLetterQueue Object", description = "Configures SNS topic or SQS queue where Lambda sends events that it can't process.")
+            CloudFormationManualResourceProperty(name = "DeadLetterQueue", type = "map | DeadLetterQueue Object", description = "Configures SNS topic or SQS queue where Lambda sends events that it can't process."),
+            CloudFormationManualResourceProperty(name = "DeploymentPreference", type = "DeploymentPreference Object", description = "Settings to enable Safe Lambda Deployments. Read the usage guide for detailed information."),
+            CloudFormationManualResourceProperty(name = "AutoPublishAlias", type = "string", description = "Name of the Alias. Read AutoPublishAlias Guide for how it works"),
+            CloudFormationManualResourceProperty(name = "ReservedConcurrentExecutions", type = "integer", description = "The maximum of concurrent executions you want to reserve for the function. For more information see AWS Documentation on managing concurrency")
         ),
         attributes = listOf(
             CloudFormationManualResourceAttribute("Arn", "The ARN of the Lambda function.")
@@ -85,7 +88,11 @@ val awsServerless20161031ResourceTypes = listOf(
             CloudFormationManualResourceProperty(name = "DefinitionBody", type = "JSON or YAML Object", description = "Swagger specification that describes your API. Either one of DefinitionUri or DefinitionBody must be specified."),
             CloudFormationManualResourceProperty(name = "CacheClusterEnabled", type = "boolean", description = "Indicates whether cache clustering is enabled for the stage."),
             CloudFormationManualResourceProperty(name = "CacheClusterSize", type = "string", description = "The stage's cache cluster size."),
-            CloudFormationManualResourceProperty(name = "Variables", type = "string", description = "A map (string to string map) that defines the stage variables, where the variable name is the key and the variable value is the value. Variable names are limited to alphanumeric characters. Values must match the following regular expression: [A-Za-z0-9._~:/?#&amp;=,-]+.")
+            CloudFormationManualResourceProperty(name = "Variables", type = "string", description = "A map (string to string map) that defines the stage variables, where the variable name is the key and the variable value is the value. Variable names are limited to alphanumeric characters. Values must match the following regular expression: [A-Za-z0-9._~:/?#&amp;=,-]+."),
+            CloudFormationManualResourceProperty(name = "MethodSettings", type = "CloudFormation MethodSettings property", description = "Configures all settings for API stage including Logging, Metrics, CacheTTL, Throttling. This value is passed through to CloudFormation. So any values supported by CloudFormation MethodSettings property can be used here."),
+            CloudFormationManualResourceProperty(name = "EndpointConfiguration", type = "string", description = "string\tSpecify the type of endpoint for API endpoint. Value is either REGIONAL or EDGE."),
+            CloudFormationManualResourceProperty(name = "BinaryMediaTypes", type = "List of string", description = "List of MIME types that your API could return. Use this to enable binary support for APIs. Use ~1 instead of / in the mime types (See examples in template.yaml)."),
+            CloudFormationManualResourceProperty(name = "Cors", type = "string or Cors Configuration", description = "Enable CORS for all your APIs. Specify the domain to allow as a string or specify a dictionary with additional Cors Configuration. NOTE: Cors requires SAM to modify your Swagger definition. Hence it works only inline swagger defined with DefinitionBody.")
         )
     ),
     CloudFormationManualResourceType(
@@ -94,7 +101,9 @@ val awsServerless20161031ResourceTypes = listOf(
         description = "The AWS::Serverless::SimpleTable resource creates a DynamoDB table with a single attribute primary key. It is useful when data only needs to be accessed via a primary key. To use the more advanced functionality of DynamoDB, use an AWS::DynamoDB::Table resource instead.",
         properties = listOf(
             CloudFormationManualResourceProperty(name = "PrimaryKey", type = "Primary Key Object", description = "Attribute name and type to be used as the table's primary key. This cannot be modified without replacing the resource. Defaults to String attribute named ID."),
-            CloudFormationManualResourceProperty(name = "ProvisionedThroughput", type = "Provisioned Throughput Object", description = "Read and write throughput provisioning information. Defaults to 5 read and 5 write capacity units per second.")
+            CloudFormationManualResourceProperty(name = "ProvisionedThroughput", type = "Provisioned Throughput Object", description = "Read and write throughput provisioning information. Defaults to 5 read and 5 write capacity units per second."),
+            CloudFormationManualResourceProperty(name = "Tags", type = "Map of string to string", description = "A map (string to string) that specifies the tags to be added to this table. Keys and values are limited to alphanumeric characters."),
+            CloudFormationManualResourceProperty(name = "TableName", type = "string", description = "Name for the DynamoDB Table")
         )
     )
 )

@@ -19005,6 +19005,36 @@
               <updateRequires></updateRequires>
             </ResourceProperty>
           </entry>
+          <entry>
+            <string>DeploymentPreference</string>
+            <ResourceProperty>
+              <name>DeploymentPreference</name>
+              <type>DeploymentPreference Object</type>
+              <required>false</required>
+              <url>https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction</url>
+              <updateRequires></updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>AutoPublishAlias</string>
+            <ResourceProperty>
+              <name>AutoPublishAlias</name>
+              <type>string</type>
+              <required>false</required>
+              <url>https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction</url>
+              <updateRequires></updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>ReservedConcurrentExecutions</string>
+            <ResourceProperty>
+              <name>ReservedConcurrentExecutions</name>
+              <type>integer</type>
+              <required>false</required>
+              <url>https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction</url>
+              <updateRequires></updateRequires>
+            </ResourceProperty>
+          </entry>
         </properties>
         <attributes class="linked-hash-map">
           <entry>
@@ -19093,6 +19123,46 @@
               <updateRequires></updateRequires>
             </ResourceProperty>
           </entry>
+          <entry>
+            <string>MethodSettings</string>
+            <ResourceProperty>
+              <name>MethodSettings</name>
+              <type>CloudFormation MethodSettings property</type>
+              <required>false</required>
+              <url>https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessapi</url>
+              <updateRequires></updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>EndpointConfiguration</string>
+            <ResourceProperty>
+              <name>EndpointConfiguration</name>
+              <type>string</type>
+              <required>false</required>
+              <url>https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessapi</url>
+              <updateRequires></updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>BinaryMediaTypes</string>
+            <ResourceProperty>
+              <name>BinaryMediaTypes</name>
+              <type>List of string</type>
+              <required>false</required>
+              <url>https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessapi</url>
+              <updateRequires></updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Cors</string>
+            <ResourceProperty>
+              <name>Cors</name>
+              <type>string or Cors Configuration</type>
+              <required>false</required>
+              <url>https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessapi</url>
+              <updateRequires></updateRequires>
+            </ResourceProperty>
+          </entry>
         </properties>
         <attributes class="linked-hash-map"/>
       </ResourceType>
@@ -19119,6 +19189,26 @@
             <ResourceProperty>
               <name>ProvisionedThroughput</name>
               <type>Provisioned Throughput Object</type>
+              <required>false</required>
+              <url>https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlesssimpletable</url>
+              <updateRequires></updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Tags</string>
+            <ResourceProperty>
+              <name>Tags</name>
+              <type>Map of string to string</type>
+              <required>false</required>
+              <url>https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlesssimpletable</url>
+              <updateRequires></updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>TableName</string>
+            <ResourceProperty>
+              <name>TableName</name>
+              <type>string</type>
               <required>false</required>
               <url>https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlesssimpletable</url>
               <updateRequires></updateRequires>

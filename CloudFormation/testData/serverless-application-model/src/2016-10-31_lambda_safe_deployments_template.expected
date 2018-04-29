@@ -1,4 +1,4 @@
-0@<AWSTemplateFormatVersion :> '2010-09-09'
+AWSTemplateFormatVersion : '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: A sample Lambda Safe Deployment Application
 
@@ -10,8 +10,8 @@ Resources:
       Handler: safeTest.handler
       CodeUri: src/
       Runtime: nodejs6.10
-      1@<AutoPublishAlias:> live
-      2@<DeploymentPreference:>
+      AutoPublishAlias: live
+      DeploymentPreference:
           Type: Linear10PercentEvery1Minute
           Hooks:
             PreTraffic: !Ref preTrafficHook
@@ -34,18 +34,14 @@ Resources:
           - Effect: "Allow"
             Action:
               - "lambda:InvokeFunction"
-            Resource: 4@<!Ref safeTest.Version>
+            Resource: 0@<!Ref safeTest.Version>
       Runtime: nodejs6.10
       FunctionName: 'CodeDeployHook_preTrafficHook'
-      3@<DeploymentPreference:>
+      DeploymentPreference:
         Enabled: false
       Environment:
         Variables:
-          CurrentVersion: 5@<!Ref safeTest.Version>
+          CurrentVersion: 1@<!Ref safeTest.Version>
 
-0: Unknown section: AWSTemplateFormatVersion
-1: Unknown resource type property: AutoPublishAlias
-2: Unknown resource type property: DeploymentPreference
-3: Unknown resource type property: DeploymentPreference
-4: Cannot resolve symbol 'safeTest.Version'
-5: Cannot resolve symbol 'safeTest.Version'
+0: Cannot resolve symbol 'safeTest.Version'
+1: Cannot resolve symbol 'safeTest.Version'

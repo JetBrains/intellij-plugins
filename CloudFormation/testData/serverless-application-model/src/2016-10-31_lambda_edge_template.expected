@@ -25,7 +25,7 @@ Resources:
                   EventType: origin-request
                   # <SAM-Function.Version> provides {FunctionARN}:{Version} which is exactly what Cloudfront expects
                   # SAM Benefit here is upon function changes this function version will also be updated in Cloudfront
-                  LambdaFunctionARN: 1@<!Ref LambdaEdgeFunctionSample.Version>
+                  LambdaFunctionARN: 0@<!Ref LambdaEdgeFunctionSample.Version>
               ForwardedValues:
                 QueryString: 'false'
                 Headers:
@@ -43,7 +43,7 @@ Resources:
           Handler: index.handler
           Timeout: 5
           # More info at https://github.com/awslabs/serverless-application-model/blob/master/docs/safe_lambda_deployments.rst
-          0@<AutoPublishAlias:> live
+          AutoPublishAlias: live
 
     LambdaEdgeFunctionRole:
       Type: "AWS::IAM::Role"
@@ -72,12 +72,11 @@ Outputs:
 
     LambdaEdgeFunctionSampleVersion:
       Description: Lambda@Edge Sample Function ARN with Version
-      Value: 2@<!Ref LambdaEdgeFunctionSample.Version>
+      Value: 1@<!Ref LambdaEdgeFunctionSample.Version>
 
     CFDistribution:
       Description: Cloudfront Distribution Domain Name
       Value: !GetAtt CFDistribution.DomainName
 
-0: Unknown resource type property: AutoPublishAlias
+0: Cannot resolve symbol 'LambdaEdgeFunctionSample.Version'
 1: Cannot resolve symbol 'LambdaEdgeFunctionSample.Version'
-2: Cannot resolve symbol 'LambdaEdgeFunctionSample.Version'
