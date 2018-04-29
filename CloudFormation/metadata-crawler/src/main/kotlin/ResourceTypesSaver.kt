@@ -1,12 +1,7 @@
 @file:Suppress("LoopToCallChain", "Destructure")
 
-import com.intellij.aws.cloudformation.CloudFormationConstants.awsServerless20161031TransformName
 import com.intellij.aws.cloudformation.metadata.CloudFormationLimits
 import com.intellij.aws.cloudformation.metadata.CloudFormationMetadata
-import com.intellij.aws.cloudformation.metadata.CloudFormationResourceAttribute
-import com.intellij.aws.cloudformation.metadata.CloudFormationResourceProperty
-import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType
-import com.intellij.aws.cloudformation.metadata.CloudFormationResourceTypeDescription
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceTypesDescription
 import com.intellij.aws.cloudformation.metadata.MetadataSerializer
 import org.apache.commons.io.IOUtils
@@ -24,66 +19,44 @@ object ResourceTypesSaver {
   private val RESOURCE_TYPE_PATTERN = Pattern.compile("<li><a href=\"([^\"]+)\">(AWS::[^<]+)</a></li>")
   private val FETCH_TIMEOUT_MS = 10000
 
-  private fun List<CloudFormationManualResourceType>.toDescriptions() = map { type ->
-    Pair(
-        type.name,
-        CloudFormationResourceTypeDescription(
-            description = type.description,
-            properties = type.properties.map { Pair(it.name, it.description) }.toMap(),
-            attributes = type.attributes.map { Pair(it.name, it.description) }.toMap()
-        )
-    )
-  }.toMap()
-
-  private fun List<CloudFormationManualResourceType>.toResourceTypes(transformName: String?) = map { type ->
-    Pair(
-        type.name,
-        CloudFormationResourceType(
-            name = type.name,
-            url = type.url,
-            transform = transformName,
-            properties = type.properties.map {
-              Pair(
-                  it.name,
-                  CloudFormationResourceProperty(it.name, it.type, it.required, it.url ?: type.url, it.updateRequires ?: "")
-              )
-            }.toMap(),
-            attributes = type.attributes.map { Pair(it.name, CloudFormationResourceAttribute(it.name)) }.toMap()
-        )
-    )
-  }.toMap()
-
   fun saveResourceTypes() {
-    val resourceAttributesMap = fetchResourceAttributes()
+    awsServerless20161031ResourceTypes.map { it.toResourceTypeBuilder().toResourceType() }
+    awsServerless20161031ResourceTypes.map { it.toResourceTypeBuilder().toResourceTypeDescription() }
 
     val limits = fetchLimits()
     val resourceTypeLocations = fetchResourceTypeLocations()
     val predefinedParameters = fetchPredefinedParameters()
 
-    for (orphanResourceTypeName in resourceAttributesMap.keys.minus(resourceTypeLocations.map { it.name })) {
-      throw RuntimeException("ResourceType $orphanResourceTypeName from resources attributes list is not found in list of resource types")
+    val resourceTypes = resourceTypeLocations.map {
+      val builder = ResourceTypeBuilder(it.name, it.location)
+      fetchResourceType(builder)
+
+      // Check everything is set
+      builder.toResourceType()
+      builder.toResourceTypeDescription()
+
+      builder
     }
 
-    val resourceTypes = resourceTypeLocations.map {
-      it.name to fetchResourceType(it.name, it.location, resourceAttributesMap.getOrElse(it.name, { mapOf() }))
-    }.toMap()
+    fetchResourceAttributes(resourceTypes)
+
+    val allBuilders = resourceTypes + awsServerless20161031ResourceTypes.map { it.toResourceTypeBuilder() }
 
     val metadata = CloudFormationMetadata(
-        resourceTypes = resourceTypes.mapValues { it.value.first }
-              + awsServerless20161031ResourceTypes.toResourceTypes(awsServerless20161031TransformName),
+        resourceTypes = allBuilders.map { Pair(it.name, it.toResourceType()) }.toMap(),
         predefinedParameters = predefinedParameters,
         limits = limits
     )
 
     val descriptions = CloudFormationResourceTypesDescription(
-        resourceTypes = resourceTypes.mapValues { it.value.second } + awsServerless20161031ResourceTypes.toDescriptions()
+        resourceTypes = allBuilders.map { Pair(it.name, it.toResourceTypeDescription()) }.toMap()
     )
 
     FileOutputStream(File("src/main/resources/cloudformation-metadata.xml")).use { outputStream -> MetadataSerializer.toXML(metadata, outputStream) }
     FileOutputStream(File("src/main/resources/cloudformation-descriptions.xml")).use { outputStream -> MetadataSerializer.toXML(descriptions, outputStream) }
   }
 
-  private fun fetchResourceAttributes(): Map<String, Map<String, Pair<CloudFormationResourceAttribute, String>>> {
+  private fun fetchResourceAttributes(resourceTypes: List<ResourceTypeBuilder>) {
     val fnGetAttrDocUrl = URL("https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html")
     val doc = getDocumentFromUrl(fnGetAttrDocUrl)
 
@@ -92,8 +65,6 @@ object ResourceTypesSaver {
     assert(tableElement.className() == "table")
 
     val table = parseTable(tableElement)
-
-    val result: MutableMap<String, MutableMap<String, Pair<CloudFormationResourceAttribute, String>>> = hashMapOf()
 
     for (row in table) {
       if (row.size != 3) {
@@ -124,8 +95,8 @@ object ResourceTypesSaver {
       }
 
       fun addAttribute(_resourceTypeName: String, _attribute: String, _description: String) {
-        val attributesList = result.getOrPut(_resourceTypeName, { mutableMapOf() })
-        attributesList[_attribute] = Pair(CloudFormationResourceAttribute(_attribute), _description)
+        val builder = resourceTypes.single { it.name == _resourceTypeName }
+        builder.addAttribute(_attribute).description = _description
       }
 
       if (resourceTypeName == "AWS::DirectoryService::MicrosoftAD and AWS::DirectoryService::SimpleAD") {
@@ -136,12 +107,10 @@ object ResourceTypesSaver {
 
       addAttribute(resourceTypeName, attribute, description)
     }
-
-    return result
   }
 
   private fun downloadDocument(url: URL): Document {
-    println("Downloading " + url)
+    println("Downloading $url")
     for (retry in 1..4) {
       try {
         return Jsoup.parse(url, FETCH_TIMEOUT_MS)
@@ -151,7 +120,7 @@ object ResourceTypesSaver {
       println("retry...")
     }
 
-    throw RuntimeException("Could not download from " + url)
+    throw RuntimeException("Could not download from $url")
   }
 
   private fun getDocumentFromUrl(url: URL): Document {
@@ -167,20 +136,25 @@ object ResourceTypesSaver {
     return doc
   }
 
-  private fun fetchResourceType(resourceTypeName: String, docLocation: URL, resourceAttributes: Map<String, Pair<CloudFormationResourceAttribute, String>>): Pair<CloudFormationResourceType, CloudFormationResourceTypeDescription> {
-    println(resourceTypeName)
+  @JvmStatic
+  fun main(args: Array<String>) {
+    val builder = ResourceTypeBuilder(
+        "AWS::Cognito::UserPool",
+        "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cognito-userpool.html")
+    fetchResourceType(builder)
+  }
 
-    val doc = getDocumentFromUrl(docLocation)
+  private fun fetchResourceType(builder: ResourceTypeBuilder) {
+    println(builder.name)
+
+    val doc = getDocumentFromUrl(URL(builder.url))
 
     val descriptionElement = doc.select("div").single { it.attr("id") == "main-col-body" }
     descriptionElement.getElementsByAttributeValueMatching("id", "language-filter").forEach { it.remove() }
     descriptionElement.getElementsByAttributeValueMatching("summary", "Breadcrumbs").forEach { it.remove() }
-    val description = cleanupHtml(descriptionElement.toString())
+    builder.description = cleanupHtml(descriptionElement.toString())
 
     val vlists = doc.select("div.variablelist")
-
-    val properties: MutableMap<String, Pair<CloudFormationResourceProperty, String>> = mutableMapOf()
-
     if (!vlists.isEmpty()) {
       for (vlist in vlists) {
         var cur = vlist
@@ -195,6 +169,22 @@ object ResourceTypesSaver {
         assert(cur.tagName() == "h2")
 
         val sectionTitle = cur.text()
+
+        if (sectionTitle == "Return Value") {
+          for (term in vlist.select("span.term")) {
+            if (term.parent().parent().parent() !== vlist) {
+              continue
+            }
+
+            val descr = term.parent().nextElementSibling()
+            val name = term.text()
+
+            builder.addAttribute(name).description = descr.text()
+          }
+
+          continue
+        }
+
         if ("Properties" != sectionTitle && "Members" != sectionTitle) {
           continue
         }
@@ -215,14 +205,19 @@ object ResourceTypesSaver {
           assert(href.hasAttr("id"))
           val propertyId = href.attr("id")
           assert(propertyId.contains(name, ignoreCase = true)) {
-            "Property anchor id ($propertyId) should have a property name ($name) as substring in $docLocation"
+            "Property anchor id ($propertyId) should have a property name ($name) as substring in ${builder.url}"
           }
           val docUrl = doc.baseUri() + "#" + propertyId
 
+          val propertyBuilder = builder.addProperty(name)
+          propertyBuilder.url = docUrl
+
+          propertyBuilder.updateRequires = ""
+
           var requiredValue: String? = null
           var typeValue: String? = null
-          var descriptionValue = ""
-          var updateValue = ""
+
+          propertyBuilder.description = ""
 
           for (element in descrElements) {
             if (element.parent() !== descr) {
@@ -241,30 +236,31 @@ object ResourceTypesSaver {
               when (fieldName) {
                 "Required" -> requiredValue = fieldValue
                 "Type" -> typeValue = element.toString().replace("Type:", "")
-                "Update requires" -> updateValue = element.toString().replace("Update requires:", "")
+                "Update requires" -> propertyBuilder.updateRequires = element.toString().replace("Update requires:", "")
               }
             } else {
-              descriptionValue = element.toString()
+              propertyBuilder.description = element.toString()
             }
           }
 
-          var type = ""
-
-          if (typeValue != null) {
-            type = typeValue
-          } else if (resourceTypeName == "AWS::Redshift::Cluster" && name == "SnapshotClusterIdentifier") {
-            type = "String"
-          } else if (resourceTypeName == "AWS::Cognito::IdentityPool" && name == "SupportedLoginProviders") {
-            type = "String"
-          } else if (resourceTypeName == "AWS::ApiGateway::VpcLink" && name == "TargetArns") {
-            type = "List of String"
-          } else if (resourceTypeName == "AWS::SNS::TopicPolicy" && name == "PolicyDocument") {
-            type = "JSON or YAML"
+          propertyBuilder.type = if (typeValue != null) {
+            typeValue
+          } else if (builder.name == "AWS::Redshift::Cluster" && name == "SnapshotClusterIdentifier") {
+            "String"
+          } else if (builder.name == "AWS::Cognito::IdentityPool" && name == "SupportedLoginProviders") {
+            "String"
+          } else if (builder.name == "AWS::ApiGateway::VpcLink" && name == "TargetArns") {
+            "List of String"
+          } else if (builder.name == "AWS::SNS::TopicPolicy" && name == "PolicyDocument") {
+            "JSON or YAML"
+          } else if (builder.name == "AWS::Route53::RecordSet" && name == "Region") {
+            "String"
           } else {
             // TODO
-            if (resourceTypeName != "AWS::Route53::RecordSet" && !(name == "ScheduleExpression" && resourceTypeName == "AWS::Events::Rule")) {
-              throw RuntimeException("Type is not found in property $name in $docLocation")
-            }
+//            if (resourceTypeName == "AWS::Route53::RecordSet" || name == "ScheduleExpression" && resourceTypeName == "AWS::Events::Rule") "" else {
+//            }
+
+            throw RuntimeException("Type is not found in property $name in ${builder.url}")
           }
 
           // TODO Handle "Required if NetBiosNameServers is specified; optional otherwise" in https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-dhcp-options.html
@@ -275,134 +271,99 @@ object ResourceTypesSaver {
           // TODO https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html: If your cache cluster isn't in a VPC, you must specify this property
           // TODO https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html: If your cache cluster is in a VPC, you must specify this property
 
-          var required = false
+          propertyBuilder.required =
+              if (builder.name == "AWS::Batch::JobDefinition" && name == "Parameters") {
+                // Most likely a documentation bug, it contradicts examples in the same article
+                // see https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-batch-jobdefinition.html
+                false
+              } else if (builder.name == "AWS::Kinesis::Stream" && name == "StreamEncryption") {
+                // Most likely a documentation bug, this property was introduced later
+                // and will break existing code if it is mandatory
+                false
+              } else if (requiredValue != null) {
+                if (requiredValue.equals("Yes", ignoreCase = true)) {
+                  true
+                } else if (
+                    requiredValue.startsWith("No", ignoreCase = true) ||
+                    requiredValue.startsWith("Conditional") ||
+                    requiredValue == "Required if NetBiosNameServers is specified; optional otherwise" ||
+                    requiredValue == "Yes, for VPC security groups" ||
+                    requiredValue == "Yes. The IamInstanceProfile and ServiceRole options are required" ||
+                    requiredValue == "Can be used instead of GroupId for EC2 security groups" ||
+                    requiredValue == "Yes, for VPC security groups; can be used instead of GroupName for EC2 security groups" ||
+                    requiredValue == "Yes, for ICMP and any protocol that uses ports" ||
+                    requiredValue == "If your cache cluster isn't in a VPC, you must specify this property" ||
+                    requiredValue == "If your cache cluster is in a VPC, you must specify this property" ||
+                    requiredValue == "Yes. If you specify the AuthorizerId property, specify CUSTOM for this property" ||
+                    requiredValue == "Yes, for VPC security groups without a default VPC") {
+                  false
+                } else {
+                  throw RuntimeException("Unknown value for required in property $name in ${builder.url}: $requiredValue")
+                }
+              } else {
+                // TODO
+                if (builder.name != "AWS::RDS::DBParameterGroup" &&
+                    builder.name != "AWS::Route53::RecordSet" &&
+                    builder.name != "AWS::RDS::DBSecurityGroupIngress") {
+                  throw RuntimeException("Required is not found in property $name in ${builder.url}")
+                }
 
-          if (requiredValue != null) {
-            if (requiredValue.equals("Yes", ignoreCase = true)) {
-              required = true
-            } else if (
-                requiredValue.startsWith("No", ignoreCase = true) ||
-                requiredValue.startsWith("Conditional") ||
-                requiredValue == "Required if NetBiosNameServers is specified; optional otherwise" ||
-                requiredValue == "Yes, for VPC security groups" ||
-                requiredValue == "Yes. The IamInstanceProfile and ServiceRole options are required" ||
-                requiredValue == "Can be used instead of GroupId for EC2 security groups" ||
-                requiredValue == "Yes, for VPC security groups; can be used instead of GroupName for EC2 security groups" ||
-                requiredValue == "Yes, for ICMP and any protocol that uses ports" ||
-                requiredValue == "If your cache cluster isn't in a VPC, you must specify this property" ||
-                requiredValue == "If your cache cluster is in a VPC, you must specify this property" ||
-                requiredValue == "Yes. If you specify the AuthorizerId property, specify CUSTOM for this property" ||
-                requiredValue == "Yes, for VPC security groups without a default VPC") {
-              required = false
-            } else {
-              throw RuntimeException("Unknown value for required in property $name in $docLocation: $requiredValue")
+                false
+              }
+
+          if (builder.name == "AWS::AutoScaling::AutoScalingGroup" && name == "NotificationConfigurations") {
+            builder.addProperty("NotificationConfiguration").apply {
+              type = propertyBuilder.description
+              description = propertyBuilder.description
+              required = propertyBuilder.required
+              updateRequires = propertyBuilder.updateRequires
+              url = propertyBuilder.url
             }
-          } else {
-            // TODO
-            if (resourceTypeName != "AWS::RDS::DBParameterGroup" &&
-                resourceTypeName != "AWS::Route53::RecordSet" &&
-                resourceTypeName != "AWS::RDS::DBSecurityGroupIngress") {
-              throw RuntimeException("Required is not found in property $name in $docLocation")
-            }
           }
-
-          if (resourceTypeName == "AWS::AutoScaling::AutoScalingGroup" && name == "NotificationConfigurations") {
-            val additionalProperty = CloudFormationResourceProperty("NotificationConfiguration", type, required, docUrl, updateValue)
-            properties[additionalProperty.name] = Pair(additionalProperty, descriptionValue)
-          }
-
-          // Most likely a documentation bug, it contradicts examples in the same article
-          // see https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-batch-jobdefinition.html
-          if (resourceTypeName == "AWS::Batch::JobDefinition" && name == "Parameters") {
-            required = false
-          }
-
-          // Most likely a documentation bug, this property was introduced later
-          // and will break existing code if it is mandatory
-          if (resourceTypeName == "AWS::Kinesis::Stream" && name == "StreamEncryption") {
-            required = false
-          }
-
-          properties[name] = Pair(CloudFormationResourceProperty(name, type, required, docUrl, updateValue), descriptionValue)
         }
       }
     } else {
-      val tableElement = doc.select("div.informaltable").first()
-      if (tableElement != null) {
-        val table = parseTable(tableElement)
-
-        for (row in table) {
-          if (row.size != 4) {
-            continue
-          }
-
-          val name = row[0]
-          val type = row[1]
-          val requiredString = row[2]
-          // final String notes = row.get(3);
-
-          val required: Boolean
-
-          required = when {
-            requiredString.equals("yes", ignoreCase = true) -> true
-            requiredString.equals("no", ignoreCase = true) -> false
-            else -> throw RuntimeException("Unknown value for required in property $name in $docLocation: $requiredString")
-          }
-
-          properties[name] = Pair(CloudFormationResourceProperty(name, type, required, "", ""), "")
+        if (builder.name != "AWS::CloudFormation::WaitConditionHandle" &&
+            builder.name != "AWS::SDB::Domain" &&
+            builder.name != "AWS::CodeDeploy::Application" &&
+            builder.name != "AWS::ECS::Cluster") {
+          throw RuntimeException("No properties found in ${builder.url}")
         }
-      } else {
-        if (resourceTypeName != "AWS::CloudFormation::WaitConditionHandle" &&
-            resourceTypeName != "AWS::SDB::Domain" &&
-            resourceTypeName != "AWS::CodeDeploy::Application" &&
-            resourceTypeName != "AWS::ECS::Cluster") {
-          throw RuntimeException("No properties found in $docLocation")
-        }
-      }
     }
 
     // De-facto changes not covered in documentation
 
-    fun changeProperty(name: String, converter: (CloudFormationResourceProperty) -> CloudFormationResourceProperty) {
-      val value = properties[name] ?: error("Property $name is not found in resource type $resourceTypeName")
-      properties[name] = Pair(converter(value.first), "")
-    }
-
-    if (resourceTypeName == "AWS::ElasticBeanstalk::Application") {
+    if (builder.name == "AWS::ElasticBeanstalk::Application") {
       // Not in official documentation yet, found in examples
-      properties["ConfigurationTemplates"] = Pair(CloudFormationResourceProperty("ConfigurationTemplates", "Unknown", false, "", ""), "")
-      properties["ApplicationVersions"] = Pair(CloudFormationResourceProperty("ApplicationVersions", "Unknown", false, "", ""), "")
+      builder.addProperty("ConfigurationTemplates").apply {
+        type = "Unknown"
+        required = false
+        url = ""
+        updateRequires = ""
+        description = ""
+      }
+      builder.addProperty("ApplicationVersions").apply {
+        type = "Unknown"
+        required = false
+        url = ""
+        updateRequires = ""
+        description = ""
+      }
     }
 
-    if (resourceTypeName == "AWS::IAM::AccessKey") {
-      changeProperty("Status", { it.copy(required = false) })
+    if (builder.name == "AWS::IAM::AccessKey") {
+      builder.addProperty("Status").required = false
     }
 
-    if (resourceTypeName == "AWS::RDS::DBInstance") {
-      changeProperty("AllocatedStorage", { it.copy(required = false) })
+    if (builder.name == "AWS::RDS::DBInstance") {
+      builder.addProperty("AllocatedStorage").required = false
     }
 
     // See #17, ToPort and FromPort are required with port-based ip protocols only, will implement special check later
-    if (resourceTypeName == "AWS::EC2::SecurityGroupEgress" || resourceTypeName == "AWS::EC2::SecurityGroupIngress") {
-      changeProperty("ToPort", { it.copy(required = false) })
-      changeProperty("FromPort", { it.copy(required = false) })
+    if (builder.name == "AWS::EC2::SecurityGroupEgress" || builder.name == "AWS::EC2::SecurityGroupIngress") {
+      builder.addProperty("ToPort").required = false
+      builder.addProperty("FromPort").required = false
     }
-
-    return Pair(
-        CloudFormationResourceType(
-            resourceTypeName,
-            null,
-            doc.baseUri(),
-            properties.mapValues { it.value.first },
-            resourceAttributes.mapValues { it.value.first }
-        ),
-
-        CloudFormationResourceTypeDescription(
-            description,
-            properties = properties.mapValues { it.value.second },
-            attributes = resourceAttributes.mapValues { it.value.second }
-        )
-    )
   }
 
   private val cleanElementIdPattern = Regex(""" ?id="[0-9a-f]{8}"""")
@@ -431,7 +392,7 @@ object ResourceTypesSaver {
     return result
   }
 
-  private data class ResourceTypeLocation(val name: String, val location: URL)
+  private data class ResourceTypeLocation(val name: String, val location: String)
 
   private fun fetchResourceTypeLocations(): List<ResourceTypeLocation> {
     val url = URL("https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html")
@@ -447,7 +408,7 @@ object ResourceTypesSaver {
         continue
       }
 
-      result.add(ResourceTypeLocation(name.trim(), URL(url, href.trim())))
+      result.add(ResourceTypeLocation(name.trim(), URL(url, href.trim()).toExternalForm()))
     }
 
     return result.sortedBy { it.name }

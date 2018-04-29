@@ -1851,9 +1851,9 @@
             </ResourceProperty>
           </entry>
           <entry>
-            <string>NotificationConfiguration</string>
+            <string>NotificationConfigurations</string>
             <ResourceProperty>
-              <name>NotificationConfiguration</name>
+              <name>NotificationConfigurations</name>
               <type>&lt;p&gt;&lt;em&gt;Type&lt;/em&gt;: List of &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-notificationconfigurations.html&quot;&gt;Amazon EC2 Auto Scaling AutoScalingGroup NotificationConfiguration&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
               <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html#cfn-as-group-notificationconfigurations</url>
@@ -1861,10 +1861,10 @@
             </ResourceProperty>
           </entry>
           <entry>
-            <string>NotificationConfigurations</string>
+            <string>NotificationConfiguration</string>
             <ResourceProperty>
-              <name>NotificationConfigurations</name>
-              <type>&lt;p&gt;&lt;em&gt;Type&lt;/em&gt;: List of &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-notificationconfigurations.html&quot;&gt;Amazon EC2 Auto Scaling AutoScalingGroup NotificationConfiguration&lt;/a&gt;&lt;/p&gt;</type>
+              <name>NotificationConfiguration</name>
+              <type>&lt;p&gt;An embedded property that configures an Auto Scaling group to send notifications when specified events take place. &lt;/p&gt;</type>
               <required>false</required>
               <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html#cfn-as-group-notificationconfigurations</url>
               <updateRequires>&lt;p&gt;&lt;em&gt;Update requires&lt;/em&gt;: &lt;a href=&quot;https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -4089,7 +4089,14 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>Name</string>
+            <ResourceAttribute>
+              <name>Name</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -4299,7 +4306,26 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>ProviderName</string>
+            <ResourceAttribute>
+              <name>ProviderName</name>
+            </ResourceAttribute>
+          </entry>
+          <entry>
+            <string>ProviderURL</string>
+            <ResourceAttribute>
+              <name>ProviderURL</name>
+            </ResourceAttribute>
+          </entry>
+          <entry>
+            <string>Arn</string>
+            <ResourceAttribute>
+              <name>Arn</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -4379,7 +4405,20 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>ClientSecret</string>
+            <ResourceAttribute>
+              <name>ClientSecret</name>
+            </ResourceAttribute>
+          </entry>
+          <entry>
+            <string>Name</string>
+            <ResourceAttribute>
+              <name>Name</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -16592,7 +16631,7 @@
             <string>Region</string>
             <ResourceProperty>
               <name>Region</name>
-              <type></type>
+              <type>String</type>
               <required>false</required>
               <url>https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset.html#cfn-route53-recordset-region</url>
               <updateRequires></updateRequires>
@@ -17824,7 +17863,20 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>Type</string>
+            <ResourceAttribute>
+              <name>Type</name>
+            </ResourceAttribute>
+          </entry>
+          <entry>
+            <string>Value</string>
+            <ResourceAttribute>
+              <name>Value</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -18954,7 +19006,7 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="singleton-map">
+        <attributes class="linked-hash-map">
           <entry>
             <string>Arn</string>
             <ResourceAttribute>
@@ -19042,7 +19094,7 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="kotlin.collections.EmptyMap"/>
+        <attributes class="linked-hash-map"/>
       </ResourceType>
     </entry>
     <entry>
@@ -19073,7 +19125,7 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="kotlin.collections.EmptyMap" reference="../../../entry[270]/ResourceType/attributes"/>
+        <attributes class="linked-hash-map"/>
       </ResourceType>
     </entry>
   </resourceTypes>

@@ -1,10 +1,36 @@
+import com.intellij.aws.cloudformation.CloudFormationConstants
+
 data class CloudFormationManualResourceType(
     val name: String,
     val url: String,
     val description: String,
     val properties: List<CloudFormationManualResourceProperty>,
     val attributes: List<CloudFormationManualResourceAttribute> = emptyList()
-)
+) {
+  fun toResourceTypeBuilder(): ResourceTypeBuilder {
+    val builder = ResourceTypeBuilder(name, url)
+    builder.description = description
+    builder.transform = CloudFormationConstants.awsServerless20161031TransformName
+
+    attributes.forEach { attribute ->
+      builder.addAttribute(attribute.name).apply {
+        description = attribute.description
+      }
+    }
+
+    properties.forEach { property ->
+      builder.addProperty(property.name).apply {
+        description = property.description
+        type = property.type
+        required = property.required
+        url = property.url ?: builder.url
+        updateRequires = property.updateRequires ?: ""
+      }
+    }
+
+    return builder
+  }
+}
 
 data class CloudFormationManualResourceProperty(
     val name: String,
