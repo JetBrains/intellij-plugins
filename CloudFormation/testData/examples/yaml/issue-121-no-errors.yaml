@@ -1,0 +1,10 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  Pool1:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: A
+  Pool2:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !GetAtt Pool1.Arn
