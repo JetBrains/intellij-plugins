@@ -178,13 +178,13 @@ public class DartPsiImplUtil {
   }
 
   private static PsiElement doResolveTypeReference(final DartType dartType) {
-    final DartExpression expression = dartType.getReferenceExpression();
+    final DartReference expression = dartType.getReferenceExpression();
     if (expression == null) {
       return null;
     }
     final String typeName = expression.getText();
     if (typeName.indexOf('.') != -1) {
-      return ((DartReference)expression).resolve();
+      return expression.resolve();
     }
     List<DartComponentName> result = new ArrayList<>();
     final DartResolveProcessor dartResolveProcessor = new DartResolveProcessor(result, typeName);

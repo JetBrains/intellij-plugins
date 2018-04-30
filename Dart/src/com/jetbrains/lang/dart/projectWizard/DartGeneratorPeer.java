@@ -1,18 +1,26 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.browsers.BrowserSpecificSettings;
-import com.intellij.ide.browsers.WebBrowser;
-import com.intellij.ide.browsers.chrome.ChromeSettings;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.platform.WebProjectGenerator;
 import com.intellij.ui.ColorUtil;
@@ -26,7 +34,6 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.xml.util.XmlStringUtil;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,54 +52,23 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
   private ComboboxWithBrowseButton mySdkPathComboWithBrowse;
   private JBLabel myVersionLabel;
 
-  private JPanel myDartiumSettingsPanel;
-  private ComboboxWithBrowseButton myDartiumPathComboWithBrowse;
-  private JButton myDartiumSettingsButton;
-  private JBCheckBox myCheckedModeCheckBox;
-
   private JPanel myTemplatesPanel;
   private JPanel myLoadingTemplatesPanel;
   private JPanel myLoadedTemplatesPanel;
   private JBCheckBox myCreateSampleProjectCheckBox;
-  private JBList myTemplatesList;
+  private JBList<DartProjectTemplate> myTemplatesList;
 
   private JBLabel myErrorLabel; // shown in IntelliJ IDEA only
-
-  private ChromeSettings myDartiumSettingsCurrent;
 
   private boolean myIntellijLiveValidationEnabled = false;
 
   public DartGeneratorPeer() {
-    // set initial values before initDartSdkAndDartiumControls() because listeners should not be triggered on initialization
+    // set initial values before initDartSdkControls() because listeners should not be triggered on initialization
     mySdkPathComboWithBrowse.getComboBox().setEditable(true);
     //mySdkPathComboWithBrowse.getComboBox().getEditor().setItem(...); initial sdk path will be correctly taken from known paths history
 
-    final WebBrowser dartiumInitial = DartiumUtil.getDartiumBrowser();
-    myDartiumSettingsCurrent = new ChromeSettings();
-    if (dartiumInitial != null) {
-      final BrowserSpecificSettings browserSpecificSettings = dartiumInitial.getSpecificSettings();
-      if (browserSpecificSettings instanceof ChromeSettings) {
-        myDartiumSettingsCurrent = (ChromeSettings)browserSpecificSettings.clone();
-      }
-    }
-
-    final String dartiumPath = dartiumInitial == null ? ""
-                                                      : FileUtilRt.toSystemDependentName(StringUtil.notNullize(dartiumInitial.getPath()));
-    myDartiumPathComboWithBrowse.getComboBox().setEditable(true);
-    myDartiumPathComboWithBrowse.getComboBox().getEditor().setItem(dartiumPath);
-
-
     // now setup controls
-    DartSdkUtil.initDartSdkAndDartiumControls(null, mySdkPathComboWithBrowse, myVersionLabel, myDartiumPathComboWithBrowse,
-                                              new Computable.PredefinedValueComputable<>(myDartiumSettingsCurrent),
-                                              myDartiumSettingsButton,
-                                              new Computable.PredefinedValueComputable<>(false));
-
-    // we decided to save one line in settings and always use Dartium in checked mode
-    DartiumUtil.setCheckedMode(myDartiumSettingsCurrent.getEnvironmentVariables(), true);
-    myCheckedModeCheckBox.setVisible(false);
-    //final boolean checkedMode = dartiumInitial == null || DartiumUtil.isCheckedMode(myDartiumSettingsCurrent.getEnvironmentVariables());
-    //myCheckedModeCheckBox.setSelected(checkedMode);
+    DartSdkUtil.initDartSdkControls(null, mySdkPathComboWithBrowse, myVersionLabel);
 
     myCreateSampleProjectCheckBox.addActionListener(e -> myTemplatesList.setEnabled(myCreateSampleProjectCheckBox.isSelected()));
 
@@ -162,7 +138,7 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
 
     DartProjectTemplate selectedTemplate = null;
 
-    final DefaultListModel model = new DefaultListModel();
+    final DefaultListModel<DartProjectTemplate> model = new DefaultListModel<>();
     for (DartProjectTemplate template : templates) {
       model.addElement(template);
 
@@ -204,8 +180,6 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
   public void buildUI(final @NotNull SettingsStep settingsStep) {
     settingsStep.addSettingsField(DartBundle.message("dart.sdk.path.label"), mySdkPathComboWithBrowse);
     settingsStep.addSettingsField(DartBundle.message("version.label"), myVersionLabel);
-    settingsStep.addSettingsField(DartBundle.message("dartium.path.label"), myDartiumSettingsPanel);
-    //settingsStep.addSettingsField("", myCheckedModeCheckBox); we decided to save one line in settings and always use Dartium in checked mode
     settingsStep.addSettingsComponent(myTemplatesPanel);
   }
 
@@ -213,20 +187,15 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
   @Override
   public DartProjectWizardData getSettings() {
     final String sdkPath = FileUtil.toSystemIndependentName(mySdkPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim());
-    final String dartiumPath =
-      FileUtil.toSystemIndependentName(myDartiumPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim());
-
-    final DartProjectTemplate template = myCreateSampleProjectCheckBox.isSelected()
-                                         ? (DartProjectTemplate)myTemplatesList.getSelectedValue() : null;
+    final DartProjectTemplate template = myCreateSampleProjectCheckBox.isSelected() ? myTemplatesList.getSelectedValue() : null;
     PropertiesComponent.getInstance().setValue(DART_PROJECT_TEMPLATE, template == null ? CREATE_SAMPLE_UNCHECKED : template.getName());
 
-    return new DartProjectWizardData(sdkPath, dartiumPath, myDartiumSettingsCurrent, template);
+    return new DartProjectWizardData(sdkPath, template);
   }
 
   @Nullable
   @Override
   public ValidationInfo validate() {
-    // invalid Dartium path is not a blocking error
     final String sdkPath = mySdkPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim();
     final String message = DartSdkUtil.getErrorMessageIfWrongSdkRootPath(sdkPath);
     if (message != null) {
@@ -284,7 +253,6 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
 
   @Override
   public void addSettingsStateListener(final @NotNull WebProjectGenerator.SettingsStateListener stateListener) {
-    // invalid Dartium path is not a blocking error
     final JTextComponent editorComponent = (JTextComponent)mySdkPathComboWithBrowse.getComboBox().getEditor().getEditorComponent();
     editorComponent.getDocument().addDocumentListener(new DocumentAdapter() {
       protected void textChanged(final DocumentEvent e) {
@@ -299,6 +267,5 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
 
   private void createUIComponents() {
     mySdkPathComboWithBrowse = new ComboboxWithBrowseButton(new ComboBox<>());
-    myDartiumPathComboWithBrowse = new ComboboxWithBrowseButton(new ComboBox<>());
   }
 }

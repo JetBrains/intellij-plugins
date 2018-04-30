@@ -52,7 +52,7 @@ public class GherkinTypedHandler extends TypedHandlerDelegate {
       return null;
     }
 
-    PsiElement element = getTable(cursorElement);
+    GherkinTable element = getTable(cursorElement);
     if (element == null) {
       cursorElement = file.findElementAt(offset - cursorElement.getTextLength());
       if (cursorElement == null) {
@@ -64,7 +64,7 @@ public class GherkinTypedHandler extends TypedHandlerDelegate {
       }
     }
 
-    final GherkinTable table = (GherkinTable)element;
+    final GherkinTable table = element;
     final int tableOffset = table.getTextOffset();
     final int caretOffsetInParent = editor.getCaretModel().getOffset() - tableOffset;
 
@@ -131,9 +131,7 @@ public class GherkinTypedHandler extends TypedHandlerDelegate {
   private static String getSpaceLine(int n) {
     char[] spaces = new char[n];
     Arrays.fill(spaces, ' ');
-    final StringBuilder sb = new StringBuilder(n);
-    sb.append(spaces);
-    return sb.toString();
+    return String.valueOf(spaces);
   }
 
   /**

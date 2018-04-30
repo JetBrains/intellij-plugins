@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
@@ -14,7 +27,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.WebModuleBuilder;
 import com.intellij.openapi.module.WebModuleType;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableModelsProvider;
@@ -24,11 +36,9 @@ import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.actions.DartPubGetAction;
-import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
@@ -89,7 +99,7 @@ public class DartModuleBuilder extends ModuleBuilder {
   }
 
   @Override
-  public void setupRootModel(final ModifiableRootModel modifiableRootModel) throws ConfigurationException {
+  public void setupRootModel(final ModifiableRootModel modifiableRootModel) {
     final ContentEntry contentEntry = doAddContentEntry(modifiableRootModel);
     final VirtualFile baseDir = contentEntry == null ? null : contentEntry.getFile();
     if (baseDir != null) {
@@ -103,7 +113,7 @@ public class DartModuleBuilder extends ModuleBuilder {
     final String templateName = wizardData.myTemplate == null ? "Empty project" : wizardData.myTemplate.getName();
     UsageTrigger.trigger("DartProjectWizard." + templateName);
 
-    setupSdkAndDartium(modifiableRootModel, wizardData);
+    setupSdk(modifiableRootModel, wizardData);
     if (wizardData.myTemplate != null) {
       try {
         final Collection<VirtualFile> filesToOpen =
@@ -116,8 +126,8 @@ public class DartModuleBuilder extends ModuleBuilder {
     }
   }
 
-  private static void setupSdkAndDartium(@NotNull final ModifiableRootModel modifiableRootModel,
-                                         @NotNull final DartProjectWizardData wizardData) {
+  private static void setupSdk(@NotNull final ModifiableRootModel modifiableRootModel,
+                               @NotNull final DartProjectWizardData wizardData) {
     // similar to DartConfigurable.apply()
     if (DartSdkUtil.isDartSdkHome(wizardData.dartSdkPath)) {
       final Project project = modifiableRootModel.getProject();
@@ -137,8 +147,6 @@ public class DartModuleBuilder extends ModuleBuilder {
 
       modifiableRootModel.addInvalidLibrary(DartSdk.DART_SDK_LIB_NAME, LibraryTablesRegistrar.PROJECT_LEVEL);
     }
-
-    DartiumUtil.applyDartiumSettings(FileUtilRt.toSystemIndependentName(wizardData.dartiumPath), wizardData.dartiumSettings);
   }
 
   public static boolean isPubGetScheduledForNewlyCreatedProject(@NotNull final Project project) {

@@ -26,6 +26,7 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
+import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
@@ -251,8 +252,10 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     return false
   }
 
-  override fun addTypeFromResolveResult(evaluator: JSTypeEvaluator?, result: PsiElement?): Boolean {
-    if (result == null || evaluator == null || !org.jetbrains.vuejs.index.hasVue(result.project)) return false
+  override fun addTypeFromResolveResult(evaluator: JSTypeEvaluator,
+                                        context: JSEvaluateContext,
+                                        result: PsiElement): Boolean {
+    if (!org.jetbrains.vuejs.index.hasVue(result.project)) return false
     if (result is JSVariable && result.language is VueJSLanguage) {
       val vFor = result.parent as? VueVForExpression ?: result.parent.parent as? VueVForExpression
       val vForRef = vFor?.getReferenceExpression()

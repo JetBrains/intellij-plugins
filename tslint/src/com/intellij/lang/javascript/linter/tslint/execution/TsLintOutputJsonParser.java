@@ -5,7 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
+import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
@@ -22,7 +22,7 @@ import static com.intellij.lang.javascript.linter.tslint.highlight.TsLintFixInfo
 
 public final class TsLintOutputJsonParser {
 
-  private static final Logger LOG = Logger.getInstance(TsLintConfiguration.LOG_CATEGORY);
+  private static final Logger LOG = TslintUtil.LOG;
   public static final String FIX_PROPERTY = "fix";
 
   @Nullable

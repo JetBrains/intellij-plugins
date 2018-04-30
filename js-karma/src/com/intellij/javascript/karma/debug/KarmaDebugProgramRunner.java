@@ -33,6 +33,7 @@ import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
+import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.SingleAlarm;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
@@ -127,13 +128,12 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
           debugProcess.setConsoleMessagesSupportEnabled(false);
           debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess));
           karmaServer.onBrowsersReady(() -> {
-            Runnable resumeTestRunning = () -> resumeTestRunning((OSProcessHandler)executionResult.getProcessHandler());
+            Runnable resumeTestRunning = ConcurrencyUtil.once(() -> resumeTestRunning((OSProcessHandler)executionResult.getProcessHandler()));
             SingleAlarm alarm = new SingleAlarm(resumeTestRunning, 5000);
             alarm.request();
             debugProcess.getConnection().executeOnStart((vm) -> {
-              if (alarm.cancelAllRequests() == 1) {
-                resumeTestRunning.run();
-              }
+              alarm.cancelAllRequests();
+              resumeTestRunning.run();
               return Unit.INSTANCE;
             });
           });

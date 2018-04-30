@@ -38,11 +38,11 @@ public class CfmlFileReferenceInspection extends LocalInspectionTool {
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
     return new PsiElementVisitor() {
       public void visitElement(final PsiElement element) {
-        PsiElement tagParent = PsiTreeUtil.getParentOfType((element), CfmlTag.class);
+        CfmlTag tagParent = PsiTreeUtil.getParentOfType((element), CfmlTag.class);
         if ((element.getNode().getElementType() == CfmlTokenTypes.STRING_TEXT)) {
           if ((tagParent == null ||
-               (!((CfmlTag)tagParent).getTagName().equalsIgnoreCase("cfinclude") &&
-                !((CfmlTag)tagParent).getTagName().equalsIgnoreCase("cfmodule")))) {
+               (!tagParent.getTagName().equalsIgnoreCase("cfinclude") &&
+                !tagParent.getTagName().equalsIgnoreCase("cfmodule")))) {
             PsiElement superParent = element.getParent() != null ? element.getParent().getParent() : null;
             ASTNode superParentNode = superParent != null ? superParent.getNode() : null;
             if ((superParentNode == null || superParentNode.getElementType() != CfmlElementTypes.INCLUDEEXPRESSION)) {

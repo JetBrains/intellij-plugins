@@ -19,6 +19,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.execution.ParametersListUtil;
 import com.intellij.util.ui.UIUtil;
@@ -29,7 +30,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class KarmaServer {
 
@@ -345,25 +345,25 @@ public class KarmaServer {
 
   private class MyDisposable implements Disposable {
 
-    private final AtomicBoolean myDisposed = new AtomicBoolean(false);
+    private final Runnable myRunnable = ConcurrencyUtil.once(() -> {
+      LOG.info("Disposing Karma server " + myProcessHashCode);
+      if (myCoveragePeer != null) {
+        FileUtil.asyncDelete(myCoveragePeer.getCoverageTempDir());
+      }
+      UIUtil.invokeLaterIfNeeded(() -> {
+        if (myOnPortBoundCallbacks != null) {
+          myOnPortBoundCallbacks.clear();
+        }
+        if (myOnBrowsersReadyCallbacks != null) {
+          myOnBrowsersReadyCallbacks.clear();
+        }
+      });
+      shutdown();
+    });
 
     @Override
     public void dispose() {
-      if (myDisposed.compareAndSet(false, true)) {
-        LOG.info("Disposing Karma server " + myProcessHashCode);
-        if (myCoveragePeer != null) {
-          FileUtil.asyncDelete(myCoveragePeer.getCoverageTempDir());
-        }
-        UIUtil.invokeLaterIfNeeded(() -> {
-          if (myOnPortBoundCallbacks != null) {
-            myOnPortBoundCallbacks.clear();
-          }
-          if (myOnBrowsersReadyCallbacks != null) {
-            myOnBrowsersReadyCallbacks.clear();
-          }
-        });
-        shutdown();
-      }
+      myRunnable.run();
     }
   }
 }

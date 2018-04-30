@@ -209,7 +209,7 @@ abstract class FunctionSpacesRule : TsLintSimpleRule<Boolean>("space-before-func
       }
     }
 
-    val secondIndexValues = option.getSecondIndexValues()
+    val secondIndexValues = option.getStringMapValue()
     val valueFromLiteral = secondIndexValues[getCode()]
     when (valueFromLiteral) {
       ALWAYS -> return true
@@ -463,7 +463,7 @@ class IndentRule : TsLintSimpleRule<String>("indent") {
 class MaxLineLengthRule : TsLintSimpleRule<Int>("max-line-length") {
   override fun getConfigValue(config: TsLintConfigWrapper): Int? {
     val option = config.getOption(optionId) ?: return null
-    return option.getSecondNumberValue()
+    return option.getNumberValue()
   }
 
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Int {
@@ -479,7 +479,7 @@ class MaxLineLengthRule : TsLintSimpleRule<Int>("max-line-length") {
 class ImportBlacklistRule : TsLintSimpleRule<Collection<String>>("import-blacklist") {
   override fun getConfigValue(config: TsLintConfigWrapper): Collection<String>? {
     val option = config.getOption(optionId) ?: return null
-    if (!option.isTrue()) return null
+    if (!option.isEnabled()) return null
 
     val stringValues = option.getStringValues()
     if (stringValues.isNotEmpty()) {

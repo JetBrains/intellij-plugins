@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTagValue;
 import com.intellij.lang.javascript.psi.literal.JSLiteralImplicitElementProvider;
+import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
@@ -566,7 +567,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Override
-  public boolean addTypeFromResolveResult(JSTypeEvaluator evaluator, PsiElement resolveResult) {
+  public boolean addTypeFromResolveResult(@NotNull JSTypeEvaluator evaluator,
+                                          @NotNull JSEvaluateContext context, @NotNull PsiElement resolveResult) {
     if (!AngularIndexUtil.hasAngularJS(resolveResult.getProject())) return false;
 
     if (resolveResult instanceof JSDefinitionExpression && resolveResult.getLanguage() instanceof AngularJSLanguage) {

@@ -44,7 +44,6 @@ import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartExecutionHelper;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfiguration;
-import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
@@ -205,7 +204,7 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     if (myRunnerParameters.isCheckedModeOrEnableAsserts()) {
       if (StringUtil.compareVersionNumbers(sdk.getVersion(), "2") < 0) {
-        commandLine.addParameter(DartiumUtil.CHECKED_MODE_OPTION);
+        commandLine.addParameter("--checked");
       }
       else {
         commandLine.addParameter("--enable-asserts");

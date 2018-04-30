@@ -1,19 +1,17 @@
 package com.intellij.lang.javascript.linter.tslint.ui;
 
 import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.linter.JSLinterBaseView;
 import com.intellij.lang.javascript.linter.NodeModuleConfigurationView;
-import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
+import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
-import com.intellij.lang.javascript.linter.tslint.ide.TsLintConfigFileType;
 import com.intellij.lang.javascript.linter.ui.JSLinterConfigFileTexts;
 import com.intellij.lang.javascript.linter.ui.JSLinterConfigFileView;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.SwingHelper;
@@ -23,8 +21,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.util.Collections;
 
 /**
  * @author Irina.Chernushina on 6/3/2015.
@@ -33,7 +29,6 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
   private static final JSLinterConfigFileTexts CONFIG_TEXTS = getConfigTexts();
 
   private final Project myProject;
-  private final boolean myDialog;
   private final NodeModuleConfigurationView myNodeModuleConfigurationView;
   private final JSLinterConfigFileView myConfigFileView;
   private TextFieldWithBrowseButton myRules;
@@ -42,24 +37,8 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
   public TsLintView(@NotNull Project project, boolean fullModeDialog) {
     super(fullModeDialog);
     myProject = project;
-    myDialog = fullModeDialog;
-    myConfigFileView = new JSLinterConfigFileView(project, CONFIG_TEXTS, TsLintConfigFileType.INSTANCE);
-    myConfigFileView.setAdditionalConfigFilesProducer(() -> {
-      final String home = System.getProperty("user.home");
-      final LocalFileSystem lfs = LocalFileSystem.getInstance();
-      final File homeFile = new File(home);
-      VirtualFile homeVf = lfs.findFileByIoFile(homeFile);
-      if (homeVf == null) {
-        homeVf = lfs.refreshAndFindFileByIoFile(homeFile);
-      }
-      if (homeVf == null) return Collections.emptyList();
-      VirtualFile config = homeVf.findChild(TsLintConfiguration.TSLINT_JSON);
-      if (config == null) {
-        config = lfs.refreshAndFindFileByIoFile(new File(homeFile, TsLintConfiguration.TSLINT_JSON));
-      }
-      if (config == null) return Collections.emptyList();
-      return Collections.singletonList(config);
-    });
+    myConfigFileView = new JSLinterConfigFileView(project, CONFIG_TEXTS, null);
+    myConfigFileView.setAdditionalConfigFilesProducer(() -> TslintUtil.findAllConfigsInScope(project));
     myNodeModuleConfigurationView = new NodeModuleConfigurationView(project, "tslint", "TSLint", null);
   }
 
@@ -148,9 +127,9 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
   }
 
   private static JSLinterConfigFileTexts getConfigTexts() {
-    return new JSLinterConfigFileTexts("Search for tslint.json",
-                                       "When linting a TypeScript file, TSLint looks for tslint.json starting from the file's folder and then moving up to the filesystem root" +
+    return new JSLinterConfigFileTexts(JSBundle.message("javascript.linter.configurable.config.autoSearch.title"),
+                                       "When linting a TypeScript file, TSLint looks for tslint.json or tslint.yaml starting from the file's folder and then moving up to the filesystem root" +
                                        " or in the user's home directory.",
-                                       "Select TSLint configuration file (*.json)");
+                                       "Select TSLint configuration file (*.json|*.yaml)");
   }
 }

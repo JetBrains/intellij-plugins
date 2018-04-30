@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.resolve.JSTypeInfo;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
@@ -309,7 +310,8 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Override
-  public boolean addTypeFromResolveResult(JSTypeEvaluator evaluator, PsiElement result) {
+  public boolean addTypeFromResolveResult(@NotNull JSTypeEvaluator evaluator,
+                                          @NotNull JSEvaluateContext context, @NotNull PsiElement result) {
     if (!(result instanceof JSImplicitElement) || !AngularJSProcessor.$EVENT.equals(((JSImplicitElement)result).getName())) {
       return false;
     }

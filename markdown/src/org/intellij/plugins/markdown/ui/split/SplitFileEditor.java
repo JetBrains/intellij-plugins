@@ -169,7 +169,9 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
   @Nullable
   @Override
   public JComponent getPreferredFocusedComponent() {
-    return myMainEditor.getPreferredFocusedComponent();
+    if (mySplitEditorLayout.showFirst) return myMainEditor.getPreferredFocusedComponent();
+    if (mySplitEditorLayout.showSecond) return mySecondEditor.getPreferredFocusedComponent();
+    return null;
   }
 
   @NotNull

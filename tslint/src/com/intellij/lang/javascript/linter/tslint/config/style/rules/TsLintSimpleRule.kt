@@ -27,7 +27,7 @@ abstract class TsLintSimpleRule<T>(val optionId: String) : TsLintRule {
     setValue(languageSettings, codeStyleSettings, value)
   }
 
-  open fun hasOption(config: TsLintConfigWrapper): Boolean = config.getOption(optionId)?.isTrue() ?: false
+  open fun hasOption(config: TsLintConfigWrapper): Boolean = config.getOption(optionId)?.isEnabled() ?: false
 
   abstract fun getSettingsValue(languageSettings: CommonCodeStyleSettings,
                                 codeStyleSettings: JSCodeStyleSettings): T
