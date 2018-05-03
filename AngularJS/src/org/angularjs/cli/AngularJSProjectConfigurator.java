@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Dennis.Ushakov
  */
 public class AngularJSProjectConfigurator implements DirectoryProjectConfigurator {
+  public static final String ANGULAR_JSON = "angular.json";
   public static final String ANGULAR_CLI_JSON = ".angular-cli.json";
   public static final String DEPRECATED_ANGULAR_CLI_JSON = "angular-cli.json";
 
@@ -48,7 +49,8 @@ public class AngularJSProjectConfigurator implements DirectoryProjectConfigurato
 
   @Nullable
   public static VirtualFile findCliJson(@Nullable VirtualFile dir) {
-    VirtualFile cliJson = dir != null ? dir.findChild(ANGULAR_CLI_JSON) : null;
+    VirtualFile cliJson = dir != null ? dir.findChild(ANGULAR_JSON) : null;
+    cliJson = dir != null && cliJson == null ? dir.findChild(ANGULAR_CLI_JSON) : cliJson;
     cliJson = dir != null && cliJson == null ? dir.findChild(DEPRECATED_ANGULAR_CLI_JSON) : cliJson;
     return cliJson;
   }
