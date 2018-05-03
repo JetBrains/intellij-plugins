@@ -76,10 +76,12 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
     return null;
   }
 
+  @Override
   public boolean hasTypeParameters() {
     return false;
   }
 
+  @Override
   @Nullable
   public PsiTypeParameterList getTypeParameterList() {
     return null;
