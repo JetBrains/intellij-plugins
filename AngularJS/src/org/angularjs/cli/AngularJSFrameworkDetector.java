@@ -51,9 +51,9 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
       StandardPatterns.string().with(new PatternCondition<String>("cli-json-name") {
         @Override
         public boolean accepts(@NotNull String s, ProcessingContext context) {
-          return s.endsWith(AngularJSProjectConfigurator.ANGULAR_JSON) ||
-                 s.endsWith(AngularJSProjectConfigurator.ANGULAR_CLI_JSON) ||
-                 s.endsWith(AngularJSProjectConfigurator.DEPRECATED_ANGULAR_CLI_JSON);
+          return AngularJSProjectConfigurator.ANGULAR_JSON.equals(s) ||
+                 AngularJSProjectConfigurator.ANGULAR_CLI_JSON.equals(s) ||
+                 AngularJSProjectConfigurator.DEPRECATED_ANGULAR_CLI_JSON.equals(s);
         }
       })
       ).with(new PatternCondition<FileContent>("notLibrary") {

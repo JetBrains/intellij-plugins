@@ -49,9 +49,10 @@ public class AngularJSProjectConfigurator implements DirectoryProjectConfigurato
 
   @Nullable
   public static VirtualFile findCliJson(@Nullable VirtualFile dir) {
-    VirtualFile cliJson = dir != null ? dir.findChild(ANGULAR_JSON) : null;
-    cliJson = dir != null && cliJson == null ? dir.findChild(ANGULAR_CLI_JSON) : cliJson;
-    cliJson = dir != null && cliJson == null ? dir.findChild(DEPRECATED_ANGULAR_CLI_JSON) : cliJson;
+    if (dir == null) return null;
+    VirtualFile cliJson = dir.findChild(ANGULAR_JSON);
+    cliJson = cliJson == null ? dir.findChild(ANGULAR_CLI_JSON) : cliJson;
+    cliJson = cliJson == null ? dir.findChild(DEPRECATED_ANGULAR_CLI_JSON) : cliJson;
     return cliJson;
   }
 }
