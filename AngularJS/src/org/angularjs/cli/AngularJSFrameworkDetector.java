@@ -47,7 +47,16 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
   @NotNull
   @Override
   public ElementPattern<FileContent> createSuitableFilePattern() {
-    return FileContentPattern.fileContent().withName(StandardPatterns.string().endsWith(AngularJSProjectConfigurator.ANGULAR_CLI_JSON)).with(new PatternCondition<FileContent>("notLibrary") {
+    return FileContentPattern.fileContent().withName(
+      StandardPatterns.string().with(new PatternCondition<String>("cli-json-name") {
+        @Override
+        public boolean accepts(@NotNull String s, ProcessingContext context) {
+          return AngularJSProjectConfigurator.ANGULAR_JSON.equals(s) ||
+                 AngularJSProjectConfigurator.ANGULAR_CLI_JSON.equals(s) ||
+                 AngularJSProjectConfigurator.DEPRECATED_ANGULAR_CLI_JSON.equals(s);
+        }
+      })
+      ).with(new PatternCondition<FileContent>("notLibrary") {
       @Override
       public boolean accepts(@NotNull FileContent content, ProcessingContext context) {
         return !JSLibraryUtil.isProbableLibraryFile(content.getFile());
