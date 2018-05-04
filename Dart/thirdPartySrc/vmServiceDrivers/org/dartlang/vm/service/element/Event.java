@@ -212,8 +212,8 @@ public class Event extends Response {
    * pause events, the timestamp is from when the isolate was paused. For other events, the
    * timestamp is from when the event was created.
    */
-  public int getTimestamp() {
-    return json.get("timestamp") == null ? -1 : json.get("timestamp").getAsInt();
+  public long getTimestamp() {
+    return json.get("timestamp") == null ? -1 : json.get("timestamp").getAsLong();
   }
 
   /**
