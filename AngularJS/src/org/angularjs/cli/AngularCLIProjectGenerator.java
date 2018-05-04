@@ -9,6 +9,7 @@ import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
+import com.intellij.util.text.SemVer;
 import com.intellij.xml.util.XmlStringUtil;
 import icons.AngularJSIcons;
 import org.jetbrains.annotations.Nls;
@@ -109,5 +110,15 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
       }
     }
     return super.validateProjectPath(path);
+  }
+
+  @NotNull
+  @Override
+  protected File workingDir(Settings settings, @NotNull VirtualFile baseDir) {
+    File workingDir = super.workingDir(settings, baseDir);
+    SemVer version = settings.myPackage.getVersion();
+    return version == null || version.isGreaterOrEqualThan(6, 0, 0) ?
+           workingDir.getParentFile() :
+           workingDir;
   }
 }
