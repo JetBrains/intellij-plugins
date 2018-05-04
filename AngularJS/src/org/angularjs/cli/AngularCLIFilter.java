@@ -24,10 +24,15 @@ public class AngularCLIFilter extends AbstractFileHyperlinkFilter implements Dum
   @NotNull
   @Override
   public List<FileHyperlinkRawData> parse(@NotNull String line) {
-    int index = StringUtil.indexOfIgnoreCase(line, CREATE, 0);
-    index = index < 0 ? StringUtil.indexOfIgnoreCase(line, UPDATE, 0) : index;
+    List<FileHyperlinkRawData> create = parse(line, CREATE);
+    return !create.isEmpty() ? create : parse(line, UPDATE);
+  }
+
+  @NotNull
+  public List<FileHyperlinkRawData> parse(@NotNull String line, @NotNull String prefix) {
+    int index = StringUtil.indexOfIgnoreCase(line, prefix, 0);
     if (index >= 0) {
-      final int start = index + CREATE.length();
+      final int start = index + prefix.length();
       int end = line.indexOf(" (", start);
       if (end == -1) end = line.length();
       final String fileName = line.substring(start, end).trim();
