@@ -51,13 +51,8 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
   }
 
   @Override
-  protected PsiElement findPackage(String qName) {
-    return createInstance(getManager(), qName);
-  }
-
-  @Override
-  protected FlexPackageImpl createInstance(PsiManager manager, String qName) {
-    return new FlexPackageImpl(manager, qName);
+  protected FlexPackageImpl findPackage(String qName) {
+    return new FlexPackageImpl(getManager(), qName);
   }
 
   protected Collection<PsiDirectory> getAllDirectories(boolean includeLibrarySources) {
