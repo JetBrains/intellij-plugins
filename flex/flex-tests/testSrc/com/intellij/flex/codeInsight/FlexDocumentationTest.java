@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.intellij.flex.codeInsight;
 
 import com.intellij.flex.util.FlexTestUtils;
@@ -230,12 +243,12 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
 
   public void testQuickNavigateInfo() throws Exception {
     final String testName = getTestName(false);
-    doNavigateTest(testName, "js2", "public class xxx.AAA extends ZZZ\n" + "implements yyy.XXX");
+    doNavigateTest(testName, "js2", "public class xxx.AAA extends ZZZ<br>implements yyy.XXX");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testQuickNavigateInfoWithMxml() throws Exception {
-    doNavigateTest(getTestName(false), "mxml", "flash.display.Sprite\n" + "Event mouseDown" + file("MockFlex.as"));
+    doNavigateTest(getTestName(false), "mxml", "flash.display.Sprite<br>Event mouseDown" + file("MockFlex.as"));
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
@@ -248,7 +261,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   public void testQuickNavigateInfo_3() throws Exception {
-    doNavigateTest(getTestName(false), "js2", "public static function xxx.AAA.yyy(p:Object):AAA");
+    doNavigateTest(getTestName(false), "js2", "public static function xxx.<a href=\"psi_element://AAA\">AAA</a>.yyy(p:Object):AAA");
   }
 
   public void testQuickNavigateInfo_4() throws Exception {
@@ -264,7 +277,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   public void testQuickNavigateInfo_6() throws Exception {
-    doNavigateTest(getTestName(false), "js2", "testData.documentation\n" + "namespace XXX = \"\"", false);
+    doNavigateTest(getTestName(false), "js2", "testData.documentation<br>namespace XXX = \"\"", false);
   }
 
   public void testQuickNavigateInfo_7() throws Exception {
