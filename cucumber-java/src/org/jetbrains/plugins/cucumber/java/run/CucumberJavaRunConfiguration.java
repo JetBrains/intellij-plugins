@@ -2,6 +2,7 @@ package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.diagnostic.logging.LogConfigurationPanel;
 import com.intellij.execution.*;
+import com.intellij.execution.application.ApplicationCommandLineState;
 import com.intellij.execution.application.ApplicationConfiguration;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.process.ProcessHandler;
@@ -45,7 +46,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   @Override
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) {
-    return new JavaApplicationCommandLineState<CucumberJavaRunConfiguration>(CucumberJavaRunConfiguration.this, env) {
+    return new ApplicationCommandLineState<CucumberJavaRunConfiguration>(CucumberJavaRunConfiguration.this, env) {
       protected JavaParameters createJavaParameters() throws ExecutionException {
         final JavaParameters params = new JavaParameters();
         final JavaRunConfigurationModule module = getConfigurationModule();
