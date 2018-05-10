@@ -77,7 +77,7 @@ public class VmService extends VmServiceBase {
   /**
    * The minor version number of the protocol supported by this client.
    */
-  public static final int versionMinor = 6;
+  public static final int versionMinor = 8;
 
   /**
    * The [addBreakpoint] RPC is used to add a breakpoint at a specific line of some script.
@@ -467,6 +467,17 @@ public class VmService extends VmServiceBase {
     params.addProperty("isolateId", isolateId);
     params.addProperty("mode", mode.name());
     request("setExceptionPauseMode", params, consumer);
+  }
+
+  /**
+   * The [setFlag] RPC is used to set a VM flag at runtime. Returns an error if the named flag does
+   * not exist, the flag may not be set at runtime, or the value is of the wrong type for the flag.
+   */
+  public void setFlag(String name, String value, SuccessConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("name", name);
+    params.addProperty("value", value);
+    request("setFlag", params, consumer);
   }
 
   /**

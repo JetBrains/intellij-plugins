@@ -122,7 +122,7 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
     myFixture.checkResultByFile("fix/fix_after.ts");
   }
 
-  public void testAllRulesAreInConfig() throws Exception {
+  public void _testAllRulesAreInConfig() throws Exception {
     myFixture.configureByFile(getTestName(true) + "/tslint.json");
     final Set<String> fromConfig =
       Arrays.stream(myFixture.completeBasic()).map(lookup -> StringUtil.unquoteString(lookup.getLookupString())).collect(Collectors.toSet());
