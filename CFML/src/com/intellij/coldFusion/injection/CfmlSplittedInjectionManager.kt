@@ -30,19 +30,19 @@ class CfmlSplittedInjectionManager(project: Project, psiManagerEx: PsiManagerEx)
   init {
     val concatPoint: ExtensionPoint<SplittedInjector> = Extensions.getArea(project).getExtensionPoint(SPLITTED_INJECTOR_EP_NAME)
     concatPoint.addExtensionPointListener(object : ExtensionPointListener<SplittedInjector> {
-      override fun extensionAdded(injector: SplittedInjector, pluginDescriptor: PluginDescriptor?) = registerSplittedInjection(injector)
+      override fun extensionAdded(injector: SplittedInjector, pluginDescriptor: PluginDescriptor?) = registerSplittedInjector(injector)
 
-      override fun extensionRemoved(injector: SplittedInjector, pluginDescriptor: PluginDescriptor?) = unregisterSplittedInjection(injector)
+      override fun extensionRemoved(injector: SplittedInjector, pluginDescriptor: PluginDescriptor?) = unregisterSplittedInjector(injector)
     })
     psiManagerEx.registerRunnableToRunOnAnyChange({ incModificationCount() /* clear caches even on non-physical changes */ })
   }
 
-  fun registerSplittedInjection(injector: SplittedInjector) {
+  fun registerSplittedInjector(injector: SplittedInjector) {
     mySplittedInjectors.add(injector)
     incModificationCount()
   }
 
-  fun unregisterSplittedInjection(injector: SplittedInjector) {
+  fun unregisterSplittedInjector(injector: SplittedInjector) {
     mySplittedInjectors.remove(injector)
     incModificationCount()
   }

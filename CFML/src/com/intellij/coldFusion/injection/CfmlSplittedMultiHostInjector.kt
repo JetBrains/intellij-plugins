@@ -6,71 +6,54 @@ import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.lang.injection.MultiHostRegistrar
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import java.util.*
 
 class CfmlSplittedMultiHostInjector(project: Project) : MultiHostInjector {
 
   private val splittedManager: CfmlSplittedInjectionManager = CfmlSplittedInjectionManager.getInstance(project)
 
-  override fun getLanguagesToInject(registrar: MultiHostRegistrar, psiElement: PsiElement) {
+  override fun getLanguagesToInject(registrar: MultiHostRegistrar, context: PsiElement) {
     if (splittedManager.mySplittedInjectors.isEmpty()) return
 
-    val containingFile = psiElement.containingFile
+    val containingFile = context.containingFile
     val project = containingFile.project
-    val (_, splittedElements) = getHeadAndSplittedElements(psiElement)
-    if (splittedElements.any { com.intellij.psi.util.PsiTreeUtil.isAncestor(psiElement, it, false) })
-      getRegistrarWithLinkedSplittedElements(project, splittedElements, registrar)
+    val (_, splittedElements) = getHeadAndSplittedElements(context)
+//    if (splittedElements.any { PsiTreeUtil.isAncestor(context, it, false) })
+      processInjections(project, splittedElements, registrar)
   }
+
+  override fun elementsToInjectIn(): List<Class<out PsiElement>> = listOf(CfmlTagImpl::class.java)
 
   /**
    * Iterates all splittedInjectors from CfmlSplittedInjectionManager and updates registrar <Place, PsiFile> result
    */
-  private fun getRegistrarWithLinkedSplittedElements(project: Project,
-                                                     splittedElements: Array<PsiElement>,
-                                                     registrar: MultiHostRegistrar): Boolean {
-
+  private fun processInjections(project: Project,
+                                splittedElements: List<PsiElement>,
+                                registrar: MultiHostRegistrar): Boolean {
     val splittedManager = CfmlSplittedInjectionManager.getInstance(project)
-    var injected = false
-    for (splittedInjector in splittedManager.mySplittedInjectors) {
-      injected = splittedInjector.getLanguagesToInject(registrar, *splittedElements)
-      if (injected) break
+    return splittedManager.mySplittedInjectors.any { it.processInjection(registrar, splittedElements) }
+  }
+
+
+
+
+  private fun getHeadAndSplittedElements(context: PsiElement): Pair<PsiElement, List<PsiElement>> {
+    if (context.isCfQueryTag()) return getHeadAndSplittedElementsForCfQuery(context)
+    if (context.isCfElseTagInsideCfQuery() || context.isCfIfElseTagInsideCfQuery()) return getHeadAndSplittedElementsForCfElseOrCfIfElse(context)
+    return Pair(context, emptyList())
+  }
+
+  private fun getHeadAndSplittedElementsForCfElseOrCfIfElse(context: PsiElement): Pair<PsiElement, List<PsiElement>> {
+    if (context.nextSibling is CfmlLeafPsiElement) return Pair(context, listOf(context.nextSibling))
+    return Pair(context, emptyList())
+  }
+
+  private fun getHeadAndSplittedElementsForCfQuery(context: PsiElement): Pair<PsiElement, List<PsiElement>> {
+    val filteredChildren = mutableListOf<PsiElement>()
+    context.firstChild.traverse().forEach {
+      if (it is CfmlLeafPsiElement) filteredChildren.add(it)
+      if (it.isCfifTag()) filteredChildren.addNotNull(getFirstCfifValue(it as CfmlTagImpl))
     }
-
-    return injected
+    return Pair(context, filteredChildren)
   }
-
-  private fun getHeadAndSplittedElements(context: PsiElement): Pair<PsiElement, Array<PsiElement>> {
-    val head: PsiElement? = findHead(context) { it is CfmlTagImpl && it.name?.toLowerCase() == "cfquery" }
-    val filteredChildren: Array<PsiElement> =
-      if (head != null)
-        filterChildren(head) { it is CfmlLeafPsiElement }
-      else
-        emptyArray()
-    return Pair(head ?: context, filteredChildren)
-  }
-
-  //if there is no head checked by checker than return null
-  private fun findHead(start: PsiElement, checker: (PsiElement) -> Boolean): PsiElement? {
-    var psiElement = start
-    while (psiElement.parent != null && !checker.invoke(psiElement)) psiElement = psiElement.parent
-    if (checker.invoke(psiElement)) return psiElement
-    else return null
-  }
-
-  private fun filterChildren(root: PsiElement, filter: (PsiElement) -> Boolean): Array<PsiElement> {
-    val filteredList = ArrayList<PsiElement>()
-    root.firstChild.traverseAndConsume { if (filter.invoke(it)) filteredList.add(it) }
-    return filteredList.toTypedArray()
-  }
-
-  private fun PsiElement.traverseAndConsume(consumer: (PsiElement) -> Unit) {
-    var psiElement = this
-    while (psiElement.nextSibling != null) {
-      consumer.invoke(psiElement)
-      psiElement = psiElement.nextSibling
-    }
-  }
-
-  override fun elementsToInjectIn(): List<Class<out PsiElement>> = listOf(CfmlTagImpl::class.java)
 
 }

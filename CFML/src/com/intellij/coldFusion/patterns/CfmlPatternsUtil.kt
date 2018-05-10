@@ -10,15 +10,28 @@ import com.intellij.util.ProcessingContext
 object CfmlPatternsUtil {
 
   fun sqlCapture(): CfmlTagImplPattern.Capture<CfmlTagImpl> {
-    val initPatternCond: InitialPatternCondition<CfmlTagImpl> = object : InitialPatternCondition<CfmlTagImpl>(CfmlTagImpl::class.java) {
-      override fun accepts(obj: Any?, context: ProcessingContext): Boolean {
-        val isCfquery = (obj is CfmlTagImpl && obj.name == "cfquery")
-        if (!isCfquery) return false
-        val cfmlTag = obj as CfmlTagImpl
-        return cfmlTag.text.contains(Regex("<cfquery[^>]*>"))
-      }
-    }
-    return CfmlTagImplPattern.Capture(initPatternCond)
+    return CfmlTagImplPattern.Capture(object : InitialPatternCondition<CfmlTagImpl>(
+      CfmlTagImpl::class.java) {
+
+      override fun accepts(cfmlTag: Any?, context: ProcessingContext): Boolean =
+        listOf(::cfQueryHost, ::cfIfElseHost, ::cfElseHost).any { it(cfmlTag) }
+    })
   }
+
+  private fun cfQueryHost(cfmlTag: Any?): Boolean {
+    if (!(cfmlTag is CfmlTagImpl && cfmlTag.name?.toLowerCase() == "cfquery")) return false
+    return cfmlTag.text.contains(Regex("<cfquery[^>]*>"))
+  }
+
+  private fun cfElseHost(cfmlTag: Any?): Boolean {
+    if (!(cfmlTag is CfmlTagImpl && cfmlTag.name?.toLowerCase() == "cfelse")) return false
+    return cfQueryHost(cfmlTag.parent?.parent)
+  }
+
+  private fun cfIfElseHost(cfmlTag: Any?): Boolean {
+    if (!(cfmlTag is CfmlTagImpl && cfmlTag.name?.toLowerCase() == "cfifelse")) return false
+    return cfQueryHost(cfmlTag.parent?.parent)
+  }
+
 
 }

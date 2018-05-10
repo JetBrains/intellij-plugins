@@ -8,5 +8,5 @@ import com.intellij.psi.PsiElement
  */
 interface SplittedInjector {
   // returns true if injected
-  fun getLanguagesToInject(registrar: MultiHostRegistrar, vararg splittedElements: PsiElement): Boolean
+  fun processInjection(registrar: MultiHostRegistrar, splittedElements: List<PsiElement>): Boolean
 }
