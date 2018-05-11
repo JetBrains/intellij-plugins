@@ -13,6 +13,7 @@ import com.intellij.sql.psi.SqlCommonKeywords
 import com.intellij.util.FileContentUtil
 import com.intellij.util.containers.isNullOrEmpty
 import com.intellij.util.ui.UIUtil
+import junit.framework.TestCase
 import org.junit.Test
 
 /**
@@ -29,6 +30,7 @@ class CfmlSqlInjectionTest : CfmlCodeInsightFixtureTestCase() {
       fun create() {
         this.myFixture = this@CfmlSqlInjectionTest.myFixture
         createDataSource(SqliteDialect.INSTANCE, null, "Sqlite.create.ddl")
+        createDataSource(SqliteDialect.INSTANCE, null, "Sqlite2.create.ddl")
       }
     }.create()
   }
@@ -63,6 +65,22 @@ class CfmlSqlInjectionTest : CfmlCodeInsightFixtureTestCase() {
   @Test
   fun testWithExpression() {
     prepareWithDatabase()
+    doHighlightText()
+  }
+
+  @Test
+  fun testWithCfElse() {
+    prepareWithDatabase()
+    doHighlightText()
+  }
+
+  @Test
+  fun testWithCfElse2() {
+    prepareWithDatabase()
+    doHighlightText(expectedErrorCount = 2)
+  }
+
+  private fun doHighlightText(expectedErrorCount: Int = 0) {
     val highlights = mutableListOf<HighlightInfo>()
     val attemptsInitial = 3
     var attempts = attemptsInitial
@@ -70,9 +88,11 @@ class CfmlSqlInjectionTest : CfmlCodeInsightFixtureTestCase() {
       UIUtil.dispatchAllInvocationEvents()
       assertTrue("Unable to update highlighters in ${attemptsInitial} attempts", attempts-- > 0)
       highlights.addAll(myFixture.doHighlighting())
-    } while (highlights.isEmpty())
+    }
+    while (highlights.isEmpty())
     val errors = highlights.filter { it.severity == HighlightSeverity.ERROR }
-    assertTrue("Highlighting errors should be empty, but this file has: $errors", errors.isNullOrEmpty())
+    if (expectedErrorCount == 0) assertTrue("Highlighting errors should be empty, but this file has: $errors", errors.isNullOrEmpty())
+    else TestCase.assertEquals("Highlight errors count should be ${expectedErrorCount}, got ${errors.size}", expectedErrorCount, errors.size)
   }
 
   private fun getElementAtCaret(): PsiElement {

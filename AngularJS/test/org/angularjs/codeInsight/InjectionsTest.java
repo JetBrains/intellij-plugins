@@ -2,7 +2,9 @@ package org.angularjs.codeInsight;
 
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.html.HTMLLanguage;
+import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lang.javascript.inspections.JSBitwiseOperatorUsageInspection;
 import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
@@ -17,6 +19,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
+import com.intellij.util.containers.ContainerUtil;
 import com.sixrr.inspectjs.confusing.CommaExpressionJSInspection;
 import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
 import org.angularjs.AngularTestUtil;
@@ -288,10 +291,13 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testHost() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("host.ts", "angular2.js");
-      for (String signature : new String[]{"eve<caret>nt", "bind<caret>ing", "at<caret>tribute"}) {
-        final int offset = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
+      for (Pair<String, ? extends JSLanguageDialect> signature : ContainerUtil.newArrayList(
+        Pair.create("eve<caret>nt", AngularJSLanguage.INSTANCE),
+        Pair.create("bind<caret>ing", AngularJSLanguage.INSTANCE),
+        Pair.create("at<caret>tribute", JavaScriptSupportLoader.TYPESCRIPT))) {
+        final int offset = AngularTestUtil.findOffsetBySignature(signature.first, myFixture.getFile());
         final PsiElement element = InjectedLanguageUtil.findElementAtNoCommit(myFixture.getFile(), offset);
-        assertEquals(signature, AngularJSLanguage.INSTANCE, element.getContainingFile().getLanguage());
+        assertEquals(signature.first, signature.second, element.getContainingFile().getLanguage());
       }
     });
   }
