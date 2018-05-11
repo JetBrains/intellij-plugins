@@ -17,11 +17,15 @@ import com.intellij.coldFusion.model.psi.CfmlLeafPsiElement
 import com.intellij.coldFusion.model.psi.impl.CfmlTagImpl
 import com.intellij.psi.PsiElement
 
-internal fun PsiElement.traverse(): Iterable<PsiElement> {
+internal fun PsiElement.traverse(untilPsiElement: PsiElement? = null): Iterable<PsiElement> {
   return Iterable {
     var pivotPsiElement: PsiElement = this@traverse
     object : Iterator<PsiElement> {
-      override fun hasNext(): Boolean = pivotPsiElement.nextSibling != null
+      override fun hasNext(): Boolean {
+        val nextSibling = pivotPsiElement.nextSibling ?: return false
+        return (nextSibling != untilPsiElement)
+      }
+
       override fun next(): PsiElement {
         pivotPsiElement = pivotPsiElement.nextSibling
         return pivotPsiElement
@@ -30,29 +34,43 @@ internal fun PsiElement.traverse(): Iterable<PsiElement> {
   }
 }
 
+
 internal fun <T> MutableList<T>.addNotNull(t: T?) {
   t ?: return
   this.add(t)
 }
 
-internal fun PsiElement.isCfifTag(): Boolean {
-  return (this is CfmlTagImpl && this.tagName == "cfif")
+internal fun getFirstCfIfValue(cfifTag: CfmlTagImpl): PsiElement? {
+  return cfifTag.firstChild.traverse().firstOrNull { it is CfmlLeafPsiElement }
 }
 
-internal fun getFirstCfifValue(cfifTag: CfmlTagImpl): PsiElement? {
-  return cfifTag.firstChild.traverse().firstOrNull { it is CfmlLeafPsiElement }
+internal fun PsiElement.isCfIfTag(): Boolean {
+  return this.isCfmlTag("cfif")
+}
+
+internal fun PsiElement.isCfElseTag(): Boolean {
+  return this.isCfmlTag("cfelse")
+}
+
+
+internal fun PsiElement.isCfElseIfTag(): Boolean {
+  return this.isCfmlTag("cfelseif")
+}
+
+internal fun PsiElement.isCfQueryParamTag(): Boolean {
+  return this.isCfmlTag("cfqueryparam")
 }
 
 internal fun PsiElement.isCfQueryTag(): Boolean {
   return this.isCfmlTag("cfquery")
 }
 
-internal fun PsiElement.isCfIfElseTagInsideCfQuery(): Boolean {
-  return this.isCfmlTag("cfifelse") && this.isTagInsideCfQuery()
+internal fun PsiElement.isCfElseTagInsideCfQuery(): Boolean {
+  return this.isCfElseTag() && this.isTagInsideCfQuery()
 }
 
-internal fun PsiElement.isCfElseTagInsideCfQuery(): Boolean {
-  return this.isCfmlTag("cfelse") && this.isTagInsideCfQuery()
+internal fun PsiElement.isCfElseIfTagInsideCfQuery(): Boolean {
+  return this.isCfElseIfTag() && this.isTagInsideCfQuery()
 }
 
 private fun PsiElement.isTagInsideCfQuery(): Boolean {
