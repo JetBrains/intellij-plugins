@@ -65,16 +65,8 @@ internal fun PsiElement.isCfQueryTag(): Boolean {
   return this.isCfmlTag("cfquery")
 }
 
-internal fun PsiElement.isCfElseTagInsideCfQuery(): Boolean {
-  return this.isCfElseTag() && this.isTagInsideCfQuery()
-}
-
-internal fun PsiElement.isCfElseIfTagInsideCfQuery(): Boolean {
-  return this.isCfElseIfTag() && this.isTagInsideCfQuery()
-}
-
-private fun PsiElement.isTagInsideCfQuery(): Boolean {
-  return this.parent?.parent?.isCfQueryTag() ?: false
+internal fun PsiElement.isTagInsideCfQuery(): Boolean {
+  return this.parent?.isCfQueryTag() ?: false
 }
 
 private fun PsiElement.isCfmlTag(tagName: String): Boolean {
