@@ -277,46 +277,44 @@ ASTWrapperPsiElement(FILE)
 ------
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
-    AngularJSRepeatExpression
-      JSVarStatement
-        PsiElement(JS:LET_KEYWORD)('let')
-        PsiWhiteSpace(' ')
-        JSVariable
-          PsiElement(JS:IDENTIFIER)('todo')
-      PsiErrorElement:'of' expected
-        <empty list>
+    JSVarStatement
+      PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
+      JSVariable
+        PsiElement(JS:IDENTIFIER)('todo')
+  PsiWhiteSpace(' ')
+  JSExpressionStatement
+    JSBinaryExpression
       JSBinaryExpression
-        JSBinaryExpression
+        JSReferenceExpression
           JSReferenceExpression
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('todoService')
-            PsiElement(JS:DOT)('.')
-            PsiElement(JS:IDENTIFIER)('todos')
-          PsiWhiteSpace(' ')
-          PsiElement(JS:OR)('|')
-          PsiWhiteSpace(' ')
-          AngularJSFilterExpression
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('started')
-            PsiWhiteSpace(' ')
-            JSArgumentList
-              PsiElement(JS:COLON)(':')
-              PsiWhiteSpace(' ')
-              JSReferenceExpression
-                PsiElement(JS:IDENTIFIER)('status')
+            PsiElement(JS:IDENTIFIER)('todoService')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:IDENTIFIER)('todos')
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
         AngularJSFilterExpression
           JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('search')
+            PsiElement(JS:IDENTIFIER)('started')
           PsiWhiteSpace(' ')
           JSArgumentList
             PsiElement(JS:COLON)(':')
             PsiWhiteSpace(' ')
             JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('term')
+              PsiElement(JS:IDENTIFIER)('status')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OR)('|')
+      PsiWhiteSpace(' ')
+      AngularJSFilterExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('search')
+        PsiWhiteSpace(' ')
+        JSArgumentList
+          PsiElement(JS:COLON)(':')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('term')
 ------
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
