@@ -53,13 +53,13 @@ class CfmlSqlMultiHostInjector(project: Project) : MultiHostInjector {
 
   override fun getLanguagesToInject(registrar: MultiHostRegistrar, context: PsiElement) {
 
-    if (context.isCfIfTag()) {
+    if (context.isCfIfTag() && context.isTagInsideCfQuery()) {
       val cfIfTagOptionHosts = getCfIfTagOptionHosts(context)
       for (host in cfIfTagOptionHosts) {
         registerInjection(SqlLanguage.INSTANCE, mapSplittedHostsToTextRanges(context, listOf(host)), context.containingFile, registrar)
       }
     }
-    else {
+    if (context.isCfQueryTag()) {
       val splittedHosts = getCfQueryHosts(context)
       if (splittedHosts.isEmpty()) return
       registerInjection(SqlLanguage.INSTANCE, mapSplittedHostsToTextRanges(context, splittedHosts), context.containingFile, registrar)

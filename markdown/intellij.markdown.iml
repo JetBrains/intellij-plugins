@@ -52,5 +52,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="netty-codec-http" level="project" />
+    <orderEntry type="library" name="netty-handler" level="project" />
   </component>
 </module>

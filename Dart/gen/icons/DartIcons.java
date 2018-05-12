@@ -32,7 +32,6 @@ public class DartIcons {
   public static final Icon Dart_remote = load("/icons/dart_remote.png"); // 16x16
   public static final Icon Dart_test = load("/icons/dart_test.png"); // 16x16
   public static final Icon Dart_warning = load("/icons/dart_warning.png"); // 16x16
-  public static final Icon Dart_web = load("/icons/dart_web.png"); // 16x16
   public static final Icon Feedback = load("/icons/feedback.png"); // 16x16
   public static final Icon Observatory = load("/icons/observatory.png"); // 16x16
   public static final Icon PubServeToolWindow = load("/icons/pubServeToolWindow.svg"); // 13x13
