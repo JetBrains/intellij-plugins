@@ -41,7 +41,12 @@ class CourseManager internal constructor() {
     initModules()
   }
 
-  private fun initModules() {
+  fun clearModules() {
+    modulesId2modules.clear()
+    modules.clear()
+  }
+
+  fun initModules() {
     val modulesRoot = Module.getRootFromPath(GenModuleXml.MODULE_ALLMODULE_FILENAME)
     for (element in modulesRoot.children) {
       if (element.name == GenModuleXml.MODULE_TYPE_ATTR) {

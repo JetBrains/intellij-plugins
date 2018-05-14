@@ -11,6 +11,7 @@ import training.learn.CourseManager
 import training.learn.Module
 import training.ui.LearnIcons
 import training.ui.UISettings
+import training.util.DataLoader
 import java.awt.*
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
@@ -18,7 +19,6 @@ import javax.swing.Box
 import javax.swing.BoxLayout
 import javax.swing.JPanel
 import javax.swing.JTextPane
-import javax.swing.border.Border
 import javax.swing.border.EmptyBorder
 import javax.swing.text.BadLocationException
 import javax.swing.text.SimpleAttributeSet
@@ -80,6 +80,11 @@ class ModulesPanel : JPanel() {
 
     private fun initModulesPanel() {
         val modules = CourseManager.instance.modules
+        if(DataLoader.liveMode) {
+            CourseManager.instance.clearModules()
+            CourseManager.instance.initModules()
+            module2linklabel!!.clear()
+        }
         for (module in modules) {
             if (module.lessons.size == 0) continue
             val moduleHeader = JPanel()

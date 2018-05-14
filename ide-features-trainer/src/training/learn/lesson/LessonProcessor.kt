@@ -1,11 +1,9 @@
 package training.learn.lesson
 
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.util.ui.EdtInvocationManager
 import org.jdom.Element
 import training.commands.Command
 import training.commands.CommandFactory
@@ -39,8 +37,8 @@ object LessonProcessor {
     //Prepare environment before execution
     with(LessonProcessor) {
       prepareEnvironment(editor, project, myEditorParameters)
-      currentExecutionList = ExecutionList(myQueueOfElements, lesson, project, editor)
-      startCommandsPipeline(myQueueOfElements)
+      currentExecutionList = ExecutionList(myQueueOfElements, lesson, project)
+      CommandFactory.buildCommand(myQueueOfElements.peek()).execute(currentExecutionList!!)
     }
   }
 
@@ -78,16 +76,6 @@ object LessonProcessor {
       }
     }
     return commandsQueue
-  }
-
-
-  private fun startCommandsPipeline(elements: Queue<Element>) {
-    val cmd = CommandFactory.buildCommand(elements.peek())
-    //Do not invoke pipeline of commands from Edt!
-    if (!EdtInvocationManager.getInstance().isEventDispatchThread)
-      cmd.execute(LessonProcessor.currentExecutionList!!)
-    else
-      ApplicationManager.getApplication().executeOnPooledThread { cmd.execute(LessonProcessor.currentExecutionList!!) }
   }
 
 
