@@ -1,6 +1,6 @@
-var cli = require('./intellijCli')
-  , intellijUtil = require('./intellijUtil')
-  , originalConfigPath = cli.getConfigFile()
+var intellijUtil = require('./intellijUtil')
+  , intellijParameters = require('./karma-intellij-parameters')
+  , originalConfigPath = intellijParameters.getUserConfigFilePath()
   , IntellijReporter = require('./intellijReporter')
   , IntellijCoverageReporter = require('./intellijCoverageReporter');
 
@@ -28,7 +28,6 @@ function configureDebug(config) {
     if (typeof client === 'undefined') {
       config.client = client = {};
     }
-    require('./karma-intellij-debug').initCustomContextFile(config);
     if (client === Object(client)) {
       var mocha = client.mocha;
       if (typeof mocha === 'undefined') {
@@ -71,7 +70,7 @@ module.exports = function (config) {
   config.reporters = filteredReporters;
 
   IntellijCoverageReporter.configureCoverage(config);
-  if (cli.isDebug()) {
+  if (intellijParameters.isDebug()) {
     configureDebug(config);
   }
 

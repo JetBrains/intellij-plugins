@@ -155,9 +155,15 @@ public class KarmaServerLogComponent implements ComponentWithActions {
   }
 
   private void foldCommandLine() {
-    ConsoleCommandLineFolder folder = new ConsoleCommandLineFolder("karma", "start");
     KarmaServerSettings serverSettings = myServer.getServerSettings();
-    folder.addPlaceholderText("--config=" + PathUtil.getFileName(serverSettings.getConfigurationFilePath()));
+    ConsoleCommandLineFolder folder = new ConsoleCommandLineFolder();
+    if (KarmaUtil.isAngularCliPkg(serverSettings.getKarmaPackage())) {
+      folder.addPlaceholderTexts("ng", "test");
+      folder.addPlaceholderText("--karma-config=" + PathUtil.getFileName(serverSettings.getConfigurationFilePath()));
+    }
+    else {
+      folder.addPlaceholderTexts("karma", "start", PathUtil.getFileName(serverSettings.getConfigurationFilePath()));
+    }
     if (!StringUtil.isEmptyOrSpaces(serverSettings.getBrowsers())) {
       folder.addPlaceholderText("--browsers=" + serverSettings.getBrowsers());
     }

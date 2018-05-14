@@ -87,7 +87,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     if (pkg == null) {
       Project project = getProject();
       NodeJsLocalInterpreter interpreter = NodeJsLocalInterpreter.tryCast(myRunSettings.getInterpreterRef().resolve(project));
-      pkg = NodePackage.findPreferredPackage(project, KarmaUtil.NODE_PACKAGE_NAME, interpreter);
+      pkg = KarmaUtil.PKG_DESCRIPTOR.findFirstDirectDependencyPackage(project, interpreter, null);
       if (!pkg.isEmptyPath() && !KarmaUtil.isPathUnderContentRoots(project, pkg)) {
         NodePackage projectKarmaPackage = KarmaProjectSettings.getKarmaPackage(project);
         if (projectKarmaPackage.isEmptyPath()) {

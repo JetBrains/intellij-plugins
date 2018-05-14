@@ -5,6 +5,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.javascript.nodejs.util.NodePackageDescriptor;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.openapi.fileTypes.FileType;
@@ -25,6 +26,8 @@ import java.util.List;
 public class KarmaUtil {
 
   public static final String NODE_PACKAGE_NAME = "karma";
+  public static final String ANGULAR_CLI__PACKAGE_NAME = "@angular/cli";
+  public static final NodePackageDescriptor PKG_DESCRIPTOR = new NodePackageDescriptor(ANGULAR_CLI__PACKAGE_NAME, NODE_PACKAGE_NAME);
   private static final String[] STARTING_PARTS = new String[] {"karma"};
   private static final String NAME_PART_DELIMITERS = ".-";
   private static final String[] BEFORE_EXT_PARTS = new String[] {"conf", "karma"};
@@ -108,5 +111,9 @@ public class KarmaUtil {
                                                              @NotNull ExecutionEnvironment environment) {
     RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, environment);
     return contentBuilder.showRunContent(environment.getContentToReuse());
+  }
+
+  public static boolean isAngularCliPkg(@NotNull NodePackage pkg) {
+    return pkg.getSystemIndependentPath().endsWith("/" + ANGULAR_CLI__PACKAGE_NAME);
   }
 }
