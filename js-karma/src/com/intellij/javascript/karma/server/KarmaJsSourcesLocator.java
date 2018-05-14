@@ -58,8 +58,8 @@ public class KarmaJsSourcesLocator {
   }
 
   @NotNull
-  public File getServerAppFile() throws IOException {
-    return getAppFile("intellijServer.js");
+  public File getIntellijConfigFile() throws IOException {
+    return getAppFile("intellij.conf.js");
   }
 
   @NotNull

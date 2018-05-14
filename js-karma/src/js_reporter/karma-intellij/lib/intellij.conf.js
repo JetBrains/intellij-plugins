@@ -1,6 +1,6 @@
-var cli = require('./intellijCli')
-  , intellijUtil = require('./intellijUtil')
-  , originalConfigPath = cli.getConfigFile()
+var intellijUtil = require('./intellijUtil')
+  , intellijParameters = require('./karma-intellij-parameters')
+  , originalConfigPath = intellijParameters.getUserConfigFilePath()
   , IntellijReporter = require('./intellijReporter')
   , IntellijCoverageReporter = require('./intellijCoverageReporter');
 
@@ -15,13 +15,11 @@ function configureDebug(config) {
   // By default, browserNoActivityTimeout=10000 ms, not enough for suspended execution.
   // https://github.com/karma-runner/karma/blob/master/docs/config/01-configuration-file.md#browsernoactivitytimeout
   config.browserNoActivityTimeout = null;
-  const intellijDebug = require('./karma-intellij-debug');
   (function fixMochaTimeout() {
     var client = config.client;
     if (typeof client === 'undefined') {
       config.client = client = {};
     }
-    intellijDebug.initCustomContextFile(config);
     if (client === Object(client)) {
       var mocha = client.mocha;
       if (typeof mocha === 'undefined') {
@@ -38,7 +36,7 @@ function configureDebug(config) {
       console.error('intellij: config.client is not an object')
     }
   })();
-  return intellijDebug.configureBrowsers(config);
+  return require('./karma-intellij-debug').configureBrowsers(config);
 }
 
 module.exports = function (config) {
@@ -66,7 +64,7 @@ module.exports = function (config) {
 
   IntellijCoverageReporter.configureCoverage(config);
   var debugInfo;
-  if (cli.isDebug()) {
+  if (intellijParameters.isDebug()) {
     debugInfo = configureDebug(config);
   }
 

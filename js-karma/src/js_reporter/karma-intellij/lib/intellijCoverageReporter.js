@@ -1,4 +1,4 @@
-var cli = require('./intellijCli.js')
+var intellijParameters = require('./karma-intellij-parameters')
   , intellijUtil = require('./intellijUtil.js')
   , fs = require('fs')
   , path = require('path')
@@ -11,7 +11,7 @@ var cli = require('./intellijCli.js')
  * @param {Object} config
  */
 function preconfigureCoverage(config) {
-  if (cli.isWithCoverage()) {
+  if (intellijParameters.isWithCoverage()) {
     configureAngularCliCoverage(config);
   }
 }
@@ -32,7 +32,7 @@ function configureAngularCliCoverage(config) {
  */
 function configureCoverage(config) {
   var reporters = config.reporters || [];
-  if (cli.isWithCoverage()) {
+  if (intellijParameters.isWithCoverage()) {
     reporters.push(IntellijCoverageReporter.reporterName);
     var coverageReporter = config.coverageReporter;
     if (!coverageReporter) {
@@ -46,7 +46,7 @@ function configureCoverage(config) {
     }
     coverageReporter.reporters.push({
       type : 'lcovonly',
-      dir : path.join(cli.getCoverageTempDirPath())
+      dir : path.join(intellijParameters.getCoverageTempDirPath())
     });
     configureKarmaTypeScript(config);
   }
@@ -75,7 +75,7 @@ function configureKarmaTypeScript(config) {
       config.karmaTypescriptConfig.reports = reports;
     }
     if (!reports.lcovonly) {
-      reports.lcovonly = cli.getCoverageTempDirPath();
+      reports.lcovonly = intellijParameters.getCoverageTempDirPath();
     }
     extraLcovLocations.push(reports.lcovonly);
   }
