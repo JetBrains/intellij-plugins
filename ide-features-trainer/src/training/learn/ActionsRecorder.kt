@@ -9,31 +9,29 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.ex.AnActionListener
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Document
-import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
-import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.FileEditorManagerEvent
+import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.util.messages.MessageBusConnection
 import training.check.Check
 import java.awt.event.KeyEvent
-import java.awt.event.KeyListener
 import java.util.*
 
 /**
  * Created by karashevich on 18/12/14.
  */
 class ActionsRecorder(private val project: Project,
-                      private val document: Document,
-                      private val editor: Editor) : Disposable {
+                      private val document: Document) : Disposable {
   private var triggerActivated: Boolean = false
   private var triggerQueue: Queue<String>? = null
 
   private var myDocumentListener: DocumentListener? = null
   private var myAnActionListener: AnActionListener? = null
-  private var myKeyListener: KeyListener? = null
 
   private var disposed = false
   private var doWhenDone: Runnable? = null
@@ -62,7 +60,6 @@ class ActionsRecorder(private val project: Project,
     startRecording(doWhenDone, stringArray, check)
   }
 
-
   fun startRecording(doWhenDone: Runnable, actionIdArray: Array<String>?, check: Check?) {
     if (check != null) this.check = check
     if (disposed) return
@@ -76,7 +73,6 @@ class ActionsRecorder(private val project: Project,
     }
     addActionAndDocumentListeners()
   }
-
 
   private fun isTaskSolved(current: Document): Boolean {
     if (disposed) return false
@@ -99,6 +95,8 @@ class ActionsRecorder(private val project: Project,
     return ls
   }
 
+  private val myMessageBusConnection: MessageBusConnection
+    get() { return project.messageBus.connect() }
 
   /**
    * method adds action and document listeners to monitor user activity and check task
@@ -108,49 +106,21 @@ class ActionsRecorder(private val project: Project,
 
     myAnActionListener = object : AnActionListener {
 
-      private var editorFlag: Boolean = false
+      private var projectAvailable: Boolean = false
 
       override fun beforeActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
-        editorFlag = event.project != null && FileEditorManager.getInstance(event.project!!).selectedTextEditor === editor
+        projectAvailable = event.project != null
       }
 
-      override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
-
-        //if action called not from project or current editor is different from editor
-        if (!editorFlag) return
-
-        if (triggerQueue!!.size == 0) {
-          if (isTaskSolved(document)) {
-            //                        actionManager.removeAnActionListener(this);
-            removeListeners(document, actionManager)
-            if (doWhenDone != null) {
-              dispose()
-              doWhenDone!!.run()
-            }
-          }
-        }
-        if (checkAction(action, triggerQueue!!.peek())) {
-          if (triggerQueue!!.size > 1) {
-            triggerQueue!!.poll()
-          } else if (triggerQueue!!.size == 1) {
-            if (isTaskSolved(document)) {
-              //                            actionManager.removeAnActionListener(this);
-              removeListeners(document, actionManager)
-              if (doWhenDone != null) {
-                dispose()
-                doWhenDone!!.run()
-              }
-            } else {
-              triggerQueue!!.poll()
-            }
-          }
-        }
+      override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent?) {
+        val actionId = ActionManager.getInstance().getId(action)
+        val actionClassName = action.javaClass.name
+        val resultId = actionId ?: actionClassName
+        doProcessAction(resultId, projectAvailable)
       }
 
       override fun beforeEditorTyping(c: Char, dataContext: DataContext) {}
     }
-
-
     myDocumentListener = object : DocumentListener {
 
 
@@ -168,7 +138,6 @@ class ActionsRecorder(private val project: Project,
       }
     }
 
-
     val myEventDispatcher = IdeEventQueue.EventDispatcher { e ->
       if (e is KeyEvent) {
         doWhenTriggerIsEmptyAndTaskSolved(actionManager)
@@ -176,10 +145,53 @@ class ActionsRecorder(private val project: Project,
       false
     }
 
+    myMessageBusConnection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
+      override fun selectionChanged(event: FileEditorManagerEvent) {
+        event.newFile?.name?.let { doProcessAction(it, true) }
+      }
+    })
+
 
     if (check != null && check!!.listenAllKeys()) IdeEventQueue.getInstance().addDispatcher(myEventDispatcher, this)
     document.addDocumentListener(myDocumentListener!!)
     actionManager.addAnActionListener(myAnActionListener)
+  }
+  /**
+   * @param action - caught action by AnActionListener (see [.addActionAndDocumentListeners] addActionAndDocumentListeners()} method.) or by the project
+   * message bus - see FileEditorManagerListener
+   * @param actionString - could be an actionId, action class name or the file name opened after some action
+   */
+
+  private fun doProcessAction(action: String, projectAvailable: Boolean){
+    //if action called not from project or current editor is different from editor
+    if (!projectAvailable) return
+
+    if (triggerQueue!!.size == 0) {
+      if (isTaskSolved(document)) {
+        //                        actionManager.removeAnActionListener(this);
+        removeListeners(document, ActionManager.getInstance())
+        if (doWhenDone != null) {
+          dispose()
+          doWhenDone!!.run()
+        }
+      }
+    }
+    if (equalStr(action, triggerQueue!!.peek())) {
+      if (triggerQueue!!.size > 1) {
+        triggerQueue!!.poll()
+      } else if (triggerQueue!!.size == 1) {
+        if (isTaskSolved(document)) {
+          //                            actionManager.removeAnActionListener(this);
+          removeListeners(document, ActionManager.getInstance())
+          if (doWhenDone != null) {
+            dispose()
+            doWhenDone!!.run()
+          }
+        } else {
+          triggerQueue!!.poll()
+        }
+      }
+    }
   }
 
   private fun doWhenTriggerIsEmptyAndTaskSolved(actionManager: ActionManager) {
@@ -194,23 +206,10 @@ class ActionsRecorder(private val project: Project,
     }
   }
 
-  /**
-   * @param action - caught action by AnActionListener (see [.addActionAndDocumentListeners] addActionAndDocumentListeners()} method.)
-   * @param actionString - could be an actionId or action class name
-   * @return if action equals to actionId or have the same action class name
-   */
-  private fun checkAction(action: AnAction, actionString: String?): Boolean {
-    val actionId = ActionManager.getInstance().getId(action)
-    val actionClassName = action.javaClass.name
-    return if (actionId != null) equalStr(actionId, actionString) || equalStr(actionClassName, actionString)
-    else equalStr(actionClassName, actionString)
-  }
-
   private fun removeListeners(document: Document, actionManager: ActionManager) {
     if (myAnActionListener != null) actionManager.removeAnActionListener(myAnActionListener)
     if (myDocumentListener != null) document.removeDocumentListener(myDocumentListener!!)
-    if (myKeyListener != null) editor.component.rootPane.glassPane.removeKeyListener(myKeyListener)
-    myKeyListener = null
+    myMessageBusConnection.disconnect()
     myAnActionListener = null
     myDocumentListener = null
   }

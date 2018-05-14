@@ -23,7 +23,7 @@ class TryCommand : Command(Command.CommandType.TRY) {
 
     LessonManager.getInstance(lesson)?.addMessages(Message.convert(element))
 
-    val recorder = ActionsRecorder(editor.project!!, editor.document, editor)
+    val recorder = ActionsRecorder(editor.project!!, editor.document)
     LessonManager.getInstance(lesson).registerActionsRecorder(recorder)
 
     if (element.getAttribute("check") != null) {
