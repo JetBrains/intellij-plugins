@@ -1,7 +1,7 @@
 var cli = require('./intellijCli')
   , intellijUtil = require('./intellijUtil')
   , RESUME_TEST_RUNNING_MESSAGE = 'resume-test-running'
-  , EXIT_CODE_BUF = new Buffer('\x1FEXIT');
+  , EXIT_CODE_BUF = Buffer.from('\x1FEXIT');
 
 /**
  * @param {Buffer} buffer
