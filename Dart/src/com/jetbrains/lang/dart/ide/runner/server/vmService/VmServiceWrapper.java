@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class VmServiceWrapper implements Disposable {
@@ -155,6 +156,31 @@ public class VmServiceWrapper implements Disposable {
 
   private void getVm(@NotNull final VMConsumer consumer) {
     addRequest(() -> myVmService.getVM(consumer));
+  }
+
+  public CompletableFuture<Isolate> getCachedIsolate(@NotNull final String isolateId) {
+    return myIsolatesInfo.getCachedIsolate(isolateId, () -> {
+      CompletableFuture<Isolate> isolateFuture = new CompletableFuture<>();
+      getIsolate(isolateId, new GetIsolateConsumer() {
+
+        @Override
+        public void onError(RPCError error) {
+          isolateFuture.completeExceptionally(new RuntimeException(error.getMessage()));
+        }
+
+        @Override
+        public void received(Isolate response) {
+          isolateFuture.complete(response);
+        }
+
+        @Override
+        public void received(Sentinel response) {
+          // Unable to get the isolate.
+          isolateFuture.complete(null);
+        }
+      });
+      return isolateFuture;
+    });
   }
 
   private void getIsolate(@NotNull final String isolateId, @NotNull final GetIsolateConsumer consumer) {
@@ -303,6 +329,9 @@ public class VmServiceWrapper implements Disposable {
    * Reloaded scripts need to have their breakpoints re-applied; re-set all existing breakpoints.
    */
   public void restoreBreakpointsForIsolate(@NotNull final String isolateId, @Nullable final Runnable onFinished) {
+    // Cached information about the isolate may now be stale.
+    myIsolatesInfo.invalidateCache(isolateId);
+
     // Remove all existing VM breakpoints for this isolate.
     myBreakpointHandler.removeAllVmBreakpoints(isolateId);
     // Re-set existing breakpoints.
@@ -495,5 +524,32 @@ public class VmServiceWrapper implements Disposable {
                                       @NotNull final String expression,
                                       @NotNull final EvaluateConsumer consumer) {
     addRequest(() -> myVmService.evaluate(isolateId, targetId, expression, consumer));
+  }
+
+  public void evaluateInTargetContext(@NotNull final String isolateId,
+                                      @NotNull final String targetId,
+                                      @NotNull final String expression,
+                                      @NotNull final XDebuggerEvaluator.XEvaluationCallback callback) {
+    evaluateInTargetContext(isolateId, targetId, expression, new EvaluateConsumer() {
+      @Override
+      public void received(InstanceRef instanceRef) {
+        callback.evaluated(new DartVmServiceValue(myDebugProcess, isolateId, "result", instanceRef, null, null, false));
+      }
+
+      @Override
+      public void received(Sentinel sentinel) {
+        callback.errorOccurred(sentinel.getValueAsString());
+      }
+
+      @Override
+      public void received(ErrorRef errorRef) {
+        callback.errorOccurred(DartVmServiceEvaluator.getPresentableError(errorRef.getMessage()));
+      }
+
+      @Override
+      public void onError(RPCError error) {
+        callback.errorOccurred(error.getMessage());
+      }
+    });
   }
 }
