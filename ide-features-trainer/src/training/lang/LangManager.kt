@@ -49,7 +49,7 @@ class LangManager : PersistentStateComponent<LangManager.State> {
   }
 
   override fun loadState(state: State?) {
-    if (state == null) return
+    if (state == null || state.languageName == null) return
     myLangSupport = supportedLanguagesExtensions.find { langExt -> langExt.language == state.languageName }!!.instance
     myState.languageName = state.languageName
   }
