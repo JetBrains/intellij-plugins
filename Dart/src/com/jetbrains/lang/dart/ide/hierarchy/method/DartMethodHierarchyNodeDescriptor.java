@@ -82,7 +82,7 @@ public class DartMethodHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
         final LayeredIcon icon = new LayeredIcon(2);
         icon.setIcon(newIcon, 0);
         newIcon = icon;
-        icon.setIcon(AllIcons.Hierarchy.Base, 1, -AllIcons.Hierarchy.Base.getIconWidth() / 2, 0);
+        icon.setIcon(AllIcons.Actions.Forward, 1, -AllIcons.Actions.Forward.getIconWidth() / 2, 0);
       }
       if (myStateIcon != null) {
         newIcon = new RowIcon(myStateIcon, newIcon);
