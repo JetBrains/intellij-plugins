@@ -24,6 +24,7 @@ import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.execution.ParametersListUtil;
+import com.intellij.util.text.SemVer;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -180,7 +181,18 @@ public class KarmaServer {
     if (angularCli) {
       commandLine.addParameter(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "ng");
       commandLine.addParameter("test");
-      commandLine.addParameter("--karma-config=" + sourcesLocator.getIntellijConfigFile().getAbsolutePath());
+      String absoluteConfigPath = sourcesLocator.getIntellijConfigFile().getAbsolutePath();
+      if (shouldUseOldConfigCliOption(pkg)) {
+        File workingDir = new File(serverSettings.getWorkingDirectorySystemDependent());
+        String configPath = FileUtil.getRelativePath(workingDir, new File(absoluteConfigPath));
+        if (configPath == null) {
+          configPath = absoluteConfigPath;
+        }
+        commandLine.addParameter("--config=" + configPath);
+      }
+      else {
+        commandLine.addParameter("--karma-config=" + absoluteConfigPath);
+      }
     }
     else {
       commandLine.addParameter(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "karma");
@@ -203,6 +215,11 @@ public class KarmaServer {
     }
     commandLine.setCharset(CharsetToolkit.UTF8_CHARSET);
     return commandLine;
+  }
+
+  private static boolean shouldUseOldConfigCliOption(@NotNull NodePackage pkg) {
+    SemVer version = pkg.getVersion();
+    return version != null && !version.isGreaterOrEqualThan(6, 0, 0);
   }
 
   private static void setIntellijParameter(@NotNull GeneralCommandLine commandLine,
