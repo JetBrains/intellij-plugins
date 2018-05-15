@@ -17,7 +17,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class KarmaProcessOutputManager {
 
-  private static final int MAX_ARCHIVED_TEXTS_LENGTH = 1024 * 16;
+  private static final int MAX_ARCHIVED_TEXTS_LENGTH = 1024 * 1024;
 
   private static final char NEW_LINE = '\n';
   private static final String PREFIX = "##intellij-event[";

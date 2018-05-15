@@ -159,7 +159,6 @@ public class KarmaServerLogComponent implements ComponentWithActions {
     ConsoleCommandLineFolder folder = new ConsoleCommandLineFolder();
     if (KarmaUtil.isAngularCliPkg(serverSettings.getKarmaPackage())) {
       folder.addPlaceholderTexts("ng", "test");
-      folder.addPlaceholderText("--karma-config=" + PathUtil.getFileName(serverSettings.getConfigurationFilePath()));
     }
     else {
       folder.addPlaceholderTexts("karma", "start", PathUtil.getFileName(serverSettings.getConfigurationFilePath()));
