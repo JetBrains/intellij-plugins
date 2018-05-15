@@ -46,6 +46,22 @@ function configureDebug(config) {
   })();
 }
 
+function disableSingleRun(config) {
+  config.singleRun = false;
+  const prevSet = config.set;
+  // Workaround if karma server is instantiated with { singleRun: true }
+  // For example, @angular/cli is the case:
+  // https://github.com/angular/devkit/blob/v6.0.1/packages/angular_devkit/build_angular/src/karma/index.ts#L65
+  if (typeof prevSet === 'function') {
+    config.set = function (newConfig) {
+      if (newConfig.singleRun === true) {
+        newConfig.singleRun = false;
+      }
+      prevSet.apply(config, arguments);
+    };
+  }
+}
+
 module.exports = function (config) {
   IntellijCoverageReporter.preconfigureCoverage(config);
   var originalConfigModule = require(originalConfigPath);
@@ -93,7 +109,7 @@ module.exports = function (config) {
     config.logLevel = config.LOG_INFO;
   }
 
-  config.singleRun = false;
+  disableSingleRun(config);
   var originalAutoWatch = config.autoWatch;
   config.autoWatch = false;
   config.autoWatchBatchDelay = 0;
