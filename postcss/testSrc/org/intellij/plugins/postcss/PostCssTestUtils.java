@@ -20,7 +20,7 @@ public final class PostCssTestUtils {
 
   @NotNull
   public static String getRootTestDataPath() {
-    return FileUtil.join(PathManager.getHomePath(), "plugins", "postcss", "testData");
+    return FileUtil.join(PathManager.getHomePath(), "contrib", "postcss", "testData");
   }
 
   /**
