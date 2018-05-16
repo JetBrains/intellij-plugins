@@ -16,6 +16,7 @@ package com.jetbrains.lang.dart.ide.errorTreeView;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.CopyProvider;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.ide.CopyPasteManager;
@@ -31,10 +32,16 @@ import com.intellij.ui.*;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
+import com.intellij.util.SmartList;
 import com.intellij.util.ui.JBUI;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.assists.AssistUtils;
+import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.AnalysisError;
+import org.dartlang.analysis.server.protocol.AnalysisErrorFixes;
+import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -136,8 +143,65 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
     group.add(ActionManager.getInstance().getAction(IdeActions.ACTION_COPY));
 
+    addQuickFixActions(group);
+
     final ActionPopupMenu menu = ActionManager.getInstance().createActionPopupMenu(ActionPlaces.TOOLBAR, group);
     menu.getComponent().show(component, x, y);
+  }
+
+  private void addQuickFixActions(@NotNull final DefaultActionGroup group) {
+    // Reference the list of selected DartProblems
+    final List<DartProblem> selectedProblems = myTable.getSelectedObjects();
+
+    // Reference the single DartProblem selected
+    final DartProblem selectedProblem = selectedProblems.size() == 1 ? selectedProblems.get(0) : null;
+
+    // Return if there is not a single selected DartProblem
+    if (selectedProblem == null) return;
+
+    // Reference the selected VirtualFile
+    final VirtualFile selectedVFile = selectedProblem.getFile();
+
+    // Return if the VirtualFile is null or the DartProblem does not have a fix
+    if (selectedVFile == null) return;
+
+    // Reference the DAS
+    final DartAnalysisServerService das = DartAnalysisServerService.getInstance(myProject);
+
+    //
+    // Reference the set of fixes for the selected DartProblem and add the fixes as actions onto the passed action group
+    //
+    final List<SourceChange> selectedProblemSourceChangeFixes = new SmartList<>();
+    das.askForFixesAndWaitABitIfReceivedQuickly(selectedVFile, selectedProblem.getOffset(), fixes -> {
+      for (AnalysisErrorFixes fix : fixes) {
+        if (fix.getError().getCode().equals(selectedProblem.getCode())) {
+          selectedProblemSourceChangeFixes.addAll(fix.getFixes());
+        }
+      }
+    });
+
+    // Return if there are no quick fixes for this problem
+    if (selectedProblemSourceChangeFixes.isEmpty()) return;
+
+    // Add a separator and proceed to add the action for each fix
+    group.addSeparator();
+    for (final SourceChange sourceChangeFix : selectedProblemSourceChangeFixes) {
+      if(sourceChangeFix == null) continue;
+      group.add(new AnAction(sourceChangeFix.getMessage()) {
+        @Override
+        public void actionPerformed(final AnActionEvent event) {
+          ApplicationManager.getApplication().runWriteAction(() ->
+                                                             {
+                                                               try {
+                                                                 AssistUtils.applySourceChange(myProject, sourceChangeFix, true);
+                                                               }
+                                                               catch (DartSourceEditException ignored) {
+                                                               }
+                                                             }
+          );
+        }
+      });
+    }
   }
 
   @NotNull
