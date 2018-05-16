@@ -24,7 +24,7 @@ class TsLintLanguageServiceProtocol(project: Project, readyConsumer: Consumer<*>
     result.tslintPackagePath = extendedState.state.packagePath
     result.additionalRootDirectory = extendedState.state.rulesDirectory
     result.pluginName = "tslint"
-    val file = File(getPluginDirectory(this.javaClass, "tslintLanguageService"), "tslint-plugin-provider")
+    val file = File(getPluginDirectory(this.javaClass, "js"), "tslint-plugin-provider")
     result.pluginPath = file.absolutePath
     return result
   }

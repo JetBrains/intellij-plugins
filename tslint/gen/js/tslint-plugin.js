@@ -5,13 +5,13 @@ var TsLintCommands;
     TsLintCommands.GetErrors = "GetErrors";
     TsLintCommands.FixErrors = "FixErrors";
 })(TsLintCommands || (TsLintCommands = {}));
-var Response = (function () {
+var Response = /** @class */ (function () {
     function Response() {
     }
     return Response;
 }());
 var fs = require("fs");
-var TSLintPlugin = (function () {
+var TSLintPlugin = /** @class */ (function () {
     function TSLintPlugin(state) {
         this.linterOptions = resolveTsLint(state);
         this.additionalRulesDirectory = state.additionalRootDirectory;
