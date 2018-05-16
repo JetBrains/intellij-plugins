@@ -1,18 +1,14 @@
+import {getVersion, TsLintVersion, Version} from "../utils";
+
 namespace TsLintCommands {
     export let GetErrors: string = "GetErrors";
     export let FixErrors: string = "FixErrors";
 }
 
-const enum TsLintVersion {
-    VERSION_3_AND_BEFORE,
-    VERSION_4_AND_HIGHER
-}
-
 type LinterOptions = {
     linter?: any;
-    versionKind?: TsLintVersion;
     linterConfiguration: any;
-    version?: string
+    version: Version
 }
 class Response {
     version?: string;
@@ -51,7 +47,7 @@ export class TSLintPlugin implements LanguagePlugin {
         // here we use object -> JSON.stringify, because we need to escape possible error's text symbols
         // and we do not want to duplicate this code
         let response: Response = new Response();
-        response.version = this.linterOptions.version;
+        response.version = this.linterOptions.version.versionString;
         response.command = request.command;
         response.request_seq = request.seq;
 
@@ -97,7 +93,7 @@ export class TSLintPlugin implements LanguagePlugin {
         let result = {};
 
         let configuration = this.getConfiguration(fileName, configFileName, linter);
-        if (linterOptions.versionKind == TsLintVersion.VERSION_4_AND_HIGHER) {
+        if (linterOptions.version.kind == TsLintVersion.VERSION_4_AND_HIGHER) {
             let tslint = new linter(options);
             tslint.lint(fileName, content, configuration);
             result = tslint.getResult();
@@ -114,7 +110,7 @@ export class TSLintPlugin implements LanguagePlugin {
     private getConfiguration(fileName: string, configFileName: string, linter: any) {
 
         let linterConfiguration = this.linterOptions.linterConfiguration;
-        let versionKind = this.linterOptions.versionKind;
+        let versionKind = this.linterOptions.version.kind;
         if (versionKind == TsLintVersion.VERSION_4_AND_HIGHER) {
             let configurationResult: any = linterConfiguration.findConfiguration(configFileName, fileName);
             if (!configurationResult) {
@@ -134,31 +130,13 @@ export class TSLintPlugin implements LanguagePlugin {
 
 function resolveTsLint(options: PluginState): LinterOptions {
     const tslintPackagePath = options.tslintPackagePath;
-    let value: any = require(tslintPackagePath);
+    const tslint: any = require(tslintPackagePath);
 
-    let versionText = getVersionText(value);
-    const versionKind = getVersion(versionText);
+    const version = getVersion(tslint);
 
-    const linter = versionKind == TsLintVersion.VERSION_4_AND_HIGHER ? value.Linter : value;
-    const linterConfiguration = value.Configuration;
+    const linter = version.kind == TsLintVersion.VERSION_4_AND_HIGHER ? tslint.Linter : tslint;
+    const linterConfiguration = tslint.Configuration;
 
-    return {linter, linterConfiguration, versionKind, version: versionText};
+    return {linter, linterConfiguration, version};
 }
 
-function getVersionText(tslint: any) {
-    return tslint.VERSION || (tslint.Linter && tslint.Linter.VERSION);
-};
-
-function getVersion(version?: string): TsLintVersion {
-    if (version == null) {
-        return TsLintVersion.VERSION_3_AND_BEFORE;
-    }
-
-
-    const firstDot = version.indexOf(".");
-    const majorVersion = firstDot == -1 ? version : version.substr(0, firstDot + 1);
-
-    return majorVersion && (Number(majorVersion) > 3) ?
-        TsLintVersion.VERSION_4_AND_HIGHER :
-        TsLintVersion.VERSION_3_AND_BEFORE;
-}

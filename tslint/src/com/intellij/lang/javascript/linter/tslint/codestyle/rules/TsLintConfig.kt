@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.linter.tslint.config.style.rules
+package com.intellij.lang.javascript.linter.tslint.codestyle.rules
 
 import com.google.gson.Gson
 import com.intellij.application.options.CodeStyle
@@ -14,9 +14,11 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.util.*
 import org.yaml.snakeyaml.Yaml
 
-class TsLintConfigWrapper(private val options: Map<String, TslintJsonOption>) {
+class TsLintConfigWrapper(private val rules: Map<String, TslintJsonOption>, private val extends: List<String>) {
 
-  fun getOption(name: String): TslintJsonOption? = options[name]
+  fun hasExtends() = !extends.isEmpty()
+
+  fun getOption(name: String): TslintJsonOption? = rules[name]
 
   fun getRulesToApply(project: Project): Collection<TsLintSimpleRule<*>> {
     ApplicationManager.getApplication().assertReadAccessAllowed()
@@ -70,44 +72,44 @@ class TsLintConfigWrapper(private val options: Map<String, TslintJsonOption>) {
       if (it == null || PsiTreeUtil.hasErrorElements(it)) {
         CachedValueProvider.Result.create(null, it)
       }
-      CachedValueProvider.Result.create(parseConfigFile(it), it)
-    }
-
-    private fun parseConfigFile(it: PsiFile): TsLintConfigWrapper? {
-      val map = jsonAsMap(it) ?: yamlAsMap(it)
-      if (map != null) {
-        val rulesObject = map["rules"]
-        if (rulesObject is Map<*, *>) {
-          @Suppress("UNCHECKED_CAST")
-          val typed = rulesObject as Map<String, Any>
-          return TsLintConfigWrapper(typed.mapValues { TslintJsonOption(it.value) })
-        }
-      }
-      return null
-    }
-
-    private fun jsonAsMap(it: PsiFile): Map<String, Any>? {
-      return try {
-        Gson().fromJson<MutableMap<String, Any>>(it.text, MutableMap::class.java)
-      }
-      catch (e: Exception) {
-        null
-      }
-    }
-
-    private fun yamlAsMap(file: PsiFile): Map<String, Any>? {
-      return try {
-        Yaml().load<Map<String, Any>>(file.text)
-      }
-      catch (e: Exception) {
-        null
-      }
+      CachedValueProvider.Result.create(getConfigFromText(it.text), it)
     }
 
     fun getConfigForFile(psiFile: PsiFile?): TsLintConfigWrapper? {
       if (psiFile == null) return null
       return CachedValuesManager.getManager(psiFile.project)
                .getParameterizedCachedValue(psiFile, RULES_CACHE_KEY, CACHED_VALUE_PROVIDER, false, psiFile) ?: return null
+    }
+
+    fun getConfigFromText(text: String?): TsLintConfigWrapper? {
+      val map = jsonAsMap(text) ?: yamlAsMap(text)
+      if (map != null) {
+        val rulesObject = map["rules"]
+        if (rulesObject is Map<*, *>) {
+          @Suppress("UNCHECKED_CAST")
+          val typed = rulesObject as Map<String, Any>
+          return TsLintConfigWrapper(typed.mapValues { TslintJsonOption(it.value) }, asStringArrayOrSingleString(map["extends"]))
+        }
+      }
+      return null
+    }
+
+    private fun jsonAsMap(text: String?): Map<String, Any>? {
+      return try {
+        Gson().fromJson<MutableMap<String, Any>>(text, MutableMap::class.java)
+      }
+      catch (e: Exception) {
+        null
+      }
+    }
+
+    private fun yamlAsMap(text: String?): Map<String, Any>? {
+      return try {
+        Yaml().load<Map<String, Any>>(text)
+      }
+      catch (e: Exception) {
+        null
+      }
     }
   }
 }
@@ -157,36 +159,36 @@ class TslintJsonOption(private val element: Any?) {
   }
 
   fun getStringMapValue(): Map<String, String> {
-    if (element is List<*> && element.size > 1) {
-      return asStringMap(element[1])
+    if (this.element is List<*> && this.element.size > 1) {
+      return asStringMap(this.element[1])
     }
-    if (element is Map<*, *>) {
-      return asStringMap(element["options"])
+    if (this.element is Map<*, *>) {
+      return asStringMap(this.element["options"])
     }
 
     return emptyMap()
   }
+}
 
-  private fun asStringArrayOrSingleString(element: Any?): List<String> {
-    if (element is String) {
-      return listOf(element)
-    }
-    if (element is List<*>) {
-      return element.mapNotNull { it as? String }
-    }
-    return emptyList()
-  }
-
-  private fun asStringMap(element: Any?): Map<String, String> {
-    if (element is Map<*, *>) {
-      val result = mutableMapOf<String, String>()
-      element.forEach {
-        if (it.key is String && it.value is String) {
-          result[it.key as String] = it.value as String
-        }
+private fun asStringMap(element: Any?): Map<String, String> {
+  if (element is Map<*, *>) {
+    val result = mutableMapOf<String, String>()
+    element.forEach {
+      if (it.key is String && it.value is String) {
+        result[it.key as String] = it.value as String
       }
-      return result
     }
-    return emptyMap()
+    return result
   }
+  return emptyMap()
+}
+
+private fun asStringArrayOrSingleString(element: Any?): List<String> {
+  if (element is String) {
+    return listOf(element)
+  }
+  if (element is List<*>) {
+    return element.mapNotNull { it as? String }
+  }
+  return emptyList()
 }
