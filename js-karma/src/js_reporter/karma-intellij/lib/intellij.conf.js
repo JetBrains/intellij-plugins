@@ -15,6 +15,7 @@ function configureDebug(config) {
   // By default, browserNoActivityTimeout=10000 ms, not enough for suspended execution.
   // https://github.com/karma-runner/karma/blob/master/docs/config/01-configuration-file.md#browsernoactivitytimeout
   config.browserNoActivityTimeout = null;
+  require('./karma-intellij-debug').initCustomContextFile(config);
   if (intellijUtil.isString(config.browserForDebugging)) {
     config.browsers = [config.browserForDebugging];
     console.info('intellij: set config.browsers to ' + JSON.stringify(config.browsers));
