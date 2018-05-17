@@ -1,10 +1,9 @@
 package com.intellij.lang.javascript.linter.tslint.editor
 
-import com.intellij.lang.javascript.JSBundle
-import com.intellij.lang.javascript.linter.JSLinterUtil
 import com.intellij.lang.javascript.linter.LinterCodeStyleImportSourceTracker
 import com.intellij.lang.javascript.linter.tslint.TsLintBundle
 import com.intellij.lang.javascript.linter.tslint.TslintUtil
+import com.intellij.lang.javascript.linter.tslint.codestyle.TsLintImportCodeStyleAction
 import com.intellij.lang.javascript.linter.tslint.codestyle.rules.TsLintConfigWrapper
 import com.intellij.lang.javascript.linter.tslint.codestyle.rules.TsLintSimpleRule
 import com.intellij.openapi.editor.colors.EditorColors
@@ -42,22 +41,9 @@ class TsLintCodeStyleEditorNotificationProvider(project: Project) : EditorNotifi
     return object : EditorNotificationPanel(EditorColors.GUTTER_BACKGROUND) {
       init {
         setText(TsLintBundle.message("tslint.code.style.apply.message"))
-        val okAction = Runnable {
-          runWriteActionAndUpdateNotifications(project, file, wrapper, rules)
-        }
-        createActionLabel(TsLintBundle.message("tslint.code.style.apply.text"), okAction)
+        createActionLabel(TsLintBundle.message("tslint.code.style.apply.text"), TsLintImportCodeStyleAction.ACTION_ID)
         createActionLabel(TsLintBundle.message("tslint.code.style.dismiss.text"), mySourceTracker.dismissAction)
       }
     }
-  }
-
-  private fun runWriteActionAndUpdateNotifications(project: Project,
-                                                   file: VirtualFile,
-                                                   wrapper: TsLintConfigWrapper,
-                                                   rules: Collection<TsLintSimpleRule<*>>) {
-    wrapper.applyRules(project, rules)
-    EditorNotifications.getInstance(project).updateAllNotifications()
-    JSLinterUtil.reportCodeStyleSettingsImported(project, JSBundle.message("settings.javascript.linters.tslint.configurable.name"), file,
-                                                 rules.map { it.optionId }.toSet())
   }
 }

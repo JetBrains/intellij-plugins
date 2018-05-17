@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 
 public class TsLintImportCodeStyleAction extends AnAction {
+  public static final String ACTION_ID = "TslintImportCodeStyleAction";
 
   @Override
   public void update(AnActionEvent e) {
