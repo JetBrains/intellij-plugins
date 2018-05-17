@@ -16,7 +16,7 @@ package com.intellij.lang.javascript.linter.tslint;
 import com.intellij.application.options.CodeStyle;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.linter.tslint.config.style.rules.TsLintConfigWrapper;
+import com.intellij.lang.javascript.linter.tslint.codestyle.rules.TsLintConfigWrapper;
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
@@ -26,7 +26,7 @@ import com.intellij.util.Consumer;
 import org.intellij.lang.annotations.Language;
 import org.junit.Assert;
 
-public class TslintCodeStyleImportTest extends LightPlatformCodeInsightFixtureTestCase {
+public class TsLintCodeStyleImportBasicTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testSimpleStringValue() throws Exception {
     doTestJson("{\"rules\": {\"semicolon\": [true,\"never\"]}}", (settings) -> {
       Assert.assertFalse(settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_SEMICOLON_AFTER_STATEMENT);

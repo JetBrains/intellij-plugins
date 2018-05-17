@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.linter.tslint.config.style.rules
+package com.intellij.lang.javascript.linter.tslint.codestyle.rules
 
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.openapi.project.Project

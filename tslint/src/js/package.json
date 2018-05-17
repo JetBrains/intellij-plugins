@@ -4,7 +4,8 @@
   "description": "tslint idea server implementation",
   "main": " ",
   "devDependencies": {
-    "tslint": "^3.15.0"
+    "tslint": "^5.10.0",
+    "@types/node": "10.1.0"
   },
   "repository": {
     "type": "git",

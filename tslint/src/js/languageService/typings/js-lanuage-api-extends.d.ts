@@ -1,9 +1,4 @@
 /**
- * NodeJS require function
- */
-declare let require: any;
-
-/**
  * Plugin state for starting the service
  *
  * see also js-language-service-api.d.ts

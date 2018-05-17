@@ -5,8 +5,8 @@ import com.intellij.lang.javascript.linter.JSLinterUtil
 import com.intellij.lang.javascript.linter.LinterCodeStyleImportSourceTracker
 import com.intellij.lang.javascript.linter.tslint.TsLintBundle
 import com.intellij.lang.javascript.linter.tslint.TslintUtil
-import com.intellij.lang.javascript.linter.tslint.config.style.rules.TsLintConfigWrapper
-import com.intellij.lang.javascript.linter.tslint.config.style.rules.TsLintSimpleRule
+import com.intellij.lang.javascript.linter.tslint.codestyle.rules.TsLintConfigWrapper
+import com.intellij.lang.javascript.linter.tslint.codestyle.rules.TsLintSimpleRule
 import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileEditor

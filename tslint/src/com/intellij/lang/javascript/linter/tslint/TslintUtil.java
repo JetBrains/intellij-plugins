@@ -31,6 +31,7 @@ public class TslintUtil {
   }
 
   public static final Logger LOG = Logger.getInstance("#com.intellij.lang.javascript.linter.tslint.TsLint");
+  public static final String PACKAGE_NAME = "tslint";
   public static final String TSLINT_JSON = "tslint.json";
 
   public static final String[] CONFIG_FILE_NAMES = new String[]{TSLINT_JSON, "tslint.yaml", "tslint.yml"};

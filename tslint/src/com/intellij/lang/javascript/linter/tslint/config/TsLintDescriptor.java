@@ -3,13 +3,12 @@ package com.intellij.lang.javascript.linter.tslint.config;
 import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
+import com.intellij.lang.javascript.linter.JSLinterCodeStyleImporter;
 import com.intellij.lang.javascript.linter.JSLinterConfiguration;
 import com.intellij.lang.javascript.linter.JSLinterDescriptor;
 import com.intellij.lang.javascript.linter.JSLinterGuesser;
-import com.intellij.lang.javascript.linter.JSLinterUtil;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
-import com.intellij.lang.javascript.linter.tslint.config.style.rules.TsLintConfigWrapper;
-import com.intellij.lang.javascript.linter.tslint.config.style.rules.TsLintSimpleRule;
+import com.intellij.lang.javascript.linter.tslint.codestyle.TsLintCodeStyleImporter;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -17,8 +16,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
 
 import static com.intellij.lang.javascript.linter.JSLinterConfigFileUtil.findDistinctConfigInContentRoots;
 
@@ -64,19 +62,10 @@ public final class TsLintDescriptor extends JSLinterDescriptor {
     if (config == null) return;
 
     PsiFile file = PsiManager.getInstance(project).findFile(config);
-    TsLintConfigWrapper wrapper = TsLintConfigWrapper.Companion.getConfigForFile(file);
-    if (wrapper == null) return;
-    Collection<TsLintSimpleRule<?>> rules = wrapper.getRulesToApply(project);
-    if (rules.isEmpty()) return;
+    if (file == null) return;
 
-    Map<TsLintSimpleRule<?>, Object> oldValues = wrapper.getCurrentSettings(project, rules);
-
-    wrapper.applyRules(project, rules);
-    Set<String> appliedRules = rules.stream().map(el -> el.getOptionId()).collect(Collectors.toSet());
-    String message = JSBundle.message("settings.javascript.linters.tslint.configurable.name");
-    JSLinterUtil.reportCodeStyleSettingsImported(project, message, config, appliedRules, () -> {
-      wrapper.applyValues(project, oldValues);
-    });
+    TsLintCodeStyleImporter importer = new TsLintCodeStyleImporter(false, false);
+    JSLinterCodeStyleImporter.importConfigFileWhenToolInstalled(importer, file);
   }
 
   @NotNull
