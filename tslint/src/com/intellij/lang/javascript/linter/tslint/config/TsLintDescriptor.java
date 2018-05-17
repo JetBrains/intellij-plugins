@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.linter.tslint.config;
 import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
+import com.intellij.lang.javascript.linter.JSLinterCodeStyleImporter;
 import com.intellij.lang.javascript.linter.JSLinterConfiguration;
 import com.intellij.lang.javascript.linter.JSLinterDescriptor;
 import com.intellij.lang.javascript.linter.JSLinterGuesser;
@@ -62,7 +63,9 @@ public final class TsLintDescriptor extends JSLinterDescriptor {
 
     PsiFile file = PsiManager.getInstance(project).findFile(config);
     if (file == null) return;
-    new TsLintCodeStyleImporter(false, false).importConfigFile(file);
+
+    TsLintCodeStyleImporter importer = new TsLintCodeStyleImporter(false, false);
+    JSLinterCodeStyleImporter.importConfigFileWhenToolInstalled(importer, file);
   }
 
   @NotNull
