@@ -1,6 +1,6 @@
 {
   "extends": [
-    "tslint:recommended"
+    "tslint:all"
   ],
   <caret>
   "rules": {

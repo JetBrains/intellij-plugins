@@ -15,12 +15,10 @@ package com.intellij.lang.javascript.linter.tslint;
 
 import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.linter.LinterHighlightingTest;
 import com.intellij.lang.javascript.linter.tslint.codestyle.TsLintImportCodeStyleAction;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
-import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
 public class TsLintCodeStyleImportIntegrationTest extends LinterHighlightingTest {
@@ -45,10 +43,9 @@ public class TsLintCodeStyleImportIntegrationTest extends LinterHighlightingTest
     myFixture.configureByFile(getTestName(true) + "/" + TslintUtil.TSLINT_JSON);
     JSTestUtils.testWithTempCodeStyleSettings(getProject(), (settings) -> {
       myFixture.testAction(new TsLintImportCodeStyleAction());
-      CommonCodeStyleSettings commonSettings = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT);
       TypeScriptCodeStyleSettings customSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
       assertFalse(customSettings.USE_SEMICOLON_AFTER_STATEMENT);
-      assertEquals(120, commonSettings.RIGHT_MARGIN);
+      assertTrue(customSettings.SPACES_WITHIN_IMPORTS);
     });
   }
 }
