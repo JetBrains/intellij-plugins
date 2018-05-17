@@ -29,6 +29,7 @@ import com.intellij.lang.javascript.modules.NodeModuleUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -132,6 +133,9 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
             SingleAlarm alarm = new SingleAlarm(resumeTestRunning, 5000);
             alarm.request();
             debugProcess.getConnection().executeOnStart((vm) -> {
+              if (Registry.is("js.debugger.break.on.first.statement", false)) {
+                vm.getBreakpointManager().setBreakOnFirstStatement();
+              }
               alarm.cancelAllRequests();
               resumeTestRunning.run();
               return Unit.INSTANCE;
@@ -185,8 +189,8 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
         }
       }
     }
+    VirtualFile[] roots = ManagingFS.getInstance().getLocalRoots();
     if (SystemInfo.isWindows) {
-      VirtualFile[] roots = ManagingFS.getInstance().getLocalRoots();
       for (VirtualFile root : roots) {
         String key = karmaServer.formatUrlWithoutUrlRoot("/absolute" + root.getName());
         if (mappings.containsKey(key)) {
@@ -198,7 +202,6 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
       }
     }
     else {
-      VirtualFile[] roots = ManagingFS.getInstance().getLocalRoots();
       if (roots.length == 1) {
         mappings.put(karmaServer.formatUrlWithoutUrlRoot("/absolute"), roots[0]);
       }
