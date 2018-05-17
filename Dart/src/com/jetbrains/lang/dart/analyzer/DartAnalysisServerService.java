@@ -94,6 +94,7 @@ import java.io.File;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DartAnalysisServerService implements Disposable {
 
@@ -1604,6 +1605,46 @@ public class DartAnalysisServerService implements Disposable {
     }
   }
 
+  public RuntimeCompletionResult execution_getSuggestions(@NotNull final VirtualFile file,
+                                                          @NotNull final String code,
+                                                          final int _offset,
+                                                          @NotNull final VirtualFile contextFile,
+                                                          final int contextOffset,
+                                                          @NotNull final List<RuntimeCompletionVariable> variables,
+                                                          @NotNull final List<RuntimeCompletionExpression> expressions) {
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+    final String contextFilePath = FileUtil.toSystemDependentName(contextFile.getPath());
+
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return new RuntimeCompletionResult(Lists.newArrayList(), Lists.newArrayList());
+    }
+
+    final CountDownLatch latch = new CountDownLatch(1);
+    final AtomicReference<RuntimeCompletionResult> refResult = new AtomicReference<>();
+    final int offset = getOriginalOffset(file, _offset);
+    server.execution_getSuggestions(
+      code, offset,
+      contextFilePath, contextOffset,
+      variables, expressions,
+      new GetRuntimeCompletionConsumer() {
+        @Override
+        public void computedResult(RuntimeCompletionResult result) {
+          refResult.set(result);
+          latch.countDown();
+        }
+
+        @Override
+        public void onError(RequestError error) {
+          logError("execution_getSuggestions()", filePath, error);
+          latch.countDown();
+        }
+      });
+
+    awaitForLatchCheckingCanceled(server, latch, GET_SUGGESTIONS_TIMEOUT);
+    return refResult.get();
+  }
+
   @Nullable
   public String execution_mapUri(@NotNull final String _id, @Nullable final String _filePath, @Nullable final String _uri) {
     // From the Dart Analysis Server Spec:
@@ -1688,6 +1729,7 @@ public class DartAnalysisServerService implements Disposable {
       }
 
       final DebugPrintStream debugStream = str -> {
+        if (!str.contains("{\"event\":\"analysis.errors\"")) System.out.println("debugStream: " + str);
         str = str.substring(0, Math.min(str.length(), MAX_DEBUG_LOG_LINE_LENGTH));
         synchronized (myDebugLog) {
           myDebugLog.add(str);
