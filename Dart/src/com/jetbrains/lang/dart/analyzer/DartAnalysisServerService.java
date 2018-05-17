@@ -1729,7 +1729,6 @@ public class DartAnalysisServerService implements Disposable {
       }
 
       final DebugPrintStream debugStream = str -> {
-        if (!str.contains("{\"event\":\"analysis.errors\"")) System.out.println("debugStream: " + str);
         str = str.substring(0, Math.min(str.length(), MAX_DEBUG_LOG_LINE_LENGTH));
         synchronized (myDebugLog) {
           myDebugLog.add(str);
