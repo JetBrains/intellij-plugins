@@ -37,7 +37,6 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
@@ -96,8 +95,7 @@ public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintCon
     commandLine.withCharset(StandardCharsets.UTF_8);
     commandLine.withWorkDirectory(ReadAction.compute(() -> configPsi.getContainingDirectory().getVirtualFile().getPath()));
     commandLine.setExePath(interpreter.getInterpreterSystemDependentPath());
-    commandLine.addParameter(new File(getPluginDirectory(TsLintImportCodeStyleAction.class, "js"), "convert-tslint-config")
-                               .getAbsolutePath());
+    commandLine.addParameter(getPluginDirectory(TsLintImportCodeStyleAction.class, "js/convert-tslint-config.js").getAbsolutePath());
     commandLine.addParameter(linterPackage.getSystemDependentPath());
     commandLine.addParameter(configPsi.getVirtualFile().getPath());
 
