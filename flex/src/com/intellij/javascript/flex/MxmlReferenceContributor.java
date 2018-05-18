@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptReferenceSet;
+import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptTextReference;
 import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
 import com.intellij.lang.javascript.psi.impl.JSTextReference;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
@@ -152,7 +153,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
       public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         final String trimmedText = StringUtil.unquoteString(element.getText());
         if (CodeContext.isPackageBackedNamespace(trimmedText)) {
-          return new JSReferenceSet(element, trimmedText, 1, false, false).getReferences();
+          return new ActionScriptReferenceSet(element, trimmedText, 1, false, false).getReferences();
         }
         return PsiReference.EMPTY_ARRAY;
       }
@@ -472,10 +473,10 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
     };
   }
 
-  private static class MyJSTextReference extends JSTextReference implements LocalQuickFixProvider {
+  private static class MyJSTextReference extends ActionScriptTextReference implements LocalQuickFixProvider {
     private final Function<PsiReference, LocalQuickFix[]> myQuickFixProvider;
 
-    MyJSTextReference(JSReferenceSet set,
+    MyJSTextReference(ActionScriptReferenceSet set,
                       String s,
                       int offset,
                       Function<PsiReference, LocalQuickFix[]> quickFixProvider) {
