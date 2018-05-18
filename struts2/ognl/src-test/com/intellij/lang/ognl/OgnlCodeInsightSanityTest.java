@@ -13,12 +13,14 @@
 // limitations under the License.
 package com.intellij.lang.ognl;
 
+import com.intellij.lexer.LayeredLexer;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.SkipSlowTestLocally;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.testFramework.propertyBased.CheckHighlighterConsistency;
 import com.intellij.testFramework.propertyBased.MadTestingAction;
 import com.intellij.testFramework.propertyBased.MadTestingUtil;
 import org.jetbrains.annotations.NonNls;
@@ -55,6 +57,18 @@ public class OgnlCodeInsightSanityTest extends LightCodeInsightFixtureTestCase {
 
   public void testReparse() {
     PropertyChecker.checkScenarios(actionsOnOgnlFiles(MadTestingUtil::randomEditsWithReparseChecks));
+  }
+
+  public void testIncrementalHighlighterUpdate() {
+    try {
+      // turn off embedded StringLiteralLexer from OgnlHighlightingLexer
+      LayeredLexer.ourDisableLayersFlag.set(Boolean.TRUE);
+
+      PropertyChecker.checkScenarios(actionsOnOgnlFiles(CheckHighlighterConsistency.randomEditsWithHighlighterChecks));
+    }
+    finally {
+      LayeredLexer.ourDisableLayersFlag.set(null);
+    }
   }
 
   @NotNull
