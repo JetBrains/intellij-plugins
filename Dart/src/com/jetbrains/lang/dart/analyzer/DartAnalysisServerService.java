@@ -1605,14 +1605,13 @@ public class DartAnalysisServerService implements Disposable {
     }
   }
 
-  public RuntimeCompletionResult execution_getSuggestions(@NotNull final VirtualFile file,
-                                                          @NotNull final String code,
-                                                          final int _offset,
+  @Nullable
+  public RuntimeCompletionResult execution_getSuggestions(@NotNull final String code,
+                                                          final int offset,
                                                           @NotNull final VirtualFile contextFile,
                                                           final int contextOffset,
                                                           @NotNull final List<RuntimeCompletionVariable> variables,
                                                           @NotNull final List<RuntimeCompletionExpression> expressions) {
-    final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final String contextFilePath = FileUtil.toSystemDependentName(contextFile.getPath());
 
     final AnalysisServer server = myServer;
@@ -1622,7 +1621,6 @@ public class DartAnalysisServerService implements Disposable {
 
     final CountDownLatch latch = new CountDownLatch(1);
     final AtomicReference<RuntimeCompletionResult> refResult = new AtomicReference<>();
-    final int offset = getOriginalOffset(file, _offset);
     server.execution_getSuggestions(
       code, offset,
       contextFilePath, contextOffset,
@@ -1636,7 +1634,7 @@ public class DartAnalysisServerService implements Disposable {
 
         @Override
         public void onError(RequestError error) {
-          logError("execution_getSuggestions()", filePath, error);
+          logError("execution_getSuggestions()", contextFilePath, error);
           latch.countDown();
         }
       });

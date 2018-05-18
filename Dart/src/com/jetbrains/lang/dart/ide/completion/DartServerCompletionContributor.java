@@ -170,11 +170,10 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
     final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
     final RuntimeCompletionResult completionResult =
-      das.execution_getSuggestions(originalFile.getVirtualFile(),
-                                   code, codeOffset,
+      das.execution_getSuggestions(code, codeOffset,
                                    contextFile, contextOffset,
                                    Lists.newArrayList(), Lists.newArrayList());
-    if (completionResult.suggestions != null) {
+    if (completionResult != null && completionResult.suggestions != null) {
       for (CompletionSuggestion suggestion : completionResult.suggestions) {
         LookupElementBuilder lookupElement = createLookupElement(project, suggestion);
         resultSet.addElement(lookupElement);
