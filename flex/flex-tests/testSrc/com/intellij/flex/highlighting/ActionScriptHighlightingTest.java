@@ -265,6 +265,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testSpellChecker() throws Exception {
+    PsiTestUtil.disablePsiTextConsistencyChecks(getTestRootDisposable());
     enableInspectionTool(new SpellCheckingInspection());
     doSimpleHighlightingWithInvokeFixAndCheckResult(RenameTo.FIX_NAME);
   }
@@ -873,6 +874,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testVariableUnderPackage() throws Exception {
+    PsiTestUtil.disablePsiTextConsistencyChecks(getTestRootDisposable());
     doSimpleHighlightingWithInvokeFixAndCheckResult("Rename variable 'Foo' to 'VariableUnderPackage'");
   }
 

@@ -2,6 +2,7 @@ package com.intellij.flex.intentions;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.flex.util.FlexTestUtils;
+import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle;
@@ -32,6 +33,7 @@ public class ActionScriptIntentionActionTest extends LightCodeInsightFixtureTest
   }
 
   public void testMergeDeclarationAndInitialization() {
+    PsiTestUtil.disablePsiTextConsistencyChecks(getTestRootDisposable());
     final String dirName = "mergeDeclarationAndInitialization/";
 
     final String intentionActionName = JSIntentionBundle.message("initialization.merge-declaration-and-initialization.display-name");
