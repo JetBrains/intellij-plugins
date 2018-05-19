@@ -13,6 +13,7 @@ import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.karma.util.StreamEventListener;
 import com.intellij.javascript.nodejs.NodeCommandLineUtil;
 import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.lang.javascript.ConsoleCommandLineFolder;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -22,6 +23,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.util.ConcurrencyUtil;
+import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.execution.ParametersListUtil;
 import com.intellij.util.text.SemVer;
@@ -42,8 +44,8 @@ public class KarmaServer {
   private final KarmaJsSourcesLocator myKarmaJsSourcesLocator;
   private final KarmaServerState myState;
   private final KarmaCoveragePeer myCoveragePeer;
-
   private final KarmaServerSettings myServerSettings;
+  private final ConsoleCommandLineFolder myCommandLineFolder = new ConsoleCommandLineFolder();
 
   private List<Runnable> myOnPortBoundCallbacks = Lists.newCopyOnWriteArrayList();
   private List<Runnable> myOnBrowsersReadyCallbacks = Lists.newCopyOnWriteArrayList();
@@ -61,7 +63,8 @@ public class KarmaServer {
     myServerSettings = serverSettings;
     myKarmaJsSourcesLocator = new KarmaJsSourcesLocator();
     myCoveragePeer = serverSettings.isWithCoverage() ? new KarmaCoveragePeer() : null;
-    KillableColoredProcessHandler processHandler = startServer(serverSettings, myKarmaJsSourcesLocator, myCoveragePeer);
+    KillableColoredProcessHandler processHandler = startServer(serverSettings, myKarmaJsSourcesLocator,
+                                                               myCoveragePeer, myCommandLineFolder);
     myProcessHashCode = System.identityHashCode(processHandler.getProcess());
     File configurationFile = myServerSettings.getConfigurationFile();
     myState = new KarmaServerState(this, configurationFile);
@@ -140,10 +143,16 @@ public class KarmaServer {
   }
 
   @NotNull
+  public ConsoleCommandLineFolder getCommandLineFolder() {
+    return myCommandLineFolder;
+  }
+
+  @NotNull
   private static KillableColoredProcessHandler startServer(@NotNull KarmaServerSettings serverSettings,
                                                            @NotNull KarmaJsSourcesLocator sourcesLocator,
-                                                           @Nullable KarmaCoveragePeer coveragePeer) throws IOException {
-    GeneralCommandLine commandLine = createCommandLine(serverSettings, sourcesLocator, coveragePeer);
+                                                           @Nullable KarmaCoveragePeer coveragePeer,
+                                                           @NotNull ConsoleCommandLineFolder commandLineFolder) throws IOException {
+    GeneralCommandLine commandLine = createCommandLine(serverSettings, sourcesLocator, coveragePeer, commandLineFolder);
 
     KillableColoredProcessHandler processHandler;
     try {
@@ -160,7 +169,8 @@ public class KarmaServer {
   @NotNull
   private static GeneralCommandLine createCommandLine(@NotNull KarmaServerSettings serverSettings,
                                                       @NotNull KarmaJsSourcesLocator sourcesLocator,
-                                                      @Nullable KarmaCoveragePeer coveragePeer) throws IOException {
+                                                      @Nullable KarmaCoveragePeer coveragePeer,
+                                                      @NotNull ConsoleCommandLineFolder commandLineFolder) throws IOException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     serverSettings.getEnvData().configureCommandLine(commandLine, true);
     NodeCommandLineUtil.configureUsefulEnvironment(commandLine);
@@ -177,37 +187,50 @@ public class KarmaServer {
     //  throw new IOException(e);
     //}
     NodePackage pkg = serverSettings.getKarmaPackage();
+    String userConfigFileName = PathUtil.getFileName(serverSettings.getConfigurationFilePath());
     boolean angularCli = KarmaUtil.isAngularCliPkg(pkg);
     if (angularCli) {
       commandLine.addParameter(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "ng");
       commandLine.addParameter("test");
-      String absoluteConfigPath = sourcesLocator.getIntellijConfigFile().getAbsolutePath();
+      commandLineFolder.addPlaceholderTexts("ng", "test");
+      File configFile = sourcesLocator.getIntellijConfigFile();
+      File workingDir = new File(serverSettings.getWorkingDirectorySystemDependent());
       if (shouldUseOldConfigCliOption(pkg)) {
-        File workingDir = new File(serverSettings.getWorkingDirectorySystemDependent());
-        String configPath = FileUtil.getRelativePath(workingDir, new File(absoluteConfigPath));
+        String configPath = FileUtil.getRelativePath(workingDir, configFile);
         if (configPath == null) {
-          configPath = absoluteConfigPath;
+          configPath = configFile.getAbsolutePath();
         }
         commandLine.addParameter("--config=" + configPath);
+        commandLineFolder.addPlaceholderText("--config=" + userConfigFileName);
       }
       else {
-        commandLine.addParameter("--karma-config=" + absoluteConfigPath);
+        AngularCliConfig config = AngularCliConfig.findProjectConfig(workingDir);
+        String defaultProject = config != null ? config.getDefaultProject() : null;
+        if (defaultProject != null) {
+          commandLine.addParameter(defaultProject);
+          commandLineFolder.addPlaceholderText(defaultProject);
+        }
+        commandLine.addParameter("--karma-config=" + configFile.getAbsolutePath());
+        commandLineFolder.addPlaceholderText("--karma-config=" + userConfigFileName);
       }
     }
     else {
       commandLine.addParameter(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "karma");
       commandLine.addParameter("start");
       commandLine.addParameter(sourcesLocator.getIntellijConfigFile().getAbsolutePath());
+      commandLineFolder.addPlaceholderTexts("karma", "start", userConfigFileName);
     }
     String browsers = serverSettings.getBrowsers();
     if (!StringUtil.isEmptyOrSpaces(browsers)) {
       commandLine.addParameter("--browsers=" + browsers);
+      commandLineFolder.addLastParameterFrom(commandLine);
     }
     setIntellijParameter(commandLine, "user-config", serverSettings.getConfigurationFilePath());
     if (coveragePeer != null) {
       setIntellijParameter(commandLine, "coverage-temp-dir", coveragePeer.getCoverageTempDir().getAbsolutePath());
       if (angularCli) {
         commandLine.addParameter("--code-coverage");
+        commandLineFolder.addLastParameterFrom(commandLine);
       }
     }
     if (serverSettings.isDebug()) {
