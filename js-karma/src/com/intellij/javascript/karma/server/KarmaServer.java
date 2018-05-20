@@ -205,7 +205,7 @@ public class KarmaServer {
       }
       else {
         AngularCliConfig config = AngularCliConfig.findProjectConfig(workingDir);
-        String defaultProject = config != null ? config.getDefaultProject() : null;
+        String defaultProject = config != null ? config.getDefaultOrFirstProject() : null;
         if (defaultProject != null) {
           commandLine.addParameter(defaultProject);
           commandLineFolder.addPlaceholderText(defaultProject);
