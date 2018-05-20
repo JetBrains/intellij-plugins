@@ -14,11 +14,13 @@
 package com.intellij.javascript.karma.server;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,21 +40,30 @@ public class AngularCliConfig {
   }
 
   @Nullable
-  public String getDefaultProject() {
+  public String getDefaultOrFirstProject() {
     try {
-      return doGetDefaultProject();
+      String value = doGetDefaultOrFirstProject();
+      if (value == null) {
+        LOG.info("Neither default nor any project defined in " + myConfig.getPath());
+      }
+      return value;
     }
-    catch (IOException e) {
-      LOG.info("Cannot get " + DEFAULT_PROJECT + " from " + myConfig.getPath(), e);
+    catch (Exception e) {
+      LOG.info("Cannot get default or first project from " + myConfig.getPath(), e);
       return null;
     }
   }
 
-  private String doGetDefaultProject() throws IOException {
+  @Nullable
+  private String doGetDefaultOrFirstProject() throws IOException {
     if (!myConfig.isValid()) return null;
     String text = JSLinterConfigFileUtil.loadActualText(myConfig);
     JsonElement root = new JsonParser().parse(text);
-    return JsonUtil.getChildAsString(root.getAsJsonObject(), DEFAULT_PROJECT);
+    JsonObject rootObj = root.getAsJsonObject();
+    String defaultProject = JsonUtil.getChildAsString(rootObj, DEFAULT_PROJECT);
+    if (defaultProject != null) return defaultProject;
+    JsonObject projects = JsonUtil.getChildAsObject(rootObj, "projects");
+    return projects != null ? ContainerUtil.getFirstItem(projects.keySet()) : null;
   }
 
   /**
