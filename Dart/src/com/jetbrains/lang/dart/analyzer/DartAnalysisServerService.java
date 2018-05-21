@@ -94,6 +94,7 @@ import java.io.File;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DartAnalysisServerService implements Disposable {
 
@@ -1602,6 +1603,44 @@ public class DartAnalysisServerService implements Disposable {
     if (server != null) {
       server.execution_deleteContext(contextId);
     }
+  }
+
+  @Nullable
+  public RuntimeCompletionResult execution_getSuggestions(@NotNull final String code,
+                                                          final int offset,
+                                                          @NotNull final VirtualFile contextFile,
+                                                          final int contextOffset,
+                                                          @NotNull final List<RuntimeCompletionVariable> variables,
+                                                          @NotNull final List<RuntimeCompletionExpression> expressions) {
+    final String contextFilePath = FileUtil.toSystemDependentName(contextFile.getPath());
+
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return new RuntimeCompletionResult(Lists.newArrayList(), Lists.newArrayList());
+    }
+
+    final CountDownLatch latch = new CountDownLatch(1);
+    final AtomicReference<RuntimeCompletionResult> refResult = new AtomicReference<>();
+    server.execution_getSuggestions(
+      code, offset,
+      contextFilePath, contextOffset,
+      variables, expressions,
+      new GetRuntimeCompletionConsumer() {
+        @Override
+        public void computedResult(RuntimeCompletionResult result) {
+          refResult.set(result);
+          latch.countDown();
+        }
+
+        @Override
+        public void onError(RequestError error) {
+          logError("execution_getSuggestions()", contextFilePath, error);
+          latch.countDown();
+        }
+      });
+
+    awaitForLatchCheckingCanceled(server, latch, GET_SUGGESTIONS_TIMEOUT);
+    return refResult.get();
   }
 
   @Nullable
