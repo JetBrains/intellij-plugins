@@ -11,8 +11,6 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
@@ -39,7 +37,7 @@ import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.actions.DartPopFrameAction;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
 import com.jetbrains.lang.dart.ide.runner.server.OpenDartObservatoryUrlAction;
-import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceEvaluatorOnLibrary;
+import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceEvaluator;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceSuspendContext;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -86,7 +84,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @NotNull private final OpenDartObservatoryUrlAction myOpenObservatoryAction =
     new OpenDartObservatoryUrlAction(null, () -> myVmConnected && !getSession().isStopped());
-
 
   public DartVmServiceDebugProcess(@NotNull final XDebugSession session,
                                    @NotNull final String debuggingHost,
@@ -157,6 +154,12 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     else {
       LOG.assertTrue(myExecutionResult != null && myDASExecutionContextId != null, myDASExecutionContextId + myExecutionResult);
     }
+  }
+
+  public ExceptionPauseMode getBreakOnExceptionMode() {
+    return DartExceptionBreakpointHandler
+      .getBreakOnExceptionMode(getSession(),
+                               DartExceptionBreakpointHandler.getDefaultExceptionBreakpoint(getSession().getProject()));
   }
 
   public VmServiceWrapper getVmServiceWrapper() {
@@ -581,33 +584,20 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   }
 
   @Nullable
+  public String getCurrentIsolateId() {
+    if (myLatestCurrentIsolateId != null) {
+      return myLatestCurrentIsolateId;
+    }
+    return getIsolateInfos().isEmpty() ? null : getIsolateInfos().iterator().next().getIsolateId();
+  }
+
+  @Nullable
   public XDebuggerEvaluator getEvaluator() {
     XStackFrame frame = getSession().getCurrentStackFrame();
     if (frame != null) {
       return frame.getEvaluator();
     }
-    String isolateId = myLatestCurrentIsolateId;
-    if (isolateId == null) {
-      if (getIsolateInfos().isEmpty()) {
-        return null;
-      } else {
-        // A breakpoint hasn't yet been hit but some isolates have been
-        // started. Use the first one.
-        isolateId = getIsolateInfos().iterator().next().getIsolateId();
-      }
-    }
-    Project project = getSession().getProject();
-    FileEditorManager manager = FileEditorManager.getInstance(project);
-
-    VirtualFile[] files = manager.getSelectedFiles();
-    if (files.length == 0) {
-      return null;
-    }
-
-    // TODO(jacobr): we could use the most recently selected Dart file instead
-    // of using the selected file.
-    VirtualFile currentFile = files[0];
-    return new DartVmServiceEvaluatorOnLibrary(this, isolateId, currentFile, project);
+    return new DartVmServiceEvaluator(this);
   }
 
   @NotNull
