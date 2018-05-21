@@ -1605,6 +1605,46 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   @Nullable
+  public RuntimeCompletionResult execution_getSuggestions(@NotNull final String code,
+                                                          final int offset,
+                                                          @NotNull final VirtualFile contextFile,
+                                                          final int contextOffset,
+                                                          @NotNull final List<RuntimeCompletionVariable> variables,
+                                                          @NotNull final List<RuntimeCompletionExpression> expressions) {
+    final String contextFilePath = FileUtil.toSystemDependentName(contextFile.getPath());
+
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return new RuntimeCompletionResult(Lists.newArrayList(), Lists.newArrayList());
+    }
+
+    final CountDownLatch latch = new CountDownLatch(1);
+    final Ref<RuntimeCompletionResult> refResult = Ref.create();
+    server.execution_getSuggestions(
+      code, offset,
+      contextFilePath, contextOffset,
+      variables, expressions,
+      new GetRuntimeCompletionConsumer() {
+        @Override
+        public void computedResult(RuntimeCompletionResult result) {
+          refResult.set(result);
+          latch.countDown();
+        }
+
+        @Override
+        public void onError(RequestError error) {
+          latch.countDown();
+          if (!RequestErrorCode.UNKNOWN_REQUEST.equals(error.getCode())) {
+            logError("execution_getSuggestions()", contextFilePath, error);
+          }
+        }
+      });
+
+    awaitForLatchCheckingCanceled(server, latch, GET_SUGGESTIONS_TIMEOUT);
+    return refResult.get();
+  }
+
+  @Nullable
   public String execution_mapUri(@NotNull final String _id, @Nullable final String _filePath, @Nullable final String _uri) {
     // From the Dart Analysis Server Spec:
     // Exactly one of the file and uri fields must be provided. If both fields are provided, then an error of type INVALID_PARAMETER will
