@@ -265,7 +265,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testSpellChecker() throws Exception {
-    PsiTestUtil.disablePsiTextConsistencyChecks(getTestRootDisposable());
     enableInspectionTool(new SpellCheckingInspection());
     doSimpleHighlightingWithInvokeFixAndCheckResult(RenameTo.FIX_NAME);
   }
@@ -874,7 +873,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testVariableUnderPackage() throws Exception {
-    PsiTestUtil.disablePsiTextConsistencyChecks(getTestRootDisposable());
     doSimpleHighlightingWithInvokeFixAndCheckResult("Rename variable 'Foo' to 'VariableUnderPackage'");
   }
 
@@ -1173,12 +1171,14 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
                      "}\n" +
                      "}";
     String prevText =
-      JSTestUtils.modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, newText, getProject());
+      JSTestUtils
+        .modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, newText, getProject());
     try {
       doCreateClassOrInterfaceTestWithCheck("Abc", true);
     }
     finally {
-      JSTestUtils.modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, prevText, getProject());
+      JSTestUtils
+        .modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, prevText, getProject());
     }
   }
 
@@ -1196,12 +1196,14 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
                      "}\n" +
                      "}";
     String prevText =
-      JSTestUtils.modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, newText, getProject());
+      JSTestUtils
+        .modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, newText, getProject());
     try {
       doCreateClassOrInterfaceTestWithCheck("Abc", false);
     }
     finally {
-      JSTestUtils.modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, prevText, getProject());
+      JSTestUtils
+        .modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, prevText, getProject());
     }
   }
 
@@ -1645,7 +1647,8 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   @JSTestOptions(JSTestOption.WithFlexFacet)
   public void testConditionalBlocks() throws Exception {
     FlexTestUtils.modifyBuildConfiguration(myModule, bc -> bc.getCompilerOptions()
-      .setAllOptions(Collections.singletonMap("compiler.define", "CONFIG::debugging\t")));
+                                                             .setAllOptions(
+                                                               Collections.singletonMap("compiler.define", "CONFIG::debugging\t")));
 
     enableInspectionTool(new BadExpressionStatementJSInspection());
     defaultTest();
