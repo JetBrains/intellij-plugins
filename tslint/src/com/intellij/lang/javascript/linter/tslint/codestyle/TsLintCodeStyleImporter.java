@@ -82,7 +82,7 @@ public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintCon
   @Nullable
   @Override
   protected TsLintConfigWrapper parseConfigFromFile(@NotNull PsiFile configPsi) {
-    return TsLintConfigWrapper.Companion.getConfigForFile(configPsi);
+    return ReadAction.compute(() -> TsLintConfigWrapper.Companion.getConfigForFile(configPsi));
   }
 
   @Nullable
