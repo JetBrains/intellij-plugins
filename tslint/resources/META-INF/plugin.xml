@@ -44,7 +44,10 @@
     <action class="com.intellij.lang.javascript.linter.tslint.fix.TsLintFileFixAction" id="TsLintFileFixAction"/>
     <action id="TslintImportCodeStyleAction"
             class="com.intellij.lang.javascript.linter.tslint.codestyle.TsLintImportCodeStyleAction" 
-            text="Apply TSLint Code Style Rules"/>
+            text="Apply TSLint Code Style Rules">
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+    </action>
   </actions>
 
 </idea-plugin>
