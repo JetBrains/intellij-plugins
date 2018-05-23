@@ -41,6 +41,6 @@ public class TsLintImportCodeStyleAction extends AnAction {
     if (configPsi == null || project == null) {
       return;
     }
-    new TsLintCodeStyleImporter(true, true).importConfigFile(configPsi);
+    new TsLintCodeStyleImporter(false).importConfigFile(configPsi);
   }
 }

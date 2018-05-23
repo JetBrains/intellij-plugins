@@ -14,9 +14,6 @@
 package com.intellij.lang.javascript.linter.tslint.codestyle;
 
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.CapturingProcessHandler;
-import com.intellij.execution.process.ProcessOutput;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.linter.JSLinterCodeStyleImporter;
@@ -31,22 +28,20 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static com.intellij.lang.javascript.service.JSLanguageServiceUtil.getPluginDirectory;
 
 public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintConfigWrapper> {
-  public TsLintCodeStyleImporter(boolean reportAlreadyImported, boolean showUiOnMissingTool) {
-    super(reportAlreadyImported, showUiOnMissingTool);
+  public TsLintCodeStyleImporter(boolean isForInitialImport) {
+    super(isForInitialImport);
   }
 
   @NotNull
@@ -91,27 +86,11 @@ public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintCon
                                                        @NotNull NodeJsLocalInterpreter interpreter,
                                                        @NotNull NodePackage linterPackage) throws ExecutionException {
 
-    GeneralCommandLine commandLine = new GeneralCommandLine();
-    commandLine.withCharset(StandardCharsets.UTF_8);
-    commandLine.withWorkDirectory(ReadAction.compute(() -> configPsi.getContainingDirectory().getVirtualFile().getPath()));
-    commandLine.setExePath(interpreter.getInterpreterSystemDependentPath());
-    commandLine.addParameter(getPluginDirectory(TsLintImportCodeStyleAction.class, "js/convert-tslint-config.js").getAbsolutePath());
-    commandLine.addParameter(linterPackage.getSystemDependentPath());
-    commandLine.addParameter(configPsi.getVirtualFile().getPath());
-
-    final CapturingProcessHandler processHandler = new CapturingProcessHandler(commandLine);
-    final ProcessOutput processOutput = processHandler.runProcess((int)TimeUnit.SECONDS.toMillis(10));
-    if (processOutput.isTimeout()) {
-      throw new ExecutionException("Timeout processing TSLint configuration file");
-    }
-    final int exitCode = processOutput.getExitCode();
-    final String stderr = processOutput.getStderr();
-    String stdout = processOutput.getStdout();
-    if (exitCode != 0) {
-      throw new ExecutionException(
-        "Error applying code style rules from  TSLint configuration file " + (StringUtil.isEmptyOrSpaces(stderr) ? stdout : stderr));
-    }
-    return TsLintConfigWrapper.Companion.getConfigFromText(stdout);
+    List<String> parameters =
+      ContainerUtil.list(getPluginDirectory(TsLintImportCodeStyleAction.class, "js/convert-tslint-config.js").getAbsolutePath(),
+                         linterPackage.getSystemDependentPath(),
+                         configPsi.getVirtualFile().getPath());
+    return TsLintConfigWrapper.Companion.getConfigFromText(runToolWithArguments(configPsi, interpreter, parameters));
   }
 
   @NotNull
