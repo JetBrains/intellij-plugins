@@ -21,8 +21,7 @@ public class AngularJSLanguageConfigurableProvider extends JSInheritedLanguagesC
   @Nullable
   @Override
   protected PsiElement createExpressionFromText(@NotNull String text,
-                                                @NotNull PsiElement element,
-                                                boolean reportErrorIfFailed) {
+                                                @NotNull PsiElement element) {
     JSExpressionStatement created =
       JSChangeUtil.createStatementPsiFromTextWithContext("(" + text + ")", element, JSExpressionStatement.class);
     JSParenthesizedExpression parenthesized = ObjectUtils.tryCast(created != null 
