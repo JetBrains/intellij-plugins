@@ -38,6 +38,14 @@ public class RenameTest extends LightPlatformCodeInsightFixtureTestCase {
     doMultiFileTest("test.component.html", "newName");
   }
 
+  public void testComponentFieldFromTemplate() throws IOException {
+    doMultiFileTest("test.component.html", "newName");
+  }
+
+  public void testLocalInTemplate() throws IOException {
+    doMultiFileTest("test.component.html", "newName");
+  }
+
   public void testComponentWithRelatedFiles() throws Exception {
     Messages.setTestDialog(TestDialog.OK);
     JSTestUtils.testWithTempCodeStyleSettings(getProject(), t -> {
