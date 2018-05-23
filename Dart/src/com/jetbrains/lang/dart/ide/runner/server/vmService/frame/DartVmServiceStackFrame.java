@@ -178,7 +178,7 @@ public class DartVmServiceStackFrame extends XStackFrame {
   @Nullable
   @Override
   public XDebuggerEvaluator getEvaluator() {
-    return new DartVmServiceEvaluator(myDebugProcess, myIsolateId, myVmFrame);
+    return new DartVmServiceEvaluatorInFrame(myDebugProcess, myIsolateId, myVmFrame);
   }
 
   public boolean isInDartSdkPatchFile() {
