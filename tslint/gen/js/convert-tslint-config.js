@@ -44,18 +44,15 @@ var modulePath = process.argv[2];
 var configFilePath = process.argv[3];
 var tslint = require(modulePath);
 var version = utils_1.getVersion(tslint);
-if (version.kind == 1 /* VERSION_4_AND_HIGHER */) {
-    var configFile = tslint.Configuration.loadConfigurationFromPath(configFilePath);
-    var result = {
+var configFile = version.major && version.major >= 4
+    ? tslint.Configuration.loadConfigurationFromPath(configFilePath)
+    : tslint.loadConfigurationFromPath(configFilePath);
+var configObject = version.major && version.major >= 5
+    ? {
         rules: mapToObject(configFile.rules, mapOptions),
         jsRules: mapToObject(configFile.jsRules, mapOptions)
-    };
-    console.log(JSON.stringify(result));
-}
-else {
-    var config = tslint.loadConfigurationFromPath(configFilePath);
-    console.log(JSON.stringify(config));
-}
+    } : configFile;
+console.log(JSON.stringify(configObject));
 function mapToObject(map, mapper) {
     var rules = {};
     try {

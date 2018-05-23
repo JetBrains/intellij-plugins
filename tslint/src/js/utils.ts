@@ -17,21 +17,24 @@ export const enum TsLintVersion {
 }
 
 export type Version = {
-    versionString: string | undefined,
-    kind: TsLintVersion
+    raw?: string | undefined,
+    major: number | undefined,
+    minor?: number
+    patch?: number
 }
 
 export function getVersion(tslint: any): Version {
     const version = tslint.VERSION || (tslint.Linter && tslint.Linter.VERSION);
     if (version == null) {
-        return {versionString: version, kind: TsLintVersion.VERSION_3_AND_BEFORE};
+        return {major: 3};
     }
 
-    const firstDot = version.indexOf(".");
-    const majorVersion = firstDot == -1 ? version : version.substr(0, firstDot + 1);
+    const numbers = (<string>version).split(".").map(value => Number(value));
 
-    const kind = majorVersion && (Number(majorVersion) > 3) ?
-        TsLintVersion.VERSION_4_AND_HIGHER :
-        TsLintVersion.VERSION_3_AND_BEFORE;
-    return {versionString: version, kind};
+    return {
+        raw: version,
+        major: numbers.length > 0 ? numbers[0] : undefined,
+        minor: numbers.length > 1 ? numbers[1] : undefined,
+        patch: numbers.length > 2 ? numbers[2] : undefined
+    };
 }

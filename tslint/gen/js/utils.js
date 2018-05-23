@@ -3,13 +3,14 @@ exports.__esModule = true;
 function getVersion(tslint) {
     var version = tslint.VERSION || (tslint.Linter && tslint.Linter.VERSION);
     if (version == null) {
-        return { versionString: version, kind: 0 /* VERSION_3_AND_BEFORE */ };
+        return { major: 3 };
     }
-    var firstDot = version.indexOf(".");
-    var majorVersion = firstDot == -1 ? version : version.substr(0, firstDot + 1);
-    var kind = majorVersion && (Number(majorVersion) > 3) ?
-        1 /* VERSION_4_AND_HIGHER */ :
-        0 /* VERSION_3_AND_BEFORE */;
-    return { versionString: version, kind: kind };
+    var numbers = version.split(".").map(function (value) { return Number(value); });
+    return {
+        raw: version,
+        major: numbers.length > 0 ? numbers[0] : undefined,
+        minor: numbers.length > 1 ? numbers[1] : undefined,
+        patch: numbers.length > 2 ? numbers[2] : undefined
+    };
 }
 exports.getVersion = getVersion;

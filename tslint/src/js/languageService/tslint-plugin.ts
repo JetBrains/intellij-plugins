@@ -1,4 +1,4 @@
-import {getVersion, TsLintVersion, Version} from "../utils";
+import {getVersion, Version} from "../utils";
 
 namespace TsLintCommands {
     export let GetErrors: string = "GetErrors";
@@ -47,7 +47,7 @@ export class TSLintPlugin implements LanguagePlugin {
         // here we use object -> JSON.stringify, because we need to escape possible error's text symbols
         // and we do not want to duplicate this code
         let response: Response = new Response();
-        response.version = this.linterOptions.version.versionString;
+        response.version = this.linterOptions.version.raw;
         response.command = request.command;
         response.request_seq = request.seq;
 
@@ -93,7 +93,7 @@ export class TSLintPlugin implements LanguagePlugin {
         let result = {};
 
         let configuration = this.getConfiguration(fileName, configFileName, linter);
-        if (linterOptions.version.kind == TsLintVersion.VERSION_4_AND_HIGHER) {
+        if (linterOptions.version.major && linterOptions.version.major >= 4) {
             let tslint = new linter(options);
             tslint.lint(fileName, content, configuration);
             result = tslint.getResult();
@@ -110,8 +110,8 @@ export class TSLintPlugin implements LanguagePlugin {
     private getConfiguration(fileName: string, configFileName: string, linter: any) {
 
         let linterConfiguration = this.linterOptions.linterConfiguration;
-        let versionKind = this.linterOptions.version.kind;
-        if (versionKind == TsLintVersion.VERSION_4_AND_HIGHER) {
+        let majorVersion = this.linterOptions.version.major;
+        if (majorVersion && majorVersion >= 4) {
             let configurationResult: any = linterConfiguration.findConfiguration(configFileName, fileName);
             if (!configurationResult) {
                 throw new Error("Cannot find configuration " + configFileName);
@@ -134,7 +134,7 @@ function resolveTsLint(options: PluginState): LinterOptions {
 
     const version = getVersion(tslint);
 
-    const linter = version.kind == TsLintVersion.VERSION_4_AND_HIGHER ? tslint.Linter : tslint;
+    const linter = version.major && version.major >= 4 ? tslint.Linter : tslint;
     const linterConfiguration = tslint.Configuration;
 
     return {linter, linterConfiguration, version};

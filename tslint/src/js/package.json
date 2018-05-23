@@ -5,7 +5,8 @@
   "main": " ",
   "devDependencies": {
     "tslint": "^5.10.0",
-    "@types/node": "10.1.0"
+    "@types/node": "10.1.0",
+    "typescript": "^2.8.3"
   },
   "repository": {
     "type": "git",

@@ -14,7 +14,7 @@
 
 import * as tslintModule from "tslint";
 import {IOptions} from "tslint";
-import {getVersion, TsLintVersion} from "./utils";
+import {getVersion} from "./utils";
 
 type TslintModuleType = typeof tslintModule;
 
@@ -22,18 +22,15 @@ const modulePath = process.argv[2];
 const configFilePath = process.argv[3];
 const tslint: TslintModuleType = require(modulePath);
 const version = getVersion(tslint);
-if (version.kind == TsLintVersion.VERSION_4_AND_HIGHER) {
-    const configFile = tslint.Configuration.loadConfigurationFromPath(configFilePath);
-    const result = {
+let configFile = version.major && version.major >= 4
+    ? tslint.Configuration.loadConfigurationFromPath(configFilePath)
+    : (<any>tslint).loadConfigurationFromPath(configFilePath);
+let configObject = version.major && version.major >= 5
+    ? {
         rules: mapToObject(configFile.rules, mapOptions),
         jsRules: mapToObject(configFile.jsRules, mapOptions)
-    }
-    console.log(JSON.stringify(result))
-}
-else {
-    const config = (<any>tslint).loadConfigurationFromPath(configFilePath);
-    console.log(JSON.stringify(config))
-}
+    } : configFile;
+console.log(JSON.stringify(configObject))
 
 function mapToObject(map: any, mapper: (p: any) => any) {
     const rules: any = {};
