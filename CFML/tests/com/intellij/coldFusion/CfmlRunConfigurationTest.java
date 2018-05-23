@@ -39,6 +39,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -76,10 +77,10 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
       final ConfigurationFromContext configurationFromContext = producer.createConfigurationFromContext(configurationContext);
       if (configurationFromContext != null) configs.add(configurationFromContext);
     }
-
-    assertThat(configs).hasSize(1);
-    final ConfigurationFromContext defaultConfigurationFromContext = configs.get(0);
-    final RunConfiguration configuration = defaultConfigurationFromContext.getConfiguration();
+    List<ConfigurationFromContext> cfmlRunContextConfigurations =
+      configs.stream().filter(context -> context.getConfiguration() instanceof CfmlRunConfiguration).collect(Collectors.toList());
+    assertThat(cfmlRunContextConfigurations).hasSize(1);
+    final RunConfiguration configuration = cfmlRunContextConfigurations.get(0).getConfiguration();
     TestCase.assertNotNull(configuration);
     UsefulTestCase.assertInstanceOf(configuration, CfmlRunConfiguration.class);
     return (CfmlRunConfiguration)configuration;
