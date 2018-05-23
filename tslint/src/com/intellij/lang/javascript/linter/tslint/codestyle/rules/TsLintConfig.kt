@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiFile
@@ -14,6 +15,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.util.*
 import org.yaml.snakeyaml.Yaml
 
+private val LOG = Logger.getInstance(TsLintConfigWrapper.javaClass)
 class TsLintConfigWrapper(private val rules: Map<String, TslintJsonOption>, private val extends: List<String>) {
 
   fun hasExtends() = !extends.isEmpty()
@@ -99,6 +101,7 @@ class TsLintConfigWrapper(private val rules: Map<String, TslintJsonOption>, priv
         Gson().fromJson<MutableMap<String, Any>>(text, MutableMap::class.java)
       }
       catch (e: Exception) {
+        LOG.debug("Could not parse JSON TSLint config from $text", e)
         null
       }
     }
@@ -108,6 +111,7 @@ class TsLintConfigWrapper(private val rules: Map<String, TslintJsonOption>, priv
         Yaml().load<Map<String, Any>>(text)
       }
       catch (e: Exception) {
+        LOG.debug("Could not parse YAML TSLint config from $text", e)
         null
       }
     }
