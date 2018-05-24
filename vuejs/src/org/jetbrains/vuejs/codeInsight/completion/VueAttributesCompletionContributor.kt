@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.jetbrains.vuejs.codeInsight
+package org.jetbrains.vuejs.codeInsight.completion
 
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElementBuilder
@@ -29,7 +29,8 @@ import org.jetbrains.vuejs.index.hasVue
 
 class VueAttributesCompletionContributor : CompletionContributor() {
   init {
-    extend(CompletionType.BASIC, psiElement(XmlTokenType.XML_NAME).withParent(xmlAttribute()), VueEventAttrCompletionProvider())
+    extend(CompletionType.BASIC, psiElement(XmlTokenType.XML_NAME).withParent(xmlAttribute()),
+           VueEventAttrCompletionProvider())
   }
 }
 
@@ -86,19 +87,24 @@ private class VueEventAttrCompletionProvider : CompletionProvider<CompletionPara
     val newResult = result.withPrefixMatcher(prefix.substring(lastDotIndex + 1))
     val usedModifiers = getUsedModifiers(prefix, lastDotIndex)
 
-    doAddModifierCompletions(newResult, usedModifiers, EVENT_MODIFIERS)
+    doAddModifierCompletions(newResult, usedModifiers,
+                             EVENT_MODIFIERS)
 
     if (isEventFromGroup(KEY_EVENTS, prefix)) {
-      doAddModifierCompletions(newResult, usedModifiers, KEY_MODIFIERS)
+      doAddModifierCompletions(newResult, usedModifiers,
+                               KEY_MODIFIERS)
       // Do we also want to suggest the full list of https://vuejs.org/v2/guide/events.html#Automatic-Key-Modifiers?
     }
 
     if (isEventFromGroup(MOUSE_BUTTON_EVENTS, prefix)) {
-      doAddModifierCompletions(newResult, usedModifiers, MOUSE_BUTTON_MODIFIERS)
+      doAddModifierCompletions(newResult, usedModifiers,
+                               MOUSE_BUTTON_MODIFIERS)
     }
 
-    if (isEventFromGroup(KEY_EVENTS, prefix) || isEventFromGroup(MOUSE_EVENTS, prefix)) {
-      doAddModifierCompletions(newResult, usedModifiers, SYSTEM_MODIFIERS)
+    if (isEventFromGroup(KEY_EVENTS, prefix) || isEventFromGroup(
+        MOUSE_EVENTS, prefix)) {
+      doAddModifierCompletions(newResult, usedModifiers,
+                               SYSTEM_MODIFIERS)
     }
   }
 
