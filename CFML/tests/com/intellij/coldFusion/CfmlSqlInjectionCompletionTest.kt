@@ -73,7 +73,7 @@ class CfmlSqlInjectionCompletionTest : SqlCompletionTestCase(null) {
                               type: CompletionType,
                               count: Int,
                               matchType: SqlCompletionTestCase.MatchType,
-                              vararg variants: String): Unit {
+                              vararg variants: String) {
     val dialect = SqlLanguage.INSTANCE.dialects.find { it.id == "SQL92" }
     SqlDialectMappings.getInstance(project).setMapping(null, dialect as SqlLanguageDialect)
     val file = myFixture.file

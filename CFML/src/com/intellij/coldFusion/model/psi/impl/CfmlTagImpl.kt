@@ -69,7 +69,7 @@ open class CfmlTagImpl : CfmlCompositeElement, CfmlTag, PsiLanguageInjectionHost
 
   //// PsiLanguageInjectionHost implementation
 
-  override fun isValidHost() = true
+  override fun isValidHost(): Boolean = true
 
   override fun updateText(text: String): PsiLanguageInjectionHost? = ElementManipulators.handleContentChange<CfmlTagImpl>(this, text)
 
