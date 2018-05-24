@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The authors
+ * Copyright 2018 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -267,11 +267,10 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b);
     r = expressionSequenceRequired_1_0(b, l + 1);
-    int c = current_position_(b);
     while (r) {
+      int c = current_position_(b);
       if (!expressionSequenceRequired_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "expressionSequenceRequired_1", c)) break;
-      c = current_position_(b);
     }
     exit_section_(b, m, null, r);
     return r;
@@ -306,11 +305,10 @@ public class OgnlParser implements PsiParser, LightPsiParser {
   // ('.' IDENTIFIER)*
   private static boolean fqnTypeExpression_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fqnTypeExpression_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!fqnTypeExpression_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "fqnTypeExpression_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -339,46 +337,53 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, MAP_ENTRY_ELEMENT, "<map entry>");
     r = expression(b, l + 1, -1);
-    r = r && consumeToken(b, COLON);
-    p = r; // pin = 2
-    r = r && expression(b, l + 1, -1);
+    p = r; // pin = 1
+    r = r && report_error_(b, consumeToken(b, COLON));
+    r = p && expression(b, l + 1, -1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   /* ********************************************************** */
-  // mapEntryElement (',' mapEntryElement)*
+  // [] mapEntryElement (',' mapEntryElement)*
   static boolean mapExpressionSequence(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapExpressionSequence")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = mapEntryElement(b, l + 1);
-    r = r && mapExpressionSequence_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = mapExpressionSequence_0(b, l + 1);
+    p = r; // pin = 1
+    r = r && report_error_(b, mapEntryElement(b, l + 1));
+    r = p && mapExpressionSequence_2(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // []
+  private static boolean mapExpressionSequence_0(PsiBuilder b, int l) {
+    return true;
   }
 
   // (',' mapEntryElement)*
-  private static boolean mapExpressionSequence_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "mapExpressionSequence_1")) return false;
-    int c = current_position_(b);
+  private static boolean mapExpressionSequence_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapExpressionSequence_2")) return false;
     while (true) {
-      if (!mapExpressionSequence_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "mapExpressionSequence_1", c)) break;
-      c = current_position_(b);
+      int c = current_position_(b);
+      if (!mapExpressionSequence_2_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "mapExpressionSequence_2", c)) break;
     }
     return true;
   }
 
   // ',' mapEntryElement
-  private static boolean mapExpressionSequence_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "mapExpressionSequence_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+  private static boolean mapExpressionSequence_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapExpressionSequence_2_0")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
     r = consumeToken(b, COMMA);
+    p = r; // pin = 1
     r = r && mapEntryElement(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -400,12 +405,10 @@ public class OgnlParser implements PsiParser, LightPsiParser {
   static boolean numberLiteralExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "numberLiteralExpression")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, INTEGER_LITERAL);
     if (!r) r = consumeToken(b, BIG_INTEGER_LITERAL);
     if (!r) r = consumeToken(b, DOUBLE_LITERAL);
     if (!r) r = consumeToken(b, BIG_DECIMAL_LITERAL);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -431,11 +434,10 @@ public class OgnlParser implements PsiParser, LightPsiParser {
   // (',' expression)*
   private static boolean parameterList_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "parameterList_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!parameterList_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "parameterList_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -597,10 +599,8 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "textLiteralExpression")) return false;
     if (!nextTokenIs(b, "", CHARACTER_LITERAL, STRING_LITERAL)) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, STRING_LITERAL);
     if (!r) r = consumeToken(b, CHARACTER_LITERAL);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -838,21 +838,18 @@ public class OgnlParser implements PsiParser, LightPsiParser {
   private static boolean indexedExpression_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "indexedExpression_0")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = referenceExpression(b, l + 1);
     if (!r) r = variableExpression(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
   // ('.' IDENTIFIER)*
   private static boolean indexedExpression_4(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "indexedExpression_4")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!indexedExpression_4_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "indexedExpression_4", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -945,11 +942,10 @@ public class OgnlParser implements PsiParser, LightPsiParser {
   // ('.' IDENTIFIER)*
   private static boolean referenceExpression_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "referenceExpression_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!referenceExpression_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "referenceExpression_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }

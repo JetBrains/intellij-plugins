@@ -13,9 +13,10 @@ OgnlFile:MissingKeyAfterFirstElement.ognl
       PsiWhiteSpace(' ')
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('value')
-  PsiElement(,)(',')
-  PsiWhiteSpace('  ')
-  PsiErrorElement:<map entry> expected, got '}'
+    PsiElement(,)(',')
+    PsiErrorElement:<map entry> expected, got '}'
+      <empty list>
+    PsiWhiteSpace('  ')
     PsiElement(})('}')
   PsiWhiteSpace(' ')
   PsiElement(EXPRESSION_END)('}')
