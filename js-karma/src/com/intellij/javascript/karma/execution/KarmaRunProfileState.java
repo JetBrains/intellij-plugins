@@ -9,6 +9,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
+import com.intellij.javascript.debugger.locationResolving.JSLocationResolver;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
@@ -73,6 +74,7 @@ public class KarmaRunProfileState implements RunProfileState {
       server = null;
     }
     if (server == null) {
+      JSLocationResolver.Companion.getInstance().dropCache(myRunConfiguration);
       registry.startServer(
         serverSettings,
         new CatchingConsumer<KarmaServer, Exception>() {
