@@ -146,11 +146,8 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
     val parsed = CloudFormationParser.parse(file)
     val resource = CloudFormationResolve.resolveResource(parsed, resourceName) ?: return
 
-    val resourceTypeName = resource.typeName ?: return
-    val resourceType = CloudFormationMetadataProvider.METADATA.findResourceType(resourceTypeName, parsed.root) ?: return
-
-    resourceType.attributes.values.forEach {
-      rs.addElement(createLookupElement(it.name, quote))
+    resource.getAttributes(parsed.root).keys.sorted().forEach {
+      rs.addElement(createLookupElement(it, quote))
     }
   }
 

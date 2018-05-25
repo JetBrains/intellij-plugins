@@ -25,7 +25,7 @@ Resources:
                   EventType: origin-request
                   # <SAM-Function.Version> provides {FunctionARN}:{Version} which is exactly what Cloudfront expects
                   # SAM Benefit here is upon function changes this function version will also be updated in Cloudfront
-                  LambdaFunctionARN: 0@<!Ref LambdaEdgeFunctionSample.Version>
+                  LambdaFunctionARN: !GetAtt LambdaEdgeFunctionSample.Version
               ForwardedValues:
                 QueryString: 'false'
                 Headers:
@@ -44,6 +44,15 @@ Resources:
           Timeout: 5
           # More info at https://github.com/awslabs/serverless-application-model/blob/master/docs/safe_lambda_deployments.rst
           AutoPublishAlias: live
+
+    LambdaEdgeFunctionSampleWithoutAutoPublishAlias:
+        Type: AWS::Serverless::Function
+        Properties:
+          CodeUri: src/
+          Role: !GetAtt LambdaEdgeFunctionRole.Arn
+          Runtime: nodejs6.10
+          Handler: index.handler
+          Timeout: 5
 
     LambdaEdgeFunctionRole:
       Type: "AWS::IAM::Role"
@@ -72,11 +81,20 @@ Outputs:
 
     LambdaEdgeFunctionSampleVersion:
       Description: Lambda@Edge Sample Function ARN with Version
-      Value: 1@<!Ref LambdaEdgeFunctionSample.Version>
+      Value: !GetAtt LambdaEdgeFunctionSample.Version
+
+    LambdaEdgeFunctionSampleVersion2:
+      Description: Lambda@Edge Sample Function ARN with Version
+      Value: !Ref LambdaEdgeFunctionSample.Version
+
+    LambdaEdgeFunctionSampleWithoutAutoPublishAliasVersion:
+      Description: Lambda@Edge Sample Function ARN with Version
+      Value: !GetAtt LambdaEdgeFunctionSampleWithoutAutoPublishAlias.Version
+
+    LambdaEdgeFunctionSampleWithoutAutoPublishAliasVersion2:
+      Description: Lambda@Edge Sample Function ARN with Version
+      Value: !Ref LambdaEdgeFunctionSampleWithoutAutoPublishAlias.Version
 
     CFDistribution:
       Description: Cloudfront Distribution Domain Name
       Value: !GetAtt CFDistribution.DomainName
-
-0: Cannot resolve symbol 'LambdaEdgeFunctionSample.Version'
-1: Cannot resolve symbol 'LambdaEdgeFunctionSample.Version'

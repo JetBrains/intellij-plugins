@@ -100,10 +100,26 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
         if (function.args.size != 1 || arg0 !is CfnScalarValueNode) {
           addProblem(function, "Reference expects one string argument")
         } else {
-          if (!CloudFormationMetadataProvider.METADATA.predefinedParameters.contains(arg0.value)) {
-            val resourceNodeParent = function.parentOfType<CfnResourceNode>(parsed)
-            val excluded = resourceNodeParent?.let { it.name?.value }?.let { listOf(it) } ?: emptyList()
-            addEntityReference(arg0, CloudFormationSection.ParametersAndResources, excludeFromCompletion = excluded)
+          val arg0WithoutVersionOrAlias = arg0.value.removeSuffix(".Version").removeSuffix(".Alias")
+          val resourceNodeWithoutVersionOrAlias = CloudFormationResolve.resolveResource(
+              parsed, arg0WithoutVersionOrAlias)
+
+          val resourceNodeParent = function.parentOfType<CfnResourceNode>(parsed)
+          val excluded = resourceNodeParent?.let { it.name?.value }?.let { listOf(it) } ?: emptyList()
+
+          when {
+            CloudFormationMetadataProvider.METADATA.predefinedParameters.contains(arg0.value) -> Unit
+
+            // Disgusting hack from serverless spec
+            // https://github.com/awslabs/serverless-application-model/blob/develop/versions/2016-10-31.md#referencing-lambda-version--alias-resources
+            resourceNodeWithoutVersionOrAlias != null && resourceNodeWithoutVersionOrAlias.isAwsServerlessFunctionWithAutoPublishAlias() &&
+                arg0WithoutVersionOrAlias != arg0.value -> {
+              addEntityReference(arg0, CloudFormationSection.ResourcesSingletonList, excludeFromCompletion = excluded, referenceValue = arg0WithoutVersionOrAlias)
+            }
+
+            else -> {
+              addEntityReference(arg0, CloudFormationSection.ParametersAndResources, excludeFromCompletion = excluded)
+            }
           }
         }
 
@@ -188,13 +204,12 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
             val typeName = resource?.typeName
             if (typeName != null &&
                 !CloudFormationResourceType.isCustomResourceType(typeName) &&
-                !(CloudFormationResourceType.isCloudFormationStack(typeName) && attributeName.startsWith("Outputs."))) {
-              CloudFormationMetadataProvider.METADATA.resourceTypes[typeName]?.let {
-                if (!it.attributes.containsKey(attributeName)) {
-                  addProblem(
-                      if (function.args.size == 1) arg0 else (arg1 ?: function),
-                      "Unknown attribute in resource type '$typeName': $attributeName")
-                }
+                !(CloudFormationResourceType.isCloudFormationStack(typeName) && attributeName.startsWith("Outputs.")) &&
+                CloudFormationMetadataProvider.METADATA.findResourceType(typeName, parsed.root) != null) {
+              if (!resource.getAttributes(parsed.root).containsKey(attributeName)) {
+                addProblem(
+                    if (function.args.size == 1) arg0 else (arg1 ?: function),
+                    "Unknown attribute in resource type '$typeName': $attributeName")
               }
             }
           }

@@ -6,8 +6,7 @@ data class CloudFormationManualResourceType(
     val description: String,
     val properties: List<CloudFormationManualResourceProperty>,
     val attributes: List<CloudFormationManualResourceAttribute> = emptyList()
-) {
-}
+)
 
 data class CloudFormationManualResourceProperty(
     val name: String,
