@@ -49,3 +49,10 @@ Build and Test locally
  * "gradlew assemble" to build plugin in build/distributions
  * "gradlew test" to run tests
  * "gradlew runIdea" to run IntelliJ IDEA with CloudFormation plugin
+
+Make a release
+--------------
+
+ * Pin and tag build with 'release' on https://teamcity.jetbrains.com/viewType.html?buildTypeId=IdeaAwsCloudFormation_Master_Build
+ * Add release to https://github.com/shalupov/idea-cloudformation/releases
+ * Upload zip from https://teamcity.jetbrains.com/viewType.html?buildTypeId=IdeaAwsCloudFormation_Master_Build to https://plugins.jetbrains.com/plugin/7371-aws-cloudformation
