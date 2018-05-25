@@ -70,7 +70,7 @@ Prerequisites:
    Zero mandatory local changes in intellij-plugins repository.
    There should be 3 locally changed files in intellij-community repository, each having exactly one added line,
    just keep these files in a separate '~never commit' changelist and do not worry about them:
-     - intellij-community/community-main.iml (line `<orderEntry type="module" module-name="Dart-community" />`)
+     - intellij-community/intellij.idea.community.main.iml (line `<orderEntry type="module" module-name="Dart-community" />`)
      - intellij-community/.idea/modules.xml (line `<module fileurl="file://$PROJECT_DIR$/../intellij-plugins/Dart/Dart-community.iml" ... />`)
      - intellij-community/.idea/vcs.xml (line `<mapping directory="$PROJECT_DIR$/../intellij-plugins" vcs="Git" />`)
 

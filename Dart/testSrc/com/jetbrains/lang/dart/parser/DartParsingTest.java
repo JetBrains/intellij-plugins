@@ -155,4 +155,8 @@ public class DartParsingTest extends ParsingTestCase {
   public void testFunctionType() {
     doTest();
   }
+
+  public void testAsyncForgotten() {
+    doTest();
+  }
 }

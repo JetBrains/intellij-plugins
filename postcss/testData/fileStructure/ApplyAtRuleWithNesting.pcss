@@ -1,0 +1,15 @@
+@media all {
+  @apply --my;
+}
+
+div {
+  @apply --my2;
+}
+
+a {
+  @nest &:--any-link, :--button & {
+    & p {
+      @apply --my3;
+    }
+  }
+}

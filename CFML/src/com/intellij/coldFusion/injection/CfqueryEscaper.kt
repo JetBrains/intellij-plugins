@@ -12,9 +12,9 @@ class CfqueryEscaper(tag: CfmlTagImpl) : LiteralTextEscaper<CfmlTagImpl>(tag) {
     return true
   }
 
-  override fun getOffsetInHost(offsetInDecoded: Int, rangeInsideHost: TextRange) = offsetInDecoded + rangeInsideHost.startOffset
+  override fun getOffsetInHost(offsetInDecoded: Int, rangeInsideHost: TextRange): Int = offsetInDecoded + rangeInsideHost.startOffset
 
-  override fun isOneLine() = false
+  override fun isOneLine(): Boolean = false
 
   //exclude cfquery tags from TextRange
   override fun getRelevantTextRange(): TextRange {

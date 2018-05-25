@@ -1,0 +1,13 @@
+@media all {
+  @custom-media --my all;
+}
+
+div {
+  @custom-media --my2 screen;
+}
+
+a {
+  @media (--my), (--my2) {
+    color: red;
+  }
+}

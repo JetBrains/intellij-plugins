@@ -12,10 +12,10 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.ReferenceSupport;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
+import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptReferenceSet;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeNameValuePairImpl;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
-import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
@@ -61,7 +61,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
         return false;
       }
     };
-  private static final Key<JSReferenceSet> METADATA_REFERENCE_KEY = Key.create("com.intellij.lang.javascript.METADATA_REFERENCE_KEY");
+  private static final Key<ActionScriptReferenceSet> METADATA_REFERENCE_KEY = Key.create("com.intellij.lang.javascript.METADATA_REFERENCE_KEY");
   private static final FlexPropertiesSupport.BundleReferenceInfoProvider<JSAttributeNameValuePairImpl> ourBundleInfoProvider =
     new FlexPropertiesSupport.BundleReferenceInfoProvider<JSAttributeNameValuePairImpl>() {
       public TextRange getReferenceRange(JSAttributeNameValuePairImpl element) {
@@ -113,9 +113,9 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     if (valueNode != null) {
       final int offsetInParent = valueNode.getPsi().getStartOffsetInParent();
       final String text = valueNode.getText();
-      JSReferenceSet referenceSet = element.getUserData(METADATA_REFERENCE_KEY);
+      ActionScriptReferenceSet referenceSet = element.getUserData(METADATA_REFERENCE_KEY);
       if (referenceSet == null) {
-        referenceSet = new JSReferenceSet(element, "", offsetInParent, false, true);
+        referenceSet = new ActionScriptReferenceSet(element, "", offsetInParent, false, true);
         element.putUserData(METADATA_REFERENCE_KEY, referenceSet);
 
         referenceSet.setLocalQuickFixProvider(new ClassRefQuickFixProvider(element, referenceSet));
@@ -145,9 +145,9 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     if ("DefaultProperty".equals(parentName)) {
       final ASTNode valueNode = element.findValueNode();
       if (valueNode != null) {
-        JSReferenceSet referenceSet = element.getUserData(METADATA_REFERENCE_KEY);
+        ActionScriptReferenceSet referenceSet = element.getUserData(METADATA_REFERENCE_KEY);
         if (referenceSet == null) {
-          referenceSet = new JSReferenceSet(element, false);
+          referenceSet = new ActionScriptReferenceSet(element, false);
           element.putUserData(METADATA_REFERENCE_KEY, referenceSet);
         }
         referenceSet.update(valueNode.getText(), valueNode.getPsi().getStartOffsetInParent());
@@ -203,9 +203,9 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
 
   private static class ClassRefQuickFixProvider implements LocalQuickFixProvider {
     private final JSAttributeNameValuePairImpl myElement;
-    private final JSReferenceSet myReferenceSet;
+    private final ActionScriptReferenceSet myReferenceSet;
 
-    public ClassRefQuickFixProvider(JSAttributeNameValuePairImpl element, JSReferenceSet referenceSet) {
+    public ClassRefQuickFixProvider(JSAttributeNameValuePairImpl element, ActionScriptReferenceSet referenceSet) {
       myElement = element;
       myReferenceSet = referenceSet;
     }

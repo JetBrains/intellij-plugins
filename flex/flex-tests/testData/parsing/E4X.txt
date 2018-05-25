@@ -85,6 +85,8 @@ JSFile:E4X.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:LPAR)('(')
     JSVarStatement
+      ActionScriptAttributeList
+        <empty list>
       PsiElement(JS:VAR_KEYWORD)('var')
       PsiWhiteSpace(' ')
       ActionScriptVariable
@@ -497,6 +499,8 @@ JSFile:E4X.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:LPAR)('(')
     JSVarStatement
+      ActionScriptAttributeList
+        <empty list>
       PsiElement(JS:VAR_KEYWORD)('var')
       PsiWhiteSpace(' ')
       ActionScriptVariable
@@ -550,6 +554,8 @@ JSFile:E4X.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:LPAR)('(')
     JSVarStatement
+      ActionScriptAttributeList
+        <empty list>
       PsiElement(JS:VAR_KEYWORD)('var')
       PsiWhiteSpace(' ')
       ActionScriptVariable
@@ -838,6 +844,8 @@ JSFile:E4X.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:LPAR)('(')
     JSVarStatement
+      ActionScriptAttributeList
+        <empty list>
       PsiElement(JS:VAR_KEYWORD)('var')
       PsiWhiteSpace(' ')
       ActionScriptVariable

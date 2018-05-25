@@ -11,18 +11,15 @@ import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLinterInput;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueueImpl;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.LineSeparator;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -36,9 +33,7 @@ import java.util.stream.Collectors;
 public class TsLintHighlightingTest extends LinterHighlightingTest {
   @Override
   protected String getBasePath() {
-    final String homePath = isCommunity() ? PlatformTestUtil.getCommunityPath() : PathManager.getHomePath();
-    final String path = TsLintTestUtil.BASE_TEST_DATA_PATH + "/highlighting/";
-    return File.separator + FileUtil.getRelativePath(new File(homePath), new File(path));
+    return TsLintTestUtil.getTestDataRelativePath() + "/highlighting/";
   }
 
   @NotNull

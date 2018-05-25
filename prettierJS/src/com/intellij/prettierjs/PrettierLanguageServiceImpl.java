@@ -10,9 +10,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.Consumer;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.concurrency.FixedFuture;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webcore.util.JsonUtil;
@@ -21,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import static com.intellij.lang.javascript.service.JSLanguageServiceQueue.LOGGER;
@@ -45,14 +42,15 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
 
   @Nullable
   @Override
-  public Future<FormatResult> format(@NotNull PsiFile file, @NotNull NodePackage prettierPackage, @Nullable TextRange range) {
+  public Future<FormatResult> format(@NotNull String filePath, @NotNull String text, @NotNull NodePackage prettierPackage,
+                                     @Nullable TextRange range) {
     String prettierPackagePath = JSLanguageServiceUtil.normalizeNameAndPath(prettierPackage.getSystemDependentPath());
     JSLanguageServiceQueue process = getProcess();
     if (process == null || !process.isValid()) {
       return new FixedFuture<>(FormatResult.error(PrettierBundle.message("service.not.started.message")));
     }
     ReformatFileCommand command =
-      new ReformatFileCommand(file.getVirtualFile().getPath(), prettierPackagePath, file.getText(), range, myFlushConfigCache);
+      new ReformatFileCommand(filePath, prettierPackagePath, text, range, myFlushConfigCache);
     return process.execute(command, (ignored, response) -> {
       myFlushConfigCache = false;
       return parseReformatResponse(response);

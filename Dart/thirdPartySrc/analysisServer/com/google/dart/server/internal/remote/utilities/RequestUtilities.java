@@ -30,7 +30,11 @@ import java.util.Map.Entry;
  * @coverage dart.server.remote
  */
 public class RequestUtilities {
+  private static final String CODE = "code";
+  private static final String CONTEXT_FILE = "contextFile";
+  private static final String CONTEXT_OFFSET = "contextOffset";
   private static final String CONTEXT_ROOT = "contextRoot";
+  private static final String EXPRESSIONS = "expressions";
   private static final String FILE = "file";
   private static final String ID = "id";
   private static final String LENGTH = "length";
@@ -44,6 +48,7 @@ public class RequestUtilities {
   private static final String SUBSCRIPTIONS = "subscriptions";
   private static final String SUPER_ONLY = "superOnly";
   private static final String URI = "uri";
+  private static final String VARIABLES = "variables";
   private static final String KEY = "key";
   private static final String ELEMENTS = "elements";
 
@@ -93,6 +98,7 @@ public class RequestUtilities {
   // Execution domain
   private static final String METHOD_EXECUTION_CREATE_CONTEXT = "execution.createContext";
   private static final String METHOD_EXECUTION_DELETE_CONTEXT = "execution.deleteContext";
+  private static final String METHOD_EXECUTION_GET_SUGGESTIONS = "execution.getSuggestions";
   private static final String METHOD_EXECUTION_MAP_URI = "execution.mapUri";
   private static final String METHOD_EXECUTION_SET_SUBSCRIPTIONS = "execution.setSubscriptions";
 
@@ -662,6 +668,41 @@ public class RequestUtilities {
     JsonObject params = new JsonObject();
     params.addProperty(ID, contextId);
     return buildJsonObjectRequest(idValue, METHOD_EXECUTION_DELETE_CONTEXT, params);
+  }
+
+  /**
+   * Generate and return a {@value #METHOD_EXECUTION_GET_SUGGESTIONS} request.
+   * <p>
+   * <pre>
+   * request: {
+   *   "id": String
+   *   "method": "execution.getSuggestions"
+   *   "params": {
+   *     "code": String
+   *     "offset": int
+   *     "contextFile": FilePath
+   *     "contextOffset": int
+   *     "variables": List<RuntimeCompletionVariable>
+   *     "expressions": optional List<RuntimeCompletionExpression>
+   *   }
+   * }
+   * </pre>
+   */
+  public static JsonObject generateExecutionGetSuggestions(String idValue,
+                                                           String code,
+                                                           int offset,
+                                                           String contextFile,
+                                                           int contextOffset,
+                                                           List<RuntimeCompletionVariable> variables,
+                                                           List<RuntimeCompletionExpression> expressions) {
+    JsonObject params = new JsonObject();
+    params.addProperty(CODE, code);
+    params.addProperty(OFFSET, offset);
+    params.addProperty(CONTEXT_FILE, contextFile);
+    params.addProperty(CONTEXT_OFFSET, contextOffset);
+    params.add(VARIABLES, buildJsonElement(variables));
+    params.add(EXPRESSIONS, buildJsonElement(expressions));
+    return buildJsonObjectRequest(idValue, METHOD_EXECUTION_GET_SUGGESTIONS, params);
   }
 
   /**

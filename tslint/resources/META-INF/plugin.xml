@@ -35,12 +35,19 @@
     <externalAnnotator language="JavaScript" implementationClass="com.intellij.lang.javascript.linter.tslint.highlight.TsLintExternalAnnotator"/>
     <externalAnnotator language="HTML" implementationClass="com.intellij.lang.javascript.linter.tslint.highlight.TsLintExternalAnnotator"/>
     <psi.referenceContributor language="JSON" implementation="com.intellij.lang.javascript.linter.tslint.TsLintConfigReferenceContributor"/>
+    <json.jsonStandardComplianceProvider implementation="com.intellij.lang.javascript.linter.tslint.TslintJsonStandardComplianceProvider"/>
   </extensions>
   <extensions defaultExtensionNs="JavaScript.JsonSchema">
     <ProviderFactory implementation="com.intellij.lang.javascript.linter.tslint.schema.TsLintJsonSchemaProviderFactory"/>
   </extensions>
   <actions>
     <action class="com.intellij.lang.javascript.linter.tslint.fix.TsLintFileFixAction" id="TsLintFileFixAction"/>
+    <action id="TslintImportCodeStyleAction"
+            class="com.intellij.lang.javascript.linter.tslint.codestyle.TsLintImportCodeStyleAction" 
+            text="Apply TSLint Code Style Rules">
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+    </action>
   </actions>
 
 </idea-plugin>

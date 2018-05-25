@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.intellij.coldFusion;
 
 import com.intellij.coldFusion.UI.runner.CfmlRunConfiguration;
@@ -26,6 +39,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -63,10 +77,10 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
       final ConfigurationFromContext configurationFromContext = producer.createConfigurationFromContext(configurationContext);
       if (configurationFromContext != null) configs.add(configurationFromContext);
     }
-
-    assertThat(configs).hasSize(1);
-    final ConfigurationFromContext defaultConfigurationFromContext = configs.get(0);
-    final RunConfiguration configuration = defaultConfigurationFromContext.getConfiguration();
+    List<ConfigurationFromContext> cfmlRunContextConfigurations =
+      configs.stream().filter(context -> context.getConfiguration() instanceof CfmlRunConfiguration).collect(Collectors.toList());
+    assertThat(cfmlRunContextConfigurations).hasSize(1);
+    final RunConfiguration configuration = cfmlRunContextConfigurations.get(0).getConfiguration();
     TestCase.assertNotNull(configuration);
     UsefulTestCase.assertInstanceOf(configuration, CfmlRunConfiguration.class);
     return (CfmlRunConfiguration)configuration;
@@ -76,11 +90,10 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
     final CfmlRunConfiguration defaultCfmlRunConfiguration = getDefaultCfmlRunConfiguration();
     final CfmlRunConfiguration clonedConfiguration = (CfmlRunConfiguration) defaultCfmlRunConfiguration.clone();
     clonedConfiguration.getRunnerParameters().setUrl("http://4.4.4.4/src/index.cfm");
-    final RunnerAndConfigurationSettings runnerAndConfigurationSettings = RunManager.getInstance(getProject())
-      .createConfiguration(clonedConfiguration, CfmlRunConfigurationType.getInstance().getConfigurationFactories()[0]);
-    RunManager.getInstance(getProject()).addConfiguration(runnerAndConfigurationSettings);
+    RunManager runManager = RunManager.getInstance(getProject());
+    RunnerAndConfigurationSettings runnerAndConfigurationSettings = runManager.createConfiguration(clonedConfiguration, CfmlRunConfigurationType.getInstance().getConfigurationFactories()[0]);
+    runManager.addConfiguration(runnerAndConfigurationSettings);
   }
-
 
   private static CfmlRunConfiguration getContextRunConfiguration(Editor editor){
     final DataContext dataContext = DataManager.getInstance().getDataContext(editor.getComponent());
@@ -118,7 +131,6 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
     TestCase.assertEquals("index2.cfm", configuration.getName());
   }
 
-
   public PsiFile createCfmPsiFile(String filename) throws IOException {
     String filePath = getDataPath() + filename;
     FileInputStream fileInputStream = new FileInputStream(new File(filePath));
@@ -153,6 +165,4 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
   protected String getDataPath() {
     return CfmlTestUtil.BASE_TEST_DATA_PATH + "/runconfig/";
   }
-
-
 }

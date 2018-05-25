@@ -1,0 +1,28 @@
+PostCSS File:NestAtRuleIncorrectSelectorList.pcss
+  PsiElement(POST_CSS_LAZY_STYLESHEET)
+    PsiElement(POST_CSS_STYLESHEET)
+      PsiElement(CSS_RULESET_LIST)
+        PsiElement(POST_CSS_NEST)
+          PsiElement(POST_CSS_NEST_SYM)('@nest')
+          PsiWhiteSpace(' ')
+          PsiElement(CSS_SELECTOR_LIST)
+            PsiElement(CSS_SELECTOR)
+              PsiElement(CSS_SIMPLE_SELECTOR)
+                PsiElement(CSS_IDENT)('p')
+                PsiElement(CSS_SELECTOR_SUFFIX_LIST)
+                  <empty list>
+          PsiErrorElement:'{ expected
+            <empty list>
+        PsiWhiteSpace(' ')
+        PsiElement(POST_CSS_NEST)
+          PsiElement(POST_CSS_NEST_SYM)('@nest')
+          PsiWhiteSpace(' ')
+          PsiElement(CSS_SELECTOR_LIST)
+            PsiElement(CSS_SELECTOR)
+              PsiElement(CSS_SIMPLE_SELECTOR)
+                PsiElement(CSS_SELECTOR_SUFFIX_LIST)
+                  <empty list>
+          PsiElement(CSS_DECLARATION_BLOCK)
+            PsiElement(CSS_LBRACE)('{')
+            PsiWhiteSpace('\n\n')
+            PsiElement(CSS_RBRACE)('}')

@@ -16,11 +16,10 @@ import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
-import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageWrapper;
+import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptReferenceSet;
+import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptTextReference;
 import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
 import com.intellij.lang.javascript.psi.impl.JSTextReference;
-import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
-import com.intellij.lang.javascript.psi.resolve.ResultSink;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.lang.javascript.validation.fixes.CreateClassIntentionWithCallback;
 import com.intellij.lang.javascript.validation.fixes.CreateFlexMobileViewIntentionAndFix;
@@ -154,7 +153,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
       public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         final String trimmedText = StringUtil.unquoteString(element.getText());
         if (CodeContext.isPackageBackedNamespace(trimmedText)) {
-          return new JSReferenceSet(element, trimmedText, 1, false, false).getReferences();
+          return new ActionScriptReferenceSet(element, trimmedText, 1, false, false).getReferences();
         }
         return PsiReference.EMPTY_ARRAY;
       }
@@ -172,7 +171,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
                                                      @NotNull final ProcessingContext context) {
           final String trimmedText = StringUtil.unquoteString(element.getText());
           final JSReferenceSet referenceSet =
-            new JSReferenceSet(element, trimmedText, 1, false);
+            new ActionScriptReferenceSet(element, trimmedText, 1, false);
           return referenceSet.getReferences();
         }
       });
@@ -459,8 +458,8 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
         if (trimmedValueAndRange.second.getStartOffset() == 0) return PsiReference.EMPTY_ARRAY;
         if (trimmedValueAndRange.first.indexOf('{') != -1 || trimmedValueAndRange.first.indexOf('@') != -1) return PsiReference.EMPTY_ARRAY;
 
-        final JSReferenceSet jsReferenceSet =
-          new JSReferenceSet(element, trimmedValueAndRange.first, trimmedValueAndRange.second.getStartOffset(), false, true) {
+        final ActionScriptReferenceSet jsReferenceSet =
+          new ActionScriptReferenceSet(element, trimmedValueAndRange.first, trimmedValueAndRange.second.getStartOffset(), false, true) {
             @Override
             protected JSTextReference createTextReference(String s, int offset) {
               return new MyJSTextReference(this, s, offset, quickFixProvider);
@@ -474,10 +473,10 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
     };
   }
 
-  private static class MyJSTextReference extends JSTextReference implements LocalQuickFixProvider {
+  private static class MyJSTextReference extends ActionScriptTextReference implements LocalQuickFixProvider {
     private final Function<PsiReference, LocalQuickFix[]> myQuickFixProvider;
 
-    MyJSTextReference(JSReferenceSet set,
+    MyJSTextReference(ActionScriptReferenceSet set,
                       String s,
                       int offset,
                       Function<PsiReference, LocalQuickFix[]> quickFixProvider) {

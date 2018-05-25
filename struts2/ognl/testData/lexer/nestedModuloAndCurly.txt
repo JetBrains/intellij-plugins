@@ -1,0 +1,7 @@
+%{ ('%{')
+WHITE_SPACE (' ')
+% ('%')
+{ ('{')
+WHITE_SPACE (' ')
+} ('}')
+EXPRESSION_END ('}')

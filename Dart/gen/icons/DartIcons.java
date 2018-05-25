@@ -27,10 +27,10 @@ public class DartIcons {
   }
 
   public static final Icon Dart_13 = load("/icons/dart_13.svg"); // 13x13
-  public static final Icon Dart_16 = load("/icons/dart_16.png"); // 16x16
-  public static final Icon Dart_file = load("/icons/dart_file.png"); // 16x16
-  public static final Icon Dart_remote = load("/icons/dart_remote.png"); // 16x16
-  public static final Icon Dart_test = load("/icons/dart_test.png"); // 16x16
+  public static final Icon Dart_16 = load("/icons/dart_16.svg"); // 16x16
+  public static final Icon Dart_file = load("/icons/dart_file.svg"); // 16x16
+  public static final Icon Dart_remote = load("/icons/dart_remote.svg"); // 16x16
+  public static final Icon Dart_test = load("/icons/dart_test.svg"); // 16x16
   public static final Icon Dart_warning = load("/icons/dart_warning.png"); // 16x16
   public static final Icon Feedback = load("/icons/feedback.png"); // 16x16
   public static final Icon Observatory = load("/icons/observatory.png"); // 16x16

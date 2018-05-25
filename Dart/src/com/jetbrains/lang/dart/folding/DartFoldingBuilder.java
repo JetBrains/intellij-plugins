@@ -28,6 +28,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
 
   private static final String SMILEY = "<~>";
 
+  @Override
   protected void buildLanguageFoldRegions(@NotNull final List<FoldingDescriptor> descriptors,
                                           @NotNull final PsiElement root,
                                           @NotNull final Document document,
@@ -56,6 +57,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     foldNewDartExpressions(descriptors, psiElements);                                  // 10. Constructor invocations
   }
 
+  @Override
   protected String getLanguagePlaceholderText(@NotNull final ASTNode node, @NotNull final TextRange range) {
     final IElementType elementType = node.getElementType();
     final PsiElement psiElement = node.getPsi();
@@ -81,6 +83,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     return "...";
   }
 
+  @Override
   protected boolean isRegionCollapsedByDefault(@NotNull final ASTNode node) {
     final IElementType elementType = node.getElementType();
     final PsiElement psiElement = node.getPsi();
@@ -174,9 +177,8 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
   private static void foldComments(@NotNull final List<FoldingDescriptor> descriptors,
                                    @NotNull final Collection<PsiElement> psiElements,
                                    @Nullable final TextRange fileHeaderRange) {
-    PsiElement psiElement;
     for (Iterator<PsiElement> iter = psiElements.iterator(); iter.hasNext(); ) {
-      psiElement = iter.next();
+      PsiElement psiElement = iter.next();
       if (!(psiElement instanceof PsiComment)) {
         continue;
       }
@@ -224,7 +226,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       else if (dartClass instanceof DartEnumDefinition) {
         final ASTNode lBrace = dartClass.getNode().findChildByType(DartTokenTypes.LBRACE);
         final ASTNode rBrace = dartClass.getNode().findChildByType(DartTokenTypes.RBRACE, lBrace);
-        if (lBrace != null && rBrace != null && (rBrace.getStartOffset() - lBrace.getStartOffset() > 2)) {
+        if (lBrace != null && rBrace != null && rBrace.getStartOffset() - lBrace.getStartOffset() > 2) {
           descriptors.add(new FoldingDescriptor(dartClass, TextRange.create(lBrace.getStartOffset(), rBrace.getStartOffset() + 1)));
         }
       }

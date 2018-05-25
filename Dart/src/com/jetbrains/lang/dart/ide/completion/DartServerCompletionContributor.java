@@ -32,6 +32,7 @@ import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -58,6 +59,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
@@ -75,14 +77,27 @@ public class DartServerCompletionContributor extends CompletionContributor {
              protected void addCompletions(@NotNull final CompletionParameters parameters,
                                            @NotNull final ProcessingContext context,
                                            @NotNull final CompletionResultSet originalResultSet) {
-               VirtualFile file = DartResolveUtil.getRealVirtualFile(parameters.getOriginalFile());
+               final PsiFile originalFile = parameters.getOriginalFile();
+               final Project project = originalFile.getProject();
+
+               final CompletionSorter sorter = createSorter(parameters, originalResultSet.getPrefixMatcher());
+               final String uriPrefix = getPrefixIfCompletingUri(parameters);
+               final CompletionResultSet resultSet = uriPrefix != null
+                                                     ? originalResultSet.withRelevanceSorter(sorter).withPrefixMatcher(uriPrefix)
+                                                     : originalResultSet.withRelevanceSorter(sorter);
+
+               // If completion is requested in "Evaluate Expression" dialog or when editing a breakpoint condition, use runtime completion.
+               if (originalFile instanceof DartExpressionCodeFragment) {
+                 appendRuntimeCompletion(parameters, resultSet);
+                 return;
+               }
+
+               VirtualFile file = DartResolveUtil.getRealVirtualFile(originalFile);
                if (file instanceof VirtualFileWindow) {
                  file = ((VirtualFileWindow)file).getDelegate();
                }
 
                if (file == null) return;
-
-               final Project project = parameters.getOriginalFile().getProject();
 
                if (file.getFileType() == HtmlFileType.INSTANCE &&
                    PubspecYamlUtil.findPubspecYamlFile(project, file) == null &&
@@ -96,16 +111,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
                final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
                das.updateFilesContent();
 
-               final int offset =
-                 InjectedLanguageManager.getInstance(project).injectedToHost(parameters.getOriginalFile(), parameters.getOffset());
+               final int offset = InjectedLanguageManager.getInstance(project).injectedToHost(originalFile, parameters.getOffset());
                final String completionId = das.completion_getSuggestions(file, offset);
                if (completionId == null) return;
-
-               final CompletionSorter sorter = createSorter(parameters, originalResultSet.getPrefixMatcher());
-               final String uriPrefix = getPrefixIfCompletingUri(parameters);
-               final CompletionResultSet resultSet = uriPrefix != null
-                                                     ? originalResultSet.withRelevanceSorter(sorter).withPrefixMatcher(uriPrefix)
-                                                     : originalResultSet.withRelevanceSorter(sorter);
 
                das.addCompletions(file, completionId, (replacementOffset, replacementLength, suggestion) -> {
                  final CompletionResultSet updatedResultSet;
@@ -137,6 +145,39 @@ public class DartServerCompletionContributor extends CompletionContributor {
                });
              }
            });
+  }
+
+  private static void appendRuntimeCompletion(@NotNull final CompletionParameters parameters,
+                                              @NotNull final CompletionResultSet resultSet) {
+    final PsiFile originalFile = parameters.getOriginalFile();
+    final Project project = originalFile.getProject();
+    final PsiElement contextElement = originalFile.getContext();
+    if (contextElement == null) {
+      return;
+    }
+
+    final VirtualFile contextFile = contextElement.getContainingFile().getVirtualFile();
+    final int contextOffset = contextElement.getTextOffset();
+
+    final Document dummyDocument = FileDocumentManager.getInstance().getDocument(originalFile.getVirtualFile());
+    if (dummyDocument == null) {
+      return;
+    }
+
+    final String code = dummyDocument.getText();
+    final int codeOffset = parameters.getOffset();
+
+    final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
+    final RuntimeCompletionResult completionResult =
+      das.execution_getSuggestions(code, codeOffset,
+                                   contextFile, contextOffset,
+                                   Collections.emptyList(), Collections.emptyList());
+    if (completionResult != null && completionResult.suggestions != null) {
+      for (CompletionSuggestion suggestion : completionResult.suggestions) {
+        LookupElementBuilder lookupElement = createLookupElement(project, suggestion);
+        resultSet.addElement(lookupElement);
+      }
+    }
   }
 
   private static CompletionSorter createSorter(@NotNull final CompletionParameters parameters, @NotNull final PrefixMatcher prefixMatcher) {

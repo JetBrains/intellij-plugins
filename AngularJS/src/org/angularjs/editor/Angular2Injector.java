@@ -49,7 +49,7 @@ public class Angular2Injector implements MultiHostInjector {
       }
       if (parent instanceof JSProperty && parent.getParent() instanceof JSObjectLiteralExpression) {
         String name = ((JSProperty)parent).getName();
-        if (isInjectableAttribute(project, context.getTextLength(), name)) {
+        if (name != null && isInjectableAttribute(project, context.getTextLength(), name)) {
           injectIntoDirectiveProperty(registrar, context, parent.getParent().getParent(), "host", AngularJSLanguage.INSTANCE);
         }
       }

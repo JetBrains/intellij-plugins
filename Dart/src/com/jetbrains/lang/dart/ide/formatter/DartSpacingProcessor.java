@@ -291,7 +291,8 @@ public class DartSpacingProcessor {
     if (elementType == STATEMENTS && (parentType == SWITCH_CASE || parentType == DEFAULT_CASE)) {
       return Spacing.createSpacing(0, 0, 1, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
-    if (!COMMENTS.contains(type2) && BLOCKS.contains(parentType) && !(node1.getTreeNext() instanceof PsiErrorElement)) {
+    if (!COMMENTS.contains(type2) && BLOCKS.contains(parentType)
+        && !(node1.getTreeNext() instanceof PsiErrorElement) && !(node1.getLastChildNode() instanceof PsiErrorElement)) {
       return addLineBreak();
     }
 

@@ -54,6 +54,7 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
     return myInterpreterRef;
   }
 
+  @Nullable
   public String getPackagePath() {
     return myPackagePath;
   }

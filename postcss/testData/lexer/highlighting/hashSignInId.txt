@@ -1,0 +1,5 @@
+POST_CSS_HASH_SIGN ('#')
+POST_CSS_AMPERSAND ('&')
+CSS_IDENT ('id')
+CSS_LBRACE ('{')
+CSS_RBRACE ('}')

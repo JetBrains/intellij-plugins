@@ -38,7 +38,9 @@
     <orderEntry type="module" module-name="intellij.webComponents" scope="TEST" />
     <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="library" name="gson" level="project" />
-    <orderEntry type="library" exported="" name="markdownj" level="project" />
+    <orderEntry type="library" name="snakeyaml" level="project" />
+    <orderEntry type="library" name="netty-codec-http" level="project" />
+    <orderEntry type="library" name="markdownj" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -66,8 +68,5 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="snakeyaml" level="project" />
-    <orderEntry type="module" module-name="intellij.javascript.wip.backend" />
-    <orderEntry type="library" name="netty-codec-http" level="project" />
   </component>
 </module>
