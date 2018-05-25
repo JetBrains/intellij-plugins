@@ -28,6 +28,7 @@ CfnRootNode{
       value=Resources
     }
   }
+  globalsNode=<null>
   outputsNode=CfnOutputsNode{
     properties=[
       CfnOutputNode{

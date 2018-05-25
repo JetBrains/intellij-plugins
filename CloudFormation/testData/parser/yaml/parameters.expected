@@ -61,5 +61,6 @@ CfnRootNode{
   mappingsNode=<null>
   conditionsNode=<null>
   resourcesNode=<null>
+  globalsNode=<null>
   outputsNode=<null>
 }

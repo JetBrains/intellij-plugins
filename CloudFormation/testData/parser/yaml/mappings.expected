@@ -72,5 +72,6 @@ CfnRootNode{
   }
   conditionsNode=<null>
   resourcesNode=<null>
+  globalsNode=<null>
   outputsNode=<null>
 }

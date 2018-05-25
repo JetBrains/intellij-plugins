@@ -71,5 +71,6 @@ CfnRootNode{
       value=Resources
     }
   }
+  globalsNode=<null>
   outputsNode=<null>
 }
