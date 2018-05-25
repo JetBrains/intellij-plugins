@@ -5,6 +5,8 @@ enum class CloudFormationSection(val id: String) {
   Parameters("Parameters"),
   Mappings("Mappings"),
   Metadata("Metadata"),
+  // https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+  Globals("Globals"),
   Conditions("Conditions"),
   Outputs("Outputs"),
 

@@ -9,6 +9,7 @@ import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType.Companion.isCustomResourceType
 import com.intellij.aws.cloudformation.model.CfnArrayValueNode
 import com.intellij.aws.cloudformation.model.CfnFunctionNode
+import com.intellij.aws.cloudformation.model.CfnGlobalsNode
 import com.intellij.aws.cloudformation.model.CfnMappingsNode
 import com.intellij.aws.cloudformation.model.CfnMetadataNode
 import com.intellij.aws.cloudformation.model.CfnNameValueNode
@@ -25,6 +26,7 @@ import com.intellij.aws.cloudformation.model.CfnResourceTypeNode
 import com.intellij.aws.cloudformation.model.CfnResourcesNode
 import com.intellij.aws.cloudformation.model.CfnRootNode
 import com.intellij.aws.cloudformation.model.CfnScalarValueNode
+import com.intellij.aws.cloudformation.model.CfnServerlessEntityDefaultsNode
 import com.intellij.aws.cloudformation.model.CfnVisitor
 import com.intellij.aws.cloudformation.references.CloudFormationEntityReference
 import com.intellij.aws.cloudformation.references.CloudFormationMappingFirstLevelKeyReference
@@ -357,6 +359,46 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     }
 
     super.outputs(outputs)
+  }
+
+  override fun globals(globals: CfnGlobalsNode) {
+    if (!parsed.root.transformValues.contains(CloudFormationConstants.awsServerless20161031TransformName)) {
+      addProblem(globals, "Globals section supported with ${CloudFormationConstants.awsServerless20161031TransformName} transform only")
+      return
+    }
+
+    if (globals.globals.isEmpty()) {
+      addProblem(globals, "Globals section must provide defaults for at least one resource")
+    }
+
+    super.globals(globals)
+  }
+
+  override fun serverlessEntityDefaultsNode(serverlessEntityDefaultsNode: CfnServerlessEntityDefaultsNode) {
+    val name = serverlessEntityDefaultsNode.name?.value
+
+    if (name != null) {
+      val resourceType = CloudFormationConstants.GlobalsResourcesMap.get(name)
+      if (resourceType == null) {
+        addProblem(
+            serverlessEntityDefaultsNode,
+            "Unsupported globals section '$name'. The following sections are supported: " +
+                CloudFormationConstants.GlobalsResourcesMap.keys.sorted().joinToString())
+      } else {
+        for (nameValueNode in serverlessEntityDefaultsNode.properties) {
+          val propertyName = nameValueNode.name?.value ?: continue
+
+          val property = resourceType.properties.firstOrNull { it.name == propertyName }
+          if (property == null || property.excludedFromGlobals) {
+            addProblem(
+                nameValueNode.name,
+                "Property $propertyName is unsupported in '$name' sections of Globals")
+          }
+        }
+      }
+    }
+
+    super.serverlessEntityDefaultsNode(serverlessEntityDefaultsNode)
   }
 
   override fun parameters(parameters: CfnParametersNode) {

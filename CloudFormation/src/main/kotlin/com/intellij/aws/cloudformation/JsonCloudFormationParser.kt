@@ -8,6 +8,7 @@ import com.intellij.aws.cloudformation.model.CfnConditionsNode
 import com.intellij.aws.cloudformation.model.CfnExpressionNode
 import com.intellij.aws.cloudformation.model.CfnFirstLevelMappingNode
 import com.intellij.aws.cloudformation.model.CfnFunctionNode
+import com.intellij.aws.cloudformation.model.CfnGlobalsNode
 import com.intellij.aws.cloudformation.model.CfnMappingValue
 import com.intellij.aws.cloudformation.model.CfnMappingsNode
 import com.intellij.aws.cloudformation.model.CfnMetadataNode
@@ -53,7 +54,7 @@ class JsonCloudFormationParser private constructor () {
     assert(!node2psi.containsKey(this)) { "Nodes map already has $psiElement" }
 
     psi2node.put(psiElement, this)
-    node2psi.put(this, psiElement)
+    node2psi[this] = psiElement
 
     return this
   }
@@ -105,6 +106,7 @@ class JsonCloudFormationParser private constructor () {
         lookupSection<CfnMappingsNode>(sections),
         lookupSection<CfnConditionsNode>(sections),
         lookupSection<CfnResourcesNode>(sections),
+        lookupSection<CfnGlobalsNode>(sections),
         lookupSection<CfnOutputsNode>(sections)
     ).registerNode(root)
   }
@@ -222,7 +224,7 @@ class JsonCloudFormationParser private constructor () {
         }
       }
 
-      topLevelProperties.put(propertyName, node)
+      topLevelProperties[propertyName] = node
     }
 
     val properties: Collection<CfnNode> = topLevelProperties.values

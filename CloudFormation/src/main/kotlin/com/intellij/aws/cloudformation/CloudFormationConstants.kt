@@ -1,5 +1,9 @@
 package com.intellij.aws.cloudformation
 
+import com.intellij.aws.cloudformation.metadata.awsServerlessApi
+import com.intellij.aws.cloudformation.metadata.awsServerlessFunction
+import com.intellij.aws.cloudformation.metadata.awsServerlessSimpleTable
+
 object CloudFormationConstants {
   val SupportedTemplateFormatVersions = setOf("2010-09-09")
 
@@ -29,6 +33,13 @@ object CloudFormationConstants {
   val MetadataPropertyName = "Metadata"
   val UpdatePolicyPropertyName = "UpdatePolicy"
   val VersionPropertyName = "Version"
+
+  // https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst#supported-resources
+  val GlobalsResourcesMap = mapOf(
+      "Function" to awsServerlessFunction,
+      "Api" to awsServerlessApi,
+      "SimpleTable" to awsServerlessSimpleTable
+  )
 
   val AllTopLevelResourceProperties = listOf(
       ConditionPropertyName,

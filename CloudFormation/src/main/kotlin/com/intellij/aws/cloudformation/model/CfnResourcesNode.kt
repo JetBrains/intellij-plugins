@@ -6,6 +6,9 @@ class CfnTransformNode(name: CfnScalarValueNode?, val transforms: List<CfnScalar
 
 class CfnResourcesNode(name: CfnScalarValueNode?, val resources: List<CfnResourceNode>) : CfnNamedNode(name)
 
+class CfnGlobalsNode(name: CfnScalarValueNode?, val globals: List<CfnServerlessEntityDefaultsNode>) : CfnNamedNode(name)
+class CfnServerlessEntityDefaultsNode(name: CfnScalarValueNode?, val properties: List<CfnNameValueNode>) : CfnNamedNode(name)
+
 class CfnOutputNode(name: CfnScalarValueNode?, value: CfnExpressionNode?) : CfnNameValueNode(name, value)
 class CfnOutputsNode(name: CfnScalarValueNode?, val properties: List<CfnOutputNode>) : CfnNamedNode(name)
 

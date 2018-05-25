@@ -8,6 +8,7 @@ import com.intellij.aws.cloudformation.model.CfnConditionsNode
 import com.intellij.aws.cloudformation.model.CfnExpressionNode
 import com.intellij.aws.cloudformation.model.CfnFirstLevelMappingNode
 import com.intellij.aws.cloudformation.model.CfnFunctionNode
+import com.intellij.aws.cloudformation.model.CfnGlobalsNode
 import com.intellij.aws.cloudformation.model.CfnMappingValue
 import com.intellij.aws.cloudformation.model.CfnMappingsNode
 import com.intellij.aws.cloudformation.model.CfnMetadataNode
@@ -29,6 +30,7 @@ import com.intellij.aws.cloudformation.model.CfnResourcesNode
 import com.intellij.aws.cloudformation.model.CfnRootNode
 import com.intellij.aws.cloudformation.model.CfnScalarValueNode
 import com.intellij.aws.cloudformation.model.CfnSecondLevelMappingNode
+import com.intellij.aws.cloudformation.model.CfnServerlessEntityDefaultsNode
 import com.intellij.aws.cloudformation.model.CfnTransformNode
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -98,6 +100,7 @@ class YamlCloudFormationParser private constructor () {
         CloudFormationSection.Resources -> resources(property)
         CloudFormationSection.Conditions -> conditions(property)
         CloudFormationSection.Metadata -> metadata(property)
+        CloudFormationSection.Globals -> globals(property)
         CloudFormationSection.Outputs -> outputs(property)
         CloudFormationSection.Mappings -> mappings(property)
         else -> {
@@ -118,6 +121,7 @@ class YamlCloudFormationParser private constructor () {
         lookupSection<CfnMappingsNode>(sections),
         lookupSection<CfnConditionsNode>(sections),
         lookupSection<CfnResourcesNode>(sections),
+        lookupSection<CfnGlobalsNode>(sections),
         lookupSection<CfnOutputsNode>(sections)
     ).registerNode(root)
   }
@@ -142,6 +146,18 @@ class YamlCloudFormationParser private constructor () {
       outputs,
       { output -> CfnOutputNode(keyName(output), output.value?.let { expression(it, AllowFunctions.True) }).registerNode(output.owner) },
       { nameNode, list -> CfnOutputsNode(nameNode, list) }
+  )
+
+  private fun globals(globals: CfnKeyValue): CfnGlobalsNode = parseNameValues(
+      globals,
+      { global -> serverlessEntityDefaultsNode(global) },
+      { nameNode, list -> CfnGlobalsNode(nameNode, list) }
+  )
+
+  private fun serverlessEntityDefaultsNode(defaultsNode: CfnKeyValue): CfnServerlessEntityDefaultsNode = parseNameValues(
+      defaultsNode,
+      { node -> CfnNameValueNode(keyName(node), node.value?.let { expression(it, AllowFunctions.False) }).registerNode(node.owner) },
+      { nameNode, list -> CfnServerlessEntityDefaultsNode(nameNode, list) }
   )
 
   private fun parameters(parameters: CfnKeyValue): CfnParametersNode = parseNameValues(

@@ -1,0 +1,60 @@
+---
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Api:
+    0@<UnknownApiProperty:> "XX"
+
+    # Allows www.example.com to call these APIs
+    # SAM will automatically add AllowMethods with a list of methods for this API
+    Cors: "'https://www.www.example.com'"
+
+    # API Gateway regional endpoints
+    EndpointConfiguration: REGIONAL
+
+    # Send/receive binary data through the APIs
+    BinaryMediaTypes:
+      # These are equivalent to image/gif and image/png when deployed
+      - image~1gif
+      - image~1png
+
+    # Logging, Metrics, Throttling, and all other Stage settings
+    MethodSettings: [{
+        # Turn on Info logging
+        "LoggingLevel": "INFO",
+
+        # Enable Metrics
+        "MetricsEnabled": True,
+
+        # Trace-level Logging
+        "DataTraceEnabled": True,
+
+        # On all Paths & methods
+        "ResourcePath": "/*",
+        "HttpMethod": "*",
+    }]
+  1@<UnknownGlobalsSection:>
+    A: B
+
+Resources:
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      # Replace <bucket> with your bucket name
+      CodeUri: src/
+      Handler: index.handler
+      Runtime: nodejs6.10
+      Events:
+        ProxyApiRoot:
+          Type: Api
+          Properties:
+            Path: /
+            Method: ANY
+        ProxyApiGreedy:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+
+0: Property UnknownApiProperty is unsupported in 'Api' sections of Globals
+1: Unsupported globals section 'UnknownGlobalsSection'. The following sections are supported: Api, Function, SimpleTable

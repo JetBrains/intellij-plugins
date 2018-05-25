@@ -7,12 +7,13 @@ class CfnRootNode(
     val mappingsNode: CfnMappingsNode?,
     val conditionsNode: CfnConditionsNode?,
     val resourcesNode: CfnResourcesNode?,
+    val globalsNode: CfnGlobalsNode?,
     val outputsNode: CfnOutputsNode?
 ) : CfnNode() {
   val transformValues
     get() = transformNode?.transforms?.map { it.value } ?: emptyList()
 
   companion object {
-    fun empty() = CfnRootNode(null, null, null, null, null, null, null)
+    fun empty() = CfnRootNode(null, null, null, null, null, null, null, null)
   }
 }

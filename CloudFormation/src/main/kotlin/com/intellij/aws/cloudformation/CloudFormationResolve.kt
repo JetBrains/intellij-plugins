@@ -16,7 +16,7 @@ object CloudFormationResolve {
         CloudFormationSection.Outputs -> parsed.root.outputsNode?.properties ?: emptyList()
 
         CloudFormationSection.Description, CloudFormationSection.FormatVersion,
-        CloudFormationSection.Metadata, CloudFormationSection.Transform -> emptyList()
+        CloudFormationSection.Globals, CloudFormationSection.Metadata, CloudFormationSection.Transform -> emptyList()
       }
 
   fun resolveEntity(parsed: CloudFormationParsedFile, entityName: String, sections: Collection<CloudFormationSection>): CfnNamedNode? =

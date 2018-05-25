@@ -1,9 +1,12 @@
 @file:Suppress("LoopToCallChain", "Destructure")
 
+import com.intellij.aws.cloudformation.CloudFormationConstants
 import com.intellij.aws.cloudformation.metadata.CloudFormationLimits
+import com.intellij.aws.cloudformation.metadata.CloudFormationManualResourceType
 import com.intellij.aws.cloudformation.metadata.CloudFormationMetadata
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceTypesDescription
 import com.intellij.aws.cloudformation.metadata.MetadataSerializer
+import com.intellij.aws.cloudformation.metadata.awsServerless20161031ResourceTypes
 import org.apache.commons.io.IOUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -18,6 +21,30 @@ import java.util.regex.Pattern
 object ResourceTypesSaver {
   private val RESOURCE_TYPE_PATTERN = Pattern.compile("<li><a href=\"([^\"]+)\">(AWS::[^<]+)</a></li>")
   private val FETCH_TIMEOUT_MS = 10000
+
+  fun CloudFormationManualResourceType.toResourceTypeBuilder(): ResourceTypeBuilder {
+    val builder = ResourceTypeBuilder(name, url)
+    builder.description = description
+    builder.transform = CloudFormationConstants.awsServerless20161031TransformName
+
+    attributes.forEach { attribute ->
+      builder.addAttribute(attribute.name).apply {
+        description = attribute.description
+      }
+    }
+
+    properties.forEach { property ->
+      builder.addProperty(property.name).apply {
+        description = property.description
+        type = property.type
+        required = property.required
+        url = property.url ?: builder.url
+        updateRequires = property.updateRequires ?: ""
+      }
+    }
+
+    return builder
+  }
 
   fun saveResourceTypes() {
     awsServerless20161031ResourceTypes.map { it.toResourceTypeBuilder().toResourceType() }

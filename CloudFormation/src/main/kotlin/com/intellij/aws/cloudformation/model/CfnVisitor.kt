@@ -8,6 +8,7 @@ abstract class CfnVisitor {
     root.metadataNode?.let { metadata(it) }
     root.outputsNode?.let { outputs(it) }
     root.parametersNode?.let { parameters(it) }
+    root.globalsNode?.let { globals(it) }
     root.resourcesNode?.let { resources(it) }
   }
 
@@ -16,6 +17,12 @@ abstract class CfnVisitor {
   }
 
   open fun parameter(parameter: CfnParameterNode) {}
+
+  open fun globals(globals: CfnGlobalsNode) {
+    globals.globals.forEach { serverlessEntityDefaultsNode(it) }
+  }
+
+  open fun serverlessEntityDefaultsNode(serverlessEntityDefaultsNode: CfnServerlessEntityDefaultsNode) {}
 
   open fun resources(resources: CfnResourcesNode) {
     resources.resources.forEach { resource(it) }
