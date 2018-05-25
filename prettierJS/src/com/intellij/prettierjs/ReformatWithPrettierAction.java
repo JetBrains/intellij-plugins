@@ -59,6 +59,7 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.util.*;
+import java.util.concurrent.Future;
 
 public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   private static final int REQUEST_TIMEOUT = 3000;
@@ -162,6 +163,9 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     CharSequence textBefore = document.getImmutableCharSequence();
     CaretVisualPositionKeeper caretVisualPositionKeeper = new CaretVisualPositionKeeper(document);
     ensureConfigsSaved(new VirtualFile[]{file.getVirtualFile()}, project);
+    PrettierLanguageService service = PrettierLanguageService.getInstance(file.getProject());
+    String filePath = file.getVirtualFile().getPath();
+    String text = file.getText();
     PrettierLanguageService.FormatResult result = ProgressManager
       .getInstance()
       .runProcessWithProgressSynchronously(() -> {
@@ -169,9 +173,10 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
                                                myErrorHandler.showError(project, editor, PrettierBundle.message("not.supported.file", file.getName()), null);
                                                return null;
                                              }
-                                             return processFileWithService(file, nodePackage, range);
+                                             return awaitFuture(service.format(filePath, text, nodePackage, range));
                                            },
                                            PrettierBundle.message("progress.title"), true, project);
+    // timed out. show notification?
     if (result == null) {
       return;
     }
@@ -224,6 +229,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
                                    @NotNull final FileTreeIterator fileIterator,
                                    @NotNull NodePackage nodePackage, 
                                    boolean reportUnsupported) {
+    PrettierLanguageService service = PrettierLanguageService.getInstance(project);
     Map<PsiFile, PrettierLanguageService.FormatResult> results = executeUnderProgress(project, indicator -> {
       Map<PsiFile, PrettierLanguageService.FormatResult> reformattedResults = new HashMap<>();
 
@@ -237,7 +243,10 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
           continue;
         }
         indicator.setText("Processing " + currentFile.getName());
-        PrettierLanguageService.FormatResult result = ReadAction.compute(() -> processFileWithService(currentFile, nodePackage, null));
+        String filePath = ReadAction.compute(() -> currentFile.getVirtualFile().getPath());
+        String text = ReadAction.compute(() -> currentFile.getText());
+        PrettierLanguageService.FormatResult result = awaitFuture(service.format(filePath, text, nodePackage, null));
+        // timed out. show notification?
         if (result == null) {
           continue;
         }
@@ -270,11 +279,8 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   }
 
   @Nullable
-  private static PrettierLanguageService.FormatResult processFileWithService(@NotNull PsiFile currentFile,
-                                                                             @NotNull NodePackage nodePackage,
-                                                                             @Nullable TextRange range) {
-    PrettierLanguageService service = PrettierLanguageService.getInstance(currentFile.getProject());
-    return JSLanguageServiceUtil.awaitFuture(service.format(currentFile, nodePackage, range), REQUEST_TIMEOUT);
+  private static PrettierLanguageService.FormatResult awaitFuture(@Nullable Future<PrettierLanguageService.FormatResult> future) {
+    return JSLanguageServiceUtil.awaitFuture(future, REQUEST_TIMEOUT);
   }
 
   private static <T> T executeUnderProgress(@NotNull Project project, @NotNull NullableFunction<ProgressIndicator, T> handler) {
