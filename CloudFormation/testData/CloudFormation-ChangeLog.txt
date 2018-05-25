@@ -194,9 +194,11 @@ User Guide (API Version 2010-05-15)
                 + AWS::AutoScaling::LifecycleHook
                 + AWS::AutoScaling::ScalingPolicy
                 + AWS::AutoScaling::ScheduledAction
+                + AWS::AutoScalingPlans::ScalingPlan
                 + AWS::Batch::ComputeEnvironment
                 + AWS::Batch::JobDefinition
                 + AWS::Batch::JobQueue
+                + AWS::Budgets::Budget
                 + AWS::CertificateManager::Certificate
                 + AWS::Cloud9::EnvironmentEC2
                 + AWS::CloudFormation::Authentication
@@ -325,6 +327,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::Glue::Table
                 + AWS::Glue::Trigger
                 + AWS::GuardDuty::Detector
+                + AWS::GuardDuty::Filter
                 + AWS::GuardDuty::Master
                 + AWS::GuardDuty::Member
                 + AWS::GuardDuty::IPSet
@@ -391,6 +394,18 @@ User Guide (API Version 2010-05-15)
                 + AWS::S3::Bucket
                 + AWS::S3::BucketPolicy
                 + AWS::SDB::Domain
+                + AWS::ServiceCatalog::AcceptedPortfolioShare
+                + AWS::ServiceCatalog::CloudFormationProduct
+                + AWS::ServiceCatalog::CloudFormationProvisionedProduct
+                + AWS::ServiceCatalog::LaunchNotificationConstraint
+                + AWS::ServiceCatalog::LaunchRoleConstraint
+                + AWS::ServiceCatalog::LaunchTemplateConstraint
+                + AWS::ServiceCatalog::Portfolio
+                + AWS::ServiceCatalog::PortfolioPrincipalAssociation
+                + AWS::ServiceCatalog::PortfolioProductAssociation
+                + AWS::ServiceCatalog::PortfolioShare
+                + AWS::ServiceCatalog::TagOption
+                + AWS::ServiceCatalog::TagOptionAssociation
                 + AWS::ServiceDiscovery::Instance
                 + AWS::ServiceDiscovery::PrivateDnsNamespace
                 + AWS::ServiceDiscovery::PublicDnsNamespace
@@ -465,18 +480,35 @@ User Guide (API Version 2010-05-15)
                 + AWS AppSync DataSource LambdaConfig
                 + AWS AppSync GraphQLApi LogConfig
                 + AWS AppSync GraphQLApi UserPoolConfig
-                + AutoScaling Block Device Mapping
-                + AutoScaling EBS Block Device
-                + Auto Scaling AutoScalingGroup LifecycleHookSpecification
-                + Auto Scaling AutoScalingGroup LaunchTemplateSpecification
-                + Auto Scaling AutoScalingGroup MetricsCollection
-                + Auto Scaling AutoScalingGroup NotificationConfiguration
-                + Auto Scaling AutoScalingGroup TagProperty
-                + Auto Scaling ScalingPolicy CustomizedMetricSpecification
-                + Auto Scaling ScalingPolicy MetricDimension
-                + Auto Scaling ScalingPolicy PredefinedMetricSpecification
-                + Auto Scaling ScalingPolicy StepAdjustments
-                + Auto Scaling ScalingPolicy TargetTrackingConfiguration
+                + AWS AppSync GraphQLApi OpenId Connect Config
+                + Amazon EC2 Auto Scaling Block Device Mapping
+                + Amazon EC2 Auto Scaling EBS Block Device
+                + Amazon EC2 Auto Scaling AutoScalingGroup
+                  LifecycleHookSpecification
+                + Amazon EC2 Auto Scaling AutoScalingGroup
+                  LaunchTemplateSpecification
+                + Amazon EC2 Auto Scaling AutoScalingGroup
+                  MetricsCollection
+                + Amazon EC2 Auto Scaling AutoScalingGroup
+                  NotificationConfiguration
+                + Amazon EC2 Auto Scaling AutoScalingGroup TagProperty
+                + Amazon EC2 Auto Scaling ScalingPolicy
+                  CustomizedMetricSpecification
+                + Amazon EC2 Auto Scaling ScalingPolicy MetricDimension
+                + Amazon EC2 Auto Scaling ScalingPolicy
+                  PredefinedMetricSpecification
+                + Amazon EC2 Auto Scaling ScalingPolicy StepAdjustments
+                + Amazon EC2 Auto Scaling ScalingPolicy
+                  TargetTrackingConfiguration
+                + AWS Auto Scaling ScalingPlan ApplicationSource
+                + AWS Auto Scaling ScalingPlan
+                  CustomizedScalingMetricSpecification
+                + AWS Auto Scaling ScalingPlan MetricDimension
+                + AWS Auto Scaling ScalingPlan
+                  PredefinedScalingMetricSpecification
+                + AWS Auto Scaling ScalingPlan ScalingInstruction
+                + AWS Auto Scaling ScalingPlan TagFilter
+                + AWS Auto Scaling ScalingPlan TargetTrackingConfiguration
                 + AWS Batch ComputeEnvironment ComputeResources
                 + AWS Batch JobDefinition ContainerProperties
                 + AWS Batch JobDefinition Environment
@@ -486,6 +518,14 @@ User Guide (API Version 2010-05-15)
                 + AWS Batch JobDefinition Volumes
                 + AWS Batch JobDefinition VolumesHost
                 + AWS Batch JobQueue ComputeEnvironmentOrder
+                + Billing and Cost Management Budget BudgetData
+                + Billing and Cost Management Budget CostTypes
+                + Billing and Cost Management Budget Notification
+                + Billing and Cost Management Budget
+                  NotificationWithSubscribers
+                + Billing and Cost Management Budget Spend
+                + Billing and Cost Management Budget Subscriber
+                + Billing and Cost Management Budget TimePeriod
                 + AWS Cloud9 EnvironmentEC2 Repository
                 + ACM Certificate DomainValidationOption
                 + AWS CloudFormation Stack Parameters
@@ -610,6 +650,7 @@ User Guide (API Version 2010-05-15)
                 + DynamoDB Table GlobalSecondaryIndex
                 + DynamoDB Table KeySchema
                 + DynamoDB Table LocalSecondaryIndex
+                + DynamoDB Table PointInTimeRecoverySpecification
                 + DynamoDB Table Projection
                 + DynamoDB Table ProvisionedThroughput
                 + DynamoDB SSESpecification
@@ -619,6 +660,7 @@ User Guide (API Version 2010-05-15)
                 + Amazon Elastic Block Store Block Device Property
                 + Amazon EC2 Instance CreditSpecification
                 + Amazon EC2 Instance ElasticGpuSpecification
+                + Amazon EC2 Instance LaunchTemplateSpecification
                 + Amazon EC2 Instance SsmAssociations AssociationParameters
                 + Amazon EC2 Instance SsmAssociations
                 + Amazon EC2 LaunchTemplate BlockDeviceMapping
@@ -664,6 +706,8 @@ User Guide (API Version 2010-05-15)
                 + Amazon ECS Service PlacementConstraint
                 + Amazon ECS Service PlacementStrategies
                 + Amazon ECS Service LoadBalancers
+                + Amazon ECS Service ServiceRegistry
+                + Amazon ECS TaskDefinition HealthCheck
                 + Amazon ECS TaskDefinition ContainerDefinition
                 + Amazon ECS TaskDefinition Device
                 + Amazon ECS TaskDefinition HostEntry
@@ -715,6 +759,7 @@ User Guide (API Version 2010-05-15)
                 + Elastic Load Balancing TargetGroup TargetGroupAttributes
                 + Amazon ES Domain EBSOptions
                 + Amazon ES Domain ElasticsearchClusterConfig
+                + Amazon ES Domain EncryptionAtRestOptions
                 + Amazon ES Domain SnapshotOptions
                 + Amazon ES Domain VPCOptions
                 + Amazon EMR Cluster Application
@@ -791,6 +836,8 @@ User Guide (API Version 2010-05-15)
                 + AWS Glue Trigger Action
                 + AWS Glue Trigger Condition
                 + AWS Glue Trigger Predicate
+                + GuardDuty Filter FindingCriteria
+                + GuardDuty Filter Condition
                 + IAM Policies
                 + IAM User LoginProfile
                 + AWS IoT TopicRule Action
@@ -868,6 +915,9 @@ User Guide (API Version 2010-05-15)
                   RedshiftDestinationConfiguration
                 + Kinesis Firehose DeliveryStream
                   S3DestinationConfiguration
+                + Kinesis Data Firehose DeliveryStream
+                  SplunkDestinationConfiguration
+                + Kinesis Data Firehose DeliveryStream SplunkRetryOptions
                 + AWS Lambda Alias AliasRoutingConfiguration
                 + AWS Lambda Alias VersionWeight
                 + AWS Lambda Function DeadLetterConfig
@@ -951,6 +1001,10 @@ User Guide (API Version 2010-05-15)
                   Rule Property
                 + Amazon S3 Website Configuration Routing Rules Routing
                   Rule Condition Property
+                + AWS Service Catalog CloudFormationProduct
+                  ProvisioningArtifactProperties
+                + AWS Service Catalog CloudFormationProvisionedProduct
+                  ProvisioningParameter
                 + Amazon Route 53 ServiceDiscovery DnsConfig
                 + Amazon Route 53 ServiceDiscovery DnsRecord
                 + Amazon Route 53 ServiceDiscovery HealthCheckConfig
@@ -974,6 +1028,8 @@ User Guide (API Version 2010-05-15)
                 + Amazon SES ReceiptRule StopAction
                 + Amazon SES ReceiptRule WorkmailAction
                 + Amazon SES Template Template
+                + SSM Association InstanceAssociationOutputLocation
+                + SSM Association S3OutputLocation
                 + SSM Association Targets
                 + SSM MaintenanceWindowTarget Targets
                 + SSM MaintenanceWindowTask LoggingInfo
@@ -1126,6 +1182,236 @@ The following table describes the important changes to the documentation
 since the preceding release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
+
+AWS CloudFormation now creates S3 buckets with encryption enabled
+
+May 24, 2018
+
+For Amazon S3 buckets that AWS CloudFormation creates to store uploaded 
+stack templates, server-side encryption is now enabled by default, thereby 
+encrypting all objects stored in those buckets. For more information, see 
+Selecting a Stack Template.
+
+2010-05-15
+
+New resources
+
+May 24, 2018
+
+AWS::ServiceCatalog::AcceptedPortfolioShare
+
+    Use the AWS::ServiceCatalog::AcceptedPortfolioShare resource to accept
+    an offer to share the specified portfolio for AWS Service Catalog.
+
+AWS::ServiceCatalog::CloudFormationProduct
+
+    Use the AWS::ServiceCatalog::CloudFormationProduct resource to create a
+    product for AWS Service Catalog.
+
+AWS::ServiceCatalog::LaunchNotificationConstraint
+
+    Use the AWS::ServiceCatalog::LaunchNotificationConstraint resource to
+    create a notification constraint for AWS Service Catalog.
+
+AWS::ServiceCatalog::LaunchRoleConstraint
+
+    Use the AWS::ServiceCatalog::LaunchRoleConstraint resource to create a
+    launch constraint for AWS Service Catalog.
+
+AWS::ServiceCatalog::LaunchTemplateConstraint
+
+    Use the AWS::ServiceCatalog::LaunchTemplateConstraint resource to
+    create a template constraint for AWS Service Catalog.
+
+AWS::ServiceCatalog::Portfolio
+
+    Use the AWS::ServiceCatalog::Portfolio resource to create a portfolio
+    for AWS Service Catalog.
+
+AWS::ServiceCatalog::PortfolioPrincipalAssociation
+
+    Use the AWS::ServiceCatalog::PortfolioPrincipalAssociation resource to
+    associate a principal with a portfolio for AWS Service Catalog.
+
+AWS::ServiceCatalog::PortfolioProductAssociation
+
+    Use the AWS::ServiceCatalog::PortfolioProductAssociation resource to
+    associate a product with a portfolio for AWS Service Catalog.
+
+AWS::ServiceCatalog::PortfolioShare
+
+    Use the AWS::ServiceCatalog::PortfolioShare resource to share a
+    portfolio for AWS Service Catalog.
+
+AWS::ServiceCatalog::TagOption
+
+    Use the AWS::ServiceCatalog::TagOption resource to create a TagOption.
+
+AWS::ServiceCatalog::TagOptionAssociation
+
+    Use the AWS::ServiceCatalog::TagOptionAssociation resource to associate
+    a TagOption with a resource for AWS Service Catalog.
+
+2010-05-15
+
+Updated resources
+
+May 24, 2018
+
+AWS::ApiGateway::RestApi
+
+    Use the Policy property to specify a policy document that contains the
+    permissions for the specified RestAPI.
+
+AWS::AutoScaling::AutoScalingGroup
+
+    Use the ServiceLinkedRoleARN property to specify the Amazon Resource
+    Name (ARN) of the service-linked role that the Auto Scaling group uses
+    to call other AWS services on your behalf.
+
+AWS::AutoScaling::LaunchConfiguration
+
+    Use the LaunchConfigurationName property to specify the name of the
+    launch configuration.
+
+AWS::DirectoryService::MicrosoftAD
+
+    Use the Edition property to specify the AWS Microsoft AD edition to
+    use.
+
+AWS::DynamoDB::Table
+
+    Use the PointInTimeRecoverySpecification property to specify the
+    settings used to enable point in time recovery.
+
+AWS::EC2::Instance
+
+    Use the LaunchTemplate property to specify the launch template to use
+    for an Amazon EC2 instance.
+
+AWS::ECS::Service
+
+    Use the ServiceRegistry property type to specify the details of the
+    service registry.
+
+AWS::ECS::TaskDefinition
+
+    Use the HealthCheck property type to specify a container health check.
+
+AWS::Elasticsearch::Domain
+
+    Use the EncryptionAtRestOptions property type to specify whether the
+    domain should encrypt data at rest, and if so, the AWS Key Management
+    Service (KMS) key to use.
+
+AWS::IAM::Role
+
+    Use the RoleId attribute to have Fn::GetAtt return the stable and
+    unique string identifying the role.
+
+    Use the MaxSessionDuration property to specify the maximum session
+    duration (in seconds) for the specified role.
+
+AWS::KinesisFirehose::DeliveryStream
+
+    Use the SplunkDestinationConfiguration property to specify the
+    configuration of a destination in Splunk for a Kinesis Data Firehose
+    delivery stream.
+
+AWS::Lambda::EventSourceMapping
+
+    The StartingPosition property is no longer required.
+
+AWS::Logs::MetricFilter
+
+    In the CloudWatch Logs MetricFilter MetricTransformation Property 
+    property type, use the DefaultValue property to specify the value to
+    emit when a filter pattern does not match a log event.
+
+AWS::SSM::Association
+
+    Use the OutputLocation property to specify an Amazon S3 bucket where
+    you want to store the results of an association request.
+
+2010-05-15
+
+New resource
+
+May 22, 2018
+
+AWS::Budgets::Budget
+
+    Use the AWS::Budgets::Budget resource to create a budget.
+
+2010-05-15
+
+FIPS endpoints added
+
+May 17, 2018
+
+AWS CloudFormation now offers new endpoints which use FIPS 140-2 validated 
+cryptographic modules in the following public US regions: US-East-1, 
+US-East-2, US-West-1, and US-West-2. See Regions and Endpoints
+<http://docs.aws.amazon.com/general/latest/gr/rande.html#cfn_region> in the 
+Amazon Web Services General Reference
+<http://docs.aws.amazon.com/general/latest/gr/> for the new FIPS-compliant 
+endpoint URLs.
+
+2010-05-15
+
+New resource
+
+May 9, 2018
+
+AWS::AutoScalingPlans::ScalingPlan
+
+    Use the AWS::AutoScalingPlans::ScalingPlan resource to create a scaling
+    plan for the scalable resources for your application.
+
+2010-05-15
+
+New resource
+
+May 8, 2018
+
+AWS::GuardDuty::Filter
+
+    Use the AWS::GuardDuty::Filter resource to create a filter for your
+    GuardDuty findings.
+
+2010-05-15
+
+New resource
+
+May 1, 2018
+
+AWS::ServiceCatalog::CloudFormationProvisionedProduct
+
+    Use the AWS::ServiceCatalog::CloudFormationProvisionedProduct resource
+    to provision the specified product for AWS Service Catalog.
+
+2010-05-15
+
+Updated resources
+
+  	
+
+May 1, 2018
+
+AWS::AppSync::GraphQLApi
+
+    Use the OpenIdConnectConfig property to specify the authorization
+    configuration for using an OpenId Connect compliant service with your
+    GraphQL endpoint..
+
+AWS::GuardDuty::Member
+
+    Use the DisableEmailNotification property to specify whether an email
+    notification is to be sent to the accounts that you want to invite to
+    GuardDuty as members. When set to 'True', email notification is not
+    sent to the invitees.
+
+2010-05-15
 
 Stack set naming convention
 
@@ -1334,6 +1620,11 @@ AWS::Elasticsearch::Domain
     Name (ARN) of the domain.
 
     The DomainArn attribute of Fn::GetAtt has been deprecated.
+
+AWS::RDS::DBCluster
+
+    Use the DBClusterIdentifier property to specify the DB cluster
+    identifier.
 
 AWS::RDS::DBCluster
 
@@ -5377,6 +5668,8 @@ This is the initial public release of AWS CloudFormation.
 Document Conventions
 « Previous Next »
 © 2018, Amazon Web Services, Inc. or its affiliates. All rights reserved.
+We use cookies to provide and improve our services. By using our site, you 
+consent to cookies. Learn more <http://aws.amazon.com/privacy>
 Terms of Use <http://aws.amazon.com/terms> | Privacy
 <http://aws.amazon.com/privacy> | © 2018, Amazon Web Services, Inc. or its 
 affiliates. All rights reserved.
