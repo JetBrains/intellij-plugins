@@ -165,4 +165,9 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
     }
     return false;
   }
+
+  @Override
+  protected boolean checkConstructorWithNew(@NotNull PsiElement element, @NotNull SinkResolveProcessor resolveProcessor) {
+    return true;
+  }
 }
