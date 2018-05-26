@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class KarmaJsSourcesLocator {
+  private static final KarmaJsSourcesLocator INSTANCE = new KarmaJsSourcesLocator();
   private static final String KARMA_INTELLIJ_NAME = "karma-intellij";
   private static final String JS_REPORTER_NAME = "js_reporter";
 
@@ -16,6 +17,11 @@ public class KarmaJsSourcesLocator {
 
   public KarmaJsSourcesLocator() {
     myKarmaIntellijPackageDir = findKarmaIntellijPackageDir();
+  }
+
+  @NotNull
+  public static KarmaJsSourcesLocator getInstance() {
+    return INSTANCE;
   }
 
   /**

@@ -41,7 +41,6 @@ public class KarmaServer {
   private static final Logger LOG = Logger.getInstance(KarmaServer.class);
 
   private final KarmaProcessOutputManager myProcessOutputManager;
-  private final KarmaJsSourcesLocator myKarmaJsSourcesLocator;
   private final KarmaServerState myState;
   private final KarmaCoveragePeer myCoveragePeer;
   private final KarmaServerSettings myServerSettings;
@@ -61,10 +60,8 @@ public class KarmaServer {
 
   public KarmaServer(@NotNull Project project, @NotNull KarmaServerSettings serverSettings) throws IOException {
     myServerSettings = serverSettings;
-    myKarmaJsSourcesLocator = new KarmaJsSourcesLocator();
     myCoveragePeer = serverSettings.isWithCoverage() ? new KarmaCoveragePeer() : null;
-    KillableColoredProcessHandler processHandler = startServer(serverSettings, myKarmaJsSourcesLocator,
-                                                               myCoveragePeer, myCommandLineFolder);
+    KillableColoredProcessHandler processHandler = startServer(serverSettings, myCoveragePeer, myCommandLineFolder);
     myProcessHashCode = System.identityHashCode(processHandler.getProcess());
     File configurationFile = myServerSettings.getConfigurationFile();
     myState = new KarmaServerState(this, configurationFile);
@@ -133,11 +130,6 @@ public class KarmaServer {
     return myCoveragePeer;
   }
 
-  @NotNull
-  public KarmaJsSourcesLocator getKarmaJsSourcesLocator() {
-    return myKarmaJsSourcesLocator;
-  }
-
   public void registerStreamEventHandler(@NotNull StreamEventHandler handler) {
     myHandlers.put(handler.getEventType(), handler);
   }
@@ -149,10 +141,9 @@ public class KarmaServer {
 
   @NotNull
   private static KillableColoredProcessHandler startServer(@NotNull KarmaServerSettings serverSettings,
-                                                           @NotNull KarmaJsSourcesLocator sourcesLocator,
                                                            @Nullable KarmaCoveragePeer coveragePeer,
                                                            @NotNull ConsoleCommandLineFolder commandLineFolder) throws IOException {
-    GeneralCommandLine commandLine = createCommandLine(serverSettings, sourcesLocator, coveragePeer, commandLineFolder);
+    GeneralCommandLine commandLine = createCommandLine(serverSettings, coveragePeer, commandLineFolder);
 
     KillableColoredProcessHandler processHandler;
     try {
@@ -168,7 +159,6 @@ public class KarmaServer {
 
   @NotNull
   private static GeneralCommandLine createCommandLine(@NotNull KarmaServerSettings serverSettings,
-                                                      @NotNull KarmaJsSourcesLocator sourcesLocator,
                                                       @Nullable KarmaCoveragePeer coveragePeer,
                                                       @NotNull ConsoleCommandLineFolder commandLineFolder) throws IOException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
@@ -193,7 +183,7 @@ public class KarmaServer {
       commandLine.addParameter(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "ng");
       commandLine.addParameter("test");
       commandLineFolder.addPlaceholderTexts("ng", "test");
-      File configFile = sourcesLocator.getIntellijConfigFile();
+      File configFile = KarmaJsSourcesLocator.getInstance().getIntellijConfigFile();
       File workingDir = new File(serverSettings.getWorkingDirectorySystemDependent());
       if (shouldUseOldConfigCliOption(pkg)) {
         String configPath = FileUtil.getRelativePath(workingDir, configFile);
@@ -217,7 +207,7 @@ public class KarmaServer {
     else {
       commandLine.addParameter(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "karma");
       commandLine.addParameter("start");
-      commandLine.addParameter(sourcesLocator.getIntellijConfigFile().getAbsolutePath());
+      commandLine.addParameter(KarmaJsSourcesLocator.getInstance().getIntellijConfigFile().getAbsolutePath());
       commandLineFolder.addPlaceholderTexts("karma", "start", userConfigFileName);
     }
     String browsers = serverSettings.getBrowsers();
