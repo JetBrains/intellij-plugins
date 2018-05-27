@@ -54,13 +54,6 @@ allprojects {
 }
 
 project(':metadata-crawler') {
-    apply plugin: 'org.jetbrains.intellij'
-
-    intellij {
-        version idea_version
-        plugins 'yaml'
-    }
-
     dependencies {
         compile rootProject
 
