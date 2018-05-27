@@ -1,6 +1,5 @@
 package com.intellij.aws.cloudformation
 
-import com.google.common.base.Charsets
 import com.intellij.icons.AllIcons
 import com.intellij.json.JsonFileType
 import com.intellij.json.JsonLanguage
@@ -9,6 +8,7 @@ import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.fileTypes.ex.FileTypeIdentifiableByVirtualFile
 import com.intellij.openapi.util.RecursionManager
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.yaml.YAMLFileType
 import javax.swing.Icon
 
 class JsonCloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE), FileTypeIdentifiableByVirtualFile {
@@ -23,9 +23,15 @@ class JsonCloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE), File
     val extension = file.extension ?: return false
 
     return fileTypeRecursionGuard.doPreventingRecursion(javaClass, false, {
+      val fileTypeByFile = FileTypeManager.getInstance().getFileTypeByFile(file)
+
+      if (fileTypeByFile === YamlCloudFormationFileType.INSTANCE ||
+          fileTypeByFile === YAMLFileType.YML)
+        return@doPreventingRecursion false
+
       if (JsonFileType.DEFAULT_EXTENSION.equals(extension, ignoreCase = true) ||
           JsonCloudFormationFileType.EXTENSION.equals(extension, ignoreCase = true) ||
-          FileTypeManager.getInstance().getFileTypeByFile(file) === JsonFileType.INSTANCE) {
+          fileTypeByFile === JsonFileType.INSTANCE) {
         return@doPreventingRecursion signatureDetector.detectSignature(file)
       }
 
@@ -38,7 +44,9 @@ class JsonCloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE), File
 
     private val EXTENSION = "template"
 
-    private val signature = CloudFormationSection.FormatVersion.id.toByteArray(Charsets.US_ASCII)
-    private val signatureDetector = FileContentDetector(INSTANCE.name, signature)
+    private val signatureDetector = FileContentDetector(
+        INSTANCE.name,
+        true,
+        CloudFormationSection.FormatVersion.id)
   }
 }

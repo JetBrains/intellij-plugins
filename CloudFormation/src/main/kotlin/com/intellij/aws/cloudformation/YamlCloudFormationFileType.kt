@@ -41,7 +41,8 @@ class YamlCloudFormationFileType : LanguageFileType(YAMLLanguage.INSTANCE), File
 
     private val signatureDetector = FileContentDetector(
         JsonCloudFormationFileType.INSTANCE.name,
-        CloudFormationSection.FormatVersion.id.toByteArray(Charsets.US_ASCII),
-        CloudFormationConstants.awsServerless20161031TransformName.toByteArray(Charsets.US_ASCII))
+        false,
+        CloudFormationSection.FormatVersion.id,
+        CloudFormationConstants.awsServerless20161031TransformName)
   }
 }

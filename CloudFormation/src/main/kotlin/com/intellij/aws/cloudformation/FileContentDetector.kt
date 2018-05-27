@@ -7,7 +7,7 @@ import com.intellij.openapi.vfs.newvfs.FileSystemInterface
 import com.intellij.openapi.vfs.newvfs.impl.StubVirtualFile
 import java.io.IOException
 
-class FileContentDetector(moniker: String, private vararg val signature: ByteArray) {
+class FileContentDetector(moniker: String, private val requireJsonObject: Boolean, private vararg val signature: String) {
   private val cacheKey = Key.create<DetectedSignatureCache>("CloudFormationDetectedSignature:$moniker")
 
   private data class DetectedSignatureCache(val stamp: Long, val signatureDetected: Boolean)
@@ -51,7 +51,16 @@ class FileContentDetector(moniker: String, private vararg val signature: ByteArr
         val bytes = ByteArray(4096)
 
         val n = it.read(bytes, 0, bytes.size)
-        return n > 0 && signature.any { findSubArray(bytes, it) >= 0 }
+        if (n <= 0) {
+          return false
+        }
+
+        val string = String(bytes, 0, n, Charsets.UTF_8).trimStart()
+        if (requireJsonObject && !string.startsWith('{')) {
+          return false
+        }
+
+        return signature.any { string.contains(it) }
       }
     } catch (ignored: IOException) {
       return false

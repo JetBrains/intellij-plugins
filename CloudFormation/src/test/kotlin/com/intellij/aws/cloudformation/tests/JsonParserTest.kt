@@ -7,7 +7,6 @@ import java.io.File
 class JsonParserTest : LightPlatformCodeInsightTestCase() {
   fun testFile1() = runTest("file1")
   fun testWrongResources() = runTest("wrongResources")
-  fun testNoRootExpression() = runTest("no_root_expression")
 
   fun runTest(name: String) {
     configureByFile("$name.template")
