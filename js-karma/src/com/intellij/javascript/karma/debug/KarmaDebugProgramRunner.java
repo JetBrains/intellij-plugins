@@ -145,7 +145,7 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
         }
       }
     );
-    return session.getRunContentDescriptor();
+    return KarmaUtil.withReusePolicy(session.getRunContentDescriptor(), karmaServer);
   }
 
   @NotNull
