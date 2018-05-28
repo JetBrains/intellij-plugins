@@ -144,7 +144,7 @@ function startCreation(pathToVueCli, packageName, projectTemplate, projectName) 
     var vue_init = require(pathToVueCli + "vue-cli/bin/vue-init");
   }
   else {
-    var vue_create = require(pathToVueCli + packageName + "/lib/create")(projectName);
+    var vue_create = require(pathToVueCli + packageName + "/lib/create")(projectName, {});
   }
 }
 
