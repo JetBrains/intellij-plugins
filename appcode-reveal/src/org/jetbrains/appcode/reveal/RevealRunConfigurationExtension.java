@@ -175,6 +175,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     if (toInject == null) return;
 
     UsageTrigger.trigger("appcode.reveal.inject");
+    RevealUsageTriggerCollector.Companion.trigger(configuration.getProject(), "inject");
 
     environment.putUserData(FILE_TO_INJECT, toInject);
   }
@@ -253,6 +254,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     }
 
     UsageTrigger.trigger("appcode.reveal.installOnDevice");
+    RevealUsageTriggerCollector.Companion.trigger(configuration.getProject(), "installOnDevice");
 
     return signAndInstall(libReveal, buildConfiguration, mainExecutable);
   }
