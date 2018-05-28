@@ -54,8 +54,9 @@ class VueInjector : MultiHostInjector {
     private fun calculateDelimitersFromIndex(project: Project, key: String): Pair<String, PsiElement>? {
       val elements = resolve("", GlobalSearchScope.projectScope(project), VueOptionsIndex.KEY) ?: return null
       val element = onlyLocal(elements).firstOrNull() ?: return null
-      val obj = element as? JSObjectLiteralExpression ?:
-                PsiTreeUtil.getParentOfType(element, JSObjectLiteralExpression::class.java) ?: return null
+      val obj = element as? JSObjectLiteralExpression
+                ?: PsiTreeUtil.getParentOfType(element, JSObjectLiteralExpression::class.java)
+                ?: return null
       val property = findProperty(obj, "delimiters") ?: return null
       val delimiter = getDelimiterValue(property, key) ?: return null
       return Pair.create(delimiter, element)
@@ -88,7 +89,7 @@ class VueInjector : MultiHostInjector {
 
     // this supposed to work in <template lang="jade"> attribute values
     if (context is XmlAttributeValueImpl && !context.value.isNullOrBlank() && context.parent is XmlAttribute
-        && VueAttributesProvider.HAVE_JS_AS_VALUE.contains((context.parent as XmlAttribute).name)) {
+        && VueAttributesProvider.isInjectJS((context.parent as XmlAttribute).name)) {
       val embedded = PsiTreeUtil.getChildOfType(context, JSEmbeddedContent::class.java)
       if (embedded != null && VueJSLanguage.INSTANCE != embedded.language) {
         val literal = PsiTreeUtil.getChildOfType(embedded, JSLiteralExpressionImpl::class.java)
@@ -96,7 +97,8 @@ class VueInjector : MultiHostInjector {
           injectInElement(literal, registrar)
           return
         }
-      } else if (embedded == null) {
+      }
+      else if (embedded == null) {
         injectInElement(context, registrar)
       }
     }

@@ -16,7 +16,6 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
 import com.intellij.psi.meta.PsiPresentableMetaData
 import com.intellij.psi.xml.XmlElement
@@ -36,21 +35,28 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
   companion object {
     val SCOPED = "scoped"
     @NonNls private val SRC_ATTR_NAME = "src"
-    private val DEFAULT_BINDABLE = arrayOf("key", "is")
+    // "v-on" is not included because it can't be used as is, it must be followed by a colon and an event, this is supported separately
     val DEFAULT = setOf("v-text", "v-html", "v-show", "v-if", "v-else", "v-else-if", "v-for",
-                          "v-on", "v-bind", "v-model", "v-pre", "v-cloak","v-once",
-                          "slot", "ref").
-                  plus(DEFAULT_BINDABLE.map { "v-bind:" + it }).
-                  plus(DEFAULT_BINDABLE.map { ":" + it })
+                        "v-bind", "v-model", "v-pre", "v-cloak", "v-once",
+                        "slot", "ref")
     val HAVE_NO_PARAMS = setOf("v-else", "v-once", "v-pre", "v-cloak", "scoped")
-    val HAVE_JS_AS_VALUE = DEFAULT - "slot" - "ref"
+
+    fun isInjectJS(attrName: String): Boolean {
+      if (attrName == "slot" || attrName == "ref") return false
+      if (DEFAULT.contains(attrName)) return true
+      if (attrName.startsWith("@") || attrName.startsWith("v-on:") ||
+          attrName.startsWith(":") || attrName.startsWith("v-bind:")) {
+        return true
+      }
+      return false
+    }
 
     fun vueAttributeDescriptor(attributeName: String?): VueAttributeDescriptor? {
       if (DEFAULT.contains(attributeName!!)) return VueAttributeDescriptor(attributeName)
       return null
     }
-
     fun getDefaultVueAttributes() = DEFAULT.map { VueAttributeDescriptor(it) }.toTypedArray()
+
     fun isBinding(name: String) = name.startsWith(":") || name.startsWith("v-bind:")
 
     fun addBindingAttributes(result: MutableList<XmlAttributeDescriptor>,
@@ -64,12 +70,6 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
     if (context == null || !org.jetbrains.vuejs.index.hasVue(context.project)) return emptyArray()
     val result = mutableListOf<XmlAttributeDescriptor>()
     result.addAll(getDefaultVueAttributes())
-
-    // v-bind:any-standard-attribute support
-    val commonAttributes = (context.descriptor as? HtmlElementDescriptorImpl)?.getDefaultAttributeDescriptors(context)
-    if (commonAttributes != null) {
-      addBindingAttributes(result, commonAttributes)
-    }
 
     if (insideStyle(context)) {
       result.add(VueAttributeDescriptor(SCOPED))

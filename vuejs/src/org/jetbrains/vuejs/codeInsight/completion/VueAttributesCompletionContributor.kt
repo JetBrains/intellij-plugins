@@ -14,6 +14,7 @@
 package org.jetbrains.vuejs.codeInsight.completion
 
 import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.patterns.PlatformPatterns.psiElement
@@ -25,6 +26,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.ProcessingContext
 import com.intellij.util.SmartList
+import icons.VuejsIcons
 import org.jetbrains.vuejs.index.hasVue
 
 class VueAttributesCompletionContributor : CompletionContributor() {
@@ -56,12 +58,29 @@ private class VueEventAttrCompletionProvider : CompletionProvider<CompletionPara
 
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
     if (!hasVue(parameters.position.project)) return
-
     val attr = parameters.position.parent as? XmlAttribute ?: return
-
     val attrName = attr.name
-    if (!attrName.startsWith("v-on:") && !attrName.startsWith("@")) return
 
+    if (attrName.startsWith("v-on:") || attrName.startsWith("@")) {
+      addEventCompletions(attr, result)
+      return
+    }
+
+    if (attrName.startsWith("v-bind:") || attrName.startsWith(":")) {
+      addBindCompletions(attr, result)
+      return
+    }
+
+    val insertHandler = InsertHandler<LookupElement> { insertionContext, _ ->
+      insertionContext.setLaterRunnable {
+        CodeCompletionHandlerBase(CompletionType.BASIC).invokeCompletion(parameters.originalFile.project, parameters.editor)
+      }
+    }
+    result.addElement(LookupElementBuilder.create("v-on:").withIcon(VuejsIcons.Vue).withInsertHandler(insertHandler))
+    result.addElement(LookupElementBuilder.create("v-bind:").withIcon(VuejsIcons.Vue).withInsertHandler(insertHandler))
+  }
+
+  private fun addEventCompletions(attr: XmlAttribute, result: CompletionResultSet) {
     val prefix = result.prefixMatcher.prefix
     val lastDotIndex = prefix.lastIndexOf('.')
     if (lastDotIndex < 0) {
@@ -78,7 +97,9 @@ private class VueEventAttrCompletionProvider : CompletionProvider<CompletionPara
     for (attrDescriptor in descriptor.getAttributesDescriptors(tag)) {
       val name = attrDescriptor.name
       if (name.startsWith("on")) {
-        result.addElement(LookupElementBuilder.create(prefix + name.substring("on".length)))
+        result.addElement(LookupElementBuilder
+                            .create(prefix + name.substring("on".length))
+                            .withInsertHandler(XmlAttributeInsertHandler.INSTANCE))
       }
     }
   }
@@ -131,6 +152,23 @@ private class VueEventAttrCompletionProvider : CompletionProvider<CompletionPara
       if (!usedModifiers.contains(it)) {
         result.addElement(LookupElementBuilder.create(it))
       }
+    }
+  }
+
+  private fun addBindCompletions(attr: XmlAttribute, result: CompletionResultSet) {
+    val prefix = result.prefixMatcher.prefix
+    val newResult = if (prefix == "v-bind:") result.withPrefixMatcher("") else result
+    val lookupItemPrefix = if (prefix.startsWith(":")) ":" else ""
+
+    newResult.addElement(LookupElementBuilder.create(lookupItemPrefix + "is").withInsertHandler(XmlAttributeInsertHandler.INSTANCE))
+    newResult.addElement(LookupElementBuilder.create(lookupItemPrefix + "key").withInsertHandler(XmlAttributeInsertHandler.INSTANCE))
+
+    // v-bind:any-standard-attribute support
+    val descriptors = (attr.parent?.descriptor as? HtmlElementDescriptorImpl)?.getDefaultAttributeDescriptors(attr.parent) ?: return
+    for (attribute in descriptors) {
+      newResult.addElement(LookupElementBuilder
+                             .create(lookupItemPrefix + attribute.name)
+                             .withInsertHandler(XmlAttributeInsertHandler.INSTANCE))
     }
   }
 }

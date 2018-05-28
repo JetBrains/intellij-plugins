@@ -255,6 +255,11 @@ Vue.options.delimiters = ['<%', '%>']
     ParsingTestCase.doCheckResult(testDataPath, getTestName(false) + "." + "txt", toParseTreeText(myFixture.file))
   }
 
+  fun testPugAttrValueInjection() {
+    myFixture.configureByFile(getTestName(false) + ".vue")
+    ParsingTestCase.doCheckResult(testDataPath, getTestName(false) + "." + "txt", toParseTreeText(myFixture.file))
+  }
+
   private fun toParseTreeText(file: PsiFile): String {
     return DebugUtil.psiToString(file, false, false, { psiElement, consumer ->
       InjectedLanguageManager.getInstance(project).enumerate(psiElement) { injectedPsi, _ -> consumer.consume(injectedPsi) }

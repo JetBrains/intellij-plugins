@@ -17,6 +17,7 @@ import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
+import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
@@ -695,7 +696,7 @@ $script""")
 </template>
 $script""")
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "v-bind:href", "v-bind:hidden", "v-bind:onclick", "v-bind:onchange")
+    assertContainsElements(myFixture.lookupElementStrings!!, "href", "hidden", "onclick", "onchange", "key", "is")
     UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, ":use-me", ":two-words")
 
     myFixture.configureByText("User.vue", """
@@ -1226,6 +1227,16 @@ Pair("""<template>
     myFixture.completeBasic()
     assertSameElements(myFixture.lookupElementStrings!!, "stop", "prevent", "capture", "self", "once", "passive",
                        "ctrl", "alt", "shift", "meta", "exact")
+  }
+
+  fun testAutopopupAfterVOnSelection() {
+    myFixture.configureByText("a.vue", "<div v-o<caret>>")
+    myFixture.completeBasic()
+    (myFixture.lookup as LookupImpl).finishLookup(Lookup.NORMAL_SELECT_CHAR)
+    // new completion must start
+    myFixture.assertPreferredCompletionItems(0, "abort", "autocomplete", "autocompleteerror", "blur", "cancel", "canplay")
+    (myFixture.lookup as LookupImpl).finishLookup(Lookup.NORMAL_SELECT_CHAR)
+    myFixture.checkResult("<div v-on:abort=\"<caret>\">")
   }
 }
 
