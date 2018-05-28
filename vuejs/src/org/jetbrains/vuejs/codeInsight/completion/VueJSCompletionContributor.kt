@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.jetbrains.vuejs.codeInsight
+package org.jetbrains.vuejs.codeInsight.completion
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
@@ -21,10 +21,9 @@ import com.intellij.lang.javascript.completion.JSLookupUtilImpl
 import com.intellij.lang.javascript.completion.JSSmartCompletionContributor
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
+import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider
+import org.jetbrains.vuejs.codeInsight.findScriptWithExport
 
-/**
- * @author Irina.Chernushina on 7/31/2017.
- */
 class VueJSCompletionContributor : JSSmartCompletionContributor() {
   override fun getSmartCompletionVariants(location: JSReferenceExpression): List<LookupElement>? {
     val baseVariants = super.getSmartCompletionVariants(location)

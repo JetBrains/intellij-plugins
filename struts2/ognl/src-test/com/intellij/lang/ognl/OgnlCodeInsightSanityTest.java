@@ -20,9 +20,7 @@ import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.SkipSlowTestLocally;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import com.intellij.testFramework.propertyBased.CheckHighlighterConsistency;
-import com.intellij.testFramework.propertyBased.MadTestingAction;
-import com.intellij.testFramework.propertyBased.MadTestingUtil;
+import com.intellij.testFramework.propertyBased.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jetCheck.Generator;
@@ -69,6 +67,15 @@ public class OgnlCodeInsightSanityTest extends LightCodeInsightFixtureTestCase {
     finally {
       LayeredLexer.ourDisableLayersFlag.set(null);
     }
+  }
+
+  public void testRandomActivity() {
+    MadTestingUtil.enableAllInspections(getProject(), getTestRootDisposable());
+    Function<PsiFile, Generator<? extends MadTestingAction>> fileActions =
+      file -> Generator.sampledFrom(new InvokeIntention(file, new IntentionPolicy()),
+                                    new InvokeCompletion(file, new CompletionPolicy()),
+                                    new DeleteRange(file));
+    PropertyChecker.checkScenarios(actionsOnOgnlFiles(fileActions));
   }
 
   @NotNull
