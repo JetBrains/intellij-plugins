@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 
 class VueJSLanguageConfigurableProvider : JSInheritedLanguagesConfigurableProvider() {
-  override fun isNeedToBeTerminated(element: PsiElement) = false
+  override fun isNeedToBeTerminated(element: PsiElement): Boolean = false
   
   override fun createExpressionFromText(text: String,
                                         element: PsiElement): PsiElement? {

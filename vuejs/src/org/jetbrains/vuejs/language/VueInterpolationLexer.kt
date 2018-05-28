@@ -19,10 +19,10 @@ class VueInterpolationLexer(val prefix:String, val suffix:String, val type:IElem
     end = 0
   }
 
-  override fun getState() = state
-  override fun getTokenType() = element
-  override fun getTokenStart() = start
-  override fun getTokenEnd() = end
+  override fun getState(): Int = state
+  override fun getTokenType(): IElementType? = element
+  override fun getTokenStart(): Int = start
+  override fun getTokenEnd(): Int = end
 
   override fun advance() {
     if (end == buffer!!.length) {
@@ -62,6 +62,6 @@ class VueInterpolationLexer(val prefix:String, val suffix:String, val type:IElem
     }
   }
 
-  override fun getBufferSequence() = buffer!!
-  override fun getBufferEnd() = buffer!!.length
+  override fun getBufferSequence(): CharSequence = buffer!!
+  override fun getBufferEnd(): Int = buffer!!.length
 }

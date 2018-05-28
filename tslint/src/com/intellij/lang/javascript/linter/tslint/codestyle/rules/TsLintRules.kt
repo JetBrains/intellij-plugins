@@ -4,34 +4,34 @@ import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 
-val TslintRulesSet = setOf(ImportDestructuringSpacingRule(),
-                           QuotemarkRule(),
-                           ForceQuotemarkRule(),
-                           SemicolonRule(),
-                           ForceSemicolonRule(),
-                           OneLineCatchRule(),
-                           OneLineElseRule(),
-                           OneLineFinallyRule(),
-                           NamedFunctionSpacesRule(),
-                           WhitespaceTypeRule(),
-                           AnonymousFunctionSpacesRule(),
-                           WhitespaceIfRule(),
-                           WhitespaceForRule(),
-                           WhitespaceWhileRule(),
-                           WhitespaceAssignmentRule(),
-                           WhitespaceArrowOperatorRule(),
-                           WhitespaceLogicalOperatorRule(),
-                           WhitespaceEqOperatorRule(),
-                           WhitespaceBitwiseOperatorRule(),
-                           WhitespaceRelationOperatorRule(),
-                           WhitespaceAdditiveOperatorRule(),
-                           WhitespaceMultplyOperatorRule(),
-                           WhitespaceShiftOperatorRule(),
-                           WhitespaceCommaRule(),
-                           WhitespaceImportsRule(),
-                           MaxLineLengthRule(),
-                           ImportBlacklistRule(),
-                           IndentRule()
+val TslintRulesSet: Set<TsLintSimpleRule<out Any>> = setOf(ImportDestructuringSpacingRule(),
+                                                           QuotemarkRule(),
+                                                           ForceQuotemarkRule(),
+                                                           SemicolonRule(),
+                                                           ForceSemicolonRule(),
+                                                           OneLineCatchRule(),
+                                                           OneLineElseRule(),
+                                                           OneLineFinallyRule(),
+                                                           NamedFunctionSpacesRule(),
+                                                           WhitespaceTypeRule(),
+                                                           AnonymousFunctionSpacesRule(),
+                                                           WhitespaceIfRule(),
+                                                           WhitespaceForRule(),
+                                                           WhitespaceWhileRule(),
+                                                           WhitespaceAssignmentRule(),
+                                                           WhitespaceArrowOperatorRule(),
+                                                           WhitespaceLogicalOperatorRule(),
+                                                           WhitespaceEqOperatorRule(),
+                                                           WhitespaceBitwiseOperatorRule(),
+                                                           WhitespaceRelationOperatorRule(),
+                                                           WhitespaceAdditiveOperatorRule(),
+                                                           WhitespaceMultplyOperatorRule(),
+                                                           WhitespaceShiftOperatorRule(),
+                                                           WhitespaceCommaRule(),
+                                                           WhitespaceImportsRule(),
+                                                           MaxLineLengthRule(),
+                                                           ImportBlacklistRule(),
+                                                           IndentRule()
 )
 
 class ImportDestructuringSpacingRule : TsLintSimpleRule<Boolean>("import-destructuring-spacing") {
@@ -194,8 +194,8 @@ class OneLineElseRule : MergedArrayRule("one-line") {
 }
 
 abstract class FunctionSpacesRule : TsLintSimpleRule<Boolean>("space-before-function-paren") {
-  val ALWAYS = "always"
-  val NEVER = "never"
+  val ALWAYS: String = "always"
+  val NEVER: String = "never"
 
   override fun getConfigValue(config: TsLintConfigWrapper): Boolean? {
     val option = config.getOption(optionId) ?: return null
@@ -416,8 +416,8 @@ class WhitespaceCommaRule : MergedArrayRule("whitespace") {
 }
 
 class WhitespaceImportsRule : MergedArrayRule("whitespace") {
-  override fun getCode() = "check-module"
-  override fun defaultValue() = true
+  override fun getCode(): String = "check-module"
+  override fun defaultValue(): Boolean = true
   
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
     return codeStyleSettings.SPACES_WITHIN_IMPORTS

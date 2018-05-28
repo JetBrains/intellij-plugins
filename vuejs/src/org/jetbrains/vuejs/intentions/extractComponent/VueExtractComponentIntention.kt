@@ -48,7 +48,7 @@ class VueExtractComponentIntention : JavaScriptIntention() {
     VueExtractComponentRefactoring(project, context, editor).perform()
   }
 
-  override fun startInWriteAction() = false
+  override fun startInWriteAction(): Boolean = false
 
   companion object {
     fun getContext(editor: Editor?, element: PsiElement): List<XmlTag>? {

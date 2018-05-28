@@ -49,7 +49,7 @@ import org.jetbrains.vuejs.index.hasVueClassComponentLibrary
 
 class VueInsertHandler : XmlTagInsertHandler() {
   companion object {
-    val INSTANCE = VueInsertHandler()
+    val INSTANCE: VueInsertHandler = VueInsertHandler()
 
     fun reformatElement(element: PsiElement?) {
       if (element != null && element.isValid) {

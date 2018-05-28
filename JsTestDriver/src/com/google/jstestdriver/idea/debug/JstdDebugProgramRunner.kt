@@ -50,9 +50,9 @@ class JstdDebugProgramRunner : AsyncProgramRunner<RunnerSettings>() {
       }
   }
 
-  override fun getRunnerId() = DEBUG_RUNNER_ID
+  override fun getRunnerId(): String = DEBUG_RUNNER_ID
 
-  override fun canRun(executorId: String, profile: RunProfile) = DefaultDebugExecutor.EXECUTOR_ID == executorId && profile is JstdRunConfiguration
+  override fun canRun(executorId: String, profile: RunProfile): Boolean = DefaultDebugExecutor.EXECUTOR_ID == executorId && profile is JstdRunConfiguration
 
   override fun execute(environment: ExecutionEnvironment, state: RunProfileState): Promise<RunContentDescriptor?> {
     val runSettings = JstdRunProfileState.cast(state).runSettings

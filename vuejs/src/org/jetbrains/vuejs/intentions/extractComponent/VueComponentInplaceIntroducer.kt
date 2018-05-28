@@ -61,13 +61,13 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
   private var isCanceled = false
 
   companion object {
-    const val GROUP_ID = "VueExtractComponent"
+    const val GROUP_ID: String = "VueExtractComponent"
   }
 
   override fun collectAdditionalElementsToRename(stringUsages: MutableList<Pair<PsiElement, TextRange>>) {
   }
 
-  override fun shouldSelectAll() = false
+  override fun shouldSelectAll(): Boolean = false
 
   override fun getCommandName(): String {
     return commandName

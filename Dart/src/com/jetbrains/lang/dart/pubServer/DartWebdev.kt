@@ -30,7 +30,7 @@ import java.util.concurrent.ExecutionException
 private val LOG = logger<DartWebdev>()
 
 object DartWebdev {
-  var activated = false
+  var activated: Boolean = false
 
   fun useWebdev(sdk: DartSdk?): Boolean {
     if (sdk == null) return false

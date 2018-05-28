@@ -128,6 +128,6 @@ fun findScriptWithExport(element: PsiElement) : Pair<PsiElement, ES6ExportDefaul
   return null
 }
 
-fun getContainingXmlFile(element: PsiElement) =
+fun getContainingXmlFile(element: PsiElement): XmlFile? =
   (element.containingFile as? XmlFile ?: element as? XmlFile ?:
    InjectedLanguageManager.getInstance(element.project).getInjectionHost(element)?.containingFile as? XmlFile)
