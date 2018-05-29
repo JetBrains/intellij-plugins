@@ -18,7 +18,7 @@ import com.intellij.internal.statistic.service.fus.collectors.ProjectUsageTrigge
 import com.intellij.openapi.project.Project
 
 class RevealUsageTriggerCollector: ProjectUsageTriggerCollector() {
-  override fun getGroupId() = "statistics.appcode.reveal"
+  override fun getGroupId(): String = "statistics.appcode.reveal"
 
   companion object {
     fun trigger(project: Project, feature: String) {
