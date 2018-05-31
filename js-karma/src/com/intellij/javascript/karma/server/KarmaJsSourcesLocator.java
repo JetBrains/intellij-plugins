@@ -47,7 +47,7 @@ public class KarmaJsSourcesLocator {
       return new File(pluginBaseDir, JS_REPORTER_NAME);
     }
     if (ApplicationManager.getApplication().isInternal()) {
-      String srcDir = jarPath.replace("/out/classes/production/intellij.karma", "/contrib/js-karma/src");
+      String srcDir = jarPath.replace('\\', '/').replace("/out/classes/production/intellij.karma", "/contrib/js-karma/src");
       if (new File(srcDir).isDirectory()) {
         jarPath = srcDir;
       }
