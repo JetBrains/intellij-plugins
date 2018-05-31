@@ -129,6 +129,7 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
           debugProcess.setConsoleMessagesSupportEnabled(false);
           debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess));
           karmaServer.onBrowsersReady(() -> {
+            openConnectionIfRemoteDebugging(karmaServer, debugProcess.getConnection());
             Runnable resumeTestRunning = ConcurrencyUtil.once(() -> resumeTestRunning((OSProcessHandler)executionResult.getProcessHandler()));
             SingleAlarm alarm = new SingleAlarm(resumeTestRunning, 5000);
             alarm.request();
@@ -157,10 +158,8 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
                                                                                    @NotNull Url url) {
     KarmaConfig karmaConfig = karmaServer.getKarmaConfig();
     if (karmaConfig != null && karmaConfig.getRemoteDebuggingPort() > 0) {
-      WipRemoteVmConnection connection = new WipRemoteVmConnection();
-      BrowserChromeDebugProcess debugProcess = new BrowserChromeDebugProcess(session, fileFinder, connection, executionResult);
-      connection.open(new InetSocketAddress(karmaConfig.getHostname(), karmaConfig.getRemoteDebuggingPort()));
-      return debugProcess;
+      // open connection later on browser ready to workaround WEB-33076
+      return new BrowserChromeDebugProcess(session, fileFinder, new WipRemoteVmConnection(), executionResult);
     }
     JavaScriptDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
     WebBrowser browser = debuggableWebBrowser.getWebBrowser();
@@ -168,6 +167,13 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
     // reload it to capture. Otherwise (no capturing page was open), reloading shouldn't harm.
     boolean reloadPage = !karmaServer.areBrowsersReady();
     return debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, reloadPage);
+  }
+
+  private static void openConnectionIfRemoteDebugging(@NotNull KarmaServer server, @NotNull VmConnection<?> connection) {
+    KarmaConfig config = server.getKarmaConfig();
+    if (config != null && config.getRemoteDebuggingPort() > 0 && connection instanceof WipRemoteVmConnection) {
+      ((WipRemoteVmConnection)connection).open(new InetSocketAddress(config.getHostname(), config.getRemoteDebuggingPort()));
+    }
   }
 
   @NotNull
