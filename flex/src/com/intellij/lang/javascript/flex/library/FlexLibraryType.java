@@ -55,7 +55,7 @@ public class FlexLibraryType extends LibraryType<FlexLibraryProperties> {
   }
 
   @Override
-  public Icon getIcon() {
+  public Icon getIcon(FlexLibraryProperties properties) {
     return PlatformIcons.LIBRARY_ICON;    // TODO: change icon to Flex specific only when automatic library converters are done
   }
 
