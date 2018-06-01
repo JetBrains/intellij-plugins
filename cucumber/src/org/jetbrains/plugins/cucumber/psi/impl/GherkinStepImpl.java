@@ -88,7 +88,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   @NotNull
   @Override
   public PsiReference[] getReferences() {
-    return ReferenceProvidersRegistry.getReferencesFromProviders(this, GherkinStepImpl.class);
+    return ReferenceProvidersRegistry.getReferencesFromProviders(this);
   }
 
   protected void acceptGherkin(GherkinElementVisitor gherkinElementVisitor) {
