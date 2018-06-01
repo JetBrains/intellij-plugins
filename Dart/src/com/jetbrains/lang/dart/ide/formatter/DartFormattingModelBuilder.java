@@ -22,12 +22,6 @@ public class DartFormattingModelBuilder implements FormattingModelBuilderEx {
     return createModel(element, settings, FormattingMode.REFORMAT);
   }
 
-  @Nullable
-  @Override
-  public TextRange getRangeAffectingIndent(PsiFile file, int offset, ASTNode elementAtOffset) {
-    return null;
-  }
-
   @NotNull
   @Override
   public FormattingModel createModel(@NotNull PsiElement element, @NotNull CodeStyleSettings settings, @NotNull FormattingMode mode) {
