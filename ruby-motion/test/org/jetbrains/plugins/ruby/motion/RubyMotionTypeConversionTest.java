@@ -18,7 +18,7 @@ package org.jetbrains.plugins.ruby.motion;
 import org.jetbrains.plugins.ruby.motion.symbols.MotionSymbolUtil;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolFilterFactory;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.*;
-import org.jetbrains.plugins.ruby.ruby.codeInsight.types.collections.RArrayType;
+import org.jetbrains.plugins.ruby.ruby.codeInsight.types.collections.RCollectionType;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.impl.REmptyType;
 
 /**
@@ -37,11 +37,11 @@ public class RubyMotionTypeConversionTest extends RubyMotionLightFixtureTestCase
     type = MotionSymbolUtil.getTypeByName(getModule(), "BOOL");
     assertEquals("TrueClass or FalseClass", type.getPresentableName());
     type = MotionSymbolUtil.getTypeByName(getModule(), "bool*");
-    assertInstanceOf(type, RArrayType.class);
-    assertEquals("TrueClass or FalseClass", ((RArrayType)type).getItemType().getPresentableName());
+    assertInstanceOf(type, RCollectionType.class);
+    assertEquals("TrueClass or FalseClass", ((RCollectionType)type).getIndexType().getPresentableName());
     type = MotionSymbolUtil.getTypeByName(getModule(), "BOOL*");
-    assertInstanceOf(type, RArrayType.class);
-    assertEquals("TrueClass or FalseClass", ((RArrayType)type).getItemType().getPresentableName());
+    assertInstanceOf(type, RCollectionType.class);
+    assertEquals("TrueClass or FalseClass", ((RCollectionType)type).getIndexType().getPresentableName());
   }
 
   public void testVoid() {
@@ -49,8 +49,8 @@ public class RubyMotionTypeConversionTest extends RubyMotionLightFixtureTestCase
     RType type = MotionSymbolUtil.getTypeByName(getModule(), "void");
     assertEquals(REmptyType.INSTANCE, type);
     type = MotionSymbolUtil.getTypeByName(getModule(), "void*");
-    assertInstanceOf(type, RArrayType.class);
-    assertEquals(REmptyType.INSTANCE, ((RArrayType)type).getItemType());
+    assertInstanceOf(type, RCollectionType.class);
+    assertEquals(REmptyType.INSTANCE, ((RCollectionType)type).getIndexType());
   }
 
   public void testFloat() {
@@ -123,8 +123,8 @@ public class RubyMotionTypeConversionTest extends RubyMotionLightFixtureTestCase
     assertInstanceOf(type, RSymbolType.class);
     assertEquals("NSObject", ((RSymbolType)type).getSymbol().getName());
     type = MotionSymbolUtil.getTypeByName(getModule(), "NSObject**");
-    assertInstanceOf(type, RArrayType.class);
-    final RType itemType = ((RArrayType)type).getItemType();
+    assertInstanceOf(type, RCollectionType.class);
+    final RType itemType = ((RCollectionType)type).getIndexType();
     assertInstanceOf(itemType, RSymbolType.class);
     assertEquals("NSObject", ((RSymbolType)itemType).getSymbol().getName());
   }
