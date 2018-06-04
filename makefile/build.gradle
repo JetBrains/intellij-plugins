@@ -11,7 +11,7 @@ buildscript {
 }
 
 plugins {
-    id "org.jetbrains.intellij" version "0.2.13"
+    id "org.jetbrains.intellij" version "0.3.2"
 }
 apply plugin: 'kotlin'
 apply plugin: 'java'
@@ -20,7 +20,7 @@ group 'name.kropp.intellij'
 version '1.2.2'
 
 intellij {
-    version '2016.3'
+    version '2018.1'
     pluginName rootProject.name
     updateSinceUntilBuild false
 }

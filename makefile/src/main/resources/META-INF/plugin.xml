@@ -12,7 +12,7 @@ Support for UNIX Makefiles
 Bugfix release. The last update to support 2016.3.
 ]]></change-notes>
 
-  <idea-version since-build="163.0"/>
+  <idea-version since-build="181.0"/>
 
   <depends>com.intellij.modules.lang</depends>
 
