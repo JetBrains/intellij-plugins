@@ -11,7 +11,7 @@ class MakefileProjectSettings : PersistentStateComponent<MakeSettings> {
 
   override fun getState() = settings
 
-  override fun loadState(state: MakeSettings?) {
+  override fun loadState(state: MakeSettings) {
     settings = state
   }
 }

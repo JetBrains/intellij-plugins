@@ -34,9 +34,9 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
 
   override fun getConfigurationEditor() = MakefileRunConfigurationEditor(project)
 
-  override fun writeExternal(element: Element?) {
+  override fun writeExternal(element: Element) {
     super.writeExternal(element)
-    val child = element!!.getOrCreate(MAKEFILE)
+    val child = element.getOrCreate(MAKEFILE)
     child.setAttribute(FILENAME, filename)
     child.setAttribute(TARGET, target)
     child.setAttribute(WORKING_DIRECTORY, workingDirectory)
@@ -44,9 +44,9 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
     environmentVariables.writeExternal(child)
   }
 
-  override fun readExternal(element: Element?) {
+  override fun readExternal(element: Element) {
     super.readExternal(element)
-    val child = element?.getChild(MAKEFILE)
+    val child = element.getChild(MAKEFILE)
     if (child != null) {
       filename = child.getAttributeValue(FILENAME) ?: ""
       target = child.getAttributeValue(TARGET) ?: ""

@@ -36,7 +36,7 @@ class MakeConfigurable(private val project: Project?, private val settings: Make
   }
 
   override fun reset() {
-    pathField.text = settings.settings?.path
+    pathField.text = settings.settings?.path ?: ""
   }
 
   override fun getHelpTopic() = null
