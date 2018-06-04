@@ -5,5 +5,5 @@ import com.intellij.psi.css.EmbeddedCssProvider
 import org.jetbrains.vuejs.VueLanguage
 
 class VueEmbeddedCssProvider : EmbeddedCssProvider() {
-  override fun enableEmbeddedCssFor(language: Language) = language is VueLanguage
+  override fun enableEmbeddedCssFor(language: Language): Boolean = language is VueLanguage
 }

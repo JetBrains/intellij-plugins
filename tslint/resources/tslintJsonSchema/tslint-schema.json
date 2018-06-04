@@ -3487,7 +3487,8 @@
                   "type": "string",
                   "enum": [
                     "ignore-interfaces",
-                    "ignore-bound-class-methods"
+                    "ignore-bound-class-methods",
+                    "strict-bound-class-methods"
                   ]
                 }
               ],
@@ -4385,11 +4386,12 @@
                 "enum": [
                   "no-public",
                   "check-accessor",
-                  "check-constructor"
+                  "check-constructor",
+                  "check-parameter-property"
                 ]
               },
               "minItems": 1,
-              "maxItems": 3,
+              "maxItems": 4,
               "uniqueItems": true
             }
           },

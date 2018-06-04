@@ -39,7 +39,6 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Symbol;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.Context;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.RType;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.RTypeFactory;
-import org.jetbrains.plugins.ruby.ruby.codeInsight.types.collections.RArrayType;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.impl.REmptyType;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.impl.RSymbolTypeImpl;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.controlStructures.methods.ArgumentInfo;
@@ -122,7 +121,7 @@ public class MotionSymbolUtil {
     if (typeName.endsWith("*")) {
       final RType type = doGetTypeByName(module, dereferencePointerType(typeName));
       if (type != REmptyType.INSTANCE || "void".equals(dereferencePointerType(typeName))) {
-        return new RArrayType(project, type);
+        return RTypeFactory.createArrayType(project, type);
       }
     }
 

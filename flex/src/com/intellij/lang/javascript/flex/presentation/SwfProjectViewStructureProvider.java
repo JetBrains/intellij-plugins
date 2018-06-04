@@ -1,6 +1,18 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.intellij.lang.javascript.flex.presentation;
 
-import com.intellij.diagnostic.LogMessageEx;
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.SelectableTreeStructureProvider;
 import com.intellij.ide.projectView.ViewSettings;
@@ -28,7 +40,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiCompiledFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.DebugUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -178,7 +189,7 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
           final Attachment attachment = e.getParent() != null
                                         ? new Attachment("Parent element.txt", e.getParent().getText())
                                         : new Attachment("Element text.txt", e.getText());
-          LOG.error(LogMessageEx.createEvent("Null qname: '" + e.getClass().getName() + "'", DebugUtil.currentStackTrace(), attachment));
+          LOG.error("Null qname: '" + e.getClass().getName() + "'", new Throwable(), attachment);
           continue;
         }
         elements.add((JSQualifiedNamedElement)e);
@@ -229,8 +240,7 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
           final Attachment attachment = element.getParent() != null
                                         ? new Attachment("Parent element.txt", element.getParent().getText())
                                         : new Attachment("Element text.txt", element.getText());
-          LOG.error(LogMessageEx.createEvent("package=[" + aPackage + "], qName=[" + qName + "]", DebugUtil.currentStackTrace(),
-                                             attachment));
+          LOG.error("package=[" + aPackage + "], qName=[" + qName + "]", new Throwable(), attachment);
           continue;
         }
 

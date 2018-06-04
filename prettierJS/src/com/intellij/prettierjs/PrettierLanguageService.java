@@ -4,7 +4,6 @@ import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +12,10 @@ import java.util.concurrent.Future;
 
 public interface PrettierLanguageService {
   @Nullable
-  Future<FormatResult> format(@NotNull PsiFile file, @NotNull NodePackage prettierPackage, @Nullable TextRange range);
+  Future<FormatResult> format(@NotNull String filePath,
+                              @NotNull String text, 
+                              @NotNull NodePackage prettierPackage,
+                              @Nullable TextRange range);
 
   @Nullable
   Future<SupportedFilesInfo> getSupportedFiles(@NotNull NodePackage prettierPackage);

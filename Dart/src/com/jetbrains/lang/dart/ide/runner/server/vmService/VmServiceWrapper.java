@@ -15,10 +15,7 @@ import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartAsyncMarkerFrame;
-import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceEvaluator;
-import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
-import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceValue;
+import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.*;
 import org.dartlang.vm.service.VmService;
 import org.dartlang.vm.service.consumer.*;
 import org.dartlang.vm.service.element.*;
@@ -30,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class VmServiceWrapper implements Disposable {
@@ -157,6 +155,31 @@ public class VmServiceWrapper implements Disposable {
     addRequest(() -> myVmService.getVM(consumer));
   }
 
+  public CompletableFuture<Isolate> getCachedIsolate(@NotNull final String isolateId) {
+    return myIsolatesInfo.getCachedIsolate(isolateId, () -> {
+      CompletableFuture<Isolate> isolateFuture = new CompletableFuture<>();
+      getIsolate(isolateId, new GetIsolateConsumer() {
+
+        @Override
+        public void onError(RPCError error) {
+          isolateFuture.completeExceptionally(new RuntimeException(error.getMessage()));
+        }
+
+        @Override
+        public void received(Isolate response) {
+          isolateFuture.complete(response);
+        }
+
+        @Override
+        public void received(Sentinel response) {
+          // Unable to get the isolate.
+          isolateFuture.complete(null);
+        }
+      });
+      return isolateFuture;
+    });
+  }
+
   private void getIsolate(@NotNull final String isolateId, @NotNull final GetIsolateConsumer consumer) {
     addRequest(() -> myVmService.getIsolate(isolateId, consumer));
   }
@@ -172,11 +195,8 @@ public class VmServiceWrapper implements Disposable {
 
     // Just to make sure that the main isolate is not handled twice, both from handleDebuggerConnected() and DartVmServiceListener.received(PauseStart)
     if (newIsolate) {
-      final ExceptionPauseMode mode = DartExceptionBreakpointHandler
-        .getBreakOnExceptionMode(myDebugProcess.getSession(),
-                                 DartExceptionBreakpointHandler.getDefaultExceptionBreakpoint(myDebugProcess.getSession().getProject()));
       addRequest(() -> myVmService.setExceptionPauseMode(isolateRef.getId(),
-                                                         mode,
+                                                         myDebugProcess.getBreakOnExceptionMode(),
                                                          new VmServiceConsumers.SuccessConsumerWrapper() {
                                                            @Override
                                                            public void received(Success response) {
@@ -303,6 +323,9 @@ public class VmServiceWrapper implements Disposable {
    * Reloaded scripts need to have their breakpoints re-applied; re-set all existing breakpoints.
    */
   public void restoreBreakpointsForIsolate(@NotNull final String isolateId, @Nullable final Runnable onFinished) {
+    // Cached information about the isolate may now be stale.
+    myIsolatesInfo.invalidateCache(isolateId);
+
     // Remove all existing VM breakpoints for this isolate.
     myBreakpointHandler.removeAllVmBreakpoints(isolateId);
     // Re-set existing breakpoints.
@@ -495,5 +518,32 @@ public class VmServiceWrapper implements Disposable {
                                       @NotNull final String expression,
                                       @NotNull final EvaluateConsumer consumer) {
     addRequest(() -> myVmService.evaluate(isolateId, targetId, expression, consumer));
+  }
+
+  public void evaluateInTargetContext(@NotNull final String isolateId,
+                                      @NotNull final String targetId,
+                                      @NotNull final String expression,
+                                      @NotNull final XDebuggerEvaluator.XEvaluationCallback callback) {
+    evaluateInTargetContext(isolateId, targetId, expression, new EvaluateConsumer() {
+      @Override
+      public void received(InstanceRef instanceRef) {
+        callback.evaluated(new DartVmServiceValue(myDebugProcess, isolateId, "result", instanceRef, null, null, false));
+      }
+
+      @Override
+      public void received(Sentinel sentinel) {
+        callback.errorOccurred(sentinel.getValueAsString());
+      }
+
+      @Override
+      public void received(ErrorRef errorRef) {
+        callback.errorOccurred(DartVmServiceEvaluator.getPresentableError(errorRef.getMessage()));
+      }
+
+      @Override
+      public void onError(RPCError error) {
+        callback.errorOccurred(error.getMessage());
+      }
+    });
   }
 }

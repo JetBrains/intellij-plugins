@@ -3,6 +3,8 @@ JSFile:ConstInFor.js2
     PsiElement(JS:FOR_KEYWORD)('for')
     PsiElement(JS:LPAR)('(')
     JSVarStatement
+      ActionScriptAttributeList
+        <empty list>
       PsiElement(JS:CONST_KEYWORD)('const')
       PsiWhiteSpace(' ')
       ActionScriptVariable

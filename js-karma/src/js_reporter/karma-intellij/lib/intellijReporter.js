@@ -1,4 +1,4 @@
-var cli = require('./intellijCli.js')
+var intellijParameters = require('./karma-intellij-parameters')
   , intellijUtil = require('./intellijUtil.js')
   , util = require('util')
   , Tree = require('./tree.js');
@@ -120,6 +120,7 @@ function filterSuiteNames(suiteNames) {
 function IntellijReporter(config, fileList, formatError, globalEmitter, injector) {
   require('./kjhtml/kjhtml-specFilter-patch').apply(config.files);
   require('./karma-browser-tracker').startBrowserTracking(globalEmitter);
+  require('./karma-intellij-debug').configureTimeouts(injector);
   var logManager = new LogManager();
   this.adapters = [];
 
@@ -137,7 +138,7 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
     clearOtherAdapters(injector, that);
 
     beforeRunStart = false;
-    tree = new Tree(cli.getConfigFile(), write);
+    tree = new Tree(intellijParameters.getUserConfigFilePath(), write);
     process.nextTick(function() {
       tree.write('##teamcity[enteredTheMatrix]\n');
     });

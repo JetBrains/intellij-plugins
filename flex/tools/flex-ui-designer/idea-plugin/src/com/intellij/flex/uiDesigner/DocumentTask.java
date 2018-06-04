@@ -1,7 +1,18 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.diagnostic.LogMessageEx;
-import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.flex.uiDesigner.libraries.InitException;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.openapi.Disposable;
@@ -11,13 +22,10 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.util.ExceptionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -89,21 +97,10 @@ abstract class DocumentTask extends Task.Backgroundable {
   protected static void processInitException(InitException e, Module module, boolean debug) {
     DesignerApplicationManager.notifyUser(debug, e.getMessage(), module);
     if (e.attachments == null) {
-      LOG.error(e.getCause());
+      LOG.error(e.technicalMessage, e);
     }
     else {
-      final Collection<Attachment> attachments = new ArrayList<>(e.attachments.length);
-      for (Attachment attachment : e.attachments) {
-        if (attachment != null) {
-          attachments.add(attachment);
-        }
-        else {
-          break;
-        }
-      }
-
-      LOG.error(LogMessageEx.createEvent(e.getMessage(), e.technicalMessage + "\n" + ExceptionUtil.getThrowableText(e), e.getMessage(),
-                                         null, attachments));
+      LOG.error(e.technicalMessage, e, e.attachments);
     }
   }
 

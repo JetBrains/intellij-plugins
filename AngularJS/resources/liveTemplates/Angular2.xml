@@ -157,7 +157,7 @@
       <option name="TypeScript" value="true" />
     </context>
   </template>
-  <template name="a-guard-can-deactivate" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { ActivatedRouteSnapshot, CanDeactivate, RouterStateSnapshot } from &apos;@angular/router&apos;;&#10;import { Observable } from &apos;rxjs/Observable&apos;;&#10;&#10;import { $ComponentName$Component } from &apos;./$filename$.component&apos;;&#10;&#10;// Consider using this interface for all CanDeactivate guards,&#10;// and have your components implement this interface, too.&#10;//&#10;//   e.g. export class CanDeactivateGuard implements CanDeactivate&lt;CanComponentDeactivate&gt; {&#10;//&#10;// export interface CanComponentDeactivate {&#10;// canDeactivate: () =&gt; any;&#10;// }&#10;&#10;@Injectable()&#10;export class $Name$Guard implements CanDeactivate&lt;$ComponentName$Component&gt; {&#10;	canDeactivate(&#10;		component: $ComponentName$Component,&#10;		currentRoute: ActivatedRouteSnapshot, &#10;		currentState: RouterStateSnapshot&#10;	): Observable&lt;boolean&gt;|Promise&lt;boolean&gt;|boolean {&#10;		return false;$END$&#10;	}&#10;}" description="Angular CanDeactivate guard" toReformat="true" toShortenFQNames="true">
+  <template name="a-guard-can-deactivate" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { ActivatedRouteSnapshot, CanDeactivate, RouterStateSnapshot } from &apos;@angular/router&apos;;&#10;import { Observable } from &apos;rxjs&apos;;&#10;&#10;import { $ComponentName$Component } from &apos;./$filename$.component&apos;;&#10;&#10;// Consider using this interface for all CanDeactivate guards,&#10;// and have your components implement this interface, too.&#10;//&#10;//   e.g. export class CanDeactivateGuard implements CanDeactivate&lt;CanComponentDeactivate&gt; {&#10;//&#10;// export interface CanComponentDeactivate {&#10;// canDeactivate: () =&gt; any;&#10;// }&#10;&#10;@Injectable()&#10;export class $Name$Guard implements CanDeactivate&lt;$ComponentName$Component&gt; {&#10;	canDeactivate(&#10;		component: $ComponentName$Component,&#10;		currentRoute: ActivatedRouteSnapshot, &#10;		currentState: RouterStateSnapshot&#10;	): Observable&lt;boolean&gt;|Promise&lt;boolean&gt;|boolean {&#10;		return false;$END$&#10;	}&#10;}" description="Angular CanDeactivate guard" toReformat="true" toShortenFQNames="true">
     <variable name="ComponentName" expression="" defaultValue="&quot;ComponentName&quot;" alwaysStopAt="true" />
     <variable name="filename" expression="lowercaseAndDash(ComponentName)" defaultValue="" alwaysStopAt="true" />
     <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
@@ -182,6 +182,13 @@
   <template name="a-component-inline" value="import { Component, OnInit } from &apos;@angular/core&apos;;&#10;&#10;@Component({&#10;	selector: &apos;$selector_name$&apos;,&#10;	template: `$END$`&#10;})&#10;&#10;export class $Name$Component implements OnInit {&#10;	constructor() { }&#10;&#10;	ngOnInit() { }&#10;}" description="Angular component with an inline template" toReformat="true" toShortenFQNames="true">
     <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
     <variable name="selector_name" expression="lowercaseAndDash(Name)" defaultValue="" alwaysStopAt="true" />
+
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-preload-strategy" value="import { PreloadingStrategy, Route } from &apos;@angular/router&apos;;&#10;import { Observable, of } from &apos;rxjs&apos;;&#10;&#10;export class PreloadSelectedModulesList implements PreloadingStrategy {&#10;	preload(route: Route, load: Function): Observable&lt;any&gt; {&#10;		return route.data &amp;&amp; route.data[&apos;$preload$&apos;] ? load() : of(null);&#10;	}&#10;}&#10;$END$" description="Angular custom preload strategy" toReformat="true" toShortenFQNames="true">
+    <variable name="preload" expression="" defaultValue="&quot;preload&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
     </context>
@@ -206,29 +213,23 @@
       <option name="TypeScript" value="true" />
     </context>
   </template>
-  <template name="a-service-http" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { Http, Response } from &apos;@angular/http&apos;;&#10;import { Observable } from &apos;rxjs/Observable&apos;;&#10;import &apos;rxjs/add/operator/map&apos;;&#10;import &apos;rxjs/add/operator/catch&apos;;&#10;&#10;@Injectable()&#10;export class $ServiceName$Service {&#10;	constructor(private http: Http) { }&#10;	$END$&#10;}" description="Angular service with Http" toReformat="true" toShortenFQNames="true">
-    <variable name="ServiceName" expression="" defaultValue="&quot;ServiceName&quot;" alwaysStopAt="true" />
-    <context>
-      <option name="TypeScript" value="true" />
-    </context>
-  </template>
   <template name="a-service-httpclient" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { HttpClient } from &apos;@angular/common/http&apos;;&#10;import { catchError } from &apos;rxjs/operators&apos;;&#10;&#10;@Injectable()&#10;export class $ServiceName$Service {&#10;	constructor(private httpClient: HttpClient) { }&#10;	$END$&#10;}" description="Angular service with HttpClient" toReformat="true" toShortenFQNames="true">
     <variable name="ServiceName" expression="" defaultValue="&quot;ServiceName&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
     </context>
   </template>
-  <template name="a-http-interceptor" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { HttpInterceptor, HttpEvent, HttpHandler, HttpRequest } from &apos;@angular/common/http&apos;;&#10;import { Observable } from &apos;rxjs/Observable&apos;;&#10;&#10;@Injectable()&#10;export class HeaderInterceptor implements HttpInterceptor {&#10;	intercept(req: HttpRequest&lt;any&gt;, next: HttpHandler): Observable&lt;HttpEvent&lt;any&gt;&gt; {&#10;		return next.handle(req);&#10;	}&#10;}" description="Empty Angular HttpInterceptor for HttpClient" toReformat="true" toShortenFQNames="true">
+  <template name="a-http-interceptor" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { HttpInterceptor, HttpEvent, HttpHandler, HttpRequest } from &apos;@angular/common/http&apos;;&#10;import { Observable } from &apos;rxjs&apos;;&#10;&#10;@Injectable()&#10;export class HeaderInterceptor implements HttpInterceptor {&#10;	intercept(req: HttpRequest&lt;any&gt;, next: HttpHandler): Observable&lt;HttpEvent&lt;any&gt;&gt; {&#10;		return next.handle(req);&#10;	}&#10;}" description="Empty Angular HttpInterceptor for HttpClient" toReformat="true" toShortenFQNames="true">
     <context>
       <option name="TypeScript" value="true" />
     </context>
   </template>
-  <template name="a-http-interceptor-headers" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest } from &apos;@angular/common/http&apos;;&#10;import { Observable } from &apos;rxjs/Observable&apos;;&#10;&#10;@Injectable()&#10;export class HeaderInterceptor implements HttpInterceptor {&#10;	constructor() {}&#10;&#10;	intercept(req: HttpRequest&lt;any&gt;, next: HttpHandler): Observable&lt;HttpEvent&lt;any&gt;&gt; {&#10;		const headers = req.headers&#10;			.set(&apos;Content-Type&apos;, &apos;application/json&apos;);&#10;		const authReq = req.clone({ headers });&#10;		return next.handle(authReq);&#10;	}&#10;}" description="Angular HttpInterceptor for headers HttpClient" toReformat="true" toShortenFQNames="true">
+  <template name="a-http-interceptor-headers" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest } from &apos;@angular/common/http&apos;;&#10;import { Observable } from &apos;rxjs&apos;;&#10;&#10;@Injectable()&#10;export class HeaderInterceptor implements HttpInterceptor {&#10;	constructor() {}&#10;&#10;	intercept(req: HttpRequest&lt;any&gt;, next: HttpHandler): Observable&lt;HttpEvent&lt;any&gt;&gt; {&#10;		const headers = req.headers&#10;			.set(&apos;Content-Type&apos;, &apos;application/json&apos;);&#10;		const authReq = req.clone({ headers });&#10;		return next.handle(authReq);&#10;	}&#10;}" description="Angular HttpInterceptor for headers HttpClient" toReformat="true" toShortenFQNames="true">
     <context>
       <option name="TypeScript" value="true" />
     </context>
   </template>
-  <template name="a-http-interceptor-logging" value="import { HttpInterceptor, HttpHandler, HttpRequest, HttpEvent, HttpResponse } from &apos;@angular/common/http&apos;;&#10;import { Observable } from &apos;rxjs/Observable&apos;;&#10;import { tap } from &apos;rxjs/operators&apos;;&#10;&#10;export class LogInterceptor implements HttpInterceptor {&#10;	constructor() {}&#10;&#10;	intercept(req: HttpRequest&lt;any&gt;, next: HttpHandler): Observable&lt;HttpEvent&lt;any&gt;&gt; {&#10;		const started = Date.now();&#10;		return next.handle(req).pipe(&#10;			tap(event =&gt; {&#10;				if (event instanceof HttpResponse) {&#10;					const elapsed = Date.now() - started;&#10;					console.log(`Request for \${req.urlWithParams} took \$elapsed$ ms.`);&#10;				}&#10;			})&#10;		);&#10;	}&#10;}" description="Angular HttpInterceptor for Logging HttpClient" toReformat="true" toShortenFQNames="true">
+  <template name="a-http-interceptor-logging" value="import { HttpInterceptor, HttpHandler, HttpRequest, HttpEvent, HttpResponse } from &apos;@angular/common/http&apos;;&#10;import { Observable, tap } from &apos;rxjs&apos;;&#10;&#10;export class LogInterceptor implements HttpInterceptor {&#10;	constructor() {}&#10;&#10;	intercept(req: HttpRequest&lt;any&gt;, next: HttpHandler): Observable&lt;HttpEvent&lt;any&gt;&gt; {&#10;		const started = Date.now();&#10;		return next.handle(req).pipe(&#10;			tap(event =&gt; {&#10;				if (event instanceof HttpResponse) {&#10;					const elapsed = Date.now() - started;&#10;					console.log(`Request for \${req.urlWithParams} took \$elapsed$ ms.`);&#10;				}&#10;			})&#10;		);&#10;	}&#10;}" description="Angular HttpInterceptor for Logging HttpClient" toReformat="true" toShortenFQNames="true">
     <variable name="elapsed" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
@@ -304,12 +305,6 @@
       <option name="TypeScript" value="true" />
     </context>
   </template>
-  <template name="a-http-get" value="return this.http.get(&apos;$url$&apos;)&#10;	.map((response: Response) =&gt; response.json());$END$" description="Angular Http.get" toReformat="true" toShortenFQNames="true">
-    <variable name="url" expression="" defaultValue="&quot;url&quot;" alwaysStopAt="true" />
-    <context>
-      <option name="TypeScript" value="true" />
-    </context>
-  </template>
   <template name="a-httpclient-get" value="return this.httpClient.get(&apos;$url$&apos;);$END$" description="Angular HttpClient.get" toReformat="true" toShortenFQNames="true">
     <variable name="url" expression="" defaultValue="&quot;url&quot;" alwaysStopAt="true" />
     <context>
@@ -328,40 +323,14 @@
       <option name="TypeScript" value="true" />
     </context>
   </template>
-  <template name="rx-add-observable" value="import &apos;rxjs/add/observable/$of$&apos;;&#10;$END$" description="RxJS Add Observable import" toReformat="true" toShortenFQNames="true">
-    <variable name="of" expression="" defaultValue="&quot;of&quot;" alwaysStopAt="true" />
+  <template name="a-rxjs-import" value="import { $Observable$ } from &apos;rxjs&apos;;&#10;$END$" description="RxJs import" toReformat="true" toShortenFQNames="true">
+    <variable name="Observable" expression="" defaultValue="&quot;Observable&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
     </context>
   </template>
-  <template name="rx-add-operator" value="import &apos;rxjs/add/operator/$map$&apos;;&#10;$END$" description="RxJS Add Operator import" toReformat="true" toShortenFQNames="true">
+  <template name="a-rxjs-operator-import" value="import { $map$ } from &apos;rxjs/operators&apos;;&#10;$END$" description="RxJs import" toReformat="true" toShortenFQNames="true">
     <variable name="map" expression="" defaultValue="&quot;map&quot;" alwaysStopAt="true" />
-    <context>
-      <option name="TypeScript" value="true" />
-    </context>
-  </template>
-  <template name="rx-behavior-subject" value="import { BehaviorSubject } from &apos;rxjs/BehaviorSubject&apos;;&#10;$END$" description="RxJS BehaviorSubject import" toReformat="true" toShortenFQNames="true">
-    <context>
-      <option name="TypeScript" value="true" />
-    </context>
-  </template>
-  <template name="rx-observable" value="import { Observable } from &apos;rxjs/Observable&apos;;&#10;$END$" description="RxJS Observable import" toReformat="true" toShortenFQNames="true">
-    <context>
-      <option name="TypeScript" value="true" />
-    </context>
-  </template>
-  <template name="rx-operators" value="import { $map$ } from &apos;rxjs/operators&apos;;&#10;$END$" description="RxJS Operators import" toReformat="true" toShortenFQNames="true">
-    <variable name="map" expression="" defaultValue="&quot;map&quot;" alwaysStopAt="true" />
-    <context>
-      <option name="TypeScript" value="true" />
-    </context>
-  </template>
-  <template name="rx-replay-subject" value="import { ReplaySubject } from &apos;rxjs/ReplaySubject&apos;;&#10;$END$" description="RxJS ReplaySubject import" toReformat="true" toShortenFQNames="true">
-    <context>
-      <option name="TypeScript" value="true" />
-    </context>
-  </template>
-  <template name="rx-subject" value="import { Subject } from &apos;rxjs/Subject&apos;;&#10;$END$" description="RxJS Subject import" toReformat="true" toShortenFQNames="true">
     <context>
       <option name="TypeScript" value="true" />
     </context>

@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.service.protocol.JSLanguageServiceInitialSta
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceNodeStdProtocolBase
 import com.intellij.openapi.project.Project
 import com.intellij.util.Consumer
-import java.io.File
 
 
 class TsLintLanguageServiceProtocol(project: Project, readyConsumer: Consumer<*>) : JSLanguageServiceNodeStdProtocolBase(project,
@@ -24,12 +23,10 @@ class TsLintLanguageServiceProtocol(project: Project, readyConsumer: Consumer<*>
     result.tslintPackagePath = extendedState.state.packagePath
     result.additionalRootDirectory = extendedState.state.rulesDirectory
     result.pluginName = "tslint"
-    val file = File(getPluginDirectory(this.javaClass, "tslintLanguageService"), "tslint-plugin-provider")
-    result.pluginPath = file.absolutePath
+    result.pluginPath = getPluginDirectory(this.javaClass, "js/languageService/tslint-plugin-provider.js").absolutePath
     return result
   }
 
   override fun dispose() {
-
   }
 }

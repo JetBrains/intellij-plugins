@@ -3,5 +3,5 @@ OgnlFile:MissingClosingBrace.ognl
   PsiWhiteSpace(' ')
   REFERENCE_EXPRESSION
     PsiElement(IDENTIFIER)('a')
-  PsiErrorElement:EXPRESSION_END expected, unexpected end of file
+  PsiErrorElement:EXPRESSION_END expected
     <empty list>

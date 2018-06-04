@@ -61,6 +61,8 @@ JSFile:ForEachIn.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:LPAR)('(')
     JSVarStatement
+      ActionScriptAttributeList
+        <empty list>
       PsiElement(JS:VAR_KEYWORD)('var')
       PsiWhiteSpace(' ')
       ActionScriptVariable

@@ -63,7 +63,8 @@
     <liveTemplateContext implementation="org.jetbrains.vuejs.liveTemplate.VueTopLevelLiveTemplateContextType"/>
     <defaultLiveTemplatesProvider implementation="org.jetbrains.vuejs.liveTemplate.VueTemplatesProvider"/>
 
-    <completion.contributor language="HTML" implementationClass="org.jetbrains.vuejs.codeInsight.VueAttributesCompletionContributor"/>
+    <completion.contributor language="HTML" implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueAttributesCompletionContributor"/>
+    <typedHandler implementation="org.jetbrains.vuejs.codeInsight.completion.VueAutoPopupHandler"/>
   </extensions>
   <actions>
     <action class="org.jetbrains.vuejs.CreateVueSingleFileComponentAction" id="CreateVueSingleFileComp">
@@ -84,6 +85,6 @@
     <frameworkSpecificHandlersFactory language="JavaScript"
                                       implementationClass="org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandlersFactory"/>
     <analysisHandlersFactory implementationClass="org.jetbrains.vuejs.codeInsight.VueAnalysisHandlersFactory" language="VueJS"/>
-    <smartCompletionContributor language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSCompletionContributor"/>
+    <smartCompletionContributor language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueJSCompletionContributor"/>
   </extensions>
 </idea-plugin>

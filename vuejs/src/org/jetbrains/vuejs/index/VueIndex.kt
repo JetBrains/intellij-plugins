@@ -40,15 +40,15 @@ import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.index.VueIndexBase.Companion.createJSKey
 
-const val VUE = "vue"
+const val VUE: String = "vue"
 @Suppress("PropertyName")
-const val GLOBAL = "global"
-const val LOCAL = "local"
-const val MIXINS = "mixins"
-const val EXTENDS = "extends"
-const val DIRECTIVES = "directives"
-const val GLOBAL_BINDING_MARK = "*"
-const val VUE_CLASS_COMPONENT = "vue-class-component"
+const val GLOBAL: String = "global"
+const val LOCAL: String = "local"
+const val MIXINS: String = "mixins"
+const val EXTENDS: String = "extends"
+const val DIRECTIVES: String = "directives"
+const val GLOBAL_BINDING_MARK: String = "*"
+const val VUE_CLASS_COMPONENT: String = "vue-class-component"
 private const val INDEXED_ACCESS_HINT = "[]"
 private const val DELIMITER = "#"
 
@@ -119,9 +119,9 @@ fun hasVueClassComponentLibrary(project: Project): Boolean {
   })
 }
 
-fun isGlobal(element: JSImplicitElement) = getVueIndexData(element).isGlobal
+fun isGlobal(element: JSImplicitElement): Boolean = getVueIndexData(element).isGlobal
 
-fun isGlobalExact(element: JSImplicitElement) = getVueIndexData(element).isGlobalExact()
+fun isGlobalExact(element: JSImplicitElement): Boolean = getVueIndexData(element).isGlobalExact()
 
 fun createImplicitElement(name: String, provider: PsiElement, indexKey: String,
                           nameType: String? = null,
@@ -156,5 +156,5 @@ fun getVueIndexData(element : JSImplicitElement): VueIndexData {
 
 class VueIndexData(val originalName: String,
                    val nameRef: String?, val descriptorRef: String?, val groupRegistration: Boolean, val isGlobal: Boolean) {
-  fun isGlobalExact() = isGlobal && !originalName.endsWith(GLOBAL_BINDING_MARK)
+  fun isGlobalExact(): Boolean = isGlobal && !originalName.endsWith(GLOBAL_BINDING_MARK)
 }

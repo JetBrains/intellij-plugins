@@ -39,7 +39,7 @@ class DataFunctionInspection : LocalInspectionTool() {
 }
 
 class WrapWithFunctionFix(psiElement: PsiElement) : LocalQuickFixOnPsiElement(psiElement) {
-  override fun getText() = "Wrap data object in function"
+  override fun getText(): String = "Wrap data object in function"
 
   override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
     val expression = startElement as JSObjectLiteralExpression
@@ -49,6 +49,6 @@ class WrapWithFunctionFix(psiElement: PsiElement) : LocalQuickFixOnPsiElement(ps
     property.replace(newProperty)
   }
 
-  override fun getFamilyName() = "Wrap object"
+  override fun getFamilyName(): String = "Wrap object"
 
 }

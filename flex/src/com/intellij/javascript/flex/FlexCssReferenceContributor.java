@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.ReferenceSupport;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexComponentFix;
-import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
+import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptReferenceSet;
 import com.intellij.lang.javascript.refactoring.util.ActionScriptRefactoringUtil;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.module.Module;
@@ -61,7 +61,7 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
           return ReferenceSupport.getFileRefs(element, element, 1, ReferenceSupport.LookupOptions.EMBEDDED_ASSET);
         }
         final String value = StringUtil.unquoteString(element.getText());
-        JSReferenceSet refSet = new JSReferenceSet(element, value, 1, false, true);
+        ActionScriptReferenceSet refSet = new ActionScriptReferenceSet(element, value, 1, false, true);
         if (fun != null && element instanceof CssString) {
           assert FlexReferenceContributor.CLASS_REFERENCE.equals(fun.getName());
           refSet.setLocalQuickFixProvider(new LocalQuickFixProvider() {

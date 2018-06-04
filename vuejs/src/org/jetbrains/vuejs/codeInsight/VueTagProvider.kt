@@ -266,12 +266,12 @@ fun multiDefinitionDescriptor(variants: Collection<JSImplicitElement>): VueEleme
 }
 
 class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JSImplicitElement> = listOf(element)) : XmlElementDescriptor {
-  override fun getDeclaration() = element
+  override fun getDeclaration(): JSImplicitElement = element
   override fun getName(context: PsiElement?):String = (context as? XmlTag)?.name ?: name
-  override fun getName() = fromAsset(declaration.name)
+  override fun getName(): String = fromAsset(declaration.name)
   override fun init(element: PsiElement?) {}
-  override fun getQualifiedName() = name
-  override fun getDefaultName() = name
+  override fun getQualifiedName(): String = name
+  override fun getDefaultName(): String = name
 
   override fun getElementsDescriptors(context: XmlTag): Array<XmlElementDescriptor> {
     return XmlDescriptorUtil.getElementsDescriptors(context)
@@ -320,11 +320,11 @@ class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JS
            ?: VueAttributeDescriptor(attributeName, isNonProp = true)
   }
 
-  override fun getAttributeDescriptor(attribute: XmlAttribute?) = getAttributeDescriptor(attribute?.name, attribute?.parent)
+  override fun getAttributeDescriptor(attribute: XmlAttribute?): XmlAttributeDescriptor? = getAttributeDescriptor(attribute?.name, attribute?.parent)
 
   override fun getNSDescriptor(): XmlNSDescriptor? = null
   override fun getTopGroup(): XmlElementsGroup? = null
-  override fun getContentType() = CONTENT_TYPE_ANY
+  override fun getContentType(): Int = CONTENT_TYPE_ANY
   override fun getDefaultValue(): String? = null
   override fun getDependences(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY!!
 }

@@ -246,7 +246,8 @@ public class AngularJSParser
       parseHashDefinition();
 
       if (builder.getTokenType() != JSTokenTypes.OF_KEYWORD) {
-        builder.error("'of' expected");
+        expr.drop();
+        return true;
       } else {
         builder.advanceLexer();
       }

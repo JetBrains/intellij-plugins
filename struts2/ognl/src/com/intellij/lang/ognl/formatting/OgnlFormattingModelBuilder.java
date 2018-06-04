@@ -51,11 +51,6 @@ public class OgnlFormattingModelBuilder implements FormattingModelBuilder {
     return FormattingModelProvider.createFormattingModelForPsiFile(containingFile, ognlBlock, settings);
   }
 
-  @Override
-  public TextRange getRangeAffectingIndent(final PsiFile file, final int offset, final ASTNode elementAtOffset) {
-    return null;
-  }
-
   private static SpacingBuilder createSpacingBuilder(final CodeStyleSettings settings) {
     CommonCodeStyleSettings javaSettings = settings.getCommonSettings(JavaLanguage.INSTANCE);
     return new SpacingBuilder(settings, OgnlLanguage.INSTANCE)

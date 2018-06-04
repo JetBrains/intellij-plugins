@@ -1,0 +1,49 @@
+package org.intellij.plugins.postcss.references;
+
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementResolveResult;
+import com.intellij.psi.PsiPolyVariantReferenceBase;
+import com.intellij.psi.ResolveResult;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.IncorrectOperationException;
+import org.intellij.plugins.postcss.psi.PostCssCustomMedia;
+import org.intellij.plugins.postcss.psi.stubs.PostCssCustomMediaIndex;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+public class PostCssCustomMediaReference extends PsiPolyVariantReferenceBase<PsiElement> {
+  public PostCssCustomMediaReference(PsiElement psiElement) {
+    super(psiElement);
+  }
+
+  @NotNull
+  @Override
+  public ResolveResult[] multiResolve(boolean incompleteCode) {
+    String name = getCustomMediaName();
+    return name != null ? PsiElementResolveResult.createResults(PostCssCustomMediaIndex.getCustomMediaFeatures(name, myElement))
+                        : ResolveResult.EMPTY_ARRAY;
+  }
+
+  @Override
+  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+    return super.handleElementRename(StringUtil.startsWith(newElementName, "--") ? newElementName : "--" + newElementName);
+  }
+
+  @Override
+  public boolean isReferenceTo(PsiElement element) {
+    String name = getCustomMediaName();
+    return name != null && element instanceof PostCssCustomMedia && name.equals(((PostCssCustomMedia)element).getName());
+  }
+
+  @Nullable
+  private String getCustomMediaName() {
+    return StringUtil.startsWith(getCanonicalText(), "--") ? getCanonicalText().substring(2) : null;
+  }
+
+  @NotNull
+  @Override
+  public Object[] getVariants() {
+    return ArrayUtil.EMPTY_OBJECT_ARRAY;
+  }
+}

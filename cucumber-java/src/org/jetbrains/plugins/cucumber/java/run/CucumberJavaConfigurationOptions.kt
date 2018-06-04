@@ -18,15 +18,15 @@ import com.intellij.util.xmlb.annotations.OptionTag
 
 open class CucumberJavaConfigurationOptions: ApplicationConfigurationOptions() {
   @get:OptionTag("GLUE")
-  open var glue by string()
+  open var glue: String? by string()
 
   @get:OptionTag("FILE_PATH")
-  open var filePath by string()
+  open var filePath: String? by string()
 
   @get:OptionTag("NAME_FILTER")
-  open var nameFilter by string()
+  open var nameFilter: String? by string()
 
   @get:OptionTag("SUGGESTED_NAME")
-  open var suggestedName by string()
+  open var suggestedName: String? by string()
 
 }

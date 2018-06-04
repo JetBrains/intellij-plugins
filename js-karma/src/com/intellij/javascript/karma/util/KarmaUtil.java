@@ -3,8 +3,13 @@ package com.intellij.javascript.karma.util;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
+import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunContentDescriptorReusePolicy;
+import com.intellij.javascript.karma.execution.KarmaConsoleView;
+import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.javascript.nodejs.util.NodePackageDescriptor;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.openapi.fileTypes.FileType;
@@ -14,9 +19,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.io.LocalFileFinder;
 
 import java.util.Collection;
@@ -25,6 +32,8 @@ import java.util.List;
 public class KarmaUtil {
 
   public static final String NODE_PACKAGE_NAME = "karma";
+  public static final String ANGULAR_CLI__PACKAGE_NAME = "@angular/cli";
+  public static final NodePackageDescriptor PKG_DESCRIPTOR = new NodePackageDescriptor(ANGULAR_CLI__PACKAGE_NAME, NODE_PACKAGE_NAME);
   private static final String[] STARTING_PARTS = new String[] {"karma"};
   private static final String NAME_PART_DELIMITERS = ".-";
   private static final String[] BEFORE_EXT_PARTS = new String[] {"conf", "karma"};
@@ -106,7 +115,29 @@ public class KarmaUtil {
   @NotNull
   public static RunContentDescriptor createDefaultDescriptor(@NotNull ExecutionResult executionResult,
                                                              @NotNull ExecutionEnvironment environment) {
+    ExecutionConsole console = executionResult.getExecutionConsole();
+    KarmaServer server = console instanceof KarmaConsoleView ? ((KarmaConsoleView)console).getKarmaServer() : null;
     RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, environment);
-    return contentBuilder.showRunContent(environment.getContentToReuse());
+    RunContentDescriptor descriptor = contentBuilder.showRunContent(environment.getContentToReuse());
+    return withReusePolicy(descriptor, server);
+  }
+
+  @NotNull
+  public static RunContentDescriptor withReusePolicy(@NotNull RunContentDescriptor descriptor, @Nullable KarmaServer karmaServer) {
+    descriptor.setReusePolicy(new RunContentDescriptorReusePolicy() {
+      @Override
+      public boolean canBeReusedBy(@NotNull RunContentDescriptor newDescriptor) {
+        if (karmaServer == null || karmaServer.getProcessHandler().isProcessTerminated()) {
+          return true;
+        }
+        KarmaConsoleView newConsole = ObjectUtils.tryCast(newDescriptor.getExecutionConsole(), KarmaConsoleView.class);
+        return newConsole != null && newConsole.getKarmaServer().equals(karmaServer);
+      }
+    });
+    return descriptor;
+  }
+
+  public static boolean isAngularCliPkg(@NotNull NodePackage pkg) {
+    return pkg.getSystemIndependentPath().endsWith("/" + ANGULAR_CLI__PACKAGE_NAME);
   }
 }

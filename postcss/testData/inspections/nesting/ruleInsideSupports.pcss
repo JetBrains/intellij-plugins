@@ -1,0 +1,29 @@
+@supports (display: table-cell) and (display: list-item) {
+  div {
+    color: white;
+  }
+
+  <warning descr="Top level ruleset selector should not contain '&'">&</warning> div {
+    color: red;
+  }
+
+  <warning descr="Top level ruleset selector should not contain '@nest'">@nest</warning> div <warning descr="Top level ruleset selector should not contain '&'">&</warning> {
+      color: red;
+  }
+}
+
+h1 {
+  @supports (transform-style: preserve) {
+    <warning descr="Nested ruleset selector should start with '&'">div</warning> {
+      color: white;
+    }
+
+    & div {
+      color: red;
+    }
+
+    @nest div & {
+        color: red;
+    }
+  }
+}

@@ -9,6 +9,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
+import com.intellij.javascript.debugger.locationResolving.JSLocationResolver;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
@@ -73,6 +74,7 @@ public class KarmaRunProfileState implements RunProfileState {
       server = null;
     }
     if (server == null) {
+      JSLocationResolver.Companion.getInstance().dropCache(myRunConfiguration);
       registry.startServer(
         serverSettings,
         new CatchingConsumer<KarmaServer, Exception>() {
@@ -106,7 +108,6 @@ public class KarmaRunProfileState implements RunProfileState {
                                                               myExecutionType);
     SMTRunnerConsoleView smtRunnerConsoleView = session.getSmtConsoleView();
     ProcessHandler processHandler = session.getProcessHandler();
-    // TODO make smtRunnerConsoleView instance of LanguageConsoleView to make it more usage for debugging
     DefaultExecutionResult executionResult = new DefaultExecutionResult(smtRunnerConsoleView, processHandler);
     executionResult.setRestartActions(new ToggleAutoTestAction());
     return executionResult;

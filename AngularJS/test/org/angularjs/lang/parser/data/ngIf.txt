@@ -127,14 +127,11 @@ ASTWrapperPsiElement(FILE)
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace(' ')
   JSExpressionStatement
-    AngularJSRepeatExpression
-      JSVarStatement
-        PsiElement(JS:LET_KEYWORD)('let')
-        PsiWhiteSpace(' ')
-        JSVariable
-          PsiElement(JS:IDENTIFIER)('conditionResult')
-      PsiErrorElement:'of' expected
-        <empty list>
+    JSVarStatement
+      PsiElement(JS:LET_KEYWORD)('let')
+      PsiWhiteSpace(' ')
+      JSVariable
+        PsiElement(JS:IDENTIFIER)('conditionResult')
 ------
 ASTWrapperPsiElement(FILE)
   JSIfStatement

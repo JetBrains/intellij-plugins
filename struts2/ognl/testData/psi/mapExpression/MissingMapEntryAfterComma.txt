@@ -13,9 +13,10 @@ OgnlFile:MissingMapEntryAfterComma.ognl
       PsiWhiteSpace(' ')
       LITERAL_EXPRESSION
         PsiElement(CHARACTER_LITERAL)(''value'')
-  PsiElement(,)(',')
-  PsiWhiteSpace(' ')
-  PsiErrorElement:<map entry> expected, got '}'
+    PsiElement(,)(',')
+    PsiErrorElement:<map entry> expected, got '}'
+      <empty list>
+    PsiWhiteSpace(' ')
     PsiElement(})('}')
   PsiWhiteSpace(' ')
   PsiElement(EXPRESSION_END)('}')

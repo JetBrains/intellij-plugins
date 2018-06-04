@@ -1,0 +1,11 @@
+{
+  "extends": [
+    "tslint:all"
+  ],
+  <caret>
+  "rules": {
+    "semicolon": {
+      "options": "never"
+    }
+  }
+}

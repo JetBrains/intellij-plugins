@@ -1,6 +1,6 @@
-var cli = require('./intellijCli')
-  , intellijUtil = require('./intellijUtil')
-  , originalConfigPath = cli.getConfigFile()
+var intellijUtil = require('./intellijUtil')
+  , intellijParameters = require('./karma-intellij-parameters')
+  , originalConfigPath = intellijParameters.getUserConfigFilePath()
   , IntellijReporter = require('./intellijReporter')
   , IntellijCoverageReporter = require('./intellijCoverageReporter');
 
@@ -15,13 +15,12 @@ function configureDebug(config) {
   // By default, browserNoActivityTimeout=10000 ms, not enough for suspended execution.
   // https://github.com/karma-runner/karma/blob/master/docs/config/01-configuration-file.md#browsernoactivitytimeout
   config.browserNoActivityTimeout = null;
-  const intellijDebug = require('./karma-intellij-debug');
+  require('./karma-intellij-debug').initCustomContextFile(config);
   (function fixMochaTimeout() {
     var client = config.client;
     if (typeof client === 'undefined') {
       config.client = client = {};
     }
-    intellijDebug.initCustomContextFile(config);
     if (client === Object(client)) {
       var mocha = client.mocha;
       if (typeof mocha === 'undefined') {
@@ -38,7 +37,23 @@ function configureDebug(config) {
       console.error('intellij: config.client is not an object')
     }
   })();
-  return intellijDebug.configureBrowsers(config);
+  return require('./karma-intellij-debug').configureBrowsers(config);
+}
+
+function disableSingleRun(config) {
+  config.singleRun = false;
+  const prevSet = config.set;
+  // Workaround if karma server is instantiated with { singleRun: true }
+  // For example, @angular/cli is the case:
+  // https://github.com/angular/devkit/blob/v6.0.1/packages/angular_devkit/build_angular/src/karma/index.ts#L65
+  if (typeof prevSet === 'function') {
+    config.set = function (newConfig) {
+      if (newConfig.singleRun === true) {
+        newConfig.singleRun = false;
+      }
+      prevSet.apply(config, arguments);
+    };
+  }
 }
 
 module.exports = function (config) {
@@ -66,7 +81,7 @@ module.exports = function (config) {
 
   IntellijCoverageReporter.configureCoverage(config);
   var debugInfo;
-  if (cli.isDebug()) {
+  if (intellijParameters.isDebug()) {
     debugInfo = configureDebug(config);
   }
 
@@ -89,7 +104,7 @@ module.exports = function (config) {
     config.logLevel = config.LOG_INFO;
   }
 
-  config.singleRun = false;
+  disableSingleRun(config);
   var originalAutoWatch = config.autoWatch;
   config.autoWatch = false;
   config.autoWatchBatchDelay = 0;

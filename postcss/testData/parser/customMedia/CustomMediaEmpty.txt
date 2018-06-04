@@ -1,0 +1,10 @@
+PostCSS File:CustomMediaEmpty.pcss
+  PsiElement(POST_CSS_LAZY_STYLESHEET)
+    PsiElement(POST_CSS_STYLESHEET)
+      PsiElement(CSS_RULESET_LIST)
+        PsiElement(POST_CSS_CUSTOM_MEDIA_RULE)
+          PsiElement(POST_CSS_CUSTOM_MEDIA_SYM)('@custom-media')
+          PsiWhiteSpace(' ')
+          PsiElement(POST_CSS_CUSTOM_MEDIA)
+            PsiElement(CSS_IDENT)('--my-media')
+          PsiElement(CSS_SEMICOLON)(';')

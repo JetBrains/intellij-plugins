@@ -1,0 +1,9 @@
+@custom-selector :--button h1, h2, h3;
+@custom-selector :--enter :hover, :focus;
+@custom-selector :--any-link :link, :visited;
+
+:--button:--any-link :--any-link, :--button:--enter {
+}
+
+a:--any-link{
+}

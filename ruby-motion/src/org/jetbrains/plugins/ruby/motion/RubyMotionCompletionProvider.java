@@ -15,6 +15,7 @@
  */
 package org.jetbrains.plugins.ruby.motion;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.template.TemplateBuilder;
@@ -25,7 +26,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -95,8 +95,7 @@ public class RubyMotionCompletionProvider extends RubyCompletionProvider {
       document.insertString(offset, split[0]);
       offset += split[0].length();
 
-      final boolean insertParentheses = CodeStyleSettingsManager.getSettings(context.getProject())
-        .getCustomSettings(RubyCodeStyleSettings.class).PARENTHESES_AROUND_METHOD_ARGUMENTS;
+      final boolean insertParentheses = CodeStyle.getCustomSettings(context.getFile(), RubyCodeStyleSettings.class).PARENTHESES_AROUND_METHOD_ARGUMENTS;
       final List<TextRange> argRanges = new ArrayList<>(split.length);
       document.insertString(offset, insertParentheses ? "(" : " ");
       offset++;

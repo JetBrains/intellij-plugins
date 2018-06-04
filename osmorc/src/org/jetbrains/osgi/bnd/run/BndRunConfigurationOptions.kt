@@ -18,7 +18,7 @@ package org.jetbrains.osgi.bnd.run
 import com.intellij.execution.configurations.LocatableRunConfigurationOptions
 
 class BndRunConfigurationOptions : LocatableRunConfigurationOptions() {
-  var bndRunFile by string()
-  var useAlternativeJre by property(false)
-  var alternativeJrePath by string()
+  var bndRunFile: String? by string()
+  var useAlternativeJre: Boolean by property(false)
+  var alternativeJrePath: String? by string()
 }

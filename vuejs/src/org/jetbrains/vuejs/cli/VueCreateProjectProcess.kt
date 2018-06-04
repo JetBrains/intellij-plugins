@@ -18,8 +18,9 @@ import com.google.gson.JsonParser
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.*
-import com.intellij.javascript.nodejs.NodeCommandLineUtil
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef
+import com.intellij.javascript.nodejs.npm.NpmUtil
+import com.intellij.lang.javascript.buildTools.npm.rc.NpmCommand
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
@@ -190,7 +191,7 @@ class VueCreateProjectProcess(private val folder: Path,
     val interpreterPath = interpreter.interpreterSystemDependentPath
 
     indicator.text = "Installing packages to create a new Vue project..."
-    val installCommandLine = NodeCommandLineUtil.createNpmCommandLine(folder, interpreter, listOf("i", "ij-rpc-client"))
+    val installCommandLine = NpmUtil.createNpmCommandLine(null, folder, interpreter, NpmCommand.ADD, listOf("ij-rpc-client"))
     val output = CapturingProcessHandler(installCommandLine).runProcess(TimeUnit.MINUTES.toMillis(5).toInt(), true)
     if (output.exitCode != 0) {
       return reportError("Can not install 'ij-rpc-client': " + output.stderr)

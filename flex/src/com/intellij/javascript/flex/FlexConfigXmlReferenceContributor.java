@@ -1,7 +1,7 @@
 package com.intellij.javascript.flex;
 
 import com.intellij.lang.javascript.flex.ReferenceSupport;
-import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
+import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptReferenceSet;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.filters.position.NamespaceFilter;
@@ -54,7 +54,7 @@ public class FlexConfigXmlReferenceContributor extends PsiReferenceContributor {
       });
   }
 
-  static class FlexConfigXmlReferenceSet extends JSReferenceSet {
+  static class FlexConfigXmlReferenceSet extends ActionScriptReferenceSet {
     public FlexConfigXmlReferenceSet(@NotNull PsiElement element, String text, int offset) {
       super(element, text, offset, false, true);
     }

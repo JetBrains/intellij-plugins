@@ -17,7 +17,42 @@ import com.intellij.lang.ognl.OgnlTypes;
     this((java.io.Reader)null);
   }
 
-  int braceCount;
+  private static final class State {
+    final int lBraceCount;
+    final int state;
+
+    private State(int state, int lBraceCount) {
+        this.state = state;
+        this.lBraceCount = lBraceCount;
+    }
+
+    @Override
+    public String toString() {
+        return "yystate = " + state + (lBraceCount == 0 ? "" : "lBraceCount = " + lBraceCount);
+    }
+  }
+
+  private final Stack<State> myStateStack = new Stack<State>();
+  private int myLeftBraceCount;
+
+  protected void resetInternal() {
+    myLeftBraceCount = 0;
+    myStateStack.clear();
+  }
+
+  private void pushState(int newState) {
+    myStateStack.push(new State(yystate(), myLeftBraceCount));
+    myLeftBraceCount = 0;
+    yybegin(newState);
+  }
+
+  private void popState() {
+    if (myStateStack.empty()) return;
+
+    State state = myStateStack.pop();
+    myLeftBraceCount = state.lBraceCount;
+    yybegin(state.state);
+  }
 %}
 
 %unicode
@@ -27,6 +62,9 @@ import com.intellij.lang.ognl.OgnlTypes;
 %unicode
 %function advance
 %type IElementType
+%eof{
+  resetInternal();
+%eof}
 
 ALPHA=[:letter:]
 DIGIT=[0-9]
@@ -49,15 +87,29 @@ STRING_LITERAL=\"([^\\\"\r\n]|{ESCAPE_SEQUENCE})*(\"|\\)?
 
 ESCAPE_SEQUENCE=\\[^\r\n]
 
-%state NESTED_BRACE
+%state NESTED_BRACE, EXPR
 
 %%
 
-<YYINITIAL> "%{"      { return OgnlTypes.EXPRESSION_START; }
-<YYINITIAL> "}"       { return OgnlTypes.EXPRESSION_END; }
+<YYINITIAL> "%{" {
+  pushState(EXPR);
+  return OgnlTypes.EXPRESSION_START;
+}
+<EXPR, NESTED_BRACE> "}" {
+  popState();
+  if (myLeftBraceCount == 0)  {
+    return OgnlTypes.EXPRESSION_END;
+  }
 
-"{"                   { if (++braceCount > 0)  yybegin(NESTED_BRACE); return OgnlTypes.LBRACE; }
-<NESTED_BRACE> "}"    { if (--braceCount == 0) yybegin(YYINITIAL); return OgnlTypes.RBRACE; }
+  myLeftBraceCount--;
+  return OgnlTypes.RBRACE;
+}
+
+<YYINITIAL, EXPR, NESTED_BRACE> "{" {
+  myLeftBraceCount++;
+  pushState(NESTED_BRACE);
+  return OgnlTypes.LBRACE;
+}
 
 {WHITE_SPACE_CHAR}+   { return TokenType.WHITE_SPACE; }
 
@@ -138,4 +190,4 @@ ESCAPE_SEQUENCE=\\[^\r\n]
 "&"  { return OgnlTypes.AND; }
 "~"  { return OgnlTypes.NOT; }
 
-[^]  {  yybegin(YYINITIAL); return TokenType.BAD_CHARACTER; }
+[^]  { return TokenType.BAD_CHARACTER; }

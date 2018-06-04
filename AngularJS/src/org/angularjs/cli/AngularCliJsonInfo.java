@@ -108,25 +108,22 @@ public class AngularCliJsonInfo {
     try (JsonReaderEx reader = new JsonReaderEx(text)) {
       reader.beginObject();
       while (reader.hasNext()) {
-        if ("apps".equals(reader.nextName())) {
+        final String topLevelName = reader.nextName();
+        if ("apps".equals(topLevelName)) {
           reader.beginArray();
           while (reader.hasNext()) {
-            reader.beginObject();
-            while (reader.hasNext()) {
-              final String nextName = reader.nextName();
-              if ("root".equals(nextName)) {
-                rootPaths.add(reader.nextString());
-              }
-              else if ("stylePreprocessorOptions".equals(nextName)) {
-                readIncludePaths(reader, includePaths);
-              }
-              else {
-                reader.skipValue();
-              }
-            }
-            reader.endObject();
+            readProject(reader, rootPaths, includePaths);
           }
+          reader.endArray();
           break;
+        }
+        else if ("projects".equals(topLevelName)) {
+          reader.beginObject();
+          while (reader.hasNext()) {
+            reader.nextName();
+            readProject(reader, rootPaths, includePaths);
+          }
+          reader.endObject();
         }
         else {
           reader.skipValue();
@@ -138,7 +135,27 @@ public class AngularCliJsonInfo {
     return new AngularCliJsonInfo(modStamp, rootPaths, includePaths);
   }
 
-  private static void readIncludePaths(@NotNull final JsonReaderEx reader, @NotNull final Collection<String> includePaths) {
+  private static void readProject(JsonReaderEx reader, Collection<String> rootPaths, Collection<String> includePaths) {
+    reader.beginObject();
+    while (reader.hasNext()) {
+      final String nextName = reader.nextName();
+      if ("root".equals(nextName)) {
+        rootPaths.add(reader.nextString());
+      }
+      else if ("stylePreprocessorOptions".equals(nextName)) {
+        readIncludePaths(reader, includePaths);
+      }
+      else if ("architect".equals(nextName)) {
+        readBuildOptions(reader, includePaths);
+      }
+      else {
+        reader.skipValue();
+      }
+    }
+    reader.endObject();
+  }
+
+  private static void readIncludePaths(@NotNull final JsonReaderEx reader, @NotNull final Collection<? super String> includePaths) {
     try {
       reader.beginObject();
       while (reader.hasNext()) {
@@ -148,6 +165,42 @@ public class AngularCliJsonInfo {
             includePaths.add(reader.nextString());
           }
           reader.endArray();
+        }
+        else {
+          reader.skipValue();
+        }
+      }
+      reader.endObject();
+    }
+    catch (IllegalStateException | JsonParseException ignore) {
+      reader.skipValue();
+    }
+  }
+
+  private static void readBuildOptions(@NotNull final JsonReaderEx reader, @NotNull final Collection<? super String> includePaths) {
+    try {
+      reader.beginObject();
+      while (reader.hasNext()) {
+        if ("build".equals(reader.nextName())) {
+          reader.beginObject();
+          while (reader.hasNext()) {
+            if ("options".equals(reader.nextName())) {
+              reader.beginObject();
+              while (reader.hasNext()) {
+                if ("stylePreprocessorOptions".equals(reader.nextName())) {
+                  readIncludePaths(reader, includePaths);
+                }
+                else {
+                  reader.skipValue();
+                }
+              }
+              reader.endObject();
+            }
+            else {
+              reader.skipValue();
+            }
+          }
+          reader.endObject();
         }
         else {
           reader.skipValue();

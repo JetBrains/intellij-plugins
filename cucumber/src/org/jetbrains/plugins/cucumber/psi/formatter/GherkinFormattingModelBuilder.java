@@ -27,7 +27,4 @@ public class GherkinFormattingModelBuilder implements FormattingModelBuilder {
     return new DocumentBasedFormattingModel(rootBlock, file.getProject(), settings, file.getFileType(), file);
   }
 
-  public TextRange getRangeAffectingIndent(PsiFile file, int offset, ASTNode elementAtOffset) {
-    return null;
-  }
 }

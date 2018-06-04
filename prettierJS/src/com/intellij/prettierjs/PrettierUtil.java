@@ -22,6 +22,7 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.ParameterizedCachedValue;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.text.SemVer;
 import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,6 +49,7 @@ public class PrettierUtil {
   public static final List<String> CONFIG_FILE_NAMES_WITH_PACKAGE_JSON =
     ContainerUtil.append(CONFIG_FILE_NAMES, PackageJsonUtil.FILE_NAME);
   
+  public static final SemVer MIN_VERSION = new SemVer("1.8.0", 1, 8, 0);
   private static final Logger LOG = Logger.getInstance(PrettierUtil.class);
   public static final String BRACKET_SPACING = "bracketSpacing";
   public static final String PRINT_WIDTH = "printWidth";

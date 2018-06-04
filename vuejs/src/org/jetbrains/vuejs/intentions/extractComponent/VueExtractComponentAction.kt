@@ -37,16 +37,16 @@ class VueExtractComponentAction: BaseRefactoringAction() {
     templatePresentation.icon = VuejsIcons.Vue
   }
 
-  override fun isAvailableInEditorOnly() = true
+  override fun isAvailableInEditorOnly(): Boolean = true
 
-  override fun isEnabledOnElements(elements: Array<out PsiElement>) = true
+  override fun isEnabledOnElements(elements: Array<out PsiElement>): Boolean = true
   override fun isAvailableOnElementInEditorAndFile(element: PsiElement, editor: Editor, file: PsiFile, context: DataContext): Boolean {
     return VueExtractComponentIntention.getContext(editor, element) != null
   }
 
-  override fun isAvailableForLanguage(language: Language?) = VueLanguage.INSTANCE == language
+  override fun isAvailableForLanguage(language: Language?): Boolean = VueLanguage.INSTANCE == language
 
-  override fun isAvailableForFile(file: PsiFile?) = VueFileType.INSTANCE == file?.fileType
+  override fun isAvailableForFile(file: PsiFile?): Boolean = VueFileType.INSTANCE == file?.fileType
 
   override fun getHandler(dataContext: DataContext): RefactoringActionHandler? {
     return object: RefactoringActionHandler {

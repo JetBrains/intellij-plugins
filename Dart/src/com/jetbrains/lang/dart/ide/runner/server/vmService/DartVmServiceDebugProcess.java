@@ -27,6 +27,7 @@ import com.intellij.util.TimeoutUtil;
 import com.intellij.xdebugger.*;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
+import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XSuspendContext;
 import com.jetbrains.lang.dart.DartBundle;
@@ -36,6 +37,7 @@ import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.actions.DartPopFrameAction;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
 import com.jetbrains.lang.dart.ide.runner.server.OpenDartObservatoryUrlAction;
+import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceEvaluator;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceSuspendContext;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -82,7 +84,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @NotNull private final OpenDartObservatoryUrlAction myOpenObservatoryAction =
     new OpenDartObservatoryUrlAction(null, () -> myVmConnected && !getSession().isStopped());
-
 
   public DartVmServiceDebugProcess(@NotNull final XDebugSession session,
                                    @NotNull final String debuggingHost,
@@ -153,6 +154,12 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     else {
       LOG.assertTrue(myExecutionResult != null && myDASExecutionContextId != null, myDASExecutionContextId + myExecutionResult);
     }
+  }
+
+  public ExceptionPauseMode getBreakOnExceptionMode() {
+    return DartExceptionBreakpointHandler
+      .getBreakOnExceptionMode(getSession(),
+                               DartExceptionBreakpointHandler.getDefaultExceptionBreakpoint(getSession().getProject()));
   }
 
   public VmServiceWrapper getVmServiceWrapper() {
@@ -574,6 +581,23 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     }
 
     return result;
+  }
+
+  @Nullable
+  public String getCurrentIsolateId() {
+    if (myLatestCurrentIsolateId != null) {
+      return myLatestCurrentIsolateId;
+    }
+    return getIsolateInfos().isEmpty() ? null : getIsolateInfos().iterator().next().getIsolateId();
+  }
+
+  @Nullable
+  public XDebuggerEvaluator getEvaluator() {
+    XStackFrame frame = getSession().getCurrentStackFrame();
+    if (frame != null) {
+      return frame.getEvaluator();
+    }
+    return new DartVmServiceEvaluator(this);
   }
 
   @NotNull

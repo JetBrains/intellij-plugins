@@ -24,7 +24,7 @@ import java.util.*
  */
 class VueComponentDetailsProvider {
   companion object {
-    val INSTANCE = VueComponentDetailsProvider()
+    val INSTANCE: VueComponentDetailsProvider = VueComponentDetailsProvider()
     private val ADVANCED_PROVIDERS = listOf(VueMixinLocalComponentDetailsProvider(), VueGlobalMixinComponentDetailsProvider(),
                                             VueExtendsLocalComponentDetailsProvider())
     private val BIND_VARIANTS = setOf(".prop", ".camel", ".sync")

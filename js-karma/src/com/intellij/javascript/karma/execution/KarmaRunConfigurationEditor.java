@@ -57,7 +57,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     myProject = project;
     myNodeInterpreterField = new NodeJsInterpreterField(project, false);
     myNodeOptionsEditor = createNodeOptionsEditor();
-    myKarmaPackageField = new NodePackageField(myNodeInterpreterField, KarmaUtil.NODE_PACKAGE_NAME);
+    myKarmaPackageField = new NodePackageField(myNodeInterpreterField, KarmaUtil.PKG_DESCRIPTOR, null);
     myWorkingDirComponent = createWorkingDirComponent(project);
     myConfigPathField = createConfigurationFileTextField(project);
     PathShortener.enablePathShortening(myConfigPathField.getChildComponent().getTextEditor(), null);

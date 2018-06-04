@@ -12,6 +12,7 @@ import com.intellij.execution.testframework.sm.runner.TestProxyFilterProvider;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.scope.KarmaScopeKind;
+import com.intellij.javascript.karma.server.KarmaJsSourcesLocator;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
 import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
@@ -34,7 +35,6 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.execution.ParametersListUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.io.LocalFileFinder;
 
 import java.io.File;
@@ -91,16 +91,15 @@ public class KarmaExecutionSession {
 
   @NotNull
   private ProcessHandler createProcessHandler(@NotNull final KarmaServer server) throws ExecutionException {
-    File clientAppFile = server.getKarmaJsSourcesLocator().getClientAppFile();
     ProcessHandler processHandler = null;
     if (isDebug()) {
       if (server.isPortBound()) {
-        processHandler = createOSProcessHandler(server, clientAppFile);
+        processHandler = createOSProcessHandler(server);
       }
     }
     else {
       if (server.areBrowsersReady()) {
-        processHandler = createOSProcessHandler(server, clientAppFile);
+        processHandler = createOSProcessHandler(server);
       }
     }
     if (processHandler == null) {
@@ -127,10 +126,9 @@ public class KarmaExecutionSession {
   }
 
   @NotNull
-  private OSProcessHandler createOSProcessHandler(@NotNull KarmaServer server,
-                                                  @NotNull File clientAppFile) throws ExecutionException {
+  private OSProcessHandler createOSProcessHandler(@NotNull KarmaServer server) throws ExecutionException {
     NodeJsLocalInterpreter interpreter = myRunSettings.getInterpreterRef().resolveAsLocal(myProject);
-    GeneralCommandLine commandLine = createCommandLine(interpreter, server.getServerPort(), server.getKarmaConfig(), clientAppFile);
+    GeneralCommandLine commandLine = createCommandLine(interpreter, server);
     OSProcessHandler processHandler = new KillableColoredProcessHandler(commandLine);
     server.getRestarter().onRunnerExecutionStarted(processHandler);
     ProcessTerminatedListener.attach(processHandler);
@@ -139,9 +137,7 @@ public class KarmaExecutionSession {
 
   @NotNull
   private GeneralCommandLine createCommandLine(@NotNull NodeJsLocalInterpreter interpreter,
-                                               int serverPort,
-                                               @Nullable KarmaConfig config,
-                                               @NotNull File clientAppFile) throws ExecutionException {
+                                               @NotNull KarmaServer server) throws ExecutionException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     commandLine.setWorkDirectory(myRunSettings.getWorkingDirectorySystemDependent());
     commandLine.setCharset(CharsetToolkit.UTF8_CHARSET);
@@ -149,9 +145,10 @@ public class KarmaExecutionSession {
     List<String> nodeOptionList = ParametersListUtil.parse(myRunSettings.getNodeOptions().trim());
     commandLine.addParameters(nodeOptionList);
     //NodeCommandLineUtil.addNodeOptionsForDebugging(commandLine, Collections.emptyList(), 5858, false, interpreter, true);
+    File clientAppFile = KarmaJsSourcesLocator.getInstance().getClientAppFile();
     commandLine.addParameter(clientAppFile.getAbsolutePath());
-    commandLine.addParameter("--karmaPackageDir=" + myKarmaServer.getServerSettings().getKarmaPackage().getSystemDependentPath());
-    commandLine.addParameter("--serverPort=" + serverPort);
+    commandLine.addParameter("--serverPort=" + server.getServerPort());
+    KarmaConfig config = server.getKarmaConfig();
     if (config != null) {
       commandLine.addParameter("--protocol=" + config.getProtocol());
       commandLine.addParameter("--urlRoot=" + config.getUrlRoot());
