@@ -16,6 +16,7 @@ package org.jetbrains.vuejs.cli
 import com.intellij.ide.file.BatchFileChangeListener
 import com.intellij.javascript.nodejs.packageJson.PackageJsonDependenciesExternalUpdateManager
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.openapi.Disposable
@@ -86,7 +87,8 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
             val callback: (Project) -> Unit = { project ->
               val publisher = BackgroundTaskUtil.syncPublisher(BatchFileChangeListener.TOPIC)
               publisher.batchChangeStarted(project, VueBundle.message("vue.project.generator.progress.task.name"))
-              val doneCallback = PackageJsonDependenciesExternalUpdateManager.getInstance(project).externalUpdateStarted(null, null)
+              val packageJson = PackageJsonUtil.findChildPackageJsonFile(project.baseDir)
+              val doneCallback = PackageJsonDependenciesExternalUpdateManager.getInstance(project).externalUpdateStarted(packageJson, null)
               StartupManager.getInstance(project).runWhenProjectIsInitialized {
                 createListeningProgress(project, Runnable {
                   publisher.batchChangeCompleted(project)
