@@ -57,7 +57,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     String title = "Show in Reveal";
 
     XCBuildConfiguration xcBuildConfiguration = myConfiguration.getConfiguration();
-    AppleSdk sdk = xcBuildConfiguration == null ? null : XcodeMetaData.getBuildSettingsProvider(xcBuildConfiguration).getBaseSdk();
+    AppleSdk sdk = xcBuildConfiguration == null ? null : XcodeMetaData.getRawBuildSettingsProvider(xcBuildConfiguration).getBaseSdk();
 
     File lib = null;
     boolean compatible = false;
