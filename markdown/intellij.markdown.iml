@@ -26,15 +26,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/owasp-java-html-sanitizer.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module" module-name="intellij.xml.psi.impl" />
     <orderEntry type="module" module-name="intellij.platform.langInjection" />
     <orderEntry type="module" module-name="intellij.platform.builtInServer" />
@@ -54,5 +45,6 @@
     </orderEntry>
     <orderEntry type="library" name="netty-codec-http" level="project" />
     <orderEntry type="library" name="netty-handler" level="project" />
+    <orderEntry type="library" name="com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20180219.1" level="project" />
   </component>
 </module>
