@@ -32,6 +32,7 @@ import org.jetbrains.plugins.ruby.motion.symbols.MotionSymbolUtil;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.AbstractRubyTypeProvider;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.resolve.ResolveUtil;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.resolve.scope.ScopeVariable;
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Children;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Symbol;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolUtil;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.v2.ClassModuleSymbol;
@@ -123,7 +124,8 @@ public class RubyMotionTypeProvider extends AbstractRubyTypeProvider {
       classSymbol = ((ClassModuleSymbol)classSymbol).getSuperClassSymbol(expression);
     }
     if (classSymbol instanceof MotionClassSymbol) {
-      final List<Symbol> candidates = classSymbol.getChildren().getSymbolsByNameAndTypes(rubyName, symbol.getType().asSet(), expression);
+      final List<Symbol> candidates = Children
+        .getSymbolsByNameAndTypes(classSymbol, rubyName, symbol.getType().asSet(), expression);
       for (Symbol candidate : candidates) {
         final Function function = ((FunctionSymbol)candidate).getFunction();
         if (objCName.equals(function.getName())) {
