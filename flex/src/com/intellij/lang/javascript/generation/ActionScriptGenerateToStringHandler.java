@@ -74,7 +74,8 @@ class ActionScriptGenerateToStringHandler extends BaseJSGenerateHandler {
 
 
   protected void collectCandidates(final PsiElement clazz, final Collection<JSChooserElementNode> candidates) {
-    collectJSVariables(clazz, candidates, false, false, true, true, true, false);
+    collectJSVariables(clazz, candidates, false, false, true, true,
+                       true, false, false);
   }
 
   protected boolean canHaveEmptySelectedElements() {
