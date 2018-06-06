@@ -30,6 +30,7 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.v2.SymbolPsiProcessor
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Dennis.Ushakov
@@ -45,39 +46,32 @@ public class MotionClassSymbol extends SymbolImpl implements MotionSymbol {
     myClasses = classes;
   }
 
-  @NotNull
   @Override
-  public Children getChildren() {
-    return new ChildrenImpl() {
-      @Override
-      public boolean processChildren(SymbolPsiProcessor processor, final PsiElement invocationPoint) {
-        final MotionClassSymbol parent = MotionClassSymbol.this;
-        for (Class clazz : myClasses) {
-          for (Function function : clazz.getFunctions()) {
-            for (RTypedSyntheticSymbol functionSymbol : MotionSymbolUtil.createSelectorSymbols(myModule, parent, function)) {
-              if (!processor.process(functionSymbol)) {
-                return false;
-              }
-            }
-          }
-          for (Class subClass : clazz.getSubClasses()) {
-            final MotionClassSymbol symbol = new MotionClassSymbol(myModule, Collections.singletonList(subClass));
-            if (!processor.process(symbol)) {
-              return false;
-            }
-          }
-        }
-
-        final Symbol superClass = getSuperClassSymbol(invocationPoint);
-        if (superClass != null) {
-          final Children children = superClass.getChildren();
-          if (!children.processChildren(processor, invocationPoint)) {
+  public boolean processChildren(SymbolPsiProcessor processor, final PsiElement invocationPoint) {
+    for (Class clazz : myClasses) {
+      for (Function function : clazz.getFunctions()) {
+        for (RTypedSyntheticSymbol functionSymbol : MotionSymbolUtil.createSelectorSymbols(myModule, this, function)) {
+          if (!processor.process(functionSymbol)) {
             return false;
           }
         }
-        return true;
       }
-    };
+      for (Class subClass : clazz.getSubClasses()) {
+        final MotionClassSymbol symbol = new MotionClassSymbol(myModule, Collections.singletonList(subClass));
+        if (!processor.process(symbol)) {
+          return false;
+        }
+      }
+    }
+
+    final Symbol superClass = getSuperClassSymbol(invocationPoint);
+    if (superClass != null) {
+      final Children children = superClass.getChildren();
+      if (!children.processChildren(processor, invocationPoint)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @Nullable
@@ -129,9 +123,7 @@ public class MotionClassSymbol extends SymbolImpl implements MotionSymbol {
 
     @Override
     public boolean processChildrenInner(SymbolPsiProcessor processor, PsiElement invocationPoint) {
-      return getParentSymbol().getChildren().processChildren(processor, invocationPoint);
+      return Objects.requireNonNull(getParentSymbol()).processChildren(processor, invocationPoint);
     }
-
-
   }
 }
