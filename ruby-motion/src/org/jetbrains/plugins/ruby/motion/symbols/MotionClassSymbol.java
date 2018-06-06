@@ -24,7 +24,10 @@ import org.jetbrains.plugins.ruby.motion.bridgesupport.Class;
 import org.jetbrains.plugins.ruby.motion.bridgesupport.Function;
 import org.jetbrains.plugins.ruby.motion.bridgesupport.InheritanceInfoHolder;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Type;
-import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.*;
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.RTypedSyntheticSymbol;
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Symbol;
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolImpl;
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolUtil;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.v2.SingletonClassSymbol;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.v2.SymbolPsiProcessor;
 
@@ -66,8 +69,7 @@ public class MotionClassSymbol extends SymbolImpl implements MotionSymbol {
 
     final Symbol superClass = getSuperClassSymbol(invocationPoint);
     if (superClass != null) {
-      final Children children = superClass.getChildren();
-      if (!children.processChildren(processor, invocationPoint)) {
+      if (!superClass.processChildren(processor, invocationPoint)) {
         return false;
       }
     }
