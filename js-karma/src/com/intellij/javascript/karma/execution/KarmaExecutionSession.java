@@ -4,11 +4,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.*;
-import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
-import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
-import com.intellij.execution.testframework.sm.runner.SMTestLocator;
-import com.intellij.execution.testframework.sm.runner.TestProxyFilterProvider;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.scope.KarmaScopeKind;
@@ -43,7 +39,6 @@ import java.util.List;
 public class KarmaExecutionSession {
 
   private static final Logger LOG = Logger.getInstance(KarmaExecutionSession.class);
-  private static final String FRAMEWORK_NAME = "KarmaJavaScriptTestRunner";
 
   private final Project myProject;
   private final KarmaRunConfiguration myRunConfiguration;
@@ -79,9 +74,9 @@ public class KarmaExecutionSession {
   @NotNull
   private SMTRunnerConsoleView createSMTRunnerConsoleView() {
     KarmaTestProxyFilterProvider filterProvider = new KarmaTestProxyFilterProvider(myProject, myKarmaServer);
-    TestConsoleProperties testConsoleProperties = new KarmaConsoleProperties(myRunConfiguration, myExecutor, filterProvider);
+    KarmaConsoleProperties testConsoleProperties = new KarmaConsoleProperties(myRunConfiguration, myExecutor, filterProvider);
     KarmaConsoleView consoleView = new KarmaConsoleView(testConsoleProperties, myKarmaServer, myExecutionType, myProcessHandler);
-    SMTestRunnerConnectionUtil.initConsoleView(consoleView, FRAMEWORK_NAME);
+    SMTestRunnerConnectionUtil.initConsoleView(consoleView, testConsoleProperties.getTestFrameworkName());
     return consoleView;
   }
 
@@ -221,31 +216,5 @@ public class KarmaExecutionSession {
   @NotNull
   public SMTRunnerConsoleView getSmtConsoleView() {
     return mySmtConsoleView;
-  }
-
-  private static class KarmaConsoleProperties extends SMTRunnerConsoleProperties {
-    private final KarmaTestProxyFilterProvider myFilterProvider;
-
-    public KarmaConsoleProperties(KarmaRunConfiguration configuration, Executor executor, KarmaTestProxyFilterProvider filterProvider) {
-      super(configuration, FRAMEWORK_NAME, executor);
-      myFilterProvider = filterProvider;
-      setUsePredefinedMessageFilter(true);
-      setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
-      setIfUndefined(TestConsoleProperties.HIDE_IGNORED_TEST, true);
-      setIfUndefined(TestConsoleProperties.SCROLL_TO_SOURCE, true);
-      setIfUndefined(TestConsoleProperties.SELECT_FIRST_DEFECT, true);
-      setIdBasedTestTree(true);
-      setPrintTestingStartedTime(false);
-    }
-
-    @Override
-    public SMTestLocator getTestLocator() {
-      return KarmaTestLocationProvider.INSTANCE;
-    }
-
-    @Override
-    public TestProxyFilterProvider getFilterProvider() {
-      return myFilterProvider;
-    }
   }
 }
