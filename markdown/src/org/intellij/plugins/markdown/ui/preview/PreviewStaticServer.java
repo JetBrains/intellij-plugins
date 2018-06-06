@@ -9,7 +9,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.stream.ChunkedStream;
 import org.intellij.plugins.markdown.settings.MarkdownCssSettings;
-import org.intellij.plugins.markdown.ui.preview.javafx.JavaFxHtmlPanel;
+import org.intellij.plugins.markdown.ui.preview.javafx.MarkdownJavaFxHtmlPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.BuiltInServerManager;
@@ -91,7 +91,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
     if ("scripts".equals(contentType) && MarkdownHtmlPanel.SCRIPTS.contains(fileName)) {
       sendResource(request,
                    context.channel(),
-                   JavaFxHtmlPanel.class,
+                   MarkdownJavaFxHtmlPanel.class,
                    fileName);
     }
     else if ("styles".equals(contentType) && MarkdownHtmlPanel.STYLES.contains(fileName)) {
