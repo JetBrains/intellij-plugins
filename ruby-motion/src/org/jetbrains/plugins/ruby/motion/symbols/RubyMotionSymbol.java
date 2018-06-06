@@ -37,7 +37,7 @@ public class RubyMotionSymbol extends TopLevelSymbol {
   }
 
   @Override
-  protected boolean processChildrenInner(final SymbolPsiProcessor processor, final PsiElement invocationPoint) {
+  public boolean processChildren(final SymbolPsiProcessor processor, final PsiElement invocationPoint) {
     final Module module = myModule;
     if (module != null) {
       for (Symbol symbol : MotionSymbolUtil.MotionSymbolsCache.getInstance(module).getSymbols()) {

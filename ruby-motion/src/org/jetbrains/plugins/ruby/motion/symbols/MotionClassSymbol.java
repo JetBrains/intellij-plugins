@@ -124,7 +124,7 @@ public class MotionClassSymbol extends SymbolImpl implements MotionSymbol {
     }
 
     @Override
-    public boolean processChildrenInner(SymbolPsiProcessor processor, PsiElement invocationPoint) {
+    public boolean processChildren(SymbolPsiProcessor processor, PsiElement invocationPoint) {
       return Objects.requireNonNull(getParentSymbol()).processChildren(processor, invocationPoint);
     }
   }
