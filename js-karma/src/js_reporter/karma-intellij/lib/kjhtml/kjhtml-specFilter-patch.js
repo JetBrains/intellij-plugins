@@ -22,4 +22,5 @@ exports.apply = function (configFiles) {
     endInd++;
     configFiles.splice(endInd + 1, 0, createPattern(__dirname + '/intellij-restore-specFilter-after-kjhtml.js'))
   }
+  configFiles.splice(configFiles.length, 0, createPattern(__dirname + '/karma-intellij-adapter.js'));
 };

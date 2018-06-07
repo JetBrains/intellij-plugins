@@ -78,14 +78,9 @@ function runTests() {
     urlRoot: urlRoot
   };
   var testName = cli.getTestName();
-  if (typeof testName !== 'undefined') {
-    config.clientArgs = ['--grep=' + testName];
-  }
-  else if (cli.isLastTestRunWithTestNameFilter()) {
-    // reset jasmine.getEnv().specFilter function
-    // otherwise, last specified specFilter will be used
-    config.clientArgs = ['--grep='];
-  }
+  // if testName is undefined, reset jasmine.getEnv().specFilter function
+  // otherwise, last specified specFilter will be used
+  config.clientArgs = ['--grep=' + (testName || '')];
   runWithConfig(config);
 }
 

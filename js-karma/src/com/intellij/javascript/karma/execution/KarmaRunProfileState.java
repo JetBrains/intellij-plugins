@@ -22,6 +22,8 @@ import com.intellij.util.CatchingConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class KarmaRunProfileState implements RunProfileState {
 
   private static final Logger LOG = Logger.getInstance(KarmaRunProfileState.class);
@@ -32,6 +34,7 @@ public class KarmaRunProfileState implements RunProfileState {
   private final NodePackage myKarmaPackage;
   private final KarmaRunSettings myRunSettings;
   private final KarmaExecutionType myExecutionType;
+  private List<List<String>> myFailedTestNames;
 
   public KarmaRunProfileState(@NotNull Project project,
                               @NotNull KarmaRunConfiguration runConfiguration,
@@ -105,12 +108,18 @@ public class KarmaRunProfileState implements RunProfileState {
                                                               executor,
                                                               server,
                                                               myRunSettings,
-                                                              myExecutionType);
-    SMTRunnerConsoleView smtRunnerConsoleView = session.getSmtConsoleView();
+                                                              myExecutionType,
+                                                              myFailedTestNames);
+    SMTRunnerConsoleView consoleView = session.getSmtConsoleView();
     ProcessHandler processHandler = session.getProcessHandler();
-    DefaultExecutionResult executionResult = new DefaultExecutionResult(smtRunnerConsoleView, processHandler);
-    executionResult.setRestartActions(new ToggleAutoTestAction());
+    DefaultExecutionResult executionResult = new DefaultExecutionResult(consoleView, processHandler);
+    executionResult.setRestartActions(((KarmaConsoleProperties)consoleView.getProperties()).createRerunFailedTestsAction(consoleView),
+                                      new ToggleAutoTestAction());
     return executionResult;
+  }
+
+  public void setFailedTestNames(@NotNull List<List<String>> failedTestNames) {
+    myFailedTestNames = failedTestNames;
   }
 
   @NotNull
