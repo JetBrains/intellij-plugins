@@ -1,15 +1,15 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.LightPsiParser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
-import com.intellij.lang.PsiParser;
-import com.intellij.psi.tree.IElementType;
-
-import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
 import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
+import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.TokenSet;
+import com.intellij.lang.PsiParser;
+import com.intellij.lang.LightPsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class MakefileParser implements PsiParser, LightPsiParser {
@@ -127,11 +127,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // (topconditional|rule|variable-assignment|directive|function|macro)*
   static boolean any(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "any")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!any_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "any", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -140,14 +139,12 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   private static boolean any_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "any_0")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = topconditional(b, l + 1);
     if (!r) r = rule(b, l + 1);
     if (!r) r = variable_assignment(b, l + 1);
     if (!r) r = directive(b, l + 1);
     if (!r) r = function(b, l + 1);
     if (!r) r = consumeToken(b, MACRO);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -183,11 +180,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   public static boolean branch(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "branch")) return false;
     Marker m = enter_section_(b, l, _NONE_, BRANCH, "<branch>");
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!branch_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "branch", c)) break;
-      c = current_position_(b);
     }
     exit_section_(b, l, m, true, false, null);
     return true;
@@ -197,11 +193,9 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   private static boolean branch_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "branch_0")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = conditional(b, l + 1);
     if (!r) r = command(b, l + 1);
     if (!r) r = variable_assignment(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -220,11 +214,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // '\t'*
   private static boolean command_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "command_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!consumeToken(b, TAB)) break;
       if (!empty_element_parsed_guard_(b, "command_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -254,11 +247,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // ('else' (conditional-keyword condition branch | EOL branch))*
   private static boolean conditional_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional_3")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!conditional_3_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "conditional_3", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -349,11 +341,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // (variable-value-line split?)*
   private static boolean define_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "define_3")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!define_3_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "define_3", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -381,7 +372,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   static boolean directive(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "directive")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = define(b, l + 1);
     if (!r) r = include(b, l + 1);
     if (!r) r = undefine(b, l + 1);
@@ -389,7 +379,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!r) r = export(b, l + 1);
     if (!r) r = privatevar(b, l + 1);
     if (!r) r = vpath(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -420,18 +409,17 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, TAB);
-    int c = current_position_(b);
     while (r) {
+      int c = current_position_(b);
       if (!consumeToken(b, TAB)) break;
       if (!empty_element_parsed_guard_(b, "empty_command", c)) break;
-      c = current_position_(b);
     }
     exit_section_(b, m, EMPTY_COMMAND, r);
     return r;
   }
 
   /* ********************************************************** */
-  // 'export' (variable-assignment|variable)?
+  // 'export' (variable-assignment|variable)? EOL
   public static boolean export(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "export")) return false;
     if (!nextTokenIs(b, KEYWORD_EXPORT)) return false;
@@ -439,7 +427,8 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, EXPORT, null);
     r = consumeToken(b, KEYWORD_EXPORT);
     p = r; // pin = 1
-    r = r && export_1(b, l + 1);
+    r = r && report_error_(b, export_1(b, l + 1));
+    r = p && consumeToken(b, EOL) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -455,10 +444,8 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   private static boolean export_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "export_1_0")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = variable_assignment(b, l + 1);
     if (!r) r = variable(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -517,11 +504,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // function-param*
   private static boolean function_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!function_param(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "function_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -571,11 +557,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b);
     r = filename(b, l + 1);
-    int c = current_position_(b);
     while (r) {
+      int c = current_position_(b);
       if (!filename(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "include_1", c)) break;
-      c = current_position_(b);
     }
     exit_section_(b, m, null, r);
     return r;
@@ -614,11 +599,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // (split line?)*
   private static boolean multiline_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "multiline_0_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!multiline_0_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "multiline_0_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -647,11 +631,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b);
     r = multiline_1_0(b, l + 1);
-    int c = current_position_(b);
     while (r) {
+      int c = current_position_(b);
       if (!multiline_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "multiline_1", c)) break;
-      c = current_position_(b);
     }
     exit_section_(b, m, null, r);
     return r;
@@ -690,11 +673,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // prerequisite*
   private static boolean normal_prerequisites_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "normal_prerequisites_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!prerequisite(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "normal_prerequisites_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -702,11 +684,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // (split prerequisite*)*
   private static boolean normal_prerequisites_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "normal_prerequisites_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!normal_prerequisites_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "normal_prerequisites_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -725,11 +706,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // prerequisite*
   private static boolean normal_prerequisites_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "normal_prerequisites_1_0_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!prerequisite(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "normal_prerequisites_1_0_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -749,11 +729,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // prerequisite*
   private static boolean order_only_prerequisites_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "order_only_prerequisites_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!prerequisite(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "order_only_prerequisites_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -761,11 +740,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // (split prerequisite*)*
   private static boolean order_only_prerequisites_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "order_only_prerequisites_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!order_only_prerequisites_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "order_only_prerequisites_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -784,11 +762,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // prerequisite*
   private static boolean order_only_prerequisites_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "order_only_prerequisites_1_0_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!prerequisite(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "order_only_prerequisites_1_0_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -881,11 +858,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   public static boolean recipe(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recipe")) return false;
     Marker m = enter_section_(b, l, _NONE_, RECIPE, "<recipe>");
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!recipe_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "recipe", c)) break;
-      c = current_position_(b);
     }
     exit_section_(b, l, m, true, false, null);
     return true;
@@ -895,11 +871,9 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   private static boolean recipe_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recipe_0")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = command(b, l + 1);
     if (!r) r = conditional(b, l + 1);
     if (!r) r = empty_command(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -1034,11 +1008,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, TARGETS, "<targets>");
     r = target(b, l + 1);
-    int c = current_position_(b);
     while (r) {
+      int c = current_position_(b);
       if (!target(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "targets", c)) break;
-      c = current_position_(b);
     }
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -1063,11 +1036,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // ('else' (conditional-keyword condition branch | EOL block))*
   private static boolean topconditional_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "topconditional_3")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!topconditional_3_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "topconditional_3", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -1225,11 +1197,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // directory*
   private static boolean vpath_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "vpath_1_0_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!directory(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "vpath_1_0_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }

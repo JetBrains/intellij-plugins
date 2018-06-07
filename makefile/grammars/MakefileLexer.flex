@@ -44,7 +44,7 @@ FILENAME_CHARACTER=[^:=!?#\ \r\n\t]
 VARIABLE_USAGE_EXPR="$("[^)]*")"
 CONDITION_CHARACTER=[^#\r\n]
 
-%state PREREQUISITES ELSE INCLUDES SOURCE DEFINE DEFINEBODY CONDITIONALS FUNCTION
+%state PREREQUISITES ELSE INCLUDES SOURCE DEFINE DEFINEBODY CONDITIONALS FUNCTION EXPORT EXPORTVAR
 
 %%
 
@@ -61,6 +61,7 @@ CONDITION_CHARACTER=[^#\r\n]
   ")"           { yybegin(YYINITIAL); return FUNCTION_END; }
   [^$)]*        { return FUNCTION_PARAM_TEXT; }
   {VARIABLE_USAGE_EXPR} { return VARIABLE_USAGE; }
+  {EOL}         { yybegin(YYINITIAL); return EOL; }
 }
 
 <YYINITIAL> {
@@ -84,7 +85,7 @@ CONDITION_CHARACTER=[^#\r\n]
     "else"             { yybegin(ELSE); return KEYWORD_ELSE; }
     "endif"            { return KEYWORD_ENDIF; }
     "override"         { return KEYWORD_OVERRIDE; }
-    "export"           { return KEYWORD_EXPORT; }
+    "export"           { yybegin(EXPORT); return KEYWORD_EXPORT; }
     "private"          { return KEYWORD_PRIVATE; }
     {ERROR}                { yybegin(FUNCTION); return FUNCTION_ERROR; }
     {WARNING}              { yybegin(FUNCTION); return FUNCTION_WARNING; }
@@ -124,6 +125,26 @@ CONDITION_CHARACTER=[^#\r\n]
     {SPACES}|\t+            { return WHITE_SPACE; }
 }
 
+<EXPORT> {
+    {ERROR}                 { yybegin(FUNCTION); return FUNCTION_ERROR; }
+    {WARNING}               { yybegin(FUNCTION); return FUNCTION_WARNING; }
+    {INFO}                  { yybegin(FUNCTION); return FUNCTION_INFO; }
+    {SHELL}                 { yybegin(FUNCTION); return FUNCTION_SHELL; }
+    {VARIABLE_USAGE_EXPR}   { return VARIABLE_USAGE; }
+    {FILENAME_CHARACTER}+   { return IDENTIFIER; }
+    {ASSIGN}                { yybegin(EXPORTVAR); return ASSIGN; }
+    {EOL}                   { yybegin(YYINITIAL); return EOL; }
+    <<EOF>>                 { yypushback(yylength()); yybegin(YYINITIAL); return EOL; }
+    {SPACES}|\t+            { return WHITE_SPACE; }
+}
+
+<EXPORTVAR> {
+    {SPACES}|\t+            { return WHITE_SPACE; }
+    {BACKSLASHCRLF}         { return SPLIT; }
+    {VARIABLE_VALUE}        { return LINE; }
+    {EOL}                   { yybegin(YYINITIAL); return EOL; }
+    <<EOF>>                 { yypushback(yylength()); yybegin(YYINITIAL); return EOL; }
+}
 
 <SOURCE> {
     {SPACES}|\t+            { return WHITE_SPACE; }
