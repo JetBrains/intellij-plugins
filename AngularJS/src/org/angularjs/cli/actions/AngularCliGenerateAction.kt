@@ -1,5 +1,6 @@
 package org.angularjs.cli.actions
 
+import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.execution.configurations.CommandLineTokenizer
 import com.intellij.icons.AllIcons
 import com.intellij.javascript.nodejs.CompletionModuleInfo
@@ -21,10 +22,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.ui.DoubleClickListener
-import com.intellij.ui.EditorTextField
-import com.intellij.ui.ScrollPaneFactory
-import com.intellij.ui.TextFieldWithAutoCompletion
+import com.intellij.ui.*
 import com.intellij.ui.components.JBList
 import com.intellij.ui.speedSearch.ListWithFilter
 import com.intellij.util.Function
@@ -61,8 +59,10 @@ class AngularCliGenerateAction : DumbAwareAction() {
                                                 cellHasFocus: Boolean): Component {
         val component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
         icon = JBUI.scale(EmptyIcon.create(5))
+        toolTipText = (value as Blueprint).description
         return component
       }
+
     }
 
     val actionGroup = DefaultActionGroup()
@@ -156,16 +156,27 @@ class AngularCliGenerateAction : DumbAwareAction() {
       }
 
       override fun createCenterPanel(): JComponent {
-        val panel = JPanel(BorderLayout())
+        val panel = JPanel(BorderLayout(0, 4))
         panel.add(JLabel(blueprint.description), BorderLayout.NORTH)
-        editor = TextFieldWithAutoCompletion.create(project, blueprint.args, false, null)
+        editor = TextFieldWithAutoCompletion(project, BlueprintOptionsCompletionProvider(blueprint.options), false, null)
         editor.setPreferredWidth(250)
-        panel.add(LabeledComponent.create(editor, "Parameters"), BorderLayout.SOUTH)
+        panel.add(LabeledComponent.create(editor, "Parameters" + paramsDesc(blueprint)), BorderLayout.SOUTH)
         return panel
       }
 
       override fun getPreferredFocusedComponent(): JComponent {
         return editor
+      }
+
+      fun paramsDesc(b: Blueprint): String {
+        val argDisplay = b.arguments.joinToString(" ") { "<" + it.name + ">" }
+        val optionsDisplay = if (b.options.isEmpty()) "" else "<options...>"
+
+        val display = listOf(argDisplay, optionsDisplay).filter { it.isNotEmpty() }
+        if (display.isEmpty()) {
+          return ""
+        }
+        return display.joinToString(" ", " (", ")")
       }
 
       fun arguments():Array<String> {
@@ -205,4 +216,31 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
     e?.presentation?.isEnabledAndVisible = project != null && findAngularCliFolder(project, file) != null
   }
+
+  private class BlueprintOptionsCompletionProvider(options: List<Option>) : TextFieldWithAutoCompletionListProvider<Option>(
+    options) {
+
+    override fun getLookupString(item: Option): String {
+      return "--" + item.name
+    }
+
+    override fun getTypeText(item: Option): String? {
+      var result = item.type
+      if (item.enum != null && item.enum.isNotEmpty()) {
+        result += " (" + item.enum.joinToString("|") + ")"
+      }
+      return result
+    }
+
+    override fun compare(item1: Option, item2: Option): Int {
+      return StringUtil.compare(item1.name, item2.name, false)
+    }
+
+    override fun createLookupBuilder(item: Option): LookupElementBuilder {
+      return super.createLookupBuilder(item)
+        .withTailText(if (item.description != null) "  " + item.description else null, true)
+    }
+
+  }
+
 }
