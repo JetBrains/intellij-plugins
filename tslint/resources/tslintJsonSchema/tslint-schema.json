@@ -960,6 +960,20 @@
           ]
         },
         "jsdoc-format": {
+          "definitions": {
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "check-multiline-start"
+                ]
+              },
+              "minItems": 0,
+              "maxItems": 1,
+              "uniqueItems": true
+            }
+          },
           "description": "Enforces basic format rules for JSDoc comments.",
           "allOf": [
             {
@@ -971,8 +985,21 @@
                   "type": "boolean"
                 }
               ],
-              "additionalItems": false,
+              "additionalItems": {
+                "$ref": "#/definitions/rules/properties/jsdoc-format/definitions/options/items"
+              },
               "properties": {
+                "options": {
+                  "description": "An option value or an array of multiple option values.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions/rules/properties/jsdoc-format/definitions/options"
+                    },
+                    {
+                      "$ref": "#/definitions/rules/properties/jsdoc-format/definitions/options/items"
+                    }
+                  ]
+                },
                 "severity": {}
               },
               "additionalProperties": false
@@ -1151,11 +1178,26 @@
             "options": {
               "type": "array",
               "items": {
-                "type": "number",
-                "minimum": 1
+                "oneOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "limit": {
+                        "type": "number"
+                      },
+                      "ignore-pattern": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
               },
-              "minItems": 1,
-              "maxItems": 1
+              "minLength": 1,
+              "maxLength": 2
             }
           },
           "allOf": [
@@ -2743,6 +2785,21 @@
           ]
         },
         "object-literal-shorthand": {
+          "definitions": {
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "always",
+                  "never"
+                ]
+              },
+              "minItems": 1,
+              "maxItems": 2,
+              "uniqueItems": true
+            }
+          },
           "description": "Enforces use of ES6 object literal shorthand when possible.",
           "allOf": [
             {
@@ -2754,8 +2811,21 @@
                   "type": "boolean"
                 }
               ],
-              "additionalItems": false,
+              "additionalItems": {
+                "$ref": "#/definitions/rules/properties/object-literal-shorthand/definitions/options/items"
+              },
               "properties": {
+                "options": {
+                  "description": "An option value or an array of multiple option values.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions/rules/properties/object-literal-shorthand/definitions/options"
+                    },
+                    {
+                      "$ref": "#/definitions/rules/properties/object-literal-shorthand/definitions/options/items"
+                    }
+                  ]
+                },
                 "severity": {}
               },
               "additionalProperties": false
