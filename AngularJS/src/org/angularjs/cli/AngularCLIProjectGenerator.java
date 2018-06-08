@@ -75,7 +75,7 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
   @NotNull
   @Override
   protected Filter[] filters(@NotNull Project project, @NotNull VirtualFile baseDir) {
-    return new Filter[]{new AngularCLIFilter(project, baseDir.getPath())};
+    return new Filter[]{new AngularCLIFilter(project, baseDir.getParent().getPath())};
   }
 
   @NotNull
