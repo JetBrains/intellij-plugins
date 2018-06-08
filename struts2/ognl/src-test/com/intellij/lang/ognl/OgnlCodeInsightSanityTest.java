@@ -76,6 +76,11 @@ public class OgnlCodeInsightSanityTest extends LightCodeInsightFixtureTestCase {
       file -> Generator.sampledFrom(new InvokeIntention(file, new IntentionPolicy()),
                                     new InvokeCompletion(file, new CompletionPolicy() {
                                       @Override
+                                      public String getPossibleSelectionCharacters() {
+                                        return "\n\t\r ";
+                                      }
+
+                                      @Override
                                       protected boolean shouldSuggestNonReferenceLeafText(@NotNull PsiElement leaf) {
                                         return false;
                                       }
