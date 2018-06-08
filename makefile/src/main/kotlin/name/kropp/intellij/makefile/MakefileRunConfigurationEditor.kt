@@ -6,15 +6,13 @@ import com.intellij.openapi.application.PathMacros
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.FixedSizeButton
-import com.intellij.openapi.ui.TextFieldWithBrowseButton
+import com.intellij.openapi.ui.*
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiManager
-import com.intellij.ui.DocumentAdapter
-import com.intellij.ui.EditorTextField
-import com.intellij.ui.TextFieldWithAutoCompletion
-import com.intellij.ui.components.JBList
+import com.intellij.ui.*
+import com.intellij.ui.components.*
+import com.intellij.ui.components.fields.ExpandableTextField
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.UIUtil
 import java.awt.BorderLayout
@@ -26,7 +24,7 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
   private val filenameField = TextFieldWithBrowseButton()
   private val targetCompletionProvider = TextFieldWithAutoCompletion.StringsCompletionProvider(emptyList(), MakefileTargetIcon)
   private val targetField = TextFieldWithAutoCompletion<String>(project, targetCompletionProvider, true, "")
-  private val argumentsField = EditorTextField()
+  private val argumentsField = ExpandableTextField()
   private val workingDirectoryField = TextFieldWithBrowseButton()
   private val environmentVarsComponent = EnvironmentVariablesComponent()
 
@@ -37,7 +35,7 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
         .setVerticalGap(UIUtil.DEFAULT_VGAP)
         .addLabeledComponent("&Makefile", filenameField)
         .addLabeledComponent("&Target", targetField)
-        .addLabeledComponent("&Arguments", argumentsField)
+        .addComponent(LabeledComponent.create(argumentsField, "&Arguments"))
         .addLabeledComponent("&Working Directory", createComponentWithMacroBrowse(workingDirectoryField))
         .addComponent(environmentVarsComponent)
         .panel
