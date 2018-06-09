@@ -38,6 +38,7 @@ import java.awt.event.InputMethodListener
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.util.*
+import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.JList
 import javax.swing.JPanel
@@ -46,7 +47,7 @@ class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Set
                                CustomStepProjectGenerator<NpmPackageProjectGenerator.Settings>,
                                HideableProjectGenerator {
 
-  override fun isHidden() = false
+  override fun isHidden(): Boolean = false
 
   override fun createStep(projectGenerator: DirectoryProjectGenerator<NpmPackageProjectGenerator.Settings>?,
                           callback: AbstractNewProjectStep.AbstractCallback<NpmPackageProjectGenerator.Settings>?): AbstractActionWithPanel {
@@ -65,9 +66,9 @@ class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Set
   override fun generateProject(project: Project, baseDir: VirtualFile, settings: NpmPackageProjectGenerator.Settings, module: Module) {
   }
 
-  override fun getName() = "Vue.js"
-  override fun getDescription() = VueBundle.message("vue.project.generator.description")
-  override fun getIcon() = VuejsIcons.Vue!!
+  override fun getName(): String = "Vue.js"
+  override fun getDescription(): String = VueBundle.message("vue.project.generator.description")
+  override fun getIcon(): Icon = VuejsIcons.Vue!!
 }
 
 class VueCliGeneratorSettingsPeer : NpmPackageGeneratorPeerExtensible(Arrays.asList("vue-cli", "@vue/cli"),

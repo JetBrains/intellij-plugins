@@ -5,7 +5,6 @@ import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonProperty
 import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil.getSimpleReferencesPathProvider
-import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.PlatformPatterns.psiFile
 import com.intellij.patterns.PsiElementPattern
@@ -13,7 +12,7 @@ import com.intellij.patterns.StandardPatterns.or
 import com.intellij.psi.PsiReferenceContributor
 import com.intellij.psi.PsiReferenceRegistrar
 
-val extendsProperty = "extends"
+val extendsProperty: String = "extends"
 
 class TsLintConfigReferenceContributor : PsiReferenceContributor() {
 

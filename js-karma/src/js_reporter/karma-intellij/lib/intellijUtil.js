@@ -197,7 +197,7 @@ function isPreprocessorSpecified(preprocessors, preprocessorName) {
 
 function getKarmaPackagePath() {
   const nodeModulesDirName = '/node_modules/';
-  const mainJsFile = process.argv[1].replace('\\', '/');
+  const mainJsFile = process.argv[1].replace(/\\/g, '/');
   var ind = mainJsFile.lastIndexOf(nodeModulesDirName);
   if (ind < 0) return null;
   const pkgStartInd = ind + nodeModulesDirName.length;

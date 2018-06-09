@@ -45,6 +45,12 @@ public class OgnlFqnTypeExpressionCompletionTest extends LightCodeInsightFixture
                            "Comparator");
   }
 
+  public void testJavaLangClassesAreSuggested() {
+    myFixture.configureByText(OgnlFileType.INSTANCE, OgnlTestUtils.createExpression("new Str<caret>"));
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "String", "StringBuilder");
+  }
+
   public void testMapTypeExpressionLimitsToMapClasses() {
     myFixture.configureByText(OgnlFileType.INSTANCE,
                               OgnlTestUtils.createExpression("#@ <caret>"));

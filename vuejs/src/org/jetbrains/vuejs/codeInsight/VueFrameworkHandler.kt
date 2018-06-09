@@ -70,7 +70,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       return Pair(VueIndexBase.createJSKey(key), key)
     }
 
-    const val VUE = "Vue"
+    const val VUE: String = "Vue"
     private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE, "mixin", "component", "extends", "directive", "delimiters")
     private val COMPONENT_INDICATOR_PROPS = setOf("template", "render", "mixins", "components", "props")
     fun hasComponentIndicatorProperties(obj: JSObjectLiteralExpression): Boolean =
@@ -312,9 +312,9 @@ private class MyScriptVisitor : VueFileVisitor() {
 }
 
 open class VueFileVisitor: XmlElementVisitor() {
-  override fun visitXmlDocument(document: XmlDocument?) = recursion(document)
+  override fun visitXmlDocument(document: XmlDocument?): Unit = recursion(document)
 
-  override fun visitXmlFile(file: XmlFile?) = recursion(file)
+  override fun visitXmlFile(file: XmlFile?): Unit = recursion(file)
 
   protected fun recursion(element: PsiElement?) {
     element?.children?.forEach { it.accept(this) }

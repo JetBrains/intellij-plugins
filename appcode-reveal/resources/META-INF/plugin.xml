@@ -13,7 +13,10 @@
   
   <vendor>JetBrains</vendor>
   <depends>com.intellij.modules.appcode</depends>
-  
+
+  <extensions defaultExtensionNs="com.intellij">
+    <statistics.projectUsagesCollector implementation="org.jetbrains.appcode.reveal.RevealUsageTriggerCollector"/>
+  </extensions>
 
   <extensions defaultExtensionNs="appcode">
     <runConfigurationExtension implementation="org.jetbrains.appcode.reveal.RevealRunConfigurationExtension"/>

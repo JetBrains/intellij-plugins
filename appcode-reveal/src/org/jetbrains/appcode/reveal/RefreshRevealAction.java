@@ -116,7 +116,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     if (appBundle == null) return;
 
     try {
-      Reveal.refreshReveal(appBundle, myBundleID, getDeviceName(myDestination));
+      Reveal.refreshReveal(project, appBundle, myBundleID, getDeviceName(myDestination));
     }
     catch (ExecutionException ex) {
       Reveal.LOG.info(ex);

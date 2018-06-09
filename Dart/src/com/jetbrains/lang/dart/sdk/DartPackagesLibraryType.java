@@ -52,7 +52,7 @@ public class DartPackagesLibraryType extends LibraryType<DartPackagesLibraryProp
 
   @Override
   @Nullable
-  public Icon getIcon() {
+  public Icon getIcon(DartPackagesLibraryProperties properties) {
     return DartIcons.Dart_16;
   }
 }

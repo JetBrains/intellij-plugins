@@ -137,6 +137,18 @@ unless drb_runner.nil?
   drb_launch_tests(drb_runner, test_scripts)
 else
   # usual mode: tests will be launched in same process
+  array = "#{IntelliJ::SEARCH_MASK}".scan(/([.\/\w]*)#(\w*)/)
+  unless array.empty?
+    h = Hash.new {|h, k| h[k] = []}
+    array.each {|k, v| h[k] << v}
+
+    ARGV << "--name=/#{h.values.join("|")}/"
+
+    test_scripts = h.keys.map do |name|
+      File.join("#{IntelliJ::FOLDER_PATH}", "#{name}")
+    end
+  end
+
   require_all_test_scripts(test_scripts)
   puts SEPARATOR
 

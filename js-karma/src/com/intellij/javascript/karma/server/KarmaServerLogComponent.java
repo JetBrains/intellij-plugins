@@ -5,6 +5,7 @@ import com.intellij.execution.filters.TextConsoleBuilderImpl;
 import com.intellij.execution.process.NopProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunnerLayoutUi;
@@ -26,6 +27,8 @@ import com.intellij.openapi.util.Key;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.content.Content;
 import com.intellij.util.Alarm;
+import com.intellij.util.ui.EmptyIcon;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -109,10 +112,11 @@ public class KarmaServerLogComponent implements ComponentWithActions {
                               @NotNull RunnerLayoutUi ui) {
     ConsoleView console = createConsole(project);
     KarmaServerLogComponent component = new KarmaServerLogComponent(console, server);
+    Icon emptyIcon = EmptyIcon.create(JBUI.scale(4));
     final Content content = ui.createContent(KARMA_SERVER_CONTENT_ID,
                                              component,
                                              "Karma Server",
-                                             null,
+                                             ExecutionUtil.getLiveIndicator(emptyIcon),
                                              console.getPreferredFocusableComponent());
     content.setCloseable(false);
     ui.addContent(content, 4, PlaceInGrid.bottom, false);
@@ -123,6 +127,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
       @Override
       public void onTerminated(int exitCode) {
         wrapperProcessHandler.destroyProcess();
+        content.setIcon(emptyIcon);
       }
     };
     server.onTerminated(terminationCallback);

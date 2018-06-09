@@ -96,7 +96,7 @@ fun findAngularCliFolder(project: Project, file: VirtualFile?): VirtualFile? {
 }
 
 
-const val DEFAULT_OUTPUT = """
+const val DEFAULT_OUTPUT: String = """
 
   Available blueprints:
     class <name> <options...>

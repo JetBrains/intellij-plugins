@@ -197,7 +197,7 @@ public class ActionScriptMoveMembersDialog extends RefactoringDialog implements 
     scrollPane.setBorder(border);
     panel.add(scrollPane, BorderLayout.CENTER);
 
-    myVisibilityPanel = new JSVisibilityPanel(true, true, true, true);
+    myVisibilityPanel = new JSVisibilityPanel();
     myVisibilityPanel.setVisibility(null);
     panel.add(myVisibilityPanel, BorderLayout.EAST);
     return panel;

@@ -16,10 +16,7 @@ import com.intellij.flex.generate.ActionScriptGenerateTest;
 import com.intellij.flex.highlighting.*;
 import com.intellij.flex.imports.FlexAutoImportsTest;
 import com.intellij.flex.imports.FlexOptimizeImportsTest;
-import com.intellij.flex.intentions.ActionScriptIntentionActionTest;
-import com.intellij.flex.intentions.CreateASFunctionIntentionTest;
-import com.intellij.flex.intentions.CreateASVariableIntentionTest;
-import com.intellij.flex.intentions.FlexConvertToLocalTest;
+import com.intellij.flex.intentions.*;
 import com.intellij.flex.parser.ActionScriptParsingTest;
 import com.intellij.flex.parser.FlexImporterTest;
 import com.intellij.flex.projectView.FlexProjectViewTest;
@@ -99,6 +96,7 @@ public class FlexTestSuite extends TestCase {
     testSuite.addTestSuite(CreateASFunctionIntentionTest.class);
     testSuite.addTestSuite(CreateASVariableIntentionTest.class);
     testSuite.addTestSuite(FlexConvertToLocalTest.class);
+    testSuite.addTestSuite(ImportJSClassIntentionTest.class);
 
     //com.intellij.flex.maven.*
     //testSuite.addTestSuite(Flexmojos3ImporterTest.class);

@@ -18,7 +18,7 @@ import org.yaml.snakeyaml.Yaml
 private val LOG = Logger.getInstance(TsLintConfigWrapper.javaClass)
 class TsLintConfigWrapper(private val rules: Map<String, TslintJsonOption>, private val extends: List<String>) {
 
-  fun hasExtends() = !extends.isEmpty()
+  fun hasExtends(): Boolean = !extends.isEmpty()
 
   fun getOption(name: String): TslintJsonOption? = rules[name]
 
