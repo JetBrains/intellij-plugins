@@ -748,6 +748,8 @@ public class DartAnalysisServerService implements Disposable {
 
   void updateCurrentFile() {
     UIUtil.invokeLaterIfNeeded(() -> {
+      if (myProject.isDisposed()) return;
+
       final VirtualFile[] files = FileEditorManager.getInstance(myProject).getSelectedFiles();
       if (files.length > 0) {
         DartProblemsView.getInstance(myProject).setCurrentFile(files[0]);

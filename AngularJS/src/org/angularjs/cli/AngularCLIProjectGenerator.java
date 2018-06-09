@@ -16,10 +16,10 @@ import com.intellij.lang.javascript.buildTools.npm.rc.NpmRunSettings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
-import com.intellij.util.text.SemVer;
 import com.intellij.xml.util.XmlStringUtil;
 import icons.AngularJSIcons;
 import org.jetbrains.annotations.Nls;
@@ -69,13 +69,13 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
   @Override
   @NotNull
   protected String[] generatorArgs(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Settings settings) {
-    return new String[]{"new", baseDir.getName(), "--dir=."};
+    return new String[]{"new", baseDir.getName()};
   }
 
   @NotNull
   @Override
   protected Filter[] filters(@NotNull Project project, @NotNull VirtualFile baseDir) {
-    return new Filter[]{new AngularCLIFilter(project, baseDir.getPath())};
+    return new Filter[]{new AngularCLIFilter(project, baseDir.getParent().getPath())};
   }
 
   @NotNull
@@ -125,11 +125,7 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
   @NotNull
   @Override
   protected File workingDir(Settings settings, @NotNull VirtualFile baseDir) {
-    File workingDir = super.workingDir(settings, baseDir);
-    SemVer version = settings.myPackage.getVersion();
-    return version == null || version.isGreaterOrEqualThan(6, 0, 0) ?
-           workingDir.getParentFile() :
-           workingDir;
+    return VfsUtilCore.virtualToIoFile(baseDir).getParentFile();
   }
 
 

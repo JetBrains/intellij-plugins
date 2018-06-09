@@ -17,6 +17,7 @@ import com.intellij.lexer.LayeredLexer;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.SkipSlowTestLocally;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
@@ -73,7 +74,17 @@ public class OgnlCodeInsightSanityTest extends LightCodeInsightFixtureTestCase {
     MadTestingUtil.enableAllInspections(getProject(), getTestRootDisposable());
     Function<PsiFile, Generator<? extends MadTestingAction>> fileActions =
       file -> Generator.sampledFrom(new InvokeIntention(file, new IntentionPolicy()),
-                                    new InvokeCompletion(file, new CompletionPolicy()),
+                                    new InvokeCompletion(file, new CompletionPolicy() {
+                                      @Override
+                                      public String getPossibleSelectionCharacters() {
+                                        return "\n\t\r ";
+                                      }
+
+                                      @Override
+                                      protected boolean shouldSuggestNonReferenceLeafText(@NotNull PsiElement leaf) {
+                                        return false;
+                                      }
+                                    }),
                                     new DeleteRange(file));
     PropertyChecker.checkScenarios(actionsOnOgnlFiles(fileActions));
   }

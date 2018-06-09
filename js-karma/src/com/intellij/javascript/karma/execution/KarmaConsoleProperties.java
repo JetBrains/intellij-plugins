@@ -15,10 +15,14 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.Executor;
 import com.intellij.execution.testframework.TestConsoleProperties;
+import com.intellij.execution.testframework.actions.AbstractRerunFailedTestsAction;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.execution.testframework.sm.runner.TestProxyFilterProvider;
+import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
+import com.intellij.execution.ui.ConsoleView;
 import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
+import org.jetbrains.annotations.Nullable;
 
 public class KarmaConsoleProperties extends SMTRunnerConsoleProperties {
   private static final String FRAMEWORK_NAME = "KarmaJavaScriptTestRunner";
@@ -45,5 +49,11 @@ public class KarmaConsoleProperties extends SMTRunnerConsoleProperties {
   @Override
   public TestProxyFilterProvider getFilterProvider() {
     return myFilterProvider;
+  }
+
+  @Nullable
+  @Override
+  public AbstractRerunFailedTestsAction createRerunFailedTestsAction(ConsoleView consoleView) {
+    return new KarmaRerunFailedTestAction((SMTRunnerConsoleView)consoleView, this);
   }
 }
