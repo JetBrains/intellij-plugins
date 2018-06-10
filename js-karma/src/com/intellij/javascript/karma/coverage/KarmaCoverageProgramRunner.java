@@ -6,10 +6,7 @@ import com.intellij.coverage.CoverageHelper;
 import com.intellij.coverage.CoverageRunnerData;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.configurations.ConfigurationInfoProvider;
-import com.intellij.execution.configurations.RunProfile;
-import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.configurations.RunnerSettings;
+import com.intellij.execution.configurations.*;
 import com.intellij.execution.configurations.coverage.CoverageEnabledConfiguration;
 import com.intellij.execution.process.NopProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -58,7 +55,7 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
   }
 
   @Override
-  protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull final ExecutionEnvironment env) throws ExecutionException {
+  protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
     ExecutionResult executionResult = state.execute(env.getExecutor(), this);
     if (executionResult == null) {
@@ -80,7 +77,7 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
   }
 
   private static void listenForCoverageFile(@NotNull ExecutionEnvironment env, @NotNull KarmaServer server) {
-    KarmaRunConfiguration runConfiguration = (KarmaRunConfiguration) env.getRunProfile();
+    RunConfigurationBase runConfiguration = (RunConfigurationBase)env.getRunProfile();
     CoverageEnabledConfiguration coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration);
     CoverageHelper.resetCoverageSuit(runConfiguration);
     String coverageFilePath = coverageEnabledConfiguration.getCoverageFilePath();
@@ -125,7 +122,7 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
                                           @NotNull String toCoverageFilePath,
                                           @NotNull ExecutionEnvironment env,
                                           @NotNull KarmaServer karmaServer,
-                                          @NotNull KarmaRunConfiguration runConfiguration) {
+                                          @NotNull RunConfigurationBase runConfiguration) {
     try {
       FileUtil.copy(lcovInfoFile, new File(toCoverageFilePath));
     }

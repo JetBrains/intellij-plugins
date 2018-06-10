@@ -5,7 +5,9 @@ import com.intellij.coverage.view.CoverageListRootNode;
 import com.intellij.coverage.view.CoverageViewExtension;
 import com.intellij.coverage.view.CoverageViewManager;
 import com.intellij.coverage.view.DirectoryCoverageViewExtension;
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunConfigurationBase;
+import com.intellij.execution.configurations.WrappingRunConfiguration;
 import com.intellij.execution.configurations.coverage.CoverageEnabledConfiguration;
 import com.intellij.execution.testframework.AbstractTestProxy;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
@@ -39,7 +41,11 @@ public class KarmaCoverageEngine extends CoverageEngine {
 
   @Override
   public boolean isApplicableTo(@Nullable RunConfigurationBase configuration) {
-    return configuration instanceof KarmaRunConfiguration;
+    RunConfiguration result = configuration;
+    if (configuration instanceof WrappingRunConfiguration) {
+      result = ((WrappingRunConfiguration)configuration).getPeer();
+    }
+    return result instanceof KarmaRunConfiguration;
   }
 
   @Override
@@ -50,7 +56,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
   @NotNull
   @Override
   public CoverageEnabledConfiguration createCoverageEnabledConfiguration(@Nullable RunConfigurationBase configuration) {
-    return new KarmaCoverageEnabledConfiguration((KarmaRunConfiguration) configuration);
+    return new KarmaCoverageEnabledConfiguration(configuration);
   }
 
   @Override
