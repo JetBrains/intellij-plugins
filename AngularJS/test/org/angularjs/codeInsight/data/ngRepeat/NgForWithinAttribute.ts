@@ -1,0 +1,49 @@
+import {Component} from '@angular/core';
+
+interface MiniContact {
+    username: string;
+    is_hidden: boolean;
+}
+
+interface Contact extends MiniContact {
+    email: string;
+    created_at: string;
+    updated_at: string;
+}
+
+type Contacts = Contact[];
+
+@Component({
+    selector: 'my-app',
+    template: `
+      <table>
+        <thead>
+        <tr>
+          <th style="width: 1%;text-align: left;">#</th>
+          <th style="width: 1%;text-align: left;">Username</th>
+          <th style="text-align: left;">Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr [style]="{'visible': contact.<caret>}" *ngFor="let contact of contacts; index as i">
+          <td>{{i + 1}}</td>
+        </tr>
+        </tbody>
+      </table>
+    `
+})
+export class AppComponent {
+    public contacts: Contacts = [{
+        username: 'Andrey',
+        is_hidden: false,
+        email: 'andrey@post.com',
+        created_at: '',
+        updated_at: '',
+    }, {
+        username: 'Silly',
+        is_hidden: false,
+        email: 'silly@post.com',
+        created_at: '',
+        updated_at: '',
+    }];
+}
