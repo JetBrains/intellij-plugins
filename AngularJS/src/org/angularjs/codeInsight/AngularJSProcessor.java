@@ -26,7 +26,7 @@ import com.intellij.psi.xml.*;
 import com.intellij.util.Consumer;
 import com.intellij.xml.util.documentation.HtmlDescriptorsTable;
 import org.angularjs.codeInsight.attributes.AngularAttributesRegistry;
-import org.angularjs.html.Angular2HTMLLanguage;
+import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.lang.parser.AngularJSElementTypes;
 import org.angularjs.lang.psi.AngularJSRecursiveVisitor;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
@@ -108,15 +108,15 @@ public class AngularJSProcessor {
       }
       declaration = declaration.getParent();
     }
-    boolean inlineTemplate = element.getContainingFile().getLanguage() == Angular2HTMLLanguage.INSTANCE;
+    boolean angular2 = AngularIndexUtil.hasAngularJS2(element.getContainingFile().getProject());
     final PsiLanguageInjectionHost elementContainer = injector.getInjectionHost(element);
-    final XmlTagChild elementTag = PsiTreeUtil.getNonStrictParentOfType(inlineTemplate ? element : elementContainer, XmlTag.class, XmlText.class);
+    final XmlTagChild elementTag = PsiTreeUtil.getNonStrictParentOfType(angular2 ? element : elementContainer, XmlTag.class, XmlText.class);
     final PsiLanguageInjectionHost declarationContainer = injector.getInjectionHost(declaration);
-    final XmlTagChild declarationTag = PsiTreeUtil.getNonStrictParentOfType(inlineTemplate ?  declaration: declarationContainer, XmlTag.class);
+    final XmlTagChild declarationTag = PsiTreeUtil.getNonStrictParentOfType(angular2 ? declaration : declarationContainer, XmlTag.class);
 
     if (declarationContainer != null && elementContainer != null && elementTag != null && declarationTag != null) {
       return PsiTreeUtil.isAncestor(declarationTag, elementTag, true) ||
-             (inlineTemplate && PsiTreeUtil.isAncestor(declarationTag, elementTag, false)) ||
+             (angular2 && PsiTreeUtil.isAncestor(declarationTag, elementTag, false)) ||
              (PsiTreeUtil.isAncestor(declarationTag, elementTag, false) &&
               declarationContainer.getTextOffset() < elementContainer.getTextOffset()) ||
              isInRepeatStartEnd(declarationTag, declarationContainer, elementContainer);

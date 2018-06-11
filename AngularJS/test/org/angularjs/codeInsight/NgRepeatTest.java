@@ -66,6 +66,27 @@ public class NgRepeatTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testNgForWithinAttribute() {
+    JSTestUtils.testES6(getProject(), () -> {
+      final List<String> variants = myFixture.getCompletionVariants("NgForWithinAttribute.ts", "angular2.js");
+      assertNotNull(variants);
+      assertTrue(variants.size() >= 2);
+      assertEquals("created_at", variants.get(0));
+      assertEquals("email", variants.get(1));
+    });
+  }
+
+  public void testNgForWithinAttributeHTML() {
+    JSTestUtils.testES6(getProject(), () -> {
+      final List<String> variants =
+        myFixture.getCompletionVariants("NgForWithinAttributeHTML.html", "NgForWithinAttributeHTML.ts", "angular2.js");
+      assertNotNull(variants);
+      assertTrue(variants.size() >= 2);
+      assertEquals("created_at", variants.get(0));
+      assertEquals("email", variants.get(1));
+    });
+  }
+
   public void testUnusedHighlighting() {
     myFixture.enableInspections(JSUnusedLocalSymbolsInspection.class);
     myFixture.enableInspections(JSUnusedGlobalSymbolsInspection.class);
