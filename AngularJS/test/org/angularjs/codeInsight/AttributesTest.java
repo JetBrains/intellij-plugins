@@ -1033,4 +1033,12 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     );
   }
 
+  public void testI18NAttr() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
+      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+      myFixture.configureByFiles("i18n.html", "angular2.js");
+      myFixture.checkHighlighting(true, false, true);
+    });
+  }
+
 }
