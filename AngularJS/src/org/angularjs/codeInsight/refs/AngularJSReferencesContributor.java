@@ -3,6 +3,7 @@ package org.angularjs.codeInsight.refs;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
@@ -91,6 +92,31 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
     }
   }));
 
+  private static final PsiElementPattern.Capture<JSLiteralExpression> VIEW_CHILD_PATTERN =
+    PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
+      @Override
+      public boolean isAcceptable(Object element, @Nullable PsiElement context) {
+        if (element instanceof JSLiteralExpression) {
+          final JSLiteralExpression literal = (JSLiteralExpression)element;
+          if (literal.isQuotedLiteral() && literal.getParent() instanceof JSArgumentList) {
+            final JSCallExpression call = ObjectUtils.tryCast(literal.getParent().getParent(), JSCallExpression.class);
+            if (call != null && call.getParent() instanceof ES6Decorator) {
+              JSReferenceExpression ref = ObjectUtils.tryCast(call.getMethodExpression(), JSReferenceExpression.class);
+              return ref != null
+                     && "ViewChild".equals(ref.getReferenceName())
+                     && AngularIndexUtil.hasAngularJS2(literal.getProject());
+            }
+          }
+        }
+        return false;
+      }
+
+      @Override
+      public boolean isClassAcceptable(Class hintClass) {
+        return true;
+      }
+  }));
+
   @Override
   public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
     final AngularJSTemplateReferencesProvider templateProvider = new AngularJSTemplateReferencesProvider();
@@ -109,6 +135,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
     registrar.registerReferenceProvider(UI_VIEW_REF, new AngularJSUiRouterStatesReferencesProvider());
     registrar.registerReferenceProvider(NG_APP_REF, new AngularJSNgAppReferencesProvider());
     registrar.registerReferenceProvider(MODULE_PATTERN, new AngularJSModuleReferencesProvider());
+    registrar.registerReferenceProvider(VIEW_CHILD_PATTERN, new Angular2ViewChildReferencesProvider());
   }
 
   private static PsiElementPattern.Capture<JSLiteralExpression> modulePattern() {
