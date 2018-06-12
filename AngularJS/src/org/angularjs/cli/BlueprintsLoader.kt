@@ -9,6 +9,8 @@ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Attachment
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
@@ -32,6 +34,8 @@ object BlueprintsLoader {
 
 private var ourGist = GistManager.getInstance().newVirtualFileGist("AngularBlueprints", 2, BlueprintsExternalizer(),
                                                                    { project, file -> doLoad(project, file) })
+
+private val LOG: Logger = Logger.getInstance("#org.angularjs.cli.BlueprintsLoader")
 
 private class BlueprintsExternalizer : DataExternalizer<List<Blueprint>> {
   override fun save(out: DataOutput, value: List<Blueprint>?) {
@@ -62,14 +66,24 @@ private fun doLoad(project: Project, cli: VirtualFile): List<Blueprint> {
   var parse: Collection<Blueprint> = emptyList()
 
   val schematicsInfoJson = loadSchematicsInfoJson(node, cli)
-  if (schematicsInfoJson.isNotEmpty()) {
-    parse = BlueprintJsonParser.parse(schematicsInfoJson)
+  if (schematicsInfoJson.isNotEmpty() && !schematicsInfoJson.startsWith("No schematics")) {
+    try {
+      parse = BlueprintJsonParser.parse(schematicsInfoJson)
+    }
+    catch (e: Exception) {
+      LOG.error("Failed to parse schematics: " + e.message, e, Attachment("output", schematicsInfoJson))
+    }
   }
 
   if (parse.isEmpty()) {
     val blueprintHelpOutput = loadBlueprintHelpOutput(node, cli)
     if (blueprintHelpOutput.isNotEmpty()) {
-      parse = BlueprintParser().parse(blueprintHelpOutput)
+      try {
+        parse = BlueprintParser().parse(blueprintHelpOutput)
+      }
+      catch (e: Exception) {
+        LOG.error("Failed to parse blueprints: " + e.message, e, Attachment("output", blueprintHelpOutput))
+      }
     }
   }
 
@@ -105,6 +119,11 @@ fun grabCommandOutput(commandLine: GeneralCommandLine, workingDir: String?): Str
 
   if (output.exitCode == 0) {
     return output.stdout
+  }
+  else {
+    LOG.error("Failed to load schematics info.",
+              Attachment("err-output", output.stderr),
+              Attachment("std-output", output.stdout))
   }
   return ""
 }

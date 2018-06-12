@@ -1,5 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+try {
+    require('@angular/cli/utilities/schematics');
+}
+catch (e) {
+    console.info("No schematics");
+    process.exit(0);
+}
 var schematics_1 = require("@angular/cli/utilities/schematics");
 var path = require("path");
 var fs = require("fs");
@@ -16,7 +23,7 @@ if (collections.indexOf(defaultCollectionName) < 0) {
     collections.push(defaultCollectionName);
 }
 var allSchematics = collections
-    // handle update schematics with `ng update`
+    // Update schematics should be executed only with `ng update`
     .filter(function (c) { return c !== "@schematics/update"; })
     .map(getCollectionSchematics)
     .reduce(function (a, b) { return a.concat.apply(a, b); });
@@ -51,12 +58,12 @@ function getCollectionSchematics(collectionName) {
     var schematicNames = engineHost.listSchematics(collection);
     var schematicInfos = schematicNames
         .map(function (name) { return schematics_1.getSchematic(collection, name).description; })
-        //handle `ng-add` and `ng-update` schematics with `ng add` and `ng update` support
-        .filter(function (info) { return info.name !== "ng-add" && info.name !== "ng-update"; });
+        //`ng-add` schematics should be executed only with `ng add`
+        .filter(function (info) { return info.name !== "ng-add"; });
     var newFormat = schematicInfos
         .map(function (info) { return info.schemaJson.properties; })
         .map(function (prop) { return Object.keys(prop).map(function (k) { return prop[k]; }); })
-        .reduce(function (a, b) { return a.concat(b); })
+        .reduce(function (a, b) { return a.concat(b); }, [])
         .find(function (prop) { return prop.$default; });
     return schematicInfos.map(function (info) {
         var required = info.schemaJson.required || [];
