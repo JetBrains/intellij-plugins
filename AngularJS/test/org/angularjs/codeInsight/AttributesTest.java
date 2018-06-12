@@ -24,6 +24,8 @@ import com.intellij.util.ThrowableRunnable;
 import com.intellij.xml.util.XmlInvalidIdInspection;
 import org.angularjs.AngularTestUtil;
 
+import java.util.Arrays;
+
 /**
  * @author Dennis.Ushakov
  */
@@ -993,6 +995,42 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.configureByFiles("id.html", "angular2.js", "object.ts");
       myFixture.checkHighlighting();
     });
+  }
+
+  public void testViewChildReferenceNavigation() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
+      PsiReference reference = myFixture.getReferenceAtCaretPosition("viewChildReference.ts", "angular2.js");
+      assertNotNull(reference);
+      PsiElement el = reference.resolve();
+      assertNotNull(el);
+      assertEquals("#area", el.getText());
+    });
+  }
+
+  public void testViewChildReferenceContentAssist() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () ->
+      assertEquals(Arrays.asList("area", "area2"),
+                   myFixture.getCompletionVariants("viewChildReference.ts", "angular2.js"))
+    );
+  }
+
+  public void testViewChildReferenceNavigationHTML() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
+      PsiReference reference =
+        myFixture.getReferenceAtCaretPosition("viewChildReferenceHTML.ts", "viewChildReferenceHTML.html", "angular2.js");
+      assertNotNull(reference);
+      PsiElement el = reference.resolve();
+      assertNotNull(el);
+      assertEquals("viewChildReferenceHTML.html", el.getContainingFile().getName());
+      assertEquals("#area", el.getText());
+    });
+  }
+
+  public void testViewChildReferenceContentAssistHTML() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () ->
+      assertEquals(Arrays.asList("area", "area2"),
+                   myFixture.getCompletionVariants("viewChildReferenceHTML.ts", "viewChildReferenceHTML.html", "angular2.js"))
+    );
   }
 
 }
