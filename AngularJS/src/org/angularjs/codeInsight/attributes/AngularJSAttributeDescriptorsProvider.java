@@ -46,6 +46,7 @@ import static org.angularjs.codeInsight.attributes.AngularAttributesRegistry.cre
  * @author Dennis.Ushakov
  */
 public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescriptorsProvider {
+
   @Override
   public XmlAttributeDescriptor[] getAttributeDescriptors(XmlTag xmlTag) {
     if (xmlTag != null) {
@@ -78,6 +79,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
             }
           }
         }
+        AngularAttributesRegistry.getCustomAngularAttributes().forEach(attr -> addAttributes(project, result, attr, null));
       }
       final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.KEY, project);
       for (String directiveName : docDirectives) {
@@ -246,6 +248,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     return AngularAttributesRegistry.isEventAttribute(attrName, project) ||
            AngularAttributesRegistry.isBindingAttribute(attrName, project) ||
            AngularAttributesRegistry.isVariableAttribute(attrName, project) ||
-           AngularAttributesRegistry.isTagReferenceAttribute(attrName, project);
+           AngularAttributesRegistry.isTagReferenceAttribute(attrName, project) ||
+           AngularAttributesRegistry.getCustomAngularAttributes().contains(attrName);
   }
 }
