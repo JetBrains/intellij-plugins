@@ -108,7 +108,10 @@ else
         if result.passed?
           unless @test_started
             # hope minitest will fire before_test callback soon, but for now we should emulate it
-            fqn = "#{result.klass}.#{test_name}"
+            fqn = "#{result.class}.#{test_name}"
+            if "#{result.class}".ends_with?("Minitest::Result")
+              fqn = "#{result.klass}.#{test_name}"
+            end
             log(@message_factory.create_test_started(test_name, minitest_test_location(fqn)))
           end
           duration_ms = get_time_in_ms(result.time)
