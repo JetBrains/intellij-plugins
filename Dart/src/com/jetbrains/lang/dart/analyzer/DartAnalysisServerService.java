@@ -112,7 +112,7 @@ public class DartAnalysisServerService implements Disposable {
   private static final long GET_FIXES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long IMPORTED_ELEMENTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long POSTFIX_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
-  private static final long POSTFIX_INITIALIZATION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(5000);
+  private static final long POSTFIX_INITIALIZATION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(1000);
   private static final long STATEMENT_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long FIND_ELEMENT_REFERENCES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
@@ -1071,6 +1071,11 @@ public class DartAnalysisServerService implements Disposable {
     if (server == null) {
       return null;
     }
+
+    if (StringUtil.compareVersionNumbers(mySdkVersion, "1.25") < 0) {
+      return PostfixCompletionTemplate.EMPTY_ARRAY;
+    }
+
     final Ref<PostfixCompletionTemplate[]> resultRef = Ref.create();
     final CountDownLatch latch = new CountDownLatch(1);
     server.edit_listPostfixCompletionTemplates(new ListPostfixCompletionTemplatesConsumer() {
@@ -1082,7 +1087,9 @@ public class DartAnalysisServerService implements Disposable {
 
       @Override
       public void onError(RequestError error) {
-        logError("edit_listPostfixCompletionTemplates()", null, error);
+        if (!RequestErrorCode.UNKNOWN_REQUEST.equals(error.getCode())) {
+          logError("edit_listPostfixCompletionTemplates()", null, error);
+        }
         latch.countDown();
       }
     });
@@ -1138,6 +1145,12 @@ public class DartAnalysisServerService implements Disposable {
       public void computedSourceChange(SourceChange sourceChange) {
         resultRef.set(sourceChange);
         latch.countDown();
+      }
+
+      @Override
+      public void onError(RequestError error) {
+        latch.countDown();
+        logError("edit_getStatementCompletion()", filePath, error);
       }
     });
 
