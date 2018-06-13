@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex.refactoring.moveClass;
 
+import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.ImportUtils;
@@ -21,12 +22,11 @@ import com.intellij.lang.javascript.refactoring.util.ActionScriptRefactoringUtil
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringConflictsUtil;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.pom.Navigatable;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.LocalSearchScope;
@@ -198,9 +198,10 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
       myMoveCallback.refactoringCompleted();
     }
 
-    OpenFileDescriptor descriptor =
-      new OpenFileDescriptor(myProject, insertedContainingFile.getVirtualFile(), newClass.getTextOffset());
-    FileEditorManager.getInstance(myProject).openTextEditor(descriptor, true);
+    Navigatable descriptor =
+      PsiNavigationSupport.getInstance().createNavigatable(myProject, insertedContainingFile.getVirtualFile(),
+                                                           newClass.getTextOffset());
+    descriptor.navigate(true);
   }
 
   @NotNull

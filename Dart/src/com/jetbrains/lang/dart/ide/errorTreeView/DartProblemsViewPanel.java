@@ -15,6 +15,7 @@ package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.CopyProvider;
+import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.ScrollType;
@@ -175,7 +176,8 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
       group.add(new AnAction(sourceChangeFix.getMessage(), null, AllIcons.Actions.QuickfixBulb) {
         @Override
         public void actionPerformed(final AnActionEvent event) {
-          OpenSourceUtil.navigate(new OpenFileDescriptor(myProject, selectedVFile, selectedProblem.getOffset()));
+          OpenSourceUtil.navigate(PsiNavigationSupport.getInstance().createNavigatable(myProject, selectedVFile,
+                                                                                       selectedProblem.getOffset()));
           try {
             WriteAction.run(() -> AssistUtils.applySourceChange(myProject, sourceChangeFix, true));
           }
