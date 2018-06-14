@@ -1,9 +1,9 @@
 package com.jetbrains.lang.dart.ide.structure;
 
 import com.intellij.ide.structureView.StructureViewTreeElement;
+import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.ide.util.treeView.NodeDescriptorProvidingKey;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.LayeredIcon;
@@ -69,7 +69,8 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
   public void navigate(boolean requestFocus) {
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance(myPsiFile.getProject());
     final int offset = service.getConvertedOffset(myPsiFile.getVirtualFile(), myOutline.getElement().getLocation().getOffset());
-    new OpenFileDescriptor(myPsiFile.getProject(), myPsiFile.getVirtualFile(), offset).navigate(requestFocus);
+    PsiNavigationSupport.getInstance().createNavigatable(myPsiFile.getProject(), myPsiFile.getVirtualFile(), offset)
+                        .navigate(requestFocus);
   }
 
   @Override

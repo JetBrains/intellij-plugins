@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.ide.SelectInContext;
 import com.intellij.ide.SelectInTarget;
-import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlFile;
@@ -29,7 +28,6 @@ public class SelectInDesigner implements SelectInTarget {
 
   @Override
   public void selectIn(SelectInContext context, boolean requestFocus) {
-    UsageTrigger.trigger("FlashUIDesigner.selectIn");
 
     final PsiElement element = getPsiElement(context);
     if (element == null) {

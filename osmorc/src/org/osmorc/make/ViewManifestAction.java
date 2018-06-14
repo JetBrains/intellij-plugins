@@ -24,10 +24,10 @@
  */
 package org.osmorc.make;
 
+import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -71,6 +71,6 @@ public class ViewManifestAction extends AnAction implements DumbAware {
       return;
     }
 
-    new OpenFileDescriptor(project, manifestFile).navigate(true);
+    PsiNavigationSupport.getInstance().createNavigatable(project, manifestFile, -1).navigate(true);
   }
 }

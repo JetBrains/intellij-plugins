@@ -3,6 +3,7 @@ package org.angularjs.codeInsight;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
+import com.intellij.lang.javascript.inspections.JSCheckFunctionSignaturesInspection;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection;
@@ -347,5 +348,14 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
                    "})", AngularTestUtil.getDirectiveDefinitionText(resolve));
     });
   }
+
+  public void testTagClassTypes() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
+      myFixture.enableInspections(JSCheckFunctionSignaturesInspection.class);
+      myFixture.configureByFiles("tagClassTypes.ts", "angular2.js");
+      myFixture.checkHighlighting(true, false, true);
+    });
+  }
+
 
 }

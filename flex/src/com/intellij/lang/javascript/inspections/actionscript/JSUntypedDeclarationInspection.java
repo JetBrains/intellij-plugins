@@ -21,6 +21,7 @@ import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.MacroCallNode;
 import com.intellij.codeInsight.template.macro.MacroFactory;
 import com.intellij.codeInspection.*;
+import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JSTokenTypes;
@@ -33,8 +34,8 @@ import com.intellij.lang.javascript.validation.fixes.BaseCreateFix;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
+import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -110,7 +111,9 @@ public class JSUntypedDeclarationInspection extends JSInspection {
         anchor = ((JSFunction)parent).getParameterList();
       }
 
-      OpenFileDescriptor openDescriptor = new OpenFileDescriptor(project, containingFile.getVirtualFile(), anchor.getTextRange().getEndOffset());
+      Navigatable openDescriptor = PsiNavigationSupport.getInstance()
+                                                       .createNavigatable(project, containingFile.getVirtualFile(),
+                                                                          anchor.getTextRange().getEndOffset());
       openDescriptor.navigate(true);
       Editor textEditor = FileEditorManager.getInstance(project).getSelectedTextEditor();
       TemplateManager templateManager = TemplateManager.getInstance(project);
