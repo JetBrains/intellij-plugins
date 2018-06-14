@@ -80,7 +80,12 @@ def drb_launch_tests(drb_runner, test_scripts)
   if drb_runner.end_with?('zeus')
     cmdline << 'test'
   elsif drb_runner.end_with?('spring')
-    cmdline << 'testunit'
+    if Gem.loaded_specs['rails'].version >= Gem::Version.create('4')
+      cmdline << 'rake'
+      cmdline << 'test'
+    else
+      cmdline << 'testunit'
+    end
   else
     load_path = cmdline.find_all{ |param|
       (not param.nil?) and param.start_with?('-I')

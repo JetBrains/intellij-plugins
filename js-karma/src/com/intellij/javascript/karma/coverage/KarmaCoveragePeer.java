@@ -13,9 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaCoveragePeer {
 
   private static final Logger LOG = Logger.getInstance(KarmaCoveragePeer.class);

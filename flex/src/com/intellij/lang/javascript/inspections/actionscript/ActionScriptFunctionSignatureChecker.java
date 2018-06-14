@@ -52,11 +52,11 @@ public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChe
   }
 
   @Override
-  protected boolean isCallableType(boolean inNewExpression, @NotNull JSType type) {
+  protected boolean isCallableType(boolean inNewExpression, @NotNull JSType type, PsiElement context) {
     final String typeText = type.getTypeText();
     return "Class".equals(typeText) ||
            inNewExpression && type instanceof JSObjectType ||
-           JSTypeUtils.hasFunctionType(type);
+           JSTypeUtils.hasFunctionType(type, false, null);
   }
 
   @Override

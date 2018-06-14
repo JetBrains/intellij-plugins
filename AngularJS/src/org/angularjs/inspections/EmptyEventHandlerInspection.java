@@ -4,7 +4,7 @@ import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.XmlElementVisitor;
@@ -53,8 +53,9 @@ public class EmptyEventHandlerInspection extends LocalInspectionTool {
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
       final XmlAttribute attribute = (XmlAttribute)descriptor.getPsiElement();
       attribute.setValue("");
-      new OpenFileDescriptor(project, attribute.getContainingFile().getVirtualFile(),
-                             attribute.getValueElement().getTextRange().getStartOffset() + 1).navigate(true);
+      PsiNavigationSupport.getInstance().createNavigatable(project, attribute.getContainingFile().getVirtualFile(),
+                                                           attribute.getValueElement().getTextRange()
+                                                                    .getStartOffset() + 1).navigate(true);
 
     }
   }

@@ -1,10 +1,10 @@
 package org.intellij.plugins.markdown.ui.preview.javafx;
 
 import com.intellij.ide.BrowserUtil;
+import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.Pair;
@@ -91,7 +91,7 @@ class SafeOpener {
 
     if (result != null) {
       ApplicationManager.getApplication().invokeLater(() -> {
-        new OpenFileDescriptor(result.first, result.second).navigate(true);
+        PsiNavigationSupport.getInstance().createNavigatable(result.first, result.second, -1).navigate(true);
         focusProjectWindow(result.first, true);
       });
     }

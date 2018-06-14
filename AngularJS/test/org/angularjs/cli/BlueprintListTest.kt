@@ -17,7 +17,7 @@ class BlueprintListTest : LightPlatformTestCase() {
     TestCase.assertEquals(requiredBlueprints.size, existingBlueprints.size)
     TestCase.assertEquals(listOf("--flat", "--inline-template", "--inline-style", "--prefix", "--spec", "--view-encapsulation",
                                  "--change-detection", "--skip-import", "--module", "--export", "--app"),
-                          existingBlueprints[1].args)
+                          existingBlueprints[1].options.map { "--" + it.name })
 
     val blacklistedBlueprints = Arrays.asList("aliases:")
     val nonBlueprints = ContainerUtil.filter(blueprints) { blacklistedBlueprints.contains(it.name) }
@@ -41,4 +41,5 @@ class BlueprintListTest : LightPlatformTestCase() {
     val existingBlueprints = ContainerUtil.filter(blueprints) { requiredBlueprints.contains(it.name) }
     TestCase.assertEquals(requiredBlueprints.size, existingBlueprints.size)
   }
+
 }

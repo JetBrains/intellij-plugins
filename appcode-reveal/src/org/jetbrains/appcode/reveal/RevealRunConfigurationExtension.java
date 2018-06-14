@@ -8,7 +8,6 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.icons.AllIcons;
-import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
@@ -174,7 +173,6 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     File toInject = installReveal(configuration, buildConfiguration, mainExecutable, settings);
     if (toInject == null) return;
 
-    UsageTrigger.trigger("appcode.reveal.inject");
     RevealUsageTriggerCollector.Companion.trigger(configuration.getProject(), "inject");
 
     environment.putUserData(FILE_TO_INJECT, toInject);
@@ -253,7 +251,6 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       setRevealSettings(configuration, settings);
     }
 
-    UsageTrigger.trigger("appcode.reveal.installOnDevice");
     RevealUsageTriggerCollector.Companion.trigger(configuration.getProject(), "installOnDevice");
 
     return signAndInstall(libReveal, buildConfiguration, mainExecutable);

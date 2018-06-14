@@ -26,7 +26,7 @@ import com.intellij.psi.xml.*;
 import com.intellij.util.Consumer;
 import com.intellij.xml.util.documentation.HtmlDescriptorsTable;
 import org.angularjs.codeInsight.attributes.AngularAttributesRegistry;
-import org.angularjs.html.Angular2HTMLLanguage;
+import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.lang.parser.AngularJSElementTypes;
 import org.angularjs.lang.psi.AngularJSRecursiveVisitor;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
@@ -42,6 +42,7 @@ import java.util.Map;
  */
 public class AngularJSProcessor {
   private static final Map<String, String> NG_REPEAT_IMPLICITS = new HashMap<>();
+  private static final Map<String, String> TAG_TO_CLASS = new HashMap<>();
   public static final String $EVENT = "$event";
 
   static {
@@ -51,6 +52,41 @@ public class AngularJSProcessor {
     NG_REPEAT_IMPLICITS.put("$last", "Boolean");
     NG_REPEAT_IMPLICITS.put("$even", "Boolean");
     NG_REPEAT_IMPLICITS.put("$odd", "Boolean");
+  }
+
+  static {
+    //Used https://developer.mozilla.org/en-US/docs/Web/API as reference
+    TAG_TO_CLASS.put("a", "Anchor");
+    TAG_TO_CLASS.put("br", "BR");
+    TAG_TO_CLASS.put("dl", "DList");
+    TAG_TO_CLASS.put("datalist", "DataList");
+    TAG_TO_CLASS.put("fieldset", "FieldSet");
+    TAG_TO_CLASS.put("frameset", "FrameSet");
+    TAG_TO_CLASS.put("hr", "HR");
+    for (int i = 1; i <= 6; i++) {
+      TAG_TO_CLASS.put("h" + i, "Heading");
+    }
+    TAG_TO_CLASS.put("iframe", "IFrame");
+    TAG_TO_CLASS.put("img", "Image");
+    TAG_TO_CLASS.put("li", "LI");
+    TAG_TO_CLASS.put("ins", "Mod");
+    TAG_TO_CLASS.put("del", "Mod");
+    TAG_TO_CLASS.put("ol", "OList");
+    TAG_TO_CLASS.put("optgroup", "OptGroup");
+    TAG_TO_CLASS.put("p", "Paragraph");
+    TAG_TO_CLASS.put("blockquote", "Quote");
+    TAG_TO_CLASS.put("q", "Quote");
+    TAG_TO_CLASS.put("caption", "TableCaption");
+    TAG_TO_CLASS.put("col", "TableCol");
+    TAG_TO_CLASS.put("colgroup", "TableCol");
+    TAG_TO_CLASS.put("td", "TableDataCell");
+    TAG_TO_CLASS.put("th", "TableHeaderCell");
+    TAG_TO_CLASS.put("tr", "TableRow");
+    TAG_TO_CLASS.put("tfoot", "TableSection");
+    TAG_TO_CLASS.put("thead", "TableSection");
+    TAG_TO_CLASS.put("tbody", "TableSection");
+    TAG_TO_CLASS.put("textarea", "TextArea");
+    TAG_TO_CLASS.put("ul", "UList");
   }
 
   public static void process(final PsiElement element, final Consumer<JSPsiElementBase> consumer) {
@@ -108,15 +144,15 @@ public class AngularJSProcessor {
       }
       declaration = declaration.getParent();
     }
-    boolean inlineTemplate = element.getContainingFile().getLanguage() == Angular2HTMLLanguage.INSTANCE;
+    boolean angular2 = AngularIndexUtil.hasAngularJS2(element.getContainingFile().getProject());
     final PsiLanguageInjectionHost elementContainer = injector.getInjectionHost(element);
-    final XmlTagChild elementTag = PsiTreeUtil.getNonStrictParentOfType(inlineTemplate ? element : elementContainer, XmlTag.class, XmlText.class);
+    final XmlTagChild elementTag = PsiTreeUtil.getNonStrictParentOfType(angular2 ? element : elementContainer, XmlTag.class, XmlText.class);
     final PsiLanguageInjectionHost declarationContainer = injector.getInjectionHost(declaration);
-    final XmlTagChild declarationTag = PsiTreeUtil.getNonStrictParentOfType(inlineTemplate ?  declaration: declarationContainer, XmlTag.class);
+    final XmlTagChild declarationTag = PsiTreeUtil.getNonStrictParentOfType(angular2 ? declaration : declarationContainer, XmlTag.class);
 
     if (declarationContainer != null && elementContainer != null && elementTag != null && declarationTag != null) {
       return PsiTreeUtil.isAncestor(declarationTag, elementTag, true) ||
-             (inlineTemplate && PsiTreeUtil.isAncestor(declarationTag, elementTag, false)) ||
+             (angular2 && PsiTreeUtil.isAncestor(declarationTag, elementTag, false)) ||
              (PsiTreeUtil.isAncestor(declarationTag, elementTag, false) &&
               declarationContainer.getTextOffset() < elementContainer.getTextOffset()) ||
              isInRepeatStartEnd(declarationTag, declarationContainer, elementContainer);
@@ -154,7 +190,7 @@ public class AngularJSProcessor {
 
     final String tagName = tag.getName();
     if (HtmlDescriptorsTable.getTagDescriptor(tagName) != null) {
-      elementBuilder.setTypeString("HTML" + StringUtil.capitalize(tagName) + "Element");
+      elementBuilder.setTypeString("HTML" + TAG_TO_CLASS.getOrDefault(tagName, StringUtil.capitalize(tagName)) + "Element");
     }
     return elementBuilder;
   }

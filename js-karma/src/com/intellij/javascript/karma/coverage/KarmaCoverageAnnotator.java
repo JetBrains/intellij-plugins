@@ -11,9 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaCoverageAnnotator extends SimpleCoverageAnnotator {
 
   public KarmaCoverageAnnotator(Project project) {

@@ -182,17 +182,12 @@ public class CfmlUnitRunConfiguration extends LocatableConfigurationBase {
   @SuppressWarnings({"CloneDoesntDeclareCloneNotSupportedException", "CloneDoesntCallSuperClone"})
   @Override
   public CfmlUnitRunConfiguration clone() {
-    try {
-      Element element = new Element("tmp");
-      writeExternal(element);
-      CfmlUnitRunConfiguration clone =
-        new CfmlUnitRunConfiguration(getProject(), getFactory(), getName());
-      clone.readExternal(element);
-      return clone;
-    }
-    catch (WriteExternalException e) {
-      throw new RuntimeException(e);
-    }
+    Element element = new Element("tmp");
+    writeExternal(element);
+    CfmlUnitRunConfiguration clone =
+      new CfmlUnitRunConfiguration(getProject(), getFactory(), getName());
+    clone.readExternal(element);
+    return clone;
   }
 
   @Override

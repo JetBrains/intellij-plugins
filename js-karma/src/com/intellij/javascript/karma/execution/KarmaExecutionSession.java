@@ -4,12 +4,9 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.*;
-import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
-import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
-import com.intellij.execution.testframework.sm.runner.SMTestLocator;
-import com.intellij.execution.testframework.sm.runner.TestProxyFilterProvider;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
+import com.intellij.javascript.jest.JestUtil;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.scope.KarmaScopeKind;
 import com.intellij.javascript.karma.server.KarmaJsSourcesLocator;
@@ -35,15 +32,16 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.execution.ParametersListUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.io.LocalFileFinder;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 public class KarmaExecutionSession {
 
   private static final Logger LOG = Logger.getInstance(KarmaExecutionSession.class);
-  private static final String FRAMEWORK_NAME = "KarmaJavaScriptTestRunner";
 
   private final Project myProject;
   private final KarmaRunConfiguration myRunConfiguration;
@@ -54,19 +52,22 @@ public class KarmaExecutionSession {
   private final KarmaExecutionType myExecutionType;
   private final SMTRunnerConsoleView mySmtConsoleView;
   private final ConsoleCommandLineFolder myFolder = new ConsoleCommandLineFolder("karma", "run");
+  private final List<List<String>> myFailedTestNames;
 
   public KarmaExecutionSession(@NotNull Project project,
                                @NotNull KarmaRunConfiguration runConfiguration,
                                @NotNull Executor executor,
                                @NotNull KarmaServer karmaServer,
                                @NotNull KarmaRunSettings runSettings,
-                               @NotNull KarmaExecutionType executionType) throws ExecutionException {
+                               @NotNull KarmaExecutionType executionType,
+                               @Nullable List<List<String>> failedTestNames) throws ExecutionException {
     myProject = project;
     myRunConfiguration = runConfiguration;
     myExecutor = executor;
     myKarmaServer = karmaServer;
     myRunSettings = runSettings;
     myExecutionType = executionType;
+    myFailedTestNames = failedTestNames;
     myProcessHandler = createProcessHandler(karmaServer);
     mySmtConsoleView = createSMTRunnerConsoleView();
     if (!(myProcessHandler instanceof NopProcessHandler)) {
@@ -79,9 +80,9 @@ public class KarmaExecutionSession {
   @NotNull
   private SMTRunnerConsoleView createSMTRunnerConsoleView() {
     KarmaTestProxyFilterProvider filterProvider = new KarmaTestProxyFilterProvider(myProject, myKarmaServer);
-    TestConsoleProperties testConsoleProperties = new KarmaConsoleProperties(myRunConfiguration, myExecutor, filterProvider);
+    KarmaConsoleProperties testConsoleProperties = new KarmaConsoleProperties(myRunConfiguration, myExecutor, filterProvider);
     KarmaConsoleView consoleView = new KarmaConsoleView(testConsoleProperties, myKarmaServer, myExecutionType, myProcessHandler);
-    SMTestRunnerConnectionUtil.initConsoleView(consoleView, FRAMEWORK_NAME);
+    SMTestRunnerConnectionUtil.initConsoleView(consoleView, testConsoleProperties.getTestFrameworkName());
     return consoleView;
   }
 
@@ -156,8 +157,18 @@ public class KarmaExecutionSession {
     if (isDebug()) {
       commandLine.addParameter("--debug=true");
     }
-    if (myKarmaServer.isLastTestRunWithTestNameFilter()) {
-      commandLine.addParameter("--lastTestRunWithTestNameFilter=true");
+    String testNamesPattern = getTestNamesPattern();
+    if (testNamesPattern != null) {
+      commandLine.addParameter("--testName=" + testNamesPattern);
+      myFolder.addLastParameterFrom(commandLine);
+    }
+    return commandLine;
+  }
+
+  @Nullable
+  private String getTestNamesPattern() throws ExecutionException {
+    if (myFailedTestNames != null) {
+      return getTestNamesPattern(myFailedTestNames);
     }
     if (myRunSettings.getScopeKind() == KarmaScopeKind.TEST_FILE) {
       List<String> topNames = findTopLevelSuiteNames(myProject, myRunSettings.getTestFileSystemIndependentPath());
@@ -170,23 +181,41 @@ public class KarmaExecutionSession {
       if (suiteName == null) {
         throw new ExecutionException("No test suites found in " + testFileName);
       }
-      commandLine.addParameter("--testName=" + suiteName + " ");
-      myFolder.addLastParameterFrom(commandLine);
-      myKarmaServer.setLastTestRunWithTestNameFilter(true);
+      return getSuiteNamePattern(Collections.singletonList(suiteName));
     }
-    else if (myRunSettings.getScopeKind() == KarmaScopeKind.SUITE || myRunSettings.getScopeKind() == KarmaScopeKind.TEST) {
-      String fullName = StringUtil.join(myRunSettings.getTestNames(), " ");
-      if (myRunSettings.getScopeKind() == KarmaScopeKind.SUITE) {
-        fullName += " "; // to distinguish "suite" and "suite_2"
-      }
-      commandLine.addParameter("--testName=" + fullName);
-      myFolder.addLastParameterFrom(commandLine);
-      myKarmaServer.setLastTestRunWithTestNameFilter(true);
+    if (myRunSettings.getScopeKind() == KarmaScopeKind.SUITE) {
+      return getSuiteNamePattern(myRunSettings.getTestNames());
+    }
+    if (myRunSettings.getScopeKind() == KarmaScopeKind.TEST) {
+      return getTestNamesPattern(Collections.singletonList(myRunSettings.getTestNames()));
+    }
+    return null;
+  }
+
+  @NotNull
+  private static String getSuiteNamePattern(@NotNull List<String> suiteNames) {
+    List<String> escaped = ContainerUtil.mapNotNull(suiteNames, s -> JestUtil.escapeJavaScriptRegexp(s));
+    String result = StringUtil.join(escaped, " ");
+    return "^" + result + " ";
+  }
+
+  @NotNull
+  private static String getTestNamesPattern(@NotNull List<List<String>> testNames) {
+    List<String> patterns = ContainerUtil.map(testNames, testFqn -> {
+      List<String> escaped = ContainerUtil.mapNotNull(testFqn, s -> JestUtil.escapeJavaScriptRegexp(s));
+      return StringUtil.join(escaped, " ");
+    });
+    if (patterns.isEmpty()) {
+      return "$^"; // matches nothing
+    }
+    String result;
+    if (patterns.size() == 1) {
+      result = patterns.get(0);
     }
     else {
-      myKarmaServer.setLastTestRunWithTestNameFilter(false);
+      result = "(" + StringUtil.join(patterns, ")|(") + ")";
     }
-    return commandLine;
+    return "^" + result + "$";
   }
 
   private static List<String> findTopLevelSuiteNames(@NotNull Project project, @NotNull String testFilePath) throws ExecutionException {
@@ -221,31 +250,5 @@ public class KarmaExecutionSession {
   @NotNull
   public SMTRunnerConsoleView getSmtConsoleView() {
     return mySmtConsoleView;
-  }
-
-  private static class KarmaConsoleProperties extends SMTRunnerConsoleProperties {
-    private final KarmaTestProxyFilterProvider myFilterProvider;
-
-    public KarmaConsoleProperties(KarmaRunConfiguration configuration, Executor executor, KarmaTestProxyFilterProvider filterProvider) {
-      super(configuration, FRAMEWORK_NAME, executor);
-      myFilterProvider = filterProvider;
-      setUsePredefinedMessageFilter(true);
-      setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
-      setIfUndefined(TestConsoleProperties.HIDE_IGNORED_TEST, true);
-      setIfUndefined(TestConsoleProperties.SCROLL_TO_SOURCE, true);
-      setIfUndefined(TestConsoleProperties.SELECT_FIRST_DEFECT, true);
-      setIdBasedTestTree(true);
-      setPrintTestingStartedTime(false);
-    }
-
-    @Override
-    public SMTestLocator getTestLocator() {
-      return KarmaTestLocationProvider.INSTANCE;
-    }
-
-    @Override
-    public TestProxyFilterProvider getFilterProvider() {
-      return myFilterProvider;
-    }
   }
 }

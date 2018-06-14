@@ -1,15 +1,25 @@
 package org.angularjs.cli;
 
+import com.intellij.execution.RunManager;
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.filters.Filter;
+import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration;
+import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator;
 import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor;
+import com.intellij.lang.javascript.buildTools.npm.rc.NpmCommand;
+import com.intellij.lang.javascript.buildTools.npm.rc.NpmConfigurationType;
+import com.intellij.lang.javascript.buildTools.npm.rc.NpmRunConfiguration;
+import com.intellij.lang.javascript.buildTools.npm.rc.NpmRunSettings;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
-import com.intellij.util.text.SemVer;
 import com.intellij.xml.util.XmlStringUtil;
 import icons.AngularJSIcons;
 import org.jetbrains.annotations.Nls;
@@ -59,13 +69,13 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
   @Override
   @NotNull
   protected String[] generatorArgs(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Settings settings) {
-    return new String[]{"new", baseDir.getName(), "--dir=."};
+    return new String[]{"new", baseDir.getName()};
   }
 
   @NotNull
   @Override
   protected Filter[] filters(@NotNull Project project, @NotNull VirtualFile baseDir) {
-    return new Filter[] {new AngularCLIFilter(project, baseDir.getPath())};
+    return new Filter[]{new AngularCLIFilter(project, baseDir.getParent().getPath())};
   }
 
   @NotNull
@@ -104,8 +114,8 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
       if (!segment.matches("[a-zA-Z][.0-9a-zA-Z]*(-[.0-9a-zA-Z]*)*")) {
         return XmlStringUtil.wrapInHtml(
           "Project name " + fileName + " is not valid. New project names must " +
-                "start with a letter, and must contain only alphanumeric characters or dashes. " +
-                "When adding a dash the segment after the dash must also start with a letter."
+          "start with a letter, and must contain only alphanumeric characters or dashes. " +
+          "When adding a dash the segment after the dash must also start with a letter."
         );
       }
     }
@@ -115,10 +125,62 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
   @NotNull
   @Override
   protected File workingDir(Settings settings, @NotNull VirtualFile baseDir) {
-    File workingDir = super.workingDir(settings, baseDir);
-    SemVer version = settings.myPackage.getVersion();
-    return version == null || version.isGreaterOrEqualThan(6, 0, 0) ?
-           workingDir.getParentFile() :
-           workingDir;
+    return VfsUtilCore.virtualToIoFile(baseDir).getParentFile();
   }
+
+
+  @NotNull
+  @Override
+  protected Runnable postInstall(@NotNull Project project,
+                                 @NotNull VirtualFile baseDir,
+                                 File workingDir) {
+    return () -> ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      super.postInstall(project, baseDir, workingDir).run();
+      createRunConfigurations(project, baseDir);
+    });
+  }
+
+  private static void createRunConfigurations(@NotNull Project project, @NotNull VirtualFile baseDir) {
+
+    if (!project.isDisposed()) {
+      RunManager runManager = RunManager.getInstance(project);
+
+      createJSDebugConfiguration(runManager, "Angular Application", "http://localhost:4200");
+
+      createNpmConfiguration(baseDir, runManager, "Angular CLI Server", "start");
+      createNpmConfiguration(baseDir, runManager, "Karma Tests", "test");
+      createNpmConfiguration(baseDir, runManager, "Protractor E2E Tests", "e2e");
+    }
+  }
+
+  private static void createJSDebugConfiguration(@NotNull RunManager runManager, @NotNull String label, @NotNull String url) {
+    ConfigurationType configurationType = JavascriptDebugConfigurationType.getTypeInstance();
+    RunnerAndConfigurationSettings settings =
+      runManager.createRunConfiguration(label, configurationType.getConfigurationFactories()[0]);
+
+    JavaScriptDebugConfiguration config = (JavaScriptDebugConfiguration)settings.getConfiguration();
+    config.setUri(url);
+
+    runManager.addConfiguration(settings);
+  }
+
+  private static void createNpmConfiguration(@NotNull VirtualFile baseDir,
+                                             @NotNull RunManager runManager,
+                                             @NotNull String label,
+                                             @NotNull String scriptName) {
+    ConfigurationType configurationType = NpmConfigurationType.getInstance();
+    RunnerAndConfigurationSettings settings =
+      runManager.createConfiguration(label, configurationType.getConfigurationFactories()[0]);
+
+    NpmRunConfiguration configuration = (NpmRunConfiguration)settings.getConfiguration();
+    configuration.setRunSettings(NpmRunSettings
+                                   .builder()
+                                   .setCommand(NpmCommand.RUN_SCRIPT)
+                                   .setScriptNames(Collections.singletonList(scriptName))
+                                   .setPackageJsonPath(baseDir.findChild("package.json").getPath())
+                                   .build());
+
+    runManager.addConfiguration(settings);
+  }
+
 }

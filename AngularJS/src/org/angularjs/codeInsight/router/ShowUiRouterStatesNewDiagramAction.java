@@ -1,7 +1,6 @@
 package org.angularjs.codeInsight.router;
 
 import com.intellij.diagram.DiagramProvider;
-import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressManager;
@@ -31,7 +30,6 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
 
   @Override
   public void actionPerformed(AnActionEvent e) {
-    UsageTrigger.trigger(USAGE_KEY);
     final Project project = e.getProject();
     if (project == null) return;
 

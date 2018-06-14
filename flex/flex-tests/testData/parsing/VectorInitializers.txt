@@ -121,6 +121,8 @@ JSFile:VectorInitializers.js2
           PsiElement(JS:LBRACKET)('[')
           PsiErrorElement:expression expected
             <empty list>
+          JSEmptyExpression
+            <empty list>
           PsiElement(JS:COMMA)(',')
           PsiElement(JS:RBRACKET)(']')
     PsiElement(JS:SEMICOLON)(';')
@@ -152,6 +154,8 @@ JSFile:VectorInitializers.js2
         JSArrayLiteralExpression
           PsiElement(JS:LBRACKET)('[')
           PsiErrorElement:expression expected
+            <empty list>
+          JSEmptyExpression
             <empty list>
           PsiElement(JS:COMMA)(',')
           JSLiteralExpression

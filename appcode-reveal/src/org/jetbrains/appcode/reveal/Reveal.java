@@ -2,7 +2,6 @@ package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.util.ExecUtil;
-import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Version;
@@ -106,7 +105,6 @@ public class Reveal {
   }
 
   public static void refreshReveal(@NotNull Project project, @NotNull File revealBundle, @NotNull String bundleID, @Nullable String deviceName) throws ExecutionException {
-    UsageTrigger.trigger("appcode.reveal.showInReveal");
     RevealUsageTriggerCollector.Companion.trigger(project, "showInReveal");
 
     if (isCompatibleWithRevealOnePointSixOrHigher(revealBundle)) {

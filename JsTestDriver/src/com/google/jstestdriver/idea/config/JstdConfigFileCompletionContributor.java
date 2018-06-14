@@ -76,7 +76,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
     final int offset = context.getEditor().getCaretModel().getOffset();
     final PsiElement element = context.getFile().findElementAt(offset);
     if (element != null) {
-      if (element.getNode().getElementType() == YAMLTokenTypes.SCALAR_KEY) {
+      if (element.getNode().getElementType() == YAMLTokenTypes.COLON) {
         return;
       }
       int prefixLength = offset - element.getTextRange().getStartOffset();
