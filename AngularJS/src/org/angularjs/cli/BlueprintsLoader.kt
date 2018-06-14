@@ -1,11 +1,13 @@
 package org.angularjs.cli
 
+import com.google.gson.GsonBuilder
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
+import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
@@ -14,10 +16,11 @@ import com.intellij.util.gist.GistManager
 import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.IOUtil
 import org.angularjs.cli.AngularJSProjectConfigurator.findCliJson
+import org.angularjs.lang.AngularJSLanguage
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
-import java.util.*
+import java.io.IOException
 
 object BlueprintsLoader {
   fun load(project: Project, cli: VirtualFile): Collection<Blueprint> = ApplicationManager.getApplication().runReadAction(
@@ -27,33 +30,26 @@ object BlueprintsLoader {
   )
 }
 
-private var ourGist = GistManager.getInstance().newVirtualFileGist("AngularBlueprints", 1, BlueprintsExternalizer(), { project, file -> doLoad(project, file) })
+private var ourGist = GistManager.getInstance().newVirtualFileGist("AngularBlueprints", 2, BlueprintsExternalizer(),
+                                                                   { project, file -> doLoad(project, file) })
 
 private class BlueprintsExternalizer : DataExternalizer<List<Blueprint>> {
   override fun save(out: DataOutput, value: List<Blueprint>?) {
     value!!
-    out.writeInt(value.size)
-    value.forEach {
-      IOUtil.writeUTF(out, it.name)
-      out.writeBoolean(it.description != null)
-      if (it.description != null) IOUtil.writeUTF(out, it.description)
-      out.writeInt(it.args.size)
-      it.args.forEach { IOUtil.writeUTF(out, it) }
-    }
+    IOUtil.writeUTF(out, GsonBuilder().create().toJson(value))
   }
 
   override fun read(`in`: DataInput): List<Blueprint> {
-    val size = `in`.readInt()
-    val result = ArrayList<Blueprint>(size)
-    for (i in 0 until size) {
-      val name = IOUtil.readUTF(`in`)
-      val description = if (`in`.readBoolean()) IOUtil.readUTF(`in`) else null
-      val argsSize = `in`.readInt()
-      val args = ArrayList<String>(argsSize)
-      for (j in 0 until argsSize) {
-        args.add(IOUtil.readUTF(`in`))
-      }
-      result.add(Blueprint(name, description, args))
+    val json = IOUtil.readUTF(`in`)
+    val result: List<Blueprint>
+    try {
+      result = BlueprintJsonParser.parse(json)
+    }
+    catch (e: Throwable) {
+      throw IOException("Failed to load gist: " + e.message, e)
+    }
+    if (result == null) {
+      throw IOException()
     }
     return result
   }
@@ -63,26 +59,54 @@ private fun doLoad(project: Project, cli: VirtualFile): List<Blueprint> {
   val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter
   val node = NodeJsLocalInterpreter.tryCast(interpreter) ?: return emptyList()
 
-  val modules:MutableList<CompletionModuleInfo> = mutableListOf()
-  NodeModuleSearchUtil.findModulesWithName(modules, AngularCLIProjectGenerator.PACKAGE_NAME, cli, false, node)
+  var parse: Collection<Blueprint> = emptyList()
 
-  val module = modules.firstOrNull() ?: return emptyList()
-  val moduleExe = "${module.virtualFile!!.path}${File.separator}bin${File.separator}ng"
-  val commandLine = GeneralCommandLine(node.interpreterSystemDependentPath, moduleExe, "help", "generate")
-  commandLine.withWorkDirectory(cli.path)
-  val handler = CapturingProcessHandler(commandLine)
-  val output = handler.runProcess()
-
-  val parser = BlueprintParser()
-  var parse:Collection<Blueprint> = emptyList()
-  if (output.exitCode == 0) {
-    parse = parser.parse(output.stdout)
+  val schematicsInfoJson = loadSchematicsInfoJson(node, cli)
+  if (schematicsInfoJson.isNotEmpty()) {
+    parse = BlueprintJsonParser.parse(schematicsInfoJson)
   }
+
   if (parse.isEmpty()) {
-    parse = parser.parse(DEFAULT_OUTPUT)
+    val blueprintHelpOutput = loadBlueprintHelpOutput(node, cli)
+    if (blueprintHelpOutput.isNotEmpty()) {
+      parse = BlueprintParser().parse(blueprintHelpOutput)
+    }
+  }
+
+  if (parse.isEmpty()) {
+    parse = BlueprintParser().parse(DEFAULT_OUTPUT)
   }
 
   return parse.sortedBy { it.name }
+}
+
+fun loadSchematicsInfoJson(node: NodeJsLocalInterpreter, cli: VirtualFile): String {
+  val directory = JSLanguageServiceUtil.getPluginDirectory(AngularJSLanguage::class.java, "ngCli")
+  val utilityExe = "${directory}${File.separator}runner.js"
+  return grabCommandOutput(
+    GeneralCommandLine(node.interpreterSystemDependentPath, utilityExe, cli.path, "./schematicsInfoProvider.js"), cli.path)
+}
+
+fun loadBlueprintHelpOutput(node: NodeJsLocalInterpreter, cli: VirtualFile): String {
+  val modules: MutableList<CompletionModuleInfo> = mutableListOf()
+  NodeModuleSearchUtil.findModulesWithName(modules, AngularCLIProjectGenerator.PACKAGE_NAME, cli, false, node)
+
+  val module = modules.firstOrNull() ?: return ""
+  val moduleExe = "${module.virtualFile!!.path}${File.separator}bin${File.separator}ng"
+  return grabCommandOutput(GeneralCommandLine(node.interpreterSystemDependentPath, moduleExe, "help", "generate"), cli.path)
+}
+
+fun grabCommandOutput(commandLine: GeneralCommandLine, workingDir: String?): String {
+  if (workingDir != null) {
+    commandLine.withWorkDirectory(workingDir)
+  }
+  val handler = CapturingProcessHandler(commandLine)
+  val output = handler.runProcess()
+
+  if (output.exitCode == 0) {
+    return output.stdout
+  }
+  return ""
 }
 
 fun findAngularCliFolder(project: Project, file: VirtualFile?): VirtualFile? {

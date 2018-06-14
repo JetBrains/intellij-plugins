@@ -14,9 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaServerRegistry {
 
   private static final Logger LOG = Logger.getInstance(KarmaServerRegistry.class);

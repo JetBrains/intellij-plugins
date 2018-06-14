@@ -25,9 +25,6 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-/**
-* @author Sergey Simonchik
-*/
 public class KarmaTestLocationProvider implements SMTestLocator {
   private static final String PROTOCOL_ID__CONFIG_FILE = "config";
   private static final String PROTOCOL_ID__TEST_SUITE = "suite";

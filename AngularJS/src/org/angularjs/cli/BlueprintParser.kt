@@ -8,14 +8,15 @@ import com.intellij.openapi.util.text.StringUtil
 class BlueprintParser {
   fun parse(output: String): Collection<Blueprint> {
     if (output.isEmpty()) return emptyList()
-    val result:MutableList<Blueprint> = mutableListOf()
+    val result: MutableList<Blueprint> = mutableListOf()
     val converted = StringUtil.convertLineSeparators(output)
-    var name:String? = null
-    var description:String? = null
-    var arguments:MutableList<String> = mutableListOf()
+    var name: String? = null
+    var description: String? = null
+    var options: MutableList<Option> = mutableListOf()
+    var arguments: MutableList<Option> = mutableListOf()
     for (line in converted.split('\n')) {
       if (line.startsWith("ng generate")) {
-        if (name != null) result.add(Blueprint(name, description, arguments))
+        if (name != null) result.add(Blueprint(name, description, options, arguments))
         name = null
         break
       }
@@ -26,30 +27,26 @@ class BlueprintParser {
         val nameCandidate = firstWord(text)
         if (nameCandidate.isNotBlank()) {
           if (name != null) {
-            result.add(Blueprint(name, description, arguments))
+            result.add(Blueprint(name, description, options, arguments))
             description = null
+            options = mutableListOf()
             arguments = mutableListOf()
           }
-
           name = nameCandidate
+          arguments.addAll(
+            text.split(" ").filter { it.startsWith("<") && it != "<options...>" }.map { Option(it.substring(1 until it.length - 1)) })
           continue
         }
         if (!text.startsWith("  ")) continue
         text = text.substring(2)
 
-        if (text.startsWith("-")) arguments.add(firstWord(text))
+        if (text.startsWith("--")) options.add(Option(firstWord(text).substring(2)))
         else if (!text.isBlank() && !text[0].isWhitespace()) description = text
       }
     }
-    if (name != null) result.add(Blueprint(name, description, arguments))
+    if (name != null) result.add(Blueprint(name, description, options, arguments))
     return result
   }
 
   private fun firstWord(text: String) = text.takeWhile { !it.isWhitespace() }
-}
-
-class Blueprint(val name:String, val description:String?, val args:List<String>) {
-  override fun toString(): String{
-    return name
-  }
 }
