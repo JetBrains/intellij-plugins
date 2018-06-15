@@ -31,6 +31,7 @@ import com.intellij.util.gist.GistManager
 import com.intellij.util.gist.GistManagerImpl
 import com.intellij.util.ui.EmptyIcon
 import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
 import icons.JavaScriptLanguageIcons
 import org.angularjs.cli.*
 import java.awt.BorderLayout
@@ -52,18 +53,21 @@ class AngularCliGenerateAction : DumbAwareAction() {
     val model = DefaultListModel<Blueprint>()
     val list = JBList<Blueprint>(model)
     updateList(list, model, project, cli)
-    list.cellRenderer = object: JBList.StripedListCellRenderer() {
-      override fun getListCellRendererComponent(list: JList<*>?,
-                                                value: Any?,
-                                                index: Int,
-                                                isSelected: Boolean,
-                                                cellHasFocus: Boolean): Component {
-        val component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
+    list.cellRenderer = object : ColoredListCellRenderer<Blueprint>() {
+      override fun customizeCellRenderer(list: JList<out Blueprint>,
+                                         value: Blueprint,
+                                         index: Int,
+                                         selected: Boolean,
+                                         hasFocus: Boolean) {
+        if (!selected && index % 2 == 0) {
+          background = UIUtil.getDecoratedRowColor()
+        }
         icon = JBUI.scale(EmptyIcon.create(5))
-        toolTipText = (value as Blueprint).description
-        return component
+        append(value.name!!, SimpleTextAttributes.REGULAR_ATTRIBUTES, true)
+        if (value.description != null) {
+          append(" - " + value.description!!, SimpleTextAttributes.GRAY_ATTRIBUTES, false)
+        }
       }
-
     }
 
     val actionGroup = DefaultActionGroup()

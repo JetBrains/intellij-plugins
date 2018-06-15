@@ -64,32 +64,37 @@ function getAvailableSchematicCollections() {
 }
 
 function getCollectionSchematics(collectionName: string): SchematicsInfo[] {
-    const collection = getCollection(collectionName);
-    const schematicNames: string[] = engineHost.listSchematics(collection);
+    try {
+        const collection = getCollection(collectionName);
+        const schematicNames: string[] = engineHost.listSchematics(collection);
 
-    const schematicInfos: any[] = schematicNames
-        .map(name => getSchematic(collection, name).description)
-        //`ng-add` schematics should be executed only with `ng add`
-        .filter(info => info.name !== "ng-add");
+        const schematicInfos: any[] = schematicNames
+            .map(name => getSchematic(collection, name).description)
+            //`ng-add` schematics should be executed only with `ng add`
+            .filter(info => info.name !== "ng-add" && info.schemaJson !== undefined);
 
-    const newFormat = schematicInfos
-        .map(info => info.schemaJson.properties)
-        .map(prop => Object.keys(prop).map(k => prop[k]))
-        .reduce((a, b) => a.concat(b), [])
-        .find(prop => prop.$default)
+        const newFormat = schematicInfos
+            .map(info => info.schemaJson.properties)
+            .map(prop => Object.keys(prop).map(k => prop[k]))
+            .reduce((a, b) => a.concat(b), [])
+            .find(prop => prop.$default)
 
-    return schematicInfos.map(info => {
-        const required = info.schemaJson.required || [];
-        return {
-            description: info.description,
-            name: (collectionName === defaultCollectionName ? "" : collectionName + ":") + info.name,
-            options: filterProps(info.schemaJson,
-                (key, prop) => newFormat ? prop.$default === undefined : required.indexOf(key) < 0)
-                .concat(coreOptions()),
-            arguments: filterProps(info.schemaJson,
-                (key, prop) => newFormat ? prop.$default !== undefined && prop.$default.$source === "argv" : required.indexOf(key) >= 0)
-        }
-    })
+        return schematicInfos.map(info => {
+            const required = info.schemaJson.required || [];
+            return {
+                description: info.description,
+                name: (collectionName === defaultCollectionName ? "" : collectionName + ":") + info.name,
+                options: filterProps(info.schemaJson,
+                    (key, prop) => newFormat ? prop.$default === undefined : required.indexOf(key) < 0)
+                    .concat(coreOptions()),
+                arguments: filterProps(info.schemaJson,
+                    (key, prop) => newFormat ? prop.$default !== undefined && prop.$default.$source === "argv" : required.indexOf(key) >= 0)
+            }
+        })
+    } catch (e) {
+        console.error(e.stack || e);
+        return [];
+    }
 }
 
 function filterProps(schemaJson: any, filter: (k: string, prop: any) => boolean): any[] {

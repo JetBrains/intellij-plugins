@@ -118,6 +118,10 @@ fun grabCommandOutput(commandLine: GeneralCommandLine, workingDir: String?): Str
   val output = handler.runProcess()
 
   if (output.exitCode == 0) {
+    if (output.stderr.trim().isNotEmpty()) {
+      LOG.error("Error while loading schematics info.",
+                Attachment("err-output", output.stderr))
+    }
     return output.stdout
   }
   else {
