@@ -23,6 +23,7 @@ public class GherkinFoldingBuilder implements FoldingBuilder, DumbAware {
                                                                  GherkinTokenTypes.PYSTRING);
 
 
+  @Override
   @NotNull
   public FoldingDescriptor[] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
     List<FoldingDescriptor> descriptors = new ArrayList<>();
@@ -41,6 +42,7 @@ public class GherkinFoldingBuilder implements FoldingBuilder, DumbAware {
     }
   }
 
+  @Override
   public String getPlaceholderText(@NotNull ASTNode node) {
     if (node.getPsi() instanceof GherkinStepsHolder ||
         node.getPsi() instanceof GherkinExamplesBlockImpl) {
@@ -49,6 +51,7 @@ public class GherkinFoldingBuilder implements FoldingBuilder, DumbAware {
     return "...";
   }
 
+  @Override
   public boolean isCollapsedByDefault(@NotNull ASTNode node) {
     return false;
   }

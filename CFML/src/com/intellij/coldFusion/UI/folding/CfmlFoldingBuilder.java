@@ -44,6 +44,7 @@ import java.util.List;
  * @author vnikolaenko
  */
 public class CfmlFoldingBuilder implements FoldingBuilder, DumbAware {
+  @Override
   @NotNull
   public FoldingDescriptor[] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
     final PsiElement element = node.getPsi();
@@ -140,6 +141,7 @@ public class CfmlFoldingBuilder implements FoldingBuilder, DumbAware {
     return range;
   }
 
+  @Override
   public String getPlaceholderText(@NotNull ASTNode node) {
     IElementType type = node.getElementType();
     if (type == CfmlElementTypes.FUNCTIONBODY ||
@@ -151,6 +153,7 @@ public class CfmlFoldingBuilder implements FoldingBuilder, DumbAware {
     return "...";
   }
 
+  @Override
   public boolean isCollapsedByDefault(@NotNull ASTNode node) {
     CodeFoldingSettings settings = CodeFoldingSettings.getInstance();
     final PsiElement element = SourceTreeToPsiMap.treeElementToPsi(node);
