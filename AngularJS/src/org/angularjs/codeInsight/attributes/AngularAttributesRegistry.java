@@ -12,10 +12,17 @@ import org.angularjs.index.AngularModuleIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author Dennis.Ushakov
  */
 public class AngularAttributesRegistry {
+
+  private static final List<String> CUSTOM_NG_ATTRS = Collections.singletonList("i18n");
+
+  @NotNull
   static AngularAttributeDescriptor createDescriptor(@Nullable final Project project,
                                                      @NotNull String directiveName,
                                                      @Nullable PsiElement declaration) {
@@ -52,6 +59,11 @@ public class AngularAttributesRegistry {
       return args != null && args.length > 2 ? args[2] : "";
     }
     return "";
+  }
+
+  @NotNull
+  public static List<String> getCustomAngularAttributes() {
+    return CUSTOM_NG_ATTRS;
   }
 
   public static boolean isEventAttribute(String name, Project project) {

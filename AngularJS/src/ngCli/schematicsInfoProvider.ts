@@ -1,3 +1,10 @@
+try {
+    require('@angular/cli/utilities/schematics');
+} catch (e) {
+    console.info("No schematics")
+    process.exit(0)
+}
+
 import {getCollection, getEngineHost, getSchematic} from '@angular/cli/utilities/schematics';
 import {Option} from "@angular/cli/models/command";
 import * as path from "path";
@@ -24,7 +31,7 @@ if (collections.indexOf(defaultCollectionName) < 0) {
 }
 
 const allSchematics = collections
-// handle update schematics with `ng update`
+// Update schematics should be executed only with `ng update`
     .filter(c => c !== "@schematics/update")
     .map(getCollectionSchematics)
     .reduce((a, b) => a.concat(...b));
@@ -62,13 +69,13 @@ function getCollectionSchematics(collectionName: string): SchematicsInfo[] {
 
     const schematicInfos: any[] = schematicNames
         .map(name => getSchematic(collection, name).description)
-        //handle `ng-add` and `ng-update` schematics with `ng add` and `ng update` support
-        .filter(info => info.name !== "ng-add" && info.name !== "ng-update");
+        //`ng-add` schematics should be executed only with `ng add`
+        .filter(info => info.name !== "ng-add");
 
     const newFormat = schematicInfos
         .map(info => info.schemaJson.properties)
         .map(prop => Object.keys(prop).map(k => prop[k]))
-        .reduce((a, b) => a.concat(b))
+        .reduce((a, b) => a.concat(b), [])
         .find(prop => prop.$default)
 
     return schematicInfos.map(info => {

@@ -4,6 +4,8 @@ import com.dmarcotte.handlebars.HbLanguage;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.ParserDefinition;
+import com.intellij.lexer.Lexer;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.LanguageSubstitutors;
 import com.intellij.psi.MultiplePsiFilesPerDocumentFileViewProvider;
@@ -36,7 +38,21 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
     TemplateDataElementType result = TEMPLATE_DATA_TO_LANG.get(lang.getID());
 
     if (result != null) return result;
-    TemplateDataElementType created = new TemplateDataElementType("HB_TEMPLATE_DATA", lang, CONTENT, OUTER_ELEMENT_TYPE);
+    TemplateDataElementType created = new TemplateDataElementType("HB_TEMPLATE_DATA", lang, CONTENT, OUTER_ELEMENT_TYPE) {
+      @Override
+      protected void appendCurrentTemplateToken(@NotNull StringBuilder result,
+                                                @NotNull CharSequence buf,
+                                                @NotNull Lexer lexer,
+                                                @NotNull RangesCollector collector) {
+        String nextSequence = lexer.getTokenText();
+        if (nextSequence.endsWith("=")) {
+          //insert fake ="" for attributes inside html tags
+          nextSequence += "\"\"";
+          collector.addRangeToRemove(new TextRange(lexer.getTokenEnd(), lexer.getTokenEnd() + 2));
+        }
+        result.append(nextSequence);
+      }
+    };
     TemplateDataElementType prevValue = TEMPLATE_DATA_TO_LANG.putIfAbsent(lang.getID(), created);
 
     return prevValue == null ? created : prevValue;
