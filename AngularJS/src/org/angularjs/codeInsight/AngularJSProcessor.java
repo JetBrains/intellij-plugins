@@ -3,21 +3,29 @@ package org.angularjs.codeInsight;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.ecma6.*;
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.lang.typescript.library.TypeScriptLibraryProvider;
+import com.intellij.lang.typescript.resolve.TypeScriptClassResolver;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.impl.source.html.HtmlEmbeddedContentImpl;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
@@ -30,19 +38,19 @@ import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.lang.parser.AngularJSElementTypes;
 import org.angularjs.lang.psi.AngularJSRecursiveVisitor;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Dennis.Ushakov
  */
 public class AngularJSProcessor {
   private static final Map<String, String> NG_REPEAT_IMPLICITS = new HashMap<>();
-  private static final Map<String, String> TAG_TO_CLASS = new HashMap<>();
+  private static volatile Map<String, String> TAG_TO_CLASS;
+
   public static final String $EVENT = "$event";
 
   static {
@@ -52,41 +60,6 @@ public class AngularJSProcessor {
     NG_REPEAT_IMPLICITS.put("$last", "Boolean");
     NG_REPEAT_IMPLICITS.put("$even", "Boolean");
     NG_REPEAT_IMPLICITS.put("$odd", "Boolean");
-  }
-
-  static {
-    //Used https://developer.mozilla.org/en-US/docs/Web/API as reference
-    TAG_TO_CLASS.put("a", "Anchor");
-    TAG_TO_CLASS.put("br", "BR");
-    TAG_TO_CLASS.put("dl", "DList");
-    TAG_TO_CLASS.put("datalist", "DataList");
-    TAG_TO_CLASS.put("fieldset", "FieldSet");
-    TAG_TO_CLASS.put("frameset", "FrameSet");
-    TAG_TO_CLASS.put("hr", "HR");
-    for (int i = 1; i <= 6; i++) {
-      TAG_TO_CLASS.put("h" + i, "Heading");
-    }
-    TAG_TO_CLASS.put("iframe", "IFrame");
-    TAG_TO_CLASS.put("img", "Image");
-    TAG_TO_CLASS.put("li", "LI");
-    TAG_TO_CLASS.put("ins", "Mod");
-    TAG_TO_CLASS.put("del", "Mod");
-    TAG_TO_CLASS.put("ol", "OList");
-    TAG_TO_CLASS.put("optgroup", "OptGroup");
-    TAG_TO_CLASS.put("p", "Paragraph");
-    TAG_TO_CLASS.put("blockquote", "Quote");
-    TAG_TO_CLASS.put("q", "Quote");
-    TAG_TO_CLASS.put("caption", "TableCaption");
-    TAG_TO_CLASS.put("col", "TableCol");
-    TAG_TO_CLASS.put("colgroup", "TableCol");
-    TAG_TO_CLASS.put("td", "TableDataCell");
-    TAG_TO_CLASS.put("th", "TableHeaderCell");
-    TAG_TO_CLASS.put("tr", "TableRow");
-    TAG_TO_CLASS.put("tfoot", "TableSection");
-    TAG_TO_CLASS.put("thead", "TableSection");
-    TAG_TO_CLASS.put("tbody", "TableSection");
-    TAG_TO_CLASS.put("textarea", "TextArea");
-    TAG_TO_CLASS.put("ul", "UList");
   }
 
   public static void process(final PsiElement element, final Consumer<JSPsiElementBase> consumer) {
@@ -190,9 +163,60 @@ public class AngularJSProcessor {
 
     final String tagName = tag.getName();
     if (HtmlDescriptorsTable.getTagDescriptor(tagName) != null) {
-      elementBuilder.setTypeString("HTML" + TAG_TO_CLASS.getOrDefault(tagName, StringUtil.capitalize(tagName)) + "Element");
+      elementBuilder.setTypeString(getHtmlElementClass(tag.getProject(), tagName));
     }
     return elementBuilder;
+  }
+
+  @NotNull
+  @NonNls
+  private static String getHtmlElementClass(@NotNull Project project, @NotNull @NonNls String tagName) {
+    if (TAG_TO_CLASS == null) {
+      initTagToClassMap(project);
+    }
+    return TAG_TO_CLASS.getOrDefault(tagName.toLowerCase(), "HTMLElement");
+  }
+
+  private static synchronized void initTagToClassMap(@NotNull Project project) {
+    if (TAG_TO_CLASS != null) {
+      return;
+    }
+    Map<String, String> tagToClass = new HashMap<>();
+    Collection<VirtualFile> libs = JSCorePredefinedLibrariesProvider
+      .getAllJSPredefinedLibraryFiles()
+      .stream()
+      .filter(lib -> TypeScriptLibraryProvider.LIB_D_TS.equals(lib.getName()))
+      .collect(Collectors.toList());
+
+    final List<JSClass> elements = TypeScriptClassResolver.getInstance().findClassesByQName(
+      "HTMLElementTagNameMap", GlobalSearchScope.filesScope(project, libs));
+
+    for (JSQualifiedNamedElement el : elements) {
+      if (!(el instanceof TypeScriptInterface)) {
+        continue;
+      }
+      TypeScriptInterface intf = (TypeScriptInterface)el;
+      if (intf.getBody() == null) {
+        continue;
+      }
+      for (TypeScriptTypeMember member : intf.getBody().getTypeMembers()) {
+        if (!(member instanceof TypeScriptPropertySignature)) {
+          continue;
+        }
+        TypeScriptPropertySignature sig = (TypeScriptPropertySignature)member;
+        JSTypeDeclaration decl = sig.getTypeDeclaration();
+        if (!(decl instanceof TypeScriptSingleType)) {
+          continue;
+        }
+        @NonNls
+        String tagName = sig.getMemberName();
+        String className = ((TypeScriptSingleType)decl).getQualifiedTypeName();
+        if (className != null && className.startsWith("HTML") && className.endsWith("Element")) {
+          tagToClass.put(tagName.toLowerCase(), className);
+        }
+      }
+    }
+    TAG_TO_CLASS = tagToClass;
   }
 
   private static class AngularInjectedFilesVisitor extends JSResolveUtil.JSInjectedFilesVisitor {
