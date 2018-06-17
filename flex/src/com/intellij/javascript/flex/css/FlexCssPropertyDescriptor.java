@@ -246,6 +246,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   /**
    * @deprecated use this#createPropertyValueDescriptor
    */
+  @Deprecated
   @NotNull
   private static CssPropertyValueImpl createPropertyValue(@NotNull Collection<FlexStyleIndexInfo> infos, boolean shorthand) {
     List<CssPropertyValue> children = new ArrayList<>();
