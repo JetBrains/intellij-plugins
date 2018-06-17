@@ -26,7 +26,6 @@ import com.intellij.lang.parameterInfo.*;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,10 +56,6 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
       return ArrayUtil.toObjectArray(methods);
     }
     return ArrayUtil.EMPTY_OBJECT_ARRAY;
-  }
-
-  public Object[] getParametersForDocumentation(CfmlFunctionDescription p, ParameterInfoContext context) {
-    return ArrayUtil.toObjectArray(p.getParameters());
   }
 
   private static boolean isEmbraced(@Nullable PsiElement element, int offset) {
@@ -164,14 +159,6 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
     }
   }
 
-
-  public String getParameterCloseChars() {
-    return ",){}";
-  }
-
-  public boolean tracksParameterIndex() {
-    return false;
-  }
 
   public void updateUI(CfmlFunctionDescription p, @NotNull ParameterInfoUIContext context) {
     if (p == null) {

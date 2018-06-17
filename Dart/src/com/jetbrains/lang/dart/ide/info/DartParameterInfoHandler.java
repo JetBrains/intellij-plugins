@@ -36,11 +36,6 @@ public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement
     return ArrayUtil.EMPTY_OBJECT_ARRAY;
   }
 
-  @Override
-  public Object[] getParametersForDocumentation(DartFunctionDescription p, ParameterInfoContext context) {
-    return p.getParameters();
-  }
-
   @Nullable
   @Override
   public PsiElement findElementForParameterInfo(@NotNull CreateParameterInfoContext context) {
@@ -112,16 +107,6 @@ public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement
     for (int i = 0; i < objects.length; i++) {
       context.setUIComponentEnabled(i, true);
     }
-  }
-
-  @Override
-  public String getParameterCloseChars() {
-    return ",){}";
-  }
-
-  @Override
-  public boolean tracksParameterIndex() {
-    return true;
   }
 
   @Override
