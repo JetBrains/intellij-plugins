@@ -88,7 +88,7 @@ public class FlexBreakpointsHandler {
     final XLineBreakpoint<XBreakpointProperties> breakpoint = myIndexToBreakpointMap.get(index);
 
     if (breakpoint != null) {
-      myDebugProcess.getSession().updateBreakpointPresentation(breakpoint, null, null);
+      myDebugProcess.getSession().updateBreakpointPresentation(breakpoint, AllIcons.Debugger.Db_verified_breakpoint, null);
     }
     else {
       // run to cursor

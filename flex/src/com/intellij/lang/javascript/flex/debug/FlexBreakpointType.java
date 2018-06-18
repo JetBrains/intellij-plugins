@@ -13,7 +13,6 @@
 // limitations under the License.
 package com.intellij.lang.javascript.flex.debug;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.ActionScriptFileType;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -25,9 +24,7 @@ import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.breakpoints.XLineBreakpointTypeBase;
 import com.intellij.xdebugger.breakpoints.ui.XBreakpointGroupingRule;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.List;
 
 /**
@@ -57,11 +54,5 @@ public class FlexBreakpointType extends XLineBreakpointTypeBase {
   @Override
   public String getBreakpointsDialogHelpTopic() {
     return "reference.dialogs.breakpoints";
-  }
-
-  @Nullable
-  @Override
-  public Icon getPendingIcon() {
-    return AllIcons.Debugger.Db_pending_breakpoint;
   }
 }
