@@ -74,7 +74,7 @@ public class GherkinParserDefinition implements ParserDefinition {
     return new GherkinFileImpl(viewProvider);
   }
 
-  public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
+  public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
     // Line break between line comment and other elements
     final IElementType leftElementType = left.getElementType();
     if (leftElementType == GherkinTokenTypes.COMMENT) {
