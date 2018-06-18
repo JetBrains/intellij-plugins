@@ -4,7 +4,7 @@ import <warning descr="Duplicate import." type="UNUSED_SYMBOL">"dart:core"</warn
 import <error descr="Target of URI doesn't exist: 'dart:incorrect'." type="ERROR">"dart:incorrect"</error>;
 
 main() {
-  <warning descr="The function 'foo' isn't defined." type="WARNING">foo</warning>();
+  <error descr="The function 'foo' isn't defined." type="ERROR">foo</error>();
   <warning descr="'bar' is deprecated and shouldn't be used." type="DEPRECATED">bar</warning>();
   // todo smth
   var <warning descr="The value of the local variable 'unused' isn't used." type="UNUSED_SYMBOL">unused</warning>;

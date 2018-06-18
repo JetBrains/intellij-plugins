@@ -331,6 +331,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
            "}");
   }
 
+  // fails, tracked as https://github.com/dart-lang/sdk/issues/32316
   public void testEnum() {
     doTest(myFixture,
            "enum Foo {FooA, FooB, }\n" +
