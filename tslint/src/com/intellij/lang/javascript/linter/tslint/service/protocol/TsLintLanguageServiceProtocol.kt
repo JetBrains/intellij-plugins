@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.linter.tslint.service.protocol
 
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil.getPluginDirectory
@@ -12,9 +13,9 @@ import com.intellij.util.Consumer
 class TsLintLanguageServiceProtocol(project: Project, readyConsumer: Consumer<*>) : JSLanguageServiceNodeStdProtocolBase(project,
                                                                                                                          readyConsumer) {
 
-  override fun getNodeInterpreter(): String? {
+  override fun getInterpreter(): NodeJsInterpreter? {
     val extendedState = TsLintConfiguration.getInstance(myProject).extendedState
-    return JSLanguageServiceUtil.getInterpreterPathIfValid(extendedState.state.interpreterRef.resolve(myProject))
+    return JSLanguageServiceUtil.getInterpreterIfValid(extendedState.state.interpreterRef.resolve(myProject))
   }
 
   override fun createState(): JSLanguageServiceInitialState {

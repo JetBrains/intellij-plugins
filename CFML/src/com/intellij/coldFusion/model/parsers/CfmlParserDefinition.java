@@ -124,7 +124,7 @@ public class CfmlParserDefinition implements ParserDefinition {
     return new CfmlFile(viewProvider, CfmlLanguage.INSTANCE);
   }
 
-  public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
+  public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
     return SpaceRequirements.MAY;
   }
 

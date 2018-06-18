@@ -119,6 +119,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
    * @deprecated use {@link com.intellij.lang.javascript.psi.JSTypeUtils
    * #areTypesCompatible(com.intellij.lang.javascript.psi.JSType, com.intellij.lang.javascript.psi.JSType)} instead.
    */
+  @Deprecated
   protected static boolean compatibleType(String overrideParameterType,
                                           String parameterType,
                                           PsiElement overrideContext,

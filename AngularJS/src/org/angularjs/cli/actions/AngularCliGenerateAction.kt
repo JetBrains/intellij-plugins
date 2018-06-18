@@ -1,5 +1,6 @@
 package org.angularjs.cli.actions
 
+import com.intellij.codeInsight.lookup.CharFilter
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.execution.configurations.CommandLineTokenizer
 import com.intellij.icons.AllIcons
@@ -226,10 +227,14 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
     override fun getTypeText(item: Option): String? {
       var result = item.type
-      if (item.enum != null && item.enum.isNotEmpty()) {
+      if (item.enum.isNotEmpty()) {
         result += " (" + item.enum.joinToString("|") + ")"
       }
       return result
+    }
+
+    override fun acceptChar(c: Char): CharFilter.Result? {
+      return if (c == '-') CharFilter.Result.ADD_TO_PREFIX else null
     }
 
     override fun compare(item1: Option, item2: Option): Int {
