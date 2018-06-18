@@ -199,7 +199,7 @@ public class CucumberJavaUtil {
   public static String getPackageOfStep(GherkinStep step) {
     for (PsiReference ref : step.getReferences()) {
       PsiElement refElement = ref.resolve();
-      if (refElement instanceof PsiMethod) {
+      if (refElement instanceof PsiMethod || refElement instanceof PsiMethodCallExpression) {
         PsiClassOwner file = (PsiClassOwner)refElement.getContainingFile();
         final String packageName = file.getPackageName();
         if (StringUtil.isNotEmpty(packageName)) {
