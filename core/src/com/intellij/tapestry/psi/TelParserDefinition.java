@@ -65,7 +65,7 @@ public class TelParserDefinition implements ParserDefinition {
     };
   }
 
-  public ParserDefinition.SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
+  public ParserDefinition.SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
     final Lexer lexer = createLexer(left.getPsi().getProject());
     return LanguageUtil.canStickTokensTogetherByLexer(left, right, lexer);
   }
