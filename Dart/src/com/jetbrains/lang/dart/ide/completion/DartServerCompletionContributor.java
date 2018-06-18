@@ -132,7 +132,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
                  LookupElementBuilder lookupElement = null;
 
-                 for (DartCompletionExtension extension : DartCompletionExtension.getExtensions()) {
+                 for (DartCompletionExtension extension: DartCompletionExtension.getExtensions()) {
                    lookupElement = extension.createLookupElement(project, suggestion);
                    if (lookupElement != null) break;
                  }
@@ -173,7 +173,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
                                    contextFile, contextOffset,
                                    Collections.emptyList(), Collections.emptyList());
     if (completionResult != null && completionResult.suggestions != null) {
-      for (CompletionSuggestion suggestion : completionResult.suggestions) {
+      for (CompletionSuggestion suggestion: completionResult.suggestions) {
         LookupElementBuilder lookupElement = createLookupElement(project, suggestion);
         resultSet.addElement(lookupElement);
       }
@@ -209,7 +209,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
   /**
    * Handles completion provided by angular_analyzer_plugin in HTML files and inside string literals;
-   * our PSI doesn't allow top calculate prefix in such cases
+   * our PSI doesn't allow to calculate prefix in such cases
    */
   @Nullable
   private static String getPrefixForSpecialCases(@NotNull final CompletionParameters parameters, final int replacementOffset) {
@@ -280,7 +280,10 @@ public class DartServerCompletionContributor extends CompletionContributor {
         reference.getRangeInElement(); // to ensure that references are sorted by range
         reference = ((PsiMultiReference)reference).getReferences()[0];
       }
-      if (reference instanceof DartNewExpression || reference instanceof DartParenthesizedExpression) {
+      if (reference instanceof DartNewExpression ||
+          reference instanceof DartParenthesizedExpression ||
+          reference instanceof DartListLiteralExpression ||
+          reference instanceof DartMapLiteralExpression) {
         // historically DartNewExpression is a reference; it can appear here only in situation like new Foo(o.<caret>);
         // without the following hack closing paren is replaced on Tab. We won't get here if at least one symbol after dot typed.
         context.setReplacementOffset(context.getStartOffset());
