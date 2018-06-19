@@ -100,8 +100,9 @@ class VueComponentsCalculation {
         val literal = getObjectLiteralFromResolve(variants.mapNotNull { if (it.isValidResult) it.element else null }.toList())
         if (literal != null) return Pair(literal, indexedAccessUsed)
       }
-      if (resolved is JSObjectLiteralExpression) return Pair(resolved, indexedAccessUsed)
-      val obj = JSStubBasedPsiTreeUtil.calculateMeaningfulElement(resolved) as? JSObjectLiteralExpression ?: return null
+      resolved = VueComponents.literalFor(resolved)
+
+      val obj = resolved ?: return null
       return Pair(obj, indexedAccessUsed)
     }
 
@@ -152,8 +153,7 @@ class VueComponentsCalculation {
     private fun getObjectLiteralFromResolve(result: Collection<PsiElement>): JSObjectLiteralExpression? {
       return result.mapNotNull(fun(it: PsiElement): JSObjectLiteralExpression? {
         val element: PsiElement? = (it as? JSVariable)?.initializerOrStub ?: it
-        if (element is JSObjectLiteralExpression) return element
-        return JSStubBasedPsiTreeUtil.calculateMeaningfulElement(element!!) as? JSObjectLiteralExpression
+        return VueComponents.literalFor(element)
       }).firstOrNull()
     }
 
@@ -186,10 +186,10 @@ class VueComponentsCalculation {
         if (asProperty != null) {
           val propName = asProperty.name
           if (propName != null && asProperty.value != null) {
-            val meaningfulElement = JSStubBasedPsiTreeUtil.calculateMeaningfulElement(asProperty.value!!)
-            var descriptor = meaningfulElement as? JSObjectLiteralExpression
-            if (descriptor == null && meaningfulElement is JSReferenceExpression) {
-              descriptor = getObjectLiteralFromResolve(resolveToValid(meaningfulElement))
+            val candidate = asProperty.value!!
+            var descriptor = VueComponents.literalFor(candidate)
+            if (descriptor == null && candidate is JSReferenceExpression) {
+              descriptor = getObjectLiteralFromResolve(resolveToValid(candidate))
             }
             val nameFromDescriptor = getTextIfLiteral(descriptor?.findProperty("name")?.value) ?: propName
             // name used in call Vue.component() overrides what was set in descriptor itself

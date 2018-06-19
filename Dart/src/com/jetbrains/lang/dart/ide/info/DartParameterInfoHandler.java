@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.ide.info;
 
 import com.intellij.codeInsight.CodeInsightBundle;
@@ -7,6 +20,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
@@ -14,6 +28,8 @@ import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+
+import java.util.List;
 
 public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement, DartFunctionDescription> {
   private String myParametersListPresentableText = "";
@@ -68,9 +84,10 @@ public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement
       final DartNewExpression newExpression = (DartNewExpression)element;
       final DartType type = newExpression.getType();
       final DartClassResolveResult classResolveResult = DartResolveUtil.resolveClassByType(type);
-      PsiElement psiElement = ((DartNewExpression)element).getReferenceExpression();
-      psiElement = psiElement == null && type != null ? type.getReferenceExpression() : psiElement;
-      final PsiElement target = psiElement != null ? ((DartReference)psiElement).resolve() : null;
+      List<DartReferenceExpression> expressionList = ((DartNewExpression)element).getReferenceExpressionList();
+      DartReference psiElement = expressionList.isEmpty() && type != null ? type.getReferenceExpression()
+                                                                          : ContainerUtil.getLastItem(expressionList);
+      final PsiElement target = psiElement != null ? psiElement.resolve() : null;
       if (target instanceof DartComponentName) {
         functionDescription = DartFunctionDescription.createDescription((DartComponent)target.getParent(), classResolveResult);
       }

@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil.getPluginDirectory
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceInitialState
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceNodeStdProtocolBase
+import com.intellij.lang.javascript.service.protocol.LocalFilePath
 import com.intellij.openapi.project.Project
 import com.intellij.util.Consumer
 
@@ -24,7 +25,7 @@ class TsLintLanguageServiceProtocol(project: Project, readyConsumer: Consumer<*>
     result.tslintPackagePath = extendedState.state.packagePath
     result.additionalRootDirectory = extendedState.state.rulesDirectory
     result.pluginName = "tslint"
-    result.pluginPath = getPluginDirectory(this.javaClass, "js/languageService/tslint-plugin-provider.js").absolutePath
+    result.pluginPath = LocalFilePath.create(getPluginDirectory(this.javaClass, "js/languageService/tslint-plugin-provider.js").absolutePath)
     return result
   }
 

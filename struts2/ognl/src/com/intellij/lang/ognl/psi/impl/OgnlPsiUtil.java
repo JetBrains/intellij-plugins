@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 The authors
+ * Copyright 2018 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,7 @@ import com.intellij.lang.ognl.psi.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.CommonClassNames;
 import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
 import com.intellij.psi.tree.IElementType;
@@ -29,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collections;
 
 /**
  * @author Yann C&eacute;bron
@@ -104,14 +106,14 @@ class OgnlPsiUtil {
     }
     if (type == OgnlTypes.BIG_INTEGER_LITERAL) {
       return JavaPsiFacade.getInstance(expression.getProject()).getElementFactory()
-        .createTypeByFQClassName("java.math.BigInteger", expression.getResolveScope());
+                          .createTypeByFQClassName("java.math.BigInteger", expression.getResolveScope());
     }
     if (type == OgnlTypes.DOUBLE_LITERAL) {
       return PsiType.DOUBLE;
     }
     if (type == OgnlTypes.BIG_DECIMAL_LITERAL) {
       return JavaPsiFacade.getInstance(expression.getProject()).getElementFactory()
-        .createTypeByFQClassName("java.math.BigDecimal", expression.getResolveScope());
+                          .createTypeByFQClassName("java.math.BigDecimal", expression.getResolveScope());
     }
     if (type == OgnlTypes.TRUE_KEYWORD ||
         type == OgnlTypes.FALSE_KEYWORD) {
@@ -165,17 +167,20 @@ class OgnlPsiUtil {
 
   static void customizeFqnTypeExpressionReferences(OgnlFqnTypeExpression fqnTypeExpression,
                                                    JavaClassReferenceProvider referenceProvider) {
-    if (fqnTypeExpression.getParent() instanceof OgnlNewExpression) {
+    PsiElement parent = fqnTypeExpression.getParent();
+    if (parent instanceof OgnlNewExpression ||
+        parent instanceof OgnlNewArrayExpression) {
       referenceProvider.setOption(JavaClassReferenceProvider.CONCRETE, Boolean.TRUE);
       referenceProvider.setOption(JavaClassReferenceProvider.NOT_INTERFACE, Boolean.TRUE);
       referenceProvider.setOption(JavaClassReferenceProvider.NOT_ENUM, Boolean.TRUE);
+      return;
     }
 
-    if (fqnTypeExpression.getParent() instanceof OgnlMapExpression) {
+    if (parent instanceof OgnlMapExpression) {
       referenceProvider.setOption(JavaClassReferenceProvider.CONCRETE, Boolean.TRUE);
       referenceProvider.setOption(JavaClassReferenceProvider.INSTANTIATABLE, Boolean.TRUE);
-      referenceProvider.setOption(JavaClassReferenceProvider.EXTEND_CLASS_NAMES,
-                                  new String[]{CommonClassNames.JAVA_UTIL_MAP});
+      referenceProvider.setOption(JavaClassReferenceProvider.SUPER_CLASSES,
+                                  Collections.singletonList(CommonClassNames.JAVA_UTIL_MAP));
     }
   }
 }

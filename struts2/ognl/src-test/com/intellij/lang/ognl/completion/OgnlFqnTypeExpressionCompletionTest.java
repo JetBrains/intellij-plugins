@@ -65,4 +65,16 @@ public class OgnlFqnTypeExpressionCompletionTest extends LightCodeInsightFixture
                            "java.util.Properties",
                            "java.util.TreeMap");
   }
+
+  public void testNewArrayExpressionBasicCompletion() {
+    myFixture.configureByText(OgnlFileType.INSTANCE,
+                              OgnlTestUtils.createExpression("new C<caret>["));
+
+    myFixture.completeBasic();
+    final List<String> lookupStrings = myFixture.getLookupElementStrings();
+    assertContainsElements(lookupStrings,
+                           "Character", "ThreadLocal");
+    assertDoesntContain(lookupStrings,
+                        "Comparable", "Deprecated");
+  }
 }
