@@ -113,7 +113,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
         LOGGER.error("prettier language service plugin not found");
       }
       state.pluginName = "prettier";
-      state.pluginPath = service.getAbsolutePath();
+      state.pluginPath = LocalFilePath.create(service.getAbsolutePath());
       return state;
     }
 

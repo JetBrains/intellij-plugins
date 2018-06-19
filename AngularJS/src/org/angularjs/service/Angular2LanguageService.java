@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceCommand;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand;
+import com.intellij.lang.javascript.service.protocol.LocalFilePath;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerService;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings;
@@ -152,7 +153,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
       String configFile = getConfigForFile(file);
       if (configFile == null) return ContainerUtil.emptyList();
       Angular2GetHtmlErrCommand error = new Angular2GetHtmlErrCommand(path);
-      error.arguments.projectFileName = configFile;
+      error.arguments.projectFileName = LocalFilePath.create(configFile);
       return Collections.singletonList(error);
     }
     return super.createGetErrCommand(file, path);
