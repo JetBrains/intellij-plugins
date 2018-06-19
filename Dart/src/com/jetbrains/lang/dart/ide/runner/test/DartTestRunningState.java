@@ -135,7 +135,14 @@ public class DartTestRunningState extends DartCommandLineRunningState {
       if (testRunnerOptions != null && !testRunnerOptions.isEmpty()) {
         builder.append(" ").append(testRunnerOptions);
       }
-      builder.append(' ').append(params.getFilePath());
+
+      final String filePath = params.getFilePath();
+      if (filePath != null && filePath.contains(" ")) {
+        builder.append(" \"").append(filePath).append('\"');
+      }
+      else {
+        builder.append(' ').append(filePath);
+      }
 
       if (params.getScope() == DartTestRunnerParameters.Scope.GROUP_OR_TEST_BY_NAME) {
         builder.append(" -N \"").append(StringUtil.notNullize(params.getTestName())).append("\"");
