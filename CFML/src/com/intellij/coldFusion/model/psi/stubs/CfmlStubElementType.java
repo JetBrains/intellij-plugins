@@ -33,6 +33,7 @@ public abstract class CfmlStubElementType<S extends StubElement, T extends CfmlP
     super(debugName, CfmlLanguage.INSTANCE);
   }
 
+  @Override
   @NotNull
   public String getExternalId() {
     return "cfml." + super.toString();
