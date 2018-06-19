@@ -4660,24 +4660,50 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('new' | 'const') type ('.' referenceExpression)? <<argumentsWrapper>>
+  // newExpressionWithKeyword | simpleQualifiedReferenceExpression typeArguments '.' referenceExpression <<argumentsWrapper>>
   public static boolean newExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "newExpression")) return false;
-    if (!nextTokenIs(b, "<new expression>", CONST, NEW)) return false;
-    boolean r, p;
+    boolean r;
     Marker m = enter_section_(b, l, _COLLAPSE_, NEW_EXPRESSION, "<new expression>");
-    r = newExpression_0(b, l + 1);
+    r = newExpressionWithKeyword(b, l + 1);
+    if (!r) r = newExpression_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // simpleQualifiedReferenceExpression typeArguments '.' referenceExpression <<argumentsWrapper>>
+  private static boolean newExpression_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "newExpression_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = simpleQualifiedReferenceExpression(b, l + 1);
+    r = r && typeArguments(b, l + 1);
+    r = r && consumeToken(b, DOT);
+    r = r && referenceExpression(b, l + 1);
+    r = r && argumentsWrapper(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ('new' | 'const') type ('.' referenceExpression)? <<argumentsWrapper>>
+  static boolean newExpressionWithKeyword(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "newExpressionWithKeyword")) return false;
+    if (!nextTokenIs(b, "", CONST, NEW)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = newExpressionWithKeyword_0(b, l + 1);
     p = r; // pin = 1
     r = r && report_error_(b, type(b, l + 1));
-    r = p && report_error_(b, newExpression_2(b, l + 1)) && r;
+    r = p && report_error_(b, newExpressionWithKeyword_2(b, l + 1)) && r;
     r = p && argumentsWrapper(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   // 'new' | 'const'
-  private static boolean newExpression_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "newExpression_0")) return false;
+  private static boolean newExpressionWithKeyword_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "newExpressionWithKeyword_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, NEW);
@@ -4687,15 +4713,15 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   // ('.' referenceExpression)?
-  private static boolean newExpression_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "newExpression_2")) return false;
-    newExpression_2_0(b, l + 1);
+  private static boolean newExpressionWithKeyword_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "newExpressionWithKeyword_2")) return false;
+    newExpressionWithKeyword_2_0(b, l + 1);
     return true;
   }
 
   // '.' referenceExpression
-  private static boolean newExpression_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "newExpression_2_0")) return false;
+  private static boolean newExpressionWithKeyword_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "newExpressionWithKeyword_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, DOT);
