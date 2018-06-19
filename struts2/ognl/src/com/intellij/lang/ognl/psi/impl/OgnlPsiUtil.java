@@ -168,7 +168,8 @@ class OgnlPsiUtil {
   static void customizeFqnTypeExpressionReferences(OgnlFqnTypeExpression fqnTypeExpression,
                                                    JavaClassReferenceProvider referenceProvider) {
     PsiElement parent = fqnTypeExpression.getParent();
-    if (parent instanceof OgnlNewExpression) {
+    if (parent instanceof OgnlNewExpression ||
+        parent instanceof OgnlNewArrayExpression) {
       referenceProvider.setOption(JavaClassReferenceProvider.CONCRETE, Boolean.TRUE);
       referenceProvider.setOption(JavaClassReferenceProvider.NOT_INTERFACE, Boolean.TRUE);
       referenceProvider.setOption(JavaClassReferenceProvider.NOT_ENUM, Boolean.TRUE);
