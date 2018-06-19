@@ -28,7 +28,6 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -127,12 +126,13 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       }
     }
 
-    VueComponentDetailsProvider.INSTANCE.processLocalComponents(component, contextElement.project, { name, element ->
+    VueComponentDetailsProvider.INSTANCE.processLocalComponents(component, contextElement.project) { name, element ->
       if (name != null) {
-        val meaningfulElement = JSStubBasedPsiTreeUtil.calculateMeaningfulElement(element)
-        processComponentMeaningfulElement(name, meaningfulElement, processor, element)
-      } else true
-    })
+        val literalOrElement = VueComponents.meaningfulExpression(element) ?: element
+        processComponentMeaningfulElement(name, literalOrElement, processor, element)
+      }
+      else true
+    }
   }
 
   private fun processComponentMeaningfulElement(localName: String, meaningfulElement: PsiElement,

@@ -41,6 +41,21 @@ class VueComponents {
     fun onlyLocal(elements: Collection<JSImplicitElement>): List<JSImplicitElement> {
       return elements.filter(this::isNotInLibrary)
     }
+    
+    fun literalFor(element: PsiElement?): JSObjectLiteralExpression? {
+      if (element is JSObjectLiteralExpression) return element
+      if (element  == null) return null
+      return JSStubBasedPsiTreeUtil.calculateMeaningfulElements(element)
+        .mapNotNull { it as? JSObjectLiteralExpression }
+        .firstOrNull()
+    }
+    
+    fun meaningfulExpression(element: PsiElement?): PsiElement? {
+      if (element == null) return element
+      
+      return JSStubBasedPsiTreeUtil.calculateMeaningfulElements(element)
+        .firstOrNull { it !is JSEmbeddedContent }
+    }
 
     fun isNotInLibrary(element : JSImplicitElement): Boolean {
       val file = element.containingFile.viewProvider.virtualFile
@@ -102,8 +117,7 @@ class VueComponents {
           val parentExport = element.parent as? ES6ExportDefaultAssignment ?: return null
           return getExportedDescriptor(parentExport)
         }
-        val objLiteral = JSStubBasedPsiTreeUtil.calculateMeaningfulElement(element!!) as? JSObjectLiteralExpression
-                         ?: return null
+        val objLiteral = VueComponents.literalFor(element!!) ?: return null
         return VueComponentDescriptor(obj = objLiteral)
       }).firstOrNull()
     }
