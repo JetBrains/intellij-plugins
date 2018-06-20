@@ -17,6 +17,7 @@ import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
+import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.filters.UrlFilter;
 import com.intellij.execution.process.ProcessHandler;
@@ -54,6 +55,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
   private static final String RUN_COMMAND = "run";
   private static final String TEST_PACKAGE_SPEC = "test";
   private static final String EXPANDED_REPORTER_OPTION = "-r json";
+  public static final String DART_VM_OPTIONS_ENV_VAR = "DART_VM_OPTIONS";
 
   public DartTestRunningState(final @NotNull ExecutionEnvironment environment) throws ExecutionException {
     super(environment);
@@ -162,7 +164,30 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     params.setCheckedModeOrEnableAsserts(false);
     // working directory is not configurable in UI because there's only one valid value that we calculate ourselves
     params.setWorkingDirectory(params.computeProcessWorkingDirectory(project));
-    return doStartProcess(DartSdkUtil.getPubSnapshotPath(sdk));
+
+    return super.startProcess();
+  }
+
+  @NotNull
+  @Override
+  protected String getExePath(@NotNull final DartSdk sdk) {
+    return DartSdkUtil.getPubPath(sdk);
+  }
+
+  @Override
+  protected void appendParamsAfterVmOptionsBeforeArgs(@NotNull GeneralCommandLine commandLine) throws ExecutionException {
+    // nothing needed
+  }
+
+  @Override
+  protected void addVmOption(@NotNull final GeneralCommandLine commandLine, @NotNull final String option) {
+    String options = commandLine.getEnvironment().get(DART_VM_OPTIONS_ENV_VAR);
+    if (StringUtil.isEmpty(options)) {
+      commandLine.getEnvironment().put(DART_VM_OPTIONS_ENV_VAR, option);
+    }
+    else {
+      commandLine.getEnvironment().put(DART_VM_OPTIONS_ENV_VAR, options + " " + option);
+    }
   }
 
   DartTestRunnerParameters getParameters() {
