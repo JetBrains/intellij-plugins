@@ -27,6 +27,10 @@ interface MarkdownAnchorReference : PsiPolyVariantReference {
       return headers
     }
 
-    fun dashed(it: String): String = it.toLowerCase().replace(" ", "-")
+    fun dashed(it: String): String =
+      it.toLowerCase()
+        .trimStart()
+        .replace(Regex("[^\\w\\- ]"), "")
+        .replace(" ", "-")
   }
 }
