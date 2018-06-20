@@ -24,6 +24,7 @@ import com.intellij.xml.util.XmlStringUtil;
 import icons.AngularJSIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.File;
@@ -145,12 +146,29 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
     if (!project.isDisposed()) {
       RunManager runManager = RunManager.getInstance(project);
 
-      createJSDebugConfiguration(runManager, "Angular Application", "http://localhost:4200");
+      String packageJsonPath = getPackageJson(baseDir);
+      if (packageJsonPath == null) {
+        return;
+      }
 
-      createNpmConfiguration(baseDir, runManager, "Angular CLI Server", "start");
-      createNpmConfiguration(baseDir, runManager, "Karma Tests", "test");
-      createNpmConfiguration(baseDir, runManager, "Protractor E2E Tests", "e2e");
+      String folderName = baseDir.getName();
+
+      createJSDebugConfiguration(runManager, "Angular Application (" + folderName + ")", "http://localhost:4200");
+
+      runManager.setSelectedConfiguration(
+        createNpmConfiguration(packageJsonPath, runManager, "Angular CLI Server (" + folderName + ")", "start"));
+      createNpmConfiguration(packageJsonPath, runManager, "Karma Tests (" + folderName + ")", "test");
+      createNpmConfiguration(packageJsonPath, runManager, "Protractor E2E Tests (" + folderName + ")", "e2e");
     }
+  }
+
+  @Nullable
+  private static String getPackageJson(@NotNull VirtualFile baseDir) {
+    VirtualFile pkg = baseDir.findChild("package.json");
+    if (pkg != null && !pkg.isDirectory()) {
+      return pkg.getPath();
+    }
+    return null;
   }
 
   private static void createJSDebugConfiguration(@NotNull RunManager runManager, @NotNull String label, @NotNull String url) {
@@ -164,7 +182,8 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
     runManager.addConfiguration(settings);
   }
 
-  private static void createNpmConfiguration(@NotNull VirtualFile baseDir,
+  @NotNull
+  private static RunnerAndConfigurationSettings createNpmConfiguration(@NotNull String packageJsonPath,
                                              @NotNull RunManager runManager,
                                              @NotNull String label,
                                              @NotNull String scriptName) {
@@ -177,10 +196,11 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
                                    .builder()
                                    .setCommand(NpmCommand.RUN_SCRIPT)
                                    .setScriptNames(Collections.singletonList(scriptName))
-                                   .setPackageJsonPath(baseDir.findChild("package.json").getPath())
+                                   .setPackageJsonPath(packageJsonPath)
                                    .build());
 
     runManager.addConfiguration(settings);
+    return settings;
   }
 
 }
