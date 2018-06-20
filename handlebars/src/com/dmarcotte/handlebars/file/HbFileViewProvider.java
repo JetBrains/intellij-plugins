@@ -43,7 +43,7 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
       protected void appendCurrentTemplateToken(@NotNull StringBuilder result,
                                                 @NotNull CharSequence buf,
                                                 @NotNull Lexer lexer,
-                                                @NotNull RangesCollector collector) {
+                                                @NotNull RangeCollector collector) {
         String nextSequence = lexer.getTokenText();
         if (nextSequence.endsWith("=")) {
           //insert fake ="" for attributes inside html tags
