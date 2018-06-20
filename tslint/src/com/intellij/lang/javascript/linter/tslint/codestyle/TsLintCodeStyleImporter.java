@@ -14,7 +14,7 @@
 package com.intellij.lang.javascript.linter.tslint.codestyle;
 
 import com.intellij.execution.ExecutionException;
-import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.linter.JSLinterCodeStyleImporter;
 import com.intellij.lang.javascript.linter.JSNpmLinterState;
@@ -83,7 +83,7 @@ public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintCon
   @Nullable
   @Override
   protected TsLintConfigWrapper computeEffectiveConfig(@NotNull PsiFile configPsi,
-                                                       @NotNull NodeJsLocalInterpreter interpreter,
+                                                       @NotNull NodeJsInterpreter interpreter,
                                                        @NotNull NodePackage linterPackage) throws ExecutionException {
 
     List<String> parameters =
