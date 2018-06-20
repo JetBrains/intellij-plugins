@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.intellij.javascript.karma.KarmaConfig;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
@@ -49,7 +50,7 @@ public class KarmaServerState {
     myServer.registerStreamEventHandler(new BrowserEventHandler(BROWSER_CONNECTED_EVENT_TYPE));
     myServer.registerStreamEventHandler(new BrowserEventHandler(BROWSER_DISCONNECTED_EVENT_TYPE));
     myServer.registerStreamEventHandler(new BrowserCapturingFailedEventHandler());
-    myServer.registerStreamEventHandler(new ConfigHandler(configurationFile));
+    myServer.registerStreamEventHandler(new ConfigHandler(configurationFile, server.getServerSettings().getNodeInterpreter()));
   }
 
   @Nullable
@@ -207,9 +208,11 @@ public class KarmaServerState {
   private class ConfigHandler implements StreamEventHandler {
 
     private final File myConfigurationFileDir;
+    private final NodeJsInterpreter myInterpreter;
 
-    public ConfigHandler(@NotNull File configurationFile) {
+    public ConfigHandler(@NotNull File configurationFile, @NotNull NodeJsInterpreter interpreter) {
       myConfigurationFileDir = configurationFile.getParentFile();
+      myInterpreter = interpreter;
     }
 
     @NotNull
@@ -220,7 +223,7 @@ public class KarmaServerState {
 
     @Override
     public void handle(@NotNull JsonElement eventBody) {
-      myConfig = KarmaConfig.parseFromJson(eventBody, myConfigurationFileDir);
+      myConfig = KarmaConfig.parseFromJson(eventBody, myConfigurationFileDir, myInterpreter);
     }
   }
 

@@ -224,7 +224,8 @@ public class KarmaServer {
     }
     setIntellijParameter(commandLine, "user-config", configurator.convertLocalPathToRemote(serverSettings.getConfigurationFilePath()));
     if (coveragePeer != null) {
-      setIntellijParameter(commandLine, "coverage-temp-dir", coveragePeer.getCoverageTempDir().getAbsolutePath());
+      String coverageDir = configurator.convertLocalPathToRemote(coveragePeer.getCoverageTempDir().getAbsolutePath());
+      setIntellijParameter(commandLine, "coverage-temp-dir", coverageDir);
       if (angularCli) {
         commandLine.addParameter("--code-coverage");
         commandLineFolder.addLastParameterFrom(commandLine);

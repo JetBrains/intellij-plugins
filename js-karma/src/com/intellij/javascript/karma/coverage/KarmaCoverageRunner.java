@@ -3,9 +3,10 @@ package com.intellij.javascript.karma.coverage;
 import com.intellij.coverage.CoverageEngine;
 import com.intellij.coverage.CoverageRunner;
 import com.intellij.coverage.CoverageSuite;
-import com.intellij.coverage.SimpleCoverageAnnotator;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.server.KarmaServer;
+import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.testFramework.coverage.CoverageSerializationUtils;
 import com.intellij.javascript.testFramework.coverage.LcovCoverageReport;
 import com.intellij.openapi.diagnostic.Logger;
@@ -45,7 +46,7 @@ public class KarmaCoverageRunner extends CoverageRunner {
       File basePathDir = new File(basePath);
       if (basePathDir.isAbsolute() && basePathDir.isDirectory()) {
         try {
-          return readProjectData(sessionDataFile, basePathDir);
+          return readProjectData(sessionDataFile, basePathDir, myKarmaServer.getServerSettings().getNodeInterpreter());
         }
         catch (Exception e) {
           LOG.warn("Can't read coverage data", e);
@@ -60,11 +61,14 @@ public class KarmaCoverageRunner extends CoverageRunner {
   }
 
   @NotNull
-  private static ProjectData readProjectData(@NotNull File dataFile, @NotNull File basePath) throws IOException {
+  private static ProjectData readProjectData(@NotNull File dataFile,
+                                             @NotNull File basePath,
+                                             @NotNull NodeJsInterpreter interpreter) throws IOException {
     ProjectData projectData = new ProjectData();
-    LcovCoverageReport report = CoverageSerializationUtils.readLCOV(basePath, dataFile);
+    LcovCoverageReport report = CoverageSerializationUtils.readLCOV(dataFile, basePath,
+                                                                    path -> NodeInterpreterUtil.convertRemotePathToLocal(path, interpreter));
     for (Map.Entry<String, List<LcovCoverageReport.LineHits>> entry : report.getInfo().entrySet()) {
-      String filePath = entry.getKey();
+      String filePath = NodeInterpreterUtil.convertRemotePathToLocal(entry.getKey(), interpreter);
       ClassData classData = projectData.getOrCreateClassData(filePath);
       int max = 0;
       List<LcovCoverageReport.LineHits> lineHitsList = entry.getValue();
@@ -88,6 +92,7 @@ public class KarmaCoverageRunner extends CoverageRunner {
     return "KarmaPresentableName";
   }
 
+  @NotNull
   @Override
   public String getId() {
     return KarmaCoverageEngine.ID;
