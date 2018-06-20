@@ -20,11 +20,11 @@ class HeaderReferenceCompletionTest : LightPlatformCodeInsightFixtureTestCase() 
 
   fun testMultipleHeaders() {
     myFixture.testCompletionVariants(getBeforeFileName(),
-                                     "environment-variables", 
-                                     "how-do-i-get-set-up", 
-                                     "mxbezier3scalar", 
-                                     "plugin-list", 
-                                     "requirements", 
+                                     "environment-variables",
+                                     "how-do-i-get-set-up",
+                                     "mxbezier3scalar",
+                                     "plugin-list",
+                                     "requirements",
                                      "what-is-this-repository-for")
   }
 
@@ -46,10 +46,24 @@ class HeaderReferenceCompletionTest : LightPlatformCodeInsightFixtureTestCase() 
   fun testAFileHeaders2() {
     myFixture.configureByFile("multipleHeaders.md")
     myFixture.testCompletionVariants(getBeforeFileName(), "environment-variables",
-                                                          "how-do-i-get-set-up",
-                                                          "mxbezier3scalar",
-                                                          "plugin-list",
-                                                          "requirements",
-                                                          "what-is-this-repository-for")
+                                     "how-do-i-get-set-up",
+                                     "mxbezier3scalar",
+                                     "plugin-list",
+                                     "requirements",
+                                     "what-is-this-repository-for")
   }
+
+  fun testGfmLowercase() {
+    myFixture.testCompletionVariants(getBeforeFileName(), "what-is-this-repository-for", "what-is-this-for")
+  }
+
+  fun testGfmPunctuation() {
+    myFixture.testCompletionVariants(getBeforeFileName(), "100-april-8-2018", "100-april-82018")
+  }
+
+  fun testGfmSpecial() {
+    myFixture.testCompletionVariants(getBeforeFileName(), "get-method", "get-call")
+  }
+
+
 }
