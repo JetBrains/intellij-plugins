@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ConsoleFolding;
@@ -19,7 +32,7 @@ import java.util.Locale;
 public class DartConsoleFolding extends ConsoleFolding {
 
   private static final String DART_MARKER = SystemInfo.isWindows ? "\\bin\\dart.exe " : "/bin/dart ";
-  private static final String TEST_RUNNER_MARKER = "pub.dart.snapshot run test:test -r json "; // see DartTestRunningState.startProcess()
+  private static final String TEST_RUNNER_MARKER = SystemInfo.isWindows ? "\\bin\\pub.bat run test -r json " : "/bin/pub run test -r json ";
   private static final int MIN_FRAME_DISPLAY_COUNT = 8;
 
   private int myFrameCount = 0;
@@ -39,7 +52,8 @@ public class DartConsoleFolding extends ConsoleFolding {
     // fold Dart VM command line created in DartCommandLineRunningState.createCommandLine() together with the following "Observatory listening on ..." message
     if (line.startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON)) return true;
 
-    final int index = line.indexOf(DART_MARKER);
+    int index = line.indexOf(DART_MARKER);
+    if (index < 0) index = line.indexOf(TEST_RUNNER_MARKER);
     if (index < 0) return false;
 
     final String probablySdkPath = line.substring(0, index);
@@ -69,35 +83,44 @@ public class DartConsoleFolding extends ConsoleFolding {
     }
 
     final String fullText = StringUtil.join(lines, "\n");
-    if (!lines.get(0).contains(DART_MARKER) ||
+    if (lines.size() > 2 ||
         lines.size() == 2 && !lines.get(1).startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON) ||
-        lines.size() > 2) {
+        lines.get(0).contains(DART_MARKER) && !lines.get(0).contains(TEST_RUNNER_MARKER)) {
       // unexpected text
       return fullText;
     }
 
-    final String line = lines.get(0);
-    int index = line.indexOf(' ');
-    assert index > 0 && line.substring(0, index + 1).endsWith(DART_MARKER) : line;
-
-    while (line.length() > index + 1 && line.charAt(index + 1) == '-') {
-      index = line.indexOf(" ", index + 1);
-    }
-
-    if (index < 0) return fullText; // can't happen
-
-    final CommandLineTokenizer tok = new CommandLineTokenizer(line.substring(index));
-    if (!tok.hasMoreTokens()) return fullText; // can't happen
-
-    final String filePath = tok.nextToken();
-    if (!filePath.contains(File.separator)) return fullText; // can't happen
-
     final StringBuilder b = new StringBuilder();
-    b.append("dart ");
-    b.append(PathUtil.getFileName(filePath));
 
-    while (tok.hasMoreTokens()) {
-      b.append(" ").append(tok.nextToken()); // program arguments
+    final String line = lines.get(0);
+    if (line.contains(DART_MARKER)) {
+      int index = line.indexOf(' ');
+      assert index > 0 && line.substring(0, index + 1).endsWith(DART_MARKER) : line;
+
+      while (line.length() > index + 1 && line.charAt(index + 1) == '-') {
+        index = line.indexOf(" ", index + 1);
+      }
+
+      if (index < 0) return fullText; // can't happen
+
+      final CommandLineTokenizer tok = new CommandLineTokenizer(line.substring(index));
+      if (!tok.hasMoreTokens()) return fullText; // can't happen
+
+      final String filePath = tok.nextToken();
+      if (!filePath.contains(File.separator)) return fullText; // can't happen
+
+      b.append("dart ");
+      b.append(PathUtil.getFileName(filePath));
+
+      while (tok.hasMoreTokens()) {
+        b.append(" ").append(tok.nextToken()); // program arguments
+      }
+    }
+    else if (line.contains(TEST_RUNNER_MARKER)) {
+      b.append(foldTestRunnerCommand(line));
+    }
+    else {
+      return fullText; // can' happen
     }
 
     if (lines.size() == 2 && lines.get(1).startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON)) {
@@ -130,7 +153,7 @@ public class DartConsoleFolding extends ConsoleFolding {
   }
 
   private static String foldTestRunnerCommand(@NotNull final String line) {
-    // C:\dart-sdk\bin\dart.exe --checked file:\\\C:\dart-sdk\bin\snapshots\pub.dart.snapshot run test:test -r json --concurrency=4 C:/MyProject/test/main_test.dart -n "group1 test21|group1 test22"
+    // C:\dart-sdk\bin\pub.bat run test -r json --concurrency=4 C:/MyProject/test/main_test.dart -n "group1 test21|group1 test22"
     // folded to
     // pub run test main_test.dart -n "group1 test21|group1 test22"
     int index = line.indexOf(TEST_RUNNER_MARKER);
@@ -138,9 +161,11 @@ public class DartConsoleFolding extends ConsoleFolding {
     index = line.toLowerCase(Locale.US).indexOf(".dart", index);
     if (index < 0) return line;
 
-    index = FileUtil.toSystemIndependentName(line.substring(0, index)).lastIndexOf('/');
-    if (index < 0) return line;
+    int tailIndex = index + (line.substring(index + ".dart".length()).startsWith("\"") ? ".dart\"".length() : ".dart".length());
 
-    return "pub run test " + line.substring(index + 1);
+    int slashIndex = FileUtil.toSystemIndependentName(line.substring(0, index)).lastIndexOf('/');
+    if (slashIndex < 0) return line;
+
+    return "pub run test " + line.substring(slashIndex + 1, index) + ".dart" + line.substring(tailIndex);
   }
 }
