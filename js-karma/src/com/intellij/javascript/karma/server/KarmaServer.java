@@ -12,6 +12,7 @@ import com.intellij.javascript.karma.execution.KarmaServerSettings;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.karma.util.StreamEventListener;
 import com.intellij.javascript.nodejs.NodeCommandLineUtil;
+import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.ConsoleCommandLineFolder;
 import com.intellij.openapi.Disposable;
@@ -143,8 +144,13 @@ public class KarmaServer {
   private static KillableColoredProcessHandler startServer(@NotNull KarmaServerSettings serverSettings,
                                                            @Nullable KarmaCoveragePeer coveragePeer,
                                                            @NotNull ConsoleCommandLineFolder commandLineFolder) throws IOException {
-    GeneralCommandLine commandLine = createCommandLine(serverSettings, coveragePeer, commandLineFolder);
-
+    GeneralCommandLine commandLine;
+    try {
+      commandLine = createCommandLine(serverSettings, coveragePeer, commandLineFolder);
+    }
+    catch (ExecutionException e) {
+      throw new IOException("Can not create command line", e);
+    }
     KillableColoredProcessHandler processHandler;
     try {
       processHandler = new KillableColoredProcessHandler(commandLine, true);
@@ -160,13 +166,14 @@ public class KarmaServer {
   @NotNull
   private static GeneralCommandLine createCommandLine(@NotNull KarmaServerSettings serverSettings,
                                                       @Nullable KarmaCoveragePeer coveragePeer,
-                                                      @NotNull ConsoleCommandLineFolder commandLineFolder) throws IOException {
+                                                      @NotNull ConsoleCommandLineFolder commandLineFolder) throws IOException,
+                                                                                                                  ExecutionException {
+    NodeCommandLineConfigurator configurator = NodeCommandLineConfigurator.find(serverSettings.getNodeInterpreter());
     GeneralCommandLine commandLine = new GeneralCommandLine();
     serverSettings.getEnvData().configureCommandLine(commandLine, true);
     NodeCommandLineUtil.configureUsefulEnvironment(commandLine);
     commandLine.withWorkDirectory(serverSettings.getWorkingDirectorySystemDependent());
     commandLine.setRedirectErrorStream(true);
-    commandLine.setExePath(serverSettings.getNodeInterpreter().getInterpreterSystemDependentPath());
     List<String> nodeOptionList = ParametersListUtil.parse(serverSettings.getNodeOptions().trim());
     commandLine.addParameters(nodeOptionList);
     //try {
@@ -190,7 +197,7 @@ public class KarmaServer {
         if (configPath == null) {
           configPath = configFile.getAbsolutePath();
         }
-        commandLine.addParameter("--config=" + configPath);
+        commandLine.addParameters("--config", configPath);
         commandLineFolder.addPlaceholderText("--config=" + userConfigFileName);
       }
       else {
@@ -200,7 +207,7 @@ public class KarmaServer {
           commandLine.addParameter(defaultProject);
           commandLineFolder.addPlaceholderText(defaultProject);
         }
-        commandLine.addParameter("--karma-config=" + configFile.getAbsolutePath());
+        commandLine.addParameters("--karma-config", configFile.getAbsolutePath());
         commandLineFolder.addPlaceholderText("--karma-config=" + userConfigFileName);
       }
     }
@@ -215,7 +222,7 @@ public class KarmaServer {
       commandLine.addParameter("--browsers=" + browsers);
       commandLineFolder.addLastParameterFrom(commandLine);
     }
-    setIntellijParameter(commandLine, "user-config", serverSettings.getConfigurationFilePath());
+    setIntellijParameter(commandLine, "user-config", configurator.convertLocalPathToRemote(serverSettings.getConfigurationFilePath()));
     if (coveragePeer != null) {
       setIntellijParameter(commandLine, "coverage-temp-dir", coveragePeer.getCoverageTempDir().getAbsolutePath());
       if (angularCli) {
@@ -227,6 +234,7 @@ public class KarmaServer {
       setIntellijParameter(commandLine, "debug", "true");
     }
     commandLine.setCharset(CharsetToolkit.UTF8_CHARSET);
+    configurator.configure(commandLine);
     return commandLine;
   }
 
