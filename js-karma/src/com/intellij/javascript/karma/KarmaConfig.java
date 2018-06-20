@@ -5,6 +5,8 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.ObjectUtils;
 import com.intellij.webcore.util.JsonUtil;
@@ -98,13 +100,14 @@ public class KarmaConfig {
 
   @Nullable
   public static KarmaConfig parseFromJson(@NotNull JsonElement jsonElement,
-                                          @NotNull File configurationFileDir) {
+                                          @NotNull File configurationFileDir,
+                                          @NotNull NodeJsInterpreter interpreter) {
     if (jsonElement.isJsonObject()) {
       JsonObject rootObject = jsonElement.getAsJsonObject();
 
       boolean autoWatch = JsonUtil.getChildAsBoolean(rootObject, AUTO_WATCH, false);
       List<String> browsers = parseBrowsers(rootObject);
-      String basePath = parseBasePath(jsonElement, rootObject, configurationFileDir);
+      String basePath = parseBasePath(jsonElement, rootObject, configurationFileDir, interpreter);
       String protocol = ObjectUtils.notNull(JsonUtil.getChildAsString(rootObject, PROTOCOL), "http:");
       String hostname = parseHostname(jsonElement, rootObject);
       String urlRoot = parseUrlRoot(jsonElement, rootObject);
@@ -120,13 +123,14 @@ public class KarmaConfig {
   @NotNull
   private static String parseBasePath(@NotNull JsonElement all,
                                       @NotNull JsonObject obj,
-                                      @NotNull File configurationFileDir) {
+                                      @NotNull File configurationFileDir,
+                                      @NotNull NodeJsInterpreter interpreter) {
     String basePath = JsonUtil.getChildAsString(obj, BASE_PATH);
     if (basePath == null) {
       LOG.warn("Can not parse Karma config.basePath from " + all.toString());
       basePath = configurationFileDir.getAbsolutePath();
     }
-    return basePath;
+    return NodeInterpreterUtil.convertRemotePathToLocal(basePath, interpreter);
   }
 
   private static String parseUrlRoot(@NotNull JsonElement all, @NotNull JsonObject obj) {
