@@ -154,7 +154,7 @@ public class DartSdkUtil {
 
     final String[] knownPaths = PropertiesComponent.getInstance().getValues(propertyKey);
     if (knownPaths != null && knownPaths.length > 0) {
-      for (String path : knownPaths) {
+      for (String path: knownPaths) {
         final String pathSD = FileUtil.toSystemDependentName(path);
         if (!pathSD.equals(currentPath) && pathChecker.fun(path)) {
           validPathsForUI.add(pathSD);
@@ -216,9 +216,5 @@ public class DartSdkUtil {
 
   public static String getPubPath(final @NotNull String sdkRoot) {
     return sdkRoot + (SystemInfo.isWindows ? "/bin/pub.bat" : "/bin/pub");
-  }
-
-  public static String getPubSnapshotPath(@NotNull final DartSdk sdk) {
-    return sdk.getHomePath() + "/bin/snapshots/pub.dart.snapshot";
   }
 }
