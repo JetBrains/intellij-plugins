@@ -8,8 +8,8 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.javascript.JSRunProfileWithCompileBeforeLaunchOption;
 import com.intellij.javascript.karma.scope.KarmaScopeKind;
 import com.intellij.javascript.karma.util.KarmaUtil;
+import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
-import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.testFramework.PreferableRunConfiguration;
 import com.intellij.javascript.testFramework.util.JsTestFqn;
@@ -86,7 +86,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     NodePackage pkg = myRunSettings.getKarmaPackage();
     if (pkg == null) {
       Project project = getProject();
-      NodeJsLocalInterpreter interpreter = NodeJsLocalInterpreter.tryCast(myRunSettings.getInterpreterRef().resolve(project));
+      NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolve(project);
       pkg = KarmaUtil.PKG_DESCRIPTOR.findFirstDirectDependencyPackage(project, interpreter, null);
       if (!pkg.isEmptyPath() && !KarmaUtil.isPathUnderContentRoots(project, pkg)) {
         NodePackage projectKarmaPackage = KarmaProjectSettings.getKarmaPackage(project);
@@ -147,8 +147,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
   }
 
   private void check(@NotNull NodePackage karmaPackage) throws RuntimeConfigurationException {
-    NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolve(getProject());
-    NodeJsLocalInterpreter.checkForRunConfiguration(interpreter);
+    NodeInterpreterUtil.checkForRunConfiguration(myRunSettings.getInterpreterRef().resolve(getProject()));
     karmaPackage.validateForRunConfiguration(KarmaUtil.NODE_PACKAGE_NAME);
     validatePath("configuration file", myRunSettings.getConfigPathSystemDependent(), true);
     validatePath("working directory", myRunSettings.getWorkingDirectorySystemDependent(), false);
