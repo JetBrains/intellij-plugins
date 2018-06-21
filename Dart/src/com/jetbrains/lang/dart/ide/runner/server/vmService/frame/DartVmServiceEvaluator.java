@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 
 import com.intellij.openapi.editor.Document;
@@ -16,6 +29,7 @@ import com.intellij.xdebugger.evaluation.ExpressionInfo;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XValue;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.DartVmServiceDebugProcess;
+import com.jetbrains.lang.dart.ide.runner.server.vmService.VmServiceWrapper;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashSet;
@@ -51,17 +65,24 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
     final List<VirtualFile> libraryFiles = new ArrayList<>();
     // Turn off pausing on exceptions as it is confusing to mouse over an expression
     // and to have that trigger pausing at an exception.
-    myDebugProcess.getVmServiceWrapper().setExceptionPauseMode(ExceptionPauseMode.None);
+    final VmServiceWrapper vmService = myDebugProcess.getVmServiceWrapper();
+    if (vmService == null) {
+      // not connected to the VM yet
+      callback.errorOccurred("No connection to the Dart VM");
+      return;
+    }
+
+    vmService.setExceptionPauseMode(ExceptionPauseMode.None);
     final XEvaluationCallback wrappedCallback = new XEvaluationCallback() {
       @Override
       public void evaluated(@NotNull XValue result) {
-        myDebugProcess.getVmServiceWrapper().setExceptionPauseMode(myDebugProcess.getBreakOnExceptionMode());
+        vmService.setExceptionPauseMode(myDebugProcess.getBreakOnExceptionMode());
         callback.evaluated(result);
       }
 
       @Override
       public void errorOccurred(@NotNull String errorMessage) {
-        myDebugProcess.getVmServiceWrapper().setExceptionPauseMode(myDebugProcess.getBreakOnExceptionMode());
+        vmService.setExceptionPauseMode(myDebugProcess.getBreakOnExceptionMode());
         callback.errorOccurred(errorMessage);
       }
     };
@@ -100,14 +121,14 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
     final DartClass dartClass = element != null ? PsiTreeUtil.getParentOfType(element, DartClass.class) : null;
     final String dartClassName = dartClass != null ? dartClass.getName() : null;
 
-    myDebugProcess.getVmServiceWrapper().getCachedIsolate(isolateId).whenComplete((isolate, error) -> {
+    vmService.getCachedIsolate(isolateId).whenComplete((isolate, error) -> {
       if (error != null) {
         wrappedCallback.errorOccurred(error.getMessage());
         return;
       }
       LibraryRef libraryRef = findMatchingLibrary(isolate, libraryFiles);
       if (dartClassName != null) {
-        myDebugProcess.getVmServiceWrapper().getObject(isolateId, libraryRef.getId(), new GetObjectConsumer() {
+        vmService.getObject(isolateId, libraryRef.getId(), new GetObjectConsumer() {
 
           @Override
           public void onError(RPCError error) {
@@ -117,15 +138,15 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
           @Override
           public void received(Obj response) {
             Library library = (Library)response;
-            for (ClassRef classRef : library.getClasses()) {
+            for (ClassRef classRef: library.getClasses()) {
               if (classRef.getName().equals(dartClassName)) {
-                myDebugProcess.getVmServiceWrapper().evaluateInTargetContext(isolateId, classRef.getId(), expression, wrappedCallback);
+                vmService.evaluateInTargetContext(isolateId, classRef.getId(), expression, wrappedCallback);
                 return;
               }
             }
 
             // Class not found so just use the library.
-            myDebugProcess.getVmServiceWrapper().evaluateInTargetContext(isolateId, libraryRef.getId(), expression, wrappedCallback);
+            vmService.evaluateInTargetContext(isolateId, libraryRef.getId(), expression, wrappedCallback);
           }
 
           @Override
@@ -135,7 +156,7 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
         });
       }
       else {
-        myDebugProcess.getVmServiceWrapper().evaluateInTargetContext(isolateId, libraryRef.getId(), expression, wrappedCallback);
+        vmService.evaluateInTargetContext(isolateId, libraryRef.getId(), expression, wrappedCallback);
       }
     });
   }
@@ -144,11 +165,11 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
     if (libraryFiles != null && !libraryFiles.isEmpty()) {
       Set<String> uris = new THashSet<>();
 
-      for (VirtualFile libraryFile : libraryFiles) {
+      for (VirtualFile libraryFile: libraryFiles) {
         uris.addAll(myDebugProcess.getUrisForFile(libraryFile));
       }
 
-      for (LibraryRef library : isolate.getLibraries()) {
+      for (LibraryRef library: isolate.getLibraries()) {
         if (uris.contains(library.getUri())) {
           return library;
         }
