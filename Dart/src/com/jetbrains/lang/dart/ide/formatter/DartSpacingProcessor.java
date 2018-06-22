@@ -41,7 +41,7 @@ public class DartSpacingProcessor {
             COVARIANT);
 
   private static final TokenSet KEYWORDS_WITH_SPACE_BEFORE =
-    TokenSet.create(GET, SET, EXTENDS, IMPLEMENTS, DEFERRED, AS, SHOW_COMBINATOR, HIDE_COMBINATOR, COVARIANT);
+    TokenSet.create(GET, SET, EXTENDS, IMPLEMENTS, DEFERRED, AS, SHOW_COMBINATOR, HIDE_COMBINATOR, COVARIANT, IN);
 
   private static final TokenSet CASCADE_REFERENCE_EXPRESSION_SET = TokenSet.create(CASCADE_REFERENCE_EXPRESSION);
   private static final TokenSet REFERENCE_EXPRESSION_SET = TokenSet.create(REFERENCE_EXPRESSION);
@@ -1002,7 +1002,7 @@ public class DartSpacingProcessor {
     boolean mustSplit = false;
     boolean mustStopAtNextMethod = false;
     List<TextRange> ranges = new ArrayList<>();
-    for (ASTNode node : calls.list) {
+    for (ASTNode node: calls.list) {
       if (doesMessageHaveArguments(node)) {
         if (mustStopAtNextMethod) {
           return Spacing.createDependentLFSpacing(0, 0, ranges, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);

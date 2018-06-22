@@ -49,3 +49,8 @@ class Foo {
       tmp.push(new Array<Int>());
   }
 }
+
+foo() {
+  for (MeasurementUnitConverter converter in lengthUnitHandler
+      .measurementUnitConverters) {}
+}
