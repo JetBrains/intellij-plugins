@@ -6,7 +6,18 @@ import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.filters.Filter;
 import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration;
 import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType;
+import com.intellij.javascript.karma.execution.KarmaConfigurationType;
+import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
+import com.intellij.javascript.karma.execution.KarmaRunSettings;
+import com.intellij.javascript.karma.util.KarmaUtil;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.javascript.nodejs.util.NodePackageDescriptor;
+import com.intellij.javascript.protractor.ProtractorConfigurationType;
+import com.intellij.javascript.protractor.ProtractorRunConfiguration;
+import com.intellij.javascript.protractor.ProtractorRunSettings;
+import com.intellij.javascript.protractor.ProtractorUtil;
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator;
 import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor;
 import com.intellij.lang.javascript.buildTools.npm.rc.NpmCommand;
@@ -14,11 +25,15 @@ import com.intellij.lang.javascript.buildTools.npm.rc.NpmConfigurationType;
 import com.intellij.lang.javascript.buildTools.npm.rc.NpmRunConfiguration;
 import com.intellij.lang.javascript.buildTools.npm.rc.NpmRunSettings;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import icons.AngularJSIcons;
@@ -30,6 +45,8 @@ import javax.swing.*;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * @author Dennis.Ushakov
@@ -151,14 +168,13 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
         return;
       }
 
-      String folderName = baseDir.getName();
+      String nameSuffix = ModuleManager.getInstance(project).getModules().length > 1 ? " (" + baseDir.getName() + ")" : "";
 
-      createJSDebugConfiguration(runManager, "Angular Application (" + folderName + ")", "http://localhost:4200");
-
+      createJSDebugConfiguration(runManager, "Angular Application" + nameSuffix, "http://localhost:4200");
+      createKarmaConfiguration(project, baseDir, runManager, "Tests" + nameSuffix);
+      createProtractorConfiguration(project, baseDir, runManager, "E2E Tests" + nameSuffix);
       runManager.setSelectedConfiguration(
-        createNpmConfiguration(packageJsonPath, runManager, "Angular CLI Server (" + folderName + ")", "start"));
-      createNpmConfiguration(packageJsonPath, runManager, "Karma Tests (" + folderName + ")", "test");
-      createNpmConfiguration(packageJsonPath, runManager, "Protractor E2E Tests (" + folderName + ")", "e2e");
+        createNpmConfiguration(packageJsonPath, runManager, "Angular CLI Server" + nameSuffix, "start"));
     }
   }
 
@@ -172,35 +188,86 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
   }
 
   private static void createJSDebugConfiguration(@NotNull RunManager runManager, @NotNull String label, @NotNull String url) {
-    ConfigurationType configurationType = JavascriptDebugConfigurationType.getTypeInstance();
-    RunnerAndConfigurationSettings settings =
-      runManager.createRunConfiguration(label, configurationType.getConfigurationFactories()[0]);
-
-    JavaScriptDebugConfiguration config = (JavaScriptDebugConfiguration)settings.getConfiguration();
-    config.setUri(url);
-
-    runManager.addConfiguration(settings);
+    createRunConfig(runManager, label, JavascriptDebugConfigurationType.getTypeInstance(),
+                    (JavaScriptDebugConfiguration config) -> config.setUri(url));
   }
 
   @NotNull
   private static RunnerAndConfigurationSettings createNpmConfiguration(@NotNull String packageJsonPath,
-                                             @NotNull RunManager runManager,
-                                             @NotNull String label,
-                                             @NotNull String scriptName) {
-    ConfigurationType configurationType = NpmConfigurationType.getInstance();
+                                                                       @NotNull RunManager runManager,
+                                                                       @NotNull String label,
+                                                                       @NotNull String scriptName) {
+    return createRunConfig(runManager, label, NpmConfigurationType.getInstance(), (NpmRunConfiguration config) ->
+      config.setRunSettings(NpmRunSettings
+                              .builder()
+                              .setCommand(NpmCommand.RUN_SCRIPT)
+                              .setScriptNames(Collections.singletonList(scriptName))
+                              .setPackageJsonPath(packageJsonPath)
+                              .build()));
+  }
+
+  private static void createKarmaConfiguration(@NotNull Project project,
+                                               @NotNull VirtualFile baseDir,
+                                               @NotNull RunManager runManager,
+                                               @NotNull String label) {
+    createRunConfig(runManager, label, KarmaConfigurationType.getInstance(), (KarmaRunConfiguration config) ->
+      config.setRunSettings(new KarmaRunSettings.Builder()
+                              .setKarmaPackage(findPackage(project, baseDir, KarmaUtil.ANGULAR_CLI__PACKAGE_NAME))
+                              .setConfigPath(findConfigFile(project, baseDir, KarmaUtil::listPossibleConfigFilesInProject))
+                              .setWorkingDirectory(baseDir.getPath())
+                              .build())
+    );
+  }
+
+  private static void createProtractorConfiguration(@NotNull Project project,
+                                                    @NotNull VirtualFile baseDir,
+                                                    @NotNull RunManager runManager,
+                                                    @NotNull String label) {
+    createRunConfig(runManager, label, ProtractorConfigurationType.getInstance(), (ProtractorRunConfiguration config) ->
+      config.setRunSettings(new ProtractorRunSettings.Builder()
+                              .setConfigFilePath(StringUtil.defaultIfEmpty(
+                                findConfigFile(project, baseDir, ProtractorUtil::listPossibleConfigFilesInProject), ""))
+                              .build())
+    );
+    Optional.ofNullable(findPackage(project, baseDir, ProtractorUtil.PACKAGE_NAME))
+            .ifPresent(pkg -> ProtractorUtil.setProtractorPackage(project, pkg));
+  }
+
+  @SuppressWarnings("unchecked")
+  private static <T> RunnerAndConfigurationSettings createRunConfig(@NotNull RunManager runManager,
+                                                                    @NotNull String label,
+                                                                    @NotNull ConfigurationType configurationType,
+                                                                    @NotNull Consumer<T> configurator) {
     RunnerAndConfigurationSettings settings =
       runManager.createConfiguration(label, configurationType.getConfigurationFactories()[0]);
 
-    NpmRunConfiguration configuration = (NpmRunConfiguration)settings.getConfiguration();
-    configuration.setRunSettings(NpmRunSettings
-                                   .builder()
-                                   .setCommand(NpmCommand.RUN_SCRIPT)
-                                   .setScriptNames(Collections.singletonList(scriptName))
-                                   .setPackageJsonPath(packageJsonPath)
-                                   .build());
+    configurator.consume((T)settings.getConfiguration());
 
     runManager.addConfiguration(settings);
     return settings;
+  }
+
+  @Nullable
+  private static NodePackage findPackage(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull String packageName) {
+    NodeJsInterpreter interpreter = NodeJsInterpreterRef.createProjectRef().resolve(project);
+    NodePackageDescriptor descr = new NodePackageDescriptor(packageName);
+    return descr.listAvailable(project, interpreter, baseDir, true)
+                .stream()
+                .filter(p -> p.getSystemIndependentPath().startsWith(baseDir.getPath())).findFirst().orElse(null);
+  }
+
+  @Nullable
+  private static String findConfigFile(@NotNull Project project,
+                                       @NotNull VirtualFile baseDir,
+                                       Function<Project, List<VirtualFile>> listProvider) {
+    return ReadAction.compute(() ->
+      listProvider.apply(project)
+                  .stream()
+                  .filter(f -> f.getPath().startsWith(baseDir.getPath()))
+                  .findFirst()
+                  .map(f -> f.getPath())
+                  .orElse(null)
+    );
   }
 
 }
