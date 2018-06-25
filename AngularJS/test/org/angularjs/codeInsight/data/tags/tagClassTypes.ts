@@ -11,6 +11,9 @@ import {Component} from "@angular/core"
         <area #area>
         {{ testArea(area) }}
         
+        <b #b></b>
+        {{ testB(b) }}
+        
         <br #br/>
         {{ testBR(br) }}
         
@@ -46,6 +49,9 @@ import {Component} from "@angular/core"
         
         <ins #ins></ins><del #del></del>
         {{ testMod(ins); testMod(del) }}
+        
+        <nav #nav></nav>
+        {{ testNav(nav) }}
         
         <ol #ol></ol>
         {{ testOList(ol) }}
@@ -92,6 +98,7 @@ import {Component} from "@angular/core"
 export class AppComponent {
     testAnchor(val: HTMLAnchorElement) {}
     testArea(val: HTMLAreaElement) {}
+    testB(val: HTMLElement) {}
     testBR(val: HTMLBRElement) {}
     testDList(val: HTMLDListElement) {}
     testDataList(val: HTMLDataListElement) {}
@@ -104,6 +111,7 @@ export class AppComponent {
     testLI(val: HTMLLIElement) {}
     testLabel(val: HTMLLabelElement) {}
     testMod(val: HTMLModElement) {}
+    testNav(val: HTMLElement) {}
     testOList(val: HTMLOListElement) {}
     testOptGroup(val: HTMLOptGroupElement) {}
     testParagraph(val: HTMLParagraphElement) {}

@@ -1,11 +1,9 @@
 package com.intellij.lang.javascript.linter.tslint.execution;
 
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
+import com.intellij.lang.javascript.service.protocol.LocalFilePath;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
@@ -31,10 +29,13 @@ public final class TsLintOutputJsonParser {
 
   @NotNull
   private final List<TsLinterError> myErrors;
+  @NotNull
+  private final Gson myGson;
 
-  public TsLintOutputJsonParser(@Nullable String path, final JsonElement root, boolean zeroBasedRowCol) {
+  public TsLintOutputJsonParser(@Nullable String path, final JsonElement root, boolean zeroBasedRowCol, @NotNull Gson gson) {
     myPath = path;
     myMyZeroBasedRowCol = zeroBasedRowCol;
+    myGson = gson;
 
     if (root instanceof JsonNull || !root.isJsonArray()) {
       logError("root element is not array");
@@ -92,7 +93,8 @@ public final class TsLintOutputJsonParser {
 
     JsonElement element = object.get(FIX_PROPERTY);
 
-    String filePath = name.getAsString();
+    LocalFilePath localfilePath = myGson.getAdapter(LocalFilePath.class).fromJsonTree(name);
+    String filePath = LocalFilePath.getPath(localfilePath);
     result.add(new TsLinterError(StringUtil.isEmpty(filePath) ? myPath : filePath,
                                  start.getFirst(),
                                  start.getSecond(),

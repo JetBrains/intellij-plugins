@@ -274,4 +274,8 @@ public class DartFormatterTest extends FormatterTestCase {
   public void testErrorInArgumentList() throws Exception {
     doTest();
   }
+
+  public void testConstructorsWithoutNew() throws Exception {
+    doTest();
+  }
 }

@@ -3,7 +3,7 @@ package com.intellij.javascript.karma.coverage;
 import com.google.gson.JsonElement;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.StreamEventHandler;
-import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
@@ -14,8 +14,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class KarmaCoveragePeer {
-
-  private static final Logger LOG = Logger.getInstance(KarmaCoveragePeer.class);
 
   private final File myCoverageTempDir;
   private volatile KarmaCoverageSession myActiveCoverageSession;
@@ -58,6 +56,7 @@ public class KarmaCoveragePeer {
         if (coverageSession != null) {
           String path = JsonUtil.getString(eventBody);
           if (path != null) {
+            path = NodeInterpreterUtil.convertRemotePathToLocal(path, server.getServerSettings().getNodeInterpreter());
             File file = new File(path);
             if (file.isAbsolute() && file.isFile()) {
               coverageSession.onCoverageSessionFinished(file);

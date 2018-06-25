@@ -30,6 +30,7 @@
 
   <depends>JavaScript</depends>
   <depends>JavaScriptDebugger</depends>
+  <depends>Karma</depends>
   <depends>com.intellij.modules.platform</depends>
   <depends optional="true" config-file="css-support.xml">com.intellij.css</depends>
   <depends optional="true" config-file="ui-router-diagram.xml">com.intellij.diagram</depends>
@@ -52,6 +53,8 @@
 
     <projectService serviceInterface="org.angularjs.settings.AngularSettings"
                     serviceImplementation="org.angularjs.settings.AngularSettings"/>
+    <applicationService serviceInterface="org.angularjs.cli.AngularCliSchematicsRegistryService"
+                        serviceImplementation="org.angularjs.cli.AngularCliSchematicsRegistryServiceImpl"/>
 
     <stubIndex implementation="org.angularjs.index.AngularDirectivesIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularDirectivesDocIndex"/>
@@ -127,7 +130,9 @@
     <framework.detector implementation="org.angularjs.cli.AngularJSFrameworkDetector"/>
 
     <localInspection implementationClass="org.angularjs.inspections.EmptyEventHandlerInspection" displayName="Empty Event Handler"
-                     groupName="AngularJS" enabledByDefault="true" level="WARNING" language="HTML"/>
+                     groupName="Angular" enabledByDefault="true" level="WARNING" language="HTML"/>
+    <localInspection implementationClass="org.angularjs.inspections.AngularCliAddDependencyInspection" displayName="Angular CLI Add Dependency"
+                     groupName="Angular" enabledByDefault="true" level="WARNING" language="JSON"/>
     <diagram.Provider implementation="org.angularjs.codeInsight.router.AngularUiRouterDiagramProvider"/>
     <javascript.module.provider implementation="org.angularjs.codeInsight.attributes.AngularModulesProvider"/>
     <fileTypeFactory implementation="org.angularjs.AngularTypeScriptConfigFileTypeFactory"/>
@@ -151,7 +156,12 @@
 
   <actions>
     <action class="org.angularjs.cli.actions.AngularCliGenerateAction" id="angularCliGenerate"
-            text="Angular CLI..." description="Generates new code from AngularCLI blueprints"
+            text="Angular Schematics..." description="Generates new code from Angular Schematics"
+            icon="/icons/angular2.png">
+      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
+    </action>
+    <action class="org.angularjs.cli.actions.AngularCliAddDependencyAction" id="angularCliAdd"
+            text="Angular Dependency..." description="Adds new dependency and executes associated 'ng-add' schematics"
             icon="/icons/angular2.png">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
     </action>

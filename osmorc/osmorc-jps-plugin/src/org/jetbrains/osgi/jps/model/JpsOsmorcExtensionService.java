@@ -24,14 +24,8 @@ import org.jetbrains.jps.model.module.JpsModule;
  * @author michael.golubev
  */
 public class JpsOsmorcExtensionService {
-  private static final JpsOsmorcExtensionService INSTANCE = new JpsOsmorcExtensionService();
 
   private JpsOsmorcExtensionService() { }
-
-  /** deprecated to be removed in IDEA 16 */
-  public static JpsOsmorcExtensionService getInstance() {
-    return INSTANCE;
-  }
 
   @Nullable
   public static JpsOsmorcProjectExtension getExtension(@NotNull JpsProject project) {

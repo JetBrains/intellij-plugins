@@ -97,6 +97,7 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
    * this is is needed to allow selecting classes and members in project view
    * @deprecated remove this method with proper check when Tree API is improved (e.g. ProjectViewNode#contains(object))
    */
+  @Deprecated
   static boolean nodeContainsFile(ProjectViewNode node, VirtualFile file) {
     AbstractTreeNode parent = node.getParent();
     while (parent instanceof SwfPackageElementNode) {

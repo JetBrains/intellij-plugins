@@ -1,5 +1,6 @@
 package com.intellij.prettierjs;
 
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.service.*;
 import com.intellij.lang.javascript.service.protocol.*;
@@ -112,7 +113,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
         LOGGER.error("prettier language service plugin not found");
       }
       state.pluginName = "prettier";
-      state.pluginPath = service.getAbsolutePath();
+      state.pluginPath = LocalFilePath.create(service.getAbsolutePath());
       return state;
     }
 
@@ -123,8 +124,8 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
 
     @Nullable
     @Override
-    protected String getNodeInterpreter() {
-      return JSLanguageServiceUtil.getInterpreterPathIfValid(
+    protected NodeJsInterpreter getInterpreter() {
+      return JSLanguageServiceUtil.getInterpreterIfValid(
         PrettierConfiguration.getInstance(myProject)
                              .getInterpreterRef()
                              .resolve(myProject));

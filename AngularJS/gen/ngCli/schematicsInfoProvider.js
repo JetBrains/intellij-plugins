@@ -1,5 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+try {
+    require('@angular/cli/utilities/schematics');
+}
+catch (e) {
+    console.info("No schematics");
+    process.exit(0);
+}
 var schematics_1 = require("@angular/cli/utilities/schematics");
 var path = require("path");
 var fs = require("fs");
@@ -16,7 +23,7 @@ if (collections.indexOf(defaultCollectionName) < 0) {
     collections.push(defaultCollectionName);
 }
 var allSchematics = collections
-    // handle update schematics with `ng update`
+    // Update schematics should be executed only with `ng update`
     .filter(function (c) { return c !== "@schematics/update"; })
     .map(getCollectionSchematics)
     .reduce(function (a, b) { return a.concat.apply(a, b); });
@@ -47,27 +54,33 @@ function getAvailableSchematicCollections() {
     return result;
 }
 function getCollectionSchematics(collectionName) {
-    var collection = schematics_1.getCollection(collectionName);
-    var schematicNames = engineHost.listSchematics(collection);
-    var schematicInfos = schematicNames
-        .map(function (name) { return schematics_1.getSchematic(collection, name).description; })
-        //handle `ng-add` and `ng-update` schematics with `ng add` and `ng update` support
-        .filter(function (info) { return info.name !== "ng-add" && info.name !== "ng-update"; });
-    var newFormat = schematicInfos
-        .map(function (info) { return info.schemaJson.properties; })
-        .map(function (prop) { return Object.keys(prop).map(function (k) { return prop[k]; }); })
-        .reduce(function (a, b) { return a.concat(b); })
-        .find(function (prop) { return prop.$default; });
-    return schematicInfos.map(function (info) {
-        var required = info.schemaJson.required || [];
-        return {
-            description: info.description,
-            name: (collectionName === defaultCollectionName ? "" : collectionName + ":") + info.name,
-            options: filterProps(info.schemaJson, function (key, prop) { return newFormat ? prop.$default === undefined : required.indexOf(key) < 0; })
-                .concat(coreOptions()),
-            arguments: filterProps(info.schemaJson, function (key, prop) { return newFormat ? prop.$default !== undefined && prop.$default.$source === "argv" : required.indexOf(key) >= 0; })
-        };
-    });
+    try {
+        var collection_1 = schematics_1.getCollection(collectionName);
+        var schematicNames = engineHost.listSchematics(collection_1);
+        var schematicInfos = schematicNames
+            .map(function (name) { return schematics_1.getSchematic(collection_1, name).description; })
+            //`ng-add` schematics should be executed only with `ng add`
+            .filter(function (info) { return info.name !== "ng-add" && info.schemaJson !== undefined; });
+        var newFormat_1 = schematicInfos
+            .map(function (info) { return info.schemaJson.properties; })
+            .map(function (prop) { return Object.keys(prop).map(function (k) { return prop[k]; }); })
+            .reduce(function (a, b) { return a.concat(b); }, [])
+            .find(function (prop) { return prop.$default; });
+        return schematicInfos.map(function (info) {
+            var required = info.schemaJson.required || [];
+            return {
+                description: info.description,
+                name: (collectionName === defaultCollectionName ? "" : collectionName + ":") + info.name,
+                options: filterProps(info.schemaJson, function (key, prop) { return newFormat_1 ? prop.$default === undefined : required.indexOf(key) < 0; })
+                    .concat(coreOptions()),
+                arguments: filterProps(info.schemaJson, function (key, prop) { return newFormat_1 ? prop.$default !== undefined && prop.$default.$source === "argv" : required.indexOf(key) >= 0; })
+            };
+        });
+    }
+    catch (e) {
+        console.error(e.stack || e);
+        return [];
+    }
 }
 function filterProps(schemaJson, filter) {
     var required = schemaJson.required || [];

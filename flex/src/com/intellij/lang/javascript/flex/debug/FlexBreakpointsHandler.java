@@ -13,7 +13,6 @@
 // limitations under the License.
 package com.intellij.lang.javascript.flex.debug;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.openapi.extensions.ExtensionPointName;
@@ -77,7 +76,7 @@ public class FlexBreakpointsHandler {
 
   void updateBreakpointStatusToInvalid(XLineBreakpoint<XBreakpointProperties> breakpoint) {
     if (breakpoint != null) {
-      myDebugProcess.getSession().updateBreakpointPresentation(breakpoint, AllIcons.Debugger.Db_invalid_breakpoint, null);
+      myDebugProcess.getSession().setBreakpointInvalid(breakpoint, null);
     }
   }
 
@@ -88,7 +87,7 @@ public class FlexBreakpointsHandler {
     final XLineBreakpoint<XBreakpointProperties> breakpoint = myIndexToBreakpointMap.get(index);
 
     if (breakpoint != null) {
-      myDebugProcess.getSession().updateBreakpointPresentation(breakpoint, null, null);
+      myDebugProcess.getSession().setBreakpointVerified(breakpoint);
     }
     else {
       // run to cursor

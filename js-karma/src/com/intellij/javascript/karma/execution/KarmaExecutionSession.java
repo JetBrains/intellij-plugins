@@ -13,7 +13,8 @@ import com.intellij.javascript.karma.server.KarmaJsSourcesLocator;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
 import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
-import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
+import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
@@ -128,7 +129,7 @@ public class KarmaExecutionSession {
 
   @NotNull
   private OSProcessHandler createOSProcessHandler(@NotNull KarmaServer server) throws ExecutionException {
-    NodeJsLocalInterpreter interpreter = myRunSettings.getInterpreterRef().resolveAsLocal(myProject);
+    NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolveNotNull(myProject);
     GeneralCommandLine commandLine = createCommandLine(interpreter, server);
     OSProcessHandler processHandler = new KillableColoredProcessHandler(commandLine);
     server.getRestarter().onRunnerExecutionStarted(processHandler);
@@ -137,12 +138,11 @@ public class KarmaExecutionSession {
   }
 
   @NotNull
-  private GeneralCommandLine createCommandLine(@NotNull NodeJsLocalInterpreter interpreter,
+  private GeneralCommandLine createCommandLine(@NotNull NodeJsInterpreter interpreter,
                                                @NotNull KarmaServer server) throws ExecutionException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     commandLine.setWorkDirectory(myRunSettings.getWorkingDirectorySystemDependent());
     commandLine.setCharset(CharsetToolkit.UTF8_CHARSET);
-    commandLine.setExePath(interpreter.getInterpreterSystemDependentPath());
     List<String> nodeOptionList = ParametersListUtil.parse(myRunSettings.getNodeOptions().trim());
     commandLine.addParameters(nodeOptionList);
     //NodeCommandLineUtil.addNodeOptionsForDebugging(commandLine, Collections.emptyList(), 5858, false, interpreter, true);
@@ -162,6 +162,7 @@ public class KarmaExecutionSession {
       commandLine.addParameter("--testName=" + testNamesPattern);
       myFolder.addLastParameterFrom(commandLine);
     }
+    NodeCommandLineConfigurator.find(interpreter).configure(commandLine);
     return commandLine;
   }
 

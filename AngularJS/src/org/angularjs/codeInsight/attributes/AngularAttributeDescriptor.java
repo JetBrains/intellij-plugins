@@ -58,6 +58,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
    * NativeScript compatibility
    * @deprecated to be removed in 2017.3
    */
+  @Deprecated
   public AngularAttributeDescriptor(final Project project,
                                     String attributeName,
                                     final StubIndexKey<String, JSImplicitElementProvider> index) {
