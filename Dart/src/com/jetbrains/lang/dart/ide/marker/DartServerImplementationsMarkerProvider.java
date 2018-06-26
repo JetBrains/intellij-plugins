@@ -68,13 +68,13 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
       return null;
     }
     // classes
-    for (DartServerData.DartRegion implementedClassRegion : service.getImplementedClasses(file)) {
+    for (DartServerData.DartRegion implementedClassRegion: service.getImplementedClasses(file)) {
       if (implementedClassRegion.getOffset() == nameOffset && implementedClassRegion.getLength() == nameLength) {
         return createMarkerClass(name);
       }
     }
     // members
-    for (DartServerData.DartRegion implementedMemberRegion : service.getImplementedMembers(file)) {
+    for (DartServerData.DartRegion implementedMemberRegion: service.getImplementedMembers(file)) {
       if (implementedMemberRegion.getOffset() == nameOffset && implementedMemberRegion.getLength() == nameLength) {
         return createMarkerMember(name);
       }
@@ -86,13 +86,13 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
   @NotNull
   private static LineMarkerInfo createMarkerClass(@NotNull final DartComponentName name) {
     final VirtualFile file = name.getContainingFile().getVirtualFile();
-    final int nameOffset = name.getTextRange().getStartOffset();
     PsiElement anchor = PsiTreeUtil.getDeepestFirst(name);
     return new LineMarkerInfo<>(anchor, anchor.getTextRange(), AllIcons.Gutter.OverridenMethod, Pass.LINE_MARKERS,
                                 element -> DaemonBundle.message("class.is.subclassed.too.many"),
                                 (e, __) -> {
-                                  final List<TypeHierarchyItem> items = DartAnalysisServerService.getInstance(name.getProject())
-                                    .search_getTypeHierarchy(file, nameOffset, false);
+                                  DartAnalysisServerService das = DartAnalysisServerService.getInstance(name.getProject());
+                                  final List<TypeHierarchyItem> items =
+                                    das.search_getTypeHierarchy(file, anchor.getTextRange().getStartOffset(), false);
                                   if (items.isEmpty()) {
                                     return;
                                   }
@@ -111,13 +111,13 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
   @NotNull
   private static LineMarkerInfo createMarkerMember(@NotNull final DartComponentName name) {
     final VirtualFile file = name.getContainingFile().getVirtualFile();
-    final int nameOffset = name.getTextRange().getStartOffset();
     PsiElement anchor = PsiTreeUtil.getDeepestFirst(name);
     return new LineMarkerInfo<>(anchor, anchor.getTextRange(), AllIcons.Gutter.OverridenMethod, Pass.LINE_MARKERS,
                                 element -> DaemonBundle.message("method.is.overridden.too.many"),
                                 (e, __) -> {
-                                  final List<TypeHierarchyItem> items = DartAnalysisServerService.getInstance(name.getProject())
-                                    .search_getTypeHierarchy(file, nameOffset, false);
+                                  DartAnalysisServerService das = DartAnalysisServerService.getInstance(name.getProject());
+                                  final List<TypeHierarchyItem> items =
+                                    das.search_getTypeHierarchy(file, anchor.getTextRange().getStartOffset(), false);
                                   if (items.isEmpty()) {
                                     return;
                                   }
