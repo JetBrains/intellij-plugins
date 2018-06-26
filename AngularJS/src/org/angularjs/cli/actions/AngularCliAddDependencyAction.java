@@ -287,7 +287,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
                                                       NpmRegistryService.namePrefixSearch(prefix), 20, pkg -> true, result::add);
       }
       catch (IOException e) {
-        LOG.error(e);
+        LOG.info(e);
       }
       return result;
     }

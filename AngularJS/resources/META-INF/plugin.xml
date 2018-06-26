@@ -156,7 +156,7 @@
 
   <actions>
     <action class="org.angularjs.cli.actions.AngularCliGenerateAction" id="angularCliGenerate"
-            text="Angular Schematics..." description="Generates new code from Angular Schematics"
+            text="Angular Schematic..." description="Generates new code from Angular Schematics"
             icon="/icons/angular2.png">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
     </action>
