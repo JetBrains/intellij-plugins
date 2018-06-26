@@ -197,14 +197,18 @@ object ResourceTypesSaver {
 
         val sectionTitle = cur.text()
 
-        if (sectionTitle == "Return Value") {
+        if (sectionTitle == "Return Value" || sectionTitle == "Return Values") {
           for (term in vlist.select("span.term")) {
             if (term.parent().parent().parent() !== vlist) {
               continue
             }
 
             val descr = term.parent().nextElementSibling()
-            val name = term.text()
+            var name = term.text()
+
+            if (name == "DomainArn (deprecated)") {
+              name = "DomainArn"
+            }
 
             builder.addAttribute(name).description = descr.text()
           }
@@ -213,7 +217,7 @@ object ResourceTypesSaver {
         }
 
         if ("Properties" != sectionTitle && "Members" != sectionTitle) {
-          continue
+          error("Unknown section $sectionTitle")
         }
 
         for (term in vlist.select("span.term")) {

@@ -1443,7 +1443,20 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>ApiKey</string>
+            <ResourceAttribute>
+              <name>ApiKey</name>
+            </ResourceAttribute>
+          </entry>
+          <entry>
+            <string>Arn</string>
+            <ResourceAttribute>
+              <name>Arn</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -1533,7 +1546,20 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>DataSourceArn</string>
+            <ResourceAttribute>
+              <name>DataSourceArn</name>
+            </ResourceAttribute>
+          </entry>
+          <entry>
+            <string>Name</string>
+            <ResourceAttribute>
+              <name>Name</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -1593,7 +1619,26 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>GraphQLUrl</string>
+            <ResourceAttribute>
+              <name>GraphQLUrl</name>
+            </ResourceAttribute>
+          </entry>
+          <entry>
+            <string>Arn</string>
+            <ResourceAttribute>
+              <name>Arn</name>
+            </ResourceAttribute>
+          </entry>
+          <entry>
+            <string>ApiId</string>
+            <ResourceAttribute>
+              <name>ApiId</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -1723,7 +1768,26 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>TypeName</string>
+            <ResourceAttribute>
+              <name>TypeName</name>
+            </ResourceAttribute>
+          </entry>
+          <entry>
+            <string>ResolverArn</string>
+            <ResourceAttribute>
+              <name>ResolverArn</name>
+            </ResourceAttribute>
+          </entry>
+          <entry>
+            <string>FieldName</string>
+            <ResourceAttribute>
+              <name>FieldName</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -3216,7 +3280,14 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>Outputs.NestedStackOutputName</string>
+            <ResourceAttribute>
+              <name>Outputs.NestedStackOutputName</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -3292,7 +3363,14 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>S3CanonicalUserId</string>
+            <ResourceAttribute>
+              <name>S3CanonicalUserId</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -3359,7 +3437,14 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>DomainName</string>
+            <ResourceAttribute>
+              <name>DomainName</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -5362,7 +5447,14 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>ParameterGroupName</string>
+            <ResourceAttribute>
+              <name>ParameterGroupName</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -5402,7 +5494,14 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>SubnetGroupName</string>
+            <ResourceAttribute>
+              <name>SubnetGroupName</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -7139,7 +7238,20 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>LatestVersionNumber</string>
+            <ResourceAttribute>
+              <name>LatestVersionNumber</name>
+            </ResourceAttribute>
+          </entry>
+          <entry>
+            <string>DefaultVersionNumber</string>
+            <ResourceAttribute>
+              <name>DefaultVersionNumber</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -11716,6 +11828,12 @@
         </properties>
         <attributes class="linked-hash-map">
           <entry>
+            <string>Arn</string>
+            <ResourceAttribute>
+              <name>Arn</name>
+            </ResourceAttribute>
+          </entry>
+          <entry>
             <string>DomainArn</string>
             <ResourceAttribute>
               <name>DomainArn</name>
@@ -13232,6 +13350,12 @@
               <name>Arn</name>
             </ResourceAttribute>
           </entry>
+          <entry>
+            <string>RoleId</string>
+            <ResourceAttribute>
+              <name>RoleId</name>
+            </ResourceAttribute>
+          </entry>
         </attributes>
       </ResourceType>
     </entry>
@@ -13369,7 +13493,14 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>Arn</string>
+            <ResourceAttribute>
+              <name>Arn</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -13429,7 +13560,14 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>Arn</string>
+            <ResourceAttribute>
+              <name>Arn</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -13449,7 +13587,14 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>Arn</string>
+            <ResourceAttribute>
+              <name>Arn</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -14789,7 +14934,32 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>Endpoint</string>
+            <ResourceAttribute>
+              <name>Endpoint</name>
+            </ResourceAttribute>
+          </entry>
+          <entry>
+            <string>Port</string>
+            <ResourceAttribute>
+              <name>Port</name>
+            </ResourceAttribute>
+          </entry>
+          <entry>
+            <string>ReadEndpoint</string>
+            <ResourceAttribute>
+              <name>ReadEndpoint</name>
+            </ResourceAttribute>
+          </entry>
+          <entry>
+            <string>ClusterResouceId</string>
+            <ResourceAttribute>
+              <name>ClusterResouceId</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -19207,7 +19377,14 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>EndpointName</string>
+            <ResourceAttribute>
+              <name>EndpointName</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -19257,7 +19434,14 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>EndpointConfigName</string>
+            <ResourceAttribute>
+              <name>EndpointConfigName</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -19317,7 +19501,14 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>ModelName</string>
+            <ResourceAttribute>
+              <name>ModelName</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -19417,7 +19608,14 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>NotebookInstanceName</string>
+            <ResourceAttribute>
+              <name>NotebookInstanceName</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -19457,7 +19655,14 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>NotebookInstanceLifecycleConfigName</string>
+            <ResourceAttribute>
+              <name>NotebookInstanceLifecycleConfigName</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -19597,7 +19802,26 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>ProductName</string>
+            <ResourceAttribute>
+              <name>ProductName</name>
+            </ResourceAttribute>
+          </entry>
+          <entry>
+            <string>ProvisioningArtifactIds</string>
+            <ResourceAttribute>
+              <name>ProvisioningArtifactIds</name>
+            </ResourceAttribute>
+          </entry>
+          <entry>
+            <string>ProvisioningArtifactNames</string>
+            <ResourceAttribute>
+              <name>ProvisioningArtifactNames</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -19707,7 +19931,20 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>CloudformationStackArn</string>
+            <ResourceAttribute>
+              <name>CloudformationStackArn</name>
+            </ResourceAttribute>
+          </entry>
+          <entry>
+            <string>RecordId</string>
+            <ResourceAttribute>
+              <name>RecordId</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -19947,7 +20184,14 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>PortfolioName</string>
+            <ResourceAttribute>
+              <name>PortfolioName</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
