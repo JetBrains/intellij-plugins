@@ -1,5 +1,6 @@
 package org.angularjs.cli;
 
+import com.intellij.javascript.nodejs.packageJson.InstalledPackageVersion;
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
 import com.intellij.openapi.components.ServiceManager;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +15,8 @@ public abstract class AngularCliSchematicsRegistryService {
   public abstract boolean supportsNgAdd(@NotNull String packageName,
                                         @NotNull String versionOrRange,
                                         long timeout);
+
+  public abstract boolean supportsNgAdd(@NotNull InstalledPackageVersion version);
 
   public abstract boolean supportsSchematics(@NotNull String packageName,
                                              @NotNull String versionOrRange,
