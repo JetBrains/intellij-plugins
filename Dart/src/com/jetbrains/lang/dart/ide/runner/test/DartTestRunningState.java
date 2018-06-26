@@ -19,6 +19,7 @@ import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.filters.UrlFilter;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -175,12 +176,23 @@ public class DartTestRunningState extends DartCommandLineRunningState {
   }
 
   @Override
-  protected void appendParamsAfterVmOptionsBeforeArgs(@NotNull GeneralCommandLine commandLine) throws ExecutionException {
+  protected void appendParamsAfterVmOptionsBeforeArgs(@NotNull GeneralCommandLine commandLine) {
     // nothing needed
   }
 
   @Override
   protected void addVmOption(@NotNull final GeneralCommandLine commandLine, @NotNull final String option) {
+    final String arguments = StringUtil.notNullize(myRunnerParameters.getArguments());
+    if (DefaultRunExecutor.EXECUTOR_ID.equals(getEnvironment().getExecutor().getId()) &&
+        option.startsWith("--enable-vm-service:") &&
+        (arguments.startsWith("-p ") || arguments.contains(" -p "))) {
+      // When we start browser-targeted tests then there are 2 dart processes spawned: parent (pub) and child (tests).
+      // If we add --enable-vm-service option to the DART_VM_OPTIONS env var then it will apply for both processes and will obviously
+      // fail for the child process (because the port will be already occupied by the parent one).
+      // Setting --enable-vm-service option for the parent process doesn't make much sense, so we skip it.
+      return;
+    }
+
     String options = commandLine.getEnvironment().get(DART_VM_OPTIONS_ENV_VAR);
     if (StringUtil.isEmpty(options)) {
       commandLine.getEnvironment().put(DART_VM_OPTIONS_ENV_VAR, option);
