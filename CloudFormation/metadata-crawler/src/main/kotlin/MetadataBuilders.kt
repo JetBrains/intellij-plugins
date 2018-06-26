@@ -3,7 +3,15 @@ import com.intellij.aws.cloudformation.metadata.CloudFormationResourceProperty
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceTypeDescription
 
+private val nameRegex = Regex("^[a-zA-Z0-9.]+$")
+
 class ResourceTypePropertyBuilder(val name: String) {
+  init {
+    if (!nameRegex.matches(name)) {
+      error("ResourceTypePropertyName is invalid: $name")
+    }
+  }
+
   var type: String? = null
   var required: Boolean? = null
   var description: String? = null
@@ -21,12 +29,26 @@ class ResourceTypePropertyBuilder(val name: String) {
 }
 
 class ResourceTypeAttributeBuilder(val name: String) {
+  init {
+    if (!nameRegex.matches(name)) {
+      error("ResourceTypeAttributeName is invalid: $name")
+    }
+  }
+
   var description: String? = null
 
   fun toResourceTypeAttribute() = CloudFormationResourceAttribute(name)
 }
 
 class ResourceTypeBuilder(val name: String, val url: String) {
+  private val resourceTypeNameRegex = Regex("^([a-zA-Z0-9]|::)+$")
+
+  init {
+    if (!resourceTypeNameRegex.matches(name)) {
+      error("ResourceTypeName is invalid: $name")
+    }
+  }
+
   var description: String? = null
   var transform: String? = null
 

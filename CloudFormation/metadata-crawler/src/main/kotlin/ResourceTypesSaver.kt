@@ -307,6 +307,9 @@ object ResourceTypesSaver {
                 // Most likely a documentation bug, this property was introduced later
                 // and will break existing code if it is mandatory
                 false
+              } else if (builder.name == "AWS::Neptune::DBCluster" && name == "IamAuthEnabled") {
+                // Most likely a documentation bug, this property was introduced later
+                false
               } else if (requiredValue != null) {
                 if (requiredValue.equals("Yes", ignoreCase = true)) {
                   true
@@ -435,7 +438,7 @@ object ResourceTypesSaver {
         continue
       }
 
-      result.add(ResourceTypeLocation(name.trim(), URL(url, href.trim()).toExternalForm()))
+      result.add(ResourceTypeLocation(name.replace(Regex("\\s"), "").trim(), URL(url, href.trim()).toExternalForm()))
     }
 
     return result.sortedBy { it.name }

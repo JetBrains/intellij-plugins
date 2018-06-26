@@ -162,6 +162,8 @@ User Guide (API Version 2010-05-15)
           o Troubleshooting
     * Template Reference
           o AWS Resource Types
+                + AWS::AmazonMQ::Broker
+                + AWS::AmazonMQ::Configuration
                 + AWS::ApiGateway::Account
                 + AWS::ApiGateway::ApiKey
                 + AWS::ApiGateway::Authorizer
@@ -279,6 +281,8 @@ User Guide (API Version 2010-05-15)
                 + AWS::EC2::VPCCidrBlock
                 + AWS::EC2::VPCDHCPOptionsAssociation
                 + AWS::EC2::VPCEndpoint
+                + AWS::EC2::VPCEndpointConnectionNotification
+                + AWS::EC2::VPCEndpointService
                 + AWS::EC2::VPCGatewayAttachment
                 + AWS::EC2::VPCPeeringConnection
                 + AWS::EC2::VPNConnection
@@ -291,6 +295,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::ECS::TaskDefinition
                 + AWS::EFS::FileSystem
                 + AWS::EFS::MountTarget
+                + AWS::EKS::Cluster
                 + AWS::ElastiCache::CacheCluster
                 + AWS::ElastiCache::ParameterGroup
                 + AWS::ElastiCache::ReplicationGroup
@@ -339,10 +344,10 @@ User Guide (API Version 2010-05-15)
                 + AWS::IAM::Policy
                 + AWS::IAM::Role
                 + AWS::IAM::User
+                + AWS::IAM::UserToGroupAddition
                 + AWS::Inspector::AssessmentTarget
                 + AWS::Inspector::AssessmentTemplate
                 + AWS::Inspector::ResourceGroup
-                + AWS::IAM::UserToGroupAddition
                 + AWS::IoT::Certificate
                 + AWS::IoT::Policy
                 + AWS::IoT::PolicyPrincipalAttachment
@@ -366,6 +371,11 @@ User Guide (API Version 2010-05-15)
                 + AWS::Logs::LogStream
                 + AWS::Logs::MetricFilter
                 + AWS::Logs::SubscriptionFilter
+                + AWS::Neptune::DBCluster
+                + AWS::Neptune::DBClusterParameterGroup
+                + AWS::Neptune::DBInstance
+                + AWS::Neptune::DBParameterGroup
+                + AWS::Neptune::DBSubnetGroup
                 + AWS::OpsWorks::App
                 + AWS::OpsWorks::ElasticLoadBalancerAttachment
                 + AWS::OpsWorks::Instance
@@ -393,6 +403,11 @@ User Guide (API Version 2010-05-15)
                 + AWS::Route53::RecordSetGroup
                 + AWS::S3::Bucket
                 + AWS::S3::BucketPolicy
+                + AWS::SageMaker::Endpoint
+                + AWS::SageMaker::EndpointConfig
+                + AWS::SageMaker::Model
+                + AWS::SageMaker::NotebookInstance
+                + AWS::SageMaker::NotebookInstanceLifecycleConfig
                 + AWS::SDB::Domain
                 + AWS::ServiceCatalog::AcceptedPortfolioShare
                 + AWS::ServiceCatalog::CloudFormationProduct
@@ -428,6 +443,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::SSM::MaintenanceWindowTask
                 + AWS::SSM::Parameter
                 + AWS::SSM::PatchBaseline
+                + AWS::SSM::ResourceDataSync
                 + AWS::StepFunctions::Activity
                 + AWS::StepFunctions::StateMachine
                 + AWS::WAF::ByteMatchSet
@@ -447,6 +463,9 @@ User Guide (API Version 2010-05-15)
                 + AWS::WAFRegional::XssMatchSet
                 + AWS::WorkSpaces::Workspace
           o Resource Property Types
+                + Amazon MQ Broker ConfigurationId
+                + Amazon MQ Broker MaintenanceWindow
+                + Amazon MQ Broker User
                 + API Gateway ApiKey StageKey
                 + API Gateway Deployment StageDescription
                 + API Gateway Deployment MethodSetting
@@ -724,6 +743,7 @@ User Guide (API Version 2010-05-15)
                 + Amazon ECS TaskDefinition Volumes
                 + Amazon ECS TaskDefinition Volumes Host
                 + Amazon Elastic File System FileSystem FileSystemTags
+                + EKS Cluster ResourcesVpcConfig
                 + Elastic Beanstalk Application
                   ApplicationResourceLifecycleConfig
                 + Elastic Beanstalk Application
@@ -1001,6 +1021,15 @@ User Guide (API Version 2010-05-15)
                   Rule Property
                 + Amazon S3 Website Configuration Routing Rules Routing
                   Rule Condition Property
+                + Amazon SageMaker Endpoint Tag
+                + Amazon SageMaker EndpointConfig ProductionVariant
+                + Amazon SageMaker EndpointConfig Tag
+                + Amazon SageMaker NotebookInstance Tag
+                + Amazon SageMaker NotebookInstanceLifecycleConfig
+                  NotebookInstanceLifecycleHook
+                + Amazon SageMaker Model ContainerDefinition
+                + Amazon SageMaker Model Tag
+                + Amazon SageMaker Model VpcConfig
                 + AWS Service Catalog CloudFormationProduct
                   ProvisioningArtifactProperties
                 + AWS Service Catalog CloudFormationProvisionedProduct
@@ -1028,26 +1057,28 @@ User Guide (API Version 2010-05-15)
                 + Amazon SES ReceiptRule StopAction
                 + Amazon SES ReceiptRule WorkmailAction
                 + Amazon SES Template Template
-                + SSM Association InstanceAssociationOutputLocation
-                + SSM Association S3OutputLocation
-                + SSM Association Targets
-                + SSM MaintenanceWindowTarget Targets
-                + SSM MaintenanceWindowTask LoggingInfo
-                + SSM MaintenanceWindowTask
+                + Systems Manager Association
+                  InstanceAssociationOutputLocation
+                + Systems Manager Association S3OutputLocation
+                + Systems Manager Association Targets
+                + Systems Manager MaintenanceWindowTarget Targets
+                + Systems Manager MaintenanceWindowTask LoggingInfo
+                + Systems Manager MaintenanceWindowTask
                   MaintenanceWindowAutomationParameters
-                + SSM MaintenanceWindowTask
+                + Systems Manager MaintenanceWindowTask
                   MaintenanceWindowLambdaParameters
-                + SSM MaintenanceWindowTask
+                + Systems Manager MaintenanceWindowTask
                   MaintenanceWindowRunCommandParameters
-                + SSM MaintenanceWindowTask
+                + Systems Manager MaintenanceWindowTask
                   MaintenanceWindowStepFunctionsParameters
-                + SSM MaintenanceWindowTask NotificationConfig
-                + SSM MaintenanceWindowTask Target
-                + SSM MaintenanceWindowTask TaskInvocationParameters
-                + SSM PatchBaseline PatchFilterGroup
-                + SSM PatchBaseline Rule
-                + SSM PatchBaseline PatchFilter
-                + SSM PatchBaseline RuleGroup
+                + Systems Manager MaintenanceWindowTask NotificationConfig
+                + Systems Manager MaintenanceWindowTask Target
+                + Systems Manager MaintenanceWindowTask
+                  TaskInvocationParameters
+                + Systems Manager PatchBaseline PatchFilterGroup
+                + Systems Manager PatchBaseline Rule
+                + Systems Manager PatchBaseline PatchFilter
+                + Systems Manager PatchBaseline RuleGroup
                 + Amazon SNS Subscription
                 + Amazon SQS RedrivePolicy
                 + AWS WAF ByteMatchSet ByteMatchTuples
@@ -1182,6 +1213,205 @@ The following table describes the important changes to the documentation
 since the preceding release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
+
+New resources
+
+June 21, 2018
+
+AWS::EC2:: VPCEndpointConnectionNotification
+
+    Use the AWS::EC2::VPCEndpointConnectionNotification resource to create
+    a connection notification for the specified VPC endpoint or VPC
+    endpoint service.
+
+AWS::EC2::VPCEndpointService
+
+    Use the AWS::EC2::VPCEndpointService resource to create a VPC endpoint
+    service configuration to which service consumers (AWS accounts, IAM
+    users, and IAM roles) can connect.
+
+2010-05-15
+
+Updated resource
+
+June 21, 2018
+
+AWS::EC2::VPCEndpoint
+
+    Use the PrivateDnsEnabled property to indicate whether to associate a
+    private hosted zone with the specified VPC.
+
+    Use the SecurityGroupIds property to specify the ID of one or more
+    security groups to associate with the endpoint network interface.
+
+    Use the SubnetIds property to specify the ID of one or more subnets in
+    which to create an endpoint network interface.
+
+    Use the VpcEndpointType property to specify the type of endpoint.
+
+2010-05-15
+
+New resources
+
+June 14, 2018
+
+AWS::AmazonMQ::Broker
+
+    Use the AWS::AmazonMQ::Broker resource to perform the following
+    actions:
+
+        * Create a broker.
+
+        * Add configuration changes or modify users for the specified
+          broker.
+
+        * Return information about the specified broker.
+
+        * Delete the specified broker.
+
+    Note
+
+    When you change any property of the Amazon MQ Broker ConfigurationId 
+    or Amazon MQ Broker User property type, the broker is rebooted
+    immediately.
+
+AWS::AmazonMQ::Configuration
+
+    Use the AWS::AmazonMQ::Configuration resource to perform the following
+    actions:
+
+        * Create a configuration.
+
+        * Update the specified configuration.
+
+        * Return information about the specified configuration.
+
+    Note
+
+    You can use AWS CloudFormation to modify—but not delete—an Amazon MQ
+    configuration.
+
+2010-05-15
+
+New resource
+
+June 11, 2018
+
+AWS::SSM::ResourceDataSync
+
+    Use the AWS::SSM::ResourceDataSync resource to create or delete a
+    Resource Data Sync for Systems Manager Inventory. You can use Resource
+    Data Sync to send Inventory data collected from all of your Systems
+    Manager managed instances to a single Amazon S3 bucket.
+
+2010-05-15
+
+New resource
+
+June 5, 2018
+
+AWS::EKS::Cluster
+
+    Use the AWS::EKS::Cluster resource to create Amazon EKS clusters.
+
+2010-05-15
+
+New resources
+
+May 31, 2018
+
+AWS::SageMaker::Endpoint
+
+    Use the AWS::SageMaker::Endpoint resource to create a SageMaker
+    endpoint to host trained models.
+
+AWS::SageMaker::EndpointConfig
+
+    Use the AWS::SageMaker::EndpointConfig resource to create a
+    configuration for an endpoint.
+
+AWS::SageMaker::Model
+
+    Use the AWS::SageMaker::Model resource to create a model to host at an
+    Amazon SageMaker endpoint.
+
+AWS::SageMaker::NotebookInstance
+
+    Use the AWS::SageMaker::NotebookInstance resource to create an Amazon
+    SageMaker notebook instance.
+
+AWS::SageMaker::NotebookInstanceLifecycleConfig
+
+    Use the AWS::SageMaker::NotebookInstanceLifecycleConfig resource to
+    specify shell scripts that run when you create or start a notebook
+    instance.
+
+2010-05-15
+
+Updated resource
+
+May 31, 2018
+
+AWS::GuardDuty::Master
+
+    The InvitationId property is now optional.
+
+2010-05-15
+
+Selective updates of stack instances during stack set update operations 
+added to the AWS CloudFormation API
+
+May 30, 2018
+
+Use the optional Accounts and Regions parameters to specify the accounts 
+and regions in which to update stack instances during a stack set update 
+operation. For more information, see UpdateStackSet
+<http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_UpdateStackSet.html> 
+in the AWS CloudFormation API Reference.
+
+2010-05-15
+
+Stack sets now support customized execution roles
+
+May 30, 2018
+
+Use customized execution roles in target accounts to control the stack 
+resources that users or groups can include in their stack sets. For more 
+information, see Prerequisites: Granting Permissions for Stack Set 
+Operations.
+
+2010-05-15
+
+New resources
+
+May 30, 2018
+
+AWS::Neptune::DBCluster
+
+    Use the AWS::Neptune::DBCluster resource to create an Amazon Neptune DB
+    cluster.
+
+AWS::Neptune::DBClusterParameterGroup
+
+    Use the AWS::Neptune::DBClusterParameterGroup resource to create a DB
+    cluster parameter group.
+
+AWS::Neptune::DBInstance
+
+    Use the AWS::Neptune::DBInstance resource to create an Amazon Neptune
+    database instance.
+
+AWS::Neptune::DBParameterGroup
+
+    Use the AWS::Neptune::DBParameterGroup resource to create a custom
+    parameter group for Amazon Neptune.
+
+AWS::Neptune::DBSubnetGroup
+
+    Use the AWS::Neptune::DBSubnetGroup resource to create an Amazon
+    Neptune database subnet group that contains subnets.
+
+2010-05-15
 
 AWS CloudFormation now creates S3 buckets with encryption enabled
 
@@ -1400,9 +1630,9 @@ May 1, 2018
 
 AWS::AppSync::GraphQLApi
 
-    Use the OpenIdConnectConfig property to specify the authorization
+    Use the OpenIDConnectConfig property to specify the authorization
     configuration for using an OpenId Connect compliant service with your
-    GraphQL endpoint..
+    GraphQL endpoint.
 
 AWS::GuardDuty::Member
 
