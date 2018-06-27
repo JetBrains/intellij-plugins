@@ -11,10 +11,11 @@ import * as path from "path";
 import * as fs from "fs";
 
 interface SchematicsInfo {
-    description: string;
+    description?: string;
     name: string;
-    arguments: Option[];
-    options: Option[];
+    error?: string;
+    arguments?: Option[];
+    options?: Option[];
 }
 
 const engineHost = getEngineHost();
@@ -64,10 +65,18 @@ function getAvailableSchematicCollections() {
 }
 
 function getCollectionSchematics(collectionName: string): SchematicsInfo[] {
+    let schematicNames: string[];
+    let collection: any;
     try {
-        const collection = getCollection(collectionName);
-        const schematicNames: string[] = engineHost.listSchematics(collection);
-
+        collection = getCollection(collectionName);
+        schematicNames = engineHost.listSchematics(collection);
+    } catch (e) {
+        return [{
+            name: collectionName,
+            error: "" + e.message
+        }]
+    }
+    try {
         const schematicInfos: any[] = schematicNames
             .map(name => getSchematic(collection, name).description)
             //`ng-add` schematics should be executed only with `ng add`

@@ -32,7 +32,7 @@ object BlueprintsLoader {
   )
 }
 
-private var ourGist = GistManager.getInstance().newVirtualFileGist("AngularBlueprints", 2, BlueprintsExternalizer(),
+private var ourGist = GistManager.getInstance().newVirtualFileGist("AngularBlueprints", 3, BlueprintsExternalizer(),
                                                                    { project, file -> doLoad(project, file) })
 
 private val LOG: Logger = Logger.getInstance("#org.angularjs.cli.BlueprintsLoader")
