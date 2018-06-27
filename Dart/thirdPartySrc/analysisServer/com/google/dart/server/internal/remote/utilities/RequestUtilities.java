@@ -51,6 +51,10 @@ public class RequestUtilities {
   private static final String VARIABLES = "variables";
   private static final String KEY = "key";
   private static final String ELEMENTS = "elements";
+  private static final String VALUE = "value";
+  private static final String ACTION = "action";
+  private static final String EVENT = "event";
+  private static final String MILLIS = "millis";
 
   // Server domain
   private static final String METHOD_SERVER_GET_VERSION = "server.getVersion";
@@ -70,6 +74,12 @@ public class RequestUtilities {
   private static final String METHOD_ANALYSIS_SET_SUBSCRIPTIONS = "analysis.setSubscriptions";
   private static final String METHOD_ANALYSIS_UPDATE_CONTENT = "analysis.updateContent";
   private static final String METHOD_ANALYSIS_UPDATE_OPTIONS = "analysis.updateOptions";
+
+  // Analytics domain
+  private static final String METHOD_ANALYTICS_ENABLE = "analytics.enable";
+  private static final String METHOD_ANALYTICS_ISENABLED = "analytics.isEnabled";
+  private static final String METHOD_ANALYTICS_SEND_EVENT = "analytics.sendEvent";
+  private static final String METHOD_ANALYTICS_SEND_TIMING = "analytics.sendTiming";
 
   // Edit domain
   private static final String METHOD_EDIT_FORMAT = "edit.format";
@@ -913,6 +923,29 @@ public class RequestUtilities {
 
   public static JsonObject generateDiagnosticGetServerPort(String idValue) {
     return buildJsonObjectRequest(idValue, METHOD_DIAGNOSTIC_GET_SERVER_PORT);
+  }
+
+  public static JsonObject generateAnalyticsEnable(String idValue, boolean value) {
+    JsonObject params = new JsonObject();
+    params.add(VALUE, buildJsonElement(value));
+    return buildJsonObjectRequest(idValue, METHOD_ANALYTICS_ENABLE, params);
+  }
+
+  public static JsonObject generateAnalyticsIsEnabled(String idValue) {
+    return buildJsonObjectRequest(idValue, METHOD_ANALYTICS_ISENABLED);
+  }
+
+  public static JsonObject generateAnalyticsSendEvent(String idValue, String action) {
+    JsonObject params = new JsonObject();
+    params.add(ACTION, buildJsonElement(action));
+    return buildJsonObjectRequest(idValue, METHOD_ANALYTICS_SEND_EVENT, params);
+  }
+
+  public static JsonObject generateAnalyticsSendTiming(String idValue, String event, int millis) {
+    JsonObject params = new JsonObject();
+    params.add(EVENT, buildJsonElement(event));
+    params.add(MILLIS, buildJsonElement(millis));
+    return buildJsonObjectRequest(idValue, METHOD_ANALYTICS_SEND_TIMING, params);
   }
 
   /**
