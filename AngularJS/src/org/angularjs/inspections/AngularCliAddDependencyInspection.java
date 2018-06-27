@@ -71,11 +71,13 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
           if (pkgVersion == null) {
             holder.registerProblem(versionLiteral, getTextRange(versionLiteral), message, quickFix);
           }
-          else {
+          else if (holder.isOnTheFly()) {
             holder.registerProblem(versionLiteral, message, ProblemHighlightType.INFORMATION, quickFix);
           }
         }
-        holder.registerProblem(nameLiteral, message, ProblemHighlightType.INFORMATION, quickFix);
+        if (holder.isOnTheFly()) {
+          holder.registerProblem(nameLiteral, message, ProblemHighlightType.INFORMATION, quickFix);
+        }
       }
     }
   }
