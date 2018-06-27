@@ -59,7 +59,7 @@ import java.util.function.Consumer;
 public class AngularCliAddDependencyAction extends DumbAwareAction {
 
   private static final NodePackageBasicInfo OTHER =
-    new NodePackageBasicInfo("other...", "Specify other compatible package not listed above");
+    new NodePackageBasicInfo("Install package not listed above…", null);
   private static final Logger LOG = Logger.getInstance(AngularCliAddDependencyAction.class);
 
   public static void runAndShowConsole(@NotNull Project project, @NotNull VirtualFile cli, @NotNull String packageSpec) {
@@ -120,7 +120,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
           setBackground(UIUtil.getDecoratedRowColor());
         }
         setIcon(JBUI.scale(EmptyIcon.create(5)));
-        append(value.getName(), value != OTHER ? SimpleTextAttributes.REGULAR_ATTRIBUTES : SimpleTextAttributes.SYNTHETIC_ATTRIBUTES, true);
+        append(value.getName(), value != OTHER ? SimpleTextAttributes.REGULAR_ATTRIBUTES : SimpleTextAttributes.LINK_ATTRIBUTES, true);
         if (value.getDescription() != null) {
           append(" - " + value.getDescription(), SimpleTextAttributes.GRAY_ATTRIBUTES, false);
         }
@@ -229,9 +229,10 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
     public SelectCustomPackageDialog(Project project) {
       super(project);
       myProject = project;
-      setTitle("Add Angular Dependency");
+      //noinspection DialogTitleCapitalization
+      setTitle("Install with 'ng add'");
       init();
-      getOKAction().putValue(Action.NAME, "Add");
+      getOKAction().putValue(Action.NAME, "Install");
     }
 
     @Nullable
@@ -240,7 +241,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       JPanel panel = new JPanel(new BorderLayout(0, 4));
       myTextEditor = new TextFieldWithAutoCompletion<>(myProject, new NodePackagesCompletionProvider(), false, null);
       myTextEditor.setPreferredWidth(250);
-      panel.add(LabeledComponent.create(myTextEditor, "Enter package name to install with 'ng add'", BorderLayout.NORTH));
+      panel.add(LabeledComponent.create(myTextEditor, "Package name", BorderLayout.NORTH));
       return panel;
     }
 

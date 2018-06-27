@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +75,7 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
       }
     }
     catch (Exception e) {
-      LOG.warn("Failed to retrieve schematics info for " + version.getPackageDir().getName(), e);
+      LOG.info("Failed to retrieve schematics info for " + version.getPackageDir().getName(), e);
     }
     return false;
   }
@@ -129,7 +130,7 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
         String key = reader.nextName();
         if (key.equals("schematics")) {
           String path = reader.nextString();
-          return new File(packageJson.getParentFile(), path).getAbsoluteFile();
+          return Paths.get(packageJson.getParent(),path).normalize().toAbsolutePath().toFile();
         } else {
           reader.skipValue();
         }
