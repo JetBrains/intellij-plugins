@@ -13,11 +13,8 @@ import com.intellij.javascript.nodejs.packageJson.codeInsight.PackageJsonMismatc
 import com.intellij.json.psi.*;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.modules.NodeModuleUtil;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -153,34 +150,8 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
 
     @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-      ApplicationManager.getApplication().executeOnPooledThread(() -> {
-        Ref<String> versionSpec = new Ref<>(myVersionSpec);
-        if (!myReinstall && !myVersionSpec.isEmpty() && !AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(myPackageName, myVersionSpec, TIMEOUT)) {
-          Ref<Integer> result = new Ref<>();
-          //noinspection DialogTitleCapitalization
-          ApplicationManager.getApplication().invokeAndWait(() ->
-            result.set(Messages.showDialog(
-              project,
-              "It looks like specified version of package doesn't support 'ng add' or doesn't exist.\n\nWould you like to install the latest version of the package?",
-              "Install with 'ng add'",
-              new String[]{"Install latest version", "Try with current version", Messages.CANCEL_BUTTON}, 0, Messages.getQuestionIcon()))
-          );
-
-          switch (result.get()) {
-            case 0:
-              versionSpec.set("latest");
-              break;
-            case 1:
-              break;
-            case 2:
-              return;
-          }
-        }
-        ApplicationManager.getApplication().invokeLater(() ->
-          AngularCliAddDependencyAction.runAndShowConsole(
-            project, myPackageJson.getParent(), myPackageName + (versionSpec.get().isEmpty() ? "" : "@" + versionSpec.get()))
-        );
-      });
+          AngularCliAddDependencyAction.runAndShowConsoleLater(
+            project, myPackageJson.getParent(), myPackageName, myVersionSpec.trim(), !myReinstall);
     }
   }
 }

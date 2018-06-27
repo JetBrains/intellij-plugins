@@ -120,11 +120,12 @@ class AngularCliGenerateAction : DumbAwareAction() {
       .setCancelOnOtherWindowOpen(true)
       .setMovable(true)
       .setResizable(true)
+      .setTitle("Generate Code with Angular Schematics")
       .setSettingButtons(toolbarComponent)
       .setCancelOnWindowDeactivation(false)
       .setCancelOnClickOutside(true)
       .setDimensionServiceKey(project, "org.angular.cli.generate", true)
-      .setMinSize(Dimension(JBUI.scale(200), JBUI.scale(200)))
+      .setMinSize(Dimension(JBUI.scale(350), JBUI.scale(300)))
       .setCancelButton(IconButton("Close", AllIcons.Actions.Close, AllIcons.Actions.CloseHovered))
     val popup = builder.createPopup()
     list.addKeyListener(object : KeyAdapter() {

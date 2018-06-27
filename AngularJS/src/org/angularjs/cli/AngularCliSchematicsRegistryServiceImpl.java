@@ -12,15 +12,10 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.HttpRequests;
 import com.intellij.util.io.RequestBuilder;
-import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.ArchiveInputStream;
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -75,16 +70,16 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
     try {
       if (version.getPackageJson() != null) {
         return myLocalNgAddPackages.compute(version.getPackageJson().getPath(), (key, curValue) -> {
-          if (curValue != null && version.getPackageJson().getTimeStamp() == curValue.getSecond()) {
+          if (curValue != null && version.getPackageJson().getModificationStamp() == curValue.getSecond()) {
             return curValue;
           }
           try {
             File schematicsCollection = getSchematicsCollection(new File(version.getPackageJson().getPath()));
             return Pair
-              .create(schematicsCollection != null && hasNgAddSchematic(schematicsCollection), version.getPackageJson().getTimeStamp());
+              .create(schematicsCollection != null && hasNgAddSchematic(schematicsCollection), version.getPackageJson().getModificationStamp());
           }
           catch (IOException e) {
-            throw new RuntimeException(e);
+            return Pair.create(false, version.getPackageJson().getModificationStamp());
           }
         }).getFirst();
       }
@@ -118,12 +113,13 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
   @NotNull
   private static List<NodePackageBasicInfo> readNgAddPackages(@NotNull String content) {
     JsonObject contents = (JsonObject)new JsonParser().parse(content);
-    return contents.get("ng-add")
-                   .getAsJsonObject()
-                   .entrySet()
-                   .stream()
-                   .map(e -> new NodePackageBasicInfo(e.getKey(), e.getValue().getAsString()))
-                   .collect(Collectors.toList());
+    return Collections.unmodifiableList(
+      contents.get("ng-add")
+              .getAsJsonObject()
+              .entrySet()
+              .stream()
+              .map(e -> new NodePackageBasicInfo(e.getKey(), e.getValue().getAsString()))
+              .collect(Collectors.toList()));
   }
 
   @Nullable
@@ -146,12 +142,6 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
 
   private static boolean hasNgAddSchematic(@NotNull File schematicsCollection) throws IOException {
     try (JsonReader reader = new JsonReader(new FileReader(schematicsCollection))) {
-      return hasNgAddSchematic(reader);
-    }
-  }
-
-  private static boolean hasNgAddSchematic(@NotNull String schematicsCollection) throws IOException {
-    try (JsonReader reader = new JsonReader(new StringReader(schematicsCollection))) {
       return hasNgAddSchematic(reader);
     }
   }
@@ -184,29 +174,7 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
     try {
       ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
       JsonObject pkgJson = NpmRegistryService.getInstance().fetchPackageJson(packageName, versionOrRange, indicator);
-      if (pkgJson == null || pkgJson.get("schematics") == null) {
-        return false;
-      }
-      String url = pkgJson.get("dist").getAsJsonObject().get("tarball").getAsString();
-      String schematicsFile = StringUtil.trimStart(pkgJson.get("schematics").getAsString(), "./");
-      byte[] contents = HttpRequests.request(url).readBytes(null);
-      InputStream bi = new BufferedInputStream(new ByteArrayInputStream(contents));
-      InputStream gzi = new GzipCompressorInputStream(bi);
-      ArchiveInputStream input = new TarArchiveInputStream(gzi);
-      ArchiveEntry e;
-      while ((e = input.getNextEntry()) != null) {
-        if (e.getName().endsWith(schematicsFile)) {
-          if (input.canReadEntryData(e)) {
-            String schematicsCollection = FileUtil.loadTextAndClose(input);
-            if (hasNgAddSchematic(schematicsCollection)) {
-              return true;
-            }
-            else {
-              return false;
-            }
-          }
-        }
-      }
+      return pkgJson != null && pkgJson.get("schematics") != null;
     }
     catch (Exception e) {
       LOG.info(e);
