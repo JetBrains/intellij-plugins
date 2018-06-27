@@ -22,9 +22,10 @@ public abstract class AngularCliSchematicsRegistryService {
                                         long timeout);
 
   /**
-   * Fetches exact information from NPM registry about highest package version in range,
-   * checks for schematics property, downloads package tar.gz and checks schematics collection
-   * JSON contents for presence of ng-add schematic. Values are cached.
+   * Checks whether any version of package supports ng-add and than
+   * fetches exact information from NPM registry about highest package version in provided range,
+   * and checks it for schematics property. Assumes that ng-add is supported if schematics
+   * property is present. Values are cached.
    */
   public abstract boolean supportsNgAdd(@NotNull String packageName,
                                         @NotNull String versionOrRange,
@@ -32,7 +33,8 @@ public abstract class AngularCliSchematicsRegistryService {
 
   /**
    * Fast method to determine whether locally installed package supports ng-add.
-   * Values are cached.
+   * This method provides exact information by checking contents of schematic
+   * json file for ng-add schematic. Values are cached.
    */
   public abstract boolean supportsNgAdd(@NotNull InstalledPackageVersion version);
 
