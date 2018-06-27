@@ -8,8 +8,11 @@ import com.intellij.javascript.nodejs.packageJson.codeInsight.PackageJsonMismatc
 import com.intellij.json.psi.*;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.modules.NodeModuleUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -25,6 +28,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class AngularCliAddDependencyInspection extends LocalInspectionTool {
+
+  private static final long TIMEOUT = 2000;
 
   @NotNull
   @Override
@@ -64,7 +69,7 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
       InstalledPackageVersion pkgVersion = finder.findInstalledPackage(packageName);
 
       if ((pkgVersion != null && AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(pkgVersion))
-          || (pkgVersion == null && AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(packageName, version, 1000))) {
+          || (pkgVersion == null && AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(packageName, TIMEOUT))) {
         String message = StringUtil.wrapWithDoubleQuote(packageName) + " can be installed using 'ng add' command";
         LocalQuickFix quickFix = new AngularCliAddQuickFix(packageJson, packageName, version, pkgVersion != null);
         if (versionLiteral != null) {
@@ -100,14 +105,14 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
   private static class AngularCliAddQuickFix implements LocalQuickFix, HighPriorityAction {
     private final VirtualFile myPackageJson;
     private final String myPackageName;
-    private final String myPackageSpec;
+    private final String myVersionSpec;
     private final boolean myReinstall;
 
     public AngularCliAddQuickFix(@NotNull VirtualFile packageJson, @NotNull String packageName,
                                  @NotNull String versionSpec, boolean reinstall) {
       myPackageJson = packageJson;
       myPackageName = packageName;
-      myPackageSpec = packageName + (versionSpec.isEmpty() ? "" : "@" + versionSpec);
+      myVersionSpec = versionSpec;
       myReinstall = reinstall;
     }
 
@@ -127,8 +132,34 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
 
     @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-      AngularCliAddDependencyAction.runAndShowConsole(
-        project, myPackageJson.getParent(), myPackageSpec);
+      ApplicationManager.getApplication().executeOnPooledThread(() -> {
+        Ref<String> versionSpec = new Ref<>(myVersionSpec);
+        if (!myReinstall && !myVersionSpec.isEmpty() && !AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(myPackageName, myVersionSpec, TIMEOUT)) {
+          Ref<Integer> result = new Ref<>();
+          //noinspection DialogTitleCapitalization
+          ApplicationManager.getApplication().invokeAndWait(() ->
+            result.set(Messages.showDialog(
+              project,
+              "It looks like specified version of package doesn't support 'ng add' or doesn't exist.\n\nWould you like to install the latest version of the package?",
+              "Install with 'ng add'",
+              new String[]{"Install latest version", "Try with current version", Messages.CANCEL_BUTTON}, 0, Messages.getQuestionIcon()))
+          );
+
+          switch (result.get()) {
+            case 0:
+              versionSpec.set("latest");
+              break;
+            case 1:
+              break;
+            case 2:
+              return;
+          }
+        }
+        ApplicationManager.getApplication().invokeLater(() ->
+          AngularCliAddDependencyAction.runAndShowConsole(
+            project, myPackageJson.getParent(), myPackageName + (versionSpec.get().isEmpty() ? "" : "@" + versionSpec.get()))
+        );
+      });
     }
   }
 }
