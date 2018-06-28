@@ -25,7 +25,7 @@ require File.dirname(__FILE__) + '/runner_settings'
 require 'teamcity/utils/runner_utils'
 require 'teamcity/utils/service_message_factory'
 
-def collect_test_scripts()
+def collect_test_scripts
   test_scripts = []
   Dir["#{IntelliJ::FOLDER_PATH}/#{IntelliJ::SEARCH_MASK}"].each { |file|
     next if File.directory?(file)
@@ -69,43 +69,80 @@ def require_all_test_scripts(test_scripts)
 end
 
 # DRB: just pass tests files to drb runner
-def drb_launch_tests(drb_runner, test_scripts)
+def drb_launch_tests(drb_runner, test_scripts, test_scripts_names, test_names)
   cmdline = []
+
+  Dir.chdir(IntelliJ::WORK_DIR) if IntelliJ::WORK_DIR
 
   IntelliJ::parse_launcher_string(IntelliJ::RUBY_INTERPRETER_CMDLINE, cmdline)
 
   # drb runner
   cmdline << drb_runner
 
-  if drb_runner.end_with?('zeus')
-    cmdline << 'test'
-  elsif drb_runner.end_with?('spring')
+  if drb_runner.end_with?('spring')
+    test_name_pattern = get_test_name_pattern(test_names)
+
     if Gem.loaded_specs['rails'].version >= Gem::Version.create('4')
       cmdline << 'rake'
       cmdline << 'test'
+
+      ARGV.each { |arg|
+        cmdline << arg
+      }
+
+      test_script_pattern = test_scripts_names.empty? ? "**/*_test.rb": test_scripts_names.join(",")
+      cmdline << "TEST=#{IntelliJ::FOLDER_PATH}/{#{test_script_pattern}}"
+      cmdline << "TESTOPTS=#{test_name_pattern}" unless test_names.empty?
     else
       cmdline << 'testunit'
+
+      ARGV.each { |arg|
+        cmdline << arg
+      }
+
+      cmdline << test_name_pattern
+
+      cmdline.concat(test_scripts)
     end
+
   else
-    load_path = cmdline.find_all{ |param|
-      (not param.nil?) and param.start_with?('-I')
+    if drb_runner.end_with?('zeus')
+      cmdline << 'test'
+    else
+      load_path = cmdline.find_all {|param|
+        (not param.nil?) and param.start_with?('-I')
+      }
+      cmdline.concat load_path
+    end
+
+    ARGV.each { |arg|
+      cmdline << arg
     }
-    cmdline.concat load_path
+
+    # tests to launch
+    cmdline.concat(test_scripts)
   end
-
-  ARGV.each { |arg|
-    cmdline << arg
-  }
-
-  # tests to launch
-  cmdline.concat(test_scripts)
 
   puts 'Command line: '
   p cmdline
 
   require 'rubygems'
   require 'rake'
-  puts sh(*cmdline)
+  puts (sh(*cmdline) do |ok, res|
+    unless ok
+      puts "Exit code: #{res.exitstatus}"
+    end
+  end)
+end
+
+def get_test_scripts(names)
+  names.map do |name|
+    File.join("#{IntelliJ::FOLDER_PATH}", "#{name}")
+  end
+end
+
+def get_test_name_pattern(test_names)
+  "--name=/#{test_names.join("|")}/"
 end
 
 #########################################
@@ -125,7 +162,20 @@ puts "Work directory: #{IntelliJ::WORK_DIR}" if IntelliJ::WORK_DIR
 # Drb
 drb_runner = IntelliJ::TUNIT_DRB_RUNNER_PATH
 
-test_scripts = collect_test_scripts()
+test_scripts_names = []
+test_scripts = collect_test_scripts
+test_names = []
+
+array = "#{IntelliJ::SEARCH_MASK}".scan(/([.\/\w]*)#(\w*)/)
+
+unless array.empty?
+  h = Hash.new {|h, k| h[k] = []}
+  array.each {|k, v| h[k] << v}
+
+  test_scripts_names = h.keys
+  test_scripts = get_test_scripts(test_scripts_names)
+  test_names << h.values
+end
 
 unless drb_runner.nil?
   # DRB
@@ -139,21 +189,11 @@ unless drb_runner.nil?
   puts SEPARATOR
 
   # Parses launch arguments - ruby interpreter and its arguments
-  drb_launch_tests(drb_runner, test_scripts)
+  drb_launch_tests(drb_runner, test_scripts, test_scripts_names, test_names)
 else
+  ARGV << get_test_name_pattern(test_names) unless test_names.empty?
+
   # usual mode: tests will be launched in same process
-  array = "#{IntelliJ::SEARCH_MASK}".scan(/([.\/\w]*)#(\w*)/)
-  unless array.empty?
-    h = Hash.new {|h, k| h[k] = []}
-    array.each {|k, v| h[k] << v}
-
-    ARGV << "--name=/#{h.values.join("|")}/"
-
-    test_scripts = h.keys.map do |name|
-      File.join("#{IntelliJ::FOLDER_PATH}", "#{name}")
-    end
-  end
-
   require_all_test_scripts(test_scripts)
   puts SEPARATOR
 
