@@ -209,7 +209,7 @@ public class DartAnalysisServerService implements Disposable {
       boolean hasSevereProblems = false;
 
       for (AnalysisError error : errors) {
-        if (AnalysisErrorSeverity.ERROR.equals(error.getSeverity()) || AnalysisErrorSeverity.WARNING.equals(error.getSeverity())) {
+        if (AnalysisErrorSeverity.ERROR.equals(error.getSeverity())) {
           hasSevereProblems = true;
         }
         if (!AnalysisErrorType.TODO.equals(error.getType())) {

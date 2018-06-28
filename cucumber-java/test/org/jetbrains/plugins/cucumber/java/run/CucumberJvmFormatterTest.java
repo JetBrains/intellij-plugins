@@ -39,7 +39,7 @@ public class CucumberJvmFormatterTest {
     CucumberJava2Mock cucumberJava2Mock = new CucumberJava2Mock();
     smFormatter.setEventPublisher(cucumberJava2Mock);
     cucumberJava2Mock.simulateRun();
-    String output = new String(byteArrayOutputStream.toByteArray(), CharsetToolkit.UTF8_CHARSET);
+    String output = new String(byteArrayOutputStream.toByteArray(), CharsetToolkit.UTF8_CHARSET).replace("\r", "");
 
     assertEquals(
       "##teamcity[enteredTheMatrix timestamp = '<time>']\n" +

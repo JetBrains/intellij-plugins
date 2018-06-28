@@ -265,6 +265,30 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
+  public void analytics_enable(boolean value) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateAnalyticsEnable(id, value));
+  }
+
+  @Override
+  public void analytics_isEnabled(IsEnabledConsumer consumer) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateAnalyticsIsEnabled(id), consumer);
+  }
+
+  @Override
+  public void analytics_sendEvent(String action) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateAnalyticsSendEvent(id, action));
+  }
+
+  @Override
+  public void analytics_sendTiming(String event, int millis) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateAnalyticsSendTiming(id, event, millis));
+  }
+
+  @Override
   public void completion_getSuggestions(String file, int offset, GetSuggestionsConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateCompletionGetSuggestions(id, file, offset), consumer);

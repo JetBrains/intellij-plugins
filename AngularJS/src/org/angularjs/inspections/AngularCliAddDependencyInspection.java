@@ -63,7 +63,8 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
       String version = versionLiteral == null ? "" : versionLiteral.getValue();
       InstalledPackageVersion pkgVersion = finder.findInstalledPackage(packageName);
 
-      if (AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(packageName, version, 1000)) {
+      if ((pkgVersion != null && AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(pkgVersion))
+          || (pkgVersion == null && AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(packageName, version, 1000))) {
         String message = StringUtil.wrapWithDoubleQuote(packageName) + " can be installed using 'ng add' command";
         LocalQuickFix quickFix = new AngularCliAddQuickFix(packageJson, packageName, version, pkgVersion != null);
         if (versionLiteral != null) {
