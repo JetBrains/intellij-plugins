@@ -15,16 +15,12 @@
     <orderEntry type="module-library" exported="">
       <library name="bndlib">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/bndlib-3.3.0.jar!/" />
-          <root url="jar://$MODULE_DIR$/../lib/bnd-repository-3.3.0.jar!/" />
-          <root url="jar://$MODULE_DIR$/../lib/bnd-resolve-3.3.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/biz.aQute.bndlib-4.0.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/biz.aQute.repository-4.0.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/biz.aQute.resolve-4.0.0.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/../lib/src/bndlib-3.3.0-sources.jar!/" />
-          <root url="jar://$MODULE_DIR$/../lib/src/bnd-repository-3.3.0-sources.jar!/" />
-          <root url="jar://$MODULE_DIR$/../lib/src/bnd-resolve-3.3.0-sources.jar!/" />
-        </SOURCES>
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
