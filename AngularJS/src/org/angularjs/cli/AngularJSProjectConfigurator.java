@@ -36,6 +36,7 @@ public class AngularJSProjectConfigurator implements DirectoryProjectConfigurato
           model.commit();
           project.save();
         });
+        AngularCLIProjectGenerator.createRunConfigurations(project, baseDir);
       } else {
         model.dispose();
       }
