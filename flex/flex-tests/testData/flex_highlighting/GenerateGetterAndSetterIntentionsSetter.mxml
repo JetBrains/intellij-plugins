@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark">
     <fx:Script><![CDATA[
-        var foo:int<caret>; // TODO fix test data when new line correctly added and comment preserved
+        var foo<caret>:int; // TODO fix test data when new line correctly added and comment preserved
         ]]></fx:Script>
 </s:Application>
