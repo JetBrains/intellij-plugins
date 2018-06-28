@@ -27,8 +27,8 @@ import com.intellij.lang.javascript.buildTools.npm.rc.NpmConfigurationType;
 import com.intellij.lang.javascript.buildTools.npm.rc.NpmRunConfiguration;
 import com.intellij.lang.javascript.buildTools.npm.rc.NpmRunSettings;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.ui.ValidationInfo;
@@ -49,8 +49,10 @@ import javax.swing.*;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 /**
@@ -69,11 +71,13 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
   }
 
   @Override
+  @NotNull
   public String getDescription() {
     return "The Angular CLI makes it easy to create an application that already works, right out of the box. It already follows our best practices!";
   }
 
   @Override
+  @NotNull
   public Icon getIcon() {
     return AngularJSIcons.Angular2;
   }
@@ -138,6 +142,7 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
                    .orElseGet(() -> super.validateProjectPath(path));
   }
 
+  @SuppressWarnings("deprecation")
   @NotNull
   @Override
   public GeneratorPeer<Settings> createPeer() {
@@ -162,6 +167,7 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
     });
   }
 
+  @Nullable
   private static String validateFolderName(String path, String label) {
     String fileName = PathUtil.getFileName(path);
     if (!VALID_NG_APP_NAME.matcher(fileName).matches()) {
@@ -174,24 +180,28 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
     return null;
   }
 
-  private static void createRunConfigurations(@NotNull Project project, @NotNull VirtualFile baseDir) {
+  public static void createRunConfigurations(@NotNull Project project, @NotNull VirtualFile baseDir) {
+    ApplicationManager.getApplication().executeOnPooledThread(
+      () -> DumbService.getInstance(project).runReadActionInSmartMode(() -> {
+        if (project.isDisposed()) {
+          return;
+        }
+        RunManager runManager = RunManager.getInstance(project);
 
-    if (!project.isDisposed()) {
-      RunManager runManager = RunManager.getInstance(project);
+        String packageJsonPath = getPackageJson(baseDir);
+        if (packageJsonPath == null) {
+          return;
+        }
 
-      String packageJsonPath = getPackageJson(baseDir);
-      if (packageJsonPath == null) {
-        return;
-      }
+        String nameSuffix = ModuleManager.getInstance(project).getModules().length > 1
+                            ? " (" + baseDir.getName() + ")" : "";
 
-      String nameSuffix = ModuleManager.getInstance(project).getModules().length > 1 ? " (" + baseDir.getName() + ")" : "";
-
-      createJSDebugConfiguration(runManager, "Angular Application" + nameSuffix, "http://localhost:4200");
-      createKarmaConfiguration(project, baseDir, runManager, "Tests" + nameSuffix);
-      createProtractorConfiguration(project, baseDir, runManager, "E2E Tests" + nameSuffix);
-      runManager.setSelectedConfiguration(
-        createNpmConfiguration(packageJsonPath, runManager, "Angular CLI Server" + nameSuffix, "start"));
-    }
+        createJSDebugConfiguration(runManager, "Angular Application" + nameSuffix, "http://localhost:4200");
+        createKarmaConfiguration(project, baseDir, runManager, "Tests" + nameSuffix);
+        createProtractorConfiguration(project, baseDir, runManager, "E2E Tests" + nameSuffix);
+        runManager.setSelectedConfiguration(
+          createNpmConfiguration(packageJsonPath, runManager, "Angular CLI Server" + nameSuffix, "start"));
+      }));
   }
 
   @Nullable
@@ -205,6 +215,7 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
 
   private static void createJSDebugConfiguration(@NotNull RunManager runManager, @NotNull String label, @NotNull String url) {
     createRunConfig(runManager, label, JavascriptDebugConfigurationType.getTypeInstance(),
+                    (JavaScriptDebugConfiguration config) -> url.equals(config.getUri()),
                     (JavaScriptDebugConfiguration config) -> config.setUri(url));
   }
 
@@ -213,25 +224,29 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
                                                                        @NotNull RunManager runManager,
                                                                        @NotNull String label,
                                                                        @NotNull String scriptName) {
-    return createRunConfig(runManager, label, NpmConfigurationType.getInstance(), (NpmRunConfiguration config) ->
-      config.setRunSettings(NpmRunSettings
-                              .builder()
-                              .setCommand(NpmCommand.RUN_SCRIPT)
-                              .setScriptNames(Collections.singletonList(scriptName))
-                              .setPackageJsonPath(packageJsonPath)
-                              .build()));
+    NpmRunSettings runSettings = NpmRunSettings
+      .builder()
+      .setCommand(NpmCommand.RUN_SCRIPT)
+      .setScriptNames(Collections.singletonList(scriptName))
+      .setPackageJsonPath(packageJsonPath)
+      .build();
+    return createRunConfig(runManager, label, NpmConfigurationType.getInstance(),
+                           (NpmRunConfiguration config) -> similar(config.getRunSettings(), runSettings),
+                           (NpmRunConfiguration config) -> config.setRunSettings(runSettings));
   }
 
   private static void createKarmaConfiguration(@NotNull Project project,
                                                @NotNull VirtualFile baseDir,
                                                @NotNull RunManager runManager,
                                                @NotNull String label) {
-    createRunConfig(runManager, label, KarmaConfigurationType.getInstance(), (KarmaRunConfiguration config) ->
-      config.setRunSettings(new KarmaRunSettings.Builder()
-                              .setKarmaPackage(findPackage(project, baseDir, KarmaUtil.ANGULAR_CLI__PACKAGE_NAME))
-                              .setConfigPath(findConfigFile(project, baseDir, KarmaUtil::listPossibleConfigFilesInProject))
-                              .setWorkingDirectory(baseDir.getPath())
-                              .build())
+    KarmaRunSettings runSettings = new KarmaRunSettings.Builder()
+      .setKarmaPackage(findPackage(project, baseDir, KarmaUtil.ANGULAR_CLI__PACKAGE_NAME))
+      .setConfigPath(findConfigFile(project, baseDir, KarmaUtil::listPossibleConfigFilesInProject))
+      .setWorkingDirectory(baseDir.getPath())
+      .build();
+    createRunConfig(runManager, label, KarmaConfigurationType.getInstance(),
+                    (KarmaRunConfiguration config) -> similar(config.getRunSettings(), runSettings),
+                    (KarmaRunConfiguration config) -> config.setRunSettings(runSettings)
     );
   }
 
@@ -239,28 +254,54 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
                                                     @NotNull VirtualFile baseDir,
                                                     @NotNull RunManager runManager,
                                                     @NotNull String label) {
-    createRunConfig(runManager, label, ProtractorConfigurationType.getInstance(), (ProtractorRunConfiguration config) ->
-      config.setRunSettings(new ProtractorRunSettings.Builder()
-                              .setConfigFilePath(StringUtil.defaultIfEmpty(
-                                findConfigFile(project, baseDir, ProtractorUtil::listPossibleConfigFilesInProject), ""))
-                              .build())
+    ProtractorRunSettings runSettings = new ProtractorRunSettings.Builder()
+      .setConfigFilePath(StringUtil.defaultIfEmpty(
+        findConfigFile(project, baseDir, ProtractorUtil::listPossibleConfigFilesInProject), ""))
+      .build();
+    createRunConfig(runManager, label, ProtractorConfigurationType.getInstance(),
+                    (ProtractorRunConfiguration config) -> similar(config.getRunSettings(), runSettings),
+                    (ProtractorRunConfiguration config) -> config.setRunSettings(runSettings)
     );
     Optional.ofNullable(findPackage(project, baseDir, ProtractorUtil.PACKAGE_NAME))
             .ifPresent(pkg -> ProtractorUtil.setProtractorPackage(project, pkg));
   }
 
+  private static boolean similar(@NotNull ProtractorRunSettings s1, @NotNull ProtractorRunSettings s2) {
+    return s1.getConfigFileSystemDependentPath().equals(s2.getConfigFileSystemDependentPath());
+  }
+
+  private static boolean similar(@NotNull KarmaRunSettings s1, @NotNull KarmaRunSettings s2) {
+    return s1.getConfigPathSystemDependent().equals(s2.getConfigPathSystemDependent())
+           && Objects.equals(s1.getKarmaPackage(), s2.getKarmaPackage());
+  }
+
+  private static boolean similar(@NotNull NpmRunSettings s1, @NotNull NpmRunSettings s2) {
+    return s1.getCommand().equals(s2.getCommand())
+           && s1.getScriptNames().equals(s2.getScriptNames())
+           && s1.getPackageJsonSystemDependentPath().equals(s2.getPackageJsonSystemDependentPath());
+  }
+
   @SuppressWarnings("unchecked")
+  @NotNull
   private static <T> RunnerAndConfigurationSettings createRunConfig(@NotNull RunManager runManager,
                                                                     @NotNull String label,
                                                                     @NotNull ConfigurationType configurationType,
+                                                                    @NotNull Predicate<T> isSimilar,
                                                                     @NotNull Consumer<T> configurator) {
-    RunnerAndConfigurationSettings settings =
-      runManager.createConfiguration(label, configurationType.getConfigurationFactories()[0]);
+    return runManager
+      .getConfigurationSettingsList(configurationType)
+      .stream()
+      .filter(settings -> isSimilar.test((T)settings.getConfiguration()))
+      .findFirst()
+      .orElseGet(() -> {
+        RunnerAndConfigurationSettings settings =
+          runManager.createConfiguration(label, configurationType.getConfigurationFactories()[0]);
 
-    configurator.consume((T)settings.getConfiguration());
+        configurator.consume((T)settings.getConfiguration());
 
-    runManager.addConfiguration(settings);
-    return settings;
+        runManager.addConfiguration(settings);
+        return settings;
+      });
   }
 
   @Nullable
@@ -276,14 +317,12 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
   private static String findConfigFile(@NotNull Project project,
                                        @NotNull VirtualFile baseDir,
                                        Function<Project, List<VirtualFile>> listProvider) {
-    return ReadAction.compute(
-      () -> listProvider.apply(project)
-                        .stream()
-                        .filter(f -> f.getPath().startsWith(baseDir.getPath()))
-                        .findFirst()
-                        .map(f -> f.getPath())
-                        .orElse(null)
-    );
+    return listProvider.apply(project)
+                       .stream()
+                       .filter(f -> f.getPath().startsWith(baseDir.getPath()))
+                       .findFirst()
+                       .map(f -> f.getPath())
+                       .orElse(null);
   }
 
   private class AngularCLIProjectGeneratorPeer extends NpmPackageGeneratorPeer {
