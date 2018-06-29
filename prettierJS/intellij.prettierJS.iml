@@ -23,5 +23,6 @@
     <orderEntry type="module" module-name="intellij.css" />
     <orderEntry type="library" name="snakeyaml" level="project" />
     <orderEntry type="module" module-name="intellij.json" />
+    <orderEntry type="module" module-name="intellij.fileWatcher" />
   </component>
 </module>
