@@ -1,0 +1,25 @@
+<xml type="Scenario" name="Move" id="swift.editorbasics.move" subtype="aimless" projectTree="hide" lang="Swift">
+    <MouseBlock>
+        <CopyText><![CDATA[import Foundation
+
+class MoveDemo {
+
+    var started = false;
+
+    public func run() {
+        started = true;
+        print("Hello!");
+    }
+
+}
+
+func test() {
+    MoveDemo().run()
+}]]></CopyText>
+    <ShowLineNumber/>
+    </MouseBlock>
+    <MoveCaret position="8:13"/>
+    <Try trigger="MoveLineDown">Rearranging lines usually takes two actions: cut and paste. In <ide/>, you can do it with just one: pressing <action>MoveLineDown</action> will pull down the current line.</Try>
+    <Try trigger="MoveLineUp">Similarly, to pull a line up, use <action>MoveLineUp</action>.</Try>
+    <Win/>
+</xml>

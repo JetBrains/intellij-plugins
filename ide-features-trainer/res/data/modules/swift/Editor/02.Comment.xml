@@ -1,0 +1,36 @@
+<xml type="Scenario" name="Comment" id="swift.editorbasics.commentline" subtype="aimless" projectTree="hide" lang="Swift">
+    <MouseBlock>
+        <CopyText><![CDATA[import Foundation
+
+public func fib(n: Int) -> Int {
+    var a = 1;
+    var b = 1;
+
+    var tmp = 0
+
+    if n < 2 {
+        return 1
+    }
+
+    for _ in 0...n - 2 {
+        tmp = b;
+        b = a;
+        a = a + tmp;
+    }
+
+    return a;
+}
+
+for i in 0...100 {
+    print(fib(n: i))
+}]]></CopyText>
+    </MouseBlock>
+    <MoveCaret position="3:1"/>
+    <Try trigger="CommentByLineComment">Comment out any line with <action>CommentByLineComment</action>.</Try>
+    <Try trigger="CommentByLineComment">Uncomment the commented line with the same shortcut, <action>CommentByLineComment</action>.</Try>
+    <Try triggers="EditorDownWithSelection;CommentByLineComment">Select several lines with <action>EditorDownWithSelection</action> and then comment them with <action>CommentByLineComment</action>.</Try>
+    <SetSelection start-position="1:1" end-position="1:1" />
+    <MoveCaret position="10:9"/>
+    <Try triggers="EditorSelectWord;EditorSelectWord;CommentByBlockComment">Press <action>EditorSelectWord</action> twice to select <code>return 1</code> and comment it with a block comment using <action>CommentByBlockComment</action></Try>
+    <Win/>
+</xml>
