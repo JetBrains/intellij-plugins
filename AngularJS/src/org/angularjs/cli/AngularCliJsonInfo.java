@@ -50,8 +50,8 @@ public class AngularCliJsonInfo {
    */
   @NotNull
   public static Collection<VirtualFile> getRootDirs(@NotNull final Project project, @NotNull final VirtualFile context) {
-    final VirtualFile angularCliFolder = BlueprintsLoaderKt.findAngularCliFolder(project, context);
-    final VirtualFile angularCliJson = angularCliFolder == null ? null : AngularJSProjectConfigurator.findCliJson(angularCliFolder);
+    final VirtualFile angularCliFolder = AngularCliUtil.findAngularCliFolder(project, context);
+    final VirtualFile angularCliJson = angularCliFolder == null ? null : AngularCliUtil.findCliJson(angularCliFolder);
     if (angularCliJson == null) {
       return Collections.emptyList();
     }
@@ -66,8 +66,8 @@ public class AngularCliJsonInfo {
   @NotNull
   public static Collection<VirtualFile> getStylePreprocessorIncludeDirs(@NotNull final Project project,
                                                                         @NotNull final VirtualFile context) {
-    final VirtualFile angularCliFolder = BlueprintsLoaderKt.findAngularCliFolder(project, context);
-    final VirtualFile angularCliJson = angularCliFolder == null ? null : AngularJSProjectConfigurator.findCliJson(angularCliFolder);
+    final VirtualFile angularCliFolder = AngularCliUtil.findAngularCliFolder(project, context);
+    final VirtualFile angularCliJson = angularCliFolder == null ? null : AngularCliUtil.findCliJson(angularCliFolder);
     if (angularCliJson == null) {
       return Collections.emptyList();
     }

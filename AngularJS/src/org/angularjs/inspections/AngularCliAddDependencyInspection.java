@@ -2,11 +2,6 @@ package org.angularjs.inspections;
 
 import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.codeInspection.*;
-import com.intellij.javascript.nodejs.CompletionModuleInfo;
-import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
-import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.javascript.nodejs.packageJson.InstalledPackageVersion;
 import com.intellij.javascript.nodejs.packageJson.NodeInstalledPackageFinder;
 import com.intellij.javascript.nodejs.packageJson.codeInsight.PackageJsonMismatchedDependencyInspection;
@@ -21,14 +16,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ObjectUtils;
-import org.angularjs.cli.AngularCLIProjectGenerator;
 import org.angularjs.cli.AngularCliSchematicsRegistryService;
-import org.angularjs.cli.AngularJSProjectConfigurator;
+import org.angularjs.cli.AngularCliUtil;
 import org.angularjs.cli.actions.AngularCliAddDependencyAction;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AngularCliAddDependencyInspection extends LocalInspectionTool {
@@ -42,25 +35,11 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
       @Override
       public void visitFile(PsiFile file) {
         if (PackageJsonUtil.isPackageJsonFile(file)
-            && AngularJSProjectConfigurator.findCliJson(file.getVirtualFile().getParent()) != null
-            && hasAngularCLIPackageInstalled(holder.getProject(), file.getVirtualFile().getParent())
-        ) {
+            && AngularCliUtil.findCliJson(file.getVirtualFile().getParent()) != null) {
           annotate((JsonFile)file, holder);
         }
       }
     };
-  }
-
-  private static boolean hasAngularCLIPackageInstalled(@NotNull Project project, @NotNull VirtualFile cli) {
-    NodeJsInterpreter interpreter = NodeJsInterpreterManager.getInstance(project).getInterpreter();
-    NodeJsLocalInterpreter node = NodeJsLocalInterpreter.tryCast(interpreter);
-    if (node == null) {
-      return false;
-    }
-    List<CompletionModuleInfo> modules = new ArrayList<>();
-    NodeModuleSearchUtil.findModulesWithName(modules, AngularCLIProjectGenerator.PACKAGE_NAME, cli,
-                                             false, node);
-    return !modules.isEmpty() && modules.get(0).getVirtualFile() != null;
   }
 
   private static void annotate(@NotNull JsonFile file, @NotNull ProblemsHolder holder) {
@@ -150,8 +129,13 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
 
     @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-          AngularCliAddDependencyAction.runAndShowConsoleLater(
-            project, myPackageJson.getParent(), myPackageName, myVersionSpec.trim(), !myReinstall);
+      if (AngularCliUtil.hasAngularCLIPackageInstalled(project, myPackageJson)) {
+        AngularCliAddDependencyAction.runAndShowConsoleLater(
+          project, myPackageJson.getParent(), myPackageName, myVersionSpec.trim(), !myReinstall);
+      }
+      else {
+        AngularCliUtil.notifyAngularCliNotInstalled(project, myPackageJson.getParent(), "Can't run 'ng add'");
+      }
     }
   }
 }
