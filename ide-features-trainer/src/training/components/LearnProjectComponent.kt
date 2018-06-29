@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.openapi.wm.impl.StripeButton
@@ -148,14 +149,21 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
 
     showToolStripes()
 
+    val toolWindowAnchor = LangManager.getInstance().getLangSupport().getToolWindowAnchor()
     GotItMessage.createMessage(LearnBundle.message("learn.tool.window.quick.access.title"),
-        LearnBundle.message("learn.tool.window.quick.access.message"))
+        LearnBundle.message("learn.tool.window.quick.access.message", toolWindowAnchor))
         .setCallback({ if (toolStripesAreHiddenDefault) hideToolStripes() })
         .show(RelativePoint(learnStripeButton,
             Point(learnStripeButton.bounds.width, learnStripeButton.bounds.height / 2)),
-            Balloon.Position.atRight)
+            getBalloonPosition(toolWindowAnchor))
   }
-
+  private fun getBalloonPosition(toolWindowAnchor: ToolWindowAnchor): Balloon.Position {
+    return when (toolWindowAnchor) {
+      ToolWindowAnchor.LEFT -> Balloon.Position.atRight
+      ToolWindowAnchor.RIGHT -> Balloon.Position.atLeft
+      else -> Balloon.Position.atRight
+    }
+  }
   private val learnStripeButton: StripeButton?
     get() {
 
