@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Extract variable" id="swift.refactorings.extract.variable" subtype="aimless" projectTree="hide" lang="Swift">
+<xml type="Scenario" name="Extract Variable" id="swift.refactorings.extract.variable" subtype="aimless" projectTree="hide" lang="Swift">
     <CopyText><![CDATA[import UIKit
 
 class ExtractVariable: UIViewController {
