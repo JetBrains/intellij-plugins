@@ -20,11 +20,7 @@
           <root url="jar://$MODULE_DIR$/../lib/bnd-resolve-3.3.0.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/../lib/src/bndlib-3.3.0-sources.jar!/" />
-          <root url="jar://$MODULE_DIR$/../lib/src/bnd-repository-3.3.0-sources.jar!/" />
-          <root url="jar://$MODULE_DIR$/../lib/src/bnd-resolve-3.3.0-sources.jar!/" />
-        </SOURCES>
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
