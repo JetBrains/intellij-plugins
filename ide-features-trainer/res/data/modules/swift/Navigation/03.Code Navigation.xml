@@ -1,0 +1,35 @@
+<xml type="Scenario" name="Code Navigation" id="swift.navigation.code" subtype="aimless" projectTree="hide" lang="Swift">
+    <CopyText><![CDATA[import UIKit
+
+protocol Serializable: ExpressibleByStringLiteral {
+
+}
+
+class Item : Serializable {
+
+}
+
+class StringItem: Item {
+
+}]]></CopyText>
+    <Text>When working on your project, you often need to open and edit a specific class, file or symbol. The fastest way to do this is to use the main navigation triple: <strong>Go to Class/File/Symbol</strong>.</Text>
+    <Try triggers="GotoClass;DetailViewController.swift">Let's navigate to <code>DetailViewController</code> class. Press <action>GotoClass</action>, type <code>dvc</code> and press <action>EditorEnter</action>.</Try>
+    <Text>Each of the <strong>Go to...</strong> dialogs allows using fuzzy matching, so you can type only the part of the class, file or symbol name to find it.</Text>
+    <Try triggers="GotoFile;AppDelegate.swift">Nice! Now let's open the <code>AppDelegate.swift</code> file: press <action>GotoFile</action>, type <code>ad</code> and press <action>EditorEnter</action>.</Try>
+    <Try triggers="GotoSymbol;MasterViewController.swift">Let's jump directly to <code>detailViewController</code> declaration in the <code>MasterViewController</code> class: press <action>GotoSymbol</action>, type <code>dvc</code> and press <action>EditorEnter</action>.</Try>
+    <Text>If you need to take into account also standard libraries and other non-project files, symbols or classes, just press the shortcut twice.</Text>
+    <MoveCaret position="13:41" />
+    <Try triggers="GotoDeclaration;DetailViewController.swift">Another important action from the <strong>Go to...</strong> family is <strong>Go to Declaration</strong>. Place the caret at <code>DetailViewController?</code> and press <action>GotoDeclaration</action> to jump to its declaration.</Try>
+    <MoveCaret position="3:40" />
+    <Try trigger="GotoImplementation">If a method or class has several implementations, <action>GotoDeclaration</action> will get you to the first one. Try using <action>GotoImplementation</action> to see all the definitions of <code>UIViewController</code></Try>
+    <Try triggers="GotoFile;Navigation.swift">Let's navigate back to <code>Navigation.swift</code> via <action>GotoFile</action></Try>
+    <MoveCaret position="11:12" />
+    <Try trigger="GotoSuperMethod"><strong>Go to Super Definition</strong> navigates you to the parent class declaration. Press <action>GotoSuperMethod</action> to jump to the <code>Item</code> class.</Try>
+    <Try trigger="GotoSuperMethod">Now press <action>GotoSuperMethod</action> again to jump to the <code>Serializable</code> protocol declaration.</Try>
+    <MoveCaret position="3:33" />
+    <Try trigger="QuickImplementations">Now let's use the <action>Quick Definition</action> to see <code>ExpressibleByStringLiteral</code> without jumping to it's source. Press <action>QuickImplementations</action></Try>
+    <Try trigger="QuickJavaDoc">Press <action>QuickJavaDoc</action> to see the <strong>Quick Documentation</strong> for symbol under caret.</Try>
+    <Try trigger="RecentFiles">Finally, there are two quite useful and frequently used navigation actions to quickly switch between recent files and toolwindows. First is the <string>Recent files</string> popup. Open it via <action>RecentFiles</action> and select what you need using arrow keys on the keyboard.</Try>
+    <Try triggers="Switcher">The second is <strong>Switcher</strong>, which looks the same but immediately disappears after you select something. Hold the <action>⌃</action> key while pressing <action>Switcher</action>, press it again to switch to select some file, or toolwindow. Release the <action>⌃</action> key when you selected what you wanted.</Try>
+    <Win/>
+</xml>

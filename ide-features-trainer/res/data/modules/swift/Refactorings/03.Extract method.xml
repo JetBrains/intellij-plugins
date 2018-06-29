@@ -1,0 +1,30 @@
+<xml type="Scenario" name="Extract method" id="swift.refactorings.extract.method" subtype="aimless" projectTree="hide" lang="Swift">
+    <CopyText><![CDATA[import UIKit
+
+class ExtractMethod: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        let x = 0
+        let y = 50
+
+        let tableView = UITableView()
+
+        let header = UILabel()
+        header.text = "AppCode"
+        header.sizeToFit()
+
+        tableView.frame = CGRect(x: x, y: y, width: 320, height: 400)
+        tableView.tableHeaderView = header
+        self.view.addSubview(tableView)
+    }
+}]]></CopyText>
+    <SetSelection start-position="11:9" end-position="18:43" />
+    <Try trigger="ExtractMethod">Extract Method allows you to encapsulate a code selection into a new method with customizable parameters and return type. Let's extract some lines of code into a new <code>setup</code> function. Press <action>ExtractMethod</action>.</Try>
+    <Try action="$Undo" trigger="$Undo">Now press <action>$Undo</action> </Try>
+    <SetSelection start-position="11:9" end-position="18:43" />
+    <Text>When extracting the method in <ide/> you can change the method signature. Click on one of the parameters in <strong>Parameters</strong> section and use <icon>AllIcons.Actions.UP</icon>/<icon>AllIcons.Actions.Down</icon> icons to change parameter order. Change their names and/or types by clicking on the parameter row. </Text>
+    <Try trigger="ExtractMethod">Now press <action>ExtractMethod</action> and try changing the signature of the extract method.</Try>
+
+</xml>

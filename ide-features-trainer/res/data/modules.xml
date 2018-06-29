@@ -6,6 +6,12 @@
     <module name="modules/java/Refactorings.xml"/>
     <module name="modules/java/CodeAssistance.xml"/>
     <module name="modules/java/Navigation.xml"/>
+    <!--Objective-C-->
+    <!--Swift-->
+    <module name="modules/swift/Editor.xml"/>
+    <module name="modules/swift/Navigation.xml"/>
+    <module name="modules/swift/Refactorings.xml"/>
+    <module name="modules/swift/Code Generation.xml"/>
     <!--<module name="modules/Loops.xml"/>-->
 </modules>
 

@@ -1,0 +1,36 @@
+<xml type="Scenario" name="Selection" id="swift.editorbasics.selection" subtype="aimless" projectTree="hide" lang="Swift">
+    <MouseBlock>
+        <CopyText><![CDATA[import Foundation
+
+public func fib(n: Int) -> Int {
+    var a = 1;
+    var b = 1;
+
+    var tmp = 0
+
+    if n < 2 {
+        return 1
+    }
+
+    for _ in 0...n - 2 {
+        tmp = b;
+        b = a;
+        a = a + tmp;
+    }
+
+    return a;
+}
+
+for i in 0...100 {
+    print(fib(n: i))
+}]]></CopyText>
+    </MouseBlock>
+    <MoveCaret position="9:5"/>
+    <Try action="EditorNextWordWithSelection" trigger="EditorNextWordWithSelection">Place the caret before any word. Press <action>EditorNextWordWithSelection</action> to move the caret to the next word and select everything in between.</Try>
+    <Try action="EditorSelectWord" trigger="EditorSelectWord">Press <action>EditorSelectWord</action> to extend the selection to the next code block.</Try>
+    <Try trigger="EditorSelectWord">Try increasing your selection with <action>EditorSelectWord</action> until your whole file is selected.</Try>
+    <Try action="EditorUnSelectWord" trigger="EditorUnSelectWord"><action>EditorUnSelectWord</action> shrinks selection. Try pressing it.</Try>
+    <Try action="$SelectAll" trigger="$SelectAll">Now select the whole file instantly with <action>$SelectAll</action>.</Try>
+    <Text action="learn.next.lesson">Awesome! Click the button below to start the next lesson, or use <action>learn.next.lesson</action>.</Text>
+    <Win/>
+</xml>
