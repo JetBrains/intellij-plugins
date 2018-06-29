@@ -22,6 +22,7 @@ import com.intellij.javascript.protractor.ProtractorConfigurationType;
 import com.intellij.javascript.protractor.ProtractorRunConfiguration;
 import com.intellij.javascript.protractor.ProtractorRunSettings;
 import com.intellij.javascript.protractor.ProtractorUtil;
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.buildTools.npm.rc.NpmCommand;
 import com.intellij.lang.javascript.buildTools.npm.rc.NpmConfigurationType;
 import com.intellij.lang.javascript.buildTools.npm.rc.NpmRunConfiguration;
@@ -37,6 +38,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import icons.AngularJSIcons;
 import org.jetbrains.annotations.NotNull;
@@ -97,7 +99,7 @@ public class AngularCliUtil {
   }
 
   public static void notifyAngularCliNotInstalled(@NotNull Project project, @NotNull VirtualFile cliFolder, @NotNull String message) {
-    VirtualFile packageJson = cliFolder.findChild("package.json");
+    VirtualFile packageJson = PackageJsonUtil.findChildPackageJsonFile(cliFolder);
     Notification notification = ANGULAR_CLI_NOTIFICATIONS.createNotification(
       message,
       "Required package '@angular/cli' is not installed.",
@@ -134,8 +136,8 @@ public class AngularCliUtil {
 
   @Nullable
   private static String getPackageJson(@NotNull VirtualFile baseDir) {
-    VirtualFile pkg = baseDir.findChild("package.json");
-    if (pkg != null && !pkg.isDirectory()) {
+    VirtualFile pkg = PackageJsonUtil.findChildPackageJsonFile(baseDir);
+    if (pkg != null) {
       return pkg.getPath();
     }
     return null;

@@ -21,6 +21,7 @@ import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
 import com.intellij.javascript.nodejs.packageJson.NpmRegistryService;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator;
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
@@ -115,13 +116,16 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
 
     final VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
     final VirtualFile cli = AngularCliUtil.findAngularCliFolder(project, file);
-    if (cli == null) {
+    final VirtualFile packageJson = PackageJsonUtil.findChildPackageJsonFile(cli);
+    if (cli == null || packageJson == null) {
       return;
     }
     if (!AngularCliUtil.hasAngularCLIPackageInstalled(project, cli)) {
       AngularCliUtil.notifyAngularCliNotInstalled(project, cli, "Can't add new Angular dependency");
       return;
     }
+
+    Set<String> existingPackages = PackageJsonUtil.getOrCreateData(packageJson).getAllDependencies();
 
     SortedListModel<NodePackageBasicInfo> model = new SortedListModel<>(
       Comparator.comparing((NodePackageBasicInfo p) -> p == OTHER ? 1 : 0)
@@ -173,7 +177,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
     Consumer<NodePackageBasicInfo> action = pkgInfo -> {
       popup.closeOk(null);
       if (pkgInfo == OTHER) {
-        chooseCustomPackageAndInstall(project, cli);
+        chooseCustomPackageAndInstall(project, cli, existingPackages);
       }
       else {
         runAndShowConsole(project, cli, pkgInfo.getName(), false);
@@ -196,7 +200,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       }
     }.installOn(list);
     popup.showCenteredInCurrentWindow(project);
-    updateListAsync(list, model, popup);
+    updateListAsync(list, model, popup, existingPackages);
   }
 
   @Override
@@ -258,7 +262,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
     if (project.isDisposed()) {
       return;
     }
-    VirtualFile packageJson = cli.findChild("package.json");
+    VirtualFile packageJson = PackageJsonUtil.findChildPackageJsonFile(cli);
     if (packageJson == null) {
       return;
     }
@@ -287,8 +291,8 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
     }
   }
 
-  private static void chooseCustomPackageAndInstall(Project project, VirtualFile cli) {
-    SelectCustomPackageDialog dialog = new SelectCustomPackageDialog(project);
+  private static void chooseCustomPackageAndInstall(@NotNull Project project, @NotNull VirtualFile cli, @NotNull Set<String> existingPackages) {
+    SelectCustomPackageDialog dialog = new SelectCustomPackageDialog(project, existingPackages);
     if (dialog.showAndGet()) {
       runAndShowConsole(project, cli, dialog.getPackage(), false);
     }
@@ -296,7 +300,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
 
   private static void updateListAsync(JBList<NodePackageBasicInfo> list,
                                       SortedListModel<NodePackageBasicInfo> model,
-                                      JBPopup popup) {
+                                      JBPopup popup, Set<String> existingPackages) {
     list.setPaintBusy(true);
     model.clear();
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
@@ -307,7 +311,11 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
         .getInstance()
         .getPackagesSupportingNgAdd(20000);
       ApplicationManager.getApplication().invokeLater(() -> {
-        packages.forEach(model::add);
+        packages.forEach(pkg -> {
+          if (!existingPackages.contains(pkg.getName())) {
+            model.add(pkg);
+          }
+        });
         model.add(OTHER);
         list.setPaintBusy(false);
       }, o -> popup.isDisposed());
@@ -316,12 +324,14 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
 
   private static class SelectCustomPackageDialog extends DialogWrapper {
 
+    private final Set<String> myExistingPackages;
     private final Project myProject;
     private EditorTextField myTextEditor;
 
-    public SelectCustomPackageDialog(Project project) {
+    public SelectCustomPackageDialog(@NotNull Project project, @NotNull Set<String> existingPackages) {
       super(project);
       myProject = project;
+      myExistingPackages = existingPackages;
       //noinspection DialogTitleCapitalization
       setTitle("Install with 'ng add'");
       init();
@@ -338,7 +348,8 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
     @Override
     protected JComponent createCenterPanel() {
       JPanel panel = new JPanel(new BorderLayout(0, 4));
-      myTextEditor = new TextFieldWithAutoCompletion<>(myProject, new NodePackagesCompletionProvider(), false, null);
+      myTextEditor = new TextFieldWithAutoCompletion<>(
+        myProject, new NodePackagesCompletionProvider(myExistingPackages), false, null);
       myTextEditor.setPreferredWidth(250);
       panel.add(LabeledComponent.create(myTextEditor, "Package name", BorderLayout.NORTH));
       return panel;
@@ -351,8 +362,11 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
 
   private static class NodePackagesCompletionProvider extends TextFieldWithAutoCompletionListProvider<NodePackageBasicInfo> {
 
-    protected NodePackagesCompletionProvider() {
+    private final Set<String> myExistingPackages;
+
+    protected NodePackagesCompletionProvider(@NotNull Set<String> existingPackages) {
       super(Collections.emptyList());
+      myExistingPackages = existingPackages;
     }
 
     @NotNull
@@ -383,8 +397,14 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       }
       List<NodePackageBasicInfo> result = new ArrayList<>();
       try {
-        NpmRegistryService.getInstance().findPackages(ProgressManager.getInstance().getProgressIndicator(),
-                                                      NpmRegistryService.namePrefixSearch(prefix), 20, pkg -> true, result::add);
+        NpmRegistryService.getInstance().findPackages(
+          ProgressManager.getInstance().getProgressIndicator(),
+          NpmRegistryService.namePrefixSearch(prefix), 20, pkg -> true,
+          pkg -> {
+            if (!myExistingPackages.contains(pkg.getName())) {
+              result.add(pkg);
+            }
+          });
       }
       catch (IOException e) {
         LOG.info(e);
