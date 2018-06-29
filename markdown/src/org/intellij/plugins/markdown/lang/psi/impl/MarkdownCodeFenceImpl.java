@@ -10,6 +10,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypes;
 import org.intellij.plugins.markdown.lang.psi.MarkdownElementVisitor;
 import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElement;
+import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElementFactory;
 import org.intellij.plugins.markdown.structureView.MarkdownBasePresentation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -139,7 +140,8 @@ public class MarkdownCodeFenceImpl extends CompositePsiElement implements PsiLan
     @Override
     public MarkdownCodeFenceImpl handleContentChange(@NotNull MarkdownCodeFenceImpl element, @NotNull TextRange range, String newContent)
       throws IncorrectOperationException {
-      return null; // TODO WTF?
+      return (MarkdownCodeFenceImpl)element
+        .replace(MarkdownPsiElementFactory.createCodeFence(element.getProject(), element.getFenceLanguage(), newContent));
     }
   }
 }
