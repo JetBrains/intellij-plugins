@@ -20,7 +20,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.SmartList;
-import org.angularjs.cli.AngularCliJsonInfo;
+import org.angularjs.cli.AngularCliConfigLoader;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -30,7 +30,7 @@ public class AngularCssFileReferenceHelper extends WebpackCssFileReferenceHelper
   @Override
   public Collection<PsiFileSystemItem> getContexts(@NotNull final Project project, @NotNull final VirtualFile file) {
     final Collection<PsiFileSystemItem> result = new SmartList<>(new AngularCliAwareCssFileReferenceResolver(project, file));
-    for (VirtualFile dir : AngularCliJsonInfo.getStylePreprocessorIncludeDirs(project, file)) {
+    for (VirtualFile dir : AngularCliConfigLoader.load(project, file).getStylePreprocessorIncludeDirs()) {
       final PsiDirectory psiDir = PsiManager.getInstance(project).findDirectory(dir);
       if (psiDir != null) {
         result.add(psiDir);
@@ -46,7 +46,7 @@ public class AngularCssFileReferenceHelper extends WebpackCssFileReferenceHelper
 
     @Override
     protected Collection<VirtualFile> findRootDirectories(@NotNull final VirtualFile context, @NotNull final Project project) {
-      return AngularCliJsonInfo.getRootDirs(project, context);
+      return AngularCliConfigLoader.load(project, context).getRootDirs();
     }
   }
 }
