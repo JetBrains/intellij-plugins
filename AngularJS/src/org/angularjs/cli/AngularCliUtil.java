@@ -35,7 +35,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
@@ -45,7 +44,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class AngularCliUtil {
@@ -169,9 +167,14 @@ public class AngularCliUtil {
                                                @NotNull VirtualFile baseDir,
                                                @NotNull RunManager runManager,
                                                @NotNull String label) {
+    String configPath = ObjectUtils.doIfNotNull(AngularCliConfigLoader.load(project, baseDir).getKarmaConfigFile(),
+                                                VirtualFile::getPath);
+    if (configPath == null) {
+      return;
+    }
     KarmaRunSettings runSettings = new KarmaRunSettings.Builder()
       .setKarmaPackage(findPackage(project, baseDir, KarmaUtil.ANGULAR_CLI__PACKAGE_NAME))
-      .setConfigPath(findConfigFile(project, baseDir, KarmaUtil::listPossibleConfigFilesInProject))
+      .setConfigPath(configPath)
       .setWorkingDirectory(baseDir.getPath())
       .build();
     createRunConfig(runManager, label, KarmaConfigurationType.getInstance(),
@@ -184,9 +187,13 @@ public class AngularCliUtil {
                                                     @NotNull VirtualFile baseDir,
                                                     @NotNull RunManager runManager,
                                                     @NotNull String label) {
+    String configPath = ObjectUtils.doIfNotNull(AngularCliConfigLoader.load(project, baseDir).getProtractorConfigFile(),
+                                                VirtualFile::getPath);
+    if (configPath == null) {
+      return;
+    }
     ProtractorRunSettings runSettings = new ProtractorRunSettings.Builder()
-      .setConfigFilePath(StringUtil.defaultIfEmpty(
-        findConfigFile(project, baseDir, ProtractorUtil::listPossibleConfigFilesInProject), ""))
+      .setConfigFilePath(configPath)
       .build();
     createRunConfig(runManager, label, ProtractorConfigurationType.getInstance(),
                     (ProtractorRunConfiguration config) -> similar(config.getRunSettings(), runSettings),
@@ -241,17 +248,5 @@ public class AngularCliUtil {
     return descr.listAvailable(project, interpreter, baseDir, true)
                 .stream()
                 .filter(p -> p.getSystemIndependentPath().startsWith(baseDir.getPath())).findFirst().orElse(null);
-  }
-
-  @Nullable
-  private static String findConfigFile(@NotNull Project project,
-                                       @NotNull VirtualFile baseDir,
-                                       Function<Project, List<VirtualFile>> listProvider) {
-    return listProvider.apply(project)
-                       .stream()
-                       .filter(f -> f.getPath().startsWith(baseDir.getPath()))
-                       .findFirst()
-                       .map(f -> f.getPath())
-                       .orElse(null);
   }
 }
