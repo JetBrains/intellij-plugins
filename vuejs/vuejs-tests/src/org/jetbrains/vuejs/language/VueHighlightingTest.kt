@@ -886,36 +886,36 @@ export default class UsageComponent extends Vue {
   }
 
   fun testClassComponentAnnotationWithLocalComponentTs() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
-      myFixture.configureByText("vue.d.ts", "export interface Vue {}")
+    JSTestUtils.testES6<Exception>(myFixture.project) {
+      myFixture.configureByText("vue.d.ts", "export interface Vue {};export class Vue {}")
       createTwoClassComponents(myFixture, true)
       myFixture.configureByText("ClassComponentAnnotationWithLocalComponentTs.vue",
                                 """
-<template>
-  <LongVue/>
-  <ShortComponent/>
-  <warning descr="Empty tag doesn't work in some browsers"><<warning descr="Unknown html tag UnknownComponent">UnknownComponent</warning>/></warning>
-  <UsageComponent/>
-</template>
-<script lang="ts">
-import { Component } from 'vue-property-decorator';
-// just for test
-import { Vue } from 'vue.d.ts';
-import LongComponent from './LongComponent';
-import ShortComponent from './ShortComponent';
-@Component({
-  name: "UsageComponent",
-  components: {
-    "LongVue": LongComponent,
-    ShortComponent
+  <template>
+    <LongVue/>
+    <ShortComponent/>
+    <warning descr="Empty tag doesn't work in some browsers"><<warning descr="Unknown html tag UnknownComponent">UnknownComponent</warning>/></warning>
+    <UsageComponent/>
+  </template>
+  <script lang="ts">
+  import { Component } from 'vue-property-decorator';
+  // just for test
+  import { Vue } from 'vue.d.ts';
+  import LongComponent from './LongComponent';
+  import ShortComponent from './ShortComponent';
+  @Component({
+    name: "UsageComponent",
+    components: {
+      "LongVue": LongComponent,
+      ShortComponent
+    }
+  })
+  export default class UsageComponent extends Vue {
   }
-})
-export default class UsageComponent extends Vue {
-}
-</script>
-""")
+  </script>
+  """)
       myFixture.checkHighlighting()
-    })
+    }
   }
 
   fun testLocalComponentExtends() {
