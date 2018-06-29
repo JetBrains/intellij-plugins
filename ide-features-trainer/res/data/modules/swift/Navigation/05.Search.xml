@@ -1,0 +1,38 @@
+<xml type="Scenario" name="Search" id="swift.navigation.search" subtype="aimless" projectTree="hide" lang="Swift">
+    <CopyText><![CDATA[import Foundation
+
+protocol Test {
+    func test(containsTest test: Int, anotherContainingTest test1: String)
+}
+
+typealias TestAlias = AnotherTest
+
+class AnotherTest: Test {
+    func test(containsTest test: Int, anotherContainingTest testAnother: String) {
+        print(test)
+
+    }
+
+    func tests() -> Test {
+        let test = AnotherTest()
+        test.test(containsTest: 1, anotherContainingTest: "test")
+        return test
+    }
+}
+]]></CopyText>
+    <Text>Searching in AppCode is different. We have our feature set intentionally separated for searching the text and the code. The code is not the text - it has a structure formed by the code constructs.</Text>
+    <SetSelection start-position="16:13" end-position="16:17" />
+    <Try trigger="Find">We have lots of code constructs containing the word <code>test</code> in this sample file and we have the caret on the variable named <code>test</code>. Hit <action>Find</action> to find all the text occurrences of the word <code>test</code></Try>
+    <SetSelection start-position="16:14" end-position="16:14" />
+    <Try trigger="FindUsages">But it does not help us a lot. In the real code we want searching for the <code>test</code> variable, not including class names, method names or any other code constructs. Now press <action>EditorEscape</action> - <action>FindUsages</action></Try>
+    <Text>Now AppCode shows us only actual <code>test</code> variable usages.</Text>
+    <MoveCaret  position="15:23" />
+    <Try trigger="FindUsages">The same applies to any other code construct - press <action>FindUsages</action> to find all the usages of <code>Test</code> protocol in the project.</Try>
+    <MoveCaret  position="17:17" />
+    <Try trigger="FindUsages">Now let's find all usages of <code>test(containsTest test: Int, anotherContainingTest test1: String)</code> method. Press <action>FindUsages</action> again.</Try>
+    <Text>It means the simple rule - think, which symbol you need to find instead of "which text I need to find". <strong>Find Usages</strong> works for any code construct in the project context, so you will find all the usages in the whole codebase.</Text>
+    <Text>Of course, sometimes you do not know what to search for and you want to find as many possible places as possible by searching for the text. In this case, use <action>Find</action> to search in the current file or <action>FindInPath</action> to search for something in the whole project.</Text>
+    <Try triggers="SearchEverywhere">What if you want searching for some text in symbols, file names, or even IDE settings and menu items? Press <action>Double⇧</action> to open the <strong>Search Everywhere</strong> dialog.</Try>
+    <Try trigger="GotoAction">Finally, try using <strong>Find Action</strong> (<action>GotoAction</action>) to quickly find the IDE action and execute it. For example, type plugins to open <strong>Preferences | Plugins</strong></Try>
+    <Win/>
+</xml>

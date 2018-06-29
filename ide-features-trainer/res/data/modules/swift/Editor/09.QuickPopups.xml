@@ -1,0 +1,35 @@
+<xml type="Scenario" name="Quick Popups" id="swift.codeassistance.quickpopups" subtype="aimless" projectTree="hide"
+     lang="Swift">
+    <MouseBlock>
+        <CopyText><![CDATA[import Foundation
+class PopupsDemo {
+
+    public class func process(register: Int) {
+
+        var counter = Array<Int>()
+        counter[0] = 0;
+        var closure = {
+            counter[0] = counter[0] + 1;
+            print("\(counter[0]) ");
+        }
+        checkAndStart(flag: (register > 10), closure: closure)
+    }
+
+    private class func checkAndStart(flag: Bool, closure: () -> ()) {
+        if (flag) {
+            closure()
+        } else {
+            print("suspending");
+        }
+    }
+}]]></CopyText>
+    </MouseBlock>
+    <MoveCaret position="10:19"/>
+    <Try trigger="ParameterInfo">Press <action>ParameterInfo</action> to see the method signature.</Try>
+    <Try check="EditorEscape">Press <action>EditorEscape</action> to close the popup.</Try>
+    <MoveCaret position="6:25"/>
+    <Try trigger="QuickJavaDoc">Press <action>QuickJavaDoc</action> to see documentation for the symbol at the caret.</Try>
+    <MoveCaret position="6:30"/>
+    <Try trigger="QuickImplementations">Press <action>QuickImplementations</action> to see the definition of the symbol at the caret.</Try>
+    <Win/>
+</xml>
