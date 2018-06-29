@@ -17,7 +17,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.gist.GistManager
 import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.IOUtil
-import org.angularjs.cli.AngularJSProjectConfigurator.findCliJson
 import org.angularjs.lang.AngularJSLanguage
 import java.io.DataInput
 import java.io.DataOutput
@@ -131,17 +130,6 @@ fun grabCommandOutput(commandLine: GeneralCommandLine, workingDir: String?): Str
   }
   return ""
 }
-
-fun findAngularCliFolder(project: Project, file: VirtualFile?): VirtualFile? {
-  var current = file
-  while (current != null) {
-    if (current.isDirectory && findCliJson(current) != null) return current
-    current = current.parent
-  }
-  if (findCliJson(project.baseDir) != null) return project.baseDir
-  return null
-}
-
 
 const val DEFAULT_OUTPUT: String = """
 

@@ -50,7 +50,7 @@ import com.intellij.util.ui.UIUtil;
 import org.angularjs.cli.AngularCLIFilter;
 import org.angularjs.cli.AngularCLIProjectGenerator;
 import org.angularjs.cli.AngularCliSchematicsRegistryService;
-import org.angularjs.cli.BlueprintsLoaderKt;
+import org.angularjs.cli.AngularCliUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -114,8 +114,12 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
     }
 
     final VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
-    final VirtualFile cli = BlueprintsLoaderKt.findAngularCliFolder(project, file);
+    final VirtualFile cli = AngularCliUtil.findAngularCliFolder(project, file);
     if (cli == null) {
+      return;
+    }
+    if (!AngularCliUtil.hasAngularCLIPackageInstalled(project, cli)) {
+      AngularCliUtil.notifyAngularCliNotInstalled(project, cli, "Can't add new Angular dependency");
       return;
     }
 
@@ -203,7 +207,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
     final Project project = e.getProject();
     final VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
     e.getPresentation().setEnabledAndVisible(
-      project != null && BlueprintsLoaderKt.findAngularCliFolder(project, file) != null);
+      project != null && AngularCliUtil.findAngularCliFolder(project, file) != null);
   }
 
   private static void runAndShowConsole(@NotNull Project project, @NotNull VirtualFile cli,

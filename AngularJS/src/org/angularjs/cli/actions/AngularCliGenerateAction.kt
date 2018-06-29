@@ -51,7 +51,12 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
     val file = e.getData(PlatformDataKeys.VIRTUAL_FILE)
     val editor = e.getData(PlatformDataKeys.FILE_EDITOR)
-    val cli = findAngularCliFolder(project, file) ?: return
+    val cli = AngularCliUtil.findAngularCliFolder(project, file) ?: return
+
+    if (!AngularCliUtil.hasAngularCLIPackageInstalled(project, cli)) {
+      AngularCliUtil.notifyAngularCliNotInstalled(project, cli, "Can't generate code from Angular Schematics")
+      return
+    }
 
     val model = SortedListModel<Blueprint>(Comparator.comparing { b1: Blueprint ->
       when {
@@ -241,8 +246,10 @@ class AngularCliGenerateAction : DumbAwareAction() {
     val project = e?.project
     val file = e?.getData(PlatformDataKeys.VIRTUAL_FILE)
 
-    e?.presentation?.isEnabledAndVisible = project != null && findAngularCliFolder(project, file) != null
+    e?.presentation?.isEnabledAndVisible = project != null
+      && AngularCliUtil.findAngularCliFolder(project, file) != null
   }
+
 
   private class BlueprintOptionsCompletionProvider(options: List<Option>) : TextFieldWithAutoCompletionListProvider<Option>(
     options) {

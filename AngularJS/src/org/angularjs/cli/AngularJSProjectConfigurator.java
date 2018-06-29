@@ -12,22 +12,18 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.DirectoryProjectConfigurator;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Dennis.Ushakov
  */
 public class AngularJSProjectConfigurator implements DirectoryProjectConfigurator {
-  public static final String ANGULAR_JSON = "angular.json";
-  public static final String ANGULAR_CLI_JSON = ".angular-cli.json";
-  public static final String DEPRECATED_ANGULAR_CLI_JSON = "angular-cli.json";
 
   @Override
   public void configureProject(Project project, @NotNull VirtualFile baseDir, Ref<Module> moduleRef) {
     final ModuleManager moduleManager = ModuleManager.getInstance(project);
     final Module[] modules = moduleManager.getModules();
     if (modules.length == 1) {
-      final VirtualFile cliJson = findCliJson(baseDir);
+      final VirtualFile cliJson = AngularCliUtil.findCliJson(baseDir);
       final ModifiableRootModel model = ModuleRootManager.getInstance(modules[0]).getModifiableModel();
       final ContentEntry entry = MarkRootActionBase.findContentEntry(model, baseDir);
       if (entry != null && cliJson != null) {
@@ -36,7 +32,7 @@ public class AngularJSProjectConfigurator implements DirectoryProjectConfigurato
           model.commit();
           project.save();
         });
-        AngularCLIProjectGenerator.createRunConfigurations(project, baseDir);
+        AngularCliUtil.createRunConfigurations(project, baseDir);
       } else {
         model.dispose();
       }
@@ -48,12 +44,4 @@ public class AngularJSProjectConfigurator implements DirectoryProjectConfigurato
     entry.addExcludeFolder(baseDir.getUrl() + "/tmp");
   }
 
-  @Nullable
-  public static VirtualFile findCliJson(@Nullable VirtualFile dir) {
-    if (dir == null) return null;
-    VirtualFile cliJson = dir.findChild(ANGULAR_JSON);
-    cliJson = cliJson == null ? dir.findChild(ANGULAR_CLI_JSON) : cliJson;
-    cliJson = cliJson == null ? dir.findChild(DEPRECATED_ANGULAR_CLI_JSON) : cliJson;
-    return cliJson;
-  }
 }
