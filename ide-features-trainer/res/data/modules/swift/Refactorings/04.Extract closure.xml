@@ -9,9 +9,9 @@ class ExtractClosure: UIViewController {
         let x = 0
         let y = 50
 
-        let tableView = UITableView()
+        var tableView = UITableView()
 
-        let header = UILabel()
+        var header = UILabel()
         header.text = "AppCode"
         header.sizeToFit()
 
@@ -20,6 +20,7 @@ class ExtractClosure: UIViewController {
         self.view.addSubview(tableView)
     }
 }]]></CopyText>
-    <MoveCaret position="8:21"/>
-    <Text>This is just a placeholder for future lessons</Text>
+    <SetSelection start-position="14:1" end-position="19:1" />
+    <Try triggers="Refactorings.QuickListPopupAction;SwiftIntroduceClosureVariable">Extract Closure allows you to encapsulate a code selection into a new closure with customizable parameters and return type in the same way as Extract Method. Press <action>Refactorings.QuickListPopupAction</action> and select <strong>Closure...</strong>.</Try>
+    <Win/>
 </xml>
