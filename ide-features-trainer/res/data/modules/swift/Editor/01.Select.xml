@@ -1,31 +1,30 @@
 <xml type="Scenario" name="Selection" id="swift.editorbasics.selection" subtype="aimless" projectTree="hide" lang="Swift">
     <MouseBlock>
         <CopyText><![CDATA[import Foundation
+import UIKit
 
-public func fib(n: Int) -> Int {
-    var a = 1;
-    var b = 1;
+class Select: UIViewController {
 
-    var tmp = 0
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
-    if n < 2 {
-        return 1
+        let x = 0
+        let y = 50
+
+        let tableView = UITableView()
+
+        let header = UILabel()
+        header.text = "AppCode"
+        header.sizeToFit()
+
+        tableView.frame = CGRect(x: x, y: y, width: 320, height: 400)
+        tableView.tableHeaderView = header
+        self.view.addSubview(tableView)
     }
 
-    for _ in 0...n - 2 {
-        tmp = b;
-        b = a;
-        a = a + tmp;
-    }
-
-    return a;
-}
-
-for i in 0...100 {
-    print(fib(n: i))
 }]]></CopyText>
     </MouseBlock>
-    <MoveCaret position="9:5"/>
+    <MoveCaret position="12:13"/>
     <Try action="EditorNextWordWithSelection" trigger="EditorNextWordWithSelection">Place the caret before any word. Press <action>EditorNextWordWithSelection</action> to move the caret to the next word and select everything in between.</Try>
     <Try action="EditorSelectWord" trigger="EditorSelectWord">Press <action>EditorSelectWord</action> to extend the selection to the next code block.</Try>
     <Try trigger="EditorSelectWord">Try increasing your selection with <action>EditorSelectWord</action> until your whole file is selected.</Try>

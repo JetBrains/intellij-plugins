@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module name="Code Generation" lessonsPath="Code Generation/" version="0.3" id="swift.code.generation" fileType="PROJECT" description="Rename, extract variable and method and other refactorings">
-  <lesson filename="05.OverrideImplement.xml"/>
-  <lesson filename="06.Quick fixes.xml"/>
+<module name="Code Generation" lessonsPath="Code Generation/" version="0.3" id="swift.code.generation" fileType="PROJECT" description="Create from usage, override/implement and quick-fixes.">
+  <lesson filename="01.OverrideImplement.xml"/>
+  <lesson filename="02.Create from usage.xml"/>
+  <lesson filename="03.Quick fixes.xml"/>
   <!--<lesson filename="07.Surround with" />-->
 </module>

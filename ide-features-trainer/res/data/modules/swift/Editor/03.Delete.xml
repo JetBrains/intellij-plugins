@@ -1,31 +1,30 @@
 <xml type="Scenario" name="Delete" id="swift.editorbasics.deleteline" subtype="aimless" projectTree="hide" lang="Swift">
     <MouseBlock>
         <CopyText><![CDATA[import Foundation
+import UIKit
 
-public func fib(n: Int) -> Int {
-    var a = 1;
-    var b = 1;
+class Delete: UIViewController {
 
-    var tmp = 0
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
-    if n < 2 {
-        return 1
+        let x = 0
+        let y = 50
+
+        let tableView = UITableView(frame: CGRect.zero)
+
+        let header = UILabel()
+        header.text = "AppCode"
+        header.sizeToFit()
+
+        tableView.frame = CGRect(x: x, y: y, width: 320, height: 400)
+        tableView.tableHeaderView = header
+        self.view.addSubview(tableView)
     }
 
-    for _ in 0...n - 2 {
-        tmp = b;
-        b = a;
-        a = a + tmp;
-    }
-
-    return a;
-}
-
-for i in 0...100 {
-    print(fib(n: i))
 }]]></CopyText>
     </MouseBlock>
-    <MoveCaret position="7:9"/>
+    <MoveCaret position="12:9"/>
     <Try action="EditorDeleteLine" trigger="EditorDeleteLine">Delete the current line with <action>EditorDeleteLine</action>.</Try>
     <Try action="$Undo" trigger="$Undo">To restore the deleted line, press <action>$Undo</action>.</Try>
     <Win/>

@@ -1,36 +1,40 @@
 <xml type="Scenario" name="Comment" id="swift.editorbasics.commentline" subtype="aimless" projectTree="hide" lang="Swift">
     <MouseBlock>
         <CopyText><![CDATA[import Foundation
+import UIKit
 
-public func fib(n: Int) -> Int {
-    var a = 1;
-    var b = 1;
+class Comment: UIViewController {
 
-    var tmp = 0
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
-    if n < 2 {
-        return 1
+        let x = 0
+        let y = 50
+
+        Here we add a table view
+        to our view controller
+        let tableView = UITableView(frame: CGRect.zero)
+
+
+        let header = UILabel()
+        header.text = "AppCode"
+        header.sizeToFit()
+
+        tableView.frame = CGRect(x: x, y: y, width: 320, height: 400)
+        tableView.tableHeaderView = header
+        self.view.addSubview(tableView)
     }
 
-    for _ in 0...n - 2 {
-        tmp = b;
-        b = a;
-        a = a + tmp;
-    }
-
-    return a;
-}
-
-for i in 0...100 {
-    print(fib(n: i))
 }]]></CopyText>
     </MouseBlock>
-    <MoveCaret position="3:1"/>
+    <MoveCaret position="12:1"/>
     <Try trigger="CommentByLineComment">Comment out any line with <action>CommentByLineComment</action>.</Try>
+    <MoveCaret position="12:1"/>
     <Try trigger="CommentByLineComment">Uncomment the commented line with the same shortcut, <action>CommentByLineComment</action>.</Try>
+    <MoveCaret position="12:1"/>
     <Try triggers="EditorDownWithSelection;CommentByLineComment">Select several lines with <action>EditorDownWithSelection</action> and then comment them with <action>CommentByLineComment</action>.</Try>
     <SetSelection start-position="1:1" end-position="1:1" />
-    <MoveCaret position="10:9"/>
-    <Try triggers="EditorSelectWord;EditorSelectWord;CommentByBlockComment">Press <action>EditorSelectWord</action> twice to select <code>return 1</code> and comment it with a block comment using <action>CommentByBlockComment</action></Try>
+    <MoveCaret position="14:37"/>
+    <Try triggers="EditorSelectWord;EditorSelectWord;CommentByBlockComment">Press <action>EditorSelectWord</action> twice to select <code>frame: CGRect.zero</code> and comment it with a block comment using <action>CommentByBlockComment</action></Try>
     <Win/>
 </xml>

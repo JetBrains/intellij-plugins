@@ -1,22 +1,32 @@
 <xml type="Scenario" name="Code Formatting" id="swift.codeassistance.codeformatting" subtype="aimless" projectTree="hide" lang="Swift">
-        <CopyText><![CDATA[import Foundation
-class CodeFormatDemo{
+        <CopyText><![CDATA[
+import UIKit
 
-   static let a = 10000
-   static let b = 500
+class Format: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
 
-public class func calc(){InnerCalc.process(a: a, b: b)}
+                        let x = 0
 
-     class InnerCalc{
+            let y = 50
 
-static let some_const = 124136; public static func process(a:Int, b:Int)->Int{ return  a * b + some_const;
-        }
+        let             tableView =     UITableView()
+
+        let header = UILabel()
+        header.text = "AppCode"
+        header.sizeToFit()
+
+        tableView.frame = CGRect(x: x, y: y, width: 320, height: 400)
+        tableView.tableHeaderView = header
+        self.view.addSubview(tableView)
     }
+
 }]]></CopyText>
-    <SetSelection start-position="8:1" end-position="8:65" />
+    <SetSelection start-position="10:1" end-position="15:1" />
     <Try triggers="ReformatCode"><ide/> can help you correct code formatting with just one action. Try reformatting the selected code with <action>ReformatCode</action>.</Try>
-    <SetSelection start-position="1:1" end-position="1:1" />
+    <SetSelection start-position="10:1" end-position="9:1" />
     <Try triggers="ReformatCode">To reformat the whole source file, use <action>ReformatCode</action> when no lines are selected.</Try>
     <Win/>
 </xml>
