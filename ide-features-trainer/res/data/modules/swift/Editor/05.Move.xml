@@ -1,25 +1,33 @@
 <xml type="Scenario" name="Move" id="swift.editorbasics.move" subtype="aimless" projectTree="hide" lang="Swift">
     <MouseBlock>
         <CopyText><![CDATA[import Foundation
+import UIKit
 
-class MoveDemo {
+class Move: UIViewController {
 
-    var started = false;
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
-    public func run() {
-        started = true;
-        print("Hello!");
+        let x = 0
+        let y = 50
+
+        let tableView = UITableView()
+
+        header.text = "AppCode"
+        header.sizeToFit()
+        let header = UILabel()
+
+        self.view.addSubview(tableView)
+        tableView.frame = CGRect(x: x, y: y, width: 320, height: 400)
+        tableView.tableHeaderView = header
     }
 
-}
-
-func test() {
-    MoveDemo().run()
 }]]></CopyText>
     <ShowLineNumber/>
     </MouseBlock>
-    <MoveCaret position="8:13"/>
-    <Try trigger="MoveLineDown">Rearranging lines usually takes two actions: cut and paste. In <ide/>, you can do it with just one: pressing <action>MoveLineDown</action> will pull down the current line.</Try>
-    <Try trigger="MoveLineUp">Similarly, to pull a line up, use <action>MoveLineUp</action>.</Try>
+    <MoveCaret position="18:9"/>
+    <Try triggers="MoveLineDown;MoveLineDown">Rearranging lines usually takes two actions: cut and paste. In <ide/>, you can do it with just one: pressing <action>MoveLineDown</action> will pull down the current line. Move the current line to the end of the <code>viewDidLoad</code> function.</Try>
+    <MoveCaret position="16:9"/>
+    <Try triggers="MoveLineUp;MoveLineUp">Similarly, to pull a line up, use <action>MoveLineUp</action>. Move <code>header</code> declaration before it's setup.</Try>
     <Win/>
 </xml>

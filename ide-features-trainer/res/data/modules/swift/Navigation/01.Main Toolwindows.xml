@@ -1,15 +1,7 @@
 <xml type="Scenario" name="Main windows &amp; views" id="swift.navigation.toolwindows" subtype="aimless" projectTree="hide" lang="Swift">
-    <CopyText><![CDATA[//
-//  MasterViewController.swift
-//  LearnProject
-//
-//  Created by jetbrains on 24/01/2018.
-//  Copyright © 2018 jetbrains. All rights reserved.
-//
+    <CopyText><![CDATA[import UIKit
 
-import UIKit
-
-class NavigationController: UITableViewController {
+class Navigation: UITableViewController {
 
     var detailViewController: DetailViewController? = nil
     var objects = [Any]()
@@ -101,6 +93,7 @@ class NavigationController: UITableViewController {
     <Text><strong>Files</strong> view is an additional helpful mode for <ide/>’s <strong>Project</strong> view. It shows all the files inside the directory where <code>.xcworkspace</code> or <code>.xcproject</code> is located. Using this view, you can easily open any file which is not included into your project and view it.</Text>
     <Try triggers="com.intellij.ui.content.tabs.TabbedContentAction$MyNextTabAction">Activate <strong>Files</strong> view by pressing <action>NextTab</action>.</Try>
     <MoveCaret position="1:1" />
+    <Text>Press <action>EditorEscape</action> to return to editor window.</Text>
     <Text><strong>Structure</strong> view and <strong>Structure</strong> popup show you the structure of a particular file together with all the <code>//TODO</code>, <code>//FIXME</code> and <code>#pragma mark</code> or <code>//MARK</code> comments in your code. They work similarly to the <strong>Symbol</strong> navigator in Xcode.</Text>
     <Try trigger="ActivateStructureToolWindow">Activate the <strong>Structure</strong> view by pressing <action>ActivateStructureToolWindow</action>.</Try>
     <Text>Using ↑/↓ keys you can select any code construct here and press <action>EditSource</action> to jump to some place in your code.</Text>

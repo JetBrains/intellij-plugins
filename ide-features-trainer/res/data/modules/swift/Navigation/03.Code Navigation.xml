@@ -1,15 +1,15 @@
 <xml type="Scenario" name="Code Navigation" id="swift.navigation.code" subtype="aimless" projectTree="hide" lang="Swift">
-    <CopyText><![CDATA[import UIKit
+    <CopyText><![CDATA[import Foundation
 
-protocol Serializable: ExpressibleByStringLiteral {
-
-}
-
-class Item : Serializable {
+protocol Protocol {
 
 }
 
-class StringItem: Item {
+class Class : Protocol {
+
+}
+
+class Subclass: Class {
 
 }]]></CopyText>
     <Text>When working on your project, you often need to open and edit a specific class, file or symbol. The fastest way to do this is to use the main navigation triple: <strong>Go to Class/File/Symbol</strong>.</Text>
@@ -27,8 +27,6 @@ class StringItem: Item {
     <Try trigger="GotoSuperMethod"><strong>Go to Super Definition</strong> navigates you to the parent class declaration. Press <action>GotoSuperMethod</action> to jump to the <code>Item</code> class.</Try>
     <Try trigger="GotoSuperMethod">Now press <action>GotoSuperMethod</action> again to jump to the <code>Serializable</code> protocol declaration.</Try>
     <MoveCaret position="3:33" />
-    <Try trigger="QuickImplementations">Now let's use the <action>Quick Definition</action> to see <code>ExpressibleByStringLiteral</code> without jumping to it's source. Press <action>QuickImplementations</action></Try>
-    <Try trigger="QuickJavaDoc">Press <action>QuickJavaDoc</action> to see the <strong>Quick Documentation</strong> for symbol under caret.</Try>
     <Try trigger="RecentFiles">Finally, there are two quite useful and frequently used navigation actions to quickly switch between recent files and toolwindows. First is the <string>Recent files</string> popup. Open it via <action>RecentFiles</action> and select what you need using arrow keys on the keyboard.</Try>
     <Try triggers="Switcher">The second is <strong>Switcher</strong>, which looks the same but immediately disappears after you select something. Hold the <action>⌃</action> key while pressing <action>Switcher</action>, press it again to switch to select some file, or toolwindow. Release the <action>⌃</action> key when you selected what you wanted.</Try>
     <Win/>
