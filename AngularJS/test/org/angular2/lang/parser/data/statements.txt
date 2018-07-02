@@ -1,0 +1,38 @@
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSAssignmentExpression
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('a')
+      PsiElement(JS:EQ)('=')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('1')
+    PsiElement(JS:SEMICOLON)(';')
+  JSExpressionStatement
+    JSAssignmentExpression
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('b')
+      PsiElement(JS:EQ)('=')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('3')
+    PsiElement(JS:SEMICOLON)(';')
+  JSExpressionStatement
+    JSBinaryExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('a')
+      PsiElement(JS:PLUS)('+')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('b')
+------
+ASTWrapperPsiElement(FILE)
+  JSEmptyStatement
+    PsiElement(JS:SEMICOLON)(';')
+  JSEmptyStatement
+    PsiElement(JS:SEMICOLON)(';')
+  JSExpressionStatement
+    JSLiteralExpression
+      PsiElement(JS:NUMERIC_LITERAL)('1')
+    PsiElement(JS:SEMICOLON)(';')
+  JSEmptyStatement
+    PsiElement(JS:SEMICOLON)(';')

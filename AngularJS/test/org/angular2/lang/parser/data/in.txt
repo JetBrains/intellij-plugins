@@ -1,0 +1,22 @@
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    Angular2RepeatExpression
+      JSVarStatement
+        JSVariable
+          PsiElement(JS:IDENTIFIER)('name')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:IN_KEYWORD)('in')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('collection')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    Angular2RepeatExpression
+      JSVarStatement
+        JSVariable
+          PsiElement(JS:IDENTIFIER)('name')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:IN_KEYWORD)('in')
+      PsiErrorElement:expression expected
+        <empty list>
