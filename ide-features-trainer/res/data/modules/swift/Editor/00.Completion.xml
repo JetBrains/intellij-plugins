@@ -17,7 +17,7 @@ class Placeholder: UIViewController {
 
         tableView.frame = CGRect(x: x, y: y, width: 320, height: 400)
         tableView.tableHeaderView = header
-        tableView.style =
+        tableView.separatorStyle =
         self.view.addSubview(tableView)
 
         UIView.animate(withDuration: 1.0, animations: { tableView.backgroundColor = .brown }, completion: nil)
@@ -28,14 +28,15 @@ class Placeholder: UIViewController {
     <MoveCaret position="15:20"/>
     <Try trigger="CodeCompletion">To activate Basic Completion, press <action>CodeCompletion</action> and you will see lookup menu again.</Try>
     <Try check="EditorEscape">Press <action>EditorEscape</action> to close the popup.</Try>
-    <MoveCaret position="19:27"/>
+    <MoveCaret position="19:35"/>
     <TypeText> </TypeText>
     <Try triggers="SmartTypeCompletion;EditorChooseLookupItem">Smart Type Completion filters the list of suggestion to include only those types that are applicable in the current context. Press <action>SmartTypeCompletion</action> to see the list of matching suggestions. Choose the first one by pressing <action>EditorEnter</action>.</Try>
-    <MoveCaret position="19:28"/>
-    <TypeText>p</TypeText>
+    <MoveCaret position="19:37"/>
+    <TypeText>s</TypeText>
     <Try trigger="CodeCompletion">Now press <action>CodeCompletion</action> again to show completion options</Try>
-    <Try trigger="EditorChooseLookupItemReplace">Select <code>plain</code> item and press <action>EditorChooseLookupItemReplace</action> instead of <action>EditorChooseLookupItem</action>. This overwrites the word at the caret rather than simply inserting it</Try>
+    <Try trigger="EditorChooseLookupItemReplace">Select <code>singleLine</code> item and press <action>EditorChooseLookupItemReplace</action> instead of <action>EditorChooseLookupItem</action>. This overwrites the word at the caret rather than simply inserting it</Try>
     <MoveCaret position="22:21"/>
     <Try triggers="CodeCompletion;EditorChooseLookupItemReplace">Now invoke <action>CodeCompletion</action> and <action>EditorChooseLookupItemReplace</action> to easily overwrite the <code>animate(withDuration:animations:completion:)</code> function with <code>animate(withDuration:animations:)</code></Try>
+    <Text action="learn.next.lesson">Awesome! Click the button below to start the next lesson, or use <action>learn.next.lesson</action>.</Text>
     <Win/>
 </xml>
