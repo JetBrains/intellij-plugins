@@ -123,29 +123,25 @@ class Module(val name: String, moduleXmlPath: String, private val root: Element)
   val nameWithoutWhitespaces: String
     get() = name.replace("\\s+".toRegex(), "")
 
-  override fun equals(other: Any?): Boolean {
-    if (other == null) return false
-    if (other !is Module) return false
-    return other.name == this.name
-
-  }
-
   fun update() {
     lessons = filterLessonsByCurrentLang()
     moduleUpdateListeners.forEach(Consumer<ModuleUpdateListener> { it.onUpdate() })
   }
 
-  fun registerListener(moduleUpdateListener: ModuleUpdateListener) {
-    moduleUpdateListeners.add(moduleUpdateListener)
-  }
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
 
-  fun removeAllListeners() {
-    moduleUpdateListeners.clear()
+    other as Module
+
+    if (name != other.name) return false
+    if (id != other.id) return false
+
+    return true
   }
 
   override fun hashCode(): Int {
     var result = name.hashCode()
-    result = 31 * result + root.hashCode()
     result = 31 * result + (id?.hashCode() ?: 0)
     return result
   }
