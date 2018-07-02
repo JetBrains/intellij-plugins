@@ -34,7 +34,7 @@ public class PrettierBackgroundTaskConsumer extends BackgroundTaskConsumer {
   public TaskOptions getOptionsTemplate() {
     TaskOptions options = new TaskOptions();
     options.setName("Prettier");
-    options.setDescription("Formats .js files");
+    options.setDescription(PrettierBundle.message("file.watcher.description"));
     options.setFileExtension(JavaScriptFileType.INSTANCE.getDefaultExtension());
     options.setScopeName(PsiBundle.message("psi.search.scope.project"));
 
