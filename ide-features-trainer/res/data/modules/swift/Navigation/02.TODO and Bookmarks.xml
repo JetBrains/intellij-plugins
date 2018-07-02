@@ -1,15 +1,7 @@
 <xml type="Scenario" name="TODOs &amp; Bookmarks" id="swift.navigation.toolwindows" subtype="aimless" projectTree="hide" lang="Swift">
-    <CopyText><![CDATA[//
-//  MasterViewController.swift
-//  LearnProject
-//
-//  Created by jetbrains on 24/01/2018.
-//  Copyright © 2018 jetbrains. All rights reserved.
-//
+    <CopyText><![CDATA[import UIKit
 
-import UIKit
-
-class MasterViewController: UITableViewController {
+class Navigation: UITableViewController {
 
     var detailViewController: DetailViewController? = nil
     var objects = [Any]()
