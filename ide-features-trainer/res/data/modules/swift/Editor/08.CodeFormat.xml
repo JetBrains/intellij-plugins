@@ -26,7 +26,7 @@ class Format: UIViewController {
 }]]></CopyText>
     <SetSelection start-position="10:1" end-position="15:1" />
     <Try triggers="ReformatCode"><ide/> can help you correct code formatting with just one action. Try reformatting the selected code with <action>ReformatCode</action>.</Try>
-    <SetSelection start-position="10:1" end-position="9:1" />
-    <Try triggers="ReformatCode">To reformat the whole source file, use <action>ReformatCode</action> when no lines are selected.</Try>
+    <!--<SetSelection start-position="10:1" end-position="9:1" />-->
+    <Try triggers="ReformatCode">To reformat the whole source file, use <action>ReformatCode</action> when no lines are selected. Press <action>EditorEscape</action> → <action>ReformatCode</action></Try>
     <Win/>
 </xml>
