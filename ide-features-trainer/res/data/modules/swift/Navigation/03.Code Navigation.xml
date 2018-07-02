@@ -20,7 +20,7 @@ class Subclass: Class {
     <Text>If you need to take into account also standard libraries and other non-project files, symbols or classes, just press the shortcut twice.</Text>
     <MoveCaret position="13:41" />
     <Try triggers="GotoDeclaration;DetailViewController.swift">Another important action from the <strong>Go to...</strong> family is <strong>Go to Declaration</strong>. Place the caret at <code>DetailViewController?</code> and press <action>GotoDeclaration</action> to jump to its declaration.</Try>
-    <MoveCaret position="3:40" />
+    <MoveCaret position="3:33" />
     <Try trigger="GotoImplementation">If a method or class has several implementations, <action>GotoDeclaration</action> will get you to the first one. Try using <action>GotoImplementation</action> to see all the definitions of <code>UIViewController</code></Try>
     <Try triggers="GotoFile;Navigation.swift">Let's navigate back to <code>Navigation.swift</code> via <action>GotoFile</action></Try>
     <MoveCaret position="11:12" />

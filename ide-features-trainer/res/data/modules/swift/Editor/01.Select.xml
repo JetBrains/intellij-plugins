@@ -30,6 +30,5 @@ class Select: UIViewController {
     <Try trigger="EditorSelectWord">Try increasing your selection with <action>EditorSelectWord</action> until your whole file is selected.</Try>
     <Try action="EditorUnSelectWord" trigger="EditorUnSelectWord"><action>EditorUnSelectWord</action> shrinks selection. Try pressing it.</Try>
     <Try action="$SelectAll" trigger="$SelectAll">Now select the whole file instantly with <action>$SelectAll</action>.</Try>
-    <Text action="learn.next.lesson">Awesome! Click the button below to start the next lesson, or use <action>learn.next.lesson</action>.</Text>
     <Win/>
 </xml>
