@@ -25,7 +25,7 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
 
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
-  <depends>com.intellij.plugins.watcher</depends>
+  <depends optional="true" config-file="file-watcher.xml">com.intellij.plugins.watcher</depends>
   <resource-bundle>PrettierBundle</resource-bundle>
 
 
@@ -45,7 +45,6 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
     <editorNotificationProvider implementation="com.intellij.prettierjs.PrettierCodeStyleEditorNotificationProvider"/>
     <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierCompatibleCodeStyleInstaller"/>
     <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierConfiguration$ProjectConfigurator"/>
-    <plugins.watcher.consumer implementation="com.intellij.prettierjs.PrettierBackgroundTaskConsumer"/>
   </extensions>
   <actions>
     <action id="ReformatWithPrettierAction"
