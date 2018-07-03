@@ -48,8 +48,10 @@ public class Message {
             else if (content instanceof Element) {
                 XMLOutputter outputter = new XMLOutputter();
                 MessageType type = MessageType.TEXT_REGULAR;
-                String text = outputter.outputString(((Element)content).getContent());
-                switch (((Element)content).getName()) {
+                Element elementContent = (Element) content;
+                String text = outputter.outputString(elementContent.getContent());
+                String link = null;
+                switch (elementContent.getName()) {
                     case "icon":
                         type = MessageType.ICON;
                         break;
@@ -59,8 +61,9 @@ public class Message {
                     case "strong":
                         type = MessageType.TEXT_BOLD;
                         break;
-                    case "link":
+                    case "a":
                         type = MessageType.LINK;
+                        link = elementContent.getAttributeValue("href");
                         break;
                     case "action":
                         type = MessageType.SHORTCUT;
@@ -75,6 +78,7 @@ public class Message {
                         break;
                 }
                 Message message = new Message(text, type);
+                message.link = link;
                 list.add(message);
             }
         });
@@ -86,6 +90,7 @@ public class Message {
     private String messageText;
     private int startOffset;
     private int endOffset;
+    private String link;
     @Nullable
     private Runnable runnable = null;
 
@@ -115,6 +120,14 @@ public class Message {
 
     public boolean isText() {
         return messageType == MessageType.TEXT_REGULAR || messageType == MessageType.TEXT_BOLD;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 
     @Override

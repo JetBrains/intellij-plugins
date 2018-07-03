@@ -10,14 +10,14 @@ import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.lesson.Lesson
 import training.ui.*
-
+import java.awt.*
+import java.awt.event.ActionEvent
+import java.net.URI
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 import javax.swing.border.MatteBorder
 import javax.swing.text.BadLocationException
-import java.awt.*
-import java.awt.event.ActionEvent
-import kotlin.reflect.KMutableProperty0
+
 
 /**
  * @author Sergey Karashevich
@@ -161,15 +161,26 @@ class LearnPanel : JPanel() {
             if (message.type == Message.MessageType.LINK) {
                 //add link handler
                 message.setRunnable {
-                    val lesson = CourseManager.instance.findLesson(message.text)
-                    if (lesson != null) {
-                        try {
-                            val project = guessCurrentProject(this@LearnPanel)
-                            CourseManager.instance.openLesson(project, lesson)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
+                    if(message.link.isNullOrEmpty()) {
+                        val lesson = CourseManager.instance.findLesson(message.text)
+                        if (lesson != null) {
+                            try {
+                                val project = guessCurrentProject(this@LearnPanel)
+                                CourseManager.instance.openLesson(project, lesson)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
 
+                        }
+                    }else{
+                        val desktop = if (Desktop.isDesktopSupported()) Desktop.getDesktop() else null
+                        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+                            try {
+                                desktop.browse(URI(message.link))
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
                     }
                 }
             }
