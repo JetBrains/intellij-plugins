@@ -1,6 +1,7 @@
 // Workaround for https://github.com/taras42/karma-jasmine-html-reporter/issues/25
 
 var KJHTML_PATTERN = /([\\/]karma-jasmine-html-reporter[\\/])/i;
+var JASMINE_ADAPTER = /([\\/]karma-jasmine[\\/]lib[\\/]adapter\.js$)/i;
 
 var createPattern = function(path) {
   return {pattern: path, included: true, served: true, watched: false};
@@ -22,5 +23,11 @@ exports.apply = function (configFiles) {
     endInd++;
     configFiles.splice(endInd + 1, 0, createPattern(__dirname + '/intellij-restore-specFilter-after-kjhtml.js'))
   }
-  configFiles.splice(configFiles.length, 0, createPattern(__dirname + '/karma-intellij-adapter.js'));
+  var jasmineAdapterInd = configFiles.length - 1;
+  configFiles.forEach(function(file, index) {
+    if (JASMINE_ADAPTER.test(file.pattern)) {
+      jasmineAdapterInd = index;
+    }
+  });
+  configFiles.splice(jasmineAdapterInd + 1, 0, createPattern(__dirname + '/karma-intellij-adapter.js'));
 };
