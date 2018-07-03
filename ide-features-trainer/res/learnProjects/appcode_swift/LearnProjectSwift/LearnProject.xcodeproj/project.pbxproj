@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C1DA99F20EAAA360072F4DF /* RunDebugTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1DA99E20EAAA360072F4DF /* RunDebugTest.swift */; };
 		2CA2B81C2018BBA200DD1EA2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA2B81B2018BBA200DD1EA2 /* AppDelegate.swift */; };
 		2CA2B8202018BBA300DD1EA2 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA2B81F2018BBA300DD1EA2 /* DetailViewController.swift */; };
 		2CA2B8232018BBA300DD1EA2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2CA2B8212018BBA300DD1EA2 /* Main.storyboard */; };
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2C1DA99E20EAAA360072F4DF /* RunDebugTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunDebugTest.swift; sourceTree = "<group>"; };
 		2CA2B8182018BBA200DD1EA2 /* LearnProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LearnProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CA2B81B2018BBA200DD1EA2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2CA2B81F2018BBA300DD1EA2 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 				2CA2B84D2018BBBD00DD1EA2 /* Refactorings.swift */,
 				2CA2B81F2018BBA300DD1EA2 /* DetailViewController.swift */,
 				2CB9B37320E6A5E0009B264D /* CodeGeneration.swift */,
+				2C1DA99E20EAAA360072F4DF /* RunDebugTest.swift */,
 				2CA2B8212018BBA300DD1EA2 /* Main.storyboard */,
 				2CA2B8242018BBA300DD1EA2 /* Assets.xcassets */,
 				2CA2B8262018BBA300DD1EA2 /* LaunchScreen.storyboard */,
@@ -274,6 +277,7 @@
 				2CF2336520A5C8B700B72688 /* MasterViewController.swift in Sources */,
 				2CA2B8202018BBA300DD1EA2 /* DetailViewController.swift in Sources */,
 				2CB9B37420E6A5E0009B264D /* CodeGeneration.swift in Sources */,
+				2C1DA99F20EAAA360072F4DF /* RunDebugTest.swift in Sources */,
 				2CA2B84E2018BBBD00DD1EA2 /* Refactorings.swift in Sources */,
 				2CA2B81C2018BBA200DD1EA2 /* AppDelegate.swift in Sources */,
 				2CA2B84C2018BBB300DD1EA2 /* Navigation.swift in Sources */,
