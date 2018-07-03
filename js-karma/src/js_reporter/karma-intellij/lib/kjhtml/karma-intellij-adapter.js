@@ -102,6 +102,8 @@
     return other
   }
 
-  createSpecFilter(window.__karma__.config, window.jasmine.getEnv())
+  if (window.jasmine) {
+    createSpecFilter(window.__karma__.config, window.jasmine.getEnv())
+  }
 
 })(window);
