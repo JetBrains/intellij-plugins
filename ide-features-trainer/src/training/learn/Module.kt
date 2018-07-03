@@ -120,8 +120,8 @@ class Module(val name: String, moduleXmlPath: String, private val root: Element)
     return lessons.any { !it.passed }
   }
 
-  val nameWithoutWhitespaces: String
-    get() = name.replace("\\s+".toRegex(), "")
+  val sanitizedName: String
+    get() = name.replace("[^\\dA-Za-z ]".toRegex(), "").replace("\\s+".toRegex(), "")
 
   fun update() {
     lessons = filterLessonsByCurrentLang()
