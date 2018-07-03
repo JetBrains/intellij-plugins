@@ -25,7 +25,7 @@ class FoldingDemo {
 }]]></CopyText>
     <CaretBlock>
         <MoveCaret position="12:27" />
-        <Try trigger="CollapseRegion">We first learned the basics of folding in the <link>Collapse</link> lesson. Now let's look at some other folding options. Select any part of code and fold it by pressing <action>CollapseRegion</action>.</Try>
+        <Try trigger="CollapseRegion">We first learned the basics of folding in the <a>Collapse</a> lesson. Now let's look at some other folding options. Select any part of code and fold it by pressing <action>CollapseRegion</action>.</Try>
     </CaretBlock>
 </MouseBlock>
         <Try trigger="ExpandRegion">Excellent! <ide /> collapses <code>new Runnable()</code> to a lambda function. Use <action>ExpandRegion</action> to expand this structure.</Try>

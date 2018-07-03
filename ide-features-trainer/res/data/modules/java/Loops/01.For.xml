@@ -23,7 +23,7 @@ class FoldingDemo {
 }]]></CopyText>
     <CaretBlock>
       <MoveCaret position="12:27"/>
-      <Text>Previously we learned the basics of folding in the <link>Collapse</link> lesson. Now let's look at some other folding options.</Text>
+      <Text>Previously we learned the basics of folding in the <a>Collapse</a> lesson. Now let's look at some other folding options.</Text>
       <Try trigger="CollapseRegion">Select any part of code and run folding by pressing <action>CollapseRegion</action></Try>
     </CaretBlock>
   </MouseBlock>
