@@ -309,7 +309,7 @@ class OpenLessonAction : AnAction() {
 
         var fileName = "Test." + extensionFile
         if (lesson.module != null) {
-          fileName = lesson.module!!.nameWithoutWhitespaces + "." + extensionFile
+          fileName = lesson.module!!.sanitizedName + "." + extensionFile
         }
 
         var lessonVirtualFile: VirtualFile? = null
