@@ -12,7 +12,7 @@ buildscript {
 
 
 plugins {
-    id "org.jetbrains.intellij" version "0.2.17"
+    id "org.jetbrains.intellij" version "0.3.4"
 }
 
 repositories {
@@ -25,7 +25,7 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-reflect:1.1.4-3"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }
 
 group 'org.sk'
@@ -37,9 +37,9 @@ apply plugin: "kotlin"
 sourceCompatibility = 1.8
 
 intellij {
-    version 'IU-173.3727.78'
+    version 'IU-182.3458.5'
     //to check compatibility for Python and Go
-    plugins = ['Pythonid:2017.3.173.3727.89', 'org.jetbrains.plugins.go:173.3727.80']
+    plugins = ['Pythonid:2018.2.182.3341.29', 'org.jetbrains.plugins.go:182.3458.6.790']
 //    publish {
 //        username repoUser
 //        password repoPassword
