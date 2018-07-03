@@ -377,8 +377,8 @@ public class BndTestState extends JavaCommandLineState {
         if (myFailingTest != null) {
           String testName = fullTestName(parseTestName(myFailingTest, false), myFailingTest);
           boolean testError = myReason != Proto.FAILED;
-          String expected = pair != null ? pair.first : null;
-          String actual = pair != null ? pair.second : null;
+          String expected = Pair.getFirst(pair);
+          String actual = Pair.getSecond(pair);
           myProcessor.onTestFailure(new TestFailedEvent(testName, message, stack.toString(), testError, actual, expected));
         }
         else {

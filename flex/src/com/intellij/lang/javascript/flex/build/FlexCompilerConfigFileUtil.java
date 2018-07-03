@@ -68,7 +68,7 @@ public class FlexCompilerConfigFileUtil {
     final FileDocumentManager documentManager = FileDocumentManager.getInstance();
     final Document cachedDocument = documentManager.getCachedDocument(configFile);
     final Long currentTimestamp = cachedDocument != null ? cachedDocument.getModificationStamp() : configFile.getModificationCount();
-    final Long cachedTimestamp = data == null ? null : data.first;
+    final Long cachedTimestamp = Pair.getFirst(data);
 
     if (cachedTimestamp == null || !cachedTimestamp.equals(currentTimestamp)) {
       data = null;
@@ -113,7 +113,7 @@ public class FlexCompilerConfigFileUtil {
     final FileDocumentManager documentManager = FileDocumentManager.getInstance();
     final Document cachedDocument = documentManager.getCachedDocument(configFile);
     final Long currentTimestamp = cachedDocument != null ? cachedDocument.getModificationStamp() : configFile.getModificationCount();
-    final Long cachedTimestamp = data == null ? null : data.first;
+    final Long cachedTimestamp = Pair.getFirst(data);
 
     if (cachedTimestamp == null || !cachedTimestamp.equals(currentTimestamp)) {
       data = null;
