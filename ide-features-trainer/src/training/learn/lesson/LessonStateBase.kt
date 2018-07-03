@@ -27,8 +27,7 @@ class LessonStateBase : PersistentStateComponent<LessonStateBase> {
 
   override fun getState(): LessonStateBase = this
 
-  override fun loadState(persistedState: LessonStateBase?) {
-    if (persistedState == null) return
+  override fun loadState(persistedState: LessonStateBase) {
     this.myMap.putAll(persistedState.myMap)
   }
 

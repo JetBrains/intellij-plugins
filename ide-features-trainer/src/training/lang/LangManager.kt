@@ -48,8 +48,7 @@ class LangManager : PersistentStateComponent<LangManager.State> {
     return myLangSupport ?: throw Exception("Lang support is not defined.")
   }
 
-  override fun loadState(state: State?) {
-    if (state == null || state.languageName == null) return
+  override fun loadState(state: State) {
     myLangSupport = supportedLanguagesExtensions.find { langExt -> langExt.language == state.languageName }!!.instance
     myState.languageName = state.languageName
   }

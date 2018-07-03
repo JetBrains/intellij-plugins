@@ -15,8 +15,7 @@ class StatisticBase : PersistentStateComponent<StatisticBase> {
 
   override fun getState(): StatisticBase = this
 
-  override fun loadState(persistedState: StatisticBase?) {
-    persistedState ?: return
+  override fun loadState(persistedState: StatisticBase) {
     this.persistedLessonId2State.putAll(persistedState.persistedLessonId2State)
   }
 

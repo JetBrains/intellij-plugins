@@ -12,8 +12,7 @@ class ActivityManager: PersistentStateComponent<ActivityManager> {
 
   override fun getState(): ActivityManager = this
 
-  override fun loadState(persistedState: ActivityManager?) {
-    if (persistedState == null) return
+  override fun loadState(persistedState: ActivityManager) {
     lastActivityTime = if (persistedState.lastActivityTime == null || persistedState.lastActivityTime == 0L)
       System.currentTimeMillis()
     else
