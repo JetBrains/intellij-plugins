@@ -265,7 +265,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     Disposer.dispose(mySecondEditor);
   }
 
-  static class MyFileEditorState implements FileEditorState {
+  public static class MyFileEditorState implements FileEditorState {
     @Nullable
     private final String mySplitLayout;
     @Nullable
