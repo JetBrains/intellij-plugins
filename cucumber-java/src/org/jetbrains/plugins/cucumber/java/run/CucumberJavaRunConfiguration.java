@@ -4,6 +4,7 @@ import com.intellij.diagnostic.logging.LogConfigurationPanel;
 import com.intellij.execution.*;
 import com.intellij.execution.application.ApplicationConfiguration;
 import com.intellij.execution.configurations.*;
+import com.intellij.execution.filters.ArgumentFileFilter;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
@@ -17,6 +18,7 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorGroup;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.JdkUtil;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtil;
@@ -26,6 +28,7 @@ import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaBundle;
 
 import java.io.File;
+import java.util.Map;
 
 
 public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
@@ -47,7 +50,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   @Override
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) {
-    return new JavaApplicationCommandLineState<CucumberJavaRunConfiguration>(CucumberJavaRunConfiguration.this, env) {
+    return new JavaApplicationCommandLineState<CucumberJavaRunConfiguration>(this, env) {
       protected JavaParameters createJavaParameters() throws ExecutionException {
         final JavaParameters params = new JavaParameters();
         final JavaRunConfigurationModule module = getConfigurationModule();
@@ -83,6 +86,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         params.getVMParametersList().addParametersString("-Dorg.jetbrains.run.directory=\"" + f.getAbsolutePath() + "\"");
 
         params.getProgramParametersList().addParametersString("\"" + filePath + "\"");
+        params.setShortenCommandLine(getShortenCommandLine(), getProject());
         return params;
       }
 
@@ -106,7 +110,20 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
       public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
         final ProcessHandler processHandler = startProcess();
         final ConsoleView console = createConsole(executor, processHandler);
+
+        Map<String, String> argumentFilesMapping = getUserData(JdkUtil.COMMAND_LINE_CONTENT);
+        if (argumentFilesMapping != null) {
+          argumentFilesMapping.forEach((key, value) -> console.addMessageFilter(new ArgumentFileFilter(key, value)));
+        }
+
         return new DefaultExecutionResult(console, processHandler, createActions(console, processHandler, executor));
+      }
+
+      @Override
+      protected GeneralCommandLine createCommandLine() throws ExecutionException {
+        GeneralCommandLine commandLine = super.createCommandLine();
+        putUserData(JdkUtil.COMMAND_LINE_CONTENT, commandLine.getUserData(JdkUtil.COMMAND_LINE_CONTENT));
+        return commandLine;
       }
     };
   }
