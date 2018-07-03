@@ -158,15 +158,6 @@ public class Angular2Parser
         }
         return true;
       }
-      if (tokenType == Angular2TokenTypes.ONE_TIME_BINDING) {
-        final PsiBuilder.Marker expr = builder.mark();
-        builder.advanceLexer();
-        if (!super.parseUnaryExpression()) {
-          builder.error(JSBundle.message("javascript.parser.message.expected.expression"));
-        }
-        expr.done(JSElementTypes.PREFIX_EXPRESSION);
-        return true;
-      }
       return super.parseUnaryExpression();
     }
 
@@ -210,7 +201,7 @@ public class Angular2Parser
     @Override
     protected boolean isReferenceQualifierSeparator(IElementType tokenType) {
       return tokenType == Angular2TokenTypes.ELVIS ||
-             tokenType == Angular2TokenTypes.ASSERT_NOT_NULL ||
+             //tokenType == Angular2TokenTypes.ASSERT_NOT_NULL ||
              super.isReferenceQualifierSeparator(tokenType);
     }
 
@@ -268,16 +259,16 @@ public class Angular2Parser
         builder.advanceLexer();
       }
       parseExpression();
-      if (builder.lookAhead(1) == Angular2TokenTypes.TRACK_BY_KEYWORD) {
-        builder.advanceLexer();
-        builder.advanceLexer();
-        if (builder.getTokenType() != JSTokenTypes.COLON) {
-          builder.error(JSBundle.message("javascript.parser.message.expected.colon"));
-        } else {
-          builder.advanceLexer();
-        }
-        parseExpression();
-      }
+      //if (builder.lookAhead(1) == Angular2TokenTypes.TRACK_BY_KEYWORD) {
+      //  builder.advanceLexer();
+      //  builder.advanceLexer();
+      //  if (builder.getTokenType() != JSTokenTypes.COLON) {
+      //    builder.error(JSBundle.message("javascript.parser.message.expected.colon"));
+      //  } else {
+      //    builder.advanceLexer();
+      //  }
+      //  parseExpression();
+      //}
       expr.done(Angular2ElementTypes.FOR_EXPRESSION);
       return true;
     }
@@ -311,10 +302,10 @@ public class Angular2Parser
       }
       builder.advanceLexer();
       parseExpression();
-      if (builder.getTokenType() == Angular2TokenTypes.TRACK_BY_KEYWORD) {
-        builder.advanceLexer();
-        parseExpression();
-      }
+      //if (builder.getTokenType() == Angular2TokenTypes.TRACK_BY_KEYWORD) {
+      //  builder.advanceLexer();
+      //  parseExpression();
+      //}
       expr.done(Angular2ElementTypes.REPEAT_EXPRESSION);
       return true;
     }

@@ -21,9 +21,6 @@ import com.intellij.lang.javascript.JSTokenTypes;
 public interface Angular2TokenTypes extends JSTokenTypes {
   Angular2TokenType ESCAPE_SEQUENCE = new Angular2TokenType("ESCAPE_SEQUENCE");
   Angular2TokenType INVALID_ESCAPE_SEQUENCE = new Angular2TokenType("INVALID_ESCAPE_SEQUENCE");
-  Angular2TokenType TRACK_BY_KEYWORD = new Angular2TokenType("TRACK_BY_KEYWORD");
-  Angular2TokenType ONE_TIME_BINDING = new Angular2TokenType("ONE_TIME_BINDING");
   Angular2TokenType ELVIS = new Angular2TokenType("ELVIS");// ?.
-  Angular2TokenType ASSERT_NOT_NULL = new Angular2TokenType("ASSERT_NOT_NULL");// !.
   Angular2TokenType THEN = new Angular2TokenType("THEN");
 }

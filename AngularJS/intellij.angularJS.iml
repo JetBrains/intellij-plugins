@@ -24,6 +24,30 @@
     <orderEntry type="module" module-name="intellij.diagram.impl" />
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="module" module-name="intellij.javascript.intentions" scope="TEST" />
+    <orderEntry type="module-library" scope="TEST">
+      <library name="oleaster-matcher" type="repository">
+        <properties include-transitive-deps="false" maven-id="com.mscharhag.oleaster:oleaster-matcher:0.2.0" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-matcher/0.2.0/oleaster-matcher-0.2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-matcher/0.2.0/oleaster-matcher-0.2.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="oleaster-runner" type="repository">
+        <properties include-transitive-deps="false" maven-id="com.mscharhag.oleaster:oleaster-runner:0.2.0" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-runner/0.2.0/oleaster-runner-0.2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-runner/0.2.0/oleaster-runner-0.2.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
     <orderEntry type="module" module-name="intellij.javascript.langInjection" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.langInjection" scope="TEST" />
     <orderEntry type="module" module-name="intellij.sass" scope="TEST" />

@@ -1,9 +1,10 @@
-this
-true
-false
+var
+let
+as
 null
 undefined
-in
-as
-track by
-let
+true
+false
+if
+else
+this

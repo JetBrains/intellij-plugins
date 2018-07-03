@@ -39,25 +39,21 @@ IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
 %%
 
 <YYINITIAL> {
-  "'"                         { yybegin(YYSTRING); quote = '\''; return STRING_LITERAL; }
-  "\""                        { yybegin(YYSTRING); quote = '"'; return STRING_LITERAL; }
+  "'"                         { yybegin(YYSTRING); quote = '\''; return STRING_LITERAL_PART; }
+  "\""                        { yybegin(YYSTRING); quote = '"'; return STRING_LITERAL_PART; }
   {NUMBER}                    { return NUMERIC_LITERAL; }
   {WHITE_SPACE}               { return WHITE_SPACE; }
 
-  "this"                      { return THIS_KEYWORD; }
-  "true"                      { return TRUE_KEYWORD; }
-  "false"                     { return FALSE_KEYWORD; }
+  "var"                       { return VAR_KEYWORD; }
+  "let"                       { return LET_KEYWORD; }
+  "as"                        { return AS_KEYWORD; }
   "null"                      { return NULL_KEYWORD; }
   "undefined"                 { return UNDEFINED_KEYWORD; }
-  "in"                        { return IN_KEYWORD; }
-  "as"                        { return AS_KEYWORD; }
-  "of"                        { return OF_KEYWORD; }
-  "track by"                  { return TRACK_BY_KEYWORD; }
-
-  "trackBy"                   { return TRACK_BY_KEYWORD; }
-  "let"                       { return LET_KEYWORD; }
-  "then"                      { return THEN; }
+  "true"                      { return TRUE_KEYWORD; }
+  "false"                     { return FALSE_KEYWORD; }
+  "if"                        { return IF_KEYWORD; }
   "else"                      { return ELSE_KEYWORD; }
+  "this"                      { return THIS_KEYWORD; }
 
   "as"/(\.)                   { return IDENTIFIER; }
   {IDENT}                     { return IDENTIFIER; }
@@ -91,12 +87,11 @@ IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
   "]"                         { return RBRACKET; }
   "."                         { return DOT; }
   "?."                        { return ELVIS; }
-  "!."                        { return ASSERT_NOT_NULL; }
   ","                         { return COMMA; }
   ";"                         { return SEMICOLON; }
   ":"                         { return COLON; }
   "?"                         { return QUEST; }
-  "::"                        { return ONE_TIME_BINDING; }
+  "#"                         { return SHARP; }
 
   [^]                         { return BAD_CHARACTER; }
 }
@@ -106,8 +101,8 @@ IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
   [\\]u[0-9a-fA-F]{4}         { return ESCAPE_SEQUENCE; }
   [\\]u[^0-9a-fA-F]           { yypushback(1); return INVALID_ESCAPE_SEQUENCE; }
   [\\]u[0-9a-fA-F]{1,3}       { return INVALID_ESCAPE_SEQUENCE; }
-  "'"                         { if (quote == '\'') yybegin(YYINITIAL); return STRING_LITERAL; }
-  "\""                        { if (quote == '"') yybegin(YYINITIAL); return STRING_LITERAL; }
-  [^\'\"\n\r\\]+              { return STRING_LITERAL; }
+  "'"                         { if (quote == '\'') yybegin(YYINITIAL); return STRING_LITERAL_PART; }
+  "\""                        { if (quote == '"') yybegin(YYINITIAL); return STRING_LITERAL_PART; }
+  [^\'\"\n\r\\]+              { return STRING_LITERAL_PART; }
   [^]                         { yypushback(yytext().length()); yybegin(YYINITIAL); }
 }
