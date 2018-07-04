@@ -44,7 +44,7 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
 
   @Override
   public boolean accept(@NotNull Project project, @NotNull VirtualFile file) {
-    return myFirstProvider.accept(project, file) && mySecondProvider.accept(project, file);
+    return myFirstProvider.accept(project, file);
   }
 
   @NotNull
