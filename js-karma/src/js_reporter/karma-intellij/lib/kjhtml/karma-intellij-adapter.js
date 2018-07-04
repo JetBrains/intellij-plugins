@@ -30,26 +30,28 @@
     }
   };
 
-  var createRegExp = function (testNamePattern) {
-    testNamePattern = testNamePattern || '';
-    if (testNamePattern === '') {
-      return null;
-    }
-    return new RegExp(testNamePattern);
-  };
-
   /**
    * @param {Object} config The karma config
    * @param {Object} jasmineEnv jasmine environment object
    */
-  var createSpecFilter = function (config, jasmineEnv) {
-    var grepOption = getGrepOption(config.args);
-    var filterPattern = createRegExp(grepOption);
-
+  var setJasmineSpecFilter = function (config, jasmineEnv) {
+    var grepOption = getGrepOption((config || {}).args);
+    var filterPattern = grepOption ? new RegExp(grepOption) : null;
     jasmineEnv.specFilter = function (spec) {
       return filterPattern == null || filterPattern.test(spec.getFullName());
     }
   };
+
+  /**
+   * @param {Object} config The karma config
+   * @param {Object} mocha mocha global object
+   */
+  function setMochaSpecFilter(config, mocha) {
+    var grepOption = getGrepOption((config || {}).args);
+    if (grepOption) {
+      mocha.grep(new RegExp(grepOption));
+    }
+  }
 
   function indexOf(collection, find, i /* opt*/) {
     if (collection.indexOf) {
@@ -103,7 +105,11 @@
   }
 
   if (window.jasmine) {
-    createSpecFilter(window.__karma__.config, window.jasmine.getEnv())
+    setJasmineSpecFilter(window.__karma__.config, window.jasmine.getEnv())
+  }
+
+  if (window.mocha) {
+    setMochaSpecFilter(window.__karma__.config, window.mocha);
   }
 
 })(window);
