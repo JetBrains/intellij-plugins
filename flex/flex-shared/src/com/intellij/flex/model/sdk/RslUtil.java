@@ -51,7 +51,7 @@ public class RslUtil {
     Pair<Long, Map<String, List<String>>> data = ourConfigFilePathToTimestampAndSwcPathToRslUrls.get(configFilePath);
 
     final Long currentTimestamp = configFile.lastModified();
-    final Long cachedTimestamp = data == null ? null : data.first;
+    final Long cachedTimestamp = Pair.getFirst(data);
 
     if (cachedTimestamp == null || !cachedTimestamp.equals(currentTimestamp)) {
       ourConfigFilePathToTimestampAndSwcPathToRslUrls.remove(configFilePath);

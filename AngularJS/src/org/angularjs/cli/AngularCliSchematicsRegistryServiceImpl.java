@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -30,16 +31,18 @@ import java.util.stream.Collectors;
 public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematicsRegistryService {
 
   private static final String USER_AGENT = "JetBrains IDE";
-  private static final String NG_PACKAGES_URL = "https://raw.githubusercontent.com/JetBrains/intellij-plugins/master/AngularJS/resources/org/angularjs/cli/ng-packages.json";
+  private static final String NG_PACKAGES_URL =
+    "https://raw.githubusercontent.com/JetBrains/intellij-plugins/master/AngularJS/resources/org/angularjs/cli/ng-packages.json";
 
   private static final Logger LOG = Logger.getInstance(AngularCliSchematicsRegistryServiceImpl.class);
   private static final int CACHE_EXPIRY = 25 * 60 * 1000; //25 mins
-  private static final ExecutorService ourExecutorService = AppExecutorUtil.createBoundedApplicationPoolExecutor("Angular CLI Schematics Registry Pool", 5);
+  private static final ExecutorService ourExecutorService =
+    AppExecutorUtil.createBoundedApplicationPoolExecutor("Angular CLI Schematics Registry Pool", 5);
 
-  private final CachedValue<List<NodePackageBasicInfo>> myNgAddPackages =new CachedValue<>(
+  private final CachedValue<List<NodePackageBasicInfo>> myNgAddPackages = new CachedValue<>(
     AngularCliSchematicsRegistryServiceImpl::fetchPackagesSupportingNgAdd);
   private final Map<String, Pair<Boolean, Long>> myLocalNgAddPackages = ContainerUtil.newConcurrentMap();
-  private final Map<String, CachedValue<Boolean>> mySchematicsSupportedCache = ContainerUtil.newConcurrentMap();
+  private final Map<String, CachedValue<Boolean>> myNgAddSupportedCache = ContainerUtil.newConcurrentMap();
 
   @NotNull
   @Override
@@ -48,11 +51,18 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
   }
 
   @Override
+  public boolean supportsNgAdd(@NotNull String packageName, long timeout) {
+    return getPackagesSupportingNgAdd(timeout).stream().anyMatch(pkg -> packageName.equals(pkg.getName()));
+  }
+
+  @Override
   public boolean supportsNgAdd(@NotNull String packageName,
                                @NotNull String versionOrRange,
                                long timeout) {
-    return getPackagesSupportingNgAdd(timeout).stream().anyMatch(pkg -> packageName.equals(pkg.getName()))
-           && supportsSchematics(packageName, versionOrRange, timeout);
+    return supportsNgAdd(packageName, timeout)
+           && Boolean.TRUE.equals(myNgAddSupportedCache.computeIfAbsent(
+      getKey(packageName, versionOrRange),
+      k -> new CachedValue<>(() -> checkForNgAddSupport(packageName, versionOrRange))).getValue(timeout));
   }
 
   @Override
@@ -60,35 +70,24 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
     try {
       if (version.getPackageJson() != null) {
         return myLocalNgAddPackages.compute(version.getPackageJson().getPath(), (key, curValue) -> {
-          if (curValue != null && version.getPackageJson().getTimeStamp() == curValue.getSecond()) {
+          if (curValue != null && version.getPackageJson().getModificationStamp() == curValue.getSecond()) {
             return curValue;
           }
           try {
             File schematicsCollection = getSchematicsCollection(new File(version.getPackageJson().getPath()));
-            return Pair.create(schematicsCollection != null && hasNgAddSchematic(schematicsCollection), version.getPackageJson().getTimeStamp());
+            return Pair
+              .create(schematicsCollection != null && hasNgAddSchematic(schematicsCollection), version.getPackageJson().getModificationStamp());
           }
           catch (IOException e) {
-            throw new RuntimeException(e);
+            return Pair.create(false, version.getPackageJson().getModificationStamp());
           }
         }).getFirst();
       }
     }
     catch (Exception e) {
-      LOG.warn("Failed to retrieve schematics info for " + version.getPackageDir().getName(), e);
+      LOG.info("Failed to retrieve schematics info for " + version.getPackageDir().getName(), e);
     }
     return false;
-  }
-
-  @Override
-  public boolean supportsSchematics(@NotNull String packageName,
-                                    @NotNull String versionOrRange,
-                                    long timeout) {
-    return Boolean.TRUE.equals(mySchematicsSupportedCache.computeIfAbsent(
-      getKey(packageName, versionOrRange), k -> new CachedValue<>(() -> {
-        ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-        JsonObject pkg = NpmRegistryService.getInstance().fetchPackageJson(packageName, versionOrRange, indicator);
-        return pkg != null && pkg.has("schematics");
-      })).getValue(timeout));
   }
 
   @NotNull
@@ -103,7 +102,8 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
       LOG.info("Failed to load current list of ng-add compatible packages.", e);
       try (InputStream is = AngularCliSchematicsRegistryServiceImpl.class.getResourceAsStream("ng-packages.json")) {
         return readNgAddPackages(FileUtil.loadTextAndClose(new InputStreamReader(is, StandardCharsets.UTF_8)));
-      } catch (Exception e1) {
+      }
+      catch (Exception e1) {
         LOG.error("Failed to load list of ng-add compatible packages from static file.", e1);
       }
     }
@@ -113,12 +113,13 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
   @NotNull
   private static List<NodePackageBasicInfo> readNgAddPackages(@NotNull String content) {
     JsonObject contents = (JsonObject)new JsonParser().parse(content);
-    return contents.get("ng-add")
-            .getAsJsonObject()
-            .entrySet()
-            .stream()
-            .map(e -> new NodePackageBasicInfo(e.getKey(), e.getValue().getAsString()))
-            .collect(Collectors.toList());
+    return Collections.unmodifiableList(
+      contents.get("ng-add")
+              .getAsJsonObject()
+              .entrySet()
+              .stream()
+              .map(e -> new NodePackageBasicInfo(e.getKey(), e.getValue().getAsString()))
+              .collect(Collectors.toList()));
   }
 
   @Nullable
@@ -129,8 +130,9 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
         String key = reader.nextName();
         if (key.equals("schematics")) {
           String path = reader.nextString();
-          return new File(packageJson.getParentFile(), path).getAbsoluteFile();
-        } else {
+          return Paths.get(packageJson.getParent(), path).normalize().toAbsolutePath().toFile();
+        }
+        else {
           reader.skipValue();
         }
       }
@@ -159,11 +161,24 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
           reader.skipValue();
         }
         reader.endObject();
-      } else {
+      }
+      else {
         reader.skipValue();
       }
     }
     reader.endObject();
+    return false;
+  }
+
+  private static boolean checkForNgAddSupport(@NotNull String packageName, @NotNull String versionOrRange) {
+    try {
+      ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+      JsonObject pkgJson = NpmRegistryService.getInstance().fetchPackageJson(packageName, versionOrRange, indicator);
+      return pkgJson != null && pkgJson.get("schematics") != null;
+    }
+    catch (Exception e) {
+      LOG.info(e);
+    }
     return false;
   }
 

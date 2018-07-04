@@ -54,11 +54,21 @@ function getAvailableSchematicCollections() {
     return result;
 }
 function getCollectionSchematics(collectionName) {
+    var schematicNames;
+    var collection;
     try {
-        var collection_1 = schematics_1.getCollection(collectionName);
-        var schematicNames = engineHost.listSchematics(collection_1);
+        collection = schematics_1.getCollection(collectionName);
+        schematicNames = engineHost.listSchematics(collection);
+    }
+    catch (e) {
+        return [{
+                name: collectionName,
+                error: "" + e.message
+            }];
+    }
+    try {
         var schematicInfos = schematicNames
-            .map(function (name) { return schematics_1.getSchematic(collection_1, name).description; })
+            .map(function (name) { return schematics_1.getSchematic(collection, name).description; })
             //`ng-add` schematics should be executed only with `ng add`
             .filter(function (info) { return info.name !== "ng-add" && info.schemaJson !== undefined; });
         var newFormat_1 = schematicInfos

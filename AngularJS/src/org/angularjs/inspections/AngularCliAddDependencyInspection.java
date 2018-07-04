@@ -17,7 +17,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ObjectUtils;
 import org.angularjs.cli.AngularCliSchematicsRegistryService;
-import org.angularjs.cli.AngularJSProjectConfigurator;
+import org.angularjs.cli.AngularCliUtil;
 import org.angularjs.cli.actions.AngularCliAddDependencyAction;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +26,8 @@ import java.util.List;
 
 public class AngularCliAddDependencyInspection extends LocalInspectionTool {
 
+  private static final long TIMEOUT = 2000;
+
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
@@ -33,7 +35,7 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
       @Override
       public void visitFile(PsiFile file) {
         if (PackageJsonUtil.isPackageJsonFile(file)
-            && AngularJSProjectConfigurator.findCliJson(file.getVirtualFile().getParent()) != null) {
+            && AngularCliUtil.findCliJson(file.getVirtualFile().getParent()) != null) {
           annotate((JsonFile)file, holder);
         }
       }
@@ -64,18 +66,20 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
       InstalledPackageVersion pkgVersion = finder.findInstalledPackage(packageName);
 
       if ((pkgVersion != null && AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(pkgVersion))
-          || (pkgVersion == null && AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(packageName, version, 1000))) {
+          || (pkgVersion == null && AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(packageName, TIMEOUT))) {
         String message = StringUtil.wrapWithDoubleQuote(packageName) + " can be installed using 'ng add' command";
         LocalQuickFix quickFix = new AngularCliAddQuickFix(packageJson, packageName, version, pkgVersion != null);
         if (versionLiteral != null) {
           if (pkgVersion == null) {
             holder.registerProblem(versionLiteral, getTextRange(versionLiteral), message, quickFix);
           }
-          else {
+          else if (holder.isOnTheFly()) {
             holder.registerProblem(versionLiteral, message, ProblemHighlightType.INFORMATION, quickFix);
           }
         }
-        holder.registerProblem(nameLiteral, message, ProblemHighlightType.INFORMATION, quickFix);
+        if (holder.isOnTheFly()) {
+          holder.registerProblem(nameLiteral, message, ProblemHighlightType.INFORMATION, quickFix);
+        }
       }
     }
   }
@@ -98,14 +102,14 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
   private static class AngularCliAddQuickFix implements LocalQuickFix, HighPriorityAction {
     private final VirtualFile myPackageJson;
     private final String myPackageName;
-    private final String myPackageSpec;
+    private final String myVersionSpec;
     private final boolean myReinstall;
 
     public AngularCliAddQuickFix(@NotNull VirtualFile packageJson, @NotNull String packageName,
                                  @NotNull String versionSpec, boolean reinstall) {
       myPackageJson = packageJson;
       myPackageName = packageName;
-      myPackageSpec = packageName + (versionSpec.isEmpty() ? "" : "@" + versionSpec);
+      myVersionSpec = versionSpec;
       myReinstall = reinstall;
     }
 
@@ -125,8 +129,13 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
 
     @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-      AngularCliAddDependencyAction.runAndShowConsole(
-        project, myPackageJson.getParent(), myPackageSpec);
+      if (AngularCliUtil.hasAngularCLIPackageInstalled(project, myPackageJson)) {
+        AngularCliAddDependencyAction.runAndShowConsoleLater(
+          project, myPackageJson.getParent(), myPackageName, myVersionSpec.trim(), !myReinstall);
+      }
+      else {
+        AngularCliUtil.notifyAngularCliNotInstalled(project, myPackageJson.getParent(), "Can't run 'ng add'");
+      }
     }
   }
 }

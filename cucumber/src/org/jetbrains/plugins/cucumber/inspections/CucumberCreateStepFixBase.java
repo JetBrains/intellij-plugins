@@ -90,7 +90,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
           @Override
           public Icon getIconFor(CucumberStepDefinitionCreationContext value) {
             PsiFile psiFile = value.getPsiFile();
-            return psiFile == null ? AllIcons.Actions.CreateFromUsage : psiFile.getIcon(0);
+            return psiFile == null ? AllIcons.Actions.IntentionBulb : psiFile.getIcon(0);
           }
 
           @Override

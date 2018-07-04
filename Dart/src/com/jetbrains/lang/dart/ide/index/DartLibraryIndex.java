@@ -99,7 +99,7 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
     if (librariesDartFile == null) return new BidirectionalMap<>();
 
     final Pair<Long, BidirectionalMap<String, String>> data = librariesDartFile.getUserData(LIBRARIES_TIME_AND_MAP_KEY);
-    final Long cachedTimestamp = data == null ? null : data.first;
+    final Long cachedTimestamp = Pair.getFirst(data);
     final long modificationCount = librariesDartFile.getModificationCount();
 
     if (cachedTimestamp != null && cachedTimestamp.equals(modificationCount)) {

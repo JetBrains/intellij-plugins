@@ -191,6 +191,9 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
     result.log.forEach(function (log) {
       failureMsg += formatError(log, '\t');
     });
+    if (failureMsg.length === 0 && result.pending) {
+      failureMsg = 'Pending test \'' + specName + '\''
+    }
     specNode.setStatus(status, result.time, failureMsg);
     logManager.attachTo(specNode);
     specNode.writeFinishMessage();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2018 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,7 +50,10 @@ abstract class OgnlReferenceExpressionBase extends OgnlExpressionImpl {
 
   @Override
   public PsiReference getReference() {
-    return new PsiReferenceBase<PsiElement>(this, TextRange.from(0, getTextLength())) {
+    PsiElement lastIdentifier = findLastChildByType(OgnlTypes.IDENTIFIER);
+    int length = lastIdentifier == null ? getTextLength() :
+                 lastIdentifier.getStartOffsetInParent() + lastIdentifier.getTextLength();
+    return new PsiReferenceBase<PsiElement>(this, TextRange.from(0, length)) {
 
       @Override
       public PsiElement resolve() {

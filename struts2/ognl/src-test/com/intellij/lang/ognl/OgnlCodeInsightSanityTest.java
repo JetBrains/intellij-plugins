@@ -19,6 +19,7 @@ import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.SkipSlowTestLocally;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.testFramework.propertyBased.*;
@@ -74,18 +75,9 @@ public class OgnlCodeInsightSanityTest extends LightCodeInsightFixtureTestCase {
     MadTestingUtil.enableAllInspections(getProject(), getTestRootDisposable());
     Function<PsiFile, Generator<? extends MadTestingAction>> fileActions =
       file -> Generator.sampledFrom(new InvokeIntention(file, new IntentionPolicy()),
-                                    new InvokeCompletion(file, new CompletionPolicy() {
-                                      @Override
-                                      public String getPossibleSelectionCharacters() {
-                                        return "\n\t\r ";
-                                      }
-
-                                      @Override
-                                      protected boolean shouldSuggestNonReferenceLeafText(@NotNull PsiElement leaf) {
-                                        return false;
-                                      }
-                                    }),
+                                    new InvokeCompletion(file, new MyCompletionPolicy()),
                                     new DeleteRange(file));
+
     PropertyChecker.checkScenarios(actionsOnOgnlFiles(fileActions));
   }
 
@@ -95,5 +87,27 @@ public class OgnlCodeInsightSanityTest extends LightCodeInsightFixtureTestCase {
                                                 PathManager.getHomePath().replace(File.separatorChar, '/') +
                                                 "/contrib/struts2/ognl/testData/",
                                                 f -> f.getName().endsWith("." + EXTENSION), fileActions);
+  }
+
+
+  private static class MyCompletionPolicy extends CompletionPolicy {
+    @Override
+    public String getPossibleSelectionCharacters() {
+      return "\n\t\r ";
+    }
+
+    @Override
+    protected boolean shouldSuggestReferenceText(@NotNull PsiReference ref, @NotNull PsiElement target) {
+      if (ref.getVariants().length == 0) {
+        return false; // we have many refs w/o any variants
+      }
+
+      return super.shouldSuggestReferenceText(ref, target);
+    }
+
+    @Override
+    protected boolean shouldSuggestNonReferenceLeafText(@NotNull PsiElement leaf) {
+      return false;
+    }
   }
 }

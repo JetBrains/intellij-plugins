@@ -25,6 +25,7 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
 
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
+  <depends optional="true" config-file="file-watcher.xml">com.intellij.plugins.watcher</depends>
   <resource-bundle>PrettierBundle</resource-bundle>
 
 

@@ -117,7 +117,7 @@ public class InfoFromConfigFile {
     Pair<Long, InfoFromConfigFile> data = ourCache.get(canonicalPath);
 
     final Long currentTimestamp = configFile.lastModified();
-    final Long cachedTimestamp = data == null ? null : data.first;
+    final Long cachedTimestamp = Pair.getFirst(data);
 
     if (cachedTimestamp == null || !cachedTimestamp.equals(currentTimestamp)) {
       ourCache.remove(canonicalPath);
