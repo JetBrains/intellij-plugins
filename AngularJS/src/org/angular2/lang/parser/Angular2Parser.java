@@ -132,12 +132,28 @@ public class Angular2Parser
     return super.isIdentifierName(firstToken) || firstToken == Angular2TokenTypes.THEN;
   }
 
-  public void parseAngular(IElementType root) {
+  public void parseAction(IElementType root) {
     final PsiBuilder.Marker rootMarker = builder.mark();
     while (!builder.eof()) {
       getStatementParser().parseStatement();
     }
     rootMarker.done(root);
+  }
+
+  public void parseBinding(IElementType root) {
+    parseAction(root);
+  }
+
+  public void parseTemplateBindings(IElementType root) {
+    parseAction(root);
+  }
+
+  public void parseInterpolation(IElementType root) {
+    parseAction(root);
+  }
+
+  public void parseSimpleBinding(IElementType root) {
+    parseAction(root);
   }
 
   protected class Angular2ExpressionParser extends ExpressionParser<Angular2Parser> {

@@ -27,57 +27,59 @@ import static com.mscharhag.oleaster.runner.StaticRunnerSupport.describe;
 import static com.mscharhag.oleaster.runner.StaticRunnerSupport.it;
 import static org.angular2.lang.lexer.Angular2TokenTypes.*;
 
+@SuppressWarnings({"JUnitTestCaseWithNonTrivialConstructors", "CodeBlock2Expr", "SameParameterValue", "JUnitTestCaseWithNoTests",
+  "ClassInitializerMayBeStatic"})
 @RunWith(OleasterRunner.class)
-public class Angular2LexerSpec {
+public class Angular2LexerSpecTest {
 
-  Token[] lex(String text) {
+  private static Token[] lex(String text) {
     return Token.create(new Angular2Lexer(), text);
   }
 
-  void expectToken(Token token, int index) {
+  private static void expectToken(Token token, int index) {
     expect(token.index).toEqual(index);
   }
 
-  void expectCharacterToken(Token token, int index, IElementType character) {
+  private static void expectCharacterToken(Token token, int index, IElementType character) {
     expectToken(token, index);
     expect(token.tokenType == character).toBeTrue();
   }
 
-  void expectOperatorToken(Token token, int index, IElementType operator) {
+  private static void expectOperatorToken(Token token, int index, IElementType operator) {
     expectToken(token, index);
     expect(token.tokenType == operator).toBeTrue();
   }
 
-  void expectNumberToken(Token token, int index, int n) {
+  private static void expectNumberToken(Token token, int index, int n) {
     expectToken(token, index);
     expect(token.isNumber()).toBeTrue();
     expect(token.toNumber()).toEqual(n);
   }
 
-  void expectNumberToken(Token token, int index, double n) {
+  private static void expectNumberToken(Token token, int index, double n) {
     expectToken(token, index);
     expect(token.isNumber()).toBeTrue();
     expect(token.toNumber()).toEqual(n);
   }
 
-  void expectStringToken(Token token, int index, String str) {
+  private static void expectStringToken(Token token, int index, String str) {
     expectToken(token, index);
     expect(token.isString()).toBeTrue();
     expect(token.toString()).toEqual(str);
   }
 
-  void expectIdentifierToken(Token token, int index, String identifier) {
+  private static void expectIdentifierToken(Token token, int index, String identifier) {
     expectToken(token, index);
     expect(token.isIdentifier()).toBeTrue();
     expect(token.toString()).toEqual(identifier);
   }
 
-  void expectKeywordToken(Token token, int index, IElementType keyword) {
+  private static void expectKeywordToken(Token token, int index, IElementType keyword) {
     expectToken(token, index);
     expect(token.tokenType == keyword).toBeTrue();
   }
 
-  void expectErrorToken(Token token, int index, String message) {
+  private static void expectErrorToken(Token token, int index, String message) {
     // expectToken(token, index);
     expect(token.isError()).toBeTrue();
     //expect(token.toString()).toEqual(message);
@@ -287,6 +289,7 @@ public class Angular2LexerSpec {
     });
   }
 
+  @SuppressWarnings("NewClassNamingConvention")
   private static class Token {
 
     public final IElementType tokenType;
@@ -362,7 +365,7 @@ public class Angular2LexerSpec {
         }
         lexer.advance();
       }
-      return result.toArray(new Token[result.size()]);
+      return result.toArray(new Token[0]);
     }
   }
 }
