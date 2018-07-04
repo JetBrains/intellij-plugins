@@ -65,15 +65,15 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     }
   };
   @NotNull
-  private JPanel myHtmlPanelWrapper;
+  private final JPanel myHtmlPanelWrapper;
   @NotNull
   private MarkdownHtmlPanel myPanel;
   @Nullable
   private MarkdownHtmlPanelProvider.ProviderInfo myLastPanelProviderInfo = null;
   @NotNull
-  private VirtualFile myFile;
+  private final VirtualFile myFile;
   @Nullable
-  private Document myDocument;
+  private final Document myDocument;
   @NotNull
   private final Alarm myPooledAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, this);
   @NotNull
@@ -90,10 +90,6 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   private String myLastRenderedHtml = "";
 
   public MarkdownPreviewFileEditor(@NotNull VirtualFile file) {
-    init(file);
-  }
-
-  void init(@NotNull VirtualFile file) {
     myFile = file;
     myDocument = FileDocumentManager.getInstance().getDocument(myFile);
 

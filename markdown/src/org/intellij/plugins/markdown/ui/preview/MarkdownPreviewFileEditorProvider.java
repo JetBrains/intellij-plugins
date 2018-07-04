@@ -16,33 +16,6 @@ import org.jetbrains.annotations.NotNull;
 public class MarkdownPreviewFileEditorProvider extends WeighedFileEditorProvider {
   @Override
   public boolean accept(@NotNull Project project, @NotNull VirtualFile file) {
-    return true;
-  }
-
-  @NotNull
-  @Override
-  public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-    MarkdownPreviewFileEditor editor = new MarkdownPreviewFileEditor(file);
-    if (isAccepted(project, file)) {
-      editor.init(file);
-    }
-
-    return editor;
-  }
-
-  @NotNull
-  @Override
-  public String getEditorTypeId() {
-    return "markdown-preview-editor";
-  }
-
-  @NotNull
-  @Override
-  public FileEditorPolicy getPolicy() {
-    return FileEditorPolicy.PLACE_AFTER_DEFAULT_EDITOR;
-  }
-
-  private static boolean isAccepted(@NotNull Project project, @NotNull VirtualFile file) {
     final FileType fileType = file.getFileType();
 
     if (!(fileType == MarkdownFileType.INSTANCE ||
@@ -62,5 +35,23 @@ public class MarkdownPreviewFileEditorProvider extends WeighedFileEditorProvider
     }
 
     return SplitEditorLayout.valueOf(((SplitFileEditor.MyFileEditorState)state).getSplitLayout()) != SplitEditorLayout.FIRST;
+  }
+
+  @NotNull
+  @Override
+  public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
+    return new MarkdownPreviewFileEditor(file);
+  }
+
+  @NotNull
+  @Override
+  public String getEditorTypeId() {
+    return "markdown-preview-editor";
+  }
+
+  @NotNull
+  @Override
+  public FileEditorPolicy getPolicy() {
+    return FileEditorPolicy.PLACE_AFTER_DEFAULT_EDITOR;
   }
 }
