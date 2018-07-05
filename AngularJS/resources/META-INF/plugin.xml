@@ -29,8 +29,6 @@
   <vendor>johnlindquist, JetBrains</vendor>
 
   <depends>JavaScript</depends>
-  <depends>JavaScriptDebugger</depends>
-  <depends>Karma</depends>
   <depends>com.intellij.modules.platform</depends>
   <depends optional="true" config-file="css-support.xml">com.intellij.css</depends>
   <depends optional="true" config-file="ui-router-diagram.xml">com.intellij.diagram</depends>

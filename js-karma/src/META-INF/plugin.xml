@@ -31,4 +31,8 @@
     <projectService serviceImplementation="com.intellij.javascript.karma.server.KarmaServerRegistry"/>
   </extensions>
 
+  <extensions defaultExtensionNs="JavaScript">
+    <runConfigurationBuilder implementation="com.intellij.javascript.karma.execution.KarmaRunConfigurationBuilder"/>
+  </extensions>
+
 </idea-plugin>

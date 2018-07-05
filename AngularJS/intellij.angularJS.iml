@@ -24,8 +24,5 @@
     <orderEntry type="module" module-name="intellij.diagram.impl" />
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="module" module-name="intellij.javascript.intentions" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.javascript.debugger" />
-    <orderEntry type="module" module-name="intellij.karma" />
-    <orderEntry type="module" module-name="intellij.javascript.testing" />
   </component>
 </module>
