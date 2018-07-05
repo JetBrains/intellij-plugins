@@ -58,21 +58,25 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
       mySecondEditor.putUserData(PARENT_SPLIT_KEY, this);
     }
 
-    MarkdownApplicationSettings.SettingsChangedListener settingsChangedListener = newSettings -> {
-      boolean oldAutoScrollPreview = MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isAutoScrollPreview();
-      SplitEditorLayout oldSplitEditorLayout =
-        MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().getSplitEditorLayout();
+    MarkdownApplicationSettings.SettingsChangedListener settingsChangedListener =
+      new MarkdownApplicationSettings.SettingsChangedListener() {
+        @Override
+        public void beforeSettingsChanged(@NotNull MarkdownApplicationSettings newSettings) {
+          boolean oldAutoScrollPreview = MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isAutoScrollPreview();
+          SplitEditorLayout oldSplitEditorLayout =
+            MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().getSplitEditorLayout();
 
-      ApplicationManager.getApplication().invokeLater(() -> {
-        if (oldAutoScrollPreview == myAutoScrollPreview) {
-          setAutoScrollPreview(newSettings.getMarkdownPreviewSettings().isAutoScrollPreview());
-        }
+          ApplicationManager.getApplication().invokeLater(() -> {
+            if (oldAutoScrollPreview == myAutoScrollPreview) {
+              setAutoScrollPreview(newSettings.getMarkdownPreviewSettings().isAutoScrollPreview());
+            }
 
-        if (oldSplitEditorLayout == mySplitEditorLayout) {
-          triggerLayoutChange(newSettings.getMarkdownPreviewSettings().getSplitEditorLayout(), false);
+            if (oldSplitEditorLayout == mySplitEditorLayout) {
+              triggerLayoutChange(newSettings.getMarkdownPreviewSettings().getSplitEditorLayout(), false);
+            }
+          });
         }
-      });
-    };
+      };
 
     ApplicationManager.getApplication().getMessageBus().connect(this)
       .subscribe(MarkdownApplicationSettings.SettingsChangedListener.TOPIC, settingsChangedListener);
