@@ -11,13 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.angular2.lang;
+package org.angular2.lang.expr;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.parsing.JavaScriptParser;
-import org.angular2.lang.parser.Angular2Parser;
+import org.angular2.lang.expr.parser.Angular2Parser;
 import org.jetbrains.annotations.NotNull;
 
 /**

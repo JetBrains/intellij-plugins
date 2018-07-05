@@ -11,13 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.angular2.lang.lexer;
+package org.angular2.lang.expr.lexer;
 
 import com.intellij.lexer.*;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
-import static org.angular2.lang.lexer.Angular2TokenTypes.*;
+import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
 
 public class Angular2Lexer extends MergingLexerAdapterBase {
 

@@ -11,18 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.angular2.lang.psi;
+package org.angular2.lang.expr.psi;
 
-import com.intellij.lang.javascript.psi.JSExpression;
-import com.intellij.psi.PsiElement;
-
-public interface TemplateBinding extends PsiElement {
-  String getKey();
-
-  boolean keyIsVar();
-
-  String getName();
-
-  JSExpression getExpression();
-
+public interface Angular2Chain {
 }

@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.angular2.lang.parser;
+package org.angular2.lang.expr.parser;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
@@ -21,10 +21,9 @@ import com.intellij.lexer.Lexer;
 import com.intellij.psi.tree.ICompositeElementType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
-import org.angular2.lang.Angular2Language;
-import org.angular2.lang.psi.Angular2FilterExpression;
-import org.angular2.lang.psi.Angular2MessageFormatExpression;
-import org.angular2.lang.psi.Angular2RepeatExpression;
+import org.angular2.lang.expr.Angular2Language;
+import org.angular2.lang.expr.psi.Angular2MessageFormatExpression;
+import org.angular2.lang.expr.psi.impl.Angular2BindingPipeImpl;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -32,25 +31,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Angular2ElementTypes {
   IFileElementType FILE = JSFileElementType.create(Angular2Language.INSTANCE);
-  IElementType REPEAT_EXPRESSION = new Angular2ElementType("REPEAT_EXPRESSION") {
+  IElementType PIPE_EXPRESSION = new Angular2ElementType("PIPE_EXPRESSION") {
     @NotNull
     @Override
     public ASTNode createCompositeNode() {
-      return new Angular2RepeatExpression(this);
-    }
-  };
-  IElementType FOR_EXPRESSION = new Angular2ElementType("REPEAT_EXPRESSION") {
-    @NotNull
-    @Override
-    public ASTNode createCompositeNode() {
-      return new Angular2RepeatExpression(this);
-    }
-  };
-  IElementType FILTER_EXPRESSION = new Angular2ElementType("FILTER_EXPRESSION") {
-    @NotNull
-    @Override
-    public ASTNode createCompositeNode() {
-      return new Angular2FilterExpression(this);
+      return new Angular2BindingPipeImpl(this);
     }
   };
 

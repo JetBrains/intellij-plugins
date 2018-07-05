@@ -11,16 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.angular2.lang.lexer;
+package org.angular2.lang.expr.psi;
 
-import com.intellij.lang.javascript.JSTokenTypes;
-
-/**
- * @author Dennis.Ushakov
- */
-public interface Angular2TokenTypes extends JSTokenTypes {
-  Angular2TokenType ESCAPE_SEQUENCE = new Angular2TokenType("ESCAPE_SEQUENCE");
-  Angular2TokenType INVALID_ESCAPE_SEQUENCE = new Angular2TokenType("INVALID_ESCAPE_SEQUENCE");
-  Angular2TokenType ELVIS = new Angular2TokenType("ELVIS");// ?.
-  Angular2TokenType THEN = new Angular2TokenType("THEN");
+public interface Angular2ImplicitReceiver {
 }

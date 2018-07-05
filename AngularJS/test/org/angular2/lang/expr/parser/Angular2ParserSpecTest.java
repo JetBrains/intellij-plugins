@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.angular2.lang.parser;
+package org.angular2.lang.expr.parser;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
@@ -29,10 +29,10 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.mscharhag.oleaster.runner.OleasterRunner;
 import junit.framework.AssertionFailedError;
-import org.angular2.lang.Angular2Language;
-import org.angular2.lang.psi.Angular2RecursiveVisitor;
-import org.angular2.lang.psi.BindingPipe;
-import org.angular2.lang.psi.TemplateBinding;
+import org.angular2.lang.expr.Angular2Language;
+import org.angular2.lang.expr.psi.Angular2BindingPipe;
+import org.angular2.lang.expr.psi.Angular2RecursiveVisitor;
+import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.junit.runner.RunWith;
 
 import java.util.Arrays;
@@ -43,7 +43,7 @@ import static com.intellij.testFramework.LightPlatformTestCase.getProject;
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
 import static com.mscharhag.oleaster.runner.StaticRunnerSupport.describe;
 import static com.mscharhag.oleaster.runner.StaticRunnerSupport.it;
-import static org.angular2.lang.lexer.Angular2TokenTypes.*;
+import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
 
 
 @SuppressWarnings({"CodeBlock2Expr", "JUnitTestCaseWithNoTests", "SameParameterValue", "JUnitTestCaseWithNonTrivialConstructors",
@@ -341,7 +341,7 @@ public class Angular2ParserSpecTest {
            });
 
         it("should allow string including dashes as keys", () -> {
-          TemplateBinding[] bindings = parseTemplateBindings("a", "b");
+          Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "b");
           expect(keys(bindings)).toEqual(new String[]{"a"});
 
           bindings = parseTemplateBindings("a-b", "c");
@@ -349,7 +349,7 @@ public class Angular2ParserSpecTest {
         });
 
         it("should detect expressions as value", () -> {
-          TemplateBinding[] bindings = parseTemplateBindings("a", "b");
+          Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "b");
           expect(exprSources(bindings)).toEqual(new String[]{"b"});
 
           bindings = parseTemplateBindings("a", "1+1");
@@ -357,35 +357,35 @@ public class Angular2ParserSpecTest {
         });
 
         it("should detect names as value", () -> {
-          final TemplateBinding[] bindings = parseTemplateBindings("a", "let b");
+          final Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "let b");
           expect(keyValues(bindings)).toEqual(new String[]{"a", "let b=$implicit"});
         });
 
         it("should allow space and colon as separators", () -> {
-          TemplateBinding[] bindings = parseTemplateBindings("a", "b");
+          Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "b");
           expect(keys(bindings)).toEqual(new String[]{"a"});
           expect(exprSources(bindings)).toEqual(new String[]{"b"});
         });
 
         it("should allow multiple pairs", () -> {
-          final TemplateBinding[] bindings = parseTemplateBindings("a", "1 b 2");
+          final Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "1 b 2");
           expect(keys(bindings)).toEqual(new String[]{"a", "aB"});
           expect(exprSources(bindings)).toEqual(new String[]{"1 ", "2"});
         });
 
         it("should store the sources in the result", () -> {
-          final TemplateBinding[] bindings = parseTemplateBindings("a", "1,b 2");
+          final Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "1,b 2");
           expect(bindings[0].getExpression().getText()).toEqual("1");
           expect(bindings[1].getExpression().getText()).toEqual("2");
         });
 
         //it("should store the passed-in location", () -> {
-        //  final TemplateBinding[] bindings = parseTemplateBindings("a", "1,b 2", "location");
+        //  final Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "1,b 2", "location");
         //  expect(bindings[0].getExpression().getLocation()).toEqual("location");
         //});
 
         it("should support let notation", () -> {
-          TemplateBinding[] bindings = parseTemplateBindings("key", "let i");
+          Angular2TemplateBinding[] bindings = parseTemplateBindings("key", "let i");
           expect(keyValues(bindings)).toEqual(new String[]{"key", "let i=$implicit"});
 
           bindings = parseTemplateBindings("key", "let a; let b");
@@ -425,7 +425,7 @@ public class Angular2ParserSpecTest {
         });
 
         it("should support as notation", () -> {
-          TemplateBinding[] bindings = parseTemplateBindings("ngIf", "exp as local", "location");
+          Angular2TemplateBinding[] bindings = parseTemplateBindings("ngIf", "exp as local", "location");
           expect(keyValues(bindings)).toEqual(new String[]{"ngIf=exp  in location", "let local=ngIf"});
 
           bindings = parseTemplateBindings("ngFor", "let item of items as iter; index as i", "L");
@@ -435,9 +435,9 @@ public class Angular2ParserSpecTest {
         });
 
         it("should parse pipes", () -> {
-          final TemplateBinding[] bindings = parseTemplateBindings("key", "value|pipe");
+          final Angular2TemplateBinding[] bindings = parseTemplateBindings("key", "value|pipe");
           final PsiElement ast = bindings[0].getExpression();
-          expect(ast).toBeInstanceOf(BindingPipe.class);
+          expect(ast).toBeInstanceOf(Angular2BindingPipe.class);
         });
 
         describe("spans", () -> {
@@ -455,7 +455,7 @@ public class Angular2ParserSpecTest {
           it("should support a prefix", () -> {
             final String source = "let person of people";
             final String prefix = "ngFor";
-            final TemplateBinding[] bindings = parseTemplateBindings(prefix, source);
+            final Angular2TemplateBinding[] bindings = parseTemplateBindings(prefix, source);
             expect(keyValues(bindings)).toEqual(new String[]{
               "ngFor", "let person=$implicit", "ngForOf=people in null"
             });
@@ -561,21 +561,21 @@ public class Angular2ParserSpecTest {
     return parse(text, Angular2PsiParser.SIMPLE_BINDING);
   }
 
-  private static TemplateBinding[] parseTemplateBindings(String key, String value) {
+  private static Angular2TemplateBinding[] parseTemplateBindings(String key, String value) {
     return parseTemplateBindings(key, value, null);
   }
 
-  private static TemplateBinding[] parseTemplateBindings(String key, String value, String location) {
+  private static Angular2TemplateBinding[] parseTemplateBindings(String key, String value, String location) {
     return null;
   }
 
-  private static String[] keys(TemplateBinding[] templateBindings) {
+  private static String[] keys(Angular2TemplateBinding[] templateBindings) {
     return Arrays.stream(templateBindings)
                  .map(binding -> binding.getKey())
                  .toArray(String[]::new);
   }
 
-  private static String[] keyValues(TemplateBinding[] templateBindings) {
+  private static String[] keyValues(Angular2TemplateBinding[] templateBindings) {
     return Arrays.stream(templateBindings).map(binding -> {
       if (binding.keyIsVar()) {
         return "let " + binding.getKey() + (binding.getName() == null ? "=null" : '=' + binding.getName());
@@ -586,13 +586,13 @@ public class Angular2ParserSpecTest {
     }).toArray(String[]::new);
   }
 
-  private static String[] keySpans(String source, TemplateBinding[] templateBindings) {
+  private static String[] keySpans(String source, Angular2TemplateBinding[] templateBindings) {
     return Arrays.stream(templateBindings)
                  .map(binding -> source.substring(binding.getTextRange().getStartOffset(), binding.getTextRange().getEndOffset()))
                  .toArray(String[]::new);
   }
 
-  private static String[] exprSources(TemplateBinding[] templateBindings) {
+  private static String[] exprSources(Angular2TemplateBinding[] templateBindings) {
     return Arrays.stream(templateBindings)
                  .map(binding -> binding.getExpression() != null ? binding.getExpression().getText() : null)
                  .toArray(String[]::new);

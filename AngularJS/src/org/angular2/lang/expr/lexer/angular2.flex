@@ -1,9 +1,8 @@
 package org.angular2.lang.lexer;
 
-import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
 
-import static org.angular2.lang.lexer.Angular2TokenTypes.*;
+import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
 import static com.intellij.psi.TokenType.WHITE_SPACE;
 

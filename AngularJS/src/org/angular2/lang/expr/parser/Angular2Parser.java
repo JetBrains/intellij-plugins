@@ -11,20 +11,45 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.angular2.lang.parser;
+package org.angular2.lang.expr.parser;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.impl.PsiBuilderImpl;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.parsing.*;
 import com.intellij.psi.tree.IElementType;
-import org.angular2.lang.lexer.Angular2TokenTypes;
+import org.angular2.lang.expr.lexer.Angular2TokenTypes;
 
 /**
  * @author Dennis.Ushakov
  */
 public class Angular2Parser
   extends JavaScriptParser<Angular2Parser.Angular2ExpressionParser, StatementParser, FunctionParser, JSPsiTypeParser> {
+
+  /*
+  Angular Expression AST mapping
+
+  Binary            - JSBinaryExpression
+  BindingPipe       - Angular2BindingPipe
+  Chain             - Angular2Chain
+  Conditional       - JSConditionalExpression
+  FunctionCall      - JSCallExpression
+  ImplicitReceiver  - Angular2ImplicitReceiver
+  KeyedRead         - JSIndexedPropertyAccessExpression
+  KeyedWrite        - JSIndexedPropertyAccessExpression
+  LiteralArray      - JSArrayLiteralExpression
+  LiteralMap        - JSObjectLiteralExpression
+  LiteralPrimitive  - JSLiteralExpression
+  MethodCall        - JSCallExpression
+  NonNullAssert     - JSPostfixExpression
+  PrefixNot         - JSPrefixExpression
+  PropertyRead      - JSReferenceExpression
+  PropertyWrite     - JSReferenceExpression
+  Quote             -
+  SafeMethodCall    - JSCallExpression
+  SafePropertyRead  - JSReferenceExpression
+   */
+
 
   public Angular2Parser(PsiBuilder builder) {
     super(JavaScriptSupportLoader.JAVASCRIPT_1_5, builder);

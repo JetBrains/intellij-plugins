@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.angular2.lang.psi;
+package org.angular2.lang.expr.psi;
 
 import com.intellij.lang.javascript.psi.impl.JSExpressionImpl;
 import com.intellij.openapi.diagnostic.Logger;
@@ -23,8 +23,8 @@ import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
-import org.angular2.lang.parser.Angular2ElementTypes;
-import org.angular2.lang.parser.Angular2MessageFormatParser;
+import org.angular2.lang.expr.parser.Angular2ElementTypes;
+import org.angular2.lang.expr.parser.Angular2MessageFormatParser;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;

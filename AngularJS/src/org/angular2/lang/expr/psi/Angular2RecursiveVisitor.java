@@ -11,19 +11,17 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.angular2.lang.psi;
+package org.angular2.lang.expr.psi;
 
-import com.intellij.lang.javascript.psi.JSElementVisitor;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiRecursiveVisitor;
 
 /**
  * @author Dennis.Ushakov
  */
-public class Angular2ElementVisitor extends JSElementVisitor {
-  public void visitAngular2RepeatExpression(Angular2RepeatExpression repeatExpression) {
-    visitJSExpression(repeatExpression);
-  }
-
-  public void visitMessageFormatExpression(Angular2MessageFormatExpression expression) {
-    visitJSExpression(expression);
+public class Angular2RecursiveVisitor extends Angular2ElementVisitor implements PsiRecursiveVisitor {
+  @Override
+  public void visitElement(PsiElement element) {
+    element.acceptChildren(this);
   }
 }

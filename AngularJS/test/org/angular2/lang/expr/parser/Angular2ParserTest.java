@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.angular2.lang.parser;
+package org.angular2.lang.expr.parser;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
@@ -21,7 +21,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.FileBasedTestCaseHelperEx;
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
-import org.angular2.lang.lexer.Angular2Lexer;
+import org.angular2.lang.expr.lexer.Angular2Lexer;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

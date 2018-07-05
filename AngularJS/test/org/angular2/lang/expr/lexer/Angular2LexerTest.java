@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.angular2.lang.lexer;
+package org.angular2.lang.expr.lexer;
 
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.application.PathManager;

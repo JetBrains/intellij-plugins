@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.angular2.lang.lexer;
+package org.angular2.lang.expr.lexer;
 
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.openapi.util.text.StringUtil;
@@ -25,7 +25,7 @@ import java.util.List;
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
 import static com.mscharhag.oleaster.runner.StaticRunnerSupport.describe;
 import static com.mscharhag.oleaster.runner.StaticRunnerSupport.it;
-import static org.angular2.lang.lexer.Angular2TokenTypes.*;
+import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
 
 @SuppressWarnings({"JUnitTestCaseWithNonTrivialConstructors", "CodeBlock2Expr", "SameParameterValue", "JUnitTestCaseWithNoTests",
   "ClassInitializerMayBeStatic"})

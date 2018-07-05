@@ -11,14 +11,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.angular2.lang.parser;
+package org.angular2.lang.expr.parser;
 
 import com.intellij.lang.PsiParser;
 import com.intellij.lang.javascript.JavascriptParserDefinition;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IFileElementType;
-import org.angular2.lang.lexer.Angular2Lexer;
+import org.angular2.lang.expr.lexer.Angular2Lexer;
 import org.jetbrains.annotations.NotNull;
 
 /**
