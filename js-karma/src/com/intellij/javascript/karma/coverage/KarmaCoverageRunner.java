@@ -68,7 +68,7 @@ public class KarmaCoverageRunner extends CoverageRunner {
     LcovCoverageReport report = CoverageSerializationUtils.readLCOV(dataFile, basePath,
                                                                     path -> NodeInterpreterUtil.convertRemotePathToLocal(path, interpreter));
     for (Map.Entry<String, List<LcovCoverageReport.LineHits>> entry : report.getInfo().entrySet()) {
-      String filePath = NodeInterpreterUtil.convertRemotePathToLocal(entry.getKey(), interpreter);
+      String filePath = entry.getKey();
       ClassData classData = projectData.getOrCreateClassData(filePath);
       int max = 0;
       List<LcovCoverageReport.LineHits> lineHitsList = entry.getValue();
