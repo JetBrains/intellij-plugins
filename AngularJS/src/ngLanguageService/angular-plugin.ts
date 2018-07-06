@@ -40,7 +40,7 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
             let sessionClass: SessionClass = super.createSessionClass(ts_impl, defaultOptionsHolder);
 
             if (ts_impl["ide_processed"]) {
-                const tmpReflect = typeof Reflect != 'undefined' && Reflect.apply ? Reflect : null;   
+                const originalReflect = typeof Reflect != 'undefined' && Reflect.apply ? Reflect : null;   
                 
                 let requiredObject = require(state.ngServicePath);
                 let ng = requiredObject;
@@ -54,12 +54,12 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
                 ts_impl["ideUtil"] = util;
 
                 //workaround for https://github.com/angular/angular/issues/21420
-                if (tmpReflect != null && !Reflect.apply) {
+                if (originalReflect != null && !Reflect.apply) {
                     loggerImpl.serverLogger("Restore Reflect after ng service loading", true);
                     const ngReflect = Reflect;
-                    (<any>Reflect) = tmpReflect;
+                    (<any>Reflect) = originalReflect;
                     Object.keys(ngReflect).forEach(function (key) {
-                        Reflect[key] = ngReflect[key] || Reflect[key]; 
+                        Reflect[key] = Reflect[key] || ngReflect[key]; 
                     });
                 }
 
