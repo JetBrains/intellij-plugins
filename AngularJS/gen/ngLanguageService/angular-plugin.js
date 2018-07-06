@@ -39,7 +39,7 @@ function createPluginClass(state) {
         AngularLanguagePlugin.prototype.createSessionClass = function (ts_impl, defaultOptionsHolder) {
             var sessionClass = _super.prototype.createSessionClass.call(this, ts_impl, defaultOptionsHolder);
             if (ts_impl["ide_processed"]) {
-                var tmpReflect = typeof Reflect != 'undefined' && Reflect.apply ? Reflect : null;
+                var originalReflect = typeof Reflect != 'undefined' && Reflect.apply ? Reflect : null;
                 var requiredObject = require(state.ngServicePath);
                 var ng = requiredObject;
                 if (typeof requiredObject == "function") {
@@ -50,12 +50,12 @@ function createPluginClass(state) {
                 ts_impl["ng_service"] = ng;
                 ts_impl["ideUtil"] = util;
                 //workaround for https://github.com/angular/angular/issues/21420
-                if (tmpReflect != null && !Reflect.apply) {
+                if (originalReflect != null && !Reflect.apply) {
                     loggerImpl.serverLogger("Restore Reflect after ng service loading", true);
                     var ngReflect_1 = Reflect;
-                    Reflect = tmpReflect;
+                    Reflect = originalReflect;
                     Object.keys(ngReflect_1).forEach(function (key) {
-                        Reflect[key] = ngReflect_1[key] || Reflect[key];
+                        Reflect[key] = Reflect[key] || ngReflect_1[key];
                     });
                 }
                 if (!isVersionCompatible(ng, util, ts_impl)) {
