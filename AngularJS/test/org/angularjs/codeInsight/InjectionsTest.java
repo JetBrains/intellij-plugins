@@ -24,6 +24,7 @@ import com.sixrr.inspectjs.confusing.CommaExpressionJSInspection;
 import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
 import org.angularjs.AngularTestUtil;
 import org.angularjs.editor.AngularJSInjector;
+import org.angularjs.html.Angular2HTMLLanguage;
 import org.angularjs.lang.AngularJSLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
@@ -71,7 +72,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testInternalDefinitionCompletion() {
-    myFixture.testCompletion("internalDefinition.html",  "internalDefinition.after.html", "angular.js");
+    myFixture.testCompletion("internalDefinition.html", "internalDefinition.after.html", "angular.js");
   }
 
   public void testNgRepeatExplicitCompletionInScript() {
@@ -121,7 +122,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testNgRepeatEndCompletion() {
-    myFixture.testCompletion("ngRepeatEnd.html","ngRepeatEnd.after.html", "angular.js");
+    myFixture.testCompletion("ngRepeatEnd.html", "ngRepeatEnd.after.html", "angular.js");
   }
 
   public void testNgRepeatEndResolve() {
@@ -142,7 +143,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.configureByFiles("ngControllerAlias.resolve.html", "angular.js", "custom.js");
     checkVariableResolve("ap<caret>p", "app", JSDefinitionExpression.class);
   }
-  
+
   public void testEmmetBeforeInjection() {
     myFixture.configureByFiles("ngController.emmet.html", "angular.js", "custom.js");
     myFixture.type('\t');
@@ -358,6 +359,21 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.enableInspections(JSBitwiseOperatorUsageInspection.class);
     myFixture.configureByFiles("bitwise.html", "angular.js", "custom.js");
     myFixture.checkHighlighting();
+  }
+
+  public void testUserSpecifiedInjection() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("userSpecifiedLang.ts", "angular2.js");
+      for (Pair<String, String> signature : ContainerUtil.newArrayList(
+        Pair.create("<div><caret></div>", Angular2HTMLLanguage.INSTANCE.getID()),
+        Pair.create("$text<caret>-color", "SCSS"), //fails if correct order of injectors is not ensured
+        Pair.create("color: <caret>#00aa00", CSSLanguage.INSTANCE.getID()))) {
+
+        final int offset = AngularTestUtil.findOffsetBySignature(signature.first, myFixture.getFile());
+        final PsiElement element = InjectedLanguageUtil.findElementAtNoCommit(myFixture.getFile(), offset);
+        assertEquals(signature.first, signature.second, element.getContainingFile().getLanguage().getID());
+      }
+    });
   }
 
 }
