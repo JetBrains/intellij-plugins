@@ -11,7 +11,8 @@ public class CreateExtendsFix3 extends C {
 package {
 import com.D;
 
-public class C extends D {}
+public class C extends D {
+  }
 
 }
 
