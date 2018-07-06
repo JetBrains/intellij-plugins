@@ -1,5 +1,5 @@
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
+  Angular2Chain
     JSAssignmentExpression
       JSDefinitionExpression
         JSReferenceExpression
@@ -8,7 +8,6 @@ ASTWrapperPsiElement(FILE)
       JSLiteralExpression
         PsiElement(JS:NUMERIC_LITERAL)('1')
     PsiElement(JS:SEMICOLON)(';')
-  JSExpressionStatement
     JSAssignmentExpression
       JSDefinitionExpression
         JSReferenceExpression
@@ -17,7 +16,6 @@ ASTWrapperPsiElement(FILE)
       JSLiteralExpression
         PsiElement(JS:NUMERIC_LITERAL)('3')
     PsiElement(JS:SEMICOLON)(';')
-  JSExpressionStatement
     JSBinaryExpression
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('a')
@@ -26,13 +24,12 @@ ASTWrapperPsiElement(FILE)
         PsiElement(JS:IDENTIFIER)('b')
 ------
 ASTWrapperPsiElement(FILE)
-  JSEmptyStatement
+  Angular2Chain
+    PsiErrorElement:expression expected
+      <empty list>
     PsiElement(JS:SEMICOLON)(';')
-  JSEmptyStatement
     PsiElement(JS:SEMICOLON)(';')
-  JSExpressionStatement
     JSLiteralExpression
       PsiElement(JS:NUMERIC_LITERAL)('1')
     PsiElement(JS:SEMICOLON)(';')
-  JSEmptyStatement
     PsiElement(JS:SEMICOLON)(';')

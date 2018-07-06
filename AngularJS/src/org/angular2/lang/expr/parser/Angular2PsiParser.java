@@ -44,7 +44,6 @@ public class Angular2PsiParser implements PsiParser {
   private static final Map<String, BiConsumer<Angular2Parser, IElementType>> parseMappings = ContainerUtil.newHashMap(
     Pair.create(ACTION, Angular2Parser::parseAction),
     Pair.create(BINDING, Angular2Parser::parseBinding),
-    Pair.create(TEMPLATE_BINDINGS, Angular2Parser::parseTemplateBindings),
     Pair.create(INTERPOLATION, Angular2Parser::parseInterpolation),
     Pair.create(SIMPLE_BINDING, Angular2Parser::parseSimpleBinding)
   );
@@ -58,6 +57,9 @@ public class Angular2PsiParser implements PsiParser {
       BiConsumer<Angular2Parser, IElementType> parseMethod = parseMappings.get(ext);
       if (parseMethod != null) {
         parseMethod.accept(new Angular2Parser(builder), root);
+      } else if (TEMPLATE_BINDINGS.equals(ext)) {
+        String templateKey = FileUtilRt.getExtension(FileUtilRt.getNameWithoutExtension(containingFile.getName()));
+        new Angular2Parser(builder).parseTemplateBindings(root, templateKey);
       }
       else {
         LOG.error("Invalid file name '" + containingFile.getName() + "' - unsupported extension: " + ext);

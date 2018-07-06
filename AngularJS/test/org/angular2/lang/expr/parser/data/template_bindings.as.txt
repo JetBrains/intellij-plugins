@@ -1,0 +1,71 @@
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('AppCtrl')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding
+      PsiElement(JS:AS_KEYWORD)('as')
+      PsiWhiteSpace(' ')
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('app')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('AppCtrl')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding
+      PsiElement(JS:AS_KEYWORD)('as')
+      PsiErrorElement:Identifier or keyword expected
+        <empty list>
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding
+      JSReferenceExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('NS')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:IDENTIFIER)('App')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('Ctrl')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding
+      PsiElement(JS:AS_KEYWORD)('as')
+      PsiWhiteSpace(' ')
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('app')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding
+      PsiElement(JS:AS_KEYWORD)('as')
+      PsiWhiteSpace(' ')
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('foo')
+        PsiElement(JS:MINUS)('-')
+        PsiElement(JS:IDENTIFIER)('bar')
+        PsiElement(JS:MINUS)('-')
+        PsiElement(JS:IDENTIFIER)('t1')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:AS_KEYWORD)('as')
+      PsiWhiteSpace(' ')
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('foo')
+        PsiElement(JS:MINUS)('-')
+      PsiErrorElement:Identifier or keyword expected
+        <empty list>
+      PsiElement(JS:NUMERIC_LITERAL)('2')
+    Angular2TemplateBinding
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('bar')
+      PsiErrorElement:expression expected
+        <empty list>

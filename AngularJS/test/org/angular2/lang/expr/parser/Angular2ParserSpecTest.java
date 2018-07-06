@@ -20,26 +20,28 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilderFactory;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.testFramework.LightPlatformTestCase;
 import com.intellij.testFramework.LightVirtualFile;
-import com.intellij.util.containers.ContainerUtil;
 import com.mscharhag.oleaster.runner.OleasterRunner;
 import junit.framework.AssertionFailedError;
 import org.angular2.lang.expr.Angular2Language;
-import org.angular2.lang.expr.psi.Angular2BindingPipe;
-import org.angular2.lang.expr.psi.Angular2RecursiveVisitor;
-import org.angular2.lang.expr.psi.Angular2TemplateBinding;
+import org.angular2.lang.expr.psi.*;
 import org.junit.runner.RunWith;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.testFramework.LightPlatformTestCase.getProject;
+import static com.intellij.util.containers.ContainerUtil.newArrayList;
+import static com.intellij.util.containers.ContainerUtil.newHashMap;
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
 import static com.mscharhag.oleaster.runner.StaticRunnerSupport.describe;
 import static com.mscharhag.oleaster.runner.StaticRunnerSupport.it;
@@ -71,10 +73,10 @@ public class Angular2ParserSpecTest {
         });
 
         it("should parse unary - expressions", () -> {
-          checkAction("-1", "0 - 1");
-          checkAction("+1", "1 - 0");
-          checkAction("-'1'", "0 - \"1\"");
-          checkAction("+'1'", "\"1\" - 0");
+          checkAction("-1"/*, "0 - 1"*/);
+          checkAction("+1"/*, "1 - 0"*/);
+          checkAction("-'1'", "-\"1\""/*, "0 - \"1\""*/);
+          checkAction("+'1'", "+\"1\"" /*, "\"1\" - 0"*/);
         });
 
         it("should parse unary ! expressions", () -> {
@@ -148,7 +150,7 @@ public class Angular2ParserSpecTest {
 
           it("should parse map", () -> {
             checkAction("{}");
-            checkAction("{a: 1, \"b\": 2}[2]");
+            checkAction("{a: 1, \"b\": 2, let: \"12\"}[2]");
             checkAction("{}[\"a\"]");
           });
 
@@ -161,14 +163,15 @@ public class Angular2ParserSpecTest {
         describe("member access", () -> {
           it("should parse field access", () -> {
             checkAction("a");
-            checkAction("this.a", "a");
+            checkAction("this.a", "this.a");
             checkAction("a.a");
+            checkAction("a.var");
           });
 
           it("should only allow identifier or keyword as member names", () -> {
-            expectActionError("x.(", "identifier or keyword");
-            expectActionError("x. 1234", "identifier or keyword");
-            expectActionError("x.\"foo\"", "identifier or keyword");
+            expectActionError("x.(", "name expected");
+            expectActionError("x. 1234", "name expected");
+            expectActionError("x.\"foo\"", "name expected");
           });
 
           it("should parse safe field access", () -> {
@@ -199,7 +202,7 @@ public class Angular2ParserSpecTest {
           });
 
           it("should report incorrect ternary operator syntax", () -> {
-            expectActionError("true?1", "Conditional expression true?1 requires all 3 expressions");
+            expectActionError("true?1", ": expected");
           });
         });
 
@@ -210,10 +213,11 @@ public class Angular2ParserSpecTest {
             checkAction("a = 123; b = 234;");
           });
 
-          it("should report on safe field assignments",
-             () -> {
-               expectActionError("a?.a = 123", "cannot be used in the assignment");
-             });
+          // TODO - implement as inspection
+          //it("should report on safe field assignments",
+          //   () -> {
+          //     expectActionError("a?.a = 123", "cannot be used in the assignment");
+          //   });
 
           it("should support array updates", () -> {
             checkAction("a[0] = 200");
@@ -222,7 +226,7 @@ public class Angular2ParserSpecTest {
 
         it("should error when using pipes",
            () -> {
-             expectActionError("x|blah", "Cannot have a pipe");
+             expectActionError("x|blah", "action expressions cannot contain pipes");
            });
 
         //it("should store the source in the result",
@@ -232,23 +236,25 @@ public class Angular2ParserSpecTest {
         //   () -> { expect(parseAction("someExpr", "location").location).toBe("location"); });
 
         it("should report when encountering interpolation", () -> {
-          expectActionError("{{a()}}", "Got interpolation ({{}}) where expression was expected");
+          expectActionError("{{a()}}", "expected identifier, keyword, or string"
+            /* TODO - add proper parsing and tokenization of interpolations */
+            /*"Got interpolation ({{}}) where expression was expected"*/);
         });
       });
 
       describe("general error handling", () -> {
         it("should report an unexpected token",
            () -> {
-             expectActionError("[1,2] trac", "Unexpected token 'trac'");
+             expectActionError("[1,2] trac", "unexpected token 'trac'");
            });
 
         it("should report reasonable error for unconsumed tokens",
            () -> {
-             expectActionError(")", "Unexpected token ) at column 1 in [)]");
+             expectActionError(")", "expression expected");
            });
 
         it("should report a missing expected token", () -> {
-          expectActionError("a(b", "Missing expected ) at the end of the expression [a(b]");
+          expectActionError("a(b", ", or ) expected");
         });
       });
 
@@ -263,7 +269,7 @@ public class Angular2ParserSpecTest {
             checkBinding("a?.b | c", "(a?.b | c)");
             checkBinding("true | a", "(true | a)");
             checkBinding("a | b:c | d", "((a | b:c) | d)");
-            checkBinding("a | b:(c | d)", "(a | b:(c | d))");
+            checkBinding("a | b:(c | d)", "(a | b:((c | d)))");
           });
 
           it("should only allow identifier or keyword as formatter names", () -> {
@@ -312,7 +318,7 @@ public class Angular2ParserSpecTest {
            });
 
         it("should report when encountering interpolation", () -> {
-          expectBindingError("{{a.b}}", "Got interpolation ({{}}) where expression was expected");
+          expectBindingError("{{a.b}}", "expected identifier, keyword, or string");
         });
 
         it("should parse conditional expression", () -> {
@@ -337,40 +343,40 @@ public class Angular2ParserSpecTest {
 
         it("should parse a key without a value",
            () -> {
-             expect(keys(parseTemplateBindings("a", ""))).toEqual(new String[]{"a"});
+             expect(keys(parseTemplateBindings("a", ""))).toEqual(newArrayList("a"));
            });
 
         it("should allow string including dashes as keys", () -> {
           Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "b");
-          expect(keys(bindings)).toEqual(new String[]{"a"});
+          expect(keys(bindings)).toEqual(newArrayList("a"));
 
           bindings = parseTemplateBindings("a-b", "c");
-          expect(keys(bindings)).toEqual(new String[]{"a-b"});
+          expect(keys(bindings)).toEqual(newArrayList("a-b"));
         });
 
         it("should detect expressions as value", () -> {
           Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "b");
-          expect(exprSources(bindings)).toEqual(new String[]{"b"});
+          expect(exprSources(bindings)).toEqual(newArrayList("b"));
 
           bindings = parseTemplateBindings("a", "1+1");
-          expect(exprSources(bindings)).toEqual(new String[]{"1+1"});
+          expect(exprSources(bindings)).toEqual(newArrayList("1+1"));
         });
 
         it("should detect names as value", () -> {
           final Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "let b");
-          expect(keyValues(bindings)).toEqual(new String[]{"a", "let b=$implicit"});
+          expect(keyValues(bindings)).toEqual(newArrayList("a", "let b=$implicit"));
         });
 
         it("should allow space and colon as separators", () -> {
           Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "b");
-          expect(keys(bindings)).toEqual(new String[]{"a"});
-          expect(exprSources(bindings)).toEqual(new String[]{"b"});
+          expect(keys(bindings)).toEqual(newArrayList("a"));
+          expect(exprSources(bindings)).toEqual(newArrayList("b"));
         });
 
         it("should allow multiple pairs", () -> {
           final Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "1 b 2");
-          expect(keys(bindings)).toEqual(new String[]{"a", "aB"});
-          expect(exprSources(bindings)).toEqual(new String[]{"1 ", "2"});
+          expect(keys(bindings)).toEqual(newArrayList("a", "aB"));
+          expect(exprSources(bindings)).toEqual(newArrayList("1", "2"));
         });
 
         it("should store the sources in the result", () -> {
@@ -379,6 +385,7 @@ public class Angular2ParserSpecTest {
           expect(bindings[1].getExpression().getText()).toEqual("2");
         });
 
+        //This feature is not required by WebStorm
         //it("should store the passed-in location", () -> {
         //  final Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "1,b 2", "location");
         //  expect(bindings[0].getExpression().getLocation()).toEqual("location");
@@ -386,80 +393,81 @@ public class Angular2ParserSpecTest {
 
         it("should support let notation", () -> {
           Angular2TemplateBinding[] bindings = parseTemplateBindings("key", "let i");
-          expect(keyValues(bindings)).toEqual(new String[]{"key", "let i=$implicit"});
+          expect(keyValues(bindings)).toEqual(newArrayList("key", "let i=$implicit"));
 
           bindings = parseTemplateBindings("key", "let a; let b");
-          expect(keyValues(bindings)).toEqual(new String[]{
+          expect(keyValues(bindings)).toEqual(newArrayList(
             "key",
             "let a=$implicit",
-            "let b=$implicit",
-          });
+            "let b=$implicit"
+          ));
 
           bindings = parseTemplateBindings("key", "let a; let b;");
-          expect(keyValues(bindings)).toEqual(new String[]{
+          expect(keyValues(bindings)).toEqual(newArrayList(
             "key",
             "let a=$implicit",
-            "let b=$implicit",
-          });
+            "let b=$implicit"
+          ));
 
           bindings = parseTemplateBindings("key", "let i-a = k-a");
-          expect(keyValues(bindings)).toEqual(new String[]{
+          expect(keyValues(bindings)).toEqual(newArrayList(
             "key",
-            "let i-a=k-a",
-          });
+            "let i-a=k-a"
+          ));
 
           bindings = parseTemplateBindings("key", "let item; let i = k");
-          expect(keyValues(bindings)).toEqual(new String[]{
+          expect(keyValues(bindings)).toEqual(newArrayList(
             "key",
             "let item=$implicit",
-            "let i=k",
-          });
+            "let i=k"
+          ));
 
           bindings = parseTemplateBindings("directive", "let item in expr; let a = b", "location");
-          expect(keyValues(bindings)).toEqual(new String[]{
+          expect(keyValues(bindings)).toEqual(newArrayList(
             "directive",
             "let item=$implicit",
-            "directiveIn=expr in location",
-            "let a=b",
-          });
+            "directiveIn=expr"/* in location"*/,
+            "let a=b"
+          ));
         });
 
         it("should support as notation", () -> {
           Angular2TemplateBinding[] bindings = parseTemplateBindings("ngIf", "exp as local", "location");
-          expect(keyValues(bindings)).toEqual(new String[]{"ngIf=exp  in location", "let local=ngIf"});
+          expect(keyValues(bindings)).toEqual(newArrayList("ngIf=exp"/*  in location"*/, "let local=ngIf"));
 
           bindings = parseTemplateBindings("ngFor", "let item of items as iter; index as i", "L");
-          expect(keyValues(bindings)).toEqual(new String[]{
-            "ngFor", "let item=$implicit", "ngForOf=items  in L", "let iter=ngForOf", "let i=index"
-          });
+          expect(keyValues(bindings)).toEqual(newArrayList(
+            "ngFor", "let item=$implicit", "ngForOf=items"/*  in L"*/, "let iter=ngForOf", "let i=index"
+          ));
         });
 
         it("should parse pipes", () -> {
           final Angular2TemplateBinding[] bindings = parseTemplateBindings("key", "value|pipe");
           final PsiElement ast = bindings[0].getExpression();
-          expect(ast).toBeInstanceOf(Angular2BindingPipe.class);
+          expect(ast).toBeInstanceOf(Angular2Pipe.class);
         });
 
         describe("spans", () -> {
           it("should should support let", () -> {
             final String source = "let i";
-            expect(keySpans(source, parseTemplateBindings("key", "let i"))).toEqual(new String[]{"", "let i"});
+            expect(keySpans(source, parseTemplateBindings("key", "let i"))).toEqual(newArrayList("", "let i"));
           });
 
           it("should support multiple lets", () -> {
             final String source = "let item; let i=index; let e=even;";
-            expect(keySpans(source, parseTemplateBindings("key", source))).toEqual(new String[]{"", "let item", "let i=index", "let e=even"
-            });
+            expect(keySpans(source, parseTemplateBindings("key", source)))
+              .toEqual(newArrayList("", "let item", "let i=index", "let e=even"
+              ));
           });
 
           it("should support a prefix", () -> {
             final String source = "let person of people";
             final String prefix = "ngFor";
             final Angular2TemplateBinding[] bindings = parseTemplateBindings(prefix, source);
-            expect(keyValues(bindings)).toEqual(new String[]{
-              "ngFor", "let person=$implicit", "ngForOf=people in null"
-            });
-            expect(keySpans(source, bindings)).toEqual(new String[]{"", "let person ", "of people"});
+            expect(keyValues(bindings)).toEqual(newArrayList(
+              "ngFor", "let person=$implicit", "ngForOf=people"/* in null"*/
+            ));
+            expect(keySpans(source, bindings)).toEqual(newArrayList("", "let person", "of people"));
           });
         });
       });
@@ -473,23 +481,24 @@ public class Angular2ParserSpecTest {
         it("should report when encountering pipes", () -> {
           expectError(
             parseSimpleBinding("a | somePipe"),
-            "Host binding expression cannot contain pipes");
+            "host binding expression cannot contain pipes");
         });
 
         it("should report when encountering interpolation", () -> {
           expectError(
             parseSimpleBinding("{{exp}}"),
-            "Got interpolation ({{}}) where expression was expected");
+            "expected identifier, keyword, or string"
+            /*"Got interpolation ({{}}) where expression was expected"*/);
         });
 
         it("should report when encountering field write", () -> {
-          expectError(parseSimpleBinding("a = b"), "Bindings cannot contain assignments");
+          expectError(parseSimpleBinding("a = b"), "binding expressions cannot contain assignments");
         });
       });
       describe("error recovery", () -> {
-        it("should be able to recover from an extra paren", () -> recover("((a)))", "a"));
-        it("should be able to recover from an extra bracket", () -> recover("[[a]]]", "[[a]]"));
-        it("should be able to recover from a missing )", () -> recover("(a;b", "a; b;"));
+        it("should be able to recover from an extra paren", () -> recover("((a)))", "((a));"));
+        it("should be able to recover from an extra bracket", () -> recover("[[a]]]", "[[a]];"));
+        it("should be able to recover from a missing )", () -> recover("(a;b", "(a); b;"));
         it("should be able to recover from a missing ]", () -> recover("[a,b", "[a, b]"));
         it("should be able to recover from a missing selector", () -> recover("a."));
         it("should be able to recover from a missing selector in a array literal",
@@ -565,17 +574,20 @@ public class Angular2ParserSpecTest {
     return parseTemplateBindings(key, value, null);
   }
 
-  private static Angular2TemplateBinding[] parseTemplateBindings(String key, String value, String location) {
-    return null;
+  private static Angular2TemplateBinding[] parseTemplateBindings(String key, String value, @SuppressWarnings("unused") String location) {
+    ASTNode root = parse(value, key + "." + Angular2PsiParser.TEMPLATE_BINDINGS);
+    return root.findChildByType(Angular2ElementTypes.TEMPLATE_BINDINGS_STATEMENT)
+               .getPsi(Angular2TemplateBindings.class)
+               .getBindings();
   }
 
-  private static String[] keys(Angular2TemplateBinding[] templateBindings) {
+  private static List<String> keys(Angular2TemplateBinding[] templateBindings) {
     return Arrays.stream(templateBindings)
                  .map(binding -> binding.getKey())
-                 .toArray(String[]::new);
+                 .collect(Collectors.toList());
   }
 
-  private static String[] keyValues(Angular2TemplateBinding[] templateBindings) {
+  private static List<String> keyValues(Angular2TemplateBinding[] templateBindings) {
     return Arrays.stream(templateBindings).map(binding -> {
       if (binding.keyIsVar()) {
         return "let " + binding.getKey() + (binding.getName() == null ? "=null" : '=' + binding.getName());
@@ -583,19 +595,19 @@ public class Angular2ParserSpecTest {
       else {
         return binding.getKey() + (binding.getExpression() == null ? "" : "=" + unparse(binding.getExpression()));
       }
-    }).toArray(String[]::new);
+    }).collect(Collectors.toList());
   }
 
-  private static String[] keySpans(String source, Angular2TemplateBinding[] templateBindings) {
+  private static List<String> keySpans(String source, Angular2TemplateBinding[] templateBindings) {
     return Arrays.stream(templateBindings)
                  .map(binding -> source.substring(binding.getTextRange().getStartOffset(), binding.getTextRange().getEndOffset()))
-                 .toArray(String[]::new);
+                 .collect(Collectors.toList());
   }
 
-  private static String[] exprSources(Angular2TemplateBinding[] templateBindings) {
+  private static List<String> exprSources(Angular2TemplateBinding[] templateBindings) {
     return Arrays.stream(templateBindings)
                  .map(binding -> binding.getExpression() != null ? binding.getExpression().getText() : null)
-                 .toArray(String[]::new);
+                 .collect(Collectors.toList());
   }
 
 
@@ -603,18 +615,22 @@ public class Angular2ParserSpecTest {
     expect(unparse(root)).toEqual(expected);
   }
 
-  private static void expectError(ASTNode root, String error) {
-    StringBuilder errors = new StringBuilder();
+  private static void expectError(ASTNode root, String expectedError) {
+    StringBuilder error = new StringBuilder();
     root.getPsi().accept(new Angular2RecursiveVisitor() {
       @Override
       public void visitErrorElement(PsiErrorElement element) {
-        if (errors.length() > 0) {
-          errors.append("\n");
+        if (error.length() == 0) {
+          error.append(element.getErrorDescription());
         }
-        errors.append(element.getErrorDescription());
       }
     });
-    expect(errors.toString()).toEqual(error);
+    if (StringUtil.isNotEmpty(expectedError)) {
+      expect(error.toString()).toEndWith(expectedError);
+    }
+    else {
+      expect(!error.toString().isEmpty()).toBeTrue();
+    }
   }
 
   private static ASTNode parse(String text, String extension) {
@@ -650,7 +666,7 @@ public class Angular2ParserSpecTest {
   }
 
   @SuppressWarnings("NewClassNamingConvention")
-  private static class MySingleRootFileViewProvider extends SingleRootFileViewProvider {
+  static class MySingleRootFileViewProvider extends SingleRootFileViewProvider {
 
     public MySingleRootFileViewProvider(VirtualFile file) {
       super(PsiManager.getInstance(getProject()), file, false, Angular2Language.INSTANCE);
@@ -660,7 +676,7 @@ public class Angular2ParserSpecTest {
   @SuppressWarnings("NewClassNamingConvention")
   private static class MyAstUnparser extends Angular2RecursiveVisitor {
 
-    private static final Map<IElementType, String> operators = ContainerUtil.newHashMap(
+    private static final Map<IElementType, String> operators = newHashMap(
       pair(PLUS, "+"),
       pair(MINUS, "-"),
       pair(MULT, "*"),
@@ -694,9 +710,12 @@ public class Angular2ParserSpecTest {
 
     @Override
     public void visitElement(PsiElement element) {
-      if (element instanceof ASTWrapperPsiElement
-          || element instanceof PsiErrorElement
-          || element.getClass() == LeafPsiElement.class) {
+      if (element.getClass() == LeafPsiElement.class) {
+        LeafPsiElement leaf = (LeafPsiElement)element;
+        result.append(leaf.getText());
+      }
+      else if (element instanceof ASTWrapperPsiElement
+               || element instanceof PsiErrorElement) {
         super.visitElement(element);
       }
       else {
@@ -718,13 +737,53 @@ public class Angular2ParserSpecTest {
 
     @Override
     public void visitJSReferenceExpression(JSReferenceExpression node) {
-      if (node.getQualifier() != null) {
-        printElement(node.getQualifier());
-        result.append(".");
+      JSExpression qualifier = node.getQualifier();
+      if (qualifier != null) {
+        printElement(qualifier);
+        IElementType qualifierType = qualifier.getNextSibling().getNode().getElementType();
+        if (qualifierType == ELVIS) {
+          result.append("?.");
+        }
+        else if (qualifierType == DOT) {
+          result.append(".");
+        }
+        else {
+          result.append("<q:")
+                .append(qualifierType.toString())
+                .append(">");
+        }
       }
       if (node.getReferenceName() != null) {
         result.append(node.getReferenceName());
       }
+    }
+
+    @Override
+    public void visitAngular2Chain(Angular2Chain expressionChain) {
+      for (JSExpression el : expressionChain.getExpressions()) {
+        printElement(el);
+        result.append("; ");
+      }
+    }
+
+    @Override
+    public void visitAngular2Quote(Angular2Quote quote) {
+      result.append(quote.getName())
+            .append(":")
+            .append(quote.getContents());
+    }
+
+    @Override
+    public void visitAngular2Pipe(Angular2Pipe pipe) {
+      result.append("(");
+      printElement(pipe.getExpression());
+      result.append(" | ")
+            .append(pipe.getName());
+      for (JSExpression expr : pipe.getArguments()) {
+        result.append(":");
+        printElement(expr);
+      }
+      result.append(")");
     }
 
     @Override
@@ -766,9 +825,9 @@ public class Angular2ParserSpecTest {
     @Override
     public void visitJSLiteralExpression(JSLiteralExpression node) {
       if (node.isStringLiteral()) {
-        result.append("\"");
-        result.append(node.getStringValue());
-        result.append("\"");
+        result.append("\"")
+              .append(node.getStringValue())
+              .append("\"");
       }
       else {
         result.append(node.getText());
@@ -779,7 +838,7 @@ public class Angular2ParserSpecTest {
     public void visitJSArrayLiteralExpression(JSArrayLiteralExpression node) {
       result.append("[");
       boolean first = true;
-      for (JSExpression expr: node.getExpressions()) {
+      for (JSExpression expr : node.getExpressions()) {
         if (!first) {
           result.append(", ");
         }
@@ -795,14 +854,14 @@ public class Angular2ParserSpecTest {
     public void visitJSObjectLiteralExpression(JSObjectLiteralExpression node) {
       result.append("{");
       boolean first = true;
-      for (JSProperty property: node.getProperties()) {
+      for (JSProperty property : node.getProperties()) {
         if (!first) {
           result.append(", ");
         }
         else {
           first = false;
         }
-        printElement(property.getLiteralExpressionInitializer());
+        printElement(property.getNameIdentifier());
         result.append(": ");
         printElement(property.getValue());
       }
@@ -814,7 +873,7 @@ public class Angular2ParserSpecTest {
       printElement(node.getMethodExpression());
       result.append("(");
       boolean first = true;
-      for (JSExpression expr: node.getArguments()) {
+      for (JSExpression expr : node.getArguments()) {
         if (!first) {
           result.append(", ");
         }
@@ -836,9 +895,14 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSDefinitionExpression(JSDefinitionExpression node) {
-      result.append(node.getInitializerReference());
+    public void visitJSAssignmentExpression(JSAssignmentExpression node) {
+      printElement(node.getLOperand());
       result.append(" = ");
+      printElement(node.getROperand());
+    }
+
+    @Override
+    public void visitJSDefinitionExpression(JSDefinitionExpression node) {
       printElement(node.getExpression());
     }
 
@@ -848,10 +912,12 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSLabeledStatement(JSLabeledStatement node) {
-      result.append(node.getLabel());
-      result.append(": ");
-      printElement(node.getStatement());
+    public void visitJSEmptyStatement(JSEmptyStatement node) {
+    }
+
+    @Override
+    public void visitComment(PsiComment comment) {
+      //do nothing
     }
 
     @Override

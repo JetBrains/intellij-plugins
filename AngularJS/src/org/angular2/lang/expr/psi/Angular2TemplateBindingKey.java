@@ -13,5 +13,12 @@
 // limitations under the License.
 package org.angular2.lang.expr.psi;
 
-public interface Angular2ImplicitReceiver {
+import com.intellij.lang.javascript.psi.JSExpression;
+import org.jetbrains.annotations.NotNull;
+
+public interface Angular2TemplateBindingKey extends JSExpression {
+
+  @NotNull
+  String getName();
+
 }

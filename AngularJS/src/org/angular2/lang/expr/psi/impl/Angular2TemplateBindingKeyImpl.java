@@ -15,12 +15,19 @@ package org.angular2.lang.expr.psi.impl;
 
 import com.intellij.lang.javascript.psi.impl.JSExpressionImpl;
 import com.intellij.psi.tree.IElementType;
-import org.angular2.lang.expr.psi.Angular2BindingPipe;
+import org.angular2.lang.expr.psi.Angular2TemplateBindingKey;
+import org.jetbrains.annotations.NotNull;
 
-public class Angular2BindingPipeImpl extends JSExpressionImpl implements Angular2BindingPipe {
+public class Angular2TemplateBindingKeyImpl extends JSExpressionImpl implements Angular2TemplateBindingKey {
 
-  public Angular2BindingPipeImpl(IElementType elementType) {
+  public Angular2TemplateBindingKeyImpl(IElementType elementType) {
     super(elementType);
+  }
+
+  @NotNull
+  @Override
+  public String getName() {
+    return getText();
   }
 
 }

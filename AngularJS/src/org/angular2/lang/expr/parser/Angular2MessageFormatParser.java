@@ -48,9 +48,9 @@ public class Angular2MessageFormatParser extends ExpressionParser<Angular2Parser
     //if (!myJavaScriptParser.getExpressionParser().parseQualifiedTypeName()) {
     myInsideSelectExpression = true;
     try {
-      if (!myJavaScriptParser.getExpressionParser().parseUnaryExpression()) {
-        return rollback(expr);
-      }
+      //if (!myJavaScriptParser.getExpressionParser().parseUnaryExpression()) {
+      //  return rollback(expr);
+      //}
     } finally {
       myInsideSelectExpression = false;
     }

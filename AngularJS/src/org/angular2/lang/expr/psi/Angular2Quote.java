@@ -13,6 +13,15 @@
 // limitations under the License.
 package org.angular2.lang.expr.psi;
 
-public interface Angular2Quote {
+import com.intellij.lang.javascript.psi.JSStatement;
+import org.jetbrains.annotations.NotNull;
+
+public interface Angular2Quote extends JSStatement {
+
+  @NotNull
+  String getName();
+
+  @NotNull
+  String getContents();
 
 }

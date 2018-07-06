@@ -1,6 +1,7 @@
-package org.angular2.lang.lexer;
+package org.angular2.lang.expr.lexer;
 
 import com.intellij.psi.tree.IElementType;
+import com.intellij.lexer.FlexLexer;
 
 import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
@@ -29,6 +30,7 @@ FP_LITERAL2="."({DIGIT})+({EXPONENT_PART})?
 FP_LITERAL3=({DIGIT})+({EXPONENT_PART})
 FP_LITERAL4=({DIGIT})+
 EXPONENT_PART=[Ee]["+""-"]?({DIGIT})*
+END_OF_LINE_COMMENT="/""/"[^\r\n]*
 
 
 IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
@@ -42,6 +44,7 @@ IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
   "\""                        { yybegin(YYSTRING); quote = '"'; return STRING_LITERAL_PART; }
   {NUMBER}                    { return NUMERIC_LITERAL; }
   {WHITE_SPACE}               { return WHITE_SPACE; }
+  {END_OF_LINE_COMMENT}       { return END_OF_LINE_COMMENT; }
 
   "var"                       { return VAR_KEYWORD; }
   "let"                       { return LET_KEYWORD; }

@@ -285,6 +285,11 @@ public class Angular2LexerSpecTest {
         it("should tokenize ?. as operator", () -> {
           expectOperatorToken(lex("?.")[0], 0, ELVIS);
         });
+        it ("should tokenize single line comment", () -> {
+          final Token[] tokens = lex("a//foo bar");
+          expectIdentifierToken(tokens[0], 0, "a");
+          expect(tokens[1].tokenType).toEqual(END_OF_LINE_COMMENT);
+        });
       });
     });
   }

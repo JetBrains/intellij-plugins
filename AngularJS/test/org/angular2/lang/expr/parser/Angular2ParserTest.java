@@ -14,14 +14,18 @@
 package org.angular2.lang.expr.parser;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilderFactory;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.FileBasedTestCaseHelperEx;
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
-import org.angular2.lang.expr.lexer.Angular2Lexer;
+import com.intellij.testFramework.LightVirtualFile;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,11 +72,23 @@ public class Angular2ParserTest extends LightPlatformCodeInsightTestCase impleme
   private static void doSingleTest(String suffix, String path) throws Throwable{
     final String text = FileUtil.loadFile(new File(path, suffix), true);
     final StringBuilder result = new StringBuilder();
+
+    int firstDot = suffix.indexOf('.');
+    String extension = suffix.substring(0, firstDot);
+    int secondDot = suffix.indexOf('.', firstDot +1);
+    String name = secondDot > 0 ? suffix.substring(firstDot + 1, secondDot) : "";
+
     for (String line : StringUtil.splitByLines(text)) {
       if (result.length() > 0) result.append("------\n");
+      VirtualFile virtualFile = new LightVirtualFile("test." + name + "." + extension, line);
+      SingleRootFileViewProvider viewProvider = new Angular2ParserSpecTest.MySingleRootFileViewProvider(virtualFile);
+      ParserDefinition parserDefinition = new Angular2ParserDefinition();
+      PsiFile psiFile = parserDefinition.createFile(viewProvider);
+
       final Angular2ParserDefinition definition = new Angular2ParserDefinition();
-      final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(definition, new Angular2Lexer(), line);
+      final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(getProject(), psiFile.getNode());
       final ASTNode root = definition.createParser(getProject()).parse(Angular2ElementTypes.FILE, builder);
+
       result.append(DebugUtil.psiToString(root.getPsi(), false, false));
     }    
 

@@ -22,4 +22,17 @@ public class Angular2ElementVisitor extends JSElementVisitor {
   public void visitMessageFormatExpression(Angular2MessageFormatExpression expression) {
     visitJSExpression(expression);
   }
+
+  public void visitAngular2Chain(Angular2Chain expressionChain) {
+    visitJSStatement(expressionChain);
+  }
+
+  public void visitAngular2Pipe(Angular2Pipe pipe) {
+    visitJSExpression(pipe);
+  }
+
+  public void visitAngular2Quote(Angular2Quote quote) {
+    visitJSStatement(quote);
+  }
+
 }

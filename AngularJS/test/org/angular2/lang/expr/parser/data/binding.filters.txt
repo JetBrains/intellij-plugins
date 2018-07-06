@@ -1,0 +1,111 @@
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    Angular2Pipe
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('1')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OR)('|')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:IDENTIFIER)('nonexistent')
+      JSArgumentList
+        <empty list>
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    Angular2Pipe
+      JSLiteralExpression
+        PsiElement(JS:STRING_LITERAL)(''abcd'')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OR)('|')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:IDENTIFIER)('substring')
+      JSArgumentList
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:COLON)(':')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('offset')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    Angular2Pipe
+      Angular2Pipe
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)(''abcd'')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:OR)('|')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:IDENTIFIER)('substring')
+        JSArgumentList
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('3')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OR)('|')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:IDENTIFIER)('uppercase')
+      JSArgumentList
+        <empty list>
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSAssignmentExpression
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('n')
+      PsiErrorElement:binding expressions cannot contain assignments
+        <empty list>
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSParenthesizedExpression
+        PsiElement(JS:LPAR)('(')
+        Angular2Pipe
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('name')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:OR)('|')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:IDENTIFIER)('lowercase')
+          JSArgumentList
+            <empty list>
+        PsiElement(JS:RPAR)(')')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    Angular2Pipe
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('name')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OR)('|')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:IDENTIFIER)('uppercase')
+      JSArgumentList
+        PsiElement(JS:COLON)(':')
+        PsiErrorElement:expression expected
+          <empty list>
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    Angular2Pipe
+      JSBinaryExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('book')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:IDENTIFIER)('title')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:OROR)('||')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)(''No Title'')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OR)('|')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:IDENTIFIER)('translate')
+      JSArgumentList
+        <empty list>

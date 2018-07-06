@@ -13,13 +13,10 @@
 // limitations under the License.
 package org.angular2.lang.expr.psi;
 
-import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSStatement;
-import org.jetbrains.annotations.NotNull;
 
-public interface Angular2Chain extends JSStatement {
+public interface Angular2TemplateBindings extends JSStatement {
 
-  @NotNull
-  JSExpression[] getExpressions();
+  Angular2TemplateBinding[] getBindings();
 
 }

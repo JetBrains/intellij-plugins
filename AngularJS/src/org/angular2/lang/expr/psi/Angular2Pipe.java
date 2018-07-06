@@ -13,8 +13,24 @@
 // limitations under the License.
 package org.angular2.lang.expr.psi;
 
+import com.intellij.lang.javascript.psi.JSArgumentList;
 import com.intellij.lang.javascript.psi.JSExpression;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public interface Angular2BindingPipe extends JSExpression {
+public interface Angular2Pipe extends JSExpression {
+
+  @Nullable
+  JSExpression getExpression();
+
+  @Nullable
+  String getName();
+
+  @Nullable
+  JSArgumentList getArgumentList();
+
+  @NotNull
+  JSExpression[] getArguments();
+
 
 }

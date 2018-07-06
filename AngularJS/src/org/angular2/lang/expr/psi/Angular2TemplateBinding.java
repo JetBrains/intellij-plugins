@@ -14,9 +14,10 @@
 package org.angular2.lang.expr.psi;
 
 import com.intellij.lang.javascript.psi.JSExpression;
-import com.intellij.psi.PsiElement;
+import com.intellij.lang.javascript.psi.JSStatement;
 
-public interface Angular2TemplateBinding extends PsiElement {
+public interface Angular2TemplateBinding extends JSStatement {
+
   String getKey();
 
   boolean keyIsVar();
