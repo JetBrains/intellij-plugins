@@ -23,7 +23,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.DependencyScope;
@@ -42,6 +41,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
@@ -537,9 +537,9 @@ public class FlexUtils {
     return DependencyType.DEFAULT_LINKAGE;
   }
 
-  public static ModuleWithDependenciesScope getModuleWithDependenciesAndLibrariesScope(@NotNull Module module,
-                                                                                       @NotNull FlexBuildConfiguration bc,
-                                                                                       boolean includeTests) {
+  public static GlobalSearchScope getModuleWithDependenciesAndLibrariesScope(@NotNull Module module,
+                                                                             @NotNull FlexBuildConfiguration bc,
+                                                                             boolean includeTests) {
     // we cannot assert this since build configuration may be not yet persisted
     //if (!ArrayUtil.contains(bc, FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations())) {
     //  throw new IllegalArgumentException("Build configuration '" + bc.getName() + "' does not belong to module '" + module.getName() + "'");
@@ -547,10 +547,7 @@ public class FlexUtils {
     //
     module.putUserData(FlexOrderEnumerationHandler.FORCE_BC, bc);
     try {
-      return new ModuleWithDependenciesScope(module, ModuleWithDependenciesScope.COMPILE_ONLY |
-                                                     ModuleWithDependenciesScope.MODULES |
-                                                     ModuleWithDependenciesScope.LIBRARIES |
-                                                     (includeTests ? ModuleWithDependenciesScope.TESTS : 0));
+      return module.getModuleWithDependenciesAndLibrariesScope(includeTests);
     }
     finally {
       module.putUserData(FlexOrderEnumerationHandler.FORCE_BC, null);
