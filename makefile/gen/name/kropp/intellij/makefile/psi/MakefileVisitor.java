@@ -12,10 +12,6 @@ public class MakefileVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitBranch(@NotNull MakefileBranch o) {
-    visitPsiElement(o);
-  }
-
   public void visitCommand(@NotNull MakefileCommand o) {
     visitPsiElement(o);
   }
@@ -113,10 +109,6 @@ public class MakefileVisitor extends PsiElementVisitor {
   }
 
   public void visitTargets(@NotNull MakefileTargets o) {
-    visitPsiElement(o);
-  }
-
-  public void visitTopconditional(@NotNull MakefileTopconditional o) {
     visitPsiElement(o);
   }
 

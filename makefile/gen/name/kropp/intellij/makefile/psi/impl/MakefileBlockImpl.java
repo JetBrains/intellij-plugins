@@ -28,6 +28,18 @@ public class MakefileBlockImpl extends ASTWrapperPsiElement implements MakefileB
 
   @Override
   @NotNull
+  public List<MakefileCommand> getCommandList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileCommand.class);
+  }
+
+  @Override
+  @NotNull
+  public List<MakefileConditional> getConditionalList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileConditional.class);
+  }
+
+  @Override
+  @NotNull
   public List<MakefileDefine> getDefineList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileDefine.class);
   }
@@ -66,12 +78,6 @@ public class MakefileBlockImpl extends ASTWrapperPsiElement implements MakefileB
   @NotNull
   public List<MakefileRule> getRuleList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileRule.class);
-  }
-
-  @Override
-  @NotNull
-  public List<MakefileTopconditional> getTopconditionalList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileTopconditional.class);
   }
 
   @Override

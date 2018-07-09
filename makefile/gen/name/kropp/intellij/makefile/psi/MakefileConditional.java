@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface MakefileConditional extends PsiElement {
 
   @NotNull
-  List<MakefileBranch> getBranchList();
+  List<MakefileBlock> getBlockList();
 
 }

@@ -19,7 +19,7 @@ Makefile
         PsiElement(ifndef)('ifndef')
         PsiElement(condition)(' VERBOSE')
         PsiWhiteSpace('\n')
-        MakefileBranchImpl(BRANCH)
+        MakefileBlockImpl(BLOCK)
           MakefileVariableAssignmentImpl(VARIABLE_ASSIGNMENT)
             MakefileVariableImpl(VARIABLE)
               PsiElement(identifier)('ZZZZ')

@@ -9,7 +9,6 @@ import name.kropp.intellij.makefile.psi.impl.*;
 public interface MakefileTypes {
 
   IElementType BLOCK = new MakefileElementType("BLOCK");
-  IElementType BRANCH = new MakefileElementType("BRANCH");
   IElementType COMMAND = new MakefileElementType("COMMAND");
   IElementType COMMENT = new MakefileElementType("COMMENT");
   IElementType CONDITIONAL = new MakefileElementType("CONDITIONAL");
@@ -35,7 +34,6 @@ public interface MakefileTypes {
   IElementType TARGETS = new MakefileElementType("TARGETS");
   IElementType TARGET_LINE = new MakefileElementType("TARGET_LINE");
   IElementType TARGET_PATTERN = new MakefileElementType("TARGET_PATTERN");
-  IElementType TOPCONDITIONAL = new MakefileElementType("TOPCONDITIONAL");
   IElementType UNDEFINE = new MakefileElementType("UNDEFINE");
   IElementType VARIABLE = new MakefileElementType("VARIABLE");
   IElementType VARIABLE_ASSIGNMENT = new MakefileElementType("VARIABLE_ASSIGNMENT");
@@ -82,9 +80,6 @@ public interface MakefileTypes {
       IElementType type = node.getElementType();
        if (type == BLOCK) {
         return new MakefileBlockImpl(node);
-      }
-      else if (type == BRANCH) {
-        return new MakefileBranchImpl(node);
       }
       else if (type == COMMAND) {
         return new MakefileCommandImpl(node);
@@ -160,9 +155,6 @@ public interface MakefileTypes {
       }
       else if (type == TARGET_PATTERN) {
         return new MakefileTargetPatternImpl(node);
-      }
-      else if (type == TOPCONDITIONAL) {
-        return new MakefileTopconditionalImpl(node);
       }
       else if (type == UNDEFINE) {
         return new MakefileUndefineImpl(node);

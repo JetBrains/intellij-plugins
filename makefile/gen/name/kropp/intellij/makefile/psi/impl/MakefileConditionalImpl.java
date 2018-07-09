@@ -28,8 +28,8 @@ public class MakefileConditionalImpl extends ASTWrapperPsiElement implements Mak
 
   @Override
   @NotNull
-  public List<MakefileBranch> getBranchList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileBranch.class);
+  public List<MakefileBlock> getBlockList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileBlock.class);
   }
 
 }

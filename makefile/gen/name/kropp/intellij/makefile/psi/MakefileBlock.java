@@ -8,6 +8,12 @@ import com.intellij.psi.PsiElement;
 public interface MakefileBlock extends PsiElement {
 
   @NotNull
+  List<MakefileCommand> getCommandList();
+
+  @NotNull
+  List<MakefileConditional> getConditionalList();
+
+  @NotNull
   List<MakefileDefine> getDefineList();
 
   @NotNull
@@ -27,9 +33,6 @@ public interface MakefileBlock extends PsiElement {
 
   @NotNull
   List<MakefileRule> getRuleList();
-
-  @NotNull
-  List<MakefileTopconditional> getTopconditionalList();
 
   @NotNull
   List<MakefileUndefine> getUndefineList();

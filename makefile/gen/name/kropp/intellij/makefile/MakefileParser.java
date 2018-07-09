@@ -26,9 +26,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (t == BLOCK) {
       r = block(b, 0);
     }
-    else if (t == BRANCH) {
-      r = branch(b, 0);
-    }
     else if (t == COMMAND) {
       r = command(b, 0);
     }
@@ -101,9 +98,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     else if (t == TARGETS) {
       r = targets(b, 0);
     }
-    else if (t == TOPCONDITIONAL) {
-      r = topconditional(b, 0);
-    }
     else if (t == UNDEFINE) {
       r = undefine(b, 0);
     }
@@ -124,7 +118,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (topconditional|rule|variable-assignment|directive|function|macro)*
+  // (conditional|rule|command|variable-assignment|directive|function|macro)*
   static boolean any(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "any")) return false;
     while (true) {
@@ -135,12 +129,13 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // topconditional|rule|variable-assignment|directive|function|macro
+  // conditional|rule|command|variable-assignment|directive|function|macro
   private static boolean any_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "any_0")) return false;
     boolean r;
-    r = topconditional(b, l + 1);
+    r = conditional(b, l + 1);
     if (!r) r = rule(b, l + 1);
+    if (!r) r = command(b, l + 1);
     if (!r) r = variable_assignment(b, l + 1);
     if (!r) r = directive(b, l + 1);
     if (!r) r = function(b, l + 1);
@@ -176,30 +171,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (conditional|command|variable-assignment)*
-  public static boolean branch(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "branch")) return false;
-    Marker m = enter_section_(b, l, _NONE_, BRANCH, "<branch>");
-    while (true) {
-      int c = current_position_(b);
-      if (!branch_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "branch", c)) break;
-    }
-    exit_section_(b, l, m, true, false, null);
-    return true;
-  }
-
-  // conditional|command|variable-assignment
-  private static boolean branch_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "branch_0")) return false;
-    boolean r;
-    r = conditional(b, l + 1);
-    if (!r) r = command(b, l + 1);
-    if (!r) r = variable_assignment(b, l + 1);
-    return r;
-  }
-
-  /* ********************************************************** */
   // '\t'* multiline
   public static boolean command(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "command")) return false;
@@ -230,21 +201,21 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // conditional-keyword condition branch ('else' (conditional-keyword condition branch | EOL branch))* 'endif'
+  // conditional-keyword condition block ('else' (conditional-keyword condition block | EOL block))* 'endif'
   public static boolean conditional(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, CONDITIONAL, "<conditional>");
     r = conditional_keyword(b, l + 1);
     r = r && consumeToken(b, CONDITION);
-    r = r && branch(b, l + 1);
+    r = r && block(b, l + 1);
     r = r && conditional_3(b, l + 1);
     r = r && consumeToken(b, KEYWORD_ENDIF);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // ('else' (conditional-keyword condition branch | EOL branch))*
+  // ('else' (conditional-keyword condition block | EOL block))*
   private static boolean conditional_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional_3")) return false;
     while (true) {
@@ -255,7 +226,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // 'else' (conditional-keyword condition branch | EOL branch)
+  // 'else' (conditional-keyword condition block | EOL block)
   private static boolean conditional_3_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional_3_0")) return false;
     boolean r;
@@ -266,7 +237,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // conditional-keyword condition branch | EOL branch
+  // conditional-keyword condition block | EOL block
   private static boolean conditional_3_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional_3_0_1")) return false;
     boolean r;
@@ -277,25 +248,25 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // conditional-keyword condition branch
+  // conditional-keyword condition block
   private static boolean conditional_3_0_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional_3_0_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = conditional_keyword(b, l + 1);
     r = r && consumeToken(b, CONDITION);
-    r = r && branch(b, l + 1);
+    r = r && block(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // EOL branch
+  // EOL block
   private static boolean conditional_3_0_1_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional_3_0_1_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, EOL);
-    r = r && branch(b, l + 1);
+    r = r && block(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1014,78 +985,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
       if (!empty_element_parsed_guard_(b, "targets", c)) break;
     }
     exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // conditional-keyword condition block ('else' (conditional-keyword condition branch | EOL block))* 'endif'
-  public static boolean topconditional(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "topconditional")) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, TOPCONDITIONAL, "<topconditional>");
-    r = conditional_keyword(b, l + 1);
-    p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, CONDITION));
-    r = p && report_error_(b, block(b, l + 1)) && r;
-    r = p && report_error_(b, topconditional_3(b, l + 1)) && r;
-    r = p && consumeToken(b, KEYWORD_ENDIF) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // ('else' (conditional-keyword condition branch | EOL block))*
-  private static boolean topconditional_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "topconditional_3")) return false;
-    while (true) {
-      int c = current_position_(b);
-      if (!topconditional_3_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "topconditional_3", c)) break;
-    }
-    return true;
-  }
-
-  // 'else' (conditional-keyword condition branch | EOL block)
-  private static boolean topconditional_3_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "topconditional_3_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, KEYWORD_ELSE);
-    r = r && topconditional_3_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // conditional-keyword condition branch | EOL block
-  private static boolean topconditional_3_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "topconditional_3_0_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = topconditional_3_0_1_0(b, l + 1);
-    if (!r) r = topconditional_3_0_1_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // conditional-keyword condition branch
-  private static boolean topconditional_3_0_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "topconditional_3_0_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = conditional_keyword(b, l + 1);
-    r = r && consumeToken(b, CONDITION);
-    r = r && branch(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // EOL block
-  private static boolean topconditional_3_0_1_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "topconditional_3_0_1_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, EOL);
-    r = r && block(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 

@@ -14,7 +14,7 @@ Makefile
         PsiElement(ifeq)('ifeq')
         PsiElement(condition)(' ($(call which,x),)')
         PsiWhiteSpace('\n')
-        MakefileBranchImpl(BRANCH)
+        MakefileBlockImpl(BLOCK)
           MakefileCommandImpl(COMMAND)
             PsiElement(\t)('\t')
             PsiElement(line)('x')

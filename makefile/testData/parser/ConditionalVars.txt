@@ -1,5 +1,5 @@
 Makefile
-  MakefileTopconditionalImpl(TOPCONDITIONAL)
+  MakefileConditionalImpl(CONDITIONAL)
     PsiElement(ifeq)('ifeq')
     PsiElement(condition)(' ($(BUILD_TYPE),QA)')
     PsiWhiteSpace('\n')
