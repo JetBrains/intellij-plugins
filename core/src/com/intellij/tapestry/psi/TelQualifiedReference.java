@@ -29,12 +29,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class TelQualifiedReference implements PsiPolyVariantReference {
 
   private static final ResolveCache.PolyVariantResolver<TelQualifiedReference> MY_RESOLVER =
-    new ResolveCache.PolyVariantResolver<TelQualifiedReference>() {
-      @NotNull
-      public ResolveResult[] resolve(@NotNull final TelQualifiedReference expression, final boolean incompleteCode) {
-        return expression.resolveInner();
-      }
-    };
+    (expression, incompleteCode) -> expression.resolveInner();
 
   private final TelReferenceQualifier myElement;
 
