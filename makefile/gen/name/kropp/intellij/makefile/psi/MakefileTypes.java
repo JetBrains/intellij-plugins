@@ -49,8 +49,10 @@ public interface MakefileTypes {
   IElementType FUNCTION_ERROR = new MakefileTokenType("$(error");
   IElementType FUNCTION_INFO = new MakefileTokenType("$(info");
   IElementType FUNCTION_PARAM_TEXT = new MakefileTokenType("function-param-text");
+  IElementType FUNCTION_PATHSUBST = new MakefileTokenType("$(pathsubst");
   IElementType FUNCTION_SHELL = new MakefileTokenType("$(shell");
   IElementType FUNCTION_WARNING = new MakefileTokenType("$(warning");
+  IElementType FUNCTION_WILDCARD = new MakefileTokenType("$(wildcard");
   IElementType IDENTIFIER = new MakefileTokenType("identifier");
   IElementType KEYWORD_DEFINE = new MakefileTokenType("define");
   IElementType KEYWORD_ELSE = new MakefileTokenType("else");

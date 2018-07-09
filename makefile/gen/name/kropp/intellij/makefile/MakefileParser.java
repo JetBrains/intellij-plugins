@@ -447,7 +447,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('$(error'|'$(warning'|'$(info'|'$(shell') function-param* ')'
+  // ('$(error'|'$(warning'|'$(info'|'$(shell'|'$(wildcard'|'$(pathsubst') function-param* ')'
   public static boolean function(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function")) return false;
     boolean r;
@@ -459,7 +459,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // '$(error'|'$(warning'|'$(info'|'$(shell'
+  // '$(error'|'$(warning'|'$(info'|'$(shell'|'$(wildcard'|'$(pathsubst'
   private static boolean function_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_0")) return false;
     boolean r;
@@ -468,6 +468,8 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, FUNCTION_WARNING);
     if (!r) r = consumeToken(b, FUNCTION_INFO);
     if (!r) r = consumeToken(b, FUNCTION_SHELL);
+    if (!r) r = consumeToken(b, FUNCTION_WILDCARD);
+    if (!r) r = consumeToken(b, FUNCTION_PATHSUBST);
     exit_section_(b, m, null, r);
     return r;
   }

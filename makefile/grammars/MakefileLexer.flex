@@ -32,6 +32,8 @@ ERROR="$(error"
 WARNING="$(warning"
 INFO="$(info"
 SHELL="$(shell"
+WILDCARD="$(wildcard"
+PATHSUBST="$(pathsubst"
 MACRO="@"[^@ \r\n]+"@"
 VARIABLE_VALUE=[^\r\n]*[^\\\r\n]
 COLON=":"
@@ -56,6 +58,8 @@ CONDITION_CHARACTER=[^#\r\n]
 {WARNING}              { yybegin(FUNCTION); return FUNCTION_WARNING; }
 {INFO}                 { yybegin(FUNCTION); return FUNCTION_INFO; }
 {SHELL}                { yybegin(FUNCTION); return FUNCTION_SHELL; }
+{WILDCARD}             { yybegin(FUNCTION); return FUNCTION_WILDCARD; }
+{PATHSUBST}            { yybegin(FUNCTION); return FUNCTION_PATHSUBST; }
 
 <FUNCTION> {
   ")"           { yybegin(YYINITIAL); return FUNCTION_END; }
@@ -91,6 +95,8 @@ CONDITION_CHARACTER=[^#\r\n]
     {WARNING}              { yybegin(FUNCTION); return FUNCTION_WARNING; }
     {INFO}                 { yybegin(FUNCTION); return FUNCTION_INFO; }
     {SHELL}                { yybegin(FUNCTION); return FUNCTION_SHELL; }
+    {WILDCARD}             { yybegin(FUNCTION); return FUNCTION_WILDCARD; }
+    {PATHSUBST}            { yybegin(FUNCTION); return FUNCTION_PATHSUBST; }
     {VARIABLE_USAGE_EXPR}   { return VARIABLE_USAGE; }
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }
 }
@@ -130,6 +136,8 @@ CONDITION_CHARACTER=[^#\r\n]
     {WARNING}               { yybegin(FUNCTION); return FUNCTION_WARNING; }
     {INFO}                  { yybegin(FUNCTION); return FUNCTION_INFO; }
     {SHELL}                 { yybegin(FUNCTION); return FUNCTION_SHELL; }
+    {WILDCARD}              { yybegin(FUNCTION); return FUNCTION_WILDCARD; }
+    {PATHSUBST}             { yybegin(FUNCTION); return FUNCTION_PATHSUBST; }
     {VARIABLE_USAGE_EXPR}   { return VARIABLE_USAGE; }
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }
     {ASSIGN}                { yybegin(EXPORTVAR); return ASSIGN; }

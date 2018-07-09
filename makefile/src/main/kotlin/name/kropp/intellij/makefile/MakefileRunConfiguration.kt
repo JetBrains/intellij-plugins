@@ -59,9 +59,6 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
   override fun getState(executor: Executor, executionEnvironment: ExecutionEnvironment): RunProfileState? {
     val makePath = ServiceManager.getService(project, MakefileProjectSettings::class.java).settings?.path ?: DEFAULT_MAKE_PATH
     return object : CommandLineState(executionEnvironment) {
-      init {
-        addConsoleFilters(ConsoleFilenameFilter(project))
-      }
       override fun startProcess(): ProcessHandler {
         val params = ParametersList()
         params.addParametersString(arguments)

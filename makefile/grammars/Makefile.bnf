@@ -37,6 +37,8 @@
     FUNCTION_WARNING = "$(warning"
     FUNCTION_INFO = "$(info"
     FUNCTION_SHELL = "$(shell"
+    FUNCTION_WILDCARD = "$(wildcard"
+    FUNCTION_PATHSUBST = "$(pathsubst"
     FUNCTION_END = ")"
   ]
 
@@ -88,7 +90,7 @@ vpath ::= 'vpath' (pattern directory*)? EOL {pin=1}
 pattern ::= identifier
 directory ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
 
-function ::= ('$(error'|'$(warning'|'$(info'|'$(shell') function-param* ')'
+function ::= ('$(error'|'$(warning'|'$(info'|'$(shell'|'$(wildcard'|'$(pathsubst') function-param* ')'
 meta function-param ::= function-param-text|variable_usage
 
 comment ::=
