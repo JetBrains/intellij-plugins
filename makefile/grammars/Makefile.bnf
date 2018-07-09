@@ -45,9 +45,9 @@
   psiImplUtilClass = "name.kropp.intellij.makefile.psi.MakefilePsiImplUtil"
 }
 
-makefile ::= any
+makefile ::= any*
 
-private any ::= (conditional|rule|command|variable-assignment|directive|function|macro)*
+private any ::= (conditional|rule|command|variable-assignment|directive|function|macro)
 
 private directive ::= define|include|undefine|override|export|privatevar|vpath
 
@@ -70,7 +70,7 @@ prerequisite ::= identifier|variable_usage {mixin="name.kropp.intellij.makefile.
 
 private conditional-keyword ::= ('ifeq'|'ifneq'|'ifdef'|'ifndef')
 conditional ::= conditional-keyword condition block ('else' (conditional-keyword condition block | EOL block))* 'endif'
-block ::= any
+block ::= any+|empty_command?
 
 meta variable-assignment ::= variable assignment (function|variable-value?) {pin=2 methods=[getAssignment getValue]}
 private assignment ::= ('='|':='|'::='|'?='|'!='|'+=')

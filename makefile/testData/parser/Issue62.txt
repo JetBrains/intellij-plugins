@@ -1,0 +1,18 @@
+Makefile
+  MakefileConditionalImpl(CONDITIONAL)
+    PsiElement(ifeq)('ifeq')
+    PsiElement(condition)(' ($(BUILD_TYPE),QA)')
+    PsiWhiteSpace('\n')
+    MakefileBlockImpl(BLOCK)
+      <empty list>
+    PsiElement(else)('else')
+    PsiElement(EOL)('\n')
+    MakefileBlockImpl(BLOCK)
+      MakefileEmptyCommandImpl(EMPTY_COMMAND)
+        PsiElement(\t)('\t')
+        PsiComment(COMMENT)('# Disabled')
+        PsiWhiteSpace('\n')
+        PsiElement(\t)('\t')
+    PsiComment(COMMENT)('#export')
+    PsiWhiteSpace('\n')
+    PsiElement(endif)('endif')

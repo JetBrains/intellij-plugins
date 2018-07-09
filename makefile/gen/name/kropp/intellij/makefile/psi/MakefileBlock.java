@@ -16,6 +16,9 @@ public interface MakefileBlock extends PsiElement {
   @NotNull
   List<MakefileDefine> getDefineList();
 
+  @Nullable
+  MakefileEmptyCommand getEmptyCommand();
+
   @NotNull
   List<MakefileExport> getExportList();
 
