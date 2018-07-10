@@ -237,6 +237,7 @@ public class PostCssParser extends CssParser2 {
                          getTokenType() == CssElementTypes.CSS_PERIOD ||
                          getTokenType() == CssElementTypes.CSS_COLON ||
                          getTokenType() == CssElementTypes.CSS_COMMA ||
+                         getTokenType() == CssElementTypes.CSS_PIPE ||
                          SELECTORS_HIERARCHY_TOKENS.contains(getTokenType()) ||
                          getTokenType() == PostCssTokenTypes.AMPERSAND ||
                          getTokenType() == CssElementTypes.CSS_BAD_CHARACTER ||
