@@ -17,6 +17,7 @@ import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 public class FlexPropertiesSupport {
@@ -77,6 +78,7 @@ public class FlexPropertiesSupport {
 
     @Override
     protected List<PropertiesFile> retrievePropertyFilesByBundleName(String bundleName, PsiElement element) {
+      if (bundleName == null) return Collections.emptyList();
       return PropertiesReferenceManager.getInstance(element.getProject()).findPropertiesFiles(
         element.getResolveScope(),
         bundleName,

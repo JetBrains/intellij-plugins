@@ -236,24 +236,21 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
   }
 
   private final ResolveCache.PolyVariantResolver<CfmlComponentReference> MY_RESOLVER =
-    new ResolveCache.PolyVariantResolver<CfmlComponentReference>() {
-      @NotNull
-      public ResolveResult[] resolve(@NotNull final CfmlComponentReference expression, final boolean incompleteCode) {
-        String componentQualifiedName;
-        CfmlImport parentOfType = PsiTreeUtil.getParentOfType(expression, CfmlImport.class);
-        if (parentOfType != null) {
-          componentQualifiedName = getText();
-        }
-        else {
-          componentQualifiedName = getComponentQualifiedName(getText());
-        }
-        PsiFile containingFile = getContainingFile();
-        containingFile = containingFile == null ? null : containingFile.getOriginalFile();
-        if (containingFile instanceof CfmlFile) {
-          return CfmlResolveResult.create(resolveFromQualifiedName(componentQualifiedName, ((CfmlFile)containingFile)));
-        }
-        return ResolveResult.EMPTY_ARRAY;
+    (expression, incompleteCode) -> {
+      String componentQualifiedName;
+      CfmlImport parentOfType = PsiTreeUtil.getParentOfType(expression, CfmlImport.class);
+      if (parentOfType != null) {
+        componentQualifiedName = getText();
       }
+      else {
+        componentQualifiedName = getComponentQualifiedName(getText());
+      }
+      PsiFile containingFile = getContainingFile();
+      containingFile = containingFile == null ? null : containingFile.getOriginalFile();
+      if (containingFile instanceof CfmlFile) {
+        return CfmlResolveResult.create(resolveFromQualifiedName(componentQualifiedName, ((CfmlFile)containingFile)));
+      }
+      return ResolveResult.EMPTY_ARRAY;
     };
 
   @NotNull

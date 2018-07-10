@@ -67,8 +67,8 @@ public class FlexUnitTestFinder implements TestFinder {
     final String className = jsClass == null ? null : jsClass.getName();
 
     final Pair<Module, FlexUnitSupport> moduleAndSupport = FlexUnitSupport.getModuleAndSupport(element);
-    final Module module = moduleAndSupport == null ? null : moduleAndSupport.first;
-    final FlexUnitSupport flexUnitSupport = moduleAndSupport == null ? null : moduleAndSupport.second;
+    final Module module = Pair.getFirst(moduleAndSupport);
+    final FlexUnitSupport flexUnitSupport = Pair.getSecond(moduleAndSupport);
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(element.getProject()).getFileIndex();
 
     if (className == null || module == null || flexUnitSupport == null || (file != null && fileIndex.isInTestSourceContent(file))) {
@@ -102,8 +102,8 @@ public class FlexUnitTestFinder implements TestFinder {
     final String className = jsClass == null ? null : jsClass.getName();
 
     final Pair<Module, FlexUnitSupport> moduleAndSupport = FlexUnitSupport.getModuleAndSupport(element);
-    final Module module = moduleAndSupport == null ? null : moduleAndSupport.first;
-    final FlexUnitSupport flexUnitSupport = moduleAndSupport == null ? null : moduleAndSupport.second;
+    final Module module = Pair.getFirst(moduleAndSupport);
+    final FlexUnitSupport flexUnitSupport = Pair.getSecond(moduleAndSupport);
 
     if (className == null || module == null || flexUnitSupport == null) {
       return Collections.emptyList();

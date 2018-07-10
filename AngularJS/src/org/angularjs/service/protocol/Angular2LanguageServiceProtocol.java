@@ -36,8 +36,8 @@ public class Angular2LanguageServiceProtocol extends TypeScriptServiceStandardOu
     fillState(state);
     state.pluginName = "angular 2 language service";
     File directory = JSLanguageServiceUtil.getPluginDirectory(AngularJSLanguage.class, NG_LANGUAGE_SERVICE);
-    state.typescriptPluginPath =
-      TypeScriptUtil.getTypeScriptCompilerFolderFile().getAbsolutePath() + File.separator + "typescript" + File.separator;
+    state.typescriptPluginPath = LocalFilePath.create(TypeScriptUtil.getTypeScriptCompilerFolderFile().getAbsolutePath()
+                                                      + File.separator + "typescript" + File.separator);
 
 
     LocalFilePath[] newPaths = {LocalFilePath.create(directory.getAbsolutePath())};
@@ -51,7 +51,7 @@ public class Angular2LanguageServiceProtocol extends TypeScriptServiceStandardOu
 
     //override plugin path
     state.pluginPath = LocalFilePath.create(new File(directory, "angular-plugin.js").getAbsolutePath());
-    state.ngServicePath = FileUtil.toSystemDependentName(myNgServicePath);
+    state.ngServicePath = LocalFilePath.create(FileUtil.toSystemDependentName(myNgServicePath));
     return state;
   }
 }

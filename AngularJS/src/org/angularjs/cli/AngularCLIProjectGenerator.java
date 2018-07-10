@@ -1,40 +1,40 @@
 package org.angularjs.cli;
 
-import com.intellij.execution.RunManager;
-import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.filters.Filter;
-import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration;
-import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType;
+import com.intellij.ide.util.projectWizard.ModuleNameLocationSettings;
+import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator;
 import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor;
-import com.intellij.lang.javascript.buildTools.npm.rc.NpmCommand;
-import com.intellij.lang.javascript.buildTools.npm.rc.NpmConfigurationType;
-import com.intellij.lang.javascript.buildTools.npm.rc.NpmRunConfiguration;
-import com.intellij.lang.javascript.buildTools.npm.rc.NpmRunSettings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.TextAccessor;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import icons.AngularJSIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
 /**
  * @author Dennis.Ushakov
  */
 public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
+
   public static final String PACKAGE_NAME = "@angular/cli";
+  private static final Pattern VALID_NG_APP_NAME = Pattern.compile("[a-zA-Z][0-9a-zA-Z]*(-[a-zA-Z][0-9a-zA-Z]*)*");
 
   @Nls
   @NotNull
@@ -44,11 +44,13 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
   }
 
   @Override
+  @NotNull
   public String getDescription() {
     return "The Angular CLI makes it easy to create an application that already works, right out of the box. It already follows our best practices!";
   }
 
   @Override
+  @NotNull
   public Icon getIcon() {
     return AngularJSIcons.Angular2;
   }
@@ -109,17 +111,15 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
 
   @Override
   protected String validateProjectPath(@NotNull String path) {
-    String fileName = PathUtil.getFileName(path);
-    for (String segment : fileName.split("-")) {
-      if (!segment.matches("[a-zA-Z][.0-9a-zA-Z]*(-[.0-9a-zA-Z]*)*")) {
-        return XmlStringUtil.wrapInHtml(
-          "Project name " + fileName + " is not valid. New project names must " +
-          "start with a letter, and must contain only alphanumeric characters or dashes. " +
-          "When adding a dash the segment after the dash must also start with a letter."
-        );
-      }
-    }
-    return super.validateProjectPath(path);
+    return Optional.ofNullable(validateFolderName(path, "Project"))
+                   .orElseGet(() -> super.validateProjectPath(path));
+  }
+
+  @SuppressWarnings("deprecation")
+  @NotNull
+  @Override
+  public GeneratorPeer<Settings> createPeer() {
+    return new AngularCLIProjectGeneratorPeer();
   }
 
   @NotNull
@@ -136,51 +136,62 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
                                  File workingDir) {
     return () -> ApplicationManager.getApplication().executeOnPooledThread(() -> {
       super.postInstall(project, baseDir, workingDir).run();
-      createRunConfigurations(project, baseDir);
+      AngularCliUtil.createRunConfigurations(project, baseDir);
     });
   }
 
-  private static void createRunConfigurations(@NotNull Project project, @NotNull VirtualFile baseDir) {
+  @Nullable
+  private static String validateFolderName(String path, String label) {
+    String fileName = PathUtil.getFileName(path);
+    if (!VALID_NG_APP_NAME.matcher(fileName).matches()) {
+      return XmlStringUtil.wrapInHtml(
+        label + " name '" + fileName + "' is not valid. " + label + " name must " +
+        "start with a letter, and must contain only alphanumeric characters or dashes. " +
+        "When adding a dash the segment after the dash must also start with a letter."
+      );
+    }
+    return null;
+  }
 
-    if (!project.isDisposed()) {
-      RunManager runManager = RunManager.getInstance(project);
 
-      createJSDebugConfiguration(runManager, "Angular Application", "http://localhost:4200");
+  private class AngularCLIProjectGeneratorPeer extends NpmPackageGeneratorPeer {
 
-      createNpmConfiguration(baseDir, runManager, "Angular CLI Server", "start");
-      createNpmConfiguration(baseDir, runManager, "Karma Tests", "test");
-      createNpmConfiguration(baseDir, runManager, "Protractor E2E Tests", "e2e");
+    private TextAccessor myContentRoot;
+
+    @Override
+    public void buildUI(@NotNull SettingsStep settingsStep) {
+      super.buildUI(settingsStep);
+      final ModuleNameLocationSettings field = settingsStep.getModuleNameLocationSettings();
+      if (field != null) {
+        myContentRoot = new TextAccessor() {
+          @Override
+          public void setText(@NotNull String text) {
+            field.setModuleContentRoot(text);
+          }
+
+          @Override
+          @NotNull
+          public String getText() {
+            return field.getModuleContentRoot();
+          }
+        };
+      }
+    }
+
+    @Nullable
+    @Override
+    public ValidationInfo validate() {
+      final ValidationInfo info = super.validate();
+      if (info != null) {
+        return info;
+      }
+      if (myContentRoot != null) {
+        String message = validateFolderName(myContentRoot.getText(), "Content root folder");
+        if (message != null) {
+          return new ValidationInfo(message);
+        }
+      }
+      return null;
     }
   }
-
-  private static void createJSDebugConfiguration(@NotNull RunManager runManager, @NotNull String label, @NotNull String url) {
-    ConfigurationType configurationType = JavascriptDebugConfigurationType.getTypeInstance();
-    RunnerAndConfigurationSettings settings =
-      runManager.createRunConfiguration(label, configurationType.getConfigurationFactories()[0]);
-
-    JavaScriptDebugConfiguration config = (JavaScriptDebugConfiguration)settings.getConfiguration();
-    config.setUri(url);
-
-    runManager.addConfiguration(settings);
-  }
-
-  private static void createNpmConfiguration(@NotNull VirtualFile baseDir,
-                                             @NotNull RunManager runManager,
-                                             @NotNull String label,
-                                             @NotNull String scriptName) {
-    ConfigurationType configurationType = NpmConfigurationType.getInstance();
-    RunnerAndConfigurationSettings settings =
-      runManager.createConfiguration(label, configurationType.getConfigurationFactories()[0]);
-
-    NpmRunConfiguration configuration = (NpmRunConfiguration)settings.getConfiguration();
-    configuration.setRunSettings(NpmRunSettings
-                                   .builder()
-                                   .setCommand(NpmCommand.RUN_SCRIPT)
-                                   .setScriptNames(Collections.singletonList(scriptName))
-                                   .setPackageJsonPath(baseDir.findChild("package.json").getPath())
-                                   .build());
-
-    runManager.addConfiguration(settings);
-  }
-
 }

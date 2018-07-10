@@ -146,16 +146,6 @@ public class DartCommandLineRunnerParameters implements Cloneable {
   }
 
   @NotNull
-  public VirtualFile getDartFile() throws RuntimeConfigurationError {
-    final VirtualFile dartFile = getDartFileOrDirectory();
-    if (dartFile.isDirectory()) {
-      assert myFilePath != null;
-      throw new RuntimeConfigurationError(DartBundle.message("dart.file.not.found", FileUtil.toSystemDependentName(myFilePath)));
-    }
-    return dartFile;
-  }
-
-  @NotNull
   public VirtualFile getDartFileOrDirectory() throws RuntimeConfigurationError {
     if (StringUtil.isEmptyOrSpaces(myFilePath)) {
       throw new RuntimeConfigurationError(DartBundle.message("path.to.dart.file.not.set"));

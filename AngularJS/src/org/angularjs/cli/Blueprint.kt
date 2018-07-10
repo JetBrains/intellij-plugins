@@ -18,7 +18,9 @@ class Blueprint {
   @SerializedName("arguments")
   @Expose
   var arguments: List<Option> = ArrayList()
-
+  @SerializedName("error")
+  @Expose
+  var error: String? = null
   constructor()
 
   constructor(name: String, description: String?, options: List<Option>, arguments: List<Option>) {

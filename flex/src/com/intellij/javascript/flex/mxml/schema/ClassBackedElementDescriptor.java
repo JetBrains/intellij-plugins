@@ -1386,12 +1386,6 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   public void init(final PsiElement element) {
   }
 
-  @NotNull
-  @Override
-  public Object[] getDependences() {
-    return ArrayUtil.EMPTY_OBJECT_ARRAY;
-  }
-
   private static class ClassNameAttributeDescriptor extends AnnotationBackedDescriptorImpl {
     protected ClassNameAttributeDescriptor(ClassBackedElementDescriptor parentDescriptor) {
       super(XmlBackedJSClassImpl.CLASS_NAME_ATTRIBUTE_NAME, parentDescriptor, true, null, null, null);

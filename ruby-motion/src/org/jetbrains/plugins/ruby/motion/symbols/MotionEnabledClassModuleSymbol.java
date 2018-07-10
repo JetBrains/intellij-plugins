@@ -34,4 +34,9 @@ public class MotionEnabledClassModuleSymbol extends ClassModuleSymbolWithMixins 
                                         final List<Symbol> implicitSuperclasses) {
     super(container, null, implicitIncludes, implicitExtends, implicitSuperclasses);
   }
+
+  @Override
+  public boolean canHaveOverloadedMembers() {
+    return true;
+  }
 }

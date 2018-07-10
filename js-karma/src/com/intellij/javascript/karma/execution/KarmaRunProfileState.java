@@ -13,7 +13,6 @@ import com.intellij.javascript.debugger.locationResolving.JSLocationResolver;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
-import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -60,10 +59,9 @@ public class KarmaRunProfileState implements RunProfileState {
 
   @Nullable
   public KarmaServer getServerOrStart(@NotNull final Executor executor) throws ExecutionException {
-    NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolve(myProject);
-    NodeJsLocalInterpreter localInterpreter = NodeJsLocalInterpreter.castAndValidate(interpreter);
+    NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolveNotNull(myProject);
     KarmaServerSettings serverSettings = new KarmaServerSettings.Builder()
-      .setNodeInterpreter(localInterpreter)
+      .setNodeInterpreter(interpreter)
       .setKarmaPackage(myKarmaPackage)
       .setRunSettings(myRunSettings)
       .setWithCoverage(myExecutionType == KarmaExecutionType.COVERAGE)

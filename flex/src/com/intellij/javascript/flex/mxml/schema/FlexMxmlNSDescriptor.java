@@ -163,7 +163,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
   }
 
   @NotNull
-  public Object[] getDependences() {
+  public Object[] getDependencies() {
     return CodeContext.getContext(namespace, module).getDependencies();
   }
 

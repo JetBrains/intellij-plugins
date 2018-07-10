@@ -1,5 +1,6 @@
 package org.intellij.plugins.markdown.settings;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.util.Disposer;
@@ -79,6 +80,9 @@ public class MarkdownSettingsConfigurable implements SearchableConfigurable {
 
     myMarkdownApplicationSettings.setMarkdownCssSettings(form.getMarkdownCssSettings());
     myMarkdownApplicationSettings.setMarkdownPreviewSettings(form.getMarkdownPreviewSettings());
+
+    ApplicationManager.getApplication().getMessageBus().syncPublisher(MarkdownApplicationSettings.SettingsChangedListener.TOPIC)
+                      .settingsChanged(myMarkdownApplicationSettings);
   }
 
   @Override

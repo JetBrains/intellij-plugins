@@ -4,11 +4,14 @@ import com.intellij.diagnostic.logging.LogConfigurationPanel;
 import com.intellij.execution.*;
 import com.intellij.execution.application.ApplicationConfiguration;
 import com.intellij.execution.configurations.*;
+import com.intellij.execution.filters.Filter;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.execution.testframework.JavaTestLocator;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
+import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.openapi.extensions.Extensions;
@@ -24,6 +27,9 @@ import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaBundle;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 
 public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
@@ -45,7 +51,9 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   @Override
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) {
-    return new JavaApplicationCommandLineState<CucumberJavaRunConfiguration>(CucumberJavaRunConfiguration.this, env) {
+    return new JavaApplicationCommandLineState<CucumberJavaRunConfiguration>(this, env) {
+      private final Collection<Filter> myConsoleFilters = new ArrayList<>();
+
       protected JavaParameters createJavaParameters() throws ExecutionException {
         final JavaParameters params = new JavaParameters();
         final JavaRunConfigurationModule module = getConfigurationModule();
@@ -81,6 +89,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         params.getVMParametersList().addParametersString("-Dorg.jetbrains.run.directory=\"" + f.getAbsolutePath() + "\"");
 
         params.getProgramParametersList().addParametersString("\"" + filePath + "\"");
+        params.setShortenCommandLine(getShortenCommandLine(), getProject());
         return params;
       }
 
@@ -89,7 +98,13 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         // console view
         final String testFrameworkName = "cucumber";
         final CucumberJavaRunConfiguration runConfiguration = CucumberJavaRunConfiguration.this;
-        final SMTRunnerConsoleProperties consoleProperties = new SMTRunnerConsoleProperties(runConfiguration, testFrameworkName, executor);
+        final SMTRunnerConsoleProperties consoleProperties = new SMTRunnerConsoleProperties(runConfiguration, testFrameworkName, executor) {
+          @NotNull
+          @Override
+          public SMTestLocator getTestLocator() {
+            return JavaTestLocator.INSTANCE;
+          }
+        };
         return SMTestRunnerConnectionUtil.createAndAttachConsole(testFrameworkName, processHandler, consoleProperties);
       }
 
@@ -98,7 +113,13 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
       public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
         final ProcessHandler processHandler = startProcess();
         final ConsoleView console = createConsole(executor, processHandler);
+        myConsoleFilters.forEach((filter) -> console.addMessageFilter(filter));
         return new DefaultExecutionResult(console, processHandler, createActions(console, processHandler, executor));
+      }
+
+      @Override
+      public void addConsoleFilters(Filter... filters) {
+        myConsoleFilters.addAll(Arrays.asList(filters));
       }
     };
   }

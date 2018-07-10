@@ -17,7 +17,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.gist.GistManager
 import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.IOUtil
-import org.angularjs.cli.AngularJSProjectConfigurator.findCliJson
 import org.angularjs.lang.AngularJSLanguage
 import java.io.DataInput
 import java.io.DataOutput
@@ -32,7 +31,7 @@ object BlueprintsLoader {
   )
 }
 
-private var ourGist = GistManager.getInstance().newVirtualFileGist("AngularBlueprints", 2, BlueprintsExternalizer(),
+private var ourGist = GistManager.getInstance().newVirtualFileGist("AngularBlueprints", 3, BlueprintsExternalizer(),
                                                                    { project, file -> doLoad(project, file) })
 
 private val LOG: Logger = Logger.getInstance("#org.angularjs.cli.BlueprintsLoader")
@@ -118,6 +117,10 @@ fun grabCommandOutput(commandLine: GeneralCommandLine, workingDir: String?): Str
   val output = handler.runProcess()
 
   if (output.exitCode == 0) {
+    if (output.stderr.trim().isNotEmpty()) {
+      LOG.error("Error while loading schematics info.",
+                Attachment("err-output", output.stderr))
+    }
     return output.stdout
   }
   else {
@@ -127,17 +130,6 @@ fun grabCommandOutput(commandLine: GeneralCommandLine, workingDir: String?): Str
   }
   return ""
 }
-
-fun findAngularCliFolder(project: Project, file: VirtualFile?): VirtualFile? {
-  var current = file
-  while (current != null) {
-    if (current.isDirectory && findCliJson(current) != null) return current
-    current = current.parent
-  }
-  if (findCliJson(project.baseDir) != null) return project.baseDir
-  return null
-}
-
 
 const val DEFAULT_OUTPUT: String = """
 

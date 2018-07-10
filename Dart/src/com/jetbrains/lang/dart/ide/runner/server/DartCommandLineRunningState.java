@@ -47,7 +47,6 @@ import com.jetbrains.lang.dart.ide.runner.base.DartRunConfiguration;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.*;
@@ -108,11 +107,7 @@ public class DartCommandLineRunningState extends CommandLineState {
   @NotNull
   @Override
   protected ProcessHandler startProcess() throws ExecutionException {
-    return doStartProcess(null);
-  }
-
-  protected ProcessHandler doStartProcess(final @Nullable String overriddenMainFilePath) throws ExecutionException {
-    final GeneralCommandLine commandLine = createCommandLine(overriddenMainFilePath);
+    final GeneralCommandLine commandLine = createCommandLine();
 
     // Workaround for "Observatory listening on ..." message that is concatenated (without line break) with the message following it
     final OSProcessHandler processHandler = new ColoredProcessHandler(commandLine) {
@@ -133,7 +128,7 @@ public class DartCommandLineRunningState extends CommandLineState {
         if (text.startsWith(prefix)) {
           processHandler.removeProcessListener(this);
           final String url = "http://" + text.substring(prefix.length());
-          for (Consumer<String> consumer : myObservatoryUrlConsumers) {
+          for (Consumer<String> consumer: myObservatoryUrlConsumers) {
             consumer.consume(url);
           }
         }
@@ -157,7 +152,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     return processHandler;
   }
 
-  private GeneralCommandLine createCommandLine(@Nullable final String overriddenMainFilePath) throws ExecutionException {
+  private GeneralCommandLine createCommandLine() throws ExecutionException {
     final DartSdk sdk = DartSdk.getDartSdk(getEnvironment().getProject());
     if (sdk == null) {
       throw new ExecutionException(DartBundle.message("dart.sdk.is.not.configured"));
@@ -166,18 +161,22 @@ public class DartCommandLineRunningState extends CommandLineState {
     final GeneralCommandLine commandLine = new GeneralCommandLine()
       .withWorkDirectory(myRunnerParameters.computeProcessWorkingDirectory(getEnvironment().getProject()));
     commandLine.setCharset(CharsetToolkit.UTF8_CHARSET);
-    commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(sdk)));
+    commandLine.setExePath(FileUtil.toSystemDependentName(getExePath(sdk)));
     commandLine.getEnvironment().putAll(myRunnerParameters.getEnvs());
     commandLine
       .withParentEnvironmentType(myRunnerParameters.isIncludeParentEnvs() ? ParentEnvironmentType.CONSOLE : ParentEnvironmentType.NONE);
-    setupParameters(sdk, commandLine, overriddenMainFilePath);
+    setupParameters(sdk, commandLine);
 
     return commandLine;
   }
 
+  @NotNull
+  protected String getExePath(@NotNull final DartSdk sdk) {
+    return DartSdkUtil.getDartExePath(sdk);
+  }
+
   private void setupParameters(@NotNull final DartSdk sdk,
-                               @NotNull final GeneralCommandLine commandLine,
-                               @Nullable final String overriddenMainFilePath) throws ExecutionException {
+                               @NotNull final GeneralCommandLine commandLine) throws ExecutionException {
     int customObservatoryPort = -1;
 
     final String vmOptions = myRunnerParameters.getVMOptions();
@@ -185,7 +184,7 @@ public class DartCommandLineRunningState extends CommandLineState {
       final StringTokenizer vmOptionsTokenizer = new CommandLineTokenizer(vmOptions);
       while (vmOptionsTokenizer.hasMoreTokens()) {
         final String vmOption = vmOptionsTokenizer.nextToken();
-        commandLine.addParameter(vmOption);
+        addVmOption(commandLine, vmOption);
 
         try {
           if (vmOption.equals("--enable-vm-service") || vmOption.equals("--observe")) {
@@ -204,23 +203,15 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     if (myRunnerParameters.isCheckedModeOrEnableAsserts()) {
       if (StringUtil.compareVersionNumbers(sdk.getVersion(), "2") < 0) {
-        commandLine.addParameter("--checked");
+        addVmOption(commandLine, "--checked");
       }
       else {
-        commandLine.addParameter("--enable-asserts");
+        addVmOption(commandLine, "--enable-asserts");
       }
-    }
-
-    final VirtualFile dartFile;
-    try {
-      dartFile = myRunnerParameters.getDartFileOrDirectory();
-    }
-    catch (RuntimeConfigurationError e) {
-      throw new ExecutionException(e);
     }
 
     if (DefaultDebugExecutor.EXECUTOR_ID.equals(getEnvironment().getExecutor().getId())) {
-      commandLine.addParameter("--pause_isolates_on_start");
+      addVmOption(commandLine, "--pause_isolates_on_start");
     }
 
     if (customObservatoryPort > 0) {
@@ -234,14 +225,14 @@ public class DartCommandLineRunningState extends CommandLineState {
         throw new ExecutionException(e);
       }
 
-      commandLine.addParameter("--enable-vm-service:" + myObservatoryPort);
+      addVmOption(commandLine, "--enable-vm-service:" + myObservatoryPort);
 
       if (getEnvironment().getRunner() instanceof DartCoverageProgramRunner) {
-        commandLine.addParameter("--pause-isolates-on-exit");
+        addVmOption(commandLine, "--pause-isolates-on-exit");
       }
     }
 
-    commandLine.addParameter(FileUtil.toSystemDependentName(overriddenMainFilePath == null ? dartFile.getPath() : overriddenMainFilePath));
+    appendParamsAfterVmOptionsBeforeArgs(commandLine);
 
     final String arguments = myRunnerParameters.getArguments();
     if (arguments != null) {
@@ -250,6 +241,22 @@ public class DartCommandLineRunningState extends CommandLineState {
         commandLine.addParameter(argumentsTokenizer.nextToken());
       }
     }
+  }
+
+  protected void appendParamsAfterVmOptionsBeforeArgs(@NotNull final GeneralCommandLine commandLine) throws ExecutionException {
+    final VirtualFile dartFile;
+    try {
+      dartFile = myRunnerParameters.getDartFileOrDirectory();
+    }
+    catch (RuntimeConfigurationError e) {
+      throw new ExecutionException(e);
+    }
+
+    commandLine.addParameter(FileUtil.toSystemDependentName(dartFile.getPath()));
+  }
+
+  protected void addVmOption(@NotNull final GeneralCommandLine commandLine, @NotNull final String option) {
+    commandLine.addParameter(option);
   }
 
   private static int parseIntBeforeSlash(@NotNull final String s) throws NumberFormatException {

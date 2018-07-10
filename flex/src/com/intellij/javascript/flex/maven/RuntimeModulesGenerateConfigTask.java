@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex.maven;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -7,7 +8,6 @@ import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -86,7 +86,7 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
       // and similar but more complicated thing with resource-bundle-list / include-resource-bundle ?
       try {
         JDOMUtil.writeDocument(mainConfigRootElement.getDocument(), info.myConfigFilePath,
-                               CodeStyleSettingsManager.getSettings(project).getLineSeparator());
+                               CodeStyle.getSettings(project).getLineSeparator());
       }
       catch (IOException ignored) {/**/}
     }

@@ -170,7 +170,6 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
                                 "ExtendError",
                                 "ExtendExpressionSOE",
                                 "ExtendFunction",
-                                "ExtendLibString",
                                 "ExtendPrototype",
                                 "ExtendTypeAlias",
                                 "ExtendingDefaultClasses",

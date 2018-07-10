@@ -23,7 +23,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.DependencyScope;
@@ -42,6 +41,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
@@ -55,23 +55,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.PathMacroUtil;
 
-import javax.swing.*;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Maxim.Mossienko
  */
 public class FlexUtils {
-
-  @NonNls private static final Pattern INFO_PLIST_EXECUTABLE_PATTERN =
-    Pattern.compile("<key>CFBundleExecutable</key>(?:(?:\\s*)(?:<!--(?:.*)-->(?:\\s*))*)<string>(.*)</string>");
 
   private FlexUtils() {
   }
@@ -95,11 +92,11 @@ public class FlexUtils {
            };
   }
 
-  public static void createSampleApp(final Project project,
-                                     final VirtualFile sourceRoot,
-                                     final String sampleFileName,
-                                     final TargetPlatform platform,
-                                     final boolean isFlex4) throws IOException {
+  static void createSampleApp(final Project project,
+                              final VirtualFile sourceRoot,
+                              final String sampleFileName,
+                              final TargetPlatform platform,
+                              final boolean isFlex4) throws IOException {
     final String sampleClassName = FileUtil.getNameWithoutExtension(sampleFileName);
     final String extension = FileUtilRt.getExtension(sampleFileName);
     final String sampleTechnology = platform == TargetPlatform.Mobile ? "AIRMobile" : platform == TargetPlatform.Desktop ? "AIR" : "Flex";
@@ -186,13 +183,12 @@ public class FlexUtils {
       private final StringBuilder currentElementContent = new StringBuilder();
 
       @Override
-      public void startElement(final String name, final String nsPrefix, final String nsURI, final String systemID, final int lineNr)
-        throws Exception {
+      public void startElement(final String name, final String nsPrefix, final String nsURI, final String systemID, final int lineNr) {
         currentElement += "<" + name + ">";
       }
 
       @Override
-      public void endElement(final String name, final String nsPrefix, final String nsURI) throws Exception {
+      public void endElement(final String name, final String nsPrefix, final String nsURI) {
         if (xmlElements.contains(currentElement)) {
           resultMap.get(currentElement).add(currentElementContent.toString());
           currentElementContent.delete(0, currentElementContent.length());
@@ -237,8 +233,7 @@ public class FlexUtils {
       private final StringBuilder xmlElementContent = new StringBuilder();
 
       @Override
-      public void startElement(final String name, final String nsPrefix, final String nsURI, final String systemID, final int lineNr)
-        throws Exception {
+      public void startElement(final String name, final String nsPrefix, final String nsURI, final String systemID, final int lineNr) {
         currentElement += "<" + name + ">";
       }
 
@@ -267,41 +262,11 @@ public class FlexUtils {
     return result.get();
   }
 
-  @Nullable
-  public static String getMacExecutable(@NotNull final String appFolderPath) {
-    try {
-      final String text = FileUtil.loadFile(new File(appFolderPath + "/Contents/Info.plist"));
-      Matcher m = INFO_PLIST_EXECUTABLE_PATTERN.matcher(text);
-      if (!m.find()) return null;
-      return appFolderPath + "/Contents/MacOS/" + m.group(1);
-    }
-    catch (IOException ignored) {
-      return null;
-    }
-  }
-
-  /**
-   * If the first item of ComboBox model is {@code null} or not instance of {@code clazz} then it will be removed from the model.
-   */
-  public static void removeIncorrectItemFromComboBoxIfPresent(final JComboBox comboBox, final Class clazz) {
-    final int oldSize = comboBox.getModel().getSize();
-    final Object firstElement = comboBox.getModel().getElementAt(0);
-    if (oldSize > 0 && (firstElement == null || !clazz.isAssignableFrom(firstElement.getClass()))) {
-      final Object selectedItem = comboBox.getSelectedItem();
-      final Object[] newObjects = new Object[oldSize - 1];
-      for (int i = 0; i < newObjects.length; i++) {
-        newObjects[i] = comboBox.getModel().getElementAt(i + 1);
-      }
-      comboBox.setModel(new DefaultComboBoxModel(newObjects));
-      comboBox.setSelectedItem(selectedItem);
-    }
-  }
-
   public static String getFlexCompilerWorkDirPath(final Project project, @Nullable final Sdk flexSdk) {
     final VirtualFile baseDir = project.getBaseDir();
     return FlexSdkUtils.isFlex2Sdk(flexSdk) || FlexSdkUtils.isFlex3_0Sdk(flexSdk)
            ? FlexCommonUtils.getTempFlexConfigsDirPath() //avoid problems with spaces in temp dir path (fcsh from Flex SDK 2 is not patched)
-           : (baseDir == null ? "" : baseDir.getPath());
+           : baseDir == null ? "" : baseDir.getPath();
   }
 
   public static String getPathToMainClassFile(final String mainClassFqn, final Module module) {
@@ -363,7 +328,7 @@ public class FlexUtils {
         namespace = candidateNs;
       }
 
-      if (namespace.length() != 0) break;
+      if (!namespace.isEmpty()) break;
     }
     return namespace;
   }
@@ -418,7 +383,7 @@ public class FlexUtils {
           macroValue = module.getProject().getBasePath();
         }
         else if (PathMacroUtil.USER_HOME_NAME.equals(macroName)) {
-          macroValue = StringUtil.trimEnd((StringUtil.trimEnd(SystemProperties.getUserHome(), "/")), "\\");
+          macroValue = StringUtil.trimEnd(StringUtil.trimEnd(SystemProperties.getUserHome(), "/"), "\\");
         }
         else if (CompilerOptionInfo.FLEX_SDK_MACRO_NAME.equals(macroName)) {
           macroValue = sdkRootPath;
@@ -483,7 +448,7 @@ public class FlexUtils {
       }
       return null;
     }
-    else if (!folder.isDirectory()) {
+    if (!folder.isDirectory()) {
       Messages.showErrorDialog(project, FlexBundle.message("selected.path.not.folder", FileUtil.toSystemDependentName(folderPath)),
                                errorMessageTitle);
       return null;
@@ -493,7 +458,7 @@ public class FlexUtils {
   }
 
   public static boolean processCompilerOption(final Module module, final FlexBuildConfiguration bc, final String option,
-                                              final Processor<Pair<String, String>> processor) {
+                                              final Processor<? super Pair<String, String>> processor) {
     String rawValue = bc.getCompilerOptions().getOption(option);
     if (rawValue == null) rawValue = FlexBuildConfigurationManager.getInstance(module).getModuleLevelCompilerOptions().getOption(option);
     if (rawValue == null) {
@@ -517,29 +482,25 @@ public class FlexUtils {
     }
 
     final int tabIndex = rawValue.indexOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, pos);
-    if (tabIndex > pos) {
-      if (!processor.process(Pair.create(rawValue.substring(pos, tabIndex), rawValue.substring(tabIndex + 1)))) return false;
-    }
-
-    return true;
+    return tabIndex <= pos || processor.process(Pair.create(rawValue.substring(pos, tabIndex), rawValue.substring(tabIndex + 1)));
   }
 
   public static LinkageType convertLinkageType(final DependencyScope scope, final boolean isExported) {
     if (scope == DependencyScope.PROVIDED) {
       return LinkageType.External;
     }
-    else if (scope == DependencyScope.TEST) {
+    if (scope == DependencyScope.TEST) {
       return LinkageType.Test;
     }
-    else if (isExported) {
+    if (isExported) {
       return LinkageType.Include;
     }
     return DependencyType.DEFAULT_LINKAGE;
   }
 
-  public static ModuleWithDependenciesScope getModuleWithDependenciesAndLibrariesScope(@NotNull Module module,
-                                                                                       @NotNull FlexBuildConfiguration bc,
-                                                                                       boolean includeTests) {
+  public static GlobalSearchScope getModuleWithDependenciesAndLibrariesScope(@NotNull Module module,
+                                                                             @NotNull FlexBuildConfiguration bc,
+                                                                             boolean includeTests) {
     // we cannot assert this since build configuration may be not yet persisted
     //if (!ArrayUtil.contains(bc, FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations())) {
     //  throw new IllegalArgumentException("Build configuration '" + bc.getName() + "' does not belong to module '" + module.getName() + "'");
@@ -547,10 +508,7 @@ public class FlexUtils {
     //
     module.putUserData(FlexOrderEnumerationHandler.FORCE_BC, bc);
     try {
-      return new ModuleWithDependenciesScope(module, ModuleWithDependenciesScope.COMPILE_ONLY |
-                                                     ModuleWithDependenciesScope.MODULES |
-                                                     ModuleWithDependenciesScope.LIBRARIES |
-                                                     (includeTests ? ModuleWithDependenciesScope.TESTS : 0));
+      return module.getModuleWithDependenciesAndLibrariesScope(includeTests);
     }
     finally {
       module.putUserData(FlexOrderEnumerationHandler.FORCE_BC, null);
