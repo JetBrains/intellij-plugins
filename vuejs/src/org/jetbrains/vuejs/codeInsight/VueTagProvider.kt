@@ -326,5 +326,5 @@ class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JS
   override fun getTopGroup(): XmlElementsGroup? = null
   override fun getContentType(): Int = CONTENT_TYPE_ANY
   override fun getDefaultValue(): String? = null
-  override fun getDependences(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY!!
+  override fun getDependencies(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY!!
 }

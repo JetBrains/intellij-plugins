@@ -1388,7 +1388,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
   @NotNull
   @Override
-  public Object[] getDependences() {
+  public Object[] getDependencies() {
     return ArrayUtil.EMPTY_OBJECT_ARRAY;
   }
 
