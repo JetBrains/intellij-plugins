@@ -87,7 +87,7 @@ public class PropertyAccessorElement extends FakePsiElement implements PsiMetaOw
   }
 
   @NotNull
-  public Object[] getDependences() {
+  public Object[] getDependencies() {
     return ArrayUtil.EMPTY_OBJECT_ARRAY;
   }
 

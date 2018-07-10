@@ -59,7 +59,7 @@ public class TapestryParametersNamespaceDescriptor implements XmlNSDescriptor {
   }
 
   @NotNull
-  public Object[] getDependences() {
+  public Object[] getDependencies() {
     return TapestryProject.JAVA_STRUCTURE_DEPENDENCY;
   }
 }
