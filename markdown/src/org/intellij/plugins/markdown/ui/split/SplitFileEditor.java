@@ -43,8 +43,6 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
 
   private SplitEditorToolbar myToolbarWrapper;
 
-  private boolean myAutoScrollPreview = MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isAutoScrollPreview();
-
   public SplitFileEditor(@NotNull E1 mainEditor, @NotNull E2 secondEditor) {
     myMainEditor = mainEditor;
     mySecondEditor = secondEditor;
@@ -62,15 +60,10 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
       new MarkdownApplicationSettings.SettingsChangedListener() {
         @Override
         public void beforeSettingsChanged(@NotNull MarkdownApplicationSettings newSettings) {
-          boolean oldAutoScrollPreview = MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isAutoScrollPreview();
           SplitEditorLayout oldSplitEditorLayout =
             MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().getSplitEditorLayout();
 
           ApplicationManager.getApplication().invokeLater(() -> {
-            if (oldAutoScrollPreview == myAutoScrollPreview) {
-              setAutoScrollPreview(newSettings.getMarkdownPreviewSettings().isAutoScrollPreview());
-            }
-
             if (oldSplitEditorLayout == mySplitEditorLayout) {
               triggerLayoutChange(newSettings.getMarkdownPreviewSettings().getSplitEditorLayout(), false);
             }
@@ -126,14 +119,6 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
   @NotNull
   public SplitEditorLayout getCurrentEditorLayout() {
     return mySplitEditorLayout;
-  }
-
-  public boolean isAutoScrollPreview() {
-    return myAutoScrollPreview;
-  }
-
-  public void setAutoScrollPreview(boolean autoScrollPreview) {
-    myAutoScrollPreview = autoScrollPreview;
   }
 
   private void invalidateLayout(boolean requestFocus) {

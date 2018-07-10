@@ -1,17 +1,37 @@
 package org.intellij.plugins.markdown.ui.preview;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.event.CaretEvent;
 import com.intellij.openapi.editor.event.CaretListener;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.pom.Navigatable;
+import org.intellij.plugins.markdown.settings.MarkdownApplicationSettings;
 import org.intellij.plugins.markdown.ui.split.SplitFileEditor;
 import org.jetbrains.annotations.NotNull;
 
 public class MarkdownSplitEditor extends SplitFileEditor<TextEditor, MarkdownPreviewFileEditor> implements TextEditor {
-  public MarkdownSplitEditor(@NotNull TextEditor mainEditor,
-                             @NotNull MarkdownPreviewFileEditor secondEditor) {
+  private boolean myAutoScrollPreview = MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isAutoScrollPreview();
+
+  public MarkdownSplitEditor(@NotNull TextEditor mainEditor, @NotNull MarkdownPreviewFileEditor secondEditor) {
     super(mainEditor, secondEditor);
+
+    MarkdownApplicationSettings.SettingsChangedListener settingsChangedListener =
+      new MarkdownApplicationSettings.SettingsChangedListener() {
+        @Override
+        public void beforeSettingsChanged(@NotNull MarkdownApplicationSettings newSettings) {
+          boolean oldAutoScrollPreview = MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isAutoScrollPreview();
+
+          ApplicationManager.getApplication().invokeLater(() -> {
+            if (oldAutoScrollPreview == myAutoScrollPreview) {
+              setAutoScrollPreview(newSettings.getMarkdownPreviewSettings().isAutoScrollPreview());
+            }
+          });
+        }
+      };
+
+    ApplicationManager.getApplication().getMessageBus().connect(this)
+      .subscribe(MarkdownApplicationSettings.SettingsChangedListener.TOPIC, settingsChangedListener);
 
     mainEditor.getEditor().getCaretModel().addCaretListener(new MyCaretListener());
   }
@@ -36,6 +56,14 @@ public class MarkdownSplitEditor extends SplitFileEditor<TextEditor, MarkdownPre
   @Override
   public void navigateTo(@NotNull Navigatable navigatable) {
     getMainEditor().navigateTo(navigatable);
+  }
+
+  public boolean isAutoScrollPreview() {
+    return myAutoScrollPreview;
+  }
+
+  public void setAutoScrollPreview(boolean autoScrollPreview) {
+    myAutoScrollPreview = autoScrollPreview;
   }
 
   private class MyCaretListener implements CaretListener {

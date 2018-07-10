@@ -17,13 +17,9 @@ public class MarkdownPreviewFileEditorProvider extends WeighedFileEditorProvider
   public boolean accept(@NotNull Project project, @NotNull VirtualFile file) {
     final FileType fileType = file.getFileType();
 
-    if (!(fileType == MarkdownFileType.INSTANCE ||
-          fileType == ScratchFileType.INSTANCE && LanguageUtil.getLanguageForPsi(project, file) == MarkdownLanguage.INSTANCE) ||
-        !MarkdownHtmlPanelProvider.hasAvailableProviders()) {
-      return false;
-    }
-
-    return true;
+    return (fileType == MarkdownFileType.INSTANCE ||
+            fileType == ScratchFileType.INSTANCE && LanguageUtil.getLanguageForPsi(project, file) == MarkdownLanguage.INSTANCE) &&
+           MarkdownHtmlPanelProvider.hasAvailableProviders();
   }
 
   @NotNull

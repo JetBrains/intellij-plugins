@@ -219,6 +219,38 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     myPooledAlarm.addRequest(() -> updateHtml(true), 0);
   }
 
+  @Override
+  public void deselectNotify() {
+  }
+
+  @Override
+  public void addPropertyChangeListener(@NotNull PropertyChangeListener listener) {
+  }
+
+  @Override
+  public void removePropertyChangeListener(@NotNull PropertyChangeListener listener) {
+  }
+
+  @Nullable
+  @Override
+  public BackgroundEditorHighlighter getBackgroundHighlighter() {
+    return null;
+  }
+
+  @Nullable
+  @Override
+  public FileEditorLocation getCurrentLocation() {
+    return null;
+  }
+
+  @Override
+  public void dispose() {
+    if (myPanel == null) {
+      return;
+    }
+    Disposer.dispose(myPanel);
+  }
+
   @NotNull
   private MarkdownHtmlPanelProvider retrievePanelProvider(@NotNull MarkdownApplicationSettings settings) {
     final MarkdownHtmlPanelProvider.ProviderInfo providerInfo = settings.getMarkdownPreviewSettings().getHtmlPanelProviderInfo();
@@ -244,6 +276,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     myLastPanelProviderInfo = settings.getMarkdownPreviewSettings().getHtmlPanelProviderInfo();
     return provider;
   }
+
 
   /**
    * Is always run from pooled thread
@@ -288,36 +321,20 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     }
   }
 
-  @Override
-  public void deselectNotify() {
-  }
-
-  @Override
-  public void addPropertyChangeListener(@NotNull PropertyChangeListener listener) {
-  }
-
-  @Override
-  public void removePropertyChangeListener(@NotNull PropertyChangeListener listener) {
-  }
-
-  @Nullable
-  @Override
-  public BackgroundEditorHighlighter getBackgroundHighlighter() {
-    return null;
-  }
-
-  @Nullable
-  @Override
-  public FileEditorLocation getCurrentLocation() {
-    return null;
-  }
-
-  @Override
-  public void dispose() {
-    if (myPanel == null) {
-      return;
+  private void detachHtmlPanel() {
+    if (myPanel != null) {
+      myHtmlPanelWrapper.remove(myPanel.getComponent());
+      Disposer.dispose(myPanel);
+      myPanel = null;
     }
-    Disposer.dispose(myPanel);
+  }
+
+  private void attachHtmlPanel() {
+    MarkdownApplicationSettings settings = MarkdownApplicationSettings.getInstance();
+    myPanel = retrievePanelProvider(settings).createHtmlPanel();
+    myHtmlPanelWrapper.add(myPanel.getComponent(), BorderLayout.CENTER);
+    myHtmlPanelWrapper.repaint();
+    updatePanelCssSettings(myPanel, settings.getMarkdownCssSettings());
   }
 
   private static void updatePanelCssSettings(@NotNull MarkdownHtmlPanel panel, @NotNull final MarkdownCssSettings cssSettings) {
@@ -333,6 +350,20 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     panel.render();
   }
 
+  private static boolean isPreviewShown(@NotNull Project project, @NotNull VirtualFile file) {
+    MarkdownSplitEditorProvider provider = FileEditorProvider.EP_FILE_EDITOR_PROVIDER.findExtension(MarkdownSplitEditorProvider.class);
+    if (provider == null) {
+      return true;
+    }
+
+    FileEditorState state = EditorHistoryManager.getInstance(project).getState(file, provider);
+    if (!(state instanceof SplitFileEditor.MyFileEditorState)) {
+      return true;
+    }
+
+    return SplitFileEditor.SplitEditorLayout.valueOf(((SplitFileEditor.MyFileEditorState)state).getSplitLayout()) !=
+           SplitFileEditor.SplitEditorLayout.FIRST;
+  }
 
   private class MyUpdatePanelOnSettingsChangedListener implements MarkdownApplicationSettings.SettingsChangedListener {
     @Override
@@ -353,36 +384,5 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
         }
       }, 0, ModalityState.stateForComponent(getComponent()));
     }
-  }
-
-  public void detachHtmlPanel() {
-    if (myPanel != null) {
-      myHtmlPanelWrapper.remove(myPanel.getComponent());
-      Disposer.dispose(myPanel);
-      myPanel = null;
-    }
-  }
-
-  public void attachHtmlPanel() {
-    MarkdownApplicationSettings settings = MarkdownApplicationSettings.getInstance();
-    myPanel = retrievePanelProvider(settings).createHtmlPanel();
-    myHtmlPanelWrapper.add(myPanel.getComponent(), BorderLayout.CENTER);
-    myHtmlPanelWrapper.repaint();
-    updatePanelCssSettings(myPanel, settings.getMarkdownCssSettings());
-  }
-
-  private static boolean isPreviewShown(@NotNull Project project, @NotNull VirtualFile file) {
-    MarkdownSplitEditorProvider provider = FileEditorProvider.EP_FILE_EDITOR_PROVIDER.findExtension(MarkdownSplitEditorProvider.class);
-    if (provider == null) {
-      return true;
-    }
-
-    FileEditorState state = EditorHistoryManager.getInstance(project).getState(file, provider);
-    if (!(state instanceof SplitFileEditor.MyFileEditorState)) {
-      return true;
-    }
-
-    return SplitFileEditor.SplitEditorLayout.valueOf(((SplitFileEditor.MyFileEditorState)state).getSplitLayout()) !=
-           SplitFileEditor.SplitEditorLayout.FIRST;
   }
 }
