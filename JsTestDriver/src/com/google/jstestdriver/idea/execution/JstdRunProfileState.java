@@ -265,7 +265,7 @@ public class JstdRunProfileState implements RunProfileState {
     }
     if (testType == TestType.TEST_CASE) {
       Map<String, Set<String>> scope = Collections.singletonMap(settings.getTestCaseName(),
-                                                                Collections.<String>emptySet());
+                                                                Collections.emptySet());
       return TestFileScope.customScope(scope);
     }
     if (testType == TestType.TEST_METHOD) {
