@@ -117,7 +117,6 @@ class VueAttributeDescriptor(private val name:String,
 
   override fun isFixed(): Boolean = false
   override fun hasIdType(): Boolean = false
-  override fun getDependencies(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY
   override fun getEnumeratedValueDeclaration(xmlElement: XmlElement?, value: String?): PsiElement? {
     return if (isEnumerated) xmlElement else super.getEnumeratedValueDeclaration(xmlElement, value)
   }

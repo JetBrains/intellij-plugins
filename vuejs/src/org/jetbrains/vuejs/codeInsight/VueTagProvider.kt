@@ -38,7 +38,6 @@ import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.ArrayUtil
 import com.intellij.xml.*
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import icons.VuejsIcons
@@ -326,5 +325,4 @@ class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JS
   override fun getTopGroup(): XmlElementsGroup? = null
   override fun getContentType(): Int = CONTENT_TYPE_ANY
   override fun getDefaultValue(): String? = null
-  override fun getDependencies(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY!!
 }
