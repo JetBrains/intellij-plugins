@@ -26,7 +26,6 @@ import com.intellij.psi.impl.FakePsiElement;
 import com.intellij.psi.meta.PsiMetaData;
 import com.intellij.psi.meta.PsiMetaOwner;
 import com.intellij.psi.meta.PsiPresentableMetaData;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -84,11 +83,6 @@ public class PropertyAccessorElement extends FakePsiElement implements PsiMetaOw
 
   public void init(PsiElement element) {
 
-  }
-
-  @NotNull
-  public Object[] getDependencies() {
-    return ArrayUtil.EMPTY_OBJECT_ARRAY;
   }
 
   @Nullable
