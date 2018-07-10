@@ -1,7 +1,9 @@
 package org.intellij.plugins.markdown.lang.psi.impl;
 
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.CompositePsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -14,6 +16,10 @@ import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElementFactory;
 import org.intellij.plugins.markdown.structureView.MarkdownBasePresentation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class MarkdownCodeFenceImpl extends CompositePsiElement implements PsiLanguageInjectionHost, MarkdownPsiElement {
   public MarkdownCodeFenceImpl(IElementType type) {
@@ -140,8 +146,41 @@ public class MarkdownCodeFenceImpl extends CompositePsiElement implements PsiLan
     @Override
     public MarkdownCodeFenceImpl handleContentChange(@NotNull MarkdownCodeFenceImpl element, @NotNull TextRange range, String newContent)
       throws IncorrectOperationException {
-      return (MarkdownCodeFenceImpl)element
-        .replace(MarkdownPsiElementFactory.createCodeFence(element.getProject(), element.getFenceLanguage(), newContent));
+      if (newContent == null) {
+        throw new IncorrectOperationException("No new content");
+      }
+
+      if (newContent.contains("```") || newContent.contains("~~~")) {
+        throw new IncorrectOperationException("New content cannot contains ``` or ~~~");
+      }
+
+      String indent = calculateIndent(element);
+
+      if (indent != null && indent.length() > 0) {
+        newContent = Arrays.stream(StringUtil.splitByLinesKeepSeparators(newContent))
+                           .map(line -> line.replaceAll(indent, ""))
+                           .map(line -> indent + line)
+                           .collect(Collectors.joining(""));
+
+        if (StringUtil.endsWithLineBreak(newContent)) {
+          newContent += indent;
+        }
+      }
+
+      return (MarkdownCodeFenceImpl)element.replace(MarkdownPsiElementFactory
+                   .createCodeFence(element.getProject(), element.getFenceLanguage(), Objects.requireNonNull(newContent), indent));
     }
+  }
+
+  @Nullable("Null if no document")
+  public static String calculateIndent(@NotNull MarkdownPsiElement element) {
+    Document document = PsiDocumentManager.getInstance(element.getProject()).getDocument(element.getContainingFile());
+    if (document == null) {
+      return null;
+    }
+
+    int offset = element.getTextOffset();
+    int lineStartOffset = document.getLineStartOffset(document.getLineNumber(offset));
+    return document.getText(TextRange.create(lineStartOffset, offset)).replaceAll("[^> ]", " ");
   }
 }
