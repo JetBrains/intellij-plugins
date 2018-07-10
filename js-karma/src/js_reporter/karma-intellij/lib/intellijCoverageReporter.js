@@ -34,17 +34,15 @@ function configureCoverage(config) {
   var reporters = config.reporters || [];
   if (intellijParameters.isWithCoverage()) {
     reporters.push(IntellijCoverageReporter.reporterName);
-    var coverageReporter = config.coverageReporter;
-    if (!coverageReporter) {
-      coverageReporter = {reporters: []};
-      config.coverageReporter = coverageReporter;
+    if (!config.coverageReporter) {
+      config.coverageReporter = {reporters: []};
     }
-    else if (!coverageReporter.reporters) {
+    else if (!config.coverageReporter.reporters) {
       // https://github.com/karma-runner/karma-coverage/blob/master/docs/configuration.md
-      // the trick from https://github.com/karma-runner/karma-coverage/blob/v1.1.1/lib/reporter.js#L53
-      coverageReporter.reporters = [coverageReporter];
+      // the trick from https://github.com/karma-runner/karma-coverage/blob/v1.1.2/lib/reporter.js#L53
+      config.coverageReporter = {reporters: [config.coverageReporter]};
     }
-    coverageReporter.reporters.push({
+    config.coverageReporter.reporters.push({
       type : 'lcovonly',
       dir : path.join(intellijParameters.getCoverageTempDirPath())
     });
