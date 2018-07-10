@@ -40,7 +40,10 @@ function configureCoverage(config) {
     else if (!config.coverageReporter.reporters) {
       // https://github.com/karma-runner/karma-coverage/blob/master/docs/configuration.md
       // the trick from https://github.com/karma-runner/karma-coverage/blob/v1.1.2/lib/reporter.js#L53
-      config.coverageReporter = {reporters: [config.coverageReporter]};
+      Object.defineProperty(config.coverageReporter, 'reporters', {
+        value: [config.coverageReporter],
+        enumerable: false // to avoid "TypeError: Converting circular structure to JSON" (WEB-33542)
+      });
     }
     config.coverageReporter.reporters.push({
       type : 'lcovonly',
