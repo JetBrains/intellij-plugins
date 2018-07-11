@@ -164,6 +164,10 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
         mySwingAlarm.cancelRequest(myLastScrollRequest);
       }
       myLastScrollRequest = () -> {
+        if (myPanel == null) {
+          return;
+        }
+
         myLastScrollOffset = offset;
         myPanel.scrollToMarkdownSrcOffset(myLastScrollOffset);
         synchronized (REQUESTS_LOCK) {
@@ -302,6 +306,10 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
         mySwingAlarm.cancelRequest(myLastHtmlOrRefreshRequest);
       }
       myLastHtmlOrRefreshRequest = () -> {
+        if (myPanel == null) {
+          return;
+        }
+
         final String currentHtml = "<html><head></head>" + SANITIZER_VALUE.getValue().sanitize(html) + "</html>";
         if (!currentHtml.equals(myLastRenderedHtml)) {
           myLastRenderedHtml = currentHtml;
