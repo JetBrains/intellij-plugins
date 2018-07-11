@@ -265,6 +265,13 @@ fun multiDefinitionDescriptor(variants: Collection<JSImplicitElement>): VueEleme
 }
 
 class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JSImplicitElement> = listOf(element)) : XmlElementDescriptor {
+  companion object {
+    // it is better to use default attributes method since it is guaranteed to do not call any extension providers
+    fun getDefaultHtmlAttributes(context: XmlTag?): Array<out XmlAttributeDescriptor> =
+      ((HtmlNSDescriptorImpl.guessTagForCommonAttributes(context) as? HtmlElementDescriptorImpl)
+         ?.getDefaultAttributeDescriptors(context) ?: emptyArray())
+  }
+
   override fun getDeclaration(): JSImplicitElement = element
   override fun getName(context: PsiElement?):String = (context as? XmlTag)?.name ?: name
   override fun getName(): String = fromAsset(declaration.name)
@@ -280,16 +287,10 @@ class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JS
     return XmlDescriptorUtil.getElementDescriptor(childTag, contextTag)
   }
 
-  // it is better to use default attributes method since it is guaranteed to do not call any extension providers
-  private fun getDefaultHtmlAttributes(context: XmlTag?): Array<out XmlAttributeDescriptor> =
-    ((HtmlNSDescriptorImpl.guessTagForCommonAttributes(context) as? HtmlElementDescriptorImpl)?.
-      getDefaultAttributeDescriptors(context) ?: emptyArray())
-
   override fun getAttributesDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
     val result = mutableListOf<XmlAttributeDescriptor>()
     val defaultHtmlAttributes = getDefaultHtmlAttributes(context)
     result.addAll(defaultHtmlAttributes)
-    VueAttributesProvider.addBindingAttributes(result, defaultHtmlAttributes)
     result.addAll(VueAttributesProvider.getDefaultVueAttributes())
 
     val obj = VueComponents.findComponentDescriptor(declaration)

@@ -58,12 +58,6 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
     fun getDefaultVueAttributes(): Array<VueAttributeDescriptor> = DEFAULT.map { VueAttributeDescriptor(it) }.toTypedArray()
 
     fun isBinding(name: String): Boolean = name.startsWith(":") || name.startsWith("v-bind:")
-
-    fun addBindingAttributes(result: MutableList<XmlAttributeDescriptor>,
-                             commonAttributes: Array<out XmlAttributeDescriptor>) {
-      result.addAll(commonAttributes.map { VueAttributeDescriptor(":" + it.name, it.declaration) })
-      result.addAll(commonAttributes.map { VueAttributeDescriptor("v-bind:" + it.name, it.declaration) })
-    }
   }
 
   override fun getAttributeDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {

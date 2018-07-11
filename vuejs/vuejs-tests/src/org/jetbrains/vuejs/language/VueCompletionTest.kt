@@ -696,8 +696,8 @@ $script""")
 </template>
 $script""")
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "href", "hidden", "onclick", "onchange", "key", "is")
-    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, ":use-me", ":two-words")
+    assertContainsElements(myFixture.lookupElementStrings!!, "hidden", "onclick", "onchange", "key", "is")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, ":use-me", ":two-words", "use-me", "two-words")
 
     myFixture.configureByText("User.vue", """
 <template>
@@ -868,9 +868,20 @@ $script""")
 </script>
 """)
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "aaa", ":aaa", "v-for", "ddd", "sss")
-    // actually the test is against exception, which occurred on completion
-    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "123", "true")
+    assertContainsElements(myFixture.lookupElementStrings!!, "aaa", "v-for", "ddd", "sss",
+                           "class", "about", "onclick", "v-bind", "v-bind:", "v-on:")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, ":aaa", ":ddd", ":sss", ":about", ":onclick", ":", "123", "true")
+
+    myFixture.type(":")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, ":aaa", ":ddd", ":sss", ":about", ":onclick")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "aaa", "v-for", "ddd", "sss", "v-bind", "v-bind:", "v-on:")
+
+    myFixture.type("a")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, ":aaa", ":about")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "aaa", "v-for", "ddd", "sss", "v-bind",
+                                       ":ddd", ":sss", ":onclick", "v-bind:", "v-on:")
   }
 
   fun testBuefyCompletion() {

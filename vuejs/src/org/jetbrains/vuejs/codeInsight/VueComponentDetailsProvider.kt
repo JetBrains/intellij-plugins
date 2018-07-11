@@ -81,20 +81,12 @@ class VueComponentDetailsProvider {
     })
 
     return result.map {
-      @Suppress("UnnecessaryVariable")
-      val attrDescriptor = it
-      if (xmlContext) {
-        val fromAsset = fromAsset(it.name)
-        return@map listOf(attrDescriptor.createNameVariant(fromAsset),
-                          attrDescriptor.createNameVariant(":$fromAsset"),
-                          attrDescriptor.createNameVariant("v-bind:$fromAsset"))
-      } else {
-        if (it.name.contains('-')) {
-          listOf(attrDescriptor.createNameVariant(toAsset(it.name)))
-        }
-        else listOf(it)
+      when {
+        xmlContext -> it.createNameVariant(fromAsset(it.name))
+        it.name.contains('-') -> it.createNameVariant(toAsset(it.name))
+        else -> it
       }
-    }.flatten()
+    }
   }
 
   fun resolveAttribute(descriptor: JSObjectLiteralExpression,
