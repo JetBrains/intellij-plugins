@@ -41,7 +41,8 @@ public class VueTestSuite extends TestCase {
     testSuite.addTestSuite(VueAutoPopupTest.class);
     testSuite.addTestSuite(VueHighlightingLexerTest.class);
     testSuite.addTestSuite(VueLexerTest.class);
-    
+    testSuite.addTestSuite(VueEmmetTest.class);
+
     return testSuite;
   }
 }
