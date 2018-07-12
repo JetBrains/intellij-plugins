@@ -92,7 +92,7 @@ public class PrettierConfigurable implements SearchableConfigurable {
 
     @Override
     public boolean canCreateConfigurable() {
-      return PrettierUtil.isEnabled();
+      return true;
     }
 
     @Nullable

@@ -81,8 +81,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       return;
     }
     NodePackage nodePackage = PrettierConfiguration.getInstance(project).getPackage();
-    e.getPresentation().setEnabledAndVisible(PrettierUtil.isEnabled()
-                                             && nodePackage != null && !nodePackage.isEmptyPath()
+    e.getPresentation().setEnabledAndVisible(nodePackage != null && !nodePackage.isEmptyPath()
                                              && isAcceptableFileContext(e));
   }
 
@@ -102,9 +101,6 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       return;
     }
     Editor editor = e.getData(CommonDataKeys.EDITOR);
-    if (!PrettierUtil.isEnabled()) {
-      return;
-    }
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
     NodeJsInterpreter interpreter = configuration.getInterpreterRef().resolve(project);
     try {
