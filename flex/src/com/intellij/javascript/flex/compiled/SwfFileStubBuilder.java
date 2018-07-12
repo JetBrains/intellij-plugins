@@ -24,12 +24,14 @@ import java.io.ByteArrayInputStream;
 public class SwfFileStubBuilder implements BinaryFileStubBuilder {
   private static final int VERSION = 3;
 
+  @Override
   public boolean acceptsFile(@NotNull final VirtualFile file) {
     return file.getFileType() == FlexApplicationComponent.SWF_FILE_TYPE &&
            file.getPath().endsWith(JarFileSystem.JAR_SEPARATOR + file.getName());
   }
 
-  public StubElement buildStubTree(FileContent fileContent) {
+  @Override
+  public StubElement buildStubTree(@NotNull FileContent fileContent) {
     return buildFileStub(fileContent.getFile(), fileContent.getContent());
   }
 
@@ -49,6 +51,7 @@ public class SwfFileStubBuilder implements BinaryFileStubBuilder {
     return stub;
   }
 
+  @Override
   public int getStubVersion() {
     return JSFileElementType.getVersion() + VERSION;
   }

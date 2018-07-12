@@ -27,6 +27,9 @@ import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.ProcessingContext
 import com.intellij.util.SmartList
 import icons.VuejsIcons
+import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider
+import org.jetbrains.vuejs.codeInsight.VueComponents
+import org.jetbrains.vuejs.codeInsight.VueElementDescriptor
 import org.jetbrains.vuejs.index.hasVue
 
 class VueAttributesCompletionContributor : CompletionContributor() {
@@ -164,12 +167,19 @@ private class VueEventAttrCompletionProvider : CompletionProvider<CompletionPara
     newResult.addElement(LookupElementBuilder.create(lookupItemPrefix + "key").withInsertHandler(XmlAttributeInsertHandler.INSTANCE))
 
     // v-bind:any-standard-attribute support
-    val descriptors = (attr.parent?.descriptor as? HtmlElementDescriptorImpl)?.getDefaultAttributeDescriptors(attr.parent) ?: return
-    for (attribute in descriptors) {
+    for (attribute in VueElementDescriptor.getDefaultHtmlAttributes(attr.parent)) {
+      newResult.addElement(LookupElementBuilder
+                             .create(lookupItemPrefix + attribute.name)
+                             .withInsertHandler(XmlAttributeInsertHandler.INSTANCE))
+    }
+
+    // see also VueElementDescriptor.getAttributesDescriptors()
+    val jsElement = (attr.parent?.descriptor as? VueElementDescriptor)?.declaration ?: return
+    val obj = VueComponents.findComponentDescriptor(jsElement)
+    for (attribute in VueComponentDetailsProvider.INSTANCE.getAttributes(obj, attr.project, true, true)) {
       newResult.addElement(LookupElementBuilder
                              .create(lookupItemPrefix + attribute.name)
                              .withInsertHandler(XmlAttributeInsertHandler.INSTANCE))
     }
   }
 }
-

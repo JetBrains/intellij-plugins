@@ -4,12 +4,10 @@ import com.google.common.collect.ImmutableList;
 import com.intellij.ide.browsers.BrowserFamily;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.WebBrowserManager;
-import net.jcip.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-@Immutable
 public class JstdRunSettings {
   private final TestType myTestType;
   private final String myConfigFile;
