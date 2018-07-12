@@ -137,7 +137,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   private fun processComponentMeaningfulElement(localName: String, meaningfulElement: PsiElement,
                                                 processor: (String?, JSImplicitElement) -> Boolean,
                                                 sourceElement: PsiElement?): Boolean {
-    var obj = meaningfulElement as? JSObjectLiteralExpression
+    var obj = VueComponentsCalculation.getObjectLiteralFromResolve(listOf(meaningfulElement))
     var clazz: JSClassExpression<*>? = null
     if (obj == null) {
       val compDefaultExport = meaningfulElement.parent as? ES6ExportDefaultAssignment
