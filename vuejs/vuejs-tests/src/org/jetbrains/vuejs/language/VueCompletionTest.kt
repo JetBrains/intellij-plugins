@@ -1249,6 +1249,12 @@ Pair("""<template>
     (myFixture.lookup as LookupImpl).finishLookup(Lookup.NORMAL_SELECT_CHAR)
     myFixture.checkResult("<div v-on:abort=\"<caret>\">")
   }
+
+  fun testStyleAttributes() {
+    myFixture.configureByText("foo.vue", "<style <caret>></style>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "scoped", "src", "module")
+  }
 }
 
 fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,
