@@ -150,7 +150,7 @@ class VueComponentsCalculation {
       PsiTreeUtil.getContextOfType(element, JSCatchBlock::class.java, JSClass::class.java, JSExecutionScope::class.java)
       ?: element.containingFile
 
-    private fun getObjectLiteralFromResolve(result: Collection<PsiElement>): JSObjectLiteralExpression? {
+    fun getObjectLiteralFromResolve(result: Collection<PsiElement>): JSObjectLiteralExpression? {
       return result.mapNotNull(fun(it: PsiElement): JSObjectLiteralExpression? {
         val element: PsiElement? = (it as? JSVariable)?.initializerOrStub ?: it
         return VueComponents.literalFor(element)
