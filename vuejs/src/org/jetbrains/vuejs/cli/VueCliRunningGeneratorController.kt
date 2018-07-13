@@ -17,6 +17,8 @@ import com.intellij.ide.file.BatchFileChangeListener
 import com.intellij.javascript.nodejs.packageJson.PackageJsonDependenciesExternalUpdateManager
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
+import com.intellij.lang.javascript.buildTools.webpack.WebPackConfigManager
+import com.intellij.lang.javascript.buildTools.webpack.WebPackConfiguration
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.openapi.Disposable
@@ -37,16 +39,14 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.util.io.exists
 import org.jetbrains.vuejs.VueBundle
+import java.io.File
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.nio.file.Paths
 import javax.swing.JPanel
 
-/**
- * @author Irina.Chernushina on 2/12/2018.
- */
 class VueCliRunningGeneratorController internal constructor (generationLocation: Path,
-                                                             settings: NpmPackageProjectGenerator.Settings,
+                                                             private val settings: NpmPackageProjectGenerator.Settings,
                                                              private val listener: VueRunningGeneratorListener,
                                                              parentDisposable: Disposable): Disposable {
   // checked in disposed condition
@@ -129,12 +129,25 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
           if (project.isDisposed) return@run
           doneCallback.run()
           JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+          setupWebpackConfigFile(project)
           LocalFileSystem.getInstance().refreshIoFiles(listOf(generationLocation.toFile()), true, true, null)
         }
       }
     }
     val indicator = BackgroundableProcessIndicator(task)
     ProgressManager.getInstance().runProcessWithProgressAsynchronously(task, indicator)
+  }
+
+  private fun setupWebpackConfigFile(project: Project) {
+    val vueCliPackage = settings.myPackage.systemIndependentPath
+    val path = when {
+      vueCliPackage.endsWith("/@vue/cli") -> project.basePath + "/node_modules/@vue/cli-service/webpack.config.js"
+      vueCliPackage.endsWith("/vue-cli") -> project.basePath + "/build/webpack.dev.conf.js"
+      else -> null
+    }
+    if (path != null && File(path).isFile) {
+      WebPackConfigManager.instance(project).loadState(WebPackConfiguration(path))
+    }
   }
 
   fun isFinished(): Boolean {
