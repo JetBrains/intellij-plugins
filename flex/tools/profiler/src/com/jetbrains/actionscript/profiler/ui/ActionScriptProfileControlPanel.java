@@ -21,6 +21,7 @@ import com.jetbrains.actionscript.profiler.model.ProfilingManager;
 import com.jetbrains.actionscript.profiler.ui.node.CPUSnapshotNode;
 import com.jetbrains.actionscript.profiler.ui.node.LiveObjectsNode;
 import icons.FlexProfilerIcons;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -47,7 +48,7 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
   private final Alarm myAlarm = new Alarm();
   private static final int MINUTE = 60 * 1000;
 
-  public ActionScriptProfileControlPanel(String runConfigurationName, final Module module) {
+  public ActionScriptProfileControlPanel(@NotNull String runConfigurationName, final Module module) {
     this.runConfigurationName = runConfigurationName;
     this.module = module;
 
