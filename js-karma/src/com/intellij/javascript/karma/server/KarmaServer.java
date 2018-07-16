@@ -17,12 +17,15 @@ import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.ConsoleCommandLineFolder;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -144,13 +147,14 @@ public class KarmaServer {
   private static KillableColoredProcessHandler startServer(@NotNull KarmaServerSettings serverSettings,
                                                            @Nullable KarmaCoveragePeer coveragePeer,
                                                            @NotNull ConsoleCommandLineFolder commandLineFolder) throws IOException {
-    GeneralCommandLine commandLine;
-    try {
-      commandLine = createCommandLine(serverSettings, coveragePeer, commandLineFolder);
-    }
-    catch (ExecutionException e) {
-      throw new IOException("Can not create command line", e);
-    }
+    GeneralCommandLine commandLine = ReadAction.compute(() -> {
+      try {
+        return createCommandLine(serverSettings, coveragePeer, commandLineFolder);
+      }
+      catch (ExecutionException e) {
+        throw new IOException("Can not create command line", e);
+      }
+    });
     KillableColoredProcessHandler processHandler;
     try {
       processHandler = new KillableColoredProcessHandler(commandLine, true);
@@ -202,7 +206,8 @@ public class KarmaServer {
       }
       else {
         AngularCliConfig config = AngularCliConfig.findProjectConfig(workingDir);
-        String defaultProject = config != null ? config.getDefaultOrFirstProject() : null;
+        VirtualFile karmaConfFile = LocalFileSystem.getInstance().findFileByPath(serverSettings.getConfigurationFilePath());
+        String defaultProject = config != null ? config.getProjectContainingFileOrDefault(karmaConfFile) : null;
         if (defaultProject != null) {
           commandLine.addParameter(defaultProject);
           commandLineFolder.addPlaceholderText(defaultProject);
