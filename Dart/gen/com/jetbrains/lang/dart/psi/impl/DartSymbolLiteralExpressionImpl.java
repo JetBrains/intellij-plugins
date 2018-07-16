@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartSymbolLiteralExpressionImpl extends DartExpressionImpl implements DartSymbolLiteralExpression {
 
-  public DartSymbolLiteralExpressionImpl(ASTNode node) {
+  public DartSymbolLiteralExpressionImpl(@NotNull ASTNode node) {
     super(node);
   }
 

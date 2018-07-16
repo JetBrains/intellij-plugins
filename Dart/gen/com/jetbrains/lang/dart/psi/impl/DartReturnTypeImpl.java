@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartReturnTypeImpl extends DartPsiCompositeElementImpl implements DartReturnType {
 
-  public DartReturnTypeImpl(ASTNode node) {
+  public DartReturnTypeImpl(@NotNull ASTNode node) {
     super(node);
   }
 

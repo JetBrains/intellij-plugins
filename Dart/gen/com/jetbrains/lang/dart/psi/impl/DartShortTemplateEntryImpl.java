@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartShortTemplateEntryImpl extends DartPsiCompositeElementImpl implements DartShortTemplateEntry {
 
-  public DartShortTemplateEntryImpl(ASTNode node) {
+  public DartShortTemplateEntryImpl(@NotNull ASTNode node) {
     super(node);
   }
 

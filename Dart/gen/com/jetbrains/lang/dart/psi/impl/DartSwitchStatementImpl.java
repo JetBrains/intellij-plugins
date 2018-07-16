@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartSwitchStatementImpl extends DartPsiCompositeElementImpl implements DartSwitchStatement {
 
-  public DartSwitchStatementImpl(ASTNode node) {
+  public DartSwitchStatementImpl(@NotNull ASTNode node) {
     super(node);
   }
 

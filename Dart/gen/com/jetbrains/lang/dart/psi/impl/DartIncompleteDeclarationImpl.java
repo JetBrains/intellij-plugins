@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartIncompleteDeclarationImpl extends DartPsiCompositeElementImpl implements DartIncompleteDeclaration {
 
-  public DartIncompleteDeclarationImpl(ASTNode node) {
+  public DartIncompleteDeclarationImpl(@NotNull ASTNode node) {
     super(node);
   }
 

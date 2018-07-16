@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartShowCombinatorImpl extends DartPsiCompositeElementImpl implements DartShowCombinator {
 
-  public DartShowCombinatorImpl(ASTNode node) {
+  public DartShowCombinatorImpl(@NotNull ASTNode node) {
     super(node);
   }
 

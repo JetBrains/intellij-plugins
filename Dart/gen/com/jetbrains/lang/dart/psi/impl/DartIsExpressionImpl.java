@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartIsExpressionImpl extends DartExpressionImpl implements DartIsExpression {
 
-  public DartIsExpressionImpl(ASTNode node) {
+  public DartIsExpressionImpl(@NotNull ASTNode node) {
     super(node);
   }
 

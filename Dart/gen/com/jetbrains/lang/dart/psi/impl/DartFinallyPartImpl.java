@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartFinallyPartImpl extends DartPsiCompositeElementImpl implements DartFinallyPart {
 
-  public DartFinallyPartImpl(ASTNode node) {
+  public DartFinallyPartImpl(@NotNull ASTNode node) {
     super(node);
   }
 
