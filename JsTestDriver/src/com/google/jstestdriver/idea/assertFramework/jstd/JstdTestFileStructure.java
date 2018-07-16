@@ -10,13 +10,11 @@ import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import net.jcip.annotations.NotThreadSafe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-@NotThreadSafe
 public class JstdTestFileStructure extends AbstractTestFileStructure {
 
   private final List<JstdTestCaseStructure> myTestCaseStructures;

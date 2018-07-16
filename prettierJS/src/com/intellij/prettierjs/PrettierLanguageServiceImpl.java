@@ -160,8 +160,8 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
   }
 
   private static class ReformatFileCommand implements JSLanguageServiceObject, JSLanguageServiceSimpleCommand {
-    public final String path;
-    public final String prettierPath;
+    public final LocalFilePath path;
+    public final LocalFilePath prettierPath;
     public final String content;
     public Integer start;
     public Integer end;
@@ -172,8 +172,8 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
                                @NotNull String content,
                                @Nullable TextRange range, 
                                boolean flushConfigCache) {
-      this.path = filePath;
-      this.prettierPath = prettierPath;
+      this.path = LocalFilePath.create(filePath);
+      this.prettierPath = LocalFilePath.create(prettierPath);
       this.content = content;
       this.flushConfigCache = flushConfigCache;
       if (range != null) {

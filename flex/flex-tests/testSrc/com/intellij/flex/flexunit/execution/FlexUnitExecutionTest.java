@@ -39,7 +39,6 @@ import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.build.FlexCompilerHandler;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfigurationType;
@@ -355,8 +354,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
     if (!compilation.waitFor(COMPILATION_TIMEOUT * 1000)) {
       fail("Compilation did not succeed in " +
            COMPILATION_TIMEOUT +
-           " seconds. There was an error or it took too long\n" +
-           FlexCompilerHandler.getInstance(myProject).getLastCompilationMessages());
+           " seconds. There was an error or it took too long\n");
     }
 
     if (!startup.waitFor(STARTUP_TIMEOUT * 1000)) {

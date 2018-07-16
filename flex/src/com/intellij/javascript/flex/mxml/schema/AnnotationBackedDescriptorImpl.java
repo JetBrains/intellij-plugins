@@ -43,11 +43,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Maxim.Mossienko
@@ -680,12 +676,6 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
       if (namespaceByPrefix != null && !namespaceByPrefix.isEmpty()) return namespaceByPrefix + ":" + getName();
     }
     return getName();
-  }
-
-  @NotNull
-  @Override
-  public Object[] getDependences() {
-    return ArrayUtil.EMPTY_OBJECT_ARRAY;
   }
 
   @Override

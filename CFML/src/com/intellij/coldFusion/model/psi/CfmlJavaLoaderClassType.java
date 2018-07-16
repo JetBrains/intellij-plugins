@@ -45,7 +45,6 @@ public class CfmlJavaLoaderClassType extends PsiType {
     private final Module myModule;
 
     private JarFileScope(@NotNull VirtualFile file) {
-      super();
       myVirtualFile = file;
       ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
       myModule = fileIndex.getModuleForFile(myVirtualFile);
@@ -54,11 +53,6 @@ public class CfmlJavaLoaderClassType extends PsiType {
     @Override
     public boolean contains(@NotNull VirtualFile file) {
       return VfsUtilCore.isAncestor(myVirtualFile, file, true);
-    }
-
-    @Override
-    public int compare(@NotNull VirtualFile file1, @NotNull VirtualFile file2) {
-      return 0;
     }
 
     @Override
@@ -72,7 +66,7 @@ public class CfmlJavaLoaderClassType extends PsiType {
     }
   }
 
-  public CfmlJavaLoaderClassType(PsiComment comment, Project project) {
+  CfmlJavaLoaderClassType(PsiComment comment, Project project) {
     super(PsiAnnotation.EMPTY_ARRAY);
     final String text = comment.getText();
 
@@ -93,7 +87,7 @@ public class CfmlJavaLoaderClassType extends PsiType {
     }
   }
 
-  public GlobalSearchScope getSearchScope() {
+  GlobalSearchScope getSearchScope() {
     return mySearchScope;
   }
 

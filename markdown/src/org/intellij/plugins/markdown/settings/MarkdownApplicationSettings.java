@@ -95,6 +95,8 @@ public class MarkdownApplicationSettings implements PersistentStateComponent<Mar
   public interface SettingsChangedListener {
     Topic<SettingsChangedListener> TOPIC = Topic.create("MarkdownApplicationSettingsChanged", SettingsChangedListener.class);
 
-    void beforeSettingsChanged(@NotNull MarkdownApplicationSettings settings);
+    default void beforeSettingsChanged(@NotNull MarkdownApplicationSettings settings) { }
+
+    default void settingsChanged(@NotNull MarkdownApplicationSettings settings) { }
   }
 }

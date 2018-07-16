@@ -69,7 +69,7 @@ public class DartComponentMover extends LineMover {
     void findSourceComponents() {
       Pair<PsiElement, PsiElement> psiRange = getElementRange(editor, file, info.toMove);
       if (psiRange == null) return;
-      PsiElement firstMember = getDeclarationParent(firstMoveableComponent(psiRange.first));
+      PsiElement firstMember = getDeclarationParent(firstMovableComponent(psiRange.first));
       if (firstMember == null) return;
       PsiElement lastMember;
       if (isComment(firstMember)) {
@@ -356,7 +356,7 @@ public class DartComponentMover extends LineMover {
       return element instanceof LeafPsiElement;
     }
 
-    private static PsiElement firstMoveableComponent(PsiElement element) {
+    private static PsiElement firstMovableComponent(PsiElement element) {
       if (element instanceof DartClassMembers) {
         return element.getFirstChild();
       }

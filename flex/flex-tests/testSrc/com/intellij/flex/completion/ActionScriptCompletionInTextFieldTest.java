@@ -4,6 +4,7 @@ import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.util.FlexTestUtils;
+import com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersDialog;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -19,11 +20,9 @@ import com.intellij.lang.javascript.refactoring.changeSignature.JSChangeSignatur
 import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterTableModel;
 import com.intellij.lang.javascript.refactoring.introduceConstant.JSIntroduceConstantDialog;
-import com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersDialog;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -195,7 +194,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(myModule);
     manager.setActiveBuildConfiguration(manager.findConfigurationByName(activeBcName));
 
-    final ModuleWithDependenciesScope scope =
+    final GlobalSearchScope scope =
       FlexUtils.getModuleWithDependenciesAndLibrariesScope(myModule, manager.findConfigurationByName(selectedBcName), false);
     PublicInheritorFilter filter =
       new PublicInheritorFilter(myProject, FlashRunConfigurationForm.SPRITE_CLASS_NAME, scope, true);

@@ -237,6 +237,7 @@ public class PostCssParser extends CssParser2 {
                          getTokenType() == CssElementTypes.CSS_PERIOD ||
                          getTokenType() == CssElementTypes.CSS_COLON ||
                          getTokenType() == CssElementTypes.CSS_COMMA ||
+                         getTokenType() == CssElementTypes.CSS_PIPE ||
                          SELECTORS_HIERARCHY_TOKENS.contains(getTokenType()) ||
                          getTokenType() == PostCssTokenTypes.AMPERSAND ||
                          getTokenType() == CssElementTypes.CSS_BAD_CHARACTER ||
@@ -432,93 +433,5 @@ public class PostCssParser extends CssParser2 {
     }
     term.done(CssElementTypes.CSS_TERM);
     return true;
-  }
-
-  //TODO make CssParser2#parseAttribute protected and remove
-  private boolean parseAttribute() {
-    if (getTokenType() != CssElementTypes.CSS_LBRACKET) {
-      return false;
-    }
-    PsiBuilder.Marker attribute = createCompositeElement();
-    addTokenAndSkipWhitespace();
-    parseAttributeLSide();
-    parseAttributeRSide();
-    addTokenOrError(CssElementTypes.CSS_RBRACKET, "']'");
-    attribute.done(CssElementTypes.CSS_ATTRIBUTE);
-    return true;
-  }
-
-  //TODO make CssParser2#parseAttributeLSide protected and remove
-  private boolean parseAttributeLSide() {
-    if (!isIdent() && getTokenType() != CssElementTypes.CSS_PIPE && getTokenType() != CssElementTypes.CSS_ASTERISK) {
-      return false;
-    }
-    if (isIdent()) {
-      addIdentOrError();
-    }
-    else if (getTokenType() == CssElementTypes.CSS_ASTERISK) {
-      if (myBuilder.lookAhead(1) != CssElementTypes.CSS_PIPE) {
-        final PsiBuilder.Marker error = myBuilder.mark();
-        addToken();
-        error.error("unexpected asterisk");
-      }
-      else {
-        addToken();
-      }
-    }
-    if (getTokenType() == CssElementTypes.CSS_PIPE) {
-      addToken();
-      addIdentOrError();
-    }
-    return true;
-  }
-
-  //TODO make CssParser2#parsePseudoExpression protected and remove
-  private boolean parsePseudoExpression() {
-    if (!isIdent() &&
-        CssElementTypes.CSS_NUMBER != getTokenType() &&
-        CssElementTypes.CSS_PLUS != getTokenType() &&
-        CssElementTypes.CSS_MINUS != getTokenType()) {
-      return false;
-    }
-    if (isIdent() && !"n".equalsIgnoreCase(getTokenText())) return false;
-
-    PsiBuilder.Marker expression = createCompositeElement();
-    boolean op = false;
-    while (!isDone()) {
-      final IElementType tokenType = getTokenType();
-      if (/*WHITE_SPACE != tokenType &&*/ CssElementTypes.CSS_MINUS != tokenType &&
-                                          CssElementTypes.CSS_PLUS != tokenType &&
-                                          CssElementTypes.CSS_NUMBER != tokenType &&
-                                          !isIdent(tokenType)) {
-        expression.done(CssElementTypes.CSS_EXPRESSION);
-        return CssElementTypes.CSS_RPAREN == tokenType;
-      }
-
-      if (CssElementTypes.CSS_MINUS == tokenType || CssElementTypes.CSS_PLUS == tokenType) {
-        addTokenAndSkipWhitespace();
-        if (CssElementTypes.CSS_NUMBER == getTokenType()) {
-          addTokenAndSkipWhitespace();
-        }
-        if (isIdent()) {
-          addIdentOrError();
-        }
-        op = true;
-      }
-      else if (CssElementTypes.CSS_NUMBER == tokenType) {
-        if (op) createErrorElement("'+' or '-' expected");
-        addTokenAndSkipWhitespace();
-        if (isIdent()) {
-          addIdentOrError();
-        }
-        op = true;
-      }
-      else if (isIdent()) {
-        if (op) createErrorElement("'+' or '-' expected");
-        addIdentOrError();
-      }
-    }
-    expression.done(CssElementTypes.CSS_EXPRESSION);
-    return false;
   }
 }

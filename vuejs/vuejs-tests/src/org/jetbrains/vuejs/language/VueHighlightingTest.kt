@@ -32,9 +32,6 @@ import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspec
 import junit.framework.TestCase
 import org.jetbrains.vuejs.VueFileType
 
-/**
- * @author Irina.Chernushina on 7/19/2017.
- */
 class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/"
 
@@ -1152,6 +1149,11 @@ import BComponent from 'b-component'
 """)
       myFixture.checkHighlighting()
     }
+  }
+
+  fun testStyleTag() {
+    myFixture.configureByText("foo.vue", "<style scoped <warning descr=\"Wrong attribute value\">src</warning> module></style>")
+    myFixture.checkHighlighting()
   }
 }
 

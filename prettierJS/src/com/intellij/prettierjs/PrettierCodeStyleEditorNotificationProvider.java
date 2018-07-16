@@ -61,9 +61,6 @@ public class PrettierCodeStyleEditorNotificationProvider
     if (project == null) {
       return null;
     }
-    if (!PrettierUtil.isEnabled()) {
-      return null;
-    }
     if (!file.isWritable() || JSProjectUtil.isInLibrary(file, project) || JSLibraryUtil.isProbableLibraryFile(file)) {
       return null;
     }

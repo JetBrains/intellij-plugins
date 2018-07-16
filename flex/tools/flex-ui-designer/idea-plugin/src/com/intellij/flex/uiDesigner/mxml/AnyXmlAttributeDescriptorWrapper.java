@@ -203,8 +203,8 @@ class AnyXmlAttributeDescriptorWrapper implements AnnotationBackedDescriptor {
 
   @NotNull
   @Override
-  public Object[] getDependences() {
-    return descriptor.getDependences();
+  public Object[] getDependencies() {
+    return descriptor.getDependencies();
   }
 
   @Override

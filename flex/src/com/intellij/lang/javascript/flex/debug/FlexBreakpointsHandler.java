@@ -17,7 +17,6 @@ import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
@@ -146,8 +145,8 @@ public class FlexBreakpointsHandler {
       final Module module = myDebugProcess.getModule();
       if (module == null) return false;
 
-      final ModuleWithDependenciesScope scope = FlexUtils.getModuleWithDependenciesAndLibrariesScope(module, myDebugProcess.getBC(),
-                                                                                                     myDebugProcess.isFlexUnit());
+      final GlobalSearchScope scope = FlexUtils.getModuleWithDependenciesAndLibrariesScope(module, myDebugProcess.getBC(),
+                                                                                           myDebugProcess.isFlexUnit());
       if (scope.contains(file) || isInSourcesOfLibraryInScope(fileIndex, file, scope)) {
         return true;
       }

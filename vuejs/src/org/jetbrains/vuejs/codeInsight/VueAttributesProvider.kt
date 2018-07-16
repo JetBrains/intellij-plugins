@@ -25,7 +25,6 @@ import com.intellij.xml.XmlAttributeDescriptor
 import com.intellij.xml.XmlAttributeDescriptorsProvider
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor
 import icons.VuejsIcons
-import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.VueLanguage
 import org.jetbrains.vuejs.codeInsight.VueAttributesProvider.Companion.isBinding
 import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.attributeAllowsNoValue
@@ -33,13 +32,15 @@ import javax.swing.Icon
 
 class VueAttributesProvider : XmlAttributeDescriptorsProvider {
   companion object {
-    val SCOPED: String = "scoped"
-    @NonNls private val SRC_ATTR_NAME = "src"
+    private const val SCOPED_ATTR: String = "scoped"
+    private const val SRC_ATTR = "src"
+    private const val MODULE_ATTR: String = "module"
+
     // "v-on" is not included because it can't be used as is, it must be followed by a colon and an event, this is supported separately
     val DEFAULT: Set<String> = setOf("v-text", "v-html", "v-show", "v-if", "v-else", "v-else-if", "v-for",
                                      "v-bind", "v-model", "v-pre", "v-cloak", "v-once",
                                      "slot", "ref")
-    val HAVE_NO_PARAMS: Set<String> = setOf("v-else", "v-once", "v-pre", "v-cloak", "scoped")
+    val HAVE_NO_PARAMS: Set<String> = setOf("v-else", "v-once", "v-pre", "v-cloak", SCOPED_ATTR, MODULE_ATTR)
 
     fun isInjectJS(attrName: String): Boolean {
       if (attrName == "slot" || attrName == "ref") return false
@@ -58,12 +59,6 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
     fun getDefaultVueAttributes(): Array<VueAttributeDescriptor> = DEFAULT.map { VueAttributeDescriptor(it) }.toTypedArray()
 
     fun isBinding(name: String): Boolean = name.startsWith(":") || name.startsWith("v-bind:")
-
-    fun addBindingAttributes(result: MutableList<XmlAttributeDescriptor>,
-                             commonAttributes: Array<out XmlAttributeDescriptor>) {
-      result.addAll(commonAttributes.map { VueAttributeDescriptor(":" + it.name, it.declaration) })
-      result.addAll(commonAttributes.map { VueAttributeDescriptor("v-bind:" + it.name, it.declaration) })
-    }
   }
 
   override fun getAttributeDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
@@ -72,8 +67,9 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
     result.addAll(getDefaultVueAttributes())
 
     if (insideStyle(context)) {
-      result.add(VueAttributeDescriptor(SCOPED))
-      result.add(VueAttributeDescriptor(SRC_ATTR_NAME))
+      result.add(VueAttributeDescriptor(SCOPED_ATTR))
+      result.add(VueAttributeDescriptor(SRC_ATTR))
+      result.add(VueAttributeDescriptor(MODULE_ATTR))
     }
     result.addAll(VueDirectivesProvider.getAttributes(findLocalDescriptor(context), context.project))
     return result.toTypedArray()
@@ -86,7 +82,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
 
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
     if (context == null || !org.jetbrains.vuejs.index.hasVue(context.project) || attributeName == null) return null
-    if (attributeName in arrayOf(SCOPED, SRC_ATTR_NAME) && insideStyle(context)) {
+    if (attributeName in arrayOf(SCOPED_ATTR, SRC_ATTR, MODULE_ATTR) && insideStyle(context)) {
       return VueAttributeDescriptor(attributeName)
     }
     val fromDirective = VueDirectivesProvider.resolveAttribute(findLocalDescriptor(context), attributeName, context.project)
@@ -117,7 +113,6 @@ class VueAttributeDescriptor(private val name:String,
 
   override fun isFixed(): Boolean = false
   override fun hasIdType(): Boolean = false
-  override fun getDependences(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY
   override fun getEnumeratedValueDeclaration(xmlElement: XmlElement?, value: String?): PsiElement? {
     return if (isEnumerated) xmlElement else super.getEnumeratedValueDeclaration(xmlElement, value)
   }
