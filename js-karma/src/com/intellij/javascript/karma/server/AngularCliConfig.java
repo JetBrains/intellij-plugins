@@ -18,6 +18,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
@@ -27,6 +28,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 public class AngularCliConfig {
 
@@ -40,30 +43,73 @@ public class AngularCliConfig {
   }
 
   @Nullable
-  public String getDefaultOrFirstProject() {
+  public String getProjectContainingFileOrDefault(@Nullable VirtualFile file) {
     try {
-      String value = doGetDefaultOrFirstProject();
+      String value = doGetProjectContainingFileOrDefault(file);
       if (value == null) {
-        LOG.info("Neither default nor any project defined in " + myConfig.getPath());
+        LOG.info("No project found in " + myConfig.getPath());
       }
       return value;
     }
     catch (Exception e) {
-      LOG.info("Cannot get default or first project from " + myConfig.getPath(), e);
+      LOG.info("Failed to find project in " + myConfig.getPath(), e);
       return null;
     }
   }
 
   @Nullable
-  private String doGetDefaultOrFirstProject() throws IOException {
+  private String doGetProjectContainingFileOrDefault(@Nullable VirtualFile file) throws IOException {
     if (!myConfig.isValid()) return null;
     String text = JSLinterConfigFileUtil.loadActualText(myConfig);
-    JsonElement root = new JsonParser().parse(text);
-    JsonObject rootObj = root.getAsJsonObject();
+    JsonObject rootObj = new JsonParser().parse(text).getAsJsonObject();
+    JsonObject projectsObj = JsonUtil.getChildAsObject(rootObj, "projects");
+    if (projectsObj != null && file != null) {
+      Map<VirtualFile, String> projectRootToNameMap = getProjectRootToNameMap(projectsObj);
+      VirtualFile nearestRoot = findNearestRoot(file, projectRootToNameMap.keySet());
+      if (nearestRoot != null) {
+        return projectRootToNameMap.get(nearestRoot);
+      }
+    }
+    LOG.info("Cannot find project containing file, fallback to default project");
     String defaultProject = JsonUtil.getChildAsString(rootObj, DEFAULT_PROJECT);
     if (defaultProject != null) return defaultProject;
-    JsonObject projects = JsonUtil.getChildAsObject(rootObj, "projects");
-    return projects != null ? ContainerUtil.getFirstItem(projects.keySet()) : null;
+    return projectsObj != null ? ContainerUtil.getFirstItem(projectsObj.keySet()) : null;
+  }
+
+  @NotNull
+  private Map<VirtualFile, String> getProjectRootToNameMap(@NotNull JsonObject projectsObj) {
+    Map<VirtualFile, String> projectRootToNameMap = ContainerUtil.newHashMap();
+    for (Map.Entry<String, JsonElement> entry : projectsObj.entrySet()) {
+      JsonObject projectObj = JsonUtil.getAsObject(entry.getValue());
+      if (projectObj == null) {
+        LOG.info("Unexpected " + entry);
+      }
+      else {
+        VirtualFile root = getProjectRoot(projectObj);
+        if (root != null) {
+          projectRootToNameMap.put(root, entry.getKey());
+        }
+      }
+    }
+    return projectRootToNameMap;
+  }
+
+  @Nullable
+  private VirtualFile getProjectRoot(@NotNull JsonObject projectObj) {
+    String rootStr = StringUtil.notNullize(JsonUtil.getChildAsString(projectObj, "root"));
+    return myConfig.getParent().findFileByRelativePath(rootStr);
+  }
+
+  @Nullable
+  private static VirtualFile findNearestRoot(@NotNull VirtualFile file, @NotNull Set<VirtualFile> roots) {
+    VirtualFile parent = file;
+    while (parent != null) {
+      if (roots.contains(parent)) {
+        return parent;
+      }
+      parent = parent.getParent();
+    }
+    return null;
   }
 
   /**
