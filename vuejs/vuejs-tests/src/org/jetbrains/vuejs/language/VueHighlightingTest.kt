@@ -13,6 +13,7 @@
 // limitations under the License.
 package org.jetbrains.vuejs.language
 
+import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection
 import com.intellij.codeInspection.htmlInspections.*
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
@@ -1165,6 +1166,16 @@ import BComponent from 'b-component'
       </script>""")
       myFixture.checkHighlighting()
     })
+  }
+
+  fun testColonInEventName() {
+    myFixture.enableInspections(XmlUnboundNsPrefixInspection::class.java)
+    myFixture.configureByText("foo.vue", """
+      |<template>
+      |  <div @update:property=''></div>
+      |  <div <error descr="Namespace 'update' is not bound">update</error>:property=''></div>
+      |</template>""".trimMargin())
+    myFixture.checkHighlighting()
   }
 }
 
