@@ -19,7 +19,7 @@ public class CucumberJavaInjector implements MultiHostInjector {
     if (regexpLanguage == null) {
       return;
     }
-    if (element instanceof PsiLiteralExpression && element instanceof PsiLanguageInjectionHost) {
+    if (element instanceof PsiLiteralExpression && element instanceof PsiLanguageInjectionHost && element.getTextLength() > 2) {
       final PsiElement firstChild = element.getFirstChild();
       if (firstChild != null && firstChild.getNode().getElementType() == JavaTokenType.STRING_LITERAL) {
         PsiAnnotation annotation = PsiTreeUtil.getParentOfType(element, PsiAnnotation.class);
