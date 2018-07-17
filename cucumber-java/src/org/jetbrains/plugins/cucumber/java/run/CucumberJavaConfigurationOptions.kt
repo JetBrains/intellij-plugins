@@ -29,4 +29,6 @@ open class CucumberJavaConfigurationOptions: ApplicationConfigurationOptions() {
   @get:OptionTag("SUGGESTED_NAME")
   open var suggestedName: String? by string()
 
+  @get:OptionTag("CUCUMBER_CORE_VERSION")
+  open var cucumberCoreVersion: String? by string()
 }
