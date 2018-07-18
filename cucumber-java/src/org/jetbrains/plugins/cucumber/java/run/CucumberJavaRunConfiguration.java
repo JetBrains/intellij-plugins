@@ -20,7 +20,9 @@ import com.intellij.openapi.options.SettingsEditorGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
+import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
@@ -30,6 +32,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 
 public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
@@ -63,8 +66,10 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         JavaParametersUtil.configureModule(module, params, classPathType, jreHome);
         JavaParametersUtil.configureConfiguration(params, CucumberJavaRunConfiguration.this);
 
-        String path = getSMRunnerPath();
-        params.getClassPath().add(path);
+        String[] paths = getSMRunnerPaths();
+        for (String path : paths) {
+          params.getClassPath().add(path);
+        }
 
         params.setMainClass(getMainClassName());
         for (RunConfigurationExtension ext : Extensions.getExtensions(RunConfigurationExtension.EP_NAME)) {
@@ -124,8 +129,15 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
     };
   }
 
-  private static String getSMRunnerPath() {
-    return PathUtil.getJarPathForClass(CucumberJvmSMFormatter.class);
+  private String[] getSMRunnerPaths() {
+    List<String> result = new ArrayList<>();
+
+    result.add(PathUtil.getJarPathForClass(CucumberJvmSMFormatter.class));
+    if (VersionComparatorUtil.compare(getCucumberCoreVersion(), "3") >= 0) {
+      result.add(PathUtil.getJarPathForClass(CucumberJvm3SMFormatter.class));
+    }
+
+    return result.toArray(ArrayUtil.EMPTY_STRING_ARRAY);
   }
 
   @Override
@@ -190,6 +202,14 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   public void setNameFilter(String nameFilter) {
     getOptions().setNameFilter(nameFilter);
+  }
+
+  public String getCucumberCoreVersion() {
+    return getOptions().getCucumberCoreVersion();
+  }
+
+  public void setCucumberCoreVersion(String cucumberCoreVersion) {
+    getOptions().setCucumberCoreVersion(cucumberCoreVersion);
   }
 
   @Nullable
