@@ -53,7 +53,6 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
         .and(new HtmlPolicyBuilder()
                .allowUrlProtocols("http", "https").allowElements("input")
                .allowAttributes("type", "class", "checked", "disabled").onElements("input")
-               .allowTextIn("checked").allowTextIn("disabled")
                .toFactory())
         .and(new HtmlPolicyBuilder()
                .allowUrlProtocols("http", "https").allowElements("li")
