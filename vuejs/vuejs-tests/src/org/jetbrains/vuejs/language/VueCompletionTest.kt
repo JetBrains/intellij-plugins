@@ -1263,6 +1263,15 @@ Pair("""<template>
     assertContainsElements(myFixture.lookupElementStrings!!, "functional", "v-if", "v-else")
     assertDoesntContain(myFixture.lookupElementStrings!!, "scoped", "module")
   }
+
+  fun testNoVueTagsWithNamespace() {
+    myFixture.configureByText("foo.vue", """
+      <template>
+        <foo:tran<caret>/>
+      </template>""")
+    myFixture.completeBasic()
+    assertNull(myFixture.lookup)
+  }
 }
 
 fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,
