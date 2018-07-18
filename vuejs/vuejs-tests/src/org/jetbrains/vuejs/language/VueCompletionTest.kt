@@ -1254,6 +1254,14 @@ Pair("""<template>
     myFixture.configureByText("foo.vue", "<style <caret>></style>")
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "scoped", "src", "module")
+    assertDoesntContain(myFixture.lookupElementStrings!!, "functional")
+  }
+
+  fun testTemplateAttributes() {
+    myFixture.configureByText("foo.vue", "<template <caret>></template>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "functional", "v-if", "v-else")
+    assertDoesntContain(myFixture.lookupElementStrings!!, "scoped", "module")
   }
 }
 
