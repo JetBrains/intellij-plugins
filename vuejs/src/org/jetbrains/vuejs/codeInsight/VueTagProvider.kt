@@ -29,6 +29,7 @@ import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.settings.JSApplicationSettings
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl
@@ -177,8 +178,10 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     return true
   }
 
-  override fun addTagNameVariants(elements: MutableList<LookupElement>?, tag: XmlTag, prefix: String?) {
+  override fun addTagNameVariants(elements: MutableList<LookupElement>?, tag: XmlTag, namespacePrefix: String?) {
     elements ?: return
+    if (!StringUtil.isEmpty(namespacePrefix)) return
+
     val scriptLanguage = detectVueScriptLanguage(tag.containingFile)
     val files:MutableList<PsiFile> = mutableListOf()
     val localLookups = mutableListOf<LookupElement>()
