@@ -63,4 +63,8 @@ public class MarkdownSanitizingTest extends UsefulTestCase {
   public void testCheckboxes() {
     doTest();
   }
+
+  public void testHorizontalRules() {
+    doTest();
+  }
 }
