@@ -15,7 +15,7 @@ import com.intellij.openapi.util.TextRange;
 
 public class DartUriElementImpl extends DartUriElementBase implements DartUriElement {
 
-  public DartUriElementImpl(ASTNode node) {
+  public DartUriElementImpl(@NotNull ASTNode node) {
     super(node);
   }
 

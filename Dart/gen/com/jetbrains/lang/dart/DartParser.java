@@ -457,7 +457,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // additiveOperator multiplicativeExpressionWrapper
   public static boolean additiveExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "additiveExpression")) return false;
-    if (!nextTokenIs(b, "<additive expression>", PLUS, MINUS)) return false;
+    if (!nextTokenIs(b, "<additive expression>", MINUS, PLUS)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _LEFT_, ADDITIVE_EXPRESSION, "<additive expression>");
     r = additiveOperator(b, l + 1);
@@ -493,7 +493,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // '+' | '-'
   public static boolean additiveOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "additiveOperator")) return false;
-    if (!nextTokenIs(b, "<additive operator>", PLUS, MINUS)) return false;
+    if (!nextTokenIs(b, "<additive operator>", MINUS, PLUS)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, ADDITIVE_OPERATOR, "<additive operator>");
     r = consumeToken(b, PLUS);
@@ -648,7 +648,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // ('async' '*'? | 'sync' '*'?)? '=>' expression
   static boolean arrowBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "arrowBody")) return false;
-    if (!nextTokenIs(b, "", EXPRESSION_BODY_DEF, ASYNC, SYNC)) return false;
+    if (!nextTokenIs(b, "", ASYNC, EXPRESSION_BODY_DEF, SYNC)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_);
     r = arrowBody_0(b, l + 1);
@@ -894,7 +894,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // bitwiseOperator shiftExpressionWrapper
   public static boolean bitwiseExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "bitwiseExpression")) return false;
-    if (!nextTokenIs(b, "<bitwise expression>", AND, XOR, OR)) return false;
+    if (!nextTokenIs(b, "<bitwise expression>", AND, OR, XOR)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _LEFT_, BITWISE_EXPRESSION, "<bitwise expression>");
     r = bitwiseOperator(b, l + 1);
@@ -930,7 +930,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // '&' | '^' | '|'
   public static boolean bitwiseOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "bitwiseOperator")) return false;
-    if (!nextTokenIs(b, "<bitwise operator>", AND, XOR, OR)) return false;
+    if (!nextTokenIs(b, "<bitwise operator>", AND, OR, XOR)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, BITWISE_OPERATOR, "<bitwise operator>");
     r = consumeToken(b, AND);
@@ -1174,7 +1174,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata* 'abstract'? 'class' componentName typeParameters? (mixinApplication | standardClassDeclarationTail)
   public static boolean classDefinition(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "classDefinition")) return false;
-    if (!nextTokenIs(b, "<class definition>", AT, ABSTRACT, CLASS)) return false;
+    if (!nextTokenIs(b, "<class definition>", ABSTRACT, AT, CLASS)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, CLASS_DEFINITION, "<class definition>");
     r = classDefinition_0(b, l + 1);
@@ -1636,7 +1636,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // '==' | '!='
   public static boolean equalityOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "equalityOperator")) return false;
-    if (!nextTokenIs(b, "<equality operator>", NEQ, EQ_EQ)) return false;
+    if (!nextTokenIs(b, "<equality operator>", EQ_EQ, NEQ)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, EQUALITY_OPERATOR, "<equality operator>");
     r = consumeToken(b, EQ_EQ);
@@ -3939,7 +3939,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // 'const'? typeArguments? '[' (expressionList ','?)? ']'
   public static boolean listLiteralExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listLiteralExpression")) return false;
-    if (!nextTokenIs(b, "<list literal expression>", LT, LBRACKET, CONST)) return false;
+    if (!nextTokenIs(b, "<list literal expression>", CONST, LBRACKET, LT)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, LIST_LITERAL_EXPRESSION, "<list literal expression>");
     r = listLiteralExpression_0(b, l + 1);
@@ -4113,7 +4113,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // 'const'? typeArguments? '{' (mapLiteralEntry (',' mapLiteralEntry)* ','? )? '}'
   public static boolean mapLiteralExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapLiteralExpression")) return false;
-    if (!nextTokenIs(b, "<map literal expression>", LT, CONST, LBRACE)) return false;
+    if (!nextTokenIs(b, "<map literal expression>", CONST, LBRACE, LT)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, MAP_LITERAL_EXPRESSION, "<map literal expression>");
     r = mapLiteralExpression_0(b, l + 1);
@@ -4417,7 +4417,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // multiplicativeOperator prefixExpression
   public static boolean multiplicativeExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "multiplicativeExpression")) return false;
-    if (!nextTokenIs(b, "<multiplicative expression>", REM, MUL, DIV, INT_DIV)) return false;
+    if (!nextTokenIs(b, "<multiplicative expression>", DIV, INT_DIV, MUL, REM)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _LEFT_, MULTIPLICATIVE_EXPRESSION, "<multiplicative expression>");
     r = multiplicativeOperator(b, l + 1);
@@ -4453,7 +4453,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // '*' | '/' | '%' | '~/'
   public static boolean multiplicativeOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "multiplicativeOperator")) return false;
-    if (!nextTokenIs(b, "<multiplicative operator>", REM, MUL, DIV, INT_DIV)) return false;
+    if (!nextTokenIs(b, "<multiplicative operator>", DIV, INT_DIV, MUL, REM)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, MULTIPLICATIVE_OPERATOR, "<multiplicative operator>");
     r = consumeToken(b, MUL);
@@ -4939,7 +4939,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // optionalPositionalFormalParameters (',' namedFormalParameters)? | namedFormalParameters
   public static boolean optionalFormalParameters(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "optionalFormalParameters")) return false;
-    if (!nextTokenIs(b, "<optional formal parameters>", LBRACKET, LBRACE)) return false;
+    if (!nextTokenIs(b, "<optional formal parameters>", LBRACE, LBRACKET)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, OPTIONAL_FORMAL_PARAMETERS, "<optional formal parameters>");
     r = optionalFormalParameters_0(b, l + 1);
@@ -4981,7 +4981,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // optionalPositionalParameterTypes | namedParameterTypes
   public static boolean optionalParameterTypes(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "optionalParameterTypes")) return false;
-    if (!nextTokenIs(b, "<optional parameter types>", LBRACKET, LBRACE)) return false;
+    if (!nextTokenIs(b, "<optional parameter types>", LBRACE, LBRACKET)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, OPTIONAL_PARAMETER_TYPES, "<optional parameter types>");
     r = optionalPositionalParameterTypes(b, l + 1);
@@ -5249,8 +5249,8 @@ public class DartParser implements PsiParser, LightPsiParser {
   // '-' | '+' | '--' | '++' | '!' | '~'
   public static boolean prefixOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "prefixOperator")) return false;
-    if (!nextTokenIs(b, "<prefix operator>", NOT, PLUS,
-      PLUS_PLUS, MINUS, MINUS_MINUS, BIN_NOT)) return false;
+    if (!nextTokenIs(b, "<prefix operator>", BIN_NOT, MINUS,
+      MINUS_MINUS, NOT, PLUS, PLUS_PLUS)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, PREFIX_OPERATOR, "<prefix operator>");
     r = consumeToken(b, MINUS);
@@ -5992,7 +5992,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // '--' | '++'
   public static boolean suffixExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "suffixExpression")) return false;
-    if (!nextTokenIs(b, "<suffix expression>", PLUS_PLUS, MINUS_MINUS)) return false;
+    if (!nextTokenIs(b, "<suffix expression>", MINUS_MINUS, PLUS_PLUS)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _LEFT_, SUFFIX_EXPRESSION, "<suffix expression>");
     r = consumeToken(b, MINUS_MINUS);

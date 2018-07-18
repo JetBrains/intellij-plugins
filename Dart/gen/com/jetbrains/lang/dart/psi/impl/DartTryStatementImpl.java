@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartTryStatementImpl extends DartPsiCompositeElementImpl implements DartTryStatement {
 
-  public DartTryStatementImpl(ASTNode node) {
+  public DartTryStatementImpl(@NotNull ASTNode node) {
     super(node);
   }
 

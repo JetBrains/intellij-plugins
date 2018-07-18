@@ -13,10 +13,8 @@
 // limitations under the License.
 package org.jetbrains.vuejs.language
 
-import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection
-import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeInspectionBase
-import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
-import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection
+import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection
+import com.intellij.codeInspection.htmlInspections.*
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.inspections.*
@@ -1153,6 +1151,30 @@ import BComponent from 'b-component'
 
   fun testStyleTag() {
     myFixture.configureByText("foo.vue", "<style scoped <warning descr=\"Wrong attribute value\">src</warning> module></style>")
+    myFixture.checkHighlighting()
+  }
+
+  fun testEndTagNotForbidden() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.project, ThrowableRunnable<Exception> {
+
+      myFixture.enableInspections(HtmlExtraClosingTagInspection::class.java)
+      myFixture.addFileToProject("input.vue", "<script>export default {name: 'Input'}</script>")
+      myFixture.configureByText("foo.vue", """<template> <Input> </Input> </template>
+      <script>
+        import Input from 'input'
+        export default { components: {Input}}
+      </script>""")
+      myFixture.checkHighlighting()
+    })
+  }
+
+  fun testColonInEventName() {
+    myFixture.enableInspections(XmlUnboundNsPrefixInspection::class.java)
+    myFixture.configureByText("foo.vue", """
+      |<template>
+      |  <div @update:property=''></div>
+      |  <div <error descr="Namespace 'update' is not bound">update</error>:property=''></div>
+      |</template>""".trimMargin())
     myFixture.checkHighlighting()
   }
 }

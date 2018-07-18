@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartForLoopPartsInBracesImpl extends DartPsiCompositeElementImpl implements DartForLoopPartsInBraces {
 
-  public DartForLoopPartsInBracesImpl(ASTNode node) {
+  public DartForLoopPartsInBracesImpl(@NotNull ASTNode node) {
     super(node);
   }
 

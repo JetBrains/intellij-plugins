@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartEqualityOperatorImpl extends DartPsiCompositeElementImpl implements DartEqualityOperator {
 
-  public DartEqualityOperatorImpl(ASTNode node) {
+  public DartEqualityOperatorImpl(@NotNull ASTNode node) {
     super(node);
   }
 
