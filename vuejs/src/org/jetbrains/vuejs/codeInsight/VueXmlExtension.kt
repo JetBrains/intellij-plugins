@@ -14,10 +14,14 @@
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
+import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.xml.SchemaPrefix
 import com.intellij.psi.impl.source.xml.TagNameReference
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.HtmlXmlExtension
 import org.jetbrains.vuejs.VueLanguage
@@ -42,12 +46,25 @@ class VueXmlExtension : HtmlXmlExtension() {
 
   override fun isRequiredAttributeImplicitlyPresent(tag: XmlTag?, attrName: String?): Boolean {
     if (attrName == null) return false
-    val normalized = fromAsset(attrName)
-    if (tag?.attributes?.filter {
-        val extractedName = VueComponentDetailsProvider.getBoundName(it.name) ?: it.name
-        return@filter normalized == fromAsset(extractedName)
-      }?.any() == true) return true
-    return super.isRequiredAttributeImplicitlyPresent(tag, attrName)
+
+    val toAssetName = toAsset(attrName)
+    val fromAssetName = fromAsset(attrName)
+
+    return tag?.attributes?.find {
+      if (it.name == "v-bind") {
+        val jsEmbeddedContent = PsiTreeUtil.findChildOfType(it.valueElement, JSEmbeddedContent::class.java)
+        val child = jsEmbeddedContent?.firstChild
+        if (child is JSReferenceExpression && child.nextSibling == null) {
+          val resolve = child.resolve()
+          (resolve as? JSProperty)?.objectLiteralExpressionInitializer?.properties?.forEach {
+            if (it.name == toAssetName) return@find true
+          }
+        }
+        return@find false
+      }
+
+      return@find fromAsset(VueComponentDetailsProvider.getBoundName(it.name) ?: it.name) == fromAssetName
+    } != null
   }
 
   override fun isCollapsibleTag(tag: XmlTag?): Boolean = false
