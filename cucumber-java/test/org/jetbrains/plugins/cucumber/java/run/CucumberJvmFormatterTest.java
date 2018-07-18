@@ -25,7 +25,8 @@ import static org.junit.Assert.assertEquals;
 public class CucumberJvmFormatterTest {
   @Test
   public void testGetFeatureName() {
-    String featureHeader = "@wip\n" +
+    String featureHeader = "#language: en\n"
+                           + "@wip\n" +
                            "Feature: super puper\n" +
                            "  my feature";
     assertEquals("Feature: super puper", CucumberJvmSMFormatterUtil.getFeatureName(featureHeader));
