@@ -13,10 +13,15 @@
 // limitations under the License.
 package org.jetbrains.vuejs.cli
 
+import com.intellij.execution.RunManager
 import com.intellij.ide.file.BatchFileChangeListener
+import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration
+import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType
 import com.intellij.javascript.nodejs.packageJson.PackageJsonDependenciesExternalUpdateManager
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
+import com.intellij.lang.javascript.buildTools.webpack.WebPackConfigManager
+import com.intellij.lang.javascript.buildTools.webpack.WebPackConfiguration
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.openapi.Disposable
@@ -37,17 +42,15 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.util.io.exists
 import org.jetbrains.vuejs.VueBundle
+import java.io.File
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.nio.file.Paths
 import javax.swing.JPanel
 
-/**
- * @author Irina.Chernushina on 2/12/2018.
- */
 class VueCliRunningGeneratorController internal constructor (generationLocation: Path,
-                                                             settings: NpmPackageProjectGenerator.Settings,
-                                                             private val listener: VueRunningGeneratorListener,
+                                                            private val settings: NpmPackageProjectGenerator.Settings,
+                                                            private val listener: VueRunningGeneratorListener,
                                                              parentDisposable: Disposable): Disposable {
   // checked in disposed condition
   @Volatile private var state: VueProjectCreationState = VueProjectCreationState.Starting
@@ -64,8 +67,8 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
     val isOldPackage = Paths.get(settings.myPackage.systemDependentPath).fileName.toString() == "vue-cli"
     questionUi = VueCliGeneratorQuestioningPanel(isOldPackage, templateName, projectName,
                                                  { if (state == VueProjectCreationState.User) {
-                                                   if (it) listener.enableNext()
-                                                   else listener.disableNext(null)
+                                                     if (it) listener.enableNext()
+                                                     else listener.disableNext(null)
                                                  } })
     process = VueCreateProjectProcess(generationLocation.parent, projectName, templateName, settings.myInterpreterRef,
                                       settings.myPackage.systemDependentPath, this)
@@ -82,7 +85,7 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
             process!!.listener = null
             process!!.cancel()
           } else if (VueProjectCreationState.QuestionsFinished == processState.processState ||
-                     VueProjectCreationState.Finished == processState.processState) {
+                   VueProjectCreationState.Finished == processState.processState) {
             state = VueProjectCreationState.QuestionsFinished
             val callback: (Project) -> Unit = { project ->
               val publisher = BackgroundTaskUtil.syncPublisher(BatchFileChangeListener.TOPIC)
@@ -119,7 +122,7 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
                                       generationLocation: Path) {
     if (process == null) return
     val task = object: Task.Backgroundable(project, VueBundle.message("vue.project.generator.progress.task.name.dots"), false,
-                                           PerformInBackgroundOption.ALWAYS_BACKGROUND) {
+                                            PerformInBackgroundOption.ALWAYS_BACKGROUND) {
       override fun run(indicator: ProgressIndicator) {
         process!!.waitForProcessTermination(indicator)
       }
@@ -129,12 +132,35 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
           if (project.isDisposed) return@run
           doneCallback.run()
           JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+          setupWebpackConfigFile(project)
+          createJsDebugConfiguration(project)
           LocalFileSystem.getInstance().refreshIoFiles(listOf(generationLocation.toFile()), true, true, null)
         }
       }
     }
     val indicator = BackgroundableProcessIndicator(task)
     ProgressManager.getInstance().runProcessWithProgressAsynchronously(task, indicator)
+  }
+
+  private fun setupWebpackConfigFile(project: Project) {
+    val vueCliPackage = settings.myPackage.systemIndependentPath
+    val path = when {
+      vueCliPackage.endsWith("/@vue/cli") -> project.basePath + "/node_modules/@vue/cli-service/webpack.config.js"
+      vueCliPackage.endsWith("/vue-cli") -> project.basePath + "/build/webpack.dev.conf.js"
+      else -> null
+    }
+    if (path != null && File(path).isFile) {
+      WebPackConfigManager.instance(project).loadState(WebPackConfiguration(path))
+    }
+  }
+
+  private fun createJsDebugConfiguration(project: Project) {
+    val runManager = RunManager.getInstance(project)
+    val settings = runManager.createRunConfiguration("", JavascriptDebugConfigurationType.getTypeInstance().factory)
+    (settings.configuration as JavaScriptDebugConfiguration).uri = "http://localhost:8080"
+    settings.setName((settings.configuration as JavaScriptDebugConfiguration).suggestedName())
+    runManager.addConfiguration(settings)
+    runManager.selectedConfiguration = settings
   }
 
   fun isFinished(): Boolean {

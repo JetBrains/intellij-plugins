@@ -13,10 +13,8 @@
 // limitations under the License.
 package org.jetbrains.vuejs.language
 
-import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection
-import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeInspectionBase
-import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
-import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection
+import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection
+import com.intellij.codeInspection.htmlInspections.*
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.inspections.*
@@ -261,10 +259,12 @@ const props = {seeMe: {}}
       myFixture.configureByText("CompRequiredAttributesTest.vue", """
 <template>
     <div id="app">
-        <<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning></warning>></<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning></warning>>
+        <<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning></warning> v-bind='<weak_warning descr="Unresolved variable or type incorrect">incorrect</weak_warning>'></<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning></warning>>
         <<warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning> :one="5"></<warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning>>
         <camelCase one="test" two="2" three=3 with-camel-case="1" four=1></camelCase>
         <camelCase one="test" v-bind:two="2" :three=3 withCamelCase="1"></camelCase>
+        <<warning descr="Element camelCase doesn't have required attribute three">camelCase</warning> v-bind:incorrect='0' v-bind='input'></<warning descr="Element camelCase doesn't have required attribute three">camelCase</warning>>
+        <camelCase v-bind:three='3' v-bind='input'></camelCase>
         <camelCase one="test" v-bind:two="2" :three=3 withCamelCase="1" not-required=11></camelCase>
         <<warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning> one="test" v-bind:two="2" :three=3></<warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning>>
     </div>
@@ -278,6 +278,15 @@ const props = {seeMe: {}}
         three: {required:true},
         withCamelCase: {required:true},
         notRequired: {required:false}
+      },
+      data () {
+        return {
+          input: {
+            one: '',
+            two: '',
+            withCamelCase: ''
+          }
+        }
       }
     }
 </script>""")
@@ -1151,8 +1160,34 @@ import BComponent from 'b-component'
     }
   }
 
-  fun testStyleTag() {
-    myFixture.configureByText("foo.vue", "<style scoped <warning descr=\"Wrong attribute value\">src</warning> module></style>")
+  fun testTopLevelTags() {
+    myFixture.configureByText("foo.vue",
+                              "<template functional v-if='' v-else='' <warning descr=\"Attribute scoped is not allowed here\">scoped</warning>></template>\n" +
+                              "<style scoped <warning descr=\"Wrong attribute value\">src</warning> module <warning descr=\"Attribute functional is not allowed here\">functional</warning>></style>")
+    myFixture.checkHighlighting()
+  }
+
+  fun testEndTagNotForbidden() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.project, ThrowableRunnable<Exception> {
+
+      myFixture.enableInspections(HtmlExtraClosingTagInspection::class.java)
+      myFixture.addFileToProject("input.vue", "<script>export default {name: 'Input'}</script>")
+      myFixture.configureByText("foo.vue", """<template> <Input> </Input> </template>
+      <script>
+        import Input from 'input'
+        export default { components: {Input}}
+      </script>""")
+      myFixture.checkHighlighting()
+    })
+  }
+
+  fun testColonInEventName() {
+    myFixture.enableInspections(XmlUnboundNsPrefixInspection::class.java)
+    myFixture.configureByText("foo.vue", """
+      |<template>
+      |  <div @update:property=''></div>
+      |  <div <error descr="Namespace 'update' is not bound">update</error>:property=''></div>
+      |</template>""".trimMargin())
     myFixture.checkHighlighting()
   }
 }

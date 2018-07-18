@@ -457,7 +457,7 @@ public class OgnlParser implements PsiParser, LightPsiParser {
   // '+' | '-'
   static boolean plusMinusOperations(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "plusMinusOperations")) return false;
-    if (!nextTokenIs(b, "", PLUS, MINUS)) return false;
+    if (!nextTokenIs(b, "", MINUS, PLUS)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, PLUS);

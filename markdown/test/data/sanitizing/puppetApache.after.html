@@ -2712,7 +2712,7 @@ The apache module allows you to set up pretty much any configuration of virtual 
       serveradmin &#61;&gt; &#39;admin&#64;example.com&#39;,
     }
 </code></pre>
-
+<hr />
 <p md-src-pos="90443..90478">Set up a vhost with aliased servers</p>
 <pre><code class="language-puppet" md-src-pos="90480..90702">    apache::vhost { &#39;sixth.example.com&#39;:
       serveraliases &#61;&gt; [
@@ -2723,7 +2723,7 @@ The apache module allows you to set up pretty much any configuration of virtual 
       docroot       &#61;&gt; &#39;/var/www/fifth&#39;,
     }
 </code></pre>
-
+<hr />
 <p md-src-pos="90711..90743">Configure a vhost with a cgi-bin</p>
 <pre><code class="language-puppet" md-src-pos="90745..90918">    apache::vhost { &#39;eleventh.example.com&#39;:
       port        &#61;&gt; &#39;80&#39;,
@@ -2731,7 +2731,7 @@ The apache module allows you to set up pretty much any configuration of virtual 
       scriptalias &#61;&gt; &#39;/usr/lib/cgi-bin&#39;,
     }
 </code></pre>
-
+<hr />
 <p md-src-pos="90927..90967">Set up a vhost with a rack configuration</p>
 <pre><code class="language-puppet" md-src-pos="90969..91161">    apache::vhost { &#39;fifteenth.example.com&#39;:
       port           &#61;&gt; &#39;80&#39;,
@@ -2739,7 +2739,7 @@ The apache module allows you to set up pretty much any configuration of virtual 
       rack_base_uris &#61;&gt; [&#39;/rackapp1&#39;, &#39;/rackapp2&#39;],
     }
 </code></pre>
-
+<hr />
 <p md-src-pos="91170..91227">Set up a mix of SSL and non-SSL vhosts at the same domain</p>
 <pre><code class="language-puppet" md-src-pos="91229..91647">    #The non-ssl vhost
     apache::vhost { &#39;first.example.com non-ssl&#39;:
@@ -2756,7 +2756,7 @@ The apache module allows you to set up pretty much any configuration of virtual 
       ssl        &#61;&gt; true,
     }
 </code></pre>
-
+<hr />
 <p md-src-pos="91656..91712">Configure a vhost to redirect non-SSL connections to SSL</p>
 <pre><code class="language-puppet" md-src-pos="91714..92205">    apache::vhost { &#39;sixteenth.example.com non-ssl&#39;:
       servername      &#61;&gt; &#39;sixteenth.example.com&#39;,
@@ -2772,7 +2772,7 @@ The apache module allows you to set up pretty much any configuration of virtual 
       ssl        &#61;&gt; true,
     }
 </code></pre>
-
+<hr />
 <p md-src-pos="92214..92453">Set up IP-based vhosts on any listen port and have them respond to requests on specific IP addresses. In this example, we set listening on ports 80 and 81. This is required because the example vhosts are not declared with a port parameter.</p>
 <pre><code class="language-puppet" md-src-pos="92455..92526">    apache::listen { &#39;80&#39;: }
     apache::listen { &#39;81&#39;: }
@@ -2789,7 +2789,7 @@ The apache module allows you to set up pretty much any configuration of virtual 
       ip_based &#61;&gt; true,
     }
 </code></pre>
-
+<hr />
 <p md-src-pos="92864..92986">Configure a mix of name-based and IP-based vhosts. First, we add two IP-based vhosts on 10.0.0.10, one SSL and one non-SSL</p>
 <pre><code class="language-puppet" md-src-pos="92988..93482">    apache::vhost { &#39;The first IP-based vhost, non-ssl&#39;:
       servername &#61;&gt; &#39;first.example.com&#39;,

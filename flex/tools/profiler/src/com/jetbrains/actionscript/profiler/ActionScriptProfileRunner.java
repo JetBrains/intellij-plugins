@@ -99,7 +99,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<RunnerSettings> 
     }
   }
 
-  private static void startProfiling(final String runConfigurationName,
+  private static void startProfiling(@NotNull String runConfigurationName,
                                      final Module module) {
     if (!initProfilingAgent(module)) {
       return;

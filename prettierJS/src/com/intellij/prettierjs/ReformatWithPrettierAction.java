@@ -7,8 +7,7 @@ import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.hint.HintUtil;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessOutput;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
-import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
+import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
 import com.intellij.javascript.nodejs.npm.NpmManager;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.DialectDetector;
@@ -58,7 +57,10 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 public class ReformatWithPrettierAction extends AnAction implements DumbAware {
@@ -102,9 +104,8 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
     Editor editor = e.getData(CommonDataKeys.EDITOR);
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
-    NodeJsInterpreter interpreter = configuration.getInterpreterRef().resolve(project);
     try {
-      NodeJsLocalInterpreter.castAndValidate(interpreter);
+      NodeInterpreterUtil.getValidInterpreterOrThrow(configuration.getInterpreterRef().resolve(project));
     }
     catch (ExecutionException e1) {
       myErrorHandler.showError(project, editor, PrettierBundle.message("error.invalid.interpreter"),

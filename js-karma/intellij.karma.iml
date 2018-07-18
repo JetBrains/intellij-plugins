@@ -25,5 +25,6 @@
     <orderEntry type="module" module-name="intellij.platform.scriptDebugger.ui" />
     <orderEntry type="module" module-name="intellij.platform.scriptDebugger.backend" />
     <orderEntry type="module" module-name="intellij.javascript.chrome.connector" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
   </component>
 </module>

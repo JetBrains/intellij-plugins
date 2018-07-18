@@ -17,6 +17,7 @@ package org.jetbrains.plugins.ruby.motion;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -119,8 +120,15 @@ public class RubyMotionTypeProvider extends AbstractRubyTypeProvider {
     if (!isSelector) return null;
 
     Symbol classSymbol = symbol.getParentSymbol();
-    while (classSymbol instanceof ClassModuleSymbol) {
-      classSymbol = ((ClassModuleSymbol)classSymbol).getSuperClassSymbol(expression);
+    Ref<Symbol> superClassRef = Ref.create(classSymbol);
+    if (classSymbol instanceof ClassModuleSymbol) {
+      ((ClassModuleSymbol)classSymbol).processSuperClassSymbols(superclass -> {
+        superClassRef.set(superclass);
+        return true;
+      }, expression, true);
+    }
+    if (superClassRef.get() instanceof ClassModuleSymbol) {
+      classSymbol = ((ClassModuleSymbol)superClassRef.get()).getSuperClassSymbol(expression);
     }
     if (classSymbol instanceof MotionClassSymbol) {
       final List<Symbol> candidates = classSymbol.getChildren().getSymbolsByNameAndTypes(rubyName, symbol.getType().asSet(), expression);

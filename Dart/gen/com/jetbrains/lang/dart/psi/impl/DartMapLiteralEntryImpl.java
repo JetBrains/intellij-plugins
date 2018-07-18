@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartMapLiteralEntryImpl extends DartPsiCompositeElementImpl implements DartMapLiteralEntry {
 
-  public DartMapLiteralEntryImpl(ASTNode node) {
+  public DartMapLiteralEntryImpl(@NotNull ASTNode node) {
     super(node);
   }
 

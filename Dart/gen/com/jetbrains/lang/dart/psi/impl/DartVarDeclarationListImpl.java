@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartVarDeclarationListImpl extends DartPsiCompositeElementImpl implements DartVarDeclarationList {
 
-  public DartVarDeclarationListImpl(ASTNode node) {
+  public DartVarDeclarationListImpl(@NotNull ASTNode node) {
     super(node);
   }
 

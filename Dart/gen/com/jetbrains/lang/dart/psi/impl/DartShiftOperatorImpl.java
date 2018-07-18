@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartShiftOperatorImpl extends DartPsiCompositeElementImpl implements DartShiftOperator {
 
-  public DartShiftOperatorImpl(ASTNode node) {
+  public DartShiftOperatorImpl(@NotNull ASTNode node) {
     super(node);
   }
 

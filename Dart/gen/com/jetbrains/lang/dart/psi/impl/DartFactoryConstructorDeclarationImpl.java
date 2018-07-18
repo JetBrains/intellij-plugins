@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartFactoryConstructorDeclarationImpl extends AbstractDartComponentImpl implements DartFactoryConstructorDeclaration {
 
-  public DartFactoryConstructorDeclarationImpl(ASTNode node) {
+  public DartFactoryConstructorDeclarationImpl(@NotNull ASTNode node) {
     super(node);
   }
 

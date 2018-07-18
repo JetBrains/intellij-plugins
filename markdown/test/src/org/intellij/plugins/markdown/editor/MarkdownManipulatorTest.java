@@ -13,11 +13,11 @@
 // limitations under the License.
 package org.intellij.plugins.markdown.editor;
 
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.intellij.plugins.markdown.lang.MarkdownFileType;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownCodeFenceImpl;
@@ -44,7 +44,7 @@ public class MarkdownManipulatorTest extends LightPlatformCodeInsightFixtureTest
 
   public void testSimpleCodeFenceNewLineAfter() {
     doTest("```ruby\n" +
-           "Runtime<caret>\n" +
+           "Runt<caret>ime\n" +
            "```", "Runtime\n",
            "```ruby\n" +
            "Runtime\n" +
@@ -154,7 +154,7 @@ public class MarkdownManipulatorTest extends LightPlatformCodeInsightFixtureTest
     int offset = myFixture.getCaretOffset();
 
     PsiElement element = myFixture.getFile().findElementAt(offset);
-    MarkdownCodeFenceImpl codeFence = PsiTreeUtil.getParentOfType(element, MarkdownCodeFenceImpl.class);
+    MarkdownCodeFenceImpl codeFence = (MarkdownCodeFenceImpl)InjectedLanguageManager.getInstance(getProject()).getInjectionHost(element);
 
     final MarkdownCodeFenceImpl.Manipulator manipulator = new MarkdownCodeFenceImpl.Manipulator();
     MarkdownCodeFenceImpl newCodeFence =

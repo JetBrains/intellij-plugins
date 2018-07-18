@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartLibraryReferenceListImpl extends DartPsiCompositeElementImpl implements DartLibraryReferenceList {
 
-  public DartLibraryReferenceListImpl(ASTNode node) {
+  public DartLibraryReferenceListImpl(@NotNull ASTNode node) {
     super(node);
   }
 

@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartDefaultCaseImpl extends DartPsiCompositeElementImpl implements DartDefaultCase {
 
-  public DartDefaultCaseImpl(ASTNode node) {
+  public DartDefaultCaseImpl(@NotNull ASTNode node) {
     super(node);
   }
 
