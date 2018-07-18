@@ -60,7 +60,6 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     myKarmaPackageField = new NodePackageField(myNodeInterpreterField, KarmaUtil.PKG_DESCRIPTOR, null);
     myWorkingDirComponent = createWorkingDirComponent(project);
     myConfigPathField = createConfigurationFileTextField(project);
-    PathShortener.enablePathShortening(myConfigPathField.getChildComponent().getTextEditor(), null);
     myEnvVarsComponent = new EnvironmentVariablesTextFieldWithBrowseButton();
     myBrowsers = createBrowsersTextField();
     JComponent browsersDescription = createBrowsersDescription();
@@ -86,7 +85,6 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   @NotNull
   private static RawCommandLineEditor createNodeOptionsEditor() {
     RawCommandLineEditor editor = new RawCommandLineEditor();
-    editor.setDialogCaption("Node Options");
     JTextField field = editor.getTextField();
     if (field instanceof ExpandableTextField) {
       field.putClientProperty("monospaced", false);
@@ -210,10 +208,14 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     textFieldWithHistory.setMinimumAndPreferredWidth(0);
     // add a fake empty element as 'Down' key doesn't show popup if the combobox model is empty
     textFieldWithHistory.setHistory(Collections.singletonList(""));
+    PathShortener.enablePathShortening(textFieldWithHistory.getTextEditor(), null);
     SwingHelper.addHistoryOnExpansion(textFieldWithHistory, () -> {
       textFieldWithHistory.setHistory(Collections.emptyList());
       List<VirtualFile> newFiles = KarmaUtil.listPossibleConfigFilesInProject(project);
-      List<String> newFilePaths = ContainerUtil.map(newFiles, file -> FileUtil.toSystemDependentName(file.getPath()));
+      List<String> newFilePaths = ContainerUtil.map(newFiles, file -> {
+        String path = FileUtil.toSystemDependentName(file.getPath());
+        return FileUtil.getLocationRelativeToUserHome(path, false);
+      });
       Collections.sort(newFilePaths);
       return newFilePaths;
     });
