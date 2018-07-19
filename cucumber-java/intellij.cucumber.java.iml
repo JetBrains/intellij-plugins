@@ -29,6 +29,5 @@
     <orderEntry type="library" scope="TEST" name="cucumber-core:2.0.1" level="project" />
     <orderEntry type="library" name="cucumber-java" level="project" />
     <orderEntry type="module" module-name="intellij.cucumber.jvmFormatter3" />
-    <orderEntry type="library" name="io.cucumber:cucumber-core:3.0.2" level="project" />
   </component>
 </module>
