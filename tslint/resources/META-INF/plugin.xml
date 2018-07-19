@@ -28,7 +28,7 @@
                      key="settings.javascript.linters.tslint.configurable.name"
                      groupName="TypeScript"
                      enabledByDefault="false"
-                     level="ERROR"
+                     level="WARNING"
                      implementationClass="com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection"
                      unfair="true"/>
 
