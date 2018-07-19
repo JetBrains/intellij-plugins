@@ -192,7 +192,7 @@ import compUI from 'compUI.vue'
 """)
     myFixture.configureByText("CompleteWithImportCreateExport.vue", """
 <template>
-<To<caret>
+<To<caret>></To>
 </template>
 <script>
 </script>
@@ -204,7 +204,7 @@ import compUI from 'compUI.vue'
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
       myFixture.checkResult("""
 <template>
-<ToImport<caret>
+<ToImport<caret>></ToImport>
 </template>
 <script>
     import ToImport from "./toImport";
