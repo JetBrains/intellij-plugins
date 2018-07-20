@@ -198,16 +198,15 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
                     @NotNull AnnotationHolder holder) {
     if (annotationResult == null) return;
     TsLintConfigurable configurable = new TsLintConfigurable(file.getProject(), true);
-
-
     final Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
     IntentionAction fixAllFileIntention = new TsLintFileFixAction().asIntentionAction();
+
     JSLinterStandardFixes fixes = new JSLinterStandardFixes();
     fixes.setErrorToIntentionConverter(errorBase -> {
       if (errorBase instanceof TsLinterError && ((TsLinterError)errorBase).hasFix()) {
         ArrayList<IntentionAction> result = ContainerUtil.newArrayList();
-        if (document != null && myOnTheFly) {
-          result.add(new TsLintErrorFixAction((TsLinterError)errorBase, document));
+        if (document != null && isOnTheFly()) {
+          result.add(new TsLintErrorFixAction((TsLinterError)errorBase, document.getModificationStamp()));
         }
         result.add(fixAllFileIntention);
         return result;
