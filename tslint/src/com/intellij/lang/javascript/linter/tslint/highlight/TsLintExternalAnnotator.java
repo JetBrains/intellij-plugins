@@ -201,25 +201,18 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
 
     final Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
     IntentionAction fixAllFileIntention = new TsLintFileFixAction().asIntentionAction();
-    JSLinterStandardFixes fixes = new JSLinterStandardFixes() {
-      @Override
-      public List<IntentionAction> createListForError(@Nullable VirtualFile configFile,
-                                                      @NotNull UntypedJSLinterConfigurable configurable,
-                                                      @NotNull JSLinterErrorBase errorBase) {
-        List<IntentionAction> defaultIntentions = super.createListForError(configFile, configurable, errorBase);
-        if (errorBase instanceof TsLinterError && ((TsLinterError)errorBase).hasFix()) {
-          ArrayList<IntentionAction> result = ContainerUtil.newArrayList();
-          if (document != null && myOnTheFly) {
-            result.add(new TsLintErrorFixAction((TsLinterError)errorBase, document));
-          }
-          result.add(fixAllFileIntention);
-          result.addAll(defaultIntentions);
-          return result;
+    JSLinterStandardFixes fixes = new JSLinterStandardFixes();
+    fixes.setErrorToIntentionConverter(errorBase -> {
+      if (errorBase instanceof TsLinterError && ((TsLinterError)errorBase).hasFix()) {
+        ArrayList<IntentionAction> result = ContainerUtil.newArrayList();
+        if (document != null && myOnTheFly) {
+          result.add(new TsLintErrorFixAction((TsLinterError)errorBase, document));
         }
-
-        return defaultIntentions;
+        result.add(fixAllFileIntention);
+        return result;
       }
-    };
+      return ContainerUtil.emptyList();
+    });
 
 
     new JSLinterAnnotationsBuilder<>(file, annotationResult, holder, TsLintInspection.getHighlightDisplayKey(),
