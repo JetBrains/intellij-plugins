@@ -119,7 +119,7 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
 
   public void testFixSingleError() {
     doTest("fixSingleError", "fixSingleError/fix.ts", null);
-    myFixture.launchAction(JSTestUtils.getSingleQuickFix(myFixture, "TSLint: Fix current error"));
+    myFixture.launchAction(JSTestUtils.getSingleQuickFix(myFixture, "TSLint: Fix 'quotemark'"));
     myFixture.checkResultByFile("fixSingleError/fix_after.ts");
   }
 

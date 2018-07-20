@@ -19,6 +19,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -32,8 +33,6 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
 
 
   public TsLintErrorFixAction(@NotNull TsLinterError error, @NotNull Document document) {
-    //noinspection DialogTitleCapitalization
-    setText(getFamilyName());
     myError = error;
     myModificationStamp = document.getModificationStamp();
   }
@@ -41,15 +40,20 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
   @NotNull
   @Override
   public String getText() {
-    //noinspection DialogTitleCapitalization
-    return TsLintBundle.message("tslint.action.fix.problems.current.text");
+    return getText(myError.getCode());
   }
 
   @Nls
   @NotNull
   @Override
   public String getFamilyName() {
-    return getText();
+    return getText(null);
+  }
+
+  @NotNull
+  private static String getText(@Nullable String errorCode) {
+    String errorMessage = StringUtil.isNotEmpty(errorCode) ? "'" + errorCode + "'" : "current error";
+    return TsLintBundle.message("tslint.action.fix.problems.current.text", errorMessage);
   }
 
   @Override
