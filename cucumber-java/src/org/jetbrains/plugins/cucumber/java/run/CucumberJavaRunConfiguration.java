@@ -134,7 +134,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
     result.add(PathUtil.getJarPathForClass(CucumberJvmSMFormatter.class));
     if (VersionComparatorUtil.compare(getCucumberCoreVersion(), "3") >= 0) {
-      result.add(PathUtil.getJarPathForClass(CucumberJvm3SMFormatter.class));
+      result.add(PathUtil.getJarPathForClass(CucumberJvmSMFormatter.class) + "3");
     }
 
     return result.toArray(ArrayUtil.EMPTY_STRING_ARRAY);
