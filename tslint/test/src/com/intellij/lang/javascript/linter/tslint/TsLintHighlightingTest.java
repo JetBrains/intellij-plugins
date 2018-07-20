@@ -111,10 +111,16 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
     }
   }
 
-  public void testFix() {
-    doTest("fix", "fix/fix.ts", null);
+  public void testFixFile() {
+    doTest("fixFile", "fixFile/fix.ts", null);
     myFixture.launchAction(JSTestUtils.getSingleQuickFix(myFixture, "TSLint: Fix current file"));
-    myFixture.checkResultByFile("fix/fix_after.ts");
+    myFixture.checkResultByFile("fixFile/fix_after.ts");
+  }
+
+  public void testFixSingleError() {
+    doTest("fixSingleError", "fixSingleError/fix.ts", null);
+    myFixture.launchAction(JSTestUtils.getSingleQuickFix(myFixture, "TSLint: Fix current error"));
+    myFixture.checkResultByFile("fixSingleError/fix_after.ts");
   }
 
   public void _testAllRulesAreInConfig() throws Exception {
