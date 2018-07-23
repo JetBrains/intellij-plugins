@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLinterInput;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueueImpl;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -97,7 +96,6 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   }
 
   public void testLineSeparatorsWin() {
-    if (!SystemInfo.isWindows) return;
     doTest("lineSeparators", "lineSeparators/data.ts", LineSeparator.CRLF);
   }
 
