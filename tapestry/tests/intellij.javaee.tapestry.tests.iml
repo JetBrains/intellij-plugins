@@ -15,16 +15,7 @@
     <orderEntry type="library" name="CGLIB" level="project" />
     <orderEntry type="module" module-name="intellij.java.testFramework" />
     <orderEntry type="library" scope="TEST" name="TestNG" level="project" />
-    <orderEntry type="module-library" scope="TEST">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../RefactorX/lib/xmlunit-1.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module" module-name="intellij.idea.ultimate.resources" scope="RUNTIME" />
+    <orderEntry type="library" scope="TEST" name="XMLUnit" level="project" />
     <orderEntry type="module" module-name="intellij.database.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.java.langInjection" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.xml.langInjection" scope="RUNTIME" />
@@ -32,5 +23,6 @@
     <orderEntry type="module" module-name="intellij.javaee.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.css.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.i18n" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.resources" scope="RUNTIME" />
   </component>
 </module>
