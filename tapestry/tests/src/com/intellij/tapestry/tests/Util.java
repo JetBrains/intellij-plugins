@@ -56,6 +56,6 @@ public class Util {
   }
 
   static String getCommonTestDataPath() {
-    return PathManager.getHomePath().replace(File.separatorChar, '/') + "/plugins/tapestry/tests/testData/";
+    return PathManager.getHomePath().replace(File.separatorChar, '/') + "/contrib/tapestry/tests/testData/";
   }
 }
