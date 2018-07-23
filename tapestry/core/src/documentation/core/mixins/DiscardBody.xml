@@ -1,0 +1,6 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Discards a component's body. Returns false from the org.apache.tapestry.annotations.BeforeRenderBody phase, which prevents the rendering of the body. Set up as a "MixinAfter" so that
+        components can render their an alternative body if they so desire before this mixin cancels the normal body (from the container's template).
+    </description>
+</element>

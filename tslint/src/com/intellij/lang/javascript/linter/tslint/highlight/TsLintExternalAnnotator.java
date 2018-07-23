@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.DialectDetector;
@@ -20,7 +21,6 @@ import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
-import com.intellij.lang.javascript.service.ResultWithError;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
@@ -118,20 +118,21 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
     TsLintLanguageService service = TsLintLanguageService.getService(collectedInfo.getProject());
 
     final Future<List<TsLinterError>> future = service.highlight(collectedInfo.getVirtualFile(), config, collectedInfo.getFileContent());
-    final ResultWithError<List<TsLinterError>> result = JSLanguageServiceUtil.awaitLanguageService(future, service);
-    if (result.getError() != null) {
-      return JSLinterAnnotationResult.create(collectedInfo, new JSLinterFileLevelAnnotation(result.getError()), config);
+    final List<TsLinterError> result;
+    try {
+      result = JSLanguageServiceUtil.awaitLanguageService(future, service);
     }
+    catch (ExecutionException e) {
+      return JSLinterAnnotationResult.create(collectedInfo, new JSLinterFileLevelAnnotation(e.getMessage()), config);
+    }
+    if (result == null || result.isEmpty()) return null;
 
-    final List<TsLinterError> annotationErrors = result.getResult();
-    if (annotationErrors == null || annotationErrors.isEmpty()) return null;
-
-    final Optional<TsLinterError> globalError = annotationErrors.stream().filter(error -> error.isGlobal()).findFirst();
+    final Optional<TsLinterError> globalError = result.stream().filter(error -> error.isGlobal()).findFirst();
     if (globalError.isPresent() && !StringUtil.isEmptyOrSpaces(globalError.get().getDescription())) {
       return createGlobalErrorMessage(collectedInfo, config, globalError.get().getDescription());
     }
 
-    final List<JSLinterError> filtered = filterResultByFile(collectedInfo, annotationErrors);
+    final List<JSLinterError> filtered = filterResultByFile(collectedInfo, result);
     return JSLinterAnnotationResult.createLinterResult(collectedInfo, filtered, config);
   }
 
@@ -197,29 +198,21 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
                     @NotNull AnnotationHolder holder) {
     if (annotationResult == null) return;
     TsLintConfigurable configurable = new TsLintConfigurable(file.getProject(), true);
-
-
     final Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
     IntentionAction fixAllFileIntention = new TsLintFileFixAction().asIntentionAction();
-    JSLinterStandardFixes fixes = new JSLinterStandardFixes() {
-      @Override
-      public List<IntentionAction> createListForError(@Nullable VirtualFile configFile,
-                                                      @NotNull UntypedJSLinterConfigurable configurable,
-                                                      @NotNull JSLinterErrorBase errorBase) {
-        List<IntentionAction> defaultIntentions = super.createListForError(configFile, configurable, errorBase);
-        if (errorBase instanceof TsLinterError && ((TsLinterError)errorBase).hasFix()) {
-          ArrayList<IntentionAction> result = ContainerUtil.newArrayList();
-          if (document != null && myOnTheFly) {
-            result.add(new TsLintErrorFixAction((TsLinterError)errorBase, document));
-          }
-          result.add(fixAllFileIntention);
-          result.addAll(defaultIntentions);
-          return result;
-        }
 
-        return defaultIntentions;
+    JSLinterStandardFixes fixes = new JSLinterStandardFixes();
+    fixes.setErrorToIntentionConverter(errorBase -> {
+      if (errorBase instanceof TsLinterError && ((TsLinterError)errorBase).hasFix()) {
+        ArrayList<IntentionAction> result = ContainerUtil.newArrayList();
+        if (document != null && isOnTheFly()) {
+          result.add(new TsLintErrorFixAction((TsLinterError)errorBase, document.getModificationStamp()));
+        }
+        result.add(fixAllFileIntention);
+        return result;
       }
-    };
+      return ContainerUtil.emptyList();
+    });
 
 
     new JSLinterAnnotationsBuilder<>(file, annotationResult, holder, TsLintInspection.getHighlightDisplayKey(),

@@ -15,6 +15,7 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.completion.XmlTagInsertHandler
+import com.intellij.codeInsight.editorActions.XmlTagNameSynchronizer
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.lang.ecmascript6.psi.JSClassExpression
@@ -83,7 +84,9 @@ class VueInsertHandler : XmlTagInsertHandler() {
 
     context.commitDocument()
     val isClass = jsImplicitElement.parent is JSClassExpression<*> || jsImplicitElement.parent is ES6Decorator
-    InsertHandlerWorker().insertComponentImport(context.file, item.lookupString, importedFile, context.editor, isClass)
+    XmlTagNameSynchronizer.runWithoutCancellingSyncTagsEditing(context.document) {
+      InsertHandlerWorker().insertComponentImport(context.file, item.lookupString, importedFile, context.editor, isClass)
+    }
   }
 
   class InsertHandlerWorker {

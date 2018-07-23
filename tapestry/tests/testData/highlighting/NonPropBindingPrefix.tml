@@ -1,0 +1,8 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+    ${someProp.length()}
+    ${someProp.length()<error descr="} expected"> </error>- 5}
+    ${message:status-panel.test-link}
+    ${prop:someProp.length()}
+    </body>
+</html>

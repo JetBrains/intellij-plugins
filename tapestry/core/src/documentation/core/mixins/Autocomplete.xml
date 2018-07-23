@@ -1,0 +1,27 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description><![CDATA[
+        A mixin for a text field that allows for autocompletion of text fields. This is based on Prototype's autocompleter control. The mixin renders an (initially invisible) progress indicator after
+        the field (it will also be after the error icon most fields render). The progress indicator is made visible during the request to the server. The mixin then renders a div that will be filled
+        in on the client side with dynamically obtained selections. Multiple selection on the client is enabled by binding the tokens parameter (however, the mixin doesn't help split multiple
+        selections up on the server, that is still your code's responsibility). The container is responsible for providing an event handler for event "providecompletions". The context will be the
+        partial input string sent from the client. The return value should be an array or list of completions, in presentation order.<br/>
+        I.e.
+        <br/>
+        <div class="source"><pre>
+        String[] onProvideCompletionsFromMyField(String input) {
+            return . . .;
+        }</pre></div>]]>
+    </description>
+
+    <parameters>
+        <parameter name="frequency">
+            Overrides the default check frequency for determining whether to send a server request. The default is .4 seconds.
+        </parameter>
+        <parameter name="minChars">
+            Overwrites the default minimum characters to trigger a server round trip (the default is 1).
+        </parameter>
+        <parameter name="tokens">
+            If given, then the autocompleter will support multiple input values, seperated by any of the individual characters in the string.
+        </parameter>
+    </parameters>
+</element>

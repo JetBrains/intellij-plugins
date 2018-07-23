@@ -1,0 +1,12 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+
+    <<error>hr</error> class="dashedLine paddingTopBot10"/>
+
+	<<error>div</error> class="barLinks fLeft width31P">
+		<<info>t:pagelink</info> <info>page</info>="<error>somePage</error>">${message:instance}</<info>t:pagelink</info>>
+	</<error>div</error>>
+
+        <<info>t:pagelink</info> <info>page</info>="<error>somePage</error>">${message:instance}</<info>t:pagelink</info>>
+	<<error>br</error> class="clear" />
+</html>

@@ -1,0 +1,8 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <head>
+        <t:count u:en<caret>d="2">
+        </t:count>
+    </head>
+    <body>
+    </body>
+</html>

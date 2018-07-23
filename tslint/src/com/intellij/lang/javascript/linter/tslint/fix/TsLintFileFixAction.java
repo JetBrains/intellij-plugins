@@ -14,6 +14,7 @@
 package com.intellij.lang.javascript.linter.tslint.fix;
 
 
+import com.intellij.execution.ExecutionException;
 import com.intellij.history.LocalHistory;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil;
@@ -26,7 +27,6 @@ import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLinterError;
 import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
-import com.intellij.lang.javascript.service.ResultWithError;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.fileTypes.FileType;
@@ -74,9 +74,11 @@ public class TsLintFileFixAction extends JSLinterFixAction {
         for (VirtualFile file : filesToProcess) {
           indicator.setText("Processing file " + file.getCanonicalPath());
           final Future<List<TsLinterError>> future = ReadAction.compute(() -> service.highlightAndFix(file, state));
-          final ResultWithError<List<TsLinterError>> result = JSLanguageServiceUtil.awaitLanguageService(future, service);
-          if (result.getError() != null) {
-            JSLinterGuesser.NOTIFICATION_GROUP.createNotification("TSLint: " + result.getError(), MessageType.ERROR).notify(project);
+          try {
+            JSLanguageServiceUtil.awaitLanguageService(future, service);
+          }
+          catch (ExecutionException e) {
+            JSLinterGuesser.NOTIFICATION_GROUP.createNotification("TSLint: " + e.getMessage(), MessageType.ERROR).notify(project);
           }
         }
 

@@ -1,0 +1,125 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Select an item from a list of values, using an [X]HTML select element on the client side. An validation decorations will go around the entire select element. A core part of this component\
+        is the org.apache.tapestry.ValueEncoder (the encoder parameter) that is used to convert between server-side values and client-side strings. In many cases, a org.apache.tapestry.ValueEncoder\
+        can be generated automatically from the type of the value parameter. The org.apache.tapestry.services.ValueEncoderSource service provides an encoder in these situations; it can be overriden\
+        by binding the encoder parameter, or extended by contributing a org.apache.tapestry.services.ValueEncoderFactory into the service's configuration.
+    </description>
+
+    <parameters>
+        <parameter name="clientId">
+            The id used to generate a page-unique client-side identifier for the component. If a component renders multiple times, a suffix will be appended to the to id to ensure uniqueness.\
+            The uniqued value may be accessed via the clientId property.
+        </parameter>
+        <parameter name="disabled">
+            If true, then the field will render out with a disabled attribute (to turn off client-side behavior). Further, a disabled field ignores any value in the request when the form is\
+            submitted.
+        </parameter>
+        <parameter name="encoder">
+            Allows a specific implementation of org.apache.tapestry.ValueEncoder to be supplied. This is used to create client-side string values for the different options.
+        </parameter>
+        <parameter name="label">
+            The user presentable label for the field. If not provided, a reasonable label is generated from the component's id, first by looking for a message key named "id-label"\
+            (substituting the component's actual id), then by converting the actual id to a presentable string (for example, "userId" to "User Id").
+        </parameter>
+        <parameter name="model">
+            The model used to identify the option groups and options to be presented to the user. This can be generated automatically for Enum types.
+        </parameter>
+        <parameter name="validate">
+            Performs input validation on the value supplied by the user in the form submission.
+        </parameter>
+        <parameter name="value">
+            The value to read or update.
+        </parameter>
+    </parameters>
+
+    <examples>
+        <![CDATA[
+<p>
+A simple example, selecting one of three strings:
+</p>
+
+<div class="section">SelectColor.tml (partial)</div>
+
+<div class="source"><pre>
+Select a color:<br/>
+    &lt;t:select t:id="color" model="literal:Red,Blue,Green"/&gt;
+</pre>
+</div>
+
+
+When the model parameter is a string, it is broken apart at the commas.
+
+
+<p>
+    When using this approach, you'll commonly put the list into the message catalog,
+    and reference it using a "message:" binding.
+</p>
+
+
+<div class="title2"><b>Enum Example</b></div>
+
+<p>Working with Enums is, amazingly, even easier (and more so than with the Radio component).</p>
+
+<div class="section">CardType.java</div>
+
+<div class="source"><pre>
+public enum CardType<br/>
+{<br/>
+    MASTER_CARD, VISA, AMERICAN_EXPRESS, DINERS_CLUB, DISCOVER<br/>
+}
+
+</pre>
+</div>
+
+<div class="section">Payment.tml (partial)</div>
+
+<div class="source">
+<pre>
+    &lt;t:select t:id="type"/&gt;
+</pre>
+</div>
+
+
+<p>
+    Here again, Tapestry is binding the value parameter to the type property, based on the component's
+    id.
+    In addition, because the property type of the property in question is an enum, a SelectModel
+    is automatically generated.
+</p>
+
+<div class="section">Payment.java (partial)</div>
+
+<div class="source"><pre>
+
+public class Payment<br/>
+{<br/>
+    . . .<br/>
+<br/>
+    @Persist<br/>
+    private CardType _type;<br/>
+<br/>
+    public CardType getType() { return _type; }<br/>
+<br/>
+    public void setType(CardType type) { _type = type; }<br/>
+<br/>
+    . . .<br/>
+}</pre>
+</div>
+
+<div class="section">Payment.properties</div>
+
+<div class="source">
+    <pre>DINERS_CLUB=Diner's Club</pre>
+</div>
+
+<p>
+    Tapestry is able to make very good guesses about the labels to use in the Select component, it
+    <em>humanizes</em>
+    the enum names to user presentable labels: "Master Card", "Visa", etc.
+    However, it doesn't get "Diner's Club" just right, so we provide an override in the page's
+    message catalog.
+</p>
+	]]>
+    </examples>
+</element>

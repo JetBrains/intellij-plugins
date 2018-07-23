@@ -1,0 +1,23 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        A Zone is portion of the output page designed for easy dynamic updating via Ajax or other client-side effects. A Zone renders out as a div element and may have content initially, or may\
+        only get its content as a result of client side activity. Often, Zone's are initially invisible, in which case the visible parameter may be set to false (it defaults to false). When a user\
+        clicks an org.apache.tapestry.corelib.components.ActionLink whose zone parameter is set, the corresponding client-side Tapestry.Zone object is located. It will update the content of the\
+        Zone's div and then invoke either a show method (if the div is not visible) or an update method (if the div is visible). The show and update parameters are the names of functions attached to\
+        the Tapestry.ZoneEffects object. Renders informal parameters, adding CSS class "t-zone" and possibly, "t-invisible".
+    </description>
+
+    <parameters>
+        <parameter name="show">
+            Name of a function on the client-side Tapestry.ZoneEffects object that is invoked to make the Zone's div visible before being updated. If not specified, then the basic "show" method is\
+            used.
+        </parameter>
+        <parameter name="update">
+            Name of a function on the client-side Tapestry.ZoneEffects object that is invoked after the Zone's content has been updated. If not specified, then the basic "highlight" method is\
+            used, which performs a classic "yellow fade" to indicate to the user that and update has taken place.
+        </parameter>
+        <parameter name="visible">
+            If true (the default) then the zone will render normally. If false, then the "t-invisible" CSS class is added, which will make the zone initially invisible.
+        </parameter>
+    </parameters>
+</element>

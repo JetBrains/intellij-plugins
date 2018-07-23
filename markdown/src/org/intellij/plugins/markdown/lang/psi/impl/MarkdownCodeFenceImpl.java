@@ -147,11 +147,11 @@ public class MarkdownCodeFenceImpl extends CompositePsiElement implements PsiLan
     public MarkdownCodeFenceImpl handleContentChange(@NotNull MarkdownCodeFenceImpl element, @NotNull TextRange range, String newContent)
       throws IncorrectOperationException {
       if (newContent == null) {
-        throw new IncorrectOperationException("No new content");
+        return null;
       }
 
       if (newContent.contains("```") || newContent.contains("~~~")) {
-        throw new IncorrectOperationException("New content cannot contains ``` or ~~~");
+        return null;
       }
 
       String indent = calculateIndent(element);

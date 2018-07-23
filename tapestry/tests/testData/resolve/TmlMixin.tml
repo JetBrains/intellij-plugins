@@ -1,0 +1,4 @@
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+  <t:count t:mixins="foomixin" ba<caret>r="239">
+  </t:count>
+</t:container>

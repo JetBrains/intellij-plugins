@@ -1,0 +1,11 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
+      xmlns:p="tapestry:parameter">
+    <head>
+        <t:count>
+          <p:st<caret>art>
+          </p:start>
+        </t:count>
+    </head>
+    <body>
+    </body>
+</html>

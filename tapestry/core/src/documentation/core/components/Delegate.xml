@@ -1,0 +1,117 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        A component that does not do any rendering of its own, but will delegate to some other object that can do rendering. This other object may be a component or a org.apache.tapestry.Block\
+        (among other things).
+    </description>
+
+    <parameters>
+        <parameter name="to">
+            The object which will be rendered in place of the Delegate component. This is typically a specific component instance, or a org.apache.tapestry.Block.
+        </parameter>
+    </parameters>
+
+    <examples>
+        <![CDATA[
+<p>
+    The Delegate component allows us to be very flexible in how and what gets rendered, and
+    in what order. In some cases, the object to be rendered may come from an entirely
+    different page.
+</p>
+
+<p>
+    This example is simpler, and could easily be accomplished using an If component. We'll create
+    a page that can be used for viewing or editting an object.
+</p>
+
+<div class="section">ViewAccount.tml</div>
+
+<div class="source"><pre>
+&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
+    &lt;body&gt;<br/>
+        &lt;h1&gt;View Account&lt;/h1&gt;<br/>
+<br/>
+        &lt;t:delegate to="activeBlock"/&gt;<br/>
+<br/>
+        &lt;t:block id="view"&gt;<br/>
+            &lt;t:beandisplay object="account"/&gt;<br/>
+<br/>
+            &lt;p&gt;&lt;t:actionlink t:id="edit"&gt;Edit this account&lt;/t:actionlink&gt;&lt;/p&gt;<br/>
+        &lt;/t:block&gt;<br/>
+<br/>
+        &lt;t:block id="edit"&gt;<br/>
+            &lt;t:beaneditform t:id="account"/&gt;<br/>
+        &lt;/t:block&gt;<br/>
+    &lt;/body&gt;<br/>
+&lt;/html&gt;</pre>
+</div>
+
+<p>
+    So we end up with a display of the Account's properties, and a link to activate edit mode.
+    In edit mode, we use the other block and show a BeanEditForm.
+</p>
+
+<div class="section">ViewAccount.java</div>
+
+<div class="source"><pre>
+public class ViewAccount<br/>
+{<br/>
+    @Persist<br/>
+    private Account _account;<br/>
+<br/>
+    @Persist<br/>
+    private boolean _editMode;<br/>
+<br/>
+    @Inject<br/>
+    private Block _view;<br/>
+<br/>
+    @Inject<br/>
+    private Block _edit;<br/>
+<br/>
+    @Inject<br/>
+    private AccountDAO _accountDAO;<br/>
+<br/>
+    public Account getAccount()<br/>
+    {<br/>
+        return _account;<br/>
+    }<br/>
+<br/>
+    public void setAccount(Account account)<br/>
+    {<br/>
+        _account = account;<br/>
+        _editMode = false;<br/>
+    }<br/>
+<br/>
+    void onSuccess()<br/>
+    {<br/>
+         _accountDAO.update(_account);<br/>
+<br/>
+        _editMode = false;<br/>
+    }<br/>
+<br/>
+    void onActionFromEdit()<br/>
+    {<br/>
+        _editMode = true;<br/>
+    }<br/>
+<br/>
+    public Object getActiveBlock()<br/>
+    {<br/>
+        return _editMode ? _edit : _view;<br/>
+    }<br/>
+}</pre>
+</div>
+
+<p>
+    The use of the @Inject annotation on a field of type Block is used to access a
+    <code>&lt;t:block&gt;</code>
+
+    element from the template. The field name,
+    stripped of leading underscores, is matched against the block's id.
+</p>
+
+<p>
+    The rest is concerned with handling the form submission, turning on edit mode,
+    and determining which block will be the one to render.
+</p>
+	]]>
+    </examples>
+</element>

@@ -1,0 +1,22 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <parameters>
+        <parameter name="disabled">
+            If true, then the field will render out with a disabled attribute (to turn off client-side behavior). Further, a disabled field ignores any value in the request when the form is\
+            submitted.
+        </parameter>
+        <parameter name="encoder">
+            Allows a specific implementation of org.apache.tapestry.ValueEncoder to be supplied. This is used to create client-side string values for the different radio button values.
+        </parameter>
+        <parameter name="value">
+            The property read and updated by the group as a whole.
+        </parameter>
+    </parameters>
+
+    <examples>
+        <![CDATA[
+<p>
+    Examples are provided with the documentation of the Radio component.
+</p>
+	]]>
+    </examples>
+</element>

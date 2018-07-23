@@ -1,0 +1,20 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Generates a series of links used to jump to a particular page index within the overall data set.
+    </description>
+
+    <parameters>
+        <parameter name="currentPage">
+            The current page number (indexed from 1).
+        </parameter>
+        <parameter name="range">
+            Number of pages before and after the current page in the range. The pager always displays links for 2 * range + 1 pages, unless that's more than the total number of available pages.
+        </parameter>
+        <parameter name="rowsPerPage">
+            The number of rows displayed per page.
+        </parameter>
+        <parameter name="source">
+            The source of the data displayed by the grid (this is used to determine how many rows are available, which in turn determines the page count).
+        </parameter>
+    </parameters>
+</element>
