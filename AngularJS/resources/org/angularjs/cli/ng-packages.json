@@ -17,6 +17,7 @@
     "@ngrx/effects": "Side effect model for @ngrx/store",
     "@ngrx/store": "RxJS powered Redux for Angular apps",
     "@ngx-formly/schematics": "ngx-formly is an Angular 2 module which has a Components to help customize and render JavaScript/JSON configured forms. The formly-form Component and the FormlyConfig service are very powerful and bring unmatched maintainability to your application\u0027s form",
+    "@ngx-kit/core": "Toolkit and collection of Schematics for generating UI components",
     "@nrwl/schematics": "Nrwl Extensions for Angular: Schematics",
     "@progress/kendo-angular-conversational-ui": "Kendo UI for Angular Conversational UI components",
     "@progress/kendo-angular-excel-export": "Kendo UI for Angular Excel Export component",
