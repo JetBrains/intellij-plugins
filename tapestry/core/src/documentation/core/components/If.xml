@@ -1,0 +1,70 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Conditionally renders its body.
+    </description>
+
+    <parameters>
+        <parameter name="else">
+            An alternate org.apache.tapestry.Block to render if the test parameter is false. The default, null, means render nothing in that situation.
+        </parameter>
+        <parameter name="negate">
+            Optional parameter to invert the test. If true, then the body is rendered when the test parameter is false (not true).
+        </parameter>
+        <parameter name="test">
+            If true, then the body of the If component is rendered. If false, the body is omitted.
+        </parameter>
+    </parameters>
+
+    <examples>
+        <![CDATA[
+<div class="section">Start.tml</div>
+
+<div class="source"><pre>
+&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
+<br/>
+    &lt;body&gt;<br/>
+        &lt;h1&gt;Welcome!&lt;/h1&gt;<br/>
+<br/>
+        &lt;t:if test="user"&gt;<br/>
+            Welcome back, ${user.firstName}<br/>
+            &lt;t:parameter name="else"&gt;<br/>
+                &lt;t:pagelink name="login"&gt;Login&lt;/t:pagelink&gt;<br/>
+                &lt;t:pagelink name="register"&gt;Register&lt;/t:pagelink&gt;<br/>
+<br/>
+            &lt;/t:parameter&gt;<br/>
+        &lt;/t:if&gt;<br/>
+<br/>
+        . . .<br/>
+<br/>
+&lt;/html&gt;</pre>
+</div>
+
+<p>
+    Here, the main text is rendered if the user is logged in (the user property will
+    be non-null after the user logs in). Otherwise, links to a login and register
+    page are rendered.
+</p>
+	]]>
+    </examples>
+
+    <notes>
+        <![CDATA[
+<p>
+    Tapestry has many builtin coercions to boolean:
+</p>
+
+<dl>
+    <dt>String</dt>
+    <dd>True if non-blank</dd>
+
+    <dt>Number</dt>
+    <dd>True if non-zero</dd>
+    <dt>Collection</dt>
+
+    <dd>True if non-empty</dd>
+    <dt>Object</dt>
+    <dd>True (as long as its not null)</dd>
+</dl>
+	]]>
+    </notes>
+</element>

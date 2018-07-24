@@ -1,0 +1,92 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Corresponds to input type="submit", a client-side element that can force the enclosing form to submit. The submit responsible for the form submission will post a notification that allows\
+        the application to know that it was the responsible entity. The notification is named "selected" and has no context.
+    </description>
+
+    <parameters>
+        <parameter name="clientId">
+            The id used to generate a page-unique client-side identifier for the component. If a component renders multiple times, a suffix will be appended to the to id to ensure uniqueness.\
+            The uniqued value may be accessed via the clientId property.
+        </parameter>
+        <parameter name="defer">
+            If true (the default), then any notification sent by the component will be deferred until the end of the form submission (this is usually desirable).
+        </parameter>
+        <parameter name="disabled">
+            If true, then the field will render out with a disabled attribute (to turn off client-side behavior). Further, a disabled field ignores any value in the request when the form is\
+            submitted.
+        </parameter>
+        <parameter name="label">
+            The user presentable label for the field. If not provided, a reasonable label is generated from the component's id, first by looking for a message key named "id-label"\
+            (substituting the component's actual id), then by converting the actual id to a presentable string (for example, "userId" to "User Id").
+        </parameter>
+    </parameters>
+
+    <examples>
+        <![CDATA[
+<p>
+The thing to remember is that the Submit component will trigger its "selected" event in the
+<i>middle</i>
+of the form submission, before the form triggers its "validate", "success" (or "failure") and "submit"
+events.
+Thus the best thing to do is to store in a temporary field what should be done inside the "success"
+event handler.
+</p>
+
+<div class="section">EditUser.tml</div>
+
+<div class="source"><pre>
+&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
+    &lt;body&gt;<br/>
+<br/>
+        &lt;h1&gt;Edit User&lt;/h1&gt;<br/>
+<br/>
+        &lt;t:form&gt;<br/>
+<br/>
+            &lt;t:errors/&gt;<br/>
+<br/>
+            &lt;t:beaneditor t:id="user"/&gt;<br/>
+<br/>
+            &lt;p&gt;<br/>
+                &lt;input type="submit" value="Update User"/&gt;<br/>
+                &lt;t:submit t:id="delete" value="Delete User"/&gt;<br/>
+            &lt;/p&gt;<br/>
+<br/>
+        &lt;/t:form&gt;<br/>
+<br/>
+&lt;/html&gt;</pre>
+</div>
+
+<div class="section">EditUser.java</div>
+
+<div class="source"><pre>
+public class EditUser<br/>
+{<br/>
+    @Inject<br/>
+    private UserDAO _userDAO;<br/>
+<br/>
+    @Persist<br/>
+    private User _user;<br/>
+<br/>
+    private boolean _deleteUser;<br/>
+<br/>
+    void onSelectedFromDelete() { _deleteUser = true; }<br/>
+<br/>
+    Object onSuccess()<br/>
+    {<br/>
+        if (_deleteUser)<br/>
+            _userDAO.delete(user.getId());<br/>
+        else<br/>
+            _userDAO.update(user);<br/>
+<br/>
+        return UserList.class;<br/>
+    }<br/>
+<br/>
+    public void setUser(User user) { _user = user; }<br/>
+<br/>
+    public User getUser() { return _user; }<br/>
+}</pre>
+</div>
+	]]>
+    </examples>
+</element>

@@ -1,0 +1,6 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        A page that exists to contain blocks used to edit different types of properties. The blocks on this page are contributed into the org.apache.tapestry.services.BeanBlockSource service
+        configuration.
+    </description>
+</element>

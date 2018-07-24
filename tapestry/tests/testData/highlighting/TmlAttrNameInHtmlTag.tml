@@ -1,0 +1,7 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+	    <<info>a</info> <info>t:type</info>="pagelink" <info>t:page</info>="<error>eee</error>" <error>t:notattr</error>="prop:<inject>value</inject>">xxxx</<info>a</info>>
+      <<info>a</info> <info>t:type</info>="pagelink">xxxx</<info>a</info>>
+      <<info>t:block</info> <info>id</info>="foo"/>
+    </body>
+</html>

@@ -35,12 +35,13 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
     private const val SCOPED_ATTR: String = "scoped"
     private const val SRC_ATTR = "src"
     private const val MODULE_ATTR: String = "module"
+    private const val FUNCTIONAL_ATTR: String = "functional"
 
     // "v-on" is not included because it can't be used as is, it must be followed by a colon and an event, this is supported separately
     val DEFAULT: Set<String> = setOf("v-text", "v-html", "v-show", "v-if", "v-else", "v-else-if", "v-for",
                                      "v-bind", "v-model", "v-pre", "v-cloak", "v-once",
                                      "slot", "ref")
-    val HAVE_NO_PARAMS: Set<String> = setOf("v-else", "v-once", "v-pre", "v-cloak", SCOPED_ATTR, MODULE_ATTR)
+    val HAVE_NO_PARAMS: Set<String> = setOf("v-else", "v-once", "v-pre", "v-cloak", SCOPED_ATTR, MODULE_ATTR, FUNCTIONAL_ATTR)
 
     fun isInjectJS(attrName: String): Boolean {
       if (attrName == "slot" || attrName == "ref") return false
@@ -66,7 +67,10 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
     val result = mutableListOf<XmlAttributeDescriptor>()
     result.addAll(getDefaultVueAttributes())
 
-    if (insideStyle(context)) {
+    if (isTopLevelTemplateTag(context)) {
+      result.add(VueAttributeDescriptor(FUNCTIONAL_ATTR))
+    }
+    if (isTopLevelStyleTag(context)) {
       result.add(VueAttributeDescriptor(SCOPED_ATTR))
       result.add(VueAttributeDescriptor(SRC_ATTR))
       result.add(VueAttributeDescriptor(MODULE_ATTR))
@@ -82,7 +86,8 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
 
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
     if (context == null || !org.jetbrains.vuejs.index.hasVue(context.project) || attributeName == null) return null
-    if (attributeName in arrayOf(SCOPED_ATTR, SRC_ATTR, MODULE_ATTR) && insideStyle(context)) {
+    if (isTopLevelTemplateTag(context) && attributeName == FUNCTIONAL_ATTR ||
+        isTopLevelStyleTag(context) && attributeName in arrayOf(SCOPED_ATTR, SRC_ATTR, MODULE_ATTR)) {
       return VueAttributeDescriptor(attributeName)
     }
     val fromDirective = VueDirectivesProvider.resolveAttribute(findLocalDescriptor(context), attributeName, context.project)
@@ -94,7 +99,13 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
     return vueAttributeDescriptor(attributeName)
   }
 
-  private fun insideStyle(context: XmlTag) = "style" == context.name && context.containingFile?.language == VueLanguage.INSTANCE
+  private fun isTopLevelStyleTag(tag: XmlTag): Boolean = tag.parentTag == null &&
+                                                         tag.name == "style" &&
+                                                         tag.containingFile?.language == VueLanguage.INSTANCE
+
+  private fun isTopLevelTemplateTag(tag: XmlTag): Boolean = tag.parentTag == null &&
+                                                            tag.name == "template" &&
+                                                            tag.containingFile?.language == VueLanguage.INSTANCE
 }
 
 class VueAttributeDescriptor(private val name:String,

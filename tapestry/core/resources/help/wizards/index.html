@@ -1,0 +1,419 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+    <LINK REL="stylesheet" HREF="../style.css" TYPE="text/css">
+    <title>Loomy: Wizards</title>
+</head>
+<body style="font-family: Verdana; font-size: 13" bgColor="#ffffff" LEFTMARGIN=0 RIGHTMARGIN=0 MARGINWIDTH=0
+      MARGINHEIGHT=0 TOPMARGIN=0 link="#336666" vlink="#669999" alink="#669999">
+
+<table cellspacing="0" width="65%" height="30" cellPadding=0 border="0">
+    <tr>
+        <td width="70%" valign="center" bgcolor="#669999" background="../images/secondary/headerBg.gif">
+            <font class="mainheader">&nbsp;&nbsp;Wizards</font>
+        </td>
+        <td width="30%" valign="center" height="25" align="right" background="../images/secondary/headerBg.gif">
+            <img src="../images/secondary/headerSec.gif">
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><img src="../images/secondary/transparency.gif" width="800" height="1" border="0">
+        </td>
+    </tr>
+</table>
+<table cellpadding="15" width="750" border="0">
+<tr>
+<td>
+<br>
+This plugin provides additional wizards to help you deal with the most common tasks.
+<br><br>
+This section covers the following wizards:
+
+<ul>
+    <li><a class="context" href="#module">Tapestry Module Creation</a></li>
+    <li><a class="context" href="#component">New Component</a></li>
+    <li><a class="context" href="#page">New Page</a></li>
+    <li><a class="context" href="#mixin">New Mixin</a></li>
+</ul>
+
+<table width="100%" cellPadding="8">
+    <tr>
+        <td bgcolor="#669999">
+            <a name="module"><font class="tableheader">Tapestry Module Creation</font></a>
+        </td>
+    </tr>
+</table>
+<br>
+This plugin allows you to get a Tapestry project up and running quickly by providing special support for
+Tapestry in the
+new module wizard.<br><br>
+The generated web module will be a <font class="detailedtext">ready-to-run</font> Tapestry web application
+with a sample Home page.<br><br>
+
+<br>
+The general flow of the module creation process is similar to the described in the
+<font class="detailedtext">Creating Modules</font> section.
+This subsection describes only features specific for the <font class="detailedtext">Tapestry Web
+    Module</font> creation.
+<br><br>
+At <font class="detailedtext">Step 1</font> select the
+<font class="detailedtext">Web Module</font> item in the module list.
+
+<br><br><img border="1" src="../images/wizards/newModule/webModule.png"><br><br>
+
+Steps <font class="detailedtext">2 to 6</font> are the same as in the normal web module creation.<br><br>
+
+<font class="detailedtext">Step 7</font> is different. Here you need to specify that you want this web
+module to
+have <font class="detailedtext">Tapestry</font> support.
+
+<br><br><img border="1" src="../images/wizards/newModule/addSupport.png"><br><br>
+
+Every step from here on is specific to Tapestry.<br>
+
+In <font class="detailedtext">Step 8</font> you need to specify Tapestry related information:
+
+<br><br><img border="1" src="../images/wizards/newModule/configuration.png"><br><br>
+
+<ul>
+    <li>
+        <font class="detailedtext">Update web.xml</font>
+        <br>Check to update the main deployment descriptor(<i>web.xml</i>) with <font class="detailedtext">Tapestry</font> specific
+        configurations.
+    </li>
+    <li>
+        <font class="detailedtext">Create Ioc module builder class</font>
+        <br>Check to generate a new module builder class.
+    </li>
+    <li>
+        <font class="detailedtext">Create Ioc module builder class</font>
+        <br>Check to generate a new module builder class.
+    </li>
+    <li>
+        <font class="detailedtext">Create application packages</font>
+        <br>Check to create the base packages for a <font class="detailedtext">Tapestry</font> application.
+    </li>
+    <li>
+        <font class="detailedtext">Root package</font>
+        <br>The application root package.
+    </li>
+    <li>
+        <font class="detailedtext">Filter name</font>
+        <br>The name of the filter that will be configured in your <i>web.xml</i>.
+    </li>
+    <li>
+        <font class="detailedtext">Tapestry version</font>
+        <br>The <font class="detailedtext">Tapestry</font> version to use.
+    </li>
+    <li>
+        <font class="detailedtext">Create Support for Maven</font>
+        <br>Check to generate a <i>pom.xml</i> file with basic project configuration.
+    </li>
+</ul>
+
+This step is specific to Maven.<br>
+
+In <font class="detailedtext">Step 9</font> you need to specify Maven related information:
+
+<br><br><img border="1" src="../images/wizards/newModule/mavenConfiguration.png"><br><br>
+
+<ul>
+    <li>
+        <font class="detailedtext">Group ID</font>
+        <br>The group that this Maven project belongs to.
+    </li>
+    <li>
+        <font class="detailedtext">Artifact ID</font>
+        <br>The artifact ID of this Maven project.
+    </li>
+    <li>
+        <font class="detailedtext">Version</font>
+        <br>The version of this Maven project(optional).
+    </li>
+    <li>
+        <font class="detailedtext">Create Parent Pom</font>
+        <br>Check to generate a parent pom section in your <i>pom.xml</i>.
+    </li>
+    <li>
+        <font class="detailedtext">Parent Group ID</font>
+        <br>The parent pom group ID.
+    </li>
+    <li>
+        <font class="detailedtext">Parent Artifact ID</font>
+        <br>The parent pom artifact ID.
+    </li>
+    <li>
+        <font class="detailedtext">Version</font>
+        <br>The parent pom version.
+    </li>
+    <li>
+        <font class="detailedtext">Add Remote Repository</font>
+        <br>Check to generate a remote repositories sections in your <i>pom.xml</i> file.
+    </li>
+</ul>
+
+In <font class="detailedtext">Step 10</font> you can configure the <font
+        class="detailedtext">Tapestry</font> libraries.
+
+<br><br><img border="1" src="../images/wizards/newModule/libraries.png"><br><br>
+
+Here you can add the <font class="detailedtext">Tapestry</font> dependencies in three ways:
+<ul>
+    <li>
+        <font class="detailedtext">Use existing library</font>
+        <br>If you have a configured library with the <font class="detailedtext">Tapestry</font> jars you can select
+        it to be used in this new module.
+    </li>
+    <li>
+        <font class="detailedtext">Download jars</font>
+        <br>If you don't have any library created then you can let the plugin download the jars from a remote
+        location and create the library for you.
+    </li>
+    <li>
+        <font class="detailedtext">Add jars</font>
+        <br>If you already have the jars in you computer you can add select them and a new library will be created.
+    </li>
+</ul>
+<br>
+<table width="100%" cellPadding="8">
+    <tr>
+        <td bgcolor="#669999">
+            <a name="component"><font class="tableheader">New Component</font></a>
+        </td>
+    </tr>
+</table>
+<br>
+This wizard allows you to create a new component(class and template) in your Tapestry project.
+<br><br>
+<font class="orangeb">1.&nbsp;</font>Select the destination component package.<br><br>
+<font class="orangeb">2.&nbsp;</font>Right-click the node, point to <font class="detailedtext">New</font>
+and click <font class="detailedtext">Tapestry Component</font>.<br><br>
+<img border="1" src="../images/actions/newComponent.png"><br><br>
+<font class="orangeb">3.&nbsp;</font>Enter the required information about the component.<br><br>
+<img border="1" src="../images/actions/formNewTapestryComponent.png"><br><br>
+<ul>
+    <li>
+        <font class="detailedtext">Name</font>
+        <br>The component name. Can include "/" as path separators.
+    </li>
+    <li>
+        <font class="detailedtext">Class source directory</font>
+        <br>The java source root to add the component class to.
+    </li>
+    <li>
+        <font class="detailedtext">Class template directory</font>
+        <br>The web context root to add the component template to.
+    </li>
+    <li>
+        <font class="detailedtext">Replace existing files</font>
+        <br>Check if you want to replace existing files with the ones that are create by this wizard.
+    </li>
+    <li>
+        <font class="detailedtext">Do not create template</font>
+        <br>Allows the user to create a new element without a template.
+    </li>
+</ul>
+<hr>
+<table cellpadding="5" border="0" width="100%">
+    <tr>
+        <td valign="top" width="5%">
+            <img src="../images/secondary/bell2.gif" border="0">
+        </td>
+        <td valign="center" width="95%">
+            <font class="note">
+                For the wizard to be enabled you have to right-click in a package under the "components"
+                package in your configured application root.
+            </font>
+        </td>
+    </tr>
+</table>
+<hr>
+<table cellpadding="5" border="0" width="100%">
+    <tr>
+        <td valign="top" width="5%">
+            <img src="../images/secondary/lamp.gif" border="0">
+        </td>
+        <td valign="center" width="95%">
+            <font class="note">
+                You can change the generated class and template by editing the corresponding <a
+                    href="../templates/FileTemplates.html">file templates</a>.
+            </font>
+        </td>
+    </tr>
+</table>
+<hr>
+<table cellpadding="5" border="0" width="100%">
+    <tr>
+        <td valign="top" width="5%">
+            <img src="../images/secondary/lamp.gif" border="0">
+        </td>
+        <td valign="center" width="95%">
+            <font class="note">
+                The wizard will remember you last selection for the class and template directory so you
+                won't have to select it every time you use this wizard.
+            </font>
+        </td>
+    </tr>
+</table>
+<hr>
+<br>
+<table width="100%" cellPadding="8">
+    <tr>
+        <td bgcolor="#669999">
+            <a name="page"><font class="tableheader">New Page</font></a>
+        </td>
+    </tr>
+</table>
+<br>
+This wizard allows you to create a new page(class and template) in your Tapestry project.
+<br><br>
+<font class="orangeb">1.&nbsp;</font>Select the destination page package or web context folder.<br><br>
+<font class="orangeb">2.&nbsp;</font>Right-click the node, point to <font class="detailedtext">New</font>
+and click <font class="detailedtext">Tapestry Page</font>.<br><br>
+<img border="1" src="../images/actions/newPage.png"><br><br>
+<font class="orangeb">3.&nbsp;</font>Enter the required information about the page.<br><br>
+<img border="1" src="../images/actions/formNewTapestryPage.png"><br><br>
+<ul>
+    <li>
+        <font class="detailedtext">Name</font>
+        <br>The page name. Can include "/" as path separators.
+    </li>
+    <li>
+        <font class="detailedtext">Class source directory</font>
+        <br>The java source root to add the page class to.
+    </li>
+    <li>
+        <font class="detailedtext">Class template directory</font>
+        <br>The web context root to add the page template to.
+    </li>
+    <li>
+        <font class="detailedtext">Replace existing files</font>
+        <br>Check if you want to replace existing files with the ones that are create by this wizard.
+    </li>
+    <li>
+        <font class="detailedtext">Do not create template</font>
+        <br>Allows the user to create a new element without a template.
+    </li>
+</ul>
+<hr>
+<table cellpadding="5" border="0" width="100%">
+    <tr>
+        <td valign="top" width="5%">
+            <img src="../images/secondary/bell2.gif" border="0">
+        </td>
+        <td valign="center" width="95%">
+            <font class="note">
+                For the wizard to be enabled you have to right-click in a package under the "pages"
+                package in your configured application root or under any web context folder.
+            </font>
+        </td>
+    </tr>
+</table>
+<hr>
+<table cellpadding="5" border="0" width="100%">
+    <tr>
+        <td valign="top" width="5%">
+            <img src="../images/secondary/lamp.gif" border="0">
+        </td>
+        <td valign="center" width="95%">
+            <font class="note">
+                You can change the generated class and template by editing the corresponding <a
+                    href="../templates/FileTemplates.html">file templates</a>.
+            </font>
+        </td>
+    </tr>
+</table>
+<hr>
+<table cellpadding="5" border="0" width="100%">
+    <tr>
+        <td valign="top" width="5%">
+            <img src="../images/secondary/lamp.gif" border="0">
+        </td>
+        <td valign="center" width="95%">
+            <font class="note">
+                The wizard will remember you last selection for the class and template directory so you
+                won't have to select it every time you use this wizard.
+            </font>
+        </td>
+    </tr>
+</table>
+<hr>
+<br>
+<table width="100%" cellPadding="8">
+    <tr>
+        <td bgcolor="#669999">
+            <a name="mixin"><font class="tableheader">New Mixin</font></a>
+        </td>
+    </tr>
+</table>
+<br>
+This wizard allows you to create a new mixin in your Tapestry project.
+<br><br>
+<font class="orangeb">1.&nbsp;</font>Select the destination mixin package.<br><br>
+<font class="orangeb">2.&nbsp;</font>Right-click the node, point to <font class="detailedtext">New</font>
+and click <font class="detailedtext">Tapestry Mixin</font>.<br><br>
+<img border="1" src="../images/actions/newMixin.png"><br><br>
+<font class="orangeb">3.&nbsp;</font>Enter the required information about the mixin.<br><br>
+<img border="1" src="../images/actions/formNewTapestryMixin.png"><br><br>
+<ul>
+    <li>
+        <font class="detailedtext">Name</font>
+        <br>The mixin name. Can include "/" as path separators.
+    </li>
+    <li>
+        <font class="detailedtext">Class source directory</font>
+        <br>The java source root to add the mixin class to.
+    </li>
+    <li>
+        <font class="detailedtext">Replace existing files</font>
+        <br>Check if you want to replace existing files with the ones that are create by this wizard.
+    </li>
+</ul>
+<hr>
+<table cellpadding="5" border="0" width="100%">
+    <tr>
+        <td valign="top" width="5%">
+            <img src="../images/secondary/bell2.gif" border="0">
+        </td>
+        <td valign="center" width="95%">
+            <font class="note">
+                For the wizard to be enabled you have to right-click in a package under the "mixins"
+                package in your configured application root.
+            </font>
+        </td>
+    </tr>
+</table>
+<hr>
+<table cellpadding="5" border="0" width="100%">
+    <tr>
+        <td valign="top" width="5%">
+            <img src="../images/secondary/lamp.gif" border="0">
+        </td>
+        <td valign="center" width="95%">
+            <font class="note">
+                You can change the generated class by editing the corresponding <a
+                    href="../templates/FileTemplates.html">file templates</a>.
+            </font>
+        </td>
+    </tr>
+</table>
+<hr>
+<table cellpadding="5" border="0" width="100%">
+    <tr>
+        <td valign="top" width="5%">
+            <img src="../images/secondary/lamp.gif" border="0">
+        </td>
+        <td valign="center" width="95%">
+            <font class="note">
+                The wizard will remember you last selection for the class directory so you
+                won't have to select it every time you use this wizard.
+            </font>
+        </td>
+    </tr>
+</table>
+<hr>
+</td>
+</tr>
+</table>
+</body>
+</html>

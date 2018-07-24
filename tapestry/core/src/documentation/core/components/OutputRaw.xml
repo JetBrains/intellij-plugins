@@ -1,0 +1,12 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Used to output raw markup to the client. Unlike, say, an expansion, the output from OutputRaw is unfiltered, with any special characters or entities left exactly as is. This is used in\
+        situations where the markup is provided externally, rather than constructed within Tapestry.
+    </description>
+
+    <parameters>
+        <parameter name="value">
+            The value to to render. If unbound, and a property of the container matches the component's id, then that property will be the source of the value.
+        </parameter>
+    </parameters>
+</element>

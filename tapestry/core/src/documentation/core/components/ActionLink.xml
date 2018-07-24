@@ -1,0 +1,160 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Component that triggers an action on the server with a subsequent full page refresh.
+    </description>
+
+    <parameters>
+        <parameter name="context">
+            The context for the link (optional parameter). This list of values will be converted into strings and included in the URI. The strings will be coerced back to whatever their values \
+            are and made available to event handler methods.
+        </parameter>
+        <parameter name="disabled">
+            If true, then then no link element is rendered (and no informal parameters as well). The body is, however, still rendered.
+        </parameter>
+        <parameter name="zone">
+            Binding the zone parameter turns the link into a an Ajax control that causes the related zone to be updated.
+        </parameter>
+        <parameter name="anchor">
+            An anchor value to append to the generated URL (the hash separator will be added automatically).
+        </parameter>
+    </parameters>
+
+    <examples>
+        <![CDATA[
+<p>
+In this example, we are showing part of a page to view and Account object, with an option to
+delete the Account.
+</p>
+
+<div class="section">Account.java</div>
+
+<div class="source"><pre>
+public class Account<br/>
+{<br/>
+    private long _id;<br/>
+<br/>
+    private String _userName;<br/>
+<br/>
+    // etc., etc., ...<br/>
+<br/>
+    // Getters and setters omitted ...<br/>
+<br/>
+}</pre>
+</div>
+
+
+<div class="section">ViewAccount.tml</div>
+
+<div class="source"><pre>
+&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
+    &lt;body&gt;<br/>
+       &lt;h1&gt;View Account ${account.id}&lt;/h1&gt;<br/>
+        &lt;t:beandisplay object="account"/&gt;<br/>
+            &lt;p&gt;<br/>
+                [&lt;t:actionlink t:id="delete" context="account.id"&gt;delete&lt;/t:actionlink&gt;<br/>
+            &lt;/p&gt;<br/>
+    &lt;/body&gt;<br/>
+&lt;/html&gt;
+</pre>
+</div>
+
+<p>
+We store the account's id as
+<i>event context</i>
+inside the URL. The account's id will
+be part of the URL and will be accessible when the event request is later triggered.
+</p>
+
+<div class="section">ViewAccount.java</div>
+
+<div class="source"><pre>
+public class ViewAccount<br/>
+{<br/>
+    @Persist<br/>
+    private Account _account;<br/>
+<br/>
+    @InjectPage<br/>
+    private AccountsSummary _accountsSummaryPage;<br/>
+<br/>
+    @Inject<br/>
+    private AccountDAO _accountDAO;<br/>
+<br/>
+    public Account getAccount() { return _account; }<br/>
+<br/>
+    Object onActionFromDelete(long accountId)<br/>
+    {<br/>
+        _accountDAO.delete(accountId);<br/>
+<br/>
+        _accountsSummaryPage.setMessage(String.format("Account %d has been deleted.", accountId));<br/>
+<br/>
+        return _accountsSummaryPage;<br/>
+    }<br/>
+}<br/>
+
+</pre>
+</div>
+<p>
+    The ActionLink component triggers an "action" event, which is matched by the
+    onActionFromDelete() method. A real application might have other action links on the page, for (say)
+    creating new accounts or other operations, thus we use the component's id ("delete")
+    to ensure that the method is only invoked under the expected circumstances.
+</p>
+
+<p>
+    Notice how the context (from when the link was rendered) now becomes parameters
+    to the event handler method.
+</p>
+
+<p>
+    The AccountDAO (data access object) service is responsible for the work, we
+    then set a message on another page (the field for this message should be persistent) and return
+    the page. Tapestry will send a redirect request to the client to display the page.
+</p>
+	    ]]>
+    </examples>
+
+    <notes>
+        <![CDATA[
+<p>
+    Rarely, you might need to pass more information in the context. For example, perhaps
+    account id is not enought to uniquely identify the Account object in question - hypothetically,
+    you may need to include a company id as well as the account id. You can
+    build an object array to contain both values:
+</p>
+
+<div class="source"><pre>
+public Object[] getAccountContext()<br/>
+{<br/>
+    return new Object[] { account.companyId, account.id };<br/>
+}<br/>
+<br/>
+Object onActionFromDelete(long companyId, long accountId)<br/>
+{<br/>
+    _accountDAO.delete(companyId, accountId);<br/>
+<br/>
+    _accountsSummaryPage.setMessage(String.format("Account #%d has been deleted.", accountId));<br/>
+<br/>
+    return _accountsSummaryPage;<br/>
+}
+
+</pre>
+</div>
+
+<p>
+    In the template, this would be referenced as:
+</p>
+
+<div class="source"><pre>
+&lt;p&gt;<br/>
+    [&lt;t:actionlink t:id="delete" context="accountContext"&gt;delete&lt;/t:actionlink&gt;]<br/>
+&lt;/p&gt;
+</pre>
+</div>
+
+<p>
+    This highlights the use of the component class: any complicated processing should be offloaded
+    out of the template and into the class.
+</p>
+	]]>
+    </notes>
+</element>

@@ -1,0 +1,13 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <body>
+            ${getCurrentTime().getDate()}
+            ${currentTime.date}
+            ${getSomeProp().length()}
+            ${<warning descr="There is no method 'setSomeProp' in 'TelPropertiesAndAccessors' applicable to (int)">setSomeProp</warning>(65)}
+            ${setSomeProp('ppp').<warning descr="Cannot resolve method 'length' of class 'void'">length</warning>()}
+            ${someProp.<warning descr="Cannot resolve property 'length' of class 'String'">length</warning>}
+	    ${prop:someProp.length()}
+	    ${<warning descr="Cannot resolve property 'justField' of class 'TelPropertiesAndAccessors'">justField</warning>}
+	    ${<warning descr="Cannot resolve method 'getJustField' of class 'TelPropertiesAndAccessors'">getJustField</warning>()}
+    </body>
+</html>

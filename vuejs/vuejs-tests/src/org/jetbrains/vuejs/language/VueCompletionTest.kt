@@ -192,7 +192,7 @@ import compUI from 'compUI.vue'
 """)
     myFixture.configureByText("CompleteWithImportCreateExport.vue", """
 <template>
-<To<caret>
+<To<caret>></To>
 </template>
 <script>
 </script>
@@ -204,7 +204,7 @@ import compUI from 'compUI.vue'
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
       myFixture.checkResult("""
 <template>
-<ToImport<caret>
+<ToImport<caret>></ToImport>
 </template>
 <script>
     import ToImport from "./toImport";
@@ -1254,6 +1254,23 @@ Pair("""<template>
     myFixture.configureByText("foo.vue", "<style <caret>></style>")
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "scoped", "src", "module")
+    assertDoesntContain(myFixture.lookupElementStrings!!, "functional")
+  }
+
+  fun testTemplateAttributes() {
+    myFixture.configureByText("foo.vue", "<template <caret>></template>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "functional", "v-if", "v-else")
+    assertDoesntContain(myFixture.lookupElementStrings!!, "scoped", "module")
+  }
+
+  fun testNoVueTagsWithNamespace() {
+    myFixture.configureByText("foo.vue", """
+      <template>
+        <foo:tran<caret>/>
+      </template>""")
+    myFixture.completeBasic()
+    assertNull(myFixture.lookup)
   }
 }
 

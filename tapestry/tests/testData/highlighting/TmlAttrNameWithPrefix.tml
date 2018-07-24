@@ -1,0 +1,9 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+        <<info>t:count</info> <info>t:end</info>="<inject>3</inject>"/>
+        <<error descr="Element t:count doesn't have required attribute end">t:count</error>/>
+        <<info>t:count2</info> alt="message:alt-text-from-message-catalog" foo="literal:bar-baz" <info>pageTitle</info>="My Home"/>
+        <<info>t:count2</info> <info>pageTitle</info>="literal:bar-baz"/>
+        <<info>t:count2</info> <info>pageTitle</info>="messages:bar-baz"/>
+    </body>
+</html>

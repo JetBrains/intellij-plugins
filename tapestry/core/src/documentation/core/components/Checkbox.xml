@@ -1,0 +1,105 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        A Checkbox component is simply a input type="checkbox".
+    </description>
+
+    <parameters>
+        <parameter name="clientId">
+            The id used to generate a page-unique client-side identifier for the component. If a component renders multiple times, a suffix will be appended to the to id to ensure uniqueness.\
+            The uniqued value may be accessed via the clientId property.
+        </parameter>
+        <parameter name="disabled">
+            If true, then the field will render out with a disabled attribute (to turn off client-side behavior). Further, a disabled field ignores any value in the request when the form is\
+            submitted.
+        </parameter>
+        <parameter name="label">
+            The user presentable label for the field. If not provided, a reasonable label is generated from the component's id, first by looking for a message key named "id-label" (substituting\
+            the component's actual id), then by converting the actual id to a presentable string (for example, "userId" to "User Id").
+        </parameter>
+        <parameter name="value">
+            The value to be read or updated. If not bound, the Checkbox will attempt to edit a property of its container whose name matches the component's id.
+        </parameter>
+    </parameters>
+
+    <examples>
+       <![CDATA[
+<p>
+In this example, a Checkbox will be used alone to manipulate a property of the page.
+</p>
+
+<div class="section">ViewAccounts.tml</div>
+
+<div class="source"><pre>
+&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
+    &lt;body&gt;<br/>
+        &lt;h1&gt;View Accounts&lt;/h1&gt;<br/>
+<br/>
+        &lt;t:form&gt;<br/>
+            &lt;t:checkbox t:id="showall" onclick="this.form.submit();"/&gt; &lt;t:label for="showall"/&gt;<br/>
+        &lt;/t:form&gt;<br/>
+<br/>
+        &lt;t:grid t:id="accounts"/&gt;<br/>
+<br/>
+    &lt;/body&gt;<br/>
+&lt;/html&gt;
+</pre>
+</div>
+
+<p>
+The Grid component will do most of the work in terms of displaying the account data.
+</p>
+
+<p>
+    Normally, we should bind the value parameter explicitly; here the component's id, "showAll",
+    matches against a property of the page and the value parameter is automatically bound
+    as a convienience.
+</p>
+
+<p>
+    A small amount of JavaScript is provided in-line to submit the form when the checkbox is clicked.
+</p>
+
+<p>
+    All Tapestry form control element components must be enclosed by a Form component.
+</p>
+
+<p>
+    The Label component is responsible for rendering a &lt;label&gt; element connected to the checkbox.
+    This
+    is good for accessibility, it also provides a larger "target" to click on.
+    The label's text will be "Show All", derived from the property name. Using a Label component is
+    optional
+    but recommended.
+</p>
+
+<div class="section">ViewAccounts.java</div>
+
+<div class="source"><pre>
+public class ViewAccount<br/>
+{<br/>
+    @Persist<br/>
+    private boolean _showAll;<br/>
+<br/>
+    @Inject<br/>
+    private AccountDAO _accountDAO;<br/>
+<br/>
+    public boolean isShowAll() { return _showAll; }<br/>
+<br/>
+    public void setShowAll(boolean showAll) { _showAll = showAll; }<br/>
+<br/>
+    public List&lt;Account&gt; getAccounts()<br/>
+    {<br/>
+        return _showAll ? _accountDAO.getAllAccounts() : _accountDAO.getActiveAccounts();<br/>
+    }<br/>
+}</pre>
+</div>
+
+<p>
+    The component updates the _showAll field, and that's used to determine which
+    set of accounts should be provided to the Grid component. As always in Tapestry, you
+    must be careful to mark fields persistent if they need to hold their value between
+    the action request (the form submission) and the render request.
+</p>
+	]]>
+    </examples>
+</element>

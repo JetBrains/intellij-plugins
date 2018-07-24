@@ -1,0 +1,17 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<<info>html</info> <info>t:type</info>="<error>portallayout</error>" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+
+    <<info>div</info> <info>t:type</info>="loop" <info>source</info>="propertiesToDisplay" <info>value</info>="curProperty">
+        ${curProperty}<br />
+    </<info>div</info>>
+
+    <hr class="dashedLine paddingTopBot10"/>
+
+	<div class="barLinks fLeft width31P">
+		<<info>t:pagelink</info> <info>page</info>="<error>somePage</error>">${message:instance}</<info>t:pagelink</info>>
+	</div>
+	<div class="barLinks fLeft width32P">
+		<a href="#">${message:order-profiles}</a>
+	</div>
+	<br class="clear" />
+</<info>html</info>>

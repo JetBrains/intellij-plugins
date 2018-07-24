@@ -1,0 +1,104 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        A close relative of org.apache.tapestry.corelib.components.ActionLink except in two ways. First, the event that it triggers is explicitly controlled, rather than always "action". Second,\
+        the event is triggered in its container. This allows slightly shorter URLs but also allows multiple components within the same container to generate identical URLs for common actions.
+    </description>
+
+    <parameters>
+        <parameter name="anchor">
+            An anchor value to append to the generated URL (the hash separator will be added automatically).
+        </parameter>
+        <parameter name="context">
+            The context for the link (optional parameter). This list of values will be converted into strings and included in the URI. The strings will be coerced back to whatever their values\
+            are and made available to event handler methods.
+        </parameter>
+        <parameter name="disabled">
+            If true, then then no link element is rendered (and no informal parameters as well). The body is, however, still rendered.
+        </parameter>
+        <parameter name="event">
+            The name of the event to be triggered in the parent component. Defaults to the id of the component. An org.apache.tapestry.corelib.components.ActionLink triggers an "action" event on\
+            itself, and EventLink component triggers any arbitrary event on its container.
+        </parameter>
+        <parameter name="zone">
+            Binding the zone parameter turns the link into a an Ajax control that causes the related zone to be updated.
+        </parameter>
+    </parameters>
+
+    <examples>
+        <![CDATA[
+<p>
+This example is from Tapestry itself, from the GridColumns component that displays the columns
+titles across to the top of a Grid. We've simplified the example somewhat to focus in on
+the use of the EventLink component.
+</p>
+
+<div class="section">GridColumns.tml</div>
+
+<div class="source"><pre>
+&lt;thead xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
+    &lt;tr&gt;<br/>
+        &lt;th t:type="Loop" source="columnNames" value="columnName"&gt;<br/>
+<br/>
+            &lt;a t:id="sort"&gt;${columnModel.label}&lt;/a&gt;<br/>
+            &lt;a t:id="sort2"&gt;<br/>
+                &lt;img src="${icon}" id="${columnModel.id}:sort" class="t-sort-icon" alt="${iconLabel}"/&gt;<br/>
+            &lt;/a&gt;<br/>
+        &lt;/th&gt;<br/>
+<br/>
+    &lt;/tr&gt;<br/>
+&lt;/thead&gt;</pre>
+</div>
+
+<div class="section">GridColumns.java (partial)</div>
+
+<div class="source"><pre>
+public class GridColumns<br/>
+{<br/>
+    . . .<br/>
+<br/>
+    @Component(parameters = {"event=sort", "context=columnModel.id"})<br/>
+    private EventLink _sort, _sort2;<br/>
+<br/>
+    void onSort(String columnId)<br/>
+    {<br/>
+        if (columnId.equals(_sortColumnId))<br/>
+        {<br/>
+            _sortAscending = !_sortAscending;<br/>
+        }<br/>
+        else<br/>
+        {<br/>
+            _sortColumnId = columnId;<br/>
+            _sortAscending = true;<br/>
+        }<br/>
+    }<br/>
+}</pre>
+</div>
+
+<p>
+The advantage of the EventLink component is that instead of having two identical event handler
+methods,
+onActionFromSort() and onActionFromSort2(), we have a single event handler method,
+onSort(), that covers events triggered by either component. In addition, the URLs for the two
+components
+will be identical, whereas if using ActionLink components, the URLs would be slightly different, to
+reflect to two different component ids.
+</p>
+
+<p>
+This example also shows the advantages of defining the component in the Java class,
+using the
+@Component annotation, rather than in the template (as we do in most examples). We can
+simply define two fields with the same configuration.
+</p>
+	]]>
+    </examples>
+
+    <notes>
+        <![CDATA[
+<p>
+    The event parameter is often omitted; it defaults to the component's id ... you will often specify
+    the component id, or a specific event name, but not both.
+</p>
+	]]>
+    </notes>
+</element>

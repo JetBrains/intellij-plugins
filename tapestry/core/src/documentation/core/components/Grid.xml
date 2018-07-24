@@ -1,0 +1,276 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        A grid presents tabular data. It is a composite component, created in terms of several sub-components. The sub-components are statically wired to the Grid, as it provides access to the\
+        data and other models that they need. A Grid may operate inside a org.apache.tapestry.corelib.components.Form. By overriding the cell renderers of properties, the default output only behavior can\
+        be changed to produce a complex form with individual control for editing properties of each row. This is currently workable but less than ideal -- if the order of rows provided by the\
+        org.apache.tapestry.grid.GridDataSource changes between render and form submission, then there's the possibility that data will be applied to the wrong server-side objects.
+    </description>
+
+    <parameters>
+        <parameter name="empty">
+            A Block to render instead of the table (and pager, etc.) when the source is empty. The default is simply the text "There is no data to display". This parameter is used to customize\
+            that message, possibly including components to allow the user to create new objects.
+        </parameter>
+        <parameter name="lean">
+            If true, then the CSS class on each TD and TH cell will be omitted, which can reduce the amount of output from the component overall by a considerable amount. Leave this as false, the\
+            default, when you are leveraging the CSS to customize the look and feel of particular columns.
+        </parameter>
+        <parameter name="model">
+            The model used to identify the properties to be presented and the order of presentation. The model may be omitted, in which case a default model is generated from the first object in\
+            the data source (this implies that the objects provided by the source are uniform). The model may be explicitly specified to override the default behavior, say to reorder or rename columns or add\
+            additional columns.
+        </parameter>
+        <parameter name="pagerPosition">
+            Defines where the pager (used to navigate within the "pages" of results) should be displayed: "top", "bottom", "both" or "none".
+        </parameter>
+        <parameter name="remove">
+            A comma-separated list of property names to be removed from the org.apache.tapestry.beaneditor.BeanModel. The names are case-insensitive.
+        </parameter>
+        <parameter name="reorder">
+            A comma-separated list of property names indicating the order in which the properties should be presented. The names are case insensitive. Any properties not indicated in the list\
+            will be appended to the end of the display order.
+        </parameter>
+        <parameter name="row">
+            Used to store the current object being rendered (for the current row). This is used when parameter blocks are provided to override the default cell renderer for a particular column ...\
+            the components within the block can use the property bound to the row parameter to know what they should render.
+        </parameter>
+        <parameter name="rowClass">
+            The CSS class for the tr element for each data row. This can be used to highlight particular rows, or cycle between CSS values (for the "zebra effect"). If null or not bound, then\
+            no particular CSS class value is used.
+        </parameter>
+        <parameter name="rowsPerPage">
+            The number of rows of data displayed on each page. If there are more rows than will fit, the Grid will divide up the rows into "pages" and (normally) provide a pager to allow\
+            the user to navigate within the overall result set.
+        </parameter>
+        <parameter name="source">
+            The source of data for the Grid to display. This will usually be a List or array but can also be an explicit org.apache.tapestry.grid.GridDataSource. For Lists and Arrays, a\
+            GridDataSource is created automatically as a wrapper around the underlying List.
+        </parameter>
+        <parameter name="volatile">
+            If true and the Loop is enclosed by a Form, then the normal state persisting logic is turned off. Defaults to false, enabling state saving persisting within Forms. If a Grid is\
+            present for some reason within a Form, but does not contain any form control components (such as org.apache.tapestry.corelib.components.TextField), then binding volatile to false will reduce the\
+            amount of client-side state that must be persisted.
+        </parameter>
+    </parameters>
+
+    <examples>
+       <![CDATA[
+<p>
+    The Grid component is closely related to the BeanEditor component; they are both based on the same
+    underlying concept and share quite a bit of code.
+</p>
+
+<p>In this example, we'll display a list of users.</p>
+
+<div class="section">User.java</div>
+
+<div class="source"><pre>
+public class User<br/>
+{<br/>
+    private long _id;<br/>
+<br/>
+    private String _firstName;<br/>
+<br/>
+    private String _lastName;<br/>
+<br/>
+    private int _age;<br/>
+<br/>
+    public long getId() { return _id; }<br/>
+<br/>
+    @NonVisual<br/>
+    public void setId(long id) { _id = id; }<br/>
+<br/>
+    public String getFirstName() { return _firstName; }<br/>
+<br/>
+    public void setFirstName(String firstName) { _firstName = firstName; }<br/>
+<br/>
+    public String getLastName() { return _lastName; }<br/>
+<br/>
+    public void setLastName(String lastName) { _lastName = lastName; }<br/>
+<br/>
+    public int getAge() { return _age; }<br/>
+<br/>
+    public void setAge(int age) { _age = age; }<br/>
+}</pre>
+</div>
+
+<p>The @NonVisual annotation prevents the id from being displayed.</p>
+
+<div class="section">UserList.tml</div>
+
+<p>
+    We want to make the user's last name a clickable link to a detail page for the user.
+</p>
+
+<div class="source"><pre>
+&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
+<br/>
+    &lt;body&gt;<br/>
+        &lt;h1&gt;List Users&lt;/h1&gt;<br/>
+<br/>
+        &lt;t:grid source="users" row="user"&gt;<br/>
+            &lt;t:parameter name="lastnamecell"&gt;<br/>
+                &lt;t:pagelink page="viewuser" context="user.id"&gt;${user.lastname}&lt;/t:pagelink&gt;<br/>
+<br/>
+            &lt;/t:parameter&gt;<br/>
+        &lt;/t:grid&gt;<br/>
+    &lt;/body&gt;<br/>
+&lt;/html&gt;
+</pre>
+</div>
+
+<p>
+    The parameter name
+    <code><i>property</i>cell</code>
+    is used
+    to override the rendering of cells for one property. As usual, case is ignored. Here we
+    use a PageLink component to link to a ViewUser page, passing the id of the user as
+    activation context for the target page.
+</p>
+
+<p>
+    For the block to know what is being rendered, we bind the row parameter of the Grid
+    to the user property of the page. The Grid will keep updating this property
+    just before it renders each row (using its own internal renderers, or the ones
+    provided as parameters).
+</p>
+
+<p>
+    Overriding of headers, the clickable links at the top of columns, is not yet implemented.
+</p>
+
+<div class="section">UserList.java</div>
+
+<div class="source"><pre>
+public class UserList<br/>
+{<br/>
+    @Inject<br/>
+    private UserDAO _userDAO;<br/>
+<br/>
+    private User _user;<br/>
+<br/>
+    public List&lt;User&gt; getUsers() { return _userDAO.findAll(); }<br/>
+<br/>
+    public void setUser(User user) { _user = user; }<br/>
+<br/>
+    public User getUser() { return _user; }<br/>
+}</pre>
+</div>
+
+
+<p>
+    The UserList class exists to provide access to the UserDAO service, and to act as a holder
+    for the user property, needed when the Grid is rendering.
+</p>
+
+<div class="title2"><b>Adding Columns Example</b></div>
+
+<p>
+    Commonly, you may want to add a column to the Grid to support a computed property, or as a placeholder
+    for an action. We'll do the latter, adding a column for deleting a user.
+</p>
+
+<div class="section">UserList.tml</div>
+
+<p>
+    We want to make the user's last name a clickable link to a detail page for the user.
+</p>
+
+
+<div class="source"><pre>
+&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
+    &lt;body&gt;<br/>
+        &lt;h1&gt;List Users&lt;/h1&gt;<br/>
+<br/>
+        &lt;t:grid source="users" model="model" row="user"&gt;<br/>
+            &lt;t:parameter name="lastnamecell"&gt;<br/>
+                &lt;t:pagelink page="viewuser" context="user.id"&gt;${user.lastname}&lt;/t:pagelink&gt;<br/>
+            &lt;/t:parameter&gt;<br/>
+            &lt;t:parameter name="deletecell"&gt;<br/>
+<br/>
+                &lt;t:actionlink t:id="delete" context="user.id"&gt;Delete&lt;/t:actionlink&gt;<br/>
+            &lt;/t:parameter&gt;<br/>
+        &lt;/t:grid&gt;<br/>
+    &lt;/body&gt;<br/>
+&lt;/html&gt;
+</pre>
+</div>
+
+<p>
+    We now explicitly provide a model parameter. In addition, a block
+    for the "delete" property has been added that includes an ActionLink
+    used to delete the user for the current row. This property is a <i>virtual</i>
+    property because it doesn't correspond to a property
+    of the data object, User.
+</p>
+
+<div class="section">UserList.java</div>
+
+<div class="source"><pre>
+public class UserList<br/>
+{<br/>
+    @Inject<br/>
+    private UserDAO _userDAO;<br/>
+<br/>
+    @Inject<br/>
+    private BeanModelSource _beanModelSource;<br/>
+<br/>
+    @Inject<br/>
+    private ComponentResources _resources;<br/>
+<br/>
+    private final BeanModel _model;<br/>
+<br/>
+    {<br/>
+        _model = _source.create(User.class, true, _resources);<br/>
+<br/>
+        _model.add("delete", null);<br/>
+    }<br/>
+<br/>
+    private User _user;<br/>
+<br/>
+    public List&lt;User&gt; getUsers() { return _userDAO.findAll(); }<br/>
+<br/>
+    public void setUser(User user) { _user = user; }<br/>
+<br/>
+    public User getUser() { return _user; }<br/>
+<br/>
+    public BeanModel getModel() { return _model; }<br/>
+<br/>
+    void onActionFromDelete(long userId)<br/>
+    {<br/>
+        _userDAO.remove(userId);<br/>
+    }<br/>
+}</pre>
+</div>
+
+<p>
+    Here we create the model using the BeanModelSource service.
+    We then customize it, adding a new property, "delete". The null
+    indicates that this is a virtual property, with no real data behind it.
+</p>
+
+<div class="section">UserList.properties</div>
+
+<div class="source">
+    <pre>delete-label=Delete user?</pre>
+</div>
+
+<p>
+    The normal column title for the "delete" property would be "Delete". Using the
+    page's message catalog we can override that.
+</p>
+	]]>
+    </examples>
+
+    <notes>
+        <![CDATA[
+<p>
+    Tapestry does a lot of work to help you with the source parameter. The parameter type
+    is GridDataSource, but Tapestry has built-in coercions from
+    Object[] and List. In more complicated cases, such as very large
+    queries against a database, you will want to provide your own implementation
+    of GridDataSource, to minimimze the sizes of queries and result sets.
+</p>
+	]]>
+    </notes>
+</element>

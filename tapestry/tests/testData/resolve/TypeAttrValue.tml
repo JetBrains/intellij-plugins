@@ -1,0 +1,7 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <head>
+    </head>
+    <body>
+        <button t:type="c<caret>ount" end="1">Start Again</button>
+    </body>
+</html>

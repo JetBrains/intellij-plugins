@@ -1,0 +1,113 @@
+html, body, p, div, span, table, tr,td {
+    font-family : arial;
+    font-size   : 12px;
+    font-weight : normal;
+}
+
+p {
+    text-align:justify;
+}
+
+html {
+    margin-top      : 10px;
+    margin-left     : 30px;
+    margin-right    : 30px;
+    margin-bottom   : 30px;
+}
+
+div {
+    position    : relative;
+    display     : block;
+    float       : none;
+}
+
+#header  {
+    background-color    : #383838;
+    height              : 80px;
+}
+
+#menubar {
+    background-color    : #efefef;
+    height              : 20px;
+    padding-left        : 10px;
+    padding-top         : 5px;
+    padding-bottom      : 5px;
+    margin-bottom       : 20px;
+    border              : 1px solid #E8E8E8;
+    vertical-align      : middle;
+}
+
+#imageComponent {
+    float               : right;
+    margin-right        : 10px;
+}
+
+
+.box {
+    border              : 1px solid #e8e8e8;
+    vertical-align      : top;
+}
+
+
+.boxHeader {
+    border-bottom    : 1px solid #e8e8e8;
+    background-color : #cccc00;
+    padding-left     : 8px;
+    padding-top      : 5px;
+    padding-bottom   : 5px;
+    text-align       : left;
+}
+
+.titleHeader {
+    width           : 130px;
+    text-align      : left;
+}
+
+.anchor {
+    text-align      : right;
+    padding-right   : 10px;
+    float           : right;
+    top             : -15px;
+}
+
+.separator {
+    margin-top      : 20px;
+    margin-bottom   : 20px;
+    border          : 1px dashed #f0efef;
+}
+
+.title2 {
+    padding-left        : 5px;
+    margin-top          : 15px;
+    margin-bottom       : 3px;
+    font-size           : 14px;
+    text-decoration     : underline;
+}
+
+.source {
+    padding     : 12px;
+    margin      : 1em 7px 1em 7px;
+    border      : 1px dashed #d5d4d4;
+    font-size   : 11px;
+    overflow    : auto;
+}
+
+.source pre {
+    margin      : 0px;
+    padding     : 0px;
+}
+
+code {
+    font-size   : 11px;
+}
+
+.section {
+    padding                 : 4px 4px 4px 24px;
+    color                   : #333333;
+    background-color        : #efefef;
+    border                  : 1px solid #e8e8e8;
+    font-weight             : bold;
+    font-size               : 12px;
+    background-repeat       : no-repeat;
+    background-position     : left bottom;
+}

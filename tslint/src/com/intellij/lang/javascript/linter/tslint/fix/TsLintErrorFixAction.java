@@ -19,6 +19,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -31,25 +32,28 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
   private final long myModificationStamp;
 
 
-  public TsLintErrorFixAction(@NotNull TsLinterError error, @NotNull Document document) {
-    //noinspection DialogTitleCapitalization
-    setText(getFamilyName());
+  public TsLintErrorFixAction(@NotNull TsLinterError error, long modificationStamp) {
     myError = error;
-    myModificationStamp = document.getModificationStamp();
+    myModificationStamp = modificationStamp;
   }
 
   @NotNull
   @Override
   public String getText() {
-    //noinspection DialogTitleCapitalization
-    return TsLintBundle.message("tslint.action.fix.problems.current.text");
+    return getText(myError.getCode());
   }
 
   @Nls
   @NotNull
   @Override
   public String getFamilyName() {
-    return getText();
+    return getText(null);
+  }
+
+  @NotNull
+  private static String getText(@Nullable String errorCode) {
+    String errorMessage = StringUtil.isNotEmpty(errorCode) ? "'" + errorCode + "'" : "current error";
+    return TsLintBundle.message("tslint.action.fix.problems.current.text", errorMessage);
   }
 
   @Override
@@ -86,33 +90,29 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
     DaemonCodeAnalyzer.getInstance(project).restart(file);
   }
 
-  public boolean applyReplacements(@NotNull Document document,
-                                   @NotNull String separator,
-                                   @NotNull TsLintFixInfo.TsLintFixReplacements[] replacements) {
+  private static boolean applyReplacements(@NotNull Document document,
+                                           @NotNull String separator,
+                                           @NotNull TsLintFixInfo.TsLintFixReplacements[] replacements) {
     if ("\n".equals(separator)) {
-      if (!applyFor(document.getTextLength(), replacements,
-                    (replacement) -> document
-                      .replaceString(replacement.innerStart, replacement.innerStart + replacement.innerLength, StringUtil
-                        .notNullize(replacement.innerText)))) {
-        return false;
-      }
+      return applyFor(document.getTextLength(), replacements,
+                      replacement -> document
+                        .replaceString(replacement.innerStart, replacement.innerStart + replacement.innerLength, StringUtil
+                          .notNullize(replacement.innerText)));
     }
-    else {
-      StringBuilder newContent = new StringBuilder(StringUtilRt.convertLineSeparators(document.getText(), separator));
-      if (!applyFor(newContent.length(), replacements,
-                    (replacement) -> newContent
-                      .replace(replacement.innerStart, replacement.innerStart + replacement.innerLength, StringUtil.notNullize(
-                        replacement.innerText)))) {
-        return false;
-      }
+    StringBuilder newContent = new StringBuilder(StringUtilRt.convertLineSeparators(document.getText(), separator));
+    if (applyFor(newContent.length(), replacements,
+                 replacement -> newContent
+                   .replace(replacement.innerStart, replacement.innerStart + replacement.innerLength, StringUtil.notNullize(
+                     replacement.innerText)))) {
       document.setText(StringUtilRt.convertLineSeparators(newContent, "\n"));
+      return true;
     }
-    return true;
+    return false;
   }
 
-  public boolean applyFor(int documentLength,
-                          @NotNull TsLintFixInfo.TsLintFixReplacements[] replacements,
-                          @NotNull Consumer<TsLintFixInfo.TsLintFixReplacements> apply) {
+  private static boolean applyFor(int documentLength,
+                                  @NotNull TsLintFixInfo.TsLintFixReplacements[] replacements,
+                                  @NotNull Consumer<TsLintFixInfo.TsLintFixReplacements> apply) {
     for (TsLintFixInfo.TsLintFixReplacements replacement : replacements) {
       int offset = replacement.innerStart;
       if (offset > documentLength || (offset + replacement.innerLength) > documentLength) {

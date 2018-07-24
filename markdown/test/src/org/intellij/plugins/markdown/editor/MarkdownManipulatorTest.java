@@ -13,11 +13,11 @@
 // limitations under the License.
 package org.intellij.plugins.markdown.editor;
 
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.intellij.plugins.markdown.lang.MarkdownFileType;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownCodeFenceImpl;
@@ -26,7 +26,8 @@ public class MarkdownManipulatorTest extends LightPlatformCodeInsightFixtureTest
   public void testSimpleCodeFence() {
     doTest("```ruby\n" +
            "Runti<caret>me\n" +
-           "```", "singleton_class",
+           "```",
+           "singleton_class",
            "```ruby\n" +
            "singleton_class\n" +
            "```");
@@ -35,7 +36,8 @@ public class MarkdownManipulatorTest extends LightPlatformCodeInsightFixtureTest
   public void testSimpleCodeFenceNewLineBefore() {
     doTest("```ruby\n" +
            "Runti<caret>me\n" +
-           "```", "\nRuntime",
+           "```",
+           "\nRuntime",
            "```ruby\n" +
            "\n" +
            "Runtime\n" +
@@ -44,8 +46,9 @@ public class MarkdownManipulatorTest extends LightPlatformCodeInsightFixtureTest
 
   public void testSimpleCodeFenceNewLineAfter() {
     doTest("```ruby\n" +
-           "Runtime<caret>\n" +
-           "```", "Runtime\n",
+           "Runt<caret>ime\n" +
+           "```",
+           "Runtime\n",
            "```ruby\n" +
            "Runtime\n" +
            "\n" +
@@ -55,7 +58,8 @@ public class MarkdownManipulatorTest extends LightPlatformCodeInsightFixtureTest
   public void testCodeFenceInList() {
     doTest("* ```ruby\n" +
            "  <caret>singleton_class\n" +
-           "  ```", "singleton",
+           "  ```",
+           "singleton",
            "```ruby\n" +
            "  singleton\n" +
            "  ```");
@@ -64,7 +68,8 @@ public class MarkdownManipulatorTest extends LightPlatformCodeInsightFixtureTest
   public void testCodeFenceInListNewLineBefore() {
     doTest("* ```ruby\n" +
            "  <caret>singleton_class\n" +
-           "  ```", "\nsingleton_class",
+           "  ```",
+           "\nsingleton_class",
            "```ruby\n" +
            "  \n" +
            "  singleton_class\n" +
@@ -74,7 +79,8 @@ public class MarkdownManipulatorTest extends LightPlatformCodeInsightFixtureTest
   public void testCodeFenceInListNewLineAfter() {
     doTest("* ```ruby\n" +
            "  <caret>singleton_class\n" +
-           "  ```", "singleton_class\n",
+           "  ```",
+           "singleton_class\n",
            "```ruby\n" +
            "  singleton_class\n" +
            "  \n" +
@@ -87,7 +93,8 @@ public class MarkdownManipulatorTest extends LightPlatformCodeInsightFixtureTest
            "    <caret>setup\n" +
            "    ```\n" +
            "  * C\n" +
-           "*D", "singleton_class\n",
+           "*D",
+           "singleton_class\n",
            "```ruby\n" +
            "    singleton_class\n" +
            "    \n" +
@@ -97,7 +104,8 @@ public class MarkdownManipulatorTest extends LightPlatformCodeInsightFixtureTest
   public void testCodeFenceInQuotes() {
     doTest(">```ruby\n" +
            "><caret>setup\n" +
-           ">```", "singleton_class\n",
+           ">```",
+           "singleton_class\n",
            "```ruby\n" +
            ">singleton_class\n" +
            ">\n" +
@@ -112,7 +120,8 @@ public class MarkdownManipulatorTest extends LightPlatformCodeInsightFixtureTest
            "    >  * D  \n" +
            "  -  >  -    > ```ruby\n" +
            "     >       > <caret>$LAST_MATCH_INFO\n" +
-           "     >       > ```\n", "singleton_class",
+           "     >       > ```\n",
+           "singleton_class",
            "```ruby\n" +
            "     >       > singleton_class\n" +
            "     >       > ```");
@@ -126,7 +135,8 @@ public class MarkdownManipulatorTest extends LightPlatformCodeInsightFixtureTest
            "    >  * D  \n" +
            "  -  >  -    > ```ruby\n" +
            "     >       > <caret>$LAST_MATCH_INFO\n" +
-           "     >       > ```\n", "\nsingleton_class",
+           "     >       > ```\n",
+           "\nsingleton_class",
            "```ruby\n" +
            "     >       > \n" +
            "     >       > singleton_class\n" +
@@ -141,11 +151,32 @@ public class MarkdownManipulatorTest extends LightPlatformCodeInsightFixtureTest
            "    >  * D  \n" +
            "  -  >  -    > ```ruby\n" +
            "     >       > <caret>$LAST_MATCH_INFO\n" +
-           "     >       > ```\n", "singleton_class\n",
+           "     >       > ```\n",
+           "singleton_class\n",
            "```ruby\n" +
            "     >       > singleton_class\n" +
            "     >       > \n" +
            "     >       > ```");
+  }
+
+  public void testThreeBackticksCodeFence() {
+    doTest("```ruby\n" +
+           "Runti<caret>me\n" +
+           "```",
+           "```singleton_class",
+           "```ruby\n" +
+           "Runtime\n" +
+           "```");
+  }
+
+  public void testThreeTildaCodeFence() {
+    doTest("```ruby\n" +
+           "Runti<caret>me\n" +
+           "```",
+           "~~~singleton_class",
+           "```ruby\n" +
+           "Runtime\n" +
+           "```");
   }
 
   public void doTest(String text, String newContent, String expectedText) {
@@ -154,13 +185,13 @@ public class MarkdownManipulatorTest extends LightPlatformCodeInsightFixtureTest
     int offset = myFixture.getCaretOffset();
 
     PsiElement element = myFixture.getFile().findElementAt(offset);
-    MarkdownCodeFenceImpl codeFence = PsiTreeUtil.getParentOfType(element, MarkdownCodeFenceImpl.class);
+    MarkdownCodeFenceImpl codeFence = (MarkdownCodeFenceImpl)InjectedLanguageManager.getInstance(getProject()).getInjectionHost(element);
 
     final MarkdownCodeFenceImpl.Manipulator manipulator = new MarkdownCodeFenceImpl.Manipulator();
     MarkdownCodeFenceImpl newCodeFence =
       WriteCommandAction.runWriteCommandAction(myFixture.getProject(), (Computable<MarkdownCodeFenceImpl>)() -> manipulator
         .handleContentChange(codeFence, TextRange.from(element.getTextOffset(), element.getTextLength()), newContent));
 
-    assertEquals(expectedText, newCodeFence.getText());
+    assertEquals(expectedText, newCodeFence != null ? newCodeFence.getText() : codeFence.getText());
   }
 }
