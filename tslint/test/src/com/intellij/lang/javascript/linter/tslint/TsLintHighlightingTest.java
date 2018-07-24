@@ -100,13 +100,9 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   }
 
   public void testTimeout() {
-    JSLanguageServiceUtil.TEST_TIMEOUT_MILLIS = 1;
-    try {
-      myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: " + JSLanguageServiceQueueImpl.LANGUAGE_SERVICE_EXECUTION_TIMEOUT, true, false);
-      doTest("clean", "clean/clean.ts", null);
-    } finally {
-      JSLanguageServiceUtil.TEST_TIMEOUT_MILLIS = JSLanguageServiceUtil.TIMEOUT_MILLS;
-    }
+    JSLanguageServiceUtil.setTimeout(1, getTestRootDisposable());
+    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: " + JSLanguageServiceQueueImpl.LANGUAGE_SERVICE_EXECUTION_TIMEOUT, true, false);
+    doTest("clean", "clean/clean.ts", null);
   }
 
   public void testFixFile() {
