@@ -66,11 +66,6 @@ public class CfmlReferenceContributor extends PsiReferenceContributor {
           public PsiElement resolve() {
             return variable;
           }
-
-          @NotNull
-          public Object[] getVariants() {
-            return EMPTY_ARRAY;
-          }
         };
       final List<PsiReference> result = new SmartList<>();
       result.add(ref);

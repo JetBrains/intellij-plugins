@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.psi.resolve.JSIndexBasedResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.WalkUpResolveProcessor;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.psi.*;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ProcessingContext;
 import org.angularjs.index.AngularIndexUtil;
@@ -47,12 +46,6 @@ public class AngularJSDIReferencesProvider extends PsiReferenceProvider {
 
       final ResolveResult[] results = processor.getResults();
       return results.length == 1 ? results[0].getElement() : null;
-    }
-
-    @NotNull
-    @Override
-    public Object[] getVariants() {
-      return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
 
     @Override

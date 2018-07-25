@@ -92,12 +92,6 @@ public class DartLibraryComponentReferenceExpressionBase extends DartExpressionI
 
   @NotNull
   @Override
-  public Object[] getVariants() {
-    return ResolveResult.EMPTY_ARRAY;
-  }
-
-  @NotNull
-  @Override
   public DartClassResolveResult resolveDartClass() {
     return DartClassResolveResult.EMPTY;
   }

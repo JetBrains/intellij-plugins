@@ -8,7 +8,6 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularUiRouterViewsIndex;
@@ -68,12 +67,6 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
     @Override
     public boolean isSoft() {
       return true;
-    }
-
-    @NotNull
-    @Override
-    public Object[] getVariants() {
-      return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
   }
 }

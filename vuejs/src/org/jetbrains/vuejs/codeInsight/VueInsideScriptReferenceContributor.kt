@@ -13,7 +13,6 @@ import com.intellij.psi.filters.ElementFilter
 import com.intellij.psi.filters.position.FilterPattern
 import com.intellij.psi.util.PsiTreeUtil.getParentOfType
 import com.intellij.psi.util.PsiTreeUtil.isAncestor
-import com.intellij.util.ArrayUtil
 import com.intellij.util.ProcessingContext
 
 /**
@@ -65,9 +64,5 @@ class VueComponentLocalReference(reference: JSReferenceExpressionImpl,
     getParentOfType(element, JSFunction::class.java, true) ?: return emptyArray()
     // let function context around the expression be enough to think it is used somewhere in assembling the exported object
     return org.jetbrains.vuejs.codeInsight.VueJSReferenceExpressionResolver(element, false).resolveInCurrentComponentDefinition(element) ?: emptyArray()
-  }
-
-  override fun getVariants(): Array<Any> {
-    return ArrayUtil.EMPTY_OBJECT_ARRAY
   }
 }

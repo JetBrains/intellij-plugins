@@ -227,11 +227,6 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
       public PsiElement resolve() {
         return attrValue;
       }
-
-      @NotNull
-      public Object[] getVariants() {
-        return EMPTY_ARRAY;
-      }
     }};
   }
 

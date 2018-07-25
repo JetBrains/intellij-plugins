@@ -19,7 +19,6 @@ import com.intellij.coldFusion.model.files.CfmlFile;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -84,12 +83,6 @@ public class CfmlThisComponentReference extends CfmlCompositeElement implements 
   public boolean isReferenceTo(@NotNull PsiElement element) {
     return element instanceof CfmlComponent &&
            (element.getContainingFile() == getContainingFile());
-  }
-
-  @NotNull
-  @Override
-  public Object[] getVariants() {
-    return ArrayUtil.EMPTY_OBJECT_ARRAY;
   }
 
   @Override

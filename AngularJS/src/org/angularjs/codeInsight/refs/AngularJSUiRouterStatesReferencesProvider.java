@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularUiRouterStatesIndex;
@@ -56,12 +55,6 @@ public class AngularJSUiRouterStatesReferencesProvider extends PsiReferenceProvi
     @Override
     public boolean isSoft() {
       return true;
-    }
-
-    @NotNull
-    @Override
-    public Object[] getVariants() {
-      return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
   }
 }

@@ -5,7 +5,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReferenceBase;
 import com.intellij.psi.ResolveResult;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.intellij.plugins.postcss.psi.PostCssCustomMedia;
 import org.intellij.plugins.postcss.psi.stubs.PostCssCustomMediaIndex;
@@ -39,11 +38,5 @@ public class PostCssCustomMediaReference extends PsiPolyVariantReferenceBase<Psi
   @Nullable
   private String getCustomMediaName() {
     return StringUtil.startsWith(getCanonicalText(), "--") ? getCanonicalText().substring(2) : null;
-  }
-
-  @NotNull
-  @Override
-  public Object[] getVariants() {
-    return ArrayUtil.EMPTY_OBJECT_ARRAY;
   }
 }

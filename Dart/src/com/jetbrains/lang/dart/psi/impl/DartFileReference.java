@@ -136,12 +136,6 @@ public class DartFileReference implements PsiPolyVariantReference {
     return element instanceof DartFile && element.equals(resolve());
   }
 
-  @NotNull
-  @Override
-  public Object[] getVariants() {
-    return EMPTY_ARRAY;
-  }
-
   @Override
   public boolean isSoft() {
     return false;
