@@ -2,6 +2,7 @@ package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.intellij.javascript.testFramework.AbstractTestStructureElement;
 import com.intellij.javascript.testFramework.JstdRunElement;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
@@ -12,11 +13,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
-public class JstdTestCaseStructure {
+public class JstdTestCaseStructure extends AbstractTestStructureElement<JstdTestCaseStructure> {
 
   private final JstdTestFileStructure myJsTestFileStructure;
-  private final String myName;
-  private final JSCallExpression myEnclosingCallExpression;
   private final List<JstdTestStructure> myTestStructures;
   private final Map<String, JstdTestStructure> myTestStructureByNameMap;
   private final JSObjectLiteralExpression myTestsObjectsLiteral;
@@ -25,9 +24,8 @@ public class JstdTestCaseStructure {
                                @NotNull String name,
                                @NotNull JSCallExpression enclosingCallExpression,
                                @Nullable JSObjectLiteralExpression testsObjectLiteral) {
+    super(enclosingCallExpression, name, null);
     myJsTestFileStructure = jsTestFileStructure;
-    myName = name;
-    myEnclosingCallExpression = enclosingCallExpression;
     myTestsObjectsLiteral = testsObjectLiteral;
     myTestStructures = Lists.newArrayList();
     myTestStructureByNameMap = Maps.newHashMap();
@@ -38,11 +36,6 @@ public class JstdTestCaseStructure {
     return myJsTestFileStructure;
   }
 
-  @NotNull
-  public String getName() {
-    return myName;
-  }
-
   public void addTestStructure(@NotNull JstdTestStructure testStructure) {
     myTestStructures.add(testStructure);
     myTestStructureByNameMap.put(testStructure.getName(), testStructure);
@@ -50,7 +43,7 @@ public class JstdTestCaseStructure {
 
   @NotNull
   public JSCallExpression getEnclosingCallExpression() {
-    return myEnclosingCallExpression;
+    return (JSCallExpression)getEnclosingPsiElement();
   }
 
   @Nullable
@@ -77,7 +70,7 @@ public class JstdTestCaseStructure {
         return JstdRunElement.newTestMethodRunElement(myName, testStructure.getName());
       }
     }
-    TextRange testCaseCallTextRange = myEnclosingCallExpression.getTextRange();
+    TextRange testCaseCallTextRange = getEnclosingCallExpression().getTextRange();
     if (testCaseCallTextRange.contains(textRange)) {
       return JstdRunElement.newTestCaseRunElement(myName);
     }
