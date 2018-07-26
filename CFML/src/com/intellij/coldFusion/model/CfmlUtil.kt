@@ -18,9 +18,9 @@ package com.intellij.coldFusion.model
 import com.intellij.codeInsight.AutoPopupController
 import com.intellij.coldFusion.model.info.CfmlAttributeDescription
 import com.intellij.coldFusion.model.info.CfmlLangInfo
-import com.intellij.coldFusion.model.lexer.CfmlKeywords
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes
+import com.intellij.coldFusion.model.parsers.CfmlKeywords
 import com.intellij.coldFusion.model.psi.CfmlImport
 import com.intellij.coldFusion.model.psi.CfmlReferenceExpression
 import com.intellij.coldFusion.model.psi.impl.CfmlTagImpl
@@ -209,7 +209,7 @@ object CfmlUtil {
             || second === CfmlTokenTypes.ASSIGN && third === CfscriptTokenTypes.L_CURLYBRACKET)
   }
 
-  fun getPredifinedFunctions(project: Project): Array<String> {
+  fun getPredefinedFunctions(project: Project): Array<String> {
     return CfmlLangInfo.getInstance(anyProject(project)).predefinedFunctions
   }
 

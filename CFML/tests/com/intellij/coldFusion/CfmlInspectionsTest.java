@@ -109,6 +109,8 @@ public class CfmlInspectionsTest extends CfmlCodeInsightFixtureTestCase {
     }
   }
 
+
+
   public void testUnresolvedScopeVariable() {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
     myFixture.enableInspections(CfmlReferenceInspection.class);

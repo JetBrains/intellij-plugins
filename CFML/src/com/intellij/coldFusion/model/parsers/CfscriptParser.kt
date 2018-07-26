@@ -112,7 +112,7 @@ class CfscriptParser {
   private fun parseAction(myBuilder: PsiBuilder) {
     // http://help.adobe.com/en_US/ColdFusion/9.0/Developing/WSc3ff6d0ea77859461172e0811cbec0999c-7ffa.html
     assert(myBuilder.tokenType === IDENTIFIER)
-    val actionName = myBuilder.tokenText
+    val actionName = myBuilder.tokenText ?: throw Exception("Unable to get token text (the text is null)")
     val actionMarker = myBuilder.mark()
     myBuilder.remapCurrentToken(ACTION_NAME)
     myBuilder.advanceLexer()
@@ -124,12 +124,16 @@ class CfscriptParser {
     }
     else {
       CfmlParser.parseAttributes(myBuilder, "cfproperty", IDENTIFIER, true) //it's not really property, but have same syntax rules
-      if ("param".equals(actionName!!, ignoreCase = true)) {
+      if ("param".equals(actionName, ignoreCase = true)) {
         // See link above.
         eatSemicolon(myBuilder)
       }
       else {
-        parseFunctionBody(myBuilder)
+        if (isKeyword(actionName) && parseKeyword(actionName)!!.omitCodeBlock && myBuilder.tokenType == SEMICOLON) {
+          //do nothing
+        } else {
+          parseFunctionBody(myBuilder)
+        }
       }
       actionMarker.done(CfmlElementTypes.ACTION)
     }
@@ -413,7 +417,7 @@ class CfscriptParser {
   private fun parseFunctionBody(myBuilder: PsiBuilder) {
     val functionBodyMarker = myBuilder.mark()
     if (myBuilder.tokenType !== L_CURLYBRACKET) {
-      myBuilder.error(CfmlBundle.message("cfml.parsing.open.curly.bracket.expected"))
+      myBuilder.error(CfmlBundle.message("cfml.parsing.open.curly.bracket.or.semicolon.expected"))
       functionBodyMarker.drop()
       return
     }
@@ -476,7 +480,7 @@ class CfscriptParser {
     argumentsList.done(CfmlElementTypes.PARAMETERS_LIST)
   }
 
-  internal fun parseFunctionExpression(myBuilder: PsiBuilder, anonymous: Boolean) {
+  fun parseFunctionExpression(myBuilder: PsiBuilder, anonymous: Boolean) {
     val functionMarker = myBuilder.mark()
     if (!anonymous) {
       if (ACCESS_KEYWORDS.contains(myBuilder.tokenType)) {

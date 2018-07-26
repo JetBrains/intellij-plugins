@@ -1,5 +1,5 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.coldFusion.model.lexer
+package com.intellij.coldFusion.model.parsers
 
 enum class CfmlKeywords(val keyword: String, val omitCodeBlock: Boolean = false) {
   PARAM("param"),
@@ -8,4 +8,12 @@ enum class CfmlKeywords(val keyword: String, val omitCodeBlock: Boolean = false)
   TRANSACTION("transaction", true),
   WRITELOG("writelog"),
   SAVECONTENT("savecontent")
+}
+
+fun isKeyword(actionName: String): Boolean {
+  return parseKeyword(actionName) != null
+}
+
+fun parseKeyword(keywordName: String): CfmlKeywords? {
+  return CfmlKeywords.values().firstOrNull { it.keyword.toLowerCase() == keywordName.toLowerCase() }
 }
