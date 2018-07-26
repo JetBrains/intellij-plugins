@@ -96,7 +96,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
         shortcutSet = CustomShortcutSet(*KeymapManager.getInstance().activeKeymap.getShortcuts("Refresh"))
       }
 
-      override fun actionPerformed(e: AnActionEvent?) {
+      override fun actionPerformed(e: AnActionEvent) {
         (GistManager.getInstance() as GistManagerImpl).invalidateData()
         updateList(list, model, project, cli)
       }
@@ -242,11 +242,11 @@ class AngularCliGenerateAction : DumbAwareAction() {
                                         null, arrayOf(filter), "generate", blueprint.name, *arguments)
   }
 
-  override fun update(e: AnActionEvent?) {
-    val project = e?.project
-    val file = e?.getData(PlatformDataKeys.VIRTUAL_FILE)
+  override fun update(e: AnActionEvent) {
+    val project = e.project
+    val file = e.getData(PlatformDataKeys.VIRTUAL_FILE)
 
-    e?.presentation?.isEnabledAndVisible = project != null
+    e.presentation.isEnabledAndVisible = project != null
       && AngularCliUtil.findAngularCliFolder(project, file) != null
   }
 

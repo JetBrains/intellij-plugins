@@ -33,6 +33,10 @@ class OpenFileAction extends BaseVFileAction {
   }
 
   public void actionPerformed(AnActionEvent e) {
+    perform();
+  }
+
+  void perform() {
     myIdeFacade.open(getVFile(myFileTree));
   }
 }

@@ -67,7 +67,7 @@ public class DropDownButton extends JButton {
           else {
             AnAction[] children = myActionGroup.getChildren(null);
             if (children.length > 0 && canExecute(children[0])) {
-              children[0].actionPerformed(null);
+              children[0].actionPerformed(AnActionEvent.createFromDataContext(ActionPlaces.UNKNOWN, null, dataId -> null));
             }
           }
         }

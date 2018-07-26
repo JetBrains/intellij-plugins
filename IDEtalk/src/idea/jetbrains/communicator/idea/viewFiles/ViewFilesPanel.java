@@ -76,7 +76,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
       protected void onEnter() {
         super.onEnter();
         if (myOpenFileAction.isEnabled()) {
-          myOpenFileAction.actionPerformed(null);
+          myOpenFileAction.perform();
         }
       }
     };
