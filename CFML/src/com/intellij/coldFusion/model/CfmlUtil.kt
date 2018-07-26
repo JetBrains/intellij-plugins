@@ -148,7 +148,7 @@ object CfmlUtil {
     else !tagAttributes[tagName]!!.isEndTagRequired && tagAttributes[tagName]!!.isSingle
   }
 
-  fun isEndTagRequired(tagName: String, project: Project): Boolean {
+  fun isEndTagRequired(tagName: String, project: Project?): Boolean {
     val cfmlLangInfo = CfmlLangInfo.getInstance(anyProject(project))
     return if (!cfmlLangInfo.tagAttributes.containsKey(tagName)) true
     else cfmlLangInfo.tagAttributes[tagName]!!.isEndTagRequired
