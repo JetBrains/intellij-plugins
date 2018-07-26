@@ -18,6 +18,7 @@ package com.intellij.coldFusion.model
 import com.intellij.codeInsight.AutoPopupController
 import com.intellij.coldFusion.model.info.CfmlAttributeDescription
 import com.intellij.coldFusion.model.info.CfmlLangInfo
+import com.intellij.coldFusion.model.lexer.CfmlKeywords
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes
 import com.intellij.coldFusion.model.psi.CfmlImport
@@ -199,11 +200,7 @@ object CfmlUtil {
     val tokenText = builder.tokenText ?: return false
 
     val name = tokenText.toLowerCase()
-    val keyword = name == "param" ||
-                  name == "lock" ||
-                  name == "transaction" ||
-                  name == "writelog" ||
-                  name == "savecontent"
+    val keyword = CfmlKeywords.values().any { it.keyword == name }
     return keyword && checkAheadActionTokens(builder.lookAhead(1), builder.lookAhead(2))
   }
 
