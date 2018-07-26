@@ -24,11 +24,11 @@ import com.intellij.coldFusion.model.psi.*;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import java.util.HashMap;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.intellij.codeInspection.ProblemHighlightType.WEAK_WARNING;
@@ -61,14 +61,14 @@ public class CfmlReferenceInspection extends CfmlInspectionBase {
       return;
     }
     final CfmlReference ref = (CfmlReference)element;
-    if (CfmlUtil.isPredefinedFunction(ref.getText(), element.getProject())) {
+    if (CfmlUtil.INSTANCE.isPredefinedFunction(ref.getText(), element.getProject())) {
       return;
     }
 
     // skip argument names of standard functions
     if (ref instanceof CfmlArgumentNameReference) {
       String functionName = ((CfmlArgumentNameReference)ref).getFunctionName();
-      if (CfmlUtil.isPredefinedFunction(functionName, element.getProject())) {
+      if (CfmlUtil.INSTANCE.isPredefinedFunction(functionName, element.getProject())) {
         return;
       }
     }
@@ -89,7 +89,7 @@ public class CfmlReferenceInspection extends CfmlInspectionBase {
       .containsKey(mostDescentReferenceParent.getText().toLowerCase())) {
       return;
     }
-    if (ref instanceof CfmlReferenceExpression && CfmlUtil.isPredefinedTagVariables((CfmlReferenceExpression)ref, element.getProject())) {
+    if (ref instanceof CfmlReferenceExpression && CfmlUtil.INSTANCE.isPredefinedTagVariables((CfmlReferenceExpression)ref, element.getProject())) {
       return;
     }
 

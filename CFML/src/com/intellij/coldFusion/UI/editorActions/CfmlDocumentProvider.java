@@ -38,13 +38,13 @@ public class CfmlDocumentProvider implements DocumentationProvider {
 
   public String generateDoc(PsiElement element, PsiElement originalElement) {
     if (element instanceof CfmlAttributeImpl && element.getParent() instanceof CfmlTag) {
-      return CfmlUtil.getAttributeDescription(((CfmlTag)element.getParent()).getTagName().toLowerCase(),
-                                              ((CfmlAttributeImpl)element).getName().toLowerCase(), element.getProject());
+      return CfmlUtil.INSTANCE.getAttributeDescription(((CfmlTag)element.getParent()).getTagName().toLowerCase(),
+                                                       ((CfmlAttributeImpl)element).getName().toLowerCase(), element.getProject());
     }
     else if (element instanceof CfmlTag) {
       String name = ((CfmlTag)element).getTagName().toLowerCase();
-      if (CfmlUtil.isStandardTag(name, element.getProject())) {
-        return CfmlUtil.getTagDescription(name, element.getProject());
+      if (CfmlUtil.INSTANCE.isStandardTag(name, element.getProject())) {
+        return CfmlUtil.INSTANCE.getTagDescription(name, element.getProject());
       }
     }
     return null;

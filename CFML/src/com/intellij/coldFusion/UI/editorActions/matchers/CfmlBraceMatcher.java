@@ -109,7 +109,7 @@ public class CfmlBraceMatcher implements BraceMatcher {
       }
     }
     return tokenType.equals(CfmlTokenTypes.OPENER) &&
-           (!CfmlUtil.isEndTagRequired(getTagName(fileText, iterator), null) || findEndTag(fileText, iterator));
+           (!CfmlUtil.INSTANCE.isEndTagRequired(getTagName(fileText, iterator), null) || findEndTag(fileText, iterator));
   }
 
   @Override
@@ -141,7 +141,7 @@ public class CfmlBraceMatcher implements BraceMatcher {
     }
     return ((tokenType.equals(CfmlTokenTypes.CLOSER)) && findBeginTag(fileText, iterator)) ||
            (tokenType.equals(CfmlTokenTypes.R_ANGLEBRACKET) &&
-            !CfmlUtil.isEndTagRequired(getTagName(fileText, iterator), null) &&
+            !CfmlUtil.INSTANCE.isEndTagRequired(getTagName(fileText, iterator), null) &&
             !findEndTag(fileText, iterator));
   }
 

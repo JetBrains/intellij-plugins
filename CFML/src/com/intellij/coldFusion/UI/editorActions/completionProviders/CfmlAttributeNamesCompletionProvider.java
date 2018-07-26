@@ -34,9 +34,9 @@ import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
-import java.util.HashSet;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.Set;
 
 class CfmlAttributeNamesCompletionProvider extends CompletionProvider<CompletionParameters> {
@@ -70,7 +70,7 @@ class CfmlAttributeNamesCompletionProvider extends CompletionProvider<Completion
         excluded.add(attribute.getAttributeName());
       }
     }
-    for (CfmlAttributeDescription s : CfmlUtil.getAttributes(tagName, element.getProject())) {
+    for (CfmlAttributeDescription s : CfmlUtil.INSTANCE.getAttributes(tagName, element.getProject())) {
       if (s.getName() == null) {
         continue;
       }
