@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.highlighting;
 
 import com.intellij.codeInsight.daemon.GutterMark;
@@ -12,8 +13,8 @@ import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
+import com.intellij.util.ui.ColorIcon;
 import com.intellij.util.ui.EmptyIcon;
-import com.intellij.xml.util.ColorIconCache;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
@@ -46,13 +47,13 @@ public class FlexColorAnnotatorTest extends CodeInsightFixtureTestCase<FlexModul
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testGutter1() {
     FlexMxmlColorAnnotator.MyRenderer renderer = findAppropriateRenderer("mxml");
-    assertInstanceOf(renderer.getIcon(), ColorIconCache.ColorIcon.class);
+    assertInstanceOf(renderer.getIcon(), ColorIcon.class);
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testGutter2() {
     FlexMxmlColorAnnotator.MyRenderer renderer = findAppropriateRenderer("mxml");
-    assertInstanceOf(renderer.getIcon(), ColorIconCache.ColorIcon.class);
+    assertInstanceOf(renderer.getIcon(), ColorIcon.class);
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
@@ -65,20 +66,20 @@ public class FlexColorAnnotatorTest extends CodeInsightFixtureTestCase<FlexModul
   public void testGutter4() {
     GutterMark r = myFixture.findGutter(getTestName(false) + '.' + "css");
     assertNotNull(r);
-    assertInstanceOf(r.getIcon(), ColorIconCache.ColorIcon.class);
+    assertInstanceOf(r.getIcon(), ColorIcon.class);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithCssSupportLoader})
   public void testGutter5() {
     GutterMark r = myFixture.findGutter(getTestName(false) + '.' + "css");
     assertNotNull(r);
-    assertInstanceOf(r.getIcon(), ColorIconCache.ColorIcon.class);
+    assertInstanceOf(r.getIcon(), ColorIcon.class);
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testGutter6() {
     FlexMxmlColorAnnotator.MyRenderer renderer = findAppropriateRenderer("mxml");
-    assertInstanceOf(renderer.getIcon(), ColorIconCache.ColorIcon.class);
+    assertInstanceOf(renderer.getIcon(), ColorIcon.class);
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
