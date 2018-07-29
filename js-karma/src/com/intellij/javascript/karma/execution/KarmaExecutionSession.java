@@ -13,6 +13,7 @@ import com.intellij.javascript.karma.server.KarmaJsSourcesLocator;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
 import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
+import com.intellij.javascript.nodejs.NodeStackTraceFilter;
 import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
@@ -81,9 +82,12 @@ public class KarmaExecutionSession {
   @NotNull
   private SMTRunnerConsoleView createSMTRunnerConsoleView() {
     KarmaTestProxyFilterProvider filterProvider = new KarmaTestProxyFilterProvider(myProject, myKarmaServer);
-    KarmaConsoleProperties testConsoleProperties = new KarmaConsoleProperties(myRunConfiguration, myExecutor, filterProvider);
-    KarmaConsoleView consoleView = new KarmaConsoleView(testConsoleProperties, myKarmaServer, myExecutionType, myProcessHandler);
-    SMTestRunnerConnectionUtil.initConsoleView(consoleView, testConsoleProperties.getTestFrameworkName());
+    KarmaConsoleProperties consoleProperties = new KarmaConsoleProperties(myRunConfiguration, myExecutor, filterProvider);
+    consoleProperties.addStackTraceFilter(new NodeStackTraceFilter(
+      myProject, myKarmaServer.getServerSettings().getWorkingDirectorySystemDependent())
+    );
+    KarmaConsoleView consoleView = new KarmaConsoleView(consoleProperties, myKarmaServer, myExecutionType, myProcessHandler);
+    SMTestRunnerConnectionUtil.initConsoleView(consoleView, consoleProperties.getTestFrameworkName());
     return consoleView;
   }
 
