@@ -6,11 +6,12 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.psi.css.util.CssEditorUtil;
+import org.jetbrains.annotations.NotNull;
 
 public class PostCssOneLineAtRuleInsertHandler implements InsertHandler<LookupElement> {
 
   @Override
-  public void handleInsert(InsertionContext context, LookupElement item) {
+  public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {
     Editor editor = context.getEditor();
     CssEditorUtil.typeOrMove(editor, ' ');
     int offset = CssEditorUtil.skipWhiteSpaces(editor, editor.getCaretModel().getOffset());

@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.intellij.plugins.markdown.injection;
 
 import com.intellij.codeInsight.completion.*;
@@ -94,7 +95,7 @@ public class LanguageListCompletionContributor extends CompletionContributor {
     }
 
     @Override
-    public void handleInsert(InsertionContext context, LookupElement item) {
+    public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {
       if (isInMiddleOfUncollapsedFence(myParameters.getOriginalPosition(), context.getStartOffset())) {
         context.getDocument().insertString(context.getTailOffset(), "\n\n");
         context.getEditor().getCaretModel().moveCaretRelatively(1, 0, false, false, false);

@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.osmorc.manifest.completion;
 
 import com.intellij.codeInsight.completion.*;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 class HeaderParametersProvider extends CompletionProvider<CompletionParameters> {
   private static final InsertHandler<LookupElement> ATTRIBUTE_HANDLER = new InsertHandler<LookupElement>() {
     @Override
-    public void handleInsert(InsertionContext context, LookupElement item) {
+    public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {
       context.setAddCompletionChar(false);
       EditorModificationUtil.insertStringAtCaret(context.getEditor(), "=");
       context.commitDocument();
@@ -23,7 +24,7 @@ class HeaderParametersProvider extends CompletionProvider<CompletionParameters> 
 
   private static final InsertHandler<LookupElement> DIRECTIVE_HANDLER = new InsertHandler<LookupElement>() {
     @Override
-    public void handleInsert(InsertionContext context, LookupElement item) {
+    public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {
       context.setAddCompletionChar(false);
       EditorModificationUtil.insertStringAtCaret(context.getEditor(), ":=");
       context.commitDocument();
