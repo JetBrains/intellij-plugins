@@ -843,9 +843,10 @@ Vue.component('global-comp-literal', {
     myFixture.checkHighlighting(true, false, true, false)
   }
 
-  fun testColVueComponent() {
+  fun testComponentsNamedLikeHtmlTags() {
     myFixture.configureByText("ColVueComponent.vue", """
 <template>
+    <Input><span slot="prepend"></span></Input>
     <col>
     <Col></Col>
     <Col>
@@ -853,7 +854,8 @@ Vue.component('global-comp-literal', {
 <script lang="es6">
   export default {
     components: {
-      Col: {}
+      Col: {},
+      Input: {}
     }
   }
 </script>
