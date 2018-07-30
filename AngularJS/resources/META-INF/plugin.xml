@@ -155,12 +155,12 @@
   <actions>
     <action class="org.angularjs.cli.actions.AngularCliGenerateAction" id="angularCliGenerate"
             text="Angular Schematic..." description="Generate new code from Angular Schematics"
-            icon="/icons/angular2.png">
+            icon="/icons/angular2.svg">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
     </action>
     <action class="org.angularjs.cli.actions.AngularCliAddDependencyAction" id="angularCliAdd"
             text="Angular Dependency..." description="Add new dependency and execute associated 'ng-add' schematics"
-            icon="/icons/angular2.png">
+            icon="/icons/angular2.svg">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
     </action>
   </actions>
