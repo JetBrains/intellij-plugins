@@ -60,10 +60,9 @@ class VueInsertHandler : XmlTagInsertHandler() {
   }
 
   override fun handleInsert(context: InsertionContext, item: LookupElement) {
-    if (context == null || shouldHandleXmlInsert(context)) {
+    if (shouldHandleXmlInsert(context)) {
       super.handleInsert(context, item)
     }
-    if (context == null || item == null) return
     val jsImplicitElement = item.`object` as JSImplicitElement
     val importedFile = jsImplicitElement.containingFile
     if (importedFile == context.file) return
