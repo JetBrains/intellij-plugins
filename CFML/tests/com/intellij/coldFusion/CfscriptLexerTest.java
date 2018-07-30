@@ -19,7 +19,7 @@ import com.intellij.coldFusion.model.lexer.CfmlLexer;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.testFramework.UsefulTestCase;
+import com.intellij.testFramework.LightPlatformTestCase;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +27,7 @@ import java.io.IOException;
 /**
  * Created by Lera Nikolaenko
  */
-public class CfscriptLexerTest extends UsefulTestCase {
+public class CfscriptLexerTest extends LightPlatformTestCase {
 
   public void testSimpleScript() throws Throwable {
     doTest();
