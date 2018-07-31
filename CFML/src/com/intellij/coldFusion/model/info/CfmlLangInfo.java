@@ -42,11 +42,20 @@ public class CfmlLangInfo {
   private Reference<CfmlLangDictionary> myCFDictionary;
   private String myCFDictionaryLevel;
 
-  public static CfmlLangInfo getInstance(Project project) {
-    return ServiceManager.getService(project, CfmlLangInfo.class);
+  private static class InstanceWithoutApplication {
+    static CfmlLangInfo instanceWithoutApplication = new CfmlLangInfo(null);
   }
 
-  public CfmlLangInfo(Project project) {
+  public static CfmlLangInfo getInstance(@Nullable Project project) {
+    if (project != null) {
+      return ServiceManager.getService(project, CfmlLangInfo.class);
+    }
+    else {
+      return InstanceWithoutApplication.instanceWithoutApplication;
+    }
+  }
+
+  public CfmlLangInfo(@Nullable Project project) {
     myProject = project;
   }
 
@@ -103,6 +112,7 @@ public class CfmlLangInfo {
   }
 
   public String getLanguageLevel() {
+    if (myProject == null) return CfmlLanguage.CF10;
     CfmlProjectConfiguration.State state = CfmlProjectConfiguration.getInstance(myProject).getState();
     return state != null ? state.getLanguageLevel() : CfmlLanguage.CF10;
   }

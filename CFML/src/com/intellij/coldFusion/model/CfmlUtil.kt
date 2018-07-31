@@ -115,24 +115,24 @@ object CfmlUtil {
     if (isUserDefined(tagName)) {
       return true
     }
-    return if (!(CfmlLangInfo.getInstance(anyProject(project)).tagAttributes[tagName] == null || CfmlLangInfo.getInstance(
-        anyProject(project)).tagAttributes[tagName]?.attributes == null)) {
-      CfmlLangInfo.getInstance(anyProject(project)).tagAttributes[tagName]?.attributes?.size != 0
+    return if (!(cfmlLangInfo(project).tagAttributes[tagName] == null || cfmlLangInfo(
+        project).tagAttributes[tagName]?.attributes == null)) {
+      cfmlLangInfo(project).tagAttributes[tagName]?.attributes?.size != 0
     }
     else false
   }
 
   fun getAttributes(tagName: String, project: Project?): Collection<CfmlAttributeDescription> {
-    return if (CfmlLangInfo.getInstance(anyProject(project)).tagAttributes[tagName] != null && CfmlLangInfo.getInstance(
-        anyProject(project)).tagAttributes[tagName]?.attributes != null) {
+    return if (cfmlLangInfo(project).tagAttributes[tagName] != null && cfmlLangInfo(
+        project).tagAttributes[tagName]?.attributes != null) {
       Collections
-        .unmodifiableCollection(CfmlLangInfo.getInstance(anyProject(project)).tagAttributes[tagName]?.attributes)
+        .unmodifiableCollection(cfmlLangInfo(project).tagAttributes[tagName]?.attributes)
     }
     else emptyList()
   }
 
   fun isStandardTag(tagName: String, project: Project?): Boolean {
-    return CfmlLangInfo.getInstance(anyProject(project)).tagAttributes.containsKey(tagName)
+    return cfmlLangInfo(project).tagAttributes.containsKey(tagName)
   }
 
   fun isUserDefined(tagName: String?): Boolean {
@@ -141,7 +141,7 @@ object CfmlUtil {
 
   fun isSingleCfmlTag(tagName: String, project: Project?): Boolean {
     if (isUserDefined(tagName)) return false
-    val tagAttributes = CfmlLangInfo.getInstance(anyProject(project)).tagAttributes ?: return false
+    val tagAttributes = cfmlLangInfo(project).tagAttributes ?: return false
     return if (!tagAttributes.containsKey(tagName)) {
       false
     }
@@ -149,15 +149,15 @@ object CfmlUtil {
   }
 
   fun isEndTagRequired(tagName: String, project: Project?): Boolean {
-    val cfmlLangInfo = CfmlLangInfo.getInstance(anyProject(project))
+    val cfmlLangInfo = cfmlLangInfo(project)
     return if (!cfmlLangInfo.tagAttributes.containsKey(tagName)) true
     else cfmlLangInfo.tagAttributes[tagName]!!.isEndTagRequired
   }
 
   fun getTagDescription(tagName: String, project: Project?): String? {
-    if (!CfmlLangInfo.getInstance(anyProject(project)).tagAttributes.containsKey(tagName)) return null
-    if (!CfmlLangInfo.getInstance(anyProject(project)).tagAttributes.containsKey(tagName)) return null
-    val tagAttributes = CfmlLangInfo.getInstance(anyProject(project)).tagAttributes[tagName] ?: throw Exception("Unable to get tag attributes for tag: $tagName")
+    if (!cfmlLangInfo(project).tagAttributes.containsKey(tagName)) return null
+    if (!cfmlLangInfo(project).tagAttributes.containsKey(tagName)) return null
+    val tagAttributes = cfmlLangInfo(project).tagAttributes[tagName] ?: throw Exception("Unable to get tag attributes for tag: $tagName")
     return "<div>Name: " +
            tagName +
            "</div>" +
@@ -177,7 +177,7 @@ object CfmlUtil {
   }
 
   fun getAttribute(tagName: String, attributeName: String, project: Project?): CfmlAttributeDescription? {
-    val tagDescription = CfmlLangInfo.getInstance(anyProject(project)).tagAttributes[tagName] ?: return null
+    val tagDescription = cfmlLangInfo(project).tagAttributes[tagName] ?: return null
     val attributesCollection = tagDescription.attributes
     for (af in attributesCollection) {
       if (af.acceptName(attributeName)) {
@@ -210,11 +210,11 @@ object CfmlUtil {
   }
 
   fun getPredefinedFunctions(project: Project?): Array<String> {
-    return CfmlLangInfo.getInstance(anyProject(project)).predefinedFunctions
+    return cfmlLangInfo(project).predefinedFunctions
   }
 
   fun isPredefinedFunction(functionName: String, project: Project?): Boolean {
-    return ArrayUtil.find(CfmlLangInfo.getInstance(anyProject(project)).predefinedFunctionsInLowCase, functionName.toLowerCase()) != -1
+    return ArrayUtil.find(cfmlLangInfo(project).predefinedFunctionsInLowCase, functionName.toLowerCase()) != -1
   }
 
   fun isPredefinedTagVariables(cfmlRef: CfmlReferenceExpression, project: Project?): Boolean {
@@ -231,7 +231,7 @@ object CfmlUtil {
     }
     val tagName = referenceName.tagName
     val tagNameWithoutCf = if (tagName.startsWith("cf")) tagName.substring(2) else tagName
-    return CfmlLangInfo.getInstance(anyProject(project)).predefinedVariables.keys
+    return cfmlLangInfo(project).predefinedVariables.keys
       .contains(tagNameWithoutCf.toLowerCase() + "." + predefVarText
         .toLowerCase())
   }
@@ -246,7 +246,12 @@ object CfmlUtil {
   }
 
   fun getVariableScopes(project: Project?): Array<String> {
-    return CfmlLangInfo.getInstance(anyProject(project)).variableScopes
+    return cfmlLangInfo(project).variableScopes
+  }
+
+  private fun cfmlLangInfo(project: Project?): CfmlLangInfo {
+    return if (ApplicationManager.getApplication() == null) CfmlLangInfo.getInstance(null)
+    else CfmlLangInfo.getInstance(anyProject(project))
   }
 
   fun getFileName(element: PsiElement): String {
