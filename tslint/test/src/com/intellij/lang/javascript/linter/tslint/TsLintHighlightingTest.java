@@ -108,7 +108,7 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   public void testFixFile() {
     doTest("fixFile", "fixFile/fix.ts", null);
     myFixture.launchAction(JSTestUtils.getSingleQuickFix(myFixture, "TSLint: Fix current file"));
-    myFixture.checkResultByFile("fixFile/fix_after.ts");
+    myFixture.checkResultByFile("fixFile/fix_after.ts", true);
   }
 
   public void testFixSingleError() {
