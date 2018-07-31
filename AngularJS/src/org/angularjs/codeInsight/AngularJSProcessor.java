@@ -185,7 +185,7 @@ public class AngularJSProcessor {
     Collection<VirtualFile> libs = JSCorePredefinedLibrariesProvider
       .getAllJSPredefinedLibraryFiles()
       .stream()
-      .filter(lib -> TypeScriptLibraryProvider.LIB_D_TS.equals(lib.getName()))
+      .filter(lib -> TypeScriptLibraryProvider.LIB_DOM_D_TS.equals(lib.getName()))
       .collect(Collectors.toList());
 
     final List<JSClass> elements = TypeScriptClassResolver.getInstance().findClassesByQName(
