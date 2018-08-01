@@ -6,6 +6,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,11 +16,13 @@ public class KarmaSourceMapStacktraceFilter extends AbstractFileHyperlinkFilter 
   private static final String SEPARATOR = " <- ";
 
   private final AbstractFileHyperlinkFilter myBaseFilter;
+  private final String myBaseDirName;
 
   public KarmaSourceMapStacktraceFilter(@NotNull Project project,
                                         @Nullable String baseDir,
                                         @NotNull AbstractFileHyperlinkFilter baseFilter) {
     super(project, baseDir);
+    myBaseDirName = StringUtil.isNotEmpty(baseDir) ? PathUtil.getFileName(baseDir) : null;
     myBaseFilter = baseFilter;
   }
 
@@ -48,6 +51,14 @@ public class KarmaSourceMapStacktraceFilter extends AbstractFileHyperlinkFilter 
     VirtualFile file = super.findFile(filePath);
     if (file == null && filePath.startsWith("/tmp/")) {
       return super.findFile(StringUtil.trimStart(filePath, "/tmp/"));
+    }
+    if (file == null && myBaseDirName != null && !myBaseDirName.isEmpty() &&
+        StringUtil.startsWithIgnoreCase(filePath, myBaseDirName) &&
+        filePath.length() > myBaseDirName.length()) {
+      char ch = filePath.charAt(myBaseDirName.length());
+      if (ch == '\\' || ch == '/') {
+        return super.findFile(filePath.substring(myBaseDirName.length() + 1));
+      }
     }
     return file;
   }
