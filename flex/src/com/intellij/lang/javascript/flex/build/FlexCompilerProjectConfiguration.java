@@ -1,16 +1,15 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.build;
 
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-@State(
-  name = "FlexCompilerConfiguration", // do not rename it for compatibility
-  storages = {
-    @Storage("flexCompiler.xml"),
-    @Storage(value = StoragePathMacros.WORKSPACE_FILE, deprecated = true)
-  }
-)
+// do not rename it for compatibility
+@State(name = "FlexCompilerConfiguration", storages = @Storage("flexCompiler.xml"))
 public class FlexCompilerProjectConfiguration implements PersistentStateComponent<FlexCompilerProjectConfiguration> {
 
   public boolean GENERATE_FLEXMOJOS_CONFIGS = true;

@@ -26,7 +26,6 @@ import com.intellij.openapi.extensions.ExtensionPoint;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.help.HelpManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -390,13 +389,7 @@ public class DesignerApplicationManager {
         }
 
         notification.expire();
-
-        if ("help".equals(event.getDescription())) {
-          HelpManager.getInstance().invokeHelp("flex.ui.designer.launch");
-        }
-        else {
-          handler.consume(event.getDescription());
-        }
+        handler.consume(event.getDescription());
       }
     });
     notification.notify(project);

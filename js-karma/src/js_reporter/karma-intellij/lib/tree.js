@@ -208,10 +208,13 @@ inherit(TestNode, Node);
  * @param {Number} duration test duration is ms
  * @param {String} failureMsg
  */
-TestNode.prototype.setStatus = function (status, duration, failureMsg) {
+TestNode.prototype.setStatus = function (status, duration, failureMsg, stack, expectedStr, actualStr) {
   this.status = status;
   this.duration = duration;
   this.failureMsg = failureMsg;
+  this.stack = stack;
+  this.expectedStr = expectedStr;
+  this.actualStr = actualStr;
 };
 
 TestNode.prototype.getStartCommandName = function () {
@@ -241,8 +244,17 @@ TestNode.prototype.getExtraFinishMessageParameters = function () {
   if (this.status === 3) {
     params += " error='yes'";
   }
-  if (this.failureMsg) {
+  if (intellijUtil.isString(this.failureMsg)) {
     params += " message='" + intellijUtil.attributeValueEscape(this.failureMsg) + "'";
+  }
+  if (intellijUtil.isString(this.stack)) {
+    params += " details='" + intellijUtil.attributeValueEscape(this.stack) + "'";
+  }
+  if (intellijUtil.isString(this.expectedStr)) {
+    params += " expected='" + intellijUtil.attributeValueEscape(this.expectedStr) + "'";
+  }
+  if (intellijUtil.isString(this.actualStr)) {
+    params += " actual='" + intellijUtil.attributeValueEscape(this.actualStr) + "'";
   }
   return params.length === 0 ? null : params;
 };

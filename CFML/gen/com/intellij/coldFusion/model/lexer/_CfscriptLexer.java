@@ -1203,7 +1203,7 @@ class _CfscriptLexer implements FlexLexer {
             // lookahead expression with fixed lookahead length
             zzMarkedPos = Character.offsetByCodePoints
                 (zzBufferL/*, zzStartRead, zzEndRead - zzStartRead*/, zzMarkedPos, -1);
-            { if (ArrayUtil.find(CfmlUtil.getVariableScopes(myProject), yytext().toString().toLowerCase()) != -1) {
+            { if (ArrayUtil.find(CfmlUtil.INSTANCE.getVariableScopes(myProject), yytext().toString().toLowerCase()) != -1) {
         return CfscriptTokenTypes.SCOPE_KEYWORD;
     } else {
         return CfscriptTokenTypes.IDENTIFIER;

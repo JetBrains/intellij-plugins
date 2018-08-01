@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.resolve;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -224,6 +225,22 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                                                        "<script src='<caret expected='packages'>packages/<caret expected='lib'>ProjectName/<caret expected='lib/projectFile.dart'>projectFile.dart'/>\n" +
                                                        "<script src='packages<caret expected='packages'>/PathPackage<caret expected='local_package/lib'>/localPackageFile.html<caret expected='local_package/lib/localPackageFile.html'>'/>\n" +
                                                        "<script src='<caret expected='packages'>packages/<caret expected='packages/browser'>browser/<caret expected='packages/browser/dart.js'>dart.js'/>\n");
+    myFixture.openFileInEditor(psiFile.getVirtualFile());
+    doTest(myFixture);
+  }
+
+  public void testPackageReferencesInHtmlViaDotPackages() {
+    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName");
+    myFixture.addFileToProject("lib/projectFile.dart", "");
+    myFixture.addFileToProject("local_package/lib/localPackageFile.html", "");
+    myFixture.addFileToProject("global_package/browser/dart.js", "");
+    myFixture.addFileToProject(".packages", "browser:global_package/browser/\n" +
+                                            "ProjectName:lib/\n" +
+                                            "PathPackage:local_package/lib/");
+    final PsiFile psiFile = myFixture.addFileToProject("web/file.html",
+                                                       "<script src='<caret expected='.packages'>packages/<caret expected='lib'>ProjectName/<caret expected='lib/projectFile.dart'>projectFile.dart'/>\n" +
+                                                       "<script src='packages<caret expected='.packages'>/PathPackage<caret expected='local_package/lib'>/localPackageFile.html<caret expected='local_package/lib/localPackageFile.html'>'/>\n" +
+                                                       "<script src='<caret expected='.packages'>packages/<caret expected='global_package/browser'>browser/<caret expected='global_package/browser/dart.js'>dart.js'/>\n");
     myFixture.openFileInEditor(psiFile.getVirtualFile());
     doTest(myFixture);
   }

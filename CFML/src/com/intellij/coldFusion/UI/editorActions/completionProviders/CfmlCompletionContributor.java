@@ -116,7 +116,7 @@ public class CfmlCompletionContributor extends CompletionContributor {
                PsiElement position = parameters.getPosition();
                String text = position.getParent().getText();
                String[] attributeValues = text.indexOf('.') == -1 ?
-                                          CfmlUtil.getAttributeValues("cffunction", "returntype", position.getProject()):
+                                          CfmlUtil.INSTANCE.getAttributeValues("cffunction", "returntype", position.getProject()) :
                                           ArrayUtil.EMPTY_STRING_ARRAY;
                Set<LookupElement> lookupResult = ContainerUtil.map2Set(attributeValues, argumentValue -> LookupElementBuilder.create(argumentValue).withCaseSensitivity(false));
 

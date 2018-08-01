@@ -1,5 +1,5 @@
-let abc = <error descr="TSLint: ' should be \" (quotemark)">'aaa'</error>;
-console.log(abc);
+let abc = <error>'aaa'</error><EOLError>
+</EOLError>console.log(abc)<EOLError>
 
 
-let cde = <error descr="TSLint: ' should be \" (quotemark)">'cde'</error>;
+</EOLError>let cde = <error><error>'cde'</error></error>

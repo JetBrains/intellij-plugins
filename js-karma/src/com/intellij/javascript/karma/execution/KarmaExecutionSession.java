@@ -13,6 +13,7 @@ import com.intellij.javascript.karma.server.KarmaJsSourcesLocator;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
 import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
+import com.intellij.javascript.nodejs.NodeStackTraceFilter;
 import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
@@ -81,9 +82,12 @@ public class KarmaExecutionSession {
   @NotNull
   private SMTRunnerConsoleView createSMTRunnerConsoleView() {
     KarmaTestProxyFilterProvider filterProvider = new KarmaTestProxyFilterProvider(myProject, myKarmaServer);
-    KarmaConsoleProperties testConsoleProperties = new KarmaConsoleProperties(myRunConfiguration, myExecutor, filterProvider);
-    KarmaConsoleView consoleView = new KarmaConsoleView(testConsoleProperties, myKarmaServer, myExecutionType, myProcessHandler);
-    SMTestRunnerConnectionUtil.initConsoleView(consoleView, testConsoleProperties.getTestFrameworkName());
+    KarmaConsoleProperties consoleProperties = new KarmaConsoleProperties(myRunConfiguration, myExecutor, filterProvider);
+    consoleProperties.addStackTraceFilter(new NodeStackTraceFilter(
+      myProject, myKarmaServer.getServerSettings().getWorkingDirectorySystemDependent())
+    );
+    KarmaConsoleView consoleView = new KarmaConsoleView(consoleProperties, myKarmaServer, myExecutionType, myProcessHandler);
+    SMTestRunnerConnectionUtil.initConsoleView(consoleView, consoleProperties.getTestFrameworkName());
     return consoleView;
   }
 
@@ -169,39 +173,27 @@ public class KarmaExecutionSession {
   @Nullable
   private String getTestNamesPattern() throws ExecutionException {
     if (myFailedTestNames != null) {
-      return getTestNamesPattern(myFailedTestNames);
+      return getTestNamesPattern(myFailedTestNames, false);
     }
     if (myRunSettings.getScopeKind() == KarmaScopeKind.TEST_FILE) {
       List<String> topNames = findTopLevelSuiteNames(myProject, myRunSettings.getTestFileSystemIndependentPath());
       String testFileName = PathUtil.getFileName(myRunSettings.getTestFileSystemIndependentPath());
-      if (topNames.size() > 1) {
-        throw new ExecutionException(testFileName + " contains multiple top level suites (" +
-                                     StringUtil.join(topNames, s -> StringUtil.wrapWithDoubleQuote(s), ", ") + ")");
+      if (topNames.isEmpty()) {
+        throw new ExecutionException("No tests found in " + testFileName);
       }
-      String suiteName = ContainerUtil.getFirstItem(topNames);
-      if (suiteName == null) {
-        throw new ExecutionException("No test suites found in " + testFileName);
-      }
-      return getSuiteNamePattern(Collections.singletonList(suiteName));
+      return getTestNamesPattern(ContainerUtil.map(topNames, name -> Collections.singletonList(name)), true);
     }
     if (myRunSettings.getScopeKind() == KarmaScopeKind.SUITE) {
-      return getSuiteNamePattern(myRunSettings.getTestNames());
+      return getTestNamesPattern(Collections.singletonList(myRunSettings.getTestNames()), true);
     }
     if (myRunSettings.getScopeKind() == KarmaScopeKind.TEST) {
-      return getTestNamesPattern(Collections.singletonList(myRunSettings.getTestNames()));
+      return getTestNamesPattern(Collections.singletonList(myRunSettings.getTestNames()), false);
     }
     return null;
   }
 
   @NotNull
-  private static String getSuiteNamePattern(@NotNull List<String> suiteNames) {
-    List<String> escaped = ContainerUtil.mapNotNull(suiteNames, s -> JestUtil.escapeJavaScriptRegexp(s));
-    String result = StringUtil.join(escaped, " ");
-    return "^" + result + " ";
-  }
-
-  @NotNull
-  private static String getTestNamesPattern(@NotNull List<List<String>> testNames) {
+  private static String getTestNamesPattern(@NotNull List<List<String>> testNames, boolean suite) {
     List<String> patterns = ContainerUtil.map(testNames, testFqn -> {
       List<String> escaped = ContainerUtil.mapNotNull(testFqn, s -> JestUtil.escapeJavaScriptRegexp(s));
       return StringUtil.join(escaped, " ");
@@ -216,7 +208,7 @@ public class KarmaExecutionSession {
     else {
       result = "(" + StringUtil.join(patterns, ")|(") + ")";
     }
-    return "^" + result + "$";
+    return "^" + result + (suite ? " " : "$");
   }
 
   private static List<String> findTopLevelSuiteNames(@NotNull Project project, @NotNull String testFilePath) throws ExecutionException {

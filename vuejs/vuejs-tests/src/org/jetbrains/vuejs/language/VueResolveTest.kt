@@ -1326,7 +1326,7 @@ const props = {seeMe: {}}
     val function = reference!!.resolve()
     TestCase.assertNotNull(function)
     TestCase.assertTrue(function is TypeScriptFunction)
-    TestCase.assertEquals("lib.d.ts", function!!.containingFile.name)
+    TestCase.assertEquals("lib.es5.d.ts", function!!.containingFile.name)
   }
 
   fun testECMA5Resolve() {

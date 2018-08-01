@@ -196,7 +196,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
         PsiElement parentRef = variantsResult.getElement().getParent();
         if (!(parentRef instanceof CfmlReferenceExpression) ||
             (variantsResult.getElement() instanceof CfmlAssignmentExpression.AssignedVariable &&
-             CfmlUtil.hasEqualScope(this, (CfmlReferenceExpression)parentRef))) {
+             CfmlUtil.INSTANCE.hasEqualScope(this, (CfmlReferenceExpression)parentRef))) {
           results.add(variantsResult);
         }
       }

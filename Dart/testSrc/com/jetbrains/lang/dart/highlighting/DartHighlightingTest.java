@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.highlighting;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
@@ -66,6 +67,16 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     myFixture.addFileToProject("local_package/lib/localPackageFile.html", "");
     myFixture.addFileToProject("packages/browser/dart.js", "");
     myFixture.configureByFile(testName + "/" + testName + ".html");
+    myFixture.checkHighlighting(true, false, true);
+  }
+
+  public void testScriptSrcPathToDotPackagesFile() {
+    myFixture.enableInspections(HtmlUnknownTargetInspection.class);
+    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName");
+    myFixture.addFileToProject("local_package/lib/src/localPackageFile.html", "");
+    myFixture.addFileToProject(".packages","PathPackage:local_package/lib/");
+    myFixture.configureByText("foo.html", "<link href=\"packages/PathPackage/src/localPackageFile.html\">\n" +
+                                          "<link href=\"packages/PathPackage/src/<warning descr=\"Cannot resolve file 'incorrect.html'\">incorrect.html</warning> \">");
     myFixture.checkHighlighting(true, false, true);
   }
 
