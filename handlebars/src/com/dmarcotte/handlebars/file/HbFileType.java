@@ -61,6 +61,7 @@ public class HbFileType extends LanguageFileType implements TemplateLanguageFile
     return HandlebarsIcons.Handlebars_icon;
   }
 
+  @Override
   public Charset extractCharsetFromFileContent(@Nullable final Project project,
                                                @Nullable final VirtualFile file,
                                                @NotNull final CharSequence content) {
