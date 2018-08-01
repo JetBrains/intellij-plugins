@@ -21,6 +21,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.file.PsiDirectoryImpl;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -84,7 +85,11 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
   private static String getPresentableElementPosition(@NotNull final CodeInsightTestFixture fixture, final @Nullable PsiElement element) {
     if (element == null) return "";
 
-    final StringBuilder buf = new StringBuilder(element.getText());
+    final StringBuilder buf = new StringBuilder();
+    if (!(element instanceof PsiFileSystemItem)) {
+      buf.append(element.getText());
+    }
+
     DartComponent component = PsiTreeUtil.getParentOfType(element, DartComponent.class);
     while (component != null) {
       final DartComponentName componentName = component.getComponentName();

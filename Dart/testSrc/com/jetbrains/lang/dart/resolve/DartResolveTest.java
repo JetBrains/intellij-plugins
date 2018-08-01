@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.resolve;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -224,6 +237,22 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                                                        "<script src='<caret expected='packages'>packages/<caret expected='lib'>ProjectName/<caret expected='lib/projectFile.dart'>projectFile.dart'/>\n" +
                                                        "<script src='packages<caret expected='packages'>/PathPackage<caret expected='local_package/lib'>/localPackageFile.html<caret expected='local_package/lib/localPackageFile.html'>'/>\n" +
                                                        "<script src='<caret expected='packages'>packages/<caret expected='packages/browser'>browser/<caret expected='packages/browser/dart.js'>dart.js'/>\n");
+    myFixture.openFileInEditor(psiFile.getVirtualFile());
+    doTest(myFixture);
+  }
+
+  public void testPackageReferencesInHtmlViaDotPackages() {
+    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName");
+    myFixture.addFileToProject("lib/projectFile.dart", "");
+    myFixture.addFileToProject("local_package/lib/localPackageFile.html", "");
+    myFixture.addFileToProject("global_package/browser/dart.js", "");
+    myFixture.addFileToProject(".packages", "browser:global_package/browser/\n" +
+                                            "ProjectName:lib/\n" +
+                                            "PathPackage:local_package/lib/");
+    final PsiFile psiFile = myFixture.addFileToProject("web/file.html",
+                                                       "<script src='<caret expected='.packages'>packages/<caret expected='lib'>ProjectName/<caret expected='lib/projectFile.dart'>projectFile.dart'/>\n" +
+                                                       "<script src='packages<caret expected='.packages'>/PathPackage<caret expected='local_package/lib'>/localPackageFile.html<caret expected='local_package/lib/localPackageFile.html'>'/>\n" +
+                                                       "<script src='<caret expected='.packages'>packages/<caret expected='global_package/browser'>browser/<caret expected='global_package/browser/dart.js'>dart.js'/>\n");
     myFixture.openFileInEditor(psiFile.getVirtualFile());
     doTest(myFixture);
   }
