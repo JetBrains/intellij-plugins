@@ -50,7 +50,7 @@ class CfmlAttributeValuesCompletionProvider extends CompletionProvider<Completio
     CfmlTag tag = (CfmlTag)element;
     String tagName = tag.getTagName();
 
-    String[] attributeValue = CfmlUtil.INSTANCE.getAttributeValues(tagName, attributeName, parameters.getPosition().getProject());
+    String[] attributeValue = CfmlUtil.getAttributeValues(tagName, attributeName, parameters.getPosition().getProject());
 
     if ("type".equalsIgnoreCase(attributeName) && "cfargument".equalsIgnoreCase(tagName) ||
         "returntype".equalsIgnoreCase(attributeName) && "cffunction".equalsIgnoreCase(tagName)

@@ -42,7 +42,7 @@ class CfmlTagNamesCompletionProvider extends CompletionProvider<CompletionParame
       return;
     }
 
-    for (String s : CfmlUtil.INSTANCE.getTagList(parameters.getPosition().getProject())) {
+    for (String s : CfmlUtil.getTagList(parameters.getPosition().getProject())) {
       result.addElement(LookupElementBuilder.create(s).withCaseSensitivity(false));
     }
 
@@ -60,7 +60,7 @@ class CfmlTagNamesCompletionProvider extends CompletionProvider<CompletionParame
 
   private void addCompletionsFromDirectory(CompletionResultSet result, CompletionParameters parameters, String libtag, String prefix) {
     final PsiFile originalFile = parameters.getOriginalFile();
-    final VirtualFile folder = CfmlUtil.INSTANCE.findFileByLibTag(originalFile, libtag);
+    final VirtualFile folder = CfmlUtil.findFileByLibTag(originalFile, libtag);
     if (folder != null && folder.isDirectory()) {
       final Set<String> names = new THashSet<>(CfmlIndex.getInstance(originalFile.getProject()).getAllComponentsNames());
       names.retainAll(ContainerUtil.map(folder.getChildren(), virtualFile -> FileUtil.getNameWithoutExtension(virtualFile.getName()).toLowerCase()));

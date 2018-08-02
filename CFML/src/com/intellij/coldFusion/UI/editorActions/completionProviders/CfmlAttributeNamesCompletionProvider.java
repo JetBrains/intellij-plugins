@@ -70,7 +70,7 @@ class CfmlAttributeNamesCompletionProvider extends CompletionProvider<Completion
         excluded.add(attribute.getAttributeName());
       }
     }
-    for (CfmlAttributeDescription s : CfmlUtil.INSTANCE.getAttributes(tagName, element.getProject())) {
+    for (CfmlAttributeDescription s : CfmlUtil.getAttributes(tagName, element.getProject())) {
       if (s.getName() == null) {
         continue;
       }

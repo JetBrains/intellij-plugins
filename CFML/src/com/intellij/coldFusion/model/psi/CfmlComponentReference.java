@@ -208,12 +208,12 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
     }
 
     if (result.isEmpty()) {
-      final Couple<String> prefixAndName = CfmlUtil.INSTANCE.getPrefixAndName(componentQualifiedName);
+      final Couple<String> prefixAndName = CfmlUtil.getPrefixAndName(componentQualifiedName);
       final String componentName = prefixAndName.getSecond();
-      final CfmlImport cfmlImport = CfmlUtil.INSTANCE.getImportByPrefix(originalFile, prefixAndName.getFirst());
+      final CfmlImport cfmlImport = CfmlUtil.getImportByPrefix(originalFile, prefixAndName.getFirst());
       if (cfmlImport != null && !StringUtil.isEmpty(componentName)) {
         String libtag = cfmlImport.getImportString();
-        final VirtualFile folder = CfmlUtil.INSTANCE.findFileByLibTag(originalFile, libtag);
+        final VirtualFile folder = CfmlUtil.findFileByLibTag(originalFile, libtag);
         if (folder != null && folder.isDirectory()) {
           final GlobalSearchScope scope = GlobalSearchScopes.directoryScope(originalFile.getProject(), folder, true);
           result.addAll(CfmlIndex.getInstance(originalFile.getProject()).getComponentsByNameInScope(componentName, scope));

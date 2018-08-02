@@ -1291,7 +1291,7 @@ class _CfmlLexer implements FlexLexer {
         } else {
             yybegin(YYINITIAL);
         }
-        if (CfmlUtil.INSTANCE.isSingleCfmlTag(myCurrentConfiguration.myCurrentTag, myProject))
+        if (CfmlUtil.isSingleCfmlTag(myCurrentConfiguration.myCurrentTag, myProject))
             return CfmlTokenTypes.CLOSER;
         return CfmlTokenTypes.R_ANGLEBRACKET;
   }
@@ -1728,7 +1728,7 @@ class _CfmlLexer implements FlexLexer {
           case 82: break;
           case 32: 
             { myCurrentConfiguration.myCurrentTag = yytext().toString().toLowerCase();
-    if (!CfmlUtil.INSTANCE.hasAnyAttributes(myCurrentConfiguration.myCurrentTag, myProject)) {
+    if (!CfmlUtil.hasAnyAttributes(myCurrentConfiguration.myCurrentTag, myProject)) {
         myCurrentConfiguration.myStartExpression = false;
         yybegin(SCRIPT_EXPRESSION);
     } else {

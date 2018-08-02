@@ -44,7 +44,7 @@ public CfmlTagComponentImpl(ASTNode astNode) {
   @NotNull
   public String getName() {
     final String name = CfmlPsiUtil.getPureAttributeValue(this, "name");
-    final String nameFromFile = CfmlUtil.INSTANCE.getFileName(this);
+    final String nameFromFile = CfmlUtil.getFileName(this);
     return !StringUtil.isEmpty(nameFromFile) ? nameFromFile : (name != null ? name : "");
   }
 

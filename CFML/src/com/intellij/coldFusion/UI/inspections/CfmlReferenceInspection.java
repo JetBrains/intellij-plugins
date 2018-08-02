@@ -61,14 +61,14 @@ public class CfmlReferenceInspection extends CfmlInspectionBase {
       return;
     }
     final CfmlReference ref = (CfmlReference)element;
-    if (CfmlUtil.INSTANCE.isPredefinedFunction(ref.getText(), element.getProject())) {
+    if (CfmlUtil.isPredefinedFunction(ref.getText(), element.getProject())) {
       return;
     }
 
     // skip argument names of standard functions
     if (ref instanceof CfmlArgumentNameReference) {
       String functionName = ((CfmlArgumentNameReference)ref).getFunctionName();
-      if (CfmlUtil.INSTANCE.isPredefinedFunction(functionName, element.getProject())) {
+      if (CfmlUtil.isPredefinedFunction(functionName, element.getProject())) {
         return;
       }
     }
@@ -89,7 +89,7 @@ public class CfmlReferenceInspection extends CfmlInspectionBase {
       .containsKey(mostDescentReferenceParent.getText().toLowerCase())) {
       return;
     }
-    if (ref instanceof CfmlReferenceExpression && CfmlUtil.INSTANCE.isPredefinedTagVariables((CfmlReferenceExpression)ref, element.getProject())) {
+    if (ref instanceof CfmlReferenceExpression && CfmlUtil.isPredefinedTagVariables((CfmlReferenceExpression)ref, element.getProject())) {
       return;
     }
 

@@ -137,7 +137,7 @@ public class CfmlArgumentNameReference extends CfmlReferenceExpression implement
     Object[] superResult = ArrayUtil.EMPTY_OBJECT_ARRAY;
 
     String functionName = getFunctionName();
-    if (CfmlUtil.INSTANCE.isPredefinedFunction(functionName, getProject())) {
+    if (CfmlUtil.isPredefinedFunction(functionName, getProject())) {
       CfmlFunctionDescription cfmlFunctionDescription =
         CfmlLangInfo.getInstance(getProject()).getFunctionParameters().get(functionName.toLowerCase());
       for (CfmlFunctionDescription.CfmlParameterDescription param : cfmlFunctionDescription.getParameters()) {

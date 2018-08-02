@@ -108,7 +108,7 @@ public class CfmlParser implements PsiParser {
       while (!tagNamesStack.isEmpty()) {
         Tag tag = tagNamesStack.pop();
         // tag.myMarkerOfBegin.drop();
-        if (CfmlUtil.INSTANCE.isUserDefined(tag.myTagName) || !CfmlUtil.INSTANCE.isEndTagRequired(tag.myTagName, builder.getProject())) {
+        if (CfmlUtil.isUserDefined(tag.myTagName) || !CfmlUtil.isEndTagRequired(tag.myTagName, builder.getProject())) {
           tag.myMarkerOfBegin.doneBefore(getElementTypeForTag(tag.myTagName), tag.myMarkerOfContent);
         }
         else {
@@ -153,7 +153,7 @@ public class CfmlParser implements PsiParser {
         while (!builder.eof() &&
                builder.getTokenType() != SINGLE_QUOTE_CLOSER &&
                builder.getTokenType() != DOUBLE_QUOTE_CLOSER &&
-               !CfmlUtil.INSTANCE.isControlToken(builder.getTokenType())) {
+               !CfmlUtil.isControlToken(builder.getTokenType())) {
           if (builder.getTokenType() == START_EXPRESSION) {
             parseExpression(builder);
           }
@@ -176,13 +176,13 @@ public class CfmlParser implements PsiParser {
         }
         return;
       }
-      else if (!CfmlUtil.INSTANCE.isControlToken(builder.getTokenType()) && builder.getTokenType() != ATTRIBUTE) {
+      else if (!CfmlUtil.isControlToken(builder.getTokenType()) && builder.getTokenType() != ATTRIBUTE) {
         (new CfmlExpressionParser(builder)).parseExpression();
         return;
       }
     }
     // reading what is comming up to the next control token
-    while (!builder.eof() && !CfmlUtil.INSTANCE.isControlToken(builder.getTokenType()) && builder.getTokenType() != ATTRIBUTE) {
+    while (!builder.eof() && !CfmlUtil.isControlToken(builder.getTokenType()) && builder.getTokenType() != ATTRIBUTE) {
       if (builder.getTokenType() == START_EXPRESSION) {
         parseExpression(builder);
       }
@@ -212,7 +212,7 @@ public class CfmlParser implements PsiParser {
       return;
     }
 
-    while (!builder.eof() && !CfmlUtil.INSTANCE.isControlToken(builder.getTokenType())) {
+    while (!builder.eof() && !CfmlUtil.isControlToken(builder.getTokenType())) {
       if (builder.getTokenType() == attributeType ||
           builder.getTokenType() == CfscriptTokenTypes.DEFAULT_KEYWORD ||
           (tagName.equalsIgnoreCase("cfproperty") && builder.getTokenType() ==
@@ -271,10 +271,10 @@ public class CfmlParser implements PsiParser {
 
 
   private static boolean parseCloser(PsiBuilder builder) {
-    if (!builder.eof() && !CfmlUtil.INSTANCE.isControlToken(builder.getTokenType())) {
+    if (!builder.eof() && !CfmlUtil.isControlToken(builder.getTokenType())) {
       builder.error(CfmlBundle.message("cfml.parsing.unexpected.token"));
       builder.advanceLexer();
-      while (!builder.eof() && !CfmlUtil.INSTANCE.isControlToken(builder.getTokenType())) {
+      while (!builder.eof() && !CfmlUtil.isControlToken(builder.getTokenType())) {
         builder.advanceLexer();
       }
     }
@@ -304,7 +304,7 @@ public class CfmlParser implements PsiParser {
       if (canParse) {
         Tag tag = null;
         while (!tagNamesStack.empty() && !((tag = tagNamesStack.pop()).myTagName.equals(closeTagName))) {
-          if (CfmlUtil.INSTANCE.isUserDefined(tag.myTagName) || !CfmlUtil.INSTANCE.isEndTagRequired(tag.myTagName, builder.getProject())) {
+          if (CfmlUtil.isUserDefined(tag.myTagName) || !CfmlUtil.isEndTagRequired(tag.myTagName, builder.getProject())) {
             tag.myMarkerOfBegin.doneBefore(getElementTypeForTag(tag.myTagName), tag.myMarkerOfContent);
           }
           else {

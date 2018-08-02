@@ -44,7 +44,7 @@ public class CfmlComponentImpl extends CfmlCompositeElement implements CfmlCompo
   }
 
   public String getName() {
-    final String nameFromFile = CfmlUtil.INSTANCE.getFileName(this);
+    final String nameFromFile = CfmlUtil.getFileName(this);
     if (!StringUtil.isEmpty(nameFromFile)) {
       return nameFromFile;
     }
