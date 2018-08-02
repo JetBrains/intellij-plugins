@@ -21,6 +21,7 @@ import com.intellij.coldFusion.model.info.CfmlLangInfo;
 import com.intellij.coldFusion.model.info.CfmlTagDescription;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
+import com.intellij.coldFusion.model.parsers.CfmlKeywords;
 import com.intellij.coldFusion.model.psi.CfmlImport;
 import com.intellij.coldFusion.model.psi.CfmlReferenceExpression;
 import com.intellij.coldFusion.model.psi.impl.CfmlTagImpl;
@@ -44,6 +45,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -106,7 +108,7 @@ public class CfmlUtil {
   }
 
   public static Set<String> getTagList(@NotNull Project project) {
-    return CfmlLangInfo.getInstance(project).getTagAttributes().keySet();
+    return getCfmlLangInfo(project).getTagAttributes().keySet();
   }
 
   @NotNull
@@ -121,24 +123,28 @@ public class CfmlUtil {
     if (isUserDefined(tagName)) {
       return true;
     }
-    if (CfmlLangInfo.getInstance(anyProject(project)).getTagAttributes().get(tagName) != null &&
-        CfmlLangInfo.getInstance(anyProject(project)).getTagAttributes().get(tagName).getAttributes() != null) {
-      return CfmlLangInfo.getInstance(anyProject(project)).getTagAttributes().get(tagName).getAttributes().size() != 0;
+    if (getCfmlLangInfo(project).getTagAttributes().get(tagName) != null &&
+        getCfmlLangInfo(project).getTagAttributes().get(tagName).getAttributes() != null) {
+      return getCfmlLangInfo(project).getTagAttributes().get(tagName).getAttributes().size() != 0;
     }
     return false;
   }
 
+  private static CfmlLangInfo getCfmlLangInfo(Project project) {
+    return CfmlLangInfo.getInstance(anyProject(project));
+  }
+
   public static Collection<CfmlAttributeDescription> getAttributes(String tagName, Project project) {
-    if (CfmlLangInfo.getInstance(anyProject(project)).getTagAttributes().get(tagName) != null &&
-        CfmlLangInfo.getInstance(anyProject(project)).getTagAttributes().get(tagName).getAttributes() != null) {
+    if (getCfmlLangInfo(project).getTagAttributes().get(tagName) != null &&
+        getCfmlLangInfo(project).getTagAttributes().get(tagName).getAttributes() != null) {
       return Collections
-        .unmodifiableCollection(CfmlLangInfo.getInstance(anyProject(project)).getTagAttributes().get(tagName).getAttributes());
+        .unmodifiableCollection(getCfmlLangInfo(project).getTagAttributes().get(tagName).getAttributes());
     }
     return Collections.emptyList();
   }
 
   public static boolean isStandardTag(String tagName, Project project) {
-    return CfmlLangInfo.getInstance(anyProject(project)).getTagAttributes().containsKey(tagName);
+    return getCfmlLangInfo(project).getTagAttributes().containsKey(tagName);
   }
 
   public static boolean isUserDefined(String tagName) {
@@ -149,25 +155,25 @@ public class CfmlUtil {
     if (isUserDefined(tagName)) {
       return false;
     }
-    if (!CfmlLangInfo.getInstance(anyProject(project)).getTagAttributes().containsKey(tagName)) {
+    if (!getCfmlLangInfo(project).getTagAttributes().containsKey(tagName)) {
       return false;
     }
-    return !CfmlLangInfo.getInstance(anyProject(project)).getTagAttributes().get(tagName).isEndTagRequired() &&
-           CfmlLangInfo.getInstance(anyProject(project)).getTagAttributes().get(tagName).isSingle();
+    return !getCfmlLangInfo(project).getTagAttributes().get(tagName).isEndTagRequired() &&
+           getCfmlLangInfo(project).getTagAttributes().get(tagName).isSingle();
   }
 
   public static boolean isEndTagRequired(String tagName, Project project) {
-    if (!CfmlLangInfo.getInstance(anyProject(project)).getTagAttributes().containsKey(tagName)) {
+    if (!getCfmlLangInfo(project).getTagAttributes().containsKey(tagName)) {
       return true;
     }
-    return CfmlLangInfo.getInstance(anyProject(project)).getTagAttributes().get(tagName).isEndTagRequired();
+    return getCfmlLangInfo(project).getTagAttributes().get(tagName).isEndTagRequired();
   }
 
   public static String getTagDescription(String tagName, Project project) {
-    if (!CfmlLangInfo.getInstance(anyProject(project)).getTagAttributes().containsKey(tagName)) {
+    if (!getCfmlLangInfo(project).getTagAttributes().containsKey(tagName)) {
       return null;
     }
-    CfmlTagDescription a = CfmlLangInfo.getInstance(anyProject(project)).getTagAttributes().get(tagName);
+    CfmlTagDescription a = getCfmlLangInfo(project).getTagAttributes().get(tagName);
     return "<div>Name: " +
            tagName +
            "</div>" +
@@ -191,7 +197,7 @@ public class CfmlUtil {
 
   @Nullable
   public static CfmlAttributeDescription getAttribute(String tagName, String attributeName, Project project) {
-    CfmlTagDescription tagDescription = CfmlLangInfo.getInstance(anyProject(project)).getTagAttributes().get(tagName);
+    CfmlTagDescription tagDescription = getCfmlLangInfo(project).getTagAttributes().get(tagName);
     if (tagDescription == null) return null;
     final Collection<CfmlAttributeDescription> attributesCollection = tagDescription.getAttributes();
     for (CfmlAttributeDescription af : attributesCollection) {
@@ -218,12 +224,10 @@ public class CfmlUtil {
     }
 
     final String name = tokenText.toLowerCase();
-    final boolean keyword = name.equals("param") ||
-                            name.equals("lock") ||
-                            name.equals("transaction") ||
-                            name.equals("writelog") ||
-                            name.equals("savecontent");
-    return keyword && checkAheadActionTokens(builder.lookAhead(1), builder.lookAhead(2));
+    boolean isKeyword = Arrays
+      .stream(CfmlKeywords.values())
+      .anyMatch(cfmlKeyword -> cfmlKeyword.getKeyword().equals(name));
+    return isKeyword && checkAheadActionTokens(builder.lookAhead(1), builder.lookAhead(2));
   }
 
   private static boolean checkAheadActionTokens(@Nullable IElementType second, @Nullable IElementType third) {
@@ -232,11 +236,11 @@ public class CfmlUtil {
   }
 
   public static String[] getPredifinedFunctions(Project project) {
-    return CfmlLangInfo.getInstance(anyProject(project)).getPredefinedFunctions();
+    return getCfmlLangInfo(project).getPredefinedFunctions();
   }
 
   public static boolean isPredefinedFunction(String functionName, Project project) {
-    return ArrayUtil.find(CfmlLangInfo.getInstance(anyProject(project)).getPredefinedFunctionsInLowCase(), functionName.toLowerCase()) !=
+    return ArrayUtil.find(getCfmlLangInfo(project).getPredefinedFunctionsInLowCase(), functionName.toLowerCase()) !=
            -1;
   }
 
@@ -255,7 +259,7 @@ public class CfmlUtil {
     String tagName = ((CfmlTagImpl)referenceName).getTagName();
     String tagNameWithoutCf = tagName.startsWith("cf") ? tagName.substring(2) : tagName;
     return
-      CfmlLangInfo.getInstance(anyProject(project)).getPredefinedVariables().keySet()
+      getCfmlLangInfo(project).getPredefinedVariables().keySet()
         .contains(tagNameWithoutCf.toLowerCase() + "." + predefVarText
           .toLowerCase());
   }
@@ -279,7 +283,7 @@ public class CfmlUtil {
   }
 
   public static String[] getVariableScopes(Project project) {
-    return CfmlLangInfo.getInstance(anyProject(project)).getVariableScopes();
+    return getCfmlLangInfo(project).getVariableScopes();
   }
 
   @NotNull
