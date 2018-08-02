@@ -22,7 +22,11 @@ import com.intellij.coldFusion.model.psi.stubs.CfmlStubElementTypes;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 
+import java.util.Objects;
+
 import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.*;
+import static com.intellij.coldFusion.model.parsers.CfmlKeywordsKt.isKeyword;
+import static com.intellij.coldFusion.model.parsers.CfmlKeywordsKt.parseKeyword;
 
 /**
  * Created by Lera Nikolaenko
@@ -132,7 +136,11 @@ public class CfscriptParser {
         eatSemicolon(myBuilder);
       }
       else {
-        parseFunctionBody(myBuilder);
+        if (actionName != null && isKeyword(actionName) && Objects.requireNonNull(parseKeyword(actionName)).getOmitCodeBlock() && myBuilder.getTokenType() == SEMICOLON) {
+          //do nothing
+        } else{
+          parseFunctionBody(myBuilder);
+        }
       }
       actionMarker.done(CfmlElementTypes.ACTION);
     }
@@ -416,7 +424,7 @@ public class CfscriptParser {
   private void parseFunctionBody(PsiBuilder myBuilder) {
     PsiBuilder.Marker functionBodyMarker = myBuilder.mark();
     if (myBuilder.getTokenType() != L_CURLYBRACKET) {
-      myBuilder.error(CfmlBundle.message("cfml.parsing.open.curly.bracket.expected"));
+      myBuilder.error(CfmlBundle.message("cfml.parsing.open.curly.bracket.or.semicolon.expected"));
       functionBodyMarker.drop();
       return;
     }
