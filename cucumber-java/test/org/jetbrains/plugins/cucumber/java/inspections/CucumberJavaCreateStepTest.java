@@ -28,15 +28,18 @@ public class CucumberJavaCreateStepTest extends CucumberJavaCodeInsightTestCase 
 
     myFixture.checkHighlighting(true, false, false);
 
-    final String fixName = createAll ? "Create All" : "Create step";
+    final String fixName = createAll ? "Create all" : "Create step";
     final IntentionAction quickFix = ContainerUtil.find(myFixture.getAvailableIntentions(),
-                                                        intentionAction -> intentionAction instanceof QuickFixWrapper && intentionAction.getText().contains(fixName));
+                                                        intentionAction -> intentionAction.getText().contains(fixName));
 
     if (quickFix != null) {
       myFixture.launchAction(quickFix);
       VirtualFile expectedFile = myFixture.findFileInTempDir("StepDefs.java");
       myFixture.openFileInEditor(expectedFile);
       myFixture.checkResultByFile("createStep/" + getTestName(true) + "/StepDefs_fixed.txt");
+    }
+    else {
+      fail("Quick fix not found");
     }
   }
 

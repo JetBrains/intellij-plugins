@@ -1,6 +1,5 @@
 package cucumber.examples.java.calculator;
 
-import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 
 public class CreateAllStepDefs {
@@ -9,14 +8,12 @@ public class CreateAllStepDefs {
     }
 
     @Given("^test$")
-    public void test() throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
+    public void test() {
+        
     }
 
     @Given("^super test$")
-    public void superTest() throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
+    public void superTest() {
+        
     }
 }
