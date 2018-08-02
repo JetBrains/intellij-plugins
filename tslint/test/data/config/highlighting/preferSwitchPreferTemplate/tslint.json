@@ -1,6 +1,6 @@
 {
   "rules": {
     "prefer-switch": [true, { "min-cases": <warning descr="Type is not allowed. Expected: number.">true</warning> }],
-    "prefer-template": [true, <warning descr="Value should be one of: [\"allow-single-concat\"]">"allow-single-conca"</warning>]
+    "prefer-template": [true, <warning descr="Value should be one of: \"allow-single-concat\"">"allow-single-conca"</warning>]
   }
 }
