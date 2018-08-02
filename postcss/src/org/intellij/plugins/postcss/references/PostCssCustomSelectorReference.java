@@ -31,7 +31,7 @@ public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<
   }
 
   @Override
-  public boolean isReferenceTo(PsiElement element) {
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     String name = getCustomSelectorName();
     return name != null && element instanceof PostCssCustomSelector && name.equals(((PostCssCustomSelector)element).getName());
   }

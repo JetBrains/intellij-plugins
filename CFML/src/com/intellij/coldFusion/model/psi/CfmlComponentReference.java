@@ -312,7 +312,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
     throw new IncorrectOperationException("Not implemented yet");
   }
 
-  public boolean isReferenceTo(PsiElement element) {
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     // TODO: replace with fully qualified names
 
     if (element instanceof CfmlComponent && getCanonicalText().equals(((CfmlComponent)element).getName())) {

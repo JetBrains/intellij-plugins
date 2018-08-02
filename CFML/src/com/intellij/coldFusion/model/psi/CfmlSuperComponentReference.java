@@ -89,7 +89,7 @@ public class CfmlSuperComponentReference extends CfmlCompositeElement implements
   }
 
   @Override
-  public boolean isReferenceTo(PsiElement element) {
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     CfmlComponent componentDefinition = getComponentDefinition();
     if (componentDefinition != null) {
       CfmlComponentReference superReference = componentDefinition.getSuperReference();

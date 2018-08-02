@@ -81,7 +81,7 @@ public class CfmlThisComponentReference extends CfmlCompositeElement implements 
   }
 
   @Override
-  public boolean isReferenceTo(PsiElement element) {
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     return element instanceof CfmlComponent &&
            (element.getContainingFile() == getContainingFile());
   }

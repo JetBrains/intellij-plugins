@@ -122,7 +122,7 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
   }
 
   @Override
-  public boolean isReferenceTo(PsiElement element) {
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     if (element instanceof CssSelectorSuffix) {
       String text = element.getText();
       return text != null && !text.isEmpty() && text.substring(1).equals(getValue(myElement));

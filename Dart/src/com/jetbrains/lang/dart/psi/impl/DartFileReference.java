@@ -132,7 +132,7 @@ public class DartFileReference implements PsiPolyVariantReference {
   }
 
   @Override
-  public boolean isReferenceTo(final PsiElement element) {
+  public boolean isReferenceTo(@NotNull final PsiElement element) {
     return element instanceof DartFile && element.equals(resolve());
   }
 

@@ -60,7 +60,7 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
     return myElement;
   }
 
-  public boolean isReferenceTo(final PsiElement element) {
+  public boolean isReferenceTo(@NotNull final PsiElement element) {
     final PsiManager manager = myElement.getManager();
     for (final ResolveResult result : multiResolve(false)) {
       final PsiElement target = result.getElement();

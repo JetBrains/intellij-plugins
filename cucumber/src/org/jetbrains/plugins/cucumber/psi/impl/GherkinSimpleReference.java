@@ -54,7 +54,7 @@ public class GherkinSimpleReference implements PsiReference {
   }
 
   @Override
-  public boolean isReferenceTo(PsiElement element) {
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     PsiElement myResolved = resolve();
     PsiElement resolved = element.getReference() != null ? element.getReference().resolve() : null;
     if (resolved == null) {

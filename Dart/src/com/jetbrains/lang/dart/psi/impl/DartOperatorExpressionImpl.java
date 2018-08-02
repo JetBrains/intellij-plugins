@@ -52,7 +52,7 @@ public class DartOperatorExpressionImpl extends DartExpressionImpl implements Da
   }
 
   @Override
-  public boolean isReferenceTo(PsiElement element) {
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     return false;
   }
 

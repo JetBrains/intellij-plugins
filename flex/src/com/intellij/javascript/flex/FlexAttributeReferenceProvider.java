@@ -314,7 +314,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
       throw new IncorrectOperationException();
     }
 
-    public boolean isReferenceTo(PsiElement element) {
+    public boolean isReferenceTo(@NotNull PsiElement element) {
       return false;
     }
 

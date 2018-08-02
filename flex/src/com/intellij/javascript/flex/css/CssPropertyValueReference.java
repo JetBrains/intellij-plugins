@@ -97,7 +97,7 @@ public class CssPropertyValueReference extends PsiPolyVariantCachingReference im
   }
 
   @Override
-  public boolean isReferenceTo(PsiElement element) {
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     ResolveResult[] results = multiResolve(false);
     for (ResolveResult result : results) {
       if (myElement.getManager().areElementsEquivalent(result.getElement(), element)) {

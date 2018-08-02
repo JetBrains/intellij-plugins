@@ -59,7 +59,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
     return myStep;
   }
 
-  public boolean isReferenceTo(PsiElement element) {
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     ResolveResult[] resolvedResults = multiResolve(false);
     for (ResolveResult rr : resolvedResults) {
       if (getElement().getManager().areElementsEquivalent(rr.getElement(), element)) {

@@ -82,7 +82,7 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
   }
 
   @Override
-  public boolean isReferenceTo(PsiElement element) {
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     final DartReference[] references = PsiTreeUtil.getChildrenOfType(this, DartReference.class);
     final boolean chain = references != null && references.length == 2;
     if (chain) {

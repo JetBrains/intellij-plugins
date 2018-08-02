@@ -135,7 +135,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
   }
 
   @Override
-  public boolean isReferenceTo(PsiElement element) {
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     if (element instanceof CfmlProperty && element.getContainingFile() == getContainingFile()) {
       String name = ((CfmlProperty)element).getName();
       String referenceText = getText();

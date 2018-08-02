@@ -31,7 +31,7 @@ public class PostCssCustomMediaReference extends PsiPolyVariantReferenceBase<Psi
   }
 
   @Override
-  public boolean isReferenceTo(PsiElement element) {
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     String name = getCustomMediaName();
     return name != null && element instanceof PostCssCustomMedia && name.equals(((PostCssCustomMedia)element).getName());
   }

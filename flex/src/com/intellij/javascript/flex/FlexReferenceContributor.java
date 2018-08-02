@@ -163,7 +163,7 @@ public class FlexReferenceContributor {
     }
 
     @Override
-    public boolean isReferenceTo(PsiElement element) {
+    public boolean isReferenceTo(@NotNull PsiElement element) {
       for (ResolveResult r : multiResolve(false)) {
         if (myElement.getManager().areElementsEquivalent(element, r.getElement())) return true;
       }

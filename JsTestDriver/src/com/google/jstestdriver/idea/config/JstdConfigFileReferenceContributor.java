@@ -213,7 +213,7 @@ public class JstdConfigFileReferenceContributor extends PsiReferenceContributor 
     }
 
     @Override
-    public boolean isReferenceTo(PsiElement element) {
+    public boolean isReferenceTo(@NotNull PsiElement element) {
       return getElement().getManager().areElementsEquivalent(resolve(), element);
     }
 
