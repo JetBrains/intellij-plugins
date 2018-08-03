@@ -111,6 +111,9 @@ public class CfmlUtil {
     return getCfmlLangInfo(project).getTagAttributes().keySet();
   }
 
+  /**
+   * Use only if {@code ApplicationManager.getApplication() != null}
+   */
   @NotNull
   private static Project anyProject(Project project) {
     if (project != null) return project;
@@ -131,6 +134,7 @@ public class CfmlUtil {
   }
 
   private static CfmlLangInfo getCfmlLangInfo(Project project) {
+    if (ApplicationManager.getApplication() == null) return CfmlLangInfo.getInstance(null);
     return CfmlLangInfo.getInstance(anyProject(project));
   }
 
