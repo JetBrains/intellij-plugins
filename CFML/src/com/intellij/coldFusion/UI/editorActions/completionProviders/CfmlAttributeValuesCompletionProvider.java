@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 class CfmlAttributeValuesCompletionProvider extends CompletionProvider<CompletionParameters> {
   public void addCompletions(@NotNull final CompletionParameters parameters,
-                             final ProcessingContext context,
+                             @NotNull final ProcessingContext context,
                              @NotNull final CompletionResultSet result) {
     PsiElement element = parameters.getPosition();
     while (element != null && !(element instanceof CfmlAttributeImpl)) {

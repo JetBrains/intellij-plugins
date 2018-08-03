@@ -42,7 +42,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
     extend(CompletionType.BASIC, JstdConfigFileUtils.CONFIG_FILE_ELEMENT_PATTERN, new CompletionProvider<CompletionParameters>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
-                                    ProcessingContext context,
+                                    @NotNull ProcessingContext context,
                                     @NotNull CompletionResultSet result) {
         UnquotedText text = new UnquotedText(parameters.getPosition());
         int prefixLength = Math.max(0, parameters.getOffset() - text.getUnquotedDocumentTextRange().getStartOffset());

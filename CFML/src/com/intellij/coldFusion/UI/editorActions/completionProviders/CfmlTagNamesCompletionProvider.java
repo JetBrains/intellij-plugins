@@ -36,7 +36,7 @@ import java.util.Set;
 
 class CfmlTagNamesCompletionProvider extends CompletionProvider<CompletionParameters> {
   public void addCompletions(@NotNull final CompletionParameters parameters,
-                             final ProcessingContext context,
+                             @NotNull final ProcessingContext context,
                              @NotNull final CompletionResultSet result) {
     if (!(parameters.getOriginalFile().getViewProvider() instanceof CfmlFileViewProvider)) {
       return;
