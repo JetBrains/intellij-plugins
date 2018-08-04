@@ -306,7 +306,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
       return myValue;
     }
 
-    public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+    public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
       throw new IncorrectOperationException();
     }
 

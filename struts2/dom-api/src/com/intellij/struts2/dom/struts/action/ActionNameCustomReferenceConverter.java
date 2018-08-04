@@ -68,7 +68,7 @@ public class ActionNameCustomReferenceConverter implements CustomReferenceConver
       }
 
       // do nothing. the element will be renamed via PsiMetaData
-      public PsiElement handleElementRename(final String newElementName) throws IncorrectOperationException {
+      public PsiElement handleElementRename(@NotNull final String newElementName) throws IncorrectOperationException {
         return getElement();
       }
 

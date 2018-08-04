@@ -304,7 +304,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
     return getText();
   }
 
-  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+  public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
     throw new IncorrectOperationException("Not implemented yet");
   }
 

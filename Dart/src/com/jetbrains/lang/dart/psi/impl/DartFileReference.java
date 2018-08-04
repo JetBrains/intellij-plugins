@@ -91,7 +91,7 @@ public class DartFileReference implements PsiPolyVariantReference {
   }
 
   @Override
-  public PsiElement handleElementRename(final String newFileName) throws IncorrectOperationException {
+  public PsiElement handleElementRename(@NotNull final String newFileName) throws IncorrectOperationException {
     final int index = Math.max(myUri.lastIndexOf('/'), myUri.lastIndexOf("\\\\"));
     final String newUri = index < 0 ? newFileName : myUri.substring(0, index) + "/" + newFileName;
     return updateUri(newUri);

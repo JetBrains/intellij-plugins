@@ -79,7 +79,7 @@ public class CfmlSuperComponentReference extends CfmlCompositeElement implements
   }
 
   @Override
-  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+  public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
     throw new IncorrectOperationException("Can't rename a keyword");
   }
 

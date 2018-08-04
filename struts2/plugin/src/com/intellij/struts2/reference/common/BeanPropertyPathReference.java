@@ -101,7 +101,7 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
     return "Cannot resolve property '" + getValue() + "'";
   }
 
-  public PsiElement handleElementRename(final String newElementName) throws IncorrectOperationException {
+  public PsiElement handleElementRename(@NotNull final String newElementName) throws IncorrectOperationException {
     final String name = PropertyUtilBase.getPropertyName(newElementName);
     return super.handleElementRename(name == null ? newElementName : name);
   }

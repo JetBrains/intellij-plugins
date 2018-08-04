@@ -61,7 +61,7 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
   }
 
   @Override
-  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+  public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
     PsiElement element = this;
     if (getText().indexOf('.') != -1) {
       // libPrefix.name

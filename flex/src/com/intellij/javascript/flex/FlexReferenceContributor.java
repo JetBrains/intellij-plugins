@@ -198,7 +198,7 @@ public class FlexReferenceContributor {
       return FlexBundle.message("cannot.resolve.state");
     }
 
-    public PsiElement handleElementRename(final String newElementName) throws IncorrectOperationException {
+    public PsiElement handleElementRename(@NotNull final String newElementName) throws IncorrectOperationException {
       if (myElement instanceof XmlTag) {
         final XmlToken startTagNameElement = XmlTagUtil.getStartTagNameElement((XmlTag)myElement);
         if (startTagNameElement != null) {

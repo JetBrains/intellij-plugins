@@ -49,7 +49,7 @@ public class DartLibraryComponentReferenceExpressionBase extends DartExpressionI
   }
 
   @Override
-  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+  public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
     final DartId identifier = PsiTreeUtil.getChildOfType(this, DartId.class);
     final DartId identifierNew = DartElementGenerator.createIdentifierFromText(getProject(), newElementName);
     if (identifier != null && identifierNew != null) {

@@ -362,7 +362,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
   }
 
   @Override
-  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+  public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
     CheckUtil.checkWritable(this);
 
     PsiElement newElement;

@@ -42,7 +42,7 @@ public class DartOperatorExpressionImpl extends DartExpressionImpl implements Da
   }
 
   @Override
-  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+  public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
     return this;
   }
 

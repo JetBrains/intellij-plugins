@@ -34,7 +34,7 @@ public class TelReferenceExpression extends TelCompositeElement implements TelRe
       return findChildByClass(TelReferenceQualifier.class);
     }
 
-    public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+    public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
       PsiElement resolve = resolve();
       // if we referenced property name before (without get) then rename should also strip get prefix
       if (resolve instanceof PsiMethod && PropertyUtilBase.getPropertyName((PsiMethod)resolve) != null) {
