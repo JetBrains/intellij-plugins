@@ -3,11 +3,13 @@ package org.intellij.plugins.markdown.ui.preview;
 
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
-import io.netty.handler.stream.ChunkedStream;
 import org.intellij.plugins.markdown.settings.MarkdownCssSettings;
 import org.intellij.plugins.markdown.ui.preview.javafx.MarkdownJavaFxHtmlPanel;
 import org.jetbrains.annotations.NotNull;
@@ -15,13 +17,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.BuiltInServerManager;
 import org.jetbrains.ide.HttpRequestHandler;
 import org.jetbrains.io.FileResponses;
-import org.jetbrains.io.FileResponsesKt;
 import org.jetbrains.io.Responses;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.List;
 
 public class PreviewStaticServer extends HttpRequestHandler {
@@ -32,7 +33,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
   private static final String PREFIX = "/api/markdown-preview/";
 
   @Nullable
-  private String myInlineStyle = null;
+  private ByteBuf myInlineStyle = null;
 
   private long myInlineStyleTimestamp = 0;
 
@@ -64,7 +65,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
   }
 
   public void setInlineStyle(@Nullable String inlineStyle) {
-    myInlineStyle = inlineStyle;
+    myInlineStyle = inlineStyle == null ? null : Unpooled.wrappedBuffer(inlineStyle.getBytes(StandardCharsets.UTF_8));
     myInlineStyleTimestamp = System.currentTimeMillis();
   }
 
@@ -117,55 +118,50 @@ public class PreviewStaticServer extends HttpRequestHandler {
 
 
   private void sendInlineStyle(@NotNull HttpRequest request, @NotNull Channel channel) {
-    final HttpResponse response = FileResponses.INSTANCE.prepareSend(request, channel, myInlineStyleTimestamp, INLINE_CSS_FILENAME);
-    if (response == null) {
+    if (FileResponses.INSTANCE.checkCache(request, channel, myInlineStyleTimestamp)) {
       return;
     }
-
-    boolean isKeepAlive = Responses.addKeepAliveIfNeed(response, request);
 
     if (myInlineStyle == null) {
       Responses.send(HttpResponseStatus.NOT_FOUND, channel, request);
       return;
     }
 
-    channel.write(response);
-    if (request.method() != HttpMethod.HEAD) {
-      byte[] data = myInlineStyle.getBytes(StandardCharsets.UTF_8);
-      HttpUtil.setContentLength(response, data.length);
-      channel.write(new ChunkedStream(new ByteArrayInputStream(data)));
-    }
-
-    FileResponsesKt.flushChunkedResponse(channel, isKeepAlive);
+    FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, myInlineStyle);
+    response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/css");
+    response.headers().set(HttpHeaderNames.CACHE_CONTROL, "private, must-revalidate");
+    response.headers().set(HttpHeaderNames.LAST_MODIFIED, new Date(myInlineStyleTimestamp));
+    Responses.send(response, channel, request);
   }
 
   private static void sendResource(@NotNull HttpRequest request,
                                    @NotNull Channel channel,
                                    @NotNull Class<?> clazz,
                                    @NotNull String resourceName) {
-    final String fileName = resourceName.substring(resourceName.lastIndexOf('/') + 1);
-    final HttpResponse response = FileResponses.INSTANCE.prepareSend(request, channel, ApplicationInfo.getInstance().getBuildDate().getTimeInMillis(), fileName);
-    if (response == null) {
+    long lastModified = ApplicationInfo.getInstance().getBuildDate().getTimeInMillis();
+    if (FileResponses.INSTANCE.checkCache(request, channel, lastModified)) {
       return;
     }
 
-    boolean isKeepAlive = Responses.addKeepAliveIfNeed(response, request);
-
-    try (final InputStream resource = clazz.getResourceAsStream(resourceName)) {
-      if (resource == null) {
+    byte[] data;
+    try (final InputStream inputStream = clazz.getResourceAsStream(resourceName)) {
+      if (inputStream == null) {
         Responses.send(HttpResponseStatus.NOT_FOUND, channel, request);
         return;
       }
 
-      channel.write(response);
-      if (request.method() != HttpMethod.HEAD) {
-        channel.write(new ChunkedStream(resource));
-      }
+      data = FileUtilRt.loadBytes(inputStream);
     }
     catch (IOException e) {
       LOG.warn(e);
+      Responses.send(HttpResponseStatus.INTERNAL_SERVER_ERROR, channel, request);
+      return;
     }
 
-    FileResponsesKt.flushChunkedResponse(channel, isKeepAlive);
+    FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(data));
+    response.headers().set(HttpHeaderNames.CONTENT_TYPE, FileResponses.INSTANCE.getContentType(resourceName));
+    response.headers().set(HttpHeaderNames.CACHE_CONTROL, "private, must-revalidate");
+    response.headers().set(HttpHeaderNames.LAST_MODIFIED, new Date(lastModified));
+    Responses.send(response, channel, request);
   }
 }
