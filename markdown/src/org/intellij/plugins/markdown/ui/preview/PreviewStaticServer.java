@@ -1,10 +1,10 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.intellij.plugins.markdown.ui.preview;
 
+import com.intellij.openapi.application.ApplicationInfo;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.stream.ChunkedStream;
@@ -15,14 +15,17 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.BuiltInServerManager;
 import org.jetbrains.ide.HttpRequestHandler;
 import org.jetbrains.io.FileResponses;
+import org.jetbrains.io.FileResponsesKt;
 import org.jetbrains.io.Responses;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class PreviewStaticServer extends HttpRequestHandler {
+  private static final Logger LOG = Logger.getInstance(PreviewStaticServer.class);
 
   public static final String INLINE_CSS_FILENAME = "inline.css";
 
@@ -73,7 +76,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
   @Override
   public boolean process(@NotNull QueryStringDecoder urlDecoder,
                          @NotNull FullHttpRequest request,
-                         @NotNull ChannelHandlerContext context) throws IOException {
+                         @NotNull ChannelHandlerContext context) {
     final String path = urlDecoder.path();
     if (!path.startsWith(PREFIX)) {
       throw new IllegalStateException("prefix should have been checked by #isSupported");
@@ -121,7 +124,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
       return;
     }
 
-    Responses.addKeepAliveIfNeed(response, request);
+    boolean isKeepAlive = Responses.addKeepAliveIfNeed(response, request);
 
     if (myInlineStyle == null) {
       Responses.send(HttpResponseStatus.NOT_FOUND, channel, request);
@@ -130,11 +133,12 @@ public class PreviewStaticServer extends HttpRequestHandler {
 
     channel.write(response);
     if (request.method() != HttpMethod.HEAD) {
-      channel.write(new ChunkedStream(new ByteArrayInputStream(myInlineStyle.getBytes(CharsetToolkit.UTF8_CHARSET))));
+      byte[] data = myInlineStyle.getBytes(StandardCharsets.UTF_8);
+      HttpUtil.setContentLength(response, data.length);
+      channel.write(new ChunkedStream(new ByteArrayInputStream(data)));
     }
 
-    final ChannelFuture future = channel.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
-    future.addListener(ChannelFutureListener.CLOSE);
+    FileResponsesKt.flushChunkedResponse(channel, isKeepAlive);
   }
 
   private static void sendResource(@NotNull HttpRequest request,
@@ -142,13 +146,12 @@ public class PreviewStaticServer extends HttpRequestHandler {
                                    @NotNull Class<?> clazz,
                                    @NotNull String resourceName) {
     final String fileName = resourceName.substring(resourceName.lastIndexOf('/') + 1);
-    final HttpResponse response =
-      FileResponses.INSTANCE.prepareSend(request, channel, 0, fileName, EmptyHttpHeaders.INSTANCE);
+    final HttpResponse response = FileResponses.INSTANCE.prepareSend(request, channel, ApplicationInfo.getInstance().getBuildDate().getTimeInMillis(), fileName, EmptyHttpHeaders.INSTANCE);
     if (response == null) {
       return;
     }
 
-    Responses.addKeepAliveIfNeed(response, request);
+    boolean isKeepAlive = Responses.addKeepAliveIfNeed(response, request);
 
     try (final InputStream resource = clazz.getResourceAsStream(resourceName)) {
       if (resource == null) {
@@ -161,10 +164,10 @@ public class PreviewStaticServer extends HttpRequestHandler {
         channel.write(new ChunkedStream(resource));
       }
     }
-    catch (IOException ignored) {
+    catch (IOException e) {
+      LOG.warn(e);
     }
 
-    final ChannelFuture future = channel.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
-    future.addListener(ChannelFutureListener.CLOSE);
+    FileResponsesKt.flushChunkedResponse(channel, isKeepAlive);
   }
 }
