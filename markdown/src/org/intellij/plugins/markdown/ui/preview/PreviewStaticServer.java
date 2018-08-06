@@ -116,10 +116,8 @@ public class PreviewStaticServer extends HttpRequestHandler {
   }
 
 
-  private void sendInlineStyle(@NotNull HttpRequest request,
-                               @NotNull Channel channel) {
-    final HttpResponse response =
-      FileResponses.INSTANCE.prepareSend(request, channel, myInlineStyleTimestamp, INLINE_CSS_FILENAME, EmptyHttpHeaders.INSTANCE);
+  private void sendInlineStyle(@NotNull HttpRequest request, @NotNull Channel channel) {
+    final HttpResponse response = FileResponses.INSTANCE.prepareSend(request, channel, myInlineStyleTimestamp, INLINE_CSS_FILENAME);
     if (response == null) {
       return;
     }
@@ -146,7 +144,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
                                    @NotNull Class<?> clazz,
                                    @NotNull String resourceName) {
     final String fileName = resourceName.substring(resourceName.lastIndexOf('/') + 1);
-    final HttpResponse response = FileResponses.INSTANCE.prepareSend(request, channel, ApplicationInfo.getInstance().getBuildDate().getTimeInMillis(), fileName, EmptyHttpHeaders.INSTANCE);
+    final HttpResponse response = FileResponses.INSTANCE.prepareSend(request, channel, ApplicationInfo.getInstance().getBuildDate().getTimeInMillis(), fileName);
     if (response == null) {
       return;
     }
