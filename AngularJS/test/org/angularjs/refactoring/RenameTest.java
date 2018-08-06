@@ -64,6 +64,11 @@ public class RenameTest extends LightPlatformCodeInsightFixtureTestCase {
     doMultiFileTest("foo.module.ts", "Module");
   }
 
+  public void testInjectionReparse() throws IOException {
+    Messages.setTestDialog(TestDialog.OK);
+    doMultiFileTest("foo.component.html", "product");
+  }
+
   private void doMultiFileTest(String mainFile, String newName) throws IOException {
     final String testName = getTestName(true);
     final VirtualFile dir1 = myFixture.copyDirectoryToProject(testName + "/before", "");
