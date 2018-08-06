@@ -34,6 +34,7 @@ import jetbrains.communicator.util.KirTree;
 import jetbrains.communicator.util.KirTreeNode;
 import jetbrains.communicator.util.StringUtil;
 import jetbrains.communicator.util.TreeUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -133,7 +134,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
 
   private void addRefreshAction(DefaultActionGroup actionGroup) {
     actionGroup.add(new AnAction(StringUtil.getMsg("refresh.file.list"), "", AllIcons.Actions.Refresh) {
-      public void actionPerformed(AnActionEvent e) {
+      public void actionPerformed(@NotNull AnActionEvent e) {
         refreshData(myUser, myUser.getProjectsData(myIdeFacade));
       }
     });

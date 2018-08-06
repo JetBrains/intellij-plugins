@@ -21,12 +21,13 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import jetbrains.communicator.idea.IDEtalkMessagesWindow;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Kir
  */
 public class CloseAction extends AnAction {
-  public void actionPerformed(AnActionEvent e) {
+  public void actionPerformed(@NotNull AnActionEvent e) {
     Project project = (CommonDataKeys.PROJECT.getData(e.getDataContext()));
     doHideToolwindow(project);
   }

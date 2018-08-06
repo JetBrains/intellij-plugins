@@ -175,7 +175,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
       if (sourceChangeFix == null) continue;
       group.add(new AnAction(sourceChangeFix.getMessage(), null, AllIcons.Actions.QuickfixBulb) {
         @Override
-        public void actionPerformed(final AnActionEvent event) {
+        public void actionPerformed(@NotNull final AnActionEvent event) {
           OpenSourceUtil.navigate(PsiNavigationSupport.getInstance().createNavigatable(myProject, selectedVFile,
                                                                                        selectedProblem.getOffset()));
           try {
@@ -385,13 +385,13 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     }
 
     @Override
-    public void update(final AnActionEvent e) {
+    public void update(@NotNull final AnActionEvent e) {
       // show icon as toggled on if any filter is active
       e.getPresentation().putClientProperty(Toggleable.SELECTED_PROPERTY, myPresentationHelper.areFiltersApplied());
     }
 
     @Override
-    public void actionPerformed(final AnActionEvent e) {
+    public void actionPerformed(@NotNull final AnActionEvent e) {
       showFiltersPopup();
     }
   }

@@ -25,6 +25,7 @@ import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.core.commands.UserCommand;
 import jetbrains.communicator.idea.IDEtalkContainerRegistry;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.picocontainer.MutablePicoContainer;
 
@@ -86,14 +87,14 @@ public class BaseAction<T extends UserCommand> extends AnAction {
     return null;
   }
 
-  public void actionPerformed(AnActionEvent e) {
+  public void actionPerformed(@NotNull AnActionEvent e) {
     T t = getCommand(e);
     if (t != null) {
       t.execute();
     }
   }
 
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     super.update(e);
     UserCommand command = getCommand(e);
     e.getPresentation().setEnabled(command != null && command.isEnabled());

@@ -24,6 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import org.dartlang.analysis.server.protocol.RequestError;
+import org.jetbrains.annotations.NotNull;
 
 public class AnalysisServerDiagnosticsAction extends DumbAwareAction {
   private static final String GROUP_DISPLAY_ID = "Dart Analysis Server";
@@ -33,14 +34,14 @@ public class AnalysisServerDiagnosticsAction extends DumbAwareAction {
   }
 
   @Override
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     final Project project = e.getProject();
     final DartAnalysisServerService service = project == null ? null : DartAnalysisServerService.getInstance(project);
     e.getPresentation().setEnabledAndVisible(service != null && service.isServerProcessActive());
   }
 
   @Override
-  public void actionPerformed(AnActionEvent e) {
+  public void actionPerformed(@NotNull AnActionEvent e) {
     final Project project = e.getProject();
     if (project == null) return;
 

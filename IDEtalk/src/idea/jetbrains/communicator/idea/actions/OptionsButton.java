@@ -22,6 +22,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import jetbrains.communicator.core.Pico;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -56,7 +57,7 @@ public class OptionsButton extends DropDownButton {
 
   private void addResetPreferencesActionTo(DefaultActionGroup actionGroup) {
     myResetSettingsAction = new AnAction("Reset to default settings") {
-      public void actionPerformed(AnActionEvent e) {
+      public void actionPerformed(@NotNull AnActionEvent e) {
         try {
           Preferences preferences = Preferences.userRoot().node("jetbrains.communicator");
           preferences.removeNode();

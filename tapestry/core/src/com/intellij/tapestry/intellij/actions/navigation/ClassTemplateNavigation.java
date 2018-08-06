@@ -37,7 +37,7 @@ public class ClassTemplateNavigation extends AnAction {
    * {@inheritDoc}
    */
   @Override
-  public void update(AnActionEvent event) {
+  public void update(@NotNull AnActionEvent event) {
     Presentation presentation = event.getPresentation();
 
     Module module;
@@ -71,7 +71,7 @@ public class ClassTemplateNavigation extends AnAction {
   /**
    * {@inheritDoc}
    */
-  public void actionPerformed(AnActionEvent event) {
+  public void actionPerformed(@NotNull AnActionEvent event) {
     Project project = (Project)event.getDataContext().getData(DataKeys.PROJECT.getName());
 
     PsiFile psiFile = getEventPsiFile(event);

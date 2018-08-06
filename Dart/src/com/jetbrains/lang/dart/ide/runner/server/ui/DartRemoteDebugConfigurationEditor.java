@@ -72,7 +72,7 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
       }
 
       @Override
-      public void actionPerformed(final AnActionEvent e) {
+      public void actionPerformed(@NotNull final AnActionEvent e) {
         CopyPasteManager.getInstance().setContents(new StringSelection(myVMArgsArea.getText().trim()));
       }
     });

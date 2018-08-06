@@ -19,6 +19,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import icons.IdetalkCoreIcons;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -32,7 +33,7 @@ class OpenFileAction extends BaseVFileAction {
         fileTree, ideFacade);
   }
 
-  public void actionPerformed(AnActionEvent e) {
+  public void actionPerformed(@NotNull AnActionEvent e) {
     perform();
   }
 

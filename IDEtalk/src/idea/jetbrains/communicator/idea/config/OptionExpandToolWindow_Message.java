@@ -17,6 +17,7 @@ package jetbrains.communicator.idea.config;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import jetbrains.communicator.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Kir
@@ -26,7 +27,7 @@ public class OptionExpandToolWindow_Message extends OptionExpandToolWindow1 {
     super(IdeaFlags.EXPAND_ON_MESSAGE);
   }
 
-  public void update(final AnActionEvent e) {
+  public void update(@NotNull final AnActionEvent e) {
     super.update(e);
     e.getPresentation().setText(StringUtil.getMsg("expand.on.incoming.message"));
     e.getPresentation().setDescription(StringUtil.getMsg("expand.on.incoming.message.description"));

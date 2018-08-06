@@ -37,7 +37,7 @@ public abstract class AddNewElementAction<T extends PackageNode> extends AnActio
    * {@inheritDoc}
    */
   @Override
-  public void update(AnActionEvent event) {
+  public void update(@NotNull AnActionEvent event) {
     boolean enabled = false;
     Presentation presentation = event.getPresentation();
 

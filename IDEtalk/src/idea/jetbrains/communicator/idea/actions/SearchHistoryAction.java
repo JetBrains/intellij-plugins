@@ -22,6 +22,7 @@ import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.ide.UserListComponent;
 import jetbrains.communicator.idea.IDEtalkMessagesWindow;
 import jetbrains.communicator.idea.messagesWindow.IDEtalkMessagesWindowImpl;
+import org.jetbrains.annotations.NotNull;
 import org.picocontainer.MutablePicoContainer;
 
 /**
@@ -33,7 +34,7 @@ public class SearchHistoryAction extends BaseAction<SearchHistoryCommand> {
     super(SearchHistoryCommand.class);
   }
 
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     super.update(e);
 
     Project project = getProject(e);

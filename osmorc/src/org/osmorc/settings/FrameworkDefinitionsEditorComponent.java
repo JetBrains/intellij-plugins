@@ -196,7 +196,7 @@ public class FrameworkDefinitionsEditorComponent {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
       addFrameworkInstance(myIntegrator);
     }
 

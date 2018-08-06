@@ -41,7 +41,7 @@ import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackagePro
 public class AirPackageAction extends DumbAwareAction {
   public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("AIR Packaging");
 
-  public void update(final AnActionEvent e) {
+  public void update(@NotNull final AnActionEvent e) {
     final Project project = e.getProject();
 
     boolean flexModulePresent = false;
@@ -72,7 +72,7 @@ public class AirPackageAction extends DumbAwareAction {
                                    !AirPackageProjectParameters.getInstance(project).isPackagingInProgress());
   }
 
-  public void actionPerformed(final AnActionEvent e) {
+  public void actionPerformed(@NotNull final AnActionEvent e) {
     final Project project = e.getProject();
     if (project == null) return;
 

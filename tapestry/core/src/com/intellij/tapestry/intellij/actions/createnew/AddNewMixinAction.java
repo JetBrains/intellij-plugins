@@ -34,7 +34,7 @@ public class AddNewMixinAction extends AddNewElementAction<MixinsNode> {
   /**
    * {@inheritDoc}
    */
-  public void actionPerformed(AnActionEvent event) {
+  public void actionPerformed(@NotNull AnActionEvent event) {
     final Module module = getModule(event);
     if (module == null) return;
 

@@ -151,12 +151,12 @@ public class JstdServerStatusView {
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
       e.getPresentation().setEnabledAndVisible(myUrl != null);
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
       String url = myUrl;
       if (url != null) {
         BrowserUtil.browse(url);
@@ -177,12 +177,12 @@ public class JstdServerStatusView {
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
       e.getPresentation().setEnabledAndVisible(myUrl != null);
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
       String url = myUrl;
       if (url != null) {
         Transferable content = new StringSelection(url);

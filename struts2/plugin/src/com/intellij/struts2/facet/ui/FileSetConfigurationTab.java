@@ -207,7 +207,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
         .addExtraAction(AnActionButton.fromAction(actionManager.createCollapseAllAction(myTreeExpander, myTree)))
         .addExtraAction(new AnActionButton("Open Struts 2 plugin documentation…", AllIcons.Actions.Help) {
           @Override
-          public void actionPerformed(AnActionEvent e) {
+          public void actionPerformed(@NotNull AnActionEvent e) {
             BrowserUtil.browse("https://confluence.jetbrains.com/pages/viewpage.action?pageId=35367");
           }
         })

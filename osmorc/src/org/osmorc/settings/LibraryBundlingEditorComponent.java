@@ -110,7 +110,7 @@ public class LibraryBundlingEditorComponent {
         })
         .addExtraAction(new AnActionButton("Copy", PlatformIcons.COPY_ICON) {
           @Override
-          public void actionPerformed(AnActionEvent e) {
+          public void actionPerformed(@NotNull AnActionEvent e) {
             updateCurrentRule();
             int index = myRulesList.getSelectedIndex();
             if (index >= 0) {

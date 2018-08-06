@@ -189,7 +189,7 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
         }
 
         @Override
-        public void update(AnActionEvent e) {
+        public void update(@NotNull AnActionEvent e) {
           super.update(e);
           e.getPresentation().setEnabled(currentState != State.NONE);
         }
@@ -198,7 +198,7 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
                    ProfilerBundle.message("do.gc.description"),
                    FlexProfilerIcons.GC) {
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
           profilingManager.doGc(new ProfilingManager.Callback() {
             public void finished(@Nullable String data, @Nullable IOException ex) {
               //TODO
@@ -207,7 +207,7 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
         }
 
         @Override
-        public void update(AnActionEvent e) {
+        public void update(@NotNull AnActionEvent e) {
           super.update(e);
           e.getPresentation().setEnabled(currentState != State.NONE);
         }

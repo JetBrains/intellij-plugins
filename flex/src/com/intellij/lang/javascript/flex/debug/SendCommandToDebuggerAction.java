@@ -12,6 +12,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -19,7 +20,7 @@ import javax.swing.*;
  * @author Maxim.Mossienko
  */
 public class SendCommandToDebuggerAction extends AnAction {
-  public void update(final AnActionEvent e) {
+  public void update(@NotNull final AnActionEvent e) {
     Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return;
 
@@ -28,7 +29,7 @@ public class SendCommandToDebuggerAction extends AnAction {
     e.getPresentation().setEnabled(internal && XDebuggerManager.getInstance(project).getCurrentSession() != null);
   }
 
-  public void actionPerformed(final AnActionEvent e) {
+  public void actionPerformed(@NotNull final AnActionEvent e) {
     Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return;
 

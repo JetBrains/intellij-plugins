@@ -26,7 +26,7 @@ public abstract class BaseDartGenerateAction extends AnAction {
     return true;
   }
 
-  public void actionPerformed(final AnActionEvent e) {
+  public void actionPerformed(@NotNull final AnActionEvent e) {
     final Project project = e.getData(CommonDataKeys.PROJECT);
     assert project != null;
     final Pair<Editor, PsiFile> editorAndPsiFile = getEditorAndPsiFile(e);
@@ -45,7 +45,7 @@ public abstract class BaseDartGenerateAction extends AnAction {
   protected abstract BaseDartGenerateHandler getGenerateHandler();
 
   @Override
-  public void update(final AnActionEvent e) {
+  public void update(@NotNull final AnActionEvent e) {
     final Pair<Editor, PsiFile> editorAndPsiFile = getEditorAndPsiFile(e);
     final Editor editor = editorAndPsiFile.first;
     final PsiFile psiFile = editorAndPsiFile.second;

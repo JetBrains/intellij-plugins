@@ -20,6 +20,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import jetbrains.communicator.idea.toolWindow.UserListComponentImpl;
 import jetbrains.communicator.util.TreeUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -37,12 +38,12 @@ public class ExpandAllAction extends AnAction {
     getTemplatePresentation().setIcon(AllIcons.Actions.Expandall);
   }
 
-  public void update(AnActionEvent anActionEvent) {
+  public void update(@NotNull AnActionEvent anActionEvent) {
     super.update(anActionEvent);
     anActionEvent.getPresentation().setIcon(AllIcons.Actions.Expandall);
   }
 
-  public void actionPerformed(AnActionEvent e) {
+  public void actionPerformed(@NotNull AnActionEvent e) {
     TreeUtils.expandAll(getTree(e));
   }
 

@@ -20,6 +20,7 @@ import jetbrains.communicator.OptionFlag;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.SettingsChanged;
 import jetbrains.communicator.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Kir
@@ -29,7 +30,7 @@ public class OptionHideOfflineUsers extends OptionExpandToolWindow1 {
     super(OptionFlag.OPTION_HIDE_OFFLINE_USERS);
   }
 
-  public void update(final AnActionEvent e) {
+  public void update(@NotNull final AnActionEvent e) {
     super.update(e);
     e.getPresentation().setText(StringUtil.getMsg("hide.offline.users"));
     e.getPresentation().setDescription(StringUtil.getMsg("hide.offline.users.description"));

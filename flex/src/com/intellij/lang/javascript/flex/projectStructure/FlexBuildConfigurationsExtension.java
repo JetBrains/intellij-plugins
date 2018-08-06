@@ -132,11 +132,11 @@ public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
     final Collection<AnAction> actions = new ArrayList<>(2);
     actions.add(new DumbAwareAction(FlexBundle.message("create.bc.action.text"), FlexBundle.message("create.bc.action.description"),
                                     FlexIcons.Flash_run_config) {
-      public void update(final AnActionEvent e) {
+      public void update(@NotNull final AnActionEvent e) {
         e.getPresentation().setVisible(getFlexModuleForNode(selectedNodeRetriever.compute()) != null);
       }
 
-      public void actionPerformed(final AnActionEvent e) {
+      public void actionPerformed(@NotNull final AnActionEvent e) {
         final Module module = getFlexModuleForNode(selectedNodeRetriever.compute());
         myConfigurator.addConfiguration(module, treeNodeNameUpdater);
       }

@@ -18,7 +18,7 @@ public class JstdServerRestartAction extends AnAction {
   }
 
   @Override
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     JstdServer runningServer = JstdServerRegistry.getInstance().getServer();
     Presentation presentation = e.getPresentation();
     if (runningServer != null && runningServer.isProcessRunning()) {
@@ -33,7 +33,7 @@ public class JstdServerRestartAction extends AnAction {
   }
 
   @Override
-  public void actionPerformed(AnActionEvent e) {
+  public void actionPerformed(@NotNull AnActionEvent e) {
     mySession.saveSettings();
     mySession.restart(JstdServerSettingsManager.loadSettings());
   }

@@ -36,7 +36,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
   private static final Icon ICON_ACTIVE_SELECTED = PlatformIcons.CHECK_ICON_SELECTED;
   private static final Icon ICON_EMPTY = EmptyIcon.create(ICON_ACTIVE);
 
-  public void update(final AnActionEvent e) {
+  public void update(@NotNull final AnActionEvent e) {
     boolean enabled = isEnabled(e.getDataContext());
     if (ActionPlaces.isPopupPlace(e.getPlace())) {
       e.getPresentation().setVisible(enabled);
@@ -54,7 +54,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
     return module != null && ModuleType.get(module) == FlexModuleType.getInstance();
   }
 
-  public void actionPerformed(final AnActionEvent e) {
+  public void actionPerformed(@NotNull final AnActionEvent e) {
     Module module = LangDataKeys.MODULE.getData(e.getDataContext());
     if (module != null) {
       createPopup(module).showInBestPositionFor(e.getDataContext());
@@ -152,7 +152,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
       return bc.getNature().getPresentableText();
     }
 
-    public void actionPerformed(final AnActionEvent e) {
+    public void actionPerformed(@NotNull final AnActionEvent e) {
       myManager.setActiveBuildConfiguration(myBc);
     }
 
@@ -173,7 +173,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
       final FlexBuildConfiguration activeConfiguration = FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration();
       final ProjectStructureConfigurable c = ProjectStructureConfigurable.getInstance(myModule.getProject());
       ShowSettingsUtil.getInstance().editConfigurable(myModule.getProject(), c, () -> {

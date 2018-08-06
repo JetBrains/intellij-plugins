@@ -961,13 +961,13 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       myTree = tree;
     }
 
-    public void update(final AnActionEvent e) {
+    public void update(@NotNull final AnActionEvent e) {
       TableUtil.stopEditing(myTreeTable);
       final CompilerOptionInfo info = getNodeAndInfo().second;
       e.getPresentation().setEnabled(info != null && hasCustomValue(info));
     }
 
-    public void actionPerformed(final AnActionEvent e) {
+    public void actionPerformed(@NotNull final AnActionEvent e) {
       final Pair<DefaultMutableTreeNode, CompilerOptionInfo> nodeAndInfo = getNodeAndInfo();
       if (nodeAndInfo.second != null) {
         myMapModified = true;

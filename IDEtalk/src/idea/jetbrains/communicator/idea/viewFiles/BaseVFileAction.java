@@ -20,6 +20,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import jetbrains.communicator.core.vfs.VFile;
 import jetbrains.communicator.core.vfs.VFile;
 import jetbrains.communicator.ide.IDEFacade;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -36,7 +37,7 @@ public abstract class BaseVFileAction extends AnAction {
     myIdeFacade = ideFacade;
   }
 
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     super.update(e);
 
     e.getPresentation().setEnabled(isEnabled());

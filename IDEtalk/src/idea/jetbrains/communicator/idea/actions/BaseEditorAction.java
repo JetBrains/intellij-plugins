@@ -26,6 +26,7 @@ import jetbrains.communicator.ide.UserListComponent;
 import jetbrains.communicator.idea.VFSUtil;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.picocontainer.MutablePicoContainer;
 
 /**
@@ -39,7 +40,7 @@ public class BaseEditorAction<T extends FileCommand> extends BaseAction<T> {
     super(commandClass);
   }
 
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
 
     FileEditorManager editorManager = FileEditorManager.getInstance(getProject(e));
     Editor editor = editorManager.getSelectedTextEditor();

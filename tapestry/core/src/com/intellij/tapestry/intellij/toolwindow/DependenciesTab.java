@@ -21,6 +21,7 @@ import com.intellij.ui.PopupHandler;
 import com.intellij.ui.treeStructure.actions.CollapseAllAction;
 import com.intellij.ui.treeStructure.actions.ExpandAllAction;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -244,7 +245,7 @@ public class DependenciesTab {
         /**
          * {@inheritDoc}
          */
-        public void actionPerformed(AnActionEvent event) {
+        public void actionPerformed(@NotNull AnActionEvent event) {
             DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) _dependenciesTree.getSelectionPath().getLastPathComponent();
             Object selectedObject = selectedNode.getUserObject();
 
@@ -281,7 +282,7 @@ public class DependenciesTab {
         /**
          * {@inheritDoc}
          */
-        public void actionPerformed(AnActionEvent event) {
+        public void actionPerformed(@NotNull AnActionEvent event) {
             DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) _dependenciesTree.getSelectionPath().getLastPathComponent();
             Object selectedObject = selectedNode.getUserObject();
 

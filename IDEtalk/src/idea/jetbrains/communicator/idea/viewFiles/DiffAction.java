@@ -21,6 +21,7 @@ import jetbrains.communicator.commands.ShowDiffCommand;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.idea.actions.BaseAction;
 import jetbrains.communicator.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -36,7 +37,7 @@ abstract class DiffAction extends BaseAction<ShowDiffCommand> {
     myFileTree = fileTree;
   }
 
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     e.getPresentation().setText(StringUtil.getMsg("diff.action.text"));
     e.getPresentation().setDescription(StringUtil.getMsg("diff.action.description"));
     e.getPresentation().setIcon(AllIcons.Actions.Diff);

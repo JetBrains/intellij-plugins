@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.jetbrains.lang.dart.DartBundle;
 import icons.DartIcons;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class AnalysisServerFeedbackAction extends DumbAwareAction {
@@ -28,7 +29,7 @@ public class AnalysisServerFeedbackAction extends DumbAwareAction {
   }
 
   @Override
-  public void actionPerformed(AnActionEvent e) {
+  public void actionPerformed(@NotNull AnActionEvent e) {
     final Project project = e.getProject();
     if (project == null) return;
 
@@ -36,7 +37,7 @@ public class AnalysisServerFeedbackAction extends DumbAwareAction {
     builder.sendFeedback(project, null, null);
   }
 
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     final Presentation presentation = e.getPresentation();
     final Project project = e.getProject();
     if (isApplicable(project)) {

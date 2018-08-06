@@ -45,7 +45,7 @@ public abstract class BaseEditorPopup extends ActionGroup implements DumbAware {
 
 
 
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     super.update(e);
     e.getPresentation().setEnabled(getEditor(e) != null &&
             getFile(e) != null &&
@@ -107,11 +107,11 @@ public abstract class BaseEditorPopup extends ActionGroup implements DumbAware {
     for (final User user : users) {
       if (shouldAddUserToChoiceList(user)) {
         result.add(new AnAction(user.getDisplayName()) {
-          public void actionPerformed(AnActionEvent e) {
+          public void actionPerformed(@NotNull AnActionEvent e) {
             doActionCommand(user, file, editor);
           }
 
-          public void update(AnActionEvent e) {
+          public void update(@NotNull AnActionEvent e) {
             super.update(e);
             e.getPresentation().setDescription(getActionDescription(user, file));
             e.getPresentation().setIcon(user.getIcon());
