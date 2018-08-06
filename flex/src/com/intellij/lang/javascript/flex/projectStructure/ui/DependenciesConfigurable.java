@@ -857,7 +857,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         }
       }).setRemoveActionUpdater(new AnActionButtonUpdater() {
         @Override
-        public boolean isEnabled(AnActionEvent e) {
+        public boolean isEnabled(@NotNull AnActionEvent e) {
           if (myTable.getSelectedRowCount() == 0) return false;
           for (int row : myTable.getSelectedRows()) {
             MyTableItem item = myTable.getItemAt(row);
@@ -867,7 +867,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         }
       }).setEditActionUpdater(new AnActionButtonUpdater() {
         @Override
-        public boolean isEnabled(AnActionEvent e) {
+        public boolean isEnabled(@NotNull AnActionEvent e) {
           MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
           return item != null && item.canEdit();
         }
