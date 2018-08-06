@@ -11,6 +11,7 @@ import com.intellij.util.ui.ColumnInfo;
 import com.jetbrains.actionscript.profiler.base.ColoredSortableTreeTable;
 import com.jetbrains.actionscript.profiler.sampler.FrameInfo;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -31,7 +32,7 @@ public class LiveObjectsTreeTable extends ColoredSortableTreeTable implements Da
 
   @Override
   @Nullable
-  public Object getData(@NonNls String dataId) {
+  public Object getData(@NotNull @NonNls String dataId) {
     if (CommonDataKeys.NAVIGATABLE.is(dataId)) {
       return navigatableSelectedItem();
     }

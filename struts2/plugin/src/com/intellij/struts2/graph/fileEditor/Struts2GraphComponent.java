@@ -40,6 +40,7 @@ import com.intellij.util.xml.DomEventListener;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.events.DomEvent;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -152,7 +153,7 @@ public class Struts2GraphComponent extends JPanel implements DataProvider, Dispo
   }
 
   @Nullable
-  public Object getData(@NonNls final String dataId) {
+  public Object getData(@NotNull @NonNls final String dataId) {
     if (Comparing.equal(dataId, STRUTS2_DESIGNER_COMPONENT)) {
       return this;
     }

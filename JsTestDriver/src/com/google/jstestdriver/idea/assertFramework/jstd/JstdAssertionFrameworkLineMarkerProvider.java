@@ -176,7 +176,7 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
     return new DataContext() {
       @Nullable
       @Override
-      public Object getData(@NonNls String dataId) {
+      public Object getData(@NotNull @NonNls String dataId) {
         if (Location.DATA_KEY.is(dataId)) {
           return new PsiLocation<>(element.getProject(), element);
         }

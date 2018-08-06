@@ -68,7 +68,7 @@ public class CucumberJavaRunConfigurationTest extends CucumberJavaCodeInsightTes
 
     IdeaTestApplication.getInstance().setDataProvider(new TestDataProvider(getProject()) {
       @Override
-      public Object getData(@NonNls String dataId) {
+      public Object getData(@NotNull @NonNls String dataId) {
         if (LangDataKeys.MODULE.is(dataId)) {
           return myFixture.getModule();
         }

@@ -74,7 +74,7 @@ class DartComponentUsageGroup implements UsageGroup, DataProvider {
 
   @Nullable
   @Override
-  public Object getData(@NonNls String dataId) {
+  public Object getData(@NotNull @NonNls String dataId) {
     if (CommonDataKeys.PSI_ELEMENT.is(dataId)) {
       final DartComponentName nameElement = getNameElement();
       if (nameElement != null) {

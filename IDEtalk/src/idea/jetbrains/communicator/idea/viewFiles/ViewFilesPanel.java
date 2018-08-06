@@ -91,7 +91,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
     setMinimumSize(new Dimension(200, 0));
   }
 
-  public Object getData(String dataId) {
+  public Object getData(@NotNull String dataId) {
     if (DiffAction.USER.equals(dataId)) {
       return myUser;
     }

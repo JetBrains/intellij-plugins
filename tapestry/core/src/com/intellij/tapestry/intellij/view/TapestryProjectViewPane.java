@@ -336,7 +336,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
-  public Object getData(String dataId) {
+  public Object getData(@NotNull String dataId) {
     if (DataKeys.PROJECT.is(dataId)) {
       return myProject;
     }

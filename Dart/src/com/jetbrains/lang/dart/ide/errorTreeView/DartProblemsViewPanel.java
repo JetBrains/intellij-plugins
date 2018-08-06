@@ -324,7 +324,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
   @Nullable
   @Override
-  public Object getData(@NonNls String dataId) {
+  public Object getData(@NotNull @NonNls String dataId) {
     if (PlatformDataKeys.COPY_PROVIDER.is(dataId)) {
       return this;
     }
