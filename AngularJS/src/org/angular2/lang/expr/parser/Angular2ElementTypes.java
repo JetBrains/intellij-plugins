@@ -91,7 +91,7 @@ public interface Angular2ElementTypes extends JSElementTypes {
   IElementType MESSAGE_FORMAT_OPTION = new IElementType("MESSAGE_FORMAT_OPTION", Angular2Language.INSTANCE);
   IElementType MESSAGE_FORMAT_SELECTION_KEYWORD = new IElementType("MESSAGE_FORMAT_SELECTION_KEYWORD", Angular2Language.INSTANCE);
 
-  IElementType EMBEDDED_CONTENT = new JSEmbeddedContentElementType(Angular2Language.INSTANCE, "ANG_") {
+  IElementType EMBEDDED_CONTENT = new JSEmbeddedContentElementType(Angular2Language.INSTANCE, "ANG2_") {
     @Override
     protected Lexer createStripperLexer(Language baseLanguage) {
       return null;
