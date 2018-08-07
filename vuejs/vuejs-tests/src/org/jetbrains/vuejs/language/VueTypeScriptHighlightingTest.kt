@@ -709,8 +709,4 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
   override fun testIntermediateResultsNotCachedForRecursiveTypes() {
     LOG.info("Skipping muted test")
   }
-
-  override fun testAsyncReparse() {
-    LOG.info("Skipping muted test")
-  }
 }
