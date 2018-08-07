@@ -2,6 +2,7 @@
 
 var KJHTML_PATTERN = /([\\/]karma-jasmine-html-reporter[\\/])/i;
 var JASMINE_ADAPTER = /([\\/]karma-jasmine[\\/]lib[\\/]adapter\.js$)/i;
+var MOCHA_ADAPTER = /([\\/]karma-mocha[\\/]lib[\\/]adapter\.js$)/i;
 
 var createPattern = function(path) {
   return {pattern: path, included: true, served: true, watched: false};
@@ -23,11 +24,14 @@ exports.apply = function (configFiles) {
     endInd++;
     configFiles.splice(endInd + 1, 0, createPattern(__dirname + '/intellij-restore-specFilter-after-kjhtml.js'))
   }
-  var jasmineAdapterInd = configFiles.length - 1;
-  configFiles.forEach(function(file, index) {
-    if (JASMINE_ADAPTER.test(file.pattern)) {
-      jasmineAdapterInd = index;
-    }
-  });
-  configFiles.splice(jasmineAdapterInd + 1, 0, createPattern(__dirname + '/karma-intellij-adapter.js'));
+  var jasmineAdapterInd = findPatternInd(configFiles, JASMINE_ADAPTER);
+  var mochaAdapterInd = findPatternInd(configFiles, MOCHA_ADAPTER);
+  // Insert karma-intellij-adapter.js right after jasmine/mocha adapter to override specified specFilter/grep.
+  // If no jasmine/mocha adapter found, insert karma-intellij-adapter.js at the beginning of the list:
+  //   jasmine/mocha adapter will be inserted before karma-intellij-adapter.js later.
+  configFiles.splice(Math.max(jasmineAdapterInd, mochaAdapterInd) + 1, 0, createPattern(__dirname + '/karma-intellij-adapter.js'));
 };
+
+function findPatternInd(configFiles, filePattern) {
+  return configFiles.findIndex((file) => filePattern.test(file.pattern));
+}
