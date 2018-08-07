@@ -1,0 +1,18 @@
+<template>
+#[[$END$]]#
+</template>
+
+<script lang="ts">
+    import {Component, Vue} from 'vue-property-decorator';
+    
+    @Component({
+        name:"${Component_name}"
+    })
+    export default class ${NAME} extends Vue{
+        
+    }
+</script>
+
+<style scoped>
+
+</style>
