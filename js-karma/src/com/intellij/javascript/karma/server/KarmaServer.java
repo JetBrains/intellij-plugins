@@ -37,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -179,13 +180,15 @@ public class KarmaServer {
     commandLine.setRedirectErrorStream(true);
     List<String> nodeOptionList = ParametersListUtil.parse(serverSettings.getNodeOptions().trim());
     commandLine.addParameters(nodeOptionList);
-    //try {
-    //  NodeCommandLineUtil.addNodeOptionsForDebugging(commandLine, Collections.emptyList(), 34598, true,
-    //                                                 serverSettings.getNodeInterpreter(), true);
-    //}
-    //catch (ExecutionException e) {
-    //  throw new IOException(e);
-    //}
+    if (Boolean.parseBoolean(commandLine.getEnvironment().get("KARMA_SERVER_WITH_INSPECT_BRK"))) {
+      try {
+        NodeCommandLineUtil.addNodeOptionsForDebugging(commandLine, Collections.emptyList(), 34598, true,
+                                                       serverSettings.getNodeInterpreter(), true);
+      }
+      catch (ExecutionException e) {
+        throw new IOException(e);
+      }
+    }
     NodePackage pkg = serverSettings.getKarmaPackage();
     String userConfigFileName = PathUtil.getFileName(serverSettings.getConfigurationFilePath());
     boolean angularCli = KarmaUtil.isAngularCliPkg(pkg);
