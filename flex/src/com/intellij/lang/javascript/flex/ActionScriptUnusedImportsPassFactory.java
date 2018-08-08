@@ -56,6 +56,7 @@ public class ActionScriptUnusedImportsPassFactory implements TextEditorHighlight
     );
   }
 
+  @Override
   public TextEditorHighlightingPass createHighlightingPass(@NotNull final PsiFile file, @NotNull final Editor editor) {
     if (file instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile(file) ||
         file instanceof JSFile && !(file instanceof PsiCompiledElement) && file.getLanguage().is(JavaScriptSupportLoader.ECMA_SCRIPT_L4)
