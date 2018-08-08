@@ -1,29 +1,24 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.ProjectTopics;
-import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
 import gnu.trove.THashMap;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author Maxim.Mossienko
-*/
-public class CodeContextHolder extends AbstractProjectComponent {
+public class CodeContextHolder {
   private final Set<Module> myModulesWithSdkComponentsHandled = new HashSet<>();
   private final Map<String, Map<Module, CodeContext>> myStandardContexts = new HashMap<>();
   private final Map<String, Map<Module, CodeContext>> myNSToCodeContextMap = new THashMap<>();
   static final CodeContext EMPTY = new CodeContext(null, null);
 
   public CodeContextHolder(Project project) {
-    super(project);
     project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
       @Override
       public void rootsChanged(final ModuleRootEvent event) {
@@ -34,13 +29,6 @@ public class CodeContextHolder extends AbstractProjectComponent {
         }
       }
     });
-  }
-
-  @Override
-  @NonNls
-  @NotNull
-  public String getComponentName() {
-    return "CodeContextHolder";
   }
 
   @Nullable

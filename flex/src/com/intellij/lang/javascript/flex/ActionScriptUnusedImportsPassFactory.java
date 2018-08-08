@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.codeHighlighting.Pass;
@@ -26,7 +27,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSImportStatement;
 import com.intellij.lang.javascript.validation.ActionScriptUnusedImportsHelper;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
@@ -45,9 +45,8 @@ import java.util.List;
 /**
  * @author Maxim.Mossienko
  */
-public class ActionScriptUnusedImportsPassFactory extends AbstractProjectComponent implements TextEditorHighlightingPassFactory {
-  public ActionScriptUnusedImportsPassFactory(Project project, TextEditorHighlightingPassRegistrar registrar) {
-    super(project);
+public class ActionScriptUnusedImportsPassFactory implements TextEditorHighlightingPassFactory {
+  public ActionScriptUnusedImportsPassFactory(TextEditorHighlightingPassRegistrar registrar) {
     registrar.registerTextEditorHighlightingPass(
         this,
         new int[]{Pass.UPDATE_ALL},
