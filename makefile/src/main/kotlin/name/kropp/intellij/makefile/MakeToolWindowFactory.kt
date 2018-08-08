@@ -1,14 +1,14 @@
 package name.kropp.intellij.makefile
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ui.componentsList.components.*
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
-import com.intellij.psi.search.*
-import com.intellij.ui.ColoredTreeCellRenderer
+import com.intellij.ui.*
 import com.intellij.ui.treeStructure.Tree
-import com.intellij.util.*
 import com.intellij.util.enumeration.ArrayEnumeration
 import com.intellij.util.enumeration.EmptyEnumeration
+import name.kropp.intellij.makefile.psi.*
 import java.util.*
 import javax.swing.Icon
 import javax.swing.JTree
@@ -19,19 +19,17 @@ class MakeToolWindowFactory : ToolWindowFactory {
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
     toolWindow.title = "make"
 
-    val files = MakefileTargetIndex.allTargets(project).groupBy {
+    val files = MakefileTargetIndex.allTargets(project).filterNot { it.isSpecialTarget || it.isPatternTarget }.groupBy {
       it.containingFile
     }.map {
-      MakefileFileNode(it.key.name, it.value.map { MakefileTargetNode(it.name ?: "") }.toTypedArray())
+      MakefileFileNode(it.key.name, it.value.map { MakefileTargetNode(it) }.toTypedArray())
     }
 
     val model = DefaultTreeModel(MakefileRootNode(files.toTypedArray()))
 
-    val tree = Tree(model).apply {
+    toolWindow.component.add(ScrollPaneFactory.createScrollPane(Tree(model).apply {
       cellRenderer = MakefileCellRenderer()
-    }
-
-    toolWindow.component.add(tree)
+    }))
   }
 }
 
@@ -100,7 +98,7 @@ class MakefileFileNode(name: String, private val targets: Array<MakefileTargetNo
   override fun getAllowsChildren() = true
 }
 
-class MakefileTargetNode(name: String) : MakefileTreeNode(name) {
+class MakefileTargetNode(private val target: MakefileTarget) : MakefileTreeNode(target.name ?: "") {
   override val icon: Icon
     get() = MakefileTargetIcon
 
