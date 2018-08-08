@@ -218,6 +218,6 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
     new JSLinterAnnotationsBuilder<>(file, annotationResult, holder, TsLintInspection.getHighlightDisplayKey(),
                                      configurable, TsLintBundle.message("tslint.framework.title") + ": ",
                                      getInspectionClass(), fixes)
-      .setHighlightingGranularity(HighlightingGranularity.element).apply(document);
+      .setHighlightingGranularity(HighlightingGranularity.element).apply();
   }
 }
