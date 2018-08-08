@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.scope.ProjectFilesScope;
 import com.intellij.ui.PopupHandler;
@@ -24,7 +25,6 @@ import com.jetbrains.actionscript.profiler.model.ProfileData;
 import com.jetbrains.actionscript.profiler.render.FrameInfoCellRenderer;
 import com.jetbrains.actionscript.profiler.sampler.FrameInfo;
 import com.jetbrains.actionscript.profiler.sampler.Sample;
-import com.jetbrains.actionscript.profiler.util.AllSearchScope;
 import com.jetbrains.actionscript.profiler.util.JTreeUtil;
 import com.jetbrains.actionscript.profiler.util.ResolveUtil;
 import com.jetbrains.actionscript.profiler.vo.CallInfo;
@@ -118,7 +118,7 @@ public class CPUSnapshotView extends ProfileView implements Disposable {
 
     final ComboBoxModel model = filterScope.getComboBox().getModel();
     if (model instanceof DefaultComboBoxModel) {
-      ((DefaultComboBoxModel)model).insertElementAt(new ScopeDescriptor(new AllSearchScope(getProject())), 0);
+      ((DefaultComboBoxModel)model).insertElementAt(new ScopeDescriptor(ProjectScope.getEverythingScope(getProject())), 0);
     }
 
     myHotSpotsTreeTable.getTree().setCellRenderer(new FrameInfoCellRenderer(projectScope) {
