@@ -10,11 +10,17 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
 import name.kropp.intellij.makefile.psi.*;
 import com.intellij.navigation.ItemPresentation;
+import name.kropp.intellij.makefile.stub.MakefileTargetStubElement;
+import com.intellij.psi.stubs.IStubElementType;
 
 public class MakefileTargetImpl extends MakefileNamedElementImpl implements MakefileTarget {
 
-  public MakefileTargetImpl(ASTNode node) {
+  public MakefileTargetImpl(@NotNull ASTNode node) {
     super(node);
+  }
+
+  public MakefileTargetImpl(@NotNull MakefileTargetStubElement stub, @NotNull IStubElementType type) {
+    super(stub, type);
   }
 
   public void accept(@NotNull MakefileVisitor visitor) {

@@ -12,7 +12,7 @@ import name.kropp.intellij.makefile.psi.*;
 
 public class MakefilePrerequisiteImpl extends MakefilePrerequisiteMixin implements MakefilePrerequisite {
 
-  public MakefilePrerequisiteImpl(ASTNode node) {
+  public MakefilePrerequisiteImpl(@NotNull ASTNode node) {
     super(node);
   }
 

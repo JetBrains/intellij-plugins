@@ -13,7 +13,7 @@ import name.kropp.intellij.makefile.psi.*;
 
 public class MakefileConditionalImpl extends ASTWrapperPsiElement implements MakefileConditional {
 
-  public MakefileConditionalImpl(ASTNode node) {
+  public MakefileConditionalImpl(@NotNull ASTNode node) {
     super(node);
   }
 

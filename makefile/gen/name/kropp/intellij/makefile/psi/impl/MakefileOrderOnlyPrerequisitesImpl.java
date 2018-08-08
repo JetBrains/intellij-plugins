@@ -13,7 +13,7 @@ import name.kropp.intellij.makefile.psi.*;
 
 public class MakefileOrderOnlyPrerequisitesImpl extends ASTWrapperPsiElement implements MakefileOrderOnlyPrerequisites {
 
-  public MakefileOrderOnlyPrerequisitesImpl(ASTNode node) {
+  public MakefileOrderOnlyPrerequisitesImpl(@NotNull ASTNode node) {
     super(node);
   }
 

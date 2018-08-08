@@ -5,9 +5,11 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.navigation.NavigationItem;
+import com.intellij.psi.StubBasedPsiElement;
+import name.kropp.intellij.makefile.stub.MakefileTargetStubElement;
 import com.intellij.navigation.ItemPresentation;
 
-public interface MakefileTarget extends MakefileNamedElement, NavigationItem {
+public interface MakefileTarget extends MakefileNamedElement, NavigationItem, StubBasedPsiElement<MakefileTargetStubElement> {
 
   @Nullable
   String getName();

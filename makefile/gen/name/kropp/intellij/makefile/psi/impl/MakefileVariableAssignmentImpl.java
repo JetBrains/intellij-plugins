@@ -13,7 +13,7 @@ import name.kropp.intellij.makefile.psi.*;
 
 public class MakefileVariableAssignmentImpl extends ASTWrapperPsiElement implements MakefileVariableAssignment {
 
-  public MakefileVariableAssignmentImpl(ASTNode node) {
+  public MakefileVariableAssignmentImpl(@NotNull ASTNode node) {
     super(node);
   }
 
@@ -29,19 +29,19 @@ public class MakefileVariableAssignmentImpl extends ASTWrapperPsiElement impleme
   @Override
   @Nullable
   public MakefileFunction getFunction() {
-    return findChildByClass(MakefileFunction.class);
+    return PsiTreeUtil.getChildOfType(this, MakefileFunction.class);
   }
 
   @Override
   @NotNull
   public MakefileVariable getVariable() {
-    return findNotNullChildByClass(MakefileVariable.class);
+    return notNullChild(PsiTreeUtil.getChildOfType(this, MakefileVariable.class));
   }
 
   @Override
   @Nullable
   public MakefileVariableValue getVariableValue() {
-    return findChildByClass(MakefileVariableValue.class);
+    return PsiTreeUtil.getChildOfType(this, MakefileVariableValue.class);
   }
 
   @Nullable

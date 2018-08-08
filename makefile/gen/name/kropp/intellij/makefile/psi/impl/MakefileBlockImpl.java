@@ -13,7 +13,7 @@ import name.kropp.intellij.makefile.psi.*;
 
 public class MakefileBlockImpl extends ASTWrapperPsiElement implements MakefileBlock {
 
-  public MakefileBlockImpl(ASTNode node) {
+  public MakefileBlockImpl(@NotNull ASTNode node) {
     super(node);
   }
 
@@ -47,7 +47,7 @@ public class MakefileBlockImpl extends ASTWrapperPsiElement implements MakefileB
   @Override
   @Nullable
   public MakefileEmptyCommand getEmptyCommand() {
-    return findChildByClass(MakefileEmptyCommand.class);
+    return PsiTreeUtil.getChildOfType(this, MakefileEmptyCommand.class);
   }
 
   @Override

@@ -13,7 +13,7 @@ import name.kropp.intellij.makefile.psi.*;
 
 public class MakefileIncludeImpl extends ASTWrapperPsiElement implements MakefileInclude {
 
-  public MakefileIncludeImpl(ASTNode node) {
+  public MakefileIncludeImpl(@NotNull ASTNode node) {
     super(node);
   }
 

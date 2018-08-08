@@ -1,22 +1,19 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile.psi.impl;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import java.util.List;
+import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import name.kropp.intellij.makefile.psi.MakefileDirectory;
-import name.kropp.intellij.makefile.psi.MakefilePattern;
-import name.kropp.intellij.makefile.psi.MakefileVisitor;
-import name.kropp.intellij.makefile.psi.MakefileVpath;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
+import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import name.kropp.intellij.makefile.psi.*;
 
 public class MakefileVpathImpl extends ASTWrapperPsiElement implements MakefileVpath {
 
-  public MakefileVpathImpl(ASTNode node) {
+  public MakefileVpathImpl(@NotNull ASTNode node) {
     super(node);
   }
 

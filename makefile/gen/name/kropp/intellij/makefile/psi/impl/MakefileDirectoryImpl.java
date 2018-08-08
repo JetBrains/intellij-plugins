@@ -12,7 +12,7 @@ import name.kropp.intellij.makefile.psi.*;
 
 public class MakefileDirectoryImpl extends MakefileFilenameMixin implements MakefileDirectory {
 
-  public MakefileDirectoryImpl(ASTNode node) {
+  public MakefileDirectoryImpl(@NotNull ASTNode node) {
     super(node);
   }
 

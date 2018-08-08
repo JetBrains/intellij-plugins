@@ -13,7 +13,7 @@ import name.kropp.intellij.makefile.psi.*;
 
 public class MakefileDocCommentImpl extends ASTWrapperPsiElement implements MakefileDocComment {
 
-  public MakefileDocCommentImpl(ASTNode node) {
+  public MakefileDocCommentImpl(@NotNull ASTNode node) {
     super(node);
   }
 

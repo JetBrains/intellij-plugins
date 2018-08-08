@@ -13,7 +13,7 @@ import name.kropp.intellij.makefile.psi.*;
 
 public class MakefileRuleImpl extends ASTWrapperPsiElement implements MakefileRule {
 
-  public MakefileRuleImpl(ASTNode node) {
+  public MakefileRuleImpl(@NotNull ASTNode node) {
     super(node);
   }
 
@@ -29,13 +29,13 @@ public class MakefileRuleImpl extends ASTWrapperPsiElement implements MakefileRu
   @Override
   @NotNull
   public MakefileRecipe getRecipe() {
-    return findNotNullChildByClass(MakefileRecipe.class);
+    return notNullChild(PsiTreeUtil.getChildOfType(this, MakefileRecipe.class));
   }
 
   @Override
   @NotNull
   public MakefileTargetLine getTargetLine() {
-    return findNotNullChildByClass(MakefileTargetLine.class);
+    return notNullChild(PsiTreeUtil.getChildOfType(this, MakefileTargetLine.class));
   }
 
   public List<MakefileTarget> getTargets() {

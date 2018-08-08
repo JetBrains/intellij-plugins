@@ -3,8 +3,10 @@ package name.kropp.intellij.makefile
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
+import com.intellij.psi.search.*
 import com.intellij.ui.ColoredTreeCellRenderer
 import com.intellij.ui.treeStructure.Tree
+import com.intellij.util.*
 import com.intellij.util.enumeration.ArrayEnumeration
 import com.intellij.util.enumeration.EmptyEnumeration
 import java.util.*
@@ -17,9 +19,17 @@ class MakeToolWindowFactory : ToolWindowFactory {
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
     toolWindow.title = "make"
 
-    val model = DefaultTreeModel(MakefileFileNode("Makefile", arrayOf(MakefileTargetNode("all"))))
-    val tree = Tree(model)
-    tree.cellRenderer = MakefileCellRenderer()
+    val files = MakefileTargetIndex.allTargets(project).groupBy {
+      it.containingFile
+    }.map {
+      MakefileFileNode(it.key.name, it.value.map { MakefileTargetNode(it.name ?: "") }.toTypedArray())
+    }
+
+    val model = DefaultTreeModel(MakefileRootNode(files.toTypedArray()))
+
+    val tree = Tree(model).apply {
+      cellRenderer = MakefileCellRenderer()
+    }
 
     toolWindow.component.add(tree)
   }
@@ -38,12 +48,39 @@ abstract class MakefileTreeNode(val name: String) : TreeNode {
   abstract val icon: Icon
 }
 
+class MakefileRootNode(private val files: Array<MakefileFileNode>) : MakefileTreeNode("make") {
+  init {
+    for (file in files) {
+      file.parent = this
+    }
+  }
+
+  override val icon: Icon
+    get() = MakefileIcon
+
+  override fun children() = ArrayEnumeration(files)
+
+  override fun isLeaf() = false
+
+  override fun getChildCount() = files.size
+
+  override fun getParent() = null
+
+  override fun getChildAt(i: Int) = files[i]
+
+  override fun getIndex(node: TreeNode) = files.indexOf(node)
+
+  override fun getAllowsChildren() = true
+}
+
 class MakefileFileNode(name: String, private val targets: Array<MakefileTargetNode>) : MakefileTreeNode(name) {
   init {
     for (target in targets) {
       target.parent = this
     }
   }
+
+  internal lateinit var parent: MakefileRootNode
 
   override val icon: Icon
     get() = MakefileIcon
@@ -54,7 +91,7 @@ class MakefileFileNode(name: String, private val targets: Array<MakefileTargetNo
 
   override fun getChildCount() = targets.size
 
-  override fun getParent() = null
+  override fun getParent() = parent
 
   override fun getChildAt(i: Int) = targets[i]
 

@@ -13,7 +13,7 @@ import name.kropp.intellij.makefile.psi.*;
 
 public class MakefileTargetLineImpl extends ASTWrapperPsiElement implements MakefileTargetLine {
 
-  public MakefileTargetLineImpl(ASTNode node) {
+  public MakefileTargetLineImpl(@NotNull ASTNode node) {
     super(node);
   }
 
@@ -29,37 +29,37 @@ public class MakefileTargetLineImpl extends ASTWrapperPsiElement implements Make
   @Override
   @Nullable
   public MakefileOverride getOverride() {
-    return findChildByClass(MakefileOverride.class);
+    return PsiTreeUtil.getChildOfType(this, MakefileOverride.class);
   }
 
   @Override
   @Nullable
   public MakefilePrerequisites getPrerequisites() {
-    return findChildByClass(MakefilePrerequisites.class);
+    return PsiTreeUtil.getChildOfType(this, MakefilePrerequisites.class);
   }
 
   @Override
   @Nullable
   public MakefilePrivatevar getPrivatevar() {
-    return findChildByClass(MakefilePrivatevar.class);
+    return PsiTreeUtil.getChildOfType(this, MakefilePrivatevar.class);
   }
 
   @Override
   @Nullable
   public MakefileTargetPattern getTargetPattern() {
-    return findChildByClass(MakefileTargetPattern.class);
+    return PsiTreeUtil.getChildOfType(this, MakefileTargetPattern.class);
   }
 
   @Override
   @NotNull
   public MakefileTargets getTargets() {
-    return findNotNullChildByClass(MakefileTargets.class);
+    return notNullChild(PsiTreeUtil.getChildOfType(this, MakefileTargets.class));
   }
 
   @Override
   @Nullable
   public MakefileVariableAssignment getVariableAssignment() {
-    return findChildByClass(MakefileVariableAssignment.class);
+    return PsiTreeUtil.getChildOfType(this, MakefileVariableAssignment.class);
   }
 
   @Nullable
