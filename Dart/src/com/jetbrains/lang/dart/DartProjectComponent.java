@@ -71,6 +71,7 @@ public class DartProjectComponent implements ProjectComponent {
     return component.myProjectRootsModificationTracker;
   }
 
+  @Override
   public void projectOpened() {
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> {
       removeGlobalDartSdkLib();
@@ -214,6 +215,7 @@ public class DartProjectComponent implements ProjectComponent {
       ContainerUtil.filter(ModuleRootManager.getInstance(module).getExcludeRootUrls(), new Condition<String>() {
         final String rootUrl = root.getUrl();
 
+        @Override
         public boolean value(final String url) {
           if (url.equals(rootUrl + "/.dart_tool") && sdk != null && StringUtil.compareVersionNumbers(sdk.getVersion(), "2.0") >= 0) {
             return true;
@@ -294,6 +296,7 @@ public class DartProjectComponent implements ProjectComponent {
     if (folder == null) return;
 
     VfsUtilCore.visitChildrenRecursively(folder, new VirtualFileVisitor() {
+      @Override
       @NotNull
       public Result visitFileEx(@NotNull final VirtualFile file) {
         if (!fileIndex.isInContent(file)) {

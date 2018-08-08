@@ -69,6 +69,7 @@ public class FlexCompilerHandler implements ProjectComponent {
     return project.getComponent(FlexCompilerHandler.class);
   }
 
+  @Override
   public void projectOpened() {
     CompilerManager compilerManager = CompilerManager.getInstance(myProject);
     if (compilerManager != null) {
@@ -82,6 +83,7 @@ public class FlexCompilerHandler implements ProjectComponent {
     myWidget = new ActiveBuildConfigurationWidget(myProject);
   }
 
+  @Override
   public void projectClosed() {
     FlexCommonUtils.deleteTempFlexConfigFiles(myProject.getName());
     FlexCompilationUtils.deleteUnzippedANEFiles();
