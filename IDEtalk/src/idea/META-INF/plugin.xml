@@ -1,26 +1,23 @@
 <idea-plugin url="https://www.jetbrains.com">
   <name>IDETalk</name>
   <description><![CDATA[
-  A plugin for code-related communications between developers.
+  Provides code-related communication between developers.
   <p>
   <ul>
-    <li>Exchange messages with your fellow developers right inside the IDE.
-    You can reach your colleagues from your local network or use
-    Jabber for distant communications.
-    </li>
+    <li>Exchange messages with your fellow developers right inside the IDE. You can reach your colleagues from your local network or use Jabber for distant communications.</li>
 
-    <li>Right click in your editor and send a "code pointer" -
-    a reference to that particular point in the file. </li>
+    <li>Right-click in your editor and send a "code pointer" (a reference to that particular point in the file).</li>
 
-    <li>Send stacktrace to a user from your contact list.
-    The stacktrace will be navigatable on the receiving side. </li>
+    <li>Send a stack trace to any user from your contact list. The stack trace will be navigable on the receiving side.</li>
 
-    <li>View list of files opened in IDEA by any of your IDEtalk contacts.
-    Hide your files from viewing, if you don't like to be spied. </li>
+    <li>View list of files opened by any of your IDEtalk contacts. Hide your files from viewing, if you don't like to be spied.</li>
 
     <li>View differences between your files and files of your contact.</li>
   </ul>
 
+  To use IDETalk, open the View menu, point to Tool Windows, and click IDEtalk.
+
+  <b>NOTE: This plugin is currently not maintained.</b>
   ]]></description>
 
   <vendor>JetBrains</vendor>
