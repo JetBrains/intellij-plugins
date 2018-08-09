@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MarkdownIndexPatternBuilder implements IndexPatternBuilder {
-  public static final TokenSet COMMENT_TOKEN_SET = TokenSet.create(MarkdownElementTypes.LINK_TITLE);
+  public static final TokenSet COMMENT_TOKEN_SET = TokenSet.create(MarkdownElementTypes.LINK_COMMENT);
 
   @Nullable
   @Override

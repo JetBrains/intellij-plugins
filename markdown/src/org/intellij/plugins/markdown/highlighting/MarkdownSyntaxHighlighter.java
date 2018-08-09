@@ -61,6 +61,7 @@ public class MarkdownSyntaxHighlighter extends SyntaxHighlighterBase {
     safeMap(ATTRIBUTES, MarkdownElementTypes.LINK_LABEL, MarkdownHighlighterColors.LINK_LABEL_ATTR_KEY);
     safeMap(ATTRIBUTES, MarkdownElementTypes.LINK_DESTINATION, MarkdownHighlighterColors.LINK_DESTINATION_ATTR_KEY);
     safeMap(ATTRIBUTES, MarkdownElementTypes.LINK_TITLE, MarkdownHighlighterColors.LINK_TITLE_ATTR_KEY);
+    safeMap(ATTRIBUTES, MarkdownElementTypes.LINK_COMMENT, MarkdownHighlighterColors.COMMENT_ATTR_KEY);
 
     safeMap(ATTRIBUTES, MarkdownElementTypes.BLOCK_QUOTE, MarkdownHighlighterColors.BLOCK_QUOTE_ATTR_KEY);
     safeMap(ATTRIBUTES, MarkdownElementTypes.UNORDERED_LIST, MarkdownHighlighterColors.UNORDERED_LIST_ATTR_KEY);
