@@ -72,8 +72,8 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
                .allowElements("hr")
                .toFactory())
         .and(new HtmlPolicyBuilder()
-               .allowElements("code", "tr")
-               .allowAttributes("class").onElements("code", "tr")
+               .allowElements("code", "tr", "span")
+               .allowAttributes("class").onElements("code", "tr", "span")
                .toFactory());
     }
   };
