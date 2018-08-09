@@ -17,6 +17,7 @@ public class TapestryToolWindowFactory implements ToolWindowFactory {
   public static final String TAPESTRY_TOOLWINDOW_ID = "Tapestry";
   private static final Key<TapestryToolWindow> TAPESTRY_TOOL_WINDOW_KEY = Key.create("tapestry.toolWindow");
 
+  @Override
   public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
     toolWindow.setAvailable(true, null);
     TapestryToolWindow tapestryToolWindow = new TapestryToolWindow(project);
