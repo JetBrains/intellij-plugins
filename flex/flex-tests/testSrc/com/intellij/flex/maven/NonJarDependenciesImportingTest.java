@@ -5,6 +5,7 @@ import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.idea.maven.MavenImportingTestCase;
+import org.jetbrains.idea.maven.server.MavenServerManager;
 
 import java.io.File;
 
@@ -17,6 +18,8 @@ public class NonJarDependenciesImportingTest extends MavenImportingTestCase {
     super.tearDown();
   }
   public void testArtifactTypeProvidedByExtensionPlugin() {
+    // this test is basically the same as com.intellij.flex.maven.Flexmojos3ImporterTest.testConfiguringResourceBundleDependency
+    MavenServerManager.getInstance().setUseMaven2();
     // This test ensures that we download all necessary extension plugins.
     importProject("<groupId>test</groupId>" +
                   "<artifactId>project</artifactId>" +
