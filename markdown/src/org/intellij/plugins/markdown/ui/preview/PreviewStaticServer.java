@@ -5,6 +5,8 @@ import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.Url;
+import com.intellij.util.Urls;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -24,6 +26,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class PreviewStaticServer extends HttpRequestHandler {
   private static final Logger LOG = Logger.getInstance(PreviewStaticServer.class);
@@ -51,7 +54,8 @@ public class PreviewStaticServer extends HttpRequestHandler {
 
   @NotNull
   private static String getStaticUrl(@NotNull String staticPath) {
-    return "http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + staticPath;
+    Url url = Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + staticPath);
+    return BuiltInServerManager.getInstance().addAuthToken(Objects.requireNonNull(url)).toExternalForm();
   }
 
   @NotNull
