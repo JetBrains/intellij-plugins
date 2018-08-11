@@ -1,1 +1,2 @@
+gradlew* -text diff
 testData/officialExamples/src/* -text diff
