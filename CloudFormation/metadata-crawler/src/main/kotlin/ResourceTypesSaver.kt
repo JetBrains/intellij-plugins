@@ -54,7 +54,7 @@ object ResourceTypesSaver {
     val resourceTypeLocations = fetchResourceTypeLocations()
     val predefinedParameters = fetchPredefinedParameters()
 
-    val resourceTypes = resourceTypeLocations.map {
+    val resourceTypes = resourceTypeLocations.pmap(numThreads = 10) {
       val builder = ResourceTypeBuilder(it.name, it.location)
       fetchResourceType(builder)
 
