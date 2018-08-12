@@ -7,6 +7,7 @@ import com.google.common.collect.Multimap
 import com.google.common.primitives.Floats
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType.Companion.isCustomResourceType
+import com.intellij.aws.cloudformation.metadata.awsServerlessFunction
 import com.intellij.aws.cloudformation.model.CfnArrayValueNode
 import com.intellij.aws.cloudformation.model.CfnFunctionNode
 import com.intellij.aws.cloudformation.model.CfnGlobalsNode
@@ -197,19 +198,36 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
           // TODO calculate exact text range and add it to ReferencesTest
           val resourceNodeParent = function.parentOfType<CfnResourceNode>(parsed)
           val excluded = resourceNodeParent?.let { it.name?.value }?.let { listOf(it) } ?: emptyList()
-          addEntityReference(arg0 as CfnScalarValueNode, CloudFormationSection.ResourcesSingletonList, excludeFromCompletion = excluded, referenceValue = resourceName)
 
-          if (attributeName != null) {
-            val resource = CloudFormationResolve.resolveResource(parsed, resourceName)
-            val typeName = resource?.typeName
-            if (typeName != null &&
-                !CloudFormationResourceType.isCustomResourceType(typeName) &&
-                !(CloudFormationResourceType.isCloudFormationStack(typeName) && attributeName.startsWith("Outputs.")) &&
-                CloudFormationMetadataProvider.METADATA.findResourceType(typeName, parsed.root) != null) {
-              if (!resource.getAttributes(parsed.root).containsKey(attributeName)) {
-                addProblem(
-                    if (function.args.size == 1) arg0 else (arg1 ?: function),
-                    "Unknown attribute in resource type '$typeName': $attributeName")
+          val resource = CloudFormationResolve.resolveResource(parsed, resourceName)
+
+          // From https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+          // Role: ARN of an IAM role to use as this function's execution role. If omitted, a default role is created for this function.
+          // Here we handle this implicitly created role
+          val resourceNameWithoutRoleSuffix = resourceName.removeSuffix("Role")
+          val resourceWithoutRoleSuffix = CloudFormationResolve.resolveResource(parsed, resourceNameWithoutRoleSuffix)
+          if (resource == null && resourceWithoutRoleSuffix?.typeName == awsServerlessFunction.name) {
+            addEntityReference(arg0 as CfnScalarValueNode, CloudFormationSection.ResourcesSingletonList,
+                excludeFromCompletion = excluded, referenceValue = resourceNameWithoutRoleSuffix)
+            if (attributeName != "Arn") {
+              addProblem(
+                  if (function.args.size == 1) arg0 else (arg1 ?: function),
+                  "Implicit IAM Function Role supports only 'Arn' attribute")
+            }
+          } else {
+            addEntityReference(arg0 as CfnScalarValueNode, CloudFormationSection.ResourcesSingletonList, excludeFromCompletion = excluded, referenceValue = resourceName)
+
+            if (attributeName != null) {
+              val typeName = resource?.typeName
+              if (typeName != null &&
+                  !CloudFormationResourceType.isCustomResourceType(typeName) &&
+                  !(CloudFormationResourceType.isCloudFormationStack(typeName) && attributeName.startsWith("Outputs.")) &&
+                  CloudFormationMetadataProvider.METADATA.findResourceType(typeName, parsed.root) != null) {
+                if (!resource.getAttributes(parsed.root).containsKey(attributeName)) {
+                  addProblem(
+                      if (function.args.size == 1) arg0 else (arg1 ?: function),
+                      "Unknown attribute in resource type '$typeName': $attributeName")
+                }
               }
             }
           }
