@@ -6,10 +6,10 @@ Parameters:
 Resources:
   service:
     Type: AWS::EC2::Host
-    2@<Properties:>
+    2@<Properties>:
       AvailabilityZone: 0@<!Ref '
       InstanceType: '1'>
-      1@<Xxx:> AA
+      1@<Xxx>: AA
 
 0: Too many values
 1: Unknown resource type property: Xxx

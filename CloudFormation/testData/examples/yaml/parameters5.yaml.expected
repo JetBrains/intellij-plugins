@@ -2,8 +2,8 @@ AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
   MyNestedStack:
     Type: Number
-    0@<MaxLength:> 100
-    1@<MinLength:> 1
+    0@<MaxLength>: 100
+    1@<MinLength>: 1
 Resources:
   RootBucket:
     Type: AWS::S3::Bucket

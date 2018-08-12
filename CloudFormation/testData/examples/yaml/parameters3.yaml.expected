@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
   MyNestedStack:
     Type: String
-    0@<AllowedValues:> a
+    0@<AllowedValues>: a
 Resources:
   RootBucket:
     Type: AWS::S3::Bucket

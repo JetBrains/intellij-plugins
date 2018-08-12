@@ -2,8 +2,8 @@ AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
   MyNestedStack:
     Type: String
-    0@<1@<MinValue:>> 100a
-    2@<MaxValue:> 1
+    0@<1@<MinValue>>: 100a
+    2@<MaxValue>: 1
 Resources:
   RootBucket:
     Type: AWS::S3::Bucket

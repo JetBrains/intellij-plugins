@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
-  0@<MyNestedStack:>
+  0@<MyNestedStack>:
     A: B
 Resources:
   RootBucket:

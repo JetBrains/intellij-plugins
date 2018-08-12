@@ -5,7 +5,7 @@ Description: Prints Hello World
 Resources:
   HelloWorldLambda:
     Type: AWS::Serverless::Function
-    0@<Properties:>
+    0@<Properties>:
       Handler: main.handle
       Runtime: python2.7
       Events:

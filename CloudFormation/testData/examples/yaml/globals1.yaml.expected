@@ -3,7 +3,7 @@ Transform: AWS::Serverless-2016-10-31
 
 Globals:
   Api:
-    0@<UnknownApiProperty:> "XX"
+    0@<UnknownApiProperty>: "XX"
 
     # Allows www.example.com to call these APIs
     # SAM will automatically add AllowMethods with a list of methods for this API
@@ -33,7 +33,7 @@ Globals:
         "ResourcePath": "/*",
         "HttpMethod": "*",
     }]
-  1@<UnknownGlobalsSection:>
+  1@<UnknownGlobalsSection>:
     A: B
 
 Resources:

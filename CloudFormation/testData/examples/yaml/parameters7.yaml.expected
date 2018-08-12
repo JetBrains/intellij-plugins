@@ -1,8 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
-  1@<MyNestedStack:>
+  1@<MyNestedStack>:
     Type: String
-    0@<NoEcho:> a
+    0@<NoEcho>: a
     UUU: OOO
 Resources:
   RootBucket:
