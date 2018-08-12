@@ -38,7 +38,7 @@
   ]]></change-notes>
 
   <!-- from IDEA 2018.2 to IDEA 2018.3 -->
-  <idea-version since-build="182.3684.101" until-build="183.*"/>
+  <idea-version since-build="182.3684" until-build="183.*"/>
 
   <depends>com.intellij.modules.lang</depends>
   <depends>org.jetbrains.plugins.yaml</depends>

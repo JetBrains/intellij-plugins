@@ -21,7 +21,7 @@ Globals:
 Resources:
   microservicehttpendpointpython3:
     Type: 'AWS::Serverless::Function'
-    0@<Properties:>
+    0@<Properties>:
       Handler: lambda_function.lambda_handler
       CodeUri: .
       Description: >-
