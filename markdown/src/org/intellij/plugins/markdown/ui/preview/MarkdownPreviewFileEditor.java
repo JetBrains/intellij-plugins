@@ -65,14 +65,8 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
                .toFactory())
         .and(Sanitizers.TABLES)
         .and(new HtmlPolicyBuilder()
-               .allowElements("body", "pre")
+               .allowElements("body", "pre", "hr", "code", "tr", "span")
                .allowAttributes(HtmlGenerator.Companion.getSRC_ATTRIBUTE_NAME()).globally()
-               .toFactory())
-        .and(new HtmlPolicyBuilder()
-               .allowElements("hr")
-               .toFactory())
-        .and(new HtmlPolicyBuilder()
-               .allowElements("code", "tr", "span")
                .allowAttributes("class").onElements("code", "tr", "span")
                .toFactory());
     }
