@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.intellij.plugins.markdown.ui.preview;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -68,7 +69,7 @@ public class MarkdownSplitEditor extends SplitFileEditor<TextEditor, MarkdownPre
 
   private class MyCaretListener implements CaretListener {
     @Override
-    public void caretPositionChanged(CaretEvent e) {
+    public void caretPositionChanged(@NotNull CaretEvent e) {
       if (!isAutoScrollPreview()) return;
 
       final Editor editor = e.getEditor();
