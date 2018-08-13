@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs;
 
 import com.intellij.lang.documentation.DocumentationProviderEx;
@@ -50,7 +51,7 @@ public class AngularJSDocumentationProvider extends DocumentationProviderEx {
 
         if (name != null && AngularIndexUtil.resolve(element.getProject(), AngularDirectivesDocIndex.KEY, DirectiveUtil.getAttributeName(name)) != null) {
           final String directiveName = DirectiveUtil.attributeToDirective(null, name);
-          return Collections.singletonList("http://docs.angularjs.org/api/ng/directive/" + directiveName);
+          return Collections.singletonList("https://docs.angularjs.org/api/ng/directive/" + directiveName);
         }
       }
     }
