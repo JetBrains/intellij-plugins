@@ -1,6 +1,18 @@
 <idea-plugin>
   <name>Dart</name>
-  <description>Support for the Dart programming language.</description>
+  <description><![CDATA[
+<p>Support for <a href="https://www.dartlang.org/">Dart</a></p>
+<p>Features</p>
+<ul>
+<li>Smart coding assistance for Dart that includes code completion, formatting, navigation, intentions, refactorings, and more</li>
+<li>Integration with pub and the Dart Analysis Server</li>
+<li>The IDE detects the problems with your code on-the-fly and suggests ways to automatically fix them</li>
+<li>Run and debug Dart command-line and web applications right in the IDE using the built-in debugger</li>
+<li>Run and debug tests</li>
+<li>Create new Dart projects from the IDE Welcome screen</li>
+</ul>
+<p>Find more information on <a href="https://www.jetbrains.com/help/webstorm/dart.html">getting started with Dart in the IDE</a> in our docs.</p>
+  ]]></description>
   <vendor>JetBrains</vendor>
   <depends>com.intellij.modules.xml</depends>
   <depends optional="true" config-file="dartium-debugger-support.xml">JavaScriptDebugger</depends>
