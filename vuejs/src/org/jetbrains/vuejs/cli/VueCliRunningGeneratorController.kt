@@ -156,9 +156,8 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
 
   private fun createJsDebugConfiguration(project: Project) {
     val runManager = RunManager.getInstance(project)
-    val settings = runManager.createRunConfiguration("", JavascriptDebugConfigurationType.getTypeInstance().factory)
+    val settings = runManager.createRunConfiguration("Debug Application", JavascriptDebugConfigurationType.getTypeInstance().factory)
     (settings.configuration as JavaScriptDebugConfiguration).uri = "http://localhost:8080"
-    settings.setName((settings.configuration as JavaScriptDebugConfiguration).suggestedName())
     runManager.addConfiguration(settings)
     runManager.selectedConfiguration = settings
   }
