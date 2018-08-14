@@ -15,13 +15,12 @@ package org.angular2.lang.html.lexer;
 
 import com.intellij.psi.xml.XmlTokenType;
 
-public interface Angular2TokenTypes extends XmlTokenType {
+public interface Angular2HtmlTokenTypes extends XmlTokenType {
 
-  Angular2TokenType NG_LBRACE = new Angular2TokenType("NG:LBRACE");
-  Angular2TokenType NG_RBRACE = new Angular2TokenType("NG:RBRACE");
+  Angular2HtmlTokenType LBRACE = new Angular2HtmlTokenType("NG:LBRACE");
+  Angular2HtmlTokenType RBRACE = new Angular2HtmlTokenType("NG:RBRACE");
 
-  Angular2TokenType NG_INTERPOLATION_START = new Angular2TokenType("NG:INTERPOLATION_START");
-  Angular2TokenType NG_INTERPOLATION_CONTENT = new Angular2TokenType("NG:INTERPOLATION_CONTENT");
-  Angular2TokenType NG_INTERPOLATION_END = new Angular2TokenType("NG:INTERPOLATION_END");
+  Angular2HtmlTokenType INTERPOLATION_START = new Angular2HtmlTokenType("NG:INTERPOLATION_START");
+  Angular2HtmlTokenType INTERPOLATION_END = new Angular2HtmlTokenType("NG:INTERPOLATION_END");
 
 }

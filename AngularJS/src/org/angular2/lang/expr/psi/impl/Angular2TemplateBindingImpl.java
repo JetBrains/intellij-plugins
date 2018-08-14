@@ -37,7 +37,7 @@ public class Angular2TemplateBindingImpl extends JSStatementImpl implements Angu
 
   @Override
   public String getKey() {
-    //ASTNode keyNode = findChildByType(Angular2ElementTypes.TEMPLATE_BINDING_KEY);
+    //ASTNode keyNode = findChildByType(Angular2HtmlElementTypes.TEMPLATE_BINDING_KEY);
     return myKey;//keyNode != null ? keyNode.getPsi(Angular2TemplateBindingKey.class).getName() : null;
   }
 

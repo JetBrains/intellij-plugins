@@ -72,12 +72,8 @@
     <lang.documentationProvider language="HTML" implementationClass="org.angularjs.AngularJSDocumentationProvider" />
     <lang.documentationProvider language="JavaScript" implementationClass="org.angularjs.AngularJSDocumentationProvider" order="first"/>
     <lang.parserDefinition language="AngularJS" implementationClass="org.angularjs.lang.parser.AngularJSParserDefinition"/>
-    <lang.parserDefinition language="Angular2" implementationClass="org.angular2.lang.expr.parser.Angular2ParserDefinition"/>
     <stubElementTypeHolder class="org.angularjs.lang.parser.AngularJSElementTypes"/>
-    <stubElementTypeHolder class="org.angular2.lang.expr.parser.Angular2ElementTypes"/>
     <lang.syntaxHighlighterFactory language="AngularJS" implementationClass="org.angularjs.lang.AngularJSSyntaxHighlighterFactory"/>
-    <lang.parserDefinition language="Angular2HTML" implementationClass="org.angularjs.html.Angular2HTMLParserDefinition"/>
-    <lang.syntaxHighlighterFactory language="Angular2HTML" implementationClass="org.angularjs.html.Angular2HTMLHighlighterFactory"/>
     <psi.referenceContributor implementation="org.angularjs.codeInsight.refs.AngularJSReferencesContributor"/>
     <highlightErrorFilter implementation="org.angularjs.lang.AngularJSErrorFilter" />
     <annotator language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSMessageFormatAnnotator"/>
@@ -85,7 +81,6 @@
     <fileTypeFactory implementation="org.angularjs.AngularJSFileFactory"/>
 
     <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector" id="angular"/>
-    <multiHostInjector implementation="org.angularjs.editor.Angular2Injector" order="first,after JSCommentInjector" id="angular2"/>
     <completion.contributor language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSCompletionContributor"
                             id="AngularJSCompletionContributor"
                             order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"/>
@@ -99,10 +94,6 @@
                             order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"/>
 
     <completion.contributor id="Angular2ServiceCompletionContributor" language="AngularJS"
-                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"
-                            implementationClass="org.angularjs.codeInsight.Angular2ServiceCompletionContributor"/>
-
-    <completion.contributor id="Angular2ServiceCompletionContributorNgHtml" language="Angular2HTML"
                             order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"
                             implementationClass="org.angularjs.codeInsight.Angular2ServiceCompletionContributor"/>
 
@@ -138,6 +129,20 @@
     <fileTypeFactory implementation="org.angularjs.AngularTypeScriptConfigFileTypeFactory"/>
     <javascript.names.suggester implementation="org.angularjs.naming.Angular2NamesSuggester"/>
     <javascript.rename.extension implementation="org.angularjs.refactoring.Angular2RenameExtension"/>
+
+    <!-- Angular 2 HTML template contributions -->
+    <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="first,after JSCommentInjector" id="angular2"/>
+    <lang.parserDefinition language="Angular2Html" implementationClass="org.angular2.lang.html.parser.Angular2HtmlParserDefinition"/>
+    <lang.syntaxHighlighterFactory language="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlHighlighterFactory"/>
+    <lang.substitutor language="HTML" implementationClass="org.angular2.lang.html.Angular2HtmlLanguageSubstitutor"/>
+    <completion.contributor id="Angular2ServiceCompletionContributorNgHtml" language="Angular2Html"
+                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"
+                            implementationClass="org.angularjs.codeInsight.Angular2ServiceCompletionContributor"/>
+
+    <!-- Angular 2 Expression Language contributions -->
+    <lang.parserDefinition language="Angular2" implementationClass="org.angular2.lang.expr.parser.Angular2ParserDefinition"/>
+    <stubElementTypeHolder class="org.angular2.lang.expr.parser.Angular2ElementTypes"/>
+
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

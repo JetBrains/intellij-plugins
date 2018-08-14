@@ -40,10 +40,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.MultiMap;
+import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angularjs.codeInsight.AngularJSProcessor;
 import org.angularjs.codeInsight.attributes.AngularEventHandlerDescriptor;
-import org.angularjs.html.Angular2HTMLLanguage;
-import org.angularjs.lang.AngularJSLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,7 +70,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
       if (isModule(name)) {
         addImplicitElementToModules(callExpression, (JSElementIndexingDataImpl)outData, determineModuleName(callExpression));
       }
-     }
+    }
   }
 
   @Override
@@ -80,7 +79,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     if (ref.getElementType() == JSTokenTypes.NEW_KEYWORD) {
       ref = TreeUtil.findSibling(ref, JSElementTypes.REFERENCE_EXPRESSION);
     }
-    if (ref != null){
+    if (ref != null) {
       final ASTNode name = ref.getLastChildNode();
       if (name != null && name.getElementType() == JSTokenTypes.IDENTIFIER) {
         final String referencedName = name.getText();
@@ -140,7 +139,8 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
         .setType(JSImplicitElement.Type.Class);
       if (!attributesToElements.containsKey(elementName)) {
         elementBuilder.setTypeString("E;;;");
-      } else {
+      }
+      else {
         Collection<String> elements = attributesToElements.get(elementName);
         elementBuilder.setTypeString("AE;" + StringUtil.join(elements, ",") + ";;");
       }
@@ -219,7 +219,8 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
 
   @Nullable
   public static JSProperty getSelector(PsiElement decorator) {
-    return getProperty(decorator instanceof ES6Decorator ? PsiTreeUtil.findChildOfType(decorator, JSCallExpression.class) : decorator, SELECTOR);
+    return getProperty(decorator instanceof ES6Decorator ? PsiTreeUtil.findChildOfType(decorator, JSCallExpression.class) : decorator,
+                       SELECTOR);
   }
 
   @Nullable
@@ -277,29 +278,35 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   @Nullable
   public static JSClass findDirectiveClass(PsiElement context) {
     final PsiFile file = context.getContainingFile();
-    if (file == null) return null;
-    if (file.getLanguage().is(Angular2HTMLLanguage.INSTANCE)) { // inline template
+    if (file == null
+        || !file.getLanguage().is(Angular2HtmlLanguage.INSTANCE)) {
+      return null;
+    }
+    final PsiElement original = CompletionUtil.getOriginalOrSelf(context);
+    PsiFile hostFile = FileContextUtil.getContextFile(original != context ? original : context.getContainingFile().getOriginalFile());
+    hostFile = hostFile != null ? hostFile.getOriginalFile() : null;
+    if (hostFile == null) {
+      return null;
+    }
+    if (!file.getOriginalFile().equals(hostFile)) {// inline template
       return PsiTreeUtil.getParentOfType(InjectedLanguageManager.getInstance(context.getProject()).getInjectionHost(file), JSClass.class);
     }
-    if (file.getLanguage().is(AngularJSLanguage.INSTANCE)) { // template file with the same name
-      final PsiElement original = CompletionUtil.getOriginalOrSelf(context);
-      PsiFile hostFile = FileContextUtil.getContextFile(original != context ? original : context.getContainingFile().getOriginalFile());
-      final String name = hostFile != null ? hostFile.getViewProvider().getVirtualFile().getNameWithoutExtension() : null;
-      final PsiDirectory dir = hostFile != null ? hostFile.getParent() : null;
-      final PsiFile directiveFile = dir != null ? dir.findFile(name + ".ts") : null;
-      if (directiveFile != null) {
-        for (PsiElement element : directiveFile.getChildren()) {
-          if (element instanceof JSClass) {
-            JSClass clazz = (JSClass)element;
-            JSAttributeList list = clazz.getAttributeList();
-            for (ES6Decorator decorator : PsiTreeUtil.getChildrenOfTypeAsList(list, ES6Decorator.class)) {
-              PsiElement[] decoratorChildren = decorator.getChildren();
-              if (decoratorChildren.length > 0 && decoratorChildren[0] instanceof JSCallExpression) {
-                JSCallExpression call = (JSCallExpression)decoratorChildren[0];
-                if (call.getMethodExpression() instanceof JSReferenceExpression &&
-                    isDirective(((JSReferenceExpression)call.getMethodExpression()).getReferenceName())) {
-                  return clazz;
-                }
+    // template file with the same name
+    final String name = hostFile.getViewProvider().getVirtualFile().getNameWithoutExtension();
+    final PsiDirectory dir = hostFile.getParent();
+    final PsiFile directiveFile = dir != null ? dir.findFile(name + ".ts") : null;
+    if (directiveFile != null) {
+      for (PsiElement element : directiveFile.getChildren()) {
+        if (element instanceof JSClass) {
+          JSClass clazz = (JSClass)element;
+          JSAttributeList list = clazz.getAttributeList();
+          for (ES6Decorator decorator : PsiTreeUtil.getChildrenOfTypeAsList(list, ES6Decorator.class)) {
+            PsiElement[] decoratorChildren = decorator.getChildren();
+            if (decoratorChildren.length > 0 && decoratorChildren[0] instanceof JSCallExpression) {
+              JSCallExpression call = (JSCallExpression)decoratorChildren[0];
+              if (call.getMethodExpression() instanceof JSReferenceExpression &&
+                  isDirective(((JSReferenceExpression)call.getMethodExpression()).getReferenceName())) {
+                return clazz;
               }
             }
           }
@@ -322,7 +329,8 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     JSType type = null;
     if (declaration instanceof JSField) {
       type = ((JSField)declaration).getType();
-    } else if (declaration instanceof JSFunction) {
+    }
+    else if (declaration instanceof JSFunction) {
       type = ((JSFunction)declaration).getReturnType();
     }
     type = JSTypeUtils.getValuableType(type);
@@ -350,7 +358,8 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
         if (data != null && data.getImplicitElements() != null) {
           for (JSImplicitElement element : data.getImplicitElements()) {
             JSImplicitElementImpl.Builder elementBuilder = ((JSImplicitElementImpl)element).toBuilder().setProvider(null);
-            JSImplicitElementsIndex.JSElementProxy proxy = new JSImplicitElementsIndex.JSElementProxy(elementBuilder, value.getTextRange().getStartOffset());
+            JSImplicitElementsIndex.JSElementProxy proxy =
+              new JSImplicitElementsIndex.JSElementProxy(elementBuilder, value.getTextRange().getStartOffset());
             builder.addImplicitElement(element.getName(), proxy);
           }
         }

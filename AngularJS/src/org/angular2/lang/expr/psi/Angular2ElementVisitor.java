@@ -15,13 +15,7 @@ package org.angular2.lang.expr.psi;
 
 import com.intellij.lang.javascript.psi.JSElementVisitor;
 
-/**
- * @author Dennis.Ushakov
- */
 public class Angular2ElementVisitor extends JSElementVisitor {
-  public void visitMessageFormatExpression(Angular2MessageFormatExpression expression) {
-    visitJSExpression(expression);
-  }
 
   public void visitAngular2Chain(Angular2Chain expressionChain) {
     visitJSStatement(expressionChain);

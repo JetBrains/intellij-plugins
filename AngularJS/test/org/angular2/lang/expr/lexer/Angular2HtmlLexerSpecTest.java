@@ -30,7 +30,7 @@ import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
 @SuppressWarnings({"JUnitTestCaseWithNonTrivialConstructors", "CodeBlock2Expr", "SameParameterValue", "JUnitTestCaseWithNoTests",
   "ClassInitializerMayBeStatic"})
 @RunWith(OleasterRunner.class)
-public class Angular2LexerSpecTest {
+public class Angular2HtmlLexerSpecTest {
 
   private static Token[] lex(String text) {
     return Token.create(new Angular2Lexer(), text);

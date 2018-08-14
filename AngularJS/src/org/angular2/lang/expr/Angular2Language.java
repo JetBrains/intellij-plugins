@@ -20,9 +20,6 @@ import com.intellij.lang.javascript.parsing.JavaScriptParser;
 import org.angular2.lang.expr.parser.Angular2Parser;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Dennis.Ushakov
- */
 public class Angular2Language extends JSLanguageDialect {
   public static final Angular2Language INSTANCE = new Angular2Language();
 

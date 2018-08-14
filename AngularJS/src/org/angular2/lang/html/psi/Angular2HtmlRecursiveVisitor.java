@@ -11,15 +11,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.angular2.lang.expr.lexer;
+package org.angular2.lang.html.psi;
 
-import com.intellij.psi.tree.IElementType;
-import org.angular2.lang.expr.Angular2Language;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiRecursiveVisitor;
 
-public class Angular2TokenType extends IElementType {
-  public Angular2TokenType(@NotNull @NonNls String debugName) {
-    super(debugName, Angular2Language.INSTANCE);
+public class Angular2HtmlRecursiveVisitor extends Angular2HtmlElementVisitor implements PsiRecursiveVisitor {
+  @Override
+  public void visitElement(PsiElement element) {
+    element.acceptChildren(this);
   }
 }

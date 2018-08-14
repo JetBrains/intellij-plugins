@@ -22,9 +22,9 @@ import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.containers.ContainerUtil;
 import com.sixrr.inspectjs.confusing.CommaExpressionJSInspection;
 import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
+import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angularjs.AngularTestUtil;
 import org.angularjs.editor.AngularJSInjector;
-import org.angularjs.html.Angular2HTMLLanguage;
 import org.angularjs.lang.AngularJSLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
@@ -377,7 +377,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("userSpecifiedLang.ts", "angular2.js");
       for (Pair<String, String> signature : ContainerUtil.newArrayList(
-        Pair.create("<div><caret></div>", Angular2HTMLLanguage.INSTANCE.getID()),
+        Pair.create("<div><caret></div>", Angular2HtmlLanguage.INSTANCE.getID()),
         Pair.create("$text<caret>-color", "SCSS"), //fails if correct order of injectors is not ensured
         Pair.create("color: <caret>#00aa00", CSSLanguage.INSTANCE.getID()))) {
 

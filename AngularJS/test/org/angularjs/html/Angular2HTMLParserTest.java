@@ -17,7 +17,7 @@ import com.intellij.psi.css.CssRulesetBlockEmbeddedTokenTypesProvider;
 import com.intellij.psi.css.impl.CssTreeElementFactory;
 import com.intellij.psi.xml.StartTagEndTokenProvider;
 import com.intellij.testFramework.ParsingTestCase;
-import org.angularjs.lang.parser.AngularJSParserDefinition;
+import org.angular2.lang.html.parser.Angular2HtmlParserDefinition;
 
 /**
  * @author Dennis.Ushakov
@@ -25,7 +25,7 @@ import org.angularjs.lang.parser.AngularJSParserDefinition;
 public class Angular2HTMLParserTest extends ParsingTestCase {
   public Angular2HTMLParserTest() {
     super("", "html", true,
-          new Angular2HTMLParserDefinition(), new JavascriptParserDefinition(), new AngularJSParserDefinition(), new CSSParserDefinition());
+          new Angular2HtmlParserDefinition(), new JavascriptParserDefinition(), new CSSParserDefinition());
   }
 
   @Override

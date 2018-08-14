@@ -16,9 +16,6 @@ package org.angular2.lang.expr.lexer;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.psi.tree.TokenSet;
 
-/**
- * @author Dennis.Ushakov
- */
 public interface Angular2TokenTypes extends JSTokenTypes {
   Angular2TokenType ESCAPE_SEQUENCE = new Angular2TokenType("NG:ESCAPE_SEQUENCE");
   Angular2TokenType INVALID_ESCAPE_SEQUENCE = new Angular2TokenType("NG:INVALID_ESCAPE_SEQUENCE");

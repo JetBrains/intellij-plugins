@@ -21,7 +21,7 @@ import org.angularjs.AngularTestUtil;
 /**
  * @author Dennis.Ushakov
  */
-public class Angular2LexerTest extends LexerTestCase {
+public class Angular2HtmlLexerTest extends LexerTestCase {
   public void testIdent() {
     doFileTest("js");
   }
@@ -53,6 +53,6 @@ public class Angular2LexerTest extends LexerTestCase {
 
   @Override
   protected String getDirPath() {
-    return AngularTestUtil.getBaseTestDataPath(Angular2LexerTest.class).substring(PathManager.getHomePath().length());
+    return AngularTestUtil.getBaseTestDataPath(Angular2HtmlLexerTest.class).substring(PathManager.getHomePath().length());
   }
 }

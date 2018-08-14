@@ -2,7 +2,7 @@ package org.angularjs.codeInsight;
 
 import com.intellij.lang.Language;
 import com.intellij.psi.css.EmbeddedCssProvider;
-import org.angularjs.html.Angular2HTMLLanguage;
+import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -11,6 +11,6 @@ import org.jetbrains.annotations.NotNull;
 public class AngularJSEmbeddedCssProvider extends EmbeddedCssProvider {
   @Override
   public boolean enableEmbeddedCssFor(@NotNull Language language) {
-    return language.isKindOf(Angular2HTMLLanguage.INSTANCE);
+    return language.isKindOf(Angular2HtmlLanguage.INSTANCE);
   }
 }

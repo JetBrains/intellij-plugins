@@ -34,11 +34,12 @@ import static com.mscharhag.oleaster.matcher.util.Expectations.expectTrue;
 import static com.mscharhag.oleaster.runner.StaticRunnerSupport.describe;
 import static com.mscharhag.oleaster.runner.StaticRunnerSupport.it;
 import static java.util.stream.Collectors.toList;
-import static org.angular2.lang.html.lexer.Angular2TokenTypes.*;
+import static org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR;
+import static org.angular2.lang.html.lexer.Angular2HtmlTokenTypes.*;
 
 @SuppressWarnings({"CodeBlock2Expr", "JUnitTestCaseWithNoTests", "JUnitTestCaseWithNonTrivialConstructors"})
 @RunWith(OleasterRunner.class)
-public class Angular2LexerSpecTest {
+public class Angular2HtmlLexerSpecTest {
 
   private static final Object JS_EMBEDDED_CONTENT = new Object() {
     @Override
@@ -247,18 +248,18 @@ public class Angular2LexerSpecTest {
             newArrayList(XML_NAME, "a"),
             newArrayList(XML_EQ, "="),
             newArrayList(XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
-            newArrayList(NG_INTERPOLATION_START, "{{"),
-            newArrayList(NG_INTERPOLATION_CONTENT, "v"),
-            newArrayList(NG_INTERPOLATION_END, "}}"),
+            newArrayList(INTERPOLATION_START, "{{"),
+            newArrayList(INTERPOLATION_EXPR, "v"),
+            newArrayList(INTERPOLATION_END, "}}"),
             newArrayList(XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
             newArrayList(WHITE_SPACE, " "),
             newArrayList(XML_NAME, "b"),
             newArrayList(XML_EQ, "="),
             newArrayList(XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
             newArrayList(XML_ATTRIBUTE_VALUE_TOKEN, "s"),
-            newArrayList(NG_INTERPOLATION_START, "{{"),
-            newArrayList(NG_INTERPOLATION_CONTENT, "m"),
-            newArrayList(NG_INTERPOLATION_END, "}}"),
+            newArrayList(INTERPOLATION_START, "{{"),
+            newArrayList(INTERPOLATION_EXPR, "m"),
+            newArrayList(INTERPOLATION_END, "}}"),
             newArrayList(XML_ATTRIBUTE_VALUE_TOKEN, "e"),
             newArrayList(XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
             newArrayList(WHITE_SPACE, " "),
@@ -266,9 +267,9 @@ public class Angular2LexerSpecTest {
             newArrayList(XML_EQ, "="),
             newArrayList(XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
             newArrayList(XML_ATTRIBUTE_VALUE_TOKEN, "s"),
-            newArrayList(NG_INTERPOLATION_START, "{{"),
-            newArrayList(NG_INTERPOLATION_CONTENT, "m//c"),
-            newArrayList(NG_INTERPOLATION_END, "}}"),
+            newArrayList(INTERPOLATION_START, "{{"),
+            newArrayList(INTERPOLATION_EXPR, "m//c"),
+            newArrayList(INTERPOLATION_END, "}}"),
             newArrayList(XML_ATTRIBUTE_VALUE_TOKEN, "e"),
             newArrayList(XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
             newArrayList(XML_TAG_END, ">")
@@ -517,49 +518,49 @@ public class Angular2LexerSpecTest {
 
         it("should parse interpolation", () -> {
           expect(tokenizeAndHumanizeParts("{{ a }}b{{ c // comment }}")).toEqual(newArrayList(
-            newArrayList(NG_INTERPOLATION_START, "{{"),
-            newArrayList(NG_INTERPOLATION_CONTENT, " a "),
-            newArrayList(NG_INTERPOLATION_END, "}}"),
+            newArrayList(INTERPOLATION_START, "{{"),
+            newArrayList(INTERPOLATION_EXPR, " a "),
+            newArrayList(INTERPOLATION_END, "}}"),
             newArrayList(XML_DATA_CHARACTERS, "b"),
-            newArrayList(NG_INTERPOLATION_START, "{{"),
-            newArrayList(NG_INTERPOLATION_CONTENT, " c // comment "),
-            newArrayList(NG_INTERPOLATION_END, "}}")
+            newArrayList(INTERPOLATION_START, "{{"),
+            newArrayList(INTERPOLATION_EXPR, " c // comment "),
+            newArrayList(INTERPOLATION_END, "}}")
           ));
           expect(tokenizeAndHumanizeParts("{{a}}", false)).toEqual(newArrayList(
-            newArrayList(NG_INTERPOLATION_START, "{{"),
-            newArrayList(NG_INTERPOLATION_CONTENT, "a"),
-            newArrayList(NG_INTERPOLATION_END, "}}")
+            newArrayList(INTERPOLATION_START, "{{"),
+            newArrayList(INTERPOLATION_EXPR, "a"),
+            newArrayList(INTERPOLATION_END, "}}")
           ));
         });
         it("should parse empty interpolation", () -> {
           expect(tokenizeAndHumanizeParts("{{}}", false)).toEqual(newArrayList(
-            newArrayList(NG_INTERPOLATION_START, "{{"),
-            newArrayList(NG_INTERPOLATION_END, "}}")
+            newArrayList(INTERPOLATION_START, "{{"),
+            newArrayList(INTERPOLATION_END, "}}")
           ));
           expect(tokenizeAndHumanizeParts("{{ }}", false)).toEqual(newArrayList(
-            newArrayList(NG_INTERPOLATION_START, "{{"),
-            newArrayList(NG_INTERPOLATION_CONTENT, " "),
-            newArrayList(NG_INTERPOLATION_END, "}}")
+            newArrayList(INTERPOLATION_START, "{{"),
+            newArrayList(INTERPOLATION_EXPR, " "),
+            newArrayList(INTERPOLATION_END, "}}")
           ));
         });
 
         it("should parse interpolation with custom markers", () -> {
           expect(tokenizeAndHumanizeParts("{% a %}", false, pair("{%", "%}"))).toEqual(newArrayList(
-            newArrayList(NG_INTERPOLATION_START, "{%"),
-            newArrayList(NG_INTERPOLATION_CONTENT, " a "),
-            newArrayList(NG_INTERPOLATION_END, "%}")
+            newArrayList(INTERPOLATION_START, "{%"),
+            newArrayList(INTERPOLATION_EXPR, " a "),
+            newArrayList(INTERPOLATION_END, "%}")
           ));
         });
 
         it("should parse empty interpolation with custom markers", () -> {
           expect(tokenizeAndHumanizeParts("{%%}", false, pair("{%", "%}"))).toEqual(newArrayList(
-            newArrayList(NG_INTERPOLATION_START, "{%"),
-            newArrayList(NG_INTERPOLATION_END, "%}")
+            newArrayList(INTERPOLATION_START, "{%"),
+            newArrayList(INTERPOLATION_END, "%}")
           ));
           expect(tokenizeAndHumanizeParts("{% %}", false, pair("{%", "%}"))).toEqual(newArrayList(
-            newArrayList(NG_INTERPOLATION_START, "{%"),
-            newArrayList(NG_INTERPOLATION_CONTENT, " "),
-            newArrayList(NG_INTERPOLATION_END, "%}")
+            newArrayList(INTERPOLATION_START, "{%"),
+            newArrayList(INTERPOLATION_EXPR, " "),
+            newArrayList(INTERPOLATION_END, "%}")
           ));
         });
 
@@ -597,9 +598,9 @@ public class Angular2LexerSpecTest {
 
         it("should allow \"<\" in text nodes", () -> {
           expect(tokenizeAndHumanizeParts("{{ a < b ? c : d }}")).toEqual(newArrayList(
-            newArrayList(NG_INTERPOLATION_START, "{{"),
-            newArrayList(NG_INTERPOLATION_CONTENT, " a < b ? c : d "),
-            newArrayList(NG_INTERPOLATION_END, "}}")
+            newArrayList(INTERPOLATION_START, "{{"),
+            newArrayList(INTERPOLATION_EXPR, " a < b ? c : d "),
+            newArrayList(INTERPOLATION_END, "}}")
           ));
 
           //expect(tokenizeAndHumanizeSourceSpans("<p>a<b</p>")).toEqual(newArrayList(
@@ -621,8 +622,8 @@ public class Angular2LexerSpecTest {
 
         it("should parse valid start tag in interpolation", () -> {
           expect(tokenizeAndHumanizeParts("{{ a <b && c > d }}")).toEqual(newArrayList(
-            newArrayList(NG_INTERPOLATION_START, "{{"),
-            newArrayList(NG_INTERPOLATION_CONTENT, " a "),
+            newArrayList(INTERPOLATION_START, "{{"),
+            newArrayList(INTERPOLATION_EXPR, " a "),
             newArrayList(XML_START_TAG_START, "<"),
             newArrayList(XML_NAME, "b"),
             newArrayList(WHITE_SPACE, " "),
@@ -637,7 +638,7 @@ public class Angular2LexerSpecTest {
             newArrayList(XML_DATA_CHARACTERS, "}}")
           ));
           expect(tokenizeAndHumanizeParts("{{<b>}}")).toEqual(newArrayList(
-            newArrayList(NG_INTERPOLATION_START, "{{"),
+            newArrayList(INTERPOLATION_START, "{{"),
             newArrayList(XML_START_TAG_START, "<"),
             newArrayList(XML_NAME, "b"),
             newArrayList(XML_TAG_END, ">"),
@@ -647,17 +648,17 @@ public class Angular2LexerSpecTest {
 
         it("should be able to escape {", () -> {
           expect(tokenizeAndHumanizeParts("{{ \"{\" }}")).toEqual(newArrayList(
-            newArrayList(NG_INTERPOLATION_START, "{{"),
-            newArrayList(NG_INTERPOLATION_CONTENT, " \"{\" "),
-            newArrayList(NG_INTERPOLATION_END, "}}")
+            newArrayList(INTERPOLATION_START, "{{"),
+            newArrayList(INTERPOLATION_EXPR, " \"{\" "),
+            newArrayList(INTERPOLATION_END, "}}")
           ));
         });
 
         it("should be able to escape {{", () -> {
           expect(tokenizeAndHumanizeParts("{{ \"{{\" }}")).toEqual(newArrayList(
-            newArrayList(NG_INTERPOLATION_START, "{{"),
-            newArrayList(NG_INTERPOLATION_CONTENT, " \"{{\" "),
-            newArrayList(NG_INTERPOLATION_END, "}}")
+            newArrayList(INTERPOLATION_START, "{{"),
+            newArrayList(INTERPOLATION_EXPR, " \"{{\" "),
+            newArrayList(INTERPOLATION_END, "}}")
           ));
         });
 
@@ -798,7 +799,7 @@ public class Angular2LexerSpecTest {
         it("should parse an expansion form", () -> {
           expect(tokenizeAndHumanizeParts("{one.two, three, =4 {four} =5 {five} foo {bar} }", true))
             .toEqual(newArrayList(
-              newArrayList(NG_LBRACE, "{"),
+              newArrayList(LBRACE, "{"),
               newArrayList(XML_DATA_CHARACTERS, "one.two"),
               newArrayList(XML_COMMA, ","),
               newArrayList(XML_REAL_WHITE_SPACE, " "),
@@ -807,30 +808,30 @@ public class Angular2LexerSpecTest {
               newArrayList(XML_REAL_WHITE_SPACE, " "),
               newArrayList(XML_DATA_CHARACTERS, "=4"),
               newArrayList(XML_REAL_WHITE_SPACE, " "),
-              newArrayList(NG_LBRACE, "{"),
+              newArrayList(LBRACE, "{"),
               newArrayList(XML_DATA_CHARACTERS, "four"),
-              newArrayList(NG_RBRACE, "}"),
+              newArrayList(RBRACE, "}"),
               newArrayList(XML_REAL_WHITE_SPACE, " "),
               newArrayList(XML_DATA_CHARACTERS, "=5"),
               newArrayList(XML_REAL_WHITE_SPACE, " "),
-              newArrayList(NG_LBRACE, "{"),
+              newArrayList(LBRACE, "{"),
               newArrayList(XML_DATA_CHARACTERS, "five"),
-              newArrayList(NG_RBRACE, "}"),
+              newArrayList(RBRACE, "}"),
               newArrayList(XML_REAL_WHITE_SPACE, " "),
               newArrayList(XML_DATA_CHARACTERS, "foo"),
               newArrayList(XML_REAL_WHITE_SPACE, " "),
-              newArrayList(NG_LBRACE, "{"),
+              newArrayList(LBRACE, "{"),
               newArrayList(XML_DATA_CHARACTERS, "bar"),
-              newArrayList(NG_RBRACE, "}"),
+              newArrayList(RBRACE, "}"),
               newArrayList(XML_REAL_WHITE_SPACE, " "),
-              newArrayList(NG_RBRACE, "}")
+              newArrayList(RBRACE, "}")
             ));
         });
 
         it("should parse an expansion form with text elements surrounding it", () -> {
           expect(tokenizeAndHumanizeParts("before{one.two, three, =4 {four}}after", true)).toEqual(newArrayList(
             newArrayList(XML_DATA_CHARACTERS, "before"),
-            newArrayList(NG_LBRACE, "{"),
+            newArrayList(LBRACE, "{"),
             newArrayList(XML_DATA_CHARACTERS, "one.two"),
             newArrayList(XML_COMMA, ","),
             newArrayList(XML_REAL_WHITE_SPACE, " "),
@@ -839,10 +840,10 @@ public class Angular2LexerSpecTest {
             newArrayList(XML_REAL_WHITE_SPACE, " "),
             newArrayList(XML_DATA_CHARACTERS, "=4"),
             newArrayList(XML_REAL_WHITE_SPACE, " "),
-            newArrayList(NG_LBRACE, "{"),
+            newArrayList(LBRACE, "{"),
             newArrayList(XML_DATA_CHARACTERS, "four"),
-            newArrayList(NG_RBRACE, "}"),
-            newArrayList(NG_RBRACE, "}"),
+            newArrayList(RBRACE, "}"),
+            newArrayList(RBRACE, "}"),
             newArrayList(XML_DATA_CHARACTERS, "after")
           ));
         });
@@ -855,7 +856,7 @@ public class Angular2LexerSpecTest {
             newArrayList(XML_START_TAG_START, "<"),
             newArrayList(XML_NAME, "span"),
             newArrayList(XML_TAG_END, ">"),
-            newArrayList(NG_LBRACE, "{"),
+            newArrayList(LBRACE, "{"),
             newArrayList(XML_DATA_CHARACTERS, "a"),
             newArrayList(XML_COMMA, ","),
             newArrayList(XML_REAL_WHITE_SPACE, " "),
@@ -864,10 +865,10 @@ public class Angular2LexerSpecTest {
             newArrayList(XML_REAL_WHITE_SPACE, " "),
             newArrayList(XML_DATA_CHARACTERS, "=4"),
             newArrayList(XML_REAL_WHITE_SPACE, " "),
-            newArrayList(NG_LBRACE, "{"),
+            newArrayList(LBRACE, "{"),
             newArrayList(XML_DATA_CHARACTERS, "c"),
-            newArrayList(NG_RBRACE, "}"),
-            newArrayList(NG_RBRACE, "}"),
+            newArrayList(RBRACE, "}"),
+            newArrayList(RBRACE, "}"),
             newArrayList(XML_END_TAG_START, "</"),
             newArrayList(XML_NAME, "span"),
             newArrayList(XML_TAG_END, ">"),
@@ -879,7 +880,7 @@ public class Angular2LexerSpecTest {
 
         it("should parse an expansion forms with elements in it", () -> {
           expect(tokenizeAndHumanizeParts("{one.two, three, =4 {four <b>a</b>}}", true)).toEqual(newArrayList(
-            newArrayList(NG_LBRACE, "{"),
+            newArrayList(LBRACE, "{"),
             newArrayList(XML_DATA_CHARACTERS, "one.two"),
             newArrayList(XML_COMMA, ","),
             newArrayList(XML_REAL_WHITE_SPACE, " "),
@@ -888,7 +889,7 @@ public class Angular2LexerSpecTest {
             newArrayList(XML_REAL_WHITE_SPACE, " "),
             newArrayList(XML_DATA_CHARACTERS, "=4"),
             newArrayList(XML_REAL_WHITE_SPACE, " "),
-            newArrayList(NG_LBRACE, "{"),
+            newArrayList(LBRACE, "{"),
             newArrayList(XML_DATA_CHARACTERS, "four"),
             newArrayList(XML_REAL_WHITE_SPACE, " "),
             newArrayList(XML_START_TAG_START, "<"),
@@ -898,14 +899,14 @@ public class Angular2LexerSpecTest {
             newArrayList(XML_END_TAG_START, "</"),
             newArrayList(XML_NAME, "b"),
             newArrayList(XML_TAG_END, ">"),
-            newArrayList(NG_RBRACE, "}"),
-            newArrayList(NG_RBRACE, "}")
+            newArrayList(RBRACE, "}"),
+            newArrayList(RBRACE, "}")
           ));
         });
 
         it("should parse an expansion forms containing an interpolation", () -> {
           expect(tokenizeAndHumanizeParts("{one.two, three, =4 {four {{a}}}}", true)).toEqual(newArrayList(
-            newArrayList(NG_LBRACE, "{"),
+            newArrayList(LBRACE, "{"),
             newArrayList(XML_DATA_CHARACTERS, "one.two"),
             newArrayList(XML_COMMA, ","),
             newArrayList(XML_REAL_WHITE_SPACE, " "),
@@ -914,21 +915,21 @@ public class Angular2LexerSpecTest {
             newArrayList(XML_REAL_WHITE_SPACE, " "),
             newArrayList(XML_DATA_CHARACTERS, "=4"),
             newArrayList(XML_REAL_WHITE_SPACE, " "),
-            newArrayList(NG_LBRACE, "{"),
+            newArrayList(LBRACE, "{"),
             newArrayList(XML_DATA_CHARACTERS, "four"),
             newArrayList(XML_REAL_WHITE_SPACE, " "),
-            newArrayList(NG_INTERPOLATION_START, "{{"),
-            newArrayList(NG_INTERPOLATION_CONTENT, "a"),
-            newArrayList(NG_INTERPOLATION_END, "}}"),
-            newArrayList(NG_RBRACE, "}"),
-            newArrayList(NG_RBRACE, "}")
+            newArrayList(INTERPOLATION_START, "{{"),
+            newArrayList(INTERPOLATION_EXPR, "a"),
+            newArrayList(INTERPOLATION_END, "}}"),
+            newArrayList(RBRACE, "}"),
+            newArrayList(RBRACE, "}")
           ));
         });
 
         it("should parse nested expansion forms", () -> {
           expect(tokenizeAndHumanizeParts("{one.two, three, =4 { {xx, yy, =x {one}} }}", true))
             .toEqual(newArrayList(
-              newArrayList(NG_LBRACE, "{"),
+              newArrayList(LBRACE, "{"),
               newArrayList(XML_DATA_CHARACTERS, "one.two"),
               newArrayList(XML_COMMA, ","),
               newArrayList(XML_REAL_WHITE_SPACE, " "),
@@ -937,9 +938,9 @@ public class Angular2LexerSpecTest {
               newArrayList(XML_REAL_WHITE_SPACE, " "),
               newArrayList(XML_DATA_CHARACTERS, "=4"),
               newArrayList(XML_REAL_WHITE_SPACE, " "),
-              newArrayList(NG_LBRACE, "{"),
+              newArrayList(LBRACE, "{"),
               newArrayList(XML_REAL_WHITE_SPACE, " "),
-              newArrayList(NG_LBRACE, "{"),
+              newArrayList(LBRACE, "{"),
               newArrayList(XML_DATA_CHARACTERS, "xx"),
               newArrayList(XML_COMMA, ","),
               newArrayList(XML_REAL_WHITE_SPACE, " "),
@@ -948,13 +949,13 @@ public class Angular2LexerSpecTest {
               newArrayList(XML_REAL_WHITE_SPACE, " "),
               newArrayList(XML_DATA_CHARACTERS, "=x"),
               newArrayList(XML_REAL_WHITE_SPACE, " "),
-              newArrayList(NG_LBRACE, "{"),
+              newArrayList(LBRACE, "{"),
               newArrayList(XML_DATA_CHARACTERS, "one"),
-              newArrayList(NG_RBRACE, "}"),
-              newArrayList(NG_RBRACE, "}"),
+              newArrayList(RBRACE, "}"),
+              newArrayList(RBRACE, "}"),
               newArrayList(XML_REAL_WHITE_SPACE, " "),
-              newArrayList(NG_RBRACE, "}"),
-              newArrayList(NG_RBRACE, "}")
+              newArrayList(RBRACE, "}"),
+              newArrayList(RBRACE, "}")
             ));
         });
       });
@@ -1093,7 +1094,7 @@ public class Angular2LexerSpecTest {
 
     public static List<Token> create(String input, boolean tokenizeExpansionForms,
                                      Pair<String, String> interpolationConfig) {
-      Angular2Lexer lexer = new Angular2Lexer(tokenizeExpansionForms, interpolationConfig);
+      Angular2HtmlLexer lexer = new Angular2HtmlLexer(tokenizeExpansionForms, interpolationConfig);
       List<Token> result = new ArrayList<>();
       lexer.start(input, 0, input.length());
       IElementType tokenType;

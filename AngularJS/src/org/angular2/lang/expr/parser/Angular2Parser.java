@@ -27,9 +27,6 @@ import com.intellij.psi.tree.TokenSet;
 import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
 import static org.angular2.lang.expr.parser.Angular2ElementTypes.*;
 
-/**
- * @author Dennis.Ushakov
- */
 public class Angular2Parser
   extends
   JavaScriptParser<Angular2Parser.Angular2ExpressionParser, Angular2Parser.Angular2StatementParser, FunctionParser, JSPsiTypeParser> {
@@ -68,8 +65,6 @@ public class Angular2Parser
   }
 
   public void parseAction(IElementType root) {
-    myIsAction = true;
-    myIsSimpleBinding = false;
     parseRoot(root, true, false, () -> getStatementParser().parseChain());
   }
 
@@ -86,12 +81,15 @@ public class Angular2Parser
   }
 
   public void parseInterpolation(IElementType root) {
-    //TODO Implement interpolation parsing
-    throw new UnsupportedOperationException();
+    parseRoot(root, false, false, () -> getStatementParser().parseChain());
   }
 
   public void parseSimpleBinding(IElementType root) {
-    parseRoot(root, false, true, () -> getStatementParser().parseChain());
+    parseRoot(root, false, true, () -> {
+      if (!getStatementParser().parseQuote()) {
+        getStatementParser().parseChain();
+      }
+    });
   }
 
   private void parseRoot(IElementType root, boolean isAction, boolean isSimpleBinding, Runnable parseAction) {

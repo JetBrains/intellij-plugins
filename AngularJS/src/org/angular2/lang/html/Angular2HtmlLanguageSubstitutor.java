@@ -11,15 +11,25 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.angular2.lang.expr.lexer;
+package org.angular2.lang.html;
 
-import com.intellij.psi.tree.IElementType;
-import org.angular2.lang.expr.Angular2Language;
-import org.jetbrains.annotations.NonNls;
+import com.intellij.lang.Language;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.LanguageSubstitutor;
+import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class Angular2TokenType extends IElementType {
-  public Angular2TokenType(@NotNull @NonNls String debugName) {
-    super(debugName, Angular2Language.INSTANCE);
+public class Angular2HtmlLanguageSubstitutor extends LanguageSubstitutor {
+
+  @Nullable
+  @Override
+  public Language getLanguage(@NotNull VirtualFile file, @NotNull Project project) {
+    if (Angular2LangUtil.isAngular2Context(file)) {
+      return Angular2HtmlLanguage.INSTANCE;
+    }
+    return null;
   }
+
 }

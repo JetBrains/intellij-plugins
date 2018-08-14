@@ -1,8 +1,6 @@
 package org.angular2.lang.html.lexer;
 
-import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.*;
 import com.intellij.psi.xml.*;
 
 %%
@@ -10,12 +8,12 @@ import com.intellij.psi.xml.*;
 %unicode
 
 %{
-  public _HtmlNgLexer() {
+  public _Angular2HtmlLexer() {
     this(null);
   }
 %}
 
-%class _HtmlNgLexer
+%class _Angular2HtmlLexer
 %public
 %implements FlexLexer
 %function advance
@@ -140,8 +138,8 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
 "&#"(x|X)({DIGIT}|[a-fA-F])+";" { return XmlTokenType.XML_CHAR_ENTITY_REF; }
 "&"{TAG_NAME}";" { return XmlTokenType.XML_ENTITY_REF_TOKEN; }
 
-<YYINITIAL> "{" { return Angular2TokenTypes.NG_LBRACE; }
-<YYINITIAL> "}" { return Angular2TokenTypes.NG_RBRACE; }
+<YYINITIAL> "{" { return Angular2HtmlTokenTypes.LBRACE; }
+<YYINITIAL> "}" { return Angular2HtmlTokenTypes.RBRACE; }
 <YYINITIAL> "," { return XmlTokenType.XML_COMMA; }
 <YYINITIAL> ([^<&\$# \n\r\t\f{},]|(\\\$)|(\\#)) { return XmlTokenType.XML_DATA_CHARACTERS; }
 <YYINITIAL> [^] { return XmlTokenType.XML_DATA_CHARACTERS; }

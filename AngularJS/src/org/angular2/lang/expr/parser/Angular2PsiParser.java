@@ -28,9 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-/**
- * @author Dennis.Ushakov
- */
 public class Angular2PsiParser implements PsiParser {
 
   public static final String ACTION = "action";
@@ -69,4 +66,5 @@ public class Angular2PsiParser implements PsiParser {
     }
     return builder.getTreeBuilt();
   }
+
 }

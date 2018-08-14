@@ -14,8 +14,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.XmlElementDescriptor;
+import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angularjs.codeInsight.tags.AngularJSTagDescriptor;
-import org.angularjs.html.Angular2HTMLLanguage;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,7 +43,7 @@ public class AngularJSErrorFilter extends HighlightErrorFilter {
       return !(descriptor instanceof AngularJSTagDescriptor);
     }
     if (XMLLanguage.INSTANCE.is(language) && error.getErrorDescription().equals(XmlErrorMessages.message("xml.parsing.unexpected.tokens"))) {
-      return !error.getParent().getLanguage().is(Angular2HTMLLanguage.INSTANCE);
+      return !error.getParent().getLanguage().is(Angular2HtmlLanguage.INSTANCE);
     }
     return true;
   }

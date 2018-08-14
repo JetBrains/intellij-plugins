@@ -17,27 +17,38 @@ import com.intellij.lexer.*;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
-import com.intellij.psi.xml.XmlTokenType;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class Angular2Lexer extends HtmlLexer {
+import static com.intellij.psi.xml.XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
+import static com.intellij.psi.xml.XmlTokenType.XML_COMMA;
+import static com.intellij.psi.xml.XmlTokenType.XML_COMMENT_CHARACTERS;
+import static com.intellij.psi.xml.XmlTokenType.XML_DATA_CHARACTERS;
+import static com.intellij.psi.xml.XmlTokenType.XML_REAL_WHITE_SPACE;
+import static com.intellij.psi.xml.XmlTokenType.XML_TAG_CHARACTERS;
+import static com.intellij.psi.xml.XmlTokenType.XML_WHITE_SPACE;
+import static org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR;
+import static org.angular2.lang.html.lexer.Angular2HtmlTokenTypes.*;
+
+public class Angular2HtmlLexer extends HtmlLexer {
 
   private static final TokenSet TOKENS_TO_MERGE =
-    TokenSet.create(XmlTokenType.XML_COMMENT_CHARACTERS, XmlTokenType.XML_WHITE_SPACE, XmlTokenType.XML_REAL_WHITE_SPACE,
-                    XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN, XmlTokenType.XML_DATA_CHARACTERS, XmlTokenType.XML_TAG_CHARACTERS);
+    TokenSet.create(XML_COMMENT_CHARACTERS, XML_WHITE_SPACE, XML_REAL_WHITE_SPACE,
+                    XML_ATTRIBUTE_VALUE_TOKEN, XML_DATA_CHARACTERS, XML_TAG_CHARACTERS);
 
   private static final TokenSet EXPANSION_TOKENS =
-    TokenSet.create(XmlTokenType.XML_COMMA, Angular2TokenTypes.NG_LBRACE, Angular2TokenTypes.NG_RBRACE);
+    TokenSet.create(XML_COMMA, LBRACE, RBRACE);
 
   private static final TokenSet INTERPOLATION_CONTENT_TOKENS =
-    TokenSet.orSet(TokenSet.create(XmlTokenType.XML_REAL_WHITE_SPACE, XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN,
-                                   XmlTokenType.XML_DATA_CHARACTERS),
+    TokenSet.orSet(TokenSet.create(XML_REAL_WHITE_SPACE, XML_ATTRIBUTE_VALUE_TOKEN,
+                                   XML_DATA_CHARACTERS),
                    EXPANSION_TOKENS);
 
-  public Angular2Lexer(boolean tokenizeExpansionForms,
-                       Pair<String, String> interpolationConfig) {
+  public Angular2HtmlLexer(boolean tokenizeExpansionForms,
+                           @Nullable Pair<String, String> interpolationConfig) {
     super(new MyMergingLexer(
-      new FlexAdapter(new _HtmlNgLexer()), tokenizeExpansionForms, interpolationConfig), true);
+      new FlexAdapter(new _Angular2HtmlLexer()), tokenizeExpansionForms, interpolationConfig), true);
   }
 
   private static class MyMergingLexer extends MergingLexerAdapterBase {
@@ -47,8 +58,8 @@ public class Angular2Lexer extends HtmlLexer {
 
     private int myInterpolationScanningState;
 
-    public MyMergingLexer(Lexer original, boolean tokenizeExpansionForms,
-                          Pair<String, String> interpolationConfig) {
+    public MyMergingLexer(@NotNull Lexer original, boolean tokenizeExpansionForms,
+                          @Nullable Pair<String, String> interpolationConfig) {
       super(original);
       myTokenizeExpansionForms = tokenizeExpansionForms;
       myInterpolationConfig = interpolationConfig == null ? Pair.create("{{", "}}") : interpolationConfig;
@@ -77,18 +88,18 @@ public class Angular2Lexer extends HtmlLexer {
           case 0:
             if (tryConsumeInterpolationBoundary(myInterpolationConfig.first)) {
               myInterpolationScanningState = 1;
-              return Angular2TokenTypes.NG_INTERPOLATION_START;
+              return INTERPOLATION_START;
             }
             break;
           case 1:
             if (tryConsumeInterpolationContent()) {
               myInterpolationScanningState = 2;
-              return Angular2TokenTypes.NG_INTERPOLATION_CONTENT;
+              return INTERPOLATION_EXPR;
             }
           case 2:
             myInterpolationScanningState = 0;
             if (tryConsumeInterpolationBoundary(myInterpolationConfig.second)) {
-              return Angular2TokenTypes.NG_INTERPOLATION_END;
+              return INTERPOLATION_END;
             }
             break;
         }
@@ -112,9 +123,10 @@ public class Angular2Lexer extends HtmlLexer {
       return type;
     }
 
-    private IElementType convertType(IElementType tokenType) {
+    @Contract("null -> null; !null -> !null")
+    private IElementType convertType(@Nullable IElementType tokenType) {
       return !myTokenizeExpansionForms && EXPANSION_TOKENS.contains(tokenType) ?
-             XmlTokenType.XML_DATA_CHARACTERS : tokenType;
+             XML_DATA_CHARACTERS : tokenType;
     }
 
     private boolean tryConsumeInterpolationBoundary(String boundary) {
@@ -146,13 +158,13 @@ public class Angular2Lexer extends HtmlLexer {
       return true;
     }
 
-    private boolean inBuffer(String text, int offset) {
+    private boolean inBuffer(@NotNull String text, int offset) {
       final Lexer original = getOriginal();
       final int tokenPos = original.getTokenStart() + offset;
-      return tokenPos >= 0
-             && original.getBufferSequence()
-                        .subSequence(tokenPos, Math.min(tokenPos + text.length(), original.getBufferEnd()))
-                        .equals(text);
+      return tokenPos >= 0 && text.contentEquals(
+        original
+          .getBufferSequence()
+          .subSequence(tokenPos, Math.min(tokenPos + text.length(), original.getBufferEnd())));
     }
   }
 
@@ -161,7 +173,7 @@ public class Angular2Lexer extends HtmlLexer {
     private final LexerPosition myOriginal;
     private final int myInterpolationScanningState;
 
-    public MyLexerPosition(LexerPosition original, int interpolationScanningState) {
+    public MyLexerPosition(@NotNull LexerPosition original, int interpolationScanningState) {
       myOriginal = original;
       myInterpolationScanningState = interpolationScanningState;
     }
@@ -170,6 +182,7 @@ public class Angular2Lexer extends HtmlLexer {
       return myInterpolationScanningState;
     }
 
+    @NotNull
     public LexerPosition getOriginal() {
       return myOriginal;
     }

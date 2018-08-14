@@ -11,26 +11,16 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.angular2.codeInsight;
+package org.angular2.lang.html.psi.impl;
 
-/**
- * @author Irina.Chernushina on 12/3/2015.
- */
-public enum Angular2PluralCategories {
-  zero(5),
-  one(1),
-  two(4),
-  few(3),
-  many(2),
-  other(0);
+import com.intellij.psi.impl.source.tree.CompositePsiElement;
+import com.intellij.psi.tree.IElementType;
+import org.angular2.lang.html.psi.Angular2HtmlFormCaseContent;
 
-  private final int myCompletionOrder;
+public class Angular2HtmlExpansionFormCaseContentImpl extends CompositePsiElement implements Angular2HtmlFormCaseContent {
 
-  Angular2PluralCategories(int completionOrder) {
-    myCompletionOrder = completionOrder;
+  public Angular2HtmlExpansionFormCaseContentImpl(IElementType type) {
+    super(type);
   }
 
-  public int getCompletionOrder() {
-    return myCompletionOrder;
-  }
 }

@@ -16,9 +16,6 @@ package org.angular2.lang.expr.psi;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiRecursiveVisitor;
 
-/**
- * @author Dennis.Ushakov
- */
 public class Angular2RecursiveVisitor extends Angular2ElementVisitor implements PsiRecursiveVisitor {
   @Override
   public void visitElement(PsiElement element) {

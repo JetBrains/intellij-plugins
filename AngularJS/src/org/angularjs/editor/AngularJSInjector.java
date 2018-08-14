@@ -41,7 +41,7 @@ public class AngularJSInjector implements MultiHostInjector {
     if (context.getLanguage() == XMLLanguage.INSTANCE) return;
     // check that we have angular directives indexed before injecting
     final Project project = context.getProject();
-    if (!AngularIndexUtil.hasAngularJS(project)) return;
+    if (!AngularIndexUtil.hasAngularJS(project) || AngularIndexUtil.hasAngularJS2(project)) return;
 
     final PsiElement parent = context.getParent();
     if (context instanceof XmlAttributeValueImpl && parent instanceof XmlAttribute) {
@@ -80,7 +80,7 @@ public class AngularJSInjector implements MultiHostInjector {
 
   @NotNull
   @Override
-  public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
+  public List<Class<? extends PsiElement>> elementsToInjectIn() {
     return Arrays.asList(XmlTextImpl.class, XmlAttributeValueImpl.class);
   }
 }

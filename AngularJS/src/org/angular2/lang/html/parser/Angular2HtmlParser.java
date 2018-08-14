@@ -11,18 +11,18 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.angular2.lang.html.lexer;
+package org.angular2.lang.html.parser;
 
-import com.intellij.psi.tree.IElementType;
-import org.angular2.lang.expr.Angular2Language;
-import org.jetbrains.annotations.NonNls;
+import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.html.HTMLParser;
+import com.intellij.lang.html.HtmlParsing;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Dennis.Ushakov
- */
-public class Angular2TokenType extends IElementType {
-  public Angular2TokenType(@NotNull @NonNls String debugName) {
-    super(debugName, Angular2Language.INSTANCE);
+public class Angular2HtmlParser extends HTMLParser {
+
+  @NotNull
+  protected HtmlParsing createHtmlParsing(@NotNull PsiBuilder builder) {
+    return new Angular2HtmlParsing(builder);
   }
+
 }

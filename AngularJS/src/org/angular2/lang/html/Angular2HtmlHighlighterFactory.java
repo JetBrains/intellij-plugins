@@ -1,4 +1,4 @@
-package org.angularjs.html;
+package org.angular2.lang.html;
 
 import com.intellij.ide.highlighter.HtmlFileHighlighter;
 import com.intellij.lexer.HtmlHighlightingLexer;
@@ -9,17 +9,14 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.psi.xml.XmlTokenType;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Dennis.Ushakov
- */
-public class Angular2HTMLHighlighterFactory extends SingleLazyInstanceSyntaxHighlighterFactory {
+public class Angular2HtmlHighlighterFactory extends SingleLazyInstanceSyntaxHighlighterFactory {
   @Override
   @NotNull
   protected SyntaxHighlighter createHighlighter() {
-    return new Angular2HTMLHighlighter();
+    return new Angular2HtmlHighlighter();
   }
 
-  private static class Angular2HTMLHighlighter extends HtmlFileHighlighter {
+  private static class Angular2HtmlHighlighter extends HtmlFileHighlighter {
     @NotNull
     @Override
     public Lexer getHighlightingLexer() {
