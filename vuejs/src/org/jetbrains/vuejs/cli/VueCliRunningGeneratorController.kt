@@ -19,6 +19,7 @@ import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration
 import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType
 import com.intellij.javascript.nodejs.packageJson.PackageJsonDependenciesExternalUpdateManager
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
+import com.intellij.lang.javascript.buildTools.npm.NpmScriptsUtil
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.buildTools.npm.rc.NpmRunConfigurationBuilder
 import com.intellij.lang.javascript.buildTools.webpack.WebPackConfigManager
@@ -186,7 +187,15 @@ class VueCliRunningGeneratorController internal constructor(generationLocation: 
     val runManager = RunManager.getInstance(project)
     val pkg = PackageJsonUtil.findChildPackageJsonFile(project.baseDir)
     if (pkg != null) {
-      val scriptName = if (getVueCliVersion() == 3) "serve" else "start"
+      val npmScripts = NpmScriptsUtil.listTasks(project, pkg).scripts
+      if (npmScripts.find { it.name == "start" || it.name == "serve" || it.name == "dev" } == null && getVueCliVersion() != 3) {
+        return
+      }
+      var scriptName = "serve"
+      when {
+        npmScripts.find { it.name == "start" } != null -> scriptName = "start"
+        npmScripts.find { it.name == "start" || it.name == "serve" } == null && npmScripts.find { it.name == "dev" } != null -> scriptName = "dev"
+      }
       val startConfiguration = NpmRunConfigurationBuilder(project).createRunConfiguration("npm $scriptName", null, pkg.path,
                                                                                           ContainerUtil.newHashMap<String, Any>(
                                                                                             pair<String, String>("run-script", scriptName)))
