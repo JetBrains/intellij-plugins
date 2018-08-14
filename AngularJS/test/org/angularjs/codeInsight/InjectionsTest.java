@@ -216,6 +216,18 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     assertBraces("**", "**");
   }
 
+  public void testAngular2EmptyInterpolation() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() ->
+      myFixture.testCompletion("emptyInterpolation.html", "emptyInterpolation.after.html", "angular2.js", "emptyInterpolation.ts")
+    );
+  }
+
+  public void testAngular2NonEmptyInterpolation() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() ->
+      myFixture.testCompletion("nonEmptyInterpolation.html", "nonEmptyInterpolation.after.html", "angular2.js", "nonEmptyInterpolation.ts")
+    );
+  }
+
   public void testNgNonBindable() {
     myFixture.configureByFiles(getTestName(true) + ".html", "angular.js");
     assertNotSame(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());

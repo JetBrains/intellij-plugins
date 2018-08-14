@@ -284,7 +284,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     if (file.getLanguage().is(AngularJSLanguage.INSTANCE)) { // template file with the same name
       final PsiElement original = CompletionUtil.getOriginalOrSelf(context);
       PsiFile hostFile = FileContextUtil.getContextFile(original != context ? original : context.getContainingFile().getOriginalFile());
-      final String name = hostFile != null ? hostFile.getVirtualFile().getNameWithoutExtension() : null;
+      final String name = hostFile != null ? hostFile.getViewProvider().getVirtualFile().getNameWithoutExtension() : null;
       final PsiDirectory dir = hostFile != null ? hostFile.getParent() : null;
       final PsiFile directiveFile = dir != null ? dir.findFile(name + ".ts") : null;
       if (directiveFile != null) {
