@@ -255,6 +255,7 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
   public void addSettingsStateListener(final @NotNull WebProjectGenerator.SettingsStateListener stateListener) {
     final JTextComponent editorComponent = (JTextComponent)mySdkPathComboWithBrowse.getComboBox().getEditor().getEditorComponent();
     editorComponent.getDocument().addDocumentListener(new DocumentAdapter() {
+      @Override
       protected void textChanged(final DocumentEvent e) {
         stateListener.stateChanged(validate() == null);
       }

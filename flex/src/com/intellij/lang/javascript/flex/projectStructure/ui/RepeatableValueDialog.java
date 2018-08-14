@@ -54,12 +54,14 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
         myTextWithBrowse.addBrowseFolderListener(null, null, myProject, myFileChooserDescriptor);
       }
 
+      @Override
       public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         myFileChooserDescriptor.setAllowedExtensions(myInfo.LIST_ELEMENTS[column].FILE_EXTENSIONS);
         myTextWithBrowse.setText(FileUtil.toSystemDependentName(String.valueOf(value)));
         return myTextWithBrowse;
       }
 
+      @Override
       public Object getCellEditorValue() {
         return FileUtil.toSystemIndependentName(myTextWithBrowse.getText().trim());
       }
@@ -81,22 +83,27 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
     }
   }
 
+  @Override
   @Nullable
   public JComponent getPreferredFocusedComponent() {
     return myTable;
   }
 
+  @Override
   protected TableModelBase createTableModel() {
     return new TableModelBase() {
+      @Override
       public int getColumnCount() {
         return myInfo.LIST_ELEMENTS.length;
       }
 
+      @Override
       @Nullable
       public String getColumnName(final int column) {
         return myInfo.LIST_ELEMENTS.length == 1 ? null : myInfo.LIST_ELEMENTS[column].DISPLAY_NAME;
       }
 
+      @Override
       public Class getColumnClass(final int column) {
         final ListElementType type = myInfo.LIST_ELEMENTS[column].LIST_ELEMENT_TYPE;
         return (type == ListElementType.File || type == ListElementType.FileOrFolder)
@@ -106,6 +113,7 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
                  : String.class;
       }
 
+      @Override
       protected Object getValue(final StringBuilder s, final int column) {
         final String value = StringUtil.split(s.toString(), CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false).get(column);
         final ListElementType type = myInfo.LIST_ELEMENTS[column].LIST_ELEMENT_TYPE;
@@ -116,6 +124,7 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
                  : value;
       }
 
+      @Override
       protected void setValue(final StringBuilder s, final int column, final Object aValue) {
         final List<String> parts =
           StringUtil.split(s.toString(), String.valueOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR), true, false);
@@ -138,6 +147,7 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
     };
   }
 
+  @Override
   protected boolean addObject() {
     final CompilerOptionInfo.ListElement firstElement = myInfo.LIST_ELEMENTS[0];
     if (myInfo.LIST_ELEMENTS.length == 1 &&
@@ -171,6 +181,7 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
     return false;
   }
 
+  @Override
   @Nullable
   protected ValidationInfo doValidate() {
     if ("compiler.define".equals(myInfo.ID)) {

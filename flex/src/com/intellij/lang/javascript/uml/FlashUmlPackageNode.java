@@ -33,15 +33,18 @@ public class FlashUmlPackageNode extends DiagramNodeBase<Object> {
     myPackage = aPackage;
   }
 
+  @Override
   public Icon getIcon() {
     return PlatformIcons.PACKAGE_ICON;
   }
 
+  @Override
   @NotNull
   public String getIdentifyingElement() {
     return myPackage;
   }
 
+  @Override
   public String getTooltip() {
     return "<html><b>" + (myPackage.length() > 0 ? myPackage : JSBundle.message("top.level")) + "</b></html>";
   }

@@ -31,6 +31,7 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
     super.setUp();
   }
 
+  @Override
   protected String[] getActiveFileNames() {
     return new String[]{"From.as", "From.mxml"};
   }

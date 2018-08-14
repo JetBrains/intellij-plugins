@@ -57,6 +57,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
     return new JavaApplicationCommandLineState<CucumberJavaRunConfiguration>(this, env) {
       private final Collection<Filter> myConsoleFilters = new ArrayList<>();
 
+      @Override
       protected JavaParameters createJavaParameters() throws ExecutionException {
         final JavaParameters params = new JavaParameters();
         final JavaRunConfigurationModule module = getConfigurationModule();

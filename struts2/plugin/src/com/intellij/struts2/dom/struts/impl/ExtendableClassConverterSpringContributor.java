@@ -51,6 +51,7 @@ import java.util.List;
 public class ExtendableClassConverterSpringContributor
   extends ExtendableClassConverter.ExtendableClassConverterContributor {
 
+  @Override
   @NotNull
   public String getTypeName() {
     return StrutsBundle.message("dom.extendable.class.converter.type.spring");
@@ -62,6 +63,7 @@ public class ExtendableClassConverterSpringContributor
    * @param convertContext Current context.
    * @return true if yes.
    */
+  @Override
   public boolean isSuitable(@NotNull final ConvertContext convertContext) {
     final Module module = convertContext.getModule();
     if (module == null) {
@@ -76,6 +78,7 @@ public class ExtendableClassConverterSpringContributor
                                  convertContext.getInvocationElement()) != null;
   }
 
+  @Override
   @NotNull
   public PsiReference[] getReferences(@NotNull final ConvertContext convertContext,
                                       @NotNull final PsiElement psiElement,
@@ -105,6 +108,7 @@ public class ExtendableClassConverterSpringContributor
       return SpringManager.getInstance(module.getProject()).getCombinedModel(module);
     }
 
+    @Override
     public PsiElement resolve() {
       final String beanName = myElement.getValue();
       if (StringUtil.isEmpty(beanName)) {
@@ -124,6 +128,7 @@ public class ExtendableClassConverterSpringContributor
       return springBean.getBeanClass();
     }
 
+    @Override
     @NotNull
     public Object[] getVariants() {
       final SpringModel springModel = getSpringModel();

@@ -26,6 +26,7 @@ public abstract class BaseDartGenerateAction extends AnAction {
     return true;
   }
 
+  @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {
     final Project project = e.getData(CommonDataKeys.PROJECT);
     assert project != null;

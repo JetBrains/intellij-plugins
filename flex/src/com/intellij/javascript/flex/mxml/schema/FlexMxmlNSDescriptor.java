@@ -41,6 +41,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
   private static final String[] ILLEGAL_LANGUAGE_ROOT_TAGS =
     {"Array", "Boolean", "Component", "Class", "Date", "DesignLayer", "Function", "Number", "String", "XML", "int", "uint"};
 
+  @Override
   @Nullable
   public XmlElementDescriptor getElementDescriptor(@NotNull final XmlTag tag) {
     if (MxmlJSClass.isInsideTagThatAllowsAnyXmlContent(tag)) {
@@ -102,6 +103,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
     return true;
   }
 
+  @Override
   @NotNull
   public XmlElementDescriptor[] getRootElementsDescriptors(@Nullable final XmlDocument document) {
     XmlElementDescriptor[] elementDescriptors = CodeContext.getContext(namespace, module).getDescriptorsWithAllowedDeclaration();
@@ -121,7 +123,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
           final PsiElement declaration = elementDescriptor.getDeclaration();
           final PsiFile containingFile = document.getContainingFile();
           if (declaration != null && containingFile != null && declaration.equals(containingFile.getOriginalFile())) {
-            // do not suggest root tag referencing to this mxml file itself 
+            // do not suggest root tag referencing to this mxml file itself
             continue;
           }
         }
@@ -133,25 +135,30 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
     return results.toArray(XmlElementDescriptor.EMPTY_ARRAY);
   }
 
+  @Override
   @Nullable
   public XmlFile getDescriptorFile() {
     return myFile;
   }
 
+  @Override
   public PsiElement getDeclaration() {
     return myFile;
   }
 
+  @Override
   @NonNls
   public String getName(final PsiElement context) {
     return null;
   }
 
+  @Override
   @NonNls
   public String getName() {
     return null;
   }
 
+  @Override
   public void init(final PsiElement element) {
     XmlDocument document = (XmlDocument) element;
     myFile = ((XmlFile)document.getContainingFile());
@@ -162,11 +169,13 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
     CodeContextHolder.getInstance(module.getProject()).clearCodeContext(namespace, module);
   }
 
+  @Override
   @NotNull
   public Object[] getDependencies() {
     return CodeContext.getContext(namespace, module).getDependencies();
   }
 
+  @Override
   public void validate(@NotNull final XmlDocument context, @NotNull final ValidationHost host) {}
 
   public boolean hasElementDescriptorWithName(String name, String className) {

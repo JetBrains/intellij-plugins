@@ -110,6 +110,7 @@ public class Library implements Comparable {
   /**
    * {@inheritDoc}
    */
+  @Override
   public int compareTo(Object object) {
     return getBasePackage().compareTo(((Library)object).getBasePackage());
   }

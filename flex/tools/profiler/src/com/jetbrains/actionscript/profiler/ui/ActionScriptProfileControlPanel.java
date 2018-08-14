@@ -122,6 +122,7 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
     myAlarm.addRequest(() -> NOTIFICATION_GROUP.createNotification(ProfilerBundle.message("profiler.connection.timeout"), NotificationType.ERROR)
       .notify(module.getProject()), MINUTE);
     profilingManager.initializeProfiling(profilerDataConsumer, new ProfilingManager.Callback() {
+      @Override
       public void finished(@Nullable String data, @Nullable IOException ex) {
         if (data != null && connectionCallback != null) {
           myAlarm.cancelAllRequests();
@@ -200,6 +201,7 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
           profilingManager.doGc(new ProfilingManager.Callback() {
+            @Override
             public void finished(@Nullable String data, @Nullable IOException ex) {
               //TODO
             }

@@ -49,6 +49,7 @@ public class Struts2ModelValidator extends ValidatorBase {
           StrutsBundle.message("inspections.struts2.model.validator.progress"));
   }
 
+  @Override
   public Collection<VirtualFile> getFilesToProcess(final Project project, final CompileContext context) {
     final StrutsManager strutsManager = StrutsManager.getInstance(project);
     final PsiManager psiManager = PsiManager.getInstance(project);

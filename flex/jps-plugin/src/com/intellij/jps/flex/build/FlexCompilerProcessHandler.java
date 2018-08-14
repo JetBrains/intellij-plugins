@@ -42,6 +42,7 @@ public class FlexCompilerProcessHandler extends BaseOSProcessHandler {
     public void startNotified(@NotNull final ProcessEvent event) {
     }
 
+    @Override
     public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
       handleText(event.getText());
     }
@@ -50,10 +51,12 @@ public class FlexCompilerProcessHandler extends BaseOSProcessHandler {
     public void processWillTerminate(@NotNull final ProcessEvent event, final boolean willBeDestroyed) {
     }
 
+    @Override
     public void processTerminated(@NotNull final ProcessEvent event) {
       registerCompilationFinished();
     }
 
+    @Override
     protected void onCancelled() {
       destroyProcess();
     }

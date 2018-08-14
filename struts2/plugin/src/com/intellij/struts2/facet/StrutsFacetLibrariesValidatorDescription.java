@@ -41,6 +41,7 @@ public class StrutsFacetLibrariesValidatorDescription extends FacetLibrariesVali
     super("struts2-" + version);
   }
 
+  @Override
   public void onLibraryAdded(final Facet facet, @NotNull final Library library) {
     super.onLibraryAdded(facet, library);
     final StrutsFacet strutsFacet = (StrutsFacet) facet;

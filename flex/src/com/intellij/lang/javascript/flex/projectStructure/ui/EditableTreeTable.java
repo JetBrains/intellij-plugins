@@ -210,6 +210,7 @@ abstract class EditableTreeTable<T> extends TreeTable {
       return (T)treeNode.getUserObject();
     }
 
+    @Override
     public Class getColumnClass() {
       return TreeTableModel.class;
     }

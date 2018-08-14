@@ -37,10 +37,12 @@ public class AngularSettings implements
     myState = state;
   }
 
+  @Override
   public boolean isUseService() {
     return myState.useService;
   }
 
+  @Override
   public void setUseService(boolean useService) {
     myState.useService = useService;
   }

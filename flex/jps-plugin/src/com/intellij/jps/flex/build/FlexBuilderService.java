@@ -12,11 +12,13 @@ import java.util.List;
 
 public class FlexBuilderService extends BuilderService {
 
+  @Override
   @NotNull
   public List<? extends BuildTargetType<?>> getTargetTypes() {
     return Arrays.asList(FlexResourceBuildTargetType.PRODUCTION, FlexResourceBuildTargetType.TEST, FlexBuildTargetType.INSTANCE);
   }
 
+  @Override
   @NotNull
   public List<? extends TargetBuilder<?, ?>> createBuilders() {
     return Arrays.asList(new FlexResourceBuilder(), new FlexBuilder());

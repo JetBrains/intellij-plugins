@@ -29,6 +29,7 @@ class JpsFlexBCReferenceImpl
     super(original);
   }
 
+  @Override
   @NotNull
   public JpsFlexBCReferenceImpl createCopy() {
     return new JpsFlexBCReferenceImpl(this);

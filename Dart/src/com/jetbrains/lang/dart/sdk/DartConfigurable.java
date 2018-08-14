@@ -102,6 +102,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
     final JTextComponent sdkEditor = (JTextComponent)mySdkPathComboWithBrowse.getComboBox().getEditor().getEditorComponent();
     sdkEditor.getDocument().addDocumentListener(new DocumentAdapter() {
+      @Override
       protected void textChanged(final DocumentEvent e) {
         final String sdkHomePath = getTextFromCombo(mySdkPathComboWithBrowse);
         if (!sdkHomePath.isEmpty()) {
@@ -444,8 +445,10 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     //myModulesCheckboxTreeTable.setRowHeight(myModulesCheckboxTreeTable.getRowHeight() + 2);
 
     myModulesCheckboxTreeTable.getTree().addTreeWillExpandListener(new TreeWillExpandListener() {
+      @Override
       public void treeWillExpand(final TreeExpansionEvent event) {}
 
+      @Override
       public void treeWillCollapse(final TreeExpansionEvent event) throws ExpandVetoException {
         throw new ExpandVetoException(event);
       }

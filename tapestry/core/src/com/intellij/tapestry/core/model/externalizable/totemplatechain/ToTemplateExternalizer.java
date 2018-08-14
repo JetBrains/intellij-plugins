@@ -10,6 +10,7 @@ public class ToTemplateExternalizer implements Command {
 
     private ExternalizeToTemplateContext _context;
 
+    @Override
     public boolean execute(Context context) throws Exception {
         if (!(context instanceof ExternalizeToTemplateContext))
             return false;

@@ -10,12 +10,14 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class FlexUnitSuiteInspectionBase extends LocalInspectionTool {
+  @Override
   @Nls
   @NotNull
   public String getGroupDisplayName() {
     return FlexBundle.message("flexunit.inspections.group");
   }
 
+  @Override
   public boolean isEnabledByDefault() {
     return true;
   }

@@ -1,8 +1,7 @@
 package com.google.jstestdriver.idea.execution.settings.ui;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.google.jstestdriver.idea.execution.settings.TestType;
+import org.jetbrains.annotations.NotNull;
 
 class TestTypeListItem implements IdProvider, RunSettingsSectionProvider {
 
@@ -20,6 +19,7 @@ class TestTypeListItem implements IdProvider, RunSettingsSectionProvider {
     return myTestType;
   }
 
+  @Override
   public RunSettingsSection provideRunSettingsSection() {
     return myRunSettingsSection;
   }

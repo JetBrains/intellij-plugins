@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.moveCode;
 
 public class DartStatementMoverTest extends DartCodeMoverTest {
 
+  @Override
   protected String getBasePath() {
     return "/statementMover/";
   }

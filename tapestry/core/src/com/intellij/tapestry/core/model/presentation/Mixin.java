@@ -15,6 +15,7 @@ public class Mixin extends ParameterReceiverElement {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean allowsTemplate() {
         return false;
     }
@@ -22,6 +23,7 @@ public class Mixin extends ParameterReceiverElement {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IResource[] getTemplate() {
         return IResource.EMPTY_ARRAY;
     }
@@ -29,6 +31,7 @@ public class Mixin extends ParameterReceiverElement {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IResource[] getMessageCatalog() {
         return IResource.EMPTY_ARRAY;
     }

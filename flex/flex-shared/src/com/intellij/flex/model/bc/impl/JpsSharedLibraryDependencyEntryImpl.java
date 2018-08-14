@@ -28,6 +28,7 @@ class JpsSharedLibraryDependencyEntryImpl extends JpsFlexDependencyEntryBase<Jps
     super(original);
   }
 
+  @Override
   @NotNull
   public JpsSharedLibraryDependencyEntryImpl createCopy() {
     return new JpsSharedLibraryDependencyEntryImpl(this);
@@ -35,6 +36,7 @@ class JpsSharedLibraryDependencyEntryImpl extends JpsFlexDependencyEntryBase<Jps
 
 // ------------------------------------
 
+  @Override
   @Nullable
   public JpsLibrary getLibrary() {
     return myContainer.getChild(LIB_REF_ROLE).resolve();

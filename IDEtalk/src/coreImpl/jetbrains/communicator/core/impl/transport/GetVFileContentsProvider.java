@@ -30,10 +30,12 @@ public class GetVFileContentsProvider extends FileAccessProvider {
     super(ideFacade, userModel);
   }
 
+  @Override
   public String getTagName() {
     return GetVFileContentsXmlMessage.TAG;
   }
 
+  @Override
   protected void doProcess(Element request, Element response) {
     VFile from = VFile.createFrom(request);
     myIdeFacade.fillFileContents(from);

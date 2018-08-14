@@ -11,6 +11,7 @@ public class TapestryLibrariesValidatorDescription extends FacetLibrariesValidat
         super("tapestry");
     }
 
+    @Override
     public void onLibraryAdded(final Facet facet, @NotNull final Library library) {
         //((TapestryFacet) facet).getWebFacet().getPackagingConfiguration().addLibraryLink(library);
     }

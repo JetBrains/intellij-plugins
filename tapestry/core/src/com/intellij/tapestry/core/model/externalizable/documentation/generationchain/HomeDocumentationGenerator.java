@@ -18,6 +18,7 @@ public class HomeDocumentationGenerator extends AbstractDocumentationGenerator {
     private static final String VELOCITY_TEMPLATE = "/documentation/home.vm";
     private static final String[] DOCUMENTATION_ELEMENT_TYPES = new String[]{"components", "pages", "mixins"};
 
+    @Override
     public boolean execute(Context context) throws Exception {
         if (!super.execute(context))
             return false;

@@ -211,6 +211,7 @@ public class BCUtils {
   public static void initTargetPlatformCombo(final JComboBox targetPlatformCombo) {
     targetPlatformCombo.setModel(new DefaultComboBoxModel(TargetPlatform.values()));
     targetPlatformCombo.setRenderer(new ListCellRendererWrapper<TargetPlatform>() {
+      @Override
       public void customize(JList list, TargetPlatform value, int index, boolean selected, boolean hasFocus) {
         setText(value.getPresentableText());
         setIcon(value.getIcon());
@@ -221,6 +222,7 @@ public class BCUtils {
   public static void initOutputTypeCombo(final JComboBox outputTypeCombo) {
     outputTypeCombo.setModel(new DefaultComboBoxModel(OutputType.values()));
     outputTypeCombo.setRenderer(new ListCellRendererWrapper<OutputType>() {
+      @Override
       public void customize(JList list, OutputType value, int index, boolean selected, boolean hasFocus) {
         setText(value.getPresentableText());
       }

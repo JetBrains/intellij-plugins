@@ -159,6 +159,7 @@ public class GherkinLexerTest extends TestCase {
       //TODO add custom langs
     }
 
+    @Override
     public Collection<String> getAllKeywords(String language) {
       return language.equals("en-lol") ? myLolcatKeywords : super.getAllKeywords(language);
     }
@@ -168,6 +169,7 @@ public class GherkinLexerTest extends TestCase {
       return language.equals("en-lol") ? GherkinTokenTypes.FEATURE_KEYWORD : super.getTokenType(language, keyword);
     }
 
+    @Override
     public String getBaseKeyword(String language, String keyword) {
       return language.equals("en-lol") ? "Feature" : super.getBaseKeyword(language, keyword);
     }

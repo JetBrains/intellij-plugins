@@ -40,6 +40,7 @@ abstract class ElementsCachedMap extends CachedUserDataCache<Map<String, Present
     assert myCachePages || myCacheComponents || myCacheMixin || myCacheAbstractComponents;
   }
 
+  @Override
   protected Map<String, PresentationLibraryElement> computeValue(Module module) {
     Map<String, PresentationLibraryElement> map = new THashMap<>();
     TapestryProject project = TapestryModuleSupportLoader.getTapestryProject(module);
@@ -60,6 +61,7 @@ abstract class ElementsCachedMap extends CachedUserDataCache<Map<String, Present
     return TapestryProject.JAVA_STRUCTURE_DEPENDENCY;
   }
 
+  @Override
   protected Project getProject(Module projectOwner) {
     return projectOwner.getProject();
   }

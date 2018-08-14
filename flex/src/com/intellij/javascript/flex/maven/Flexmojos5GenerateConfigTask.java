@@ -7,6 +7,7 @@ public class Flexmojos5GenerateConfigTask extends Flexmojos4GenerateConfigTask {
     super(tree);
   }
 
+  @Override
   protected String getIdeaConfiguratorClassName() {
     return "com.intellij.flex.maven.IdeaConfiguratorFlexmojos5";
   }

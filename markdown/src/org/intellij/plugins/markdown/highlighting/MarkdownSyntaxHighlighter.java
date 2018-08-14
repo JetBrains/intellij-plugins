@@ -77,11 +77,13 @@ public class MarkdownSyntaxHighlighter extends SyntaxHighlighterBase {
     safeMap(ATTRIBUTES, MarkdownTokenTypes.HTML_TAG, MarkdownHighlighterColors.INLINE_HTML_ATTR_KEY);
   }
 
+  @Override
   @NotNull
   public Lexer getHighlightingLexer() {
     return lexer;
   }
 
+  @Override
   @NotNull
   public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
     return pack(ATTRIBUTES.get(tokenType));

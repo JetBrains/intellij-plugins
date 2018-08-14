@@ -2,7 +2,9 @@ package org.jetbrains.plugins.cucumber.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.cucumber.psi.*;
+import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
+import org.jetbrains.plugins.cucumber.psi.GherkinScenario;
+import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
 
 /**
  * @author yole
@@ -20,6 +22,7 @@ public class GherkinScenarioImpl extends GherkinStepsHolderBase implements Gherk
     return "GherkinScenario:" + getScenarioName();
   }
 
+  @Override
   public boolean isBackground() {
     return getNode().getFirstChildNode().getElementType() == GherkinTokenTypes.BACKGROUND_KEYWORD;
   }
@@ -29,6 +32,7 @@ public class GherkinScenarioImpl extends GherkinStepsHolderBase implements Gherk
     return buildPresentableText(isBackground() ? "Background" : "Scenario");
   }
 
+  @Override
   protected void acceptGherkin(GherkinElementVisitor gherkinElementVisitor) {
     gherkinElementVisitor.visitScenario(this);
   }

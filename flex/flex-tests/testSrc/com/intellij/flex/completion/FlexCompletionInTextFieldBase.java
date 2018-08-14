@@ -48,6 +48,7 @@ public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionInTe
     return "js2";
   }
 
+  @Override
   protected String getBasePath() {
     return BASE_PATH;
   }

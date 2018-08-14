@@ -24,10 +24,12 @@ public interface UserCommand {
   void execute();
 
   UserCommand NULL = new UserCommand() {
+    @Override
     public boolean isEnabled() {
       return false;
     }
 
+    @Override
     public void execute() {
       throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
     }

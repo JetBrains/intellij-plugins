@@ -164,6 +164,7 @@ public class StrutsFileSet implements Disposable {
     return name;
   }
 
+  @Override
   public void dispose() {
   }
 

@@ -30,11 +30,16 @@ public class MultipleSelectionListUI extends BasicListUI {
   private int myLastDraggedRow = -1;
   private int myLastPressedRow = -1;
 
+  @Override
   protected MouseInputListener createMouseInputListener() {
     return new MouseInputListener() {
+      @Override
       public void mouseClicked(MouseEvent e) {}
+      @Override
       public void mouseEntered(MouseEvent e) {}
+      @Override
       public void mouseExited(MouseEvent e) {}
+      @Override
       public void mousePressed(MouseEvent e) {
         if (e.isConsumed()) {
           selectedOnPress = false;
@@ -78,6 +83,7 @@ public class MultipleSelectionListUI extends BasicListUI {
         }
       }
 
+      @Override
       public void mouseDragged(MouseEvent e) {
         if (e.isConsumed()) {
           return;
@@ -107,9 +113,11 @@ public class MultipleSelectionListUI extends BasicListUI {
         }
       }
 
+      @Override
       public void mouseMoved(MouseEvent e) {
       }
 
+      @Override
       public void mouseReleased(MouseEvent e) {
         if (selectedOnPress) {
           if (!SwingUtilities.isLeftMouseButton(e)) {

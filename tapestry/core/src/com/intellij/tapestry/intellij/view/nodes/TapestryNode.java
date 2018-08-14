@@ -39,6 +39,7 @@ public abstract class TapestryNode extends SimpleNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public SimpleNode[] getChildren() {
         return new SimpleNode[0];
     }
@@ -46,6 +47,7 @@ public abstract class TapestryNode extends SimpleNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object getElement() {
         return _element;
     }
@@ -61,6 +63,7 @@ public abstract class TapestryNode extends SimpleNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void doUpdate() {
         _presentation = updatePresentation(_presentation);
         setIcon(_presentation.getIcon(false));
@@ -80,6 +83,7 @@ public abstract class TapestryNode extends SimpleNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean expandOnDoubleClick() {
         return false;
     }

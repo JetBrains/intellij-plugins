@@ -29,6 +29,7 @@ public class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
   private static final Logger LOG = Logger.getInstance(FlashUmlVfsResolver.class.getName());
   public static final String SEPARATOR = ":";
 
+  @Override
   public String getQualifiedName(Object element) {
     return getQualifiedNameStatic(element);
   }
@@ -79,6 +80,7 @@ public class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
     return qName;
   }
 
+  @Override
   public Object resolveElementByFQN(String fqn, Project project) {
     return resolveElementByFqnStatic(fqn, project);
   }

@@ -141,6 +141,7 @@ public class CPUSnapshotView extends ProfileView implements Disposable {
     });
 
     myFilterSystemStuff.addItemListener(new ItemListener() {
+      @Override
       public void itemStateChanged(ItemEvent e) {
         buildPerformanceSamples(myHotSpotsTreeTable.getSortableTreeTableModel());
         TreeUtil.expand(myHotSpotsTreeTable.getTree(), 1);
@@ -149,6 +150,7 @@ public class CPUSnapshotView extends ProfileView implements Disposable {
 
 
     filterScope.getComboBox().addItemListener(new ItemListener() {
+      @Override
       public void itemStateChanged(ItemEvent e) {
         myAlarm.cancelAllRequests();
         myAlarm.addRequest(() -> {
@@ -172,6 +174,7 @@ public class CPUSnapshotView extends ProfileView implements Disposable {
     myHotSpotsTreeTable = new CallTreeTable(getProject());
 
     myHotSpotsTreeTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      @Override
       public void valueChanged(ListSelectionEvent e) {
         final Object node = myHotSpotsTreeTable.getSelectedValue();
         if (!(node instanceof MergedCallNode)) return;

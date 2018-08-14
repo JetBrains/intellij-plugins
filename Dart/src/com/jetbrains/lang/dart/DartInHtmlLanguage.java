@@ -19,6 +19,7 @@ public class DartInHtmlLanguage extends Language implements DependentLanguage {
   {
     SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(this,
                                                                    new SingleLazyInstanceSyntaxHighlighterFactory() {
+                                                                     @Override
                                                                      @NotNull
                                                                      protected SyntaxHighlighter createHighlighter() {
                                                                        return new DartSyntaxHighlighter();

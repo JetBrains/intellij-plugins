@@ -100,6 +100,7 @@ public class RegistrationForm {
   private void setupFormActionsAndLF() {
 
     myUseExisting.addItemListener(new ItemListener() {
+      @Override
       public void itemStateChanged(ItemEvent e) {
         boolean useExisting = myUseExisting.isSelected();
 
@@ -122,10 +123,12 @@ public class RegistrationForm {
     });
 
     UIUtil.traverse(myPanel, new UIUtil.TraverseAction() {
+      @Override
       public boolean executeAndContinue(Component c) {
         if (c instanceof JTextComponent) {
           JTextComponent textComponent = (JTextComponent) c;
           textComponent.getDocument().addDocumentListener(new DocumentAdapter() {
+            @Override
             protected void textChanged(DocumentEvent e) {
               myErrorLabel.setText(null);
             }
@@ -135,7 +138,7 @@ public class RegistrationForm {
       }
     });
   }
-  
+
   public final void setUseExisingAccount(boolean useExistingAccount) {
     if (useExistingAccount) {
       myUseExisting.setSelected(true);
@@ -198,7 +201,7 @@ public class RegistrationForm {
 
   private void doLogin(String[] result) {
     myFacade.disconnect();
-    
+
     if (useExistingAccount()) {
       result[0] = myFacade.connect(getUsername(), getPassword(), getServer(), getPort(), isForceSSL());
       addErrorPrefixIfNeeded(result);

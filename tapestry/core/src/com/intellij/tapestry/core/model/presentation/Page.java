@@ -28,6 +28,7 @@ public class Page extends PresentationLibraryElement implements ExternalizableTo
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean allowsTemplate() {
         return true;
     }
@@ -35,6 +36,7 @@ public class Page extends PresentationLibraryElement implements ExternalizableTo
     /**
      * {@inheritDoc}
      */
+    @Override
     public IResource[] getTemplate() {
         if (_templateCache != null && checkAllValidResources(_templateCache)) {
             return _templateCache;
@@ -67,6 +69,7 @@ public class Page extends PresentationLibraryElement implements ExternalizableTo
         return _templateCache;
     }
 
+    @Override
     public String getTemplateRepresentation(String namespacePrefix) throws Exception {
         return ExternalizeToTemplateChain.getInstance().externalize(this, namespacePrefix);
     }

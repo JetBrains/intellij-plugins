@@ -4,23 +4,26 @@ import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
-import static com.intellij.tapestry.intellij.lang.TemplateColorSettingsPage.*;
-import static com.intellij.tapestry.psi.TelTokenTypes.*;
 import com.intellij.tapestry.psi.TelLexer;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+import static com.intellij.tapestry.intellij.lang.TemplateColorSettingsPage.*;
+import static com.intellij.tapestry.psi.TelTokenTypes.*;
+
 /**
  * @author Alexey Chmutov
  */
 public class TelHighlighter extends SyntaxHighlighterBase {
+  @Override
   @NotNull
   public Lexer getHighlightingLexer() {
     return new TelLexer();
   }
 
+  @Override
   @NotNull
   public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
     return getTokenHighlightsStatic(tokenType);

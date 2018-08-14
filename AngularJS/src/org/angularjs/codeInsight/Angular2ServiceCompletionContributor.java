@@ -58,6 +58,7 @@ public class Angular2ServiceCompletionContributor extends TypeScriptLanguageServ
     return virtualFile;
   }
 
+  @Override
   @Nullable
   protected Icon getIcon(String kind, @Nullable String kindModifiers) {
     if ("element".equals(kind)) {

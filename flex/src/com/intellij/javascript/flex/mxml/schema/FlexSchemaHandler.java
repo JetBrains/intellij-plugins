@@ -30,7 +30,6 @@ import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xml.XmlElementDescriptor;
@@ -54,6 +53,7 @@ import java.util.regex.Pattern;
 public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
   private static final Pattern prefixPattern = Pattern.compile("[a-z_][a-z_0-9]*");
 
+  @Override
   @Nullable
   public XmlFile getSchema(@NotNull @NonNls final String url, final Module module, @NotNull final PsiFile baseFile) {
     return url.length() > 0 && JavaScriptSupportLoader.isFlexMxmFile(baseFile) ? getFakeSchemaReference(url, module) : null;
@@ -176,9 +176,11 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
     FlexResolveHelper
       .processAllMxmlAndFxgFiles(scopeWithoutLibs, project,
                                  new FlexResolveHelper.MxmlAndFxgFilesProcessor() {
+                                   @Override
                                    public void addDependency(final PsiDirectory directory) {
                                    }
 
+                                   @Override
                                    public boolean processFile(final VirtualFile file, final VirtualFile root) {
                                      if (tagName == null || tagName.equals(file.getNameWithoutExtension())) {
                                        final String packageName = VfsUtilCore.getRelativePath(file.getParent(), root, '.');

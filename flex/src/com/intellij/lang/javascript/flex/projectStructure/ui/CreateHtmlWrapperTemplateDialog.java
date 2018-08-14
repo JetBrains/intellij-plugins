@@ -59,6 +59,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
     setInitialPath(module, initialPath);
 
     myCheckPlayerVersionCheckBox.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         myExpressInstallCheckBox.setEnabled(myCheckPlayerVersionCheckBox.isSelected());
       }
@@ -85,10 +86,12 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
     }
   }
 
+  @Override
   public JComponent getPreferredFocusedComponent() {
     return myWrapperFolderComponent.getComponent().getTextField();
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     return myMainPanel;
   }
@@ -97,6 +100,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
     return FileUtil.toSystemIndependentName(myWrapperFolderComponent.getComponent().getText().trim());
   }
 
+  @Override
   protected ValidationInfo doValidate() {
     final String wrapperFolderPath = getWrapperFolderPath();
 
@@ -127,6 +131,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
     return null;
   }
 
+  @Override
   protected void doOKAction() {
     if (createHtmlWrapperTemplate(myModule.getProject(), mySdk, getWrapperFolderPath(),
                                   myEnableHistoryCheckBox.isSelected(), myCheckPlayerVersionCheckBox.isSelected(),
@@ -160,6 +165,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
         case 0:
           // noinspection ThrowableResultOfMethodCallIgnored
           final IOException exception = ApplicationManager.getApplication().runWriteAction(new NullableComputable<IOException>() {
+            @Override
             public IOException compute() {
               try {
                 for (VirtualFile child : children) {
@@ -216,6 +222,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
 
     // noinspection ThrowableResultOfMethodCallIgnored
     final IOException exception = ApplicationManager.getApplication().runWriteAction(new NullableComputable<IOException>() {
+      @Override
       public IOException compute() {
         try {
           for (VirtualFile file : sdkTemplateFolder.getChildren()) {
@@ -281,6 +288,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
     FlexUtils.addFileWithContent(file.getName(), fixedText, folder);
   }
 
+  @Override
   protected String getHelpId() {
     return "flex.CreateHtmlWrapperTemplateDialog";
   }

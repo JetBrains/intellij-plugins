@@ -26,6 +26,7 @@ class JpsAirDesktopPackagingOptionsImpl extends JpsAirPackagingOptionsBase<JpsAi
     super(original);
   }
 
+  @Override
   @NotNull
   public JpsAirDesktopPackagingOptionsImpl createCopy() {
     return new JpsAirDesktopPackagingOptionsImpl(this);
@@ -71,6 +72,7 @@ class JpsAirDesktopPackagingOptionsImpl extends JpsAirPackagingOptionsBase<JpsAi
       super("air desktop packaging options");
     }
 
+    @Override
     @NotNull
     public JpsAirDesktopPackagingOptions create() {
       return new JpsAirDesktopPackagingOptionsImpl();

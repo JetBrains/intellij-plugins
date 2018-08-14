@@ -16,6 +16,7 @@ public class TelRangeExpression extends TelCompositeElement implements TelExpres
     super(node);
   }
 
+  @Override
   @Nullable
   public PsiType getPsiType() {
     return JavaPsiFacade.getInstance(getProject()).getElementFactory().createTypeByFQClassName(CommonClassNames.JAVA_UTIL_LIST, getResolveScope());

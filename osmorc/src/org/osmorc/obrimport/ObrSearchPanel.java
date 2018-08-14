@@ -54,11 +54,13 @@ public class ObrSearchPanel extends ProgressIndicatorBase {
   public ObrSearchPanel(QueryType queryType) {
     _queryType = queryType;
     _searchButton.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         search();
       }
     });
     _cancelButton.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         cancel();
       }
@@ -71,6 +73,7 @@ public class ObrSearchPanel extends ProgressIndicatorBase {
       }
     });
     _resultList.addListSelectionListener(new ListSelectionListener() {
+      @Override
       public void valueChanged(ListSelectionEvent e) {
         firePropertyChangeEvent("hasResult", null, null);
       }

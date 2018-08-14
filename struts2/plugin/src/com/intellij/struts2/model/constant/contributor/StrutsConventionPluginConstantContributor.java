@@ -63,6 +63,7 @@ public class StrutsConventionPluginConstantContributor extends StrutsConstantCon
     return StrutsConventionConstants.CONVENTIONS_SERVICE;
   }
 
+  @Override
   @NotNull
   public List<StrutsConstant> getStrutsConstantDefinitions(@NotNull final Module module) {
     return CONSTANTS;

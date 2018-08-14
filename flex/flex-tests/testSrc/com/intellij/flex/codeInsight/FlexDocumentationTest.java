@@ -62,6 +62,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     return "js2";
   }
 
+  @Override
   protected ModuleType getModuleType() {
     boolean hasFlex = JSTestUtils.testMethodHasOption(getClass(), getTestName(false), JSTestOption.WithFlexSdk, JSTestOption.WithFlexFacet);
     return hasFlex ? FlexModuleType.getInstance() : WebModuleType.getInstance();

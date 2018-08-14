@@ -169,6 +169,7 @@ public class FlexMxmlColorAnnotator implements Annotator {
     @Override
     public AnAction getClickAction() {
       return new AnAction() {
+        @Override
         public void actionPerformed(@NotNull final AnActionEvent e) {
           final Editor editor = CommonDataKeys.EDITOR.getData(e.getDataContext());
           if (editor != null) {

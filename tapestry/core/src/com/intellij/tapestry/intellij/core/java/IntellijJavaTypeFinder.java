@@ -26,6 +26,7 @@ public class IntellijJavaTypeFinder implements IJavaTypeFinder {
   /**
    * {@inheritDoc}
    */
+  @Override
   @Nullable
   public IJavaClassType findType(@NotNull String fullyQualifiedName, boolean includeDependencies) {
 
@@ -42,6 +43,7 @@ public class IntellijJavaTypeFinder implements IJavaTypeFinder {
   /**
    * {@inheritDoc}
    */
+  @Override
   public Collection<IJavaClassType> findTypesInPackage(String packageName, boolean includeDependencies) {
     Collection<IJavaClassType> types = new ArrayList<>();
 
@@ -55,6 +57,7 @@ public class IntellijJavaTypeFinder implements IJavaTypeFinder {
   /**
    * {@inheritDoc}
    */
+  @Override
   public Collection<IJavaClassType> findTypesInPackageRecursively(String basePackageName, boolean includeDependencies) {
     Collection<IJavaClassType> types = new ArrayList<>();
 
@@ -79,6 +82,7 @@ public class IntellijJavaTypeFinder implements IJavaTypeFinder {
   /**
    * {@inheritDoc}
    */
+  @Override
   public IServiceBindingDiscoverer getServiceBindingDiscoverer() {
     return null;
   }

@@ -23,6 +23,7 @@ public class DartTestRunConfiguration extends DartRunConfigurationBase {
     super(project, factory, name);
   }
 
+  @Override
   @NotNull
   public DartTestRunnerParameters getRunnerParameters() {
     return myRunnerParameters;
@@ -34,11 +35,13 @@ public class DartTestRunConfiguration extends DartRunConfigurationBase {
     return new DartTestConfigurationEditorForm(getProject());
   }
 
+  @Override
   @Nullable
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
     return new DartTestRunningState(env);
   }
 
+  @Override
   @Nullable
   public String suggestedName() {
     final String path = myRunnerParameters.getFilePath();
@@ -70,6 +73,7 @@ public class DartTestRunConfiguration extends DartRunConfigurationBase {
     }
   }
 
+  @Override
   public RunConfiguration clone() {
     final DartTestRunConfiguration clone = (DartTestRunConfiguration)super.clone();
     clone.myRunnerParameters = myRunnerParameters.clone();

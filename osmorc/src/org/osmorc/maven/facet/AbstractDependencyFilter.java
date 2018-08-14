@@ -116,6 +116,7 @@ public abstract class AbstractDependencyFilter {
 
       if (!"*".equals(primaryKey)) {
         filter = new DependencyFilter(primaryKey) {
+          @Override
           boolean matches(MavenArtifact dependency) {
             return super.matches(dependency.getArtifactId());
           }
@@ -129,6 +130,7 @@ public abstract class AbstractDependencyFilter {
         Map.Entry attr = (Map.Entry)entry;
         if ("groupId".equals(attr.getKey())) {
           filter = new DependencyFilter((String)attr.getValue()) {
+            @Override
             boolean matches(MavenArtifact dependency) {
               return super.matches(dependency.getGroupId());
             }
@@ -136,6 +138,7 @@ public abstract class AbstractDependencyFilter {
         }
         else if ("artifactId".equals(attr.getKey())) {
           filter = new DependencyFilter((String)attr.getValue()) {
+            @Override
             boolean matches(MavenArtifact dependency) {
               return super.matches(dependency.getArtifactId());
             }
@@ -143,6 +146,7 @@ public abstract class AbstractDependencyFilter {
         }
         else if ("version".equals(attr.getKey())) {
           filter = new DependencyFilter((String)attr.getValue()) {
+            @Override
             boolean matches(MavenArtifact dependency) {
               try {
                 // use the symbolic version if available (ie. 1.0.0-SNAPSHOT)
@@ -156,6 +160,7 @@ public abstract class AbstractDependencyFilter {
         }
         else if ("scope".equals(attr.getKey())) {
           filter = new DependencyFilter((String)attr.getValue(), "compile") {
+            @Override
             boolean matches(MavenArtifact dependency) {
               return super.matches(dependency.getScope());
             }
@@ -163,6 +168,7 @@ public abstract class AbstractDependencyFilter {
         }
         else if ("type".equals(attr.getKey())) {
           filter = new DependencyFilter((String)attr.getValue(), "jar") {
+            @Override
             boolean matches(MavenArtifact dependency) {
               return super.matches(dependency.getType());
             }
@@ -170,6 +176,7 @@ public abstract class AbstractDependencyFilter {
         }
         else if ("classifier".equals(attr.getKey())) {
           filter = new DependencyFilter((String)attr.getValue()) {
+            @Override
             boolean matches(MavenArtifact dependency) {
               return super.matches(dependency.getClassifier());
             }
@@ -177,6 +184,7 @@ public abstract class AbstractDependencyFilter {
         }
         else if ("optional".equals(attr.getKey())) {
           filter = new DependencyFilter((String)attr.getValue(), "false") {
+            @Override
             boolean matches(MavenArtifact dependency) {
               return super.matches(String.valueOf(dependency.isOptional()));
             }

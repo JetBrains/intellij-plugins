@@ -41,6 +41,7 @@ import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackagePro
 public class AirPackageAction extends DumbAwareAction {
   public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("AIR Packaging");
 
+  @Override
   public void update(@NotNull final AnActionEvent e) {
     final Project project = e.getProject();
 
@@ -72,6 +73,7 @@ public class AirPackageAction extends DumbAwareAction {
                                    !AirPackageProjectParameters.getInstance(project).isPackagingInProgress());
   }
 
+  @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {
     final Project project = e.getProject();
     if (project == null) return;
@@ -92,6 +94,7 @@ public class AirPackageAction extends DumbAwareAction {
     FlexResourceBuildTargetScopeProvider.setBCsToCompileForPackaging(compileScope, modulesAndBCs);
 
     compilerManager.make(compileScope, new CompileStatusNotification() {
+      @Override
       public void finished(final boolean aborted, final int errors, final int warnings, final CompileContext compileContext) {
         if (!aborted && errors == 0) {
           createPackages(project, modulesAndBCs, dialog.getPasswords());
@@ -192,6 +195,7 @@ public class AirPackageAction extends DumbAwareAction {
         final String message = FlexBundle.message("air.application.created", packagePathsToWarnings.size(), hrefs);
 
         final NotificationListener listener = new NotificationListener() {
+          @Override
           public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
             if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
               notification.expire();

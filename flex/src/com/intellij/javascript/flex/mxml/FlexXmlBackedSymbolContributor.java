@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class FlexXmlBackedSymbolContributor implements ChooseByNameContributor {
+  @Override
   @NotNull
   public String[] getNames(Project project, boolean includeNonProjectItems) {
     Collection<String> result = new THashSet<>();
@@ -20,6 +21,7 @@ public class FlexXmlBackedSymbolContributor implements ChooseByNameContributor {
     return ArrayUtil.toStringArray(result);
   }
 
+  @Override
   @NotNull
   public NavigationItem[] getItemsByName(String name, final String pattern, Project project, boolean includeNonProjectItems) {
     Collection<NavigationItem> result = new THashSet<>();

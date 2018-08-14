@@ -40,6 +40,7 @@ public class FlexProjectStructureDetector extends ProjectStructureDetector {
     return FileTypeRegistry.getInstance().getFileTypeByFileName(file.getName()) == ActionScriptFileType.INSTANCE;
   }
 
+  @Override
   @NotNull
   public DirectoryProcessingResult detectRoots(@NotNull final File dir,
                                                @NotNull final File[] children,
@@ -62,7 +63,7 @@ public class FlexProjectStructureDetector extends ProjectStructureDetector {
         else if (JavaScriptSupportLoader.isFlexMxmFile(child.getName())) {
           result.add(new FlexModuleSourceRoot(dir));
           // don't skip this folder since .as files can be located here, and they will make some parent folder marked as source root
-          // essentially 'dir' will be marked as source root *only* if no .as files exist at this level or below 
+          // essentially 'dir' will be marked as source root *only* if no .as files exist at this level or below
         }
       }
 
@@ -73,6 +74,7 @@ public class FlexProjectStructureDetector extends ProjectStructureDetector {
     return DirectoryProcessingResult.PROCESS_CHILDREN;
   }
 
+  @Override
   public List<ModuleWizardStep> createWizardSteps(final ProjectFromSourcesBuilder builder,
                                                   final ProjectDescriptor projectDescriptor,
                                                   final Icon stepIcon) {

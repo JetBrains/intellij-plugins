@@ -9,6 +9,7 @@ import org.apache.commons.chain.Context;
  */
 public class PageExternalizer extends ToTemplateExternalizer {
 
+    @Override
     public boolean execute(Context context) throws Exception {
         if (!super.execute(context))
             return false;

@@ -31,6 +31,7 @@ import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMob
 
 public class FlexDebugRunner extends FlexBaseRunner {
 
+  @Override
   public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
     return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) &&
            (profile instanceof FlashRunConfiguration ||
@@ -38,11 +39,13 @@ public class FlexDebugRunner extends FlexBaseRunner {
             profile instanceof RemoteFlashRunConfiguration);
   }
 
+  @Override
   @NotNull
   public String getRunnerId() {
     return "FlexDebugRunner";
   }
 
+  @Override
   protected RunContentDescriptor launchWebFlexUnit(final Project project,
                                                    final RunContentDescriptor contentToReuse,
                                                    final ExecutionEnvironment env,
@@ -57,6 +60,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
     }
   }
 
+  @Override
   protected RunContentDescriptor launchAirFlexUnit(final Project project,
                                                    final RunProfileState state,
                                                    final RunContentDescriptor contentToReuse,
@@ -71,6 +75,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
     }
   }
 
+  @Override
   protected RunContentDescriptor launchFlexConfig(final Module module,
                                                   final FlexBuildConfiguration bc,
                                                   final FlashRunnerParameters runnerParameters,

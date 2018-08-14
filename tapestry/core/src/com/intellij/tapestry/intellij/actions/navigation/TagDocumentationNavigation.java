@@ -33,6 +33,7 @@ public class TagDocumentationNavigation extends AnAction {
   /**
    * {@inheritDoc}
    */
+  @Override
   public void actionPerformed(@NotNull AnActionEvent event) {
 
     Project project = (Project)event.getDataContext().getData(DataKeys.PROJECT.getName());

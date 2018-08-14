@@ -25,11 +25,13 @@ public class JpsAirPackageEntryImpl extends JpsElementBase<JpsAirPackageEntryImp
     myPathInPackage = original.myPathInPackage;
   }
 
+  @Override
   @NotNull
   public JpsAirPackageEntryImpl createCopy() {
     return new JpsAirPackageEntryImpl(this);
   }
 
+  @Override
   public void applyChanges(@NotNull final JpsAirPackageEntryImpl modified) {
     myFilePath = modified.myFilePath;
     myPathInPackage = modified.myPathInPackage;
@@ -37,11 +39,13 @@ public class JpsAirPackageEntryImpl extends JpsElementBase<JpsAirPackageEntryImp
 
 // ---------------------------------------------
 
+  @Override
   @NotNull
   public String getFilePath() {
     return myFilePath;
   }
 
+  @Override
   @NotNull
   public String getPathInPackage() {
     return myPathInPackage;
@@ -68,6 +72,7 @@ public class JpsAirPackageEntryImpl extends JpsElementBase<JpsAirPackageEntryImp
       super("air package entry");
     }
 
+    @Override
     @NotNull
     public JpsAirPackageEntry create() {
       return new JpsAirPackageEntryImpl();

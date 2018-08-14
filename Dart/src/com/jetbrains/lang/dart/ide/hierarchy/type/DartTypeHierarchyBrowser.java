@@ -25,10 +25,12 @@ public class DartTypeHierarchyBrowser extends TypeHierarchyBrowserBase {
     super(project, dartClass);
   }
 
+  @Override
   protected boolean isInterface(@NotNull PsiElement psiElement) {
     return false;
   }
 
+  @Override
   protected void createTrees(@NotNull final Map<String, JTree> trees) {
     createTreeAndSetupCommonActions(trees, "DartClassHierarchyPopupMenu");
   }
@@ -51,24 +53,29 @@ public class DartTypeHierarchyBrowser extends TypeHierarchyBrowserBase {
   }
   */
 
+  @Override
   protected PsiElement getElementFromDescriptor(@NotNull HierarchyNodeDescriptor descriptor) {
     if (!(descriptor instanceof DartTypeHierarchyNodeDescriptor)) return null;
     return ((DartTypeHierarchyNodeDescriptor)descriptor).getDartClass();
   }
 
+  @Override
   @Nullable
   protected JPanel createLegendPanel() {
     return null;
   }
 
+  @Override
   protected boolean isApplicableElement(@NotNull final PsiElement element) {
     return element instanceof DartClass;
   }
 
+  @Override
   protected Comparator<NodeDescriptor> getComparator() {
     return DartHierarchyUtil.getComparator(myProject);
   }
 
+  @Override
   protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull final String typeName, @NotNull final PsiElement psiElement) {
     if (SUPERTYPES_HIERARCHY_TYPE.equals(typeName)) {
       return new DartServerSupertypesHierarchyTreeStructure(myProject, (DartClass)psiElement);
@@ -85,10 +92,12 @@ public class DartTypeHierarchyBrowser extends TypeHierarchyBrowserBase {
     }
   }
 
+  @Override
   protected boolean canBeDeleted(final PsiElement psiElement) {
     return psiElement instanceof DartClass;
   }
 
+  @Override
   protected String getQualifiedName(final PsiElement psiElement) {
     if (psiElement instanceof DartClass) {
       return ((DartClass)psiElement).getName();
@@ -97,6 +106,7 @@ public class DartTypeHierarchyBrowser extends TypeHierarchyBrowserBase {
   }
 
   public static class BaseOnThisTypeAction extends TypeHierarchyBrowserBase.BaseOnThisTypeAction {
+    @Override
     protected boolean isEnabled(@NotNull final HierarchyBrowserBaseEx browser, @NotNull final PsiElement psiElement) {
       return super.isEnabled(browser, psiElement) && !DartResolveUtil.OBJECT.equals(((DartClass)psiElement).getName());
     }

@@ -24,6 +24,7 @@ import org.picocontainer.MutablePicoContainer;
  */
 public class CommandManagerImpl implements CommandManager {
 
+  @Override
   public <T extends UserCommand> T getCommand(Class<T> commandClass, MutablePicoContainer registerIn) {
     T result = (T) registerIn.getComponentInstanceOfType(commandClass);
     if (result == null) {

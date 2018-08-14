@@ -32,6 +32,7 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
     return FlexTestUtils.getTestDataPath("as_editor/");
   }
 
+  @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();
   }

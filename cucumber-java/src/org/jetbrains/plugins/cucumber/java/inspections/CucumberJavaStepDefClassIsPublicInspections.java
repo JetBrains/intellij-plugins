@@ -10,17 +10,20 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 public class CucumberJavaStepDefClassIsPublicInspections extends BaseLocalInspectionTool {
 
+  @Override
   @Nls
   @NotNull
   public String getDisplayName() {
     return CucumberJavaBundle.message("cucumber.java.inspections.step.def.class.is.public.title");
   }
 
+  @Override
   @NotNull
   public String getShortName() {
     return "CucumberJavaStepDefClassIsPublic";
   }
 
+  @Override
   @NotNull
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
     return new CucumberJavaStepDefClassIsPublicVisitor(holder);

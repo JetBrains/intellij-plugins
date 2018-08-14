@@ -46,9 +46,11 @@ public class FlashBCOutputSourceItem extends PackagingSourceItem {
     return myBc.hashCode() + myType.hashCode() * 239;
   }
 
+  @Override
   @NotNull
   public SourceItemPresentation createPresentation(final @NotNull ArtifactEditorContext context) {
     return new SourceItemPresentation() {
+      @Override
       public String getPresentableName() {
         switch (myType) {
           case OutputFile:
@@ -63,6 +65,7 @@ public class FlashBCOutputSourceItem extends PackagingSourceItem {
         }
       }
 
+      @Override
       public void render(final @NotNull PresentationData presentationData,
                          final SimpleTextAttributes mainAttributes,
                          final SimpleTextAttributes commentAttributes) {
@@ -70,12 +73,14 @@ public class FlashBCOutputSourceItem extends PackagingSourceItem {
         presentationData.addText(getPresentableName(), mainAttributes);
       }
 
+      @Override
       public int getWeight() {
         return -myOrderNumber;
       }
     };
   }
 
+  @Override
   @NotNull
   public List<? extends PackagingElement<?>> createElements(@NotNull final ArtifactEditorContext context) {
     final String outputFilePath = myBc.getActualOutputFilePath();

@@ -72,30 +72,36 @@ public class ActionScriptUnusedImportsPassFactory implements TextEditorHighlight
   private static IntentionAction createOptimizeImportsIntention() {
     return new IntentionAction() {
 
+      @Override
       @NotNull
       public String getText() {
         return JSBundle.message("javascript.fix.optimize.imports");
       }
 
+      @Override
       @NotNull
       public String getFamilyName() {
         return getText();
       }
 
+      @Override
       public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
         return true;
       }
 
+      @Override
       public void invoke(@NotNull final Project project, Editor editor, PsiFile file) {
         ImportOptimizer optimizer = new ECMAScriptImportOptimizer();
         final Runnable runnable = optimizer.processFile(file);
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
+          @Override
           public void run() {
             CommandProcessor.getInstance().executeCommand(project, runnable, getFamilyName(), this);
           }
         });
       }
 
+      @Override
       public boolean startInWriteAction() {
         return true;
       }

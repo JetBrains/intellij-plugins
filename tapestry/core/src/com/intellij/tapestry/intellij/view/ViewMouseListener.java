@@ -39,6 +39,7 @@ class ViewMouseListener extends MouseInputAdapter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void mousePressed(MouseEvent event) {
         if (_tapestryProjectViewPane.getTree().getSelectionPath() != null && _tapestryProjectViewPane.getTree().getSelectionPaths().length < 2) {
             Object selectedNode = ((DefaultMutableTreeNode) _tapestryProjectViewPane.getTree().getSelectionPath().getLastPathComponent()).getUserObject();
@@ -136,6 +137,7 @@ class ViewMouseListener extends MouseInputAdapter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void mouseDragged(MouseEvent event) {
         if (_firstMouseEvent != null) {
             event.consume();
@@ -158,6 +160,7 @@ class ViewMouseListener extends MouseInputAdapter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void mouseReleased(MouseEvent event) {
         _firstMouseEvent = null;
     }

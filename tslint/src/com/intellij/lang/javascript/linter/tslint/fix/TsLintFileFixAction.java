@@ -87,6 +87,7 @@ public class TsLintFileFixAction extends JSLinterFixAction {
     };
   }
 
+  @Override
   protected Collection<FileType> getFileTypes() {
     return TypeScriptUtil.TYPESCRIPT_FILE_TYPES;
   }

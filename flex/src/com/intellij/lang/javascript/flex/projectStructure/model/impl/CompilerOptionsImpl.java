@@ -57,6 +57,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
     myResetHighlightingOnCommit = resetHighlightingOnCommit;
   }
 
+  @Override
   public void addOptionsListener(CompilerOptionsListener listener, Disposable parentDisposable) {
     myDispatcher.addListener(listener, parentDisposable);
   }
@@ -83,10 +84,12 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
     }
   }
 
+  @Override
   public void setResourceFilesMode(@NotNull final ResourceFilesMode mode) {
     myResourceFilesMode = mode;
   }
 
+  @Override
   @NotNull
   public ResourceFilesMode getResourceFilesMode() {
     return myResourceFilesMode;
@@ -104,6 +107,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
       filesToIncludeInSWC.isEmpty() ? "" : StringUtil.join(filesToIncludeInSWC, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
   }
 
+  @Override
   public void setAdditionalConfigFilePath(@NotNull final String path) {
     myAdditionalConfigFilePath = path;
 
@@ -113,11 +117,13 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
     }
   }
 
+  @Override
   @NotNull
   public String getAdditionalConfigFilePath() {
     return myAdditionalConfigFilePath;
   }
 
+  @Override
   public void setAdditionalOptions(@NotNull final String options) {
     myAdditionalOptions = options;
 
@@ -127,6 +133,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
     }
   }
 
+  @Override
   @NotNull
   public String getAdditionalOptions() {
     return myAdditionalOptions;

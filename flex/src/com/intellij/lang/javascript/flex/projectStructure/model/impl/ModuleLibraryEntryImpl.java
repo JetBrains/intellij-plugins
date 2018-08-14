@@ -48,6 +48,7 @@ class ModuleLibraryEntryImpl implements ModifiableModuleLibraryEntry, StatefulDe
     return true;
   }
 
+  @Override
   public EntryState getState() {
     EntryState state = new EntryState();
     state.LIBRARY_ID = myLibraryId;

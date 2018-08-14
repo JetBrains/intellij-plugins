@@ -22,6 +22,7 @@ import java.util.List;
 
 public class FlashPackagingSourceItemsProvider extends PackagingSourceItemsProvider {
 
+  @Override
   @NotNull
   public Collection<? extends PackagingSourceItem> getSourceItems(final @NotNull ArtifactEditorContext editorContext,
                                                                   final @NotNull Artifact artifact,

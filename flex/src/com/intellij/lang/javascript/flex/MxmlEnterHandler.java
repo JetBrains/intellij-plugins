@@ -7,7 +7,6 @@ import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.util.Ref;
@@ -19,6 +18,7 @@ import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class MxmlEnterHandler extends EnterHandlerDelegateAdapter {
+  @Override
   public Result preprocessEnter(@NotNull PsiFile file,
                                 @NotNull Editor editor,
                                 @NotNull Ref<Integer> caretOffset,
@@ -26,7 +26,7 @@ public class MxmlEnterHandler extends EnterHandlerDelegateAdapter {
                                 @NotNull DataContext dataContext,
                                 EditorActionHandler originalHandler) {
     int offset = caretOffset.get().intValue();
-    
+
     if (file instanceof JSFile) {
       PsiElement context = InjectedLanguageManager.getInstance(file.getProject()).getInjectionHost(file);
       if (context instanceof XmlComment) {
@@ -35,9 +35,9 @@ public class MxmlEnterHandler extends EnterHandlerDelegateAdapter {
         offset = editor.getCaretModel().getOffset();
       }
     }
-    
+
     if (!JavaScriptSupportLoader.isFlexMxmFile(file)) return Result.Continue;
-    
+
     if (CodeInsightSettings.getInstance().INSERT_BRACE_ON_ENTER && isAfterUnmatchedMxmlComment(editor, file, offset)) {
       String indent = "";
       CharSequence buffer = editor.getDocument().getCharsSequence();
@@ -49,7 +49,7 @@ public class MxmlEnterHandler extends EnterHandlerDelegateAdapter {
       }
       editor.getDocument().insertString(offset, "\n" + indent + "-->");
       originalHandler.execute(editor, dataContext);
-      
+
       return Result.Stop;
     }
     return Result.Continue;
@@ -58,10 +58,10 @@ public class MxmlEnterHandler extends EnterHandlerDelegateAdapter {
   private static boolean isAfterUnmatchedMxmlComment(Editor editor, PsiFile file, int offset) {
     CharSequence chars = editor.getDocument().getCharsSequence();
 
-    if (!(offset >= 5 && chars.charAt(offset - 1) == '-' && 
-          chars.charAt(offset - 2) == '-' && 
-          chars.charAt(offset - 3) == '-' && 
-          chars.charAt(offset - 4) == '!' && 
+    if (!(offset >= 5 && chars.charAt(offset - 1) == '-' &&
+          chars.charAt(offset - 2) == '-' &&
+          chars.charAt(offset - 3) == '-' &&
+          chars.charAt(offset - 4) == '!' &&
           chars.charAt(offset - 5) == '<')) {
       return false;
     }

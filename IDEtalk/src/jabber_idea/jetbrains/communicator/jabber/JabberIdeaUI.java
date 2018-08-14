@@ -43,7 +43,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class JabberIdeaUI implements JabberUI {
   private static boolean ourInitialized;
-  
+
   private final JabberFacade myFacade;
   private final IDEFacade myIdeFacade;
 
@@ -52,6 +52,7 @@ public class JabberIdeaUI implements JabberUI {
     myIdeFacade = ideFacade;
   }
 
+  @Override
   public void initPerProject(MutablePicoContainer projectLevelContainer) {
     StatusToolbar statusToolbar = ((StatusToolbar) projectLevelContainer.getComponentInstanceOfType(StatusToolbar.class));
     if (statusToolbar != null) {
@@ -66,6 +67,7 @@ public class JabberIdeaUI implements JabberUI {
     }
   }
 
+  @Override
   public boolean connectAndLogin(String message) {
     myFacade.connect();
     if (!myFacade.isConnectedAndAuthenticated()) {
@@ -75,6 +77,7 @@ public class JabberIdeaUI implements JabberUI {
     return myFacade.isConnectedAndAuthenticated();
   }
 
+  @Override
   public void connectAndLoginAsync(final String message, final AtomicBoolean connected) {
     if (SwingUtilities.isEventDispatchThread()) {
       myIdeFacade.runOnPooledThread(() -> connectAndLoginAsync(message, connected));
@@ -96,6 +99,7 @@ public class JabberIdeaUI implements JabberUI {
     }
   }
 
+  @Override
   public void login(Component parentComponent) {
     Component parent = parentComponent;
     if (parent == null) {
@@ -115,6 +119,7 @@ public class JabberIdeaUI implements JabberUI {
     return ProjectManager.getInstance().getOpenProjects().length > 0;
   }
 
+  @Override
   public String getFindByIdData(List<String> availableGroups) {
     FindByJabberIdDialog dialog = new FindByJabberIdDialog(availableGroups);
     if (dialog.showAndGet()) {
@@ -127,6 +132,7 @@ public class JabberIdeaUI implements JabberUI {
     return null;
   }
 
+  @Override
   public boolean shouldAcceptSubscriptionRequest(Presence requestFrom) {
     VCardInfo fromInfo = myFacade.getVCard(requestFrom.getFrom());
 

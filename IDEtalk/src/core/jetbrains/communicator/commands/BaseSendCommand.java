@@ -46,6 +46,7 @@ abstract class BaseSendCommand  implements UserCommand {
     myEventBroadcaster = myUserModel.getBroadcaster();
   }
 
+  @Override
   public final boolean isEnabled() {
     return getDefaultTargetUsers().length == 1;
   }
@@ -66,7 +67,7 @@ abstract class BaseSendCommand  implements UserCommand {
     if (myDefaultTargetUser != null) {
       selectedUsers.add(myDefaultTargetUser);
     }
-    
+
     return (User[]) selectedUsers.toArray(new User[0]);
   }
 }

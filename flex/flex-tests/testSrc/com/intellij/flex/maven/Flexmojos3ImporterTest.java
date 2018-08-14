@@ -52,6 +52,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
     return "3.5.0";
   }
 
+  @Override
   protected String getConfigFilesBasePath(final Module module) {
     return PathUtil.getParentPath(module.getModuleFilePath());
   }

@@ -58,6 +58,7 @@ public class CompositeIcon implements Icon {
     myIcons.remove(icon);
   }
 
+  @Override
   public int getIconHeight() {
     int max = 0;
     for (Iterator<Icon> it = myIcons.iterator(); it.hasNext();) {
@@ -67,6 +68,7 @@ public class CompositeIcon implements Icon {
     return max;
   }
 
+  @Override
   public int getIconWidth() {
     int width = 0;
     for (int i = 0; i < myIcons.size(); i++) {
@@ -79,6 +81,7 @@ public class CompositeIcon implements Icon {
     return width;
   }
 
+  @Override
   public void paintIcon(Component c, Graphics g, int x, int y) {
     int height = getIconHeight();
 

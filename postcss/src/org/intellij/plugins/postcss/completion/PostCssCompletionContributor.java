@@ -38,6 +38,7 @@ public class PostCssCompletionContributor extends CompletionContributor {
     return psiElement(CssElementTypes.CSS_IDENT).withReference(PostCssCustomSelectorReference.class);
   }
 
+  @Override
   public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull final CompletionResultSet result) {
     if (result.isStopped()) return;
     final PsiElement position = parameters.getPosition();

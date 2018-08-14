@@ -50,6 +50,7 @@ public class Flexmojos4ImporterTest extends FlexmojosImporterTestBase {
     return "4.0-RC2";
   }
 
+  @Override
   protected String getConfigFilesBasePath(final Module module) {
     return module.getProject().getBasePath();
   }

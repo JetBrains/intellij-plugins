@@ -22,6 +22,7 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
   }
 
   //@Override
+  @Override
   protected boolean processOnRead() {
     return false;
   }

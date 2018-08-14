@@ -9,6 +9,7 @@ public class LiteralResolver extends AbstractValueResolver {
 
     private static final String PREFIX = "literal";
 
+    @Override
     public boolean execute(Context context) throws Exception {
         String prefix = getPrefix(((ValueResolverContext) context).getValue(), ((ValueResolverContext) context).getDefaultPrefix());
 

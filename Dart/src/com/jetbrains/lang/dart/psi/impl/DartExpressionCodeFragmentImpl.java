@@ -54,6 +54,7 @@ public class DartExpressionCodeFragmentImpl extends DartFile implements DartExpr
   }
 
 
+  @Override
   public PsiElement getContext() {
     return myContext != null && myContext.isValid() ? myContext : super.getContext();
   }
@@ -65,6 +66,7 @@ public class DartExpressionCodeFragmentImpl extends DartFile implements DartExpr
     return super.getViewProvider();
   }
 
+  @Override
   protected DartExpressionCodeFragmentImpl clone() {
     final DartExpressionCodeFragmentImpl clone = (DartExpressionCodeFragmentImpl)cloneImpl((FileElement)calcTreeElement().clone());
     clone.myPhysical = false;

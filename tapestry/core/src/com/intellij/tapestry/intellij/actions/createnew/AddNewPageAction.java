@@ -27,6 +27,7 @@ public class AddNewPageAction extends AddNewElementAction<PagesNode> {
     super(PagesNode.class);
   }
 
+  @Override
   protected String getElementsRootPackage(@NotNull TapestryProject tapestryProject) {
     return tapestryProject.getPagesRootPackage();
   }
@@ -34,6 +35,7 @@ public class AddNewPageAction extends AddNewElementAction<PagesNode> {
   /**
    * {@inheritDoc}
    */
+  @Override
   public void actionPerformed(@NotNull AnActionEvent event) {
     final Module module = getModule(event);
     if (module == null) return;

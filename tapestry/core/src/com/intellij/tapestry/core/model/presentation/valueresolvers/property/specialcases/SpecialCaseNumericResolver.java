@@ -14,6 +14,7 @@ public class SpecialCaseNumericResolver extends AbstractValueResolver {
     private static final Pattern LONG_PATTERN = Pattern.compile("\\d+");
     private static final Pattern DOUBLE_PATTERN = Pattern.compile("\\d+((\\.|,)\\d+)");
 
+    @Override
     public boolean execute(Context context) throws Exception {
         String cleanValue = getCleanValue(((ValueResolverContext) context).getValue()).trim().toLowerCase();
 

@@ -23,6 +23,7 @@ public abstract class ActionScriptImplementedMethodProcessor extends JSCollectMe
     final JSFunctionCollector alreadyUsedMethods = new JSFunctionCollector();
     ActionScriptImplementedMethodProcessor processor = new ActionScriptImplementedMethodProcessor(clazz) {
 
+      @Override
       protected void addNonImplementedFunction(final JSFunction function) {
         if (alreadyUsedMethods.hasFunctionWithTheSameKind(function.getName(), function.getKind())) return;
         alreadyUsedMethods.add(function);

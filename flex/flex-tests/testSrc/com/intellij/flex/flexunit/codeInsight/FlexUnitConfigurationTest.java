@@ -60,6 +60,7 @@ public class FlexUnitConfigurationTest extends CodeInsightTestCase implements Fl
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
+  @Override
   public Object getData(@NotNull final String dataId) {
     return LangDataKeys.MODULE.is(dataId) ? myModule : super.getData(dataId);
   }

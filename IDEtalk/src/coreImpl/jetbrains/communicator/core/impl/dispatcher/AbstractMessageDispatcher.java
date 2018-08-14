@@ -54,6 +54,7 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
     load();
   }
 
+  @Override
   public void dispose() {
     myEventListener.dispose();
     //noinspection HardCodedStringLiteral
@@ -94,12 +95,14 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
     }
   }
 
+  @Override
   public boolean hasUsersWithMessages() {
     synchronized(myUser2MessagesLock) {
       return !myUser2Messages.isEmpty();
     }
   }
 
+  @Override
   public User[] getUsersWithMessages() {
     synchronized(myUser2MessagesLock) {
       Set<User> users = myUser2Messages.keySet();
@@ -107,6 +110,7 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
     }
   }
 
+  @Override
   public Message[] getPendingMessages(User user) {
     synchronized (myUser2MessagesLock) {
       List<Message> messages = myUser2Messages.get(user);
@@ -118,10 +122,12 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
     }
   }
 
+  @Override
   public EventBroadcaster getBroadcaster() {
     return myEventBroadcaster;
   }
 
+  @Override
   public boolean sendNow(User user, Message message) {
     boolean result = performDispatch(user, message);
     if (result) {
@@ -239,6 +245,7 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
       myBroadcaster.removeListener(this);
     }
 
+    @Override
     public void afterChange(IDEtalkEvent event) {
       event.accept(new EventVisitor(){
         @SuppressWarnings({"RefusedBequest"})

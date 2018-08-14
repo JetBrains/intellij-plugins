@@ -34,6 +34,7 @@ public class FlexResourceBuildTargetScopeProvider extends BuildTargetScopeProvid
     return scope.getUserData(MODULES_AND_BCS_TO_COMPILE);
   }
 
+  @Override
   @NotNull
   public List<TargetTypeBuildScope> getBuildTargetScopes(@NotNull final CompileScope baseScope,
                                                          @NotNull final Project project,

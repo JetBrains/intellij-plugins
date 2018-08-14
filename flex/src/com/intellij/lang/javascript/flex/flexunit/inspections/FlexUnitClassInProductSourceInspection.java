@@ -17,17 +17,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class FlexUnitClassInProductSourceInspection extends FlexUnitClassInspectionBase {
 
+  @Override
   @Nls
   @NotNull
   public String getDisplayName() {
     return FlexBundle.message("flexunit.inspection.testclassinproductsource.displayname");
   }
 
+  @Override
   @NotNull
   public String getShortName() {
     return "FlexUnitClassInProductSourceInspection";
   }
 
+  @Override
   protected void visitPotentialTestClass(JSClass aClass, @NotNull ProblemsHolder holder, FlexUnitSupport support) {
     final VirtualFile file = aClass.getContainingFile().getVirtualFile();
     if (file == null) {

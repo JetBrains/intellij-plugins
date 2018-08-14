@@ -448,6 +448,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     catch (RuntimeConfigurationError e) {/* should be already checked somewhere else */}
   }
 
+  @Override
   public Pair<Module, FlexBuildConfiguration> checkAndGetModuleAndBC(final Project project) throws RuntimeConfigurationError {
     final Pair<Module, FlexBuildConfiguration> moduleAndBC = super.checkAndGetModuleAndBC(project);
     doCheck(moduleAndBC);
@@ -719,6 +720,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     return suggestedName;
   }
 
+  @Override
   protected FlashRunnerParameters clone() {
     final FlashRunnerParameters clone = (FlashRunnerParameters)super.clone();
     clone.myLauncherParameters = myLauncherParameters.clone();

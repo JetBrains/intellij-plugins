@@ -79,12 +79,14 @@ public class DocumentationTab {
         }
 
         _homeButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 showDocumentation(null, _project);
             }
         });
 
         _classButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 navigateToClass();
             }

@@ -19,14 +19,17 @@ public class TapestryUnknownTagDescriptor extends BasicTapestryTagDescriptor {
     myQualifiedName = getPrefixWithColon() + componentName.toLowerCase();
   }
 
+  @Override
   public String getDefaultName() {
     return myQualifiedName;
   }
 
+  @Override
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
     return context != null ? DescriptorUtil.getAttributeDescriptors(context) : XmlAttributeDescriptor.EMPTY;
   }
 
+  @Override
   public XmlAttributeDescriptor getAttributeDescriptor(@NonNls String attributeName, @Nullable XmlTag context) {
     return context != null ? DescriptorUtil.getAttributeDescriptor(attributeName, context) : null;
   }

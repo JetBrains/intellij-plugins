@@ -23,6 +23,7 @@ public class TapestryFacetConfiguration implements FacetConfiguration {
   private String _applicationPackage;
   private TapestryVersion _version;
 
+  @Override
   public FacetEditorTab[] createEditorTabs(FacetEditorContext editorContext, FacetValidatorsManager validatorsManager) {
     FacetLibrariesValidator validator = FacetEditorsFactory.getInstance()
         .createLibrariesValidator(getLibraryInfos(TapestryVersion.TAPESTRY_5_3_6.toString()), new TapestryLibrariesValidatorDescription(), editorContext,
@@ -47,12 +48,14 @@ public class TapestryFacetConfiguration implements FacetConfiguration {
     return TapestryFacetConfiguration.class.getResource("/libraries/tapestry.xml");
   }
 
+  @Override
   public void readExternal(Element element) throws InvalidDataException {
     _filterName = JDOMExternalizer.readString(element, "filterName");
     _applicationPackage = JDOMExternalizer.readString(element, "applicationPackage");
     _version = TapestryVersion.fromString(JDOMExternalizer.readString(element, "version"));
   }
 
+  @Override
   public void writeExternal(Element element) throws WriteExternalException {
     JDOMExternalizer.write(element, "filterName", _filterName);
     JDOMExternalizer.write(element, "applicationPackage", _applicationPackage);

@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex.debug;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
@@ -20,6 +19,7 @@ import javax.swing.*;
  * @author Maxim.Mossienko
  */
 public class SendCommandToDebuggerAction extends AnAction {
+  @Override
   public void update(@NotNull final AnActionEvent e) {
     Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return;
@@ -29,6 +29,7 @@ public class SendCommandToDebuggerAction extends AnAction {
     e.getPresentation().setEnabled(internal && XDebuggerManager.getInstance(project).getCurrentSession() != null);
   }
 
+  @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {
     Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return;
@@ -75,6 +76,7 @@ public class SendCommandToDebuggerAction extends AnAction {
       );
     }
 
+    @Override
     protected JComponent createCenterPanel() {
       return myPanel;
     }

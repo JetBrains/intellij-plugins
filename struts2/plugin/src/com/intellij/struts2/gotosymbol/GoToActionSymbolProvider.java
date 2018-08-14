@@ -21,7 +21,6 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.facet.StrutsFacet;
-import com.intellij.util.Processor;
 import com.intellij.util.xml.model.gotosymbol.GoToSymbolProvider;
 import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
@@ -36,10 +35,12 @@ import java.util.Set;
  */
 public class GoToActionSymbolProvider extends GoToSymbolProvider {
 
+  @Override
   protected boolean acceptModule(final Module module) {
     return StrutsFacet.getInstance(module) != null;
   }
 
+  @Override
   protected void addNames(@NotNull final Module module, final Set<String> result) {
     final StrutsModel strutsModel = StrutsManager.getInstance(module.getProject()).getCombinedModel(module);
     if (strutsModel == null) {
@@ -52,6 +53,7 @@ public class GoToActionSymbolProvider extends GoToSymbolProvider {
     });
   }
 
+  @Override
   protected void addItems(@NotNull final Module module, final String name, final List<NavigationItem> result) {
     final StrutsModel strutsModel = StrutsManager.getInstance(module.getProject()).getCombinedModel(module);
     if (strutsModel == null) {

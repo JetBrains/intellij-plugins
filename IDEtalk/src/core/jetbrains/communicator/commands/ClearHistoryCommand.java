@@ -34,6 +34,7 @@ public class ClearHistoryCommand implements UserCommand {
     myIdeFacade = ideFacade;
   }
 
+  @Override
   public void execute() {
     if (myIdeFacade.askQuestion(
         StringUtil.getMsg("ClearHistoryCommand.title"),
@@ -46,6 +47,7 @@ public class ClearHistoryCommand implements UserCommand {
     }
   }
 
+  @Override
   public boolean isEnabled() {
     return !myMessageDispatcher.isHistoryEmpty();
   }

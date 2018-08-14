@@ -15,6 +15,7 @@ import com.maddyhome.idea.copyright.psi.UpdateJavaScriptFileCopyright;
  */
 public class UpdateDartCopyrightsProvider extends UpdateCopyrightsProvider {
 
+  @Override
   public UpdateCopyright createInstance(final Project project,
                                         final Module module,
                                         final VirtualFile file,
@@ -31,6 +32,7 @@ public class UpdateDartCopyrightsProvider extends UpdateCopyrightsProvider {
       super(project, module, file, options);
     }
 
+    @Override
     protected boolean accept() {
       return getFile() instanceof DartFile;
     }

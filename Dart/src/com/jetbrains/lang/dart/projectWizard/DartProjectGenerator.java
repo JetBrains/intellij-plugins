@@ -15,20 +15,24 @@ import javax.swing.*;
 
 public class DartProjectGenerator extends WebProjectTemplate<DartProjectWizardData> implements Comparable<DartProjectGenerator> {
 
+  @Override
   @NotNull
   public final String getName() {
     return DartBundle.message("dart.title");
   }
 
+  @Override
   @NotNull
   public final String getDescription() {
     return DartBundle.message("dart.project.description");
   }
 
+  @Override
   public Icon getIcon() {
     return DartIcons.Dart_16;
   }
 
+  @Override
   @NotNull
   public GeneratorPeer<DartProjectWizardData> createPeer() {
     return new DartGeneratorPeer();

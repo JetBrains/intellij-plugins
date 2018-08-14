@@ -16,7 +16,6 @@
 package com.intellij.struts2.reference.web;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
-import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.javaee.model.xml.ParamValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
@@ -29,7 +28,6 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.model.constant.StrutsConstantKey;
 import com.intellij.struts2.model.constant.StrutsConstantManager;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Consumer;
 import com.intellij.util.xml.*;
 import com.intellij.util.xml.impl.ConvertContextFactory;
 import org.jetbrains.annotations.NotNull;
@@ -52,6 +50,7 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
     elementConverterPair = getElementConverterPair();
   }
 
+  @Override
   @SuppressWarnings({"unchecked"})
   public PsiElement resolve() {
     if (elementConverterPair == null) {
@@ -89,14 +88,16 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
     return (PsiElement) resolveObject;
   }
 
+  @Override
   @NotNull
   public String getUnresolvedMessagePattern() {
     assert elementConverterPair != null;
-    
+
     return elementConverterPair.second
         .getErrorMessage(getValue(), ConvertContextFactory.createConvertContext(elementConverterPair.first));
   }
 
+  @Override
   @NotNull
   @SuppressWarnings({"unchecked"})
   public Object[] getVariants() {

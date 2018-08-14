@@ -79,6 +79,7 @@ public class JavaClassTypeCoercionValidator implements Command {
         ));
     }
 
+    @Override
     public boolean execute(Context context) throws Exception {
         if (!(((CoercionContext) context).getSourceType() instanceof IJavaClassType && ((CoercionContext) context).getTargetType() instanceof IJavaClassType))
             return false;

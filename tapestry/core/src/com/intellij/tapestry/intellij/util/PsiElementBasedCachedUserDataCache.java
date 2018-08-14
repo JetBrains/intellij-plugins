@@ -1,7 +1,7 @@
 package com.intellij.tapestry.intellij.util;
 
-import com.intellij.psi.PsiElement;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NonNls;
 
 /**
@@ -12,6 +12,7 @@ public abstract class PsiElementBasedCachedUserDataCache<T, Owner extends PsiEle
     super(keyName);
   }
 
+  @Override
   public Project getProject(Owner projectOwner) {
     return projectOwner.getProject();
   }

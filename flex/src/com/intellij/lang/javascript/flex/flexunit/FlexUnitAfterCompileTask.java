@@ -10,6 +10,7 @@ import java.util.Collection;
 
 public class FlexUnitAfterCompileTask implements CompileTask {
 
+  @Override
   public boolean execute(final CompileContext context) {
     deleteTempFlexUnitFiles(context);
     return true;

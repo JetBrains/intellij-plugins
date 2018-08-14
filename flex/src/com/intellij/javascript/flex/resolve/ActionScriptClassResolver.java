@@ -89,6 +89,7 @@ public class ActionScriptClassResolver extends JSClassResolver {
     return JSInheritanceUtil.isParentClass(clazz, (JSClass)parentClass, strict);
   }
 
+  @Override
   protected PsiElement doFindClassByQName(@NotNull String link, final JavaScriptIndex index, GlobalSearchScope searchScope,
                                           boolean allowFileLocalSymbols, @NotNull DialectOptionHolder dialect) {
     Project project = index.getProject();

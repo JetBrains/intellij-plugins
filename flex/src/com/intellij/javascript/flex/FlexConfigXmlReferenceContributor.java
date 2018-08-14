@@ -16,6 +16,7 @@ import static com.intellij.patterns.XmlPatterns.*;
 public class FlexConfigXmlReferenceContributor extends PsiReferenceContributor {
   public static final String CLASS_REFERENCE = "ClassReference";
 
+  @Override
   public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
     XmlUtil.registerXmlTagReferenceProvider(
       registrar,
@@ -44,6 +45,7 @@ public class FlexConfigXmlReferenceContributor extends PsiReferenceContributor {
     registrar.registerReferenceProvider(
       xmlAttributeValue(xmlAttribute("class").withParent(xmlTag().withName("component").withParent(xmlTag().withName("componentPackage")))),
       new PsiReferenceProvider() {
+        @Override
         @NotNull
         public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
           TextRange myRange = ElementManipulators.getValueTextRange(element);

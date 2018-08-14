@@ -72,6 +72,7 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
     return myGetterNotSetter;
   }
 
+  @Override
   public PsiDocComment getDocComment() {
     return null;
   }
@@ -87,23 +88,28 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
     return null;
   }
 
+  @Override
   @NotNull
   public PsiTypeParameter[] getTypeParameters() {
     return PsiTypeParameter.EMPTY_ARRAY;
   }
 
+  @Override
   public PsiClass getContainingClass() {
     return myProperty.getContainingClass();
   }
 
+  @Override
   public PsiType getReturnType() {
     return myGetterNotSetter ? myProperty.getType() : PsiType.VOID;
   }
 
+  @Override
   public PsiTypeElement getReturnTypeElement() {
     return myProperty.getTypeElement();
   }
 
+  @Override
   @NotNull
   public PsiParameterList getParameterList() {
     if (myParameterList == null) {
@@ -115,20 +121,24 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
     return myParameterList;
   }
 
+  @Override
   @Nullable
   public PsiIdentifier getNameIdentifier() {
     return myProperty.getNameIdentifier();
   }
 
+  @Override
   @NotNull
   public PsiModifierList getModifierList() {
     return myModifierList;
   }
 
+  @Override
   public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
     return null;
   }
 
+  @Override
   @NotNull
   public HierarchicalMethodSignature getHierarchicalMethodSignature() {
     return PsiSuperMethodImplUtil.getHierarchicalMethodSignature(this);
@@ -139,67 +149,81 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
     return "AccessorMethod";
   }
 
+  @Override
   @NotNull
   public PsiReferenceList getThrowsList() {
     return new LightEmptyImplementsList(getManager());
   }
 
+  @Override
   @Nullable
   public PsiCodeBlock getBody() {
     return null;
   }
 
+  @Override
   public boolean isConstructor() {
     return false;
   }
 
+  @Override
   public boolean isVarArgs() {
     return false;
   }
 
+  @Override
   @NotNull
   public MethodSignature getSignature(@NotNull PsiSubstitutor substitutor) {
     return MethodSignatureBackedByPsiMethod.create(this, substitutor);
   }
 
+  @Override
   @NotNull
   public PsiMethod[] findSuperMethods() {
     return PsiMethod.EMPTY_ARRAY;
   }
 
+  @Override
   @NotNull
   public PsiMethod[] findSuperMethods(boolean checkAccess) {
     return PsiMethod.EMPTY_ARRAY;
   }
 
+  @Override
   @NotNull
   public PsiMethod[] findSuperMethods(PsiClass parentClass) {
     return PsiMethod.EMPTY_ARRAY;
   }
 
+  @Override
   @NotNull
   public List<MethodSignatureBackedByPsiMethod> findSuperMethodSignaturesIncludingStatic(boolean checkAccess) {
     return Collections.emptyList();
   }
 
+  @Override
   @NotNull
   public PsiMethod[] findDeepestSuperMethods() {
     return PsiMethod.EMPTY_ARRAY;
   }
 
+  @Override
   @Nullable
   public PsiMethod findDeepestSuperMethod() {
     return null;
   }
 
+  @Override
   public boolean hasModifierProperty(@NonNls @NotNull String name) {
     return getModifierList().hasModifierProperty(name);
   }
 
+  @Override
   public boolean isDeprecated() {
     return false;
   }
 
+  @Override
   @NotNull
   public String getName() {
     return myName;
@@ -215,6 +239,7 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
       myName = name;
     }
 
+    @Override
     public void accept(@NotNull PsiElementVisitor visitor) {
       if (visitor instanceof JavaElementVisitor) {
         ((JavaElementVisitor)visitor).visitParameter(this);
@@ -225,10 +250,12 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
       return "Light Parameter";
     }
 
+    @Override
     public boolean isVarArgs() {
       return false;
     }
 
+    @Override
     @NotNull
     public String getName() {
       return StringUtil.notNullize(myName);
@@ -244,12 +271,14 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
       myParametersComputation = parametersComputation;
     }
 
+    @Override
     public void accept(@NotNull PsiElementVisitor visitor) {
       if (visitor instanceof JavaElementVisitor) {
         ((JavaElementVisitor)visitor).visitParameterList(this);
       }
     }
 
+    @Override
     @NotNull
     public PsiParameter[] getParameters() {
       if (myParameters == null) {
@@ -259,11 +288,13 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
       return myParameters;
     }
 
+    @Override
     public int getParameterIndex(@NotNull PsiParameter parameter) {
       LOG.assertTrue(parameter.getParent() == this);
       return PsiImplUtil.getParameterIndex(parameter, this);
     }
 
+    @Override
     public int getParametersCount() {
       return getParameters().length;
     }

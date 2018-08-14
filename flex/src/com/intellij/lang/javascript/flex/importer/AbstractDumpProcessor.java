@@ -20,10 +20,12 @@ abstract class AbstractDumpProcessor implements FlexByteCodeInformationProcessor
 
   String getResult() { return sb.toString(); }
 
+  @Override
   public void append(@NotNull @NonNls String str) {
     sb.append(str);
   }
 
+  @Override
   public String getParentName(final MemberInfo member) {
     String parentName = null;
 
@@ -52,6 +54,7 @@ abstract class AbstractDumpProcessor implements FlexByteCodeInformationProcessor
     append(s1);
   }
 
+  @Override
   public void processVariable(SlotInfo info, String indent, String attr) {
     appendFieldSeparator();
 
@@ -65,6 +68,7 @@ abstract class AbstractDumpProcessor implements FlexByteCodeInformationProcessor
     if (info.value != null) processValue(info.type, info.value);
   }
 
+  @Override
   public void processFunction(MethodInfo methodInfo, boolean referenceNameRequested, Abc abc, String indent, String attr) {
     if (!referenceNameRequested) appendMethodSeparator();
 
@@ -124,11 +128,12 @@ abstract class AbstractDumpProcessor implements FlexByteCodeInformationProcessor
 
   protected abstract boolean dumpRestParameter();
 
+  @Override
   public void processMetadata(MetaData metaData) {
     append("[");
     append(metaData.name);
     firstMetaDataMember = true;
-    
+
     for (String n : metaData.keySet()) {
       addMetaDataValue(!"*".equals(n) || doStarMetaAttrNameDump() ?  n:null, '"' + quote(metaData.get(n)) + '"');
     }
@@ -137,6 +142,7 @@ abstract class AbstractDumpProcessor implements FlexByteCodeInformationProcessor
     append("]");
   }
 
+  @Override
   public void processClass(SlotInfo slotInfo, Abc abc, String attr, String indent) {
     append("\n");
 

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
  * @author: Fedor.Korotkov
  */
 public class DartStatementsSurroundDescriptor implements SurroundDescriptor {
+  @Override
   @NotNull
   public PsiElement[] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
     final PsiElement[] statements = DartRefactoringUtil.findStatementsInRange(file, startOffset, endOffset);
@@ -19,6 +20,7 @@ public class DartStatementsSurroundDescriptor implements SurroundDescriptor {
     return statements;
   }
 
+  @Override
   @NotNull
   public Surrounder[] getSurrounders() {
     return new Surrounder[]{

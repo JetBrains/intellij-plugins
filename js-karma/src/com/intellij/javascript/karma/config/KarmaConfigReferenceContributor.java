@@ -33,11 +33,13 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
   public static final ElementPattern<JSLiteralExpression> STRING_LITERAL_INSIDE_KARMA_CONFIG_FILE =
     PlatformPatterns.psiElement(JSLiteralExpression.class)
     .and(new FilterPattern(new ElementFilter() {
+      @Override
       public boolean isAcceptable(Object element, PsiElement context) {
         PsiFile psiFile = context.getContainingFile();
         return KarmaUtil.isKarmaConfigFile(psiFile.getName(), false);
       }
 
+      @Override
       public boolean isClassAcceptable(Class hintClass) {
         return true;
       }

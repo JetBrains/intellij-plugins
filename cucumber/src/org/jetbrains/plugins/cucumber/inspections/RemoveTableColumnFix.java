@@ -34,16 +34,19 @@ public class RemoveTableColumnFix implements LocalQuickFix {
     myColumnIndex = columnIndex;
   }
 
+  @Override
   @NotNull
   public String getName() {
     return "Remove unused column";
   }
 
+  @Override
   @NotNull
   public String getFamilyName() {
     return "RemoveTableColumnFix";
   }
 
+  @Override
   public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
     GherkinTable table = myTable.getElement();
     if (table == null) return;

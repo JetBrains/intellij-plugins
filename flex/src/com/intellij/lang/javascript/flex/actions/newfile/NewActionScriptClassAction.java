@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class NewActionScriptClassAction extends AnAction {
 
+  @Override
   public void update(@NotNull final AnActionEvent e) {
     final DataContext dataContext = e.getDataContext();
     final Presentation presentation = e.getPresentation();
@@ -51,6 +52,7 @@ public class NewActionScriptClassAction extends AnAction {
     return ModuleType.get(module) == FlexModuleType.getInstance();
   }
 
+  @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {
     final DataContext dataContext = e.getDataContext();
 

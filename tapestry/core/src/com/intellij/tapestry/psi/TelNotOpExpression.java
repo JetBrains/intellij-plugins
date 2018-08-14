@@ -14,6 +14,7 @@ public class TelNotOpExpression extends TelCompositeElement implements TelExpres
     super(node);
   }
 
+  @Override
   @Nullable
   public PsiType getPsiType() {
     return PsiType.BOOLEAN;

@@ -23,6 +23,7 @@ class JpsFlexBCDependencyEntryImpl extends JpsFlexDependencyEntryBase<JpsFlexBCD
     super(original);
   }
 
+  @Override
   @NotNull
   public JpsFlexBCDependencyEntryImpl createCopy() {
     return new JpsFlexBCDependencyEntryImpl(this);
@@ -30,6 +31,7 @@ class JpsFlexBCDependencyEntryImpl extends JpsFlexDependencyEntryBase<JpsFlexBCD
 
 // ------------------------------------
 
+  @Override
   @Nullable
   public JpsFlexBuildConfiguration getBC() {
     final JpsFlexBCReference bcRef = myContainer.getChild(JpsFlexBCReferenceImpl.ROLE);

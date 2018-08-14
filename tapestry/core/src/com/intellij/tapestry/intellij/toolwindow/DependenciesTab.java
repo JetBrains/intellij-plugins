@@ -114,6 +114,7 @@ public class DependenciesTab {
 
         _dependenciesTree.addTreeSelectionListener(
                 new TreeSelectionListener() {
+                    @Override
                     public void valueChanged(TreeSelectionEvent event) {
 
                         if (event.getNewLeadSelectionPath() != null) {
@@ -245,6 +246,7 @@ public class DependenciesTab {
         /**
          * {@inheritDoc}
          */
+        @Override
         public void actionPerformed(@NotNull AnActionEvent event) {
             DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) _dependenciesTree.getSelectionPath().getLastPathComponent();
             Object selectedObject = selectedNode.getUserObject();
@@ -282,6 +284,7 @@ public class DependenciesTab {
         /**
          * {@inheritDoc}
          */
+        @Override
         public void actionPerformed(@NotNull AnActionEvent event) {
             DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) _dependenciesTree.getSelectionPath().getLastPathComponent();
             Object selectedObject = selectedNode.getUserObject();

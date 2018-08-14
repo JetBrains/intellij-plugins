@@ -34,52 +34,64 @@ public class MockJabberFacade implements JabberFacade {
   private String myLog = "";
   public static final String ERROR_LINE = "connection error";
 
+  @Override
   public String[] getServers() {
     return new String[] {"foo.bar", "mu.no", "jabber.ru", "jabber.org"};
   }
 
+  @Override
   public XMPPConnection getConnection() {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public void disconnect() {
   }
 
+  @Override
   public VCardInfo getVCard(String userId) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public void changeSubscription(String from, boolean subscribe) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public void setOnlinePresence(UserPresence userPresence) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public AccountInfo getMyAccount() {
     return myAccountInfo;
   }
 
+  @Override
   public String connect() {
     myLog += "connect";
     return myConnected ? null : ERROR_LINE;
   }
 
+  @Override
   public String connect(String username, String password, String server, int port, boolean forceOldSSL) {
     myLog += username + ":" + password + "@" + server + ":" + port + ":" + forceOldSSL;
     return myConnected ? null : ERROR_LINE;
   }
 
+  @Override
   public String createAccountAndConnect(String username, String password, String server, int port, boolean forceOldSSL) {
     myLog += "createAccount_" + username + ":" + password + "@" + server + ":" + port + ":" + forceOldSSL;
     return myConnected ? null : ERROR_LINE;
   }
 
+  @Override
   public void setVCardInfo(String nickName, String firstName, String lastName) {
     myLog += "_setVCard" + nickName + firstName + lastName;
   }
 
+  @Override
   public boolean isConnectedAndAuthenticated() {
     return myConnected;
   }
@@ -88,17 +100,21 @@ public class MockJabberFacade implements JabberFacade {
     myConnected = b;
   }
 
+  @Override
   public void saveSettings() {
     myLog += "saveSettings";
   }
 
+  @Override
   public void addUsers(String group, List<String>/*<String>*/ list) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public void addConnectionListener(ConnectionListener connectionListener) {
   }
 
+  @Override
   public void removeConnectionListener(ConnectionListener connectionListener) {
   }
 

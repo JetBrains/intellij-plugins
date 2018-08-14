@@ -26,6 +26,7 @@ public class CucumberJavaRunConfigurationType extends ApplicationConfigurationTy
         return CucumberJavaRunConfigurationType.this.getIcon();
       }
 
+      @Override
       @NotNull
       public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new CucumberJavaRunConfiguration(getDisplayName(), project, this);

@@ -100,17 +100,21 @@ public class FlexReferenceContributor {
       myStateGroupsOnly = stateGroupsOnly;
     }
 
+    @Override
     public PsiElement resolve() {
       ResolveResult[] results = multiResolve(false);
       return results.length == 1 ? results[0].getElement() : null;
     }
 
+    @Override
     @NotNull
     public ResolveResult[] multiResolve(boolean incompleteCode) {
       final List<ResolveResult> result = new ArrayList<>(1);
       process(new StateProcessor() {
+        @Override
         public boolean process(@NotNull final XmlTag t, @NotNull String name) {
           result.add(new ResolveResult() {
+            @Override
             public PsiElement getElement() {
               return t.getAttribute(FlexStateElementNames.NAME).getValueElement();
             }
@@ -123,6 +127,7 @@ public class FlexReferenceContributor {
           return true;
         }
 
+        @Override
         public String getHint() {
           return getCanonicalText();
         }
@@ -137,16 +142,19 @@ public class FlexReferenceContributor {
       String getHint();
     }
 
+    @Override
     @NotNull
     public Object[] getVariants() {
       final Set<String> list = new THashSet<>();
 
       process(new StateProcessor() {
+        @Override
         public boolean process(@NotNull XmlTag t, @NotNull String name) {
           list.add(name);
           return true;
         }
 
+        @Override
         public String getHint() {
           return null;
         }
@@ -189,15 +197,18 @@ public class FlexReferenceContributor {
       return true;
     }
 
+    @Override
     public boolean isSoft() {
       return false;
     }
 
+    @Override
     @NotNull
     public String getUnresolvedMessagePattern() {
       return FlexBundle.message("cannot.resolve.state");
     }
 
+    @Override
     public PsiElement handleElementRename(@NotNull final String newElementName) throws IncorrectOperationException {
       if (myElement instanceof XmlTag) {
         final XmlToken startTagNameElement = XmlTagUtil.getStartTagNameElement((XmlTag)myElement);

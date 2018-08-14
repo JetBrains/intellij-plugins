@@ -65,11 +65,13 @@ public class JpsFlexUnitRunnerParameters extends JpsBCBasedRunnerParameters<JpsF
     myOutputLogLevel = original.myOutputLogLevel;
   }
 
+  @Override
   @NotNull
   public JpsFlexUnitRunnerParameters createCopy() {
     return new JpsFlexUnitRunnerParameters(this);
   }
 
+  @Override
   public void applyChanges(@NotNull final JpsFlexUnitRunnerParameters modified) {
     super.applyChanges(modified);
 
@@ -150,6 +152,7 @@ public class JpsFlexUnitRunnerParameters extends JpsBCBasedRunnerParameters<JpsF
     mySocketPolicyPort = port;
   }
 
+  @Override
   @Nullable
   public JpsFlexBuildConfiguration getBC(final JpsProject project) {
     final JpsFlexBuildConfiguration bc = super.getBC(project);

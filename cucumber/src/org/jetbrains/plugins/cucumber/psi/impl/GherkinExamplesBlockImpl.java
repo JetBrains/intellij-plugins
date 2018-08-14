@@ -29,10 +29,12 @@ public class GherkinExamplesBlockImpl extends GherkinPsiElementBase implements G
     return buildPresentableText("Examples");
   }
 
+  @Override
   protected void acceptGherkin(GherkinElementVisitor gherkinElementVisitor) {
     gherkinElementVisitor.visitExamplesBlock(this);
   }
 
+  @Override
   @Nullable
   public GherkinTable getTable() {
     final ASTNode node = getNode();

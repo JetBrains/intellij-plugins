@@ -12,6 +12,7 @@ public class NoBackgroundBooleanTableCellRenderer extends JCheckBox implements T
     setHorizontalAlignment(JLabel.CENTER);
   }
 
+  @Override
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
     if (value == null) {
       myPanel.setBackground(table.getBackground());

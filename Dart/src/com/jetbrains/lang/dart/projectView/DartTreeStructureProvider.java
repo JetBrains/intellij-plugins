@@ -29,6 +29,7 @@ import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 public class DartTreeStructureProvider implements TreeStructureProvider, DumbAware {
 
+  @Override
   @NotNull
   public Collection<AbstractTreeNode> modify(final @NotNull AbstractTreeNode parentNode,
                                              final @NotNull Collection<AbstractTreeNode> children,
@@ -140,17 +141,20 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
       setIcon(DartIconProvider.EXCLUDED_FOLDER_SYMLINK_ICON);
     }
 
+    @Override
     @NotNull
     public Collection<? extends AbstractTreeNode> getChildren() {
       return Collections.emptyList();
     }
 
+    @Override
     protected void update(final PresentationData presentation) {
       presentation.setIcon(getIcon());
       presentation.setPresentableText(myName);
       presentation.setLocationString(mySymlinkPath);
     }
 
+    @Override
     public int getWeight() {
       return 0;
     }

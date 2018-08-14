@@ -10,6 +10,7 @@ public class ActionScriptLiveTemplatesProvider implements DefaultLiveTemplatesPr
     "/liveTemplates/actionscript_miscellaneous"
   };
 
+  @Override
   public String[] getDefaultLiveTemplateFiles() {
     return DEFAULT_TEMPLATES;
   }

@@ -19,6 +19,7 @@ public abstract class AdtPackageTask extends AdtTask {
     myPackageFilePath = packageFilePath;
   }
 
+  @Override
   protected List<String> createCommandLine() {
     final List<String> command = super.createCommandLine();
     final List<Pair<String, String>> proxySettings = HttpConfigurable.getInstance().getJvmProperties(false, null);
@@ -30,15 +31,18 @@ public abstract class AdtPackageTask extends AdtTask {
     return command;
   }
 
+  @Override
   protected File getProcessDir() {
     return new File(PathUtil.getParentPath(myPackageFilePath));
   }
 
+  @Override
   public void start() {
     myStartTime = System.currentTimeMillis();
     super.start();
   }
 
+  @Override
   protected boolean checkMessages() {
     // in this way we distinguish between errors and warnings
     return new File(myPackageFilePath).lastModified() > myStartTime;

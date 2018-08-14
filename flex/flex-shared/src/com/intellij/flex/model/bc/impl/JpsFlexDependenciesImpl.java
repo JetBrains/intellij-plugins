@@ -55,11 +55,13 @@ class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDependencie
     myFrameworkLinkage = original.myFrameworkLinkage;
   }
 
+  @Override
   @NotNull
   public JpsFlexDependenciesImpl createCopy() {
     return new JpsFlexDependenciesImpl(this);
   }
 
+  @Override
   public void applyChanges(@NotNull final JpsFlexDependenciesImpl modified) {
     super.applyChanges(modified);
     setTargetPlayer(modified.getTargetPlayer());
@@ -69,6 +71,7 @@ class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDependencie
 
 // ------------------------------------
 
+  @Override
   @Nullable
   public JpsSdk<?> getSdk() {
     final JpsSdkReference<JpsDummyElement> flexSdkReference = myContainer.getChild(FLEX_SDK_REF_ROLE);
@@ -91,20 +94,24 @@ class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDependencie
     return null;
   }
 
+  @Override
   @NotNull
   public String getTargetPlayer() {
     return myTargetPlayer;
   }
 
+  @Override
   public void setTargetPlayer(@NotNull final String targetPlayer) {
     myTargetPlayer = targetPlayer;
   }
 
+  @Override
   @NotNull
   public ComponentSet getComponentSet() {
     return myComponentSet;
   }
 
+  @Override
   public void setComponentSet(@NotNull final ComponentSet componentSet) {
     myComponentSet = componentSet;
   }
@@ -115,10 +122,12 @@ class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDependencie
     return myFrameworkLinkage;
   }
 
+  @Override
   public void setFrameworkLinkage(@NotNull final LinkageType frameworkLinkage) {
     myFrameworkLinkage = frameworkLinkage;
   }
 
+  @Override
   @NotNull
   public List<JpsFlexDependencyEntry> getEntries() {
     return myContainer.getChild(ENTRIES_ROLE).getElements();
@@ -217,6 +226,7 @@ class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDependencie
       super("flex dependencies");
     }
 
+    @Override
     @NotNull
     public JpsFlexDependencies create() {
       return new JpsFlexDependenciesImpl();

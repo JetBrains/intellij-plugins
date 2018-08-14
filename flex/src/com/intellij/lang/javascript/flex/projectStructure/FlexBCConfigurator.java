@@ -34,7 +34,6 @@ import com.intellij.util.EventDispatcher;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.containers.ContainerUtil;
-import java.util.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -94,12 +93,14 @@ public class FlexBCConfigurator {
           return ProjectStructureConfigurable.getInstance(project).getContext().createModifiableModelProvider(level).getModifiableModel();
         }
 
+        @Override
         public Library findSourceLibraryForLiveName(final String name, final String level) {
           final LibrariesModifiableModel model =
             ProjectStructureConfigurable.getInstance(project).getContext().createModifiableModelProvider(level).getModifiableModel();
           return ContainerUtil.find(model.getLibraries(), library -> name.equals(model.getLibraryEditor(library).getModel().getName()));
         }
 
+        @Override
         public Library findSourceLibrary(final String name, final String level) {
           return getLibrariesModifiableModel(level).getLibraryByName(name);
         }
@@ -158,6 +159,7 @@ public class FlexBCConfigurator {
     final ProjectStructureConfigurable c = ProjectStructureConfigurable.getInstance(module.getProject());
     final Runnable bcNatureModifier = createBCNatureModifier(bc);
     return new FlexBCConfigurable(module, bc, bcNatureModifier, myConfigEditor, c.getProjectJdksModel(), c.getContext()) {
+      @Override
       public void apply() throws ConfigurationException {
         super.apply();
         myBCToOutputPathMap.put(bc, bc.getActualOutputFilePath());

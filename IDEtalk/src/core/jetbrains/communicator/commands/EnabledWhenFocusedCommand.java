@@ -31,6 +31,7 @@ abstract class EnabledWhenFocusedCommand implements UserCommand {
     myUserListComponent = userListComponent;
   }
 
+  @Override
   public final boolean isEnabled() {
     return isFocused() && enabled();
   }

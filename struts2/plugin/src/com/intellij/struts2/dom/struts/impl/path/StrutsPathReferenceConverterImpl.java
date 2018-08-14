@@ -16,9 +16,9 @@
 package com.intellij.struts2.dom.struts.impl.path;
 
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.paths.PathReferenceManager;
-import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlElement;
@@ -35,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class StrutsPathReferenceConverterImpl extends StrutsPathReferenceConverter {
 
+  @Override
   public PathReference fromString(@Nullable final String value, final ConvertContext context) {
     if (value == null) {
       return null;
@@ -53,6 +54,7 @@ public class StrutsPathReferenceConverterImpl extends StrutsPathReferenceConvert
                                                                      getResultContributors());
   }
 
+  @Override
   @NotNull
   public PsiReference[] createReferences(@NotNull final PsiElement psiElement, final boolean soft) {
     return PathReferenceManager.getInstance().createCustomReferences(psiElement,

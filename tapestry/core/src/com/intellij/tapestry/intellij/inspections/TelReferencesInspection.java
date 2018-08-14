@@ -22,6 +22,7 @@ import static com.intellij.codeInspection.ProblemHighlightType.LIKE_UNKNOWN_SYMB
  */
 public class TelReferencesInspection extends TapestryInspectionBase {
 
+  @Override
   protected void registerProblems(PsiElement element, ProblemsHolder holder) {
     if (!(element instanceof TelReferenceExpression)) return;
     TelQualifiedReference ref = ((TelReferenceExpression)element).getReference();
@@ -35,12 +36,14 @@ public class TelReferencesInspection extends TapestryInspectionBase {
     }
   }
 
+  @Override
   @Nls
   @NotNull
   public String getDisplayName() {
     return TapestryBundle.message("tel.references.inspection");
   }
 
+  @Override
   @NonNls
   @NotNull
   public String getShortName() {

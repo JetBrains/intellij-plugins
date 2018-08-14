@@ -21,6 +21,7 @@ public class DartIconProvider extends IconProvider {
   public static final Icon FOLDER_SYMLINK_ICON = LayeredIcon.create(AllIcons.Nodes.Folder, AllIcons.Nodes.Symlink);
   public static final Icon EXCLUDED_FOLDER_SYMLINK_ICON = LayeredIcon.create(AllIcons.Modules.ExcludeRoot, AllIcons.Nodes.Symlink);
 
+  @Override
   @Nullable
   public Icon getIcon(@NotNull final PsiElement element, @Iconable.IconFlags final int flags) {
     if (element instanceof PsiDirectory) {

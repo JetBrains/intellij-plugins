@@ -71,18 +71,21 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
 
   private void setupInitialPathComponent() {
     myInitialPathComponent.getComponent().getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+      @Override
       protected void textChanged(final DocumentEvent e) {
         onInitialPathChanged();
       }
     });
 
     final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, true, true, true, false, false) {
+      @Override
       public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
         return (super.isFileVisible(file, showHiddenFiles) &&
                 (file.isDirectory() || FlashBuilderProjectFinder.isFlashBuilderProject(file)) ||
                 FlashBuilderProjectFinder.hasArchiveExtension(file.getPath()));
       }
 
+      @Override
       public Icon getIcon(final VirtualFile file) {
         // do not use Flash Builder specific icon for zip
         return !file.isDirectory() &&
@@ -149,20 +152,24 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
     myProjectFormatPanel = new ProjectFormatPanel();
   }
 
+  @Override
   public JComponent getComponent() {
     return myMainPanel;
   }
 
+  @Override
   public JComponent getPreferredFocusedComponent() {
     return myInitialPathComponent.getComponent().getTextField();
   }
 
+  @Override
   public void updateStep() {
     if (getWizardContext().isProjectFileDirectorySet() && myInitialPathComponent.getComponent().getText().isEmpty()) {
       myInitialPathComponent.getComponent().setText(FileUtil.toSystemDependentName(getWizardContext().getProjectFileDirectory()));
     }
   }
 
+  @Override
   public void updateDataModel() {
     final FlashBuilderImporter builder = (FlashBuilderImporter)getBuilder();
     builder.setExtractToSubfolder(myCreateSubfolderCheckBox.isSelected());
@@ -175,6 +182,7 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
     myProjectFormatPanel.updateData(getWizardContext());
   }
 
+  @Override
   public boolean validate() throws ConfigurationException {
     final String path = myInitialPathComponent.getComponent().getText().trim();
     if (path.length() == 0) {
@@ -240,6 +248,7 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
     return true;
   }
 
+  @Override
   public String getHelpId() {
     return "reference.dialogs.new.project.import.flex.page1";
   }

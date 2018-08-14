@@ -37,14 +37,17 @@ public class IconSizeWrapper implements Icon {
   }
 
 
+  @Override
   public int getIconHeight() {
     return myHeight;
   }
 
+  @Override
   public int getIconWidth() {
     return myWidth;
   }
 
+  @Override
   public void paintIcon(Component c, Graphics g, int x, int y) {
     Shape savedClip = g.getClip();
     g.setClip(x, y, myWidth, myHeight);

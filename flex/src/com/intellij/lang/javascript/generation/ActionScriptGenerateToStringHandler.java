@@ -21,10 +21,12 @@ import java.util.Set;
 
 class ActionScriptGenerateToStringHandler extends BaseJSGenerateHandler {
 
+  @Override
   protected String getTitleKey() {
     return "generate.to.string.chooser.title";
   }
 
+  @Override
   protected BaseCreateMembersFix createFix(final PsiElement jsClass) {
 
     return new BaseCreateMembersFix<JSVariable>((JSClass)jsClass) {
@@ -34,6 +36,7 @@ class ActionScriptGenerateToStringHandler extends BaseJSGenerateHandler {
 
         final boolean[] needOverride = new boolean[1];
         JSInheritanceUtil.processOverrides((JSClass)jsClass, new JSOverrideHandler() {
+          @Override
           public boolean process(@NotNull List<JSPsiElementBase> elements, final PsiElement scope, final String className) {
             needOverride[0] = !"Object".equals(className);
             return false;
@@ -73,11 +76,13 @@ class ActionScriptGenerateToStringHandler extends BaseJSGenerateHandler {
   }
 
 
+  @Override
   protected void collectCandidates(final PsiElement clazz, final Collection<JSChooserElementNode> candidates) {
     collectJSVariables(clazz, candidates, false, false, true, true,
                        true, false, false);
   }
 
+  @Override
   protected boolean canHaveEmptySelectedElements() {
     return true;
   }

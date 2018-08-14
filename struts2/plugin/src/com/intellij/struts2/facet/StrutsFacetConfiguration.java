@@ -87,6 +87,7 @@ public class StrutsFacetConfiguration extends SimpleModificationTracker implemen
     this.myPropertiesKeysDisabled = myPropertiesKeysDisabled;
   }
 
+  @Override
   public FacetEditorTab[] createEditorTabs(final FacetEditorContext editorContext,
                                            final FacetValidatorsManager validatorsManager) {
     final FacetLibrariesValidator validator =
@@ -100,6 +101,7 @@ public class StrutsFacetConfiguration extends SimpleModificationTracker implemen
                                 new FeaturesConfigurationTab(this)};
   }
 
+  @Override
   public void readExternal(final Element element) throws InvalidDataException {
     for (final Object setElement : element.getChildren(FILESET)) {
       final String setName = ((Element) setElement).getAttributeValue(SET_NAME);
@@ -126,6 +128,7 @@ public class StrutsFacetConfiguration extends SimpleModificationTracker implemen
 
   }
 
+  @Override
   public void writeExternal(final Element element) throws WriteExternalException {
     for (final StrutsFileSet fileSet : myFileSets) {
       final Element setElement = new Element(FILESET);
@@ -150,6 +153,7 @@ public class StrutsFacetConfiguration extends SimpleModificationTracker implemen
     incModificationCount();
   }
 
+  @Override
   public void dispose() {
   }
 }

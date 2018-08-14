@@ -27,6 +27,7 @@ public class NavigateToUsageAction extends AnAction {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void actionPerformed(@NotNull AnActionEvent event) {
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) _tree.getSelectionPath().getLastPathComponent();
         Object selectedObject = selectedNode.getUserObject();

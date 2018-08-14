@@ -16,10 +16,12 @@ public class TapestryIdOrTypeAttributeDescriptor extends BasicTapestryAttributeD
     myContext = context;
   }
 
+  @Override
   public PsiElement getDeclaration() {
     return myContext;
   }
 
+  @Override
   public String getName() {
     return myName;
   }

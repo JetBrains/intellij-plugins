@@ -56,6 +56,7 @@ public class PostCssDumbAwareCompletionContributor extends CompletionContributor
     return psiElement(type).inside(psiElement(PostCssElementTypes.POST_CSS_STYLESHEET));
   }
 
+  @Override
   public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull final CompletionResultSet result) {
     final CompletionResultSet resultSet = CssCompletionUtil.fixPrefixForVendorPrefixes(parameters, result);
     super.fillCompletionVariants(parameters, resultSet);

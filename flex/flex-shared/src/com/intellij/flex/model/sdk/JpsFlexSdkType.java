@@ -14,11 +14,13 @@ public class JpsFlexSdkType extends JpsSdkType<JpsDummyElement> {
 
   public static JpsSdkPropertiesSerializer<JpsDummyElement> createJpsSdkPropertiesSerializer() {
     return new JpsSdkPropertiesSerializer<JpsDummyElement>(ID, INSTANCE) {
+      @Override
       @NotNull
       public JpsDummyElement loadProperties(@Nullable final Element propertiesElement) {
         return JpsElementFactory.getInstance().createDummyElement();
       }
 
+      @Override
       public void saveProperties(@NotNull final JpsDummyElement properties, @NotNull final Element element) {
         // no additional data for this sdk type
       }

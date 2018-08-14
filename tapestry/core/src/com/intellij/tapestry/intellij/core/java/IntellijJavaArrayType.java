@@ -17,15 +17,18 @@ public class IntellijJavaArrayType extends IntellijJavaType implements IJavaArra
         _psiArrayType = psiArrayType;
     }
 
+    @Override
     public String getName() {
         return _psiArrayType.getPresentableText();
     }
 
+    @Override
     @NotNull
     public Object getUnderlyingObject() {
         return _psiArrayType;
     }
 
+    @Override
     public IJavaType getComponentType() {
         return IdeaUtils.createJavaTypeFromPsiType(_module, _psiArrayType.getComponentType());
     }

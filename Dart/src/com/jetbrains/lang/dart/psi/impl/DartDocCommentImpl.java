@@ -16,11 +16,13 @@ public class DartDocCommentImpl extends ASTWrapperPsiElement implements DartDocC
     super(node);
   }
 
+  @Override
   @Nullable
   public PsiElement getOwner() {
     return null; // todo
   }
 
+  @Override
   public IElementType getTokenType() {
     return getNode().getElementType();
   }

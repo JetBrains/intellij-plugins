@@ -23,6 +23,7 @@ class CallTreeNode implements FrameInfoProducer, FilePathProducer {
     this.duration = duration;
   }
 
+  @Override
   public FrameInfo getFrameInfo() {
     return frameInfo;
   }

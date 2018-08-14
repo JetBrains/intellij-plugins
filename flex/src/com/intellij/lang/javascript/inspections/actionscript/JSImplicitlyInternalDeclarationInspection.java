@@ -40,11 +40,13 @@ import org.jetbrains.annotations.NotNull;
  * @author Maxim.Mossienko
  */
 public class JSImplicitlyInternalDeclarationInspection extends JSInspection {
+  @Override
   @NotNull
   public String getDisplayName() {
     return FlexBundle.message("js.implicitly.internal.declaration.inspection.name");
   }
 
+  @Override
   @NotNull
   protected JSElementVisitor createVisitor(final ProblemsHolder holder, LocalInspectionToolSession session) {
     return new JSElementVisitor() {

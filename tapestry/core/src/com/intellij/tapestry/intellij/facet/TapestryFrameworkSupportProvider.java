@@ -29,6 +29,7 @@ public class TapestryFrameworkSupportProvider extends FacetBasedFrameworkSupport
     super(TapestryFacetType.getInstance());
   }
 
+  @Override
   protected void setupConfiguration(TapestryFacet tapestryFacet, ModifiableRootModel modifiableRootModel, FrameworkVersion version) {
     setupConfiguration(tapestryFacet.getConfiguration(), tapestryFacet.getModule(), TapestryVersion.fromString(version.getVersionName()));
   }
@@ -72,7 +73,7 @@ public class TapestryFrameworkSupportProvider extends FacetBasedFrameworkSupport
         builder.setCenterPanel(newFacetDialog.getMainPanel());
         builder.setTitle("New Tapestry Support");
         builder.setButtonsAlignment(SwingConstants.CENTER);
-        
+
         builder.setOkOperation(() -> {
           if (!Validators.isValidPackageName(newFacetDialog.getApplicationPackage())) {
             Messages.showErrorDialog("Invalid package!", CommonBundle.getErrorTitle());
@@ -80,7 +81,7 @@ public class TapestryFrameworkSupportProvider extends FacetBasedFrameworkSupport
           }
           configuration.setFilterName(newFacetDialog.getFilterName());
           configuration.setApplicationPackage(newFacetDialog.getApplicationPackage());
-  
+
           builder.getWindow().dispose();
         });
         builder.showModal(true);
@@ -89,7 +90,7 @@ public class TapestryFrameworkSupportProvider extends FacetBasedFrameworkSupport
                                                               newFacetDialog.shouldGenerateStartupApplication(),
                                                               newFacetDialog.shouldGeneratePom());
       };
-      
+
       if (ApplicationManager.getApplication().isWriteAccessAllowed()) {
         ApplicationManager.getApplication().invokeLater(action, ModalityState.defaultModalityState());
       } else {

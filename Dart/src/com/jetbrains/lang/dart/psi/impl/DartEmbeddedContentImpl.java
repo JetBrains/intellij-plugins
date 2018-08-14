@@ -13,24 +13,28 @@ public class DartEmbeddedContentImpl extends DartPsiCompositeElementImpl impleme
     super(node);
   }
 
+  @Override
   public XmlTag getParentTag() {
     final PsiElement parent = getParent();
     if (parent instanceof XmlTag) return (XmlTag)parent;
     return null;
   }
 
+  @Override
   public XmlTagChild getNextSiblingInTag() {
     PsiElement nextSibling = getNextSibling();
     if (nextSibling instanceof XmlTagChild) return (XmlTagChild)nextSibling;
     return null;
   }
 
+  @Override
   public XmlTagChild getPrevSiblingInTag() {
     final PsiElement prevSibling = getPrevSibling();
     if (prevSibling instanceof XmlTagChild) return (XmlTagChild)prevSibling;
     return null;
   }
 
+  @Override
   public boolean processElements(PsiElementProcessor processor, PsiElement place) {
     // TODO
     return true;

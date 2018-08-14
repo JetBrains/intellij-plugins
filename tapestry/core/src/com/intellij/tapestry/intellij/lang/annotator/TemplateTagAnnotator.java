@@ -40,6 +40,7 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
     annotationHolder = null;
   }//Constructor
 
+  @Override
   public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder annotationHolder) {
     this.annotationHolder = annotationHolder;
 

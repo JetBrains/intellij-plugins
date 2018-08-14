@@ -35,6 +35,7 @@ public class TemplateElement implements Comparable {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int compareTo(Object o) {
         return getTemplate().compareTo(((TemplateElement) o).getTemplate());
     }

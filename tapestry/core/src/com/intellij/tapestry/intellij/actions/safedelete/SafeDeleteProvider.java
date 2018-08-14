@@ -35,6 +35,7 @@ public class SafeDeleteProvider implements DeleteProvider {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deleteElement(@NotNull DataContext dataContext) {
         SafeDeleteRefactoring safeDeleteRefactoring;
         final Project project = (Project) dataContext.getData(DataKeys.PROJECT.getName());
@@ -107,6 +108,7 @@ public class SafeDeleteProvider implements DeleteProvider {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean canDeleteElement(@NotNull DataContext dataContext) {
         final Project project = (Project) dataContext.getData(DataKeys.PROJECT.getName());
 

@@ -33,11 +33,13 @@ public class CreateFlexSkinIntention extends CreateMxmlFileIntentionBase {
     super(skinFqn, element);
   }
 
+  @Override
   @NotNull
   public String getText() {
     return FlexBundle.message("create.skin", myClassName);
   }
 
+  @Override
   protected Pair<String, PsiDirectory> getFileTextAndDir(final @NotNull Module module) {
     final String hostComponent;
     final PsiDirectory targetDirectory;

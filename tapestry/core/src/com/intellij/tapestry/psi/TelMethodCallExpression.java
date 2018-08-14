@@ -27,6 +27,7 @@ public class TelMethodCallExpression extends TelCompositeElement implements TelR
     return findNotNullChildByClass(TelArgumentList.class);
   }
 
+  @Override
   @Nullable
   public PsiType getPsiType() {
     return findNotNullChildByClass(TelReferenceExpression.class).getPsiType();

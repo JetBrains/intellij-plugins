@@ -74,6 +74,7 @@ public class AddNewComponentDialog extends JDialog {
 
         _createTemplateCheck.addActionListener(
                 new ActionListener() {
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         setNotCreatingTemplate(!_createTemplateCheck.isSelected());
                     }
@@ -81,6 +82,7 @@ public class AddNewComponentDialog extends JDialog {
         );
     }
 
+    @Override
     public JPanel getContentPane() {
         return _contentPane;
     }

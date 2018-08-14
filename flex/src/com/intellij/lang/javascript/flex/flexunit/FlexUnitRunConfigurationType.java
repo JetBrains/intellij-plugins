@@ -18,6 +18,7 @@ public class FlexUnitRunConfigurationType implements ConfigurationType {
 
   public FlexUnitRunConfigurationType() {
     myFactory = new ConfigurationFactory(this) {
+      @Override
       @NotNull
       public RunConfiguration createTemplateConfiguration(Project project) {
         return new FlexUnitRunConfiguration(project, this, "");
@@ -30,22 +31,27 @@ public class FlexUnitRunConfigurationType implements ConfigurationType {
     };
   }
 
+  @Override
   public String getDisplayName() {
     return "FlexUnit";
   }
 
+  @Override
   public String getConfigurationTypeDescription() {
     return "FlexUnit run configuration";
   }
 
+  @Override
   public Icon getIcon() {
     return FlexIcons.Flex.Flexunit;
   }
 
+  @Override
   public ConfigurationFactory[] getConfigurationFactories() {
     return new ConfigurationFactory[]{myFactory};
   }
 
+  @Override
   @NotNull
   public String getId() {
     return "FlexUnitRunConfigurationType";

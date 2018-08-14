@@ -23,6 +23,7 @@ import jetbrains.communicator.core.IDEtalkEvent;
 */
 public class SettingsChanged implements IDEtalkEvent {
 
+  @Override
   public void accept(EventVisitor visitor) {
     visitor.visitSettingsChanged(this);
   }

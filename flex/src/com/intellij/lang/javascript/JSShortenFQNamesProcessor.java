@@ -31,6 +31,7 @@ import java.util.Collections;
 public class JSShortenFQNamesProcessor implements TemplateOptionalProcessor {
   private static final Logger LOG = Logger.getInstance("#com.intellij.lang.javascript.JSShortenFQNamesProcessor");
 
+  @Override
   public void processText(final Project project,
                           final Template template,
                           final Document document,
@@ -74,10 +75,12 @@ public class JSShortenFQNamesProcessor implements TemplateOptionalProcessor {
     }
   }
 
+  @Override
   public String getOptionName() {
     return CodeInsightBundle.message("dialog.edit.template.checkbox.shorten.fq.names");
   }
 
+  @Override
   public boolean isEnabled(final Template template) {
     return template.isToShortenLongNames();
   }

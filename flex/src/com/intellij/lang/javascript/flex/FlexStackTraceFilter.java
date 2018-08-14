@@ -42,6 +42,7 @@ public class FlexStackTraceFilter implements Filter {
     myProject = project;
   }
 
+  @Override
   @Nullable
   public Result applyFilter(final String line, final int entireLength) {
     //    [trace]    at org.flexunit::Assert$/fail()[E:\hudson\jobs\FlexUnit4-Flex4.1\workspace\FlexUnit4\src\org\flexunit\Assert.as:294]
@@ -149,6 +150,7 @@ public class FlexStackTraceFilter implements Filter {
       myLine = line;
     }
 
+    @Override
     public void navigate(final Project project) {
       final List<VirtualFile> validFiles = new ArrayList<>(myFiles.size());
       for (final VirtualFile file : myFiles) {

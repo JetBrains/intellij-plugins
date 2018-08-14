@@ -3,6 +3,7 @@ package org.jetbrains.plugins.cucumber.java.inspections;
 import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
 
 public abstract class CucumberJavaBaseInspectionTest extends JavaCodeInsightFixtureTestCase {
+  @Override
   public void setUp() throws Exception {
     super.setUp();
 

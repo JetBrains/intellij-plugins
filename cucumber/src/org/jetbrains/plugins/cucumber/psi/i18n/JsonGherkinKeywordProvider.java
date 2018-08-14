@@ -78,6 +78,7 @@ public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
     }
   }
 
+  @Override
   public Collection<String> getAllKeywords(String language) {
     return getKeywordList(language).getAllKeywords();
   }

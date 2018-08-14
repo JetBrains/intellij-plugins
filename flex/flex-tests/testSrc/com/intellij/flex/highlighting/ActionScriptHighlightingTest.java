@@ -109,6 +109,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
+  @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();
   }

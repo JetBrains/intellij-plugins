@@ -2011,6 +2011,7 @@ public class Encoder {
       return size;
     }
 
+    @Override
     void writeTo(ByteBuffer buffer) {
       writeTo(buffer, 0);
     }
@@ -2081,6 +2082,7 @@ public class Encoder {
       }
     }
 
+    @Override
     public void clear() {
       super.clear();
       offsets.clear();

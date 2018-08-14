@@ -18,10 +18,12 @@ public class TapestryNamespaceDescriptor extends SchemaNSDescriptor {
   private XmlFile myFile;
   private XmlElement myElement;
 
+  @Override
   public XmlElementDescriptor getElementDescriptor(@NotNull XmlTag tag) {
     return DescriptorUtil.getTmlOrHtmlTagDescriptor(tag);
   }
 
+  @Override
   @NotNull
   public XmlElementDescriptor[] getRootElementsDescriptors(@Nullable XmlDocument doc) {
     if (doc == null) return XmlElementDescriptor.EMPTY_ARRAY;
@@ -30,23 +32,28 @@ public class TapestryNamespaceDescriptor extends SchemaNSDescriptor {
     return DescriptorUtil.getTmlSubelementDescriptors(rootTag, this);
   }
 
+  @Override
   @Nullable
   public XmlFile getDescriptorFile() {
     return myFile;
   }
 
+  @Override
   public PsiElement getDeclaration() {
     return myElement;
   }
 
+  @Override
   public String getName(PsiElement context) {
     return getName();
   }
 
+  @Override
   public String getName() {
     return myFile.getName();
   }
 
+  @Override
   public void init(PsiElement element) {
     super.init(element);
     myFile = (XmlFile)element.getContainingFile();
@@ -57,6 +64,7 @@ public class TapestryNamespaceDescriptor extends SchemaNSDescriptor {
     }
   }
 
+  @Override
   @NotNull
   public Object[] getDependencies() {
     return TapestryProject.JAVA_STRUCTURE_DEPENDENCY;

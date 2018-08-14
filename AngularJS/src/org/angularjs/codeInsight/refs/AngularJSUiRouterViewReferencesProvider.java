@@ -36,6 +36,7 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
       return text;
     }
 
+    @Override
     @NotNull
     public ResolveResult[] resolveInner() {
       final String id = getViewName();

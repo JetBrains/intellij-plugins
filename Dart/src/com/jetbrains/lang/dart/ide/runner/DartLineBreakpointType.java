@@ -27,6 +27,7 @@ public class DartLineBreakpointType extends XLineBreakpointTypeBase {
     super("Dart", DartBundle.message("dart.line.breakpoints.title"), new DartDebuggerEditorsProvider());
   }
 
+  @Override
   public boolean canPutAt(@NotNull final VirtualFile file, final int line, @NotNull final Project project) {
     return DartFileType.INSTANCE.equals(file.getFileType());
   }

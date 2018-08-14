@@ -87,6 +87,7 @@ public class MarkdownJavaFxHtmlPanel extends JavaFxHtmlPanel implements Markdown
     subscribeForGrayscaleSetting();
   }
 
+  @Override
   protected void registerListeners(@NotNull WebEngine engine) {
     engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);
     engine.getLoadWorker().stateProperty().addListener(myScrollPreservingListener);

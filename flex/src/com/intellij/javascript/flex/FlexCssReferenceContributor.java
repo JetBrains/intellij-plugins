@@ -34,12 +34,14 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
   @Override
   public void registerReferenceProviders(final @NotNull PsiReferenceRegistrar registrar) {
     registrar.registerReferenceProvider(PlatformPatterns.psiElement(CssString.class).and(new FilterPattern(new ElementFilter() {
+      @Override
       public boolean isAcceptable(Object element, PsiElement context) {
         CssFunction fun = PsiTreeUtil.getParentOfType((PsiElement)element, CssFunction.class);
         String funName;
         return fun != null && (FlexReferenceContributor.CLASS_REFERENCE.equals(funName = fun.getName()) || "Embed".equals(funName));
       }
 
+      @Override
       public boolean isClassAcceptable(Class hintClass) {
         return true;
       }
@@ -92,6 +94,7 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
     });
 
     registrar.registerReferenceProvider(PlatformPatterns.psiElement().and(new FilterPattern(new ElementFilter() {
+      @Override
       public boolean isAcceptable(Object element, PsiElement context) {
         if (element instanceof CssTokenImpl || element instanceof CssString) {
           CssTermList cssTermList = PsiTreeUtil.getParentOfType((PsiElement)element, CssTermList.class);
@@ -114,6 +117,7 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
         return false;
       }
 
+      @Override
       public boolean isClassAcceptable(Class hintClass) {
         return true;
       }

@@ -34,6 +34,7 @@ public class SendCodePointerEvent extends OwnMessageEvent {
     myCodePointer = codePointer;
   }
 
+  @Override
   public void accept(EventVisitor visitor) {
     visitor.visitSendCodePointerEvent(this);
   }

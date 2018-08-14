@@ -37,6 +37,7 @@ public class AnalysisServerFeedbackAction extends DumbAwareAction {
     builder.sendFeedback(project, null, null);
   }
 
+  @Override
   public void update(@NotNull AnActionEvent e) {
     final Presentation presentation = e.getPresentation();
     final Project project = e.getProject();

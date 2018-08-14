@@ -1,11 +1,11 @@
 package com.google.jstestdriver.idea.assertFramework.jstd.codeInsight;
 
-import com.intellij.javascript.testFramework.codeInsight.AbstractJsGenerateAction;
-import com.intellij.javascript.testFramework.codeInsight.GenerateActionContext;
-import com.intellij.javascript.testFramework.codeInsight.JsGeneratorUtils;
 import com.google.jstestdriver.idea.assertFramework.jstd.JstdTestCaseStructure;
 import com.google.jstestdriver.idea.assertFramework.jstd.JstdTestFileStructure;
 import com.google.jstestdriver.idea.assertFramework.jstd.JstdTestFileStructureBuilder;
+import com.intellij.javascript.testFramework.codeInsight.AbstractJsGenerateAction;
+import com.intellij.javascript.testFramework.codeInsight.GenerateActionContext;
+import com.intellij.javascript.testFramework.codeInsight.JsGeneratorUtils;
 import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSArgumentList;
 import com.intellij.lang.javascript.psi.JSCallExpression;
@@ -82,6 +82,7 @@ public class JstdGenerateNewTestAction extends AbstractJsGenerateAction {
       myContext = context;
     }
 
+    @Override
     public void run() {
       JsGeneratorUtils.generateProperty(myTestsObjectLiteral, myContext, "\"test ${name}\": function() {|}");
     }

@@ -55,21 +55,25 @@ public class DartUrlResolverImpl extends DartUrlResolver {
     }
   }
 
+  @Override
   @Nullable
   public VirtualFile getPubspecYamlFile() {
     return myPubspecYamlFile;
   }
 
+  @Override
   public void processLivePackages(final @NotNull PairConsumer<String, VirtualFile> packageNameAndDirConsumer) {
     for (Map.Entry<String, VirtualFile> entry : myLivePackageNameToDirMap.entrySet()) {
       packageNameAndDirConsumer.consume(entry.getKey(), entry.getValue());
     }
   }
 
+  @Override
   public Collection<String> getLivePackageNames() {
     return myLivePackageNameToDirMap.keySet();
   }
 
+  @Override
   @Nullable
   public VirtualFile getPackageDirIfNotInOldStylePackagesFolder(@NotNull final String packageName,
                                                                 @Nullable final String pathRelToPackageDir) {
@@ -100,6 +104,7 @@ public class DartUrlResolverImpl extends DartUrlResolver {
     return null;
   }
 
+  @Override
   @Nullable
   public VirtualFile findFileByDartUrl(final @NotNull String url) {
     if (url.startsWith(DART_PREFIX)) {
@@ -141,6 +146,7 @@ public class DartUrlResolverImpl extends DartUrlResolver {
     return null;
   }
 
+  @Override
   @NotNull
   public String getDartUrlForFile(final @NotNull VirtualFile file) {
     String result = null;

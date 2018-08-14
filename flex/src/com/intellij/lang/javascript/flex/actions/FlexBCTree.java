@@ -149,6 +149,7 @@ public class FlexBCTree extends CheckboxTree {
 
   private static CheckboxTreeCellRenderer createRenderer() {
     return new CheckboxTree.CheckboxTreeCellRenderer() {
+      @Override
       public void customizeRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         if (!(value instanceof CheckedTreeNode)) return;
 
@@ -189,6 +190,7 @@ public class FlexBCTree extends CheckboxTree {
     }
   }
 
+  @Override
   protected void installSpeedSearch() {
     new TreeSpeedSearch(this, path -> {
       final CheckedTreeNode node = (CheckedTreeNode)path.getLastPathComponent();

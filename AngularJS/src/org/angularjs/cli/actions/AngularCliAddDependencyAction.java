@@ -61,8 +61,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class AngularCliAddDependencyAction extends DumbAwareAction {
@@ -184,6 +184,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       }
     };
     list.addKeyListener(new KeyAdapter() {
+      @Override
       public void keyPressed(KeyEvent e) {
         if (list.getSelectedValue() == null) return;
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -193,6 +194,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       }
     });
     new DoubleClickListener() {
+      @Override
       public boolean onDoubleClick(MouseEvent event) {
         if (list.getSelectedValue() == null) return true;
         action.accept(list.getSelectedValue());

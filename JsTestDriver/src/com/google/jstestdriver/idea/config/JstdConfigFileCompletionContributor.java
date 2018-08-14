@@ -71,6 +71,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
     return false;
   }
 
+  @Override
   public void beforeCompletion(@NotNull CompletionInitializationContext context) {
     boolean acceptPathSeparator = false;
     final int offset = context.getEditor().getCaretModel().getOffset();
@@ -84,7 +85,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
       Character separator = extractDirectoryTrailingFileSeparator(caretBipartiteElementText);
       acceptPathSeparator = separator != null;
     }
-    
+
     final OffsetMap offsetMap = context.getOffsetMap();
     int idEnd = offsetMap.getOffset(CompletionInitializationContext.IDENTIFIER_END_OFFSET);
     final String text = context.getFile().getText();

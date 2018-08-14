@@ -13,6 +13,7 @@ public class SpecialCaseRangeIntegersResolver extends AbstractValueResolver {
 
     private static final Pattern PATTERN = Pattern.compile("\\d+\\.\\.\\d+");
 
+    @Override
     public boolean execute(Context context) throws Exception {
         String cleanValue = getCleanValue(((ValueResolverContext) context).getValue()).trim().toLowerCase();
 

@@ -58,30 +58,37 @@ public class DummyTapestryParameter extends TapestryParameter {
       _type = type;
     }
 
+    @Override
     public String getName() {
       return _name;
     }
 
+    @Override
     public IJavaType getType() {
       return _type;
     }
 
+    @Override
     public boolean isPrivate() {
       return true;
     }
 
+    @Override
     public Map<String, IJavaAnnotation> getAnnotations() {
       return new HashMap<>();
     }
 
+    @Override
     public String getDocumentation() {
       return "";
     }
 
+    @Override
     public String getStringRepresentation() {
       return "";
     }
 
+    @Override
     public boolean isValid() {
       return true;
     }

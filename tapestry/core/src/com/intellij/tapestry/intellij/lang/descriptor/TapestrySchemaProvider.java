@@ -7,7 +7,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.lang.TmlFileType;
-import java.util.HashSet;
 import com.intellij.xml.XmlSchemaProvider;
 import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NonNls;
@@ -15,12 +14,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * @author Alexey Chmutov
  */
 public class TapestrySchemaProvider extends XmlSchemaProvider implements DumbAware {
+  @Override
   public XmlFile getSchema(@NotNull @NonNls String url, @Nullable Module module, @NotNull PsiFile baseFile) {
     final String location = ExternalResourceManager.getInstance().getResourceLocation(url, baseFile.getProject());
     return XmlUtil.findXmlFile(baseFile, location);

@@ -29,6 +29,7 @@ public class IntellijResourceFinder implements IResourceFinder {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Collection<IResource> findClasspathResource(String path, boolean includeDependencies) {
         Collection<IResource> resources = new ArrayList<>();
 
@@ -51,6 +52,7 @@ public class IntellijResourceFinder implements IResourceFinder {
   /**
      * {@inheritDoc}
      */
+    @Override
     public Collection<IResource> findLocalizedClasspathResource(String path, boolean includeDependencies) {
         Collection<IResource> resources = new ArrayList<>();
 
@@ -76,6 +78,7 @@ public class IntellijResourceFinder implements IResourceFinder {
   /**
      * {@inheritDoc}
      */
+    @Override
     @Nullable
     public IResource findContextResource(String path) {
         WebFacet webFacet = IdeaUtils.getWebFacet(_module);
@@ -109,6 +112,7 @@ public class IntellijResourceFinder implements IResourceFinder {
     /**
      * {@inheritDoc}
      */
+    @Override
     @NotNull
     public Collection<IResource> findLocalizedContextResource(String path) {
         Collection<IResource> resources = new ArrayList<>();

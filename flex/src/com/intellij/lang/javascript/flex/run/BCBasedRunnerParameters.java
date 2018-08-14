@@ -78,6 +78,7 @@ public class BCBasedRunnerParameters implements Cloneable {
     return Pair.create(module, bc);
   }
 
+  @Override
   protected BCBasedRunnerParameters clone() {
     try {
       return (BCBasedRunnerParameters)super.clone();

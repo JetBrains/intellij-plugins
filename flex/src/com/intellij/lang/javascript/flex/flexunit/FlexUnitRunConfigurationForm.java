@@ -45,6 +45,7 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
     myProject = project;
 
     myBCCombo.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         myWhatToTestForm.updateOnBCChange(myBCCombo.getBC(), myBCCombo.getModule());
         myAppDescriptorForEmulatorCombo.repaint();
@@ -61,6 +62,7 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
 
   private void initLogLevelControls() {
     myShowLogCheckBox.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         if (myShowLogCheckBox.isSelected()) {
           IdeFocusManager.getInstance(myProject).requestFocus(myLogLevelCombo, false);
@@ -75,6 +77,7 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
   private void initLaunchWithTextWithBrowse() {
     myLauncherParametersTextWithBrowse.getTextField().setEditable(false);
     myLauncherParametersTextWithBrowse.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         final FlexLauncherDialog dialog = new FlexLauncherDialog(myProject, myLauncherParameters);
         if (dialog.showAndGet()) {
@@ -115,11 +118,13 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
     }
   }
 
+  @Override
   @NotNull
   protected JComponent createEditor() {
     return myMainPanel;
   }
 
+  @Override
   protected void resetEditorFrom(@NotNull final FlexUnitRunConfiguration config) {
     final FlexUnitRunnerParameters params = config.getRunnerParameters();
     myLauncherParameters = params.getLauncherParameters().clone(); // must be before myBCsCombo.setModel()
@@ -137,6 +142,7 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
     myAppDescriptorForEmulatorCombo.setSelectedItem(params.getAppDescriptorForEmulator());
   }
 
+  @Override
   protected void applyEditorTo(@NotNull final FlexUnitRunConfiguration config) throws ConfigurationException {
     final FlexUnitRunnerParameters params = config.getRunnerParameters();
 
@@ -154,6 +160,7 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
     params.setAppDescriptorForEmulator((FlashRunnerParameters.AppDescriptorForEmulator)myAppDescriptorForEmulatorCombo.getSelectedItem());
   }
 
+  @Override
   protected void disposeEditor() {
     myBCCombo.dispose();
     myWhatToTestForm.dispose();

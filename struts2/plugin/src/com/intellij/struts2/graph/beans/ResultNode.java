@@ -35,6 +35,7 @@ public class ResultNode extends BasicStrutsNode<Result> {
     super(identifyingElement, path);
   }
 
+  @Override
   @NotNull
   public Icon getIcon() {
     final Result result = getIdentifyingElement();

@@ -78,36 +78,43 @@ public class PostCssColorsPage implements ColorSettingsPage {
     new AttributesDescriptor(CssBundle.message("css.url"), PostCssSyntaxHighlighter.URL),
   };
 
+  @Override
   @Nullable
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
     return ADDITIONAL_ATTRIBUTES_KEY_MAP;
   }
 
+  @Override
   @NotNull
   public String getDisplayName() {
     return PostCssBundle.message("color.settings.postcss.name");
   }
 
+  @Override
   @NotNull
   public Icon getIcon() {
     return PostcssIcons.Postcss;
   }
 
+  @Override
   @NotNull
   public AttributesDescriptor[] getAttributeDescriptors() {
     return ATTRS;
   }
 
+  @Override
   @NotNull
   public ColorDescriptor[] getColorDescriptors() {
     return ColorDescriptor.EMPTY_ARRAY;
   }
 
+  @Override
   @NotNull
   public SyntaxHighlighter getHighlighter() {
     return new PostCssSyntaxHighlighter();
   }
 
+  @Override
   @NotNull
   public String getDemoText() {
     return DEMO_TEXT;

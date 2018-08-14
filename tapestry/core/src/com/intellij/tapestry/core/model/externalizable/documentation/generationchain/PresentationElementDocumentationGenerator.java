@@ -16,6 +16,7 @@ public abstract class PresentationElementDocumentationGenerator extends Abstract
     private DocumentationGenerationContext _context;
     private PresentationLibraryElement _element;
 
+    @Override
     public boolean execute(Context context) throws Exception {
         if (!super.execute(context))
             return false;

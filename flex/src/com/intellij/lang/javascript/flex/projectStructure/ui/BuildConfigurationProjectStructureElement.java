@@ -216,6 +216,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
 
           final String quickFixName = FlexBundle.message("instead.setup.dependency.on.bc", otherLibBC.getName(), otherLibModule.getName());
           final ConfigurationErrorQuickFix quickFix = new ConfigurationErrorQuickFix(quickFixName) {
+            @Override
             public void performFix() {
               final FlexBCConfigurable configurable = configurator.getBCConfigurable(myBc);
               final DependenciesConfigurable dependenciesConfigurable = configurable.getDependenciesConfigurable();

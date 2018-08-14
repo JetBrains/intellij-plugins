@@ -45,6 +45,7 @@ public class FlashModuleSourceItem extends PackagingSourceItem {
         presentationData.addText(myModule.getName(), mainAttributes);
       }
 
+      @Override
       public int getWeight() {
         return SourceItemWeights.MODULE_WEIGHT - 1;
       }

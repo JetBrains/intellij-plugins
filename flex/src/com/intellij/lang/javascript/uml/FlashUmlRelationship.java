@@ -85,6 +85,7 @@ public interface FlashUmlRelationship extends DiagramRelationshipInfo {
           element != null ? SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element) : null;
       }
 
+      @Override
       @Nullable
       public PsiElement getElement() {
         return myElementPointer != null ? myElementPointer.getElement() : null;

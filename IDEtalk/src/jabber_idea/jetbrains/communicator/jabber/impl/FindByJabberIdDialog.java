@@ -56,10 +56,12 @@ public class FindByJabberIdDialog extends IdeaDialog {
     }
   }
 
+  @Override
   public JComponent getPreferredFocusedComponent() {
     return myJabberIDs;
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     return myPanel;
   }

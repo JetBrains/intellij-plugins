@@ -30,18 +30,22 @@ public abstract class BasicTapestryTagDescriptor implements XmlElementDescriptor
     return myNamespacePrefix != null && myNamespacePrefix.length() > 0 ? myNamespacePrefix + ":" : "";
   }
 
+  @Override
   public String getQualifiedName() {
     return getDefaultName();
   }
 
+  @Override
   public XmlElementDescriptor[] getElementsDescriptors(XmlTag context) {
     return getTmlSubelementDescriptors(context, myNamespaceDescriptor);
   }
 
+  @Override
   public XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
     return getTmlOrHtmlTagDescriptor(childTag);
   }
 
+  @Override
   public XmlAttributeDescriptor getAttributeDescriptor(XmlAttribute attribute) {
     String prefix = attribute.getNamespacePrefix();
     return prefix.length() == 0 || prefix.equals(myNamespacePrefix)
@@ -49,6 +53,7 @@ public abstract class BasicTapestryTagDescriptor implements XmlElementDescriptor
            : null;
   }
 
+  @Override
   public XmlNSDescriptor getNSDescriptor() {
     return myNamespaceDescriptor;
   }
@@ -61,6 +66,7 @@ public abstract class BasicTapestryTagDescriptor implements XmlElementDescriptor
     return null;
   }
 
+  @Override
   public int getContentType() {
     return CONTENT_TYPE_ANY;
   }
@@ -70,22 +76,27 @@ public abstract class BasicTapestryTagDescriptor implements XmlElementDescriptor
     return null;
   }
 
+  @Override
   @Nullable
   public PsiElement getDeclaration() {
     return null;
   }
 
+  @Override
   public String getName(PsiElement context) {
     return getDefaultName();
   }
 
+  @Override
   public String getName() {
     return getDefaultName();
   }
 
+  @Override
   public void init(PsiElement element) {
   }
 
+  @Override
   public void setName(String name) throws IncorrectOperationException {
 
   }

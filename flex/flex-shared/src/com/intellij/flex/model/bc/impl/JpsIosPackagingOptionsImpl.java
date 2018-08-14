@@ -25,6 +25,7 @@ class JpsIosPackagingOptionsImpl extends JpsAirPackagingOptionsBase<JpsIosPackag
     super(original);
   }
 
+  @Override
   @NotNull
   public JpsIosPackagingOptionsImpl createCopy() {
     return new JpsIosPackagingOptionsImpl(this);
@@ -70,6 +71,7 @@ class JpsIosPackagingOptionsImpl extends JpsAirPackagingOptionsBase<JpsIosPackag
       super("ios packaging options");
     }
 
+    @Override
     @NotNull
     public JpsIosPackagingOptions create() {
       return new JpsIosPackagingOptionsImpl();

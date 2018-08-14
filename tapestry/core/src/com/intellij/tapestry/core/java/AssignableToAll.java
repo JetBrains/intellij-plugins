@@ -13,14 +13,17 @@ public class AssignableToAll implements IJavaType {
         return _me;
     }
 
+    @Override
     public String getName() {
         return "assignable";
     }
 
+    @Override
     public boolean isAssignableFrom(IJavaType type) {
         return true;
     }
 
+    @Override
     @NotNull
     public Object getUnderlyingObject() {
         return this;

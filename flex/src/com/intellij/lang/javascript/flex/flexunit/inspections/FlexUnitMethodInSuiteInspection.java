@@ -12,17 +12,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class FlexUnitMethodInSuiteInspection extends FlexUnitMethodInspectionBase {
 
+  @Override
   @Nls
   @NotNull
   public String getDisplayName() {
     return FlexBundle.message("flexunit.inspection.testmethodinsuite.displayname");
   }
 
+  @Override
   @NotNull
   public String getShortName() {
     return "FlexUnitMethodInSuiteInspection";
   }
 
+  @Override
   protected void visitPotentialTestMethod(JSFunction method, ProblemsHolder holder, FlexUnitSupport support) {
     if (support.isSuite((JSClass)method.getParent())) {
       final ASTNode nameIdentifier = method.findNameIdentifier();

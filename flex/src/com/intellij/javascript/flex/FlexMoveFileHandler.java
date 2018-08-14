@@ -1,8 +1,8 @@
 package com.intellij.javascript.flex;
 
+import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -18,10 +18,12 @@ import java.util.Map;
  * @author Maxim.Mossienko
  */
 public class FlexMoveFileHandler extends MoveFileHandler {
+  @Override
   public boolean canProcessElement(final PsiFile element) {
     return element instanceof JSFile || JavaScriptSupportLoader.isFlexMxmFile(element);
   }
 
+  @Override
   public void prepareMovedFile(final PsiFile file, PsiDirectory moveDestination, Map<PsiElement, PsiElement> oldToNewMap) {
     if (file instanceof JSFile) {
       RenameMoveUtils.prepareMovedFile((JSFile)file);
@@ -37,9 +39,10 @@ public class FlexMoveFileHandler extends MoveFileHandler {
 
   @Override
   public void retargetUsages(List<UsageInfo> usageInfos, Map<PsiElement, PsiElement> oldToNewMap) {
-    
+
   }
 
+  @Override
   public void updateMovedFile(final PsiFile file) throws IncorrectOperationException {
     if (file instanceof JSFile) {
       RenameMoveUtils.updateMovedFile((JSFile)file);

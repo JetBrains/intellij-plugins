@@ -38,6 +38,7 @@ public final class DartServerSupertypesHierarchyTreeStructure extends HierarchyT
     super(project, new DartTypeHierarchyNodeDescriptor(project, null, dartClass, true));
   }
 
+  @Override
   @NotNull
   protected final Object[] buildChildren(@NotNull final HierarchyNodeDescriptor descriptor) {
     final DartClass dartClass = ((DartTypeHierarchyNodeDescriptor)descriptor).getDartClass();

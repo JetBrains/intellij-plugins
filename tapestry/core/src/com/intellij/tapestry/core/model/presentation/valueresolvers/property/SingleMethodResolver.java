@@ -15,6 +15,7 @@ public class SingleMethodResolver extends AbstractValueResolver {
 
     private static final Pattern PATTERN = Pattern.compile("\\w+\\(\\)");
 
+    @Override
     public boolean execute(Context context) throws Exception {
         String cleanValue = getCleanValue(((ValueResolverContext) context).getValue());
 

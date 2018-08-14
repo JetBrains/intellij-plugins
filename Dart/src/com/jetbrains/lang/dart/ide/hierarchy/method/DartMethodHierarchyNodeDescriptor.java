@@ -48,6 +48,7 @@ public class DartMethodHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
     return (DartClass)getPsiElement();
   }
 
+  @Override
   public final boolean update() {
     boolean changes = super.update();
     final CompositeAppearance oldText = myHighlightedText;

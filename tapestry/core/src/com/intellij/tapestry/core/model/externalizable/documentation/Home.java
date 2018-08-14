@@ -1,7 +1,7 @@
 package com.intellij.tapestry.core.model.externalizable.documentation;
 
-import com.intellij.tapestry.core.model.externalizable.documentation.generationchain.DocumentationGenerationChain;
 import com.intellij.tapestry.core.model.externalizable.ExternalizableToDocumentation;
+import com.intellij.tapestry.core.model.externalizable.documentation.generationchain.DocumentationGenerationChain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +17,7 @@ public class Home implements ExternalizableToDocumentation {
         _tapestryProjects = tapestryProjects;
     }
 
+    @Override
     public String getDocumentation() throws Exception {
         return DocumentationGenerationChain.getInstance().generate(this);
     }

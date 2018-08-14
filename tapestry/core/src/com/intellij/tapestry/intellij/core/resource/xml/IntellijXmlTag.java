@@ -17,6 +17,7 @@ public class IntellijXmlTag implements XmlTag {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getName() {
         return _xmlTag.getName();
     }
@@ -24,6 +25,7 @@ public class IntellijXmlTag implements XmlTag {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getNamespace() {
         return _xmlTag.getNamespace();
     }
@@ -31,6 +33,7 @@ public class IntellijXmlTag implements XmlTag {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getLocalName() {
         return _xmlTag.getLocalName();
     }
@@ -38,6 +41,7 @@ public class IntellijXmlTag implements XmlTag {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getText() {
         return _xmlTag.getText();
     }
@@ -45,6 +49,7 @@ public class IntellijXmlTag implements XmlTag {
     /**
      * {@inheritDoc}
      */
+    @Override
     public XmlAttribute[] getAttributes() {
         List<XmlAttribute> attributes = new ArrayList<>();
 
@@ -54,6 +59,7 @@ public class IntellijXmlTag implements XmlTag {
         return attributes.toArray(new XmlAttribute[0]);
     }
 
+    @Override
     public XmlAttribute getAttribute(String name, String namespace) {
         com.intellij.psi.xml.XmlAttribute attribute = _xmlTag.getAttribute(name, namespace);
 

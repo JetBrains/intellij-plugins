@@ -97,6 +97,7 @@ public class FileSetEditor extends DialogWrapper {
 
     TreeUtil.expandAll(myFilesTree);
     myFilesTree.getModel().addTreeModelListener(new TreeModelAdapter() {
+      @Override
       public void treeNodesChanged(final TreeModelEvent e) {
         updateFileSet();
       }
@@ -115,16 +116,19 @@ public class FileSetEditor extends DialogWrapper {
     getOKAction().setEnabled(fileSet.isNew());
   }
 
+  @Override
   @Nullable
   protected JComponent createCenterPanel() {
     return myMainPanel;
   }
 
+  @Override
   @NonNls
   protected String getDimensionServiceKey() {
     return "struts2 file set editor";
   }
 
+  @Override
   public boolean isOKActionEnabled() {
     if (myOriginalSet.isNew()) {
       return true;
@@ -153,6 +157,7 @@ public class FileSetEditor extends DialogWrapper {
     return !Comparing.equal(myFileSet.getName(), myOriginalSet.getName());
   }
 
+  @Override
   protected void doOKAction() {
     updateFileSet();
     super.doOKAction();

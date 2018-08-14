@@ -74,10 +74,12 @@ class AdditionalJARContentsTableModel extends AbstractTableModel {
     return lastRow;
   }
 
+  @Override
   public int getRowCount() {
     return _additionalContents.size();
   }
 
+  @Override
   public int getColumnCount() {
     return 2;
   }
@@ -99,6 +101,7 @@ class AdditionalJARContentsTableModel extends AbstractTableModel {
     return true;  //columnIndex == 1;
   }
 
+  @Override
   public Object getValueAt(int rowIndex, int columnIndex) {
     Pair<String, String> row = _additionalContents.get(rowIndex);
     return columnIndex == 0 ? row.getFirst() : row.getSecond();

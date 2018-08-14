@@ -24,7 +24,6 @@ import com.intellij.psi.codeStyle.VariableKind;
 import com.intellij.psi.util.PsiTypesUtil;
 import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.CustomReferenceConverter;
@@ -58,20 +57,24 @@ public class ActionNameCustomReferenceConverter implements CustomReferenceConver
                                          final ConvertContext convertContext) {
     final PsiReferenceBase<PsiElement> ref = new PsiReferenceBase<PsiElement>(psiElement) {
 
+      @Override
       @SuppressWarnings({"ConstantConditions"})
       public PsiElement resolve() {
         return genericDomValue.getParent().getXmlTag();
       }
 
+      @Override
       public boolean isSoft() {
         return true;
       }
 
       // do nothing. the element will be renamed via PsiMetaData
+      @Override
       public PsiElement handleElementRename(@NotNull final String newElementName) throws IncorrectOperationException {
         return getElement();
       }
 
+      @Override
       @NotNull
       public Object[] getVariants() {
         final DomElement invocationElement = convertContext.getInvocationElement();

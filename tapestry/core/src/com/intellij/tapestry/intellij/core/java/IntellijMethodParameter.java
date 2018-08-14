@@ -20,6 +20,7 @@ public class IntellijMethodParameter implements IMethodParameter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getName() {
         return _psiParameter.getName();
     }
@@ -27,6 +28,7 @@ public class IntellijMethodParameter implements IMethodParameter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IJavaType getType() {
         if (_psiParameter.getType() instanceof PsiClassType) {
             return new IntellijJavaClassType(_module, ((PsiClassType) _psiParameter.getType()).resolve().getContainingFile());

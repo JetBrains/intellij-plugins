@@ -24,15 +24,18 @@ public class ActionScriptProfileSettingsConfigurable implements SearchableConfig
   private final ActionScriptProfileSettings mySettings = ActionScriptProfileSettings.getInstance();
   private ActionScriptProfileSettingsForm mySettingsPane;
 
+  @Override
   public String getDisplayName() {
     return ProfilerBundle.message("profile.settings.name");
   }
 
+  @Override
   @NotNull
   public String getId() {
     return "asprofile.settings";
   }
 
+  @Override
   public JComponent createComponent() {
     if (mySettingsPane == null) {
       mySettingsPane = new ActionScriptProfileSettingsForm();
@@ -41,22 +44,26 @@ public class ActionScriptProfileSettingsConfigurable implements SearchableConfig
     return mySettingsPane.getPanel();
   }
 
+  @Override
   public boolean isModified() {
     return mySettingsPane != null && mySettingsPane.isModified(mySettings);
   }
 
+  @Override
   public void apply() {
     if (mySettingsPane != null) {
       mySettingsPane.applyEditorTo(mySettings);
     }
   }
 
+  @Override
   public void reset() {
     if (mySettingsPane != null) {
       mySettingsPane.resetEditorFrom(mySettings);
     }
   }
 
+  @Override
   public void disposeUIResources() {
     mySettingsPane = null;
   }

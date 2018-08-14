@@ -37,11 +37,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Yann C&eacute;bron
@@ -65,41 +61,49 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
     myProject = file.getProject();
   }
 
+  @Override
   @NotNull
   public Collection<BasicStrutsNode> getNodes() {
     refreshDataModel();
     return myNodes;
   }
 
+  @Override
   @NotNull
   public Collection<BasicStrutsEdge> getEdges() {
     return myEdges;
   }
 
+  @Override
   @NotNull
   public BasicStrutsNode getSourceNode(final BasicStrutsEdge edge) {
     return edge.getSource();
   }
 
+  @Override
   @NotNull
   public BasicStrutsNode getTargetNode(final BasicStrutsEdge edge) {
     return edge.getTarget();
   }
 
+  @Override
   @NotNull
   public String getNodeName(final BasicStrutsNode node) {
     return node.getName();
   }
 
+  @Override
   @NotNull
   public String getEdgeName(final BasicStrutsEdge edge) {
     return edge.getName();
   }
 
+  @Override
   public BasicStrutsEdge createEdge(@NotNull final BasicStrutsNode from, @NotNull final BasicStrutsNode to) {
     return null;
   }
 
+  @Override
   public void dispose() {
   }
 
@@ -136,6 +140,7 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
 
         final BasicNodesGroup group = new BasicNodesGroup(name) {
 
+          @Override
           @Nullable
           public GroupNodeRealizer getGroupNodeRealizer() {
             final GroupNodeRealizer groupNodeRealizer = super.getGroupNodeRealizer();

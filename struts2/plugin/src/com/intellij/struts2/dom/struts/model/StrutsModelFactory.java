@@ -43,6 +43,7 @@ class StrutsModelFactory extends DomModelFactory<StrutsRoot, StrutsModel, PsiEle
     super(StrutsRoot.class, project, "struts2");
   }
 
+  @Override
   protected List<StrutsModel> computeAllModels(@NotNull final Module module) {
     final PsiManager psiManager = PsiManager.getInstance(module.getProject());
     final StrutsManager strutsManager = StrutsManager.getInstance(module.getProject());
@@ -83,6 +84,7 @@ class StrutsModelFactory extends DomModelFactory<StrutsRoot, StrutsModel, PsiEle
     return models;
   }
 
+  @Override
   protected StrutsModel createCombinedModel(@NotNull final Set<XmlFile> xmlFiles,
                                             @NotNull final DomFileElement<StrutsRoot> strutsRootDomFileElement,
                                             final StrutsModel strutsModel,

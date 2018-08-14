@@ -2,7 +2,6 @@ package com.intellij.flex.refactoring;
 
 import com.intellij.execution.RunManager;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.javascript.JSSupportLoader;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.json.JsonLanguage;
@@ -42,6 +41,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     super.setUp();
   }
 
+  @Override
   protected String getBasePath() {
     return "/flex_rename/";
   }
@@ -56,6 +56,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
+  @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();
   }
@@ -570,12 +571,13 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     return ObjectUtils.coalesce(super.findTarget(), myFile);
   }
 
+  @Override
   protected void doTest(final String newName, String ext) throws Exception {
     final String name = getTestName(false);
     doTest(newName, name + "_after." + ext, true, true, false,
             name + "." + ext); // current test data expects that string refs are renamed
   }
-  
+
   protected void doTest(final String newName, String fileNameAfter, String... fileNames) throws Exception {
     doTest(newName, fileNameAfter, false, true, false, fileNames);
   }

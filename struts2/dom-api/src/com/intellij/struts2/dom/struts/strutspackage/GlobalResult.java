@@ -33,10 +33,12 @@ import com.intellij.util.xml.*;
 @Presentation(typeName = "Global Result", provider = Struts2PresentationProvider.class)
 public interface GlobalResult extends HasResultType, ParamsElement, GenericDomValue<PathReference> {
 
+  @Override
   @NameValue
   @Scope(ParentScopeProvider.class)
   GenericAttributeValue<String> getName();
 
+  @Override
   @Convert(ResultTypeResolvingConverter.class)
   GenericAttributeValue<ResultType> getType();
 

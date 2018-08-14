@@ -29,6 +29,7 @@ public abstract class TelCompositeElementType extends IElementType implements IC
 
   public abstract PsiElement createPsiElement(ASTNode node);
 
+  @Override
   @NotNull
   public ASTNode createCompositeNode() {
     return new CompositeElement(this);
@@ -36,6 +37,7 @@ public abstract class TelCompositeElementType extends IElementType implements IC
 
 
   public static final TelCompositeElementType EXPLICIT_BINDING = new TelCompositeElementType("ExplicitBinding") {
+    @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new TelCompositeElement(node) {
         @NotNull
@@ -60,30 +62,35 @@ public abstract class TelCompositeElementType extends IElementType implements IC
   };
 
   public static final TelCompositeElementType REFERENCE_EXPRESSION = new TelCompositeElementType("ReferenceExpression") {
+    @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new TelReferenceExpression(node);
     }
   };
 
   public static final TelCompositeElementType ARGUMENT_LIST = new TelCompositeElementType("ArgumentList") {
+    @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new TelArgumentList(node);
     }
   };
 
   public static final TelCompositeElementType METHOD_CALL_EXPRESSION = new TelCompositeElementType("MethodCallExpression") {
+    @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new TelMethodCallExpression(node);
     }
   };
 
   public static final TelCompositeElementType RANGE_EXPRESSION = new TelCompositeElementType("RangeExpression") {
+    @Override
     public PsiElement createPsiElement(ASTNode node) {
       return new TelRangeExpression(node);
     }
   };
 
   public static final TelCompositeElementType NOT_OP_EXPRESSION = new TelCompositeElementType("NotOpExpression") {
+    @Override
     public PsiElement createPsiElement(ASTNode node) {
       return new TelNotOpExpression(node);
     }

@@ -12,8 +12,8 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.SideBorder;
 import com.intellij.util.PlatformIcons;
-import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.SwingHelper;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -130,6 +130,7 @@ public class JstdServerStatusView {
     final OpenLinkInBrowser openLinkInBrowserAction = new OpenLinkInBrowser();
     final DefaultActionGroup group = new DefaultActionGroup(openLinkInBrowserAction, copyLinkAction);
     pane.addMouseListener(new PopupHandler() {
+      @Override
       public void invokePopup(Component comp, int x, int y) {
         String url = urlRef.get();
         copyLinkAction.setUrl(url);

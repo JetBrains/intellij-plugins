@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class CreateFlexMobileViewIntentionAndFix extends CreateMxmlFileIntentionBase {
   private final boolean myAskForPackage;
 
+  @Override
   @NotNull
   public String getText() {
     return JSBundle.message("create.mobile.view", myClassName);
@@ -22,6 +23,7 @@ public class CreateFlexMobileViewIntentionAndFix extends CreateMxmlFileIntention
     myAskForPackage = askForPackage;
   }
 
+  @Override
   protected String getFileText() {
     return "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
            "<s:View xmlns:fx=\"http://ns.adobe.com/mxml/2009\" xmlns:s=\"library://ns.adobe.com/flex/spark\">\n" +
@@ -29,6 +31,7 @@ public class CreateFlexMobileViewIntentionAndFix extends CreateMxmlFileIntention
            "</s:View>\n";
   }
 
+  @Override
   protected Pair<String, PsiDirectory> getFileTextAndDir(final @NotNull Module module) {
     if (!myAskForPackage) return super.getFileTextAndDir(module);
 

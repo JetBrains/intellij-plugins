@@ -32,6 +32,7 @@ public class KarmaCoverageAnnotator extends SimpleCoverageAnnotator {
     return null;
   }
 
+  @Override
   @Nullable
   public String getDirCoverageInformationString(@NotNull PsiDirectory directory,
                                                 @NotNull CoverageSuitesBundle currentSuite,

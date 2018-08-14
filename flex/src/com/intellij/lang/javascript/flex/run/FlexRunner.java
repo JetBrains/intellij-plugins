@@ -46,6 +46,7 @@ import java.lang.reflect.InvocationTargetException;
 
 public class FlexRunner extends FlexBaseRunner {
 
+  @Override
   protected RunContentDescriptor launchFlexConfig(final Module module,
                                                   final FlexBuildConfiguration bc,
                                                   final FlashRunnerParameters runnerParameters,
@@ -116,6 +117,7 @@ public class FlexRunner extends FlexBaseRunner {
                 final String message = FlexBundle.message("ios.application.packaged.to.run", ipaName);
                 ToolWindowManager.getInstance(module.getProject())
                   .notifyByBalloon(ToolWindowId.RUN, MessageType.INFO, message, null, new HyperlinkAdapter() {
+                    @Override
                     protected void hyperlinkActivated(final HyperlinkEvent e) {
                       ShowFilePathAction.openFile(new File(outputFolder + "/" + ipaName));
                     }
@@ -141,6 +143,7 @@ public class FlexRunner extends FlexBaseRunner {
     return contentBuilder.showRunContent(contentToReuse);
   }
 
+  @Override
   protected RunContentDescriptor launchWebFlexUnit(final Project project,
                                                    final RunContentDescriptor contentToReuse,
                                                    final ExecutionEnvironment env,
@@ -178,6 +181,7 @@ public class FlexRunner extends FlexBaseRunner {
     return contentBuilder.showRunContent(contentToReuse);
   }
 
+  @Override
   @Nullable
   protected RunContentDescriptor launchAirFlexUnit(final Project project,
                                                    final RunProfileState state,
@@ -215,11 +219,13 @@ public class FlexRunner extends FlexBaseRunner {
     return contentBuilder.showRunContent(contentToReuse);
   }
 
+  @Override
   public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
     return DefaultRunExecutor.EXECUTOR_ID.equals(executorId) &&
            (profile instanceof FlashRunConfiguration || profile instanceof FlexUnitRunConfiguration);
   }
 
+  @Override
   @NotNull
   public String getRunnerId() {
     return "FlexRunner";
@@ -232,12 +238,14 @@ public class FlexRunner extends FlexBaseRunner {
       myProcessHandler = processHandler;
     }
 
+    @Override
     public void statusChanged(FlexUnitConnection.ConnectionStatus status) {
       if (status == FlexUnitConnection.ConnectionStatus.CONNECTION_FAILED || status == FlexUnitConnection.ConnectionStatus.DISCONNECTED) {
         myProcessHandler.destroyProcess();
       }
     }
 
+    @Override
     public void onData(final String line) {
       Runnable runnable = () -> myProcessHandler.notifyTextAvailable(line + "\n", ProcessOutputTypes.STDOUT);
       if (ApplicationManager.getApplication().isUnitTestMode()) {
@@ -256,6 +264,7 @@ public class FlexRunner extends FlexBaseRunner {
       }
     }
 
+    @Override
     public void onFinish() {
       // ignore
     }

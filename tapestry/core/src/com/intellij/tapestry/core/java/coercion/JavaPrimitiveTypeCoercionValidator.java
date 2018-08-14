@@ -23,6 +23,7 @@ public class JavaPrimitiveTypeCoercionValidator implements Command {
         PRIMITIVE_COERCION_MAP.put("boolean", "java.lang.Boolean");
     }
 
+    @Override
     public boolean execute(Context context) throws Exception {
         if (!(((CoercionContext) context).getSourceType() instanceof IJavaPrimitiveType || ((CoercionContext) context).getTargetType() instanceof IJavaPrimitiveType))
             return false;

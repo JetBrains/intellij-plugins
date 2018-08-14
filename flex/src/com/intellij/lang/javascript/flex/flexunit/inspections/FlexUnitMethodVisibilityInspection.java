@@ -14,17 +14,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class FlexUnitMethodVisibilityInspection extends FlexUnitMethodInspectionBase {
 
+  @Override
   @Nls
   @NotNull
   public String getDisplayName() {
     return FlexBundle.message("flexunit.inspection.testmethodvisibility.displayname");
   }
 
+  @Override
   @NotNull
   public String getShortName() {
     return "FlexUnitMethodVisibilityInspection";
   }
 
+  @Override
   protected void visitPotentialTestMethod(@NotNull JSFunction method, ProblemsHolder holder, FlexUnitSupport support) {
     if (FlexUnitSupport.getCustomRunner((JSClass)method.getParent()) != null) return;
     if (method.getAttributeList() == null || method.getAttributeList().getAccessType() != JSAttributeList.AccessType.PUBLIC) {

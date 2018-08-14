@@ -52,7 +52,7 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
       if (originalElement == null) return;
       PsiElement originalElementParent = originalElement.getParent();
       if (!(originalElementParent instanceof JSCallExpression)) return;
-      
+
       JSExpression methodExpression = ((JSCallExpression)originalElementParent).getMethodExpression();
       if (methodExpression instanceof JSReferenceExpression) {
         JSExpression qualifier = ((JSReferenceExpression)methodExpression).getQualifier();
@@ -77,6 +77,7 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
     }
   }
 
+  @Override
   protected void evaluateIndexedAccessType(JSIndexedPropertyAccessExpression node) {
     if (isASDictionaryAccess(node)) {
       myResult = createNamedType(JSCommonTypeNames.OBJECT_CLASS_NAME, myGrandParent);

@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
  * @author: Fedor.Korotkov
  */
 public abstract class DartStatementSurrounder implements Surrounder {
+  @Override
   public boolean isApplicable(@NotNull PsiElement[] elements) {
     return true;
   }
@@ -28,6 +29,7 @@ public abstract class DartStatementSurrounder implements Surrounder {
     );
   }
 
+  @Override
   @Nullable
   public TextRange surroundElements(@NotNull Project project, @NotNull Editor editor, @NotNull PsiElement[] elements)
     throws IncorrectOperationException {

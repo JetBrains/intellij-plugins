@@ -9,6 +9,7 @@ public class MessageResolver extends AbstractValueResolver {
 
     private static final String PREFIX = "message";
 
+    @Override
     public boolean execute(Context context) throws Exception {
         String prefix = getPrefix(((ValueResolverContext) context).getValue(), ((ValueResolverContext) context).getDefaultPrefix());
 

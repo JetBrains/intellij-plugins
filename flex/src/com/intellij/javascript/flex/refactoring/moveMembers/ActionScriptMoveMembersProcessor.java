@@ -92,6 +92,7 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
     myNewVisibility = options.getMemberVisibility();
   }
 
+  @Override
   @NotNull
   protected String getCommandName() {
     return myCommandName;
@@ -119,11 +120,13 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
     myCommandName = commandName.toString();
   }
 
+  @Override
   @NotNull
   protected UsageViewDescriptor createUsageViewDescriptor(@NotNull UsageInfo[] usages) {
     return new MoveMemberViewDescriptor(PsiUtilCore.toPsiElementArray(myMembersToMove));
   }
 
+  @Override
   @NotNull
   protected UsageInfo[] findUsages() {
     return JSRefactoringUtil.getUsages(myMembersToMove, myTargetClass);
@@ -138,6 +141,7 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
     }
   }
 
+  @Override
   protected void performRefactoring(@NotNull final UsageInfo[] usages) {
     try {
       final Collection<PsiFile> filesWithUsages = ActionScriptRefactoringUtil.qualifyIncomingReferences(usages);
@@ -203,6 +207,7 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
     }
   }
 
+  @Override
   protected boolean preprocessUsages(@NotNull Ref<UsageInfo[]> refUsages) {
     if (myTargetClass == null) {
       return true;

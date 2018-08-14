@@ -24,6 +24,7 @@ public class ExternalLibraryNode extends TapestryNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public SimpleNode[] getChildren() {
         List<TapestryNode> children = new ArrayList<>();
 

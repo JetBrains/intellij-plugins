@@ -591,6 +591,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     return getIsolateInfos().isEmpty() ? null : getIsolateInfos().iterator().next().getIsolateId();
   }
 
+  @Override
   @Nullable
   public XDebuggerEvaluator getEvaluator() {
     XStackFrame frame = getSession().getCurrentStackFrame();

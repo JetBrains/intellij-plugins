@@ -71,35 +71,42 @@ public class TemplateColorSettingsPage implements ColorSettingsPage {
           createAttributesDescriptor("Bad character", TEL_BAD_CHAR),
       };
 
+  @Override
   @NotNull
   public String getDisplayName() {
     return "Tapestry";
   }
 
+  @Override
   public Icon getIcon() {
     return TapestryIcons.Tapestry_logo_small;
   }
 
+  @Override
   @NotNull
   public AttributesDescriptor[] getAttributeDescriptors() {
     return ourAttributeDescriptors;
   }
 
+  @Override
   @NotNull
   public ColorDescriptor[] getColorDescriptors() {
     return ColorDescriptor.EMPTY_ARRAY;
   }
 
+  @Override
   @NotNull
   public SyntaxHighlighter getHighlighter() {
     return new TmlHighlighter();
   }
 
+  @Override
   @NotNull
   public String getDemoText() {
     return ourColorSettingsText;
   }
 
+  @Override
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
     return ourAdditionalHighlightingTagToDescriptorMap;
   }

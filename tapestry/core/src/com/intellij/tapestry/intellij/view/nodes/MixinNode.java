@@ -24,6 +24,7 @@ public class MixinNode extends TapestryNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public SimpleNode[] getChildren() {
         Mixin mixin = (Mixin) getElement();
 

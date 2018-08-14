@@ -30,34 +30,41 @@ public class CucumberStepReference implements PsiPolyVariantReference {
     myRange = range;
   }
 
+  @Override
   @NotNull
   public PsiElement getElement() {
     return myStep;
   }
 
+  @Override
   @NotNull
   public TextRange getRangeInElement() {
     return myRange;
   }
 
+  @Override
   public PsiElement resolve() {
     final ResolveResult[] result = multiResolve(true);
     return result.length == 1 ? result[0].getElement() : null;
   }
 
+  @Override
   @NotNull
   public String getCanonicalText() {
     return myStep.getText();
   }
 
+  @Override
   public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
     return myStep;
   }
 
+  @Override
   public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
     return myStep;
   }
 
+  @Override
   public boolean isReferenceTo(@NotNull PsiElement element) {
     ResolveResult[] resolvedResults = multiResolve(false);
     for (ResolveResult rr : resolvedResults) {
@@ -68,6 +75,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
     return false;
   }
 
+  @Override
   public boolean isSoft() {
     return false;
   }

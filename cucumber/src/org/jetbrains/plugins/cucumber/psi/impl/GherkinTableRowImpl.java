@@ -45,12 +45,14 @@ public class GherkinTableRowImpl extends GherkinPsiElementBase implements Gherki
     return list.isEmpty() ? Collections.emptyList() : list;
   }
 
+  @Override
   @NotNull
   public List<GherkinTableCell> getPsiCells() {
 
     return getChildrenByFilter(this, GherkinTableCell.class);
   }
 
+  @Override
   public int getColumnWidth(int columnIndex) {
     final List<GherkinTableCell> cells = getPsiCells();
     if (cells.size() <= columnIndex) {
@@ -64,6 +66,7 @@ public class GherkinTableRowImpl extends GherkinPsiElementBase implements Gherki
     return 0;
   }
 
+  @Override
   public void deleteCell(int columnIndex) {
     final List<GherkinTableCell> cells = getPsiCells();
     if (columnIndex < cells.size()) {

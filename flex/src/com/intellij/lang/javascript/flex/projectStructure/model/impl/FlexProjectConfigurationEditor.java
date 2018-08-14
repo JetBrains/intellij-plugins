@@ -35,7 +35,6 @@ import com.intellij.util.Consumer;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import java.util.HashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -179,26 +178,31 @@ public class FlexProjectConfigurationEditor implements Disposable {
                                                                    final @Nullable LibraryTable.ModifiableModel projectLibrariesModel,
                                                                    final @Nullable LibraryTable.ModifiableModel globalLibrariesModel) {
     return new ProjectModifiableModelProvider() {
+      @Override
       public Module[] getModules() {
         final Set<Module> modules = moduleToModifiableModel.keySet();
         return modules.toArray(Module.EMPTY_ARRAY);
       }
 
+      @Override
       public ModifiableRootModel getModuleModifiableModel(final Module module) {
         final ModifiableRootModel model = moduleToModifiableModel.get(module);
         LOG.assertTrue(model != null, "No model for module " + module.getName());
         return model;
       }
 
+      @Override
       public void addListener(final FlexBCConfigurator.Listener listener,
                               final Disposable parentDisposable) {
         // modules and BCs must not be removed
       }
 
+      @Override
       public void commitModifiableModels() throws ConfigurationException {
         // commit must be performed somewhere else
       }
 
+      @Override
       @Nullable
       public Library findSourceLibrary(final String name, final String level) {
         if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
@@ -212,6 +216,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
         return null;
       }
 
+      @Override
       public Library findSourceLibraryForLiveName(final String name, final String level) {
         return findSourceLibrary(name, level);
       }

@@ -36,6 +36,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
   private static final Icon ICON_ACTIVE_SELECTED = PlatformIcons.CHECK_ICON_SELECTED;
   private static final Icon ICON_EMPTY = EmptyIcon.create(ICON_ACTIVE);
 
+  @Override
   public void update(@NotNull final AnActionEvent e) {
     boolean enabled = isEnabled(e.getDataContext());
     if (ActionPlaces.isPopupPlace(e.getPlace())) {
@@ -54,6 +55,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
     return module != null && ModuleType.get(module) == FlexModuleType.getInstance();
   }
 
+  @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {
     Module module = LangDataKeys.MODULE.getData(e.getDataContext());
     if (module != null) {
@@ -152,6 +154,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
       return bc.getNature().getPresentableText();
     }
 
+    @Override
     public void actionPerformed(@NotNull final AnActionEvent e) {
       myManager.setActiveBuildConfiguration(myBc);
     }

@@ -9,6 +9,7 @@ import org.apache.commons.chain.Context;
  */
 public class SpecialCaseThisResolver extends AbstractValueResolver {
 
+    @Override
     public boolean execute(Context context) throws Exception {
         String cleanValue = getCleanValue(((ValueResolverContext) context).getValue()).trim().toLowerCase();
 

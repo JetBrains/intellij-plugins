@@ -40,6 +40,7 @@ public abstract class JpsBCBasedRunnerParameters<Self extends JpsBCBasedRunnerPa
     myBCName = BCName;
   }
 
+  @Override
   public void applyChanges(@NotNull final Self modified) {
     myModuleName = modified.myModuleName;
     myBCName = modified.myBCName;

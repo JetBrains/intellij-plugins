@@ -20,26 +20,31 @@ public class DartCommandLineRunConfiguration extends DartRunConfigurationBase {
     super(project, configurationType.getConfigurationFactories()[0], name);
   }
 
+  @Override
   @NotNull
   public DartCommandLineRunnerParameters getRunnerParameters() {
     return myRunnerParameters;
   }
 
+  @Override
   @NotNull
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new DartCommandLineConfigurationEditorForm(getProject());
   }
 
+  @Override
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
     return new DartCommandLineRunningState(env);
   }
 
+  @Override
   @Nullable
   public String suggestedName() {
     final String filePath = myRunnerParameters.getFilePath();
     return filePath == null ? null : PathUtil.getFileName(filePath);
   }
 
+  @Override
   public DartCommandLineRunConfiguration clone() {
     final DartCommandLineRunConfiguration clone = (DartCommandLineRunConfiguration)super.clone();
     clone.myRunnerParameters = myRunnerParameters.clone();

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class GherkinParser implements PsiParser {
 
+  @Override
   @NotNull
   public ASTNode parse(IElementType root, PsiBuilder builder) {
     final PsiBuilder.Marker marker = builder.mark();

@@ -18,9 +18,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class TapestryInspectionBase extends LocalInspectionTool {
 
+  @Override
   @NotNull
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
     return new PsiElementVisitor() {
+      @Override
       public void visitElement(final PsiElement element) {
         registerProblems(element, holder);
       }
@@ -29,12 +31,14 @@ public abstract class TapestryInspectionBase extends LocalInspectionTool {
 
   protected abstract void registerProblems(PsiElement element, ProblemsHolder holder);
 
+  @Override
   @Nls
   @NotNull
   public String getGroupDisplayName() {
     return TapestryBundle.message("tapestry.inspections.group");
   }
 
+  @Override
   @NotNull
   public HighlightDisplayLevel getDefaultLevel() {
     return HighlightDisplayLevel.WARNING;

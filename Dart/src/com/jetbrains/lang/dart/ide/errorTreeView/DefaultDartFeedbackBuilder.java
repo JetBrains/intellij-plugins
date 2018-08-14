@@ -29,10 +29,12 @@ import java.io.IOException;
 
 public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
 
+  @Override
   public String prompt() {
     return "Open issue submission form?";
   }
 
+  @Override
   public void sendFeedback(@NotNull Project project, @Nullable String errorMessage, @Nullable String serverLog) {
     final ApplicationInfoEx appInfo = ApplicationInfoEx.getInstanceEx();
     boolean isEAP = appInfo.isEAP();

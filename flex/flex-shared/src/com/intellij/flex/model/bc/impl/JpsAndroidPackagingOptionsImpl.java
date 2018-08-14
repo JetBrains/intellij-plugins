@@ -26,6 +26,7 @@ class JpsAndroidPackagingOptionsImpl extends JpsAirPackagingOptionsBase<JpsAndro
     super(original);
   }
 
+  @Override
   @NotNull
   public JpsAndroidPackagingOptionsImpl createCopy() {
     return new JpsAndroidPackagingOptionsImpl(this);
@@ -71,6 +72,7 @@ class JpsAndroidPackagingOptionsImpl extends JpsAirPackagingOptionsBase<JpsAndro
       super("android packaging options");
     }
 
+    @Override
     @NotNull
     public JpsAndroidPackagingOptions create() {
       return new JpsAndroidPackagingOptionsImpl();

@@ -34,6 +34,7 @@ public class Component extends ParameterReceiverElement implements Externalizabl
   /**
    * {@inheritDoc}
    */
+  @Override
   public boolean allowsTemplate() {
     return true;
   }
@@ -41,6 +42,7 @@ public class Component extends ParameterReceiverElement implements Externalizabl
   /**
    * {@inheritDoc}
    */
+  @Override
   public IResource[] getTemplate() {
     if (_templateCache != null && checkAllValidResources(_templateCache)) {
       return _templateCache;
@@ -70,6 +72,7 @@ public class Component extends ParameterReceiverElement implements Externalizabl
     return _templateCache;
   }
 
+  @Override
   public String getTemplateRepresentation(String namespacePrefix) throws Exception {
     return ExternalizeToTemplateChain.getInstance().externalize(this, namespacePrefix);
   }

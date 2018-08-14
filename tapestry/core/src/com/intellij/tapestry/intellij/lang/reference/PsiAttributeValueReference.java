@@ -13,6 +13,7 @@ public class PsiAttributeValueReference extends PsiReferenceBase<XmlAttributeVal
     _bindElement = bindElement;
   }
 
+  @Override
   @Nullable
   public PsiElement resolve() {
     return _bindElement;

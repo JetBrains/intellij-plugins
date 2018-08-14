@@ -16,18 +16,22 @@ public class SetupFlexModuleWizardStep extends ModuleWizardStep {
     myForm = new FlexModuleWizardForm();
   }
 
+  @Override
   public JComponent getComponent() {
     return myForm.getMainPanel();
   }
 
+  @Override
   public void updateDataModel() {
     myForm.applyTo(myModuleBuilder);
   }
 
+  @Override
   public boolean validate() throws ConfigurationException {
     return myForm.validate();
   }
 
+  @Override
   public String getHelpId() {
     return "reference.dialogs.new.project.fromScratch.flex";
   }

@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class JSGenerateSetUpMethodAction extends GenerateFlexUnitMethodActionBase {
 
+  @Override
   protected void buildTemplate(final Template template, final JSClass jsClass) {
     if (JSInheritanceUtil
           .findMember("setUp", jsClass, JSInheritanceUtil.SearchedMemberType.Methods, JSFunction.FunctionKind.SIMPLE, true) != null) {
@@ -25,6 +26,7 @@ public class JSGenerateSetUpMethodAction extends GenerateFlexUnitMethodActionBas
     }
   }
 
+  @Override
   protected boolean isApplicableForMemberContainer(final @NotNull PsiElement jsClass, final PsiFile psiFile, final @NotNull Editor editor) {
     return jsClass instanceof JSClass && super.isApplicableForMemberContainer(jsClass, psiFile, editor) && ((JSClass)jsClass).findFunctionByName("setUp") == null;
   }

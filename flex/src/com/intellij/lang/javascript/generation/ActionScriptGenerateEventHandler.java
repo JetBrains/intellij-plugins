@@ -52,18 +52,22 @@ import java.text.MessageFormat;
 
 public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
 
+  @Override
   protected String getTitleKey() {
     return ""; // not used in this action
   }
 
+  @Override
   protected BaseCreateMembersFix createFix(final PsiElement jsClass) {
     return new GenerateEventHandlerFix((JSClass)jsClass);
   }
 
+  @Override
   protected boolean collectCandidatesAndShowDialog() {
     return false;
   }
 
+  @Override
   protected boolean canHaveEmptySelectedElements() {
     return true;
   }
@@ -247,6 +251,7 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
     }
 
     // called outside of write action - required for class chooser
+    @Override
     public void beforeInvoke(@NotNull final Project project, final Editor editor, final PsiFile psiFile) {
       // keep consistency with CreateEventHandlerIntention.isAvailable()
 
@@ -298,6 +303,7 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
       }
     }
 
+    @Override
     public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
       if (userCancelled) return;
       final PsiElement referenceElement = insertEventHandlerReference(editor, file);
@@ -538,14 +544,17 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
         }
       }
 
+      @Override
       public Result calculateResult(ExpressionContext context) {
         return myResult;
       }
 
+      @Override
       public Result calculateQuickResult(ExpressionContext context) {
         return myResult;
       }
 
+      @Override
       public LookupElement[] calculateLookupItems(ExpressionContext context) {
         return myLookupItems;
       }

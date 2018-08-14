@@ -31,6 +31,7 @@ public class PropResolver extends AbstractValueResolver {
             new SingleMethodResolver(),
             new SinglePropertyResolver()});
 
+    @Override
     public boolean execute(Context context) throws Exception {
         String prefix = getPrefix(((ValueResolverContext) context).getValue(), ((ValueResolverContext) context).getDefaultPrefix());
 

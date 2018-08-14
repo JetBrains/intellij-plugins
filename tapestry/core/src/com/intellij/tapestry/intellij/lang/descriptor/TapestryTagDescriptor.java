@@ -39,6 +39,7 @@ public class TapestryTagDescriptor extends BasicTapestryTagDescriptor {
     myMixins = mixins;
   }
 
+  @Override
   public String getDefaultName() {
     Library library = myComponent.getLibrary();
     String name = myComponent.getName().toLowerCase().replace('/', '.');
@@ -48,6 +49,7 @@ public class TapestryTagDescriptor extends BasicTapestryTagDescriptor {
     return getPrefixWithColon() + name;
   }
 
+  @Override
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
     return context != null
            ? DescriptorUtil.getAttributeDescriptors(context)
@@ -63,6 +65,7 @@ public class TapestryTagDescriptor extends BasicTapestryTagDescriptor {
     return result.toArray(XmlAttributeDescriptor.EMPTY);
   }
 
+  @Override
   public XmlAttributeDescriptor getAttributeDescriptor(@NonNls String attributeName, @Nullable XmlTag context) {
     return context != null
            ? DescriptorUtil.getAttributeDescriptor(attributeName, context)

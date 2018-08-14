@@ -36,6 +36,7 @@ public class StrutsFilesTree extends CheckboxTreeBase {
 
   public StrutsFilesTree() {
     super(new CheckboxTreeCellRendererBase() {
+      @Override
       public void customizeRenderer(final JTree tree,
                                     final Object value,
                                     final boolean selected,

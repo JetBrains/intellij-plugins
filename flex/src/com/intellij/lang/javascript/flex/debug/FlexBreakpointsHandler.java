@@ -121,6 +121,7 @@ public class FlexBreakpointsHandler {
       super(breakpointTypeClass);
     }
 
+    @Override
     public void registerBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
       final XSourcePosition position = breakpoint.getSourcePosition();
       if (position != null) {
@@ -183,6 +184,7 @@ public class FlexBreakpointsHandler {
       return false;
     }
 
+    @Override
     public void unregisterBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint, final boolean temporary) {
       final XSourcePosition position = breakpoint.getSourcePosition();
       if (position != null && isValidSourceBreakpoint(position)) {

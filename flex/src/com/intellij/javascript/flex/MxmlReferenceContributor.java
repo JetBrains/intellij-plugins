@@ -71,10 +71,12 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
       XmlPatterns.xmlAttributeValue().withLocalName(or(string().endsWith(STYLE_NAME_ATTR_SUFFIX),
                                                        string().equalTo(STYLE_NAME_ATTR)))
         .and(new FilterPattern(new ElementFilter() {
+          @Override
           public boolean isAcceptable(final Object element, final PsiElement context) {
             return !((PsiElement)element).textContains('{');
           }
 
+          @Override
           public boolean isClassAcceptable(final Class hintClass) {
             return true;
           }
@@ -131,6 +133,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
     });
 
     XmlUtil.registerXmlAttributeValueReferenceProvider(registrar, null, new ElementFilter() {
+      @Override
       public boolean isAcceptable(final Object element, final PsiElement context) {
         PsiElement parent = ((PsiElement)element).getParent();
         if (!(parent instanceof XmlAttribute) || !((XmlAttribute)parent).isNamespaceDeclaration()) {
@@ -145,10 +148,12 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
         return true;
       }
 
+      @Override
       public boolean isClassAcceptable(final Class hintClass) {
         return true;
       }
     }, true, new PsiReferenceProvider() {
+      @Override
       @NotNull
       public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         final String trimmedText = StringUtil.unquoteString(element.getText());
@@ -166,6 +171,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
       new ScopeFilter(new ParentElementFilter(new AndFilter(XmlTagFilter.INSTANCE, new TagNameFilter(BINDING_TAG_NAME),
                                                             new NamespaceFilter(JavaScriptSupportLoader.LANGUAGE_NAMESPACES)), 2)),
       new PsiReferenceProvider() {
+        @Override
         @NotNull
         public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
                                                      @NotNull final ProcessingContext context) {
@@ -178,10 +184,12 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
 
     XmlUtil.registerXmlAttributeValueReferenceProvider(registrar, new String[]{FlexReferenceContributor.SOURCE_ATTR_NAME}, new ScopeFilter(
       new ParentElementFilter(new AndFilter(XmlTagFilter.INSTANCE, new ElementFilterBase<PsiElement>(PsiElement.class) {
+        @Override
         protected boolean isElementAcceptable(final PsiElement element, final PsiElement context) {
           return true;
         }
       }), 2)), new PsiReferenceProvider() {
+      @Override
       @NotNull
       public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
         final XmlAttribute attribute = (XmlAttribute)element.getParent();
@@ -290,6 +298,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
         return JavaScriptSupportLoader.isFlexMxmFile(xmlAttribute.getContainingFile());
       }
     }), new PsiReferenceProvider() {
+      @Override
       @NotNull
       public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
         String attrName = ((XmlAttribute)element).getLocalName();
@@ -301,10 +310,12 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
 
     XmlUtil.registerXmlTagReferenceProvider(
       registrar, null, new ElementFilterBase<XmlTag>(XmlTag.class) {
+        @Override
         protected boolean isElementAcceptable(final XmlTag element, final PsiElement context) {
           return element.getName().indexOf('.') != -1;
         }
       }, false, new PsiReferenceProvider() {
+        @Override
         @NotNull
         public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
           final String name = ((XmlTag)element).getName();
@@ -347,6 +358,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
       new String[]{"basedOn", "fromState", "toState", FlexStateElementNames.NAME, FlexStateElementNames.STATE_GROUPS},
       new ScopeFilter(new ParentElementFilter(new AndFilter(XmlTagFilter.INSTANCE, new NamespaceFilter(MxmlJSClass.MXML_URIS)), 2)),
       new PsiReferenceProvider() {
+        @Override
         @NotNull
         public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
           final PsiElement parent = element.getParent();
@@ -401,6 +413,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
       new String[]{FlexStateElementNames.EXCLUDE_FROM, FlexStateElementNames.INCLUDE_IN},
       new ScopeFilter(new ParentElementFilter(XmlTagFilter.INSTANCE, 2)),
       new PsiReferenceProvider() {
+        @Override
         @NotNull
         public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
                                                      @NotNull final ProcessingContext context) {
@@ -419,6 +432,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
         )
       ),
       new PsiReferenceProvider() {
+        @Override
         @NotNull
         public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
                                                      @NotNull final ProcessingContext context) {
@@ -429,6 +443,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
 
   private static PsiReferenceProvider createReferenceProviderForTagOrAttributeExpectingJSClass(final Function<PsiReference, LocalQuickFix[]> quickFixProvider) {
     return new PsiReferenceProvider() {
+      @Override
       @NotNull
       public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
                                                    @NotNull final ProcessingContext context) {

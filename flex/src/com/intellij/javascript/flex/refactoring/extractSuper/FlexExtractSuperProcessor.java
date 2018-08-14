@@ -537,11 +537,13 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
   }
 
   private class JSExtractInterfaceUsageViewDescriptor extends UsageViewDescriptorAdapter {
+    @Override
     @NotNull
     public PsiElement[] getElements() {
       return new PsiElement[]{mySourceClass};
     }
 
+    @Override
     public String getProcessedElementsHeader() {
       return RefactoringBundle.message(myClassNotInterface ? "members.to.form.superclass" : "members.to.form.interface");
     }

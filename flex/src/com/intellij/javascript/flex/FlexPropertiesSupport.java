@@ -22,6 +22,7 @@ import java.util.List;
 
 public class FlexPropertiesSupport {
   private static final BundleNameEvaluator MY_BUNDLE_NAME_EVALUATOR = new BundleNameEvaluator() {
+    @Override
     public String evaluateBundleName(PsiFile psiFile) {
       final VirtualFile virtualFile = psiFile == null ? null : psiFile.getOriginalFile().getVirtualFile();
       if (virtualFile != null && psiFile instanceof PropertiesFile) {
@@ -92,11 +93,13 @@ public class FlexPropertiesSupport {
       super(element, soft);
     }
 
+    @Override
     @NotNull
     public String getUnresolvedMessagePattern() {
       return "Cannot resolve property bundle";
     }
 
+    @Override
     @Nullable
     public String evaluateBundleName(final PsiFile psiFile) {
       return MY_BUNDLE_NAME_EVALUATOR.evaluateBundleName(psiFile);

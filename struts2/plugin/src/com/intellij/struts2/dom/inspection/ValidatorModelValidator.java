@@ -55,6 +55,7 @@ public class ValidatorModelValidator extends ValidatorBase {
           StrutsBundle.message("inspections.validator.model.validator.progress"));
   }
 
+  @Override
   public Collection<VirtualFile> getFilesToProcess(final Project project, final CompileContext context) {
     final PsiManager psiManager = PsiManager.getInstance(project);
     final ValidatorManager validatorManager = ValidatorManager.getInstance(project);

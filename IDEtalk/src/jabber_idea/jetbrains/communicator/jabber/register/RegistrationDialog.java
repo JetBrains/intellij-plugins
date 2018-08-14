@@ -48,26 +48,31 @@ public class RegistrationDialog extends IdeaDialog implements TextAcceptor {
     init();
   }
 
+  @Override
   protected void init() {
     setModal(false);
     setTitle("IDEtalk: Jabber Server Connection Settings");
     super.init();
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     myRegistrationForm = new RegistrationForm(myFacade, myIdeFacade, this);
     return myRegistrationForm.getComponent();
   }
 
+  @Override
   public JComponent getPreferredFocusedComponent() {
     return myRegistrationForm.getPreferredFocusedComponent();
   }
 
+  @Override
   public void doCancelAction() {
     myRegistrationForm.cancel();
     super.doCancelAction();
   }
 
+  @Override
   protected void doOKAction() {
     myRegistrationForm.commit();
     if (myFacade.isConnectedAndAuthenticated()) {
@@ -75,10 +80,12 @@ public class RegistrationDialog extends IdeaDialog implements TextAcceptor {
     }
   }
 
+  @Override
   public void setText(String text) {
     myErrorLabel.setText(text);
   }
 
+  @Override
   protected JComponent createSouthPanel() {
     JPanel result = new JPanel(new BorderLayout());
     result.add(super.createSouthPanel());

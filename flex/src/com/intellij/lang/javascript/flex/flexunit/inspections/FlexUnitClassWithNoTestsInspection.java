@@ -12,17 +12,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class FlexUnitClassWithNoTestsInspection extends FlexUnitClassInspectionBase {
 
+  @Override
   @Nls
   @NotNull
   public String getDisplayName() {
     return FlexBundle.message("flexunit.inspection.testclasswithnotests.displayname");
   }
 
+  @Override
   @NotNull
   public String getShortName() {
     return "FlexUnitClassWithNoTestsInspection";
   }
 
+  @Override
   protected void visitPotentialTestClass(JSClass aClass, @NotNull ProblemsHolder holder, FlexUnitSupport support) {
     if (!support.isTestClass(aClass, false)) return;
 

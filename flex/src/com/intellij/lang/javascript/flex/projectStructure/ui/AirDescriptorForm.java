@@ -22,6 +22,7 @@ public class AirDescriptorForm {
 
   public AirDescriptorForm(final Project project, final Runnable descriptorCreator) {
     final ActionListener listener = new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         updateControls();
         if (myCustomDescriptorRadioButton.isSelected()) {
@@ -36,6 +37,7 @@ public class AirDescriptorForm {
     myCustomDescriptorTextWithBrowse.addBrowseFolderListener(null, null, project, FlexUtils.createFileChooserDescriptor("xml"));
 
     myCreateDescriptorButton.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         descriptorCreator.run();
       }

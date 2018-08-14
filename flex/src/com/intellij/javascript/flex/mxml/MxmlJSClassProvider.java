@@ -33,11 +33,14 @@ public class MxmlJSClassProvider extends XmlBackedJSClassProvider {
   private static final Key<CachedValue<XmlTag[]>> CHILD_INLINE_COMPONENTS_TAGS_KEY = Key.create("child.inline.components.tags");
   private static final UserDataCache<CachedValue<XmlTag[]>, XmlTag, Object> ourChildComponentsTagsCache =
     new UserDataCache<CachedValue<XmlTag[]>, XmlTag, Object>() {
+      @Override
       protected CachedValue<XmlTag[]> compute(final XmlTag tag, final Object p) {
         return CachedValuesManager.getManager(tag.getProject()).createCachedValue(new CachedValueProvider<XmlTag[]>() {
+          @Override
           public Result<XmlTag[]> compute() {
             final Collection<XmlTag> result = new ArrayList<>();
             tag.processElements(new PsiElementProcessor() {
+              @Override
               public boolean execute(@NotNull PsiElement element) {
                 if (element instanceof XmlTag) {
                   XmlTag tag = (XmlTag)element;

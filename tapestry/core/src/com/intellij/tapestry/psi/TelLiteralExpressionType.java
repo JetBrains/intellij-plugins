@@ -1,7 +1,10 @@
 package com.intellij.tapestry.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.*;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiPrimitiveType;
+import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,6 +35,7 @@ public class TelLiteralExpressionType extends TelCompositeElementType {
       super(node);
     }
 
+    @Override
     public PsiType getPsiType() {
       if (myPrimitiveType != null) {
         return myPrimitiveType;

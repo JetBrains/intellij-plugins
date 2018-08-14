@@ -256,6 +256,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
     for (int i = 0; i < getTemplate().length; i++) {
 
       getTemplate()[i].accept(new CoreXmlRecursiveElementVisitor() {
+        @Override
         public void visitTag(XmlTag tag) {
           if (!ComponentUtils._isComponentTag(tag)) return;
           boolean hasAttributeType = false;
@@ -314,6 +315,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
       final String _resource = getTemplate()[i].getName();
 
       getTemplate()[i].accept(new CoreXmlRecursiveElementVisitor() {
+        @Override
         public void visitTag(XmlTag tag) {
           if (ComponentUtils._isComponentTag(tag)) {
 
@@ -385,10 +387,12 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
     return _elementType;
   }
 
+  @Override
   public String getDocumentation() throws Exception {
     return DocumentationGenerationChain.getInstance().generate(this);
   }
 
+  @Override
   public String getClassRepresentation(IJavaClassType targetClass) throws Exception {
     return ExternalizeToClassChain.getInstance().externalize(this, targetClass);
   }

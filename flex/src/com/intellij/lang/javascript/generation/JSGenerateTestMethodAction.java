@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.validation.fixes.BaseCreateFix;
 public class JSGenerateTestMethodAction extends GenerateFlexUnitMethodActionBase {
 
 
+  @Override
   protected void buildTemplate(final Template template, final JSClass jsClass) {
     template.addTextSegment("[Test]\npublic function test");
     template.addVariable(new BaseCreateFix.MyExpression("Name"), true);
