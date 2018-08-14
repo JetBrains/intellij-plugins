@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.UI.editorActions.typedHandlers;
 
 import com.intellij.codeInsight.generation.CommenterDataHolder;
@@ -115,11 +101,13 @@ public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlComme
     return offset;
   }
 
+  @Override
   public MyCommenterData createLineCommentingState(int startLine, int endLine, @NotNull Document document, @NotNull PsiFile file) {
     int lineStartOffset = document.getLineStartOffset(startLine);
     return new MyCommenterData(isOffsetWithinCfscript(lineStartOffset, document, file), lineStartOffset);
   }
 
+  @Override
   public MyCommenterData createBlockCommentingState(int selectionStart,
                                                     int selectionEnd,
                                                     @NotNull Document document,
@@ -127,6 +115,7 @@ public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlComme
     return new MyCommenterData(isOffsetWithinCfscript(selectionStart, document, file), selectionStart);
   }
 
+  @Override
   public void commentLine(int line, int offset, @NotNull Document document, @NotNull MyCommenterData data) {
     final int originalLineEndOffset = document.getLineEndOffset(line);
     offset = CharArrayUtil.shiftForward(document.getCharsSequence(), offset, " \t");
@@ -139,6 +128,7 @@ public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlComme
     }
   }
 
+  @Override
   public void uncommentLine(int line, int offset, @NotNull Document document, @NotNull MyCommenterData data) {
     int rangeEnd = document.getLineEndOffset(line);
 
@@ -155,6 +145,7 @@ public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlComme
       offset + commentPrefix.length());
   }
 
+  @Override
   public boolean isLineCommented(int line, int offset, @NotNull Document document, @NotNull MyCommenterData data) {
     int rangeEnd = document.getLineEndOffset(line);
 
@@ -182,11 +173,13 @@ public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlComme
     return commented;
   }
 
+  @Override
   public String getCommentPrefix(int line, @NotNull Document document, @NotNull MyCommenterData data) {
     return data.getLineCommentPrefix();
   }
 
   // TODO: to uncomment all commented blocks withing selection
+  @Override
   public TextRange getBlockCommentRange(int selectionStart, int selectionEnd, @NotNull Document document, @NotNull MyCommenterData data) {
     String commentSuffix = data.getBlockCommentSuffix();
     String commentPrefix = data.getBlockCommentPrefix();
@@ -205,14 +198,17 @@ public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlComme
     return null;
   }
 
+  @Override
   public String getBlockCommentPrefix(int selectionStart, @NotNull Document document, @NotNull MyCommenterData data) {
     return data.getBlockCommentPrefix();
   }
 
+  @Override
   public String getBlockCommentSuffix(int selectionEnd, @NotNull Document document, @NotNull MyCommenterData data) {
     return data.getBlockCommentSuffix();
   }
 
+  @Override
   public void uncommentBlockComment(int startOffset, int endOffset, Document document, MyCommenterData data) {
     String commentSuffix = data.getBlockCommentSuffix();
     String commentPrefix = data.getBlockCommentPrefix();
@@ -236,6 +232,7 @@ public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlComme
     document.deleteString(startOffset, startOffset + commentPrefix.length());
   }
 
+  @Override
   @NotNull
   public TextRange insertBlockComment(int startOffset, int endOffset, Document document, MyCommenterData data) {
     int startLineNumber = document.getLineNumber(startOffset);

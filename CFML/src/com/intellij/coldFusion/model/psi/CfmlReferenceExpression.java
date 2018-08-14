@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -160,6 +148,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
     return false;
   }
 
+  @Override
   @NotNull
   protected ResolveResult[] resolveInner() {
     final String referenceName = getReferenceName();
@@ -170,6 +159,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
     final CfmlVariantsProcessor<ResolveResult> processor = new CfmlVariantsProcessor<ResolveResult>(this, getParent(), referenceName) {
       //Map<String, PsiNamedElement> myVariables = new HashMap<String, PsiNamedElement>();
 
+      @Override
       protected ResolveResult execute(final PsiNamedElement element, final boolean error) {
         return new PsiElementResolveResult(element, false);
       }
@@ -215,11 +205,13 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
     return new ResolveResult[]{results.get(0)};
   }
 
+  @Override
   @NotNull
   protected CfmlReferenceExpression parseReference(String newText) {
     return CfmlPsiUtil.createReferenceExpression(newText, getProject());
   }
 
+  @Override
   protected PsiElement getSeparator() {
     return findChildByType(CfscriptTokenTypes.POINT);
   }
@@ -258,6 +250,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
     return null;
   }
 
+  @Override
   protected PsiElement getReferenceNameElement() {
     PsiElement identifier = findChildByType(CfscriptTokenTypes.IDENTIFIER);
     if (identifier == null) {
@@ -271,11 +264,13 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
     return identifier;
   }
 
+  @Override
   @NotNull
   public Object[] getVariants() {
     final CfmlVariantsProcessor<PsiNamedElement> processor = new CfmlVariantsProcessor<PsiNamedElement>(this, getParent(), null) {
       Set<String> myVariablesNames = new HashSet<>();
 
+      @Override
       protected PsiNamedElement execute(final PsiNamedElement element, final boolean error) {
         if (element instanceof CfmlVariable) {
           if (myVariablesNames.add(element.getName())) {
@@ -323,6 +318,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
     return result.toArray();
   }
 
+  @Override
   public PsiType getPsiType() {
     if (getParent() instanceof CfmlFunctionCallExpression) {
       final PsiType type = ((CfmlFunctionCallExpression)getParent()).getExternalType();

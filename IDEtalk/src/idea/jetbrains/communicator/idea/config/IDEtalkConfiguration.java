@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2006 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea.config;
 
 import com.intellij.openapi.options.Configurable;
@@ -20,7 +6,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import java.util.HashSet;
 import jetbrains.communicator.OptionFlag;
 import jetbrains.communicator.commands.ClearHistoryCommand;
 import jetbrains.communicator.core.IDEtalkOptions;
@@ -35,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -76,6 +62,7 @@ public class IDEtalkConfiguration implements Configurable {
 
     myClearHistory.setEnabled(command.isEnabled());
     myClearHistory.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         command.execute();
         myClearHistory.setEnabled(command.isEnabled());
@@ -88,6 +75,7 @@ public class IDEtalkConfiguration implements Configurable {
     spinner.setModel(new SpinnerNumberModel(value, 0.0, 9999, 1.0));
   }
 
+  @Override
   public void apply() throws ConfigurationException {
     for (Pair<JCheckBox, OptionFlag> option : myFlags) {
       option.getSecond().change(option.getFirst().isSelected());
@@ -103,11 +91,13 @@ public class IDEtalkConfiguration implements Configurable {
     myOptions.setNumber(option, value.doubleValue());
   }
 
+  @Override
   public JComponent createComponent() {
     return myPanel;
   }
 
 
+  @Override
   public boolean isModified() {
     for (Pair<JCheckBox, OptionFlag> option : myFlags) {
       if (option.getSecond().isSet() ^ option.getFirst().isSelected()) {
@@ -125,6 +115,7 @@ public class IDEtalkConfiguration implements Configurable {
   }
 
 
+  @Override
   public void reset() {
     for (Pair<JCheckBox, OptionFlag> option : myFlags) {
       option.getFirst().setSelected(option.getSecond().isSet());
@@ -134,6 +125,7 @@ public class IDEtalkConfiguration implements Configurable {
     setTimoutModel(myTimeoutXA, IDEtalkOptions.TIMEOUT_XA_MIN, UserActivityMonitor.EXTENDED_AWAY_MINS);
   }
 
+  @Override
   public String getDisplayName() {
     //noinspection HardCodedStringLiteral
     return "IDEtalk Options";

@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.info;
 
 import com.intellij.openapi.util.text.StringUtil;
@@ -52,11 +38,13 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
 
   private int myState;
 
+  @Override
   public void startDocument() throws SAXException {
     myTags = new HashMap<>();
     myFunctions = new HashMap<>();
   }
 
+  @Override
   public void endDocument() throws SAXException {
   }
 
@@ -79,6 +67,7 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
     }
   }
 
+  @Override
   public void startElement(String namespaceURI, String localName, String qName,
                            Attributes attr) throws SAXException {
     if (localName.equals("tags")) {
@@ -148,6 +137,7 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
     }
   }
 
+  @Override
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
     if (localName.equals("tag") && myCurrentTag != null) {
       myTags.put(myCurrentTag.getName(), myCurrentTag);

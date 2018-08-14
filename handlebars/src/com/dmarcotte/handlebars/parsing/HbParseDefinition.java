@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.dmarcotte.handlebars.parsing;
 
 import com.dmarcotte.handlebars.psi.HbOpenPartialBlockMustacheImpl;
@@ -17,34 +18,41 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 
 public class HbParseDefinition implements ParserDefinition {
+  @Override
   @NotNull
   public Lexer createLexer(Project project) {
     return new HbLexer();
   }
 
+  @Override
   public PsiParser createParser(Project project) {
     return new HbParser();
   }
 
+  @Override
   public IFileElementType getFileNodeType() {
     return HbTokenTypes.FILE;
   }
 
+  @Override
   @NotNull
   public TokenSet getWhitespaceTokens() {
     return HbTokenTypes.WHITESPACES;
   }
 
+  @Override
   @NotNull
   public TokenSet getCommentTokens() {
     return HbTokenTypes.COMMENTS;
   }
 
+  @Override
   @NotNull
   public TokenSet getStringLiteralElements() {
     return HbTokenTypes.STRING_LITERALS;
   }
 
+  @Override
   @NotNull
   public PsiElement createElement(ASTNode node) {
     final IElementType elementType = node.getElementType();
@@ -127,10 +135,12 @@ public class HbParseDefinition implements ParserDefinition {
     return new HbPsiElementImpl(node);
   }
 
+  @Override
   public PsiFile createFile(FileViewProvider viewProvider) {
     return new HbPsiFile(viewProvider);
   }
 
+  @Override
   public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
     return SpaceRequirements.MAY;
   }

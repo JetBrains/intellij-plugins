@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.dmarcotte.handlebars;
 
 import com.dmarcotte.handlebars.parsing.HbRawLexer;
@@ -19,6 +20,7 @@ public class HbHighlighter extends SyntaxHighlighterBase {
   private static final Map<IElementType, TextAttributesKey> keys1;
   private static final Map<IElementType, TextAttributesKey> keys2;
 
+  @Override
   @NotNull
   public Lexer getHighlightingLexer() {
     return new HbRawLexer();
@@ -92,6 +94,7 @@ public class HbHighlighter extends SyntaxHighlighterBase {
     keys1.put(HbTokenTypes.ESCAPE_CHAR, ESCAPE);
   }
 
+  @Override
   @NotNull
   public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
     return pack(keys1.get(tokenType), keys2.get(tokenType));
