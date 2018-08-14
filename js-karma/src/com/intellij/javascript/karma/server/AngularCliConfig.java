@@ -21,14 +21,19 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.MultiMap;
 import com.intellij.webcore.util.JsonUtil;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class AngularCliConfig {
@@ -62,23 +67,28 @@ public class AngularCliConfig {
     if (!myConfig.isValid()) return null;
     String text = JSLinterConfigFileUtil.loadActualText(myConfig);
     JsonObject rootObj = new JsonParser().parse(text).getAsJsonObject();
+    String defaultProject = JsonUtil.getChildAsString(rootObj, DEFAULT_PROJECT);
     JsonObject projectsObj = JsonUtil.getChildAsObject(rootObj, "projects");
     if (projectsObj != null && file != null) {
-      Map<VirtualFile, String> projectRootToNameMap = getProjectRootToNameMap(projectsObj);
+      MultiMap<VirtualFile, String> projectRootToNameMap = getProjectRootToNameMap(projectsObj);
       VirtualFile nearestRoot = findNearestRoot(file, projectRootToNameMap.keySet());
       if (nearestRoot != null) {
-        return projectRootToNameMap.get(nearestRoot);
+        Collection<String> projects = projectRootToNameMap.get(nearestRoot);
+        if (projects.contains(defaultProject) && isSuitableProject(defaultProject)) {
+          return defaultProject;
+        }
+        String suitable = projects.stream().filter(AngularCliConfig::isSuitableProject).findFirst().orElse(null);
+        return ObjectUtils.notNull(suitable, Objects.requireNonNull(ContainerUtil.getFirstItem(projects)));
       }
     }
     LOG.info("Cannot find project containing file, fallback to default project");
-    String defaultProject = JsonUtil.getChildAsString(rootObj, DEFAULT_PROJECT);
     if (defaultProject != null) return defaultProject;
     return projectsObj != null ? ContainerUtil.getFirstItem(projectsObj.keySet()) : null;
   }
 
   @NotNull
-  private Map<VirtualFile, String> getProjectRootToNameMap(@NotNull JsonObject projectsObj) {
-    Map<VirtualFile, String> projectRootToNameMap = ContainerUtil.newHashMap();
+  private MultiMap<VirtualFile, String> getProjectRootToNameMap(@NotNull JsonObject projectsObj) {
+    MultiMap<VirtualFile, String> projectRootToNameMap = MultiMap.create();
     for (Map.Entry<String, JsonElement> entry : projectsObj.entrySet()) {
       JsonObject projectObj = JsonUtil.getAsObject(entry.getValue());
       if (projectObj == null) {
@@ -87,7 +97,7 @@ public class AngularCliConfig {
       else {
         VirtualFile root = getProjectRoot(projectObj);
         if (root != null) {
-          projectRootToNameMap.put(root, entry.getKey());
+          projectRootToNameMap.putValue(root, entry.getKey());
         }
       }
     }
@@ -110,6 +120,11 @@ public class AngularCliConfig {
       parent = parent.getParent();
     }
     return null;
+  }
+
+  @Contract("null -> false")
+  private static boolean isSuitableProject(@Nullable String projectName) {
+    return projectName != null && !projectName.endsWith("-e2e");
   }
 
   /**
