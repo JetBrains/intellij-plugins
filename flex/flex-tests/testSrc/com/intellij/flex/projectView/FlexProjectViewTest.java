@@ -8,6 +8,7 @@ import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.projectView.BaseProjectViewTestCase;
 import com.intellij.testFramework.PlatformTestUtil;
+import org.jetbrains.annotations.NotNull;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
@@ -44,6 +45,7 @@ public class FlexProjectViewTest extends BaseProjectViewTestCase {
     // no JDK
   }
 
+  @NotNull
   @Override
   protected String getTestDirectoryName() {
     String testName = getTestName(false);
