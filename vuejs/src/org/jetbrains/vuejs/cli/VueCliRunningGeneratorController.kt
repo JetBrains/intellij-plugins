@@ -15,8 +15,7 @@ package org.jetbrains.vuejs.cli
 
 import com.intellij.execution.RunManager
 import com.intellij.ide.file.BatchFileChangeListener
-import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration
-import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType
+import com.intellij.javascript.CreateRunConfigurationUtil
 import com.intellij.javascript.nodejs.packageJson.PackageJsonDependenciesExternalUpdateManager
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.lang.javascript.buildTools.npm.NpmScriptsUtil
@@ -153,7 +152,7 @@ class VueCliRunningGeneratorController internal constructor(generationLocation: 
           doneCallback.run()
           JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
           setupWebpackConfigFile(project)
-          createJsDebugConfiguration(project)
+          CreateRunConfigurationUtil.debugConfiguration(project, 8080)
           createNpmRunConfiguration(project)
           LocalFileSystem.getInstance().refreshIoFiles(listOf(generationLocation.toFile()), true, true, null)
         }
@@ -173,14 +172,6 @@ class VueCliRunningGeneratorController internal constructor(generationLocation: 
     if (path != null && File(path).isFile) {
       WebPackConfigManager.instance(project).loadState(WebPackConfiguration(path))
     }
-  }
-
-  private fun createJsDebugConfiguration(project: Project) {
-    val runManager = RunManager.getInstance(project)
-    val settings = runManager.createRunConfiguration("Debug Application", JavascriptDebugConfigurationType.getTypeInstance().factory)
-    (settings.configuration as JavaScriptDebugConfiguration).uri = "http://localhost:8080"
-    runManager.addConfiguration(settings)
-    runManager.selectedConfiguration = settings
   }
 
   private fun createNpmRunConfiguration(project: Project) {
