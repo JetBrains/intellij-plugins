@@ -1,19 +1,22 @@
 package name.kropp.intellij.makefile
 
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ui.componentsList.components.*
-import com.intellij.openapi.wm.ToolWindow
-import com.intellij.openapi.wm.ToolWindowFactory
+import com.intellij.execution.*
+import com.intellij.execution.actions.*
+import com.intellij.execution.impl.*
+import com.intellij.execution.runners.*
+import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.impl.*
+import com.intellij.openapi.project.*
+import com.intellij.openapi.ui.*
+import com.intellij.openapi.wm.*
 import com.intellij.ui.*
-import com.intellij.ui.treeStructure.Tree
-import com.intellij.util.enumeration.ArrayEnumeration
-import com.intellij.util.enumeration.EmptyEnumeration
+import com.intellij.ui.treeStructure.*
+import com.intellij.util.enumeration.*
 import name.kropp.intellij.makefile.psi.*
+import java.awt.*
 import java.util.*
-import javax.swing.Icon
-import javax.swing.JTree
-import javax.swing.tree.DefaultTreeModel
-import javax.swing.tree.TreeNode
+import javax.swing.*
+import javax.swing.tree.*
 
 class MakeToolWindowFactory : ToolWindowFactory {
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
@@ -27,12 +30,47 @@ class MakeToolWindowFactory : ToolWindowFactory {
 
     val model = DefaultTreeModel(MakefileRootNode(files.toTypedArray()))
 
-    toolWindow.component.add(ScrollPaneFactory.createScrollPane(Tree(model).apply {
+    val panel = SimpleToolWindowPanel(true)
+
+    val tree = Tree(model).apply {
       cellRenderer = MakefileCellRenderer()
-    }))
+      selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
+    }
+    panel.add(ScrollPaneFactory.createScrollPane(tree))
+
+    val toolBarPanel = JPanel(GridLayout())
+
+    val actionGroup = DefaultActionGroup()
+    val runManager = RunManagerImpl.getInstanceImpl(project)
+    actionGroup.add(MakefileRunTargetAction2(tree, runManager))
+    toolBarPanel.add(ActionManager.getInstance().createActionToolbar("MakeToolWindowToolbar", actionGroup, true).component)
+
+    panel.setToolbar(toolBarPanel)
+
+    toolWindow.component.add(panel)
   }
 }
 
+
+class MakefileRunTargetAction2(private val tree: Tree, private val runManager: RunManagerImpl) : AnAction("", "Run target", MakefileTargetIcon) {
+  override fun actionPerformed(event: AnActionEvent) {
+    val selected = tree.getSelectedNodes(MakefileTargetNode::class.java, {true})
+    if (selected.any()) {
+      val target = selected.first().target
+
+      val dataContext = SimpleDataContext.getSimpleContext(Location.DATA_KEY.name, PsiLocation(target), event.dataContext)
+
+      val context = ConfigurationContext.getFromContext(dataContext)
+
+      val producer = MakefileRunConfigurationFactory(MakefileRunConfigurationType())
+      val configuration = RunnerAndConfigurationSettingsImpl(runManager, producer.createConfigurationFromTarget(target) ?: return)
+
+      (context.runManager as RunManagerEx).setTemporaryConfiguration(configuration)
+      ExecutionUtil.runConfiguration(configuration, ExecutorRegistry.getInstance().registeredExecutors.first())
+
+    }
+  }
+}
 class MakefileCellRenderer : ColoredTreeCellRenderer() {
   override fun customizeCellRenderer(tree: JTree, value: Any, selected: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean) {
     value as MakefileTreeNode
@@ -98,7 +136,7 @@ class MakefileFileNode(name: String, private val targets: Array<MakefileTargetNo
   override fun getAllowsChildren() = true
 }
 
-class MakefileTargetNode(private val target: MakefileTarget) : MakefileTreeNode(target.name ?: "") {
+class MakefileTargetNode(val target: MakefileTarget) : MakefileTreeNode(target.name ?: "") {
   override val icon: Icon
     get() = MakefileTargetIcon
 
