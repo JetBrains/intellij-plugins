@@ -44,5 +44,4 @@ public class Angular2LangUtil {
   public static boolean isDirective(@NotNull String decoratorName) {
     return "Directive".equals(decoratorName) || "Component".equals(decoratorName);
   }
-
 }

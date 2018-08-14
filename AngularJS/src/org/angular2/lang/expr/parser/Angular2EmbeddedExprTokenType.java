@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.expr.parser;
 
 import com.intellij.embedding.EmbeddingElementType;
@@ -34,8 +22,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiConsumer;
 
-public class Angular2EmbeddedExprTokenType extends IElementType implements EmbeddingElementType, ICustomParsingType, ILazyParseableElementTypeBase,
-                                                                           ILightLazyParseableElementType {
+public class Angular2EmbeddedExprTokenType extends IElementType
+  implements EmbeddingElementType, ICustomParsingType, ILazyParseableElementTypeBase,
+             ILightLazyParseableElementType {
 
   public static final Angular2EmbeddedExprTokenType ACTION_EXPR = new Angular2EmbeddedExprTokenType(
     "NG:ACTION_EXPR", Angular2EmbeddedExprTokenType.ExpressionType.ACTION);
@@ -59,7 +48,9 @@ public class Angular2EmbeddedExprTokenType extends IElementType implements Embed
     myTemplateKey = null;
   }
 
-  private Angular2EmbeddedExprTokenType(@NotNull @NonNls String debugName, @NotNull ExpressionType expressionType, @Nullable @NonNls String templateKey) {
+  private Angular2EmbeddedExprTokenType(@NotNull @NonNls String debugName,
+                                        @NotNull ExpressionType expressionType,
+                                        @Nullable @NonNls String templateKey) {
     super(debugName, Angular2Language.INSTANCE, false);
     myExpressionType = expressionType;
     myTemplateKey = templateKey;
@@ -105,8 +96,10 @@ public class Angular2EmbeddedExprTokenType extends IElementType implements Embed
 
     PsiBuilder builder =
       chameleon instanceof ASTNode
-      ? PsiBuilderFactory.getInstance().createBuilder(project, (ASTNode)chameleon, lexer, Angular2Language.INSTANCE, chars)
-      : PsiBuilderFactory.getInstance().createBuilder(project, (LighterLazyParseableNode)chameleon, lexer, Angular2Language.INSTANCE, chars);
+      ? PsiBuilderFactory.getInstance().createBuilder(project, (ASTNode)chameleon, lexer,
+                                                      Angular2Language.INSTANCE, chars)
+      : PsiBuilderFactory.getInstance().createBuilder(project, (LighterLazyParseableNode)chameleon,
+                                                      lexer, Angular2Language.INSTANCE, chars);
 
     myExpressionType.parse(builder, this, myTemplateKey);
     return builder;
@@ -130,11 +123,11 @@ public class Angular2EmbeddedExprTokenType extends IElementType implements Embed
       if (this == TEMPLATE_BINDINGS) {
         assert templateKey != null;
         parser.parseTemplateBindings(root, templateKey);
-      } else {
+      }
+      else {
         myParseMethod.accept(parser, root);
       }
     }
 
   }
-
 }

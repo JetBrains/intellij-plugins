@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.parser;
 
 import com.intellij.lang.ASTNode;
@@ -32,7 +20,8 @@ public interface Angular2HtmlElementTypes extends XmlElementType, Angular2HtmlTo
 
   IElementType EXPANSION_FORM = new Angular2ElementType("NG:EXPANSION_FORM", Angular2HtmlExpansionFormImpl::new);
   IElementType EXPANSION_FORM_CASE = new Angular2ElementType("NG:EXPANSION_FORM_CASE", Angular2HtmlExpansionFormCaseImpl::new);
-  IElementType EXPANSION_FORM_CASE_CONTENT = new Angular2ElementType("NG:EXPANSION_FORM_CASE_CONTENT", Angular2HtmlExpansionFormCaseContentImpl::new);
+  IElementType EXPANSION_FORM_CASE_CONTENT = new Angular2ElementType("NG:EXPANSION_FORM_CASE_CONTENT",
+                                                                     Angular2HtmlExpansionFormCaseContentImpl::new);
 
   IElementType ANIMATION = new Angular2ElementType("NG:ANIMATION", Angular2HtmlAnimationImpl::new);
   IElementType ANIMATION_EVENT = new Angular2ElementType("NG:ANIMATION_EVENT", Angular2HtmlAnimationEventImpl::new);
@@ -57,5 +46,4 @@ public interface Angular2HtmlElementTypes extends XmlElementType, Angular2HtmlTo
       return myClassConstructor.apply(this);
     }
   }
-
 }

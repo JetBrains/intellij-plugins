@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.parser;
 
 import com.intellij.codeInsight.daemon.XmlErrorMessages;
@@ -353,8 +341,9 @@ public class Angular2HtmlParsing extends HtmlParsing {
     if (type == TEMPLATE_BINDINGS) {
       return createTemplateBindings("$templateKey"); //TODO use real key here
     }
-    if (type == REFERENCE || type == VARIABLE || type == XML_ATTRIBUTE)
+    if (type == REFERENCE || type == VARIABLE || type == XML_ATTRIBUTE) {
       return null;
+    }
     throw new IllegalStateException("Unsupported element type: " + type);
   }
 
@@ -387,7 +376,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
 
   private void remapTokensUntilComma(IElementType textType) {
     PsiBuilder.Marker start = mark();
-    while(!eof() && token() != XML_COMMA) {
+    while (!eof() && token() != XML_COMMA) {
       advance();
     }
     start.collapse(textType);
@@ -409,11 +398,13 @@ public class Angular2HtmlParsing extends HtmlParsing {
         expansionFormCase.precede().done(EXPANSION_FORM_CASE);
         return;
       }
-    } else if (token() == LBRACE) {
+    }
+    else if (token() == LBRACE) {
       advance();
       expansionFormCase.error("Invalid ICU message. Missing case value.");
       expansionFormCase = expansionFormCase.precede();
-    } else {
+    }
+    else {
       throw new IllegalStateException();
     }
     advance();

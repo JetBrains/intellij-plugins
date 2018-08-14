@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.expr.parser;
 
 import com.intellij.lang.ASTNode;
@@ -58,7 +46,6 @@ public interface Angular2ElementTypes extends JSElementTypes {
     public ASTNode createCompositeNode() {
       return myClassConstructor.apply(this);
     }
-
   }
 
   class Angular2ExpressionElementType extends Angular2ElementType implements JSExpressionElementType {
@@ -75,7 +62,7 @@ public interface Angular2ElementTypes extends JSElementTypes {
     private final String myName;
 
     public Angular2TemplateBindingType(String key, boolean isVar, String name) {
-      super ("NG:TEMPLATE_BINDING_STATEMENT", Angular2Language.INSTANCE, false);
+      super("NG:TEMPLATE_BINDING_STATEMENT", Angular2Language.INSTANCE, false);
       myKey = key;
       myVar = isVar;
       myName = name;
@@ -86,6 +73,5 @@ public interface Angular2ElementTypes extends JSElementTypes {
     public ASTNode createCompositeNode() {
       return new Angular2TemplateBindingImpl(TEMPLATE_BINDING_STATEMENT, myKey, myVar, myName);
     }
-
   }
 }
