@@ -186,7 +186,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
     myOutputFileNameTextField.getDocument().addDocumentListener(new com.intellij.ui.DocumentAdapter() {
       @Override
-      protected void textChanged(final javax.swing.event.DocumentEvent e) {
+      protected void textChanged(@NotNull final javax.swing.event.DocumentEvent e) {
         final FlexBuildConfiguration bc = myBCCombo.getBC();
         if (bc != null && bc.getTargetPlatform() == TargetPlatform.Web) {
           updateBCOutputLabel(bc);

@@ -77,14 +77,14 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper {
     myBaseFolderChooser.getTextField().setEditable(false);
     myBaseFolderChooser.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
       @Override
-      protected void textChanged(DocumentEvent e) {
+      protected void textChanged(@NotNull DocumentEvent e) {
         checkInstance(); updateVersion();
       }
     });
 
     myNameField.getDocument().addDocumentListener(new DocumentAdapter() {
       @Override
-      protected void textChanged(DocumentEvent e) {
+      protected void textChanged(@NotNull DocumentEvent e) {
         checkInstance();
       }
     });

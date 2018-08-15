@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.compiler.options.CompilerUIConfigurable;
@@ -305,7 +306,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myConfigFileTextWithBrowse.addBrowseFolderListener(null, null, myProject, FlexUtils.createFileChooserDescriptor("xml"));
     myConfigFileTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
       @Override
-      protected void textChanged(final DocumentEvent e) {
+      protected void textChanged(@NotNull final DocumentEvent e) {
         updateAdditionalOptionsControls();
         fireConfigFileChanged();
       }
@@ -324,7 +325,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myAdditionalOptionsField.setDialogCaption(StringUtil.capitalizeWords(labelText, true));
     myAdditionalOptionsField.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
       @Override
-      protected void textChanged(final DocumentEvent e) {
+      protected void textChanged(@NotNull final DocumentEvent e) {
         updateAdditionalOptionsControls();
         fireAdditionalOptionsChanged();
       }
