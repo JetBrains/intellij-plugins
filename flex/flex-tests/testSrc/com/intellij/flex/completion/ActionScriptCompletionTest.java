@@ -82,6 +82,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     }
   }
 
+  @Override
   protected ModuleType getModuleType() {
     return needsJavaModule() ? StdModuleTypes.JAVA : FlexModuleType.getInstance();
   }
