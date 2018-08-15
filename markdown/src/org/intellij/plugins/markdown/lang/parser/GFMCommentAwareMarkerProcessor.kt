@@ -5,28 +5,27 @@ import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.flavours.commonmark.CommonMarkMarkerProcessor
 import org.intellij.markdown.flavours.gfm.GFMConstraints
 import org.intellij.markdown.flavours.gfm.GFMTokenTypes
+import org.intellij.markdown.flavours.gfm.table.GitHubTableMarkerProvider
 import org.intellij.markdown.parser.LookaheadText
 import org.intellij.markdown.parser.MarkerProcessor
 import org.intellij.markdown.parser.MarkerProcessorFactory
 import org.intellij.markdown.parser.ProductionHolder
 import org.intellij.markdown.parser.constraints.MarkdownConstraints
 import org.intellij.markdown.parser.markerblocks.MarkerBlockProvider
-import org.intellij.markdown.parser.markerblocks.providers.*
+import org.intellij.markdown.parser.markerblocks.providers.AtxHeaderProvider
+import org.intellij.markdown.parser.markerblocks.providers.LinkReferenceDefinitionProvider
 import org.intellij.markdown.parser.sequentialparsers.SequentialParser
 
 class GFMCommentAwareMarkerProcessor(productionHolder: ProductionHolder, constraintsBase: MarkdownConstraints)
   : CommonMarkMarkerProcessor(productionHolder, constraintsBase) {
-  private val markerBlockProviders = listOf(
-    CodeBlockProvider(),
-    HorizontalRuleProvider(),
-    SetextHeaderProvider(),
-    BlockQuoteProvider(),
-    ListMarkerProvider(),
-    AtxHeaderProvider(true),
-    CodeFenceProvider(),
-    HtmlBlockProvider(),
-    CommentAwareLinkReferenceDefinitionProvider()
-  )
+
+  private val markerBlockProviders = super.getMarkerBlockProviders()
+    .filterNot { it is AtxHeaderProvider }
+    .filterNot { it is LinkReferenceDefinitionProvider }
+    .plus(listOf(
+      GitHubTableMarkerProvider(),
+      AtxHeaderProvider(false),
+      CommentAwareLinkReferenceDefinitionProvider()))
 
   override fun populateConstraintsTokens(pos: LookaheadText.Position,
                                          constraints: MarkdownConstraints,
