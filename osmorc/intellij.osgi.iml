@@ -22,7 +22,7 @@
     <orderEntry type="module" module-name="intellij.java.debugger.impl" />
     <orderEntry type="module" module-name="intellij.java.manifest" />
     <orderEntry type="module" module-name="intellij.platform.smRunner" />
-    <orderEntry type="module" module-name="intellij.osgi.jps" exported="" />
+    <orderEntry type="module" module-name="intellij.osgi.jps" />
     <orderEntry type="module-library" exported="">
       <library name="org.apache.felix.framework">
         <CLASSES>
