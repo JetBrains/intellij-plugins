@@ -4,7 +4,7 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.util.*
 
-class Blueprint {
+class Schematic {
 
   @SerializedName("name")
   @Expose
@@ -21,6 +21,9 @@ class Blueprint {
   @SerializedName("error")
   @Expose
   var error: String? = null
+  @SerializedName("hidden")
+  @Expose
+  var hidden: Boolean = false
   constructor()
 
   constructor(name: String, description: String?, options: List<Option>, arguments: List<Option>) {
@@ -54,7 +57,7 @@ class Option {
   var isRequired: Boolean = false
   @SerializedName("visible")
   @Expose
-  var isVisible: Boolean = false
+  var isVisible: Boolean = true
   @SerializedName("enum")
   @Expose
   var enum: List<String> = ArrayList()
