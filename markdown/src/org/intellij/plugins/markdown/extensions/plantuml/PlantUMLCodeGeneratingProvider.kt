@@ -1,15 +1,17 @@
 package org.intellij.plugins.markdown.extensions.plantuml
 
+import com.intellij.execution.configurations.GeneralCommandLine
+import com.intellij.execution.util.ExecUtil
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.util.SystemInfoRt
 import com.intellij.openapi.util.io.FileUtil
-import net.sourceforge.plantuml.FileFormat
-import net.sourceforge.plantuml.FileFormatOption
-import net.sourceforge.plantuml.SourceStringReader
+import com.intellij.util.containers.ContainerUtil
 import org.intellij.plugins.markdown.extensions.MarkdownCodeFenceCacheableProvider
+import org.intellij.plugins.markdown.settings.MarkdownSettingsConfigurable
 import org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCache.MARKDOWN_FILE_PATH_KEY
 import org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCacheCollector
 import org.intellij.plugins.markdown.ui.preview.MarkdownUtil
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 
 internal class PlantUMLProvider(private var cacheCollector: MarkdownCodeFencePluginCacheCollector?) : MarkdownCodeFenceCacheableProvider {
@@ -41,16 +43,38 @@ internal class PlantUMLProvider(private var cacheCollector: MarkdownCodeFencePlu
     storeDiagram(innerText, diagramPath)
   }
 
-  override fun isApplicable(language: String): Boolean = language == "puml" || language == "plantuml"
+  override fun isApplicable(language: String): Boolean = (language == "puml" || language == "plantuml")
+                                                         && MarkdownSettingsConfigurable.isPlantUMLAvailable()
 
   companion object {
+    private val LOG = Logger.getInstance(PlantUMLCodeFenceLanguageProvider::class.java)
     @Throws(IOException::class)
     private fun storeDiagram(source: String, fileName: String) {
-      val reader = SourceStringReader(source)
-      val fos = FileOutputStream(fileName)
+      val commandLine = GeneralCommandLine(getShellCommand() ?: run {
+        LOG.warn("Cannot find shell to generate the plantUML diagram.")
+        return
+      })
 
-      reader.outputImage(fos, FileFormatOption(FileFormat.PNG))
-      fos.close()
+      commandLine.addParameter("echo \"$source\" " +
+                               "| java -Djava.awt.headless=true -jar ${MarkdownSettingsConfigurable.getDownloadedJarPath().absolutePath} -pipe " +
+                               "> $fileName")
+      commandLine.createProcess()
+    }
+
+    private fun getShellCommand(): List<String>? {
+      if (SystemInfoRt.isWindows) return ContainerUtil.immutableList(ExecUtil.windowsShellName, "/c")
+
+      val shell = System.getenv("SHELL")
+      if (shell == null || !File(shell).canExecute()) {
+        return null
+      }
+
+      val commands = ContainerUtil.newArrayList(shell)
+      if (!shell.endsWith("/tcsh") && !shell.endsWith("/csh")) {
+        commands.add("--login")
+      }
+      commands.add("-c")
+      return commands
     }
   }
 }

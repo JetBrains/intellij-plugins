@@ -1,5 +1,6 @@
 package org.intellij.plugins.markdown.settings;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -19,12 +20,14 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.TextBrowseFolderListener;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.CollectionComboBoxModel;
-import com.intellij.ui.EnumComboBoxModel;
-import com.intellij.ui.ListCellRendererWrapper;
-import com.intellij.ui.TitledSeparator;
+import com.intellij.ui.*;
 import com.intellij.ui.components.JBCheckBox;
+import com.intellij.ui.components.JBLabel;
+import com.intellij.ui.components.labels.LinkLabel;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.download.DownloadableFileDescription;
+import com.intellij.util.download.DownloadableFileService;
+import com.intellij.util.ui.UIUtil;
 import org.intellij.plugins.markdown.MarkdownBundle;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelProvider;
 import org.intellij.plugins.markdown.ui.split.SplitFileEditor;
@@ -40,6 +43,7 @@ import java.awt.event.ItemListener;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,6 +61,8 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   private JPanel myPreviewTitledSeparator;
   private JBCheckBox myAutoScrollCheckBox;
   private JPanel myMultipleProvidersPreviewPanel;
+  private LinkLabel myPlantUMLDownload;
+  private JBLabel myPlantUMLStatusLabel;
 
   @Nullable
   private EditorEx myEditor;
@@ -107,6 +113,50 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     });
 
     adjustAutoScroll();
+
+    updatePlantUMLLabel(false);
+    myPlantUMLStatusLabel.setFontColor(UIUtil.FontColor.BRIGHTER);
+
+    myPlantUMLDownload.setListener((source, data) -> {
+      DownloadableFileService downloader = DownloadableFileService.getInstance();
+      DownloadableFileDescription description =
+        downloader.createFileDescription(MarkdownSettingsConfigurable.PLANTUML_JAR_URL, MarkdownSettingsConfigurable.PLANTUML_JAR);
+
+      ApplicationManager.getApplication().invokeAndWait(
+        () -> downloader.createDownloader(Collections.singletonList(description), MarkdownSettingsConfigurable.PLANT_UML_DIRECTORY + ".jar")
+          .downloadFilesWithProgress(MarkdownSettingsConfigurable.getDirectoryToDownload().getAbsolutePath(), null, myMainPanel));
+
+      updatePlantUMLLabel(true);
+    }, null);
+  }
+
+  public void updatePlantUMLLabel(boolean isJustInstalled) {
+    myPlantUMLStatusLabel.setForeground(JBColor.foreground());
+    myPlantUMLStatusLabel.setIcon(null);
+
+    if (MarkdownSettingsConfigurable.isPlantUMLAvailable()) {
+      if (isJustInstalled) {
+        myPlantUMLStatusLabel.setForeground(JBColor.GREEN);
+        myPlantUMLStatusLabel.setText(MarkdownBundle.message("markdown.settings.preview.plantUML.download.success"));
+      }
+      else {
+        myPlantUMLStatusLabel.setText(MarkdownBundle.message("markdown.settings.preview.plantUML.installed"));
+      }
+      myPlantUMLDownload.setVisible(false);
+    }
+    else {
+      if (isJustInstalled) {
+        myPlantUMLStatusLabel.setForeground(JBColor.RED);
+        myPlantUMLStatusLabel.setIcon(AllIcons.General.Warning);
+        myPlantUMLStatusLabel.setText(MarkdownBundle.message("markdown.settings.preview.plantUML.download.failed"));
+        myPlantUMLDownload.setText(MarkdownBundle.message("markdown.settings.preview.plantUML.download.retry"));
+      }
+      else {
+        myPlantUMLStatusLabel.setText(MarkdownBundle.message("markdown.settings.preview.plantUML.download.isnt.installed"));
+        myPlantUMLDownload.setText(MarkdownBundle.message("markdown.settings.preview.plantUML.download"));
+      }
+      myPlantUMLDownload.setVisible(true);
+    }
   }
 
   private void adjustAutoScroll() {
