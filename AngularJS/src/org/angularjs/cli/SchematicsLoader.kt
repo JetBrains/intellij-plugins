@@ -23,30 +23,39 @@ import java.io.DataOutput
 import java.io.File
 import java.io.IOException
 
-object BlueprintsLoader {
-  fun load(project: Project, cli: VirtualFile): Collection<Blueprint> = ApplicationManager.getApplication().runReadAction(
+object SchematicsLoader {
+  fun load(project: Project,
+           cli: VirtualFile): Collection<Schematic> = load(project, cli,false)
+
+  fun load(project: Project,
+           cli: VirtualFile,
+           includeHidden: Boolean): Collection<Schematic> = ApplicationManager.getApplication().runReadAction(
     Computable {
-      ourGist.getFileData(project, cli)
+      (if (includeHidden) ourGistHiddenList else ourGist).getFileData(project, cli)
     }
   )
 }
 
-private var ourGist = GistManager.getInstance().newVirtualFileGist("AngularBlueprints", 3, BlueprintsExternalizer(),
-                                                                   { project, file -> doLoad(project, file) })
+private var ourGist = GistManager.getInstance().newVirtualFileGist(
+  "AngularBlueprints", 3, SchematicsExternalizer(),
+  { project, file -> doLoad(project, file, false) })
+private var ourGistHiddenList = GistManager.getInstance().newVirtualFileGist(
+  "AngularSchematicsHidden", 3, SchematicsExternalizer(),
+  { project, file -> doLoad(project, file, true) })
 
-private val LOG: Logger = Logger.getInstance("#org.angularjs.cli.BlueprintsLoader")
+private val LOG: Logger = Logger.getInstance("#org.angularjs.cli.SchematicsLoader")
 
-private class BlueprintsExternalizer : DataExternalizer<List<Blueprint>> {
-  override fun save(out: DataOutput, value: List<Blueprint>?) {
+private class SchematicsExternalizer : DataExternalizer<List<Schematic>> {
+  override fun save(out: DataOutput, value: List<Schematic>?) {
     value!!
     IOUtil.writeUTF(out, GsonBuilder().create().toJson(value))
   }
 
-  override fun read(`in`: DataInput): List<Blueprint> {
+  override fun read(`in`: DataInput): List<Schematic> {
     val json = IOUtil.readUTF(`in`)
-    val result: List<Blueprint>
+    val result: List<Schematic>
     try {
-      result = BlueprintJsonParser.parse(json)
+      result = SchematicsJsonParser.parse(json)
     }
     catch (e: Throwable) {
       throw IOException("Failed to load gist: " + e.message, e)
@@ -58,16 +67,16 @@ private class BlueprintsExternalizer : DataExternalizer<List<Blueprint>> {
   }
 }
 
-private fun doLoad(project: Project, cli: VirtualFile): List<Blueprint> {
+private fun doLoad(project: Project, cli: VirtualFile, includeHidden: Boolean): List<Schematic> {
   val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter
   val node = NodeJsLocalInterpreter.tryCast(interpreter) ?: return emptyList()
 
-  var parse: Collection<Blueprint> = emptyList()
+  var parse: Collection<Schematic> = emptyList()
 
-  val schematicsInfoJson = loadSchematicsInfoJson(node, cli)
+  val schematicsInfoJson = loadSchematicsInfoJson(node, cli, includeHidden)
   if (schematicsInfoJson.isNotEmpty() && !schematicsInfoJson.startsWith("No schematics")) {
     try {
-      parse = BlueprintJsonParser.parse(schematicsInfoJson)
+      parse = SchematicsJsonParser.parse(schematicsInfoJson)
     }
     catch (e: Exception) {
       LOG.error("Failed to parse schematics: " + e.message, e, Attachment("output", schematicsInfoJson))
@@ -93,11 +102,15 @@ private fun doLoad(project: Project, cli: VirtualFile): List<Blueprint> {
   return parse.sortedBy { it.name }
 }
 
-fun loadSchematicsInfoJson(node: NodeJsLocalInterpreter, cli: VirtualFile): String {
+fun loadSchematicsInfoJson(node: NodeJsLocalInterpreter,
+                           cli: VirtualFile,
+                           includeHidden: Boolean): String {
   val directory = JSLanguageServiceUtil.getPluginDirectory(AngularJSLanguage::class.java, "ngCli")
   val utilityExe = "${directory}${File.separator}runner.js"
-  return grabCommandOutput(
-    GeneralCommandLine(node.interpreterSystemDependentPath, utilityExe, cli.path, "./schematicsInfoProvider.js"), cli.path)
+  val commandLine = GeneralCommandLine(node.interpreterSystemDependentPath, utilityExe, cli.path, "./schematicsInfoProvider.js")
+  if (includeHidden)
+    commandLine.addParameter("--includeHidden")
+  return grabCommandOutput(commandLine, cli.path)
 }
 
 fun loadBlueprintHelpOutput(node: NodeJsLocalInterpreter, cli: VirtualFile): String {
