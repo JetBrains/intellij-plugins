@@ -2,6 +2,7 @@
 package org.osmorc;
 
 import com.intellij.facet.FacetManager;
+import com.intellij.jarRepository.JarRepositoryManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.PluginPathManager;
 import com.intellij.openapi.module.Module;
@@ -27,7 +28,7 @@ public abstract class LightOsgiFixtureTestCase extends LightCodeInsightFixtureTe
 
       String libPath = PluginPathManager.getPluginHomePath("osmorc") + "/lib";
       PsiTestUtil.addLibrary(module, model, "osgi.core", libPath, "org.apache.felix.framework-4.2.1.jar");
-      PsiTestUtil.addLibrary(module, model, "plexus", libPath, "plexus-utils-3.0.10.jar");
+      PsiTestUtil.addLibrary(module, model, "plexus", JarRepositoryManager.getLocalRepositoryPath().getPath() + "/org/codehaus/plexus/plexus-utils/3.0.10", "plexus-utils-3.0.10.jar");
 
       String annotationsPath = PathManager.getJarPathForClass(NotNull.class);
       assertNotNull(annotationsPath);
