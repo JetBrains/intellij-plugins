@@ -1,7 +1,5 @@
 package org.angularjs.cli.actions
 
-import com.intellij.codeInsight.lookup.CharFilter
-import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.execution.configurations.CommandLineTokenizer
 import com.intellij.icons.AllIcons
 import com.intellij.javascript.nodejs.CompletionModuleInfo
@@ -58,18 +56,18 @@ class AngularCliGenerateAction : DumbAwareAction() {
       return
     }
 
-    val model = SortedListModel<Blueprint>(Comparator.comparing { b1: Blueprint ->
+    val model = SortedListModel<Schematic>(Comparator.comparing { b1: Schematic ->
       when {
         b1.error != null -> 2
         b1.name!!.contains(":") -> 1
         else -> 0
       }
-    }.thenComparing { b1: Blueprint -> b1.name!! })
-    val list = JBList<Blueprint>(model)
+    }.thenComparing { b1: Schematic -> b1.name!! })
+    val list = JBList<Schematic>(model)
     updateList(list, model, project, cli)
-    list.cellRenderer = object : ColoredListCellRenderer<Blueprint>() {
-      override fun customizeCellRenderer(list: JList<out Blueprint>,
-                                         value: Blueprint,
+    list.cellRenderer = object : ColoredListCellRenderer<Schematic>() {
+      override fun customizeCellRenderer(list: JList<out Schematic>,
+                                         value: Schematic,
                                          index: Int,
                                          selected: Boolean,
                                          hasFocus: Boolean) {
@@ -112,7 +110,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
     val scroll = ScrollPaneFactory.createScrollPane(list)
     scroll.border = JBUI.Borders.empty()
-    val pane = ListWithFilter.wrap(list, scroll, StringUtil.createToStringFunction(Blueprint::class.java))
+    val pane = ListWithFilter.wrap(list, scroll, StringUtil.createToStringFunction(Schematic::class.java))
 
     val builder = JBPopupFactory
       .getInstance()
@@ -138,14 +136,14 @@ class AngularCliGenerateAction : DumbAwareAction() {
         if (list.selectedValue == null) return
         if (e?.keyCode == KeyEvent.VK_ENTER) {
           e.consume()
-          askOptions(project, popup, list.selectedValue as Blueprint, cli, workingDir(editor, file))
+          askOptions(project, popup, list.selectedValue as Schematic, cli, workingDir(editor, file))
         }
       }
     })
     object : DoubleClickListener() {
       override fun onDoubleClick(event: MouseEvent?): Boolean {
         if (list.selectedValue == null) return true
-        askOptions(project, popup, list.selectedValue as Blueprint, cli, workingDir(editor, file))
+        askOptions(project, popup, list.selectedValue as Schematic, cli, workingDir(editor, file))
         return true
       }
     }.installOn(list)
@@ -160,13 +158,13 @@ class AngularCliGenerateAction : DumbAwareAction() {
     return null
   }
 
-  private fun updateList(list: JBList<Blueprint>, model: SortedListModel<Blueprint>, project: Project, cli: VirtualFile) {
+  private fun updateList(list: JBList<Schematic>, model: SortedListModel<Schematic>, project: Project, cli: VirtualFile) {
     list.setPaintBusy(true)
     model.clear()
     ApplicationManager.getApplication().executeOnPooledThread {
-      val blueprints = BlueprintsLoader.load(project, cli)
+      val schematics = SchematicsLoader.load(project, cli)
       ApplicationManager.getApplication().invokeLater {
-        blueprints.forEach {
+        schematics.forEach {
           model.add(it)
         }
         list.setPaintBusy(false)
@@ -174,8 +172,8 @@ class AngularCliGenerateAction : DumbAwareAction() {
     }
   }
 
-  private fun askOptions(project: Project, popup: JBPopup, blueprint: Blueprint, cli: VirtualFile, workingDir: VirtualFile?) {
-    if (blueprint.error != null) {
+  private fun askOptions(project: Project, popup: JBPopup, schematic: Schematic, cli: VirtualFile, workingDir: VirtualFile?) {
+    if (schematic.error != null) {
       return
     }
     popup.closeOk(null)
@@ -183,16 +181,16 @@ class AngularCliGenerateAction : DumbAwareAction() {
       private lateinit var editor: EditorTextField
 
       init {
-        title = "Generate ${blueprint.name}"
+        title = "Generate ${schematic.name}"
         init()
       }
 
       override fun createCenterPanel(): JComponent {
         val panel = JPanel(BorderLayout(0, 4))
-        panel.add(JLabel(blueprint.description), BorderLayout.NORTH)
-        editor = TextFieldWithAutoCompletion(project, BlueprintOptionsCompletionProvider(blueprint.options), false, null)
+        panel.add(JLabel(schematic.description), BorderLayout.NORTH)
+        editor = SchematicOptionsTextField(project, schematic.options)
         editor.setPreferredWidth(250)
-        panel.add(LabeledComponent.create(editor, "Parameters" + paramsDesc(blueprint)), BorderLayout.SOUTH)
+        panel.add(LabeledComponent.create(editor, "Parameters" + paramsDesc(schematic)), BorderLayout.SOUTH)
         return panel
       }
 
@@ -200,7 +198,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
         return editor
       }
 
-      fun paramsDesc(b: Blueprint): String {
+      fun paramsDesc(b: Schematic): String {
         val argDisplay = b.arguments.joinToString(" ") { "<" + it.name + ">" }
         val optionsDisplay = if (b.options.isEmpty()) "" else "<options...>"
 
@@ -222,11 +220,11 @@ class AngularCliGenerateAction : DumbAwareAction() {
     }
 
     if (dialog.showAndGet()) {
-      runGenerator(project, blueprint, dialog.arguments(), cli, workingDir)
+      runGenerator(project, schematic, dialog.arguments(), cli, workingDir)
     }
   }
 
-  private fun runGenerator(project: Project, blueprint: Blueprint, arguments: Array<String>, cli: VirtualFile, workingDir: VirtualFile?) {
+  private fun runGenerator(project: Project, schematic: Schematic, arguments: Array<String>, cli: VirtualFile, workingDir: VirtualFile?) {
     val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter
     val node = NodeJsLocalInterpreter.tryCast(interpreter) ?: return
 
@@ -239,7 +237,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     AngularCLIProjectGenerator.generate(node, NodePackage(module.virtualFile?.path!!),
                                         Function<NodePackage, String> { pkg -> pkg.findBinFile()?.absolutePath },
                                         cli, VfsUtilCore.virtualToIoFile(workingDir ?: cli), project,
-                                        null, arrayOf(filter), "generate", blueprint.name, *arguments)
+                                        null, arrayOf(filter), "generate", schematic.name, *arguments)
   }
 
   override fun update(e: AnActionEvent?) {
@@ -248,37 +246,6 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
     e?.presentation?.isEnabledAndVisible = project != null
       && AngularCliUtil.findAngularCliFolder(project, file) != null
-  }
-
-
-  private class BlueprintOptionsCompletionProvider(options: List<Option>) : TextFieldWithAutoCompletionListProvider<Option>(
-    options) {
-
-    override fun getLookupString(item: Option): String {
-      return "--" + item.name
-    }
-
-    override fun getTypeText(item: Option): String? {
-      var result = item.type
-      if (item.enum.isNotEmpty()) {
-        result += " (" + item.enum.joinToString("|") + ")"
-      }
-      return result
-    }
-
-    override fun acceptChar(c: Char): CharFilter.Result? {
-      return if (c == '-') CharFilter.Result.ADD_TO_PREFIX else null
-    }
-
-    override fun compare(item1: Option, item2: Option): Int {
-      return StringUtil.compare(item1.name, item2.name, false)
-    }
-
-    override fun createLookupBuilder(item: Option): LookupElementBuilder {
-      return super.createLookupBuilder(item)
-        .withTailText(if (item.description != null) "  " + item.description else null, true)
-    }
-
   }
 
 }

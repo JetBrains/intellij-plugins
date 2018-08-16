@@ -6,9 +6,9 @@ import com.intellij.openapi.util.text.StringUtil
  * @author Dennis.Ushakov
  */
 class BlueprintParser {
-  fun parse(output: String): Collection<Blueprint> {
+  fun parse(output: String): Collection<Schematic> {
     if (output.isEmpty()) return emptyList()
-    val result: MutableList<Blueprint> = mutableListOf()
+    val result: MutableList<Schematic> = mutableListOf()
     val converted = StringUtil.convertLineSeparators(output)
     var name: String? = null
     var description: String? = null
@@ -16,7 +16,7 @@ class BlueprintParser {
     var arguments: MutableList<Option> = mutableListOf()
     for (line in converted.split('\n')) {
       if (line.startsWith("ng generate")) {
-        if (name != null) result.add(Blueprint(name, description, options, arguments))
+        if (name != null) result.add(Schematic(name, description, options, arguments))
         name = null
         break
       }
@@ -27,7 +27,7 @@ class BlueprintParser {
         val nameCandidate = firstWord(text)
         if (nameCandidate.isNotBlank()) {
           if (name != null) {
-            result.add(Blueprint(name, description, options, arguments))
+            result.add(Schematic(name, description, options, arguments))
             description = null
             options = mutableListOf()
             arguments = mutableListOf()
@@ -44,7 +44,7 @@ class BlueprintParser {
         else if (!text.isBlank() && !text[0].isWhitespace()) description = text
       }
     }
-    if (name != null) result.add(Blueprint(name, description, options, arguments))
+    if (name != null) result.add(Schematic(name, description, options, arguments))
     return result
   }
 
