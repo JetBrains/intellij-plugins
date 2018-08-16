@@ -13,6 +13,7 @@ import org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCacheColl
 import org.intellij.plugins.markdown.ui.preview.MarkdownUtil
 import java.io.File
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 internal class PlantUMLProvider(private var cacheCollector: MarkdownCodeFencePluginCacheCollector?) : MarkdownCodeFenceCacheableProvider {
   // this empty constructor is needed for the component initialization
@@ -58,7 +59,8 @@ internal class PlantUMLProvider(private var cacheCollector: MarkdownCodeFencePlu
       commandLine.addParameter("echo \"$source\" " +
                                "| java -Djava.awt.headless=true -jar ${MarkdownSettingsConfigurable.getDownloadedJarPath().absolutePath} -pipe " +
                                "> $fileName")
-      commandLine.createProcess()
+
+      commandLine.createProcess().waitFor(5, TimeUnit.SECONDS)
     }
 
     private fun getShellCommand(): List<String>? {
