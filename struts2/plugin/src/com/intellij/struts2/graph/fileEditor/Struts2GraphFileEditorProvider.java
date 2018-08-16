@@ -37,6 +37,7 @@ import java.util.Set;
  */
 public class Struts2GraphFileEditorProvider extends PerspectiveFileEditorProvider {
 
+  @Override
   public boolean accept(@NotNull final Project project, @NotNull final VirtualFile file) {
     if (!file.isValid()) {
       return false;
@@ -71,6 +72,7 @@ public class Struts2GraphFileEditorProvider extends PerspectiveFileEditorProvide
     return false;
   }
 
+  @Override
   @NotNull
   public PerspectiveFileEditor createEditor(@NotNull final Project project, @NotNull final VirtualFile file) {
     return new Struts2GraphFileEditor(project, file);
@@ -81,6 +83,7 @@ public class Struts2GraphFileEditorProvider extends PerspectiveFileEditorProvide
     return false;
   }
 
+  @Override
   public double getWeight() {
     return 0;
   }

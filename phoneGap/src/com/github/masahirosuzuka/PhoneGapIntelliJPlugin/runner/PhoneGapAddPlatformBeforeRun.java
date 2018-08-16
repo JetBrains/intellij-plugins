@@ -112,6 +112,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
           return true;
         }
 
+        @Override
         public void run(@NotNull final ProgressIndicator indicator) {
           try {
             String platform = phoneGapRunConfiguration.getPlatform();

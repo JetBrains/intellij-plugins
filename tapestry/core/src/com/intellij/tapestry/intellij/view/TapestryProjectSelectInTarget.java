@@ -21,6 +21,7 @@ public class TapestryProjectSelectInTarget extends ProjectViewSelectInTarget {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected boolean canSelect(PsiFileSystemItem psiFileSystemItem) {
         if (!super.canSelect(psiFileSystemItem)) return false;
         return TapestryProjectViewPane.getInstance(myProject).canSelect();
@@ -37,6 +38,7 @@ public class TapestryProjectSelectInTarget extends ProjectViewSelectInTarget {
     /**
      * {@inheritDoc}
      */
+    @Override
     public float getWeight() {
         return 5;
     }
@@ -44,6 +46,7 @@ public class TapestryProjectSelectInTarget extends ProjectViewSelectInTarget {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isSubIdSelectable(String subId, SelectInContext context) {
         return true;
     }

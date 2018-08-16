@@ -1,6 +1,6 @@
 /*
  * Copyright 2000-2009 JetBrains s.r.o.
- *                                           
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
@@ -33,8 +33,8 @@ import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.lang.javascript.psi.util.JSProjectUtil;
+import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -104,6 +104,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
   private static Collection<String> getSubPackages(final String packageName, final GlobalSearchScope searchScope) {
     final Collection<String> result = new HashSet<>();
     JSPackageIndex.processElementsInScope(packageName, null, new JSPackageIndex.PackageElementsProcessor() {
+      @Override
       public boolean process(VirtualFile file, String name, JSPackageIndexInfo.Kind kind, boolean isPublic) {
         if (kind == JSPackageIndexInfo.Kind.PACKAGE) {
           result.add(StringUtil.getQualifiedName(packageName, name));
@@ -117,6 +118,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
   private static Collection<JSClass> getClasses(final String packageName, final GlobalSearchScope searchScope) {
     final Collection<JSClass> result = new HashSet<>();
     JSPackageIndex.processElementsInScope(packageName, null, new JSPackageIndex.PackageElementsProcessor() {
+      @Override
       public boolean process(VirtualFile file, String name, JSPackageIndexInfo.Kind kind, boolean isPublic) {
         String qualifiedName = StringUtil.getQualifiedName(packageName, name);
         if (kind == JSPackageIndexInfo.Kind.CLASS || kind == JSPackageIndexInfo.Kind.INTERFACE) {
@@ -140,11 +142,13 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
   private final Collection<DiagramEdge<Object>> myDependencyEdgesOld = new HashSet<>();
 
 
+  @Override
   @NotNull
   public Collection<DiagramNode<Object>> getNodes() {
     return new ArrayList<>(myNodes);
   }
 
+  @Override
   @NotNull
   public Collection<DiagramEdge<Object>> getEdges() {
     if (myDependencyEdges.isEmpty()) {
@@ -157,6 +161,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
     }
   }
 
+  @Override
   @NotNull
   @NonNls
   public String getNodeName(final DiagramNode<Object> node) {
@@ -225,6 +230,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
     return !packageName.isEmpty() && !packageName.equals(StringUtil.getPackageName(context.getQualifiedName()));
   }
 
+  @Override
   public void refreshDataModel() {
     clearAll();
     updateDataModel();
@@ -567,6 +573,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
     return findNode(psiElement) != null;
   }
 
+  @Override
   public void dispose() {
   }
 
@@ -619,6 +626,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
     }
   }
 
+  @Override
   @Nullable
   public DiagramNode<Object> addElement(Object element) {
     if (findNode(element) != null) return null;

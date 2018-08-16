@@ -25,6 +25,7 @@ public class DartSdkLibraryPresentationProvider extends LibraryPresentationProvi
     return DartIcons.Dart_16;
   }
 
+  @Override
   @Nullable
   public DummyLibraryProperties detect(@NotNull final List<VirtualFile> classesRoots) {
     return findDartCoreRoot(classesRoots) == null ? null : DummyLibraryProperties.INSTANCE;

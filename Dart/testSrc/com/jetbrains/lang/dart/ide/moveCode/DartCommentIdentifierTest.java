@@ -6,6 +6,7 @@ import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 
 public class DartCommentIdentifierTest extends DartCodeInsightFixtureTestCase {
 
+  @Override
   protected String getBasePath() {
     return "/componentMover/comments/";
   }

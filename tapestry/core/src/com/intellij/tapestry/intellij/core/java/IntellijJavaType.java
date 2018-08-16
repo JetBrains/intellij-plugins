@@ -9,6 +9,7 @@ public abstract class IntellijJavaType implements IJavaType {
 
     private static final Logger _logger = Logger.getInstance(IntellijJavaType.class);
 
+    @Override
     public boolean isAssignableFrom(@Nullable IJavaType type) {
         if (type == null)
             return false;

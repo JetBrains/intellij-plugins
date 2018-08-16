@@ -37,7 +37,7 @@ public class TemplateCompletionContributor extends CompletionContributor {
     extend(null, psiElement(), new CompletionProvider<CompletionParameters>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
-                                    ProcessingContext context,
+                                    @NotNull ProcessingContext context,
                                     @NotNull CompletionResultSet result) {
         PsiElement psiElement = parameters.getPosition();
 

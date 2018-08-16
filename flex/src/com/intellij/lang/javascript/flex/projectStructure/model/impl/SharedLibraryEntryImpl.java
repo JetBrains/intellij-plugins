@@ -17,7 +17,7 @@ class SharedLibraryEntryImpl implements ModifiableSharedLibraryEntry, StatefulDe
   @NotNull
   private final String myLibraryLevel;
 
-  
+
   public SharedLibraryEntryImpl(@NotNull String libraryName, @NotNull String libraryLevel) {
     myLibraryName = libraryName;
     myLibraryLevel = libraryLevel;
@@ -29,6 +29,7 @@ class SharedLibraryEntryImpl implements ModifiableSharedLibraryEntry, StatefulDe
     return myLibraryName;
   }
 
+  @Override
   @NotNull
   public String getLibraryLevel() {
     return myLibraryLevel;
@@ -59,6 +60,7 @@ class SharedLibraryEntryImpl implements ModifiableSharedLibraryEntry, StatefulDe
     return true;
   }
 
+  @Override
   public EntryState getState() {
     EntryState state = new EntryState();
     state.LIBRARY_NAME = myLibraryName;

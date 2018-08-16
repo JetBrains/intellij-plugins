@@ -131,6 +131,7 @@ public abstract class StrutsResultContributor implements PathReferenceProvider {
     }
 
     return new PathReference(path, iconFunction) {
+      @Override
       public PsiElement resolve() {
         return target;
       }

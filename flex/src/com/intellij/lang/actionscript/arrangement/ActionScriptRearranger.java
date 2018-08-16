@@ -134,6 +134,7 @@ public class ActionScriptRearranger extends JSRearrangerBase {
     }
   }
 
+  @Override
   @NotNull
   protected Set<ArrangementSettingsToken> detectModifiers(@NotNull final JSAttributeListOwner fieldOrMethod) {
     final Set<ArrangementSettingsToken> result = ContainerUtil.newHashSet();
@@ -256,6 +257,7 @@ public class ActionScriptRearranger extends JSRearrangerBase {
     return matchRules;
   }
 
+  @Override
   protected boolean isModifierEnabled(@NotNull ArrangementSettingsToken modifier,
                                       @NotNull ArrangementSettingsToken type,
                                       @NotNull Set<ArrangementSettingsToken> existingModifiers) {

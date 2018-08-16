@@ -25,6 +25,7 @@ public class FlexUnitConnection extends ServerConnectionBase {
   protected final EventDispatcher<Listener> myDispatcher = EventDispatcher.create(Listener.class);
   //private OutputStreamWriter myWriter;
 
+  @Override
   protected void run(InputStream inputStream) throws IOException {
     DataInputStream dataInputStream = new DataInputStream(inputStream);
 

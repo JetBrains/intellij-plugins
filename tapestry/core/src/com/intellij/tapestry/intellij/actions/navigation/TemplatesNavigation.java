@@ -32,7 +32,8 @@ public class TemplatesNavigation extends ActionGroup implements DumbAware {
     /**
      * {@inheritDoc}
      */
-    public void update(AnActionEvent event) {
+    @Override
+    public void update(@NotNull AnActionEvent event) {
         final boolean isTapestryModule = TapestryUtils.isTapestryModule(event.getData(DataKeys.MODULE));
         final Presentation presentation = event.getPresentation();
         presentation.setEnabled(isTapestryModule);
@@ -42,6 +43,7 @@ public class TemplatesNavigation extends ActionGroup implements DumbAware {
     /**
      * {@inheritDoc}
      */
+    @Override
     @NotNull
     public AnAction[] getChildren(@Nullable AnActionEvent event) {
         if (event == null)
@@ -99,7 +101,8 @@ public class TemplatesNavigation extends ActionGroup implements DumbAware {
             super(template.getName().replace("_", "__"), template.getName(), null);
         }
 
-        public void actionPerformed(AnActionEvent event) {
+        @Override
+        public void actionPerformed(@NotNull AnActionEvent event) {
             Project project = (Project) event.getDataContext().getData(DataKeys.PROJECT.getName());
 
             for (int i = 0; i < tapestryElement.getTemplate().length; i++) {

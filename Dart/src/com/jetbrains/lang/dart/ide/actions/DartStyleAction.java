@@ -47,6 +47,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
     return DartBundle.message("dart.style.action.name.ellipsis"); // because with dialog
   }
 
+  @Override
   protected void runOverEditor(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile psiFile) {
     final Document document = editor.getDocument();
     if (!ReadonlyStatusHandler.ensureDocumentWritable(project, document)) return;
@@ -86,6 +87,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
       () -> CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("dart.style.action.name"), null));
   }
 
+  @Override
   protected void runOverFiles(@NotNull final Project project, @NotNull final List<VirtualFile> dartFiles) {
     if (dartFiles.isEmpty()) {
       Messages.showInfoMessage(project, DartBundle.message("dart.style.files.no.dart.files"), DartBundle.message("dart.style.action.name"));

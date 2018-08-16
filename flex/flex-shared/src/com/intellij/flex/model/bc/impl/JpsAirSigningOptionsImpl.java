@@ -34,11 +34,13 @@ public class JpsAirSigningOptionsImpl extends JpsElementBase<JpsAirSigningOption
     myTsa = original.myTsa;
   }
 
+  @Override
   @NotNull
   public JpsAirSigningOptionsImpl createCopy() {
     return new JpsAirSigningOptionsImpl(this);
   }
 
+  @Override
   public void applyChanges(@NotNull final JpsAirSigningOptionsImpl modified) {
     setUseTempCertificate(modified.isUseTempCertificate());
     setProvisioningProfilePath(modified.getProvisioningProfilePath());
@@ -51,64 +53,78 @@ public class JpsAirSigningOptionsImpl extends JpsElementBase<JpsAirSigningOption
 
 // -----------------------------
 
+  @Override
   public boolean isUseTempCertificate() {
     return myUseTempCertificate;
   }
 
+  @Override
   public void setUseTempCertificate(final boolean useTempCertificate) {
     myUseTempCertificate = useTempCertificate;
   }
 
+  @Override
   @NotNull
   public String getProvisioningProfilePath() {
     return myProvisioningProfilePath;
   }
 
+  @Override
   public void setProvisioningProfilePath(final @NotNull String provisioningProfilePath) {
     myProvisioningProfilePath = FileUtil.toSystemIndependentName(provisioningProfilePath);
   }
 
+  @Override
   @NotNull
   public String getKeystorePath() {
     return myKeystorePath;
   }
 
+  @Override
   public void setKeystorePath(final @NotNull String keystorePath) {
     myKeystorePath = FileUtil.toSystemIndependentName(keystorePath);
   }
 
+  @Override
   @NotNull
   public String getKeystoreType() {
     return myKeystoreType;
   }
 
+  @Override
   public void setKeystoreType(final @NotNull String keystoreType) {
     myKeystoreType = keystoreType;
   }
 
+  @Override
   @NotNull
   public String getKeyAlias() {
     return myKeyAlias;
   }
 
+  @Override
   public void setKeyAlias(final @NotNull String keyAlias) {
     myKeyAlias = keyAlias;
   }
 
+  @Override
   @NotNull
   public String getProvider() {
     return myProvider;
   }
 
+  @Override
   public void setProvider(final @NotNull String provider) {
     myProvider = provider;
   }
 
+  @Override
   @NotNull
   public String getTsa() {
     return myTsa;
   }
 
+  @Override
   public void setTsa(final @NotNull String tsa) {
     myTsa = tsa;
   }
@@ -144,6 +160,7 @@ public class JpsAirSigningOptionsImpl extends JpsElementBase<JpsAirSigningOption
       super("air signing options");
     }
 
+    @Override
     @NotNull
     public JpsAirSigningOptions create() {
       return new JpsAirSigningOptionsImpl();

@@ -56,6 +56,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
 
 
     final ActionListener fileToRunActionListener = new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor();
         fileChooserDescriptor.setTitle(CucumberJavaBundle.message("run.configuration.form.choose.file.or.folder.title"));
@@ -69,7 +70,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
     myFeatureOrFolder.getComponent().getButton().addActionListener(fileToRunActionListener);
 
     myAnchor = UIUtil.mergeComponentsWithAnchor(myMainClass, myGlue, myFeatureOrFolder, myModule, myCommonProgramParameters);
-    
+
     myJrePathEditor.setAnchor(myModule.getLabel());
     myShortenClasspathModeCombo.setAnchor(myModule.getLabel());
     myShortenClasspathModeCombo.setComponent(new ShortenCommandLineModeCombo(myProject, myJrePathEditor, moduleComponent));

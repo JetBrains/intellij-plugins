@@ -419,6 +419,7 @@ public class FlexStackFrame extends XStackFrame {
   }
 
   private class FlexDebuggerEvaluator extends XDebuggerEvaluator {
+    @Override
     public boolean isCodeFragmentEvaluationSupported() {
       return false;
     }

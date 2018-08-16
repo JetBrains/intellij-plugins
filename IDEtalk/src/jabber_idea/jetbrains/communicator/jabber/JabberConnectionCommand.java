@@ -26,6 +26,7 @@ public class JabberConnectionCommand extends BaseJabberConnectionCommand {
     super(jabberFacade, jabberUi);
   }
 
+  @Override
   public String getName() {
     if (isConnected()) {
       return StringUtil.getMsg("JabberConnectionCommand.connected",
@@ -37,6 +38,7 @@ public class JabberConnectionCommand extends BaseJabberConnectionCommand {
     }
   }
 
+  @Override
   public void execute() {
     if (isConnected()) {
       if (Messages.YES == Messages.showYesNoDialog(StringUtil.getMsg("disconnect.from.jabber.account"),

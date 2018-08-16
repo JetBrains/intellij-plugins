@@ -19,6 +19,7 @@ import com.jetbrains.lang.dart.util.DartResolveUtil;
 import java.util.List;
 
 public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
+  @Override
   protected String getBasePath() {
     return "/highlighting";
   }

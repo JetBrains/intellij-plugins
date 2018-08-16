@@ -93,7 +93,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   private static boolean isShorthand(@NotNull FlexStyleIndexInfo info) {
     return JSCommonTypeNames.ARRAY_CLASS_NAME.equals(info.getType());
   }
-  
+
   private static void addValuesFromEnumerations2(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Collection<CssValueDescriptor> children) {
     Set<String> constantSet = ContainerUtil.newLinkedHashSet();
     for (FlexStyleIndexInfo info : infos) {
@@ -141,7 +141,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     for (FlexStyleIndexInfo info : infos) {
       ContainerUtil.addIfNotNull(formats, info.getFormat());
     }
-    
+
     if (formats.contains(COLOR_FORMAT)) {
       children.add(createCssColorValue());
     }
@@ -169,7 +169,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     }
     return formats;
   }
-  
+
   private static void addValuesFromTypes2(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Set<String> formats, @NotNull List<CssValueDescriptor> children) {
     Set<String> types = ContainerUtil.newHashSet();
     for (FlexStyleIndexInfo info : infos) {
@@ -195,7 +195,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
       children.add(new CssLookupValue(CssPropertyValueImpl.Type.OR, CssTermTypes.NUMBER, CssTermTypes.NEGATIVE_NUMBER));
     }
   }
-  
+
   @NotNull
   private static CssValueDescriptor createPropertyValueDescriptor(@NotNull Collection<FlexStyleIndexInfo> infos, boolean shorthand) {
     List<CssValueDescriptor> children = ContainerUtil.newArrayList();
@@ -203,7 +203,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     addValuesFromEnumerations2(infos, children);
     addValuesFromTypes2(infos, formats, children);
 
-    CssGroupValue result = CssElementDescriptorFactory2.getInstance().createGroupValue(CssGroupValue.Type.OR, -1, 1, null, null);    
+    CssGroupValue result = CssElementDescriptorFactory2.getInstance().createGroupValue(CssGroupValue.Type.OR, -1, 1, null, null);
     if (!children.isEmpty()) {
       for (CssValueDescriptor child : children) {
         result.addChild(CssValueDescriptorModificator.withParent(child, result));
@@ -228,14 +228,14 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, null, null, false);
     return new CssColorValue(commonDescriptorData, valueDescriptorData, false);
   }
-  
+
   private static CssLengthValue createCssLengthValue() {
     String id = CssBundle.message("length.value.presentable.name");
     CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
     CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, null, null, false);
     return new CssLengthValue(commonDescriptorData, valueDescriptorData);
   }
-  
+
   private static CssNumberValue createCssNumberValue() {
     String id = CssBundle.message("number.value.presentable.name");
     CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
@@ -280,6 +280,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     }
   }
 
+  @Override
   @Nullable
   public String getDocumentationString(@Nullable PsiElement context) {
     if (context == null) return null;
@@ -457,15 +458,18 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     return PsiUtilCore.toPsiElementArray(result);
   }
 
+  @Override
   public boolean isShorthandValue() {
     return myShorthand;
   }
 
+  @Override
   @NotNull
   public String getPropertyName() {
     return myPropertyName;
   }
 
+  @Override
   public boolean getInherited() {
     return "yes".equalsIgnoreCase(myInherit) || "true".equals(myInherit);
   }
@@ -473,6 +477,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   private class MyMetaDataProcessor implements ActionScriptResolveUtil.MetaDataProcessor {
     private JSAttributeNameValuePair myResult;
 
+    @Override
     public boolean process(@NotNull JSAttribute jsAttribute) {
       if (FlexAnnotationNames.STYLE.equals(jsAttribute.getName())) {
         JSAttributeNameValuePair pair = jsAttribute.getValueByName("name");
@@ -484,6 +489,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
       return true;
     }
 
+    @Override
     public boolean handleOtherElement(PsiElement el, PsiElement context, @Nullable Ref<PsiElement> continuePassElement) {
       return true;
     }

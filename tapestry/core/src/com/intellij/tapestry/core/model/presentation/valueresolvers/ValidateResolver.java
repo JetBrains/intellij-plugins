@@ -10,6 +10,7 @@ public class ValidateResolver extends AbstractValueResolver {
 
     private static final String PREFIX = "validate";
 
+    @Override
     public boolean execute(Context context) throws Exception {
         String prefix = getPrefix(((ValueResolverContext) context).getValue(), ((ValueResolverContext) context).getDefaultPrefix());
 

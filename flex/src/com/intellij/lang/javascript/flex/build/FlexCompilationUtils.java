@@ -148,6 +148,7 @@ public class FlexCompilationUtils {
 
     final Application app = ApplicationManager.getApplication();
     app.invokeAndWait(() -> outputFileRef.set(app.runWriteAction(new NullableComputable<VirtualFile>() {
+      @Override
       public VirtualFile compute() {
         VirtualFile outputFile = localFileSystem.refreshAndFindFileByPath(outputFilePath);
         //if (outputFile == null) {

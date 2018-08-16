@@ -40,6 +40,7 @@ public class RemoteFlashRunnerParameters extends BCBasedRunnerParameters {
     myUsbDebugPort = usbDebugPort;
   }
 
+  @Override
   protected RemoteFlashRunnerParameters clone() {
     return (RemoteFlashRunnerParameters)super.clone();
   }

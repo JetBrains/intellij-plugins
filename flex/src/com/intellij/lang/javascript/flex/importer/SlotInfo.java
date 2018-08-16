@@ -12,6 +12,7 @@ class SlotInfo extends MemberInfo {
     kind = _kind;
   }
 
+  @Override
   void dump(Abc abc, String indent, String attr, final FlexByteCodeInformationProcessor processor) {
     if (!processor.doDumpMember(this)) return;
 

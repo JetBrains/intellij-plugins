@@ -35,6 +35,7 @@ public class FlexSdkStep extends ModuleWizardStep {
     selectSdkUsedByOtherModules(myContext.getProject(), mySdkCombo);
   }
 
+  @Override
   public JComponent getComponent() {
     mySdkLabel.setLabelFor(mySdkCombo.getChildComponent());
     final String text = FlexBundle.message(myContext.getProject() != null ? "module.sdk.label" : "project.sdk.label");
@@ -45,6 +46,7 @@ public class FlexSdkStep extends ModuleWizardStep {
     return myContentPane;
   }
 
+  @Override
   public void updateDataModel() {
     myContext.setProjectJdk(mySdkCombo.getSelectedSdk());
   }

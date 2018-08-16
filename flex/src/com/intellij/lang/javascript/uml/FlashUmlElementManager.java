@@ -69,6 +69,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     myUmlProvider = umlProvider;
   }
 
+  @Override
   public boolean isAcceptableAsNode(Object element) {
     return isAcceptableAsNodeStatic(element);
   }
@@ -98,6 +99,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     return JSUtils.packageExists(packageName, scope) || FlexResolveHelper.mxmlPackageExists(packageName, project, scope);
   }
 
+  @Override
   public PsiElement findInDataContext(DataContext context) {
     PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(context);
     if (isAcceptableAsNode(element)) {
@@ -145,6 +147,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     return element;
   }
 
+  @Override
   public PsiElement[] getNodeItems(Object parent) {
     if (parent instanceof JSClass) {
       final JSClass clazz = (JSClass)parent;
@@ -175,10 +178,12 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     return PsiElement.EMPTY_ARRAY;
   }
 
+  @Override
   public boolean canCollapse(Object element) {
     return false;
   }
 
+  @Override
   public boolean isContainerFor(Object parent, Object child) {
     //if (parent instanceof JSPackage && child instanceof JSQualifiedNamedElement) {
     //  JSQualifiedNamedElement psiQualifiedNamedElement = (JSQualifiedNamedElement)child;
@@ -189,6 +194,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     return false;
   }
 
+  @Override
   public String getElementTitle(Object element) {
     if (element instanceof JSNamedElement) {
       return ((JSNamedElement)element).getName();
@@ -209,6 +215,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     }
   }
 
+  @Override
   public SimpleColoredText getItemName(Object element, DiagramState presentation) {
     if (element instanceof JSFunction) {
       return getMethodPresentableName((JSFunction)element);
@@ -292,6 +299,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
   }
 
 
+  @Override
   public SimpleColoredText getItemType(Object element) {
     String text = getPresentableTypeStatic(element);
     return text != null ? new SimpleColoredText(text, new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, getFGColor())) : null;
@@ -310,6 +318,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     }
   }
 
+  @Override
   public String getNodeTooltip(Object element) {
     if (element instanceof JSClass) {
       return "<html><b>" + new JSNamedElementPresenter((JSClass)element).describeWithQualifiedName() + "</b></html>";

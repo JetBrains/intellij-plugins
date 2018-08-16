@@ -15,7 +15,10 @@
 package com.intellij.struts2.graph.fileEditor;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.DataProvider;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.graph.GraphManager;
 import com.intellij.openapi.graph.base.Node;
 import com.intellij.openapi.graph.builder.GraphBuilder;
@@ -40,6 +43,7 @@ import com.intellij.util.xml.DomEventListener;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.events.DomEvent;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -84,6 +88,7 @@ public class Struts2GraphComponent extends JPanel implements DataProvider, Dispo
     myBuilder.initialize();
 
     DomManager.getDomManager(myBuilder.getProject()).addDomEventListener(new DomEventListener() {
+      @Override
       public void eventOccured(final DomEvent event) {
         if (isShowing()) {
           myBuilder.queueUpdate();
@@ -148,11 +153,13 @@ public class Struts2GraphComponent extends JPanel implements DataProvider, Dispo
     return GraphManager.getGraphManager().createOverview(myBuilder.getView());
   }
 
+  @Override
   public void dispose() {
   }
 
+  @Override
   @Nullable
-  public Object getData(@NonNls final String dataId) {
+  public Object getData(@NotNull @NonNls final String dataId) {
     if (Comparing.equal(dataId, STRUTS2_DESIGNER_COMPONENT)) {
       return this;
     }

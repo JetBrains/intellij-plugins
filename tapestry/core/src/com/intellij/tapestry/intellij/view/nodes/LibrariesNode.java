@@ -23,6 +23,7 @@ public class LibrariesNode extends TapestryNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public SimpleNode[] getChildren() {
         List<TapestryNode> children = new ArrayList<>();
 

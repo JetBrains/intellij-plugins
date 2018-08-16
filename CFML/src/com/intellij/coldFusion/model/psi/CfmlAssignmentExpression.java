@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.coldFusion.model.CfmlScopesInfo;
@@ -86,6 +72,7 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
     return myAssignedVariable;
   }
 
+  @Override
   public PsiType getPsiType() {
     return getAssignedVariableElementType();
   }
@@ -103,6 +90,7 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
       return CfmlAssignmentExpression.this.getRightHandExpr();
     }
 
+    @Override
     @NotNull
     public String getName() {
       final CfmlReferenceExpression expression = getAssignedVariableElement();
@@ -117,6 +105,7 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
       return variableName != null ? expression.getText() : "";
     }
 
+    @Override
     public PsiElement setName(@NotNull @NonNls String name) throws IncorrectOperationException {
       // no need of renaming definition as it is a reference also and
       // will be renamed on handleRename operation of CfmlReferenceExpression
@@ -132,19 +121,23 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
       return namedElement != null ? namedElement : this;
     }
 
+    @Override
     public PsiElement getParent() {
       //noinspection ConstantConditions
       return getAssignedVariableElement();
     }
 
+    @Override
     public String getTypeName() {
       return "Unknown type";
     }
 
+    @Override
     public Icon getIcon() {
       return PlatformIcons.VARIABLE_ICON;
     }
 
+    @Override
     public PsiType getPsiType() {
       return getAssignedVariableElementType();
     }
@@ -173,18 +166,22 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
       return null;
     }
 
+    @Override
     public int getProvidedScope() {
       return CfmlScopesInfo.getScopeByString(getScopeName());
     }
 
+    @Override
     public boolean isTrulyDeclaration() {
       return myIsDefinition;
     }
 
+    @Override
     public PsiElement getNameIdentifier() {
       return getNavigationElement();
     }
 
+    @Override
     @NotNull
     public String getlookUpString() {
       final CfmlReferenceExpression expression = getAssignedVariableElement();

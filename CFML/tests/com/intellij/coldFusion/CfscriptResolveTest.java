@@ -240,7 +240,7 @@ public class CfscriptResolveTest extends JavaCodeInsightFixtureTestCase {
     assertAssignmentVariable(element);
     assertInstanceOf(element, CfmlVariable.class);
     assertInstanceOf(element.getParent(), CfmlReferenceExpression.class);
-    assertTrue(CfmlUtil.INSTANCE.isSearchedScope(((CfmlReferenceExpression)element.getParent()).getScope().getText()));
+    assertTrue(CfmlUtil.isSearchedScope(((CfmlReferenceExpression)element.getParent()).getScope().getText()));
   }
 
   public void testResolveFromReturn() {

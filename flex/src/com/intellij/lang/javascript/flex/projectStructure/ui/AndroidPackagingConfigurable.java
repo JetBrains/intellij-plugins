@@ -14,6 +14,7 @@ public class AndroidPackagingConfigurable extends AirPackagingConfigurableBase<M
     super(module, model, airDescriptorInfoProvider);
   }
 
+  @Override
   @Nls
   public String getDisplayName() {
     return TAB_NAME;

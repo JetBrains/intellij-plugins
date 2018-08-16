@@ -39,10 +39,12 @@ public class TapestryToolWindow extends FileSystemListenerAdapter {
        _tabbedPane.addTab("Dependencies", _dependenciesTab.getMainPanel());
 
         ModuleListener moduleListener = new ModuleListener() {
+            @Override
             public void moduleRemoved(@NotNull Project project, @NotNull Module module) {
                 reload();
             }
 
+            @Override
             public void moduleAdded(@NotNull Project project, @NotNull Module module) {
                 reload();
             }
@@ -55,6 +57,7 @@ public class TapestryToolWindow extends FileSystemListenerAdapter {
     }
 
 
+    @Override
     public void fileDeleted(String path) {
         if (_element == null || _module == null) {
             return;
@@ -65,6 +68,7 @@ public class TapestryToolWindow extends FileSystemListenerAdapter {
         _dependenciesTab.showDependencies(_module, _element);
     }
 
+    @Override
     public void fileContentsChanged(IResource changedFile) {
         if (_element == null || _module == null) {
             return;

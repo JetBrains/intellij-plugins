@@ -46,7 +46,7 @@ public class PropertyAccessorElement extends FakePsiElement implements PsiMetaOw
     myGetterNotSetter = getterNotSetter;
   }
 
-  @NotNull 
+  @NotNull
   public PsiType getMethodReturnType() {
     return myGetterNotSetter ? myField.getType() : PsiType.VOID;
   }
@@ -67,47 +67,57 @@ public class PropertyAccessorElement extends FakePsiElement implements PsiMetaOw
     return myField.getManager();
   }
 
+  @Override
   public PsiElement getDeclaration() {
     return this;
   }
 
+  @Override
   @NonNls
   public String getName(PsiElement context) {
     return getName();
   }
 
+  @Override
   @NotNull
   public String getName() {
     return myName;
   }
 
+  @Override
   public void init(PsiElement element) {
 
   }
 
+  @Override
   @Nullable
   public Icon getIcon(boolean flags) {
     return AllIcons.Nodes.Property;
   }
 
+  @Override
   public PsiElement getParent() {
     return myField;
   }
 
+  @Override
   @Nullable
   public PsiMetaData getMetaData() {
     return this;
   }
 
+  @Override
   public String getTypeName() {
     return IdeBundle.message("bean.property");
   }
 
+  @Override
   @Nullable
   public Icon getIcon() {
     return getIcon(0);
   }
 
+  @Override
   public TextRange getTextRange() {
     return TextRange.from(0, 0);
   }

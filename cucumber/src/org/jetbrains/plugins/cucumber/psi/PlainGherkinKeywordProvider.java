@@ -33,26 +33,32 @@ public class PlainGherkinKeywordProvider implements GherkinKeywordProvider {
     DEFAULT_KEYWORD_TABLE.putAllKeywordsInto(DEFAULT_KEYWORDS);
   }
 
+  @Override
   public Collection<String> getAllKeywords(String language) {
     return DEFAULT_KEYWORDS.keySet();
   }
 
+  @Override
   public IElementType getTokenType(String language, String keyword) {
     return DEFAULT_KEYWORDS.get(keyword);
   }
 
+  @Override
   public String getBaseKeyword(String language, String keyword) {
     return keyword;
   }
 
+  @Override
   public boolean isSpaceAfterKeyword(String language, String keyword) {
     return !ourKeywordsWithNoSpaceAfter.contains(keyword);
   }
 
+  @Override
   public boolean isStepKeyword(String keyword) {
     return DEFAULT_KEYWORDS.get(keyword) == GherkinTokenTypes.STEP_KEYWORD;
   }
 
+  @Override
   @NotNull
   public GherkinKeywordTable getKeywordsTable(@Nullable final String language) {
     return DEFAULT_KEYWORD_TABLE;

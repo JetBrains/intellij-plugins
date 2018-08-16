@@ -47,16 +47,19 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
   @NonNls private static final String BUNDLE_ATTR_NAME = "bundle";
   private static final FlexPropertiesSupport.PropertyReferenceInfoProvider<JSAttributeNameValuePairImpl> ourPropertyInfoProvider =
     new FlexPropertiesSupport.PropertyReferenceInfoProvider<JSAttributeNameValuePairImpl>() {
+      @Override
       @Nullable
       public TextRange getReferenceRange(JSAttributeNameValuePairImpl element) {
         return getValueRange(element);
       }
 
+      @Override
       public String getBundleName(JSAttributeNameValuePairImpl element) {
         JSAttributeNameValuePair pair = ((JSAttribute)element.getParent()).getValueByName(BUNDLE_ATTR_NAME);
         return pair != null ? pair.getSimpleValue() : null;
       }
 
+      @Override
       public boolean isSoft(JSAttributeNameValuePairImpl element) {
         return false;
       }
@@ -64,10 +67,12 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
   private static final Key<ActionScriptReferenceSet> METADATA_REFERENCE_KEY = Key.create("com.intellij.lang.javascript.METADATA_REFERENCE_KEY");
   private static final FlexPropertiesSupport.BundleReferenceInfoProvider<JSAttributeNameValuePairImpl> ourBundleInfoProvider =
     new FlexPropertiesSupport.BundleReferenceInfoProvider<JSAttributeNameValuePairImpl>() {
+      @Override
       public TextRange getReferenceRange(JSAttributeNameValuePairImpl element) {
         return getValueRange(element);
       }
 
+      @Override
       public boolean isSoft(JSAttributeNameValuePairImpl element) {
         return false;
       }
@@ -210,6 +215,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
       myReferenceSet = referenceSet;
     }
 
+    @Override
     public LocalQuickFix[] getQuickFixes() {
       final String fqn = myElement.getSimpleValue();
 
@@ -282,16 +288,19 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
       myResolveOk = ArrayUtil.contains(myValue, allowedValues);
     }
 
+    @Override
     @NotNull
     public PsiElement getElement() {
       return myElement;
     }
 
+    @Override
     @NotNull
     public TextRange getRangeInElement() {
       return myRange;
     }
 
+    @Override
     public PsiElement resolve() {
       if (myResolveOk) {
         final XmlAttributeDescriptor attributeDescriptor =
@@ -301,32 +310,39 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
       return null;
     }
 
+    @Override
     @NotNull
     public String getCanonicalText() {
       return myValue;
     }
 
-    public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+    @Override
+    public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
       throw new IncorrectOperationException();
     }
 
+    @Override
     public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
       throw new IncorrectOperationException();
     }
 
-    public boolean isReferenceTo(PsiElement element) {
+    @Override
+    public boolean isReferenceTo(@NotNull PsiElement element) {
       return false;
     }
 
+    @Override
     @NotNull
     public Object[] getVariants() {
       return myAllowedValues;
     }
 
+    @Override
     public boolean isSoft() {
       return false;
     }
 
+    @Override
     @NotNull
     public String getUnresolvedMessagePattern() {
       return XmlErrorMessages.message("wrong.value", "attribute");

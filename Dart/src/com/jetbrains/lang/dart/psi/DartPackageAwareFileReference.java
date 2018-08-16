@@ -32,6 +32,7 @@ class DartPackageAwareFileReference extends FileReference {
     myDartResolver = dartResolver;
   }
 
+  @Override
   @NotNull
   protected ResolveResult[] innerResolve(final boolean caseSensitive, @NotNull final PsiFile containingFile) {
     if (PACKAGES_FOLDER_NAME.equals(getText())) {
@@ -67,6 +68,7 @@ class DartPackageAwareFileReference extends FileReference {
     return super.innerResolve(caseSensitive, containingFile);
   }
 
+  @Override
   @NotNull
   public Object[] getVariants() {
     final Object[] superVariants = super.getVariants();

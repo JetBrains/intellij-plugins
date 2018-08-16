@@ -38,7 +38,7 @@ class HeaderParametersProvider extends CompletionProvider<CompletionParameters> 
   }
 
   @Override
-  public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
+  public void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context, @NotNull CompletionResultSet result) {
     for (String name : myNames) {
       boolean directive = StringUtil.endsWithChar(name, ':');
       if (directive) name = name.substring(0, name.length() - 1);

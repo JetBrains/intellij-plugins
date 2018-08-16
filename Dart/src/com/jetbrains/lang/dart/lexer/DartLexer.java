@@ -16,6 +16,7 @@ public class DartLexer extends MergingLexerAdapterBase {
 
   private static FlexAdapter createLexer() {
     return new FlexAdapter(new _DartLexer() {
+      @Override
       public void reset(final CharSequence buffer, final int start, final int end, final int initialState) {
         super.reset(buffer, start, end, initialState);
         myLeftBraceCount = 0;

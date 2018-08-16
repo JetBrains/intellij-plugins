@@ -27,11 +27,13 @@ class JpsModuleLibraryDependencyEntryImpl extends JpsFlexDependencyEntryBase<Jps
     myLibraryId = original.myLibraryId;
   }
 
+  @Override
   @NotNull
   public JpsModuleLibraryDependencyEntryImpl createCopy() {
     return new JpsModuleLibraryDependencyEntryImpl(this);
   }
 
+  @Override
   public void applyChanges(@NotNull final JpsModuleLibraryDependencyEntryImpl modified) {
     super.applyChanges(modified);
     myLibraryId = modified.myLibraryId;
@@ -39,6 +41,7 @@ class JpsModuleLibraryDependencyEntryImpl extends JpsFlexDependencyEntryBase<Jps
 
 // ------------------------------------
 
+  @Override
   @Nullable
   public JpsLibrary getLibrary() {
     final JpsModule module = ((JpsFlexBuildConfiguration)myParent.getParent().getParent()).getModule();

@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Alexey Chmutov
  */
 public class TmlFileTypeFactory extends FileTypeFactory {
+  @Override
   public void createFileTypes(final @NotNull FileTypeConsumer consumer) {
     final TmlFileType fileType = TmlFileType.INSTANCE;
     consumer.consume(fileType, fileType.getDefaultExtension());

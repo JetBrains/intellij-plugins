@@ -24,7 +24,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.containers.ContainerUtil;
-import java.util.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.*;
@@ -36,6 +35,7 @@ import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,11 +49,13 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     return false;
   }
 
+  @Override
   @NotNull
   public String getFamilyName() {
     return getName();
   }
 
+  @Override
   public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor) {
     final GherkinStep step = (GherkinStep)descriptor.getPsiElement();
     final GherkinFile featureFile = (GherkinFile)step.getContainingFile();
@@ -174,10 +176,12 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
   @Nullable
   private static CreateStepDefinitionFileModel askUserForFilePath(@NotNull final GherkinStep step) {
     final InputValidator validator = new InputValidator() {
+      @Override
       public boolean checkInput(final String filePath) {
         return !StringUtil.isEmpty(filePath);
       }
 
+      @Override
       public boolean canClose(final String fileName) {
         return true;
       }

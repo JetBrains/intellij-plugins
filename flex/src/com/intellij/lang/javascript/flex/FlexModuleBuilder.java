@@ -59,6 +59,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
   private boolean myCheckPlayerVersion;
   private boolean myExpressInstall;
 
+  @Override
   public ModuleType getModuleType() {
     return FlexModuleType.getInstance();
   }
@@ -111,6 +112,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
     myExpressInstall = expressInstall;
   }
 
+  @Override
   public void setupRootModel(final ModifiableRootModel modifiableRootModel) throws ConfigurationException {
     final ContentEntry contentEntry = doAddContentEntry(modifiableRootModel);
     if (contentEntry == null) return;
@@ -260,6 +262,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
 
     if (sourceRoot == null) {
       sourceRoot = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
+        @Override
         public VirtualFile compute() {
           try {
             return contentRoot.createChildDirectory(this, "src");

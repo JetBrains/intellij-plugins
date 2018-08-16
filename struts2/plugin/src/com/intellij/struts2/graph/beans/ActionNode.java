@@ -32,6 +32,7 @@ public class ActionNode extends BasicStrutsNode<Action> {
     super(identifyingElement, name);
   }
 
+  @Override
   @NotNull
   public Icon getIcon() {
     return Struts2Icons.Action;

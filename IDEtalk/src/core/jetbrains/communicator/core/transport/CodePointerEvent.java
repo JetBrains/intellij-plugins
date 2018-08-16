@@ -48,6 +48,7 @@ public class CodePointerEvent extends TransportEvent {
     return myCodePointer;
   }
 
+  @Override
   public void accept(EventVisitor visitor) {
     visitor.visitCodePointerEvent(this);
   }

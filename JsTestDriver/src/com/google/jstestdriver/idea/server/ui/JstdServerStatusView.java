@@ -12,8 +12,8 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.SideBorder;
 import com.intellij.util.PlatformIcons;
-import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.SwingHelper;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -130,6 +130,7 @@ public class JstdServerStatusView {
     final OpenLinkInBrowser openLinkInBrowserAction = new OpenLinkInBrowser();
     final DefaultActionGroup group = new DefaultActionGroup(openLinkInBrowserAction, copyLinkAction);
     pane.addMouseListener(new PopupHandler() {
+      @Override
       public void invokePopup(Component comp, int x, int y) {
         String url = urlRef.get();
         copyLinkAction.setUrl(url);
@@ -151,12 +152,12 @@ public class JstdServerStatusView {
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
       e.getPresentation().setEnabledAndVisible(myUrl != null);
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
       String url = myUrl;
       if (url != null) {
         BrowserUtil.browse(url);
@@ -177,12 +178,12 @@ public class JstdServerStatusView {
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
       e.getPresentation().setEnabledAndVisible(myUrl != null);
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
       String url = myUrl;
       if (url != null) {
         Transferable content = new StringSelection(url);

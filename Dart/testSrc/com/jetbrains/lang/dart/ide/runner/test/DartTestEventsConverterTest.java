@@ -394,6 +394,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     }
   }
 
+  @Override
   protected TestConsoleProperties createConsoleProperties() {
     TestConsoleProperties properties = super.createConsoleProperties();
     TestConsoleProperties.HIDE_PASSED_TESTS.set(properties, false);

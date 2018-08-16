@@ -34,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ValidationStructureViewBuilderProvider extends BaseStructureViewBuilderProvider {
 
+  @Override
   @Nullable
   protected DomFileElement getFileElement(@NotNull final XmlFile xmlFile) {
     final DomManager domManager = DomManager.getDomManager(xmlFile.getProject());

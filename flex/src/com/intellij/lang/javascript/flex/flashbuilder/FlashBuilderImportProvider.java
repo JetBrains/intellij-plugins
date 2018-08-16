@@ -16,6 +16,7 @@ public class FlashBuilderImportProvider extends ProjectImportProvider {
     myProcessor = new FlashBuilderOpenProcessor(builder);
   }
 
+  @Override
   public ModuleWizardStep[] createSteps(final WizardContext context) {
     return new ModuleWizardStep[]{new SelectDirWithFlashBuilderProjectsStep(context), new SelectFlashBuilderImportedProjectsStep(context)};
   }

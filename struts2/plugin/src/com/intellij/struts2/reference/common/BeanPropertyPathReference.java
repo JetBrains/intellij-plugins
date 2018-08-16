@@ -23,7 +23,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.beanProperties.CreateBeanPropertyFixes;
-import com.intellij.psi.util.PropertyUtil;
 import com.intellij.psi.util.PropertyUtilBase;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -57,6 +56,7 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
     return referenceSet.getReferences().size() - 1 == index;
   }
 
+  @Override
   public PsiMethod resolve() {
     final PsiClass psiClass = getPsiClass();
     if (psiClass == null) {
@@ -66,6 +66,7 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
     return resolveProperty(psiClass, getValue());
   }
 
+  @Override
   @NotNull
   public Object[] getVariants() {
     final PsiClass psiClass = getPsiClass();
@@ -96,16 +97,19 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
     return variants;
   }
 
+  @Override
   @NotNull
   public String getUnresolvedMessagePattern() {
     return "Cannot resolve property '" + getValue() + "'";
   }
 
-  public PsiElement handleElementRename(final String newElementName) throws IncorrectOperationException {
+  @Override
+  public PsiElement handleElementRename(@NotNull final String newElementName) throws IncorrectOperationException {
     final String name = PropertyUtilBase.getPropertyName(newElementName);
     return super.handleElementRename(name == null ? newElementName : name);
   }
 
+  @Override
   public PsiElement bindToElement(@NotNull final PsiElement element) throws IncorrectOperationException {
     if (element instanceof PsiMethod) {
       final String propertyName = PropertyUtilBase.getPropertyName((PsiMember)element);
@@ -116,6 +120,7 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
     return getElement();
   }
 
+  @Override
   public LocalQuickFix[] getQuickFixes() {
     final String value = getValue();
     if (StringUtil.isEmpty(value)) {

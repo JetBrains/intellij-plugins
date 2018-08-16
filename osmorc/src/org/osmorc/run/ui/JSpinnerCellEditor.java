@@ -55,11 +55,13 @@ public class JSpinnerCellEditor extends AbstractCellEditor implements TableCellE
   public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
     mySpinner.setValue(value);
     mySpinner.addFocusListener(new FocusAdapter() {
+      @Override
       public void focusLost(FocusEvent e) {
         fireEditingStopped();
       }
     });
     mySpinner.addChangeListener(new ChangeListener() {
+      @Override
       public void stateChanged(ChangeEvent e) {
         fireEditingStopped();
       }

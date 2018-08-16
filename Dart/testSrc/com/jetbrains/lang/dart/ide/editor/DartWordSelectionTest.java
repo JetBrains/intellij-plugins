@@ -13,6 +13,7 @@ public class DartWordSelectionTest extends DartCodeInsightFixtureTestCase {
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
   }
 
+  @Override
   protected String getBasePath() {
     return "/selectWord/";
   }

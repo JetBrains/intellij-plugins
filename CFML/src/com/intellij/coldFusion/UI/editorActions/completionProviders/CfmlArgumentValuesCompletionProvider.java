@@ -37,7 +37,7 @@ public class CfmlArgumentValuesCompletionProvider extends CompletionProvider<Com
 
   @Override
   protected void addCompletions(@NotNull CompletionParameters parameters,
-                                ProcessingContext context,
+                                @NotNull ProcessingContext context,
                                 @NotNull CompletionResultSet result) {
     PsiElement element = parameters.getPosition();
     CfmlFunctionCallExpression parentOfType = PsiTreeUtil.getParentOfType(element, CfmlFunctionCallExpression.class);
@@ -53,7 +53,7 @@ public class CfmlArgumentValuesCompletionProvider extends CompletionProvider<Com
     if (parentSibling != null &&
         parent.getNode().getElementType() == CfmlElementTypes.STRING_LITERAL &&
         parentSibling.getNode().getElementType() == CfscriptTokenTypes.L_BRACKET) {
-      result.addAllElements(map2Set(CfmlUtil.INSTANCE.getCreateObjectArgumentValues(), (Function<String, LookupElement>)argumentValue -> LookupElementBuilder.create(argumentValue).withCaseSensitivity(false))
+      result.addAllElements(map2Set(CfmlUtil.getCreateObjectArgumentValues(), (Function<String, LookupElement>)argumentValue -> LookupElementBuilder.create(argumentValue).withCaseSensitivity(false))
 
       );
     }

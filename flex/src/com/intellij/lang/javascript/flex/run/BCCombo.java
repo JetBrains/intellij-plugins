@@ -77,6 +77,7 @@ public class BCCombo extends JComboBox {
     });
 
     addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         // remove invalid entry
         final Object selectedItem = getSelectedItem();

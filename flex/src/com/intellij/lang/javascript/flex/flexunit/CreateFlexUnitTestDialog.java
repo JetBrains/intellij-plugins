@@ -81,6 +81,7 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
       .setText(FileUtil.toSystemDependentName(suggestTestSourceRootPath(module, contextClass.getContainingFile().getVirtualFile())));
 
     myCreateTestSourceFolderCheckBox.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         myTestSourceFolderTextField.setEnabled(myCreateTestSourceFolderCheckBox.isSelected());
       }
@@ -118,10 +119,12 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
     return "";
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     return myMainPanel;
   }
 
+  @Override
   public JComponent getPreferredFocusedComponent() {
     return myTestClassNameTextField;
   }
@@ -145,6 +148,7 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
 
     final List<JSMemberInfo> memberInfos = new ArrayList<>();
     JSMemberInfo.extractClassMembers(myContextClass, memberInfos, new MemberInfoBase.Filter<JSAttributeListOwner>() {
+      @Override
       public boolean includeMember(final JSAttributeListOwner member) {
         final JSAttributeList attributeList = member.getAttributeList();
         return member instanceof JSFunction &&
@@ -156,6 +160,7 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
     myMemberSelectionPanel = new JSMemberSelectionPanel("Generate test methods for:", memberInfos, null);
   }
 
+  @Override
   protected ValidationInfo doValidate() {
     if (myCreateTestSourceFolderCheckBox.isVisible() && myCreateTestSourceFolderCheckBox.isSelected()) {
       final String path = FileUtil.toSystemIndependentName(myTestSourceFolderTextField.getText().trim());
@@ -181,6 +186,7 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
     return null;
   }
 
+  @Override
   protected void doOKAction() {
     final String superClassFqn = mySuperClassField.getText().trim();
     final PsiElement element = ActionScriptClassResolver.findClassByQNameStatic(superClassFqn, getSuperClassScope(myModule));

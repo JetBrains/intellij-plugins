@@ -15,6 +15,7 @@ import java.util.Map;
  */
 public class ComponentExternalizer extends ToClassExternalizer {
 
+    @Override
     public boolean execute(Context context) throws Exception {
         if (!super.execute(context))
             return false;

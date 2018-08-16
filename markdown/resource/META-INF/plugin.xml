@@ -7,8 +7,18 @@
   <depends optional="true" config-file="plugin-intelliLang.xml">org.intellij.intelliLang</depends>
 
   <description><![CDATA[
-      Markdown support for IntelliJ products
-    ]]></description>
+<p>Provides the capability to edit markdown files within the IDE and see the rendered HTML in a live preview.
+</br>
+</br>
+Includes the following features:</p>
+<ul>
+<li>Document structure view, headers folding, highlighting, TODOs.</li>
+<li>Code completion and navigation for links to project files.</li>
+<li>Embedding fenced code blocks for different languages.</li>
+<li>Visualizing diagrams for the DOT or PlantUML diagramming languages.</li>
+<li>Ability to use custom stylesheets for a live preview.</li>
+</ul>
+]]></description>
 
   <change-notes><![CDATA[
     ]]>

@@ -50,6 +50,7 @@ public class StrutsRESTPluginConstantContributor extends StrutsConstantContribut
     return "org.apache.struts2.rest.handler.ContentTypeHandler";
   }
 
+  @Override
   @NotNull
   public List<StrutsConstant> getStrutsConstantDefinitions(@NotNull final Module module) {
     return CONSTANTS;

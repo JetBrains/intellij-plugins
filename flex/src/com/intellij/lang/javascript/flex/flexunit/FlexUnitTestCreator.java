@@ -32,6 +32,7 @@ import java.util.Set;
 import static com.intellij.lang.javascript.psi.JSFunction.FunctionKind;
 
 public class FlexUnitTestCreator implements TestCreator {
+  @Override
   public boolean isAvailable(final Project project, final Editor editor, final PsiFile file) {
     final VirtualFile vFile = file.getVirtualFile();
     return FlexUnitTestFinder.findContextClass(file) != null &&
@@ -39,6 +40,7 @@ public class FlexUnitTestCreator implements TestCreator {
            !ProjectRootManager.getInstance(project).getFileIndex().isInTestSourceContent(vFile);
   }
 
+  @Override
   public void createTest(final Project project, final Editor editor, final PsiFile file) {
     final JSClass jsClass = FlexUnitTestFinder.findContextClass(file);
     if (jsClass == null) return;

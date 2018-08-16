@@ -13,17 +13,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class FlexUnitMethodHasParametersInspection extends FlexUnitMethodInspectionBase {
 
+  @Override
   @Nls
   @NotNull
   public String getDisplayName() {
     return FlexBundle.message("flexunit.inspection.testmethodhasparameters.displayname");
   }
 
+  @Override
   @NotNull
   public String getShortName() {
     return "FlexUnitMethodHasParametersInspection";
   }
 
+  @Override
   protected void visitPotentialTestMethod(JSFunction method, ProblemsHolder holder, FlexUnitSupport support) {
     if (FlexUnitSupport.getCustomRunner((JSClass)method.getParent()) != null) return;
     if (ValidateTypesUtil.hasRequiredParameters(method)) {

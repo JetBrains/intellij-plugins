@@ -24,11 +24,13 @@ public class JpsFlashRunnerParameters extends JpsBCBasedRunnerParameters<JpsFlas
     myOverriddenOutputFileName = original.myOverriddenOutputFileName;
   }
 
+  @Override
   @NotNull
   public JpsFlashRunnerParameters createCopy() {
     return new JpsFlashRunnerParameters(this);
   }
 
+  @Override
   public void applyChanges(@NotNull final JpsFlashRunnerParameters modified) {
     super.applyChanges(modified);
 
@@ -65,6 +67,7 @@ public class JpsFlashRunnerParameters extends JpsBCBasedRunnerParameters<JpsFlas
     myOverriddenOutputFileName = overriddenOutputFileName;
   }
 
+  @Override
   @Nullable
   public JpsFlexBuildConfiguration getBC(final JpsProject project) {
     final JpsFlexBuildConfiguration origBC = super.getBC(project);

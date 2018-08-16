@@ -79,7 +79,7 @@ public class JstdToolWindowSession {
     actionGroup.add(new JstdServerStopAction());
     actionGroup.add(new AnAction("Configure paths to local web browsers", null, PlatformIcons.WEB_ICON) {
       @Override
-      public void actionPerformed(AnActionEvent e) {
+      public void actionPerformed(@NotNull AnActionEvent e) {
         ShowSettingsUtil settingsUtil = ShowSettingsUtil.getInstance();
         settingsUtil.editConfigurable(e.getProject(), new BrowserSettings());
       }

@@ -14,7 +14,10 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.flex.run.FlashPlayerTrustUtil;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunner;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -45,36 +48,44 @@ public class ActionScriptProfileRunner implements ProgramRunner<RunnerSettings> 
   private final FlexRunner myFlexRunner = new FlexRunner();
   private static final char DELIMITER = '=';
 
+  @Override
   @NotNull
   public String getRunnerId() {
     return PROFILE;
   }
 
+  @Override
   public boolean canRun(@NotNull String executorId, @NotNull RunProfile runProfile) {
     return executorId.equals(DefaultProfilerExecutor.EXECUTOR_ID) && runProfile instanceof FlashRunConfiguration;
   }
 
+  @Override
   public RunnerSettings createConfigurationData(ConfigurationInfoProvider configurationInfoProvider) {
     return null;
   }
 
+  @Override
   public void checkConfiguration(RunnerSettings runnerSettings, ConfigurationPerRunnerSettings configurationPerRunnerSettings)
     throws RuntimeConfigurationException {
     myFlexRunner.checkConfiguration(runnerSettings, configurationPerRunnerSettings);
   }
 
+  @Override
   public void onProcessStarted(RunnerSettings runnerSettings, ExecutionResult executionResult) {
     myFlexRunner.onProcessStarted(runnerSettings, executionResult);
   }
 
+  @Override
   public SettingsEditor<RunnerSettings> getSettingsEditor(Executor executor, RunConfiguration runConfiguration) {
     return null;
   }
 
+  @Override
   public void execute(@NotNull ExecutionEnvironment executionEnvironment) throws ExecutionException {
     execute(executionEnvironment, null);
   }
 
+  @Override
   public void execute(@NotNull ExecutionEnvironment executionEnvironment,
                       @Nullable Callback callback) throws ExecutionException {
     RunProfile runProfile = executionEnvironment.getRunProfile();
@@ -213,6 +224,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<RunnerSettings> 
 
   private static void begFlashPlayerToPreloadProfilerSwf(final String pathToAgent) throws IOException {
     processMmCfg(new ProfilerPathMmCfgFixer() {
+      @Override
       public String additionalOptions(String lineEnd) {
         LOG.debug("Added profiler swf reference to mm.cfg");
         return PRELOAD_SWF_OPTION + "=" + pathToAgent;
@@ -223,6 +235,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<RunnerSettings> 
   private static void removePreloadingOfProfilerSwf() {
     try {
       processMmCfg(new ProfilerPathMmCfgFixer() {
+        @Override
         @Nullable
         public String additionalOptions(String lineEnd) {
           LOG.debug("Removed profiler swf reference from mm.cfg");
@@ -243,6 +256,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<RunnerSettings> 
   }
 
   static abstract class ProfilerPathMmCfgFixer implements MmCfgFixer {
+    @Override
     @Nullable
     public String processOption(String option, String value, String line) {
       if (!PRELOAD_SWF_OPTION.equals(option)) return line;

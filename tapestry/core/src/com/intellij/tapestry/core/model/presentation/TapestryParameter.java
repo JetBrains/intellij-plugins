@@ -129,6 +129,7 @@ public class TapestryParameter implements Comparable {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int compareTo(Object o) {
         return getName().compareTo(((TapestryParameter) o).getName());
     }

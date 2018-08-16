@@ -13,6 +13,7 @@ public class SpecialCaseLiteralStringResolver extends AbstractValueResolver {
 
     private static final Pattern PATTERN = Pattern.compile("'.*'");
 
+    @Override
     public boolean execute(Context context) throws Exception {
         String cleanValue = getCleanValue(((ValueResolverContext) context).getValue()).trim().toLowerCase();
 

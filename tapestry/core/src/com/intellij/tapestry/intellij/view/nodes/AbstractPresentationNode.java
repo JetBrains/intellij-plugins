@@ -24,6 +24,7 @@ public abstract class AbstractPresentationNode extends TapestryNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public SimpleNode[] getChildren() {
         TreeSet<TapestryNode> children = new TreeSet<>(PackageNodesComparator.getInstance());
         List<String> addedFolders = new ArrayList<>();

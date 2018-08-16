@@ -15,11 +15,12 @@ package org.jetbrains.vuejs.cli
 
 import com.intellij.execution.RunManager
 import com.intellij.ide.file.BatchFileChangeListener
-import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration
-import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType
+import com.intellij.javascript.CreateRunConfigurationUtil
 import com.intellij.javascript.nodejs.packageJson.PackageJsonDependenciesExternalUpdateManager
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
+import com.intellij.lang.javascript.buildTools.npm.NpmScriptsUtil
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
+import com.intellij.lang.javascript.buildTools.npm.rc.NpmRunConfigurationBuilder
 import com.intellij.lang.javascript.buildTools.webpack.WebPackConfigManager
 import com.intellij.lang.javascript.buildTools.webpack.WebPackConfiguration
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
@@ -38,8 +39,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.Pair.pair
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.io.exists
 import org.jetbrains.vuejs.VueBundle
 import java.io.File
@@ -48,12 +51,13 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import javax.swing.JPanel
 
-class VueCliRunningGeneratorController internal constructor (generationLocation: Path,
+class VueCliRunningGeneratorController internal constructor(generationLocation: Path,
                                                             private val settings: NpmPackageProjectGenerator.Settings,
                                                             private val listener: VueRunningGeneratorListener,
-                                                             parentDisposable: Disposable): Disposable {
+                                                            parentDisposable: Disposable) : Disposable {
   // checked in disposed condition
-  @Volatile private var state: VueProjectCreationState = VueProjectCreationState.Starting
+  @Volatile
+  private var state: VueProjectCreationState = VueProjectCreationState.Starting
   private var currentQuestion: VueCreateProjectProcess.Question? = null
   private var process: VueCreateProjectProcess? = null
   private var questionUi: VueCliGeneratorQuestioningPanel? = null
@@ -66,10 +70,12 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
 
     val isOldPackage = Paths.get(settings.myPackage.systemDependentPath).fileName.toString() == "vue-cli"
     questionUi = VueCliGeneratorQuestioningPanel(isOldPackage, templateName, projectName,
-                                                 { if (state == VueProjectCreationState.User) {
+                                                 {
+                                                   if (state == VueProjectCreationState.User) {
                                                      if (it) listener.enableNext()
                                                      else listener.disableNext(null)
-                                                 } })
+                                                   }
+                                                 })
     process = VueCreateProjectProcess(generationLocation.parent, projectName, templateName, settings.myInterpreterRef,
                                       settings.myPackage.systemDependentPath, this)
     process!!.listener = {
@@ -84,7 +90,8 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
             state = VueProjectCreationState.Error
             process!!.listener = null
             process!!.cancel()
-          } else if (VueProjectCreationState.QuestionsFinished == processState.processState ||
+          }
+          else if (VueProjectCreationState.QuestionsFinished == processState.processState ||
                    VueProjectCreationState.Finished == processState.processState) {
             state = VueProjectCreationState.QuestionsFinished
             val callback: (Project) -> Unit = { project ->
@@ -100,20 +107,32 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
               }
             }
             listener.finishedQuestionsCloseUI(callback)
-          } else if (VueProjectCreationState.Process == processState.processState) {
+          }
+          else if (VueProjectCreationState.Process == processState.processState) {
             currentQuestion = processState.question
             val error = processState.question?.validationError
             if (error != null) {
               listener.disableNext(error)
               questionUi!!.activateUi()
-            } else {
+            }
+            else {
               listener.disableNext("")
               questionUi!!.question(processState.question!!)
             }
             state = VueProjectCreationState.User
             listener.enableNext()
           }
-        }, ModalityState.any(), Condition<Boolean> { state == VueProjectCreationState.QuestionsFinished || state == VueProjectCreationState.Error })
+        }, ModalityState.any(),
+        Condition<Boolean> { state == VueProjectCreationState.QuestionsFinished || state == VueProjectCreationState.Error })
+    }
+  }
+
+  private fun getVueCliVersion(): Number {
+    val vueCliPackage = settings.myPackage.systemIndependentPath
+    return when {
+      vueCliPackage.endsWith("/@vue/cli") -> 3
+      vueCliPackage.endsWith("/vue-cli") -> 2
+      else -> 0
     }
   }
 
@@ -121,7 +140,7 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
                                       doneCallback: Runnable,
                                       generationLocation: Path) {
     if (process == null) return
-    val task = object: Task.Backgroundable(project, VueBundle.message("vue.project.generator.progress.task.name.dots"), false,
+    val task = object : Task.Backgroundable(project, VueBundle.message("vue.project.generator.progress.task.name.dots"), false,
                                             PerformInBackgroundOption.ALWAYS_BACKGROUND) {
       override fun run(indicator: ProgressIndicator) {
         process!!.waitForProcessTermination(indicator)
@@ -133,7 +152,8 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
           doneCallback.run()
           JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
           setupWebpackConfigFile(project)
-          createJsDebugConfiguration(project)
+          CreateRunConfigurationUtil.debugConfiguration(project, 8080)
+          createNpmRunConfiguration(project)
           LocalFileSystem.getInstance().refreshIoFiles(listOf(generationLocation.toFile()), true, true, null)
         }
       }
@@ -142,11 +162,11 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
     ProgressManager.getInstance().runProcessWithProgressAsynchronously(task, indicator)
   }
 
+
   private fun setupWebpackConfigFile(project: Project) {
-    val vueCliPackage = settings.myPackage.systemIndependentPath
-    val path = when {
-      vueCliPackage.endsWith("/@vue/cli") -> project.basePath + "/node_modules/@vue/cli-service/webpack.config.js"
-      vueCliPackage.endsWith("/vue-cli") -> project.basePath + "/build/webpack.dev.conf.js"
+    val path = when (getVueCliVersion()) {
+      3 -> project.basePath + "/node_modules/@vue/cli-service/webpack.config.js"
+      2 -> project.basePath + "/build/webpack.dev.conf.js"
       else -> null
     }
     if (path != null && File(path).isFile) {
@@ -154,13 +174,24 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
     }
   }
 
-  private fun createJsDebugConfiguration(project: Project) {
+  private fun createNpmRunConfiguration(project: Project) {
     val runManager = RunManager.getInstance(project)
-    val settings = runManager.createRunConfiguration("", JavascriptDebugConfigurationType.getTypeInstance().factory)
-    (settings.configuration as JavaScriptDebugConfiguration).uri = "http://localhost:8080"
-    settings.setName((settings.configuration as JavaScriptDebugConfiguration).suggestedName())
-    runManager.addConfiguration(settings)
-    runManager.selectedConfiguration = settings
+    val pkg = PackageJsonUtil.findChildPackageJsonFile(project.baseDir)
+    if (pkg != null) {
+      val npmScripts = NpmScriptsUtil.listTasks(project, pkg).scripts
+      if (npmScripts.find { it.name == "start" || it.name == "serve" || it.name == "dev" } == null && getVueCliVersion() != 3) {
+        return
+      }
+      var scriptName = "serve"
+      when {
+        npmScripts.find { it.name == "start" } != null -> scriptName = "start"
+        npmScripts.find { it.name == "start" || it.name == "serve" } == null && npmScripts.find { it.name == "dev" } != null -> scriptName = "dev"
+      }
+      val startConfiguration = NpmRunConfigurationBuilder(project).createRunConfiguration("npm $scriptName", null, pkg.path,
+                                                                                          ContainerUtil.newHashMap<String, Any>(
+                                                                                            pair<String, String>("run-script", scriptName)))
+      runManager.selectedConfiguration = startConfiguration
+    }
   }
 
   fun isFinished(): Boolean {
@@ -183,7 +214,8 @@ class VueCliRunningGeneratorController internal constructor (generationLocation:
       if (currentQuestion!!.type == VueCreateProjectProcess.QuestionType.Checkbox) {
         val answer = questionUi!!.getCheckboxAnswer()!!
         process!!.answer(answer)
-      } else {
+      }
+      else {
         val answer = questionUi!!.getAnswer()!!
         process!!.answer(answer)
       }
@@ -225,7 +257,8 @@ private fun validateProjectLocation(projectLocation: String): Pair<Path?, String
     if (!parentFolder.exists() && !FileUtil.createDirectory(parentFolder.toFile())) {
       error = "Can not create project directory: %s"
     }
-  } catch (e: InvalidPathException) {
+  }
+  catch (e: InvalidPathException) {
     error = "Invalid project path: %s"
   }
   if (error != null) {

@@ -49,11 +49,13 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
     return "GherkinStep:" + getStepName();
   }
 
+  @Override
   @Nullable
   public ASTNode getKeyword() {
     return getNode().findChildByType(GherkinTokenTypes.STEP_KEYWORD);
   }
 
+  @Override
   @Nullable
   public String getStepName() {
     return getElementText();
@@ -67,11 +69,13 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
     return StringUtil.join(children, astNode -> astNode.getText(), "").trim();
   }
 
+  @Override
   @Nullable
   public GherkinPystring getPystring() {
     return PsiTreeUtil.findChildOfType(this, GherkinPystring.class);
   }
 
+  @Override
   @Nullable
   public GherkinTable getTable() {
     final ASTNode tableNode = getNode().findChildByType(GherkinElementTypes.TABLE);
@@ -91,10 +95,12 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
     return ReferenceProvidersRegistry.getReferencesFromProviders(this);
   }
 
+  @Override
   protected void acceptGherkin(GherkinElementVisitor gherkinElementVisitor) {
     gherkinElementVisitor.visitStep(this);
   }
 
+  @Override
   @NotNull
   public List<String> getParamsSubstitutions() {
     synchronized (LOCK) {
@@ -152,6 +158,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
     clearCaches();
   }
 
+  @Override
   @Nullable
   public GherkinStepsHolder getStepHolder() {
     final PsiElement parent = getParent();
@@ -164,6 +171,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
     }
   }
 
+  @Override
   @Nullable
   public String getSubstitutedName() {
     final GherkinStepsHolder holder = getStepHolder();

@@ -163,6 +163,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
     return JSLinterAnnotationResult.create(collectedInfo, annotation, config);
   }
 
+  @Override
   protected void cleanNotification(@NotNull TsLinterInput collectedInfo) {
     JSLinterEditorNotificationPanel.clearNotification(collectedInfo.getProject(), getInspectionClass(), collectedInfo.getVirtualFile());
   }
@@ -218,6 +219,6 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
     new JSLinterAnnotationsBuilder<>(file, annotationResult, holder, TsLintInspection.getHighlightDisplayKey(),
                                      configurable, TsLintBundle.message("tslint.framework.title") + ": ",
                                      getInspectionClass(), fixes)
-      .setHighlightingGranularity(HighlightingGranularity.element).apply(document);
+      .setHighlightingGranularity(HighlightingGranularity.element).apply();
   }
 }

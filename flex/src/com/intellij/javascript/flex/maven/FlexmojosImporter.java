@@ -58,27 +58,33 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
     super(pluginGroupID, pluginArtifactID);
   }
 
+  @Override
   public boolean isApplicable(MavenProject mavenProject) {
     return ArrayUtil.contains(mavenProject.getPackaging(), SUPPORTED_PACKAGINGS) && super.isApplicable(mavenProject);
   }
 
+  @Override
   @NotNull
   public ModuleType getModuleType() {
     return FlexModuleType.getInstance();
   }
 
+  @Override
   public void getSupportedPackagings(Collection<String> result) {
     Collections.addAll(result, SUPPORTED_PACKAGINGS);
   }
 
+  @Override
   public void getSupportedDependencyTypes(Collection<String> result, SupportedRequestType type) {
     result.addAll(type == SupportedRequestType.FOR_COMPLETION ? DEPENDENCY_TYPES_FOR_COMPLETION : DEPENDENCY_TYPES_FOR_IMPORT);
   }
 
+  @Override
   public void getSupportedDependencyScopes(Collection<String> result) {
     Collections.addAll(result, "merged", "internal", "external", "caching", "rsl");
   }
 
+  @Override
   public void resolve(Project project, MavenProject mavenProject, NativeMavenProjectHolder nativeMavenProject,
                       MavenEmbedderWrapper embedder, ResolveContext context) throws MavenProcessCanceledException {
     final MavenPlugin plugin = getFlexmojosPlugin(mavenProject);
@@ -100,6 +106,7 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
     return version != null && version.startsWith("3.");
   }
 
+  @Override
   @Nullable
   public Pair<String, String> getExtraArtifactClassifierAndExtension(MavenArtifact artifact, MavenExtraArtifactType type) {
     if (!DEPENDENCY_TYPES_FOR_IMPORT.contains(artifact.getType())) return null;
@@ -111,10 +118,12 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
     return "swf".equals(project.getPackaging()) || "air".equals(project.getPackaging());
   }
 
+  @Override
   public void preProcess(Module module, MavenProject mavenProject, MavenProjectChanges changes,
                          IdeModifiableModelsProvider modifiableModelsProvider) {
   }
 
+  @Override
   public void process(final IdeModifiableModelsProvider modelsProvider,
                       final Module module,
                       final MavenRootModelAdapter modelAdapter,
@@ -136,6 +145,7 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
       : new FlexProjectConfigurationEditor(module.getProject(),
                                            FlexProjectConfigurationEditor
                                              .createModelProvider(moduleToModifiableModel, projectLibrariesModel, null)) {
+        @Override
         @Nullable
         protected Module findModuleWithBC(final BuildConfigurationEntry bcEntry) {
           // don't check BC presence here because corresponding BC may appear later in next import cycle
@@ -224,6 +234,7 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
            : null;
   }
 
+  @Override
   public synchronized void showFlexConfigWarningIfNeeded(final Project project) {
     if (myFlexConfigNotification != null) return; // already shown
     doShowFlexConfigWarning(project);
@@ -231,6 +242,7 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
 
   private synchronized void doShowFlexConfigWarning(final Project project) {
     final NotificationListener listener = new NotificationListener() {
+      @Override
       public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
         Messages
           .showWarningDialog(project, FlexBundle.message("flexmojos.warning.detailed"), FlexBundle.message("flexmojos.project.import"));

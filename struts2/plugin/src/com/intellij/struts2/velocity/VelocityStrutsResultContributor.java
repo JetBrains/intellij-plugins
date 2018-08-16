@@ -47,6 +47,7 @@ public class VelocityStrutsResultContributor extends StrutsResultContributor {
     return VELOCITY.equals(resultType);
   }
 
+  @Override
   public boolean createReferences(@NotNull final PsiElement psiElement,
                                   @NotNull final List<PsiReference> references,
                                   final boolean soft) {
@@ -68,6 +69,7 @@ public class VelocityStrutsResultContributor extends StrutsResultContributor {
     return true;
   }
 
+  @Override
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
     return createDefaultPathReference(path, element, Icons.VTL_ICON);
   }

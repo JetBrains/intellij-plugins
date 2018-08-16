@@ -29,9 +29,11 @@ public abstract class DartRunConfigurationBase extends LocatableConfigurationBas
     super(project, factory, name);
   }
 
+  @Override
   @NotNull
   public abstract DartCommandLineRunnerParameters getRunnerParameters();
 
+  @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
     getRunnerParameters().check(getProject());
   }

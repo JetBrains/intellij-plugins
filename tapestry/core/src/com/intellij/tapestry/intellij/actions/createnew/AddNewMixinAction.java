@@ -27,6 +27,7 @@ public class AddNewMixinAction extends AddNewElementAction<MixinsNode> {
   }
 
 
+  @Override
   protected String getElementsRootPackage(@NotNull TapestryProject tapestryProject) {
     return tapestryProject.getMixinsRootPackage();
   }
@@ -34,7 +35,8 @@ public class AddNewMixinAction extends AddNewElementAction<MixinsNode> {
   /**
    * {@inheritDoc}
    */
-  public void actionPerformed(AnActionEvent event) {
+  @Override
+  public void actionPerformed(@NotNull AnActionEvent event) {
     final Module module = getModule(event);
     if (module == null) return;
 

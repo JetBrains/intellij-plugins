@@ -52,6 +52,7 @@ abstract class DomElementListCellRenderer<T extends DomElement> extends PsiEleme
   @NonNls
   public abstract String getAdditionalLocation(final T domElement);
 
+  @Override
   public String getElementText(final XmlTag element) {
     final DomElement domElement = getDomElement(element);
     if (domElement == null) {
@@ -62,6 +63,7 @@ abstract class DomElementListCellRenderer<T extends DomElement> extends PsiEleme
     return elementName == null ? unknownElementText : elementName;
   }
 
+  @Override
   protected String getContainerText(final XmlTag element, final String name) {
     final String containingFile = " (" + element.getContainingFile().getName() + ')';
 
@@ -78,6 +80,7 @@ abstract class DomElementListCellRenderer<T extends DomElement> extends PsiEleme
     return 0;
   }
 
+  @Override
   protected Icon getIcon(final PsiElement element) {
     final DomElement domElement = getDomElement((XmlTag) element);
     if (domElement != null) {

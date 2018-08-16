@@ -19,6 +19,7 @@ public interface IJavaClassType extends IJavaType {
     /**
      * @return the name of the type.
      */
+    @Override
     String getName();
 
     /**

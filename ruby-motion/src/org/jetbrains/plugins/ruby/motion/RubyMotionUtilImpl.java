@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.ruby.motion;
 
 import com.intellij.execution.filters.Filter;
@@ -68,6 +54,7 @@ import java.util.Locale;
 public class RubyMotionUtilImpl extends RubyMotionUtil {
   protected static final Key<ProjectType> PROJECT_TYPE = Key.create("ruby.motion.project.type");
 
+  @Override
   @Contract("null -> false")
   public boolean isRubyMotionModule(@Nullable final Module module) {
     if (module == null) {
@@ -90,6 +77,7 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
     return false;
   }
 
+  @Override
   public boolean hasMacRubySupport(@Nullable PsiElement element) {
     final PsiFile psiFile = element == null ? null : element.getContainingFile();
     if (psiFile == null) return false;
@@ -115,6 +103,7 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
     return hasRubyMotionSupport(module) || getModuleWithMotionSupport(psiFile.getProject()) != null;
   }
 
+  @Override
   public boolean hasRubyMotionSupport(@Nullable Module module) {
     return getRubyMotionFacet(module) != null;
   }
@@ -141,7 +130,8 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
     }
     return frameworks;
   }
-  
+
+  @Override
   @TestOnly
   public void resetSdkAndFrameworks(Module module) {
     module.putUserData(SDK_VERSION, null);
@@ -151,23 +141,27 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
     MotionSymbolUtil.MotionSymbolsCache.getInstance(module).reset();
   }
 
+  @Override
   public boolean isIgnoredFrameworkName(String name) {
     return name.equals("RubyMotion") || name.equals("UIAutomation");
   }
 
 
+  @Override
   public String getMainRakeTask(@NotNull final Module module) {
     return isOSX(module) ? "run" :
            isAndroid(module) ? "emulator" :
            "simulator";
   }
 
+  @Override
   public String getRubyMotionPath() {
     return ApplicationManager.getApplication().isUnitTestMode() ?
            PathManager.getHomePath() + "/ruby/gemsData/RubyMotion" :
            RUBY_MOTION_PATH;
   }
 
+  @Override
   public boolean rubyMotionPresent() {
     return new File(getRubyMotionPath() + "/bin/motion").exists();
   }
@@ -187,6 +181,7 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
     final File generatedApp = new File(tempDirectory, module.getName());
     final Filter[] filters = null;
     final ProcessAdapter processListener = new ProcessAdapter() {
+      @Override
       public void processTerminated(@NotNull ProcessEvent event) {
         FileUtil.moveDirWithContent(generatedApp, VfsUtilCore.virtualToIoFile(dir));
         tempDirectory.delete();
@@ -210,6 +205,7 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
                       null, false);
   }
 
+  @Override
   @Deprecated
   @Nullable
   public Module getModuleWithMotionSupport(final @NotNull Project project) {
@@ -222,6 +218,7 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
     return null;
   }
 
+  @Override
   @Contract(value = "null -> null")
   @Nullable
   public Facet getRubyMotionFacet(@Nullable final Module module) {
@@ -233,11 +230,13 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
     }
     return null;
   }
-  
+
+  @Override
   public boolean isMotionSymbol(@Nullable Symbol targetSymbol) {
     return targetSymbol instanceof MotionSymbol;
   }
 
+  @Override
   public Symbol getMotionSuperclass(Symbol targetSymbol, PsiElement invocationPoint) {
     return targetSymbol instanceof MotionClassSymbol ?
            ((MotionClassSymbol)targetSymbol).getSuperClassSymbol(invocationPoint) :

@@ -87,6 +87,7 @@ public class FlexBuildConfiguration {
       return result;
     }
 
+    @Override
     protected NamespaceAndManifestFileInfo clone() {
       try {
         return (NamespaceAndManifestFileInfo)super.clone();
@@ -119,6 +120,7 @@ public class FlexBuildConfiguration {
       return result;
     }
 
+    @Override
     protected ConditionalCompilationDefinition clone() {
       try {
         return (ConditionalCompilationDefinition)super.clone();

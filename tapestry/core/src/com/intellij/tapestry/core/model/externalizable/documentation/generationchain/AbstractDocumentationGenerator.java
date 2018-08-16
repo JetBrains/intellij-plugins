@@ -19,6 +19,7 @@ public abstract class AbstractDocumentationGenerator implements Command {
     private static final URL LOGO = AbstractDocumentationGenerator.class.getResource("/com/intellij/tapestry/core/icons/g5004.png");
     private static final URL STYLE = AbstractDocumentationGenerator.class.getResource("/documentation/style.css");
 
+    @Override
     public boolean execute(Context context) throws Exception {
         return context instanceof DocumentationGenerationContext;
     }

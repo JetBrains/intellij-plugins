@@ -57,6 +57,7 @@ public class DartStyleStrictTest extends DartStyleTest {
   /**
    * Run a test defined in "*.unit" or "*.stmt" file inside directory {@code dirName}.
    */
+  @Override
   protected void runTestInDirectory(String dirName) throws Exception {
     Set<String> fail = new THashSet<>();
     fail.addAll(KNOWN_TO_FAIL);
@@ -64,6 +65,7 @@ public class DartStyleStrictTest extends DartStyleTest {
     runTestInDirectory(dirName, fail);
   }
 
+  @Override
   protected SourceCode extractSourceSelection(String input, String expectedOutput, boolean isCompilationUnit) {
     return extractSelection(input, isCompilationUnit);
   }

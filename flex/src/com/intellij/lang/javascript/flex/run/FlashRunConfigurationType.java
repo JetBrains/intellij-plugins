@@ -21,6 +21,7 @@ public class FlashRunConfigurationType implements ConfigurationType {
 
   public FlashRunConfigurationType() {
     myFactory = new ConfigurationFactory(this) {
+      @Override
       @NotNull
       public RunConfiguration createTemplateConfiguration(Project project) {
         return new FlashRunConfiguration(project, this, "");
@@ -33,22 +34,27 @@ public class FlashRunConfigurationType implements ConfigurationType {
     };
   }
 
+  @Override
   public String getDisplayName() {
     return DISPLAY_NAME;
   }
 
+  @Override
   public String getConfigurationTypeDescription() {
     return "Flash run configuration";
   }
 
+  @Override
   public Icon getIcon() {
     return FlexIcons.Flash_run_config;
   }
 
+  @Override
   public ConfigurationFactory[] getConfigurationFactories() {
     return new ConfigurationFactory[]{myFactory};
   }
 
+  @Override
   @NotNull
   public String getId() {
     return TYPE;

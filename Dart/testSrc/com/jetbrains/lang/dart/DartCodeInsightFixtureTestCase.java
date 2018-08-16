@@ -5,6 +5,7 @@ import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 
 abstract public class DartCodeInsightFixtureTestCase extends LightPlatformCodeInsightFixtureTestCase {
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
     DartTestUtils.configureDartSdk(myModule, myFixture.getProjectDisposable(), false);

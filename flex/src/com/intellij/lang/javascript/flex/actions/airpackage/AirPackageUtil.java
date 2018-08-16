@@ -58,10 +58,12 @@ public class AirPackageUtil {
     final Ref<String> versionRef = new Ref<>();
 
     ExternalTask.runWithProgress(new AdtTask(project, sdk) {
+      @Override
       protected void appendAdtOptions(final List<String> command) {
         command.add("-version");
       }
 
+      @Override
       protected boolean checkMessages() {
         if (myMessages.size() == 1) {
           FlexCommonUtils.parseAirVersionFromAdtOutput(myMessages.get(0), versionRef);
@@ -89,6 +91,7 @@ public class AirPackageUtil {
 
     final boolean ok = ExternalTask.runWithProgress(
       new AdtTask(project, sdk) {
+        @Override
         protected void appendAdtOptions(final List<String> command) {
           command.add("-runtimeVersion");
           command.add("-platform");
@@ -101,6 +104,7 @@ public class AirPackageUtil {
           }
         }
 
+        @Override
         protected boolean checkMessages() {
           if (myMessages.size() == 1) {
             final String output = myMessages.get(0);
@@ -146,6 +150,7 @@ public class AirPackageUtil {
 
   public static boolean startAdbServer(final Project project, final Sdk sdk) {
     return ExternalTask.runWithProgress(new ExternalTask(project, sdk) {
+      @Override
       protected List<String> createCommandLine() {
         final ArrayList<String> command = new ArrayList<>();
         command.add(sdk.getHomePath() + ADB_RELATIVE_PATH);
@@ -153,6 +158,7 @@ public class AirPackageUtil {
         return command;
       }
 
+      @Override
       protected void scheduleInputStreamReading() {
         // Reading input stream causes hang on Windows because adb starts child process that never exits (IDEA-87648)
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
@@ -170,6 +176,7 @@ public class AirPackageUtil {
 
   private static void stopAdbServer(final Project project, final Sdk sdk, final String progressTitle, final String frameTitle) {
     ExternalTask.runWithProgress(new ExternalTask(project, sdk) {
+      @Override
       protected List<String> createCommandLine() {
         final ArrayList<String> command = new ArrayList<>();
         command.add(sdk.getHomePath() + ADB_RELATIVE_PATH);
@@ -177,6 +184,7 @@ public class AirPackageUtil {
         return command;
       }
 
+      @Override
       protected boolean checkMessages() {
         return true; // do not care
       }
@@ -232,6 +240,7 @@ public class AirPackageUtil {
                                                 final boolean uninstallExistingBeforeInstalling) {
     if (uninstallExistingBeforeInstalling) {
       ExternalTask.runWithProgress(new AdtTask(project, sdk) {
+        @Override
         protected void appendAdtOptions(final List<String> command) {
           command.add("-uninstallRuntime");
           command.add("-platform");
@@ -246,6 +255,7 @@ public class AirPackageUtil {
     }
 
     ExternalTask.runWithProgress(new AdtTask(project, sdk) {
+      @Override
       protected void appendAdtOptions(final List<String> command) {
         command.add("-installRuntime");
         command.add("-platform");
@@ -355,6 +365,7 @@ public class AirPackageUtil {
     final String packageFilePath = outputFolder + "/" + packagingOptions.getPackageFileName() + packageType.getFileExtension();
 
     return new AdtPackageTask(module.getProject(), bc.getSdk(), packageFilePath) {
+      @Override
       protected void appendAdtOptions(List<String> command) {
         switch (packageType) {
           case AirInstaller:
@@ -403,6 +414,7 @@ public class AirPackageUtil {
     final String packageFilePath = outputFolder + "/" + packagingOptions.getPackageFileName() + ".apk";
 
     return new AdtPackageTask(module.getProject(), bc.getSdk(), packageFilePath) {
+      @Override
       protected void appendAdtOptions(List<String> command) {
         command.add("-package");
         command.add("-target");
@@ -459,6 +471,7 @@ public class AirPackageUtil {
     final String packageFilePath = outputFolder + "/" + packagingOptions.getPackageFileName() + ".ipa";
 
     return new AdtPackageTask(module.getProject(), bc.getSdk(), packageFilePath) {
+      @Override
       protected void appendAdtOptions(List<String> command) {
         command.add("-package");
 
@@ -545,6 +558,7 @@ public class AirPackageUtil {
                                    final String applicationId) {
     return uninstallAndroidApplication(project, flexSdk, device, applicationId) &&
            ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
+             @Override
              protected void appendAdtOptions(final List<String> command) {
                command.add("-installApp");
                command.add("-platform");
@@ -569,6 +583,7 @@ public class AirPackageUtil {
                                               final String iOSSdkPath) {
     return uninstallFromIosSimulator(project, flexSdk, applicationId, iOSSdkPath) &&
            ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
+             @Override
              protected void appendAdtOptions(final List<String> command) {
                command.add("-installApp");
                command.add("-platform");
@@ -589,6 +604,7 @@ public class AirPackageUtil {
                                            final FlashRunnerParameters runnerParameters,
                                            final String ipaPath) {
     return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
+      @Override
       protected void appendAdtOptions(final List<String> command) {
         command.add("-installApp");
         command.add("-platform");
@@ -712,6 +728,7 @@ public class AirPackageUtil {
                                                    final String applicationId,
                                                    final String iOSSdkPath) {
     return ExternalTask.runWithProgress(new AdtTask(project, sdk) {
+      @Override
       protected void appendAdtOptions(final List<String> command) {
         command.add("-uninstallApp");
         command.add("-platform");
@@ -724,6 +741,7 @@ public class AirPackageUtil {
         command.add(applicationId);
       }
 
+      @Override
       protected boolean checkMessages() {
         return myMessages.isEmpty() ||
                (myMessages.size() == 1 &&
@@ -738,6 +756,7 @@ public class AirPackageUtil {
                                                      final @Nullable DeviceInfo device,
                                                      final String applicationId) {
     return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
+      @Override
       protected void appendAdtOptions(final List<String> command) {
         command.add("-uninstallApp");
         command.add("-platform");
@@ -752,6 +771,7 @@ public class AirPackageUtil {
         command.add(applicationId);
       }
 
+      @Override
       protected boolean checkMessages() {
         return myMessages.isEmpty() || (myMessages.size() == 1 && myMessages.get(0).equals("Failed to find package " + applicationId));
       }
@@ -763,6 +783,7 @@ public class AirPackageUtil {
                                                  final @Nullable DeviceInfo device,
                                                  final String applicationId) {
     return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
+      @Override
       protected void appendAdtOptions(final List<String> command) {
         command.add("-launchApp");
         command.add("-platform");
@@ -784,6 +805,7 @@ public class AirPackageUtil {
                                              final String applicationId,
                                              final String iOSSdkPath) {
     return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
+      @Override
       protected void appendAdtOptions(final List<String> command) {
         command.add("-launchApp");
         command.add("-platform");
@@ -803,6 +825,7 @@ public class AirPackageUtil {
                                               final @Nullable DeviceInfo device,
                                               final int usbDebugPort) {
     return ExternalTask.runWithProgress(new ExternalTask(project, sdk) {
+      @Override
       protected List<String> createCommandLine() {
         final List<String> command = new ArrayList<>();
         command.add(sdk.getHomePath() + ADB_RELATIVE_PATH);

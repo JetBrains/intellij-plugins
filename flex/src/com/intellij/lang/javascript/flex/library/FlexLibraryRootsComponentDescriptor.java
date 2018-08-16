@@ -23,6 +23,7 @@ import java.util.List;
 
 public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDescriptor {
 
+  @Override
   public OrderRootTypePresentation getRootTypePresentation(@NotNull final OrderRootType type) {
     if (type instanceof JavadocOrderRootType) {
       return new OrderRootTypePresentation(FlexBundle.message("documentation.order.root.type.name"), AllIcons.FileTypes.Text);

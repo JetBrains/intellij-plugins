@@ -13,6 +13,7 @@ public class FlexModuleFixtureBuilderImpl extends ModuleFixtureBuilderImpl<Modul
     super(new FlexModuleType(), fixtureBuilder);
   }
 
+  @Override
   protected ModuleFixture instantiateFixture() {
     return new ModuleFixtureImpl(this);
   }

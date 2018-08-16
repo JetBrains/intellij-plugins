@@ -24,6 +24,7 @@ public class ActionScriptReferenceContributor extends PsiReferenceContributor {
   @Override
   public void registerReferenceProviders(final @NotNull PsiReferenceRegistrar registrar) {
     registrar.registerReferenceProvider(psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
+      @Override
       public boolean isAcceptable(Object element, PsiElement context) {
         PsiElement parent = ((JSLiteralExpression)element).getParent();
         if (parent instanceof JSArgumentList) {
@@ -45,6 +46,7 @@ public class ActionScriptReferenceContributor extends PsiReferenceContributor {
         return false;
       }
 
+      @Override
       public boolean isClassAcceptable(Class hintClass) {
         return true;
       }
@@ -61,6 +63,7 @@ public class ActionScriptReferenceContributor extends PsiReferenceContributor {
     });
 
     registrar.registerReferenceProvider(psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
+      @Override
       public boolean isAcceptable(Object element, PsiElement context) {
         PsiElement parent = ((JSLiteralExpression)element).getParent();
         if (parent instanceof JSAssignmentExpression) {
@@ -79,6 +82,7 @@ public class ActionScriptReferenceContributor extends PsiReferenceContributor {
         return false;
       }
 
+      @Override
       public boolean isClassAcceptable(Class hintClass) {
         return true;
       }
@@ -95,6 +99,7 @@ public class ActionScriptReferenceContributor extends PsiReferenceContributor {
     });
 
     registrar.registerReferenceProvider(psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
+      @Override
       public boolean isAcceptable(Object element, PsiElement context) {
         PsiElement parent = ((JSLiteralExpression)element).getParent();
         if (parent instanceof JSArgumentList) {
@@ -116,6 +121,7 @@ public class ActionScriptReferenceContributor extends PsiReferenceContributor {
         return false;
       }
 
+      @Override
       public boolean isClassAcceptable(Class hintClass) {
         return true;
       }

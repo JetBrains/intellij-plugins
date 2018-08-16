@@ -40,6 +40,7 @@ public class StrutsSemContributor extends SemContributor {
 
   private static final PsiClassPattern PSI_CLASS_PATTERN = psiClass().nonAnnotationType();
 
+  @Override
   public void registerSemProviders(final SemRegistrar registrar) {
 
     // @DefaultInterceptorRef

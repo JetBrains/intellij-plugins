@@ -15,17 +15,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class FlexUnitMethodIsStaticInspection extends FlexUnitMethodInspectionBase {
 
+  @Override
   @Nls
   @NotNull
   public String getDisplayName() {
     return FlexBundle.message("flexunit.inspection.testmethodisstatic.displayname");
   }
 
+  @Override
   @NotNull
   public String getShortName() {
     return "FlexUnitMethodIsStaticInspection";
   }
 
+  @Override
   protected void visitPotentialTestMethod(JSFunction method, ProblemsHolder holder, FlexUnitSupport support) {
     if (FlexUnitSupport.getCustomRunner((JSClass)method.getParent()) != null) return;
     if (method.getAttributeList() != null && method.getAttributeList().hasModifier(JSAttributeList.ModifierType.STATIC)) {

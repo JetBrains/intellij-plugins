@@ -34,6 +34,7 @@ import java.util.List;
 
 public class FlexUnitTestFinder implements TestFinder {
 
+  @Override
   @Nullable
   public JSClass findSourceElement(@NotNull final PsiElement element) {
     return findContextClass(element);
@@ -60,6 +61,7 @@ public class FlexUnitTestFinder implements TestFinder {
     return null;
   }
 
+  @Override
   @NotNull
   public Collection<PsiElement> findTestsForClass(@NotNull final PsiElement element) {
     final VirtualFile file = element.getContainingFile().getVirtualFile();
@@ -96,6 +98,7 @@ public class FlexUnitTestFinder implements TestFinder {
     return TestFinderHelper.getSortedElements(classesWithProximity, true);
   }
 
+  @Override
   @NotNull
   public Collection<PsiElement> findClassesForTest(@NotNull final PsiElement element) {
     final JSClass jsClass = findSourceElement(element);
@@ -126,6 +129,7 @@ public class FlexUnitTestFinder implements TestFinder {
     return TestFinderHelper.getSortedElements(classesWithWeights, false);
   }
 
+  @Override
   public boolean isTest(@NotNull final PsiElement element) {
     final JSClass jsClass = findSourceElement(element);
     final Pair<Module, FlexUnitSupport> moduleAndSupport = FlexUnitSupport.getModuleAndSupport(element);

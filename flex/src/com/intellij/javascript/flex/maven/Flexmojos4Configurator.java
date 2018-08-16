@@ -70,6 +70,7 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
            myMavenProject.getMavenId().getGroupId() + suffix + ".xml";
   }
 
+  @Override
   protected Collection<RLMInfo> getRLMInfos() {
     final Element configurationElement = myFlexmojosPlugin.getConfigurationElement();
     final Element modulesElement = configurationElement == null
@@ -113,6 +114,7 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
     return result;
   }
 
+  @Override
   protected void appendGenerateConfigTask(final List<MavenProjectsProcessorTask> postTasks, final String configFilePath) {
     final Project project = myModule.getProject();
 

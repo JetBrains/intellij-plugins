@@ -31,14 +31,17 @@ public class EmptyIcon implements Icon {
     myIconHeight = iconHeight;
   }
 
+  @Override
   public int getIconHeight() {
     return myIconHeight;
   }
 
+  @Override
   public int getIconWidth() {
     return myIconWidth;
   }
 
+  @Override
   public void paintIcon(Component c, Graphics g, int x, int y) {
 
   }

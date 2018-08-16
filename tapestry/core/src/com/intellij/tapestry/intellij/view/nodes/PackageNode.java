@@ -40,6 +40,7 @@ public class PackageNode extends TapestryNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public SimpleNode[] getChildren() {
         final TreeSet<TapestryNode> children = new TreeSet<>(PackageNodesComparator.getInstance());
 

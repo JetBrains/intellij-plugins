@@ -40,6 +40,7 @@ public abstract class DartNamedElementImpl extends DartPsiCompositeElementImpl i
     return getId().getText();
   }
 
+  @Override
   @Nullable
   public ItemPresentation getPresentation() {
     final PsiElement parent = getParent();

@@ -19,10 +19,12 @@ public class FlexModuleSourceRoot extends DetectedSourceRoot {
     return FlexBundle.message("autodetected.source.root.type");
   }
 
+  @Override
   public boolean canContainRoot(@NotNull final DetectedProjectRoot root) {
     return !(root instanceof FlexModuleSourceRoot);
   }
 
+  @Override
   public DetectedProjectRoot combineWith(@NotNull final DetectedProjectRoot root) {
     if (root instanceof FlexModuleSourceRoot) {
       return this;

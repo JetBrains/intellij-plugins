@@ -67,4 +67,7 @@ public class MarkdownSanitizingTest extends UsefulTestCase {
   public void testHorizontalRules() {
     doTest();
   }
+  public void testStrikeThrough() {
+    doTest();
+  }
 }

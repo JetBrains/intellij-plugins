@@ -23,11 +23,13 @@ import java.util.List;
  */
 public class CucumberCreateExamplesSectionFix implements LocalQuickFix {
 
+  @Override
   @NotNull
   public String getFamilyName() {
     return "Create Examples Section";
   }
 
+  @Override
   public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor) {
     final GherkinScenarioOutlineImpl outline = (GherkinScenarioOutlineImpl) descriptor.getPsiElement();
 

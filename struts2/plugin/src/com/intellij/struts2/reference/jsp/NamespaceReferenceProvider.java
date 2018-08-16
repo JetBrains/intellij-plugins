@@ -41,6 +41,7 @@ import java.util.List;
  */
 public class NamespaceReferenceProvider extends PsiReferenceProvider {
 
+  @Override
   @NotNull
   public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,
                                                @NotNull final ProcessingContext context) {
@@ -71,6 +72,7 @@ public class NamespaceReferenceProvider extends PsiReferenceProvider {
       this.strutsModel = strutsModel;
     }
 
+    @Override
     @NotNull
     public ResolveResult[] multiResolve(final boolean incompleteCode) {
       final String namespace = myElement.getValue();
@@ -85,12 +87,14 @@ public class NamespaceReferenceProvider extends PsiReferenceProvider {
       return ArrayUtil.toObjectArray(resolveResults, ResolveResult.class);
     }
 
+    @Override
     @NotNull
     public Object[] getVariants() {
       return ContainerUtil.map2Array(strutsModel.getStrutsPackages(), LookupElement.class,
                                      STRUTS_PACKAGE_LOOKUP_ELEMENT_FUNCTION);
     }
 
+    @Override
     @NotNull
     public String getUnresolvedMessagePattern() {
       return "Cannot resolve namespace '" + getCanonicalText() + "'";

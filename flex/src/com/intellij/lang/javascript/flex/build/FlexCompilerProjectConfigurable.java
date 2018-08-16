@@ -44,15 +44,18 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
     myVMOptionsEditor.setDialogCaption(FlexBundle.message("flex.compiler.vm.options.title"));
   }
 
+  @Override
   public JComponent createComponent() {
     return myMainPanel;
   }
 
+  @Override
   @NotNull
   public String getId() {
     return "flex.compiler";
   }
 
+  @Override
   @Nls
   public String getDisplayName() {
     return "Flex Compiler";
@@ -63,6 +66,7 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
     return "reference.projectsettings.compiler.flex";
   }
 
+  @Override
   public boolean isModified() {
     return myConfig.USE_MXMLC_COMPC != myMxmlcCompcRadioButton.isSelected() ||
            myConfig.USE_BUILT_IN_COMPILER != myBuiltInCompilerRadioButton.isSelected() ||
@@ -71,6 +75,7 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
            !myVMOptionsEditor.getText().trim().equals(myConfig.VM_OPTIONS);
   }
 
+  @Override
   public void apply() throws ConfigurationException {
     myConfig.USE_BUILT_IN_COMPILER = myBuiltInCompilerRadioButton.isSelected();
     myConfig.USE_MXMLC_COMPC = myMxmlcCompcRadioButton.isSelected();
@@ -92,6 +97,7 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
     myConfig.VM_OPTIONS = myVMOptionsEditor.getText().trim();
   }
 
+  @Override
   public void reset() {
     myBuiltInCompilerRadioButton.setSelected(myConfig.USE_BUILT_IN_COMPILER);
     myMxmlcCompcRadioButton.setSelected(myConfig.USE_MXMLC_COMPC);
@@ -100,6 +106,7 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
     myVMOptionsEditor.setText(myConfig.VM_OPTIONS);
   }
 
+  @Override
   public void disposeUIResources() {
   }
 }

@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.model.CfmlUtil;
@@ -43,8 +29,9 @@ public class CfmlComponentImpl extends CfmlCompositeElement implements CfmlCompo
     super(stub, CfmlStubElementTypes.COMPONENT_DEFINITION);
   }
 
+  @Override
   public String getName() {
-    final String nameFromFile = CfmlUtil.INSTANCE.getFileName(this);
+    final String nameFromFile = CfmlUtil.getFileName(this);
     if (!StringUtil.isEmpty(nameFromFile)) {
       return nameFromFile;
     }
@@ -55,6 +42,7 @@ public class CfmlComponentImpl extends CfmlCompositeElement implements CfmlCompo
     return "";
   }
 
+  @Override
   @NotNull
   public CfmlFunction[] getFunctions() {
     CfmlFunction[] childrenOfType = PsiTreeUtil.getChildrenOfType(this, CfmlFunction.class);
@@ -80,6 +68,7 @@ public class CfmlComponentImpl extends CfmlCompositeElement implements CfmlCompo
     return CfmlPsiUtil.getPropertiesWithSupers(this, isSuperPriority);
   }
 
+  @Override
   public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
     throw new IncorrectOperationException();
   }
@@ -108,6 +97,7 @@ public class CfmlComponentImpl extends CfmlCompositeElement implements CfmlCompo
     return CfmlPsiUtil.processGlobalVariablesForComponent(this, processor, state, lastParent);
   }
 
+  @Override
   public boolean isInterface() {
     if (getNode().getFirstChildNode().getElementType() == CfscriptTokenTypes.INTERFACE_KEYWORD) {
       return true;
@@ -115,6 +105,7 @@ public class CfmlComponentImpl extends CfmlCompositeElement implements CfmlCompo
     return false;
   }
 
+  @Override
   @NotNull
   public String getSuperName() {
     if (isInterface()) return "";
@@ -123,15 +114,18 @@ public class CfmlComponentImpl extends CfmlCompositeElement implements CfmlCompo
   }
 
   // TODO
+  @Override
   public String[] getInterfaceNames() {
     return ArrayUtil.EMPTY_STRING_ARRAY;
   }
 
   // TODO
+  @Override
   public CfmlComponent[] getImplementedInterfaces() {
     return CfmlComponent.EMPTY_ARRAY;
   }
 
+  @Override
   public CfmlComponent getSuper() {
     return CfmlPsiUtil.getSuperComponent(this);
   }
@@ -141,10 +135,12 @@ public class CfmlComponentImpl extends CfmlCompositeElement implements CfmlCompo
     return CfmlPsiUtil.getSuperComponentReference(this);
   }
 
+  @Override
   public boolean isTrulyDeclaration() {
     return true;
   }
 
+  @Override
   public PsiElement getNameIdentifier() {
     return getNavigationElement();
   }

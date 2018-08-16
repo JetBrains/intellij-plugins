@@ -39,6 +39,7 @@ public class ParamNameConverterImpl extends ParamNameConverter {
     return ((ParamsElement) domElement).getParamsClass();
   }
 
+  @Override
   @NotNull
   public PsiReference[] createReferences(final GenericDomValue<List<BeanProperty>> listGenericDomValue,
                                          final PsiElement psiElement,

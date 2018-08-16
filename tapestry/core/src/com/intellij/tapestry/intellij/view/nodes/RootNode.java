@@ -22,13 +22,14 @@ public class RootNode extends SimpleNode {
 
     public RootNode(@NotNull final Project project) {
         super(project);
-        
+
         _myElement = ID;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object getElement() {
         return _myElement;
     }
@@ -40,6 +41,7 @@ public class RootNode extends SimpleNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public SimpleNode[] getChildren() {
         if (_treeBuilder == null) {
             return EMPTY_LIST;
@@ -58,6 +60,7 @@ public class RootNode extends SimpleNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     @NotNull
     public Object[] getEqualityObjects() {
         return new Object[]{_myElement};

@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.UI.editorActions.completionProviders;
 
 import com.intellij.codeInsight.completion.*;
@@ -101,6 +87,7 @@ public class CfmlCompletionContributor extends CompletionContributor {
            new CfmlAttributeNamesCompletionProvider());
     //return type completion in script function definition
     final PatternCondition<PsiElement> withinTypeCondition = new PatternCondition<PsiElement>("") {
+      @Override
       public boolean accepts(@NotNull PsiElement psiElement, ProcessingContext context) {
         return (psiElement.getParent() != null && psiElement.getParent().getNode().getElementType() == CfmlElementTypes.TYPE);
       }
@@ -111,12 +98,12 @@ public class CfmlCompletionContributor extends CompletionContributor {
            new CompletionProvider<CompletionParameters>() {
              @Override
              protected void addCompletions(@NotNull CompletionParameters parameters,
-                                           ProcessingContext context,
+                                           @NotNull ProcessingContext context,
                                            @NotNull CompletionResultSet result) {
                PsiElement position = parameters.getPosition();
                String text = position.getParent().getText();
                String[] attributeValues = text.indexOf('.') == -1 ?
-                                          CfmlUtil.INSTANCE.getAttributeValues("cffunction", "returntype", position.getProject()) :
+                                          CfmlUtil.getAttributeValues("cffunction", "returntype", position.getProject()) :
                                           ArrayUtil.EMPTY_STRING_ARRAY;
                Set<LookupElement> lookupResult = ContainerUtil.map2Set(attributeValues, argumentValue -> LookupElementBuilder.create(argumentValue).withCaseSensitivity(false));
 
@@ -136,7 +123,7 @@ public class CfmlCompletionContributor extends CompletionContributor {
            new CompletionProvider<CompletionParameters>() {
              @Override
              protected void addCompletions(@NotNull CompletionParameters parameters,
-                                           ProcessingContext context,
+                                           @NotNull ProcessingContext context,
                                            @NotNull CompletionResultSet result) {
                result.addElement(LookupElementBuilder.create("property").withCaseSensitivity(false));
              }
@@ -158,6 +145,7 @@ public class CfmlCompletionContributor extends CompletionContributor {
       withElementType(CfscriptTokenTypes.IDENTIFIER).
       withLanguage(CfmlLanguage.INSTANCE).
       with(new PatternCondition<PsiElement>("") {
+        @Override
         public boolean accepts(@NotNull PsiElement psiElement, ProcessingContext context) {
           if (withinTypeCondition.accepts(psiElement, context)) return false;
           return !(psiElement.getParent() instanceof CfmlAttribute) && (psiElement.getPrevSibling() == null ||
@@ -175,6 +163,7 @@ public class CfmlCompletionContributor extends CompletionContributor {
       super("");
     }
 
+    @Override
     public boolean accepts(@NotNull PsiElement psiElement, ProcessingContext context) {
       boolean result = false;
       PsiElement parent = psiElement.getParent();

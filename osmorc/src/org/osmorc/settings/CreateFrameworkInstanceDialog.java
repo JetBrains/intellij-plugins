@@ -34,7 +34,10 @@ import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.frameworkintegration.*;
+import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
+import org.osmorc.frameworkintegration.FrameworkInstanceManager;
+import org.osmorc.frameworkintegration.FrameworkIntegrator;
+import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkInstanceManager;
 import org.osmorc.i18n.OsmorcBundle;
 
@@ -73,14 +76,15 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper {
     myBaseFolderChooser.addBrowseFolderListener(title, description, null, descriptor);
     myBaseFolderChooser.getTextField().setEditable(false);
     myBaseFolderChooser.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
-      protected void textChanged(DocumentEvent e) {
+      @Override
+      protected void textChanged(@NotNull DocumentEvent e) {
         checkInstance(); updateVersion();
       }
     });
 
     myNameField.getDocument().addDocumentListener(new DocumentAdapter() {
       @Override
-      protected void textChanged(DocumentEvent e) {
+      protected void textChanged(@NotNull DocumentEvent e) {
         checkInstance();
       }
     });

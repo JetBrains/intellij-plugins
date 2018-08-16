@@ -13,6 +13,7 @@ public class IntellijXmlAttribute implements XmlAttribute {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getName() {
         return _xmlAttribute.getName();
     }
@@ -20,6 +21,7 @@ public class IntellijXmlAttribute implements XmlAttribute {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getLocalName() {
         return _xmlAttribute.getLocalName();
     }
@@ -27,6 +29,7 @@ public class IntellijXmlAttribute implements XmlAttribute {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getNamespace() {
         return _xmlAttribute.getNamespace();
     }
@@ -34,6 +37,7 @@ public class IntellijXmlAttribute implements XmlAttribute {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getValue() {
         return _xmlAttribute.getValue();
     }

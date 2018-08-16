@@ -12,17 +12,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class FlexUnitMixedAPIInspection extends FlexUnitMethodInspectionBase {
 
+  @Override
   @Nls
   @NotNull
   public String getDisplayName() {
     return FlexBundle.message("flexunit.inspection.mixedapi.displayname");
   }
 
+  @Override
   @NotNull
   public String getShortName() {
     return "FlexUnitMixedAPIInspection";
   }
 
+  @Override
   protected void visitPotentialTestMethod(JSFunction method, @NotNull ProblemsHolder holder, FlexUnitSupport support) {
     if (FlexUnitSupport.getCustomRunner((JSClass)method.getParent()) != null) return;
     if ((support.isFlexUnit1Subclass((JSClass)method.getParent())) &&

@@ -41,11 +41,13 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
     setText(CodeInsightBundle.message("intention.implement.abstract.class.subclass.text"));
   }
 
+  @Override
   @NotNull
   public String getFamilyName() {
     return FlexBundle.message("intention.create.subclass.or.implement.interface");
   }
 
+  @Override
   public boolean isAvailable(final @NotNull Project project, final Editor editor, final @NotNull PsiElement element) {
     final PsiFile psiFile = element.getContainingFile();
     if (!(psiFile instanceof JSFile) ||
@@ -182,6 +184,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
     }
   }
 
+  @Override
   public boolean startInWriteAction() {
     return false;
   }

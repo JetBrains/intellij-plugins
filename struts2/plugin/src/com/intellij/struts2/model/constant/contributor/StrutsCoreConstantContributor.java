@@ -25,7 +25,6 @@ import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.model.constant.StrutsConstant;
 import com.intellij.struts2.model.constant.StrutsConstantKey;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.ResolvingConverter;
@@ -33,7 +32,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -112,10 +110,12 @@ public class StrutsCoreConstantContributor extends StrutsConstantContributorBase
     return "core"; // isAvailable() returns always true
   }
 
+  @Override
   public boolean isAvailable(@NotNull final Module module) {
     return true;
   }
 
+  @Override
   @NotNull
   public List<StrutsConstant> getStrutsConstantDefinitions(@NotNull final Module module) {
     return CONSTANTS;

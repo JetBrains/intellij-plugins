@@ -18,6 +18,7 @@ import static com.intellij.tapestry.psi.TelTokenTypes.*;
 public class TelParser implements PsiParser {
   private static final Key<String> LAST_FOUND_IDENT = Key.create("LAST_FOUND_IDENT");
 
+  @Override
   @NotNull
   public ASTNode parse(IElementType root, PsiBuilder builder) {
     //builder.setDebugMode(true);

@@ -17,6 +17,7 @@ public abstract class CachedUserDataCache<T, Owner extends UserDataHolder> exten
     super(keyName);
   }
 
+  @Override
   protected final CachedValue<T> compute(final Owner owner, Object p) {
     return CachedValuesManager.getManager(getProject(owner)).createCachedValue(
       () -> CachedValueProvider.Result.create(computeValue(owner), getDependencies(owner)), false);

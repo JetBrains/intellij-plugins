@@ -104,21 +104,21 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
     }
 
     if (_element instanceof JSOffsetBasedImplicitElement) _element = ((JSOffsetBasedImplicitElement)_element).getElementAtOffset();
-    
+
     XmlTag parent = null;
     if (_element instanceof XmlBackedJSClassImpl) {
       parent = ((XmlBackedJSClassImpl)_element).getParent();
     } else if (_element instanceof XmlToken) {
       parent = PsiTreeUtil.getParentOfType(_element, XmlTag.class);
     }
-    
+
     if (parent != null) {
       PsiElement prev = PsiTreeUtil.prevLeaf(parent);
       while(prev instanceof PsiWhiteSpace || (prev instanceof XmlComment && !prev.getText().startsWith("<!---"))) {
         prev = PsiTreeUtil.prevLeaf(prev);
         if (prev instanceof XmlToken) prev = prev.getParent();
       }
-      
+
       if (prev instanceof XmlComment) {
         final String textFromComment = doGetCommentTextFromComment((PsiComment)prev, originalElement);
         return DocumentationMarkup.DEFINITION_START +
@@ -127,11 +127,12 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
                textFromComment;
       }
     }
-    
+
     final PsiElement elementToShowDoc = findElementToShowDoc(_element);
     AbstractExternalFilter docFilter = new AbstractExternalFilter() {
 
       private final RefConvertor[] myReferenceConvertors = new RefConvertor[]{new RefConvertor(ourHREFselector) {
+        @Override
         protected String convertReference(String origin, String link) {
           if (BrowserUtil.isAbsoluteURL(link)) {
             return link;
@@ -153,6 +154,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
         }
       }, new RefConvertor(ourIMGselector) {
 
+        @Override
         protected String convertReference(String root, String href) {
           if (StringUtil.startsWithChar(href, '#')) {
             return root + href;
@@ -176,6 +178,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
         String result = super.getExternalDocInfoForElement(docURL, element);
         if (StringUtil.isNotEmpty(result)) {
           result = result.replace(DISPLAY_NAME_MARKER, ApplicationManager.getApplication().runReadAction(new Computable<CharSequence>() {
+            @Override
             public CharSequence compute() {
               return getDisplayName(element);
             }
@@ -832,6 +835,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
   private static JSAttributeNameValuePair findNamedAttribute(JSClass clazz, final String type, final String name) {
     final Ref<JSAttributeNameValuePair> attribute = new Ref<>();
     ActionScriptResolveUtil.processMetaAttributesForClass(clazz, new ActionScriptResolveUtil.MetaDataProcessor() {
+      @Override
       public boolean process(@NotNull JSAttribute jsAttribute) {
         if (type.equals(jsAttribute.getName())) {
           final JSAttributeNameValuePair jsAttributeNameValuePair = jsAttribute.getValueByName("name");
@@ -843,6 +847,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
         return true;
       }
 
+      @Override
       public boolean handleOtherElement(PsiElement el, PsiElement context, @Nullable Ref<PsiElement> continuePassElement) {
         return true;
       }
@@ -889,7 +894,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
   protected JSDocumentationBuilder createDocumentationBuilder(@NotNull PsiElement element, PsiElement contextElement) {
     return new FlexDocumentationBuilder(element, null, this);
   }
-  
+
   @Override
   protected void appendFunctionInfoDoc(@NotNull JSFunction function, @NotNull StringBuilder builder) {
     JSType type = JSPsiImplUtils.getTypeFromDeclaration(function);

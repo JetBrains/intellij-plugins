@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.CommonBundle;
@@ -392,7 +393,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
       myRevealNotFoundOrIncompatible = new HyperlinkLabel();
       myRevealNotFoundOrIncompatible.setIcon(AllIcons.RunConfigurations.ConfigurationWarning);
-      myRevealNotFoundOrIncompatible.setHyperlinkTarget("http://revealapp.com");
+      myRevealNotFoundOrIncompatible.setHyperlinkTarget("https://revealapp.com");
 
       myNotAvailable = new JBLabel("<html>" +
               "Reveal integration is only available for iOS applications.<br>" +

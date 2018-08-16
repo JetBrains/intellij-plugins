@@ -75,6 +75,7 @@ public class ObrSearchDialog extends DialogWrapper {
     setOKActionEnabled(false);
     _searchPanel = new ObrSearchPanel(queryType);
     _searchPanel.addPropertyChangeListener(new PropertyChangeListener() {
+      @Override
       public void propertyChange(PropertyChangeEvent evt) {
         setOKActionEnabled(_searchPanel.isHasResult());
       }
@@ -84,6 +85,7 @@ public class ObrSearchDialog extends DialogWrapper {
     getRootPane().setDefaultButton(_searchPanel.getSearchButton());
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     return _searchPanel.getRootPanel();
   }

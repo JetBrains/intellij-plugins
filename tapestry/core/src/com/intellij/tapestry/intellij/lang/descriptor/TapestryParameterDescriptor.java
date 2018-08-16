@@ -29,14 +29,17 @@ public class TapestryParameterDescriptor extends BasicTapestryTagDescriptor {
     myParameter = parameter;
   }
 
+  @Override
   public String getDefaultName() {
     return getPrefixWithColon() + myParameter.getName();
   }
 
+  @Override
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
     return XmlAttributeDescriptor.EMPTY;
   }
 
+  @Override
   public XmlAttributeDescriptor getAttributeDescriptor(@NonNls String attributeName, @Nullable XmlTag context) {
     return null;
   }

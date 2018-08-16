@@ -88,21 +88,25 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     myModule = editorContext.getModule();
 
     myManifestFileChooser.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         chooseFile(myManifestFileChooser);
       }
     });
     myBndFile.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         chooseFile(myBndFile);
       }
     });
     myBundlorFile.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         chooseFile(myBundlorFile);
       }
     });
     myUseProjectDefaultManifestFileLocation.addChangeListener(new ChangeListener() {
+      @Override
       public void stateChanged(ChangeEvent e) {
         manifestFileLocationSelectorChanged();
       }

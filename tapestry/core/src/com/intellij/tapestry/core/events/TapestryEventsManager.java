@@ -55,6 +55,7 @@ public class TapestryEventsManager implements FileSystemListener, TapestryModelC
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void fileCreated(String path) {
         for (FileSystemListener listener : _fileSystemListeners)
             listener.fileCreated(path);
@@ -63,6 +64,7 @@ public class TapestryEventsManager implements FileSystemListener, TapestryModelC
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void classDeleted(String classFqn) {
         for (FileSystemListener listener : _fileSystemListeners)
             listener.classDeleted(classFqn);
@@ -71,6 +73,7 @@ public class TapestryEventsManager implements FileSystemListener, TapestryModelC
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void fileDeleted(String path) {
         for (FileSystemListener listener : _fileSystemListeners)
             listener.fileDeleted(path);
@@ -79,6 +82,7 @@ public class TapestryEventsManager implements FileSystemListener, TapestryModelC
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void classCreated(String classFqn) {
         for (FileSystemListener listener : _fileSystemListeners)
             listener.classCreated(classFqn);
@@ -87,6 +91,7 @@ public class TapestryEventsManager implements FileSystemListener, TapestryModelC
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void fileContentsChanged(IResource changedFile) {
         for (FileSystemListener listener : _fileSystemListeners)
             listener.fileContentsChanged(changedFile);
@@ -95,6 +100,7 @@ public class TapestryEventsManager implements FileSystemListener, TapestryModelC
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void modelChanged() {
         for (TapestryModelChangeListener listener : _tapestryModelChangeListeners)
             listener.modelChanged();

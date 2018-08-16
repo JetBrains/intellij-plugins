@@ -24,6 +24,7 @@ import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsTree;
 import org.jetbrains.idea.maven.server.MavenEmbedderWrapper;
 import org.jetbrains.idea.maven.server.MavenServerExecutionResult;
+import org.jetbrains.idea.maven.server.MavenServerManager;
 import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
 
 import java.io.File;
@@ -38,11 +39,20 @@ import static com.intellij.flex.model.bc.TargetPlatform.Desktop;
 import static com.intellij.flex.model.bc.TargetPlatform.Web;
 
 public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+
+    MavenServerManager.getInstance().setUseMaven2();
+  }
+
   @Override
   protected String getFlexmojosVersion() {
     return "3.5.0";
   }
 
+  @Override
   protected String getConfigFilesBasePath(final Module module) {
     return PathUtil.getParentPath(module.getModuleFilePath());
   }

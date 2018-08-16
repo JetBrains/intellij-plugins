@@ -25,6 +25,7 @@ public class IntellijJavaField implements IJavaField {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getName() {
         return _psiField.getName();
     }
@@ -32,6 +33,7 @@ public class IntellijJavaField implements IJavaField {
     /**
      * {@inheritDoc}
      */
+    @Override
     @Nullable
     public IJavaType getType() {
         if (_psiField.getType() instanceof PsiClassType) {
@@ -51,6 +53,7 @@ public class IntellijJavaField implements IJavaField {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isPrivate() {
         return _psiField.getModifierList().hasModifierProperty(PsiModifier.PRIVATE);
     }
@@ -58,6 +61,7 @@ public class IntellijJavaField implements IJavaField {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Map<String, IJavaAnnotation> getAnnotations() {
         Map<String, IJavaAnnotation> annotations = new HashMap<>();
 
@@ -71,6 +75,7 @@ public class IntellijJavaField implements IJavaField {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getDocumentation() {
         StringBuffer description = new StringBuffer();
 
@@ -92,6 +97,7 @@ public class IntellijJavaField implements IJavaField {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getStringRepresentation() {
         return _psiField.getText();
     }
@@ -99,6 +105,7 @@ public class IntellijJavaField implements IJavaField {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isValid() {
         return _psiField.isValid();
     }

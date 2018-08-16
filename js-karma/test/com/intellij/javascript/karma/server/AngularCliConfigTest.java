@@ -31,6 +31,16 @@ public class AngularCliConfigTest extends CodeInsightFixtureTestCase {
     return getTestDataBasePath(AngularCliConfigTest.class);
   }
 
+  public void testMalformedConfigWithMultipleIdenticalRoots() {
+    VirtualFile dir = myFixture.copyDirectoryToProject(getTestName(true), getTestName(true));
+    AngularCliConfig config = AngularCliConfig.findProjectConfig(VfsUtilCore.virtualToIoFile(dir));
+    Assert.assertNotNull(config);
+
+    VirtualFile karmaConfig = dir.findFileByRelativePath("src/karma.conf.js");
+    Assert.assertNotNull(karmaConfig);
+    Assert.assertEquals("sample", config.getProjectContainingFileOrDefault(karmaConfig));
+  }
+
   public void testMultiProject() {
     VirtualFile dir = myFixture.copyDirectoryToProject("multiProject", "multiProject");
     AngularCliConfig config = AngularCliConfig.findProjectConfig(VfsUtilCore.virtualToIoFile(dir));

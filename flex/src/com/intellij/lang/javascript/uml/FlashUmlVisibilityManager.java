@@ -37,10 +37,12 @@ public class FlashUmlVisibilityManager extends AbstractUmlVisibilityManager {
   //  return super.isVisible(element);
   //}
 
+  @Override
   public VisibilityLevel[] getVisibilityLevels() {
     return predefinedLevels.toArray(new VisibilityLevel[0]);
   }
 
+  @Override
   public VisibilityLevel getVisibilityLevel(Object element) {
     // TODO: support namespaces
 
@@ -54,6 +56,7 @@ public class FlashUmlVisibilityManager extends AbstractUmlVisibilityManager {
     return null;
   }
 
+  @Override
   public Comparator<VisibilityLevel> getComparator() {
     return COMPARATOR;
   }

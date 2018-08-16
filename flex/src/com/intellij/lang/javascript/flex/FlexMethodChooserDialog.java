@@ -36,6 +36,7 @@ public class FlexMethodChooserDialog extends DialogWrapper {
     createList(clazz.getFunctions(), filter);
     myWholePanel.add(ScrollPaneFactory.createScrollPane(myList));
     myList.setCellRenderer(new ColoredListCellRenderer() {
+      @Override
       protected void customizeCellRenderer(@NotNull final JList list,
                                            final Object value,
                                            final int index,
@@ -68,6 +69,7 @@ public class FlexMethodChooserDialog extends DialogWrapper {
     init();
 
     myList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      @Override
       public void valueChanged(ListSelectionEvent e) {
         updateOkAction();
       }
@@ -98,6 +100,7 @@ public class FlexMethodChooserDialog extends DialogWrapper {
     }
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     return myWholePanel;
   }

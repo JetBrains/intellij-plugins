@@ -62,6 +62,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
     return DartBundle.message("dart.sort.members.action.name.ellipsis"); // because with dialog
   }
 
+  @Override
   protected void runOverEditor(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile psiFile) {
     final Document document = editor.getDocument();
     if (!ReadonlyStatusHandler.ensureDocumentWritable(project, document)) return;
@@ -93,6 +94,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
       () -> CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("dart.sort.members.action.name"), null));
   }
 
+  @Override
   protected void runOverFiles(@NotNull final Project project, @NotNull final List<VirtualFile> dartFiles) {
     if (dartFiles.isEmpty()) {
       Messages.showInfoMessage(project, DartBundle.message("dart.sort.members.files.no.dart.files"),

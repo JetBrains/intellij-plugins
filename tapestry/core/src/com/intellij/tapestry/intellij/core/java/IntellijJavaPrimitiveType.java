@@ -12,10 +12,12 @@ public class IntellijJavaPrimitiveType extends IntellijJavaType implements IJava
         _psiPrimitiveType = psiPrimitiveType;
     }
 
+    @Override
     public String getName() {
         return _psiPrimitiveType.getPresentableText();
     }
 
+    @Override
     @NotNull
     public Object getUnderlyingObject() {
         return _psiPrimitiveType;

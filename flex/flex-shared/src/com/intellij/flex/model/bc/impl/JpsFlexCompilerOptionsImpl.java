@@ -35,11 +35,13 @@ public class JpsFlexCompilerOptionsImpl extends JpsElementBase<JpsFlexCompilerOp
     myAdditionalOptions = original.myAdditionalOptions;
   }
 
+  @Override
   @NotNull
   public JpsFlexCompilerOptionsImpl createCopy() {
     return new JpsFlexCompilerOptionsImpl(this);
   }
 
+  @Override
   public void applyChanges(@NotNull final JpsFlexCompilerOptionsImpl modified) {
     // todo use setters instead, because this method must throw events
     myOptions.clear();
@@ -52,41 +54,49 @@ public class JpsFlexCompilerOptionsImpl extends JpsElementBase<JpsFlexCompilerOp
 
 // ------------------------------------
 
+  @Override
   @Nullable
   public String getOption(@NotNull String name) {
     return myOptions.get(name);
   }
 
+  @Override
   @NotNull
   public Map<String, String> getAllOptions() {
     return Collections.unmodifiableMap(myOptions);
   }
 
+  @Override
   @NotNull
   public ResourceFilesMode getResourceFilesMode() {
     return myResourceFilesMode;
   }
 
+  @Override
   public void setResourceFilesMode(@NotNull final ResourceFilesMode resourceFilesMode) {
     myResourceFilesMode = resourceFilesMode;
   }
 
+  @Override
   @NotNull
   public Collection<String> getFilesToIncludeInSWC() {
     if (myFilesToIncludeInSWC.isEmpty()) return Collections.emptyList();
     return StringUtil.split(myFilesToIncludeInSWC, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
   }
 
+  @Override
   @NotNull
   public String getAdditionalConfigFilePath() {
     return myAdditionalConfigFilePath;
   }
 
+  @Override
   @NotNull
   public String getAdditionalOptions() {
     return myAdditionalOptions;
   }
 
+  @Override
   public void setAdditionalOptions(@NotNull final String additionalOptions) {
     myAdditionalOptions = additionalOptions;
   }

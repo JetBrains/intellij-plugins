@@ -36,6 +36,7 @@ public abstract class UserEvent implements IDEtalkEvent {
     return myUser;
   }
 
+  @Override
   public void accept(EventVisitor visitor) {
     visitor.visitUserEvent(this);
   }
@@ -49,6 +50,7 @@ public abstract class UserEvent implements IDEtalkEvent {
       super(user);
     }
 
+    @Override
     public void accept(EventVisitor visitor) {
       visitor.visitUserAdded(this);
     }
@@ -59,6 +61,7 @@ public abstract class UserEvent implements IDEtalkEvent {
       super(user);
     }
 
+    @Override
     public void accept(EventVisitor visitor) {
       visitor.visitUserRemoved(this);
     }
@@ -94,6 +97,7 @@ public abstract class UserEvent implements IDEtalkEvent {
       return myNewValue;
     }
 
+    @Override
     public void accept(EventVisitor visitor) {
       visitor.visitUserUpdated(this);
     }
@@ -110,6 +114,7 @@ public abstract class UserEvent implements IDEtalkEvent {
       super(user, "online", Boolean.FALSE, Boolean.TRUE);
     }
 
+    @Override
     public void accept(EventVisitor visitor) {
       visitor.visitUserOnline(this);
     }

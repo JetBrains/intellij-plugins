@@ -44,20 +44,24 @@ public class FilesToPackageForm {
 
   private enum Column {
     Path("Path to file or folder", String.class) {
+      @Override
       Object getValue(final FilePathAndPathInPackage row) {
         return FileUtil.toSystemDependentName(row.FILE_PATH);
       }
 
+      @Override
       void setValue(final List<FilePathAndPathInPackage> myFilesToPackage, final int row, final Object value) {
         myFilesToPackage.get(row).FILE_PATH = FileUtil.toSystemIndependentName(((String)value).trim());
       }
     },
 
     RelativePath("Its relative path in package", String.class) {
+      @Override
       Object getValue(final FilePathAndPathInPackage row) {
         return FileUtil.toSystemDependentName(row.PATH_IN_PACKAGE);
       }
 
+      @Override
       void setValue(final List<FilePathAndPathInPackage> myFilePathsToPackage, final int row, final Object value) {
         myFilePathsToPackage.get(row).PATH_IN_PACKAGE = FileUtil.toSystemIndependentName(((String)value).trim());
       }
@@ -99,26 +103,32 @@ public class FilesToPackageForm {
 
     myFilesToPackageTable.setModel(new DefaultTableModel() {
 
+      @Override
       public int getColumnCount() {
         return Column.values().length;
       }
 
+      @Override
       public int getRowCount() {
         return myFilesToPackage.size();
       }
 
+      @Override
       public String getColumnName(int column) {
         return Column.values()[column].getColumnName();
       }
 
+      @Override
       public Class<?> getColumnClass(int column) {
         return Column.values()[column].getColumnClass();
       }
 
+      @Override
       public Object getValueAt(int row, int column) {
         return Column.values()[column].getValue(myFilesToPackage.get(row));
       }
 
+      @Override
       public void setValueAt(Object aValue, int row, int column) {
         Column.values()[column].setValue(myFilesToPackage, row, aValue);
       }
@@ -127,8 +137,10 @@ public class FilesToPackageForm {
     myFilesToPackageTable.getColumnModel().getColumn(0).setCellEditor(new AbstractTableCellEditor() {
       private CellEditorComponentWithBrowseButton<JTextField> myComponent;
 
+      @Override
       public Component getTableCellEditorComponent(final JTable table, Object value, boolean isSelected, int row, int column) {
         final ActionListener listener = new ActionListener() {
+          @Override
           public void actionPerformed(ActionEvent e) {
             FileChooserDescriptor d = new FileChooserDescriptor(true, true, false, true, false, false);
 
@@ -145,6 +157,7 @@ public class FilesToPackageForm {
         return myComponent;
       }
 
+      @Override
       public Object getCellEditorValue() {
         return myComponent.getChildComponent().getText();
       }
@@ -154,6 +167,7 @@ public class FilesToPackageForm {
   private void initTableButtons() {
     ToolbarDecorator d = ToolbarDecorator.createDecorator(myFilesToPackageTable);
     d.setAddAction(new AnActionButtonRunnable() {
+      @Override
       public void run(AnActionButton button) {
         final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, true, false, true, false, true);
         final VirtualFile[] files = FileChooser.chooseFiles(descriptor, myProject, null);
@@ -177,6 +191,7 @@ public class FilesToPackageForm {
       }
     });
     d.setRemoveAction(new AnActionButtonRunnable() {
+      @Override
       public void run(AnActionButton anActionButton) {
         TableUtil.stopEditing(myFilesToPackageTable);
         final int[] selectedRows = myFilesToPackageTable.getSelectedRows();

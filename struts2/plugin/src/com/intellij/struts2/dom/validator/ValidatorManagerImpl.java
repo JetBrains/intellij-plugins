@@ -53,6 +53,7 @@ public class ValidatorManagerImpl extends ValidatorManager {
   @NonNls
   private static final String VALIDATORS_DEFAULT_XML = "default.xml";
 
+  @Override
   public boolean isValidatorsFile(@NotNull final XmlFile xmlFile) {
     return DomManager.getDomManager(xmlFile.getProject()).getFileElement(xmlFile, Validators.class) != null;
   }
@@ -62,10 +63,12 @@ public class ValidatorManagerImpl extends ValidatorManager {
     return DomManager.getDomManager(xmlFile.getProject()).getFileElement(xmlFile, ValidatorsConfig.class);
   }
 
+  @Override
   public boolean isCustomValidatorConfigFile(@NotNull final PsiFile psiFile) {
     return !Comparing.equal(psiFile.getName(), VALIDATORS_DEFAULT_XML);
   }
 
+  @Override
   public List<ValidatorConfig> getValidators(@NotNull final Module module) {
     final XmlFile validatorsFile = getValidatorConfigFile(module);
     if (validatorsFile == null) {
@@ -103,6 +106,7 @@ public class ValidatorManagerImpl extends ValidatorManager {
     return validatorConfigs;
   }
 
+  @Override
   @Nullable
   public XmlFile getValidatorConfigFile(@NotNull final Module module) {
     final Project project = module.getProject();

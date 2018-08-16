@@ -66,6 +66,7 @@ public class TapestryModuleSupportLoader
   /**
    * {@inheritDoc}
    */
+  @Override
   public ModuleConfiguration getState() {
     return _configuration;
   }
@@ -73,6 +74,7 @@ public class TapestryModuleSupportLoader
   /**
    * {@inheritDoc}
    */
+  @Override
   public void loadState(@NotNull ModuleConfiguration state) {
     _configuration = state;
   }

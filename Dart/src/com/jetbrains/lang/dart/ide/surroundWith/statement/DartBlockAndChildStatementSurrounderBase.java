@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
  * @author: Fedor.Korotkov
  */
 public abstract class DartBlockAndChildStatementSurrounderBase<T extends PsiElement> extends DartBlockStatementSurrounderBase {
+  @Override
   @Nullable
   protected PsiElement findElementToDelete(PsiElement surrounder) {
     return PsiTreeUtil.getChildOfType(surrounder, getClassToDelete());

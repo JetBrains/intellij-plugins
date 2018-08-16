@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ExtendableClassConverterImpl extends ExtendableClassConverter {
 
+  @Override
   public PsiClass fromString(@Nullable @NonNls final String s, final ConvertContext context) {
     if (s == null) {
       return null;
@@ -68,10 +69,12 @@ public class ExtendableClassConverterImpl extends ExtendableClassConverter {
     return null;
   }
 
+  @Override
   public String toString(@Nullable final PsiClass psiClass, final ConvertContext context) {
     return psiClass != null ? psiClass.getQualifiedName() : null;
   }
 
+  @Override
   @NotNull
   public PsiReference[] createReferences(final GenericDomValue<PsiClass> psiClassGenericDomValue,
                                          final PsiElement element,

@@ -22,6 +22,7 @@ public class RemoteFlashRunConfigurationType implements ConfigurationType, DumbA
 
   public RemoteFlashRunConfigurationType() {
     myFactory = new ConfigurationFactory(this) {
+      @Override
       @NotNull
       public RunConfiguration createTemplateConfiguration(Project project) {
         return new RemoteFlashRunConfiguration(project, this, "");
@@ -34,22 +35,27 @@ public class RemoteFlashRunConfigurationType implements ConfigurationType, DumbA
     };
   }
 
+  @Override
   public String getDisplayName() {
     return DISPLAY_NAME;
   }
 
+  @Override
   public String getConfigurationTypeDescription() {
     return "Remote Flash debug configuration";
   }
 
+  @Override
   public Icon getIcon() {
     return FlexIcons.Flash_remote_debug;
   }
 
+  @Override
   public ConfigurationFactory[] getConfigurationFactories() {
     return new ConfigurationFactory[]{myFactory};
   }
 
+  @Override
   @NotNull
   public String getId() {
     return TYPE;

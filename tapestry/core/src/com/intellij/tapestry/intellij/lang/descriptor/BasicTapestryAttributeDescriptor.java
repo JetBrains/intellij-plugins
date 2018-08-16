@@ -9,34 +9,42 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class BasicTapestryAttributeDescriptor extends BasicXmlAttributeDescriptor {
 
+  @Override
   public void init(PsiElement element) {
   }
 
+  @Override
   public boolean isRequired() {
     return false;
   }
 
+  @Override
   public boolean isFixed() {
     return false;
   }
 
+  @Override
   public boolean hasIdType() {
     return false;
   }
 
+  @Override
   public boolean hasIdRefType() {
     return false;
   }
 
+  @Override
   public boolean isEnumerated() {
     return false;
   }
 
+  @Override
   @Nullable
   public String[] getEnumeratedValues() {
     return null;
   }
 
+  @Override
   public String getDefaultValue() {
     return null;
   }

@@ -9,6 +9,7 @@ import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaField;
 import com.intellij.tapestry.intellij.toolwindow.nodes.EmbeddedComponentNode;
 import com.intellij.tapestry.intellij.toolwindow.nodes.InjectedPageNode;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -26,7 +27,8 @@ public class NavigateToUsageAction extends AnAction {
     /**
      * {@inheritDoc}
      */
-    public void actionPerformed(AnActionEvent event) {
+    @Override
+    public void actionPerformed(@NotNull AnActionEvent event) {
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) _tree.getSelectionPath().getLastPathComponent();
         Object selectedObject = selectedNode.getUserObject();
 

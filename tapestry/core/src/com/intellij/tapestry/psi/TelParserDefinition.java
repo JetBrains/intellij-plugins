@@ -23,41 +23,49 @@ import org.jetbrains.annotations.NotNull;
  */
 public class TelParserDefinition implements ParserDefinition {
 
+  @Override
   @NotNull
   public Lexer createLexer(Project project) {
     return new TelLexer();
   }
 
+  @Override
   public IFileElementType getFileNodeType() {
     return TelTokenTypes.TEL_FILE;
   }
 
+  @Override
   @NotNull
   public TokenSet getWhitespaceTokens() {
     return TelTokenTypes.WHITESPACES;
   }
 
+  @Override
   @NotNull
   public TokenSet getCommentTokens() {
     return TokenSet.EMPTY;
   }
 
+  @Override
   @NotNull
   public TokenSet getStringLiteralElements() {
     return TelTokenTypes.STRING_LITERALS;
   }
 
+  @Override
   @NotNull
   public PsiParser createParser(final Project project) {
     return new TelParser();
   }
 
+  @Override
   public PsiFile createFile(FileViewProvider viewProvider) {
     return new PsiFileBase(viewProvider, TelFileType.INSTANCE.getLanguage()) {
       {
         init(TelTokenTypes.TEL_FILE, TelTokenTypes.TAP5_EL_HOLDER);
       }
 
+      @Override
       @NotNull
       public FileType getFileType() {
         return TelFileType.INSTANCE;
@@ -65,11 +73,13 @@ public class TelParserDefinition implements ParserDefinition {
     };
   }
 
+  @Override
   public ParserDefinition.SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
     final Lexer lexer = createLexer(left.getPsi().getProject());
     return LanguageUtil.canStickTokensTogetherByLexer(left, right, lexer);
   }
 
+  @Override
   @NotNull
   public PsiElement createElement(ASTNode node) {
 

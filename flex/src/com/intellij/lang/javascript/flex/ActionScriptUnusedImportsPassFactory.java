@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.codeHighlighting.Pass;
@@ -26,7 +27,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSImportStatement;
 import com.intellij.lang.javascript.validation.ActionScriptUnusedImportsHelper;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
@@ -45,9 +45,8 @@ import java.util.List;
 /**
  * @author Maxim.Mossienko
  */
-public class ActionScriptUnusedImportsPassFactory extends AbstractProjectComponent implements TextEditorHighlightingPassFactory {
-  public ActionScriptUnusedImportsPassFactory(Project project, TextEditorHighlightingPassRegistrar registrar) {
-    super(project);
+public class ActionScriptUnusedImportsPassFactory implements TextEditorHighlightingPassFactory {
+  public ActionScriptUnusedImportsPassFactory(TextEditorHighlightingPassRegistrar registrar) {
     registrar.registerTextEditorHighlightingPass(
         this,
         new int[]{Pass.UPDATE_ALL},
@@ -57,6 +56,7 @@ public class ActionScriptUnusedImportsPassFactory extends AbstractProjectCompone
     );
   }
 
+  @Override
   public TextEditorHighlightingPass createHighlightingPass(@NotNull final PsiFile file, @NotNull final Editor editor) {
     if (file instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile(file) ||
         file instanceof JSFile && !(file instanceof PsiCompiledElement) && file.getLanguage().is(JavaScriptSupportLoader.ECMA_SCRIPT_L4)
@@ -72,30 +72,36 @@ public class ActionScriptUnusedImportsPassFactory extends AbstractProjectCompone
   private static IntentionAction createOptimizeImportsIntention() {
     return new IntentionAction() {
 
+      @Override
       @NotNull
       public String getText() {
         return JSBundle.message("javascript.fix.optimize.imports");
       }
 
+      @Override
       @NotNull
       public String getFamilyName() {
         return getText();
       }
 
+      @Override
       public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
         return true;
       }
 
+      @Override
       public void invoke(@NotNull final Project project, Editor editor, PsiFile file) {
         ImportOptimizer optimizer = new ECMAScriptImportOptimizer();
         final Runnable runnable = optimizer.processFile(file);
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
+          @Override
           public void run() {
             CommandProcessor.getInstance().executeCommand(project, runnable, getFamilyName(), this);
           }
         });
       }
 
+      @Override
       public boolean startInWriteAction() {
         return true;
       }

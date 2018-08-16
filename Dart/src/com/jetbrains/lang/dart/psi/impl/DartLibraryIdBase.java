@@ -48,7 +48,7 @@ public class DartLibraryIdBase extends DartExpressionImpl implements DartReferen
   }
 
   @Override
-  public PsiElement handleElementRename(String newLibraryName) throws IncorrectOperationException {
+  public PsiElement handleElementRename(@NotNull String newLibraryName) throws IncorrectOperationException {
     final DartLibraryNameElement libraryNameElement = DartElementGenerator.createLibraryNameElementFromText(getProject(), newLibraryName);
     if (libraryNameElement != null) {
       getNode().replaceAllChildrenToChildrenOf(libraryNameElement.getNode());
@@ -62,7 +62,7 @@ public class DartLibraryIdBase extends DartExpressionImpl implements DartReferen
   }
 
   @Override
-  public boolean isReferenceTo(PsiElement element) {
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     return resolve() == element;
   }
 

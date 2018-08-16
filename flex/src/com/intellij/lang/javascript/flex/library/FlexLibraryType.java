@@ -4,7 +4,10 @@ import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.libraries.*;
+import com.intellij.openapi.roots.libraries.LibraryType;
+import com.intellij.openapi.roots.libraries.LibraryTypeService;
+import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
+import com.intellij.openapi.roots.libraries.PersistentLibraryKind;
 import com.intellij.openapi.roots.libraries.ui.LibraryEditorComponent;
 import com.intellij.openapi.roots.libraries.ui.LibraryPropertiesEditor;
 import com.intellij.openapi.roots.libraries.ui.LibraryRootsComponentDescriptor;
@@ -50,6 +53,7 @@ public class FlexLibraryType extends LibraryType<FlexLibraryProperties> {
     return ModuleType.get(module).equals(FlexModuleType.getInstance());
   }
 
+  @Override
   public LibraryPropertiesEditor createPropertiesEditor(@NotNull final LibraryEditorComponent<FlexLibraryProperties> properties) {
     return null;
   }
@@ -59,6 +63,7 @@ public class FlexLibraryType extends LibraryType<FlexLibraryProperties> {
     return PlatformIcons.LIBRARY_ICON;    // TODO: change icon to Flex specific only when automatic library converters are done
   }
 
+  @Override
   @NotNull
   public LibraryRootsComponentDescriptor createLibraryRootsComponentDescriptor() {
     return new FlexLibraryRootsComponentDescriptor();

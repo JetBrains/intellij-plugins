@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.formatter;
 
-import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.FormatterTestCase;
 import com.jetbrains.lang.dart.DartLanguage;
@@ -8,10 +7,12 @@ import com.jetbrains.lang.dart.util.DartTestUtils;
 
 public class DartFormatterInHtmlTest extends FormatterTestCase {
 
+  @Override
   protected String getFileExtension() {
     return "html";
   }
 
+  @Override
   protected String getTestDataPath() {
     return DartTestUtils.BASE_TEST_DATA_PATH;
   }

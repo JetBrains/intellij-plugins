@@ -19,6 +19,7 @@ public class GherkinParserTest extends ParsingTestCase {
     return super.getTestName(true);
   }
 
+  @Override
   protected String getTestDataPath() {
     return CucumberTestUtil.getTestDataPath() + "/parsing";
   }

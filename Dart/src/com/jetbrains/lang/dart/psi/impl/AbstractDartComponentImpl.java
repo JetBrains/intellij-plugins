@@ -85,10 +85,12 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
     return findChildByType(DartTokenTypes.CONST) != null;
   }
 
+  @Override
   public boolean isFinal() {
     return findChildByType(DartTokenTypes.FINAL) != null;
   }
 
+  @Override
   public boolean isOperator() {
     return findChildByType(DartTokenTypes.OPERATOR) != null;
   }
@@ -107,6 +109,7 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
     return name != null && !name.startsWith("_");
   }
 
+  @Override
   public boolean isConstructor() {
     return DartComponentType.typeOf(this) == DartComponentType.CONSTRUCTOR;
   }

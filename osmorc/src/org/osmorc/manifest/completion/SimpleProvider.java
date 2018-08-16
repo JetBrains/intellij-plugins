@@ -18,7 +18,7 @@ class SimpleProvider extends CompletionProvider<CompletionParameters> {
   }
 
   @Override
-  public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
+  public void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context, @NotNull CompletionResultSet result) {
     for (String item : myItems) {
       result.addElement(LookupElementBuilder.create(item).withCaseSensitivity(false));
     }

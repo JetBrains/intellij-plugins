@@ -34,6 +34,7 @@ public class FlexIntroduceConstantTest extends CodeInsightTestCase {
     return FlexTestUtils.getTestDataPath("refactoring/introduceConstant/");
   }
 
+  @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();
   }

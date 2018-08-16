@@ -35,10 +35,12 @@ public abstract class FileAccessProvider extends XmlResponseProvider {
     myUserModel = userModel;
   }
 
+  @Override
   public String getTagNamespace() {
     return Transport.NAMESPACE;
   }
 
+  @Override
   public final boolean processAndFillResponse(Element response, Element request, Transport transport, String remoteUser) {
     User requestingUser = myUserModel.findUser(remoteUser, transport.getName());
     if (requestingUser == null) return false;

@@ -49,7 +49,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
   }
 
   @Override
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     super.update(e);
 
     e.getPresentation().setIcon(ICON);
@@ -92,7 +92,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
   }
 
   @Override
-  public void actionPerformed(AnActionEvent e) {
+  public void actionPerformed(@NotNull AnActionEvent e) {
     Project project = getEventProject(e);
     if (project == null) return;
 

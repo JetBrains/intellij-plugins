@@ -45,11 +45,13 @@ import org.jetbrains.annotations.NotNull;
  * @author Maxim.Mossienko
  */
 public class JSUntypedDeclarationInspection extends JSInspection {
+  @Override
   @NotNull
   public String getDisplayName() {
     return FlexBundle.message("js.untyped.declaration.inspection.name");
   }
 
+  @Override
   @NotNull
   protected JSElementVisitor createVisitor(final ProblemsHolder holder, LocalInspectionToolSession session) {
     return new JSElementVisitor() {
@@ -97,11 +99,13 @@ public class JSUntypedDeclarationInspection extends JSInspection {
 
   private static class AddTypeToDclFix implements LocalQuickFix {
 
+    @Override
     @NotNull
     public String getFamilyName() {
       return FlexBundle.message("js.untyped.declaration.problem.addtype.fix");
     }
 
+    @Override
     public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
       PsiElement anchor = descriptor.getPsiElement();
       final PsiFile containingFile = anchor.getContainingFile();

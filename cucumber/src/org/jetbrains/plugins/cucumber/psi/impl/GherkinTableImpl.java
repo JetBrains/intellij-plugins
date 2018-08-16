@@ -28,6 +28,7 @@ public class GherkinTableImpl extends GherkinPsiElementBase implements GherkinTa
     gherkinElementVisitor.visitTable(this);
   }
 
+  @Override
   @Nullable
   public GherkinTableRow getHeaderRow() {
     final ASTNode node = getNode();
@@ -36,6 +37,7 @@ public class GherkinTableImpl extends GherkinPsiElementBase implements GherkinTa
     return tableNode == null ? null : (GherkinTableRow)tableNode.getPsi();
   }
 
+  @Override
   @NotNull
   public List<GherkinTableRow> getDataRows() {
     List<GherkinTableRow> result = new ArrayList<>();
@@ -50,6 +52,7 @@ public class GherkinTableImpl extends GherkinPsiElementBase implements GherkinTa
     return result;
   }
 
+  @Override
   public int getColumnWidth(int columnIndex) {
     int result = 0;
     final GherkinTableRow headerRow = getHeaderRow();

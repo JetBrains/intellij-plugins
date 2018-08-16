@@ -37,11 +37,13 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
     return Collections.emptyList();
   }
 
+  @Override
   @Nullable
   public DartTypeParameters getTypeParameters() {
     return null;
   }
 
+  @Override
   @NotNull
   public DartClassResolveResult getSuperClassResolvedOrObjectClass() {
     if (DartResolveUtil.OBJECT.equals(getName())) return DartClassResolveResult.EMPTY;

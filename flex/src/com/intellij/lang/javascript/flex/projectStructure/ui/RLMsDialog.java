@@ -1,8 +1,8 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -48,6 +48,7 @@ public class RLMsDialog extends RepeatableValueDialog {
 
   private static DefaultTableCellRenderer createMainClassRenderer(final Module module) {
     return new DefaultTableCellRenderer() {
+      @Override
       public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
                                                      int row, int column) {
         final Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -67,6 +68,7 @@ public class RLMsDialog extends RepeatableValueDialog {
     return new AbstractTableCellEditor() {
       private JSReferenceEditor mainClassComponent;
 
+      @Override
       public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         mainClassComponent =
           JSReferenceEditor.forClassName("", module.getProject(), null, module.getModuleScope(false), null, null,
@@ -75,12 +77,14 @@ public class RLMsDialog extends RepeatableValueDialog {
         return mainClassComponent;
       }
 
+      @Override
       public Object getCellEditorValue() {
         return mainClassComponent.getText();
       }
     };
   }
 
+  @Override
   protected boolean addObject() {
     if (DumbService.isDumb(myProject)) {
       return super.addObject();
@@ -122,6 +126,7 @@ public class RLMsDialog extends RepeatableValueDialog {
     return result;
   }
 
+  @Override
   protected String getHelpId() {
     return "Runtime-Loaded_Modules_dialog";
   }

@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class IntellijJavaAnnotation implements IJavaAnnotation {
     private final PsiAnnotation _psiAnnotation;
-  
+
     private static final Key<CachedValue<Map<String, String[]>>> ourParametersMapKey = Key.create("parameters.map");
     private static final UserDataCache<CachedValue<Map<String, String[]>>,PsiAnnotation, Object> ourParametersMapCache = new UserDataCache<CachedValue<Map<String, String[]>>,PsiAnnotation, Object>() {
         @Override
@@ -31,6 +31,7 @@ public class IntellijJavaAnnotation implements IJavaAnnotation {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getFullyQualifiedName() {
         return _psiAnnotation.getQualifiedName();
     }
@@ -38,6 +39,7 @@ public class IntellijJavaAnnotation implements IJavaAnnotation {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Map<String, String[]> getParameters() {
         return ourParametersMapCache.get(ourParametersMapKey, _psiAnnotation, null).getValue();
     }
@@ -48,17 +50,17 @@ public class IntellijJavaAnnotation implements IJavaAnnotation {
 
     private static Map<String, String[]> doCalcParameters(PsiAnnotation owner) {
         Map<String, String[]> parameters = new HashMap<>(); // HashMap to handle null keys
-    
+
         for (PsiNameValuePair parameter : owner.getParameterList().getAttributes()) {
             String literalValue = parameter.getLiteralValue();
             if (literalValue != null) {
                 parameters.put(parameter.getName(), new String[] {literalValue});
                 continue;
             }
-      
+
             PsiAnnotationMemberValue value = parameter.getValue();
             String stringValue = calcValue(value);
-      
+
             if (stringValue != null) {
                 parameters.put(parameter.getName(), new String[]{stringValue});
             } else if (value instanceof PsiArrayInitializerMemberValue) {
@@ -67,11 +69,11 @@ public class IntellijJavaAnnotation implements IJavaAnnotation {
                 for (int i = 0; i < initializers.length; i++) {
                     values[i] = calcValue (initializers[i]);
                 }
-        
+
                 parameters.put(parameter.getName(), values);
             }
         }
-    
+
         return parameters;
     }
 

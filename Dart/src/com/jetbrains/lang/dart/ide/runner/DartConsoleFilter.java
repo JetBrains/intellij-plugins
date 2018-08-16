@@ -42,6 +42,7 @@ public class DartConsoleFilter implements Filter {
     myDartUrlResolver = contextFile == null ? null : DartUrlResolver.getInstance(project, contextFile);
   }
 
+  @Override
   @Nullable
   public Result applyFilter(final String line, final int entireLength) {
     if (line.startsWith(OBSERVATORY_LISTENING_ON + "http://")) {

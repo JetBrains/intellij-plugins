@@ -74,6 +74,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
   // GUI helpers
   private final SimpleTreeBuilder myBuilder;
   private final SimpleNode myRootNode = new SimpleNode() {
+    @Override
     public SimpleNode[] getChildren() {
       final List<SimpleNode> nodes = new ArrayList<>(myBuffer.size());
       for (final StrutsFileSet entry : myBuffer) {
@@ -85,6 +86,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       return ArrayUtil.toObjectArray(nodes, SimpleNode.class);
     }
 
+    @Override
     public boolean isAutoExpandNode() {
       return true;
     }
@@ -110,6 +112,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
 
     // init tree
     final SimpleTreeStructure structure = new SimpleTreeStructure() {
+      @Override
       public Object getRootElement() {
         return myRootNode;
       }
@@ -126,6 +129,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
 
     final DumbService dumbService = DumbService.getInstance(facetEditorContext.getProject());
     myTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
+      @Override
       public void valueChanged(final TreeSelectionEvent e) {
         final StrutsFileSet fileSet = getCurrentFileSet();
         myEditButton.setEnabled(fileSet != null && !dumbService.isDumb());
@@ -143,6 +147,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
               new StrutsFileSet(StrutsFileSet.getUniqueId(myBuffer),
                                 StrutsFileSet.getUniqueName(StrutsBundle.message("facet.fileset.my.fileset"), myBuffer),
                                 originalConfiguration) {
+                @Override
                 public boolean isNew() {
                   return true;
                 }
@@ -207,7 +212,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
         .addExtraAction(AnActionButton.fromAction(actionManager.createCollapseAllAction(myTreeExpander, myTree)))
         .addExtraAction(new AnActionButton("Open Struts 2 plugin documentation…", AllIcons.Actions.Help) {
           @Override
-          public void actionPerformed(AnActionEvent e) {
+          public void actionPerformed(@NotNull AnActionEvent e) {
             BrowserUtil.browse("https://confluence.jetbrains.com/pages/viewpage.action?pageId=35367");
           }
         })
@@ -253,6 +258,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
 
   private void selectFileSet(final StrutsFileSet fileSet) {
     myTree.select(myBuilder, new SimpleNodeVisitor() {
+      @Override
       public boolean accept(final SimpleNode simpleNode) {
         if (simpleNode instanceof FileSetNode) {
           if (((FileSetNode)simpleNode).mySet.equals(fileSet)) {
@@ -298,20 +304,24 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     }
   }
 
+  @Override
   @Nls
   public String getDisplayName() {
     return StrutsBundle.message("facet.fileset.title");
   }
 
+  @Override
   @NotNull
   public JComponent createComponent() {
     return myPanel;
   }
 
+  @Override
   public boolean isModified() {
     return myModified;
   }
 
+  @Override
   public void apply() {
     final Set<StrutsFileSet> fileSets = originalConfiguration.getFileSets();
     fileSets.clear();
@@ -324,6 +334,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     myModified = false;
   }
 
+  @Override
   public void reset() {
     myBuffer.clear();
     final Set<StrutsFileSet> sets = StrutsManager.getInstance(module.getProject()).getAllConfigFileSets(module);
@@ -335,11 +346,13 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     myTree.setSelectionRow(0);
   }
 
+  @Override
   public void disposeUIResources() {
     Disposer.dispose(myBuilder);
     Disposer.dispose(this);
   }
 
+  @Override
   public void dispose() {
   }
 
@@ -363,6 +376,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       }
     }
 
+    @Override
     public SimpleNode[] getChildren() {
       final List<SimpleNode> nodes = new ArrayList<>();
 
@@ -372,10 +386,12 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       return ArrayUtil.toObjectArray(nodes, SimpleNode.class);
     }
 
+    @Override
     public boolean isAutoExpandNode() {
       return true;
     }
 
+    @Override
     @NotNull
     public Object[] getEqualityObjects() {
       return new Object[]{mySet, mySet.getName(), mySet.getFiles()};
@@ -398,6 +414,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       return true;
     }
 
+    @Override
     protected void doUpdate() {
       final VirtualFile file = myFilePointer.getFile();
       if (file != null) {
@@ -420,6 +437,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       }
     }
 
+    @Override
     public SimpleNode[] getChildren() {
       return NO_CHILDREN;
     }

@@ -21,6 +21,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
 public class CucumberEnterHandler extends EnterHandlerDelegateAdapter {
   public static final String PYSTRING_QUOTES = "\"\"\"";
 
+  @Override
   public Result preprocessEnter(@NotNull PsiFile file,
                                 @NotNull Editor editor,
                                 @NotNull Ref<Integer> caretOffset,

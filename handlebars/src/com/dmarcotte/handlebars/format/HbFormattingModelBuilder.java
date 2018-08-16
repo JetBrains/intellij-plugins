@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.dmarcotte.handlebars.format;
 
 import com.dmarcotte.handlebars.config.HbConfig;
@@ -52,6 +53,7 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
    * delegate right back to us to format the HbTokenTypes.OUTER_ELEMENT_TYPE token we tell them to ignore,
    * causing an stack-overflowing loop of polite format-delegation.
    */
+  @Override
   @NotNull
   public FormattingModel createModel(PsiElement element, CodeStyleSettings settings) {
 

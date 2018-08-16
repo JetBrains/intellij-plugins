@@ -45,14 +45,17 @@ import java.util.regex.Pattern;
  */
 public class SpringSourceObr implements Obr {
 
+  @Override
   public String getDisplayName() {
     return "Springsource Enterprise Bundle Repository";
   }
 
+  @Override
   public boolean supportsMaven() {
     return true;
   }
 
+  @Override
   @NotNull
   public ObrMavenResult[] queryForMavenArtifact(@NotNull String queryString, @NotNull ProgressIndicator indicator) throws IOException {
     try {
@@ -147,6 +150,7 @@ public class SpringSourceObr implements Obr {
     }
   }
 
+  @Override
   @NotNull
   public MavenRepository[] getMavenRepositories() {
     return SPRINGSOURCE_REPOS;

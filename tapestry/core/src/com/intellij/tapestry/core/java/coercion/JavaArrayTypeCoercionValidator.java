@@ -9,6 +9,7 @@ import org.apache.commons.chain.Context;
 
 public class JavaArrayTypeCoercionValidator implements Command {
 
+    @Override
     public boolean execute(Context context) throws Exception {
 
         // if none of the types are an array don't treat this case
@@ -18,7 +19,7 @@ public class JavaArrayTypeCoercionValidator implements Command {
                 IJavaType componentType = ((IJavaArrayType)coercionContext.getTargetType()).getComponentType();
                 IJavaClassType objectType = coercionContext.getProject().getJavaTypeFinder().findType(
                   CommonClassNames.JAVA_LANG_OBJECT, true);
-                
+
                 if (componentType != null && componentType.isAssignableFrom(objectType)) {
                   coercionContext.setResult(true);
                   return true;

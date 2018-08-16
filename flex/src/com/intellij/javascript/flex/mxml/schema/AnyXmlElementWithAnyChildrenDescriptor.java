@@ -10,6 +10,7 @@ class AnyXmlElementWithAnyChildrenDescriptor extends AnyXmlElementDescriptor imp
     super(null, null);
   }
 
+  @Override
   public boolean allowElementsFromNamespace(final String namespace, final XmlTag context) {
     return false;
   }

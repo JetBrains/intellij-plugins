@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.inspections.*
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import com.intellij.openapi.application.PathManager
 import com.intellij.spellchecker.inspections.SpellCheckingInspection
-import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.util.ThrowableRunnable
@@ -779,32 +778,6 @@ Vue.component('global-comp-literal', {
 </template>
 """)
     myFixture.doHighlighting()
-  }
-
-  fun testAwaitHighlightingNotBlink() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
-      myFixture.configureByText("AwaitHighlightingNotBlink.vue", """
-<script>
-    <caret>function test() {
-        return await axios.get('mai')
-    }
-    test()
-</script>
-""")
-      for (i in 0..9) {
-        val error = myFixture.doHighlighting().first { it.description == "Expecting newline or semicolon" }
-        assertNotNull(error)
-
-        "async ".forEach { LightPlatformCodeInsightTestCase.type(it, myFixture.editor, project) }
-        val error2 = myFixture.doHighlighting().firstOrNull { it.description == "Expecting newline or semicolon" }
-        assertNull(error2)
-
-        for (j in "async ") {
-          LightPlatformCodeInsightTestCase.backspace(myFixture.editor, project)
-        }
-        assertFalse(myFixture.editor.document.text.contains("async"))
-      }
-    })
   }
 
   fun testTsxIsNormallyParsed() {

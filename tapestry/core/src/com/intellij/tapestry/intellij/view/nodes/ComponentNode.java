@@ -30,6 +30,7 @@ public class ComponentNode extends TapestryNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public SimpleNode[] getChildren() {
         Component component = (Component) getElement();
         List<SimpleNode> children = new ArrayList<>();

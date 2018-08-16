@@ -21,6 +21,7 @@ class MethodInfo extends MemberInfo {
   Traits activation;
   boolean anon;
 
+  @Override
   void dump(Abc abc, String indent, String attr, final FlexByteCodeInformationProcessor processor) {
     if (!processor.doDumpMember(this)) return;
 

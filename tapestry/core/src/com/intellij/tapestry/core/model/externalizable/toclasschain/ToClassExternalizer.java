@@ -12,6 +12,7 @@ public abstract class ToClassExternalizer implements Command {
 
     private ExternalizeToClassContext _context;
 
+    @Override
     public boolean execute(Context context) throws Exception {
         if (!(context instanceof ExternalizeToClassContext))
             return false;

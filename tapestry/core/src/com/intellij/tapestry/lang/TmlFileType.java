@@ -18,11 +18,13 @@ public class TmlFileType extends XmlLikeFileType {
     super(TmlLanguage.INSTANCE);
   }
 
+  @Override
   @NotNull
   public String getName() {
     return "TML";
   }
 
+  @Override
   @NotNull
   public String getDescription() {
     return "Tapestry template";
@@ -34,6 +36,7 @@ public class TmlFileType extends XmlLikeFileType {
     return TapestryConstants.TEMPLATE_FILE_EXTENSION;
   }
 
+  @Override
   public Icon getIcon() {
     return TapestryIcons.Tapestry_logo_small;
   }

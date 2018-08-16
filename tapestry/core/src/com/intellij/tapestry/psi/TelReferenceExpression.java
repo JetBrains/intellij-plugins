@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 public class TelReferenceExpression extends TelCompositeElement implements TelReferenceQualifier {
 
   private final TelQualifiedReference myReference = new TelQualifiedReference(this) {
+    @Override
     @NotNull
     public TextRange getRangeInElement() {
       final PsiElement element = getReferenceNameElement();
@@ -23,18 +24,21 @@ public class TelReferenceExpression extends TelCompositeElement implements TelRe
       return TextRange.from(element.getStartOffsetInParent(), element.getTextLength());
     }
 
+    @Override
     @Nullable
     public String getReferenceName() {
       final PsiElement element = getReferenceNameElement();
       return element == null ? null : element.getText();
     }
 
+    @Override
     @Nullable
     public TelReferenceQualifier getReferenceQualifier() {
       return findChildByClass(TelReferenceQualifier.class);
     }
 
-    public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+    @Override
+    public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
       PsiElement resolve = resolve();
       // if we referenced property name before (without get) then rename should also strip get prefix
       if (resolve instanceof PsiMethod && PropertyUtilBase.getPropertyName((PsiMethod)resolve) != null) {
@@ -61,6 +65,7 @@ public class TelReferenceExpression extends TelCompositeElement implements TelRe
     return myReference;
   }
 
+  @Override
   @Nullable
   public PsiType getPsiType() {
     return myReference.getPsiType();

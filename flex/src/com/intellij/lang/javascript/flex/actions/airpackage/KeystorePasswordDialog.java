@@ -94,14 +94,17 @@ public class KeystorePasswordDialog extends DialogWrapper {
     return result;
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     return myMainPanel;
   }
 
+  @Override
   public JComponent getPreferredFocusedComponent() {
     return myPreferredFocusedComponent;
   }
 
+  @Override
   protected ValidationInfo doValidate() {
     for (Trinity<AirSigningOptions, JPasswordField, JPasswordField> entry : myKeystoresAndPasswordFields) {
       final AirSigningOptions signingOptions = entry.first;
@@ -124,6 +127,7 @@ public class KeystorePasswordDialog extends DialogWrapper {
     return null;
   }
 
+  @Override
   protected void doOKAction() {
     storePasswords();
     super.doOKAction();

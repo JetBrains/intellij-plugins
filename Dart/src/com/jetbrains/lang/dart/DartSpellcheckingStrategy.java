@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class DartSpellcheckingStrategy extends SpellcheckingStrategy {
   //private final Tokenizer myStringLiteralTokenizer = new DartStringLiteralTokenizer();
 
+  @Override
   @NotNull
   public Tokenizer getTokenizer(final PsiElement element) {
     if (element instanceof PsiNameIdentifierOwner && !(element instanceof DartComponentName)) {

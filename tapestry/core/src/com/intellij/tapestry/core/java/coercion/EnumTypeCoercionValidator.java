@@ -5,6 +5,7 @@ import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 
 public class EnumTypeCoercionValidator implements Command {
+    @Override
     public boolean execute(Context context) throws Exception {
         // if the target type is not an enum don't treat this case
         if (!(((CoercionContext) context).getTargetType() instanceof IJavaClassType) || !((IJavaClassType) ((CoercionContext) context).getTargetType()).isEnum())

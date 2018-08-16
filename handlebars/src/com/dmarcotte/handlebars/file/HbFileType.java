@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.dmarcotte.handlebars.file;
 
 import com.dmarcotte.handlebars.HbBundle;
@@ -32,6 +33,7 @@ public class HbFileType extends LanguageFileType implements TemplateLanguageFile
     super(lang);
 
     FileTypeEditorHighlighterProviders.INSTANCE.addExplicitExtension(this, new EditorHighlighterProvider() {
+      @Override
       public EditorHighlighter getEditorHighlighter(@Nullable Project project,
                                                     @NotNull FileType fileType,
                                                     @Nullable VirtualFile virtualFile,
@@ -41,11 +43,13 @@ public class HbFileType extends LanguageFileType implements TemplateLanguageFile
     });
   }
 
+  @Override
   @NotNull
   public String getName() {
     return "Handlebars/Mustache";
   }
 
+  @Override
   @NotNull
   public String getDescription() {
     return HbBundle.message("hb.files.file.type.description");
@@ -57,6 +61,7 @@ public class HbFileType extends LanguageFileType implements TemplateLanguageFile
     return DEFAULT_EXTENSION;
   }
 
+  @Override
   public Icon getIcon() {
     return HandlebarsIcons.Handlebars_icon;
   }

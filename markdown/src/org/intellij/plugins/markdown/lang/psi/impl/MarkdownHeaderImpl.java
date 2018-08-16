@@ -49,18 +49,22 @@ public class MarkdownHeaderImpl extends MarkdownStubBasedPsiElementBase<Markdown
     String text = headerText == null ? "Invalid header: " + getText() : headerText;
 
     return new ColoredItemPresentation() {
+      @Override
       public String getPresentableText() {
         return text;
       }
 
+      @Override
       public String getLocationString() {
         return null;
       }
 
+      @Override
       public Icon getIcon(final boolean open) {
         return null;
       }
 
+      @Override
       public TextAttributesKey getTextAttributesKey() {
         return getHeaderNumber() == 1 ? MARKDOWN_HEADER_BOLD : MARKDOWN_HEADER;
       }

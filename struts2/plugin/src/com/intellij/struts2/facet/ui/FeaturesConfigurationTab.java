@@ -41,21 +41,25 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
     disablePropertiesKeys.setSelected(originalConfiguration.isPropertiesKeysDisabled());
   }
 
+  @Override
   @Nls
   public String getDisplayName() {
     return StrutsBundle.message("facet.features.title");
   }
 
+  @Override
   @NotNull
   public JComponent createComponent() {
     return myPanel;
   }
 
+  @Override
   public boolean isModified() {
     return originalConfiguration.isPropertiesKeysDisabled() !=
            disablePropertiesKeys.isSelected();
   }
 
+  @Override
   public void apply() {
     originalConfiguration.setPropertiesKeysDisabled(disablePropertiesKeys.isSelected());
     originalConfiguration.setModified();

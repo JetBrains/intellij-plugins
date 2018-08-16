@@ -25,6 +25,7 @@ public class CfmlMethodInsertHandler implements InsertHandler<LookupElement> {
 
   }
 
+  @Override
   public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement lookupElement) {
     Editor editor = context.getEditor();
     if (CfmlPsiUtil.isFunctionDefinition(lookupElement.getObject())) {

@@ -28,11 +28,13 @@ public class DeclareConditionalCompilerDefinitionFix extends FixAndIntentionActi
     myConditionalCompilerDefinitionName = conditionalCompilerDefinitionName;
   }
 
+  @Override
   @NotNull
   public String getName() {
     return FlexBundle.message("define.0", myConditionalCompilerDefinitionName);
   }
 
+  @Override
   protected void applyFix(final Project project, final PsiElement psiElement, final PsiFile file, final Editor editor) {
     final ProjectStructureConfigurable configurable = ProjectStructureConfigurable.getInstance(project);
 

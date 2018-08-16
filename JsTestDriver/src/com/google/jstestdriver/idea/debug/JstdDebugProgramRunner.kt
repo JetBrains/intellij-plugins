@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.google.jstestdriver.idea.debug
 
 import com.google.jstestdriver.idea.execution.JstdRunConfiguration
@@ -9,7 +10,6 @@ import com.google.jstestdriver.idea.server.JstdServer
 import com.google.jstestdriver.idea.server.JstdServerRegistry
 import com.google.jstestdriver.idea.server.ui.JstdToolWindowManager
 import com.intellij.execution.ExecutionException
-import com.intellij.execution.RunnerRegistry
 import com.intellij.execution.configurations.RunProfile
 import com.intellij.execution.configurations.RunProfileState
 import com.intellij.execution.configurations.RunnerSettings
@@ -17,6 +17,7 @@ import com.intellij.execution.executors.DefaultDebugExecutor
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.AsyncProgramRunner
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.execution.runners.ProgramRunner
 import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.ide.browsers.BrowserFamily
 import com.intellij.javascript.debugger.JavaScriptDebugProcess
@@ -43,8 +44,7 @@ class JstdDebugProgramRunner : AsyncProgramRunner<RunnerSettings>() {
         if (isAvailable != null) {
           return isAvailable
         }
-        val registry = RunnerRegistry.getInstance()
-        isAvailable = registry.findRunnerById(DEBUG_RUNNER_ID) != null
+        isAvailable = ProgramRunner.findRunnerById(DEBUG_RUNNER_ID) != null
         IS_AVAILABLE_CACHE = isAvailable
         return isAvailable
       }

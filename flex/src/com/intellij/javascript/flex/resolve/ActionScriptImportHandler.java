@@ -51,6 +51,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
   public static final Key<CachedValue<Map<String, JSImportedElementResolveResult>>> ourImportResolveCache = Key.create("js.import.resolve");
   public static final UserDataCache<CachedValue<Map<String, JSImportedElementResolveResult>>,PsiElement, Object> myImportResolveCache =
     new UserDataCache<CachedValue<Map<String, JSImportedElementResolveResult>>, PsiElement, Object>() {
+      @Override
       protected CachedValue<Map<String, JSImportedElementResolveResult>> compute(final PsiElement psiElement, final Object p) {
         return CachedValuesManager
           .getManager(psiElement.getProject()).createCachedValue(() -> new CachedValueProvider.Result<Map<String, JSImportedElementResolveResult>>(
@@ -268,6 +269,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
     return true;
   }
 
+  @Override
   public boolean importClass(final PsiScopeProcessor processor, final PsiNamedElement parent) {
     final ResolveProcessor resolveProcessor = (ResolveProcessor)processor;
     if(resolveProcessor.isLocalResolve() || resolveProcessor.needPackages()) return true;

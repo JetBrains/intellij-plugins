@@ -537,7 +537,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
       final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
       if (project == null) {
         e.getPresentation().setEnabled(false);
@@ -548,7 +548,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
       final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
       if (project == null) return;
       final List<DiagramNode> nodes = JSModulesDiagramUtils.getSelectedNodes(e);

@@ -38,6 +38,7 @@ public class ValidatorModelInspection extends BasicDomElementsInspection<Validat
     return new String[]{StrutsBundle.message("inspections.group.path.name"), getGroupDisplayName()};
   }
 
+  @Override
   @NotNull
   @NonNls
   public String getShortName() {

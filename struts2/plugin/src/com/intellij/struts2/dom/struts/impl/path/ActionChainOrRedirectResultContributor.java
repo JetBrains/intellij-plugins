@@ -50,6 +50,7 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
     return ResultTypeResolver.isChainOrRedirectType(resultType);
   }
 
+  @Override
   public boolean createReferences(@NotNull final PsiElement psiElement,
                                   @NotNull final List<PsiReference> references,
                                   final boolean soft) {
@@ -69,6 +70,7 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
     return true;
   }
 
+  @Override
   @Nullable
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
     return createDefaultPathReference(path, element, Struts2Icons.Action);
@@ -88,6 +90,7 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
       this.model = model;
     }
 
+    @Override
     public PsiElement resolve() {
       final XmlTagValue tagValue = myElement.getValue();
       final String path = PathReference.trimPath(tagValue.getText());
@@ -111,6 +114,7 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
       return null;
     }
 
+    @Override
     @NotNull
     public Object[] getVariants() {
       final List<Action> allActions = model.getActionsForNamespace(null);

@@ -30,14 +30,17 @@ public class DefaultResponseProvider extends XmlResponseProvider {
     myBroadcaster = broadcaster;
   }
 
+  @Override
   public String getTagName() {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public String getTagNamespace() {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public boolean processAndFillResponse(Element response, Element requestRoot, Transport transport, String remoteUser) {
     return false;
   }

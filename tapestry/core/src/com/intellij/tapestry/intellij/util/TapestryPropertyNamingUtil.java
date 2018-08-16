@@ -86,6 +86,7 @@ public class TapestryPropertyNamingUtil {
   @Nullable
   public static PsiMethod findPropertyGetter(final PsiClass aClass, final String propertyName) {
     return findPropertyAccessor(aClass, propertyName, new PropertyNameExtractor() {
+      @Override
       public String extractPropertyName(@NotNull PsiMethod method) {
         return isPropertyGetter(method) ? getPropertyNameFromGetter(method) : null;
       }
@@ -95,6 +96,7 @@ public class TapestryPropertyNamingUtil {
   @Nullable
   public static PsiMethod findPropertySetter(final PsiClass aClass, final String propertyName) {
     return findPropertyAccessor(aClass, propertyName, new PropertyNameExtractor() {
+      @Override
       public String extractPropertyName(@NotNull PsiMethod method) {
         return isPropertySetter(method) ? getPropertyNameFromSetter(method) : null;
       }

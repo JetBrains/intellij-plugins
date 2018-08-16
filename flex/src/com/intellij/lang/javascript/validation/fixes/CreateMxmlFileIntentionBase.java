@@ -44,28 +44,34 @@ public abstract class CreateMxmlFileIntentionBase implements CreateClassIntentio
     myPackageName = StringUtil.getPackageName(classFqn);
   }
 
+  @Override
   @NotNull
   public String getFamilyName() {
     return CodeInsightBundle.message("create.file.family");
   }
 
+  @Override
   public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {
     return myIdentifierIsValid && myElement.isValid();
   }
 
+  @Override
   public void setCreatedClassFqnConsumer(final Consumer<String> consumer) {
     myCreatedClassFqnConsumer = consumer;
   }
 
+  @Override
   @NotNull
   public String getName() {
     return getText();
   }
 
+  @Override
   public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
     invoke(project, null, myElement.getContainingFile());
   }
 
+  @Override
   public void invoke(@NotNull final Project project, final @Nullable Editor editor, final PsiFile file) throws IncorrectOperationException {
     final Module module = ModuleUtil.findModuleForPsiElement(file);
     if (module == null) {

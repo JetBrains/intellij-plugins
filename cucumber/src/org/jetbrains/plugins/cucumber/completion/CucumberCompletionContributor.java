@@ -65,7 +65,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
     extend(CompletionType.BASIC, psiElement().inFile(psiElement(GherkinFile.class)), new CompletionProvider<CompletionParameters>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
-                                    ProcessingContext context,
+                                    @NotNull ProcessingContext context,
                                     @NotNull CompletionResultSet result) {
         final PsiFile psiFile = parameters.getOriginalFile();
         if (psiFile instanceof GherkinFile) {
@@ -86,7 +86,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
     extend(CompletionType.BASIC, inScenario.andNot(inStep), new CompletionProvider<CompletionParameters>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
-                                    ProcessingContext context,
+                                    @NotNull ProcessingContext context,
                                     @NotNull CompletionResultSet result) {
         addStepKeywords(result, parameters.getOriginalFile());
       }
@@ -95,7 +95,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
     extend(CompletionType.BASIC, inStep, new CompletionProvider<CompletionParameters>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
-                                    ProcessingContext context,
+                                    @NotNull ProcessingContext context,
                                     @NotNull CompletionResultSet result) {
         addStepDefinitions(result, parameters.getOriginalFile());
       }

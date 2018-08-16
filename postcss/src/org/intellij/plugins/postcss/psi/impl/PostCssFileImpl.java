@@ -13,6 +13,7 @@ public class PostCssFileImpl extends StylesheetFileBase implements PostCssFile {
     super(viewProvider, PostCssLanguage.INSTANCE);
   }
 
+  @Override
   @NotNull
   public FileType getFileType() {
     return PostCssFileType.POST_CSS;

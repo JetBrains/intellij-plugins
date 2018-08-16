@@ -83,6 +83,7 @@ public class Pico extends DefaultPicoContainer {
     }
   }
 
+  @Override
   public void dispose() {
     try {
       super.dispose();

@@ -36,11 +36,13 @@ public class FacetEditor extends FacetEditorTab {
         _applicationPackage.setText(_configuration.getApplicationPackage());
     }
 
+    @Override
     @Nls
     public String getDisplayName() {
         return "Tapestry";
     }
 
+    @Override
     @NotNull
     public JComponent createComponent() {
         return _mainPanel;
@@ -53,21 +55,25 @@ public class FacetEditor extends FacetEditorTab {
     AddTapestrySupportUtil.addSupportInWriteCommandAction(facet.getModule(), _configuration, false, false);
   }
 
+  @Override
   public boolean isModified() {
         return !_filterName.getText().equals(_configuration.getFilterName()) ||
                !_applicationPackage.getText().equals(_configuration.getApplicationPackage());
     }
 
+    @Override
     public void apply() {
         _configuration.setFilterName(_filterName.getText());
         _configuration.setApplicationPackage(_applicationPackage.getText());
     }
 
+    @Override
     public void reset() {
         _filterName.setText(_configuration.getFilterName());
         _applicationPackage.setText(_configuration.getApplicationPackage());
     }
 
+    @Override
     public void disposeUIResources() {
     }
 

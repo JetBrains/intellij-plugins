@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.completion;
 
 import com.intellij.codeInsight.CodeInsightSettings;
@@ -81,6 +82,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     }
   }
 
+  @Override
   protected ModuleType getModuleType() {
     return needsJavaModule() ? StdModuleTypes.JAVA : FlexModuleType.getInstance();
   }
@@ -180,7 +182,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     String testName = getTestName(false);
     configureByFiles(null, BASE_PATH + testName + ".js2", BASE_PATH + testName + ".dtd");
     final VirtualFile relativeFile = VfsUtil.findRelativeFile(testName + ".dtd", myFile.getVirtualFile());
-    ExternalResourceManagerExImpl.addTestResource(JSAttributeImpl.URN_FLEX_META, relativeFile.getPath(), getTestRootDisposable());
+    ExternalResourceManagerExImpl.registerResourceTemporarily(JSAttributeImpl.URN_FLEX_META, relativeFile.getPath(), getTestRootDisposable());
 
     complete();
     checkResultByFile("", getExtension());
@@ -756,6 +758,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     doTest("");
   }
 
+  @Override
   protected String getExtension() {
     return "js2";
   }

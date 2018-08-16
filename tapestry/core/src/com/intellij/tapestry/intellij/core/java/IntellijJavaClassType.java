@@ -40,6 +40,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   /**
    * {@inheritDoc}
    */
+  @Override
   public String getFullyQualifiedName() {
     return getPsiClass().getQualifiedName();
   }
@@ -47,6 +48,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   /**
    * {@inheritDoc}
    */
+  @Override
   public String getName() {
     return getPsiClass().getName();
   }
@@ -54,6 +56,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   /**
    * {@inheritDoc}
    */
+  @Override
   public boolean isInterface() {
     return getPsiClass().isInterface();
   }
@@ -61,6 +64,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   /**
    * {@inheritDoc}
    */
+  @Override
   public boolean isPublic() {
     return getPsiClass().getModifierList().hasModifierProperty(PsiModifier.PUBLIC);
   }
@@ -68,6 +72,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   /**
    * {@inheritDoc}
    */
+  @Override
   public boolean isEnum() {
     return getPsiClass().isEnum();
   }
@@ -75,6 +80,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   /**
    * {@inheritDoc}
    */
+  @Override
   @Nullable
   public IntellijJavaClassType getSuperClassType() {
     PsiClass superClass = getPsiClass().getSuperClass();
@@ -84,6 +90,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   /**
    * {@inheritDoc}
    */
+  @Override
   public boolean hasDefaultConstructor() {
     return PsiUtil.hasDefaultConstructor(getPsiClass());
   }
@@ -91,6 +98,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   /**
    * {@inheritDoc}
    */
+  @Override
   public Collection<IJavaMethod> getPublicMethods(boolean fromSuper) {
     Collection<IJavaMethod> foundMethods = new ArrayList<>();
 
@@ -114,6 +122,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   /**
    * {@inheritDoc}
    */
+  @Override
   public Collection<IJavaMethod> getAllMethods(boolean fromSuper) {
     Collection<IJavaMethod> foundMethods = new ArrayList<>();
 
@@ -129,6 +138,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   /**
    * {@inheritDoc}
    */
+  @Override
   public Collection<IJavaMethod> findPublicMethods(String methodNameRegExp) {
     RegExpValidator regexpValidator = new RegExpValidator(methodNameRegExp);
     Collection<IJavaMethod> foundMethods = new ArrayList<>();
@@ -146,6 +156,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   /**
    * {@inheritDoc}
    */
+  @Override
   public Collection<IJavaAnnotation> getAnnotations() {
     Collection<IJavaAnnotation> annotations = new ArrayList<>();
 
@@ -164,6 +175,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   /**
    * {@inheritDoc}
    */
+  @Override
   public Map<String, IJavaField> getFields(boolean fromSuper) {
     Map<String, IJavaField> fields = new HashMap<>();
 
@@ -191,6 +203,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   /**
    * {@inheritDoc}
    */
+  @Override
   public String getDocumentation() {
     StringBuffer description = new StringBuffer();
 
@@ -218,6 +231,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   /**
    * {@inheritDoc}
    */
+  @Override
   public IResource getFile() {
     VirtualFile vf = VirtualFileManager.getInstance().findFileByUrl(_classFilePath);
 
@@ -263,6 +277,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   }
 
 
+  @Override
   @NotNull
   public Object getUnderlyingObject() {
     if (_psiClassType == null) processPsiClassType();

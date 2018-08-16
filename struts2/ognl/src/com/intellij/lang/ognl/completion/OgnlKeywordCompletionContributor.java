@@ -131,7 +131,7 @@ public class OgnlKeywordCompletionContributor extends CompletionContributor impl
            new CompletionProvider<CompletionParameters>() {
              @Override
              protected void addCompletions(@NotNull final CompletionParameters completionParameters,
-                                           final ProcessingContext processingContext,
+                                           @NotNull final ProcessingContext processingContext,
                                            @NotNull final CompletionResultSet completionResultSet) {
                for (final String keyword : keywords) {
                  final LookupElementBuilder builder = LookupElementBuilder.create(keyword).bold();

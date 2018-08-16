@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class MarkdownParserAdapter implements PsiParser {
 
+  @Override
   @NotNull
   public ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder builder) {
 

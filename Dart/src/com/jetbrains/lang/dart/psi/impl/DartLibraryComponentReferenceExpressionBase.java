@@ -49,7 +49,7 @@ public class DartLibraryComponentReferenceExpressionBase extends DartExpressionI
   }
 
   @Override
-  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+  public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
     final DartId identifier = PsiTreeUtil.getChildOfType(this, DartId.class);
     final DartId identifierNew = DartElementGenerator.createIdentifierFromText(getProject(), newElementName);
     if (identifier != null && identifierNew != null) {
@@ -64,7 +64,7 @@ public class DartLibraryComponentReferenceExpressionBase extends DartExpressionI
   }
 
   @Override
-  public boolean isReferenceTo(PsiElement element) {
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     return resolve() == element;
   }
 
@@ -88,12 +88,6 @@ public class DartLibraryComponentReferenceExpressionBase extends DartExpressionI
     final List<? extends PsiElement> elements =
       ResolveCache.getInstance(getProject()).resolveWithCaching(this, DartResolver.INSTANCE, true, incompleteCode);
     return DartResolveUtil.toCandidateInfoArray(elements);
-  }
-
-  @NotNull
-  @Override
-  public Object[] getVariants() {
-    return ResolveResult.EMPTY_ARRAY;
   }
 
   @NotNull

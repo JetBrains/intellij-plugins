@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.intellij.plugins.markdown.ui.preview;
 
 import com.intellij.CommonBundle;
@@ -65,15 +66,9 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
                .toFactory())
         .and(Sanitizers.TABLES)
         .and(new HtmlPolicyBuilder()
-               .allowElements("body", "pre")
+               .allowElements("body", "pre", "hr", "code", "tr", "span")
                .allowAttributes(HtmlGenerator.Companion.getSRC_ATTRIBUTE_NAME()).globally()
-               .toFactory())
-        .and(new HtmlPolicyBuilder()
-               .allowElements("hr")
-               .toFactory())
-        .and(new HtmlPolicyBuilder()
-               .allowElements("code", "tr")
-               .allowAttributes("class").onElements("code", "tr")
+               .allowAttributes("class").onElements("code", "tr", "span")
                .toFactory());
     }
   };
@@ -110,12 +105,12 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       myDocument.addDocumentListener(new DocumentListener() {
 
         @Override
-        public void beforeDocumentChange(DocumentEvent e) {
+        public void beforeDocumentChange(@NotNull DocumentEvent e) {
           myPooledAlarm.cancelAllRequests();
         }
 
         @Override
-        public void documentChanged(final DocumentEvent e) {
+        public void documentChanged(@NotNull final DocumentEvent e) {
           myPooledAlarm.addRequest(() -> {
             //myLastScrollOffset = e.getOffset();
             updateHtml(true);

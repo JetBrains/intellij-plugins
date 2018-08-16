@@ -24,6 +24,7 @@ public class DartPopFrameAction extends AnAction implements DumbAware {
     presentation.setIcon(AllIcons.Actions.PopFrame);
   }
 
+  @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     DartVmServiceStackFrame frame = getStackFrame(e);
     if (frame != null) {
@@ -31,6 +32,7 @@ public class DartPopFrameAction extends AnAction implements DumbAware {
     }
   }
 
+  @Override
   public void update(@NotNull AnActionEvent e) {
     DartVmServiceStackFrame frame = getStackFrame(e);
     boolean enabled = frame != null && frame.canDrop();

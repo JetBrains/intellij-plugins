@@ -42,6 +42,7 @@ public class ViewTransferHandler extends TransferHandler {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected Transferable createTransferable(JComponent c) {
         return new TapestryElementTransferable(((TapestryNode) ((DefaultMutableTreeNode) _tapestryProjectViewPane.getTree().getSelectionPath().getLastPathComponent()).getUserObject()).getElement());
     }
@@ -49,6 +50,7 @@ public class ViewTransferHandler extends TransferHandler {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getSourceActions(JComponent c) {
         return COPY;
     }
@@ -64,6 +66,7 @@ public class ViewTransferHandler extends TransferHandler {
         /**
          * {@inheritDoc}
          */
+        @Override
         public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
             if (!isDataFlavorSupported(flavor)) {
                 throw new UnsupportedFlavorException(flavor);
@@ -102,6 +105,7 @@ public class ViewTransferHandler extends TransferHandler {
         /**
          * {@inheritDoc}
          */
+        @Override
         public DataFlavor[] getTransferDataFlavors() {
             return new DataFlavor[]{DataFlavor.stringFlavor};
         }
@@ -109,6 +113,7 @@ public class ViewTransferHandler extends TransferHandler {
         /**
          * {@inheritDoc}
          */
+        @Override
         public boolean isDataFlavorSupported(DataFlavor flavor) {
             return DataFlavor.stringFlavor.equals(flavor);
         }

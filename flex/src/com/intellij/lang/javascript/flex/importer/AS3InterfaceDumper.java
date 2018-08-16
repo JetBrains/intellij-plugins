@@ -22,22 +22,26 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
   private boolean isInterface;
   private boolean myDumpTypeRef;
 
+  @Override
   public void dumpStat(@NotNull final String stat) {}
 
+  @Override
   public void dumpToplevelAnonymousMethod(final @NotNull Abc abc, final @NotNull MethodInfo m) {}
 
+  @Override
   public void dumpTopLevelTraits(final Abc abc, final @NotNull Traits t, final String indent) {
     t.dump(abc, indent, "", this);
   }
 
   private static final Lexer ourLexer = new JSFlexAdapter(ECMAL4LanguageDialect.DIALECT_OPTION_HOLDER);
-  
+
+  @Override
   public boolean doDumpMember(final @NotNull MemberInfo memberInfo) {
     if (memberInfo.name == null) return false;
     if (memberInfo.name.name != null) {
       if(memberInfo.name.name.indexOf(Abc.$CINIT) >= 0) return false;
       if (!StringUtil.isJavaIdentifier(memberInfo.name.name)) return false;
-      
+
       if (!JSTokenTypes.IDENTIFIER_TOKENS_SET.contains(identifierType(memberInfo.name.name)) ) {
         return false;
       }
@@ -47,28 +51,32 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
     }
     return true;
   }
-  
+
   public static synchronized IElementType identifierType(String name) {
     ourLexer.start(name);
-      
+
     if (ourLexer.getTokenEnd() != name.length()) {
       return null;
     }
     return ourLexer.getTokenType();
   }
 
+  @Override
   public void appendMethodSeparator() {
     append((++memberCount % 5) == 0? "\n":"");
   }
 
+  @Override
   public void appendFieldSeparator() {
     appendMethodSeparator();
   }
 
+  @Override
   public String getAbcInSwfIndent() {
     return "";
   }
 
+  @Override
   public void processValue(final Multiname typeName, final Object valueObject) {
     append(" = ");
     append(getValueRepr(valueObject));
@@ -107,10 +115,12 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
     return !doNotNeedQoting.contains(value);
   }
 
+  @Override
   public boolean doDumpMetaData(final @NotNull MetaData md) {
     return md.name.indexOf("__") == -1;
   }
 
+  @Override
   public void processParameter(@NotNull String name, @Nullable Multiname type, String parentName, @Nullable Multiname value, boolean rest) {
     if (rest) {
       append("... ");
@@ -133,22 +143,27 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
     myDumpTypeRef = false;
   }
 
+  @Override
   public boolean doStarTypeDumpInExtends() {
     return false;
   }
 
+  @Override
   public boolean doStarMetaAttrNameDump() {
     return false;
   }
 
+  @Override
   public void setProcessingInterface(final boolean anInterface) {
     isInterface = anInterface;
   }
 
+  @Override
   public void hasError(@NotNull final String error) {
     sb.append("/*" + error + "*/");
   }
 
+  @Override
   public void processMultinameAsPackageName(Multiname name, String parentName) {
     append(getMultinameAsPackageName(name, parentName));
   }
@@ -161,7 +176,7 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
       myDumpTypeRef = false;
     }
   }
-  
+
   protected String getMultinameAsPackageName(Multiname name, String parentName) {
     if (name.nsset == null || (name.nsset.length == 1 && name.nsset[0].equals(Abc.PUBLIC_NS))) {
       return name.name;
@@ -189,6 +204,7 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
     }
   }
 
+  @Override
   protected String appendModifiers(MemberInfo member, String attr) {
     @NonNls String s = attr;
 
@@ -207,7 +223,7 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
   }
 
   private static boolean willDumpNsName(Multiname name, String parentName, boolean memberInParentNs, boolean constructor, boolean topLevelObject, String nsName) {
-    return name != null && name.hasNotEmptyNs() && parentName != null && 
+    return name != null && name.hasNotEmptyNs() && parentName != null &&
         ((!constructor && !topLevelObject && !memberInParentNs) || nsName.indexOf("private") != -1);
   }
 
@@ -223,6 +239,7 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
     append(";\n");
   }
 
+  @Override
   protected boolean dumpRestParameter() {
     return true;
   }

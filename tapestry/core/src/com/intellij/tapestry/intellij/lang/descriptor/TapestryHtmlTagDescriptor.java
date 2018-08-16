@@ -41,20 +41,24 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
     myNamespaceDescriptor = descriptor;
   }
 
+  @Override
   public String getQualifiedName() {
     return myHtmlDelegate.getQualifiedName();
   }
 
+  @Override
   public String getDefaultName() {
     return myHtmlDelegate.getDefaultName();
   }
 
+  @Override
   public XmlElementDescriptor[] getElementsDescriptors(XmlTag context) {
     XmlElementDescriptor[] htmlDescriptors = myHtmlDelegate.getElementsDescriptors(context);
     XmlElementDescriptor[] tapestryDescriptors = DescriptorUtil.getTmlSubelementDescriptors(context, myNamespaceDescriptor);
     return ArrayUtil.mergeArrays(htmlDescriptors, tapestryDescriptors);
   }
 
+  @Override
   public XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
     XmlElementDescriptor childDescriptor = myHtmlDelegate.getElementDescriptor(childTag, contextTag);
     if (childDescriptor != null) {
@@ -73,12 +77,14 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
            TapestryXmlExtension.isTapestryTemplateNamespace(tag.getNamespace());
   }
 
+  @Override
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
     XmlAttributeDescriptor[] tapestryAttrs =
       context != null ? DescriptorUtil.getAttributeDescriptors(context) : DescriptorUtil.getAttributeDescriptors(myComponent, null);
     return ArrayUtil.mergeArrays(tapestryAttrs, myHtmlDelegate.getAttributesDescriptors(context));
   }
 
+  @Override
   public XmlAttributeDescriptor getAttributeDescriptor(@NonNls String attributeName, @Nullable XmlTag context) {
     XmlAttributeDescriptor attributeDescriptor = myHtmlDelegate.getAttributeDescriptor(attributeName, context);
     if (attributeDescriptor != null) return attributeDescriptor;
@@ -87,6 +93,7 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
            : DescriptorUtil.getAttributeDescriptor(attributeName, myComponent, myMixins);
   }
 
+  @Override
   public XmlAttributeDescriptor getAttributeDescriptor(XmlAttribute attribute) {
     final String ns = attribute.getNamespace();
     return attribute.getNamespacePrefix().length() == 0 ||
@@ -96,6 +103,7 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
            null;
   }
 
+  @Override
   public XmlNSDescriptor getNSDescriptor() {
     return myHtmlDelegate.getNSDescriptor();
   }
@@ -105,6 +113,7 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
     return null;
   }
 
+  @Override
   public int getContentType() {
     return myHtmlDelegate.getContentType();
   }
@@ -114,22 +123,27 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
     return null;
   }
 
+  @Override
   public PsiElement getDeclaration() {
     if (myComponent != null) return ((IntellijJavaClassType)myComponent.getElementClass()).getPsiClass();
     return myHtmlDelegate.getDeclaration();
   }
 
+  @Override
   public String getName(PsiElement context) {
     return myHtmlDelegate.getName(context);
   }
 
+  @Override
   public String getName() {
     return myHtmlDelegate.getName();
   }
 
+  @Override
   public void init(PsiElement element) {
   }
 
+  @Override
   public void setName(String name) throws IncorrectOperationException {
   }
 }

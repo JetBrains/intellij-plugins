@@ -41,7 +41,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 public abstract class FlexExtractSuperBaseDialog extends ExtractSuperBaseDialog<JSClass, JSMemberInfo> {
 
@@ -59,6 +61,7 @@ public abstract class FlexExtractSuperBaseDialog extends ExtractSuperBaseDialog<
     buttonGroup.add(myExtractAndTurnRefsRB);
     box.add(myExtractAndTurnRefsRB, 1);
     myExtractAndTurnRefsRB.addItemListener(new ItemListener() {
+      @Override
       public void itemStateChanged(ItemEvent e) {
         updateDialog();
       }

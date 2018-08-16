@@ -4,7 +4,6 @@ import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.FlexBCTree;
-import com.intellij.lang.javascript.flex.build.FlashProjectStructureProblem;
 import com.intellij.lang.javascript.flex.build.ValidateFlashConfigurationsPrecompileTask;
 import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
@@ -14,12 +13,10 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStr
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.util.Consumer;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
@@ -79,6 +76,7 @@ public class AirPackageDialog extends DialogWrapper {
       new IOSPackageType[]{IOSPackageType.Test, IOSPackageType.DebugOverNetwork, IOSPackageType.AdHoc, IOSPackageType.AppStore}));
 
     final ActionListener listener = new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         updateControlsVisibility();
       }
@@ -128,6 +126,7 @@ public class AirPackageDialog extends DialogWrapper {
     myIosFastPackagingCheckBox.setEnabled(iosPresent);
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     return myMainPanel;
   }
@@ -139,20 +138,24 @@ public class AirPackageDialog extends DialogWrapper {
     });
 
     myTree.addToggleCheckBoxListener(new ChangeListener() {
+      @Override
       public void stateChanged(final ChangeEvent e) {
         updateControlsEnabledState();
       }
     });
   }
 
+  @Override
   protected String getDimensionServiceKey() {
     return "AirPackageDialog.DimensionServiceKey";
   }
 
+  @Override
   protected String getHelpId() {
     return "reference.flex.package.air.application";
   }
 
+  @Override
   protected ValidationInfo doValidate() {
     final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCs = getSelectedBCs();
 
@@ -212,6 +215,7 @@ public class AirPackageDialog extends DialogWrapper {
     return null;
   }
 
+  @Override
   protected void doOKAction() {
     final Collection<Pair<Module, FlexBuildConfiguration>> selectedBCs = getSelectedBCs();
     if (!checkDisabledCompilation(myProject, selectedBCs)) return;

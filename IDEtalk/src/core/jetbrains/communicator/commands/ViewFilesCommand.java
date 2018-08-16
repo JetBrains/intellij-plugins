@@ -36,11 +36,13 @@ public class ViewFilesCommand implements UserCommand {
     myUserListComponent = userListComponent;
   }
 
+  @Override
   public boolean isEnabled() {
     User selectedUser = myUserListComponent.getSelectedUser();
     return selectedUser != null && selectedUser.isOnline() && selectedUser.hasIDEtalkClient();
   }
 
+  @Override
   public void execute() {
     User user = myUserListComponent.getSelectedUser();
     assert user != null;

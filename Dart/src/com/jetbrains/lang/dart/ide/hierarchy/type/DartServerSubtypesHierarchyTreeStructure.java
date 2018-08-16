@@ -41,6 +41,7 @@ public class DartServerSubtypesHierarchyTreeStructure extends HierarchyTreeStruc
     myCurrentScopeType = currentScopeType;
   }
 
+  @Override
   @NotNull
   protected final Object[] buildChildren(@NotNull final HierarchyNodeDescriptor descriptor) {
     final DartClass dartClass = ((DartTypeHierarchyNodeDescriptor)descriptor).getDartClass();

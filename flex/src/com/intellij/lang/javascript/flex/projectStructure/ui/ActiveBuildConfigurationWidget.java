@@ -210,10 +210,12 @@ public class ActiveBuildConfigurationWidget {
       myPanel.setToolTipText(myDisabledLabel.getToolTipText());
     }
 
+    @Override
     public StatusBarWidget copy() {
       return new MyWidget(getProject());
     }
 
+    @Override
     @NotNull
     public String ID() {
       return "ActiveFlexBuildConfiguration";

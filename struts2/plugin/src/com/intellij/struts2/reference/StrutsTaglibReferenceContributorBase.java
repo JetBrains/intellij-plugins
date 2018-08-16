@@ -33,7 +33,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 
 import static com.intellij.patterns.PlatformPatterns.virtualFile;
-import static com.intellij.patterns.StandardPatterns.*;
+import static com.intellij.patterns.StandardPatterns.and;
+import static com.intellij.patterns.StandardPatterns.or;
 import static com.intellij.patterns.XmlPatterns.xmlAttributeValue;
 import static com.intellij.patterns.XmlPatterns.xmlTag;
 
@@ -55,6 +56,7 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
       new ActionPropertyReferenceProvider(true);
 
   protected static final PsiReferenceProvider RELATIVE_PATH_PROVIDER = new PsiReferenceProvider() {
+    @Override
     @NotNull
     public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
                                                  @NotNull final ProcessingContext context) {

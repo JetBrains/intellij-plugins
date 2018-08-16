@@ -46,6 +46,7 @@ public abstract class ActionImpl implements Action {
     return name != null && name.indexOf('*') != -1;
   }
 
+  @Override
   public boolean matchesPath(@NotNull final String path) {
     final String myPath = getNameValue();
     if (myPath == null) {
@@ -55,6 +56,7 @@ public abstract class ActionImpl implements Action {
     return ActionUtil.matchesPath(myPath, path);
   }
 
+  @Override
   @NotNull
   public StrutsPackage getStrutsPackage() {
     final StrutsPackage strutsPackage = DomUtil.getParentOfType(this, StrutsPackage.class, true);
@@ -64,6 +66,7 @@ public abstract class ActionImpl implements Action {
     return strutsPackage;
   }
 
+  @Override
   @Nullable
   public PsiClass searchActionClass() {
     final GenericAttributeValue<PsiClass> actionClassAttribute = getActionClass();
@@ -81,6 +84,7 @@ public abstract class ActionImpl implements Action {
     return null;
   }
 
+  @Override
   @Nullable
   public PsiMethod searchActionMethod() {
     final GenericAttributeValue<PsiMethod> methodValue = getMethod();
@@ -91,11 +95,13 @@ public abstract class ActionImpl implements Action {
     return findActionMethod(DEFAULT_ACTION_METHOD_NAME);
   }
 
+  @Override
   @NotNull
   public String getNamespace() {
     return getStrutsPackage().searchNamespace();
   }
 
+  @Override
   @NotNull
   public List<PsiMethod> getActionMethods() {
     final PsiClass actionClass = searchActionClass();
@@ -121,6 +127,7 @@ public abstract class ActionImpl implements Action {
     return actionMethods.size() == 1 ? actionMethods.get(0) : null;
   }
 
+  @Override
   @Nullable
   public PsiClass getParamsClass() {
     return searchActionClass();

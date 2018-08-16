@@ -61,6 +61,7 @@ class BuildConfigurationEntryImpl implements ModifiableBuildConfigurationEntry, 
     return module != null ? FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(myBcName) : null;
   }
 
+  @Override
   @NotNull
   public String getBcName() {
     return myBcName;
@@ -85,6 +86,7 @@ class BuildConfigurationEntryImpl implements ModifiableBuildConfigurationEntry, 
     return true;
   }
 
+  @Override
   public EntryState getState() {
     EntryState state = new EntryState();
     state.MODULE_NAME = getModuleName();

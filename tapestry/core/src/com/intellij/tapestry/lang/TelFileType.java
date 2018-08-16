@@ -17,12 +17,14 @@ public class TelFileType extends LanguageFileType {
     super(TelLanguage.INSTANCE);
   }
 
+  @Override
   @NotNull
   @NonNls
   public String getName() {
     return "TEL";
   }
 
+  @Override
   @NotNull
   public String getDescription() {
     return "Expression Language in Tapestry 5";
@@ -35,6 +37,7 @@ public class TelFileType extends LanguageFileType {
     return "tel";
   }
 
+  @Override
   @Nullable
   public Icon getIcon() {
     return PlatformIcons.CUSTOM_FILE_ICON;

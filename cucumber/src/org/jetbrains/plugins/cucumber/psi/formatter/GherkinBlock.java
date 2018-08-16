@@ -60,15 +60,18 @@ public class GherkinBlock implements ASTBlock {
     myLeaf = leaf;
   }
 
+  @Override
   public ASTNode getNode() {
     return myNode;
   }
 
+  @Override
   @NotNull
   public TextRange getTextRange() {
     return myTextRange;
   }
 
+  @Override
   @NotNull
   public List<Block> getSubBlocks() {
     if (myLeaf) return Collections.emptyList();
@@ -110,15 +113,18 @@ public class GherkinBlock implements ASTBlock {
     return result;
   }
 
+  @Override
   @Nullable
   public Wrap getWrap() {
     return null;
   }
 
+  @Override
   public Indent getIndent() {
     return myIndent;
   }
 
+  @Override
   public Alignment getAlignment() {
     return null;
   }
@@ -171,12 +177,14 @@ public class GherkinBlock implements ASTBlock {
     return pipeCount-1;
   }
 
+  @Override
   @NotNull
   public ChildAttributes getChildAttributes(int newChildIndex) {
     Indent childIndent = BLOCKS_TO_INDENT_CHILDREN.contains(getNode().getElementType()) ? Indent.getNormalIndent() : Indent.getNoneIndent();
     return new ChildAttributes(childIndent, null);
   }
 
+  @Override
   public boolean isIncomplete() {
     if (GherkinElementTypes.SCENARIOS.contains(getNode().getElementType())) {
       return true;
@@ -189,6 +197,7 @@ public class GherkinBlock implements ASTBlock {
     return false;
   }
 
+  @Override
   public boolean isLeaf() {
     return myLeaf || getSubBlocks().size() == 0;
   }

@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.parsers;
 
 import com.intellij.coldFusion.model.CfmlLanguage;
@@ -44,29 +30,35 @@ public class CfmlParserDefinition implements ParserDefinition {
   private static final TokenSet myCommentTypes =
     TokenSet.create(CfmlTokenTypes.COMMENT, CfscriptTokenTypes.COMMENT, CfmlTokenTypes.VAR_ANNOTATION);
 
+  @Override
   @NotNull
   public Lexer createLexer(Project project) {
     return new CfmlLexer(false, project);
   }
 
+  @Override
   public PsiParser createParser(Project project) {
     return new CfmlParser();
   }
 
+  @Override
   public IFileElementType getFileNodeType() {
     return CfmlElementTypes.CFML_FILE;
   }
 
+  @Override
   @NotNull
   public TokenSet getWhitespaceTokens() {
     return TokenSet.create(CfmlTokenTypes.WHITE_SPACE, CfscriptTokenTypes.WHITE_SPACE);
   }
 
+  @Override
   @NotNull
   public TokenSet getCommentTokens() {
     return myCommentTypes;
   }
 
+  @Override
   @NotNull
   public TokenSet getStringLiteralElements() {
     return TokenSet.create(CfmlTokenTypes.STRING_TEXT,
@@ -77,6 +69,7 @@ public class CfmlParserDefinition implements ParserDefinition {
                 CfmlTokenTypes.DOUBLE_QUOTE, CfmlTokenTypes.DOUBLE_QUOTE_CLOSER);
   }
 
+  @Override
   @NotNull
   public PsiElement createElement(ASTNode node) {
     final IElementType type = node.getElementType();
@@ -120,10 +113,12 @@ public class CfmlParserDefinition implements ParserDefinition {
     // return new CfmlElementImpl(node);
   }
 
+  @Override
   public PsiFile createFile(FileViewProvider viewProvider) {
     return new CfmlFile(viewProvider, CfmlLanguage.INSTANCE);
   }
 
+  @Override
   public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
     return SpaceRequirements.MAY;
   }

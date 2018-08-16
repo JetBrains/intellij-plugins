@@ -56,10 +56,12 @@ public class StaticStringValuesReferenceProvider extends PsiReferenceProvider {
     this.values = values;
   }
 
+  @Override
   @NotNull
   public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
                                                @NotNull final ProcessingContext context) {
     return new PsiReference[]{new PsiReferenceBase<XmlAttributeValue>((XmlAttributeValue) element) {
+      @Override
       public PsiElement resolve() {
         final String myValue = myElement.getValue();
         if (allowOtherValues ||
@@ -70,6 +72,7 @@ public class StaticStringValuesReferenceProvider extends PsiReferenceProvider {
         return Arrays.binarySearch(values, myValue) > -1 ? myElement : null;
       }
 
+      @Override
       @NotNull
       public Object[] getVariants() {
         return values;

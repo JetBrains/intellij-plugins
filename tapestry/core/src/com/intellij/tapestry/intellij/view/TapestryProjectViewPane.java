@@ -93,10 +93,12 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
     myIdeView = new TapestryIdeView(this);
 
     myModuleListener = new ModuleListener() {
+      @Override
       public void moduleRemoved(@NotNull Project project, @NotNull Module module) {
         reload();
       }
 
+      @Override
       public void moduleAdded(@NotNull Project project, @NotNull Module module) {
         reload();
       }
@@ -126,6 +128,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
+  @Override
   public void addToolbarActions(DefaultActionGroup defaultactiongroup) {
     for (AnAction action : defaultactiongroup.getChildren(null)) {
       if (action.getTemplatePresentation().getText().equals("Autoscroll to Source")) {
@@ -137,10 +140,12 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
 
     defaultactiongroup.addAction(new StartInBasePackageAction() {
 
+      @Override
       public boolean isSelected(AnActionEvent e) {
         return myFromBasePackage;
       }
 
+      @Override
       public void setSelected(AnActionEvent e, boolean state) {
         myFromBasePackage = state;
 
@@ -150,10 +155,12 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
 
     defaultactiongroup.addAction(new GroupElementFilesToggleAction() {
 
+      @Override
       public boolean isSelected(AnActionEvent e) {
         return myGroupElementFiles;
       }
 
+      @Override
       public void setSelected(AnActionEvent e, boolean state) {
         myGroupElementFiles = state;
 
@@ -162,10 +169,12 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
     }).setAsSecondary(true);
 
     defaultactiongroup.addAction(new ShowLibrariesTogleAction() {
+      @Override
       public boolean isSelected(AnActionEvent e) {
         return myShowLibraries;
       }
 
+      @Override
       public void setSelected(AnActionEvent e, boolean state) {
         myShowLibraries = state;
 
@@ -196,6 +205,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
+  @Override
   public String getTitle() {
     return VIEW_TITLE;
   }//setTitle
@@ -203,6 +213,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
+  @Override
   public Icon getIcon() {
     return TapestryIcons.Tapestry_logo_small;
   }//getIcon
@@ -210,6 +221,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
+  @Override
   @NotNull
   public String getId() {
     return ID;
@@ -218,6 +230,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
+  @Override
   public JComponent createComponent() {
     initTree();
 
@@ -227,6 +240,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
+  @Override
   @NotNull
   public ActionCallback updateFromRoot(boolean b) {
     if (myTree != null) ((SimpleTreeBuilder)getTreeBuilder()).updateFromRoot(b);
@@ -237,6 +251,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
+  @Override
   public void select(Object object, VirtualFile virtualFile, boolean b) {
     //do nothing
   }//select
@@ -244,6 +259,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
+  @Override
   public int getWeight() {
     return 5;
   }//getWeight
@@ -251,6 +267,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
+  @Override
   public SelectInTarget createSelectInTarget() {
     return new TapestryProjectSelectInTarget(myProject);
   }//createSelectInTarget
@@ -258,6 +275,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
+  @Override
   public void fileCreated(String path) {
     updateFromRoot(true);
   }//fieCreated
@@ -265,6 +283,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
+  @Override
   public void fileDeleted(String path) {
     updateFromRoot(true);
   }//fileDeleted
@@ -272,6 +291,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
+  @Override
   public void classCreated(String classFqn) {
     updateFromRoot(true);
   }//classCreated
@@ -279,6 +299,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
+  @Override
   public void classDeleted(String classFqn) {
     updateFromRoot(true);
   }//classDeleted
@@ -286,6 +307,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
+  @Override
   public void fileContentsChanged(IResource changedFile) {
     //do nothing
   }//fileContentsChanged
@@ -293,6 +315,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
+  @Override
   public void modelChanged() {
     reload();
   }//modelChanged
@@ -336,7 +359,8 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
-  public Object getData(String dataId) {
+  @Override
+  public Object getData(@NotNull String dataId) {
     if (DataKeys.PROJECT.is(dataId)) {
       return myProject;
     }
@@ -432,6 +456,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   protected void installTreePopupHandler(final String place, final String groupName) {
     if (ApplicationManager.getApplication() == null) return;
     PopupHandler popupHandler = new PopupHandler() {
+      @Override
       public void invokePopup(java.awt.Component comp, int x, int y) {
         ActionGroup group = (ActionGroup)CustomActionsSchema.getInstance().getCorrectedAction(groupName);
         final ActionPopupMenu popupMenu = ActionManager.getInstance().createActionPopupMenu(place, group);
@@ -445,6 +470,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   private void addTreeListeners() {
 
     myTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
+      @Override
       public void valueChanged(TreeSelectionEvent event) {
         fireTreeChangeListener();
 
@@ -522,6 +548,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
     });
     myTree.getModel().addTreeModelListener(TreeModelAdapter.create((e, t) -> fireTreeChangeListener()));
     myTree.addKeyListener(new KeyAdapter() {
+      @Override
       public void keyPressed(KeyEvent e) {
         if (KeyEvent.VK_ENTER == e.getKeyCode()) {
           DataContext dataContext = DataManager.getInstance().getDataContext(myTree);

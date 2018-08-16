@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.execution.ExecutionBundle;
@@ -195,13 +196,15 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     createChildConfigurables();
 
     myChangeNatureHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
+      @Override
       protected void hyperlinkActivated(final HyperlinkEvent e) {
         bcNatureModifier.run();
       }
     });
 
     myNameField.getDocument().addDocumentListener(new DocumentAdapter() {
-      protected void textChanged(DocumentEvent e) {
+      @Override
+      protected void textChanged(@NotNull DocumentEvent e) {
         setDisplayName(myNameField.getText().trim());
       }
     });
@@ -232,6 +235,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
 
   private void initHtmlWrapperControls() {
     myUseHTMLWrapperCheckBox.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         updateControls();
         IdeFocusManager.getInstance(myModule.getProject()).requestFocus(myWrapperTemplateTextWithBrowse.getTextField(), true);
@@ -244,6 +248,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
                                                             FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
     myCreateHtmlWrapperTemplateButton.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         final Sdk sdk = myDependenciesConfigurable.getCurrentSdk();
         if (sdk == null || sdk.getSdkType() == FlexmojosSdkType.getInstance()) {
@@ -267,6 +272,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     myRLMTextWithBrowse.getTextField().setEditable(false);
     myRLMTextWithBrowse.setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
     myRLMTextWithBrowse.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         final RLMsDialog dialog = new RLMsDialog(myModule, myRLMs);
         if (dialog.showAndGet()) {
@@ -281,6 +287,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     myCssFilesTextWithBrowse.getTextField().setEditable(false);
     myCssFilesTextWithBrowse.setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
     myCssFilesTextWithBrowse.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         final List<StringBuilder> value = new ArrayList<>();
         for (String cssFilePath : myCssFilesToCompile) {
@@ -345,20 +352,24 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     myCompilerOptionsConfigurable.addUserActivityListener(myUserActivityListener, myDisposable);
 
     myCompilerOptionsConfigurable.addAdditionalOptionsListener(new CompilerOptionsConfigurable.OptionsListener() {
+      @Override
       public void configFileChanged(final String additionalConfigFilePath) {
         checkIfConfigFileOverridesOptions(additionalConfigFilePath);
       }
 
+      @Override
       public void additionalOptionsChanged(final String additionalOptions) {
         // may be parse additionalOptions in the same way as config file
       }
     });
 
     final AirDescriptorInfoProvider airDescriptorInfoProvider = new AirDescriptorInfoProvider() {
+      @Override
       public String getMainClass() {
         return myMainClassComponent.getText().trim();
       }
 
+      @Override
       public String getAirVersion() {
         final Sdk sdk = myDependenciesConfigurable.getCurrentSdk();
         return sdk == null || sdk.getVersionString() == null
@@ -366,19 +377,23 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
                : StringUtil.notNullize(FlexCommonUtils.getAirVersion(sdk.getHomePath(), sdk.getVersionString()));
       }
 
+      @Override
       public String[] getExtensionIDs() {
         return FlexCompilationUtils.getAirExtensionIDs(myConfigEditor.getModifiableRootModel(myModule),
                                                        myDependenciesConfigurable.getEditableObject());
       }
 
+      @Override
       public boolean isAndroidPackagingEnabled() {
         return myAndroidPackagingConfigurable != null && myAndroidPackagingConfigurable.isPackagingEnabled();
       }
 
+      @Override
       public boolean isIOSPackagingEnabled() {
         return myIOSPackagingConfigurable != null && myIOSPackagingConfigurable.isPackagingEnabled();
       }
 
+      @Override
       public void setCustomDescriptorForAndroidAndIOS(final String descriptorPath) {
         assert myAndroidPackagingConfigurable != null && myIOSPackagingConfigurable != null;
         myAndroidPackagingConfigurable.setUseCustomDescriptor(descriptorPath);
@@ -445,6 +460,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     myWarning.setVisible(myMainClassWarning.isVisible() || myOutputFileNameWarning.isVisible() || myOutputFolderWarning.isVisible());
   }
 
+  @Override
   @Nls
   public String getDisplayName() {
     return myName;
@@ -461,10 +477,12 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     }
   }
 
+  @Override
   public void setDisplayName(final String name) {
     myName = name;
   }
 
+  @Override
   public String getBannerSlogan() {
     return "Build Configuration '" + myName + "'";
   }
@@ -487,6 +505,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     return myConfiguration.getIcon();
   }
 
+  @Override
   public ModifiableFlexBuildConfiguration getEditableObject() {
     return myConfiguration;
   }
@@ -496,6 +515,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     return "BuildConfigurationPage.General";
   }
 
+  @Override
   public JComponent createOptionsPanel() {
     return myMainPanel;
   }
@@ -553,6 +573,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     return myConfiguration.getOutputType();
   }
 
+  @Override
   public boolean isModified() {
     if (!myConfiguration.getName().equals(myName)) return true;
     if (!myConfiguration.getOptimizeFor().equals(myOptimizeForCombo.getSelectedItem())) return true;
@@ -577,6 +598,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     return false;
   }
 
+  @Override
   public void apply() throws ConfigurationException {
     applyOwnTo(myConfiguration);
 
@@ -608,6 +630,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     configuration.setSkipCompile(mySkipCompilationCheckBox.isSelected());
   }
 
+  @Override
   public void reset() {
     myFreeze = true;
     try {
@@ -640,6 +663,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     myContext.getDaemonAnalyzer().queueUpdate(myStructureElement);
   }
 
+  @Override
   public void disposeUIResources() {
     myDependenciesConfigurable.disposeUIResources();
     myCompilerOptionsConfigurable.disposeUIResources();

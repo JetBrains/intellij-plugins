@@ -12,11 +12,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public class JavaScriptGenerateToStringAction extends ActionScriptBaseJSGenerateAction {
 
+  @Override
   @NotNull
   protected BaseJSGenerateHandler getGenerateHandler() {
     return new ActionScriptGenerateToStringHandler();
   }
 
+  @Override
   protected boolean isApplicableForMemberContainer(final @NotNull PsiElement jsClass, final PsiFile psiFile, final @NotNull Editor editor) {
     return jsClass instanceof JSClass && super.isApplicableForMemberContainer(jsClass, psiFile, editor)
            && ((JSClass)jsClass).findFunctionByNameAndKind("toString", JSFunction.FunctionKind.SIMPLE) == null;

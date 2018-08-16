@@ -102,6 +102,7 @@ public class InjectedElement implements Comparable {
   /**
    * {@inheritDoc}
    */
+  @Override
   public int compareTo(Object o) {
     return compareByIds(o);
   }

@@ -32,6 +32,7 @@ public class CreateEventMetadataByMxmlAttributeFix extends FixAndIntentionAction
     myEventName = eventName;
   }
 
+  @Override
   @NotNull
   public String getName() {
     return JSBundle.message("declare.event.0", myEventName);

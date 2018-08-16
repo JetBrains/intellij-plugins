@@ -24,34 +24,41 @@ public class GherkinParserDefinition implements ParserDefinition {
   private static final TokenSet WHITESPACE = TokenSet.create(TokenType.WHITE_SPACE);
   private static final TokenSet COMMENTS = TokenSet.create(GherkinTokenTypes.COMMENT);
 
+  @Override
   @NotNull
   public Lexer createLexer(Project project) {
     return new GherkinLexer(JsonGherkinKeywordProvider.getKeywordProvider());
   }
 
+  @Override
   public PsiParser createParser(Project project) {
     return new GherkinParser();
   }
 
+  @Override
   public IFileElementType getFileNodeType() {
     return GherkinElementTypes.GHERKIN_FILE;
   }
 
+  @Override
   @NotNull
   public TokenSet getWhitespaceTokens() {
     return WHITESPACE;
   }
 
+  @Override
   @NotNull
   public TokenSet getCommentTokens() {
     return COMMENTS;
   }
 
+  @Override
   @NotNull
   public TokenSet getStringLiteralElements() {
     return TokenSet.EMPTY;
   }
 
+  @Override
   @NotNull
   public PsiElement createElement(ASTNode node) {
     if (node.getElementType() == GherkinElementTypes.FEATURE) return new GherkinFeatureImpl(node);
@@ -70,10 +77,12 @@ public class GherkinParserDefinition implements ParserDefinition {
     return PsiUtilCore.NULL_PSI_ELEMENT;
   }
 
+  @Override
   public PsiFile createFile(FileViewProvider viewProvider) {
     return new GherkinFileImpl(viewProvider);
   }
 
+  @Override
   public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
     // Line break between line comment and other elements
     final IElementType leftElementType = left.getElementType();

@@ -20,15 +20,19 @@ package jetbrains.communicator.ide;
  * @author Kir
  */
 public class NullProgressIndicator implements ProgressIndicator{
+  @Override
   public void setIndefinite(boolean indefinite) {
   }
 
+  @Override
   public void setText(String text) {
   }
 
+  @Override
   public void setFraction(double x) {
   }
 
+  @Override
   public void checkCanceled() {
   }
 }

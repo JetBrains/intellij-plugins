@@ -26,6 +26,7 @@ public class AddNewComponentAction extends AddNewElementAction<ComponentsNode> {
     super(ComponentsNode.class);
   }
 
+  @Override
   protected String getElementsRootPackage(@NotNull TapestryProject tapestryProject) {
     return tapestryProject.getComponentsRootPackage();
   }
@@ -33,7 +34,8 @@ public class AddNewComponentAction extends AddNewElementAction<ComponentsNode> {
   /**
    * {@inheritDoc}
    */
-  public void actionPerformed(AnActionEvent event) {
+  @Override
+  public void actionPerformed(@NotNull AnActionEvent event) {
     final Module module = getModule(event);
     if (module == null) return;
 

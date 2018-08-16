@@ -17,6 +17,7 @@ public class SinglePropertyResolver extends AbstractValueResolver {
 
     private static final Pattern PATTERN = Pattern.compile("[a-zA-Z$_][a-zA-Z0-9$_.]*");
 
+    @Override
     public boolean execute(Context context) throws Exception {
         String cleanValue = getCleanValue(((ValueResolverContext) context).getValue());
 

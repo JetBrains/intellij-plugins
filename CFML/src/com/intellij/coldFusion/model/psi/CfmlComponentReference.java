@@ -208,12 +208,12 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
     }
 
     if (result.isEmpty()) {
-      final Couple<String> prefixAndName = CfmlUtil.INSTANCE.getPrefixAndName(componentQualifiedName);
+      final Couple<String> prefixAndName = CfmlUtil.getPrefixAndName(componentQualifiedName);
       final String componentName = prefixAndName.getSecond();
-      final CfmlImport cfmlImport = CfmlUtil.INSTANCE.getImportByPrefix(originalFile, prefixAndName.getFirst());
+      final CfmlImport cfmlImport = CfmlUtil.getImportByPrefix(originalFile, prefixAndName.getFirst());
       if (cfmlImport != null && !StringUtil.isEmpty(componentName)) {
         String libtag = cfmlImport.getImportString();
-        final VirtualFile folder = CfmlUtil.INSTANCE.findFileByLibTag(originalFile, libtag);
+        final VirtualFile folder = CfmlUtil.findFileByLibTag(originalFile, libtag);
         if (folder != null && folder.isDirectory()) {
           final GlobalSearchScope scope = GlobalSearchScopes.directoryScope(originalFile.getProject(), folder, true);
           result.addAll(CfmlIndex.getInstance(originalFile.getProject()).getComponentsByNameInScope(componentName, scope));
@@ -241,6 +241,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
       return ResolveResult.EMPTY_ARRAY;
     };
 
+  @Override
   @NotNull
   public ResolveResult[] multiResolve(boolean incompleteCode) {
     // incompleteCode = true, when autocompletion is executed,
@@ -268,11 +269,13 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
     return componentName.substring(i + 1);
   }
 
+  @Override
   @NotNull
   public PsiElement getElement() {
     return myParent != null ? myParent : this;
   }
 
+  @Override
   @NotNull
   public TextRange getRangeInElement() {
     int offset = 0;
@@ -291,6 +294,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
     return new TextRange(0, getTextLength()).shiftRight(offset);
   }
 
+  @Override
   public PsiElement resolve() {
     ResolveResult[] results = multiResolve(false);
     if (results.length == 1) {
@@ -299,20 +303,24 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
     return null;
   }
 
+  @Override
   @NotNull
   public String getCanonicalText() {
     return getText();
   }
 
-  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+  @Override
+  public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
     throw new IncorrectOperationException("Not implemented yet");
   }
 
+  @Override
   public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
     throw new IncorrectOperationException("Not implemented yet");
   }
 
-  public boolean isReferenceTo(PsiElement element) {
+  @Override
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     // TODO: replace with fully qualified names
 
     if (element instanceof CfmlComponent && getCanonicalText().equals(((CfmlComponent)element).getName())) {
@@ -321,6 +329,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
     return false;
   }
 
+  @Override
   @NotNull
   public Object[] getVariants() {
     // final CfmlIndex cfmlIndex = CfmlIndex.getInstance(getProject());
@@ -384,6 +393,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
         }
       }
 
+      @Override
       public Object fun(final Object object) {
         if (object instanceof VirtualFile) {
           VirtualFile element = (VirtualFile)object;
@@ -460,6 +470,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
     }
   }
 
+  @Override
   public boolean isSoft() {
     // TODO: now - show no error if resolve failed, change when resolve will be fully implemented
     return true;

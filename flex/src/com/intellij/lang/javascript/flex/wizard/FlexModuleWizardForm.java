@@ -50,6 +50,7 @@ public class FlexModuleWizardForm {
     BCUtils.initOutputTypeCombo(myOutputTypeCombo);
 
     final ActionListener listener = new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         updateControls();
       }
@@ -62,6 +63,7 @@ public class FlexModuleWizardForm {
     myCheckPlayerVersionCheckBox.addActionListener(listener);
 
     mySdkCombo.addComboboxListener(new FlexSdkComboBoxWithBrowseButton.Listener() {
+      @Override
       public void stateChanged() {
         BCUtils.updateAvailableTargetPlayers(mySdkCombo.getSelectedSdk(), myTargetPlayerCombo);
         updateControls();
@@ -69,6 +71,7 @@ public class FlexModuleWizardForm {
     });
 
     myPureActionScriptCheckBox.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         final String sampleApp = mySampleAppTextField.getText().trim();
         if (sampleApp.endsWith(".as") || sampleApp.endsWith(".mxml")) {

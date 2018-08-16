@@ -22,6 +22,7 @@ public class IntellijJavaMethod implements IJavaMethod {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getName() {
         return _psiMethod.getName();
     }
@@ -29,6 +30,7 @@ public class IntellijJavaMethod implements IJavaMethod {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IJavaType getReturnType() {
         return IdeaUtils.createJavaTypeFromPsiType(_module, _psiMethod.getReturnType());
     }
@@ -36,6 +38,7 @@ public class IntellijJavaMethod implements IJavaMethod {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Collection<IMethodParameter> getParameters() {
         Collection<IMethodParameter> parameters = new ArrayList<>();
 
@@ -48,6 +51,7 @@ public class IntellijJavaMethod implements IJavaMethod {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Collection<IJavaAnnotation> getAnnotations() {
         Collection<IJavaAnnotation> annotations = new ArrayList<>();
 
@@ -60,6 +64,7 @@ public class IntellijJavaMethod implements IJavaMethod {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IJavaAnnotation getAnnotation(String annotationQualifiedName) {
         for (IJavaAnnotation annotation : getAnnotations())
             if (annotation.getFullyQualifiedName().equals(annotationQualifiedName)) {
@@ -72,6 +77,7 @@ public class IntellijJavaMethod implements IJavaMethod {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IJavaClassType getContainingClass() {
         return new IntellijJavaClassType(_module, _psiMethod.getContainingClass().getContainingFile());
     }
@@ -79,6 +85,7 @@ public class IntellijJavaMethod implements IJavaMethod {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getDocumentation() {
         StringBuffer description = new StringBuffer();
 

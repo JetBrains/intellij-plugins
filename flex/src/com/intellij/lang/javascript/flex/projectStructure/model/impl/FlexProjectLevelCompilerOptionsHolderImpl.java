@@ -28,6 +28,7 @@ public class FlexProjectLevelCompilerOptionsHolderImpl extends FlexProjectLevelC
     myModel = new CompilerOptionsImpl(project, true);
   }
 
+  @Override
   public FlexProjectLevelCompilerOptionsHolderImpl.State getState() {
     FlexProjectLevelCompilerOptionsHolderImpl.State state = new State();
     state.compilerOptions = myModel.getState(myProject);
@@ -39,6 +40,7 @@ public class FlexProjectLevelCompilerOptionsHolderImpl extends FlexProjectLevelC
     return myModel;
   }
 
+  @Override
   public void loadState(@NotNull final FlexProjectLevelCompilerOptionsHolderImpl.State state) {
     myModel.loadState(state.compilerOptions);
   }

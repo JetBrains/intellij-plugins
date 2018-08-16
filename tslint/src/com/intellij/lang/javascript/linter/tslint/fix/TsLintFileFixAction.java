@@ -50,7 +50,7 @@ public class TsLintFileFixAction extends JSLinterFixAction {
   }
 
   @Override
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     super.update(e);
     e.getPresentation().setText(JSBundle.message("javascript.linter.action.fix.problems.file.text", TsLintBundle.message("tslint.framework.title")));
   }
@@ -87,6 +87,7 @@ public class TsLintFileFixAction extends JSLinterFixAction {
     };
   }
 
+  @Override
   protected Collection<FileType> getFileTypes() {
     return TypeScriptUtil.TYPESCRIPT_FILE_TYPES;
   }

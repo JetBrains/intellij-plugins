@@ -24,8 +24,8 @@ import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.ui.*;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
@@ -564,6 +564,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
     }
   }
 
+  @Override
   public boolean execute(final CompileContext context) {
     return validateConfiguration(context);
   }
@@ -615,6 +616,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
     if (!independentBCsExist(modulesAndBCsToCompile)) return;
 
     final NotificationListener listener = new NotificationListener() {
+      @Override
       public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
         notification.expire();
 
@@ -622,6 +624,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
           CompilerWorkspaceConfiguration.getInstance(project).PARALLEL_COMPILATION = true;
 
           final NotificationListener listener1 = new NotificationListener() {
+            @Override
             public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
               notification.expire();
               ShowSettingsUtil.getInstance().showSettingsDialog(project, CompilerBundle.message("compiler.configurable.display.name"));
@@ -701,14 +704,17 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
       myProblem = problem;
     }
 
+    @Override
     public boolean canNavigateToSource() {
       return false;
     }
 
+    @Override
     public boolean canNavigate() {
       return !myModule.isDisposed() && FlexBuildConfigurationManager.getInstance(myModule).findConfigurationByName(myBCNme) != null;
     }
 
+    @Override
     public void navigate(final boolean requestFocus) {
       final ProjectStructureConfigurable configurable = ProjectStructureConfigurable.getInstance(myModule.getProject());
 

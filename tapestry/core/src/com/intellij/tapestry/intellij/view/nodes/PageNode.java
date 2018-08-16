@@ -29,6 +29,7 @@ public class PageNode extends TapestryNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public SimpleNode[] getChildren() {
         Page page = (Page) getElement();
         List<SimpleNode> children = new ArrayList<>();

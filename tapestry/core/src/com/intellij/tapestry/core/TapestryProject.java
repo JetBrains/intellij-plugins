@@ -201,6 +201,7 @@ public class TapestryProject {
   }
 
   private static final ElementsCachedMap ourNameToPageMap = new ElementsCachedMap("ourNameToPageMap", false, true, false) {
+    @Override
     protected String computeKey(PresentationLibraryElement element) {
       return element.getName().toLowerCase();
     }
@@ -219,6 +220,7 @@ public class TapestryProject {
   }
 
   private static final ElementsCachedMap ourFqnToPageMap = new ElementsCachedMap("ourFqnToPageMap", false, true, false) {
+    @Override
     protected String computeKey(PresentationLibraryElement element) {
       return element.getElementClass().getFullyQualifiedName();
     }
@@ -269,7 +271,7 @@ public class TapestryProject {
         addFromMappingData(result, mappingData.compute(annotation.getContainingFile()));
       }
     }
-    
+
     return result;
   }
 
@@ -288,12 +290,14 @@ public class TapestryProject {
   }
 
   private static final ElementsCachedMap ourNameToComponentMap = new ElementsCachedMap("ourNameToComponentMap", true, false, false) {
+    @Override
     protected String computeKey(PresentationLibraryElement element) {
       return element.getName().toLowerCase();
     }
   };
 
   private static final ElementsCachedMap ourNameToMixinMap = new ElementsCachedMap("ourNameToMixinMap", false, false, true) {
+    @Override
     protected String computeKey(PresentationLibraryElement element) {
       return element.getName().toLowerCase();
     }
@@ -333,6 +337,7 @@ public class TapestryProject {
   }
 
   private static final ElementsCachedMap ourFqnToComponentMap = new ElementsCachedMap("ourFqnToComponentMap", true, false, false) {
+    @Override
     protected String computeKey(PresentationLibraryElement element) {
       return element.getElementClass().getFullyQualifiedName();
     }
@@ -351,6 +356,7 @@ public class TapestryProject {
   }
 
   private static final ElementsCachedMap ourTemplateToElementMap = new ElementsCachedMap("ourTemplateToElementMap", true, true, false, true) {
+    @Override
     @Nullable
     protected String computeKey(PresentationLibraryElement element) {
       final IResource[] resources = element.getTemplate();

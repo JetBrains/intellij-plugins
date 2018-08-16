@@ -39,10 +39,12 @@ public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetCon
     return findInstance(TapestryFacetType.class);
   }
 
+  @Override
   public TapestryFacetConfiguration createDefaultConfiguration() {
     return new TapestryFacetConfiguration();
   }
 
+  @Override
   public TapestryFacet createFacet(@NotNull Module module,
                                    String name,
                                    @NotNull TapestryFacetConfiguration configuration,
@@ -50,6 +52,7 @@ public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetCon
     return new TapestryFacet(this, module, name, configuration, underlyingFacet);
   }
 
+  @Override
   public boolean isSuitableModuleType(ModuleType moduleType) {
     return moduleType instanceof JavaModuleType;
   }

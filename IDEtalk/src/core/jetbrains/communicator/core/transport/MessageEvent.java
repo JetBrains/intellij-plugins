@@ -34,6 +34,7 @@ public class MessageEvent extends TransportEvent {
     return myComment;
   }
 
+  @Override
   public void accept(EventVisitor visitor) {
     visitor.visitMessageEvent(this);
   }

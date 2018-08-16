@@ -11,6 +11,7 @@ public class TapestryFileTemplateGroupFactory implements FileTemplateGroupDescri
 
     private static final String TEMPLATE_GROUP_NAME = "Tapestry";
 
+    @Override
     public FileTemplateGroupDescriptor getFileTemplatesDescriptor() {
         FileTemplateGroupDescriptor root = new FileTemplateGroupDescriptor(TEMPLATE_GROUP_NAME, TapestryIcons.Tapestry_logo_small);
 

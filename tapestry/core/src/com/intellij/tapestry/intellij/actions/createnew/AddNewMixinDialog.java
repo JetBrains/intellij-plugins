@@ -38,6 +38,7 @@ public class AddNewMixinDialog extends JDialog {
         }
     }
 
+    @Override
     public JPanel getContentPane() {
         return _contentPane;
     }

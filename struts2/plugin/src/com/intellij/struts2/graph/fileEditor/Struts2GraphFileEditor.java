@@ -50,6 +50,7 @@ public class Struts2GraphFileEditor extends PerspectiveFileEditor {
     myXmlFile = (XmlFile)psiFile;
   }
 
+  @Override
   @Nullable
   protected DomElement getSelectedDomElement() {
     final List<DomElement> selectedDomElements = getStruts2GraphComponent().getSelectedDomElements();
@@ -57,32 +58,39 @@ public class Struts2GraphFileEditor extends PerspectiveFileEditor {
     return selectedDomElements.size() > 0 ? selectedDomElements.get(0) : null;
   }
 
+  @Override
   protected void setSelectedDomElement(final DomElement domElement) {
     getStruts2GraphComponent().setSelectedDomElement(domElement);
   }
 
+  @Override
   @NotNull
   protected JComponent createCustomComponent() {
     return getStruts2GraphComponent();
   }
 
+  @Override
   @Nullable
   public JComponent getPreferredFocusedComponent() {
     return getStruts2GraphComponent().getBuilder().getView().getJComponent();
   }
 
+  @Override
   public void commit() {
   }
 
+  @Override
   public void reset() {
     getStruts2GraphComponent().getBuilder().queueUpdate();
   }
 
+  @Override
   @NotNull
   public String getName() {
     return "Graph";
   }
 
+  @Override
   public StructureViewBuilder getStructureViewBuilder() {
     return GraphViewUtil.createStructureViewBuilder(getStruts2GraphComponent().getOverview());
   }

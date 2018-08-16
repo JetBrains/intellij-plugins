@@ -57,10 +57,12 @@ public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
     return myConfigurator;
   }
 
+  @Override
   public void reset(Project project) {
     myConfigurator.reset(project);
   }
 
+  @Override
   public boolean addModuleNodeChildren(final Module module,
                                        final MasterDetailsComponent.MyNode moduleNode,
                                        final Runnable treeNodeNameUpdater) {
@@ -78,14 +80,17 @@ public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
     return configurables.size() > 0;
   }
 
+  @Override
   public void moduleRemoved(final Module module) {
     myConfigurator.moduleRemoved(module);
   }
 
+  @Override
   public boolean isModified() {
     return myConfigurator.isModified();
   }
 
+  @Override
   public void apply() throws ConfigurationException {
     myConfigurator.apply();
   }
@@ -95,6 +100,7 @@ public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
     myConfigurator.afterModelCommit();
   }
 
+  @Override
   public void disposeUIResources() {
     myConfigurator.dispose();
   }
@@ -117,14 +123,17 @@ public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
     });
   }
 
+  @Override
   public boolean canBeCopied(final NamedConfigurable configurable) {
     return configurable instanceof CompositeConfigurable;
   }
 
+  @Override
   public void copy(final NamedConfigurable configurable, final Runnable treeNodeNameUpdater) {
     myConfigurator.copy(((CompositeConfigurable)configurable), treeNodeNameUpdater);
   }
 
+  @Override
   public Collection<AnAction> createAddActions(final NullableComputable<MasterDetailsComponent.MyNode> selectedNodeRetriever,
                                                final Runnable treeNodeNameUpdater,
                                                final Project project,
@@ -132,11 +141,13 @@ public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
     final Collection<AnAction> actions = new ArrayList<>(2);
     actions.add(new DumbAwareAction(FlexBundle.message("create.bc.action.text"), FlexBundle.message("create.bc.action.description"),
                                     FlexIcons.Flash_run_config) {
-      public void update(final AnActionEvent e) {
+      @Override
+      public void update(@NotNull final AnActionEvent e) {
         e.getPresentation().setVisible(getFlexModuleForNode(selectedNodeRetriever.compute()) != null);
       }
 
-      public void actionPerformed(final AnActionEvent e) {
+      @Override
+      public void actionPerformed(@NotNull final AnActionEvent e) {
         final Module module = getFlexModuleForNode(selectedNodeRetriever.compute());
         myConfigurator.addConfiguration(module, treeNodeNameUpdater);
       }
@@ -158,6 +169,7 @@ public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
     return null;
   }
 
+  @Override
   @Nullable
   public ActionCallback selectOrderEntry(@NotNull final Module module, @Nullable final OrderEntry entry) {
     if (ModuleType.get(module) != FlexModuleType.getInstance()) {

@@ -26,10 +26,12 @@ public class FlexCompilerProjectConfiguration implements PersistentStateComponen
     return ServiceManager.getService(project, FlexCompilerProjectConfiguration.class);
   }
 
+  @Override
   public FlexCompilerProjectConfiguration getState() {
     return this;
   }
 
+  @Override
   public void loadState(@NotNull final FlexCompilerProjectConfiguration state) {
     GENERATE_FLEXMOJOS_CONFIGS = state.GENERATE_FLEXMOJOS_CONFIGS;
 

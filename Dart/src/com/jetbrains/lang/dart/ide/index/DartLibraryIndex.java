@@ -145,6 +145,7 @@ const Map<String, LibraryInfo> LIBRARIES = const {
     final BidirectionalMap<String, String> result = new BidirectionalMap<>();
 
     librariesDartFile.acceptChildren(new DartRecursiveVisitor() {
+      @Override
       public void visitMapLiteralEntry(final @NotNull DartMapLiteralEntry mapLiteralEntry) {
         final List<DartExpression> expressions = mapLiteralEntry.getExpressionList();
         if (expressions.size() != 2 ||

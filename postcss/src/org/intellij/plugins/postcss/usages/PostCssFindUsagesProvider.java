@@ -27,15 +27,18 @@ public class PostCssFindUsagesProvider implements FindUsagesProvider {
                                    TokenSet.create(CssElementTypes.CSS_STRING_TOKEN));
   }
 
+  @Override
   public boolean canFindUsagesFor(@NotNull PsiElement psiElement) {
     return psiElement instanceof PostCssCustomSelector ||
            psiElement instanceof PostCssCustomMedia;
   }
 
+  @Override
   public String getHelpId(@NotNull PsiElement psiElement) {
     return HelpID.FIND_OTHER_USAGES;
   }
 
+  @Override
   @NotNull
   public String getType(@NotNull PsiElement element) {
     if (element instanceof PostCssCustomSelector) {
@@ -46,11 +49,13 @@ public class PostCssFindUsagesProvider implements FindUsagesProvider {
     return "";
   }
 
+  @Override
   @NotNull
   public String getDescriptiveName(@NotNull PsiElement element) {
     return ElementDescriptionUtil.getElementDescription(element, UsageViewLongNameLocation.INSTANCE);
   }
 
+  @Override
   @NotNull
   public String getNodeText(@NotNull PsiElement element, boolean useFullName) {
     return ElementDescriptionUtil.getElementDescription(element, UsageViewShortNameLocation.INSTANCE);

@@ -19,20 +19,24 @@ import java.util.Collection;
  * as only
  */
 public class JavaScriptImplementMethodsHandlerForFlex extends BaseJSGenerateHandler {
+  @Override
   protected void collectCandidates(final PsiElement clazz, final Collection<JSChooserElementNode> candidates) {
     for(JSFunction fun: ActionScriptImplementedMethodProcessor.collectFunctionsToImplement((JSClass)clazz)) {
       candidates.add(new JSNamedElementNode(fun));
     }
   }
 
+  @Override
   protected String getTitleKey() {
     return "methods.to.implement.chooser.title";
   }
 
+  @Override
   protected String getNoCandidatesMessage() {
     return JSBundle.message("no.methods.to.implement");
   }
 
+  @Override
   protected BaseCreateMembersFix createFix(final PsiElement clazz) {
     return new ImplementMethodsFix((JSClass)clazz);
   }

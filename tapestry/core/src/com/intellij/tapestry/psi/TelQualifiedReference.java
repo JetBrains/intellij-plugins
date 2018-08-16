@@ -37,20 +37,24 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
     myElement = element;
   }
 
+  @Override
   @NotNull
   public TelExpression getElement() {
     return myElement;
   }
 
+  @Override
   @NotNull
   public String getCanonicalText() {
     return myElement.getText();
   }
 
+  @Override
   public boolean isSoft() {
     return true;
   }
 
+  @Override
   public PsiElement bindToElement(@NotNull final PsiElement element) throws IncorrectOperationException {
     if (isReferenceTo(element)) return myElement;
 
@@ -60,7 +64,8 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
     return myElement;
   }
 
-  public boolean isReferenceTo(final PsiElement element) {
+  @Override
+  public boolean isReferenceTo(@NotNull final PsiElement element) {
     final PsiManager manager = myElement.getManager();
     for (final ResolveResult result : multiResolve(false)) {
       final PsiElement target = result.getElement();
@@ -75,11 +80,13 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
     return false;
   }
 
+  @Override
   @NotNull
   public final ResolveResult[] multiResolve(final boolean incompleteCode) {
     return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, MY_RESOLVER, true, false);
   }
 
+  @Override
   @Nullable
   public final PsiElement resolve() {
     final ResolveResult[] results = multiResolve(false);
@@ -93,6 +100,7 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
 
     final TelVariantsProcessor<ResolveResult> processor =
       new TelVariantsProcessor<ResolveResult>(myElement.getParent(), referenceName, getReferenceQualifier() == null) {
+        @Override
         protected ResolveResult createResult(PsiNamedElement element, final boolean validResult) {
           if (element instanceof BeanPropertyElement) {
             element = ((BeanPropertyElement)element).getMethod();
@@ -142,10 +150,12 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
     return ((IntellijJavaClassType)libraryElement.getElementClass());
   }
 
+  @Override
   @NotNull
   public Object[] getVariants() {
     final TelVariantsProcessor<PsiNamedElement> processor =
       new TelVariantsProcessor<PsiNamedElement>(myElement.getParent(), null, getReferenceQualifier() == null) {
+        @Override
         protected PsiNamedElement createResult(final PsiNamedElement element, final boolean validResult) {
           return element;
         }

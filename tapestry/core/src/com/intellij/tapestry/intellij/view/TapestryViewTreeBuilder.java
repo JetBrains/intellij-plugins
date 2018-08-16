@@ -4,9 +4,9 @@ import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.util.StatusBarProgress;
 import com.intellij.openapi.project.Project;
+import com.intellij.tapestry.intellij.view.nodes.RootNode;
 import com.intellij.ui.treeStructure.SimpleNode;
 import com.intellij.ui.treeStructure.SimpleTreeBuilder;
-import com.intellij.tapestry.intellij.view.nodes.RootNode;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -24,6 +24,7 @@ public class TapestryViewTreeBuilder extends SimpleTreeBuilder {
         rootNode.setTreeBuilder(this);
     }
 
+    @Override
     protected boolean isDisposeOnCollapsing(NodeDescriptor nodeDescriptor) {
         return false;
     }
@@ -31,6 +32,7 @@ public class TapestryViewTreeBuilder extends SimpleTreeBuilder {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected Object getTreeStructureElement(NodeDescriptor nodeDescriptor) {
         return nodeDescriptor;
     }
@@ -38,6 +40,7 @@ public class TapestryViewTreeBuilder extends SimpleTreeBuilder {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected ProgressIndicator createProgressIndicator() {
         return new StatusBarProgress();
     }
@@ -45,6 +48,7 @@ public class TapestryViewTreeBuilder extends SimpleTreeBuilder {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isAlwaysShowPlus(@Nullable NodeDescriptor nodeDescriptor) {
         return nodeDescriptor == null || ((SimpleNode) nodeDescriptor).isAlwaysShowPlus();
     }
@@ -52,6 +56,7 @@ public class TapestryViewTreeBuilder extends SimpleTreeBuilder {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isAutoExpandNode(@Nullable NodeDescriptor nodeDescriptor) {
         return nodeDescriptor != null && ((SimpleNode) nodeDescriptor).isAutoExpandNode();
     }

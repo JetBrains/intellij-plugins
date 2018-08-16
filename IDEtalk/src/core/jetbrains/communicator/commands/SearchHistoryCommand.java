@@ -38,6 +38,7 @@ public class SearchHistoryCommand implements UserCommand {
     myIdeFacade = ideFacade;
   }
 
+  @Override
   public void execute() {
     String searchString = myIdeFacade.getMessage(
         StringUtil.getMsg("SearchHistoryCommand.enter.query.string"),
@@ -63,6 +64,7 @@ public class SearchHistoryCommand implements UserCommand {
     }
   }
 
+  @Override
   public boolean isEnabled() {
     return myUser != null && !myMessageDispatcher.isHistoryEmpty();
   }

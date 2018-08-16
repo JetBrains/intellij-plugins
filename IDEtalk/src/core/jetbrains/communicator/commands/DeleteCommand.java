@@ -41,10 +41,12 @@ public class DeleteCommand extends EnabledWhenFocusedCommand {
     myIDEFacade = facade;
   }
 
+  @Override
   public boolean enabled() {
     return myUserListComponent.getSelectedNodes().length > 0;
   }
 
+  @Override
   public void execute() {
     Object[] selectedNodes = myUserListComponent.getSelectedNodes();
 
@@ -91,6 +93,7 @@ public class DeleteCommand extends EnabledWhenFocusedCommand {
     }
 
     appendItems(question, usersToDelete, "user", hasBothUsersAndGroups, new ItemTextExtractor() {
+      @Override
       public String getText(Object item) {
         return ((User) item).getDisplayName();
       }
@@ -181,6 +184,7 @@ public class DeleteCommand extends EnabledWhenFocusedCommand {
       myHasBothUsersAndGroups = hasBothUsersAndGroups;
     }
 
+    @Override
     public String getText(Object item) {
       int numberOfUsers = myUserModel.getUsers((String) item).length;
       StringBuffer sb = new StringBuffer("\"" + item + '"');

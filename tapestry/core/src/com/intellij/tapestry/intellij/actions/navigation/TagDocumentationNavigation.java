@@ -15,6 +15,7 @@ import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.intellij.toolwindow.TapestryToolWindow;
 import com.intellij.tapestry.intellij.toolwindow.TapestryToolWindowFactory;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -24,7 +25,7 @@ import java.util.Arrays;
  */
 public class TagDocumentationNavigation extends AnAction {
   @Override
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     super.update(e);
     e.getPresentation().setEnabled(getTapestryComponent(e) != null);
   }
@@ -32,7 +33,8 @@ public class TagDocumentationNavigation extends AnAction {
   /**
    * {@inheritDoc}
    */
-  public void actionPerformed(AnActionEvent event) {
+  @Override
+  public void actionPerformed(@NotNull AnActionEvent event) {
 
     Project project = (Project)event.getDataContext().getData(DataKeys.PROJECT.getName());
     if (project == null) return;

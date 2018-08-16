@@ -22,6 +22,7 @@ public class IntellijResource implements IResource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getName() {
         return _psiFile.getName();
     }
@@ -29,6 +30,7 @@ public class IntellijResource implements IResource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public File getFile() {
         VirtualFile virtualFile = _psiFile.getViewProvider().getVirtualFile();
         return new File(virtualFile.getPath());
@@ -44,6 +46,7 @@ public class IntellijResource implements IResource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getExtension() {
         return _psiFile.getVirtualFile().getExtension();
     }
@@ -51,8 +54,10 @@ public class IntellijResource implements IResource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void accept(final CoreXmlRecursiveElementVisitor visitor) {
         _psiFile.accept(new XmlRecursiveElementVisitor() {
+            @Override
             public void visitXmlTag(XmlTag tag) {
                 super.visitXmlTag(tag);
 

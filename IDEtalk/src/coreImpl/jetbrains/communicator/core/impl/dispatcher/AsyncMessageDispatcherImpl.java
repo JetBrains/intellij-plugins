@@ -63,6 +63,7 @@ public class AsyncMessageDispatcherImpl extends AbstractMessageDispatcher implem
     return myThread != null && myThread.isAlive();
   }
 
+  @Override
   public void run() {
     LOG.debug("Starting " + Thread.currentThread().getName());
 
@@ -111,6 +112,7 @@ public class AsyncMessageDispatcherImpl extends AbstractMessageDispatcher implem
     save();
   }
 
+  @Override
   public void dispose() {
     myEventListener.dispose();
 
@@ -119,6 +121,7 @@ public class AsyncMessageDispatcherImpl extends AbstractMessageDispatcher implem
       myWorkingThreadLock.notifyAll();
     }
     new WaitFor(10000){
+      @Override
       protected boolean condition() {
         return !isRunning();
       }
@@ -127,10 +130,12 @@ public class AsyncMessageDispatcherImpl extends AbstractMessageDispatcher implem
     super.dispose();
   }
 
+  @Override
   protected String getEventsFileName() {
     return FILE_NAME;
   }
 
+  @Override
   public void sendLater(User user, Message message) {
     synchronized(myWorkingThreadLock) {
       addPendingMessage(user, message);
@@ -138,6 +143,7 @@ public class AsyncMessageDispatcherImpl extends AbstractMessageDispatcher implem
     }
   }
 
+  @Override
   public IDEFacade getIdeFacade() {
     return myIdeFacade;
   }
@@ -161,6 +167,7 @@ public class AsyncMessageDispatcherImpl extends AbstractMessageDispatcher implem
       myBroadcaster.removeListener(this);
     }
 
+    @Override
     public void afterChange(IDEtalkEvent event) {
       event.accept(new EventVisitor(){
         @Override public void visitUserOnline(UserEvent.Online online) {

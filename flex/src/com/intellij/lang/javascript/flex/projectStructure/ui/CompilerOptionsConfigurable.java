@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.compiler.options.CompilerUIConfigurable;
@@ -65,8 +66,8 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 import static com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions.ResourceFilesMode;
 
@@ -149,6 +150,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     this(Mode.BC, module, module.getProject(), nature, dependenciesConfigurable, model);
 
     dependenciesConfigurable.addSdkChangeListener(new ChangeListener() {
+      @Override
       public void stateChanged(final ChangeEvent e) {
         updateTreeTable();
       }
@@ -178,6 +180,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myFilesToIncludeInSWC = Collections.emptyList();
 
     myShowAllOptionsCheckBox.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         updateTreeTable();
       }
@@ -188,11 +191,13 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
     myResourcesPanel.setVisible(myMode == Mode.BC && BCUtils.canHaveResourceFiles(myNature));
     myCopyResourceFilesCheckBox.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         updateResourcesControls();
       }
     });
     myResourcePatternsHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
+      @Override
       protected void hyperlinkActivated(final HyperlinkEvent e) {
         ShowSettingsUtil.getInstance().editConfigurable(project, new CompilerUIConfigurable(module.getProject()));
       }
@@ -202,6 +207,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myIncludeInSWCField.getTextField().setEditable(false);
     myIncludeInSWCField.setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
     myIncludeInSWCField.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         final List<StringBuilder> value = new ArrayList<>();
         for (String path : myFilesToIncludeInSWC) {
@@ -260,10 +266,12 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   private void initButtonsAndAdditionalOptions() {
     if (myMode == Mode.BC || myMode == Mode.Module) {
       final CompilerOptionsListener optionsListener = new CompilerOptionsListener() {
+        @Override
         public void optionsInTableChanged() {
           updateTreeTable();
         }
 
+        @Override
         public void additionalOptionsChanged() {
           updateAdditionalOptionsControls();
         }
@@ -276,6 +284,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     }
 
     final ActionListener projectDefaultsListener = new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         ModifiableCompilerOptions compilerOptions = myProjectLevelOptionsHolder.getProjectLevelCompilerOptions();
         final CompilerOptionsConfigurable configurable =
@@ -285,6 +294,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     };
 
     final ActionListener moduleDefaultsListener = new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         ModifiableCompilerOptions compilerOptions = myBCManager.getModuleLevelCompilerOptions();
         final CompilerOptionsConfigurable configurable =
@@ -295,7 +305,8 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
     myConfigFileTextWithBrowse.addBrowseFolderListener(null, null, myProject, FlexUtils.createFileChooserDescriptor("xml"));
     myConfigFileTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
-      protected void textChanged(final DocumentEvent e) {
+      @Override
+      protected void textChanged(@NotNull final DocumentEvent e) {
         updateAdditionalOptionsControls();
         fireConfigFileChanged();
       }
@@ -313,7 +324,8 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myAdditionalOptionsLabel.setText(labelText);
     myAdditionalOptionsField.setDialogCaption(StringUtil.capitalizeWords(labelText, true));
     myAdditionalOptionsField.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
-      protected void textChanged(final DocumentEvent e) {
+      @Override
+      protected void textChanged(@NotNull final DocumentEvent e) {
         updateAdditionalOptionsControls();
         fireAdditionalOptionsChanged();
       }
@@ -344,18 +356,22 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     }
   }
 
+  @Override
   @Nls
   public String getDisplayName() {
     return myName;
   }
 
+  @Override
   public void setDisplayName(final String name) {
   }
 
+  @Override
   public String getBannerSlogan() {
     return getDisplayName();
   }
 
+  @Override
   public CompilerOptions getEditableObject() {
     return myModel;
   }
@@ -365,11 +381,13 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     return "BuildConfigurationPage.CompilerOptions";
   }
 
+  @Override
   public JComponent createOptionsPanel() {
     //TreeUtil.expandAll(myTreeTable.getTree());
     return myMainPanel;
   }
 
+  @Override
   public boolean isModified() {
     if (myMapModified) return true;
     if (myModel.getResourceFilesMode() != getResourceFilesMode()) return true;
@@ -389,6 +407,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
              : ResourceFilesMode.ResourcePatterns;
   }
 
+  @Override
   public void apply() throws ConfigurationException {
     applyTo(myModel);
   }
@@ -406,6 +425,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     compilerOptions.setAdditionalOptions(myAdditionalOptionsField.getText().trim());
   }
 
+  @Override
   public void reset() {
     myFreeze = true;
     try {
@@ -432,6 +452,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     }
   }
 
+  @Override
   public void disposeUIResources() {
     myListeners.clear();
     Disposer.dispose(myDisposable);
@@ -477,6 +498,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     return new TreeCellRenderer() {
       private final JLabel myLabel = new JLabel();
 
+      @Override
       public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
                                                     boolean leaf, int row, boolean hasFocus) {
         final Object userObject = ((DefaultMutableTreeNode)value).getUserObject();
@@ -510,6 +532,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       private final JCheckBox myCheckBox = new JCheckBox();
       private final ComponentWithBrowseButton<JLabel> myLabelWithBrowse = new ComponentWithBrowseButton<>(new JLabel(), null);
 
+      @Override
       public Component getTableCellRendererComponent(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
         if (!(value instanceof CompilerOptionInfo)) {
           // invisible root node or group node
@@ -588,6 +611,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
         myTextWithBrowse.addBrowseFolderListener(null, null, myProject, myFileChooserDescriptor);
 
         myCheckBox.addActionListener(new ActionListener() {
+          @Override
           public void actionPerformed(final ActionEvent e) {
             TableUtil.stopEditing(myTreeTable); // apply new check box state immediately
           }
@@ -596,6 +620,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
       private Component myCurrentEditor;
 
+      @Override
       public Component getTableCellEditorComponent(final JTable table, Object value, boolean isSelected, final int row, int column) {
         assert value instanceof CompilerOptionInfo;
 
@@ -639,6 +664,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
         return myCurrentEditor;
       }
 
+      @Override
       public Object getCellEditorValue() {
         if (myCurrentEditor == myCheckBox) {
           return String.valueOf(myCheckBox.isSelected());
@@ -668,11 +694,13 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
   private ColumnInfo[] createColumns() {
     final ColumnInfo optionColumn = new ColumnInfo("Option") {
+      @Override
       public Object valueOf(final Object o) {
         final Object userObject = ((DefaultMutableTreeNode)o).getUserObject();
         return userObject instanceof CompilerOptionInfo ? userObject : o;
       }
 
+      @Override
       public Class getColumnClass() {
         return TreeTableModel.class;
       }
@@ -680,12 +708,14 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
     final ColumnInfo valueColumn = new ColumnInfo("Value") {
 
+      @Override
       public Object valueOf(Object o) {
         final Object userObject = ((DefaultMutableTreeNode)o).getUserObject();
         return userObject instanceof CompilerOptionInfo && !((CompilerOptionInfo)userObject).isGroup()
                ? userObject : null;
       }
 
+      @Override
       public Class getColumnClass() {
         return CompilerOptionInfo.class;
       }
@@ -698,11 +728,13 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       //  return myEditor;
       //}
 
+      @Override
       public boolean isCellEditable(Object o) {
         final Object userObject = ((DefaultMutableTreeNode)o).getUserObject();
         return userObject instanceof CompilerOptionInfo && !((CompilerOptionInfo)userObject).isGroup();
       }
 
+      @Override
       public void setValue(Object node, Object value) {
         final DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)node;
         final CompilerOptionInfo info = (CompilerOptionInfo)treeNode.getUserObject();
@@ -879,6 +911,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
 
       addActionListener(new ActionListener() {
+        @Override
         public void actionPerformed(final ActionEvent e) {
           final List<String> entries = StringUtil.split(myValue, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
           final List<StringBuilder> buffers = new ArrayList<>(entries.size());
@@ -933,6 +966,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       super(true, false, true, true, false, false);
     }
 
+    @Override
     public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
       return super.isFileVisible(file, showHiddenFiles) &&
              (file.isDirectory() || isAllowedExtension(file.getExtension()));
@@ -961,13 +995,15 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       myTree = tree;
     }
 
-    public void update(final AnActionEvent e) {
+    @Override
+    public void update(@NotNull final AnActionEvent e) {
       TableUtil.stopEditing(myTreeTable);
       final CompilerOptionInfo info = getNodeAndInfo().second;
       e.getPresentation().setEnabled(info != null && hasCustomValue(info));
     }
 
-    public void actionPerformed(final AnActionEvent e) {
+    @Override
+    public void actionPerformed(@NotNull final AnActionEvent e) {
       final Pair<DefaultMutableTreeNode, CompilerOptionInfo> nodeAndInfo = getNodeAndInfo();
       if (nodeAndInfo.second != null) {
         myMapModified = true;
@@ -986,6 +1022,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     }
   }
 
+  @Override
   public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
     if (place != null) {
       final Object location = place.getPath(FlexBCConfigurable.LOCATION_ON_TAB);

@@ -30,10 +30,12 @@ public class GetProjectsDataProvider extends FileAccessProvider {
     super(ideFacade, userModel);
   }
 
+  @Override
   public String getTagName() {
     return GetProjectsDataXmlMessage.TAG;
   }
 
+  @Override
   protected void doProcess(Element request, Element response) {
     if (OptionFlag.HIDE_ALL_KEY.isSet()) {
       return;

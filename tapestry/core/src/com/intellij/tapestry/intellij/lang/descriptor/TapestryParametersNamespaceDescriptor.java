@@ -18,10 +18,12 @@ public class TapestryParametersNamespaceDescriptor implements XmlNSDescriptor {
   private XmlFile myFile;
   private XmlElement myElement;
 
+  @Override
   public XmlElementDescriptor getElementDescriptor(@NotNull XmlTag tag) {
     return null;
   }
 
+  @Override
   @NotNull
   public XmlElementDescriptor[] getRootElementsDescriptors(@Nullable XmlDocument doc) {
     if (doc == null) return XmlElementDescriptor.EMPTY_ARRAY;
@@ -32,23 +34,28 @@ public class TapestryParametersNamespaceDescriptor implements XmlNSDescriptor {
     return DescriptorUtil.getTmlSubelementDescriptors(rootTag, tapestryNamespaceDescriptor);
   }
 
+  @Override
   @Nullable
   public XmlFile getDescriptorFile() {
     return myFile;
   }
 
+  @Override
   public PsiElement getDeclaration() {
     return myElement;
   }
 
+  @Override
   public String getName(PsiElement context) {
     return getName();
   }
 
+  @Override
   public String getName() {
     return myFile.getName();
   }
 
+  @Override
   public void init(PsiElement element) {
     myFile = (XmlFile)element.getContainingFile();
     myElement = (XmlElement)element;
@@ -58,6 +65,7 @@ public class TapestryParametersNamespaceDescriptor implements XmlNSDescriptor {
     }
   }
 
+  @Override
   @NotNull
   public Object[] getDependencies() {
     return TapestryProject.JAVA_STRUCTURE_DEPENDENCY;

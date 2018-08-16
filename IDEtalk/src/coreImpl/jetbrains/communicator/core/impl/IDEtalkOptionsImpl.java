@@ -24,22 +24,27 @@ import java.util.prefs.Preferences;
  * @author Kir
  */
 public class IDEtalkOptionsImpl implements IDEtalkOptions {
+  @Override
   public boolean isSet(String option) {
     return isSet(option, false);
   }
 
+  @Override
   public boolean isSet(String option, boolean defaultValue) {
     return getPrefs().getBoolean(option, defaultValue);
   }
 
+  @Override
   public double getNumber(String option, double defaultValue) {
     return getPrefs().getDouble(option, defaultValue);
   }
 
+  @Override
   public void setNumber(String option, double value) {
     getPrefs().putDouble(option, value);
   }
 
+  @Override
   public void setOption(String option, boolean value) {
     getPrefs().putBoolean(option, value);
   }

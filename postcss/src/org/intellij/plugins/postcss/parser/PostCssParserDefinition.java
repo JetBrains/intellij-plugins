@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PostCssParserDefinition extends CSSParserDefinition {
 
+  @Override
   @NotNull
   public Lexer createLexer(Project project) {
     return new PostCssLexer();

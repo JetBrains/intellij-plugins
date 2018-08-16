@@ -24,11 +24,13 @@ import org.jetbrains.annotations.Nullable;
 public class FlashUmlRelationshipManager implements DiagramRelationshipManager<Object> {
   private static final DiagramCategory[] CATEGORIES = {new DiagramCategory("Dependencies", null)};
 
+  @Override
   @Nullable
   public DiagramRelationshipInfo getDependencyInfo(Object e1, Object e2, DiagramCategory category) {
     return null;
   }
 
+  @Override
   public DiagramCategory[] getContentCategories() {
     return CATEGORIES;
   }

@@ -1,6 +1,7 @@
 package org.intellij.plugins.markdown.settings;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.util.Disposer;
@@ -12,8 +13,15 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class MarkdownSettingsConfigurable implements SearchableConfigurable {
+  static final String PLANT_UML_DIRECTORY = "plantUML";
+  static final String PLANTUML_JAR_URL =
+    "http://central.maven.org/maven2/net/sourceforge/plantuml/plantuml/6703/plantuml-6703.jar";
+  static final String PLANTUML_JAR = "plantuml.jar";
+
+  private static final String DOWNLOAD_CACHE_DIRECTORY = "download-cache";
   @Nullable
   private MarkdownSettingsForm myForm = null;
   @NotNull
@@ -82,7 +90,7 @@ public class MarkdownSettingsConfigurable implements SearchableConfigurable {
     myMarkdownApplicationSettings.setMarkdownPreviewSettings(form.getMarkdownPreviewSettings());
 
     ApplicationManager.getApplication().getMessageBus().syncPublisher(MarkdownApplicationSettings.SettingsChangedListener.TOPIC)
-                      .settingsChanged(myMarkdownApplicationSettings);
+      .settingsChanged(myMarkdownApplicationSettings);
   }
 
   @Override
@@ -101,5 +109,28 @@ public class MarkdownSettingsConfigurable implements SearchableConfigurable {
       Disposer.dispose(myForm);
     }
     myForm = null;
+  }
+
+  /**
+   * Returns true if PlantUML jar has been already downloaded
+   */
+  public static boolean isPlantUMLAvailable() {
+    return getDownloadedJarPath().exists();
+  }
+
+  /**
+   * Gets 'download-cache' directory PlantUML jar to be download to
+   */
+  @NotNull
+  public static File getDirectoryToDownload() {
+    return new File(PathManager.getSystemPath(), DOWNLOAD_CACHE_DIRECTORY + "/" + PLANT_UML_DIRECTORY);
+  }
+
+  /**
+   * Returns {@link File} presentation of downloaded PlantUML jar
+   */
+  @NotNull
+  public static File getDownloadedJarPath() {
+    return new File(getDirectoryToDownload(), PLANTUML_JAR);
   }
 }

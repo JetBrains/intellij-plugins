@@ -31,10 +31,12 @@ public class CodePointerEventProvider extends EventProvider {
     super(broadcaster);
   }
 
+  @Override
   public String getTagName() {
     return CodePointerXmlMessage.TAGNAME;
   }
 
+  @Override
   protected TransportEvent createEvent(Transport transport, String remoteUser, Element rootElement) {
     return CodePointerXmlMessage.createEvent(transport, remoteUser, rootElement);
   }

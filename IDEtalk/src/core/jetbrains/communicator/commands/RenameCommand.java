@@ -32,18 +32,22 @@ public class RenameCommand extends EnabledWhenFocusedCommand implements NamedUse
     super(facade);
   }
 
+  @Override
   public boolean enabled() {
     return myUserListComponent.isSingleItemSelected();
   }
 
+  @Override
   public void execute() {
     myUserListComponent.startEditing();
   }
 
+  @Override
   public Icon getIcon() {
     return null;
   }
 
+  @Override
   public String getName() {
     Object[] nodes = myUserListComponent.getSelectedNodes();
     String msgCode = "RenameCommand.rename";

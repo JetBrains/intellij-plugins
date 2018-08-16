@@ -38,6 +38,7 @@ import java.util.List;
  */
 public class InterceptorRefResolveConverterImpl extends InterceptorRefResolveConverter {
 
+  @Override
   @NotNull
   public Collection<? extends InterceptorOrStackBase> getVariants(final ConvertContext context) {
     final List<InterceptorOrStackBase> results = new SmartList<>();
@@ -53,6 +54,7 @@ public class InterceptorRefResolveConverterImpl extends InterceptorRefResolveCon
     return results;
   }
 
+  @Override
   public InterceptorOrStackBase fromString(@Nullable @NonNls final String name, final ConvertContext context) {
     if (name == null) {
       return null;

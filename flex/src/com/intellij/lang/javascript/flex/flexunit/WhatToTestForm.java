@@ -54,6 +54,7 @@ public class WhatToTestForm {
     myFlexUnitSupportComputable = flexUnitSupportComputable;
 
     final ActionListener scopeChangeListener = new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         updateOnScopeChange();
       }
@@ -199,6 +200,7 @@ public class WhatToTestForm {
       setField(myMethodField);
     }
 
+    @Override
     protected String showDialog() {
       if (StringUtil.isEmpty(myClassField.getText())) {
         Messages.showInfoMessage(getProject(), ExecutionBundle.message("set.class.name.message"),

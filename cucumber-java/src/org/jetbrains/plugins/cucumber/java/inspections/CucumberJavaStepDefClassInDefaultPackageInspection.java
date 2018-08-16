@@ -11,17 +11,20 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 public class CucumberJavaStepDefClassInDefaultPackageInspection extends BaseLocalInspectionTool {
 
+  @Override
   @Nls
   @NotNull
   public String getDisplayName() {
     return CucumberJavaBundle.message("cucumber.java.inspections.step.def.class.in.default.package.title");
   }
 
+  @Override
   @NotNull
   public String getShortName() {
     return "CucumberJavaStepDefClassInDefaultPackage";
   }
 
+  @Override
   @NotNull
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
     return new CucumberJavaStepDefClassIsPublicVisitor(holder);

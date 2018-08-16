@@ -58,6 +58,7 @@ import java.util.Set;
  */
 public class StrutsFileSetCheckingAnnotator implements Annotator {
 
+  @Override
   public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
     if (!(psiElement instanceof XmlFile)) {
       return;
@@ -109,21 +110,25 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
     }
     else {
       annotation.registerFix(new IntentionAction() {
+        @Override
         @SuppressWarnings("DialogTitleCapitalization")
         @NotNull
         public String getText() {
           return StrutsBundle.message("annotators.fileset.edit.facet.settings");
         }
 
+        @Override
         @NotNull
         public String getFamilyName() {
           return StrutsBundle.message("intentions.family.name");
         }
 
+        @Override
         public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile psiFile) {
           return true;
         }
 
+        @Override
         public void invoke(@NotNull final Project project,
                            final Editor editor,
                            final PsiFile psiFile) throws IncorrectOperationException {
@@ -132,6 +137,7 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
           ModulesConfigurator.showFacetSettingsDialog(strutsFacet, null);
         }
 
+        @Override
         public boolean startInWriteAction() {
           return false;
         }
@@ -149,6 +155,7 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
       setText(StrutsBundle.message("annotators.fileset.fix.add.to.fileset", filename));
     }
 
+    @Override
     @NotNull
     public String getFamilyName() {
       return StrutsBundle.message("intentions.family.name");
@@ -159,10 +166,12 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
       return Struts2Icons.Action;
     }
 
+    @Override
     public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {
       return true;
     }
 
+    @Override
     public void invoke(@NotNull final Project project,
                        final Editor editor,
                        final PsiFile file) throws IncorrectOperationException {
@@ -174,10 +183,12 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
         new BaseListPopupStep<StrutsFileSet>(StrutsBundle.message("annotators.fileset.fix.choose.fileset"),
                                              new ArrayList<>(strutsFileSets)) {
 
+          @Override
           public Icon getIconFor(final StrutsFileSet aValue) {
             return StrutsIcons.STRUTS_CONFIG_FILE;
           }
 
+          @Override
           public PopupStep onChosen(final StrutsFileSet selectedValue, final boolean finalChoice) {
             selectedValue.addFile(file.getVirtualFile());
             ApplicationManager.getApplication().runWriteAction(() -> ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), false, true));

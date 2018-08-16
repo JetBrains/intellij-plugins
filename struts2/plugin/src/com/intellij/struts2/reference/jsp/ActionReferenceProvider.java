@@ -18,7 +18,6 @@ package com.intellij.struts2.reference.jsp;
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
@@ -47,6 +46,7 @@ import java.util.List;
  */
 public class ActionReferenceProvider extends PsiReferenceProvider {
 
+  @Override
   @NotNull
   public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,
                                                @NotNull final ProcessingContext context) {
@@ -99,6 +99,7 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
                                        getRangeInElement().getLength() - 1 - bangIndex));
     }
 
+    @Override
     public PsiElement resolve() {
       if (action == null) {
         return null;
@@ -108,6 +109,7 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
       return action.findActionMethod(methodName);
     }
 
+    @Override
     @NotNull
     public Object[] getVariants() {
       if (action == null) {
@@ -117,6 +119,7 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
       return ArrayUtil.toObjectArray(action.getActionMethods());
     }
 
+    @Override
     @NotNull
     public String getUnresolvedMessagePattern() {
       return "Cannot resolve action method '" + getValue() + "'";
@@ -140,6 +143,7 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
       this.strutsModel = strutsModel;
     }
 
+    @Override
     public PsiElement resolve() {
       if (TaglibUtil.isDynamicExpression(myElement.getValue())) {
         return myElement;
@@ -152,6 +156,7 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
       return action.getXmlTag();
     }
 
+    @Override
     @NotNull
     public Object[] getVariants() {
       final List<Action> actionList = strutsModel.getActionsForNamespace(namespace);
@@ -168,6 +173,7 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
       return ArrayUtil.toObjectArray(variants);
     }
 
+    @Override
     @NotNull
     public String getUnresolvedMessagePattern() {
       return "Cannot resolve action '" + getValue() + "'";

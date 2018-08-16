@@ -88,6 +88,7 @@ public class DartPackagePathReferenceProvider extends PsiReferenceProvider {
     }
 
     final FileReferenceSet referenceSet = new FileReferenceSet(referenceText, psiElement, textRange.getStartOffset(), null, true) {
+      @Override
       public FileReference createFileReference(final TextRange range, final int index, final String text) {
         return new DartPackageAwareFileReference(this, range, index, text, dartResolver);
       }

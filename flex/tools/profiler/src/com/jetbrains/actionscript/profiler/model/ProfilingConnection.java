@@ -181,6 +181,7 @@ public class ProfilingConnection {
 
   public void stopCpuProfiling(final Callback callback) throws IOException {
     simpleCommand(new Callback() {
+      @Override
       public void finished(@Nullable String data, @Nullable IOException ex) {
         callback.finished(data, ex);
         clearProfilingState();
@@ -416,6 +417,7 @@ public class ProfilingConnection {
       return className;
     }
 
+    @Override
     void startingPacket(String output) {
       if (output.startsWith(BATCH_MARKER)) {
         if (LOG.isDebugEnabled()) {

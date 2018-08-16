@@ -25,6 +25,7 @@ public class DartPsiCompositeElementImpl extends ASTWrapperPsiElement implements
     super(node);
   }
 
+  @Override
   public IElementType getTokenType() {
     return getNode().getElementType();
   }

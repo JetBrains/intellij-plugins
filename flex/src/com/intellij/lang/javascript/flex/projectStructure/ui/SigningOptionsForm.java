@@ -62,6 +62,7 @@ public class SigningOptionsForm {
   public SigningOptionsForm(final Project project, final Mode mode) {
     myMode = mode;
     myUseTempCertificateCheckBox.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         updateControls();
       }
@@ -81,6 +82,7 @@ public class SigningOptionsForm {
 
     myMoreOptionsHyperlinkLabel.setText(MORE_OPTIONS);
     myMoreOptionsHyperlinkLabel.addHyperlinkListener(new HyperlinkListener() {
+      @Override
       public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           showMoreOptions(!isShowingMoreOptions());

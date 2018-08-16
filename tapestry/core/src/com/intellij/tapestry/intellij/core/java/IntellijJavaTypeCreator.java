@@ -32,6 +32,7 @@ public class IntellijJavaTypeCreator implements IJavaTypeCreator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IJavaField createField(String name, IJavaClassType type, boolean isPrivate, boolean changeNameToReflectIdeSettings) {
         String fieldName;
         if (changeNameToReflectIdeSettings) {
@@ -57,6 +58,7 @@ public class IntellijJavaTypeCreator implements IJavaTypeCreator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IJavaAnnotation createFieldAnnotation(IJavaField field, String fullyQualifiedName, Map<String, String> parameters) {
         StringBuffer annotationText = new StringBuffer();
         annotationText.append("@").append(fullyQualifiedName);
@@ -90,6 +92,7 @@ public class IntellijJavaTypeCreator implements IJavaTypeCreator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean ensureClassImport(final IJavaClassType baseClass, final IJavaClassType type) {
         if (!ImportUtils.nameCanBeImported(type.getFullyQualifiedName(), ((IntellijJavaClassType) baseClass).getPsiClass().getContainingFile())) {
             return false;

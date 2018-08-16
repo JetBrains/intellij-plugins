@@ -59,6 +59,7 @@ public class TilesResultContributor extends StrutsResultContributor {
     return Comparing.equal(resultType, TILES_RESULT_TYPE);
   }
 
+  @Override
   public boolean createReferences(@NotNull final PsiElement psiElement,
                                   @NotNull final List<PsiReference> psiReferences,
                                   final boolean soft) {
@@ -72,6 +73,7 @@ public class TilesResultContributor extends StrutsResultContributor {
     return true;
   }
 
+  @Override
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement psiElement) {
     return createDefaultPathReference(path, psiElement, StrutsApiIcons.Tiles.Tile);
   }
@@ -102,6 +104,7 @@ public class TilesResultContributor extends StrutsResultContributor {
       this.definitionName = xmlElement.getValue().getTrimmedText();
     }
 
+    @Override
     public PsiElement resolve() {
       for (final TilesModel tilesModel : allTilesModels) {
         final XmlTag definition = tilesModel.getTileTag(definitionName);
@@ -113,6 +116,7 @@ public class TilesResultContributor extends StrutsResultContributor {
       return null;
     }
 
+    @Override
     @SuppressWarnings({"unchecked"})
     @NotNull
     public Object[] getVariants() {
@@ -138,6 +142,7 @@ public class TilesResultContributor extends StrutsResultContributor {
       return ArrayUtil.toObjectArray(variants);
     }
 
+    @Override
     @NotNull
     public String getUnresolvedMessagePattern() {
       return "Cannot resolve Tiles definition '" + getValue() + "'";

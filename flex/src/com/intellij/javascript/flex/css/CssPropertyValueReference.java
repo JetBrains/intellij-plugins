@@ -77,7 +77,7 @@ public class CssPropertyValueReference extends PsiPolyVariantCachingReference im
   }
 
   @Override
-  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+  public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
     final ElementManipulator<PsiElement> manipulator = ElementManipulators.getManipulator(myElement);
     assert manipulator != null;
     return manipulator.handleContentChange(myElement, getRangeInElement(), newElementName);
@@ -97,7 +97,7 @@ public class CssPropertyValueReference extends PsiPolyVariantCachingReference im
   }
 
   @Override
-  public boolean isReferenceTo(PsiElement element) {
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     ResolveResult[] results = multiResolve(false);
     for (ResolveResult result : results) {
       if (myElement.getManager().areElementsEquivalent(result.getElement(), element)) {

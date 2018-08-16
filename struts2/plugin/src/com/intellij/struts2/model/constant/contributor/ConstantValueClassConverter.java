@@ -64,6 +64,7 @@ class ConstantValueClassConverter extends ResolvingConverter<PsiClass> implement
     return Collections.emptyList();
   }
 
+  @Override
   public PsiClass fromString(@Nullable @NonNls final String s, final ConvertContext convertContext) {
     if (s == null) {
       return null;
@@ -100,6 +101,7 @@ class ConstantValueClassConverter extends ResolvingConverter<PsiClass> implement
     return aClass == null ? null : aClass.getName();
   }
 
+  @Override
   @NotNull
   public Set<String> getAdditionalVariants(@NotNull final ConvertContext context) {
     return shortCutToPsiClassMap.keySet();
@@ -113,6 +115,7 @@ class ConstantValueClassConverter extends ResolvingConverter<PsiClass> implement
     return ArrayUtil.append(references, new GenericDomValueReference(value), PsiReference.ARRAY_FACTORY);
   }
 
+  @Override
   public String getErrorMessage(@Nullable final String s, final ConvertContext context) {
     return CodeInsightBundle.message("error.cannot.resolve.class", s);
   }

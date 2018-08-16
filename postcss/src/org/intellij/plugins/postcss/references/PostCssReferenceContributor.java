@@ -24,6 +24,7 @@ public class PostCssReferenceContributor extends PsiReferenceContributor {
   }
 
   private static class PostCssReferenceProvider extends PsiReferenceProvider {
+    @Override
     @NotNull
     public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
       return CachedValuesManager.getCachedValue(element, () -> CachedValueProvider.Result.create(getReferences(element), element));

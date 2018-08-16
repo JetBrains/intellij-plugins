@@ -15,6 +15,7 @@ public class PackageNodesComparator implements Comparator<TapestryNode>, Seriali
     /**
      * {@inheritDoc}
      */
+    @Override
     public int compare(TapestryNode o1, TapestryNode o2) {
         if (o1 instanceof PackageNode && o2 instanceof PackageNode) {
             return o1.getPresentableText().compareTo(o2.getPresentableText());

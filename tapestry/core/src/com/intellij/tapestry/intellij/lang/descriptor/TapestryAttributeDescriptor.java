@@ -16,12 +16,14 @@ public class TapestryAttributeDescriptor extends BasicTapestryAttributeDescripto
     myParam = param;
   }
 
+  @Override
   public PsiElement getDeclaration() {
     final IJavaField field = myParam.getParameterField();
     if (field instanceof IntellijJavaField) return ((IntellijJavaField)field).getPsiField();
     return null; // built in attribute
   }
 
+  @Override
   public String getName() {
     return myParam.getName();
   }

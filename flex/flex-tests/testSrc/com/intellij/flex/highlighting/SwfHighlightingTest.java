@@ -135,6 +135,7 @@ public class SwfHighlightingTest extends JSDaemonAnalyzerTestCase {
   }
 
 
+  @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();
   }

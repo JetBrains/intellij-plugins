@@ -1,9 +1,11 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript;
 
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.impl.TemplateContext;
 import com.intellij.codeInsight.template.impl.TemplateOptionalProcessor;
+import com.intellij.injected.editor.EditorWindow;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -31,6 +33,7 @@ import java.util.Collections;
 public class JSShortenFQNamesProcessor implements TemplateOptionalProcessor {
   private static final Logger LOG = Logger.getInstance("#com.intellij.lang.javascript.JSShortenFQNamesProcessor");
 
+  @Override
   public void processText(final Project project,
                           final Template template,
                           final Document document,
@@ -41,7 +44,8 @@ public class JSShortenFQNamesProcessor implements TemplateOptionalProcessor {
     try {
       final PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
       psiDocumentManager.commitDocument(document);
-      final PsiFile hostFile = PsiUtilBase.getPsiFileInEditor(editor, project);
+      final PsiFile hostFile = editor instanceof EditorWindow ? ((EditorWindow)editor).getInjectedFile()
+                                                              : PsiUtilBase.getPsiFileInEditor(editor, project);
       final PsiFile file = (hostFile != null && JavaScriptSupportLoader.isFlexMxmFile(hostFile))
                            ? InjectedLanguageUtil.findInjectedPsiNoCommit(hostFile, templateRange.getStartOffset())
                            : hostFile;
@@ -74,10 +78,12 @@ public class JSShortenFQNamesProcessor implements TemplateOptionalProcessor {
     }
   }
 
+  @Override
   public String getOptionName() {
     return CodeInsightBundle.message("dialog.edit.template.checkbox.shorten.fq.names");
   }
 
+  @Override
   public boolean isEnabled(final Template template) {
     return template.isToShortenLongNames();
   }

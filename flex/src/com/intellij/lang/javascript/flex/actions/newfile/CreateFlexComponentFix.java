@@ -110,6 +110,7 @@ public class CreateFlexComponentFix extends ActionScriptCreateClassOrInterfaceFi
     }
   }
 
+  @Override
   @NotNull
   public String getName() {
     return FlexBundle.message("create.flex.component.intention.name", myClassNameToCreate);

@@ -5,7 +5,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.ResolveResult;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,35 +30,42 @@ public class CucumberStepReference implements PsiPolyVariantReference {
     myRange = range;
   }
 
+  @Override
   @NotNull
   public PsiElement getElement() {
     return myStep;
   }
 
+  @Override
   @NotNull
   public TextRange getRangeInElement() {
     return myRange;
   }
 
+  @Override
   public PsiElement resolve() {
     final ResolveResult[] result = multiResolve(true);
     return result.length == 1 ? result[0].getElement() : null;
   }
 
+  @Override
   @NotNull
   public String getCanonicalText() {
     return myStep.getText();
   }
 
-  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+  @Override
+  public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
     return myStep;
   }
 
+  @Override
   public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
     return myStep;
   }
 
-  public boolean isReferenceTo(PsiElement element) {
+  @Override
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     ResolveResult[] resolvedResults = multiResolve(false);
     for (ResolveResult rr : resolvedResults) {
       if (getElement().getManager().areElementsEquivalent(rr.getElement(), element)) {
@@ -69,11 +75,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
     return false;
   }
 
-  @NotNull
-  public Object[] getVariants() {
-    return ArrayUtil.EMPTY_OBJECT_ARRAY;
-  }
-
+  @Override
   public boolean isSoft() {
     return false;
   }

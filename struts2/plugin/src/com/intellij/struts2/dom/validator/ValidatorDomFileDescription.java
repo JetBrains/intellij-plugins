@@ -34,6 +34,7 @@ public class ValidatorDomFileDescription extends DomFileDescription<Validators> 
     super(Validators.class, Validators.TAG_NAME);
   }
 
+  @Override
   protected void initializeFileDescription() {
     registerNamespacePolicy(StrutsDomConstants.VALIDATOR_NAMESPACE_KEY, StrutsConstants.VALIDATOR_DTDS);
   }

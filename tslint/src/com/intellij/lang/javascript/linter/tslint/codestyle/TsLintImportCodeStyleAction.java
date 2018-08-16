@@ -20,12 +20,13 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 
 public class TsLintImportCodeStyleAction extends AnAction {
   public static final String ACTION_ID = "TslintImportCodeStyleAction";
 
   @Override
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     final DataContext context = e.getDataContext();
     final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(context);
     final boolean enabledAndVisible = e.getProject() != null
@@ -35,7 +36,7 @@ public class TsLintImportCodeStyleAction extends AnAction {
   }
 
   @Override
-  public void actionPerformed(AnActionEvent e) {
+  public void actionPerformed(@NotNull AnActionEvent e) {
     final Project project = e.getProject();
     final PsiFile configPsi = CommonDataKeys.PSI_FILE.getData(e.getDataContext());
     if (configPsi == null || project == null) {
