@@ -5,11 +5,15 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.intellij.plugins.markdown.MarkdownBundle;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelProvider;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +26,8 @@ public class MarkdownSettingsConfigurable implements SearchableConfigurable {
   static final String PLANTUML_JAR = "plantuml.jar";
 
   private static final String DOWNLOAD_CACHE_DIRECTORY = "download-cache";
+  @TestOnly
+  public static final Ref<VirtualFile> PLANTUML_JAR_TEST = Ref.create();
   @Nullable
   private MarkdownSettingsForm myForm = null;
   @NotNull
@@ -131,6 +137,9 @@ public class MarkdownSettingsConfigurable implements SearchableConfigurable {
    */
   @NotNull
   public static File getDownloadedJarPath() {
-    return new File(getDirectoryToDownload(), PLANTUML_JAR);
+    //noinspection TestOnlyProblems
+    return ApplicationManager.getApplication().isUnitTestMode()
+           ? VfsUtilCore.virtualToIoFile(PLANTUML_JAR_TEST.get())
+           : new File(getDirectoryToDownload(), PLANTUML_JAR);
   }
 }

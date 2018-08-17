@@ -1,6 +1,5 @@
 package org.intellij.plugins.markdown.html;
 
-import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.intellij.plugins.markdown.MarkdownTestingUtil;
@@ -28,18 +27,6 @@ public class MarkdownHtmlGenerationTest extends LightPlatformCodeInsightFixtureT
     doTestByHtmlFile();
   }
 
-  public void testPlantUML1() {
-    doTestPlantUML();
-  }
-
-  public void testPlantUML2() {
-    doTestPlantUML();
-  }
-
-  public void testPuml() {
-    doTestPlantUML();
-  }
-
   public void testXmlTags() {
     doTestByHtmlFile();
   }
@@ -52,10 +39,6 @@ public class MarkdownHtmlGenerationTest extends LightPlatformCodeInsightFixtureT
     PsiFile mdFile = myFixture.configureByFile("comment.md");
 
     assertTrue(MarkdownUtil.generateMarkdownHtml(mdFile.getVirtualFile(), mdFile.getText()).contains("<body md-src-pos=\"0..18\"></body>"));
-  }
-
-  void doTestPlantUML() {
-    doTest("<img src=\"file:" + PathManager.getSystemPath());
   }
 
   void doTestByHtmlFile() {
