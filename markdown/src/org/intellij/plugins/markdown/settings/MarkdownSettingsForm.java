@@ -64,6 +64,8 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   private LinkLabel myPlantUMLDownload;
   private JBLabel myPlantUMLStatusLabel;
 
+  private static final Color SUCCESS_COLOR = new JBColor(0x008000, 0x6A8759);
+
   @Nullable
   private EditorEx myEditor;
   @NotNull
@@ -136,7 +138,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
 
     if (MarkdownSettingsConfigurable.isPlantUMLAvailable()) {
       if (isJustInstalled) {
-        myPlantUMLStatusLabel.setForeground(JBColor.GREEN);
+        myPlantUMLStatusLabel.setForeground(SUCCESS_COLOR);
         myPlantUMLStatusLabel.setText(MarkdownBundle.message("markdown.settings.preview.plantUML.download.success"));
       }
       else {
