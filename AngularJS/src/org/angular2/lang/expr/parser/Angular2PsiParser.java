@@ -26,7 +26,7 @@ public class Angular2PsiParser implements PsiParser {
 
   private static final Logger LOG = Logger.getInstance(Angular2PsiParser.class);
 
-  private static final Map<String, BiConsumer<Angular2Parser, IElementType>> parseMappings = ContainerUtil.newHashMap(
+  private static final Map<String, BiConsumer<PsiBuilder, IElementType>> parseMappings = ContainerUtil.newHashMap(
     Pair.create(ACTION, Angular2Parser::parseAction),
     Pair.create(BINDING, Angular2Parser::parseBinding),
     Pair.create(INTERPOLATION, Angular2Parser::parseInterpolation),
@@ -39,13 +39,13 @@ public class Angular2PsiParser implements PsiParser {
     PsiFile containingFile = builder.getUserData(FileContextUtil.CONTAINING_FILE_KEY);
     if (containingFile != null) {
       String ext = FileUtilRt.getExtension(containingFile.getName());
-      BiConsumer<Angular2Parser, IElementType> parseMethod = parseMappings.get(ext);
+      BiConsumer<PsiBuilder, IElementType> parseMethod = parseMappings.get(ext);
       if (parseMethod != null) {
-        parseMethod.accept(new Angular2Parser(builder), root);
+        parseMethod.accept(builder, root);
       }
       else if (TEMPLATE_BINDINGS.equals(ext)) {
         String templateKey = FileUtilRt.getExtension(FileUtilRt.getNameWithoutExtension(containingFile.getName()));
-        new Angular2Parser(builder).parseTemplateBindings(root, templateKey);
+        Angular2Parser.parseTemplateBindings(builder, root, templateKey);
       }
       else {
         LOG.error("Invalid file name '" + containingFile.getName() + "' - unsupported extension: " + ext);

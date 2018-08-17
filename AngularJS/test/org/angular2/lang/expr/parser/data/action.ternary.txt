@@ -1,207 +1,6 @@
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:QUEST)('?')
-      JSConditionalExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:QUEST)('?')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:COLON)(':')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSConditionalExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:QUEST)('?')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:COLON)(':')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:QUEST)('?')
-      JSConditionalExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-        PsiElement(JS:QUEST)('?')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:COLON)(':')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:QUEST)('?')
-      JSConditionalExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:QUEST)('?')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-        PsiElement(JS:COLON)(':')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:QUEST)('?')
-      JSConditionalExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:QUEST)('?')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:COLON)(':')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('2')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('3')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSConditionalExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-        PsiElement(JS:QUEST)('?')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:COLON)(':')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSConditionalExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-        PsiElement(JS:QUEST)('?')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-        PsiElement(JS:COLON)(':')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSConditionalExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-        PsiElement(JS:QUEST)('?')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-        PsiElement(JS:COLON)(':')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('2')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('3')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSConditionalExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-        PsiElement(JS:QUEST)('?')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-        PsiElement(JS:COLON)(':')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('2')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('3')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:COLON)(':')
+  Angular2Action
+    JSExpressionStatement
       JSConditionalExpression
         JSLiteralExpression
           PsiElement(JS:NUMERIC_LITERAL)('0')
@@ -213,52 +12,8 @@ ASTWrapperPsiElement(FILE)
           PsiElement(JS:NUMERIC_LITERAL)('2')
 ------
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:COLON)(':')
-      JSConditionalExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:QUEST)('?')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:COLON)(':')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:COLON)(':')
-      JSConditionalExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:QUEST)('?')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:COLON)(':')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:COLON)(':')
+  Angular2Action
+    JSExpressionStatement
       JSConditionalExpression
         JSLiteralExpression
           PsiElement(JS:NUMERIC_LITERAL)('1')
@@ -270,502 +25,789 @@ ASTWrapperPsiElement(FILE)
           PsiElement(JS:NUMERIC_LITERAL)('2')
 ------
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:COLON)(':')
+  Angular2Action
+    JSExpressionStatement
       JSConditionalExpression
         JSLiteralExpression
           PsiElement(JS:NUMERIC_LITERAL)('0')
         PsiElement(JS:QUEST)('?')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('2')
-        PsiElement(JS:COLON)(':')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('3')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:COLON)(':')
-      JSConditionalExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:QUEST)('?')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:COLON)(':')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:COLON)(':')
-      JSConditionalExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-        PsiElement(JS:QUEST)('?')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:COLON)(':')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:COLON)(':')
-      JSConditionalExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-        PsiElement(JS:QUEST)('?')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('2')
-        PsiElement(JS:COLON)(':')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('3')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:COLON)(':')
-      JSConditionalExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-        PsiElement(JS:QUEST)('?')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('2')
-        PsiElement(JS:COLON)(':')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('3')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSBinaryExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:ANDAND)('&&')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSBinaryExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-        PsiElement(JS:OROR)('||')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:QUEST)('?')
-      JSBinaryExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:ANDAND)('&&')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:QUEST)('?')
-      JSBinaryExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-        PsiElement(JS:ANDAND)('&&')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:QUEST)('?')
-      JSBinaryExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:OROR)('||')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:QUEST)('?')
-      JSBinaryExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:OROR)('||')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSBinaryExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:ANDAND)('&&')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSBinaryExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-        PsiElement(JS:ANDAND)('&&')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSBinaryExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:OROR)('||')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSBinaryExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:OROR)('||')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:COLON)(':')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:COLON)(':')
-      JSBinaryExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:ANDAND)('&&')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-      PsiElement(JS:COLON)(':')
-      JSBinaryExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-        PsiElement(JS:ANDAND)('&&')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:COLON)(':')
-      JSBinaryExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:OROR)('||')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-      PsiElement(JS:COLON)(':')
-      JSBinaryExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:OROR)('||')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:COLON)(':')
-      JSBinaryExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:ANDAND)('&&')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-      PsiElement(JS:COLON)(':')
-      JSBinaryExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-        PsiElement(JS:ANDAND)('&&')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:COLON)(':')
-      JSBinaryExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:OROR)('||')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
-      PsiElement(JS:QUEST)('?')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-      PsiElement(JS:COLON)(':')
-      JSBinaryExpression
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('0')
-        PsiElement(JS:OROR)('||')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSCallExpression
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('returnTrue')
-        JSArgumentList
-          PsiElement(JS:LPAR)('(')
-          PsiElement(JS:RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiElement(JS:QUEST)('?')
-      PsiWhiteSpace(' ')
-      JSCallExpression
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('returnString')
-        JSArgumentList
-          PsiElement(JS:LPAR)('(')
-          PsiElement(JS:RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiElement(JS:COLON)(':')
-      PsiWhiteSpace(' ')
-      JSCallExpression
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('returnInt')
-        JSArgumentList
-          PsiElement(JS:LPAR)('(')
-          PsiElement(JS:RPAR)(')')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSCallExpression
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('returnFalse')
-        JSArgumentList
-          PsiElement(JS:LPAR)('(')
-          PsiElement(JS:RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiElement(JS:QUEST)('?')
-      PsiWhiteSpace(' ')
-      JSCallExpression
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('returnString')
-        JSArgumentList
-          PsiElement(JS:LPAR)('(')
-          PsiElement(JS:RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiElement(JS:COLON)(':')
-      PsiWhiteSpace(' ')
-      JSCallExpression
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('returnInt')
-        JSArgumentList
-          PsiElement(JS:LPAR)('(')
-          PsiElement(JS:RPAR)(')')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSConditionalExpression
-      JSCallExpression
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('returnTrue')
-        JSArgumentList
-          PsiElement(JS:LPAR)('(')
-          PsiElement(JS:RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiElement(JS:QUEST)('?')
-      PsiWhiteSpace(' ')
-      JSCallExpression
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('returnString')
-        JSArgumentList
-          PsiElement(JS:LPAR)('(')
-          PsiElement(JS:RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiElement(JS:COLON)(':')
-      PsiWhiteSpace(' ')
-      JSCallExpression
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('returnInt')
-        JSArgumentList
-          PsiElement(JS:LPAR)('(')
-          PsiElement(JS:RPAR)(')')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSCallExpression
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('identity')
-      JSArgumentList
-        PsiElement(JS:LPAR)('(')
         JSConditionalExpression
-          JSCallExpression
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('returnFalse')
-            JSArgumentList
-              PsiElement(JS:LPAR)('(')
-              PsiElement(JS:RPAR)(')')
-          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
           PsiElement(JS:QUEST)('?')
-          PsiWhiteSpace(' ')
-          JSCallExpression
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('returnString')
-            JSArgumentList
-              PsiElement(JS:LPAR)('(')
-              PsiElement(JS:RPAR)(')')
-          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
           PsiElement(JS:COLON)(':')
-          PsiWhiteSpace(' ')
-          JSCallExpression
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('returnInt')
-            JSArgumentList
-              PsiElement(JS:LPAR)('(')
-              PsiElement(JS:RPAR)(')')
-        PsiElement(JS:RPAR)(')')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:QUEST)('?')
+        JSConditionalExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:QUEST)('?')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:QUEST)('?')
+        JSConditionalExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:QUEST)('?')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:QUEST)('?')
+        JSConditionalExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:QUEST)('?')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:QUEST)('?')
+        JSConditionalExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:QUEST)('?')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('3')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:QUEST)('?')
+        JSConditionalExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:QUEST)('?')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:QUEST)('?')
+        JSConditionalExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:QUEST)('?')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:QUEST)('?')
+        JSConditionalExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:QUEST)('?')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('3')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:QUEST)('?')
+        JSConditionalExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:QUEST)('?')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('3')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:QUEST)('?')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:COLON)(':')
+        JSConditionalExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:QUEST)('?')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:QUEST)('?')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:COLON)(':')
+        JSConditionalExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:QUEST)('?')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:QUEST)('?')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:COLON)(':')
+        JSConditionalExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:QUEST)('?')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:QUEST)('?')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:COLON)(':')
+        JSConditionalExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:QUEST)('?')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:QUEST)('?')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:COLON)(':')
+        JSConditionalExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:QUEST)('?')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('3')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:QUEST)('?')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:COLON)(':')
+        JSConditionalExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:QUEST)('?')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:QUEST)('?')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:COLON)(':')
+        JSConditionalExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:QUEST)('?')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:QUEST)('?')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:COLON)(':')
+        JSConditionalExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:QUEST)('?')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('3')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:QUEST)('?')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:COLON)(':')
+        JSConditionalExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:QUEST)('?')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('3')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:ANDAND)('&&')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:QUEST)('?')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:OROR)('||')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:QUEST)('?')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:QUEST)('?')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:ANDAND)('&&')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:QUEST)('?')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:ANDAND)('&&')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:QUEST)('?')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:OROR)('||')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:QUEST)('?')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:OROR)('||')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:QUEST)('?')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:ANDAND)('&&')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:QUEST)('?')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:ANDAND)('&&')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:QUEST)('?')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:OROR)('||')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:QUEST)('?')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:OROR)('||')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:COLON)(':')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:QUEST)('?')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:COLON)(':')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:ANDAND)('&&')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:QUEST)('?')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+        PsiElement(JS:COLON)(':')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:ANDAND)('&&')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:QUEST)('?')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:COLON)(':')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:OROR)('||')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:QUEST)('?')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+        PsiElement(JS:COLON)(':')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:OROR)('||')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:QUEST)('?')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:COLON)(':')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:ANDAND)('&&')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:QUEST)('?')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+        PsiElement(JS:COLON)(':')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:ANDAND)('&&')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:QUEST)('?')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:COLON)(':')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:OROR)('||')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:QUEST)('?')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+        PsiElement(JS:COLON)(':')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:OROR)('||')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSCallExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('returnTrue')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:QUEST)('?')
+        PsiWhiteSpace(' ')
+        JSCallExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('returnString')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:COLON)(':')
+        PsiWhiteSpace(' ')
+        JSCallExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('returnInt')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            PsiElement(JS:RPAR)(')')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSCallExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('returnFalse')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:QUEST)('?')
+        PsiWhiteSpace(' ')
+        JSCallExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('returnString')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:COLON)(':')
+        PsiWhiteSpace(' ')
+        JSCallExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('returnInt')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            PsiElement(JS:RPAR)(')')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSConditionalExpression
+        JSCallExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('returnTrue')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:QUEST)('?')
+        PsiWhiteSpace(' ')
+        JSCallExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('returnString')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:COLON)(':')
+        PsiWhiteSpace(' ')
+        JSCallExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('returnInt')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            PsiElement(JS:RPAR)(')')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSCallExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('identity')
+        JSArgumentList
+          PsiElement(JS:LPAR)('(')
+          JSConditionalExpression
+            JSCallExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('returnFalse')
+              JSArgumentList
+                PsiElement(JS:LPAR)('(')
+                PsiElement(JS:RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:QUEST)('?')
+            PsiWhiteSpace(' ')
+            JSCallExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('returnString')
+              JSArgumentList
+                PsiElement(JS:LPAR)('(')
+                PsiElement(JS:RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:COLON)(':')
+            PsiWhiteSpace(' ')
+            JSCallExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('returnInt')
+              JSArgumentList
+                PsiElement(JS:LPAR)('(')
+                PsiElement(JS:RPAR)(')')
+          PsiElement(JS:RPAR)(')')

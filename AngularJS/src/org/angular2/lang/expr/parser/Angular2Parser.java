@@ -11,6 +11,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.util.Consumer;
 
 import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
 import static org.angular2.lang.expr.parser.Angular2ElementTypes.*;
@@ -43,49 +44,60 @@ public class Angular2Parser
   SafePropertyRead  - JSReferenceExpression
   */
 
-  private boolean myIsAction;
-  private boolean myIsSimpleBinding;
 
-  public Angular2Parser(PsiBuilder builder) {
+  public static void parseAction(PsiBuilder builder, IElementType root) {
+    parseRoot(builder, root, ACTION_STATEMENT, true, false,
+              Angular2StatementParser::parseChain);
+  }
+
+  public static void parseBinding(PsiBuilder builder, IElementType root) {
+    parseRoot(builder, root, BINDING_STATEMENT, false, false, parser -> {
+      if (!parser.parseQuote()) {
+        parser.parseChain();
+      }
+    });
+  }
+
+  public static void parseTemplateBindings(PsiBuilder builder, IElementType root, String templateKey) {
+    parseRoot(builder, root, TEMPLATE_BINDINGS_STATEMENT, false, false,
+              parser -> parser.parseTemplateBindings(templateKey));
+  }
+
+  public static void parseInterpolation(PsiBuilder builder, IElementType root) {
+    parseRoot(builder, root, INTERPOLATION_STATEMENT, false, false, Angular2StatementParser::parseChain);
+  }
+
+  public static void parseSimpleBinding(PsiBuilder builder, IElementType root) {
+    parseRoot(builder, root, SIMPLE_BINDING_STATEMENT, false, true, parser -> {
+      if (!parser.parseQuote()) {
+        parser.parseChain();
+      }
+    });
+  }
+
+  private static void parseRoot(PsiBuilder builder, IElementType root, IElementType statementType, boolean isAction, boolean isSimpleBinding,
+                                Consumer<Angular2StatementParser> parseAction) {
+    final PsiBuilder.Marker rootMarker = builder.mark();
+    final PsiBuilder.Marker statementMarker = builder.mark();
+    parseAction.consume(new Angular2Parser(builder, isAction, isSimpleBinding).getStatementParser());
+    statementMarker.done(statementType);
+    rootMarker.done(root);
+  }
+
+  private final boolean myIsAction;
+  private final boolean myIsSimpleBinding;
+
+  private Angular2Parser(PsiBuilder builder, boolean isAction, boolean isSimpleBinding) {
     super(JavaScriptSupportLoader.JAVASCRIPT_1_5, builder);
+    myIsAction = isAction;
+    myIsSimpleBinding = isSimpleBinding;
     myExpressionParser = new Angular2ExpressionParser();
     myStatementParser = new Angular2StatementParser(this);
   }
 
-  public void parseAction(IElementType root) {
-    parseRoot(root, true, false, () -> getStatementParser().parseChain());
-  }
-
-  public void parseBinding(IElementType root) {
-    parseRoot(root, false, false, () -> {
-      if (!getStatementParser().parseQuote()) {
-        getStatementParser().parseChain();
-      }
-    });
-  }
-
-  public void parseTemplateBindings(IElementType root, String templateKey) {
-    parseRoot(root, false, false, () -> getStatementParser().parseTemplateBindings(templateKey));
-  }
-
-  public void parseInterpolation(IElementType root) {
-    parseRoot(root, false, false, () -> getStatementParser().parseChain());
-  }
-
-  public void parseSimpleBinding(IElementType root) {
-    parseRoot(root, false, true, () -> {
-      if (!getStatementParser().parseQuote()) {
-        getStatementParser().parseChain();
-      }
-    });
-  }
-
-  private void parseRoot(IElementType root, boolean isAction, boolean isSimpleBinding, Runnable parseAction) {
-    myIsAction = isAction;
-    myIsSimpleBinding = isSimpleBinding;
-    final PsiBuilder.Marker rootMarker = builder.mark();
-    parseAction.run();
-    rootMarker.done(root);
+  @Override
+  public void parseJS(IElementType root) {
+    throw new UnsupportedOperationException();
   }
 
   protected class Angular2StatementParser extends StatementParser<Angular2Parser> {
@@ -99,9 +111,15 @@ public class Angular2Parser
       int count = 0;
       while (!builder.eof()) {
         count++;
+        PsiBuilder.Marker expression = builder.mark();
         if (!getExpressionParser().parseExpressionOptional(false, false)) {
           builder.error(JSBundle.message("javascript.parser.message.expected.expression"));
           builder.advanceLexer();
+          expression.drop();
+        } else if (myIsAction){
+          expression.done(EXPRESSION_STATEMENT);
+        } else {
+          expression.drop();
         }
         IElementType tokenType = builder.getTokenType();
         if (tokenType == SEMICOLON) {
@@ -118,13 +136,21 @@ public class Angular2Parser
       }
       switch (count) {
         case 0:
-          chain.done(EMPTY_STATEMENT);
+          if (myIsAction) {
+            chain.done(EMPTY_STATEMENT);
+          } else {
+            chain.done(EMPTY_EXPRESSION);
+          }
           break;
         case 1:
-          chain.done(EXPRESSION_STATEMENT);
+          chain.drop();
           break;
         default:
-          chain.done(CHAIN_STATEMENT);
+          if (myIsAction) {
+            chain.done(CHAIN_STATEMENT);
+          } else {
+            chain.drop();
+          }
       }
     }
 
@@ -149,7 +175,6 @@ public class Angular2Parser
     }
 
     public void parseTemplateBindings(String templateKey) {
-      final PsiBuilder.Marker bindings = builder.mark();
       boolean firstBinding = true;
       do {
         final PsiBuilder.Marker binding = builder.mark();
@@ -205,7 +230,6 @@ public class Angular2Parser
         }
       }
       while (!builder.eof());
-      bindings.done(TEMPLATE_BINDINGS_STATEMENT);
     }
 
     private String parseTemplateBindingKey() {
@@ -250,6 +274,11 @@ public class Angular2Parser
     public boolean parseAssignmentExpression(boolean allowIn) {
       //In Angular EL Pipe is the top level expression instead of Assignment
       return parsePipe();
+    }
+
+    @Override
+    public void parseScriptExpression(boolean isTypeContext) {
+      throw new UnsupportedOperationException();
     }
 
     public boolean parsePipe() {

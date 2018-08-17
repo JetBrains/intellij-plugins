@@ -1,5 +1,5 @@
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
+  Angular2Binding
     Angular2Pipe
       JSLiteralExpression
         PsiElement(JS:NUMERIC_LITERAL)('1')
@@ -11,7 +11,7 @@ ASTWrapperPsiElement(FILE)
         <empty list>
 ------
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
+  Angular2Binding
     Angular2Pipe
       JSLiteralExpression
         PsiElement(JS:STRING_LITERAL)(''abcd'')
@@ -28,7 +28,7 @@ ASTWrapperPsiElement(FILE)
           PsiElement(JS:IDENTIFIER)('offset')
 ------
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
+  Angular2Binding
     Angular2Pipe
       Angular2Pipe
         JSLiteralExpression
@@ -52,7 +52,7 @@ ASTWrapperPsiElement(FILE)
         <empty list>
 ------
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
+  Angular2Binding
     JSAssignmentExpression
       JSDefinitionExpression
         JSReferenceExpression
@@ -76,7 +76,7 @@ ASTWrapperPsiElement(FILE)
         PsiElement(JS:RPAR)(')')
 ------
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
+  Angular2Binding
     Angular2Pipe
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('name')
@@ -90,7 +90,7 @@ ASTWrapperPsiElement(FILE)
           <empty list>
 ------
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
+  Angular2Binding
     Angular2Pipe
       JSBinaryExpression
         JSReferenceExpression

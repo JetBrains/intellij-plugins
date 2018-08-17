@@ -1,30 +1,33 @@
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSBinaryExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:ANDAND)('&&')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSBinaryExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:OROR)('||')
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('2')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSBinaryExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('0')
-      PsiElement(JS:OROR)('||')
+  Angular2Action
+    JSExpressionStatement
       JSBinaryExpression
         JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:NUMERIC_LITERAL)('0')
         PsiElement(JS:ANDAND)('&&')
         JSLiteralExpression
           PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:OROR)('||')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:OROR)('||')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:ANDAND)('&&')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')

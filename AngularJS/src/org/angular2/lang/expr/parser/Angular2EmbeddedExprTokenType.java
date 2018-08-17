@@ -112,20 +112,19 @@ public class Angular2EmbeddedExprTokenType extends IElementType
     SIMPLE_BINDING(Angular2Parser::parseSimpleBinding),
     TEMPLATE_BINDINGS(null);
 
-    private final BiConsumer<Angular2Parser, IElementType> myParseMethod;
+    private final BiConsumer<PsiBuilder, IElementType> myParseMethod;
 
-    ExpressionType(BiConsumer<Angular2Parser, IElementType> parseMethod) {
+    ExpressionType(BiConsumer<PsiBuilder, IElementType> parseMethod) {
       myParseMethod = parseMethod;
     }
 
     public void parse(@NotNull PsiBuilder builder, @NotNull IElementType root, @Nullable String templateKey) {
-      Angular2Parser parser = new Angular2Parser(builder);
       if (this == TEMPLATE_BINDINGS) {
         assert templateKey != null;
-        parser.parseTemplateBindings(root, templateKey);
+        Angular2Parser.parseTemplateBindings(builder, root, templateKey);
       }
       else {
-        myParseMethod.accept(parser, root);
+        myParseMethod.accept(builder, root);
       }
     }
 

@@ -1,3 +1,0 @@
-recipients.length, plural, =0 {You ({{sender.name}}) gave no gifts} other {You have many gifts}
-recipients.length, plural, offset:1 =0 {You ({{sender.name}}) gave no gifts} other {You have many gifts}
-recipients.length, plural, offset:1 =0 {You ({{sender.name}}) gave no gifts} =1 { {{recipients[0].gender, select, male {You ({{sender.name}}) gave him ({{recipients[0].name}}) a gift.} female {You ({{sender.name}}) gave her ({{recipients[0].name}}) a gift.} other {You ({{sender.name}}) gave them ({{recipients[0].name}}) a gift.!}}} } other {OUTER MESSAGE}

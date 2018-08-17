@@ -5,8 +5,20 @@ import com.intellij.lang.javascript.psi.JSElementVisitor;
 
 public class Angular2ElementVisitor extends JSElementVisitor {
 
+  public void visitAngular2Action(Angular2Action action) {
+    visitJSStatement(action);
+  }
+
+  public void visitAngular2Binding(Angular2Binding binding) {
+    visitJSStatement(binding);
+  }
+
   public void visitAngular2Chain(Angular2Chain expressionChain) {
     visitJSStatement(expressionChain);
+  }
+
+  public void visitAngular2Interpolation(Angular2Interpolation interpolation) {
+    visitJSStatement(interpolation);
   }
 
   public void visitAngular2Pipe(Angular2Pipe pipe) {
@@ -16,4 +28,22 @@ public class Angular2ElementVisitor extends JSElementVisitor {
   public void visitAngular2Quote(Angular2Quote quote) {
     visitJSStatement(quote);
   }
+
+  public void visitAngular2SimpleBinding(Angular2SimpleBinding simpleBinding) {
+    visitJSStatement(simpleBinding);
+  }
+
+  public void visitAngular2TemplateBinding(Angular2TemplateBinding templateBinding) {
+    visitJSStatement(templateBinding);
+  }
+
+  public void visitAngular2TemplateBindingKey(Angular2TemplateBindingKey templateBindingKey) {
+    visitJSExpression(templateBindingKey);
+  }
+
+  public void visitAngular2TemplateBindings(Angular2TemplateBindings templateBindings) {
+    visitJSStatement(templateBindings);
+  }
+
+
 }

@@ -1,73 +1,81 @@
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSBinaryExpression
-      JSLiteralExpression
-        PsiElement(JS:STRING_LITERAL)(''a'')
-      PsiWhiteSpace(' ')
-      PsiElement(JS:PLUS)('+')
-      PsiWhiteSpace(' ')
-      JSLiteralExpression
-        PsiElement(JS:STRING_LITERAL)(''b c'')
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)(''a'')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:PLUS)('+')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)(''b c'')
 ------
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSBinaryExpression
-      JSLiteralExpression
-        PsiElement(JS:STRING_LITERAL)(''a'')
-      PsiWhiteSpace(' ')
-      PsiElement(JS:PLUS)('+')
-      PsiWhiteSpace(' ')
-      JSLiteralExpression
-        PsiElement(JS:STRING_LITERAL_PART)(''b ')
-        PsiElement(NG:ESCAPE_SEQUENCE)('\u0042')
-        PsiElement(JS:STRING_LITERAL_PART)(''')
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)(''a'')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:PLUS)('+')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL_PART)(''b ')
+          PsiElement(NG:ESCAPE_SEQUENCE)('\u0042')
+          PsiElement(JS:STRING_LITERAL_PART)(''')
 ------
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSBinaryExpression
-      JSLiteralExpression
-        PsiElement(JS:STRING_LITERAL)(''a'')
-      PsiWhiteSpace(' ')
-      PsiElement(JS:PLUS)('+')
-      PsiWhiteSpace(' ')
-      JSLiteralExpression
-        PsiElement(JS:STRING_LITERAL_PART)(''b ')
-        PsiElement(NG:INVALID_ESCAPE_SEQUENCE)('\u')
-        PsiElement(JS:STRING_LITERAL_PART)(''')
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)(''a'')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:PLUS)('+')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL_PART)(''b ')
+          PsiElement(NG:INVALID_ESCAPE_SEQUENCE)('\u')
+          PsiElement(JS:STRING_LITERAL_PART)(''')
 ------
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSBinaryExpression
-      JSLiteralExpression
-        PsiElement(JS:STRING_LITERAL)(''a'')
-      PsiWhiteSpace(' ')
-      PsiElement(JS:PLUS)('+')
-      PsiWhiteSpace(' ')
-      JSLiteralExpression
-        PsiElement(JS:STRING_LITERAL_PART)(''b ')
-        PsiElement(NG:ESCAPE_SEQUENCE)('\u0042')
-      PsiErrorElement:Unclosed string literal
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)(''a'')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:PLUS)('+')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL_PART)(''b ')
+          PsiElement(NG:ESCAPE_SEQUENCE)('\u0042')
+        PsiErrorElement:Unclosed string literal
+          <empty list>
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    Angular2Chain
+      JSExpressionStatement
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:STRING_LITERAL)(''a'')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:PLUS)('+')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:STRING_LITERAL)(''b ')
+          PsiErrorElement:Unclosed string literal
+            <empty list>
+      PsiElement(BAD_CHARACTER)('\')
+      PsiErrorElement:unexpected token 'u'
         <empty list>
+      JSExpressionStatement
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('u')
 ------
 ASTWrapperPsiElement(FILE)
-  Angular2Chain
-    JSBinaryExpression
+  Angular2Action
+    JSExpressionStatement
       JSLiteralExpression
-        PsiElement(JS:STRING_LITERAL)(''a'')
-      PsiWhiteSpace(' ')
-      PsiElement(JS:PLUS)('+')
-      PsiWhiteSpace(' ')
-      JSLiteralExpression
-        PsiElement(JS:STRING_LITERAL)(''b ')
-      PsiErrorElement:Unclosed string literal
-        <empty list>
-    PsiElement(BAD_CHARACTER)('\')
-    PsiErrorElement:unexpected token 'u'
-      <empty list>
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('u')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSLiteralExpression
-      PsiElement(JS:STRING_LITERAL)('"I'd like"')
+        PsiElement(JS:STRING_LITERAL)('"I'd like"')

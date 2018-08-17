@@ -1,95 +1,102 @@
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSObjectLiteralExpression
-      PsiElement(JS:LBRACE)('{')
-      PsiElement(JS:RBRACE)('}')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSObjectLiteralExpression
-      PsiElement(JS:LBRACE)('{')
-      JSProperty
-        PsiElement(JS:IDENTIFIER)('a')
-        PsiElement(JS:COLON)(':')
-        JSLiteralExpression
-          PsiElement(JS:STRING_LITERAL)(''b'')
-      PsiElement(JS:RBRACE)('}')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSObjectLiteralExpression
-      PsiElement(JS:LBRACE)('{')
-      JSProperty
-        PsiElement(JS:STRING_LITERAL)(''a'')
-        PsiElement(JS:COLON)(':')
-        JSLiteralExpression
-          PsiElement(JS:STRING_LITERAL)(''b'')
-      PsiElement(JS:RBRACE)('}')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSObjectLiteralExpression
-      PsiElement(JS:LBRACE)('{')
-      JSProperty
-        PsiElement(JS:STRING_LITERAL)('"a"')
-        PsiElement(JS:COLON)(':')
-        JSLiteralExpression
-          PsiElement(JS:STRING_LITERAL)(''b'')
-      PsiElement(JS:RBRACE)('}')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSIndexedPropertyAccessExpression
-      JSObjectLiteralExpression
-        PsiElement(JS:LBRACE)('{')
-        JSProperty
-          PsiElement(JS:IDENTIFIER)('false')
-          PsiElement(JS:COLON)(':')
-          JSLiteralExpression
-            PsiElement(JS:STRING_LITERAL)(''WC'')
-        PsiElement(JS:COMMA)(',')
-        PsiWhiteSpace(' ')
-        JSProperty
-          PsiElement(JS:IDENTIFIER)('true')
-          PsiElement(JS:COLON)(':')
-          JSLiteralExpression
-            PsiElement(JS:STRING_LITERAL)(''CC'')
-        PsiElement(JS:RBRACE)('}')
-      PsiElement(JS:LBRACKET)('[')
-      JSLiteralExpression
-        PsiElement(JS:FALSE_KEYWORD)('false')
-      PsiElement(JS:RBRACKET)(']')
-------
-ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSArrayLiteralExpression
-      PsiElement(JS:LBRACKET)('[')
+  Angular2Action
+    JSExpressionStatement
       JSObjectLiteralExpression
         PsiElement(JS:LBRACE)('{')
         PsiElement(JS:RBRACE)('}')
-      PsiElement(JS:RBRACKET)(']')
 ------
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSArrayLiteralExpression
-      PsiElement(JS:LBRACKET)('[')
+  Angular2Action
+    JSExpressionStatement
       JSObjectLiteralExpression
         PsiElement(JS:LBRACE)('{')
         JSProperty
           PsiElement(JS:IDENTIFIER)('a')
           PsiElement(JS:COLON)(':')
-          JSArrayLiteralExpression
-            PsiElement(JS:LBRACKET)('[')
-            PsiElement(JS:RBRACKET)(']')
+          JSLiteralExpression
+            PsiElement(JS:STRING_LITERAL)(''b'')
         PsiElement(JS:RBRACE)('}')
-      PsiElement(JS:COMMA)(',')
-      PsiWhiteSpace(' ')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
       JSObjectLiteralExpression
         PsiElement(JS:LBRACE)('{')
         JSProperty
-          PsiElement(JS:IDENTIFIER)('b')
+          PsiElement(JS:STRING_LITERAL)(''a'')
           PsiElement(JS:COLON)(':')
           JSLiteralExpression
-            PsiElement(JS:NUMERIC_LITERAL)('1')
+            PsiElement(JS:STRING_LITERAL)(''b'')
         PsiElement(JS:RBRACE)('}')
-      PsiElement(JS:RBRACKET)(']')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSObjectLiteralExpression
+        PsiElement(JS:LBRACE)('{')
+        JSProperty
+          PsiElement(JS:STRING_LITERAL)('"a"')
+          PsiElement(JS:COLON)(':')
+          JSLiteralExpression
+            PsiElement(JS:STRING_LITERAL)(''b'')
+        PsiElement(JS:RBRACE)('}')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSIndexedPropertyAccessExpression
+        JSObjectLiteralExpression
+          PsiElement(JS:LBRACE)('{')
+          JSProperty
+            PsiElement(JS:IDENTIFIER)('false')
+            PsiElement(JS:COLON)(':')
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''WC'')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          JSProperty
+            PsiElement(JS:IDENTIFIER)('true')
+            PsiElement(JS:COLON)(':')
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''CC'')
+          PsiElement(JS:RBRACE)('}')
+        PsiElement(JS:LBRACKET)('[')
+        JSLiteralExpression
+          PsiElement(JS:FALSE_KEYWORD)('false')
+        PsiElement(JS:RBRACKET)(']')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSArrayLiteralExpression
+        PsiElement(JS:LBRACKET)('[')
+        JSObjectLiteralExpression
+          PsiElement(JS:LBRACE)('{')
+          PsiElement(JS:RBRACE)('}')
+        PsiElement(JS:RBRACKET)(']')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSArrayLiteralExpression
+        PsiElement(JS:LBRACKET)('[')
+        JSObjectLiteralExpression
+          PsiElement(JS:LBRACE)('{')
+          JSProperty
+            PsiElement(JS:IDENTIFIER)('a')
+            PsiElement(JS:COLON)(':')
+            JSArrayLiteralExpression
+              PsiElement(JS:LBRACKET)('[')
+              PsiElement(JS:RBRACKET)(']')
+          PsiElement(JS:RBRACE)('}')
+        PsiElement(JS:COMMA)(',')
+        PsiWhiteSpace(' ')
+        JSObjectLiteralExpression
+          PsiElement(JS:LBRACE)('{')
+          JSProperty
+            PsiElement(JS:IDENTIFIER)('b')
+            PsiElement(JS:COLON)(':')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:RBRACE)('}')
+        PsiElement(JS:RBRACKET)(']')

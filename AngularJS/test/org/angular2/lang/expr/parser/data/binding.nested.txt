@@ -1,5 +1,5 @@
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
+  Angular2Binding
     Angular2Pipe
       JSBinaryExpression
         JSReferenceExpression

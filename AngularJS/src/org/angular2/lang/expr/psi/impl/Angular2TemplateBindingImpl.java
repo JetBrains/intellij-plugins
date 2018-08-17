@@ -4,9 +4,12 @@ package org.angular2.lang.expr.psi.impl;
 import com.intellij.lang.javascript.JSExtendedLanguagesTokenSetProvider;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.impl.JSStatementImpl;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import org.angular2.lang.expr.parser.Angular2ElementTypes;
+import org.angular2.lang.expr.psi.Angular2ElementVisitor;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
@@ -24,9 +27,18 @@ public class Angular2TemplateBindingImpl extends JSStatementImpl implements Angu
   }
 
   @Override
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof Angular2ElementVisitor) {
+      ((Angular2ElementVisitor)visitor).visitAngular2TemplateBinding(this);
+    }
+    else {
+      super.accept(visitor);
+    }
+  }
+
+  @Override
   public String getKey() {
-    //ASTNode keyNode = findChildByType(Angular2HtmlElementTypes.TEMPLATE_BINDING_KEY);
-    return myKey;//keyNode != null ? keyNode.getPsi(Angular2TemplateBindingKey.class).getName() : null;
+    return myKey;
   }
 
   @Override

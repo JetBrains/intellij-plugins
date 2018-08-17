@@ -21,6 +21,10 @@ public interface Angular2ElementTypes extends JSElementTypes {
   IElementType PIPE_EXPRESSION = new Angular2ExpressionElementType("NG:PIPE_EXPRESSION", Angular2PipeImpl::new);
   IElementType CHAIN_STATEMENT = new Angular2ElementType("NG:CHAIN_STATEMENT", Angular2ChainImpl::new);
   IElementType QUOTE_STATEMENT = new Angular2ElementType("NG:QUOTE_STATEMENT", Angular2QuoteImpl::new);
+  IElementType ACTION_STATEMENT = new Angular2ElementType("NG:ACTION", Angular2ActionImpl::new);
+  IElementType BINDING_STATEMENT = new Angular2ElementType("NG:BINDING", Angular2BindingImpl::new);
+  IElementType INTERPOLATION_STATEMENT = new Angular2ElementType("NG:INTERPOLATION", Angular2InterpolationImpl::new);
+  IElementType SIMPLE_BINDING_STATEMENT = new Angular2ElementType("NG:SIMPLE_BINDING", Angular2SimpleBindingImpl::new);
   IElementType TEMPLATE_BINDINGS_STATEMENT = new Angular2ElementType("NG:TEMPLATE_BINDINGS_STATEMENT", Angular2TemplateBindingsImpl::new);
   IElementType TEMPLATE_BINDING_KEY = new Angular2ElementType("NG:TEMPLATE_BINDING_KEY", Angular2TemplateBindingKeyImpl::new);
   IElementType TEMPLATE_BINDING_STATEMENT = new Angular2ElementType("NG:TEMPLATE_BINDING_STATEMENT", (type) -> {

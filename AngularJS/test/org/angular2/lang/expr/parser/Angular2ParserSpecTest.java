@@ -715,7 +715,8 @@ public class Angular2ParserSpecTest {
         result.append(leaf.getText());
       }
       else if (element instanceof ASTWrapperPsiElement
-               || element instanceof PsiErrorElement) {
+               || element instanceof PsiErrorElement
+               || element instanceof JSEmptyExpression) {
         super.visitElement(element);
       }
       else {
@@ -760,7 +761,7 @@ public class Angular2ParserSpecTest {
 
     @Override
     public void visitAngular2Chain(Angular2Chain expressionChain) {
-      for (JSExpression el : expressionChain.getExpressions()) {
+      for (JSExpressionStatement el : expressionChain.getStatements()) {
         printElement(el);
         result.append("; ");
       }
@@ -784,6 +785,26 @@ public class Angular2ParserSpecTest {
         printElement(expr);
       }
       result.append(")");
+    }
+
+    @Override
+    public void visitAngular2Action(Angular2Action action) {
+      super.visitElement(action);
+    }
+
+    @Override
+    public void visitAngular2Binding(Angular2Binding binding) {
+      super.visitElement(binding);
+    }
+
+    @Override
+    public void visitAngular2Interpolation(Angular2Interpolation interpolation) {
+      super.visitElement(interpolation);
+    }
+
+    @Override
+    public void visitAngular2SimpleBinding(Angular2SimpleBinding simpleBinding) {
+      super.visitElement(simpleBinding);
     }
 
     @Override

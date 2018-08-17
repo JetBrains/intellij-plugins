@@ -5,8 +5,9 @@ import com.intellij.lang.javascript.psi.JSExpressionStatement;
 import com.intellij.lang.javascript.psi.JSStatement;
 import org.jetbrains.annotations.NotNull;
 
-public interface Angular2Chain extends JSStatement {
+public interface Angular2Action extends JSStatement {
 
   @NotNull
   JSExpressionStatement[] getStatements();
+
 }

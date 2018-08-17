@@ -1,28 +1,26 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.expr.psi.impl;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.psi.JSExpressionStatement;
 import com.intellij.lang.javascript.psi.impl.JSStatementImpl;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
+import org.angular2.lang.expr.psi.Angular2Action;
 import org.angular2.lang.expr.psi.Angular2Chain;
 import org.angular2.lang.expr.psi.Angular2ElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
-import static com.intellij.lang.javascript.JSElementTypes.EXPRESSION_STATEMENT;
+public class Angular2ActionImpl extends JSStatementImpl implements Angular2Action {
 
-public class Angular2ChainImpl extends JSStatementImpl implements Angular2Chain {
-
-  public Angular2ChainImpl(IElementType elementType) {
+  public Angular2ActionImpl(IElementType elementType) {
     super(elementType);
   }
 
   @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof Angular2ElementVisitor) {
-      ((Angular2ElementVisitor)visitor).visitAngular2Chain(this);
+      ((Angular2ElementVisitor)visitor).visitAngular2Action(this);
     }
     else {
       super.accept(visitor);
@@ -32,14 +30,14 @@ public class Angular2ChainImpl extends JSStatementImpl implements Angular2Chain 
   @Override
   @NotNull
   public JSExpressionStatement[] getStatements() {
-    final ASTNode[] nodes = getChildren(TokenSet.create(EXPRESSION_STATEMENT));
-    if (nodes.length == 0) {
-      return new JSExpressionStatement[0];
+    for (PsiElement child: getChildren()) {
+      if (child instanceof Angular2Chain) {
+        return ((Angular2Chain)child).getStatements();
+      }
+      if (child instanceof JSExpressionStatement) {
+        return new JSExpressionStatement[] {(JSExpressionStatement)child};
+      }
     }
-    final JSExpressionStatement[] exprs = new JSExpressionStatement[nodes.length];
-    for (int i = 0; i < exprs.length; i++) {
-      exprs[i] = nodes[i].getPsi(JSExpressionStatement.class);
-    }
-    return exprs;
+    return new JSExpressionStatement[0];
   }
 }
