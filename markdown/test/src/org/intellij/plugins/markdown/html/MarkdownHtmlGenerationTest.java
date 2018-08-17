@@ -36,9 +36,7 @@ public class MarkdownHtmlGenerationTest extends LightPlatformCodeInsightFixtureT
   }
 
   public void testComment() {
-    PsiFile mdFile = myFixture.configureByFile("comment.md");
-
-    assertTrue(MarkdownUtil.generateMarkdownHtml(mdFile.getVirtualFile(), mdFile.getText()).contains("<body md-src-pos=\"0..18\"></body>"));
+    doTestByHtmlFile();
   }
 
   void doTestByHtmlFile() {
