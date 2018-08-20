@@ -353,19 +353,25 @@ public class Angular2HtmlParsing extends HtmlParsing {
 
     advance();
 
-    //switch value
-    remapTokensUntilComma(BINDING_EXPR);
-
-    //type
-    remapTokensUntilComma(XML_DATA_CHARACTERS);
+    if (!remapTokensUntilComma(BINDING_EXPR)/*switch value*/
+        || !remapTokensUntilComma(XML_DATA_CHARACTERS)/*type*/) {
+      markCriticalExpansionFormProblem(expansionForm);
+      return;
+    }
 
     skipRealWhiteSpaces();
+    boolean first = true;
     while (token() == XML_DATA_CHARACTERS || token() == LBRACE) {
-      parseExpansionFormCaseContent();
+      if (!parseExpansionFormCaseContent() && first) {
+        markCriticalExpansionFormProblem(expansionForm);
+        return;
+      }
+      first = false;
       skipRealWhiteSpaces();
     }
     if (token() != RBRACE) {
-      expansionForm.error("Invalid ICU message. Missing '}'.");
+      expansionForm
+        .error("Unterminated expansion form.");
       expansionForm = expansionForm.precede();
     }
     else {
@@ -374,7 +380,17 @@ public class Angular2HtmlParsing extends HtmlParsing {
     expansionForm.done(EXPANSION_FORM);
   }
 
-  private void remapTokensUntilComma(IElementType textType) {
+  private void markCriticalExpansionFormProblem(PsiBuilder.Marker expansionForm) {
+    // critical problem, most likely not an expansion form at all
+    expansionForm.rollbackTo();
+    expansionForm = mark();
+    assert token() == LBRACE;
+    advance(); //consume LBRACE
+    expansionForm
+      .error("Unterminated expansion form. Do you have an unescaped \"{\" in your template? Use \"{{ '{' }}\") to escape it.");
+  }
+
+  private boolean remapTokensUntilComma(IElementType textType) {
     PsiBuilder.Marker start = mark();
     while (!eof() && token() != XML_COMMA) {
       advance();
@@ -382,13 +398,13 @@ public class Angular2HtmlParsing extends HtmlParsing {
     start.collapse(textType);
     if (token() != XML_COMMA) {
       start.precede().error("Invalid ICU message. Expected ','.");
+      return false;
     }
-    else {
-      advance();
-    }
+    advance();
+    return true;
   }
 
-  private void parseExpansionFormCaseContent() {
+  private boolean parseExpansionFormCaseContent() {
     PsiBuilder.Marker expansionFormCase = mark();
     if (token() == XML_DATA_CHARACTERS) {
       advance(); // value
@@ -396,7 +412,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
       if (token() != LBRACE) {
         expansionFormCase.error("Invalid ICU message. Missing '{'.");
         expansionFormCase.precede().done(EXPANSION_FORM_CASE);
-        return;
+        return false;
       }
     }
     else if (token() == LBRACE) {
@@ -421,13 +437,14 @@ public class Angular2HtmlParsing extends HtmlParsing {
       else if (tt == null) {
         content.error("Invalid ICU message. Missing '}'.");
         expansionFormCase.done(EXPANSION_FORM_CASE);
-        return;
+        return false;
       }
       advance();
     }
     content.collapse(Angular2ExpansionFormCaseContentTokenType.INSTANCE);
     advance();
     expansionFormCase.done(EXPANSION_FORM_CASE);
+    return true;
   }
 
   private void skipRealWhiteSpaces() {

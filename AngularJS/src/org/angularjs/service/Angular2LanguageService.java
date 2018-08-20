@@ -3,12 +3,10 @@ package org.angularjs.service;
 
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.ide.highlighter.XmlLikeFileType;
+import com.intellij.lang.javascript.integration.JSAnnotationError;
 import com.intellij.lang.javascript.service.JSLanguageServiceCacheableCommand;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
-import com.intellij.lang.javascript.service.protocol.JSLanguageServiceCommand;
-import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol;
-import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand;
-import com.intellij.lang.javascript.service.protocol.LocalFilePath;
+import com.intellij.lang.javascript.service.protocol.*;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerService;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings;
@@ -48,6 +46,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorCheckerProvider.checkServiceIsAvailable;
@@ -235,4 +234,15 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   public TypeScriptServerServiceSettings getServiceSettings() {
     return AngularSettings.get(myProject);
   }
+
+  @NotNull
+  @Override
+  protected List<JSAnnotationError> parseGetErrorResult(@NotNull JSLanguageServiceAnswer answer, String path) {
+    return super.parseGetErrorResult(answer, path)
+      .stream()
+      .filter(error -> !error.getDescription()
+        .startsWith("ng: Parser Error:"))
+      .collect(Collectors.toList());
+  }
+
 }

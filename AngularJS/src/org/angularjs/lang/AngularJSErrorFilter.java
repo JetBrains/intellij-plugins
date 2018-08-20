@@ -1,11 +1,9 @@
 package org.angularjs.lang;
 
-import com.intellij.codeInsight.daemon.XmlErrorMessages;
 import com.intellij.codeInsight.highlighting.HighlightErrorFilter;
 import com.intellij.lang.Language;
 import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
@@ -14,7 +12,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.XmlElementDescriptor;
-import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angularjs.codeInsight.tags.AngularJSTagDescriptor;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
@@ -41,9 +38,6 @@ public class AngularJSErrorFilter extends HighlightErrorFilter {
       final PsiElement parent = error.getParent();
       final XmlElementDescriptor descriptor = parent instanceof XmlTag ? ((XmlTag)parent).getDescriptor() : null;
       return !(descriptor instanceof AngularJSTagDescriptor);
-    }
-    if (XMLLanguage.INSTANCE.is(language) && error.getErrorDescription().equals(XmlErrorMessages.message("xml.parsing.unexpected.tokens"))) {
-      return !error.getParent().getLanguage().is(Angular2HtmlLanguage.INSTANCE);
     }
     return true;
   }
