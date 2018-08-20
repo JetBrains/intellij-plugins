@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
@@ -20,7 +21,7 @@ public class FlexUnitRunConfigurationType implements ConfigurationType {
     myFactory = new ConfigurationFactory(this) {
       @Override
       @NotNull
-      public RunConfiguration createTemplateConfiguration(Project project) {
+      public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new FlexUnitRunConfiguration(project, this, "");
       }
 

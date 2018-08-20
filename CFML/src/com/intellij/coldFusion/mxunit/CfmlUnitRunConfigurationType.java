@@ -21,7 +21,7 @@ public class CfmlUnitRunConfigurationType implements ConfigurationType {
     myFactory = new ConfigurationFactory(this) {
       @Override
       @NotNull
-      public RunConfiguration createTemplateConfiguration(Project project) {
+      public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new CfmlUnitRunConfiguration(project, this, "");
       }
 
