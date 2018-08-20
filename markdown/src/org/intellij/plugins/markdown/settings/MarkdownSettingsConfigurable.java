@@ -18,6 +18,7 @@ import org.jetbrains.annotations.TestOnly;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.Optional;
 
 public class MarkdownSettingsConfigurable implements SearchableConfigurable {
   static final String PLANT_UML_DIRECTORY = "plantUML";
@@ -121,7 +122,8 @@ public class MarkdownSettingsConfigurable implements SearchableConfigurable {
    * Returns true if PlantUML jar has been already downloaded
    */
   public static boolean isPlantUMLAvailable() {
-    return getDownloadedJarPath().exists();
+    File jarPath = getDownloadedJarPath();
+    return jarPath != null && jarPath.exists();
   }
 
   /**
@@ -135,11 +137,14 @@ public class MarkdownSettingsConfigurable implements SearchableConfigurable {
   /**
    * Returns {@link File} presentation of downloaded PlantUML jar
    */
-  @NotNull
+  @Nullable
   public static File getDownloadedJarPath() {
-    //noinspection TestOnlyProblems
-    return ApplicationManager.getApplication().isUnitTestMode()
-           ? VfsUtilCore.virtualToIoFile(PLANTUML_JAR_TEST.get())
-           : new File(getDirectoryToDownload(), PLANTUML_JAR);
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      //noinspection TestOnlyProblems
+      return Optional.ofNullable(PLANTUML_JAR_TEST.get()).map(VfsUtilCore::virtualToIoFile).orElse(null);
+    }
+    else {
+      return new File(getDirectoryToDownload(), PLANTUML_JAR);
+    }
   }
 }
