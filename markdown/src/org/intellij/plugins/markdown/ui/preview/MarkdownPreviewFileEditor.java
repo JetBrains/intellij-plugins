@@ -272,7 +272,8 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       settings.setMarkdownPreviewSettings(new MarkdownPreviewSettings(settings.getMarkdownPreviewSettings().getSplitEditorLayout(),
                                                                       MarkdownPreviewSettings.DEFAULT.getHtmlPanelProviderInfo(),
                                                                       settings.getMarkdownPreviewSettings().isUseGrayscaleRendering(),
-                                                                      settings.getMarkdownPreviewSettings().isAutoScrollPreview()));
+                                                                      settings.getMarkdownPreviewSettings().isAutoScrollPreview(),
+                                                                      settings.getMarkdownPreviewSettings().isVerticalSplit()));
 
       Messages.showMessageDialog(
         myHtmlPanelWrapper,
