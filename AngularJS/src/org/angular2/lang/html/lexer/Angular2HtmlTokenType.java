@@ -2,12 +2,12 @@
 package org.angular2.lang.html.lexer;
 
 import com.intellij.psi.tree.IElementType;
-import org.angular2.lang.expr.Angular2Language;
+import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class Angular2HtmlTokenType extends IElementType {
   public Angular2HtmlTokenType(@NotNull @NonNls String debugName) {
-    super(debugName, Angular2Language.INSTANCE);
+    super(debugName, Angular2HtmlLanguage.INSTANCE);
   }
 }

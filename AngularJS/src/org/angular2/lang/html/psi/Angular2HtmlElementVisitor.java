@@ -2,6 +2,7 @@
 package org.angular2.lang.html.psi;
 
 import com.intellij.psi.XmlElementVisitor;
+import org.angular2.lang.html.psi.impl.Angular2HtmlBananaBoxBindingImpl;
 import org.angular2.lang.html.psi.impl.Angular2HtmlExpansionFormCaseImpl;
 import org.angular2.lang.html.psi.impl.Angular2HtmlTemplateBindingsImpl;
 
@@ -41,5 +42,9 @@ public class Angular2HtmlElementVisitor extends XmlElementVisitor {
 
   public void visitTemplateBindings(Angular2HtmlTemplateBindingsImpl bindings) {
     visitXmlAttribute(bindings);
+  }
+
+  public void visitBananaBoxBinding(Angular2HtmlBananaBoxBindingImpl bananaBoxBinding) {
+    visitXmlAttribute(bananaBoxBinding);
   }
 }

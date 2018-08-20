@@ -165,8 +165,12 @@ public class Angular2HtmlParsing extends HtmlParsing {
     return StringUtil.trimStart(name, "data-");
   }
 
-  @NotNull
   private Pair<IElementType, String> parseAttributeName(@NotNull String name) {
+    return parseAttributeName(name, "ng-template".contentEquals(XmlUtil.getLocalName(peekTagName())));
+  }
+
+  @NotNull
+  public static Pair<IElementType, String> parseAttributeName(@NotNull String name, boolean isInTemplateTag) {
     if (name.startsWith("bindon-")) {
       return parseBananaBoxBinding(name.substring(7));
     }
@@ -189,7 +193,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
       return parseTemplateBindings(name.substring(1));
     }
     else if (name.startsWith("let-")) {
-      return parseVariable(name.substring(4));
+      return parseVariable(name.substring(4), isInTemplateTag);
     }
     else if (name.startsWith("#")) {
       return parseReference(name.substring(1));
@@ -205,7 +209,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
 
   @NotNull
   private static Pair<IElementType, String> parseBananaBoxBinding(@NotNull String name) {
-    return parsePropertyBinding(name); // TODO + event binding
+    return pair(BANANA_BOX_BINDING, null);
   }
 
   @NotNull
@@ -256,9 +260,8 @@ public class Angular2HtmlParsing extends HtmlParsing {
   }
 
   @NotNull
-  private Pair<IElementType, String> parseVariable(@NotNull String varName) {
-    String tagName = peekTagName();
-    if (!"ng-template".contentEquals(XmlUtil.getLocalName(tagName))) {
+  private static Pair<IElementType, String> parseVariable(@NotNull String varName, boolean isInTemplateTag) {
+    if (!isInTemplateTag) {
       return pair(XML_ATTRIBUTE, "\"let-\" is only supported on ng-template elements.");
     }
     else if (varName.contains("-")) {

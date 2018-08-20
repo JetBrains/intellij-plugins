@@ -2,16 +2,15 @@
 package org.angular2.lang.html.psi;
 
 import com.intellij.psi.xml.XmlAttribute;
-import org.angular2.lang.expr.psi.Angular2TemplateBindings;
+import org.angular2.lang.expr.psi.Angular2Binding;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface Angular2HtmlTemplateBindings extends XmlAttribute {
+public interface Angular2HtmlBananaBoxBinding extends XmlAttribute {
 
   @NotNull
-  String getTemplateName();
+  String getPropertyName();
 
   @Nullable
-  Angular2TemplateBindings getBindings();
-
+  Angular2Binding getBinding();
 }

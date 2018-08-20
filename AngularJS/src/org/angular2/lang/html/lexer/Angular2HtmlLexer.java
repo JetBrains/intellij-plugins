@@ -35,19 +35,19 @@ public class Angular2HtmlLexer extends HtmlLexer {
 
   public Angular2HtmlLexer(boolean tokenizeExpansionForms,
                            @Nullable Pair<String, String> interpolationConfig) {
-    super(new MyMergingLexer(
+    super(new Angular2HtmlMergingLexer(
       new FlexAdapter(new _Angular2HtmlLexer()), tokenizeExpansionForms, interpolationConfig), true);
   }
 
-  private static class MyMergingLexer extends MergingLexerAdapterBase {
+  public static class Angular2HtmlMergingLexer extends MergingLexerAdapterBase {
 
     private final boolean myTokenizeExpansionForms;
     private final Pair<String, String> myInterpolationConfig;
 
     private int myInterpolationScanningState;
 
-    public MyMergingLexer(@NotNull Lexer original, boolean tokenizeExpansionForms,
-                          @Nullable Pair<String, String> interpolationConfig) {
+    public Angular2HtmlMergingLexer(@NotNull Lexer original, boolean tokenizeExpansionForms,
+                                    @Nullable Pair<String, String> interpolationConfig) {
       super(original);
       myTokenizeExpansionForms = tokenizeExpansionForms;
       myInterpolationConfig = interpolationConfig == null ? Pair.create("{{", "}}") : interpolationConfig;

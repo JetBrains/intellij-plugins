@@ -133,7 +133,7 @@
     <!-- Angular 2 HTML template contributions -->
     <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="first,after JSCommentInjector" id="angular2"/>
     <lang.parserDefinition language="Angular2Html" implementationClass="org.angular2.lang.html.parser.Angular2HtmlParserDefinition"/>
-    <lang.syntaxHighlighterFactory language="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlHighlighterFactory"/>
+    <lang.syntaxHighlighterFactory language="Angular2Html" implementationClass="org.angular2.lang.html.highlighting.Angular2HtmlHighlighterFactory"/>
     <lang.substitutor language="HTML" implementationClass="org.angular2.lang.html.Angular2HtmlLanguageSubstitutor"/>
     <completion.contributor id="Angular2ServiceCompletionContributorNgHtml" language="Angular2Html"
                             order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"

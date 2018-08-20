@@ -1,14 +1,17 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.psi.impl;
 
-import com.intellij.lang.javascript.psi.JSStatement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.XmlElementVisitor;
 import com.intellij.psi.impl.source.xml.XmlAttributeImpl;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.containers.ContainerUtil;
+import org.angular2.lang.expr.psi.Angular2Action;
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes.Angular2ElementType;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Angular2HtmlEventImpl extends XmlAttributeImpl implements Angular2HtmlEvent {
 
@@ -29,13 +32,22 @@ public class Angular2HtmlEventImpl extends XmlAttributeImpl implements Angular2H
     }
   }
 
+  @NotNull
   @Override
   public String getEventName() {
-    return null;
+    String name = getName();
+    if (name.startsWith("(") && name.endsWith(")")) {
+      return name.substring(1, name.length() - 1);
+    }
+    else if (name.startsWith("on-")) {
+      return name.substring(3);
+    }
+    throw new IllegalStateException("Bad attribute name: " + name);
   }
 
+  @Nullable
   @Override
-  public JSStatement getStatement() {
-    return null;
+  public Angular2Action getAction() {
+    return ContainerUtil.getFirstItem(PsiTreeUtil.findChildrenOfType(this, Angular2Action.class));
   }
 }

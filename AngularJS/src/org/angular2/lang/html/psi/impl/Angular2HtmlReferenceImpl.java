@@ -28,8 +28,16 @@ public class Angular2HtmlReferenceImpl extends XmlAttributeImpl implements Angul
     }
   }
 
+  @NotNull
   @Override
   public String getReferenceName() {
-    return null;
+    String name = getName();
+    if (name.startsWith("#")) {
+      return name.substring(1);
+    }
+    if (name.startsWith("ref-")) {
+      return name.substring(4);
+    }
+    throw new IllegalStateException("Bad attribute name: " + name);
   }
 }

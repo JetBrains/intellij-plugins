@@ -2,8 +2,10 @@
 package org.angular2.lang.html.psi;
 
 import com.intellij.psi.xml.XmlAttribute;
+import org.jetbrains.annotations.NotNull;
 
 public interface Angular2HtmlReference extends XmlAttribute {
 
+  @NotNull
   String getReferenceName();
 }
