@@ -392,7 +392,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       FormBuilder builder = new FormBuilder();
 
       myRevealNotFoundOrIncompatible = new HyperlinkLabel();
-      myRevealNotFoundOrIncompatible.setIcon(AllIcons.RunConfigurations.ConfigurationWarning);
+      myRevealNotFoundOrIncompatible.setIcon(AllIcons.General.BalloonError);
       myRevealNotFoundOrIncompatible.setHyperlinkTarget("https://revealapp.com");
 
       myNotAvailable = new JBLabel("<html>" +
