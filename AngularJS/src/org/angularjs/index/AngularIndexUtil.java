@@ -159,20 +159,13 @@ public class AngularIndexUtil {
     return getAngularJSVersion(project) > 0;
   }
 
-  public static boolean hasAngularJS2(final Project project) {
-    if (ApplicationManager.getApplication().isUnitTestMode() && "disabled".equals(System.getProperty("angular.js"))) return false;
-    return getAngularJSVersion(project) >= 20;
-  }
-
   private static int getAngularJSVersion(final Project project) {
     if (DumbService.isDumb(project) || NoAccessDuringPsiEvents.isInsideEventProcessing()) return -1;
 
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
       int version = -1;
       PsiElement resolve;
-      if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngFor")) != null) {
-        version = 20;
-      } else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-messages")) != null) {
+      if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-messages")) != null) {
         version = 13;
       } else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-model")) != null) {
         version = 12;

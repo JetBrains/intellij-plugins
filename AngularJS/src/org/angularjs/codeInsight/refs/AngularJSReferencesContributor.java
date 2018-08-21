@@ -17,6 +17,7 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
+import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.NotNull;
@@ -104,7 +105,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
               JSReferenceExpression ref = ObjectUtils.tryCast(call.getMethodExpression(), JSReferenceExpression.class);
               return ref != null
                      && "ViewChild".equals(ref.getReferenceName())
-                     && AngularIndexUtil.hasAngularJS2(literal.getProject());
+                     && Angular2LangUtil.isAngular2Context(literal);
             }
           }
         }

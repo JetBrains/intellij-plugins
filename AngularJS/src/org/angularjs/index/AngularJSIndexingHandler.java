@@ -659,7 +659,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Nullable
-  static String unquote(PsiElement value) {
+  public static String unquote(PsiElement value) {
     return ((JSLiteralExpression)value).getStringValue();
   }
 

@@ -26,10 +26,10 @@ import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
+import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.codeInsight.attributes.AngularAttributeDescriptor;
 import org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider;
-import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,7 +72,7 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
     final String attributes = string.split(";", -1)[3];
     final String[] split = attributes.split(",");
     final XmlAttributeDescriptor[] result;
-    if (context != null && AngularIndexUtil.hasAngularJS2(context.getProject())) {
+    if (context != null && Angular2LangUtil.isAngular2Context(context)) {
       result = AngularAttributeDescriptor.getFieldBasedDescriptors(declaration);
     } else if (split.length == 1 && split[0].isEmpty()) {
       result = XmlAttributeDescriptor.EMPTY;

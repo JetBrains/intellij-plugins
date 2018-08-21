@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.attributes;
 
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
@@ -22,13 +10,18 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl;
 import com.intellij.psi.stubs.StubIndexKey;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlElementType;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ThreeState;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
 import com.intellij.xml.XmlElementDescriptor;
+import org.angular2.lang.Angular2LangUtil;
+import org.angular2.lang.html.parser.Angular2HtmlElementTypes;
+import org.angular2.lang.html.parser.Angular2HtmlParsing;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularDirectivesIndex;
@@ -51,8 +44,8 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   public XmlAttributeDescriptor[] getAttributeDescriptors(XmlTag xmlTag) {
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
-      final boolean hasAngularJS2 = AngularIndexUtil.hasAngularJS2(project);
-      if (!AngularIndexUtil.hasAngularJS(xmlTag.getProject())) return XmlAttributeDescriptor.EMPTY;
+      final boolean hasAngularJS2 = Angular2LangUtil.isAngular2Context(project);
+      if (!AngularIndexUtil.hasAngularJS(xmlTag.getProject()) && !hasAngularJS2) return XmlAttributeDescriptor.EMPTY;
 
       final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<>();
       final XmlElementDescriptor descriptor = xmlTag.getDescriptor();
@@ -71,7 +64,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
         }
         for (XmlAttribute attribute : xmlTag.getAttributes()) {
           final String name = attribute.getName();
-          if (isAngular2Attribute(name, project) || !directives.contains(name)) continue;
+          if (isAngular2Attribute(name) || !directives.contains(name)) continue;
           final PsiElement declaration = applicableDirective(project, name, xmlTag, AngularDirectivesIndex.KEY);
           if (isApplicable(declaration)) {
             for (XmlAttributeDescriptor binding : AngularAttributeDescriptor.getFieldBasedDescriptors((JSImplicitElement)declaration)) {
@@ -192,11 +185,11 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       if (isApplicable(declaration)) {
         return createDescriptor(project, attributeName, declaration);
       }
-      if (!AngularIndexUtil.hasAngularJS2(project)) return null;
+      if (!Angular2LangUtil.isAngular2Context(project)) return null;
 
       for (XmlAttribute attribute : xmlTag.getAttributes()) {
         String name = attribute.getName();
-        if (isAngular2Attribute(name, project) || name.equals(attrName)) continue;
+        if (isAngular2Attribute(name) || name.equals(attrName)) continue;
         declaration = applicableDirective(project, name, xmlTag, AngularDirectivesIndex.KEY);
         if (isApplicable(declaration)) {
           for (XmlAttributeDescriptor binding : AngularAttributeDescriptor.getFieldBasedDescriptors((JSImplicitElement)declaration)) {
@@ -220,11 +213,12 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
         }
       }
 
-
-      if (AngularAttributesRegistry.isBindingAttribute(attrName, project)) {
+      IElementType attrType = Angular2HtmlParsing.parseAttributeName(attrName, false).first;
+      if (attrType == Angular2HtmlElementTypes.PROPERTY_BINDING) {
         return new AngularBindingDescriptor(xmlTag, attrName);
       }
-      if (AngularAttributesRegistry.isEventAttribute(attrName, project)) {
+      if (attrType == Angular2HtmlElementTypes.EVENT
+          || attrType == Angular2HtmlElementTypes.ANIMATION_EVENT) {
         return new AngularEventHandlerDescriptor(xmlTag, attrName);
       }
       return getAngular2Descriptor(attrName, project);
@@ -238,17 +232,14 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
 
   @Nullable
   public static AngularAttributeDescriptor getAngular2Descriptor(String attrName, Project project) {
-    if (isAngular2Attribute(attrName, project)) {
+    if (isAngular2Attribute(attrName)) {
       return createDescriptor(project, attrName, null);
     }
     return null;
   }
 
-  protected static boolean isAngular2Attribute(String attrName, Project project) {
-    return AngularAttributesRegistry.isEventAttribute(attrName, project) ||
-           AngularAttributesRegistry.isBindingAttribute(attrName, project) ||
-           AngularAttributesRegistry.isVariableAttribute(attrName, project) ||
-           AngularAttributesRegistry.isTagReferenceAttribute(attrName, project) ||
-           AngularAttributesRegistry.getCustomAngularAttributes().contains(attrName);
+  protected static boolean isAngular2Attribute(String attrName) {
+    return Angular2HtmlParsing.parseAttributeName(attrName, false).first != XmlElementType.XML_ATTRIBUTE
+           || AngularAttributesRegistry.getCustomAngularAttributes().contains(attrName);
   }
 }

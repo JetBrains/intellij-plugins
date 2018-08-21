@@ -12,7 +12,7 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.SoftFileRef
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
-import org.angularjs.index.AngularIndexUtil;
+import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -40,7 +40,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
     public Collection<PsiFileSystemItem> computeDefaultContexts() {
       final PsiElement element = getElement();
       final Project project = element.getProject();
-      if (AngularIndexUtil.hasAngularJS2(project)) {
+      if (Angular2LangUtil.isAngular2Context(project)) {
         final PsiFile file = element.getContainingFile().getOriginalFile();
         final TypeScriptConfig config = TypeScriptCompilerConfigUtil.getConfigForFile(project, file.getVirtualFile());
         final PsiDirectory directory = config != null ?
@@ -50,7 +50,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
         String pathString = getPathString();
 
         Collection<PsiFileSystemItem> contexts = ContainerUtil.newLinkedHashSet();
-        
+
         if (!pathString.startsWith(".") && addParentPathContexts(file, pathString, contexts)) {
           return contexts;
         }

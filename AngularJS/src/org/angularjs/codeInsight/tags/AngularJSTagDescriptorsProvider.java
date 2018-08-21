@@ -15,6 +15,7 @@ import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlTagNameProvider;
 import com.intellij.xml.util.XmlUtil;
 import icons.AngularJSIcons;
+import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +41,7 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
       addLookupItem(language, elements, directive);
       return true;
     });
-    if (AngularIndexUtil.hasAngularJS2(project)) {
+    if (Angular2LangUtil.isAngular2Context(xmlTag)) {
       addLookupItem(language, elements, createDirective(xmlTag, NG_CONTAINER));
       addLookupItem(language, elements, createDirective(xmlTag, NG_CONTENT));
       addLookupItem(language, elements, createDirective(xmlTag, NG_TEMPLATE));
@@ -66,7 +67,7 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
     String directiveName = DirectiveUtil.normalizeAttributeName(tagName);
     if (XmlUtil.isTagDefinedByNamespace(xmlTag)) return null;
     if ((NG_CONTAINER.equals(directiveName) || NG_CONTENT.equals(directiveName) || NG_TEMPLATE.equals(directiveName)) &&
-        AngularIndexUtil.hasAngularJS2(project)) {
+        Angular2LangUtil.isAngular2Context(project)) {
       return new AngularJSTagDescriptor(directiveName, createDirective(xmlTag, directiveName));
     }
 
@@ -75,7 +76,7 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
       // we've found directive via normalized name for Angular, it should not work
       directive = null;
     }
-    if (directive == null && !tagName.equals(directiveName) && AngularIndexUtil.hasAngularJS2(project)) {
+    if (directive == null && !tagName.equals(directiveName) && Angular2LangUtil.isAngular2Context(project)) {
       directiveName = tagName;
       directive = DirectiveUtil.getTagDirective(directiveName, project);
       if (!DirectiveUtil.isAngular2Directive(directive)) directive = null;

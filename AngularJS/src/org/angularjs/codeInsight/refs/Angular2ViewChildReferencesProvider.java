@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.angularjs.index.AngularJS2IndexingHandler.isDirective;
+import static org.angular2.index.Angular2IndexingHandler.isDirective;
 
 public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
 

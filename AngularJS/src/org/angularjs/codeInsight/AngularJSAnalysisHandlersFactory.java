@@ -18,7 +18,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveResult;
-import org.angularjs.index.AngularJS2IndexingHandler;
+import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,12 +36,12 @@ public class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory 
                                                     @NotNull List<LocalQuickFix> quickFixes) {
         if (methodExpression.getQualifier() != null) return;
 
-        JSClass directive = AngularJS2IndexingHandler.findDirectiveClass(methodExpression);
+        JSClass directive = Angular2IndexingHandler.findDirectiveClass(methodExpression);
         if (directive != null) {
           quickFixes.add(new CreateJSFunctionIntentionAction(methodExpression.getReferencedName(), true, false) {
             @Override
             protected void applyFix(Project project, PsiElement psiElement, PsiFile file, Editor editor) {
-              JSClass directive = AngularJS2IndexingHandler.findDirectiveClass(psiElement);
+              JSClass directive = Angular2IndexingHandler.findDirectiveClass(psiElement);
               assert directive != null;
               doApplyFix(project, directive, directive.getContainingFile(), null);
             }
@@ -87,12 +87,12 @@ public class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory 
                                                 boolean ecma) {
         if (referenceExpression.getQualifier() != null) return inTypeContext;
 
-        JSClass directive = AngularJS2IndexingHandler.findDirectiveClass(referenceExpression);
+        JSClass directive = Angular2IndexingHandler.findDirectiveClass(referenceExpression);
         if (directive != null) {
           quickFixes.add(new CreateJSVariableIntentionAction(referenceExpression.getReferencedName(), true, false, false) {
             @Override
             protected void applyFix(Project project, PsiElement psiElement, PsiFile file, Editor editor) {
-              JSClass directive = AngularJS2IndexingHandler.findDirectiveClass(psiElement);
+              JSClass directive = Angular2IndexingHandler.findDirectiveClass(psiElement);
               assert directive != null;
               doApplyFix(project, directive, directive.getContainingFile(), null);
             }

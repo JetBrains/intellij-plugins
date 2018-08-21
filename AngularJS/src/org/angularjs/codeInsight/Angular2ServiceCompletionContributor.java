@@ -13,7 +13,7 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlTokenType;
 import icons.AngularJSIcons;
-import org.angularjs.service.Angular2LanguageService;
+import org.angular2.service.Angular2LanguageService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

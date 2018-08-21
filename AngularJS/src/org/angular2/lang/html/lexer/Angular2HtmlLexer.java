@@ -18,6 +18,8 @@ import static com.intellij.psi.xml.XmlTokenType.XML_TAG_CHARACTERS;
 import static com.intellij.psi.xml.XmlTokenType.XML_WHITE_SPACE;
 import static org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR;
 import static org.angular2.lang.html.lexer.Angular2HtmlTokenTypes.*;
+import static org.angular2.lang.html.lexer.Angular2HtmlTokenTypes.XML_CHAR_ENTITY_REF;
+import static org.angular2.lang.html.lexer.Angular2HtmlTokenTypes.XML_ENTITY_REF_TOKEN;
 
 public class Angular2HtmlLexer extends HtmlLexer {
 
@@ -30,6 +32,7 @@ public class Angular2HtmlLexer extends HtmlLexer {
 
   private static final TokenSet INTERPOLATION_CONTENT_TOKENS =
     TokenSet.orSet(TokenSet.create(XML_REAL_WHITE_SPACE, XML_ATTRIBUTE_VALUE_TOKEN,
+                                   XML_CHAR_ENTITY_REF, XML_ENTITY_REF_TOKEN,
                                    XML_DATA_CHARACTERS),
                    EXPANSION_TOKENS);
 

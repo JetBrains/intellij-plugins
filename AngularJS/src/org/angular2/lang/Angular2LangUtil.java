@@ -3,6 +3,8 @@ package org.angular2.lang;
 
 import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -21,15 +23,23 @@ public class Angular2LangUtil {
     }
     final VirtualFile file = psiFile.getOriginalFile().getVirtualFile();
     if (file == null || !file.isInLocalFileSystem()) {
-      if (psiFile.getProject().getBaseDir() != null) {
-        return isAngular2Context(psiFile.getProject().getBaseDir());
-      }
-      return false;
+      return isAngular2Context(psiFile.getProject());
     }
     return isAngular2Context(file);
   }
 
+  public static boolean isAngular2Context(@NotNull Project project) {
+    if (project.getBaseDir() != null) {
+      return isAngular2Context(project.getBaseDir());
+    }
+    return false;
+  }
+
   public static boolean isAngular2Context(@NotNull VirtualFile context) {
+    if (ApplicationManager.getApplication().isUnitTestMode()
+        && "disabled".equals(System.getProperty("angular.js"))) {
+      return false;
+    }
     Ref<Boolean> isAngular2Context = Ref.create(false);
     PackageJsonUtil.processUpPackageJsonFilesInAllScope(context, file -> {
       PackageJsonData data = PackageJsonUtil.getOrCreateData(file);

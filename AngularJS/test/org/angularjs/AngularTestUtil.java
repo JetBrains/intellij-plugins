@@ -4,6 +4,8 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 
+import java.io.File;
+
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -12,8 +14,16 @@ import static org.junit.Assert.assertTrue;
 public class AngularTestUtil {
 
   public static String getBaseTestDataPath(Class clazz) {
-    String homePath = PathManager.getHomePath();
-    return homePath + "/contrib/AngularJS/test/" + clazz.getPackage().getName().replace('.', '/') + "/data/";
+    String contribPath = getContribPath();
+    return contribPath + "/AngularJS/test/" + clazz.getPackage().getName().replace('.', '/') + "/data/";
+  }
+
+  private static String getContribPath() {
+    final String homePath = PathManager.getHomePath();
+    if (new File(homePath, "contrib/.gitignore").isFile()) {
+      return homePath + File.separatorChar + "contrib";
+    }
+    return homePath;
   }
 
   public static int findOffsetBySignature(String signature, final PsiFile psiFile) {

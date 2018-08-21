@@ -567,6 +567,19 @@ public class Angular2HtmlLexerSpecTest {
           ));
         });
 
+        it("should parse interpolation with entities", () -> {
+          expect(tokenizeAndHumanizeParts("{{&lt;}}", false)).toEqual(newArrayList(
+            newArrayList(INTERPOLATION_START, "{{"),
+            newArrayList(INTERPOLATION_EXPR, "&lt;"),
+            newArrayList(INTERPOLATION_END, "}}")
+          ));
+          expect(tokenizeAndHumanizeParts("{{&xee12;}}", false)).toEqual(newArrayList(
+            newArrayList(INTERPOLATION_START, "{{"),
+            newArrayList(INTERPOLATION_EXPR, "&xee12;"),
+            newArrayList(INTERPOLATION_END, "}}")
+          ));
+        });
+
         it("should handle CR & LF", () -> {
           expect(tokenizeAndHumanizeParts("t\ne\rs\r\nt")).toEqual(newArrayList(
             newArrayList(XML_DATA_CHARACTERS, "t"),

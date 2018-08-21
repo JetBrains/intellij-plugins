@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.psi.resolve.QualifiedItemProcessor;
 import com.intellij.lang.javascript.psi.resolve.ResultSink;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
-import org.angularjs.index.AngularJS2IndexingHandler;
+import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -25,7 +25,7 @@ public class AngularJSSpecificHandlersFactory extends JavaScriptSpecificHandlers
 
   @Override
   public <T extends ResultSink> QualifiedItemProcessor<T> createQualifiedItemProcessor(@NotNull T sink, @NotNull PsiElement place) {
-    JSClass clazz = AngularJS2IndexingHandler.findDirectiveClass(place);
+    JSClass clazz = Angular2IndexingHandler.findDirectiveClass(place);
     if (clazz != null && DialectDetector.isTypeScript(clazz)) {
       return new TypeScriptQualifiedItemProcessor<>(sink, place.getContainingFile());
     }

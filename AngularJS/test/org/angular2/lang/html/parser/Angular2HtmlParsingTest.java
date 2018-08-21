@@ -8,11 +8,9 @@ import com.intellij.lang.css.CSSParserDefinition;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.JavascriptParserDefinition;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.css.CssEmbeddedTokenTypesProvider;
 import com.intellij.psi.css.CssRulesetBlockEmbeddedTokenTypesProvider;
-
-import java.io.File;
+import org.angularjs.AngularTestUtil;
 
 public class Angular2HtmlParsingTest extends HtmlParsingTest {
 
@@ -32,15 +30,7 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
 
   @Override
   protected String getTestDataPath() {
-    return getContribPath().replace(File.separatorChar, '/') + "/AngularJS/test/org/angular2/lang/html/parser/testData/";
-  }
-
-  private static String getContribPath() {
-    final String homePath = PathManager.getHomePath();
-    if (new File(homePath, "contrib/.gitignore").isFile()) {
-      return homePath + File.separatorChar + "contrib";
-    }
-    return homePath;
+    return AngularTestUtil.getBaseTestDataPath(Angular2HtmlParsingTest.class);
   }
 
   public void testNgParseElementsInsideNgTemplate() throws Exception {
@@ -51,11 +41,19 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
     doTestHtml("<link rel=\"author license\" href=\"/about\">");
   }
 
-  public void testNgNotErrorOnVoidHtml5Elements() throws Exception {
+  public void _testNgNotErrorOnVoidHtml5Elements() throws Exception {
     doTestHtml("<map><area></map><div><br></div><colgroup><col></colgroup>" +
                "<div><embed></div><div><hr></div><div><img></div><div><input></div>" +
                "<object><param>/<object><audio><source></audio><audio><track></audio>" +
                "<p><wbr></p>");
+  }
+
+  public void _testNgReportClosingTagForVoidElement() throws Exception {
+    doTestHtml("<input></input>");
+  }
+
+  public void _testNgReportSelfClosingHtmlElement() throws Exception {
+    doTestHtml("<p />");
   }
 
   public void testNgCloseVoidElementsOnTextNodes() throws Exception {
@@ -77,36 +75,39 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
   public void testNgParseExpansionForms1() throws Exception {
     doTestHtml("<div>before{messages.length, plural, =0 {You have <b>no</b> messages} =1 {One {{message}}}}after</div>");
   }
+
   public void testNgParseExpansionForms2() throws Exception {
     doTestHtml("<div><span>{a, plural, =0 {b}}</span></div>");
   }
+
   public void testNgParseExpansionForms3() throws Exception {
     doTestHtml("{messages.length, plural, =0 { {p.gender, select, male {m}} }}");
   }
+
   public void testNgErrorOnUnterminatedExpansionForm() throws Exception {
     doTestHtml("{messages.length, plural, =0 {one}");
   }
+
   public void testNgICUWithNumbers() throws Exception {
     doTestHtml("{sex, select, male {m} female {f} 0 {other}}");
   }
+
   public void testNgErrorOnUnterminatedExpansionCase() throws Exception {
     doTestHtml("{messages.length, plural, =0 {one");
   }
+
   public void testNgErrorOnInvalidHTMLInExpansionCase() throws Exception {
     doTestHtml("{messages.length, plural, =0 {<div>}}");
   }
+
   public void testNgReportUnexpectedClosingTag() throws Exception {
     doTestHtml("<div></p></div>");
   }
+
   public void testNgReportSubsequentOpenTagWithoutCloseTag() throws Exception {
     doTestHtml("<div</div>");
   }
-  public void testNgReportClosingTagForVoidElement() throws Exception {
-    doTestHtml("<input></input>");
-  }
-  public void testNgReportSelfClosingHtmlElement() throws Exception {
-    doTestHtml("<p />");
-  }
+
   public void testNgParseBoundProperties() throws Exception {
     doTestHtml("<div [someProp]='v'></div>" +
                "<div [some-prop]='v'></div>" +
@@ -121,6 +122,7 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
                "<div [@someAnimation]='v'></div>" +
                "<div @someAnimation='v'></div>");
   }
+
   public void testNgParseEvents() throws Exception {
     doTestHtml("<div (window:event)='v'></div>" +
                "<div (event)='v'></div>" +
@@ -129,6 +131,7 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
                "<div (someEvent)='v'></div>" +
                "<div on-event='v'></div>");
   }
+
   public void testNgParseAnimationEvents() throws Exception {
     doTestHtml("<a (@click)='doStuff()'></a>" +
                "<b on-animate-click='doStuff()'></b>" +
@@ -145,8 +148,9 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
 
   public void testNgParseVariables() throws Exception {
     doTestHtml("<div let-a></div>" +
-      "<ng-template let-a='b'></ng-template>");
+               "<ng-template let-a='b'></ng-template>");
   }
+
   public void testNgParseInlineTemplates() throws Exception {
     doTestHtml("<div *ngIf></div>" +
                "<div *ngIf='condition'></div>" +
@@ -155,8 +159,47 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
                "<div data-*ngIf='let a=b'></div>" +
                "<div *ngIf='expr as local'></div>");
   }
+
   public void testNgReportErrorsInExpressions() throws Exception {
     doTestHtml("<div [prop]='a b'></div>");
+  }
+
+  public void testNgBindingAttributeComplex() throws Exception {
+    doTestHtml("<div (lang)=\"{'current':i == (wordIndex | async)}\"></div>");
+  }
+
+  public void testNgCss() throws Exception {
+    doTestHtml("<div *ngFor=\"let something of items\" class=\"inDaClass foo\" style=\"color: #fff\"></div>");
+  }
+
+  public void testNgBindingElvis() throws Exception {
+    doTestHtml("<div lang=\"{{interpolation?.here}}\"></div>");
+  }
+
+  public void testNgEntity() throws Exception {
+    doTestHtml("<div>{{foo ? ' &mdash;' + bar : \"\"}}</div>");
+  }
+
+  public void testNgWeb20713() throws Exception {
+    doTestHtml("<h5>Last Updated: {{(viewModel.lastUpdated$ | async) | date:'mediumTime'}}</h5>");
+  }
+
+  public void testNgWeb24804() throws Exception {
+    doTestHtml("<div *myStructuralDirective style=\"z-index: 10;\"></div>");
+  }
+
+  public void testNgTextInterpolation() throws Exception {
+    doTestHtml("<div>my {{interpolated}} text</div>\n" +
+               "<div>my{{interpolated}}text</div>\n" +
+               "<div>my{{double}}{{interpolated}}text</div>\n" +
+               "<div>my{{double}}double{{interpolated}}text</div>");
+  }
+
+  public void testNgTextInterpolationWithLineBreaks() throws Exception {
+    doTestHtml("{{todo\n" +
+               "            | started : status\n" +
+               "            | search : term\n" +
+               "            }}");
   }
 
 }
