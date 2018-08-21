@@ -695,7 +695,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     }
 
     public String toString() {
-      return getClass().getSimpleName() + "(" + String.valueOf(myId) + "," + String.valueOf(myName) + ")";
+      return getClass().getSimpleName() + "(" + myId + "," + myName + ")";
     }
   }
 

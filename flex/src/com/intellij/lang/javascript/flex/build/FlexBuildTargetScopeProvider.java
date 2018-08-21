@@ -100,7 +100,7 @@ public class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider {
     final ModifiableFlexBuildConfiguration result = Factory.getCopy(bc);
     final String additionalOptions = FlexCommonUtils
       .removeOptions(bc.getCompilerOptions().getAdditionalOptions(), "debug", "compiler.debug");
-    result.getCompilerOptions().setAdditionalOptions(additionalOptions + " -debug=" + String.valueOf(debug));
+    result.getCompilerOptions().setAdditionalOptions(additionalOptions + " -debug=" + debug);
 
     return result;
   }

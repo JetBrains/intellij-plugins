@@ -69,7 +69,7 @@ class AbcDumper extends AbstractDumpProcessor {
 
   @Override
   public void processValue(final Multiname type, final Object value) {
-    append(" = "+String.valueOf(value instanceof String ? ('"' + value.toString() + '"') : value));
+    append(" = " + (value instanceof String ? ('"' + value.toString() + '"') : value));
   }
 
   @Override

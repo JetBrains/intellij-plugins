@@ -190,13 +190,13 @@ final class PubServerService extends NetService {
 
     if (DartWebdev.INSTANCE.useWebdev(dartSdk)) {
       commandLine.addParameters("global", "run", "webdev", "serve");
-      commandLine.addParameter(firstServedDir.getName() + ":" + String.valueOf(port));
+      commandLine.addParameter(firstServedDir.getName() + ":" + port);
       commandLine.withEnvironment(DartPubActionBase.PUB_ENV_VAR_NAME, DartPubActionBase.getPubEnvValue() + ".webdev");
     }
     else {
       commandLine.addParameter("serve");
       commandLine.addParameter(firstServedDir.getName());
-      commandLine.addParameter("--port=" + String.valueOf(port));
+      commandLine.addParameter("--port=" + port);
     }
 
     final OSProcessHandler processHandler = new OSProcessHandler(commandLine);

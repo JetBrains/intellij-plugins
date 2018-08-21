@@ -205,7 +205,7 @@ public class JpsBuiltInFlexCompilerHandler {
     }
 
     try {
-      final String prefix = String.valueOf(commandNumber++) + ":";
+      final String prefix = (commandNumber++) + ":";
       final String commandToSend = prefix + command + "\n";
       LOG.debug("SENDING: [" + commandToSend + "]");
       myDataOutputStream.writeUTF(commandToSend);

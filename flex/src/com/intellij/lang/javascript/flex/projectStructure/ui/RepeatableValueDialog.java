@@ -127,7 +127,7 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
       @Override
       protected void setValue(final StringBuilder s, final int column, final Object aValue) {
         final List<String> parts =
-          StringUtil.split(s.toString(), String.valueOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR), true, false);
+          StringUtil.split(s.toString(), CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false);
         s.delete(0, s.length());
 
         for (int i = 0; i < column; i++) {
