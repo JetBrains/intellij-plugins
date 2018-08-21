@@ -15,10 +15,7 @@
  */
 package com.google.jstestdriver.idea.execution;
 
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.ConfigurationTypeBase;
-import com.intellij.execution.configurations.ConfigurationTypeUtil;
-import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.configurations.*;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import icons.JsTestDriverIcons;
@@ -27,10 +24,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Top-level of the plugin - this class is registered in the plugin XML.
  * Provides a new type of Run Configuration which launches the JSTestDriver server.
+ *
  * @author alexeagle@google.com (Alex Eagle)
  */
 public class JstdConfigurationType extends ConfigurationTypeBase implements DumbAware {
-
   private static final String NAME = "JsTestDriver";
   public static final String ID = "JsTestDriver-test-runner";
 
@@ -43,14 +40,10 @@ public class JstdConfigurationType extends ConfigurationTypeBase implements Dumb
         return new JstdRunConfiguration(project, this, NAME);
       }
 
+      @NotNull
       @Override
-      public boolean isConfigurationSingletonByDefault() {
-        return true;
-      }
-
-      @Override
-      public boolean canConfigurationBeSingleton() {
-        return false;
+      public RunConfigurationSingletonPolicy getSingletonPolicy() {
+        return RunConfigurationSingletonPolicy.SINGLE_INSTANCE_ONLY;
       }
     });
   }
