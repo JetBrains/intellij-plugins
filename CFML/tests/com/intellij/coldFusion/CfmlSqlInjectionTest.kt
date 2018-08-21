@@ -1,10 +1,11 @@
 package com.intellij.coldFusion
 
-import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.rt.execution.junit.FileComparisonFailure
 import com.intellij.sql.datasource.SqlDataSourceTestCase
 import com.intellij.sql.dialects.SqlDialectMappings
 import com.intellij.sql.dialects.sql92.Sql92Dialect
@@ -81,18 +82,18 @@ class CfmlSqlInjectionTest : CfmlCodeInsightFixtureTestCase() {
   }
 
   private fun doHighlightText(expectedErrorCount: Int = 0) {
-    val highlights = mutableListOf<HighlightInfo>()
-    val attemptsInitial = 3
-    var attempts = attemptsInitial
-    do {
-      UIUtil.dispatchAllInvocationEvents()
-      assertTrue("Unable to update highlighters in ${attemptsInitial} attempts", attempts-- > 0)
-      highlights.addAll(myFixture.doHighlighting())
-    }
-    while (highlights.isEmpty())
+    UIUtil.dispatchAllInvocationEvents()
+    myFixture.doHighlighting()
+    try {
+      // needs to wait highlighting results
+      myFixture.checkHighlighting(false, false, false)
+    } catch (e: FileComparisonFailure) { /*ignore exception*/ }
+    val highlights = myFixture.doHighlighting()
+    assertTrue("Highlights count should be great than zero.", !highlights.isEmpty())
     val errors = highlights.filter { it.severity == HighlightSeverity.ERROR }
     if (expectedErrorCount == 0) assertTrue("Highlighting errors should be empty, but this file has: $errors", errors.isNullOrEmpty())
-    else TestCase.assertEquals("Highlight errors count should be ${expectedErrorCount}, got ${errors.size}", expectedErrorCount, errors.size)
+    else TestCase.assertEquals("Highlight errors count should be ${expectedErrorCount}, got ${errors.size}", expectedErrorCount,
+                               errors.size)
   }
 
   private fun getElementAtCaret(): PsiElement {
@@ -109,8 +110,9 @@ class CfmlSqlInjectionTest : CfmlCodeInsightFixtureTestCase() {
     prepare()
     val dialect = Sql92Dialect.INSTANCE
     SqlDialectMappings.getInstance(project).setMapping(myFixture.file.virtualFile, dialect)
-    val file = myFixture.file
-    if (file != null) FileContentUtil.reparseFiles(project, listOf<VirtualFile>(file.virtualFile), false)
+    val file: PsiFile = myFixture.file
+    FileContentUtil.reparseFiles(project, listOf<VirtualFile>(file.virtualFile), false)
+    myFixture.configureFromExistingVirtualFile(file.virtualFile)
   }
 
 }
