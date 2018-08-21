@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class MarkdownSplitEditor extends SplitFileEditor<TextEditor, MarkdownPreviewFileEditor> implements TextEditor {
   private boolean myAutoScrollPreview = MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isAutoScrollPreview();
+  private boolean myVerticalSplit = MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isVerticalSplit();
 
   public MarkdownSplitEditor(@NotNull TextEditor mainEditor, @NotNull MarkdownPreviewFileEditor secondEditor) {
     super(mainEditor, secondEditor);
@@ -22,10 +23,15 @@ public class MarkdownSplitEditor extends SplitFileEditor<TextEditor, MarkdownPre
         @Override
         public void beforeSettingsChanged(@NotNull MarkdownApplicationSettings newSettings) {
           boolean oldAutoScrollPreview = MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isAutoScrollPreview();
+          boolean oldVerticalSplit = MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isVerticalSplit();
 
           ApplicationManager.getApplication().invokeLater(() -> {
             if (oldAutoScrollPreview == myAutoScrollPreview) {
               setAutoScrollPreview(newSettings.getMarkdownPreviewSettings().isAutoScrollPreview());
+            }
+
+            if (oldVerticalSplit == myVerticalSplit) {
+              setVerticalSplit(newSettings.getMarkdownPreviewSettings().isVerticalSplit());
             }
           });
         }
@@ -61,6 +67,10 @@ public class MarkdownSplitEditor extends SplitFileEditor<TextEditor, MarkdownPre
 
   public boolean isAutoScrollPreview() {
     return myAutoScrollPreview;
+  }
+
+  public void setVerticalSplit(boolean verticalSplit) {
+    myVerticalSplit = verticalSplit;
   }
 
   public void setAutoScrollPreview(boolean autoScrollPreview) {

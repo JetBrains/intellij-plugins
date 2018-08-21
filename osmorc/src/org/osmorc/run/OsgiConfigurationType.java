@@ -49,7 +49,7 @@ public class OsgiConfigurationType extends ConfigurationTypeBase {
     addFactory(new ConfigurationFactory(this) {
       @NotNull
       @Override
-      public RunConfiguration createTemplateConfiguration(Project project) {
+      public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new OsgiRunConfiguration(project, this, "");
       }
 

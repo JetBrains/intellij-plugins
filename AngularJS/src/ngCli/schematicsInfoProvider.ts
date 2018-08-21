@@ -16,9 +16,13 @@ interface SchematicsInfo {
     error?: string;
     arguments?: Option[];
     options?: Option[];
+    hidden?: boolean;
 }
 
 const engineHost = getEngineHost();
+
+const includeHidden = process.argv[2] === "--includeHidden";
+
 let defaultCollectionName;
 try {
     defaultCollectionName = require('@angular/cli/utilities/config').getDefaultSchematicCollection();
@@ -69,7 +73,9 @@ function getCollectionSchematics(collectionName: string): SchematicsInfo[] {
     let collection: any;
     try {
         collection = getCollection(collectionName);
-        schematicNames = engineHost.listSchematics(collection);
+        schematicNames = includeHidden
+            ? listAllSchematics(collection)
+            : engineHost.listSchematics(collection);
     } catch (e) {
         return [{
             name: collectionName,
@@ -80,7 +86,7 @@ function getCollectionSchematics(collectionName: string): SchematicsInfo[] {
         const schematicInfos: any[] = schematicNames
             .map(name => getSchematic(collection, name).description)
             //`ng-add` schematics should be executed only with `ng add`
-            .filter(info => info.name !== "ng-add" && info.schemaJson !== undefined);
+            .filter(info => (info.name !== "ng-add" || includeHidden) && info.schemaJson !== undefined);
 
         const newFormat = schematicInfos
             .map(info => info.schemaJson.properties)
@@ -93,6 +99,7 @@ function getCollectionSchematics(collectionName: string): SchematicsInfo[] {
             return {
                 description: info.description,
                 name: (collectionName === defaultCollectionName ? "" : collectionName + ":") + info.name,
+                hidden: info.hidden,
                 options: filterProps(info.schemaJson,
                     (key, prop) => newFormat ? prop.$default === undefined : required.indexOf(key) < 0)
                     .concat(coreOptions()),
@@ -104,6 +111,26 @@ function getCollectionSchematics(collectionName: string): SchematicsInfo[] {
         console.error(e.stack || e);
         return [];
     }
+}
+
+function listAllSchematics(collection: any) {
+    collection = collection.description;
+    const schematics = [];
+    for (const key of Object.keys(collection.schematics)) {
+        const schematic = collection.schematics[key];
+        if (schematic.private) {
+            continue
+        }
+        // If extends is present without a factory it is an alias, do not return it
+        //   unless it is from another collection.
+        if (!schematic.extends || schematic.factory) {
+            schematics.push(key);
+        }
+        else if (schematic.extends && schematic.extends.indexOf(':') !== -1) {
+            schematics.push(key);
+        }
+    }
+    return schematics;
 }
 
 function filterProps(schemaJson: any, filter: (k: string, prop: any) => boolean): any[] {

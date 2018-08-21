@@ -11,6 +11,7 @@ var schematics_1 = require("@angular/cli/utilities/schematics");
 var path = require("path");
 var fs = require("fs");
 var engineHost = schematics_1.getEngineHost();
+var includeHidden = process.argv[2] === "--includeHidden";
 var defaultCollectionName;
 try {
     defaultCollectionName = require('@angular/cli/utilities/config').getDefaultSchematicCollection();
@@ -58,7 +59,9 @@ function getCollectionSchematics(collectionName) {
     var collection;
     try {
         collection = schematics_1.getCollection(collectionName);
-        schematicNames = engineHost.listSchematics(collection);
+        schematicNames = includeHidden
+            ? listAllSchematics(collection)
+            : engineHost.listSchematics(collection);
     }
     catch (e) {
         return [{
@@ -70,7 +73,7 @@ function getCollectionSchematics(collectionName) {
         var schematicInfos = schematicNames
             .map(function (name) { return schematics_1.getSchematic(collection, name).description; })
             //`ng-add` schematics should be executed only with `ng add`
-            .filter(function (info) { return info.name !== "ng-add" && info.schemaJson !== undefined; });
+            .filter(function (info) { return (info.name !== "ng-add" || includeHidden) && info.schemaJson !== undefined; });
         var newFormat_1 = schematicInfos
             .map(function (info) { return info.schemaJson.properties; })
             .map(function (prop) { return Object.keys(prop).map(function (k) { return prop[k]; }); })
@@ -81,6 +84,7 @@ function getCollectionSchematics(collectionName) {
             return {
                 description: info.description,
                 name: (collectionName === defaultCollectionName ? "" : collectionName + ":") + info.name,
+                hidden: info.hidden,
                 options: filterProps(info.schemaJson, function (key, prop) { return newFormat_1 ? prop.$default === undefined : required.indexOf(key) < 0; })
                     .concat(coreOptions()),
                 arguments: filterProps(info.schemaJson, function (key, prop) { return newFormat_1 ? prop.$default !== undefined && prop.$default.$source === "argv" : required.indexOf(key) >= 0; })
@@ -91,6 +95,26 @@ function getCollectionSchematics(collectionName) {
         console.error(e.stack || e);
         return [];
     }
+}
+function listAllSchematics(collection) {
+    collection = collection.description;
+    var schematics = [];
+    for (var _i = 0, _a = Object.keys(collection.schematics); _i < _a.length; _i++) {
+        var key = _a[_i];
+        var schematic = collection.schematics[key];
+        if (schematic.private) {
+            continue;
+        }
+        // If extends is present without a factory it is an alias, do not return it
+        //   unless it is from another collection.
+        if (!schematic.extends || schematic.factory) {
+            schematics.push(key);
+        }
+        else if (schematic.extends && schematic.extends.indexOf(':') !== -1) {
+            schematics.push(key);
+        }
+    }
+    return schematics;
 }
 function filterProps(schemaJson, filter) {
     var required = schemaJson.required || [];

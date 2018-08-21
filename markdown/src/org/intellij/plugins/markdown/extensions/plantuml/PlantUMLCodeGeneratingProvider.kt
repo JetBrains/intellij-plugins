@@ -57,7 +57,7 @@ internal class PlantUMLProvider(private var cacheCollector: MarkdownCodeFencePlu
       })
 
       commandLine.addParameter("echo \"$source\" " +
-                               "| java -Djava.awt.headless=true -jar ${MarkdownSettingsConfigurable.getDownloadedJarPath().absolutePath} -pipe " +
+                               "| java -Djava.awt.headless=true -jar ${MarkdownSettingsConfigurable.getDownloadedJarPath()?.absolutePath} -pipe " +
                                "> $fileName")
 
       commandLine.createProcess().waitFor(5, TimeUnit.SECONDS)

@@ -690,7 +690,7 @@ public class CompilerConfigGeneratorRt {
           }
         }
         else {
-          for (final String listEntry : StringUtil.split(value, String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR))) {
+          for (final String listEntry : StringUtil.split(value, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR)) {
             final Element repeatableListHolderElement = new Element(elementName, parentElement.getNamespace());
 
             final List<String> values = StringUtil.split(listEntry, CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false);

@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.typescript.library.TypeScriptLibraryProvider;
 import com.intellij.lang.typescript.resolve.TypeScriptClassResolver;
+import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -90,9 +91,11 @@ public class AngularJSProcessor {
     final AngularInjectedFilesVisitor visitor = new AngularInjectedFilesVisitor(result);
 
     for (XmlTag tag : PsiTreeUtil.getChildrenOfTypeAsList(document, XmlTag.class)) {
+      ProgressIndicatorProvider.checkCanceled();
       new XmlBackedJSClassImpl.InjectedScriptsVisitor(tag, null, true, true, visitor, true){
         @Override
         public boolean execute(@NotNull PsiElement element) {
+          ProgressIndicatorProvider.checkCanceled();
           if (element instanceof HtmlEmbeddedContentImpl) {
             processDocument(PsiTreeUtil.findChildOfType(element, XmlDocument.class), result);
           }

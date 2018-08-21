@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.ui.components.JBRadioButton;
 import com.intellij.ui.components.labels.LinkLabel;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.download.DownloadableFileDescription;
@@ -63,6 +64,11 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   private JPanel myMultipleProvidersPreviewPanel;
   private LinkLabel myPlantUMLDownload;
   private JBLabel myPlantUMLStatusLabel;
+  private JBRadioButton myVerticalLayout;
+  private JBRadioButton myHorizontalLayout;
+  private JBLabel myVerticalSplitLabel;
+
+  private static final Color SUCCESS_COLOR = new JBColor(0x008000, 0x6A8759);
 
   @Nullable
   private EditorEx myEditor;
@@ -109,6 +115,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
       @Override
       public void actionPerformed(ActionEvent e) {
         adjustAutoScroll();
+        adjustSplitOption();
       }
     });
 
@@ -130,13 +137,20 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     }, null);
   }
 
+  private void adjustSplitOption() {
+    boolean isSplitted = myDefaultSplitLayout.getSelectedItem() == SplitFileEditor.SplitEditorLayout.SPLIT;
+    myVerticalLayout.setEnabled(isSplitted);
+    myHorizontalLayout.setEnabled(isSplitted);
+    myVerticalSplitLabel.setEnabled(isSplitted);
+  }
+
   public void updatePlantUMLLabel(boolean isJustInstalled) {
     myPlantUMLStatusLabel.setForeground(JBColor.foreground());
     myPlantUMLStatusLabel.setIcon(null);
 
     if (MarkdownSettingsConfigurable.isPlantUMLAvailable()) {
       if (isJustInstalled) {
-        myPlantUMLStatusLabel.setForeground(JBColor.GREEN);
+        myPlantUMLStatusLabel.setForeground(SUCCESS_COLOR);
         myPlantUMLStatusLabel.setText(MarkdownBundle.message("markdown.settings.preview.plantUML.download.success"));
       }
       else {
@@ -361,6 +375,8 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     mySplitLayoutModel.setSelectedItem(settings.getSplitEditorLayout());
     myUseGrayscaleRenderingForJBCheckBox.setSelected(settings.isUseGrayscaleRendering());
     myAutoScrollCheckBox.setSelected(settings.isAutoScrollPreview());
+    myVerticalLayout.setSelected(settings.isVerticalSplit());
+    myHorizontalLayout.setSelected(!settings.isVerticalSplit());
 
     updateUseGrayscaleEnabled();
   }
@@ -374,6 +390,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     return new MarkdownPreviewSettings(mySplitLayoutModel.getSelectedItem(),
                                        provider,
                                        myUseGrayscaleRenderingForJBCheckBox.isSelected(),
-                                       myAutoScrollCheckBox.isSelected());
+                                       myAutoScrollCheckBox.isSelected(),
+                                       myVerticalLayout.isSelected());
   }
 }

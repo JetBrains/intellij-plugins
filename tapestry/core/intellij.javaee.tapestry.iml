@@ -28,9 +28,10 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
-      <library>
+      <library name="plexus-utils" type="repository">
+        <properties maven-id="org.codehaus.plexus:plexus-utils:1.4.1" />
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/plexus-utils.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-utils/1.4.1/plexus-utils-1.4.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

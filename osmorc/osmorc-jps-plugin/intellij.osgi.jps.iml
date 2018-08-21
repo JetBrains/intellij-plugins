@@ -49,9 +49,10 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
-      <library name="plexus-utils">
+      <library name="plexus-utils" type="repository">
+        <properties maven-id="org.codehaus.plexus:plexus-utils:3.0.10" />
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/plexus-utils-3.0.10.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-utils/3.0.10/plexus-utils-3.0.10.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
