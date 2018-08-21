@@ -14,6 +14,7 @@ import com.intellij.ui.treeStructure.*
 import com.intellij.util.enumeration.*
 import name.kropp.intellij.makefile.psi.*
 import java.awt.*
+import java.awt.event.*
 import java.util.*
 import javax.swing.*
 import javax.swing.tree.*
@@ -42,7 +43,9 @@ class MakeToolWindowFactory : ToolWindowFactory {
 
     val actionGroup = DefaultActionGroup()
     val runManager = RunManagerImpl.getInstanceImpl(project)
-    actionGroup.add(MakefileRunTargetAction2(tree, runManager))
+    val runTargetAction = MakefileRunTargetAction2(tree, runManager)
+    runTargetAction.registerCustomShortcutSet(CustomShortcutSet(KeyEvent.VK_ENTER), panel)
+    actionGroup.add(runTargetAction)
     toolBarPanel.add(ActionManager.getInstance().createActionToolbar("MakeToolWindowToolbar", actionGroup, true).component)
 
     panel.setToolbar(toolBarPanel)
@@ -52,7 +55,7 @@ class MakeToolWindowFactory : ToolWindowFactory {
 }
 
 
-class MakefileRunTargetAction2(private val tree: Tree, private val runManager: RunManagerImpl) : AnAction("", "Run target", MakefileTargetIcon) {
+class MakefileRunTargetAction2(private val tree: Tree, private val runManager: RunManagerImpl) : AnAction("Run target", "Run target", MakefileTargetIcon) {
   override fun actionPerformed(event: AnActionEvent) {
     val selected = tree.getSelectedNodes(MakefileTargetNode::class.java, {true})
     if (selected.any()) {
@@ -67,7 +70,6 @@ class MakefileRunTargetAction2(private val tree: Tree, private val runManager: R
 
       (context.runManager as RunManagerEx).setTemporaryConfiguration(configuration)
       ExecutionUtil.runConfiguration(configuration, ExecutorRegistry.getInstance().registeredExecutors.first())
-
     }
   }
 }
