@@ -10,16 +10,19 @@ import org.angular2.lang.expr.parser.Angular2ElementTypes;
 import org.angular2.lang.expr.psi.Angular2ElementVisitor;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
 public class Angular2TemplateBindingImpl extends JSStatementImpl implements Angular2TemplateBinding {
 
+  @NotNull
   private final String myKey;
   private final boolean myVar;
+  @Nullable
   private final String myName;
 
-  public Angular2TemplateBindingImpl(IElementType elementType, String key, boolean isVar, String name) {
+  public Angular2TemplateBindingImpl(@NotNull IElementType elementType, @NotNull String key, boolean isVar, @Nullable String name) {
     super(elementType);
     myKey = key;
     myVar = isVar;
@@ -36,11 +39,13 @@ public class Angular2TemplateBindingImpl extends JSStatementImpl implements Angu
     }
   }
 
+  @NotNull
   @Override
   public String getKey() {
     return myKey;
   }
 
+  @Nullable
   @Override
   public String getName() {
     return myName;
@@ -51,6 +56,7 @@ public class Angular2TemplateBindingImpl extends JSStatementImpl implements Angu
     return myVar;
   }
 
+  @Nullable
   @Override
   public JSExpression getExpression() {
     return Arrays.stream(getChildren(JSExtendedLanguagesTokenSetProvider.EXPRESSIONS))
@@ -58,5 +64,10 @@ public class Angular2TemplateBindingImpl extends JSStatementImpl implements Angu
       .map(node -> node.getPsi(JSExpression.class))
       .findFirst()
       .orElse(null);
+  }
+
+  @Override
+  public String toString() {
+    return "Angular2TemplateBinding <" + getKey() + ", " + keyIsVar() + ", " + getName() + ">";
   }
 }

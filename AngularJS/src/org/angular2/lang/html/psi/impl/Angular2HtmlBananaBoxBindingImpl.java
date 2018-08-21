@@ -3,7 +3,6 @@ package org.angular2.lang.html.psi.impl;
 
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.XmlElementVisitor;
-import com.intellij.psi.impl.source.xml.XmlAttributeImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.lang.expr.psi.Angular2Binding;
@@ -13,7 +12,9 @@ import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Angular2HtmlBananaBoxBindingImpl extends XmlAttributeImpl implements Angular2HtmlBananaBoxBinding {
+import static org.angular2.lang.html.parser.Angular2HtmlParsing.normalizeAttributeName;
+
+public class Angular2HtmlBananaBoxBindingImpl extends Angular2HtmlBaseAttributeImpl implements Angular2HtmlBananaBoxBinding {
 
   public Angular2HtmlBananaBoxBindingImpl(@NotNull Angular2ElementType type) {
     super(type);
@@ -35,7 +36,7 @@ public class Angular2HtmlBananaBoxBindingImpl extends XmlAttributeImpl implement
   @NotNull
   @Override
   public String getPropertyName() {
-    String name = getName();
+    String name = normalizeAttributeName(getName());
     if (name.startsWith("[(") && name.endsWith(")]")) {
       return name.substring(2, name.length() - 2);
     }
@@ -49,5 +50,10 @@ public class Angular2HtmlBananaBoxBindingImpl extends XmlAttributeImpl implement
   @Override
   public Angular2Binding getBinding() {
     return ContainerUtil.getFirstItem(PsiTreeUtil.findChildrenOfType(this, Angular2Binding.class));
+  }
+
+  @Override
+  public String toString() {
+    return "Angular2HtmlBananaBoxBinding <" + getPropertyName() + ">";
   }
 }

@@ -1,0 +1,97 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:a
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('a')
+      PsiWhiteSpace(' ')
+      Angular2HtmlAnimationEvent <click,null>
+        PsiErrorElement:The animation trigger output event (@click) is missing its phase value name (start or done are currently supported)
+          XmlToken:XML_NAME('(@click)')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+          ASTWrapperPsiElement(NG:ACTION_EXPR)
+            Angular2Action
+              JSExpressionStatement
+                JSCallExpression
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('doStuff')
+                  JSArgumentList
+                    PsiElement(JS:LPAR)('(')
+                    PsiElement(JS:RPAR)(')')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('a')
+      XmlToken:XML_TAG_END('>')
+    HtmlTag:b
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('b')
+      PsiWhiteSpace(' ')
+      Angular2HtmlEvent <animate-click>
+        XmlToken:XML_NAME('on-animate-click')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+          ASTWrapperPsiElement(NG:ACTION_EXPR)
+            Angular2Action
+              JSExpressionStatement
+                JSCallExpression
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('doStuff')
+                  JSArgumentList
+                    PsiElement(JS:LPAR)('(')
+                    PsiElement(JS:RPAR)(')')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('b')
+      XmlToken:XML_TAG_END('>')
+    HtmlTag:a
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('a')
+      PsiWhiteSpace(' ')
+      Angular2HtmlAnimationEvent <click,DONE>
+        XmlToken:XML_NAME('(@click.done)')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+          ASTWrapperPsiElement(NG:ACTION_EXPR)
+            Angular2Action
+              JSExpressionStatement
+                JSCallExpression
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('doStuff')
+                  JSArgumentList
+                    PsiElement(JS:LPAR)('(')
+                    PsiElement(JS:RPAR)(')')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('a')
+      XmlToken:XML_TAG_END('>')
+    HtmlTag:b
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('b')
+      PsiWhiteSpace(' ')
+      Angular2HtmlEvent <animate-click.start>
+        XmlToken:XML_NAME('on-animate-click.start')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+          ASTWrapperPsiElement(NG:ACTION_EXPR)
+            Angular2Action
+              JSExpressionStatement
+                JSCallExpression
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('doStuff')
+                  JSArgumentList
+                    PsiElement(JS:LPAR)('(')
+                    PsiElement(JS:RPAR)(')')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('b')
+      XmlToken:XML_TAG_END('>')

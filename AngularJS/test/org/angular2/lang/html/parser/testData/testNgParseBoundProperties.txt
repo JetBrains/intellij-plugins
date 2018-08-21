@@ -1,0 +1,222 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      Angular2HtmlPropertyBinding <someProp,PROPERTY>
+        XmlToken:XML_NAME('[someProp]')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+          ASTWrapperPsiElement(NG:BINDING_EXPR)
+            Angular2Binding
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('v')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      Angular2HtmlPropertyBinding <some-prop,PROPERTY>
+        XmlToken:XML_NAME('[some-prop]')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+          ASTWrapperPsiElement(NG:BINDING_EXPR)
+            Angular2Binding
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('v')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      Angular2HtmlPropertyBinding <dot.name,PROPERTY>
+        XmlToken:XML_NAME('[dot.name]')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+          ASTWrapperPsiElement(NG:BINDING_EXPR)
+            Angular2Binding
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('v')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      Angular2HtmlPropertyBinding <someAttr,ATTRIBUTE>
+        XmlToken:XML_NAME('[attr.someAttr]')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+          ASTWrapperPsiElement(NG:BINDING_EXPR)
+            Angular2Binding
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('v')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      Angular2HtmlPropertyBinding <some-class,CLASS>
+        XmlToken:XML_NAME('[class.some-class]')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+          ASTWrapperPsiElement(NG:BINDING_EXPR)
+            Angular2Binding
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('v')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      Angular2HtmlPropertyBinding <someStyle,STYLE>
+        XmlToken:XML_NAME('[style.someStyle]')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+          ASTWrapperPsiElement(NG:BINDING_EXPR)
+            Angular2Binding
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('v')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      Angular2HtmlPropertyBinding <someStyle,STYLE>
+        XmlToken:XML_NAME('data-[style.someStyle]')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+          ASTWrapperPsiElement(NG:BINDING_EXPR)
+            Angular2Binding
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('v')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      Angular2HtmlPropertyBinding <prop,PROPERTY>
+        XmlToken:XML_NAME('bind-prop')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+          ASTWrapperPsiElement(NG:BINDING_EXPR)
+            Angular2Binding
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('v')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      Angular2HtmlPropertyBinding <prop,PROPERTY>
+        XmlToken:XML_NAME('prop')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+          PsiElement(NG:INTERPOLATION_START)('{{')
+          ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+            Angular2Interpolation
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('v')
+          PsiElement(NG:INTERPOLATION_END)('}}')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      Angular2HtmlPropertyBinding <someAnimation,ANIMATION>
+        XmlToken:XML_NAME('bind-animate-someAnimation')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+          ASTWrapperPsiElement(NG:BINDING_EXPR)
+            Angular2Binding
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('val')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      Angular2HtmlPropertyBinding <someAnimation,ANIMATION>
+        XmlToken:XML_NAME('[@someAnimation]')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+          ASTWrapperPsiElement(NG:BINDING_EXPR)
+            Angular2Binding
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('v')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      Angular2HtmlPropertyBinding <someAnimation,ANIMATION>
+        XmlToken:XML_NAME('@someAnimation')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+          ASTWrapperPsiElement(NG:BINDING_EXPR)
+            Angular2Binding
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('v')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')

@@ -3,7 +3,6 @@ package org.angular2.lang.html.psi.impl;
 
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.XmlElementVisitor;
-import com.intellij.psi.impl.source.xml.XmlAttributeImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.lang.expr.psi.Angular2Action;
@@ -13,7 +12,9 @@ import org.angular2.lang.html.psi.Angular2HtmlEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Angular2HtmlEventImpl extends XmlAttributeImpl implements Angular2HtmlEvent {
+import static org.angular2.lang.html.parser.Angular2HtmlParsing.normalizeAttributeName;
+
+public class Angular2HtmlEventImpl extends Angular2HtmlBaseAttributeImpl implements Angular2HtmlEvent {
 
   public Angular2HtmlEventImpl(@NotNull Angular2ElementType type) {
     super(type);
@@ -35,7 +36,7 @@ public class Angular2HtmlEventImpl extends XmlAttributeImpl implements Angular2H
   @NotNull
   @Override
   public String getEventName() {
-    String name = getName();
+    String name = normalizeAttributeName(getName());
     if (name.startsWith("(") && name.endsWith(")")) {
       return name.substring(1, name.length() - 1);
     }
@@ -49,5 +50,10 @@ public class Angular2HtmlEventImpl extends XmlAttributeImpl implements Angular2H
   @Override
   public Angular2Action getAction() {
     return ContainerUtil.getFirstItem(PsiTreeUtil.findChildrenOfType(this, Angular2Action.class));
+  }
+
+  @Override
+  public String toString() {
+    return "Angular2HtmlEvent <" + getEventName() + ">";
   }
 }

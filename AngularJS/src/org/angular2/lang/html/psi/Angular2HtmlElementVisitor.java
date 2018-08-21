@@ -20,10 +20,6 @@ public class Angular2HtmlElementVisitor extends XmlElementVisitor {
     visitElement(expansionCase);
   }
 
-  public void visitAnimation(Angular2HtmlAnimation animation) {
-    visitXmlAttribute(animation);
-  }
-
   public void visitAnimationEvent(Angular2HtmlAnimationEvent animationEvent) {
     visitXmlAttribute(animationEvent);
   }

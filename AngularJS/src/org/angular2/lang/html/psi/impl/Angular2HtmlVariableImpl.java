@@ -3,13 +3,14 @@ package org.angular2.lang.html.psi.impl;
 
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.XmlElementVisitor;
-import com.intellij.psi.impl.source.xml.XmlAttributeImpl;
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes.Angular2ElementType;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlVariable;
 import org.jetbrains.annotations.NotNull;
 
-public class Angular2HtmlVariableImpl extends XmlAttributeImpl implements Angular2HtmlVariable {
+import static org.angular2.lang.html.parser.Angular2HtmlParsing.normalizeAttributeName;
+
+public class Angular2HtmlVariableImpl extends Angular2HtmlBaseAttributeImpl implements Angular2HtmlVariable {
 
   public Angular2HtmlVariableImpl(@NotNull Angular2ElementType type) {
     super(type);
@@ -31,10 +32,16 @@ public class Angular2HtmlVariableImpl extends XmlAttributeImpl implements Angula
   @NotNull
   @Override
   public String getVariableName() {
-    String name = getName();
+    String name = normalizeAttributeName(getName());
     if (name.startsWith("let-")) {
       return name.substring(4);
     }
     throw new IllegalStateException("Bad attribute name: " + name);
   }
+
+  @Override
+  public String toString() {
+    return "Angular2HtmlVariable <" + getVariableName() + ">";
+  }
+
 }

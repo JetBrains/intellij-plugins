@@ -1,0 +1,162 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.angular2.lang.html.parser;
+
+import com.intellij.html.HtmlParsingTest;
+import com.intellij.javascript.HtmlInlineJSScriptTokenTypesProvider;
+import com.intellij.lang.LanguageHtmlInlineScriptTokenTypesProvider;
+import com.intellij.lang.css.CSSParserDefinition;
+import com.intellij.lang.javascript.JavascriptLanguage;
+import com.intellij.lang.javascript.JavascriptParserDefinition;
+import com.intellij.lexer.EmbeddedTokenTypesProvider;
+import com.intellij.openapi.application.PathManager;
+import com.intellij.psi.css.CssEmbeddedTokenTypesProvider;
+import com.intellij.psi.css.CssRulesetBlockEmbeddedTokenTypesProvider;
+
+import java.io.File;
+
+public class Angular2HtmlParsingTest extends HtmlParsingTest {
+
+  public Angular2HtmlParsingTest() {
+    super("", "html", new Angular2HtmlParserDefinition(), new JavascriptParserDefinition(), new CSSParserDefinition());
+  }
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    addExplicitExtension(LanguageHtmlInlineScriptTokenTypesProvider.INSTANCE, JavascriptLanguage.INSTANCE,
+                         new HtmlInlineJSScriptTokenTypesProvider());
+    registerExtensionPoint(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider.class);
+    registerExtension(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, new CssEmbeddedTokenTypesProvider());
+    registerExtension(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, new CssRulesetBlockEmbeddedTokenTypesProvider());
+  }
+
+  @Override
+  protected String getTestDataPath() {
+    return getContribPath().replace(File.separatorChar, '/') + "/AngularJS/test/org/angular2/lang/html/parser/testData/";
+  }
+
+  private static String getContribPath() {
+    final String homePath = PathManager.getHomePath();
+    if (new File(homePath, "contrib/.gitignore").isFile()) {
+      return homePath + File.separatorChar + "contrib";
+    }
+    return homePath;
+  }
+
+  public void testNgParseElementsInsideNgTemplate() throws Exception {
+    doTestHtml("<ng-template><span></span></ng-template>");
+  }
+
+  public void testNgSupportVoidElements() throws Exception {
+    doTestHtml("<link rel=\"author license\" href=\"/about\">");
+  }
+
+  public void testNgNotErrorOnVoidHtml5Elements() throws Exception {
+    doTestHtml("<map><area></map><div><br></div><colgroup><col></colgroup>" +
+               "<div><embed></div><div><hr></div><div><img></div><div><input></div>" +
+               "<object><param>/<object><audio><source></audio><audio><track></audio>" +
+               "<p><wbr></p>");
+  }
+
+  public void testNgCloseVoidElementsOnTextNodes() throws Exception {
+    doTestHtml("<p>before<br>after</p>");
+  }
+
+  public void testNgSupportOptionalEndTags() throws Exception {
+    doTestHtml("<div><p>1<p>2</div>");
+  }
+
+  public void testNgSupportNestedElements() throws Exception {
+    doTestHtml("<ul><li><ul><li></li></ul></li></ul>");
+  }
+
+  public void testNgSupportSelfClosingVoidElements() throws Exception {
+    doTestHtml("<input />");
+  }
+
+  public void testNgParseExpansionForms1() throws Exception {
+    doTestHtml("<div>before{messages.length, plural, =0 {You have <b>no</b> messages} =1 {One {{message}}}}after</div>");
+  }
+  public void testNgParseExpansionForms2() throws Exception {
+    doTestHtml("<div><span>{a, plural, =0 {b}}</span></div>");
+  }
+  public void testNgParseExpansionForms3() throws Exception {
+    doTestHtml("{messages.length, plural, =0 { {p.gender, select, male {m}} }}");
+  }
+  public void testNgErrorOnUnterminatedExpansionForm() throws Exception {
+    doTestHtml("{messages.length, plural, =0 {one}");
+  }
+  public void testNgICUWithNumbers() throws Exception {
+    doTestHtml("{sex, select, male {m} female {f} 0 {other}}");
+  }
+  public void testNgErrorOnUnterminatedExpansionCase() throws Exception {
+    doTestHtml("{messages.length, plural, =0 {one");
+  }
+  public void testNgErrorOnInvalidHTMLInExpansionCase() throws Exception {
+    doTestHtml("{messages.length, plural, =0 {<div>}}");
+  }
+  public void testNgReportUnexpectedClosingTag() throws Exception {
+    doTestHtml("<div></p></div>");
+  }
+  public void testNgReportSubsequentOpenTagWithoutCloseTag() throws Exception {
+    doTestHtml("<div</div>");
+  }
+  public void testNgReportClosingTagForVoidElement() throws Exception {
+    doTestHtml("<input></input>");
+  }
+  public void testNgReportSelfClosingHtmlElement() throws Exception {
+    doTestHtml("<p />");
+  }
+  public void testNgParseBoundProperties() throws Exception {
+    doTestHtml("<div [someProp]='v'></div>" +
+               "<div [some-prop]='v'></div>" +
+               "<div [dot.name]='v'></div>" +
+               "<div [attr.someAttr]='v'></div>" +
+               "<div [class.some-class]='v'></div>" +
+               "<div [style.someStyle]='v'></div>" +
+               "<div data-[style.someStyle]='v'></div>" +
+               "<div bind-prop='v'></div>" +
+               "<div prop='{{v}}'></div>" +
+               "<div bind-animate-someAnimation='val'></div>" +
+               "<div [@someAnimation]='v'></div>" +
+               "<div @someAnimation='v'></div>");
+  }
+  public void testNgParseEvents() throws Exception {
+    doTestHtml("<div (window:event)='v'></div>" +
+               "<div (event)='v'></div>" +
+               "<div data-(event)='v'></div>" +
+               "<div (some-event)='v'></div>" +
+               "<div (someEvent)='v'></div>" +
+               "<div on-event='v'></div>");
+  }
+  public void testNgParseAnimationEvents() throws Exception {
+    doTestHtml("<a (@click)='doStuff()'></a>" +
+               "<b on-animate-click='doStuff()'></b>" +
+               "<a (@click.done)='doStuff()'></a>" +
+               "<b on-animate-click.start='doStuff()'></b>");
+  }
+
+  public void testNgParseReferences() throws Exception {
+    doTestHtml("<div #a></div>" +
+               "<div ref-a></div>" +
+               "<div a #a='dirA'></div>" +
+               "<div #a-b></div>");
+  }
+
+  public void testNgParseVariables() throws Exception {
+    doTestHtml("<div let-a></div>" +
+      "<ng-template let-a='b'></ng-template>");
+  }
+  public void testNgParseInlineTemplates() throws Exception {
+    doTestHtml("<div *ngIf></div>" +
+               "<div *ngIf='condition'></div>" +
+               "<div *ngIf='#a=b'>Report error on vars with #</div>" +
+               "<div *ngIf='let a=b'></div>" +
+               "<div data-*ngIf='let a=b'></div>" +
+               "<div *ngIf='expr as local'></div>");
+  }
+  public void testNgReportErrorsInExpressions() throws Exception {
+    doTestHtml("<div [prop]='a b'></div>");
+  }
+
+}

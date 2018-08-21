@@ -23,7 +23,8 @@ import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
 
 public class Angular2HtmlParsing extends HtmlParsing {
 
-  private static final TokenSet CUSTOM_CONTENT = TokenSet.create(LBRACE, RBRACE, INTERPOLATION_START, XML_COMMA);
+  private static final TokenSet CUSTOM_CONTENT = TokenSet.create(LBRACE, RBRACE, INTERPOLATION_START, XML_COMMA, XML_DATA_CHARACTERS);
+  private static final TokenSet DATA_TOKENS = TokenSet.create(RBRACE, XML_COMMA, XML_DATA_CHARACTERS);
 
   public Angular2HtmlParsing(@NotNull PsiBuilder builder) {
     super(builder);
@@ -126,13 +127,21 @@ public class Angular2HtmlParsing extends HtmlParsing {
       getBuilder().remapCurrentToken(XML_DATA_CHARACTERS);
       advance();
     }
+    else if (tt == XML_DATA_CHARACTERS) {
+      xmlText = startText(xmlText);
+      PsiBuilder.Marker dataStart = mark();
+      while (DATA_TOKENS.contains(token())) {
+        advance();
+      }
+      dataStart.collapse(XML_DATA_CHARACTERS);
+    }
     return xmlText;
   }
 
   @Override
   protected PsiBuilder.Marker parseCustomTopLevelContent(PsiBuilder.Marker error) {
     error = flushError(error);
-    parseCustomTagContent(null);
+    terminateText(parseCustomTagContent(null));
     return error;
   }
 
@@ -152,16 +161,16 @@ public class Angular2HtmlParsing extends HtmlParsing {
     else {
       advance();
     }
-
+    IElementType attributeElementType = attributeElementTypeAndError.first;
     if (token() == XML_EQ) {
       advance();
-      parseAttributeValue(attributeElementTypeAndError.first);
+      attributeElementType = parseAttributeValue(attributeElementType);
     }
-    att.done(attributeElementTypeAndError.first);
+    att.done(attributeElementType);
   }
 
   @NotNull
-  private static String normalizeAttributeName(@NotNull String name) {
+  public static String normalizeAttributeName(@NotNull String name) {
     return StringUtil.trimStart(name, "data-");
   }
 
@@ -187,7 +196,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
       return parseEvent(name.substring(3));
     }
     else if (name.startsWith("(") && name.endsWith(")")) {
-      return parseEvent(name.substring(1, name.length() - 2));
+      return parseEvent(name.substring(1, name.length() - 1));
     }
     else if (name.startsWith("*")) {
       return parseTemplateBindings(name.substring(1));
@@ -202,7 +211,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
       return parseReference(name.substring(4));
     }
     else if (name.startsWith("@")) {
-      return parseAnimation(name.substring(1));
+      return parsePropertyBinding(name.substring(1));
     }
     return pair(XML_ATTRIBUTE, null);
   }
@@ -214,12 +223,6 @@ public class Angular2HtmlParsing extends HtmlParsing {
 
   @NotNull
   private static Pair<IElementType, String> parsePropertyBinding(@NotNull String name) {
-    if (isAnimationLabel(name)) {
-      return parseAnimation(name.substring(1));
-    }
-    else if (name.startsWith("animate-")) {
-      return parseAnimation(name.substring(8));
-    }
     return pair(PROPERTY_BINDING, null);
   }
 
@@ -229,10 +232,6 @@ public class Angular2HtmlParsing extends HtmlParsing {
       return parseAnimationEvent(name.substring(1));
     }
     return pair(EVENT, null);
-  }
-
-  private static Pair<IElementType, String> parseAnimation(@NotNull String name) {
-    return pair(ANIMATION, null);
   }
 
   @NotNull
@@ -282,7 +281,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
     return name.startsWith("@");
   }
 
-  private void parseAttributeValue(@NotNull IElementType attributeElementType) {
+  private IElementType parseAttributeValue(@NotNull IElementType attributeElementType) {
     final PsiBuilder.Marker attValue = mark();
     final IElementType contentType = getAttributeContentType(attributeElementType);
     if (token() == XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER) {
@@ -294,6 +293,10 @@ public class Angular2HtmlParsing extends HtmlParsing {
           .XML_EMPTY_ELEMENT_END ||
             tt == XmlTokenType.XML_START_TAG_START) {
           break;
+        }
+
+        if (tt == INTERPOLATION_EXPR) {
+          attributeElementType = PROPERTY_BINDING;
         }
 
         if (tt == XmlTokenType.XML_BAD_CHARACTER) {
@@ -332,10 +335,11 @@ public class Angular2HtmlParsing extends HtmlParsing {
     }
 
     attValue.done(XmlElementType.XML_ATTRIBUTE_VALUE);
+    return attributeElementType;
   }
 
   private static IElementType getAttributeContentType(IElementType type) {
-    if (type == PROPERTY_BINDING || type == ANIMATION) {
+    if (type == PROPERTY_BINDING) {
       return BINDING_EXPR;
     }
     if (type == EVENT || type == ANIMATION_EVENT) {

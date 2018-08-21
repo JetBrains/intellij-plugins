@@ -3,13 +3,14 @@ package org.angular2.lang.html.psi.impl;
 
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.XmlElementVisitor;
-import com.intellij.psi.impl.source.xml.XmlAttributeImpl;
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes.Angular2ElementType;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlReference;
 import org.jetbrains.annotations.NotNull;
 
-public class Angular2HtmlReferenceImpl extends XmlAttributeImpl implements Angular2HtmlReference {
+import static org.angular2.lang.html.parser.Angular2HtmlParsing.normalizeAttributeName;
+
+public class Angular2HtmlReferenceImpl extends Angular2HtmlBaseAttributeImpl implements Angular2HtmlReference {
 
   public Angular2HtmlReferenceImpl(@NotNull Angular2ElementType type) {
     super(type);
@@ -31,7 +32,7 @@ public class Angular2HtmlReferenceImpl extends XmlAttributeImpl implements Angul
   @NotNull
   @Override
   public String getReferenceName() {
-    String name = getName();
+    String name = normalizeAttributeName(getName());
     if (name.startsWith("#")) {
       return name.substring(1);
     }
@@ -40,4 +41,10 @@ public class Angular2HtmlReferenceImpl extends XmlAttributeImpl implements Angul
     }
     throw new IllegalStateException("Bad attribute name: " + name);
   }
+
+  @Override
+  public String toString() {
+    return "Angular2HtmlRefence <" + getReferenceName() + ">";
+  }
+
 }

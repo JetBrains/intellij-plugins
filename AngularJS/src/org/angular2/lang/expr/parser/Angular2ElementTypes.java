@@ -11,6 +11,7 @@ import com.intellij.psi.tree.IFileElementType;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.impl.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
@@ -31,7 +32,7 @@ public interface Angular2ElementTypes extends JSElementTypes {
     throw new UnsupportedOperationException("Use createTemplateBindingStatement method instead");
   });
 
-  static IElementType createTemplateBindingStatement(String key, boolean isVar, String name) {
+  static IElementType createTemplateBindingStatement(@NotNull String key, boolean isVar, @Nullable String name) {
     return new Angular2TemplateBindingType(key, isVar, name);
   }
 
@@ -61,11 +62,13 @@ public interface Angular2ElementTypes extends JSElementTypes {
 
   class Angular2TemplateBindingType extends IElementType implements ICompositeElementType {
 
+    @NotNull
     private final String myKey;
     private final boolean myVar;
+    @Nullable
     private final String myName;
 
-    public Angular2TemplateBindingType(String key, boolean isVar, String name) {
+    public Angular2TemplateBindingType(@NotNull String key, boolean isVar, @Nullable String name) {
       super("NG:TEMPLATE_BINDING_STATEMENT", Angular2Language.INSTANCE, false);
       myKey = key;
       myVar = isVar;

@@ -4,7 +4,6 @@ package org.angular2.lang.html.psi.impl;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.XmlElementVisitor;
-import com.intellij.psi.impl.source.xml.XmlAttributeImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.lang.expr.psi.Angular2Action;
@@ -17,8 +16,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 
 import static com.intellij.openapi.util.Pair.pair;
+import static org.angular2.lang.html.parser.Angular2HtmlParsing.normalizeAttributeName;
 
-public class Angular2HtmlAnimationEventImpl extends XmlAttributeImpl implements Angular2HtmlAnimationEvent {
+public class Angular2HtmlAnimationEventImpl extends Angular2HtmlBaseAttributeImpl implements Angular2HtmlAnimationEvent {
 
   public Angular2HtmlAnimationEventImpl(@NotNull Angular2ElementType type) {
     super(type);
@@ -50,7 +50,7 @@ public class Angular2HtmlAnimationEventImpl extends XmlAttributeImpl implements 
   }
 
   private Pair<String, AnimationPhase> getNameAndPhase() {
-    String name = getName();
+    String name = normalizeAttributeName(getName());
     if (name.startsWith("(") && name.endsWith(")")) {
       name = name.substring(1, name.length() - 1);
     }
@@ -86,4 +86,10 @@ public class Angular2HtmlAnimationEventImpl extends XmlAttributeImpl implements 
   public Angular2Action getAction() {
     return ContainerUtil.getFirstItem(PsiTreeUtil.findChildrenOfType(this, Angular2Action.class));
   }
+
+  @Override
+  public String toString() {
+    return "Angular2HtmlAnimationEvent " + getNameAndPhase();
+  }
+
 }

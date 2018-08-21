@@ -25,10 +25,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.testFramework.LightPlatformTestCase;
 import com.intellij.testFramework.LightVirtualFile;
 import com.mscharhag.oleaster.runner.OleasterRunner;
 import junit.framework.AssertionFailedError;
+import org.angular2.lang.OleasterTestUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.*;
 import org.junit.runner.RunWith;
@@ -54,6 +54,8 @@ import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
 public class Angular2ParserSpecTest {
   {
     describe("parser", () -> {
+      OleasterTestUtil.bootstrapLightPlatform();
+
       describe("parseAction", () -> {
         it("should parse numbers", () -> {
           checkAction("1");
@@ -504,25 +506,9 @@ public class Angular2ParserSpecTest {
         it("should be able to recover from a missing selector in a array literal",
            () -> recover("[[a.], b, c]"));
       });
+
     });
 
-
-    //setup environment
-    new LightPlatformTestCase() {
-      {
-        try {
-          setUp();
-        }
-        catch (Exception e) {
-          throw new RuntimeException(e);
-        }
-      }
-
-      @Override
-      protected boolean shouldContainTempFiles() {
-        return false;
-      }
-    };
   }
 
   private static void checkAction(String exp) {

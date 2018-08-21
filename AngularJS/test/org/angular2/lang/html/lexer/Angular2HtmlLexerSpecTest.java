@@ -15,9 +15,9 @@ package org.angular2.lang.html.lexer;
 
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.testFramework.LightPlatformTestCase;
 import com.mscharhag.oleaster.matcher.matchers.CollectionMatcher;
 import com.mscharhag.oleaster.runner.OleasterRunner;
+import org.angular2.lang.OleasterTestUtil;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
@@ -50,6 +50,9 @@ public class Angular2HtmlLexerSpecTest {
 
   static {
     describe("HtmlLexer", () -> {
+
+      OleasterTestUtil.bootstrapLightPlatform();
+
       describe("line/column numbers", () -> {
         it("should work without newlines", () -> {
           expect(tokenizeAndHumanizeLineColumn("<t>a</t>")).toEqual(newArrayList(
@@ -984,23 +987,6 @@ public class Angular2HtmlLexerSpecTest {
         });
       });
     });
-
-    //setup environment
-    new LightPlatformTestCase() {
-      {
-        try {
-          setUp();
-        }
-        catch (Exception e) {
-          throw new RuntimeException(e);
-        }
-      }
-
-      @Override
-      protected boolean shouldContainTempFiles() {
-        return false;
-      }
-    };
   }
 
   private static List<Token> tokenizeWithoutErrors(String input) {
