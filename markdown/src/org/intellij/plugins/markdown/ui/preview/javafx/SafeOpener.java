@@ -126,7 +126,7 @@ class SafeOpener {
           showCannotNavigateNotification(project, anchor, point);
         }
         else if (headers.size() == 1) {
-          navigateToHeader(project, targetFile, Objects.requireNonNull(ContainerUtil.getFirstItem(headers)));
+          navigateToHeader(targetFile, Objects.requireNonNull(ContainerUtil.getFirstItem(headers)));
         }
         else {
           showHeadersPopup(headers, point);
@@ -146,9 +146,9 @@ class SafeOpener {
     Disposer.register(project, balloon);
   }
 
-  private static void navigateToHeader(@NotNull Project project, @NotNull VirtualFile targetFile, @NotNull PsiElement item) {
+  private static void navigateToHeader(@NotNull VirtualFile targetFile, @NotNull PsiElement item) {
     MarkdownSplitEditor splitEditor = Objects.requireNonNull(
-      ObjectUtils.tryCast(FileEditorManager.getInstance(project).getSelectedEditor(targetFile), MarkdownSplitEditor.class));
+      ObjectUtils.tryCast(FileEditorManager.getInstance(item.getProject()).getSelectedEditor(targetFile), MarkdownSplitEditor.class));
 
     boolean oldAutoScrollPreview = splitEditor.isAutoScrollPreview();
 
@@ -177,7 +177,7 @@ class SafeOpener {
 
         @Override
         public PopupStep onChosen(final PsiElement selectedValue, boolean finalChoice) {
-          return doFinalStep(() -> PsiNavigateUtil.navigate(selectedValue));
+          return doFinalStep(() -> navigateToHeader(selectedValue.getContainingFile().getVirtualFile(), selectedValue));
         }
       };
 
