@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class KarmaConfigurationType extends ConfigurationTypeBase implements DumbAware {
   public KarmaConfigurationType() {
-    super("JavaScriptTestRunnerKarma", "Karma", "Karma", JSKarmaIcons.Karma2);
+    super("JavaScriptTestRunnerKarma", "Karma", "Karma", JSKarmaIcons.Icons.Karma2);
     addFactory(new ConfigurationFactoryEx<KarmaRunConfiguration>(this) {
       @NotNull
       @Override
