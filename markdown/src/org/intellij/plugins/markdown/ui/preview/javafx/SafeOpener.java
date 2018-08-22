@@ -7,6 +7,7 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
@@ -147,8 +148,11 @@ class SafeOpener {
   }
 
   private static void navigateToHeader(@NotNull VirtualFile targetFile, @NotNull PsiElement item) {
-    MarkdownSplitEditor splitEditor = Objects.requireNonNull(
-      ObjectUtils.tryCast(FileEditorManager.getInstance(item.getProject()).getSelectedEditor(targetFile), MarkdownSplitEditor.class));
+    FileEditor editor = FileEditorManager.getInstance(item.getProject()).getSelectedEditor(targetFile);
+    if (editor == null) {
+      return;
+    }
+    MarkdownSplitEditor splitEditor = Objects.requireNonNull(ObjectUtils.tryCast(editor, MarkdownSplitEditor.class));
 
     boolean oldAutoScrollPreview = splitEditor.isAutoScrollPreview();
 
