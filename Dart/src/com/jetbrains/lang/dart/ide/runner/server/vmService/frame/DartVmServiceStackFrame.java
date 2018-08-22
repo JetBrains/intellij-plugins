@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 
 import com.intellij.icons.AllIcons;
@@ -84,7 +85,7 @@ public class DartVmServiceStackFrame extends XStackFrame {
       component.append(text, SimpleTextAttributes.GRAY_ATTRIBUTES);
     }
 
-    component.setIcon(AllIcons.Debugger.StackFrame);
+    component.setIcon(AllIcons.Debugger.Frame);
   }
 
   @NotNull
