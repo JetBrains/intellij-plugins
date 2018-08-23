@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.osmorc.inspection;
 
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -25,12 +11,13 @@ public class PackageAccessibilityInspectionTest extends LightOsgiFixtureTestCase
   public void testEmpty() {
     doTest(
       "package pkg;\n" +
-      "import org.osgi.framework.launch.FrameworkFactory;\n" +
+      "import aQute.bnd.repository.fileset.FileSetRepository;\n" +
+      "import aQute.lib.fileset.FileSet;\n" +
       "public class C {\n" +
       "  public static void main() {\n" +
       "    <error descr=\"The package 'javax.swing' is not imported in the manifest\">javax.swing.Icon</error> icon = null;\n" +
-      "    <error descr=\"The package 'org.osgi.framework.launch' is not imported in the manifest\">FrameworkFactory</error> factory =\n" +
-      "      new <error descr=\"The package 'org.apache.felix.framework' is not exported by the bundle dependencies\">org.apache.felix.framework.FrameworkFactory</error>();\n" +
+      "    <error descr=\"The package 'aQute.bnd.repository.fileset' is not imported in the manifest\">FileSetRepository</error> repo = null;\n" +
+      "    <error descr=\"The package 'aQute.lib.fileset' is not exported by the bundle dependencies\">FileSet</error> set = null;\n" +
       "  }\n" +
       "}");
   }
@@ -38,38 +25,38 @@ public class PackageAccessibilityInspectionTest extends LightOsgiFixtureTestCase
   public void testImportPackage() {
     doTest(
       "package pkg;\n" +
-      "import org.osgi.framework.*;\n" +
-      "public class C implements BundleActivator {\n" +
-      "  public void start(BundleContext context) throws Exception { }\n" +
-      "  public void stop(BundleContext context) throws Exception { }\n" +
+      "public class C {\n" +
+      "  public static void main() {\n" +
+      "    javax.swing.Icon icon = null;\n" +
+      "    aQute.bnd.repository.fileset.FileSetRepository repo = null;\n" +
+      "  }\n" +
       "}",
 
-      "Import-Package: org.osgi.framework\n");
+      "Import-Package: javax.swing, aQute.bnd.repository.fileset\n");
   }
 
   public void testRequireBundle() {
     doTest(
       "package pkg;\n" +
-      "import org.osgi.framework.*;\n" +
-      "public class C implements BundleActivator {\n" +
-      "  public void start(BundleContext context) throws Exception { }\n" +
-      "  public void stop(BundleContext context) throws Exception { }\n" +
+      "public class C {\n" +
+      "  public static void main() {\n" +
+      "    aQute.bnd.repository.fileset.FileSetRepository repo = null;\n" +
+      "  }\n" +
       "}",
 
-      "Require-Bundle: org.apache.felix.framework\n");
+      "Require-Bundle: biz.aQute.repository\n");
   }
 
   public void testAutoImport() {
     myConfiguration.setManifestGenerationMode(ManifestGenerationMode.Bnd);
     doTest(
       "package pkg;\n" +
-      "import org.apache.felix.framework.FrameworkFactory;\n" +
-      "import org.osgi.framework.launch.*;\n" +
+      "import aQute.lib.fileset.FileSet;\n" +
       "public class C {\n" +
       "  public static void main() {\n" +
       "    javax.swing.Icon icon = null;\n" +
-      "    <error descr=\"The package 'org.apache.felix.framework' is not exported by the bundle dependencies\">FrameworkFactory</error> factory =\n" +
-      "      new <error descr=\"The package 'org.apache.felix.framework' is not exported by the bundle dependencies\">FrameworkFactory</error>();\n" +
+      "    aQute.bnd.repository.fileset.FileSetRepository repo = null;\n" +
+      "    <error descr=\"The package 'aQute.lib.fileset' is not exported by the bundle dependencies\">FileSet</error> set = null;\n" +
       "  }\n" +
       "}");
   }
@@ -97,23 +84,25 @@ public class PackageAccessibilityInspectionTest extends LightOsgiFixtureTestCase
       "package pkg;\n" +
       "public class C {\n" +
       "  public static void main() {\n" +
-      "    new org.apache.felix.framework.FrameworkFactory();\n" +
+      "    aQute.lib.fileset.FileSet set = null;\n" +
       "  }\n" +
       "}",
 
-      "Private-Package: org.apache.felix.framework\n");
+      "Private-Package: aQute.lib.fileset\n");
   }
 
   public void testQuickFixExported() {
     doTestFix(
       "package pkg;\n" +
-      "import org.osgi.framework.*;\n" +
-      "public abstract class C implements <caret>BundleActivator { }",
+      "import aQute.bnd.repository.fileset.*;\n" +
+      "public abstract class C {\n" +
+      "  private <caret>FileSetRepository repo = null;\n" +
+      "}",
 
       "Import-Package: javax.sql\n",
 
       "Import-Package: javax.sql,\n" +
-      " org.osgi.framework\n");
+      " aQute.bnd.repository.fileset\n");
   }
 
   public void testQuickFixImplicit() {
