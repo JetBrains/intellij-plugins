@@ -108,6 +108,13 @@ Includes the following features:</p>
               icon="MarkdownIcons.EditorActions.Bold">
       </action>
 
+      <action class="org.intellij.plugins.markdown.ui.actions.styling.ToggleStrikethroughAction"
+              id="org.intellij.plugins.markdown.ui.actions.styling.ToggleStrikethroughAction"
+              text="Toggle strikethrough mode"
+              description="Toggles strikethrough mode on caret/selection"
+              icon="MarkdownIcons.EditorActions.Strike_through">
+      </action>
+
       <action class="org.intellij.plugins.markdown.ui.actions.styling.ToggleItalicAction"
               id="org.intellij.plugins.markdown.ui.actions.styling.ToggleItalicAction"
               text="Toggle italic mode"
