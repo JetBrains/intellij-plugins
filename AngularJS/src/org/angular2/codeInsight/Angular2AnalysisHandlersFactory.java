@@ -1,4 +1,4 @@
-package org.angularjs.codeInsight;
+package org.angular2.codeInsight;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory {
+public class Angular2AnalysisHandlersFactory extends JSAnalysisHandlersFactory {
   @NotNull
   @Override
   public JSReferenceChecker getReferenceChecker(@NotNull JSReferenceInspectionProblemReporter reporter) {

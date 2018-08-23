@@ -3,7 +3,6 @@ package org.angular2.lang.expr.psi.impl;
 
 import com.intellij.lang.javascript.JSExtendedLanguagesTokenSetProvider;
 import com.intellij.lang.javascript.psi.JSExpression;
-import com.intellij.lang.javascript.psi.impl.JSStatementImpl;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -16,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-public class Angular2BindingImpl extends JSStatementImpl implements Angular2Binding {
+public class Angular2BindingImpl extends Angular2EmbeddedExpressionImpl implements Angular2Binding {
 
   public Angular2BindingImpl(IElementType elementType) {
     super(elementType);
@@ -33,15 +32,15 @@ public class Angular2BindingImpl extends JSStatementImpl implements Angular2Bind
   }
 
   @Nullable
-  static JSExpression getExpression(JSStatementImpl statement) {
-    return Arrays.stream(statement.getChildren(JSExtendedLanguagesTokenSetProvider.EXPRESSIONS))
+  static JSExpression getExpression(Angular2EmbeddedExpressionImpl expression) {
+    return Arrays.stream(expression.getChildren(JSExtendedLanguagesTokenSetProvider.EXPRESSIONS))
       .map(node -> node.getPsi(JSExpression.class))
       .findFirst()
       .orElse(null);
   }
 
-  static Angular2Quote getQuote(JSStatementImpl statement) {
-    return Arrays.stream(statement.getChildren(TokenSet.create(Angular2ElementTypes.QUOTE_STATEMENT)))
+  static Angular2Quote getQuote(Angular2EmbeddedExpressionImpl expression) {
+    return Arrays.stream(expression.getChildren(TokenSet.create(Angular2ElementTypes.QUOTE_STATEMENT)))
       .map(node -> node.getPsi(Angular2Quote.class))
       .findFirst()
       .orElse(null);

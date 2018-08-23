@@ -2,10 +2,9 @@
 package org.angular2.lang.expr.psi;
 
 import com.intellij.lang.javascript.psi.JSExpressionStatement;
-import com.intellij.lang.javascript.psi.JSStatement;
 import org.jetbrains.annotations.NotNull;
 
-public interface Angular2Action extends JSStatement {
+public interface Angular2Action extends Angular2EmbeddedExpression {
 
   @NotNull
   JSExpressionStatement[] getStatements();

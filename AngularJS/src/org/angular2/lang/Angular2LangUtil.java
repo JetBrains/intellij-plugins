@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.testFramework.LightVirtualFileBase;
 import org.jetbrains.annotations.NotNull;
 
 public class Angular2LangUtil {
@@ -40,6 +41,15 @@ public class Angular2LangUtil {
         && "disabled".equals(System.getProperty("angular.js"))) {
       return false;
     }
+    if (context instanceof LightVirtualFileBase) {
+      while (context instanceof LightVirtualFileBase) {
+        context = ((LightVirtualFileBase)context).getOriginalFile();
+      }
+      if (context == null) {
+        return false;
+      }
+    }
+
     Ref<Boolean> isAngular2Context = Ref.create(false);
     PackageJsonUtil.processUpPackageJsonFilesInAllScope(context, file -> {
       PackageJsonData data = PackageJsonUtil.getOrCreateData(file);

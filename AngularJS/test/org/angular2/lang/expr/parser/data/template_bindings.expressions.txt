@@ -240,7 +240,8 @@ ASTWrapperPsiElement(FILE)
           PsiWhiteSpace(' ')
           PsiElement(JS:OR)('|')
           PsiWhiteSpace(' ')
-          PsiElement(JS:IDENTIFIER)('started')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('started')
           PsiWhiteSpace(' ')
           JSArgumentList
             PsiElement(JS:COLON)(':')
@@ -250,7 +251,8 @@ ASTWrapperPsiElement(FILE)
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
-        PsiElement(JS:IDENTIFIER)('search')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('search')
         PsiWhiteSpace(' ')
         JSArgumentList
           PsiElement(JS:COLON)(':')
@@ -282,7 +284,8 @@ ASTWrapperPsiElement(FILE)
           PsiWhiteSpace(' ')
           PsiElement(JS:OR)('|')
           PsiWhiteSpace(' ')
-          PsiElement(JS:IDENTIFIER)('started')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('started')
           PsiWhiteSpace(' ')
           JSArgumentList
             PsiElement(JS:COLON)(':')
@@ -292,7 +295,8 @@ ASTWrapperPsiElement(FILE)
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
-        PsiElement(JS:IDENTIFIER)('search')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('search')
         PsiWhiteSpace(' ')
         JSArgumentList
           PsiElement(JS:COLON)(':')
@@ -324,7 +328,8 @@ ASTWrapperPsiElement(FILE)
           PsiWhiteSpace(' ')
           PsiElement(JS:OR)('|')
           PsiWhiteSpace(' ')
-          PsiElement(JS:IDENTIFIER)('started')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('started')
           PsiWhiteSpace(' ')
           JSArgumentList
             PsiElement(JS:COLON)(':')
@@ -334,7 +339,8 @@ ASTWrapperPsiElement(FILE)
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
-        PsiElement(JS:IDENTIFIER)('search')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('search')
         PsiWhiteSpace(' ')
         JSArgumentList
           PsiElement(JS:COLON)(':')
@@ -404,7 +410,8 @@ ASTWrapperPsiElement(FILE)
           PsiWhiteSpace(' ')
           PsiElement(JS:OR)('|')
           PsiWhiteSpace(' ')
-          PsiElement(JS:IDENTIFIER)('async')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('async')
           JSArgumentList
             <empty list>
         PsiElement(JS:RPAR)(')')

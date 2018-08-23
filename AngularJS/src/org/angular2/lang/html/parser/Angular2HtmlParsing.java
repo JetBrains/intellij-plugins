@@ -164,7 +164,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
     IElementType attributeElementType = attributeElementTypeAndError.first;
     if (token() == XML_EQ) {
       advance();
-      attributeElementType = parseAttributeValue(attributeElementType);
+      attributeElementType = parseAttributeValue(attributeElementType, attributeName);
     }
     att.done(attributeElementType);
   }
@@ -281,9 +281,9 @@ public class Angular2HtmlParsing extends HtmlParsing {
     return name.startsWith("@");
   }
 
-  private IElementType parseAttributeValue(@NotNull IElementType attributeElementType) {
+  private IElementType parseAttributeValue(@NotNull IElementType attributeElementType, @NotNull String attributeName) {
     final PsiBuilder.Marker attValue = mark();
-    final IElementType contentType = getAttributeContentType(attributeElementType);
+    final IElementType contentType = getAttributeContentType(attributeElementType, attributeName);
     if (token() == XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER) {
       advance();
       final PsiBuilder.Marker contentStart = contentType != null ? mark() : null;
@@ -338,7 +338,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
     return attributeElementType;
   }
 
-  private static IElementType getAttributeContentType(IElementType type) {
+  private static IElementType getAttributeContentType(IElementType type, String attributeName) {
     if (type == PROPERTY_BINDING) {
       return BINDING_EXPR;
     }
@@ -346,7 +346,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
       return ACTION_EXPR;
     }
     if (type == TEMPLATE_BINDINGS) {
-      return createTemplateBindings("$templateKey"); //TODO use real key here
+      return createTemplateBindings(attributeName.substring(1));
     }
     if (type == REFERENCE || type == VARIABLE || type == XML_ATTRIBUTE) {
       return null;

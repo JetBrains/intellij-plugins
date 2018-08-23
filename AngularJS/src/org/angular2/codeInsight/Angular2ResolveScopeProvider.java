@@ -1,4 +1,4 @@
-package org.angularjs.codeInsight;
+package org.angular2.codeInsight;
 
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSElementResolveScopeProvider;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSResolveScopeProvider implements JSElementResolveScopeProvider {
+public class Angular2ResolveScopeProvider implements JSElementResolveScopeProvider {
 
   @Nullable
   @Override

@@ -21,22 +21,22 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testCustomTagsCompletion20TypeScript() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        () -> myFixture.testCompletion("custom.html", "custom.after.html", "angular2.js", "custom.ts"));
+                                        () -> myFixture.testCompletion("custom.html", "custom.after.html", "package.json", "custom.ts"));
   }
 
   public void testCustomTagsCompletion20NoNormalize() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        () -> myFixture.testCompletion("custom_no_normalize.html", "custom_no_normalize.after.html", "angular2.js", "custom_no_normalize.ts"));
+                                        () -> myFixture.testCompletion("custom_no_normalize.html", "custom_no_normalize.after.html", "package.json", "custom_no_normalize.ts"));
   }
 
   public void testCustomTagsCompletion20JavaScript() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        () -> myFixture.testCompletion("custom.html", "custom.after.html", "angular2.js", "custom2.js"));
+                                        () -> myFixture.testCompletion("custom.html", "custom.after.html", "package.json", "custom2.js"));
   }
 
   public void testCustomTagsResolve20TypeScriptComponent() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      myFixture.configureByFiles("custom.after.html", "angular2.js", "custom.ts");
+      myFixture.configureByFiles("custom.after.html", "package.json", "custom.ts");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
       PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
       assertNotNull(ref);
@@ -54,7 +54,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testCustomTagsResolve20TypeScriptDirective() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      myFixture.configureByFiles("custom.after.html", "angular2.js", "custom_directive.ts");
+      myFixture.configureByFiles("custom.after.html", "package.json", "custom_directive.ts");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
       PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
       assertNotNull(ref);
@@ -72,7 +72,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testCustomTagsResolve20JavaScript() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      myFixture.configureByFiles("custom.after.html", "angular2.js", "custom2.js");
+      myFixture.configureByFiles("custom.after.html", "package.json", "custom2.js");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
       PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
       assertNotNull(ref);
@@ -88,33 +88,33 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testDeepPseudoSelector() {
     myFixture.enableInspections(CssInvalidPseudoSelectorInspection.class);
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        () -> myFixture.testHighlighting("deepPseudoSelector.html", "angular2.js"));
+                                        () -> myFixture.testHighlighting("deepPseudoSelector.html", "package.json"));
   }
 
   public void testCustomSpaceSeparated() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
                                         () -> {
-                                          final List<String> variants = myFixture.getCompletionVariants("customSpaceSeparated.html", "customSpaceSeparated.ts", "angular2.js");
+                                          final List<String> variants = myFixture.getCompletionVariants("customSpaceSeparated.html", "customSpaceSeparated.ts", "package.json");
                                           assertContainsElements(variants, "dummy-list", "dummy-nav-list");
                                         });
   }
 
   public void testInlineTemplateHtmlTags() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      List<String> variants = myFixture.getCompletionVariants("inline_template.ts", "angular2.js");
+      List<String> variants = myFixture.getCompletionVariants("inline_template.ts", "package.json");
       assertContainsElements(variants, "a", "img", "my-customer");
     });
   }
 
   public void testNgContainerCompletion20() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        () -> myFixture.testCompletion("ngContainer.html", "ngContainer.after.html", "angular2.js"));
+                                        () -> myFixture.testCompletion("ngContainer.html", "ngContainer.after.html", "package.json"));
   }
 
 
   public void testNgContainerResolve20() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      myFixture.configureByFiles("ngContainer.after.html", "angular2.js");
+      myFixture.configureByFiles("ngContainer.after.html", "package.json");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-<caret>container", myFixture.getFile());
       PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
       assertNotNull(ref);
@@ -127,13 +127,13 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgTemplateCompletion20() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        () -> myFixture.testCompletion("ngTemplate.html", "ngTemplate.after.html", "angular2.js"));
+                                        () -> myFixture.testCompletion("ngTemplate.html", "ngTemplate.after.html", "package.json"));
   }
 
 
   public void testNgTemplateResolve20() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      myFixture.configureByFiles("ngTemplate.after.html", "angular2.js");
+      myFixture.configureByFiles("ngTemplate.after.html", "package.json");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-<caret>template", myFixture.getFile());
       PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
       assertNotNull(ref);
@@ -146,13 +146,13 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgContentCompletion20() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        () -> myFixture.testCompletion("ngContent.html", "ngContent.after.html", "angular2.js"));
+                                        () -> myFixture.testCompletion("ngContent.html", "ngContent.after.html", "package.json"));
   }
 
 
   public void testNgContentResolve20() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      myFixture.configureByFiles("ngContent.after.html", "angular2.js");
+      myFixture.configureByFiles("ngContent.after.html", "package.json");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-<caret>content", myFixture.getFile());
       PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
       assertNotNull(ref);
@@ -165,7 +165,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testComplexSelectorList2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("ionic.html", "angular2.js", "ionic.metadata.json");
+      myFixture.configureByFiles("ionic.html", "package.json", "ionic.metadata.json");
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(), "ion-item");
     });
@@ -173,7 +173,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNoNormalizedResolve20() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      myFixture.configureByFiles("noNormalized.ts", "angular2.js");
+      myFixture.configureByFiles("noNormalized.ts", "package.json");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("app_<caret>hello", myFixture.getFile());
       PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
       assertNotNull(ref);
@@ -190,7 +190,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testTagClassTypes() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
       myFixture.enableInspections(JSCheckFunctionSignaturesInspection.class);
-      myFixture.configureByFiles("tagClassTypes.ts", "angular2.js");
+      myFixture.configureByFiles("tagClassTypes.ts", "package.json");
       myFixture.checkHighlighting(true, false, true);
     });
   }

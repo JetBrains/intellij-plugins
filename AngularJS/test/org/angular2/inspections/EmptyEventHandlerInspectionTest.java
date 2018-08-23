@@ -28,7 +28,7 @@ public class EmptyEventHandlerInspectionTest extends LightPlatformCodeInsightFix
   }
 
   protected void doTest() {
-    myFixture.configureByFiles(getTestName(true) + ".html", "angular2.js");
+    myFixture.configureByFiles(getTestName(true) + ".html", "package.json");
     myFixture.checkHighlighting();
     myFixture.launchAction(myFixture.findSingleIntention("Add attribute value"));
     myFixture.checkResultByFile(getTestName(true) + ".after.html");

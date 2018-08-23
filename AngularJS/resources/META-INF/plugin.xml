@@ -103,7 +103,6 @@
 
     <diagram.Provider implementation="org.angularjs.codeInsight.router.AngularUiRouterDiagramProvider"/>
     <javascript.module.provider implementation="org.angularjs.codeInsight.attributes.AngularModulesProvider"/>
-    <fileTypeFactory implementation="org.angularjs.AngularTypeScriptConfigFileTypeFactory"/>
 
     <!-- Angular 2 contributions -->
     <projectService serviceInterface="org.angular2.settings.AngularSettings"
@@ -119,6 +118,7 @@
     <directoryProjectConfigurator implementation="org.angular2.cli.AngularJSProjectConfigurator"
                                   order="after PlatformProjectConfigurator"/>
     <framework.detector implementation="org.angular2.cli.AngularJSFrameworkDetector"/>
+    <fileTypeFactory implementation="org.angular2.AngularTypeScriptConfigFileTypeFactory"/>
 
     <!-- Angular 2 HTML template contributions -->
     <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="first,after JSCommentInjector" id="angular2"/>
@@ -136,26 +136,34 @@
                             id="Angular2ServiceCompletionContributorHtml" order="before AngularJSXmlCompletionContributor"/>
 
     <!-- Angular 2 Expression Language contributions -->
+    <codeInsight.template.postfixTemplateProvider language="Angular2"
+                                                  implementationClass="com.intellij.codeInsight.template.postfix.templates.EmptyPostfixTemplateProvider"/>
     <lang.parserDefinition language="Angular2" implementationClass="org.angular2.lang.expr.parser.Angular2ParserDefinition"/>
     <stubElementTypeHolder class="org.angular2.lang.expr.parser.Angular2ElementTypes"/>
     <completion.contributor id="Angular2ServiceCompletionContributor" language="Angular2"
                             order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"
                             implementationClass="org.angularjs.codeInsight.Angular2ServiceCompletionContributor"/>
+    <completion.contributor language="Angular2" implementationClass="org.angular2.codeInsight.Angular2CompletionContributor"
+                            id="Angular2CompletionContributor"
+                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"/>
+    <lang.braceMatcher language="Angular2" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
+    <annotator language="Angular2" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
 
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
     <intentionAndInspectionFilter language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSInspectionFilter"/>
     <frameworkIndexingHandler implementation="org.angularjs.index.AngularJSIndexingHandler"/>
-    <frameworkIndexingHandler implementation="org.angular2.index.Angular2IndexingHandler"/>
     <dialectSpecificHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSSpecificHandlersFactory"/>
-    <inheritedLanguagesConfigurableProvider language="AngularJS"
-                                            implementationClass="org.angularjs.codeInsight.AngularJSLanguageConfigurableProvider"/>
-    <elementScopeProvider implementation="org.angularjs.codeInsight.AngularJSResolveScopeProvider"/>
+
+    <!-- Angular 2 Expression language contributions -->
+    <frameworkIndexingHandler implementation="org.angular2.index.Angular2IndexingHandler"/>
+    <JSImplicitElementsIndexFileTypeProvider implementation="org.angular2.index.Angular2ImplicitlyElementsFileTypeProvider"/>
     <LanguageServiceProvider implementation="org.angular2.service.Angular2LanguageServiceProvider"/>
     <LanguageServiceFilter implementation="org.angular2.service.Angular2LanguageServiceFilter"/>
-    <analysisHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSAnalysisHandlersFactory"/>
-    <JSImplicitElementsIndexFileTypeProvider implementation="org.angular2.index.Angular2ImplicitlyElementsFileTypeProvider"/>
+    <elementScopeProvider implementation="org.angular2.codeInsight.Angular2ResolveScopeProvider"/>
+    <dialectSpecificHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
+    <analysisHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2AnalysisHandlersFactory"/>
   </extensions>
 
   <actions>

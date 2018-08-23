@@ -24,7 +24,7 @@ public class InjectionsFormattingTest extends LightPlatformCodeInsightFixtureTes
   }
 
   private void doTest(@NotNull String before, @NotNull String expectedFile) {
-    myFixture.configureByFile("angular2.js");
+    myFixture.configureByFile("package.json");
     PsiFile psiFile = myFixture.configureByFile(before);
     doReformat(psiFile);
     myFixture.checkResultByFile(expectedFile);

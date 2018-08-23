@@ -26,14 +26,16 @@ HtmlFile:test.html
                 PsiWhiteSpace(' ')
                 PsiElement(JS:OR)('|')
                 PsiWhiteSpace(' ')
-                PsiElement(JS:IDENTIFIER)('async')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('async')
                 JSArgumentList
                   <empty list>
               PsiElement(JS:RPAR)(')')
             PsiWhiteSpace(' ')
             PsiElement(JS:OR)('|')
             PsiWhiteSpace(' ')
-            PsiElement(JS:IDENTIFIER)('date')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('date')
             JSArgumentList
               PsiElement(JS:COLON)(':')
               JSLiteralExpression

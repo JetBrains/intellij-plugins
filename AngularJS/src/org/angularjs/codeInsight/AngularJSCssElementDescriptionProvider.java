@@ -31,10 +31,10 @@ public class AngularJSCssElementDescriptionProvider extends CssElementDescriptor
     final PsiFile file = context.getContainingFile();
     if (file == null) return false;
     final Project project = context.getProject();
-    if (HtmlUtil.hasHtml(file)) return AngularIndexUtil.hasAngularJS(project);
+    if (HtmlUtil.hasHtml(file)) return AngularIndexUtil.hasAngularJS(project) || Angular2LangUtil.isAngular2Context(context);
     final VirtualFile virtualFile = file.getOriginalFile().getVirtualFile();
     final CssDialect mapping = CssDialectMappings.getInstance(project).getMapping(virtualFile);
-    return (mapping == null || mapping == CssDialect.CLASSIC) && AngularIndexUtil.hasAngularJS(project);
+    return (mapping == null || mapping == CssDialect.CLASSIC) && (AngularIndexUtil.hasAngularJS(project) || Angular2LangUtil.isAngular2Context(context));
   }
 
   @Override

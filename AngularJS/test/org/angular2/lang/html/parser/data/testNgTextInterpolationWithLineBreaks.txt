@@ -12,7 +12,8 @@ HtmlFile:test.html
             PsiWhiteSpace('\n            ')
             PsiElement(JS:OR)('|')
             PsiWhiteSpace(' ')
-            PsiElement(JS:IDENTIFIER)('started')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('started')
             PsiWhiteSpace(' ')
             JSArgumentList
               PsiElement(JS:COLON)(':')
@@ -22,7 +23,8 @@ HtmlFile:test.html
           PsiWhiteSpace('\n            ')
           PsiElement(JS:OR)('|')
           PsiWhiteSpace(' ')
-          PsiElement(JS:IDENTIFIER)('search')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('search')
           PsiWhiteSpace(' ')
           JSArgumentList
             PsiElement(JS:COLON)(':')

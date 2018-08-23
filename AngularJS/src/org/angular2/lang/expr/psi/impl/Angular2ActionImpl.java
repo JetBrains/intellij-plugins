@@ -2,7 +2,6 @@
 package org.angular2.lang.expr.psi.impl;
 
 import com.intellij.lang.javascript.psi.JSExpressionStatement;
-import com.intellij.lang.javascript.psi.impl.JSStatementImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
@@ -11,7 +10,7 @@ import org.angular2.lang.expr.psi.Angular2Chain;
 import org.angular2.lang.expr.psi.Angular2ElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public class Angular2ActionImpl extends JSStatementImpl implements Angular2Action {
+public class Angular2ActionImpl extends Angular2EmbeddedExpressionImpl implements Angular2Action {
 
   public Angular2ActionImpl(IElementType elementType) {
     super(elementType);

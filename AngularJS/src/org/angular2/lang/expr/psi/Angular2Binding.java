@@ -2,10 +2,9 @@
 package org.angular2.lang.expr.psi;
 
 import com.intellij.lang.javascript.psi.JSExpression;
-import com.intellij.lang.javascript.psi.JSStatement;
 import org.jetbrains.annotations.Nullable;
 
-public interface Angular2Binding extends JSStatement {
+public interface Angular2Binding extends Angular2EmbeddedExpression {
 
   @Nullable
   JSExpression getExpression();

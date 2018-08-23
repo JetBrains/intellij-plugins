@@ -31,7 +31,7 @@ public class IntentionsTest extends LightPlatformCodeInsightFixtureTestCase {
   private void doTestForFile(String name, String intentionHint) {
     JSTestUtils.testES6(myFixture.getProject(), () -> {
       myFixture.setCaresAboutInjection(false);
-      myFixture.configureByFiles(name + ".html", "angular2.js");
+      myFixture.configureByFiles(name + ".html", "package.json");
       IntentionAction action = ContainerUtil.find(myFixture.getAvailableIntentions(),
                                                   t -> StringUtil.equals(t.getText(), intentionHint));
       if (action == null) {

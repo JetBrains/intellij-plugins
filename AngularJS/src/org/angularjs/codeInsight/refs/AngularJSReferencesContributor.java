@@ -67,7 +67,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
           if ((literal.getParent() instanceof JSArrayLiteralExpression)) {
             final JSProperty property = ObjectUtils.tryCast(literal.getParent().getParent(), JSProperty.class);
             if (property != null && "styleUrls".equals((property).getName())) {
-              return AngularIndexUtil.hasAngularJS(literal.getProject());
+              return Angular2LangUtil.isAngular2Context(literal);
             }
           }
         }

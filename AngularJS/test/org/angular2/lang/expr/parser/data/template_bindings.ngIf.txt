@@ -225,7 +225,8 @@ ASTWrapperPsiElement(FILE)
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
-        PsiElement(JS:IDENTIFIER)('async')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('async')
         PsiWhiteSpace(' ')
         JSArgumentList
           <empty list>

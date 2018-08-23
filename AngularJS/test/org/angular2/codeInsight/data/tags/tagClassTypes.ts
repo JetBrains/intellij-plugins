@@ -34,7 +34,7 @@ import {Component} from "@angular/core"
         {{ testHR(hr) }}
         
         <h1 #h1></h1><h2 #h2></h2><h3 #h3></h3><h4 #h4></h4><h5 #h5></h5><h6 #h6></h6>
-        {{ testHeading(h1); testHeading(h2); testHeading(h3); testHeading(h4); testHeading(h5); testHeading(h6);}}
+        {{ testHeading(h1) }} {{ testHeading(h2) }} {{ testHeading(h3) }} {{ testHeading(h4) }} {{ testHeading(h5) }} {{ testHeading(h6)}}
         
         <iframe #iframe></iframe>
         {{ testIFrame(iframe) }}
@@ -49,7 +49,7 @@ import {Component} from "@angular/core"
         {{ testLabel(label) }}
         
         <ins #ins></ins><del #del></del>
-        {{ testMod(ins); testMod(del) }}
+        {{ testMod(ins) }} {{ testMod(del) }}
         
         <nav #nav></nav>
         {{ testNav(nav) }}
@@ -64,13 +64,13 @@ import {Component} from "@angular/core"
         {{ testParagraph(p) }}
         
         <blockquote #blockquote></blockquote><q #q></q>
-        {{ testQuote(blockquote); testQuote(q);}}
+        {{ testQuote(blockquote) }} {{ testQuote(q) }}
         
         <caption #caption></caption>
         {{ testTableCaption(caption) }}
           
         <col #col/><colgroup #colgroup></colgroup>
-        {{ testTableCol(col); testTableCol(colgroup) }}
+        {{ testTableCol(col) }} {{ testTableCol(colgroup) }}
         
         <td #td></td>
         {{ testTableDataCell(td) }}
@@ -82,7 +82,7 @@ import {Component} from "@angular/core"
         {{ testTableRow(tr) }}
         
         <tfoot #tfoot></tfoot><thead #thead></thead><tbody #tbody></tbody>
-        {{ testTableSection(tfoot); testTableSection(thead); testTableSection(tbody); }}
+        {{ testTableSection(tfoot) }} {{ testTableSection(thead) }} {{ testTableSection(tbody) }}
 
         <textarea #textarea></textarea>
         {{ testTextArea(textarea) }}

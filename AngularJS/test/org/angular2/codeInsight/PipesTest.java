@@ -18,7 +18,7 @@ public class PipesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testPipeCompletion() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.configureByFiles("pipe.html", "angular2.js", "custom.ts");
+      myFixture.configureByFiles("pipe.html", "package.json", "custom.ts");
       final List<String> variants = myFixture.getCompletionVariants("pipe.html");
       assertContainsElements(variants, "filta");
     });
@@ -26,7 +26,7 @@ public class PipesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testPipeResolve() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.configureByFiles("pipeCustom.resolve.html", "angular2.js", "custom.ts");
+      myFixture.configureByFiles("pipeCustom.resolve.html", "package.json", "custom.ts");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("fil<caret>ta", myFixture.getFile());
       PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
       assertNotNull(ref);

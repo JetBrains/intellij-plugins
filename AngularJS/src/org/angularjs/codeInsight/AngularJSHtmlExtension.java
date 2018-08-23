@@ -6,6 +6,7 @@ import com.intellij.psi.impl.source.xml.SchemaPrefix;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.HtmlXmlExtension;
+import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +16,8 @@ import org.jetbrains.annotations.Nullable;
 public class AngularJSHtmlExtension extends HtmlXmlExtension {
   @Override
   public boolean isAvailable(PsiFile file) {
-    return super.isAvailable(file) && AngularIndexUtil.hasAngularJS(file.getProject());
+    return super.isAvailable(file)
+           && (AngularIndexUtil.hasAngularJS(file.getProject()) || Angular2LangUtil.isAngular2Context(file));
   }
 
   @Override

@@ -2,8 +2,9 @@
 package org.angular2.lang.expr.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSExtendedLanguagesTokenSetProvider;
-import com.intellij.lang.javascript.JSKeywordSets;
+import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.JSArgumentList;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.impl.JSExpressionImpl;
@@ -42,7 +43,13 @@ public class Angular2PipeImpl extends JSExpressionImpl implements Angular2Pipe {
   @Nullable
   @Override
   public String getName() {
-    final ASTNode node = findChildByType(JSKeywordSets.IDENTIFIER_NAMES);
+    ASTNode node = getFirstChildNode();
+    while (node != null && node.getElementType() != JSTokenTypes.OR) {
+      node = node.getTreeNext();
+    }
+    while (node != null && node.getElementType() != JSElementTypes.REFERENCE_EXPRESSION) {
+      node = node.getTreeNext();
+    }
     return node != null ? node.getText() : null;
   }
 

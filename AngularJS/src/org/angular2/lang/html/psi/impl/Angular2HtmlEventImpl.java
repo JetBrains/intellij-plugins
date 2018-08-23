@@ -4,6 +4,7 @@ package org.angular2.lang.html.psi.impl;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.XmlElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.lang.expr.psi.Angular2Action;
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes.Angular2ElementType;
@@ -55,5 +56,10 @@ public class Angular2HtmlEventImpl extends Angular2HtmlBaseAttributeImpl impleme
   @Override
   public String toString() {
     return "Angular2HtmlEvent <" + getEventName() + ">";
+  }
+
+  @Override
+  public void setValue(String valueText) throws IncorrectOperationException {
+    super.setValue(valueText);
   }
 }

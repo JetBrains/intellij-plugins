@@ -33,7 +33,11 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
 
   @Override
   public void addTagNameVariants(final List<LookupElement> elements, @NotNull XmlTag xmlTag, String prefix) {
-    if (!(xmlTag instanceof HtmlTag && AngularIndexUtil.hasAngularJS(xmlTag.getProject()))) return;
+    boolean angular2 = Angular2LangUtil.isAngular2Context(xmlTag);
+    if (!(xmlTag instanceof HtmlTag
+          && (AngularIndexUtil.hasAngularJS(xmlTag.getProject()) || angular2))) {
+      return;
+    }
 
     final Project project = xmlTag.getProject();
     Language language = xmlTag.getContainingFile().getLanguage();
@@ -41,7 +45,7 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
       addLookupItem(language, elements, directive);
       return true;
     });
-    if (Angular2LangUtil.isAngular2Context(xmlTag)) {
+    if (angular2) {
       addLookupItem(language, elements, createDirective(xmlTag, NG_CONTAINER));
       addLookupItem(language, elements, createDirective(xmlTag, NG_CONTENT));
       addLookupItem(language, elements, createDirective(xmlTag, NG_TEMPLATE));
@@ -61,13 +65,17 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
   @Override
   public XmlElementDescriptor getDescriptor(XmlTag xmlTag) {
     final Project project = xmlTag.getProject();
-    if (!(xmlTag instanceof HtmlTag && AngularIndexUtil.hasAngularJS(project))) return null;
+    boolean angular2 = Angular2LangUtil.isAngular2Context(xmlTag);
+    if (!(xmlTag instanceof HtmlTag
+          && (AngularIndexUtil.hasAngularJS(project) || angular2))) {
+      return null;
+    }
 
     final String tagName = xmlTag.getName();
     String directiveName = DirectiveUtil.normalizeAttributeName(tagName);
     if (XmlUtil.isTagDefinedByNamespace(xmlTag)) return null;
     if ((NG_CONTAINER.equals(directiveName) || NG_CONTENT.equals(directiveName) || NG_TEMPLATE.equals(directiveName)) &&
-        Angular2LangUtil.isAngular2Context(project)) {
+        angular2) {
       return new AngularJSTagDescriptor(directiveName, createDirective(xmlTag, directiveName));
     }
 
@@ -76,7 +84,7 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
       // we've found directive via normalized name for Angular, it should not work
       directive = null;
     }
-    if (directive == null && !tagName.equals(directiveName) && Angular2LangUtil.isAngular2Context(project)) {
+    if (directive == null && !tagName.equals(directiveName) && angular2) {
       directiveName = tagName;
       directive = DirectiveUtil.getTagDirective(directiveName, project);
       if (!DirectiveUtil.isAngular2Directive(directive)) directive = null;

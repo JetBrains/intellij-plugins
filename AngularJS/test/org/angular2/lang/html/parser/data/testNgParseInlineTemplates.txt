@@ -23,7 +23,7 @@ HtmlFile:test.html
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
           ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR)
             Angular2TemplateBindings
-              Angular2TemplateBinding <$templateKey, false, null>
+              Angular2TemplateBinding <ngIf, false, null>
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('condition')
           XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
@@ -42,10 +42,10 @@ HtmlFile:test.html
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
           ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR)
             Angular2TemplateBindings
-              Angular2TemplateBinding <$templateKey, false, null>
+              Angular2TemplateBinding <ngIf, false, null>
                 PsiErrorElement:expression expected
                   <empty list>
-              Angular2TemplateBinding <$templateKey, false, null>
+              Angular2TemplateBinding <ngIf, false, null>
                 PsiElement(JS:SHARP)('#')
                 JSAssignmentExpression
                   JSDefinitionExpression
@@ -84,7 +84,7 @@ HtmlFile:test.html
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
           ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR)
             Angular2TemplateBindings
-              Angular2TemplateBinding <$templateKey, false, null>
+              Angular2TemplateBinding <ngIf, false, null>
                 <empty list>
               Angular2TemplateBinding <a, true, b>
                 PsiElement(JS:LET_KEYWORD)('let')
@@ -110,7 +110,7 @@ HtmlFile:test.html
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
           ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR)
             Angular2TemplateBindings
-              Angular2TemplateBinding <$templateKey, false, null>
+              Angular2TemplateBinding <ngIf, false, null>
                 <empty list>
               Angular2TemplateBinding <a, true, b>
                 PsiElement(JS:LET_KEYWORD)('let')
@@ -136,11 +136,11 @@ HtmlFile:test.html
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
           ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR)
             Angular2TemplateBindings
-              Angular2TemplateBinding <$templateKey, false, null>
+              Angular2TemplateBinding <ngIf, false, null>
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('expr')
               PsiWhiteSpace(' ')
-              Angular2TemplateBinding <local, true, $templateKey>
+              Angular2TemplateBinding <local, true, ngIf>
                 PsiElement(JS:AS_KEYWORD)('as')
                 PsiWhiteSpace(' ')
                 Angular2TemplateBindingKey

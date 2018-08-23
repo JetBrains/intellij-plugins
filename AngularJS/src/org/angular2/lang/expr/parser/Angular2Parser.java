@@ -298,7 +298,9 @@ public class Angular2Parser
         builder.advanceLexer();
         if (builder.getTokenType() == IDENTIFIER
             || KEYWORDS.contains(builder.getTokenType())) {
+          PsiBuilder.Marker pipeName = builder.mark();
           builder.advanceLexer();
+          pipeName.done(REFERENCE_EXPRESSION);
         }
         else {
           builder.error("expected identifier or keyword");

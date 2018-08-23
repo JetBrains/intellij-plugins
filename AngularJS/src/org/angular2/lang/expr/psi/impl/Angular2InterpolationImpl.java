@@ -2,7 +2,6 @@
 package org.angular2.lang.expr.psi.impl;
 
 import com.intellij.lang.javascript.psi.JSExpression;
-import com.intellij.lang.javascript.psi.impl.JSStatementImpl;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import org.angular2.lang.expr.psi.Angular2ElementVisitor;
@@ -10,7 +9,7 @@ import org.angular2.lang.expr.psi.Angular2Interpolation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Angular2InterpolationImpl extends JSStatementImpl implements Angular2Interpolation {
+public class Angular2InterpolationImpl extends Angular2EmbeddedExpressionImpl implements Angular2Interpolation {
 
   public Angular2InterpolationImpl(IElementType elementType) {
     super(elementType);

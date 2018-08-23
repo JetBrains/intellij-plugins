@@ -15,7 +15,8 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
-      PsiElement(JS:IDENTIFIER)('tranzlate')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('tranzlate')
       JSArgumentList
         PsiElement(JS:COLON)(':')
         JSObjectLiteralExpression
@@ -53,7 +54,8 @@ ASTWrapperPsiElement(FILE)
                 PsiWhiteSpace(' ')
                 PsiElement(JS:OR)('|')
                 PsiWhiteSpace(' ')
-                PsiElement(JS:IDENTIFIER)('escape')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('escape')
                 JSArgumentList
                   <empty list>
               PsiElement(JS:RPAR)(')')

@@ -6,7 +6,8 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
-      PsiElement(JS:IDENTIFIER)('nonexistent')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('nonexistent')
       JSArgumentList
         <empty list>
 ------
@@ -18,7 +19,8 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
-      PsiElement(JS:IDENTIFIER)('substring')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('substring')
       JSArgumentList
         PsiElement(JS:COLON)(':')
         JSLiteralExpression
@@ -36,7 +38,8 @@ ASTWrapperPsiElement(FILE)
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
-        PsiElement(JS:IDENTIFIER)('substring')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('substring')
         JSArgumentList
           PsiElement(JS:COLON)(':')
           JSLiteralExpression
@@ -47,7 +50,8 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
-      PsiElement(JS:IDENTIFIER)('uppercase')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('uppercase')
       JSArgumentList
         <empty list>
 ------
@@ -70,7 +74,8 @@ ASTWrapperPsiElement(FILE)
           PsiWhiteSpace(' ')
           PsiElement(JS:OR)('|')
           PsiWhiteSpace(' ')
-          PsiElement(JS:IDENTIFIER)('lowercase')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('lowercase')
           JSArgumentList
             <empty list>
         PsiElement(JS:RPAR)(')')
@@ -83,7 +88,8 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
-      PsiElement(JS:IDENTIFIER)('uppercase')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('uppercase')
       JSArgumentList
         PsiElement(JS:COLON)(':')
         PsiErrorElement:expression expected
@@ -106,6 +112,7 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
-      PsiElement(JS:IDENTIFIER)('translate')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('translate')
       JSArgumentList
         <empty list>
