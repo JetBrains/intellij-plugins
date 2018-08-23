@@ -15,6 +15,7 @@
  */
 package com.intellij.coldFusion
 
+import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 
 /**
@@ -23,5 +24,9 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 abstract class CfmlCodeInsightFixtureTestCase : LightPlatformCodeInsightFixtureTestCase() {
 
   override fun getTestDataPath(): String = CfmlTestUtil.BASE_TEST_DATA_PATH + basePath
+
+  val daemonCodeAnalyzer: DaemonCodeAnalyzerImpl by lazy {
+    DaemonCodeAnalyzerImpl.getInstance(project) as DaemonCodeAnalyzerImpl
+  }
 
 }

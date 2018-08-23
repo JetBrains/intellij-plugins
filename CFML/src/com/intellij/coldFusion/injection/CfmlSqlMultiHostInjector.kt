@@ -60,9 +60,9 @@ class CfmlSqlMultiHostInjector(project: Project) : MultiHostInjector {
       }
     }
     if (context.isCfQueryTag()) {
-      val splittedHosts = getCfQueryHosts(context)
-      if (splittedHosts.isEmpty()) return
-      registerInjection(SqlLanguage.INSTANCE, mapSplittedHostsToTextRanges(context, splittedHosts), context.containingFile, registrar)
+      val splitHosts = getCfQueryHosts(context)
+      if (splitHosts.isEmpty()) return
+      registerInjection(SqlLanguage.INSTANCE, mapSplittedHostsToTextRanges(context, splitHosts), context.containingFile, registrar)
     }
 
   }
@@ -116,7 +116,7 @@ class CfmlSqlMultiHostInjector(project: Project) : MultiHostInjector {
         registrar.addPlace(getPrefixForCfIfTag(head), getSuffixForCfIfTag(head), host, textRange)
       }
       else {
-        registrar.addPlace(null, getSuffixForSplittedElement(host), host, textRange)
+        registrar.addPlace(null, getSuffixForSplitElement(host), host, textRange)
       }
 
     }
@@ -127,9 +127,9 @@ class CfmlSqlMultiHostInjector(project: Project) : MultiHostInjector {
   }
 
   /**
-   * When an SQL query is splitted into parts by some CFML tag or expression, we should convert this CFML divider into a valid SQL query element.
+   * When an SQL query is split into parts by some CFML tag or expression, we should convert this CFML divider into a valid SQL query element.
    */
-  private fun getSuffixForSplittedElement(host: PsiLanguageInjectionHost): String? {
+  private fun getSuffixForSplitElement(host: PsiLanguageInjectionHost): String? {
     if (host is CfmlLeafPsiElement && host.parent is CfmlTagImpl) {
       val sibling = host.nextSibling ?: return null
       return when (sibling) {
@@ -160,7 +160,7 @@ class CfmlSqlMultiHostInjector(project: Project) : MultiHostInjector {
     }.joinToString("")
   }
 
-  //If an SQL query is splitted by a CfmlExpression we trying to resolve it or substitute with a dummy text 'parameter from expression'
+  //If an SQL query is split by a CfmlExpression we trying to resolve it or substitute with a dummy text 'parameter from expression'
   private fun getSuffixForCfmlExpression(sibling: LeafPsiElement): String? {
     if (sibling.node.elementType == CfmlTokenTypes.START_EXPRESSION
         && sibling.nextSibling != null
@@ -185,7 +185,7 @@ class CfmlSqlMultiHostInjector(project: Project) : MultiHostInjector {
     return null
   }
 
-  //If an SQL query is splitted by <cfqueryparam> or <cfif> CFML tags, we substitute them with a dummy text
+  //If an SQL query is split by <cfqueryparam> or <cfif> CFML tags, we substitute them with a dummy text
   private fun getSuffixForCfmlTag(cfmlTag: CfmlTagImpl): String? {
     return if (cfmlTag.isCfQueryParamTag()) CFQUERY_PARAM_DUMMY else null
   }
