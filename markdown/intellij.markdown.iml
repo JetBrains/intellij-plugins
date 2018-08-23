@@ -43,15 +43,6 @@
     <orderEntry type="module" module-name="intellij.javascript" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.tests" scope="TEST" />
     <orderEntry type="library" name="Guava" level="project" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/plantuml-jar-asl/plantuml.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="netty-codec-http" level="project" />
     <orderEntry type="library" name="netty-handler" level="project" />
   </component>
