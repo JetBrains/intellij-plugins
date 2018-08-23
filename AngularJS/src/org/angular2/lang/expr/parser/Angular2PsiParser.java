@@ -47,7 +47,10 @@ public class Angular2PsiParser implements PsiParser {
         String templateKey = FileUtilRt.getExtension(FileUtilRt.getNameWithoutExtension(containingFile.getName()));
         Angular2Parser.parseTemplateBindings(builder, root, templateKey);
       }
-      else {
+      else if (ext.equals("js")) {
+        //special case for creation of AST from text
+        Angular2Parser.parseJS(builder, root);
+      } else {
         LOG.error("Invalid file name '" + containingFile.getName() + "' - unsupported extension: " + ext);
       }
     }

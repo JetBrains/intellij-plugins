@@ -1,0 +1,32 @@
+<div #outerDiv>
+  <ng-template let-foo ngForOf="contacts">
+    <div #innerDiv1></div>
+    resolveRef-T {{ foo }}
+    resolveRef-F {{ bar }}
+    resolveRef-T {{ outerDiv }}
+    resolveRef-T {{ innerDiv1 }}
+    resolveRef-F {{ innerDiv2 }}
+  </ng-template>
+  <div *ngFor="let bar of contacts">
+    <div #innerDiv2></div>
+    resolveRef-F {{ foo }}
+    resolveRef-T {{ bar }}
+    resolveRef-T {{ outerDiv }}
+    resolveRef-F {{ innerDiv1 }}
+    resolveRef-T {{ innerDiv2 }}
+    resolveRef-F {{ ngForOf }}
+    <div *ngIf="bar.email == 'test'">
+      resolveRef-F {{ foo }}
+      resolveRef-T {{ bar }}
+      resolveRef-T {{ outerDiv }}
+      resolveRef-F {{ innerDiv1 }}
+      resolveRef-T {{ innerDiv2 }}
+    </div>
+  </div>
+  resolveRef-F {{ foo }}
+  resolveRef-F {{ bar }}
+  resolveRef-T {{ outerDiv }}
+  resolveRef-F {{ innerDiv1 }}
+  resolveRef-F {{ innerDiv2 }}
+</div>
+  

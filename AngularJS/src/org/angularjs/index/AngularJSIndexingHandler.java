@@ -42,7 +42,6 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.*;
 import com.intellij.util.containers.BidirectionalMap;
 import gnu.trove.THashSet;
-import org.angular2.codeInsight.Angular2ReferenceExpressionResolver;
 import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.codeInsight.AngularJSReferenceExpressionResolver;
 import org.angularjs.codeInsight.DirectiveUtil;
@@ -575,8 +574,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
     if (resolveResult instanceof JSDefinitionExpression && resolveResult.getLanguage() instanceof AngularJSLanguage) {
       final PsiElement resolveParent = resolveResult.getParent();
-      if (AngularJSReferenceExpressionResolver.isAsExpression(resolveParent)
-          || Angular2ReferenceExpressionResolver.isAsExpression(resolveParent)) {
+      if (AngularJSReferenceExpressionResolver.isAsExpression(resolveParent)) {
         final String name = resolveParent.getFirstChild().getText();
         final JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
         final JSType type = JSNamedType.createType(name, source, JSContext.INSTANCE);

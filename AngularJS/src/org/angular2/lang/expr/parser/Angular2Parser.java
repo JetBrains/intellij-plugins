@@ -79,25 +79,30 @@ public class Angular2Parser
                                 Consumer<Angular2StatementParser> parseAction) {
     final PsiBuilder.Marker rootMarker = builder.mark();
     final PsiBuilder.Marker statementMarker = builder.mark();
-    parseAction.consume(new Angular2Parser(builder, isAction, isSimpleBinding).getStatementParser());
+    parseAction.consume(new Angular2Parser(builder, isAction, isSimpleBinding, false).getStatementParser());
     statementMarker.done(statementType);
     rootMarker.done(root);
   }
 
+  public static void parseJS(PsiBuilder builder, IElementType root) {
+    new Angular2Parser(builder).parseJS(root);
+  }
+
   private final boolean myIsAction;
   private final boolean myIsSimpleBinding;
+  private final boolean myIsJavaScript;
 
-  private Angular2Parser(PsiBuilder builder, boolean isAction, boolean isSimpleBinding) {
+  public Angular2Parser(PsiBuilder builder) {
+    this(builder, false, false, true);
+  }
+
+  private Angular2Parser(PsiBuilder builder, boolean isAction, boolean isSimpleBinding, boolean isJavaScript) {
     super(JavaScriptSupportLoader.JAVASCRIPT_1_5, builder);
     myIsAction = isAction;
     myIsSimpleBinding = isSimpleBinding;
+    myIsJavaScript = isJavaScript;
     myExpressionParser = new Angular2ExpressionParser();
     myStatementParser = new Angular2StatementParser(this);
-  }
-
-  @Override
-  public void parseJS(IElementType root) {
-    throw new UnsupportedOperationException();
   }
 
   protected class Angular2StatementParser extends StatementParser<Angular2Parser> {
@@ -107,6 +112,7 @@ public class Angular2Parser
     }
 
     public void parseChain() {
+      assert !myIsJavaScript;
       final PsiBuilder.Marker chain = builder.mark();
       int count = 0;
       while (!builder.eof()) {
@@ -341,7 +347,7 @@ public class Angular2Parser
 
       if (builder.getTokenType() == EQ) {
         definitionExpr.done(JSStubElementTypes.DEFINITION_EXPRESSION);
-        if (!myIsAction) {
+        if (!myIsAction && !myIsJavaScript) {
           builder.error("binding expressions cannot contain assignments");
         }
         builder.advanceLexer();

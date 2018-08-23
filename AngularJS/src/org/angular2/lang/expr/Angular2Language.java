@@ -5,6 +5,7 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.parsing.JavaScriptParser;
+import org.angular2.lang.expr.parser.Angular2Parser;
 import org.jetbrains.annotations.NotNull;
 
 public class Angular2Language extends JSLanguageDialect {
@@ -21,6 +22,6 @@ public class Angular2Language extends JSLanguageDialect {
 
   @Override
   public JavaScriptParser<?, ?, ?, ?> createParser(@NotNull PsiBuilder builder) {
-    throw new UnsupportedOperationException();
+    return new Angular2Parser(builder);
   }
 }

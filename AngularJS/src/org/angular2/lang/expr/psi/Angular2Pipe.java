@@ -3,6 +3,8 @@ package org.angular2.lang.expr.psi;
 
 import com.intellij.lang.javascript.psi.JSArgumentList;
 import com.intellij.lang.javascript.psi.JSExpression;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,6 +14,10 @@ public interface Angular2Pipe extends JSExpression {
   JSExpression getExpression();
 
   @Nullable
+  JSReferenceExpression getNameReference();
+
+  @Override
+  @Nullable
   String getName();
 
   @Nullable
@@ -19,4 +25,11 @@ public interface Angular2Pipe extends JSExpression {
 
   @NotNull
   JSExpression[] getArguments();
+
+  static boolean isPipeNameReference(JSReferenceExpression referenceExpression) {
+    PsiElement parent = referenceExpression.getParent();
+    return parent instanceof Angular2Pipe
+           && referenceExpression.equals(((Angular2Pipe)parent).getNameReference());
+  }
+
 }

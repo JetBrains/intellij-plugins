@@ -41,6 +41,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.MultiMap;
+import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angularjs.codeInsight.AngularJSProcessor;
 import org.angularjs.codeInsight.attributes.AngularEventHandlerDescriptor;
@@ -282,7 +283,8 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   public static JSClass findDirectiveClass(PsiElement context) {
     final PsiFile file = context.getContainingFile();
     if (file == null
-        || !file.getLanguage().is(Angular2HtmlLanguage.INSTANCE)) {
+        || !(file.getLanguage().is(Angular2HtmlLanguage.INSTANCE)
+             || file.getLanguage().is(Angular2Language.INSTANCE))) {
       return null;
     }
     final PsiElement original = CompletionUtil.getOriginalOrSelf(context);

@@ -7,9 +7,11 @@ import com.intellij.lang.javascript.JSExtendedLanguagesTokenSetProvider;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.JSArgumentList;
 import com.intellij.lang.javascript.psi.JSExpression;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.impl.JSExpressionImpl;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.ObjectUtils;
 import org.angular2.lang.expr.psi.Angular2ElementVisitor;
 import org.angular2.lang.expr.psi.Angular2Pipe;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +44,7 @@ public class Angular2PipeImpl extends JSExpressionImpl implements Angular2Pipe {
 
   @Nullable
   @Override
-  public String getName() {
+  public JSReferenceExpression getNameReference() {
     ASTNode node = getFirstChildNode();
     while (node != null && node.getElementType() != JSTokenTypes.OR) {
       node = node.getTreeNext();
@@ -50,7 +52,13 @@ public class Angular2PipeImpl extends JSExpressionImpl implements Angular2Pipe {
     while (node != null && node.getElementType() != JSElementTypes.REFERENCE_EXPRESSION) {
       node = node.getTreeNext();
     }
-    return node != null ? node.getText() : null;
+    return (JSReferenceExpression) ObjectUtils.doIfNotNull(node, ASTNode::getPsi);
+  }
+
+  @Nullable
+  @Override
+  public String getName() {
+    return ObjectUtils.doIfNotNull(getNameReference(), JSReferenceExpression::getReferenceName);
   }
 
   @Nullable

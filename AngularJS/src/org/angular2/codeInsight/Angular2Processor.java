@@ -2,17 +2,12 @@
 package org.angular2.codeInsight;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
-import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider;
-import com.intellij.lang.javascript.psi.JSDefinitionExpression;
-import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
-import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.JSSourceElement;
 import com.intellij.lang.javascript.psi.ecma6.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.typescript.library.TypeScriptLibraryProvider;
@@ -21,139 +16,67 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.html.HtmlTag;
-import com.intellij.psi.impl.source.html.HtmlEmbeddedContentImpl;
-import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.*;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
+import com.intellij.util.containers.Stack;
 import com.intellij.xml.util.documentation.HtmlDescriptorsTable;
-import org.angular2.lang.expr.psi.Angular2RecursiveVisitor;
-import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
-import org.angular2.lang.html.psi.Angular2HtmlEvent;
-import org.angular2.lang.html.psi.Angular2HtmlReference;
-import org.angular2.lang.html.psi.Angular2HtmlVariable;
+import org.angular2.lang.expr.Angular2Language;
+import org.angular2.lang.expr.psi.Angular2TemplateBinding;
+import org.angular2.lang.expr.psi.Angular2TemplateBindings;
+import org.angular2.lang.html.psi.*;
+import org.angular2.lang.html.psi.impl.Angular2HtmlTemplateBindingsImpl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-/**
- * @author Dennis.Ushakov
- */
 public class Angular2Processor {
   private static volatile Map<String, String> TAG_TO_CLASS;
 
   public static final String $EVENT = "$event";
+  public static final String NG_TEMPLATE = "ng-template";
 
-  public static void process(final PsiElement element, final Consumer<JSPsiElementBase> consumer) {
+  public static void process(final PsiElement element, final Consumer<? super JSPsiElementBase> consumer) {
     final PsiElement original = CompletionUtil.getOriginalOrSelf(element);
-    PsiFile hostFile = FileContextUtil.getContextFile(original != element ? original : element.getContainingFile().getOriginalFile());
-    if (!(hostFile instanceof XmlFile)) {
-      hostFile = original.getContainingFile();
+    if (!original.getLanguage().is(Angular2Language.INSTANCE)) {
+      return;
     }
-    if (!(hostFile instanceof XmlFile)) return;
+    final XmlFile file = (XmlFile)original.getContainingFile();
 
-    final XmlFile file = (XmlFile)hostFile;
-
-    final Collection<JSPsiElementBase> cache = CachedValuesManager.getCachedValue(file, () -> {
-      final Collection<JSPsiElementBase> result = new ArrayList<>();
-      processDocument(file.getDocument(), result);
-
+    final Angular2TemplateScope templateRootScope = CachedValuesManager.getCachedValue(file, () -> {
+      final Angular2TemplateScope result = new ScopeBuilder(file).getTopLevelScope();
       return CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT);
     });
-    for (JSPsiElementBase namedElement : cache) {
-      if (scopeMatches(original, namedElement)){
-        consumer.consume(namedElement);
+
+    calculateElementScopes(element, templateRootScope)
+      .forEach(s -> s.consumeElementsFromAllScopes(consumer));
+  }
+
+  private static List<Angular2Scope> calculateElementScopes(PsiElement element, Angular2TemplateScope rootTemplateScope) {
+    List<Angular2Scope> scopes = new ArrayList<>();
+    scopes.add(Objects.requireNonNull(rootTemplateScope.findBestMatchingTemplateScope(element)));
+
+    if (element instanceof JSSourceElement) {
+      PsiElement attribute = element;
+      while (attribute != null
+             && !(attribute instanceof XmlAttribute)) {
+        attribute = attribute.getParent();
+      }
+      if (attribute instanceof Angular2HtmlEvent) {
+        scopes.add(new Angular2EventScope((Angular2HtmlEvent)attribute));
       }
     }
-  }
-
-  private static void processDocument(XmlDocument document, final Collection<JSPsiElementBase> result) {
-    if (document == null) return;
-    final AngularInjectedFilesVisitor visitor = new AngularInjectedFilesVisitor(result);
-
-    for (XmlTag tag : PsiTreeUtil.getChildrenOfTypeAsList(document, XmlTag.class)) {
-      new XmlBackedJSClassImpl.InjectedScriptsVisitor(tag, null, true, true, visitor, true){
-        @Override
-        public boolean execute(@NotNull PsiElement element) {
-          if (element instanceof HtmlEmbeddedContentImpl) {
-            processDocument(PsiTreeUtil.findChildOfType(element, XmlDocument.class), result);
-          }
-          if (element instanceof XmlAttribute) {
-            visitor.accept(element);
-          }
-          return super.execute(element);
-        }
-      }.go();
-    }
-  }
-
-  private static boolean scopeMatches(PsiElement element, PsiElement declaration) {
-    final InjectedLanguageManager injector = InjectedLanguageManager.getInstance(element.getProject());
-    if (declaration instanceof JSImplicitElement) {
-      if ($EVENT.equals(((JSImplicitElement)declaration).getName())) {
-        return eventScopeMatches(injector, element, declaration.getParent());
-      }
-      if (declaration.getParent() instanceof Angular2HtmlReference) {
-        return true;
-      }
-      declaration = declaration.getParent();
-    }
-    final PsiLanguageInjectionHost elementContainer = injector.getInjectionHost(element);
-    final XmlTagChild elementTag = PsiTreeUtil.getNonStrictParentOfType(element, XmlTag.class, XmlText.class);
-    final PsiLanguageInjectionHost declarationContainer = injector.getInjectionHost(declaration);
-    final XmlTagChild declarationTag = PsiTreeUtil.getNonStrictParentOfType(declaration, XmlTag.class);
-
-    if (declarationContainer != null && elementContainer != null && elementTag != null && declarationTag != null) {
-      return PsiTreeUtil.isAncestor(declarationTag, elementTag, true) ||
-             PsiTreeUtil.isAncestor(declarationTag, elementTag, false) ||
-             PsiTreeUtil.isAncestor(declarationTag, elementTag, false) &&
-             declarationContainer.getTextOffset() < elementContainer.getTextOffset() ||
-             isInRepeatStartEnd(declarationTag, declarationContainer, elementContainer);
-    }
-    return true;
-  }
-
-  private static boolean isInRepeatStartEnd(XmlTagChild declarationTag,
-                                            PsiLanguageInjectionHost declarationContainer,
-                                            PsiLanguageInjectionHost elementContainer) {
-    PsiElement parent = declarationContainer.getParent();
-    if (parent instanceof XmlAttribute && "ng-repeat-start".equals(((XmlAttribute)parent).getName())) {
-      XmlTagChild next = declarationTag.getNextSiblingInTag();
-      while (next != null) {
-        if (PsiTreeUtil.isAncestor(next, elementContainer, true)) return true;
-        if (next instanceof XmlTag && ((XmlTag)next).getAttribute("ng-repeat-end") != null) break;
-        next = next.getNextSiblingInTag();
-      }
-    }
-    return false;
-  }
-
-  private static boolean eventScopeMatches(InjectedLanguageManager injector, PsiElement element, PsiElement parent) {
-    XmlAttribute attribute = PsiTreeUtil.getNonStrictParentOfType(element, XmlAttribute.class);
-    if (attribute == null) {
-      final PsiLanguageInjectionHost elementContainer = injector.getInjectionHost(element);
-      attribute = PsiTreeUtil.getNonStrictParentOfType(elementContainer, XmlAttribute.class);
-    }
-    return attribute != null && CompletionUtil.getOriginalOrSelf(attribute) == CompletionUtil.getOriginalOrSelf(parent);
-  }
-
-  public static JSImplicitElementImpl.Builder createTagReference(HtmlTag tag, Angular2HtmlReference reference) {
-    final JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(reference.getReferenceName(), reference)
-      .setType(JSImplicitElement.Type.Variable);
-
-    final String tagName = tag.getName();
-    if (HtmlDescriptorsTable.getTagDescriptor(tagName) != null) {
-      elementBuilder.setTypeString(getHtmlElementClass(tag.getProject(), tagName));
-    }
-    return elementBuilder;
+    return scopes;
   }
 
   @NotNull
@@ -207,57 +130,192 @@ public class Angular2Processor {
     TAG_TO_CLASS = tagToClass;
   }
 
-  private static class AngularInjectedFilesVisitor extends JSResolveUtil.JSInjectedFilesVisitor {
-    private final Collection<JSPsiElementBase> myResult;
+  private static class ScopeBuilder extends Angular2HtmlRecursiveVisitor {
 
-    public AngularInjectedFilesVisitor(Collection<JSPsiElementBase> result) {
-      myResult = result;
+    @NotNull
+    private final PsiFile myTemplateFile;
+    private final Stack<Angular2TemplateScope> scopes = new Stack<>();
+
+    public ScopeBuilder(@NotNull PsiFile templateFile) {
+      myTemplateFile = templateFile;
+      scopes.add(new Angular2TemplateScope(templateFile, null));
+    }
+
+    public Angular2TemplateScope getTopLevelScope() {
+      myTemplateFile.accept(this);
+      assert scopes.size() == 1;
+      return scopes.peek();
+    }
+
+    private Angular2TemplateScope currentScope() {
+      return scopes.peek();
+    }
+
+    private void popScope() {
+      scopes.pop();
+    }
+
+    private void pushScope(@NotNull XmlTag tag) {
+      scopes.push(new Angular2TemplateScope(tag, currentScope()));
+    }
+
+    private void addElement(JSImplicitElementImpl element) {
+      currentScope().add(element);
     }
 
     @Override
-    protected void process(JSFile file) {
-      accept(file);
+    public void visitXmlTag(XmlTag tag) {
+      boolean isTemplateTag = Stream.of(tag.getChildren()).anyMatch(Angular2HtmlTemplateBindings.class::isInstance)
+                              || tag.getName().equalsIgnoreCase(NG_TEMPLATE);
+      if (isTemplateTag) {
+        pushScope(tag);
+      }
+      super.visitXmlTag(tag);
+      if (isTemplateTag) {
+        popScope();
+      }
     }
 
-    protected void accept(PsiElement element) {
+    @Override
+    public void visitReference(Angular2HtmlReference reference) {
+      addElement(createReference(reference).toImplicitElement());
+    }
 
-      element.accept(new Angular2RecursiveVisitor() {
-        @Override
-        public void visitJSDefinitionExpression(JSDefinitionExpression node) {
-          myResult.add(node);
-          super.visitJSDefinitionExpression(node);
+    @Override
+    public void visitVariable(Angular2HtmlVariable variable) {
+      addElement(createVariable(variable.getVariableName(), variable).toImplicitElement());
+    }
+
+    @Override
+    public void visitTemplateBindings(Angular2HtmlTemplateBindingsImpl bindings) {
+      Angular2TemplateBindings bindingsExpr = bindings.getBindings();
+      if (bindingsExpr != null) {
+        for (Angular2TemplateBinding binding : bindingsExpr.getBindings()) {
+          if (binding.keyIsVar()) {
+            addElement(createVariable(binding.getKey(), binding).toImplicitElement());
+          }
         }
+      }
+    }
 
-        @Override
-        public void visitJSVariable(JSVariable node) {
-          myResult.add(node);
-          super.visitJSVariable(node);
+    private static JSImplicitElementImpl.Builder createVariable(@NotNull String name, @NotNull PsiElement contributor) {
+      return new JSImplicitElementImpl.Builder(name, contributor)
+        .setType(JSImplicitElement.Type.Variable);
+    }
+
+    private static JSImplicitElementImpl.Builder createReference(@NotNull Angular2HtmlReference reference) {
+      final HtmlTag tag = (HtmlTag)reference.getParent();
+      final JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(reference.getReferenceName(), reference)
+        .setType(JSImplicitElement.Type.Variable);
+
+      final String tagName = tag.getName();
+      if (HtmlDescriptorsTable.getTagDescriptor(tagName) != null
+          && reference.getValueElement() == null) {
+        elementBuilder.setTypeString(getHtmlElementClass(tag.getProject(), tagName));
+      }
+      return elementBuilder;
+    }
+  }
+
+
+  private abstract static class Angular2Scope {
+
+    @Nullable
+    private final Angular2Scope myParent;
+    private final List<Angular2Scope> children = new ArrayList<>();
+
+    private Angular2Scope(@Nullable Angular2Scope parent) {
+      myParent = parent;
+      if (parent != null) {
+        parent.add(this);
+      }
+    }
+
+    @Nullable
+    public final Angular2Scope getParent() {
+      return myParent;
+    }
+
+    public List<Angular2Scope> getChildren() {
+      return Collections.unmodifiableList(children);
+    }
+
+    private void add(Angular2Scope scope) {
+      this.children.add(scope);
+    }
+
+    public final void consumeElementsFromAllScopes(@NotNull Consumer<? super JSPsiElementBase> consumer) {
+      Angular2Scope scope = this;
+      while (scope != null) {
+        scope.getElements().forEach(el -> consumer.consume(el));
+        scope = scope.getParent();
+      }
+    }
+
+    @NotNull
+    public abstract List<JSPsiElementBase> getElements();
+  }
+
+  private static class Angular2TemplateScope extends Angular2Scope {
+
+    private final List<JSPsiElementBase> elements = new ArrayList<>();
+
+    @NotNull private final PsiElement myRoot;
+
+    public Angular2TemplateScope(@NotNull PsiElement root, @Nullable Angular2TemplateScope parent) {
+      super(parent);
+      myRoot = root;
+      if (parent != null) {
+        assert parent.myRoot.getTextRange().contains(myRoot.getTextRange());
+      }
+    }
+
+    @Override
+    @NotNull
+    public List<JSPsiElementBase> getElements() {
+      return elements;
+    }
+
+    public void add(@NotNull JSPsiElementBase element) {
+      elements.add(element);
+    }
+
+    @Nullable
+    public Angular2TemplateScope findBestMatchingTemplateScope(@NotNull PsiElement element) {
+      if (!myRoot.getTextRange().contains(element.getTextRange())) {
+        return null;
+      }
+      Angular2TemplateScope curScope = null;
+      Angular2TemplateScope innerScope = this;
+      while (innerScope != null) {
+        curScope = innerScope;
+        innerScope = null;
+        for (Angular2Scope child : curScope.getChildren()) {
+          if (child instanceof Angular2TemplateScope
+              && ((Angular2TemplateScope)child).myRoot.getTextRange().contains(element.getTextRange())) {
+            innerScope = (Angular2TemplateScope)child;
+            break;
+          }
         }
-      });
-      element.accept(new Angular2HtmlElementVisitor() {
+      }
+      return curScope;
+    }
+  }
 
-        @Override
-        public void visitReference(Angular2HtmlReference reference) {
-          final JSImplicitElementImpl.Builder builder = createTagReference(
-            (HtmlTag)reference.getParent(), reference);
-          myResult.add(builder.toImplicitElement());
-        }
+  private static class Angular2EventScope extends Angular2Scope {
 
-        @Override
-        public void visitVariable(Angular2HtmlVariable variable) {
-          final JSImplicitElementImpl.Builder builder = new JSImplicitElementImpl.Builder(variable.getVariableName(), variable).
-            setType(JSImplicitElement.Type.Variable);
-          myResult.add(builder.toImplicitElement());
-        }
+    private final Angular2HtmlEvent myEvent;
 
-        @Override
-        public void visitEvent(Angular2HtmlEvent event) {
-          final JSImplicitElementImpl.Builder builder = new JSImplicitElementImpl.Builder($EVENT, event).
-            setType(JSImplicitElement.Type.Variable);
-          myResult.add(builder.toImplicitElement());
-        }
+    private Angular2EventScope(@NotNull Angular2HtmlEvent event) {
+      super(null);
+      myEvent = event;
+    }
 
-      });
+    @Override
+    @NotNull
+    public List<JSPsiElementBase> getElements() {
+      return Collections.singletonList(new JSImplicitElementImpl.Builder($EVENT, myEvent).
+        setType(JSImplicitElement.Type.Variable).toImplicitElement());
     }
   }
 }
