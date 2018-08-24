@@ -14,12 +14,10 @@
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.javascript.psi.*
-import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.putValue
 import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.index.GLOBAL_BINDING_MARK
@@ -85,8 +83,8 @@ class VueComponentsCalculation {
       val indexData = getVueIndexData(element)
       val reference = indexData.descriptorRef ?: return null
 
-      val scope = createLocalResolveScope(element)
-      var resolved: PsiElement? = JSStubBasedPsiTreeUtil.resolveLocally(reference, scope) ?: return null
+      val context = createLocalResolveContext(element)
+      var resolved: PsiElement? = JSStubBasedPsiTreeUtil.resolveLocally(reference, context) ?: return null
       resolved = (resolved as? JSVariable)?.initializerOrStub ?: resolved
       var indexedAccessUsed = indexData.groupRegistration
       if (resolved is JSIndexedPropertyAccessExpression) {
@@ -114,7 +112,7 @@ class VueComponentsCalculation {
       element.parent as? JSCallExpression ?: return null
       val indexData = getVueIndexData(element)
       val reference = indexData.nameRef ?: return null
-      val scope = createLocalResolveScope(element)
+      val context = createLocalResolveContext(element)
 
       val parts = reference.split('.')
       if (parts.size > 2) return null
@@ -134,7 +132,7 @@ class VueComponentsCalculation {
         return null
       }
       if (descriptor == null) return null
-      var resolved = JSStubBasedPsiTreeUtil.resolveLocally(reference, scope)
+      var resolved = JSStubBasedPsiTreeUtil.resolveLocally(reference, context)
       if (resolved is JSVariable) resolved = resolved.initializerOrStub
       val strLiteral = resolved as? JSLiteralExpression
       if (strLiteral != null && strLiteral.isQuotedLiteral) {
@@ -146,9 +144,7 @@ class VueComponentsCalculation {
     private fun propStrVal(descriptor: JSObjectLiteralExpression, name: String) : String? =
       (descriptor.findProperty(name)?.value as? JSLiteralExpression)?.stringValue
 
-    private fun createLocalResolveScope(element: PsiElement): PsiElement =
-      PsiTreeUtil.getContextOfType(element, JSCatchBlock::class.java, JSClass::class.java, JSExecutionScope::class.java)
-      ?: element.containingFile
+    private fun createLocalResolveContext(element: JSImplicitElement) = element.parent
 
     fun getObjectLiteralFromResolve(result: Collection<PsiElement>): JSObjectLiteralExpression? {
       return result.mapNotNull(fun(it: PsiElement): JSObjectLiteralExpression? {
