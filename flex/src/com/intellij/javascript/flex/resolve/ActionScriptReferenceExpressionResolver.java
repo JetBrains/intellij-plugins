@@ -136,8 +136,7 @@ public class ActionScriptReferenceExpressionResolver
         return dummyResult(myRef);
       }
 
-      if (processor.resolved == QualifiedItemProcessor.TypeResolveState.Resolved ||
-          processor.resolved == QualifiedItemProcessor.TypeResolveState.Undefined ||
+      if (processor.resolved.isSuitableForReferenceResolve() ||
           processor.getResult() != null
         ) {
         return processor.getResultsAsResolveResults();
