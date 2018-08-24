@@ -217,8 +217,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       if (attrType == Angular2HtmlElementTypes.PROPERTY_BINDING) {
         return new AngularBindingDescriptor(xmlTag, attrName);
       }
-      if (attrType == Angular2HtmlElementTypes.EVENT
-          || attrType == Angular2HtmlElementTypes.ANIMATION_EVENT) {
+      if (attrType == Angular2HtmlElementTypes.EVENT) {
         return new AngularEventHandlerDescriptor(xmlTag, attrName);
       }
       return getAngular2Descriptor(attrName, project);

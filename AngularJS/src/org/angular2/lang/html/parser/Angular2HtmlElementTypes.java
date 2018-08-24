@@ -23,7 +23,6 @@ public interface Angular2HtmlElementTypes extends XmlElementType, Angular2HtmlTo
   IElementType EXPANSION_FORM_CASE_CONTENT = new Angular2ElementType("NG:EXPANSION_FORM_CASE_CONTENT",
                                                                      Angular2HtmlExpansionFormCaseContentImpl::new);
 
-  IElementType ANIMATION_EVENT = new Angular2ElementType("NG:ANIMATION_EVENT", Angular2HtmlAnimationEventImpl::new);
   IElementType EVENT = new Angular2ElementType("NG:EVENT", Angular2HtmlEventImpl::new);
   IElementType BANANA_BOX_BINDING = new Angular2ElementType("NG:BANANA_BOX_BINDING", Angular2HtmlBananaBoxBindingImpl::new);
   IElementType PROPERTY_BINDING = new Angular2ElementType("NG:PROPERTY_BINDING", Angular2HtmlPropertyBindingImpl::new);

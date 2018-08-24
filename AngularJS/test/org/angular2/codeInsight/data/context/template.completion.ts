@@ -6,7 +6,7 @@ import {EventEmitter} from "events";
     selector: 'todo-cmp',
 })
 export class TodoCmp {
-    private myCustomer:string[];
+    myCustomer: string[];
     onCompletedButton() {
         this.other = [1, 2, 3];
     }

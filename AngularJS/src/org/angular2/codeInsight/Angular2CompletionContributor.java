@@ -7,7 +7,10 @@ import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
+import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiElement;
@@ -21,9 +24,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-/**
- * @author Dennis.Ushakov
- */
 public class Angular2CompletionContributor extends CompletionContributor {
   private static final JSLookupPriority NG_VARIABLE_PRIORITY = JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY;
 
@@ -36,14 +36,27 @@ public class Angular2CompletionContributor extends CompletionContributor {
 
     if (ref instanceof JSReferenceExpressionImpl && ((JSReferenceExpressionImpl)ref).getQualifier() == null) {
       final PsiElement parent = ((JSReferenceExpressionImpl)ref).getParent();
-      if (addPipeVariants(result, parameters, (JSReferenceExpression)ref, parent)) return;
+      if (addPipeVariants(result, parameters, (JSReferenceExpression)ref, parent)) {
+        result.stopHere();
+        return;
+      }
       Angular2Processor.process(parameters.getPosition(), element -> {
         final String name = element.getName();
-        if (name != null) {
+        if (name != null && !isPrivateMember(element)) {
           result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(element, name, NG_VARIABLE_PRIORITY, false, false));
         }
       });
+      result.stopHere();
     }
+  }
+
+  private static boolean isPrivateMember(JSPsiElementBase element) {
+    if (element instanceof JSAttributeListOwner) {
+      JSAttributeListOwner attributeListOwner = (JSAttributeListOwner)element;
+      return attributeListOwner.getAttributeList() != null
+        && attributeListOwner.getAttributeList().getAccessType() == JSAttributeList.AccessType.PRIVATE;
+    }
+    return false;
   }
 
   private static boolean addPipeVariants(final CompletionResultSet result, CompletionParameters parameters, JSReferenceExpression ref, PsiElement parent) {
@@ -58,12 +71,6 @@ public class Angular2CompletionContributor extends CompletionContributor {
     for (String controller : keys) {
       result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(null, controller, NG_VARIABLE_PRIORITY, false, false));
     }
-    result.runRemainingContributors(parameters, result1 -> {
-      final String string = result1.getLookupElement().getLookupString();
-      if (!keys.contains(string)) {
-        result.passResult(result1);
-      }
-    });
   }
 
   static Language getElementLanguage(final CompletionParameters parameters) {

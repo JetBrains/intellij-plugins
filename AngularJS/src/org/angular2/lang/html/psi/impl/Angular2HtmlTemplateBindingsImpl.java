@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static org.angular2.lang.html.parser.Angular2HtmlParsing.normalizeAttributeName;
 
-public class Angular2HtmlTemplateBindingsImpl extends Angular2HtmlBaseAttributeImpl implements Angular2HtmlTemplateBindings {
+public class Angular2HtmlTemplateBindingsImpl extends Angular2HtmlBoundAttributeImpl implements Angular2HtmlTemplateBindings {
 
   public Angular2HtmlTemplateBindingsImpl(@NotNull Angular2ElementType type) {
     super(type);

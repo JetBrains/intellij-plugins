@@ -19,7 +19,7 @@ import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
 
 class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
 
-  private static final TokenSet NG_EL_ATTRIBUTES = TokenSet.create(ANIMATION_EVENT, EVENT, BANANA_BOX_BINDING,
+  private static final TokenSet NG_EL_ATTRIBUTES = TokenSet.create(EVENT, BANANA_BOX_BINDING,
                                                                    PROPERTY_BINDING, TEMPLATE_BINDINGS);
 
   private Lexer angular2ExpressionLexer;

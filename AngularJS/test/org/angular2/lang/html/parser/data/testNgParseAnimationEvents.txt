@@ -6,7 +6,7 @@ HtmlFile:test.html
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('a')
       PsiWhiteSpace(' ')
-      Angular2HtmlAnimationEvent <click,null>
+      Angular2HtmlEvent <click, ANIMATION, INVALID>
         PsiErrorElement:The animation trigger output event (@click) is missing its phase value name (start or done are currently supported)
           XmlToken:XML_NAME('(@click)')
         XmlToken:XML_EQ('=')
@@ -30,7 +30,7 @@ HtmlFile:test.html
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('b')
       PsiWhiteSpace(' ')
-      Angular2HtmlEvent <animate-click>
+      Angular2HtmlEvent <click, ANIMATION, INVALID>
         XmlToken:XML_NAME('on-animate-click')
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
@@ -53,7 +53,7 @@ HtmlFile:test.html
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('a')
       PsiWhiteSpace(' ')
-      Angular2HtmlAnimationEvent <click,DONE>
+      Angular2HtmlEvent <click, ANIMATION, DONE>
         XmlToken:XML_NAME('(@click.done)')
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
@@ -76,7 +76,7 @@ HtmlFile:test.html
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('b')
       PsiWhiteSpace(' ')
-      Angular2HtmlEvent <animate-click.start>
+      Angular2HtmlEvent <click, ANIMATION, START>
         XmlToken:XML_NAME('on-animate-click.start')
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)

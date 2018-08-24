@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static org.angular2.lang.html.parser.Angular2HtmlParsing.normalizeAttributeName;
 
-public class Angular2HtmlReferenceImpl extends Angular2HtmlBaseAttributeImpl implements Angular2HtmlReference {
+public class Angular2HtmlReferenceImpl extends Angular2HtmlBoundAttributeImpl implements Angular2HtmlReference {
 
   public Angular2HtmlReferenceImpl(@NotNull Angular2ElementType type) {
     super(type);

@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import static com.intellij.openapi.util.Pair.pair;
 import static org.angular2.lang.html.parser.Angular2HtmlParsing.normalizeAttributeName;
 
-public class Angular2HtmlPropertyBindingImpl extends Angular2HtmlBaseAttributeImpl implements Angular2HtmlPropertyBinding {
+public class Angular2HtmlPropertyBindingImpl extends Angular2HtmlBoundAttributeImpl implements Angular2HtmlPropertyBinding {
 
   public Angular2HtmlPropertyBindingImpl(@NotNull Angular2ElementType type) {
     super(type);

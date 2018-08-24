@@ -5,13 +5,14 @@ import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.impl.source.xml.XmlAttributeImpl;
 import com.intellij.psi.xml.XmlElement;
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes.Angular2ElementType;
+import org.angular2.lang.html.psi.Angular2HtmlBoundAttribute;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.psi.xml.XmlTokenType.XML_NAME;
 
-public class Angular2HtmlBaseAttributeImpl extends XmlAttributeImpl {
+public class Angular2HtmlBoundAttributeImpl extends XmlAttributeImpl implements Angular2HtmlBoundAttribute {
 
-  public Angular2HtmlBaseAttributeImpl(@NotNull Angular2ElementType elementType) {
+  public Angular2HtmlBoundAttributeImpl(@NotNull Angular2ElementType elementType) {
     super(elementType);
   }
 
@@ -24,4 +25,6 @@ public class Angular2HtmlBaseAttributeImpl extends XmlAttributeImpl {
     }
     return result;
   }
+
+
 }

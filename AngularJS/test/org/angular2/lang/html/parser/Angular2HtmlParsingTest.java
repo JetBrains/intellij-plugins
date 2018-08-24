@@ -3,13 +3,20 @@ package org.angular2.lang.html.parser;
 
 import com.intellij.html.HtmlParsingTest;
 import com.intellij.javascript.HtmlInlineJSScriptTokenTypesProvider;
+import com.intellij.lang.LanguageASTFactory;
 import com.intellij.lang.LanguageHtmlInlineScriptTokenTypesProvider;
+import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.css.CSSParserDefinition;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.JavascriptParserDefinition;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.psi.css.CssElementDescriptorProvider;
 import com.intellij.psi.css.CssEmbeddedTokenTypesProvider;
 import com.intellij.psi.css.CssRulesetBlockEmbeddedTokenTypesProvider;
+import com.intellij.psi.css.impl.CssTreeElementFactory;
+import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2;
+import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl;
 import org.angularjs.AngularTestUtil;
 
 public class Angular2HtmlParsingTest extends HtmlParsingTest {
@@ -26,6 +33,11 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
     registerExtensionPoint(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider.class);
     registerExtension(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, new CssEmbeddedTokenTypesProvider());
     registerExtension(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, new CssRulesetBlockEmbeddedTokenTypesProvider());
+
+    addExplicitExtension(LanguageASTFactory.INSTANCE, CSSLanguage.INSTANCE, new CssTreeElementFactory());
+    registerExtensionPoint(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProvider.class);
+    registerExtension(CssElementDescriptorProvider.EP_NAME, new CssElementDescriptorProviderImpl());
+    registerApplicationService(CssElementDescriptorFactory2.class, new CssElementDescriptorFactory2(ProgressManager.getInstance(), "css-parsing-tests.xml"));
   }
 
   @Override

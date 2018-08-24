@@ -243,19 +243,19 @@ public class Angular2HtmlParsing extends HtmlParsing {
   private static Pair<IElementType, String> parseAnimationEvent(@NotNull String name) {
     int dot = name.indexOf('.');
     if (dot < 0) {
-      return pair(ANIMATION_EVENT, "The animation trigger output event (@" + name +
+      return pair(EVENT, "The animation trigger output event (@" + name +
                                    ") is missing its phase value name (start or done are currently supported)");
     }
     else {
       @SuppressWarnings("StringToUpperCaseOrToLowerCaseWithoutLocale")
       String phase = name.substring(dot + 1).toLowerCase();
       if (!"start".equals(phase) && !"done".equals(phase)) {
-        return pair(ANIMATION_EVENT, "The provided animation output phase value '" + phase +
+        return pair(EVENT, "The provided animation output phase value '" + phase +
                                      "' for '@" + name.substring(0, dot) +
                                      "' is not supported (use start or done))");
       }
     }
-    return pair(ANIMATION_EVENT, null);
+    return pair(EVENT, null);
   }
 
   @NotNull
@@ -342,7 +342,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
     if (type == PROPERTY_BINDING) {
       return BINDING_EXPR;
     }
-    if (type == EVENT || type == ANIMATION_EVENT) {
+    if (type == EVENT) {
       return ACTION_EXPR;
     }
     if (type == TEMPLATE_BINDINGS) {

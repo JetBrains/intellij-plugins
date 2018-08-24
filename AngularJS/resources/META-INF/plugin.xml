@@ -125,14 +125,10 @@
     <lang.parserDefinition language="Angular2Html" implementationClass="org.angular2.lang.html.parser.Angular2HtmlParserDefinition"/>
     <lang.syntaxHighlighterFactory language="Angular2Html" implementationClass="org.angular2.lang.html.highlighting.Angular2HtmlHighlighterFactory"/>
     <lang.substitutor language="HTML" implementationClass="org.angular2.lang.html.Angular2HtmlLanguageSubstitutor"/>
-    <completion.contributor id="Angular2ServiceCompletionContributorNgHtml" language="Angular2Html"
-                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"
-                            implementationClass="org.angularjs.codeInsight.Angular2ServiceCompletionContributor"/>
-
     <lookup.charFilter implementation="org.angular2.editor.Angular2LookupCharFilter" order="before xml"/>
     <localInspection implementationClass="org.angular2.inspections.EmptyEventHandlerInspection" displayName="Empty Event Handler"
                      groupName="Angular" enabledByDefault="true" level="WARNING" language="Angular2Html"/>
-    <completion.contributor language="Angular2Html" implementationClass="org.angularjs.codeInsight.Angular2ServiceCompletionContributor"
+    <completion.contributor language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2ServiceCompletionContributor"
                             id="Angular2ServiceCompletionContributorHtml" order="before AngularJSXmlCompletionContributor"/>
 
     <!-- Angular 2 Expression Language contributions -->
@@ -140,9 +136,6 @@
                                                   implementationClass="com.intellij.codeInsight.template.postfix.templates.EmptyPostfixTemplateProvider"/>
     <lang.parserDefinition language="Angular2" implementationClass="org.angular2.lang.expr.parser.Angular2ParserDefinition"/>
     <stubElementTypeHolder class="org.angular2.lang.expr.parser.Angular2ElementTypes"/>
-    <completion.contributor id="Angular2ServiceCompletionContributor" language="Angular2"
-                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"
-                            implementationClass="org.angularjs.codeInsight.Angular2ServiceCompletionContributor"/>
     <completion.contributor language="Angular2" implementationClass="org.angular2.codeInsight.Angular2CompletionContributor"
                             id="Angular2CompletionContributor"
                             order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"/>

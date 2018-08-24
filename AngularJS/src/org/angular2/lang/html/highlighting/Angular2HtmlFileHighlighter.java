@@ -18,9 +18,6 @@ import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
 
 class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
 
-  public static final TextAttributesKey NG_ANIMATION_EVENT_ATTR_NAME = TextAttributesKey.createTextAttributesKey(
-    "NG.ANIMATION_EVENT_ATTR_NAME", DefaultLanguageHighlighterColors.INSTANCE_METHOD);
-
   public static final TextAttributesKey NG_BANANA_BINDING_ATTR_NAME = TextAttributesKey.createTextAttributesKey(
     "NG.BANANA_BINDING_ATTR_NAME", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
 
@@ -52,10 +49,9 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
     keys2.put(INTERPOLATION_START, NG_SCRIPT_DELIMITERS);
     keys2.put(INTERPOLATION_END, NG_SCRIPT_DELIMITERS);
 
-    Stream.of(ANIMATION_EVENT, BANANA_BOX_BINDING, EVENT, PROPERTY_BINDING, REFERENCE, TEMPLATE_BINDINGS, VARIABLE)
+    Stream.of(BANANA_BOX_BINDING, EVENT, PROPERTY_BINDING, REFERENCE, TEMPLATE_BINDINGS, VARIABLE)
       .forEach(type -> keys1.put(type, XmlHighlighterColors.HTML_ATTRIBUTE_NAME));
 
-    keys2.put(ANIMATION_EVENT, NG_ANIMATION_EVENT_ATTR_NAME);
     keys2.put(BANANA_BOX_BINDING, NG_BANANA_BINDING_ATTR_NAME);
     keys2.put(EVENT, NG_EVENT_BINDING_ATTR_NAME);
     keys2.put(PROPERTY_BINDING, NG_PROPERTY_BINDING_ATTR_NAME);

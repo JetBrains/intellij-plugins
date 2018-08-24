@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static org.angular2.lang.html.parser.Angular2HtmlParsing.normalizeAttributeName;
 
-public class Angular2HtmlBananaBoxBindingImpl extends Angular2HtmlBaseAttributeImpl implements Angular2HtmlBananaBoxBinding {
+public class Angular2HtmlBananaBoxBindingImpl extends Angular2HtmlBoundAttributeImpl implements Angular2HtmlBananaBoxBinding {
 
   public Angular2HtmlBananaBoxBindingImpl(@NotNull Angular2ElementType type) {
     super(type);

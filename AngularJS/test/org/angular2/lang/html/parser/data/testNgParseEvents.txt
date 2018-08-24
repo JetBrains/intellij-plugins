@@ -6,7 +6,7 @@ HtmlFile:test.html
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('div')
       PsiWhiteSpace(' ')
-      Angular2HtmlEvent <window:event>
+      Angular2HtmlEvent <window:event, REGULAR>
         XmlToken:XML_NAME('(window:event)')
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
@@ -25,7 +25,7 @@ HtmlFile:test.html
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('div')
       PsiWhiteSpace(' ')
-      Angular2HtmlEvent <event>
+      Angular2HtmlEvent <event, REGULAR>
         XmlToken:XML_NAME('(event)')
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
@@ -44,7 +44,7 @@ HtmlFile:test.html
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('div')
       PsiWhiteSpace(' ')
-      Angular2HtmlEvent <event>
+      Angular2HtmlEvent <event, REGULAR>
         XmlToken:XML_NAME('data-(event)')
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
@@ -63,7 +63,7 @@ HtmlFile:test.html
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('div')
       PsiWhiteSpace(' ')
-      Angular2HtmlEvent <some-event>
+      Angular2HtmlEvent <some-event, REGULAR>
         XmlToken:XML_NAME('(some-event)')
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
@@ -82,7 +82,7 @@ HtmlFile:test.html
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('div')
       PsiWhiteSpace(' ')
-      Angular2HtmlEvent <someEvent>
+      Angular2HtmlEvent <someEvent, REGULAR>
         XmlToken:XML_NAME('(someEvent)')
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
@@ -101,7 +101,7 @@ HtmlFile:test.html
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('div')
       PsiWhiteSpace(' ')
-      Angular2HtmlEvent <event>
+      Angular2HtmlEvent <event, REGULAR>
         XmlToken:XML_NAME('on-event')
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)

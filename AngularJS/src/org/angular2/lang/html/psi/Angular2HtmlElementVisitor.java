@@ -8,8 +8,16 @@ import org.angular2.lang.html.psi.impl.Angular2HtmlTemplateBindingsImpl;
 
 public class Angular2HtmlElementVisitor extends XmlElementVisitor {
 
+  public void visitBananaBoxBinding(Angular2HtmlBananaBoxBindingImpl bananaBoxBinding) {
+    visitBoundAttribute(bananaBoxBinding);
+  }
+
+  public void visitBoundAttribute(Angular2HtmlBoundAttribute boundAttribute) {
+    visitXmlAttribute(boundAttribute);
+  }
+
   public void visitEvent(Angular2HtmlEvent event) {
-    visitXmlAttribute(event);
+    visitBoundAttribute(event);
   }
 
   public void visitExpansionForm(Angular2HtmlExpansionForm expansion) {
@@ -20,12 +28,8 @@ public class Angular2HtmlElementVisitor extends XmlElementVisitor {
     visitElement(expansionCase);
   }
 
-  public void visitAnimationEvent(Angular2HtmlAnimationEvent animationEvent) {
-    visitXmlAttribute(animationEvent);
-  }
-
   public void visitPropertyBinding(Angular2HtmlPropertyBinding propertyBinding) {
-    visitXmlAttribute(propertyBinding);
+    visitBoundAttribute(propertyBinding);
   }
 
   public void visitReference(Angular2HtmlReference reference) {
@@ -37,10 +41,6 @@ public class Angular2HtmlElementVisitor extends XmlElementVisitor {
   }
 
   public void visitTemplateBindings(Angular2HtmlTemplateBindingsImpl bindings) {
-    visitXmlAttribute(bindings);
-  }
-
-  public void visitBananaBoxBinding(Angular2HtmlBananaBoxBindingImpl bananaBoxBinding) {
-    visitXmlAttribute(bananaBoxBinding);
+    visitBoundAttribute(bindings);
   }
 }

@@ -6,7 +6,7 @@ HtmlFile:test.html
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('div')
       PsiWhiteSpace(' ')
-      Angular2HtmlEvent <lang>
+      Angular2HtmlEvent <lang, REGULAR>
         XmlToken:XML_NAME('(lang)')
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
