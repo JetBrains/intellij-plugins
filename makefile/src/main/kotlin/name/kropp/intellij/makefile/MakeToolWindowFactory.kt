@@ -29,6 +29,11 @@ class MakeToolWindowFactory : ToolWindowFactory {
       MakefileFileNode(it.key.name, it.value.map { MakefileTargetNode(it) }.toTypedArray())
     }
 
+    if (files.isEmpty()) {
+      toolWindow.setAvailable(false) {}
+      return
+    }
+
     val model = DefaultTreeModel(MakefileRootNode(files.toTypedArray()))
 
     val panel = SimpleToolWindowPanel(true)
@@ -46,7 +51,8 @@ class MakeToolWindowFactory : ToolWindowFactory {
     val runTargetAction = MakefileRunTargetAction2(tree, runManager)
     runTargetAction.registerCustomShortcutSet(CustomShortcutSet(KeyEvent.VK_ENTER), panel)
     actionGroup.add(runTargetAction)
-    toolBarPanel.add(ActionManager.getInstance().createActionToolbar("MakeToolWindowToolbar", actionGroup, true).component)
+    val actionManager = ActionManager.getInstance()
+    toolBarPanel.add(actionManager.createActionToolbar("MakeToolWindowToolbar", actionGroup, true).component)
 
     panel.setToolbar(toolBarPanel)
 
