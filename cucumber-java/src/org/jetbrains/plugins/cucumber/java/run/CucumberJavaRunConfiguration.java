@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.diagnostic.logging.LogConfigurationPanel;
@@ -170,11 +171,6 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
   @Override
   protected CucumberJavaConfigurationOptions getOptions() {
     return (CucumberJavaConfigurationOptions)super.getOptions();
-  }
-
-  @Override
-  protected Class<? extends ModuleBasedConfigurationOptions> getOptionsClass() {
-    return CucumberJavaConfigurationOptions.class;
   }
 
   @Nullable

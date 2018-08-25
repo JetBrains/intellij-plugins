@@ -7,6 +7,7 @@ import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.ModuleBasedConfiguration;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.openapi.components.BaseState;
 import com.intellij.openapi.project.Project;
 import icons.CucumberJavaIcons;
 import org.jetbrains.annotations.NonNls;
@@ -36,6 +37,11 @@ public class CucumberJavaRunConfigurationType extends ApplicationConfigurationTy
       @Override
       public void onNewConfigurationCreated(@NotNull RunConfiguration configuration) {
         ((ModuleBasedConfiguration)configuration).onNewConfigurationCreated();
+      }
+
+      @Override
+      public Class<? extends BaseState> getOptionsClass() {
+        return CucumberJavaConfigurationOptions.class;
       }
     };
   }
