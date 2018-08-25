@@ -36,6 +36,7 @@ public class BndRunConfigurationType extends ConfigurationTypeBase {
       myIcon = icon;
     }
 
+    @NotNull
     @Override
     public String getName() {
       return myName;

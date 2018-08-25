@@ -36,6 +36,7 @@ public class RemoteFlashRunConfigurationType implements ConfigurationType, DumbA
     };
   }
 
+  @NotNull
   @Override
   public String getDisplayName() {
     return DISPLAY_NAME;

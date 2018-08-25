@@ -35,6 +35,7 @@ public class FlashRunConfigurationType implements ConfigurationType {
     };
   }
 
+  @NotNull
   @Override
   public String getDisplayName() {
     return DISPLAY_NAME;

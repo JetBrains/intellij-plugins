@@ -32,6 +32,7 @@ public class CfmlUnitRunConfigurationType implements ConfigurationType {
     };
   }
 
+  @NotNull
   @Override
   public String getDisplayName() {
     return "MXUnit";

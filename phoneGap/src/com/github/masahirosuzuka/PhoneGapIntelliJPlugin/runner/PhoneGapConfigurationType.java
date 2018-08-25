@@ -26,6 +26,7 @@ public class PhoneGapConfigurationType implements ConfigurationType, DumbAware {
     myConfigurationFactory = new PhoneGapConfigurationFactory(this);
   }
 
+  @NotNull
   @Override
   public String getDisplayName() {
     return PhoneGapBundle.message("phonegap.run.configuration.title");
