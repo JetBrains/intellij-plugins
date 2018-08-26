@@ -23,5 +23,5 @@ object MakefileTargetStubElementType : IStubElementType<MakefileTargetStubElemen
     outputStream.writeName(e.name)
   }
   override fun deserialize(inputStream: StubInputStream, parent: StubElement<*>?) =
-      MakefileTargetStubElementImpl(parent, inputStream.readName()?.string)
+    MakefileTargetStubElementImpl(parent, inputStream.readName()?.string)
 }
