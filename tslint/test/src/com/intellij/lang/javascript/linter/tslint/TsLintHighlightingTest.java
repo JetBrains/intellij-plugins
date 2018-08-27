@@ -9,13 +9,17 @@ import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintExternalAnnotator;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLinterInput;
+import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueueImpl;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
+import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.LineSeparator;
+import org.apache.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 
@@ -106,9 +110,13 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   }
 
   public void testFixFile() {
+    setTraceLog();
+    Assert.assertFalse(EditorSettingsExternalizable.getInstance().isEnsureNewLineAtEOF());
+
     doTest("fixFile", "fixFile/fix.ts", null);
     myFixture.launchAction(JSTestUtils.getSingleQuickFix(myFixture, "TSLint: Fix current file"));
     myFixture.checkResultByFile("fixFile/fix_after.ts", true);
+    Assert.assertFalse(EditorSettingsExternalizable.getInstance().isEnsureNewLineAtEOF());
   }
 
   public void testFixSingleError() {
@@ -163,5 +171,10 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
     configuration.setExtendedState(true, builder.build());
 
     myFixture.testHighlighting(true, false, true);
+  }
+
+  private void setTraceLog() {
+    JSLanguageServiceQueue.LOGGER.setLevel(Level.TRACE);
+    Disposer.register(getTestRootDisposable(), () -> JSLanguageServiceQueue.LOGGER.setLevel(Level.ERROR));
   }
 }
