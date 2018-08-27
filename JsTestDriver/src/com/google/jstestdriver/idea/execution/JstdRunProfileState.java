@@ -37,6 +37,7 @@ import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.execution.testframework.sm.runner.TestProxyFilterProvider;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.ConsoleView;
+import com.intellij.javascript.nodejs.NodeCommandLineUtil;
 import com.intellij.javascript.testFramework.TestFileStructureManager;
 import com.intellij.javascript.testFramework.TestFileStructurePack;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -151,7 +152,7 @@ public class JstdRunProfileState implements RunProfileState {
   private KillableColoredProcessHandler createOSProcessHandler(@NotNull String serverUrl) throws ExecutionException {
     Map<TestRunner.ParameterKey, String> params = createParameterMap(serverUrl);
     GeneralCommandLine commandLine = createCommandLine(params);
-    KillableColoredProcessHandler processHandler = new KillableColoredProcessHandler(commandLine, true);
+    KillableColoredProcessHandler processHandler = NodeCommandLineUtil.createKillableColoredProcessHandler(commandLine, true);
     ProcessTerminatedListener.attach(processHandler);
     return processHandler;
   }

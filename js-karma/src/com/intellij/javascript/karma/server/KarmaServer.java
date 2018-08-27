@@ -157,7 +157,7 @@ public class KarmaServer {
     });
     KillableColoredProcessHandler processHandler;
     try {
-      processHandler = new KillableColoredProcessHandler(commandLine, true);
+      processHandler = NodeCommandLineUtil.createKillableColoredProcessHandler(commandLine, true);
     }
     catch (ExecutionException e) {
       throw new IOException("Can not start Karma server: " + commandLine.getCommandLineString(), e);
