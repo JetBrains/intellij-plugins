@@ -15,30 +15,36 @@ package org.intellij.plugins.markdown.lang.psi;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import org.intellij.plugins.markdown.lang.MarkdownLanguage;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownCodeFenceImpl;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownFile;
+import org.intellij.plugins.markdown.lang.psi.impl.MarkdownHeaderImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MarkdownPsiElementFactory {
   private MarkdownPsiElementFactory() { }
 
-  @Nullable
+  @NotNull
   public static MarkdownFile createFile(@NotNull Project project, @NotNull String text) {
     final LightVirtualFile virtualFile = new LightVirtualFile("temp.rb", MarkdownLanguage.INSTANCE, text);
-    return (MarkdownFile)((PsiFileFactoryImpl)PsiFileFactory.getInstance(project))
+    PsiFile psiFile = ((PsiFileFactoryImpl)PsiFileFactory.getInstance(project))
       .trySetupPsiForFile(virtualFile, MarkdownLanguage.INSTANCE, true, true);
+
+    if (!(psiFile instanceof MarkdownFile)) {
+      throw new RuntimeException("Cannot create a new markdown file. Text: " + text);
+    }
+
+    return (MarkdownFile)psiFile;
   }
 
 
   @NotNull
-  public static MarkdownCodeFenceImpl createCodeFence(@NotNull Project project,
-                                                      @Nullable String language,
-                                                      @NotNull String text) {
+  public static MarkdownCodeFenceImpl createCodeFence(@NotNull Project project, @Nullable String language, @NotNull String text) {
     return createCodeFence(project, language, text, null);
   }
 
@@ -52,10 +58,22 @@ public class MarkdownPsiElementFactory {
     String content = "```" + StringUtil.notNullize(language) + text + "\n" + StringUtil.notNullize(indent) + "```";
     final MarkdownFile file = createFile(project, content);
 
-    if (file == null) {
-      throw new RuntimeException("Cannot create a new markdown file. Text: " + content);
-    }
-
     return (MarkdownCodeFenceImpl)file.getFirstChild().getFirstChild();
+  }
+
+  @NotNull
+  public static MarkdownPsiElement createTextElement(@NotNull Project project, @NotNull String text) {
+    return (MarkdownPsiElement)createFile(project, text).getFirstChild().getFirstChild();
+  }
+
+  @NotNull
+  public static MarkdownHeaderImpl createSetext(@NotNull Project project, @NotNull String text, @NotNull String symbol, int count) {
+    return (MarkdownHeaderImpl)createFile(project, text + "\n" + StringUtil.repeat(symbol, count)).getFirstChild().getFirstChild();
+  }
+
+
+  @NotNull
+  public static MarkdownHeaderImpl createHeader(@NotNull Project project, @NotNull String text, int level) {
+    return (MarkdownHeaderImpl)createFile(project, StringUtil.repeat("#", level) + " " + text).getFirstChild().getFirstChild();
   }
 }
