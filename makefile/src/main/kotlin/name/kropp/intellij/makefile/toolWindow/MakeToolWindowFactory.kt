@@ -24,11 +24,6 @@ class MakeToolWindowFactory : ToolWindowFactory {
         MakefileFileNode(it.key, it.value.map { MakefileTargetNode(it) }.toTypedArray())
       }
 
-      if (files.isEmpty()) {
-        toolWindow.setAvailable(false) {}
-        return@runWhenSmart
-      }
-
       val model = DefaultTreeModel(MakefileRootNode(files.toTypedArray()))
 
       val panel = SimpleToolWindowPanel(true)

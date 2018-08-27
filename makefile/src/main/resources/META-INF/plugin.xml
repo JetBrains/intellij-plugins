@@ -42,7 +42,7 @@ Bugfix for if directive parsing, support for recent IntelliJ platform.
     <stubElementTypeHolder class="name.kropp.intellij.makefile.psi.MakefileTypes" />
     <stubIndex implementation="name.kropp.intellij.makefile.MakefileTargetIndex" />
 
-    <toolWindow id="make" anchor="right" factoryClass="name.kropp.intellij.makefile.toolWindow.MakeToolWindowFactory"/>
+    <toolWindow id="make" anchor="right" conditionClass="name.kropp.intellij.makefile.toolWindow.MakeToolWindowCondition" factoryClass="name.kropp.intellij.makefile.toolWindow.MakeToolWindowFactory"/>
 
     <internalFileTemplate name="Makefile" />
   </extensions>
