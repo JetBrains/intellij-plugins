@@ -10,6 +10,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Consumer;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
@@ -131,28 +132,16 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
   public static DartNavigationRegion findRegion(@NotNull final List<DartServerData.DartNavigationRegion> regions,
                                                 final int offset,
                                                 final int length) {
-    int low = 0;
-    int high = regions.size() - 1;
-
-    while (low <= high) {
-      int mid = (low + high) >>> 1;
-      DartServerData.DartNavigationRegion midVal = regions.get(mid);
-      int cmp = midVal.getOffset() - offset;
-
-      if (cmp < 0) {
-        low = mid + 1;
-      }
-      else if (cmp > 0) {
-        high = mid - 1;
-      }
-      else {
-        if (midVal.getLength() == length) {
-          return midVal;
-        }
-        return null;
-      }
+    int i = findOffsetIndex(regions, offset);
+    if (i>= 0) {
+      DartNavigationRegion midVal = regions.get(i);
+      return midVal.getLength() == length ? midVal : null;
     }
     return null;
+  }
+
+  static int findOffsetIndex(@NotNull List<DartNavigationRegion> regions, int offset) {
+    return ObjectUtils.binarySearch(0, regions.size(), mid -> Integer.compare(regions.get(mid).getOffset(), offset));
   }
 
   public static void processRegionsInRange(@NotNull final List<DartServerData.DartNavigationRegion> regions,
@@ -161,25 +150,9 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     if (regions.isEmpty()) return;
 
     // first find the first region that has minimal allowed offset
-    int low = 0;
-    int high = regions.size() - 1;
 
-    while (low < high) {
-      int mid = (low + high) >>> 1;
-      DartServerData.DartNavigationRegion midVal = regions.get(mid);
-      int cmp = midVal.getOffset() - range.getStartOffset();
-
-      if (cmp < 0) {
-        low = Math.min(high, mid + 1);
-      }
-      else {
-        high = Math.max(low, mid - 1);
-      }
-    }
-
-    assert low == high : regions.size() + "," + low + "," + high;
-
-    int i = low;
+    int i = ObjectUtils.binarySearch(0, regions.size(), mid -> regions.get(mid).getOffset() < range.getStartOffset() ? -1 : 1);
+    i = Math.max(0,-i-2);
     DartNavigationRegion region = regions.get(i);
     if (region.getOffset() < range.getStartOffset()) {
       i++;
