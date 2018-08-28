@@ -41,7 +41,7 @@ public class FlexClassMemberNode extends ProjectViewNode<JSElement> {
   }
 
   @Override
-  protected void update(PresentationData presentation) {
+  protected void update(@NotNull PresentationData presentation) {
     String text;
     JSElement value = getValue();
     if (value == null || !value.isValid()) {
