@@ -15,6 +15,22 @@ public class MarkdownToggleStrikeThroughTest extends LightPlatformCodeInsightTes
     doTest();
   }
 
+  public void testSimpleSelection() {
+    doTest();
+  }
+
+  public void testSimpleSelectionInWord() {
+    doTest();
+  }
+
+  public void testSimpleSelectionInList() {
+    doTest();
+  }
+
+  public void testSimpleSelectionInQuote() {
+    doTest();
+  }
+
   private void doTest() {
     configureByFile(getTestName(true) + "_before.md");
     executeAction("org.intellij.plugins.markdown.ui.actions.styling.ToggleStrikethroughAction");
