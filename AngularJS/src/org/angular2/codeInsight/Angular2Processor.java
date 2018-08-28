@@ -38,6 +38,7 @@ import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
+import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angular2.lang.html.psi.*;
 import org.angular2.lang.html.psi.impl.Angular2HtmlTemplateBindingsImpl;
 import org.jetbrains.annotations.NonNls;
@@ -56,9 +57,7 @@ public class Angular2Processor {
 
   public static void process(final PsiElement element, final Consumer<? super JSPsiElementBase> consumer) {
     final PsiElement original = CompletionUtil.getOriginalOrSelf(element);
-    if (!original.getLanguage().is(Angular2Language.INSTANCE)
-        && !(original.getParent() != null
-             && original.getParent().getLanguage().is(Angular2Language.INSTANCE))) {
+    if (!checkLanguage(original)) {
       return;
     }
     final PsiFile file = original.getContainingFile();
@@ -70,6 +69,15 @@ public class Angular2Processor {
 
     calculateElementScopes(element, templateRootScope)
       .forEach(s -> s.consumeElementsFromAllScopes(consumer));
+  }
+
+  private static boolean checkLanguage(PsiElement element) {
+    return element.getLanguage().is(Angular2Language.INSTANCE)
+           || element.getLanguage().is(Angular2HtmlLanguage.INSTANCE)
+           || (element.getParent() != null
+               && (element.getParent().getLanguage().is(Angular2Language.INSTANCE)
+                   || element.getParent().getLanguage().is(Angular2HtmlLanguage.INSTANCE)
+               ));
   }
 
   private static List<Angular2Scope> calculateElementScopes(PsiElement element,
@@ -151,7 +159,7 @@ public class Angular2Processor {
     TAG_TO_CLASS = tagToClass;
   }
 
-  private static class Angular2TemplateScopeBuilder extends Angular2HtmlRecursiveVisitor {
+  private static class Angular2TemplateScopeBuilder extends Angular2HtmlRecursiveElementVisitor {
 
     @NotNull
     private final PsiFile myTemplateFile;
@@ -380,5 +388,4 @@ public class Angular2Processor {
       return result;
     }
   }
-
 }

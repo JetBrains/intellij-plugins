@@ -6,6 +6,7 @@ import {Component, ElementRef, ViewChild} from '@angular/core';
     template: `
       <textarea #area></textarea>
       <div #area2></div>
+      <div *ngIf="true" #ifRef></div>
     `
 })
 export class TestComponent {

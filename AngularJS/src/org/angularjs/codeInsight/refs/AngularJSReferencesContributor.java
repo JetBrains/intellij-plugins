@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.refs;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
@@ -17,6 +18,7 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
+import org.angular2.codeInsight.refs.Angular2ViewChildReferencesProvider;
 import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularJSIndexingHandler;
@@ -58,40 +60,42 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
         return true;
       }
     }));
-  private static final PsiElementPattern.Capture<JSLiteralExpression> STYLE_PATTERN = PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
-    @Override
-    public boolean isAcceptable(Object element, @Nullable PsiElement context) {
-      if (element instanceof JSLiteralExpression) {
-        final JSLiteralExpression literal = (JSLiteralExpression)element;
-        if (literal.isQuotedLiteral()) {
-          if ((literal.getParent() instanceof JSArrayLiteralExpression)) {
-            final JSProperty property = ObjectUtils.tryCast(literal.getParent().getParent(), JSProperty.class);
-            if (property != null && "styleUrls".equals((property).getName())) {
-              return Angular2LangUtil.isAngular2Context(literal);
+  private static final PsiElementPattern.Capture<JSLiteralExpression> STYLE_PATTERN =
+    PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
+      @Override
+      public boolean isAcceptable(Object element, @Nullable PsiElement context) {
+        if (element instanceof JSLiteralExpression) {
+          final JSLiteralExpression literal = (JSLiteralExpression)element;
+          if (literal.isQuotedLiteral()) {
+            if ((literal.getParent() instanceof JSArrayLiteralExpression)) {
+              final JSProperty property = ObjectUtils.tryCast(literal.getParent().getParent(), JSProperty.class);
+              if (property != null && "styleUrls".equals((property).getName())) {
+                return Angular2LangUtil.isAngular2Context(literal);
+              }
             }
           }
         }
+        return false;
       }
-      return false;
-    }
 
-    @Override
-    public boolean isClassAcceptable(Class hintClass) {
-      return true;
-    }
-  }));
+      @Override
+      public boolean isClassAcceptable(Class hintClass) {
+        return true;
+      }
+    }));
 
-  public static final PsiElementPattern.Capture<JSParameter> DI_PATTERN = PlatformPatterns.psiElement(JSParameter.class).and(new FilterPattern(new ElementFilter() {
-    @Override
-    public boolean isAcceptable(Object element, @Nullable PsiElement context) {
-      return AngularJSIndexingHandler.isInjectable(context);
-    }
+  public static final PsiElementPattern.Capture<JSParameter> DI_PATTERN =
+    PlatformPatterns.psiElement(JSParameter.class).and(new FilterPattern(new ElementFilter() {
+      @Override
+      public boolean isAcceptable(Object element, @Nullable PsiElement context) {
+        return AngularJSIndexingHandler.isInjectable(context);
+      }
 
-    @Override
-    public boolean isClassAcceptable(Class hintClass) {
-      return true;
-    }
-  }));
+      @Override
+      public boolean isClassAcceptable(Class hintClass) {
+        return true;
+      }
+    }));
 
   private static final PsiElementPattern.Capture<JSLiteralExpression> VIEW_CHILD_PATTERN =
     PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
@@ -116,7 +120,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
       public boolean isClassAcceptable(Class hintClass) {
         return true;
       }
-  }));
+    }));
 
   @Override
   public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
@@ -146,7 +150,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
         if (element instanceof JSLiteralExpression) {
           final PsiElement parent = ((PsiElement)element).getParent();
           if (parent instanceof JSArgumentList && parent.getParent() instanceof JSCallExpression
-            && ((JSArgumentList)parent).getArguments().length == 1) {
+              && ((JSArgumentList)parent).getArguments().length == 1) {
             if (PsiTreeUtil.isAncestor(((JSArgumentList)parent).getArguments()[0], (PsiElement)element, false)) {
               final JSExpression methodExpression = ((JSCallExpression)parent.getParent()).getMethodExpression();
               if (looksLikeAngularModuleReference(methodExpression)) {
@@ -174,7 +178,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
           if (!(parent instanceof JSArrayLiteralExpression)) return false;
           parent = parent.getParent();
           if (parent instanceof JSArgumentList && parent.getParent() instanceof JSCallExpression
-            && ((JSArgumentList)parent).getArguments().length > 1) {
+              && ((JSArgumentList)parent).getArguments().length > 1) {
             if (PsiTreeUtil.isAncestor(((JSArgumentList)parent).getArguments()[1], (PsiElement)element, false) &&
                 ((JSArgumentList)parent).getArguments()[1] instanceof JSArrayLiteralExpression) {
               final JSExpression methodExpression = ((JSCallExpression)parent.getParent()).getMethodExpression();
@@ -209,7 +213,8 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
           if (literal.isQuotedLiteral()) {
             final PsiElement parent = literal.getParent();
             if (parent instanceof JSProperty && propertyName.equals(((JSProperty)parent).getName())) {
-              return AngularIndexUtil.hasAngularJS(literal.getProject());
+              return AngularIndexUtil.hasAngularJS(literal.getProject())
+                     || Angular2LangUtil.isAngular2Context(parent);
             }
           }
         }
@@ -229,13 +234,13 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
       public boolean isAcceptable(Object element, @Nullable PsiElement context) {
         if (!(element instanceof PsiElement)) return false;
         if (element instanceof JSLiteralExpression ||
-                   element instanceof LeafPsiElement && ((LeafPsiElement)element).getNode().getElementType() == JSTokenTypes.STRING_LITERAL) {
-          if (!(((PsiElement) element).getParent() instanceof JSProperty)) return false;
+            element instanceof LeafPsiElement && ((LeafPsiElement)element).getNode().getElementType() == JSTokenTypes.STRING_LITERAL) {
+          if (!(((PsiElement)element).getParent() instanceof JSProperty)) return false;
           // started typing property, variant
-          PsiElement current = moveUpChain((PsiElement) element,
-                                                 JSLiteralExpression.class,
-                                                 JSReferenceExpression.class,
-                                                 JSProperty.class);
+          PsiElement current = moveUpChain((PsiElement)element,
+                                           JSLiteralExpression.class,
+                                           JSReferenceExpression.class,
+                                           JSProperty.class);
           if (!(current instanceof JSProperty) || !acceptablePropertyValue((JSProperty)current)) return false;
           current = current.getParent();
           if (current != null && checkParentViewsObject(current)) return AngularIndexUtil.hasAngularJS(current.getProject());
@@ -246,7 +251,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
       private boolean acceptablePropertyValue(JSProperty element) {
         return element.getNameIdentifier() != null && StringUtil.isQuotedString(element.getNameIdentifier().getText()) &&
                (element.getValue() instanceof JSObjectLiteralExpression ||
-                                             element.getValue() instanceof JSReferenceExpression || element.getValue() == null);
+                element.getValue() instanceof JSReferenceExpression || element.getValue() == null);
       }
 
       private PsiElement moveUpChain(@Nullable final PsiElement element, @NotNull final Class<? extends PsiElement>... clazz) {
