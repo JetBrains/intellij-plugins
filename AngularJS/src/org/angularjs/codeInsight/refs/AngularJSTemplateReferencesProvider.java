@@ -40,7 +40,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
     public Collection<PsiFileSystemItem> computeDefaultContexts() {
       final PsiElement element = getElement();
       final Project project = element.getProject();
-      if (Angular2LangUtil.isAngular2Context(project)) {
+      if (Angular2LangUtil.isAngular2Context(element)) {
         final PsiFile file = element.getContainingFile().getOriginalFile();
         final TypeScriptConfig config = TypeScriptCompilerConfigUtil.getConfigForFile(project, file.getVirtualFile());
         final PsiDirectory directory = config != null ?

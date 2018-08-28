@@ -23,6 +23,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.xml.util.XmlInvalidIdInspection;
 import org.angularjs.AngularTestUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
@@ -36,14 +37,27 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     return resolve.getParent().getText();
   }
 
+  @NotNull
+  private PsiElement resolveReference(@NotNull String signature) {
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    return resolve;
+  }
+
+  private void assertUnresolvedReference(@NotNull String signature) {
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    assertNull(ref.resolve());
+  }
+
   public void testCustomAttributesResolve20TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("custom2.after.html", "custom.ts");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      PsiElement resolve = resolveReference("my-cus<caret>tomer");
       assertEquals("custom.ts", resolve.getContainingFile().getName());
       assertEquals("Directive({\n" +
                    "    selector: '[my-customer]',\n" +
@@ -59,11 +73,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testCustomAttributesResolve20JavaScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("custom2.after.html", "custom2.js");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      PsiElement resolve = resolveReference("my-cus<caret>tomer");
       assertEquals("custom2.js", resolve.getContainingFile().getName());
       assertEquals("new angular.DirectiveAnnotation({\n" +
                    "    selector: '[my-customer]'\n" +
@@ -153,11 +163,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testTemplateReferenceResolve2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("binding.after.html", "package.json");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("user<caret>name", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      PsiElement resolve = resolveReference("user<caret>name");
       assertEquals("binding.after.html", resolve.getContainingFile().getName());
       assertEquals("#username", resolve.getContainingFile().findElementAt(resolve.getParent().getTextOffset()).getText());
     });
@@ -166,24 +172,20 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testVariableResolve2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("ngTemplate.after.html", "package.json");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("my_<caret>user", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      PsiElement resolve = resolveReference("let-my_<caret>user");
       assertEquals("ngTemplate.after.html", resolve.getContainingFile().getName());
       assertEquals("let-my_user", resolve.getContainingFile().findElementAt(resolve.getParent().getTextOffset()).getText());
+
+      PsiElement resolve2 = resolveReference("{{my_<caret>user");
+      assertEquals("ngTemplate.after.html", resolve2.getContainingFile().getName());
+      assertEquals("let-my_user", resolve2.getContainingFile().findElementAt(resolve2.getParent().getTextOffset()).getText());
     });
   }
 
   public void testTemplateReferenceResolve2Inline() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("binding.after.ts", "package.json");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("in<caret>put_el.", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      PsiElement resolve = resolveReference("in<caret>put_el.");
       assertEquals("binding.after.ts", resolve.getContainingFile().getName());
       assertEquals("#input_el", resolve.getContainingFile().findElementAt(resolve.getParent().getTextOffset()).getText());
     });
@@ -200,11 +202,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testBindingResolve2TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("object_binding.after.html", "package.json", "object.ts");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("[mod<caret>el]", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      PsiElement resolve = resolveReference("[mod<caret>el]");
       assertEquals("object.ts", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, JSField.class);
     });
@@ -221,11 +219,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testBindingResolveViaBase2TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("object_binding_via_base.after.html", "package.json", "inheritor.ts", "object.ts");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("[mod<caret>el]", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      PsiElement resolve = resolveReference("[mod<caret>el]");
       assertEquals("object.ts", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, JSField.class);
     });
@@ -242,11 +236,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testBindingOverrideResolve2TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("object_binding.after.html", "package.json", "objectOverride.ts");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("[mod<caret>el]", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      PsiElement resolve = resolveReference("[mod<caret>el]");
       assertEquals("objectOverride.ts", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, JSField.class);
     });
@@ -263,11 +253,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testBindingAttributeResolve2TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("attribute_binding.after.html", "package.json", "object.ts");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("[mod<caret>el]", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      PsiElement resolve = resolveReference("[mod<caret>el]");
       assertEquals("object.ts", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, JSField.class);
     });
@@ -284,11 +270,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testOneTimeBindingAttributeResolve2TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("attribute_one_time_binding.after.html", "package.json", "object.ts");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("one<caret>Time", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      PsiElement resolve = resolveReference("one<caret>Time");
       assertEquals("object.ts", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, JSField.class);
     });
@@ -297,11 +279,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testOneTimeBindingAttributeResolve2JavaScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("compiled_binding.after.html", "package.json", "button.metadata.json", "button.d.ts", "color.d.ts");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("col<caret>or", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      PsiElement resolve = resolveReference("col<caret>or");
       assertEquals("color.d.ts", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, TypeScriptPropertySignature.class);
       assertEquals("color: ThemePalette", resolve.getText());
@@ -345,11 +323,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testBindingAttributeFunctionResolve2TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("attribute_binding.after.html", "package.json", "object_with_function.ts");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("[mod<caret>el]", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      PsiElement resolve = resolveReference("[mod<caret>el]");
       assertEquals("object_with_function.ts", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, JSFunction.class);
     });
@@ -366,11 +340,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testEventHandlerResolve2TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("object_event.after.html", "package.json", "object.ts");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("(co<caret>mplete)", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      PsiElement resolve = resolveReference("(co<caret>mplete)");
       assertEquals("object.ts", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, JSField.class);
     });
@@ -387,11 +357,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testEventHandlerOverrideResolve2TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("object_event.after.html", "package.json", "objectOverride.ts");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("(co<caret>mplete)", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      PsiElement resolve = resolveReference("(co<caret>mplete)");
       assertEquals("objectOverride.ts", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, JSField.class);
     });
@@ -410,11 +376,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testForOfResolve2Typescript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("for2.html", "package.json");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("ngF<caret>", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      PsiElement resolve = resolveReference("ngF<caret>");
       assertEquals("package.json", resolve.getContainingFile().getName());
       assertEquals("Directive({selector: '[ngFor][ngForOf]', properties: ['ngForOf'], lifecycle: [onCheck]})", getDirectiveDefinitionText(resolve));
     });
@@ -452,11 +414,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testForOfResolve2Javascript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("for2.html", "common.metadata.json");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("ngF<caret>", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      PsiElement resolve = resolveReference("ngF<caret>");
       assertEquals("common.metadata.json", resolve.getContainingFile().getName());
       assertEquals("\"[ngFor][ngForOf]\"", getDirectiveDefinitionText(((JSOffsetBasedImplicitElement)resolve).getElementAtOffset()));
     });
@@ -475,10 +433,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testTemplateUrl20Resolve() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("custom.template.ts", "package.json", "custom.html");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("templateUrl: '<caret>", myFixture.getFile());
-      final PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      final PsiElement resolve = ref.resolve();
+      PsiElement resolve = resolveReference("templateUrl: '<caret>");
       assertInstanceOf(resolve, PsiFile.class);
       assertEquals("custom.html", ((PsiFile)resolve).getName());
     });
@@ -498,10 +453,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testStyleUrls20Resolve() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("custom.style.ts", "package.json", "custom.html");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("styleUrls: ['<caret>", myFixture.getFile());
-      final PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      final PsiElement resolve = ref.resolve();
+      PsiElement resolve = resolveReference("styleUrls: ['<caret>");
       assertInstanceOf(resolve, PsiFile.class);
       assertEquals("custom.html", ((PsiFile)resolve).getName());
     });
@@ -510,60 +462,32 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testTemplate20TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("template.html", "package.json", "template.ts");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("*myHover<caret>List", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      PsiElement resolve = resolveReference("*myHover<caret>List");
       assertEquals("template.ts", resolve.getContainingFile().getName());
-      offsetBySignature = AngularTestUtil.findOffsetBySignature("myHover<caret>List", myFixture.getFile());
-      ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      assertNull(ref.resolve());
+      assertUnresolvedReference("myHover<caret>List");
     });
   }
 
   public void testNoTemplate20TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("noTemplate.html", "package.json", "noTemplate.ts");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("myHover<caret>List", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      PsiElement resolve = resolveReference("myHover<caret>List");
       assertEquals("noTemplate.ts", resolve.getContainingFile().getName());
-      offsetBySignature = AngularTestUtil.findOffsetBySignature("*myHover<caret>List", myFixture.getFile());
-      ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      assertNull(ref.resolve());
+      assertUnresolvedReference("*myHover<caret>List");
     });
   }
   public void testTemplate20JavaScript() {
     myFixture.configureByFiles("template.html", "angular2_compiled.js", "template.metadata.json");
-    int offsetBySignature = AngularTestUtil.findOffsetBySignature("*myHover<caret>List", myFixture.getFile());
-    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-    assertNotNull(ref);
-    PsiElement resolve = ref.resolve();
-    assertNotNull(resolve);
+    PsiElement resolve = resolveReference("*myHover<caret>List");
     assertEquals("template.metadata.json", resolve.getContainingFile().getName());
-    offsetBySignature = AngularTestUtil.findOffsetBySignature("myHover<caret>List", myFixture.getFile());
-    ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-    assertNotNull(ref);
-    assertNull(ref.resolve());
+    assertUnresolvedReference("myHover<caret>List");
   }
 
   public void testNoTemplate20JavaScript() {
     myFixture.configureByFiles("noTemplate.html", "angular2_compiled.js", "noTemplate.metadata.json");
-    int offsetBySignature = AngularTestUtil.findOffsetBySignature("myHover<caret>List", myFixture.getFile());
-    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-    assertNotNull(ref);
-    PsiElement resolve = ref.resolve();
-    assertNotNull(resolve);
+    PsiElement resolve = resolveReference("myHover<caret>List");
     assertEquals("noTemplate.metadata.json", resolve.getContainingFile().getName());
-    offsetBySignature = AngularTestUtil.findOffsetBySignature("*myHover<caret>List", myFixture.getFile());
-    ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-    assertNotNull(ref);
-    assertNull(ref.resolve());
+    assertUnresolvedReference("*myHover<caret>List");
   }
 
   public void testBindingNamespace() throws Exception {
@@ -587,11 +511,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testCssExternalReference20() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("cssExtRef.ts", "package.json", "css.css");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("inDa<caret>Class", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      PsiElement resolve = resolveReference("inDa<caret>Class");
       assertEquals("css.css", resolve.getContainingFile().getName());
     });
   }
@@ -599,22 +519,14 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testCssInternalReference20() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("cssIntRef.ts", "package.json");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("inDa<caret>Class", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      resolveReference("inDa<caret>Class");
     });
   }
 
   public void testCssInternalReferenceWithHtmlTag20() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("cssIntRefHtmlTag.ts", "package.json");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("inDa<caret>Class", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
+      resolveReference("inDa<caret>Class");
     });
   }
 

@@ -44,7 +44,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   public XmlAttributeDescriptor[] getAttributeDescriptors(XmlTag xmlTag) {
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
-      final boolean hasAngularJS2 = Angular2LangUtil.isAngular2Context(project);
+      final boolean hasAngularJS2 = Angular2LangUtil.isAngular2Context(xmlTag);
       if (!AngularIndexUtil.hasAngularJS(xmlTag.getProject()) && !hasAngularJS2) return XmlAttributeDescriptor.EMPTY;
 
       final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<>();
@@ -185,7 +185,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       if (isApplicable(declaration)) {
         return createDescriptor(project, attributeName, declaration);
       }
-      if (!Angular2LangUtil.isAngular2Context(project)) return null;
+      if (!Angular2LangUtil.isAngular2Context(xmlTag)) return null;
 
       for (XmlAttribute attribute : xmlTag.getAttributes()) {
         String name = attribute.getName();

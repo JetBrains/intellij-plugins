@@ -33,6 +33,13 @@ import org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvide
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
+import static com.intellij.xml.XmlAttributeDescriptor.EMPTY;
+
 /**
  * @author Dennis.Ushakov
  */
@@ -68,22 +75,20 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
   @Override
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
     final JSImplicitElement declaration = getDeclaration();
-    final String string = declaration.getTypeString();
+    final String string = Objects.requireNonNull(declaration.getTypeString());
     final String attributes = string.split(";", -1)[3];
     final String[] split = attributes.split(",");
-    final XmlAttributeDescriptor[] result;
+    final List<XmlAttributeDescriptor> result = new ArrayList<>();
     if (context != null && Angular2LangUtil.isAngular2Context(context)) {
-      result = AngularAttributeDescriptor.getFieldBasedDescriptors(declaration);
-    } else if (split.length == 1 && split[0].isEmpty()) {
-      result = XmlAttributeDescriptor.EMPTY;
-    } else {
-      result = new XmlAttributeDescriptor[split.length];
-      for (int i = 0; i < split.length; i++) {
-        result[i] = new AnyXmlAttributeDescriptor(DirectiveUtil.getAttributeName(split[i]));
+      result.addAll(AngularAttributeDescriptor.getFieldBasedDescriptors(declaration));
+      result.addAll(AngularAttributeDescriptor.getExistingVarsAndRefsDescriptors(context));
+    } else if (split.length != 1 || !split[0].isEmpty()) {
+      for (String aSplit : split) {
+        result.add(new AnyXmlAttributeDescriptor(DirectiveUtil.getAttributeName(aSplit)));
       }
     }
-    final XmlAttributeDescriptor[] commonAttributes = HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context);
-    return ArrayUtil.mergeArrays(result, commonAttributes);
+    result.addAll(Arrays.asList(HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context)));
+    return result.toArray(EMPTY);
   }
 
   @Nullable

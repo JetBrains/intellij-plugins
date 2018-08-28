@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * @author Dennis.Ushakov
  */
@@ -24,7 +26,7 @@ public class AngularEventHandlerDescriptor extends AngularAttributeDescriptor {
     super(element.getProject(), attributeName, null, element);
   }
 
-  public static XmlAttributeDescriptor[] getEventHandlerDescriptors(JSImplicitElement declaration) {
+  public static List<XmlAttributeDescriptor> getEventHandlerDescriptors(JSImplicitElement declaration) {
     return getFieldBasedDescriptors(declaration, OUTPUT, FACTORY);
   }
 

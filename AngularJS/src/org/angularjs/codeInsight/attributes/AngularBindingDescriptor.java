@@ -17,11 +17,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.NotNullFunction;
 import com.intellij.util.NullableFunction;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * @author Dennis.Ushakov
@@ -30,16 +33,17 @@ public class AngularBindingDescriptor extends AngularAttributeDescriptor {
   public static final JSType STRING_TYPE = new JSStringType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE);
   public static final String INPUT = "Input";
   public static final NotNullFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> FACTORY = AngularBindingDescriptor::createBinding;
-  public static final NullableFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> FACTORY2 = AngularBindingDescriptor::createOneTimeBinding;
+  public static final NullableFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> FACTORY2 =
+    AngularBindingDescriptor::createOneTimeBinding;
 
   public AngularBindingDescriptor(PsiElement element,
                                   String attributeName) {
     super(element.getProject(), attributeName, null, element);
   }
 
-  public static XmlAttributeDescriptor[] getBindingDescriptors(JSImplicitElement declaration) {
-    return ArrayUtil.mergeArrays(getFieldBasedDescriptors(declaration, INPUT, FACTORY),
-                                 getFieldBasedDescriptors(declaration, INPUT, FACTORY2));
+  public static List<XmlAttributeDescriptor> getBindingDescriptors(JSImplicitElement declaration) {
+    return ContainerUtil.concat(getFieldBasedDescriptors(declaration, INPUT, FACTORY),
+                                getFieldBasedDescriptors(declaration, INPUT, FACTORY2));
   }
 
   @NotNull
@@ -62,8 +66,8 @@ public class AngularBindingDescriptor extends AngularAttributeDescriptor {
     }
     final JSType type = expandStringLiteralTypes(element instanceof JSFunction ?
                                                  ((JSFunction)element).getReturnType() :
-                                   element instanceof JSField ? ((JSField)element).getType() :
-                                   null);
+                                                 element instanceof JSField ? ((JSField)element).getType() :
+                                                 null);
 
     return type != null && type.isDirectlyAssignableType(STRING_TYPE, null) ?
            new AngularBindingDescriptor(element, dom.second) : null;

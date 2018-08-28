@@ -24,6 +24,7 @@ import com.intellij.psi.meta.PsiPresentableMetaData;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlElement;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.SmartList;
@@ -36,6 +37,9 @@ import org.angular2.codeInsight.metadata.AngularClass;
 import org.angular2.codeInsight.metadata.AngularField;
 import org.angular2.codeInsight.metadata.AngularMetadata;
 import org.angular2.codeInsight.metadata.AngularMetadataLoader;
+import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
+import org.angular2.lang.html.psi.Angular2HtmlReference;
+import org.angular2.lang.html.psi.Angular2HtmlVariable;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +47,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -56,6 +61,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
 
   /**
    * NativeScript compatibility
+   *
    * @deprecated to be removed in 2017.3
    */
   @Deprecated
@@ -75,9 +81,9 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
     myElement = element;
   }
 
-  public static XmlAttributeDescriptor[] getFieldBasedDescriptors(JSImplicitElement declaration,
-                                                                  String decorator,
-                                                                  NullableFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> factory) {
+  public static List<XmlAttributeDescriptor> getFieldBasedDescriptors(JSImplicitElement declaration,
+                                                                      String decorator,
+                                                                      NullableFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> factory) {
     final JSClass context = PsiTreeUtil.getContextOfType(declaration, JSClass.class);
     if (context != null) {
       final List<XmlAttributeDescriptor> result = new ArrayList<>();
@@ -94,18 +100,34 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
         }
         return true;
       });
-      return result.toArray(XmlAttributeDescriptor.EMPTY);
+      return result;
     }
     if (declaration.getContainingFile() instanceof JsonFile) {
       return getCompiledFieldBasedDescriptors(declaration, decorator, factory);
     }
-    return EMPTY;
+    return Collections.emptyList();
+  }
+
+  public static List<XmlAttributeDescriptor> getExistingVarsAndRefsDescriptors(XmlTag context) {
+    List<XmlAttributeDescriptor> result = new ArrayList<>();
+    context.acceptChildren(new Angular2HtmlElementVisitor() {
+      @Override
+      public void visitVariable(Angular2HtmlVariable variable) {
+        result.add(new AngularAttributeDescriptor(context.getProject(), variable.getName(), null, variable.getNameElement()));
+      }
+
+      @Override
+      public void visitReference(Angular2HtmlReference reference) {
+        result.add(new AngularAttributeDescriptor(context.getProject(), reference.getName(), null, reference.getNameElement()));
+      }
+    });
+    return result;
   }
 
   @NotNull
-  private static XmlAttributeDescriptor[] getCompiledFieldBasedDescriptors(JSImplicitElement declaration,
-                                                                             String decorator,
-                                                                             NullableFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> factory) {
+  private static List<XmlAttributeDescriptor> getCompiledFieldBasedDescriptors(JSImplicitElement declaration,
+                                                                               String decorator,
+                                                                               NullableFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> factory) {
     VirtualFile metadataJson = declaration.getContainingFile().getVirtualFile();
     AngularMetadata metadata = AngularMetadataLoader.INSTANCE.load(metadataJson);
     VirtualFile definition = metadataJson.getParent().findChild(StringUtil.trimEnd(metadataJson.getName(), "metadata.json") + "d.ts");
@@ -123,7 +145,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
         ContainerUtil.addIfNotNull(result, factory.fun(Pair.create(realDeclaration, field.getName())));
       }
     }
-    return result.toArray(EMPTY);
+    return result;
   }
 
   private static String getDecoratedName(JSAttributeListOwner field, String name) {
@@ -152,9 +174,9 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
   }
 
   @NotNull
-  public static XmlAttributeDescriptor[] getFieldBasedDescriptors(JSImplicitElement declaration) {
-    return ArrayUtil.mergeArrays(AngularBindingDescriptor.getBindingDescriptors(declaration),
-                                 AngularEventHandlerDescriptor.getEventHandlerDescriptors(declaration));
+  public static List<XmlAttributeDescriptor> getFieldBasedDescriptors(JSImplicitElement declaration) {
+    return ContainerUtil.concat(AngularBindingDescriptor.getBindingDescriptors(declaration),
+                                AngularEventHandlerDescriptor.getEventHandlerDescriptors(declaration));
   }
 
   @Override
