@@ -1,20 +1,18 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.psi.impl;
 
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.XmlElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.containers.ContainerUtil;
-import org.angular2.lang.expr.psi.Angular2Binding;
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes.Angular2ElementType;
 import org.angular2.lang.html.psi.Angular2HtmlBananaBoxBinding;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import static org.angular2.lang.html.parser.Angular2HtmlParsing.normalizeAttributeName;
+public class Angular2HtmlBananaBoxBindingImpl extends Angular2HtmlPropertyBindingBase implements Angular2HtmlBananaBoxBinding {
 
-public class Angular2HtmlBananaBoxBindingImpl extends Angular2HtmlBoundAttributeImpl implements Angular2HtmlBananaBoxBinding {
+  private static final Pair<String, String> DELIMITERS = Pair.pair("[(", ")]");
+  private static final String PREFIX = "bindon-";
 
   public Angular2HtmlBananaBoxBindingImpl(@NotNull Angular2ElementType type) {
     super(type);
@@ -33,27 +31,23 @@ public class Angular2HtmlBananaBoxBindingImpl extends Angular2HtmlBoundAttribute
     }
   }
 
-  @NotNull
   @Override
-  public String getPropertyName() {
-    String name = normalizeAttributeName(getName());
-    if (name.startsWith("[(") && name.endsWith(")]")) {
-      return name.substring(2, name.length() - 2);
-    }
-    if (name.startsWith("bindon-")) {
-      return name.substring(7 );
-    }
-    throw new IllegalStateException("Bad attribute name: " + name);
+  protected Pair<String, String> getDelimiters() {
+    return DELIMITERS;
   }
 
-  @Nullable
   @Override
-  public Angular2Binding getBinding() {
-    return ContainerUtil.getFirstItem(PsiTreeUtil.findChildrenOfType(this, Angular2Binding.class));
+  protected String getPrefix() {
+    return PREFIX;
+  }
+
+  @Override
+  protected boolean supportsEvents() {
+    return false;
   }
 
   @Override
   public String toString() {
-    return "Angular2HtmlBananaBoxBinding <" + getPropertyName() + ">";
+    return "Angular2HtmlBananaBoxBinding " + getNameAndType();
   }
 }

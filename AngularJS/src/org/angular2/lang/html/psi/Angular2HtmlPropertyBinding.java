@@ -19,13 +19,4 @@ public interface Angular2HtmlPropertyBinding extends Angular2HtmlBoundAttribute 
 
   @NotNull
   PropertyBindingType getBindingType();
-
-  enum PropertyBindingType {
-    PROPERTY,
-    ANIMATION,
-    ATTRIBUTE,
-    CLASS,
-    STYLE
-  }
-
 }

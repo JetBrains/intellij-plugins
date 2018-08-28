@@ -2,6 +2,7 @@
 package org.angular2.lang.html.psi;
 
 import org.angular2.lang.expr.psi.Angular2Binding;
+import org.angular2.lang.expr.psi.Angular2Interpolation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,4 +13,11 @@ public interface Angular2HtmlBananaBoxBinding extends Angular2HtmlBoundAttribute
 
   @Nullable
   Angular2Binding getBinding();
+
+  @NotNull
+  Angular2Interpolation[] getInterpolations();
+
+  @NotNull
+  PropertyBindingType getBindingType();
+
 }
