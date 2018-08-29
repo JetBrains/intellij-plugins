@@ -34,7 +34,7 @@ public abstract class CreateMxmlFileIntentionBase implements CreateClassIntentio
   protected String myPackageName;
   protected String myClassName;
   private final boolean myIdentifierIsValid;
-  private Consumer<String> myCreatedClassFqnConsumer;
+  private Consumer<? super String> myCreatedClassFqnConsumer;
 
   public CreateMxmlFileIntentionBase(final String classFqn, final @NotNull PsiElement element) {
     myElement = element;
@@ -56,7 +56,7 @@ public abstract class CreateMxmlFileIntentionBase implements CreateClassIntentio
   }
 
   @Override
-  public void setCreatedClassFqnConsumer(final Consumer<String> consumer) {
+  public void setCreatedClassFqnConsumer(final Consumer<? super String> consumer) {
     myCreatedClassFqnConsumer = consumer;
   }
 

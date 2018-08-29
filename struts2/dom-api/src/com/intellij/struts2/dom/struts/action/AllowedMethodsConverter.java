@@ -53,7 +53,7 @@ public class AllowedMethodsConverter extends DelimitedListConverter<String> {
 
   @Override
   protected Object[] getReferenceVariants(final ConvertContext convertContext,
-                                          final GenericDomValue<List<String>> listGenericDomValue) {
+                                          final GenericDomValue<? extends List<String>> listGenericDomValue) {
     final Action action = getActionElement(convertContext);
     final List<Object> variants = new ArrayList<>();
     for (final PsiMethod psiMethod : action.getActionMethods()) {
