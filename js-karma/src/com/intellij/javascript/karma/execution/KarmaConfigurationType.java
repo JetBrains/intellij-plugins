@@ -1,39 +1,26 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.execution;
 
-import com.intellij.execution.configuration.ConfigurationFactoryEx;
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.ConfigurationTypeBase;
-import com.intellij.execution.configurations.ConfigurationTypeUtil;
-import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.configurations.*;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import icons.JSKarmaIcons;
 import org.jetbrains.annotations.NotNull;
 
 public class KarmaConfigurationType extends ConfigurationTypeBase implements DumbAware {
-
   public KarmaConfigurationType() {
-    super("JavaScriptTestRunnerKarma", "Karma", "Karma", JSKarmaIcons.Karma2);
-    addFactory(new ConfigurationFactoryEx<KarmaRunConfiguration>(this) {
+    super("JavaScriptTestRunnerKarma", "Karma", "Karma", JSKarmaIcons.Icons.Karma2);
+    addFactory(new ConfigurationFactory(this) {
       @NotNull
       @Override
       public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new KarmaRunConfiguration(project, this, "Karma");
       }
 
+      @NotNull
       @Override
-      public boolean isConfigurationSingletonByDefault() {
-        return true;
-      }
-
-      @Override
-      public boolean canConfigurationBeSingleton() {
-        return false;
-      }
-
-      @Override
-      public void onNewConfigurationCreated(@NotNull KarmaRunConfiguration configuration) {
-        configuration.onNewConfigurationCreated();
+      public RunConfigurationSingletonPolicy getSingletonPolicy() {
+        return RunConfigurationSingletonPolicy.SINGLE_INSTANCE_ONLY;
       }
     });
   }

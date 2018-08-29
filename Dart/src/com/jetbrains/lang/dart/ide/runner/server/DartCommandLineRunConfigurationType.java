@@ -26,6 +26,7 @@ public class DartCommandLineRunConfigurationType extends ConfigurationTypeBase i
           DartBundle.message("runner.command.line.configuration.description"),
           LazyUtil.create(() -> DartIcons.Dart_16));
     addFactory(new ConfigurationFactory(this) {
+      @NotNull
       @Override
       public String getName() {
         return "Dart Command Line Application"; // compatibility

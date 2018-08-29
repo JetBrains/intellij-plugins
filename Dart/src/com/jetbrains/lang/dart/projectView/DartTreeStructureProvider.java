@@ -148,7 +148,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
     }
 
     @Override
-    protected void update(final PresentationData presentation) {
+    protected void update(@NotNull final PresentationData presentation) {
       presentation.setIcon(getIcon());
       presentation.setPresentableText(myName);
       presentation.setLocationString(mySymlinkPath);
@@ -176,7 +176,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
     }
 
     @Override
-    protected void updateImpl(final PresentationData data) {
+    protected void updateImpl(@NotNull final PresentationData data) {
       super.updateImpl(data);
 
       final VirtualFile dir = getVirtualFile();

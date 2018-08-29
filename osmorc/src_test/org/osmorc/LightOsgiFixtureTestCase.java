@@ -2,9 +2,7 @@
 package org.osmorc;
 
 import com.intellij.facet.FacetManager;
-import com.intellij.jarRepository.JarRepositoryManager;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.application.PluginPathManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -20,15 +18,16 @@ import org.osmorc.facet.OsmorcFacetType;
 
 import java.io.File;
 
+import static com.intellij.project.IntelliJProjectConfiguration.getModuleLibrary;
+
 public abstract class LightOsgiFixtureTestCase extends LightCodeInsightFixtureTestCase {
   private static final DefaultLightProjectDescriptor OSGi_DESCRIPTOR = new DefaultLightProjectDescriptor() {
     @Override
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
       super.configureModule(module, model, contentEntry);
 
-      String libPath = PluginPathManager.getPluginHomePath("osmorc") + "/lib";
-      PsiTestUtil.addLibrary(module, model, "osgi.core", libPath, "org.apache.felix.framework-4.2.1.jar");
-      PsiTestUtil.addLibrary(module, model, "plexus", JarRepositoryManager.getLocalRepositoryPath().getPath() + "/org/codehaus/plexus/plexus-utils/3.0.10", "plexus-utils-3.0.10.jar");
+      PsiTestUtil.addProjectLibrary(model, "bndlib-repository", getModuleLibrary("intellij.osgi.jps", "bndlib-repository").getClassesPaths());
+      PsiTestUtil.addProjectLibrary(model, "plexus-utils", getModuleLibrary("intellij.osgi.jps", "plexus-utils").getClassesPaths());
 
       String annotationsPath = PathManager.getJarPathForClass(NotNull.class);
       assertNotNull(annotationsPath);

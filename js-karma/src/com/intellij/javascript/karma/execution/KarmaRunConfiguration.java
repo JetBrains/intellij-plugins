@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.Executor;
@@ -108,6 +109,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     return "true".equals(element.getAttributeValue("default"));
   }
 
+  @Override
   public void onNewConfigurationCreated() {
     if (myRunSettings.getWorkingDirectorySystemDependent().isEmpty()) {
       VirtualFile workingDir = JsTestRunConfigurationProducer.guessWorkingDirectory(getProject(), myRunSettings.getConfigPathSystemDependent());

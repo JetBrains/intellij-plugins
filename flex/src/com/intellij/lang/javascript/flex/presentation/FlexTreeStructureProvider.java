@@ -118,7 +118,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
     }
 
     @Override
-    protected void updateImpl(final PresentationData data) {
+    protected void updateImpl(@NotNull final PresentationData data) {
       PsiFile value = getValue();
 
       String className = null;
@@ -207,7 +207,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
     }
 
     @Override
-    protected void update(final PresentationData presentation) {
+    protected void update(@NotNull final PresentationData presentation) {
       final ItemPresentation p = myElement.getPresentation();
 
       presentation.setPresentableText(p.getPresentableText());

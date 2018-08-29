@@ -16,7 +16,6 @@
 package com.intellij.struts2.dom.struts.impl;
 
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.struts2.dom.ConverterUtil;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
@@ -55,7 +54,7 @@ public class StrutsPackageExtendsResolveConverterImpl extends StrutsPackageExten
   }
 
   @Override
-  protected Object[] getReferenceVariants(ConvertContext context, GenericDomValue<List<StrutsPackage>> genericDomValue) {
+  protected Object[] getReferenceVariants(ConvertContext context, GenericDomValue<? extends List<StrutsPackage>> genericDomValue) {
     final StrutsModel strutsModel = ConverterUtil.getStrutsModel(context);
     if (strutsModel == null) {
       return ArrayUtil.EMPTY_OBJECT_ARRAY;

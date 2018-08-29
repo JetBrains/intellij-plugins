@@ -32,6 +32,7 @@ public class FlexUnitRunConfigurationType implements ConfigurationType {
     };
   }
 
+  @NotNull
   @Override
   public String getDisplayName() {
     return "FlexUnit";

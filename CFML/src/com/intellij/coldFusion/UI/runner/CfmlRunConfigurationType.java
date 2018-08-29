@@ -36,6 +36,7 @@ public class CfmlRunConfigurationType implements ConfigurationType {
   }
 
 
+  @NotNull
   @Override
   public String getDisplayName() {
     return "Cold Fusion";

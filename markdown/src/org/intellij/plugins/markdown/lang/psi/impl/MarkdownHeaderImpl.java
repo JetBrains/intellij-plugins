@@ -84,7 +84,7 @@ public class MarkdownHeaderImpl extends MarkdownStubBasedPsiElementBase<Markdown
     return StringUtil.trim(contentHolder.getText());
   }
 
-  private int getHeaderNumber() {
+  public int getHeaderNumber() {
     final IElementType type = getNode().getElementType();
     if (MarkdownTokenTypeSets.HEADER_LEVEL_1_SET.contains(type)) {
       return 1;

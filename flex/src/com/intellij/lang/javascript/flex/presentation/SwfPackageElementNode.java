@@ -46,7 +46,7 @@ public class SwfPackageElementNode extends ProjectViewNode<String> {
   }
 
   @Override
-  protected void update(PresentationData presentation) {
+  protected void update(@NotNull PresentationData presentation) {
     presentation.setPresentableText(myDisplayText);
     presentation.setIcon(PlatformIcons.PACKAGE_ICON);
   }

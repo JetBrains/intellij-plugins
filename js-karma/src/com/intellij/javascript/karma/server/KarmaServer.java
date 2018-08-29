@@ -157,7 +157,7 @@ public class KarmaServer {
     });
     KillableColoredProcessHandler processHandler;
     try {
-      processHandler = new KillableColoredProcessHandler(commandLine, true);
+      processHandler = NodeCommandLineUtil.createKillableColoredProcessHandler(commandLine, true);
     }
     catch (ExecutionException e) {
       throw new IOException("Can not start Karma server: " + commandLine.getCommandLineString(), e);
@@ -216,6 +216,10 @@ public class KarmaServer {
         }
         commandLine.addParameters("--karma-config", configFile.getAbsolutePath());
         commandLineFolder.addPlaceholderText("--karma-config=" + userConfigFileName);
+
+        if (serverSettings.isDebug()) {
+          commandLine.addParameter("--source-map"); // added in version 6.0.0
+        }
       }
     }
     else {

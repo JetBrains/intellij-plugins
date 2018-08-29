@@ -2,10 +2,12 @@
 package org.jetbrains.osgi.bnd.run;
 
 import com.intellij.execution.configurations.*;
+import com.intellij.openapi.components.BaseState;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.LazyUtil;
 import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.osgi.bnd.imp.BndProjectImporter;
 
 import javax.swing.*;
@@ -36,6 +38,7 @@ public class BndRunConfigurationType extends ConfigurationTypeBase {
       myIcon = icon;
     }
 
+    @NotNull
     @Override
     public String getName() {
       return myName;
@@ -49,6 +52,12 @@ public class BndRunConfigurationType extends ConfigurationTypeBase {
     @Override
     public boolean isApplicable(@NotNull Project project) {
       return BndProjectImporter.getWorkspace(project) != null;
+    }
+
+    @Nullable
+    @Override
+    public Class<? extends BaseState> getOptionsClass() {
+      return BndRunConfigurationOptions.class;
     }
   }
 

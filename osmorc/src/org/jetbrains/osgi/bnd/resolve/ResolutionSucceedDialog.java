@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.bnd.resolve;
 
 import com.intellij.icons.AllIcons;
@@ -27,8 +13,6 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.tree.AbstractTreeModel;
 import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
-import org.osgi.framework.namespace.IdentityNamespace;
-import org.osgi.framework.namespace.PackageNamespace;
 import org.osgi.namespace.contract.ContractNamespace;
 import org.osgi.namespace.extender.ExtenderNamespace;
 import org.osgi.namespace.implementation.ImplementationNamespace;
@@ -50,6 +34,10 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 import static org.osmorc.i18n.OsmorcBundle.message;
 
 class ResolutionSucceedDialog extends DialogWrapper {
+  private static final String IDENTITY_NAMESPACE = "osgi.identity";
+  private static final String PACKAGE_NAMESPACE = "osgi.wiring.package";
+  private static final String CAPABILITY_VERSION_ATTRIBUTE = "version";
+
   private final Map<Resource, List<Wire>> myResolveResult;
   private Tree myTree;
 
@@ -168,10 +156,10 @@ class ResolutionSucceedDialog extends DialogWrapper {
           renderVersion(attributes, this);
 
           switch (namespace) {
-            case PackageNamespace.PACKAGE_NAMESPACE:
+            case PACKAGE_NAMESPACE:
               setIcon(AllIcons.Nodes.Package);
               break;
-            case IdentityNamespace.IDENTITY_NAMESPACE:
+            case IDENTITY_NAMESPACE:
               setIcon(AllIcons.Nodes.PpLib);
               break;
             case ContractNamespace.CONTRACT_NAMESPACE:
@@ -190,10 +178,10 @@ class ResolutionSucceedDialog extends DialogWrapper {
     }
 
     private static void renderResource(Resource resource, SimpleColoredComponent renderer) {
-      List<Capability> capabilities = resource.getCapabilities(IdentityNamespace.IDENTITY_NAMESPACE);
+      List<Capability> capabilities = resource.getCapabilities(IDENTITY_NAMESPACE);
       if (capabilities.size() == 1) {
         Map<String, Object> attributes = capabilities.get(0).getAttributes();
-        Object identity = attributes.get(IdentityNamespace.IDENTITY_NAMESPACE);
+        Object identity = attributes.get(IDENTITY_NAMESPACE);
         renderer.append(String.valueOf(identity), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
         renderVersion(attributes, renderer);
       }
@@ -203,7 +191,7 @@ class ResolutionSucceedDialog extends DialogWrapper {
     }
 
     private static void renderVersion(Map<String, Object> attributes, SimpleColoredComponent renderer) {
-      Object version = attributes.get(IdentityNamespace.CAPABILITY_VERSION_ATTRIBUTE);
+      Object version = attributes.get(CAPABILITY_VERSION_ATTRIBUTE);
       if (version != null) {
         renderer.append(", version ", SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
         renderer.append(version.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);

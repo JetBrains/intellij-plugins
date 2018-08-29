@@ -26,6 +26,7 @@ public class PhoneGapConfigurationType implements ConfigurationType, DumbAware {
     myConfigurationFactory = new PhoneGapConfigurationFactory(this);
   }
 
+  @NotNull
   @Override
   public String getDisplayName() {
     return PhoneGapBundle.message("phonegap.run.configuration.title");
@@ -53,7 +54,6 @@ public class PhoneGapConfigurationType implements ConfigurationType, DumbAware {
   }
 
   public class PhoneGapConfigurationFactory extends ConfigurationFactory {
-
     public PhoneGapConfigurationFactory(ConfigurationType type) {
       super(type);
     }
@@ -62,11 +62,6 @@ public class PhoneGapConfigurationType implements ConfigurationType, DumbAware {
     @Override
     public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
       return new PhoneGapRunConfiguration(project, myConfigurationFactory, RUN_CONFIGURATION_ID);
-    }
-
-    @Override
-    public boolean isConfigurationSingletonByDefault() {
-      return true;
     }
   }
 }

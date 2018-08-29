@@ -39,7 +39,7 @@ public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNam
   }
 
   @Override
-  protected void update(PresentationData presentation) {
+  protected void update(@NotNull PresentationData presentation) {
     final JSQualifiedNamedElement value = getValue();
     if (value != null && value.isValid()) {
       presentation.setPresentableText(value.getName());
