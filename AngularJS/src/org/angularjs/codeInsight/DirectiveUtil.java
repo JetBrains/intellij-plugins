@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight;
 
 import com.intellij.json.psi.JsonElement;
@@ -67,7 +68,7 @@ public class DirectiveUtil {
   }
 
   public static boolean processTagDirectives(final Project project,
-                                             Processor<JSImplicitElement> processor) {
+                                             Processor<? super JSImplicitElement> processor) {
     final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.KEY, project);
     for (String directiveName : docDirectives) {
       final JSImplicitElement directive = getTagDirective(project, directiveName, AngularDirectivesDocIndex.KEY);
@@ -91,18 +92,31 @@ public class DirectiveUtil {
     return true;
   }
 
+  public static JSImplicitElement getAttributeDirective(String attributeName, Project project) {
+    return getDirective(attributeName, project, "A");
+  }
+
   public static JSImplicitElement getTagDirective(String directiveName, Project project) {
-    final JSImplicitElement directive = getTagDirective(project, directiveName, AngularDirectivesDocIndex.KEY);
-    return directive == null ? getTagDirective(project, directiveName, AngularDirectivesIndex.KEY) : directive;
+    return getDirective(directiveName, project, "E");
   }
 
   private static JSImplicitElement getTagDirective(Project project, String directiveName, final StubIndexKey<String, JSImplicitElementProvider> index) {
-    final JSImplicitElement directive = AngularIndexUtil.resolve(project, index, directiveName);
+    return getDirective(directiveName, project, index, "E");
+  }
+
+  private static JSImplicitElement getDirective(String name, Project project, String restrictionType) {
+    final JSImplicitElement directive = getDirective(name, project, AngularDirectivesDocIndex.KEY, restrictionType);
+    return directive == null ? getDirective(name, project, AngularDirectivesIndex.KEY, restrictionType) : directive;
+  }
+
+  private static JSImplicitElement getDirective(String name, Project project, final StubIndexKey<String, JSImplicitElementProvider> index,
+                                                String restrictionType) {
+    JSImplicitElement directive = AngularIndexUtil.resolve(project, index, name);
     final String restrictions = directive != null ? directive.getTypeString() : null;
     if (restrictions != null) {
       final String[] split = restrictions.split(";", -1);
       final String restrict = AngularIndexUtil.convertRestrictions(project, split[0]);
-      if (!StringUtil.isEmpty(restrict) && StringUtil.containsIgnoreCase(restrict, "E")) {
+      if (!StringUtil.isEmpty(restrict) && StringUtil.containsIgnoreCase(restrict, restrictionType)) {
         return directive;
       }
     }

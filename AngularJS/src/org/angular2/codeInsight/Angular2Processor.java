@@ -5,19 +5,19 @@ import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil;
 import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider;
-import com.intellij.lang.javascript.psi.JSElement;
-import com.intellij.lang.javascript.psi.JSField;
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSPsiElementBase;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.*;
+import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
+import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
 import com.intellij.lang.typescript.library.TypeScriptLibraryProvider;
+import com.intellij.lang.typescript.psi.TypeScriptPsiUtil;
 import com.intellij.lang.typescript.resolve.TypeScriptClassResolver;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -28,6 +28,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
@@ -41,6 +42,7 @@ import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angular2.lang.html.psi.*;
 import org.angular2.lang.html.psi.impl.Angular2HtmlTemplateBindingsImpl;
+import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -188,7 +190,7 @@ public class Angular2Processor {
       scopes.push(new Angular2TemplateScope(tag, currentScope()));
     }
 
-    private void addElement(JSImplicitElementImpl element) {
+    private void addElement(JSImplicitElement element) {
       currentScope().add(element);
     }
 
@@ -212,32 +214,76 @@ public class Angular2Processor {
 
     @Override
     public void visitReference(Angular2HtmlReference reference) {
-      addElement(createReference(reference).toImplicitElement());
+      addElement(createReference(reference));
     }
 
     @Override
     public void visitVariable(Angular2HtmlVariable variable) {
-      addElement(createVariable(variable.getVariableName(), variable).toImplicitElement());
+      addElement(createVariable(variable.getVariableName(), variable, null));
     }
 
     @Override
     public void visitTemplateBindings(Angular2HtmlTemplateBindingsImpl bindings) {
       Angular2TemplateBindings bindingsExpr = bindings.getBindings();
       if (bindingsExpr != null) {
+        JSRecordType templateContext = resolveTemplateContext(bindings.getTemplateName(), bindings.getBindings());
         for (Angular2TemplateBinding binding : bindingsExpr.getBindings()) {
           if (binding.keyIsVar()) {
-            addElement(createVariable(binding.getKey(), binding).toImplicitElement());
+            JSRecordType.PropertySignature prop = templateContext != null && binding.getName() != null ?
+                                                  templateContext.findPropertySignature(binding.getName())
+                                                  : null;
+            addElement(createVariable(binding.getKey(), binding, prop));
           }
         }
       }
     }
 
-    private static JSImplicitElementImpl.Builder createVariable(@NotNull String name, @NotNull PsiElement contributor) {
-      return new JSImplicitElementImpl.Builder(name, contributor)
-        .setType(JSImplicitElement.Type.Variable);
+    @Nullable
+    private static JSRecordType resolveTemplateContext(@NotNull String templateName, @NotNull Angular2TemplateBindings bindings) {
+      JSImplicitElement templateDirective = DirectiveUtil.getAttributeDirective(
+        "*" + templateName, bindings.getProject());
+      if (templateDirective == null) {
+        return null;
+      }
+      TypeScriptClass clazz = (TypeScriptClass)PsiTreeUtil.findFirstParent(templateDirective.getParent(), TypeScriptClass.class::isInstance);
+      if (clazz == null) {
+        return null;
+      }
+      JSType templateRefType = null;
+      for (TypeScriptFunction fun: clazz.getConstructors()) {
+        for (JSParameter param: fun.getParameterVariables()) {
+          if (param.getType() != null && param.getType().getTypeText().startsWith("TemplateRef<")) {
+            templateRefType = param.getType();
+            break;
+          }
+        }
+      }
+      if (!(templateRefType instanceof JSGenericTypeImpl)) {
+        return null;
+      }
+      JSGenericTypeImpl templateRefGeneric = (JSGenericTypeImpl)templateRefType;
+      if (templateRefGeneric.getArguments().isEmpty()) {
+        return null;
+      }
+      JSType templateContextType = templateRefGeneric.getArguments().get(0);
+      if (templateContextType instanceof JSGenericTypeImpl) {
+        //resolve template context generics
+        todo
+      }
+      return templateContextType.asRecordType();
     }
 
-    private static JSImplicitElementImpl.Builder createReference(@NotNull Angular2HtmlReference reference) {
+    private static JSImplicitElement createVariable(@NotNull String name,
+                                                                @NotNull PsiElement contributor,
+                                                                JSRecordType.PropertySignature property) {
+      if (property != null && property.getType() != null) {
+        return new JSLocalImplicitElementImpl(name, property.getType(), contributor, JSImplicitElement.Type.Variable);
+      }
+      return new JSImplicitElementImpl.Builder(name, contributor)
+        .setType(JSImplicitElement.Type.Variable).toImplicitElement();
+    }
+
+    private static JSImplicitElement createReference(@NotNull Angular2HtmlReference reference) {
       final HtmlTag tag = (HtmlTag)reference.getParent();
       final JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(reference.getReferenceName(), reference)
         .setType(JSImplicitElement.Type.Variable);
@@ -247,7 +293,7 @@ public class Angular2Processor {
           && reference.getValueElement() == null) {
         elementBuilder.setTypeString(getHtmlElementClass(tag.getProject(), tagName));
       }
-      return elementBuilder;
+      return elementBuilder.toImplicitElement();
     }
   }
 
@@ -373,6 +419,15 @@ public class Angular2Processor {
             if (f.getAttributeList() == null
                 || !f.getAttributeList().hasModifier(JSAttributeList.ModifierType.STATIC)) {
               result.add(f);
+            }
+          }
+          if (aClass instanceof TypeScriptClass) {
+            for (TypeScriptFunction fun : ((TypeScriptClass)aClass).getConstructors()) {
+              for (JSParameter param : fun.getParameterVariables()) {
+                if (TypeScriptPsiUtil.isClassMember(param)) {
+                  result.add(param);
+                }
+              }
             }
           }
           for (JSFunction f : aClass.getFunctions()) {

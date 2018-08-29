@@ -39,19 +39,11 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   @NotNull
   private PsiElement resolveReference(@NotNull String signature) {
-    int offsetBySignature = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
-    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-    assertNotNull(ref);
-    PsiElement resolve = ref.resolve();
-    assertNotNull(resolve);
-    return resolve;
+    return AngularTestUtil.resolveReference(signature, myFixture);
   }
 
   private void assertUnresolvedReference(@NotNull String signature) {
-    int offsetBySignature = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
-    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-    assertNotNull(ref);
-    assertNull(ref.resolve());
+    AngularTestUtil.assertUnresolvedReference(signature, myFixture);
   }
 
   public void testCustomAttributesResolve20TypeScript() throws Exception {

@@ -1,8 +1,13 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs;
 
 import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import junit.framework.TestCase;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
@@ -38,5 +43,22 @@ public class AngularTestUtil {
 
   public static String getDirectiveDefinitionText(PsiElement resolve) {
     return resolve.getParent().getText();
+  }
+
+  @NotNull
+  public static PsiElement resolveReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture) {
+    int offsetBySignature = findOffsetBySignature(signature, fixture.getFile());
+    PsiReference ref = fixture.getFile().findReferenceAt(offsetBySignature);
+    TestCase.assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    TestCase.assertNotNull(resolve);
+    return resolve;
+  }
+
+  public static void assertUnresolvedReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture) {
+    int offsetBySignature = findOffsetBySignature(signature, fixture.getFile());
+    PsiReference ref = fixture.getFile().findReferenceAt(offsetBySignature);
+    TestCase.assertNotNull(ref);
+    TestCase.assertNull(ref.resolve());
   }
 }

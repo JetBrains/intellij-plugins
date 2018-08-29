@@ -20,7 +20,7 @@ public class NgForTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgFor() {
     JSTestUtils.testES6(getProject(), () -> {
-      final List<String> variants = myFixture.getCompletionVariants("NgFor.ts", "package.json");
+      final List<String> variants = myFixture.getCompletionVariants("NgFor.ts", "ng_for_of.ts", "package.json");
       assertNotNull(variants);
       assertTrue(variants.size() >= 2);
       assertEquals("created_at", variants.get(0));
@@ -30,7 +30,7 @@ public class NgForTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgForWithinAttribute() {
     JSTestUtils.testES6(getProject(), () -> {
-      final List<String> variants = myFixture.getCompletionVariants("NgForWithinAttribute.ts", "package.json");
+      final List<String> variants = myFixture.getCompletionVariants("NgForWithinAttribute.ts", "ng_for_of.ts", "package.json");
       assertNotNull(variants);
       assertTrue(variants.size() >= 2);
       assertEquals("created_at", variants.get(0));
