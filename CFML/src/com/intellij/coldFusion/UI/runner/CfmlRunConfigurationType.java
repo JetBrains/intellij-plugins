@@ -3,25 +3,20 @@ package com.intellij.coldFusion.UI.runner;
 
 import com.intellij.coldFusion.model.files.CfmlFileType;
 import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.LazyUtil;
 import icons.CFMLIcons;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-
-/**
- * Created by Lera Nikolaenko
- */
-public class CfmlRunConfigurationType implements ConfigurationType {
-  private final ConfigurationFactory myConfigurationFactory;
-
+public final class CfmlRunConfigurationType extends ConfigurationTypeBase {
   public CfmlRunConfigurationType() {
-    myConfigurationFactory = new ConfigurationFactory(this) {
+    super("Cold Fusion runner description" /* yes, backward compatibility, so strange id */, "Cold Fusion", "Cold Fusion runner description", LazyUtil.create(() -> CFMLIcons.Cfml));
+    addFactory(new ConfigurationFactory(this) {
       @Override
       public boolean isApplicable(@NotNull Project project) {
         return FileTypeIndex.containsFileOfType(CfmlFileType.INSTANCE, GlobalSearchScope.projectScope(project));
@@ -32,39 +27,10 @@ public class CfmlRunConfigurationType implements ConfigurationType {
       public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new CfmlRunConfiguration(project, this, "Cold Fusion");
       }
-    };
-  }
-
-
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return "Cold Fusion";
-  }
-
-  @Override
-  public String getConfigurationTypeDescription() {
-    return "Cold Fusion runner description";
-  }
-
-  @Override
-  public Icon getIcon() {
-    return CFMLIcons.Cfml;
+    });
   }
 
   public static CfmlRunConfigurationType getInstance() {
     return ConfigurationTypeUtil.findConfigurationType(CfmlRunConfigurationType.class);
   }
-
-  @Override
-  @NotNull
-  public String getId() {
-    return getConfigurationTypeDescription();
-  }
-
-  @Override
-  public ConfigurationFactory[] getConfigurationFactories() {
-    return new ConfigurationFactory[]{myConfigurationFactory};
-  }
-
 }

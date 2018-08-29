@@ -19,7 +19,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class AnyApplication implements ConfigurationType {
+public final class AnyApplication implements ConfigurationType {
   private final ConfigurationFactory factory;
 
   AnyApplication() {

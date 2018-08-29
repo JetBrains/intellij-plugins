@@ -15,7 +15,7 @@ import com.jetbrains.lang.dart.DartFileType;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 
-public class DartCommandLineRunConfigurationType extends ConfigurationTypeBase implements DumbAware {
+public final class DartCommandLineRunConfigurationType extends ConfigurationTypeBase implements DumbAware {
   public static DartCommandLineRunConfigurationType getInstance() {
     return ConfigurationTypeUtil.findConfigurationType(DartCommandLineRunConfigurationType.class);
   }

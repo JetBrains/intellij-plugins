@@ -14,7 +14,7 @@ import javax.swing.*;
 
 import static org.osmorc.i18n.OsmorcBundle.message;
 
-public class BndRunConfigurationType extends ConfigurationTypeBase {
+public final class BndRunConfigurationType extends ConfigurationTypeBase {
   private static final String ID = "osgi.bnd.run";
 
   @NotNull

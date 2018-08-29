@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class FlexUnitRunConfigurationType implements ConfigurationType {
-
+public final class FlexUnitRunConfigurationType implements ConfigurationType {
   private final ConfigurationFactory myFactory;
 
   public FlexUnitRunConfigurationType() {

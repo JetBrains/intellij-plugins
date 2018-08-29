@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class RemoteFlashRunConfigurationType implements ConfigurationType, DumbAware {
+public final class RemoteFlashRunConfigurationType implements ConfigurationType, DumbAware {
 
   public static final String TYPE = "RemoteFlashRunConfigurationType";
   public static final String DISPLAY_NAME = "Flash Remote Debug";

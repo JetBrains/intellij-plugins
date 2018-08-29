@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class FlashRunConfigurationType implements ConfigurationType {
-
+public final class FlashRunConfigurationType implements ConfigurationType {
   public static final String TYPE = "FlashRunConfigurationType";
   public static final String DISPLAY_NAME = "Flash App";
 

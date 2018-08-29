@@ -15,7 +15,7 @@ import com.jetbrains.lang.dart.DartFileType;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 
-public class DartRemoteDebugConfigurationType extends ConfigurationTypeBase implements DumbAware {
+public final class DartRemoteDebugConfigurationType extends ConfigurationTypeBase implements DumbAware {
   public static DartRemoteDebugConfigurationType getInstance() {
     return ConfigurationTypeUtil.findConfigurationType(DartRemoteDebugConfigurationType.class);
   }
