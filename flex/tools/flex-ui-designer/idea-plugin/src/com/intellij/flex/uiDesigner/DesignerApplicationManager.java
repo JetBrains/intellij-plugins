@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.ProjectTopics;
@@ -421,7 +422,7 @@ public class DesignerApplicationManager {
     MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(parentDisposable);
     connection.subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
       @Override
-      public void projectClosed(Project project) {
+      public void projectClosed(@NotNull Project project) {
         if (isApplicationClosed()) {
           return;
         }
@@ -577,7 +578,7 @@ public class DesignerApplicationManager {
 
       if (psiFile instanceof XmlFile) {
         DocumentInfo info = DocumentFactoryManager.getInstance().getNullableInfo(psiFile);
-        if (info == null && !psiFile.equals(previewToolWindowManager.getServedFile())) {          
+        if (info == null && !psiFile.equals(previewToolWindowManager.getServedFile())) {
           return;
         }
       }
