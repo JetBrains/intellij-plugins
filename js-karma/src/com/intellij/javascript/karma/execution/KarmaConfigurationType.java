@@ -1,7 +1,6 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.execution;
 
-import com.intellij.execution.configuration.ConfigurationFactoryEx;
 import com.intellij.execution.configurations.*;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -11,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public class KarmaConfigurationType extends ConfigurationTypeBase implements DumbAware {
   public KarmaConfigurationType() {
     super("JavaScriptTestRunnerKarma", "Karma", "Karma", JSKarmaIcons.Icons.Karma2);
-    addFactory(new ConfigurationFactoryEx<KarmaRunConfiguration>(this) {
+    addFactory(new ConfigurationFactory(this) {
       @NotNull
       @Override
       public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
@@ -22,11 +21,6 @@ public class KarmaConfigurationType extends ConfigurationTypeBase implements Dum
       @Override
       public RunConfigurationSingletonPolicy getSingletonPolicy() {
         return RunConfigurationSingletonPolicy.SINGLE_INSTANCE_ONLY;
-      }
-
-      @Override
-      public void onNewConfigurationCreated(@NotNull KarmaRunConfiguration configuration) {
-        configuration.onNewConfigurationCreated();
       }
     });
   }
