@@ -128,7 +128,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
    * {@inheritDoc}
    */
   @Override
-  public void addToolbarActions(DefaultActionGroup defaultactiongroup) {
+  public void addToolbarActions(@NotNull DefaultActionGroup defaultactiongroup) {
     for (AnAction action : defaultactiongroup.getChildren(null)) {
       if (action.getTemplatePresentation().getText().equals("Autoscroll to Source")) {
         continue;
@@ -204,6 +204,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
+  @NotNull
   @Override
   public String getTitle() {
     return VIEW_TITLE;
@@ -212,6 +213,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
+  @NotNull
   @Override
   public Icon getIcon() {
     return TapestryIcons.Tapestry_logo_small;
@@ -229,6 +231,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
+  @NotNull
   @Override
   public JComponent createComponent() {
     initTree();
@@ -266,6 +269,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   /**
    * {@inheritDoc}
    */
+  @NotNull
   @Override
   public SelectInTarget createSelectInTarget() {
     return new TapestryProjectSelectInTarget(myProject);
