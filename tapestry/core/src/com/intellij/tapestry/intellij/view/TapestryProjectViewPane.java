@@ -48,7 +48,6 @@ import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.intellij.util.OpenSourceUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.util.ui.tree.TreeModelAdapter;
 import com.intellij.util.ui.tree.TreeUtil;
 import icons.TapestryIcons;
 import org.jetbrains.annotations.NotNull;
@@ -472,8 +471,6 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
     myTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
       @Override
       public void valueChanged(TreeSelectionEvent event) {
-        fireTreeChangeListener();
-
         if (event.getNewLeadSelectionPath() != null) {
           TapestryToolWindow toolWindow = TapestryToolWindowFactory.getToolWindow(getProject());
 
@@ -546,7 +543,6 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
         }
       }
     });
-    myTree.getModel().addTreeModelListener(TreeModelAdapter.create((e, t) -> fireTreeChangeListener()));
     myTree.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
