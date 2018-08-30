@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.maven;
 
 import com.intellij.application.options.CodeStyle;
@@ -8,13 +9,11 @@ import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.project.*;
-import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
 import org.jetbrains.idea.maven.utils.MavenProgressIndicator;
 import org.jetbrains.idea.maven.utils.MavenUtil;
 
@@ -72,7 +71,7 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
   public void perform(final Project project,
                       final MavenEmbeddersManager embeddersManager,
                       final MavenConsole console,
-                      final MavenProgressIndicator indicator) throws MavenProcessCanceledException {
+                      final MavenProgressIndicator indicator) {
     final Element mainConfigRootElement = getClonedRootElementOfMainConfigFile(myMainConfigFilePath);
     if (mainConfigRootElement == null) return;
 
@@ -107,10 +106,9 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
     final VirtualFile configFile = LocalFileSystem.getInstance().findFileByPath(filePath);
     if (configFile != null) {
       try {
-        final Document document = JDOMUtil.loadDocument(configFile.getInputStream());
-        final Element clonedRootElement = document.clone().getRootElement();
-        if (clonedRootElement.getName().equals(FLEX_CONFIG)) {
-          return clonedRootElement;
+        final Element element = JDOMUtil.load(configFile.getInputStream());
+        if (element.getName().equals(FLEX_CONFIG)) {
+          return element;
         }
       }
       catch (JDOMException ignored) {/*ignore*/}
