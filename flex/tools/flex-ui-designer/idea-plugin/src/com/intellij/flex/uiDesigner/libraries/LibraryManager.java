@@ -162,7 +162,7 @@ public class LibraryManager implements Disposable {
 
     module.getMessageBus().connect(moduleInfo).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
       @Override
-      public void rootsChanged(ModuleRootEvent event) {
+      public void rootsChanged(@NotNull ModuleRootEvent event) {
         new Notification(FlashUIDesignerBundle.message("plugin.name"), FlashUIDesignerBundle.message("plugin.name"),
           "Please reopen your project to update on library changes.",
           NotificationType.WARNING).notify(project);

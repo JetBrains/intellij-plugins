@@ -100,7 +100,7 @@ public class TapestryListenersSupportLoader implements ProjectComponent {
     MessageBusConnection connection = myProject.getMessageBus().connect(myProject);
     connection.subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
       @Override
-      public void rootsChanged(ModuleRootEvent event) {
+      public void rootsChanged(@NotNull ModuleRootEvent event) {
         for (Module module : ModuleManager.getInstance((Project)event.getSource()).getModules()) {
           if (!TapestryUtils.isTapestryModule(module)) {
             return;

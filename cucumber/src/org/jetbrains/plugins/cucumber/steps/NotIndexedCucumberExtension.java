@@ -72,14 +72,14 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
       final List<VirtualFile> myPreviousStepDefsProviders = new ArrayList<>();
 
       @Override
-      public void beforeRootsChange(ModuleRootEvent event) {
+      public void beforeRootsChange(@NotNull ModuleRootEvent event) {
         myPreviousStepDefsProviders.clear();
 
         collectAllStepDefsProviders(myPreviousStepDefsProviders, project);
       }
 
       @Override
-      public void rootsChanged(ModuleRootEvent event) {
+      public void rootsChanged(@NotNull ModuleRootEvent event) {
         // compare new and previous content roots
         final List<VirtualFile> newStepDefsProviders = new ArrayList<>();
         collectAllStepDefsProviders(newStepDefsProviders, project);

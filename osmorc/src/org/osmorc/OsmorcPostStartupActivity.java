@@ -73,7 +73,7 @@ public class OsmorcPostStartupActivity implements StartupActivity {
 
     connection.subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
       @Override
-      public void projectClosing(Project project) {
+      public void projectClosing(@NotNull Project project) {
         for (Module module : ModuleManager.getInstance(project).getModules()) {
           AdditionalJARContentsWatcherManager.getInstance(module).cleanup();
         }

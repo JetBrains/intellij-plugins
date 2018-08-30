@@ -103,7 +103,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
     myContentManager.addContentManagerListener(new ContentManagerAdapter(){
 
       @Override
-      public void selectionChanged(ContentManagerEvent event) {
+      public void selectionChanged(@NotNull ContentManagerEvent event) {
         super.selectionChanged(event);
         // Process tab switching:
         UIUtil.invokeLater(() -> processMessagesOfVisibleTab());
