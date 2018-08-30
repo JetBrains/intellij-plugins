@@ -140,12 +140,12 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
     defaultactiongroup.addAction(new StartInBasePackageAction() {
 
       @Override
-      public boolean isSelected(AnActionEvent e) {
+      public boolean isSelected(@NotNull AnActionEvent e) {
         return myFromBasePackage;
       }
 
       @Override
-      public void setSelected(AnActionEvent e, boolean state) {
+      public void setSelected(@NotNull AnActionEvent e, boolean state) {
         myFromBasePackage = state;
 
         updateFromRoot(false);
@@ -155,12 +155,12 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
     defaultactiongroup.addAction(new GroupElementFilesToggleAction() {
 
       @Override
-      public boolean isSelected(AnActionEvent e) {
+      public boolean isSelected(@NotNull AnActionEvent e) {
         return myGroupElementFiles;
       }
 
       @Override
-      public void setSelected(AnActionEvent e, boolean state) {
+      public void setSelected(@NotNull AnActionEvent e, boolean state) {
         myGroupElementFiles = state;
 
         updateFromRoot(false);
@@ -169,12 +169,12 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
 
     defaultactiongroup.addAction(new ShowLibrariesTogleAction() {
       @Override
-      public boolean isSelected(AnActionEvent e) {
+      public boolean isSelected(@NotNull AnActionEvent e) {
         return myShowLibraries;
       }
 
       @Override
-      public void setSelected(AnActionEvent e, boolean state) {
+      public void setSelected(@NotNull AnActionEvent e, boolean state) {
         myShowLibraries = state;
 
         updateFromRoot(false);

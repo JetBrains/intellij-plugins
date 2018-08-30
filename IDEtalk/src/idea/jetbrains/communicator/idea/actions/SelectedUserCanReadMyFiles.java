@@ -16,13 +16,13 @@ public class SelectedUserCanReadMyFiles extends ToggleAction {
   }
 
   @Override
-  public boolean isSelected(AnActionEvent anActionEvent) {
+  public boolean isSelected(@NotNull AnActionEvent anActionEvent) {
     ToggleFileAccessCommand command = getCommand(anActionEvent);
     return command != null && command.isSelected();
   }
 
   @Override
-  public void setSelected(AnActionEvent anActionEvent, boolean b) {
+  public void setSelected(@NotNull AnActionEvent anActionEvent, boolean b) {
     getCommand(anActionEvent).execute();
   }
 

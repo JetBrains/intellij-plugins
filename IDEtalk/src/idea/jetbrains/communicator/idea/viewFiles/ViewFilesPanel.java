@@ -137,12 +137,12 @@ class ViewFilesPanel extends JPanel implements DataProvider {
         AllIcons.Ide.Readonly
         ) {
       @Override
-      public boolean isSelected(AnActionEvent e) {
+      public boolean isSelected(@NotNull AnActionEvent e) {
         return myShowReadOnly;
       }
 
       @Override
-      public void setSelected(AnActionEvent e, boolean state) {
+      public void setSelected(@NotNull AnActionEvent e, boolean state) {
         showReadOnly(state);
       }
     });

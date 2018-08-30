@@ -4,6 +4,7 @@ package jetbrains.communicator.idea.config;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import jetbrains.communicator.OptionFlag;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Kir
@@ -16,12 +17,12 @@ public class OptionExpandToolWindow1 extends ToggleAction {
   }
 
   @Override
-  public boolean isSelected(AnActionEvent e) {
+  public boolean isSelected(@NotNull AnActionEvent e) {
     return myFlag.isSet();
   }
 
   @Override
-  public void setSelected(AnActionEvent e, boolean state) {
+  public void setSelected(@NotNull AnActionEvent e, boolean state) {
     myFlag.change(state);
   }
 }
