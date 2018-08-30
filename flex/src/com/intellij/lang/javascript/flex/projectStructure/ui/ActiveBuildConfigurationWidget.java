@@ -109,7 +109,7 @@ public class ActiveBuildConfigurationWidget {
       Disposer.register(project, this);
       project.getMessageBus().connect(this).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
         @Override
-        public void rootsChanged(final ModuleRootEvent event) {
+        public void rootsChanged(@NotNull final ModuleRootEvent event) {
           update();
         }
       });

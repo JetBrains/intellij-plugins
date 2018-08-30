@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project;
 import icons.JSKarmaIcons;
 import org.jetbrains.annotations.NotNull;
 
-public class KarmaConfigurationType extends ConfigurationTypeBase implements DumbAware {
+public final class KarmaConfigurationType extends ConfigurationTypeBase implements DumbAware {
   public KarmaConfigurationType() {
     super("JavaScriptTestRunnerKarma", "Karma", "Karma", JSKarmaIcons.Icons.Karma2);
     addFactory(new ConfigurationFactory(this) {

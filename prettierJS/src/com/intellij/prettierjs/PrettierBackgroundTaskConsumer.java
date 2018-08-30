@@ -46,6 +46,7 @@ public class PrettierBackgroundTaskConsumer extends BackgroundTaskConsumer {
 
     options.setOutput("$" + projectRootRelativePathMacro + "$");
     options.setImmediateSync(false);
+    options.setTrackOnlyRoot(false);
 
     return options;
   }

@@ -12,12 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-/**
- * PhoneGapConfigurationType.java
- * <p/>
- * Created by Masahiro Suzuka on 2014/04/04.
- */
-public class PhoneGapConfigurationType implements ConfigurationType, DumbAware {
+public final class PhoneGapConfigurationType implements ConfigurationType, DumbAware {
   public static final String RUN_CONFIGURATION_ID = "PhoneGap";
 
   public PhoneGapConfigurationFactory myConfigurationFactory;

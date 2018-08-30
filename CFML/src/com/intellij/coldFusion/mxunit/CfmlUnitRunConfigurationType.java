@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class CfmlUnitRunConfigurationType implements ConfigurationType {
+public final class CfmlUnitRunConfigurationType implements ConfigurationType {
   private final ConfigurationFactory myFactory;
 
   public CfmlUnitRunConfigurationType() {

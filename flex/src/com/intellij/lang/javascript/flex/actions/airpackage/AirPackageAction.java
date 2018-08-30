@@ -95,7 +95,7 @@ public class AirPackageAction extends DumbAwareAction {
 
     compilerManager.make(compileScope, new CompileStatusNotification() {
       @Override
-      public void finished(final boolean aborted, final int errors, final int warnings, final CompileContext compileContext) {
+      public void finished(final boolean aborted, final int errors, final int warnings, @NotNull final CompileContext compileContext) {
         if (!aborted && errors == 0) {
           createPackages(project, modulesAndBCs, dialog.getPasswords());
         }

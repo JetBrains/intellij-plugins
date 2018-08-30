@@ -119,7 +119,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     editor.getCaretModel().moveToOffset(addedElement.getTextRange().getStartOffset());
     TemplateEditingAdapter adapter = new TemplateEditingAdapter() {
         @Override
-        public void templateFinished(Template template, boolean brokenOff) {
+        public void templateFinished(@NotNull Template template, boolean brokenOff) {
           ApplicationManager.getApplication().runWriteAction(() -> {
             PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
             PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());

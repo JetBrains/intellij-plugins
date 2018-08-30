@@ -750,22 +750,22 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     final SdkModel.Listener listener = new SdkModel.Listener() {
       @Override
-      public void sdkAdded(final Sdk sdk) {
+      public void sdkAdded(@NotNull final Sdk sdk) {
         rebuildSdksModel();
       }
 
       @Override
-      public void beforeSdkRemove(final Sdk sdk) {
+      public void beforeSdkRemove(@NotNull final Sdk sdk) {
         rebuildSdksModel();
       }
 
       @Override
-      public void sdkChanged(final Sdk sdk, final String previousName) {
+      public void sdkChanged(@NotNull final Sdk sdk, final String previousName) {
         rebuildSdksModel();
       }
 
       @Override
-      public void sdkHomeSelected(final Sdk sdk, final String newSdkHome) {
+      public void sdkHomeSelected(@NotNull final Sdk sdk, @NotNull final String newSdkHome) {
         rebuildSdksModel();
       }
     };

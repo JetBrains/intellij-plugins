@@ -89,7 +89,7 @@ public class Struts2GraphComponent extends JPanel implements DataProvider, Dispo
 
     DomManager.getDomManager(myBuilder.getProject()).addDomEventListener(new DomEventListener() {
       @Override
-      public void eventOccured(final DomEvent event) {
+      public void eventOccured(@NotNull final DomEvent event) {
         if (isShowing()) {
           myBuilder.queueUpdate();
         }

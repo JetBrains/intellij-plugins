@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author alexeagle@google.com (Alex Eagle)
  */
-public class JstdConfigurationType extends ConfigurationTypeBase implements DumbAware {
+public final class JstdConfigurationType extends ConfigurationTypeBase implements DumbAware {
   private static final String NAME = "JsTestDriver";
   public static final String ID = "JsTestDriver-test-runner";
 

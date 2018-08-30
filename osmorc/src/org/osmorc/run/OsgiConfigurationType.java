@@ -40,7 +40,7 @@ import org.osmorc.settings.ApplicationSettings;
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
-public class OsgiConfigurationType extends ConfigurationTypeBase {
+public final class OsgiConfigurationType extends ConfigurationTypeBase {
   private static final String ID = "#org.osmorc.OsgiConfigurationType";
 
   public OsgiConfigurationType() {

@@ -129,7 +129,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<RunnerSettings> 
           final ContentManager contentManager = toolWindow.getContentManager();
           contentManager.addContentManagerListener(new ContentManagerAdapter() {
             @Override
-            public void contentRemoved(ContentManagerEvent event) {
+            public void contentRemoved(@NotNull ContentManagerEvent event) {
               super.contentRemoved(event);
               if (contentManager.getContentCount() == 0) {
                 toolWindowManager.unregisterToolWindow(TOOLWINDOW_ID);
