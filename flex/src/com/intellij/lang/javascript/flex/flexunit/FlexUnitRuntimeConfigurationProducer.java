@@ -30,9 +30,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nullable;
 
 public class FlexUnitRuntimeConfigurationProducer extends RunConfigurationProducer<FlexUnitRunConfiguration> {
-
   public FlexUnitRuntimeConfigurationProducer() {
-    super(FlexUnitRunConfigurationType.getInstance());
+    super(FlexUnitRunConfigurationType.class);
   }
 
   @Override

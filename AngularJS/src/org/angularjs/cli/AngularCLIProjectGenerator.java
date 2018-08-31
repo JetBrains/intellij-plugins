@@ -249,33 +249,35 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
     }
 
     private void nodePackageChanged(NodePackage nodePackage) {
-      List<Option> options = Collections.emptyList();
-      if (nodePackage.getSystemIndependentPath().endsWith("/node_modules/@angular/cli")) {
-        VirtualFile localFile = StandardFileSystems.local().findFileByPath(
-          nodePackage.getSystemDependentPath());
-        if (localFile != null) {
-          localFile = localFile.getParent().getParent().getParent();
-          try {
-            options = SchematicsLoader.INSTANCE
-              .load(ProjectManager.getInstance().getDefaultProject(), localFile, true)
-              .stream()
-              .filter(s -> "ng-new".equals(s.getName()))
-              .findFirst()
-              .map(schematic -> {
-                List<Option> list = ContainerUtil.newArrayList(schematic.getOptions());
-                list.add(createOption("verbose", "Boolean", false, "Adds more details to output logging."));
-                list.add(createOption("collection", "String", null, "Schematics collection to use"));
-                Collections.sort(list, Comparator.comparing(Option::getName));
-                return list;
-              })
-              .orElse(Collections.emptyList());
-          }
-          catch (Exception e) {
-            LOG.error("Failed to load schematics");
+      ApplicationManager.getApplication().executeOnPooledThread(() -> {
+        List<Option> options = Collections.emptyList();
+        if (nodePackage.getSystemIndependentPath().endsWith("/node_modules/@angular/cli")) {
+          VirtualFile localFile = StandardFileSystems.local().findFileByPath(
+            nodePackage.getSystemDependentPath());
+          if (localFile != null) {
+            localFile = localFile.getParent().getParent().getParent();
+            try {
+              options = SchematicsLoader.INSTANCE
+                .load(ProjectManager.getInstance().getDefaultProject(), localFile, true)
+                .stream()
+                .filter(s -> "ng-new".equals(s.getName()))
+                .findFirst()
+                .map(schematic -> {
+                  List<Option> list = ContainerUtil.newArrayList(schematic.getOptions());
+                  list.add(createOption("verbose", "Boolean", false, "Adds more details to output logging."));
+                  list.add(createOption("collection", "String", null, "Schematics collection to use"));
+                  Collections.sort(list, Comparator.comparing(Option::getName));
+                  return list;
+                })
+                .orElse(Collections.emptyList());
+            }
+            catch (Exception e) {
+              LOG.error("Failed to load schematics");
+            }
           }
         }
-      }
-      myOptionsTextField.setVariants(options);
+        myOptionsTextField.setVariants(options);
+      });
     }
 
     private Option createOption(String name, String type, Object defaultVal, String description) {

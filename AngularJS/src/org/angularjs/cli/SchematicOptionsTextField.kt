@@ -26,7 +26,7 @@ private class SchematicOptionsCompletionProvider(options: List<Option>) : TextFi
   }
 
   override fun getTypeText(item: Option): String? {
-    var result = item.type
+    var result = item.type?.capitalize()
     if (item.enum.isNotEmpty()) {
       result += " (" + item.enum.joinToString("|") + ")"
     }

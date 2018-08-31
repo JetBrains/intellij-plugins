@@ -23,7 +23,8 @@ public class Angular2HighlightingPassFactory extends JSLanguageServiceHighlighti
                                          @NotNull TextEditorHighlightingPassRegistrar highlightingPassRegistrar) {
     super(project, highlightingPassRegistrar);
 
-    Optional<JSLanguageServiceProvider> providerOptional = Arrays.stream(JSLanguageServiceProvider.getProviders(project))
+    Optional<JSLanguageServiceProvider> providerOptional = JSLanguageServiceProvider.getProviders(project)
+      .stream()
       .filter(el -> el instanceof Angular2LanguageServiceProvider)
       .findAny();
 

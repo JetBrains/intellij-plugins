@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
@@ -141,7 +142,7 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
     final RunManager runManager = RunManager.getInstance(project);
     PhoneGapConfigurationType configurationType = ConfigurationTypeUtil.findConfigurationType(PhoneGapConfigurationType.class);
     RunnerAndConfigurationSettings configuration =
-      runManager.createRunConfiguration(
+      runManager.createConfiguration(
         PhoneGapBundle.message("phonegap.project.template.create.run.configuration.title", commandLine.getPlatformName()),
         configurationType.getConfigurationFactories()[0]);
 

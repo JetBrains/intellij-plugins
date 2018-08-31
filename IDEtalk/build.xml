@@ -5,7 +5,6 @@
   <!-- set global properties for this build -->
   <property name="project.name" value="ideTalk"/>
 
-  <property name="idea" value="${user.home}/IDEA_Current"/>
   <property name="src" value="${basedir}/src"/>
   <property name="tests" value="${basedir}/tests"/>
   <property name="target" value="${basedir}/target"/>
@@ -84,7 +83,7 @@
       <javac2 srcdir="@{src}" destdir="@{dest}"
         classpathref="classpath"
         verbose="false"
-        debug="true" target="1.5"
+        debug="true" target="1.8"
         />
       <copy toDir="@{dest}">
         <fileset dir="@{src}">
@@ -109,6 +108,7 @@
 	  </taskdef>
     <!-- Compile the java code from ${src} into ${build} -->
 
+    <compile src="${resources}" dest="${classes_core}"/>
     <compile src="${src}/core" dest="${classes_core}"/>
     <compile src="${src}/idea" dest="${classes_idea}"/>
     <compile src="${src}/p2p" dest="${classes_p2p}"/>

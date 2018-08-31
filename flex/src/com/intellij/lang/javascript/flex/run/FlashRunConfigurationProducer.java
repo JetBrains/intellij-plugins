@@ -26,9 +26,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class FlashRunConfigurationProducer extends RunConfigurationProducer<FlashRunConfiguration> {
-
   public FlashRunConfigurationProducer() {
-    super(FlashRunConfigurationType.getInstance());
+    super(FlashRunConfigurationType.class);
   }
 
   @Override

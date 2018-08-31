@@ -24,7 +24,7 @@ public class OptionHideOfflineUsers extends OptionExpandToolWindow1 {
   }
 
   @Override
-  public void setSelected(AnActionEvent e, boolean state) {
+  public void setSelected(@NotNull AnActionEvent e, boolean state) {
     super.setSelected(e, state);
     Pico.getEventBroadcaster().fireEvent(new SettingsChanged());
   }

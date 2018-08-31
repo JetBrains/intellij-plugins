@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.util;
 
 import com.intellij.execution.RunManager;
@@ -532,8 +533,7 @@ public class FlexTestUtils {
                                             final String packageName,
                                             final String className,
                                             final String methodName) {
-    final List<RunnerAndConfigurationSettings> settings = runManager.getConfigurationSettingsList(
-      FlexUnitRunConfigurationType.getInstance());
+    final List<RunnerAndConfigurationSettings> settings = runManager.getConfigurationSettingsList(FlexUnitRunConfigurationType.class);
     RunnerAndConfigurationSettings settingsToCheck = null;
     for (RunnerAndConfigurationSettings setting : settings) {
       if (configName.equals(setting.getName())) {
@@ -552,7 +552,7 @@ public class FlexTestUtils {
 
   public static void createFlashRunConfig(final RunManager runManager,
                                           final Module module, final String configName, final String className, boolean generatedName) {
-    final RunnerAndConfigurationSettings settings = runManager.createRunConfiguration(configName, FlashRunConfigurationType.getFactory());
+    final RunnerAndConfigurationSettings settings = runManager.createConfiguration(configName, FlashRunConfigurationType.class);
     runManager.addConfiguration(settings);
 
     final FlashRunnerParameters params = ((FlashRunConfiguration)settings.getConfiguration()).getRunnerParameters();
@@ -574,8 +574,7 @@ public class FlexTestUtils {
                                              final String className,
                                              final String methodName,
                                              boolean generatedName) {
-    final RunnerAndConfigurationSettings settings =
-      runManager.createRunConfiguration(configName, FlexUnitRunConfigurationType.getFactory());
+    final RunnerAndConfigurationSettings settings = runManager.createConfiguration(configName, FlexUnitRunConfigurationType.class);
     runManager.addConfiguration(settings);
 
     final FlexUnitRunnerParameters params = ((FlexUnitRunConfiguration)settings.getConfiguration()).getRunnerParameters();

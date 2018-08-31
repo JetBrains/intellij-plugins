@@ -246,12 +246,12 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
                                              DartBundle.message("group.by.severity.description"),
                                              AllIcons.Nodes.SortBySeverity) {
       @Override
-      public boolean isSelected(AnActionEvent e) {
+      public boolean isSelected(@NotNull AnActionEvent e) {
         return myPresentationHelper.isGroupBySeverity();
       }
 
       @Override
-      public void setSelected(AnActionEvent e, boolean groupBySeverity) {
+      public void setSelected(@NotNull AnActionEvent e, boolean groupBySeverity) {
         myPresentationHelper.setGroupBySeverity(groupBySeverity);
         fireGroupingOrFilterChanged();
       }

@@ -157,12 +157,12 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
                        ProfilerBundle.message("start.cpu.profiling.description"),
                        FlexProfilerIcons.StartCPU) {
         @Override
-        public boolean isSelected(AnActionEvent e) {
+        public boolean isSelected(@NotNull AnActionEvent e) {
           return currentState == State.CPU_PROFILING;
         }
 
         @Override
-        public void setSelected(AnActionEvent e, boolean state) {
+        public void setSelected(@NotNull AnActionEvent e, boolean state) {
           if (state) {
             profilingManager.startCpuProfiling(new ProfilingManager.Callback() {
               @Override
