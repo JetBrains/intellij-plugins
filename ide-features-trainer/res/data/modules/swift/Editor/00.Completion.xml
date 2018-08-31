@@ -27,7 +27,7 @@ class Placeholder: UIViewController {
     <Try trigger="EditorChooseLookupItem">By default, <ide/> completes your code instantly. Start typing <code>.stf</code> right where the caret is, and select the <code>sizeToFit()</code> function using <action>EditorEnter</action>.</Try>
     <MoveCaret position="15:20"/>
     <Try trigger="CodeCompletion">To activate Basic Completion, press <action>CodeCompletion</action> and you will see lookup menu again.</Try>
-    <Try check="EditorEscape">Press <action>EditorEscape</action> to close the popup.</Try>
+    <Try trigger="EditorEscape">Press <action>EditorEscape</action> to close the popup.</Try>
     <MoveCaret position="19:35"/>
     <TypeText> </TypeText>
     <Try triggers="SmartTypeCompletion;EditorChooseLookupItem">Smart Type Completion filters the list of suggestion to include only those types that are applicable in the current context. Press <action>SmartTypeCompletion</action> to see the list of matching suggestions. Choose the first one by pressing <action>EditorEnter</action>.</Try>

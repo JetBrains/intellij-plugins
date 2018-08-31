@@ -27,7 +27,7 @@ class Duplicate: UIViewController {
     </MouseBlock>
     <MoveCaret position="18:34"/>
     <Try trigger="ParameterInfo">Press <action>ParameterInfo</action> to see the initializer signature.</Try>
-    <Try check="EditorEscape">Press <action>EditorEscape</action> to close the popup.</Try>
+    <Try trigger="EditorEscape">Press <action>EditorEscape</action> to close the popup.</Try>
     <MoveCaret position="4:26"/>
     <Try trigger="QuickJavaDoc">Press <action>QuickJavaDoc</action> to see documentation for the symbol at the caret.</Try>
     <MoveCaret position="4:26"/>
