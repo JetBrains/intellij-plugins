@@ -16,7 +16,7 @@ import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 
 public final class DartTestRunConfigurationType extends ConfigurationTypeBase implements DumbAware {
-  private DartTestRunConfigurationType() {
+  public DartTestRunConfigurationType() {
     super("DartTestRunConfigurationType", DartBundle.message("runner.test.configuration.name"),
           DartBundle.message("runner.test.configuration.description"), LazyUtil.create(() -> DartIcons.Dart_test));
     addFactory(new DartTestConfigurationFactory(this));
