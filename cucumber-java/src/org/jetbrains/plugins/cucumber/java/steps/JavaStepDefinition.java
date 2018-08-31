@@ -17,6 +17,7 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.util.CommonProcessors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
 import org.jetbrains.plugins.cucumber.ParameterTypeManager;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
@@ -25,7 +26,7 @@ import java.util.Map;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.STANDARD_PARAMETER_TYPES;
 import static org.jetbrains.plugins.cucumber.CucumberUtil.buildRegexpFromCucumberExpression;
-import static org.jetbrains.plugins.cucumber.java.steps.JavaParameterTypeManager.DEFAULT;
+import static org.jetbrains.plugins.cucumber.MapParameterTypeManager.DEFAULT;
 
 public class JavaStepDefinition extends AbstractJavaStepDefinition {
   public static final String PARAMETER_TYPE_CLASS = "io.cucumber.cucumberexpressions.ParameterType";
@@ -67,7 +68,7 @@ public class JavaStepDefinition extends AbstractJavaStepDefinition {
     return null;
   }
 
-  private static JavaParameterTypeManager getAllParameterTypes(@NotNull Module module) {
+  private static MapParameterTypeManager getAllParameterTypes(@NotNull Module module) {
     Project project = module.getProject();
     PsiManager manager = PsiManager.getInstance(project);
 
@@ -82,7 +83,7 @@ public class JavaStepDefinition extends AbstractJavaStepDefinition {
   }
 
   @NotNull
-  private static JavaParameterTypeManager doGetAllParameterTypes(@NotNull Module module) {
+  private static MapParameterTypeManager doGetAllParameterTypes(@NotNull Module module) {
     final GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
     CommonProcessors.CollectProcessor<UsageInfo> processor = new CommonProcessors.CollectProcessor<>();
     JavaMethodFindUsagesOptions options = new JavaMethodFindUsagesOptions(dependenciesScope);
@@ -124,6 +125,6 @@ public class JavaStepDefinition extends AbstractJavaStepDefinition {
     }
 
     result.putAll(STANDARD_PARAMETER_TYPES);
-    return new JavaParameterTypeManager(result);
+    return new MapParameterTypeManager(result);
   }
 }
