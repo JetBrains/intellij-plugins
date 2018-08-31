@@ -1,11 +1,21 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/* Initialize access to schematics registry */
+let provider: SchematicsProvider;
 try {
-    require('@angular/cli/utilities/schematics');
+    //first try to use schematics utils approach
+    provider = require("./schematicsProvider60");
 } catch (e) {
-    console.info("No schematics")
-    process.exit(0)
+    try {
+        //if not working than try to load SchematicCommand
+        provider = require("./schematicsProvider62");
+    } catch (e) {
+        console.info("No schematics")
+        process.exit(0)
+    }
 }
+/**/
 
-import {getCollection, getEngineHost, getSchematic} from '@angular/cli/utilities/schematics';
+import {SchematicsProvider} from "./schematicsProvider";
 import {Option} from "@angular/cli/models/command";
 import * as path from "path";
 import * as fs from "fs";
@@ -19,7 +29,7 @@ interface SchematicsInfo {
     hidden?: boolean;
 }
 
-const engineHost = getEngineHost();
+const engineHost = provider.getEngineHost();
 
 const includeHidden = process.argv[2] === "--includeHidden";
 
@@ -72,7 +82,7 @@ function getCollectionSchematics(collectionName: string): SchematicsInfo[] {
     let schematicNames: string[];
     let collection: any;
     try {
-        collection = getCollection(collectionName);
+        collection = provider.getCollection(collectionName);
         schematicNames = includeHidden
             ? listAllSchematics(collection)
             : engineHost.listSchematics(collection);
@@ -84,7 +94,7 @@ function getCollectionSchematics(collectionName: string): SchematicsInfo[] {
     }
     try {
         const schematicInfos: any[] = schematicNames
-            .map(name => getSchematic(collection, name).description)
+            .map(name => provider.getSchematic(collection, name).description)
             //`ng-add` schematics should be executed only with `ng add`
             .filter(info => (info.name !== "ng-add" || includeHidden) && info.schemaJson !== undefined);
 
