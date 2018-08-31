@@ -28,10 +28,10 @@ public class CucumberUtilTest {
 
   @Test
   public void testBuildRegexpFromCucumberExpression() {
-    assertEquals("([+-]?\\d+) cucumbers", buildRegexpFromCucumberExpression("{int} cucumbers", STANDARD_PARAMETER_TYPES));
-    assertEquals("([-+]?\\d*\\.?\\d+) cucumbers", buildRegexpFromCucumberExpression("{float} cucumbers", STANDARD_PARAMETER_TYPES));
-    assertEquals("provided ([^\\s]+)", buildRegexpFromCucumberExpression("provided {word}", STANDARD_PARAMETER_TYPES));
+    assertEquals("([+-]?\\d+) cucumbers", buildRegexpFromCucumberExpression("{int} cucumbers", MapParameterTypeManager.DEFAULT));
+    assertEquals("([-+]?\\d*\\.?\\d+) cucumbers", buildRegexpFromCucumberExpression("{float} cucumbers", MapParameterTypeManager.DEFAULT));
+    assertEquals("provided ([^\\s]+)", buildRegexpFromCucumberExpression("provided {word}", MapParameterTypeManager.DEFAULT));
     assertEquals("provided (?:(?:\"([^\"]*)\")|(:?'([^']*)'))",
-                 buildRegexpFromCucumberExpression("provided {string}", STANDARD_PARAMETER_TYPES));
+                 buildRegexpFromCucumberExpression("provided {string}", MapParameterTypeManager.DEFAULT));
   }
 }
