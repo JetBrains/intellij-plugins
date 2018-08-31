@@ -17,6 +17,7 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.util.CommonProcessors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.ParameterTypeManager;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import java.util.Map;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.STANDARD_PARAMETER_TYPES;
 import static org.jetbrains.plugins.cucumber.CucumberUtil.buildRegexpFromCucumberExpression;
+import static org.jetbrains.plugins.cucumber.java.steps.JavaParameterTypeManager.DEFAULT;
 
 public class JavaStepDefinition extends AbstractJavaStepDefinition {
   public static final String PARAMETER_TYPE_CLASS = "io.cucumber.cucumberexpressions.ParameterType";
@@ -56,7 +58,7 @@ public class JavaStepDefinition extends AbstractJavaStepDefinition {
       if (patternText.length() > 1) {
         final Module module = ModuleUtilCore.findModuleForPsiElement(element);
         if (module != null) {
-          Map<String, String> parameterTypes = getAllParameterTypes(module);
+          ParameterTypeManager parameterTypes = getAllParameterTypes(module);
           return buildRegexpFromCucumberExpression(patternText.replace("\\\\", "\\").replace("\\\"", "\""), parameterTypes);
         }
       }
@@ -65,7 +67,7 @@ public class JavaStepDefinition extends AbstractJavaStepDefinition {
     return null;
   }
 
-  private static Map<String, String> getAllParameterTypes(@NotNull Module module) {
+  private static JavaParameterTypeManager getAllParameterTypes(@NotNull Module module) {
     Project project = module.getProject();
     PsiManager manager = PsiManager.getInstance(project);
 
@@ -76,11 +78,11 @@ public class JavaStepDefinition extends AbstractJavaStepDefinition {
         CachedValueProvider.Result.create(doGetAllParameterTypes(module), PsiModificationTracker.MODIFICATION_COUNT));
     }
 
-    return STANDARD_PARAMETER_TYPES;
+    return DEFAULT;
   }
 
   @NotNull
-  private static Map<String, String> doGetAllParameterTypes(@NotNull Module module) {
+  private static JavaParameterTypeManager doGetAllParameterTypes(@NotNull Module module) {
     final GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
     CommonProcessors.CollectProcessor<UsageInfo> processor = new CommonProcessors.CollectProcessor<>();
     JavaMethodFindUsagesOptions options = new JavaMethodFindUsagesOptions(dependenciesScope);
@@ -122,6 +124,6 @@ public class JavaStepDefinition extends AbstractJavaStepDefinition {
     }
 
     result.putAll(STANDARD_PARAMETER_TYPES);
-    return result;
+    return new JavaParameterTypeManager(result);
   }
 }

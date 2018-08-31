@@ -223,11 +223,12 @@ public class CucumberUtil {
   /**
    * Replaces ParameterType-s injected into step definition.
    * Step definition {@code provided {int} cucumbers } will be presented by regexp {@code ([+-]?\d+) customers }
-   * @param parameterTypes map of standard and user-defined parameter types
-   * @return regular expression defined by Cucumber Expression and ParameterTypes value.
+   * @param parameterTypeManager provides mapping from ParameterTypes name to its value
+   * @return regular expression defined by Cucumber Expression and ParameterTypes value
    */
   @Nullable
-  public static String buildRegexpFromCucumberExpression(@NotNull String cucumberExpression, @NotNull Map<String, String> parameterTypes) {
+  public static String buildRegexpFromCucumberExpression(@NotNull String cucumberExpression,
+                                                         @NotNull ParameterTypeManager parameterTypeManager) {
     StringBuilder result = new StringBuilder();
     int i = 0;
     while (i < cucumberExpression.length()) {
@@ -246,7 +247,7 @@ public class CucumberUtil {
         }
         if (j < cucumberExpression.length()) {
           String parameterTypeName = cucumberExpression.substring(i + 1, j);
-          String parameterTypeValue = parameterTypes.get(parameterTypeName);
+          String parameterTypeValue = parameterTypeManager.getParameterTypeValue(parameterTypeName);
           if (parameterTypeValue == null) {
             return null;
           } else {
