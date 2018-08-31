@@ -1,4 +1,4 @@
-let abc = <error>'aaa'</error><EOLError>
+let abc = <error><caret>'aaa'</error><EOLError>
 </EOLError>console.log(abc)<EOLError>
 
 

@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.codeInspection.SuppressIntentionAction;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.lang.annotation.AnnotationHolder;
@@ -21,6 +22,7 @@ import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
+import com.intellij.lang.javascript.validation.JSAnnotatorProblemGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
@@ -213,6 +215,14 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
         return result;
       }
       return ContainerUtil.emptyList();
+    }).setProblemGroup(error -> {
+      if (isOnTheFly() && error instanceof TsLinterError) {
+        SuppressIntentionAction[] intentionActions = TsLintSuppressionUtil.INSTANCE
+          .getSuppressionsForError((TsLinterError)error)
+          .toArray(SuppressIntentionAction.EMPTY_ARRAY);
+        return new JSAnnotatorProblemGroup(intentionActions, null);
+      }
+      return null;
     });
 
 
