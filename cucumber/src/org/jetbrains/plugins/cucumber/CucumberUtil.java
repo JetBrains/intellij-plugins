@@ -220,6 +220,60 @@ public class CucumberUtil {
   }
 
   /**
+   * Replaces ParameterType-s injected into step definition.
+   * Step definition {@code provided {int} cucumbers } will be presented by regexp {@code ([+-]?\d+) customers }
+   * @param parameterTypes map of standard and user-defined parameter types
+   * @return regular expression defined by Cucumber Expression and ParameterTypes value.
+   */
+  @Nullable
+  public static String buildRegexpFromCucumberExpression(@NotNull String cucumberExpression, @NotNull Map<String, String> parameterTypes) {
+    StringBuilder result = new StringBuilder();
+    int i = 0;
+    while (i < cucumberExpression.length()) {
+      char c = cucumberExpression.charAt(i);
+      if (c == '{') {
+        int j = i;
+        while (j < cucumberExpression.length()) {
+          char parameterTypeChar = cucumberExpression.charAt(j);
+          if (parameterTypeChar == '}') {
+            break;
+          }
+          if (parameterTypeChar == '\\') {
+            j++;
+          }
+          j++;
+        }
+        if (j < cucumberExpression.length()) {
+          String parameterTypeName = cucumberExpression.substring(i + 1, j);
+          String parameterTypeValue = parameterTypes.get(parameterTypeName);
+          if (parameterTypeValue == null) {
+            return null;
+          } else {
+            result.append(parameterTypeValue);
+          }
+          i = j + 1;
+          continue;
+        } else {
+          // unclosed parameter type
+          return null;
+        }
+      }
+
+      result.append(c);
+      if (c == '\\') {
+        if (i >= cucumberExpression.length() - 1) {
+          // escape without following symbol;
+          return null;
+        }
+        i++;
+        result.append(cucumberExpression.charAt(i));
+      }
+      i++;
+    }
+    return result.toString();
+  }
+
+  /**
    * Accepts each element and checks if it has reference to some other element
    */
   private static class MyReferenceCheckingProcessor implements TextOccurenceProcessor {
