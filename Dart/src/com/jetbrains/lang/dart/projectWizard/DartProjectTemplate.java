@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.execution.RunManager;
@@ -104,7 +105,7 @@ public abstract class DartProjectTemplate {
       final RunManager runManager = RunManager.getInstance(module.getProject());
       try {
         final RunnerAndConfigurationSettings settings =
-          runManager.createRunConfiguration("", JavascriptDebugConfigurationType.getTypeInstance().getFactory());
+          runManager.createConfiguration("", JavascriptDebugConfigurationType.getTypeInstance().getFactory());
 
         ((JavaScriptDebugConfiguration)settings.getConfiguration()).setUri(url.toDecodedForm());
         settings.setName(((JavaScriptDebugConfiguration)settings.getConfiguration()).suggestedName());
@@ -120,7 +121,7 @@ public abstract class DartProjectTemplate {
     DartModuleBuilder.runWhenNonModalIfModuleNotDisposed(() -> {
       final RunManager runManager = RunManager.getInstance(module.getProject());
       final RunnerAndConfigurationSettings settings =
-        runManager.createRunConfiguration("", DartCommandLineRunConfigurationType.getInstance().getConfigurationFactories()[0]);
+        runManager.createConfiguration("", DartCommandLineRunConfigurationType.getInstance().getConfigurationFactories()[0]);
 
       final DartCommandLineRunConfiguration runConfiguration = (DartCommandLineRunConfiguration)settings.getConfiguration();
       runConfiguration.getRunnerParameters().setFilePath(mainDartFile.getPath());

@@ -533,8 +533,7 @@ public class FlexTestUtils {
                                             final String packageName,
                                             final String className,
                                             final String methodName) {
-    final List<RunnerAndConfigurationSettings> settings = runManager.getConfigurationSettingsList(
-      FlexUnitRunConfigurationType.getInstance());
+    final List<RunnerAndConfigurationSettings> settings = runManager.getConfigurationSettingsList(FlexUnitRunConfigurationType.class);
     RunnerAndConfigurationSettings settingsToCheck = null;
     for (RunnerAndConfigurationSettings setting : settings) {
       if (configName.equals(setting.getName())) {
@@ -575,8 +574,7 @@ public class FlexTestUtils {
                                              final String className,
                                              final String methodName,
                                              boolean generatedName) {
-    final RunnerAndConfigurationSettings settings =
-      runManager.createRunConfiguration(configName, FlexUnitRunConfigurationType.getFactory());
+    final RunnerAndConfigurationSettings settings = runManager.createConfiguration(configName, FlexUnitRunConfigurationType.class);
     runManager.addConfiguration(settings);
 
     final FlexUnitRunnerParameters params = ((FlexUnitRunConfiguration)settings.getConfiguration()).getRunnerParameters();
