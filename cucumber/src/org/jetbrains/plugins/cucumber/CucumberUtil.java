@@ -85,7 +85,7 @@ public class CucumberUtil {
   /**
    * Searches for the all references to element, representing step definition from Gherkin steps.
    * Each step should have poly reference that resolves to this element.
-   * Uses {@link #findPossibleGherkinElementUsages(com.intellij.psi.PsiElement, String, com.intellij.psi.search.TextOccurenceProcessor, com.intellij.psi.search.SearchScope)}
+   * Uses {@link #findPossibleGherkinElementUsages(PsiElement, String, TextOccurenceProcessor, SearchScope)}
    * to find elements. Than, checks for references.
    *
    * @param stepDefinitionElement step defining element (most probably method)
@@ -93,7 +93,7 @@ public class CucumberUtil {
    * @param consumer              each reference would be reported here
    * @param effectiveSearchScope  search scope
    * @return whether reference was found and reported to consumer
-   * @see #findPossibleGherkinElementUsages(com.intellij.psi.PsiElement, String, com.intellij.psi.search.TextOccurenceProcessor, com.intellij.psi.search.SearchScope)
+   * @see #findPossibleGherkinElementUsages(PsiElement, String, TextOccurenceProcessor, SearchScope)
    */
   public static boolean findGherkinReferencesToElement(@NotNull final PsiElement stepDefinitionElement,
                                                        @NotNull final String regexp,
@@ -105,7 +105,7 @@ public class CucumberUtil {
   }
 
   /**
-   * Passes to {@link com.intellij.psi.search.TextOccurenceProcessor} all elements in gherkin files that <em>may</em> have reference to
+   * Passes to {@link TextOccurenceProcessor} all elements in gherkin files that <em>may</em> have reference to
    * provided argument. I.e: calling this function for string literal "(.+)foo" would find step "Given I am foo".
    * To extract search text, {@link #getTheBiggestWordToSearchByIndex(String)} is used.
    *
@@ -114,7 +114,7 @@ public class CucumberUtil {
    * @param processor             each text occurence would be reported here
    * @param effectiveSearchScope  search scope
    * @return whether reference was found and passed to processor
-   * @see #findGherkinReferencesToElement(com.intellij.psi.PsiElement, String, com.intellij.util.Processor, com.intellij.psi.search.SearchScope)
+   * @see #findGherkinReferencesToElement(PsiElement, String, Processor, SearchScope)
    */
   public static boolean findPossibleGherkinElementUsages(@NotNull final PsiElement stepDefinitionElement,
                                                          @NotNull final String regexp,
@@ -182,6 +182,7 @@ public class CucumberUtil {
       }
       else {
         sb = new StringBuilder();
+        //noinspection AssignmentToForLoopParameter
         i++;
       }
       if (par > 0 | squareBrace > 0 | brace > 0) {
