@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.util;
 
 import com.intellij.execution.RunManager;
@@ -552,7 +553,7 @@ public class FlexTestUtils {
 
   public static void createFlashRunConfig(final RunManager runManager,
                                           final Module module, final String configName, final String className, boolean generatedName) {
-    final RunnerAndConfigurationSettings settings = runManager.createRunConfiguration(configName, FlashRunConfigurationType.getFactory());
+    final RunnerAndConfigurationSettings settings = runManager.createConfiguration(configName, FlashRunConfigurationType.class);
     runManager.addConfiguration(settings);
 
     final FlashRunnerParameters params = ((FlashRunConfiguration)settings.getConfiguration()).getRunnerParameters();
