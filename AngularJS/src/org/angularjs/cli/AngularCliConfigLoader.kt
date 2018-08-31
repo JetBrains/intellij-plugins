@@ -101,10 +101,10 @@ private class AngularCliJsonFileConfig(angularCliJson: VirtualFile, text: CharSe
     myRootPaths = allProjects.mapNotNull { it.rootPath }.fold(ArrayList()) { acc, root -> acc.add(root); acc; }
     myStylePreprocessorIncludePaths = ContainerUtil.concat(
       allProjects.mapNotNull { it.stylePreprocessorOptions?.includePaths },
-      allProjects.mapNotNull { it.architect?.build?.options?.stylePreprocessorOptions?.includePaths }
+      allProjects.mapNotNull { it.targets?.build?.options?.stylePreprocessorOptions?.includePaths }
     ).fold(ArrayList()) { acc, list -> acc.addAll(list); acc; }
-    myKarmaConfigPath = allProjects.mapNotNull { it.architect?.test?.options?.karmaConfig }.firstOrNull()
-    myProtractorConfigPath = allProjects.mapNotNull { it.architect?.e2e?.options?.protractorConfig }.firstOrNull()
+    myKarmaConfigPath = allProjects.mapNotNull { it.targets?.test?.options?.karmaConfig }.firstOrNull()
+    myProtractorConfigPath = allProjects.mapNotNull { it.targets?.e2e?.options?.protractorConfig }.firstOrNull()
   }
 
   override fun getRootDirs(): Collection<VirtualFile> {
@@ -154,12 +154,13 @@ private class AngularCliProject {
   @Expose
   val stylePreprocessorOptions: AngularCliStylePreprocessorOptions? = null
 
-  @SerializedName("architect")
+  @SerializedName("targets", alternate = ["architect"])
   @Expose
-  val architect: AngularCliArchitect? = null
+  val targets: AngularCliTargets? = null
+
 }
 
-private class AngularCliArchitect {
+private class AngularCliTargets {
   @SerializedName("build")
   @Expose
   val build: AngularCliBuild? = null

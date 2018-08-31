@@ -1,16 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/* Initialize access to schematics registry */
+var provider;
 try {
-    require('@angular/cli/utilities/schematics');
+    //first try to use schematics utils approach
+    provider = require("./schematicsProvider60");
 }
 catch (e) {
-    console.info("No schematics");
-    process.exit(0);
+    try {
+        //if not working than try to load SchematicCommand
+        provider = require("./schematicsProvider62");
+    }
+    catch (e) {
+        console.info("No schematics");
+        process.exit(0);
+    }
 }
-var schematics_1 = require("@angular/cli/utilities/schematics");
 var path = require("path");
 var fs = require("fs");
-var engineHost = schematics_1.getEngineHost();
+var engineHost = provider.getEngineHost();
 var includeHidden = process.argv[2] === "--includeHidden";
 var defaultCollectionName;
 try {
@@ -58,7 +67,7 @@ function getCollectionSchematics(collectionName) {
     var schematicNames;
     var collection;
     try {
-        collection = schematics_1.getCollection(collectionName);
+        collection = provider.getCollection(collectionName);
         schematicNames = includeHidden
             ? listAllSchematics(collection)
             : engineHost.listSchematics(collection);
@@ -71,7 +80,7 @@ function getCollectionSchematics(collectionName) {
     }
     try {
         var schematicInfos = schematicNames
-            .map(function (name) { return schematics_1.getSchematic(collection, name).description; })
+            .map(function (name) { return provider.getSchematic(collection, name).description; })
             //`ng-add` schematics should be executed only with `ng add`
             .filter(function (info) { return (info.name !== "ng-add" || includeHidden) && info.schemaJson !== undefined; });
         var newFormat_1 = schematicInfos
