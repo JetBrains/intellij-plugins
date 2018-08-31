@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.STANDARD_PARAMETER_TYPES;
+import static org.jetbrains.plugins.cucumber.CucumberUtil.buildRegexpFromCucumberExpression;
 
 public class JavaStepDefinition extends AbstractJavaStepDefinition {
   public static final String PARAMETER_TYPE_CLASS = "io.cucumber.cucumberexpressions.ParameterType";
@@ -55,62 +56,13 @@ public class JavaStepDefinition extends AbstractJavaStepDefinition {
       if (patternText.length() > 1) {
         final Module module = ModuleUtilCore.findModuleForPsiElement(element);
         if (module != null) {
-          return processCucumberExpressions(module, patternText.replace("\\\\", "\\").replace("\\\"", "\""));
+          Map<String, String> parameterTypes = getAllParameterTypes(module);
+          return buildRegexpFromCucumberExpression(patternText.replace("\\\\", "\\").replace("\\\"", "\""), parameterTypes);
         }
       }
     }
 
     return null;
-  }
-
-  @Nullable
-  private static String processCucumberExpressions(@NotNull Module module, String annotationValue) {
-    Map<String, String> parameterTypes = getAllParameterTypes(module);
-    
-    StringBuilder result = new StringBuilder();
-    int i = 0;
-    while (i < annotationValue.length()) {
-      char c = annotationValue.charAt(i);
-      if (c == '{') {
-        int j = i;
-        while (j < annotationValue.length()) {
-          char parameterTypeChar = annotationValue.charAt(j);
-          if (parameterTypeChar == '}') {
-            break;
-          }
-          if (parameterTypeChar == '\\') {
-            j++;
-          }
-          j++;
-        }
-        if (j < annotationValue.length()) {
-          String parameterTypeName = annotationValue.substring(i + 1, j);
-          String parameterTypeValue = parameterTypes.get(parameterTypeName);
-          if (parameterTypeValue == null) {
-            return null;
-          } else {
-            result.append(parameterTypeValue);
-          }
-          i = j + 1;
-          continue;
-        } else {
-          // unclosed parameter type
-          return null;
-        }
-      }
-
-      result.append(c);
-      if (c == '\\') {
-        if (i >= annotationValue.length() - 1) {
-          // escape without following symbol;
-          return null;
-        }
-        i++;
-        result.append(annotationValue.charAt(i));
-      }
-      i++;
-    }
-    return result.toString();
   }
 
   private static Map<String, String> getAllParameterTypes(@NotNull Module module) {
