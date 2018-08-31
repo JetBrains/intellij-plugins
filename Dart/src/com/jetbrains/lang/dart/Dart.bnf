@@ -84,6 +84,7 @@
   IMPLEMENTS="implements"
   IMPORT="import"
   LIBRARY="library"
+  MIXIN="mixin"
   OPERATOR="operator"
   PART="part"
   SET="set"
@@ -169,6 +170,7 @@ private topLevelDefinition ::= libraryStatement
                              | exportStatement
                              | partStatement
                              | classDefinition
+                             | mixinDeclaration
                              | enumDefinition
                              | functionTypeAlias
                              | getterOrSetterDeclaration
@@ -249,6 +251,9 @@ varDeclarationListPart ::= componentName varInit?
 classDefinition ::= metadata* 'abstract'? 'class' componentName typeParameters? (mixinApplication | standardClassDeclarationTail)
 {pin=4 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
 
+mixinDeclaration ::= metadata* 'mixin' componentName typeParameters? onMixins? interfaces? classBody
+{mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
+
 enumDefinition ::= metadata* 'enum' componentName '{' enumConstantDeclaration (',' enumConstantDeclaration)* ','? '}'
 {pin=3  mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
 
@@ -260,7 +265,7 @@ enumConstantDeclaration ::= componentName
 }
 
 mixinApplication ::= '=' type mixins? interfaces? ';' {pin = 1}
-private standardClassDeclarationTail ::= (superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody?
+private standardClassDeclarationTail ::= superclass? mixins? interfaces? ('native' stringLiteralExpression?)? classBody?
 
 classBody ::= '{' classMembers '}' {pin=1}
 classMembers ::= classMemberDefinition*
@@ -288,6 +293,7 @@ private type_parameter_recover ::= !(<<nonStrictID>> | '(' | ',' | '=' | '>' | '
                                      'static' | 'typedef' | 'var' | 'void' | '{')
 superclass ::= 'extends' type {pin=1}
 mixins ::= 'with' typeList {pin=1}
+onMixins ::= 'on' typeList {pin=1}
 interfaces ::= 'implements' typeList {pin=1}
 
 private classMemberDefinition ::= factoryConstructorDeclaration

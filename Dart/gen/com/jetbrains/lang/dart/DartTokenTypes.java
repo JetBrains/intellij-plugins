@@ -1,3 +1,17 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 // This is a generated file. Not intended for manual editing.
 package com.jetbrains.lang.dart;
 
@@ -83,6 +97,7 @@ public interface DartTokenTypes {
   IElementType METHOD_DECLARATION = new DartElementType("METHOD_DECLARATION");
   IElementType MIXINS = new DartElementType("MIXINS");
   IElementType MIXIN_APPLICATION = new DartElementType("MIXIN_APPLICATION");
+  IElementType MIXIN_DECLARATION = new DartElementType("MIXIN_DECLARATION");
   IElementType MULTIPLICATIVE_EXPRESSION = new DartElementType("MULTIPLICATIVE_EXPRESSION");
   IElementType MULTIPLICATIVE_OPERATOR = new DartElementType("MULTIPLICATIVE_OPERATOR");
   IElementType NAMED_ARGUMENT = new DartElementType("NAMED_ARGUMENT");
@@ -90,6 +105,7 @@ public interface DartTokenTypes {
   IElementType NEW_EXPRESSION = new DartElementType("NEW_EXPRESSION");
   IElementType NORMAL_FORMAL_PARAMETER = new DartElementType("NORMAL_FORMAL_PARAMETER");
   IElementType NORMAL_PARAMETER_TYPE = new DartElementType("NORMAL_PARAMETER_TYPE");
+  IElementType ON_MIXINS = new DartElementType("ON_MIXINS");
   IElementType ON_PART = new DartElementType("ON_PART");
   IElementType OPTIONAL_FORMAL_PARAMETERS = new DartElementType("OPTIONAL_FORMAL_PARAMETERS");
   IElementType OPTIONAL_PARAMETER_TYPES = new DartElementType("OPTIONAL_PARAMETER_TYPES");
@@ -215,6 +231,7 @@ public interface DartTokenTypes {
   IElementType MINUS = new DartElementType("-");
   IElementType MINUS_EQ = new DartElementType("-=");
   IElementType MINUS_MINUS = new DartElementType("--");
+  IElementType MIXIN = new DartElementType("mixin");
   IElementType MUL = new DartElementType("*");
   IElementType MUL_EQ = new DartElementType("*=");
   IElementType NATIVE = new DartElementType("native");
@@ -498,6 +515,9 @@ public interface DartTokenTypes {
       else if (type == MIXIN_APPLICATION) {
         return new DartMixinApplicationImpl(node);
       }
+      else if (type == MIXIN_DECLARATION) {
+        return new DartMixinDeclarationImpl(node);
+      }
       else if (type == MULTIPLICATIVE_EXPRESSION) {
         return new DartMultiplicativeExpressionImpl(node);
       }
@@ -518,6 +538,9 @@ public interface DartTokenTypes {
       }
       else if (type == NORMAL_PARAMETER_TYPE) {
         return new DartNormalParameterTypeImpl(node);
+      }
+      else if (type == ON_MIXINS) {
+        return new DartOnMixinsImpl(node);
       }
       else if (type == ON_PART) {
         return new DartOnPartImpl(node);
