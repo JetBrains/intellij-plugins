@@ -21,6 +21,7 @@ class ExtractClosure: UIViewController {
     }
 }]]></CopyText>
     <SetSelection start-position="14:1" end-position="19:1" />
-    <Try triggers="Refactorings.QuickListPopupAction;SwiftIntroduceClosureVariable">Extract Closure allows you to encapsulate a code selection into a new closure with customizable parameters and return type in the same way as Extract Method. Press <action>Refactorings.QuickListPopupAction</action> and select <strong>Closure...</strong>.</Try>
+    <Text>Extract Closure allows you to encapsulate a code selection into a new closure, with customizable parameters and return type. It works similarly to the Extract Method refactoring.</Text>
+	<Try triggers="Refactorings.QuickListPopupAction;SwiftIntroduceClosureVariable">Press <action>Refactorings.QuickListPopupAction</action> and then select <strong>Closure...</strong>.</Try>
     <Win/>
 </xml>

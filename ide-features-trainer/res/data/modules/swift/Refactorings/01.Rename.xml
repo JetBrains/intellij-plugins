@@ -21,11 +21,11 @@ class Rename: UIViewController {
     }
 }]]></CopyText>
     <Text>You can rename anything by placing the caret on a symbol and using the Rename refactoring.</Text>
-    <Try triggers="GotoFile;MasterViewController.swift">Navigate to the <code>MasterViewController.swift</code> using <action>GotoFile</action></Try>
+    <Try triggers="GotoFile;MasterViewController.swift">Navigate to <code>MasterViewController.swift</code> by pressing <action>GotoFile</action></Try>
     <MoveCaret position="6:10"/>
-    <Try triggers="RenameElement;NextTemplateVariable">Let's start from something simple - rename the <code>objects</code> field to <code>array</code>. Press <action>RenameElement</action>, enter new name and press <action>EditorEnter</action></Try>
+    <Try triggers="RenameElement;NextTemplateVariable">Let's start with something simple like renaming the <code>objects</code> field to <code>array</code>. Press <action>RenameElement</action>, enter a new name, and then press <action>EditorEnter</action></Try>
     <MoveCaret position="5:39"/>
-    <Try triggers="RenameElement;NextTemplateVariable">Now repeat the same actions and rename <code>DetailViewController</code> type to any new name.</Try>
-    <Try triggers="FindUsages">Press <action>FindUsages</action>. As you see, the rename works globally, even renaming occurrences in .xib and .storyboard files.</Try>
+    <Try triggers="RenameElement;NextTemplateVariable">Now, repeat the same actions and rename the <code>DetailViewController</code> type to something new.</Try>
+    <Try triggers="FindUsages">Press <action>FindUsages</action>. As you can see, the rename works globally, even renaming occurrences in .xib and .storyboard files.</Try>
     <Win/>
 </xml>

@@ -20,8 +20,8 @@ class ExtractVariable: UIViewController {
     }
 }]]></CopyText>
     <MoveCaret position="8:61"/>
-    <Try triggers="IntroduceVariable;NextTemplateVariable">Press <action>IntroduceVariable</action> to extract a <code>50</code> constant to <code>y</code> variable or field.</Try>
-    <Text>Extract variable refactoring does not require you to select the exact code you want to extract. You can just place the cursor on the statement you want to extract and then select the needed expression.</Text>
-    <Try triggers="IntroduceVariable;NextTemplateVariable">Now press <action>IntroduceVariable</action> and extract the <code>CGRect</code> to a <code>frame</code> variable by selecting it from the list.</Try>
+    <Try triggers="IntroduceVariable;NextTemplateVariable">Press <action>IntroduceVariable</action> to extract the constant <code>50</code> to the variable or field <code>y</code>.</Try>
+    <Text>Extract Variable does not require you to select the exact code you want to extract. You can simply place the caret on the statement you want to extract and then select the needed expression.</Text>
+    <Try triggers="IntroduceVariable;NextTemplateVariable">Now, press <action>IntroduceVariable</action> and extract <code>CGRect</code> to the variable <code>frame</code>, by selecting it from the list.</Try>
     <Win/>
 </xml>
