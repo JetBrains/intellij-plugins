@@ -74,10 +74,10 @@ public class CucumberUtil {
 
   static {
     Map<String, String> standardParameterTypes = new HashMap<>();
-    standardParameterTypes.put("int", "([+-]?\\d+)");
-    standardParameterTypes.put("float", "([-+]?\\d*\\.?\\d+)");
+    standardParameterTypes.put("int", "(-?\\d+)");
+    standardParameterTypes.put("float", "(-?\\d*[.,]?\\d+)");
     standardParameterTypes.put("word", "([^\\s]+)");
-    standardParameterTypes.put("string", "(?:(?:\"([^\"]*)\")|(:?'([^']*)'))");
+    standardParameterTypes.put("string", "(\"(?:[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'(?:[^'\\\\]*(?:\\\\.[^'\\\\]*)*)')");
 
     STANDARD_PARAMETER_TYPES = Collections.unmodifiableMap(standardParameterTypes);
   }
@@ -250,12 +250,14 @@ public class CucumberUtil {
           String parameterTypeValue = parameterTypeManager.getParameterTypeValue(parameterTypeName);
           if (parameterTypeValue == null) {
             return null;
-          } else {
+          }
+          else {
             result.append(parameterTypeValue);
           }
           i = j + 1;
           continue;
-        } else {
+        }
+        else {
           // unclosed parameter type
           return null;
         }
