@@ -27,10 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.steps.search.CucumberStepSearchUtil;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CucumberUtil {
   @NonNls public static final String STEP_DEFINITIONS_DIR_NAME = "step_definitions";
@@ -72,6 +69,18 @@ public class CucumberUtil {
   public static final char ESCAPE_SLASH = '\\';
   public static final String PREFIX_CHAR = "^";
   public static final String SUFFIX_CHAR = "$";
+
+  public static final Map<String, String> STANDARD_PARAMETER_TYPES;
+
+  static {
+    Map<String, String> standardParameterTypes = new HashMap<>();
+    standardParameterTypes.put("int", "([+-]?\\d+)");
+    standardParameterTypes.put("float", "([-+]?\\d*\\.?\\d+)");
+    standardParameterTypes.put("word", "([^\\s]+)");
+    standardParameterTypes.put("string", "(?:(?:\"([^\"]*)\")|(:?'([^']*)'))");
+
+    STANDARD_PARAMETER_TYPES = Collections.unmodifiableMap(standardParameterTypes);
+  }
 
   /**
    * Searches for the all references to element, representing step definition from Gherkin steps.

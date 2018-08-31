@@ -50,6 +50,15 @@ public class CucumberJavaTestResolveTest extends BaseCucumberJavaResolveTest {
     doTest("negativeLookBehind", "c<caret>a", "step_method");
   }
 
+  public void testResolveOfStepWithParameterType() {
+    init("stepResolve_ParameterType");
+    checkReference("tod<caret>ay", "step_method");
+    checkReference("in<caret>t", "step_method");
+    checkReference("floa<caret>t", "step_method");
+    checkReference("wor<caret>d", "step_method");
+    checkReference("strin<caret>g", "step_string_method");
+  }
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumberJava8ProjectDescriptor();
