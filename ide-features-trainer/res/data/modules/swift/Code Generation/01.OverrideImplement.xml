@@ -23,9 +23,9 @@ class OverrideImplement: UIViewController, UITableViewDataSource {
 
 }]]></CopyText>
     <MoveCaret position="22:5"/>
-    <Text>You can override any method of a parent class or implement any protocols, using the <strong>Override/Implement</strong> actions (<action>OverrideMethods</action>/<action>ImplementMethods</action>)</Text>
+    <Text>You can override any method of a parent class or implement any protocols, by using the <strong>Override/Implement</strong> actions (<action>OverrideMethods</action>/<action>ImplementMethods</action>)</Text>
     <Try triggers="ImplementMethods">Press <action>ImplementMethods</action> → <action>EditorEnter</action> and add stubs for all required methods from <code>UITableViewDataSource</code></Try>
     <MoveCaret position="22:5"/>
-    <Try triggers="OverrideMethods">Now let's try overriding several methods at once. Press <action>OverrideMethods</action> and start typing <code>viewAppear</code>. Two methods should be filtered in the list of methods and properties you can override. Press <action>$SelectAll</action>→ <action>EditorEnter</action> to override them.</Try>
+    <Try triggers="OverrideMethods">Now let's try overriding several methods at once. Press <action>OverrideMethods</action> and start typing <code>viewAppear</code>. The list of methods and properties you can override should be filtered down to just two methods. Press <action>$SelectAll</action>→ <action>EditorEnter</action> to override them.</Try>
     <Win/>
 </xml>

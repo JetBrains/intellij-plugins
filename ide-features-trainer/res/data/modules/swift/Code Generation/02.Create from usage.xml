@@ -16,16 +16,16 @@ class CreateFromUsage: UIViewController {
     }
 }]]></CopyText>
     <MoveCaret position="7:30"/>
-    <Try triggers="ShowIntentionActions;EditorChooseLookupItem">In <ide/> you can create various code constructs from their usages just by pressing <action>ShowIntentionActions</action> on the unresolved entity. Press <action>ShowIntentionActions</action>, select <strong>Create local variable 'label'</strong> and press <action>EditorEnter</action></Try>
+    <Try triggers="ShowIntentionActions;EditorChooseLookupItem">In <ide/>, you can create various code constructs from their usages just by pressing <action>ShowIntentionActions</action> on the unresolved entity. Press <action>ShowIntentionActions</action>, select <strong>Create local variable 'label'</strong>, and then press <action>EditorEnter</action></Try>
     <TypeText> = UILabel()</TypeText>
     <MoveCaret position="9:11"/>
     <Try triggers="ShowIntentionActions;NextTemplateVariable">Repeat the same actions to create the <code>setup</code> function.</Try>
-    <Text>Nice! Notice how parameters together with their names are generated.</Text>
+    <Text>Nice! Notice how parameters are generated together with their names.</Text>
     <MoveCaret position="17:20"/>
-    <Try triggers="ShowIntentionActions;EditorChooseLookupItem">This time we can use the same approach to create a class declaration. Press <action>ShowIntentionActions</action> and select <strong>Create type 'IDE'</strong>. Note that you can automatically create it also nested in the current class or in a new file.</Try>
+    <Try triggers="ShowIntentionActions;EditorChooseLookupItem">This time we can use the same approach to create a class declaration. Press <action>ShowIntentionActions</action> and select <strong>Create type 'IDE'</strong>. Note that you can automatically create it to be nested in the current class or in a new file.</Try>
     <MoveCaret position="22:27"/>
-    <Try triggers="ShowIntentionActions;NextTemplateVariable">Great, let's repeat the same actions to generate an initializer for our <code>IDE</code> class. Press <action>ShowIntentionActions</action>, select <strong>Create initializer</strong> and press <action>EditorEnter</action>!</Try>
+    <Try triggers="ShowIntentionActions;NextTemplateVariable">Great! Let's repeat the same actions to generate an initializer for our <code>IDE</code> class. Press <action>ShowIntentionActions</action>, select <strong>Create initializer</strong>, and then press <action>EditorEnter</action>!</Try>
     <MoveCaret position="22:21"/>
-    <Try triggers="ShowIntentionActions">And finally let's add just an empty initializer using the same actions.</Try>
+    <Try triggers="ShowIntentionActions">Finally, let's use the same actions to add an empty initializer.</Try>
     <Win/>
 </xml>

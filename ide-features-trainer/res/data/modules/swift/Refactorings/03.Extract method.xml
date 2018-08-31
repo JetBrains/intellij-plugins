@@ -21,10 +21,10 @@ class ExtractMethod: UIViewController {
     }
 }]]></CopyText>
     <SetSelection start-position="11:9" end-position="18:43" />
-    <Try trigger="ExtractMethod">Extract Method allows you to encapsulate a code selection into a new method with customizable parameters and return type. Let's extract some lines of code into a new <code>setup</code> function. Press <action>ExtractMethod</action>.</Try>
+    <Try trigger="ExtractMethod">Extract Method is a refactoring that lets you encapsulate a code selection into a new method, with customizable parameters and return type. Let's extract some lines of code into a new <code>setup</code> function. Press <action>ExtractMethod</action>.</Try>
     <Try action="$Undo" trigger="$Undo">Press <action>$Undo</action> to undo the changes.</Try>
     <SetSelection start-position="11:9" end-position="18:43" />
-    <Text>When extracting the method in <ide/> you can change the method signature. Click on one of the parameters in <strong>Parameters</strong> section and use <icon>AllIcons.Actions.UP</icon>/<icon>AllIcons.Actions.Down</icon> icons to change parameter order. Change their names and/or types by clicking on the parameter row. </Text>
-    <Try trigger="ExtractMethod">Now press <action>ExtractMethod</action> and try changing the signature of the extract method.</Try>
+    <Text>When extracting a method in <ide/>, you can change its signature. Click one of the parameters in the <strong>Parameters</strong> section and use <icon>AllIcons.Actions.UP</icon>/<icon>AllIcons.Actions.Down</icon> icons to change the order of parameters. Change their names and/or types by clicking the parameter row. </Text>
+    <Try trigger="ExtractMethod">Now press <action>ExtractMethod</action> and try changing the signature of the extracted method.</Try>
     <Win/>
 </xml>
