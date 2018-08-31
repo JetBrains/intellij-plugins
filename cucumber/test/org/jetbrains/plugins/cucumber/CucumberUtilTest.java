@@ -5,9 +5,11 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.plugins.cucumber.CucumberUtil.STANDARD_PARAMETER_TYPES;
 import static org.jetbrains.plugins.cucumber.CucumberUtil.buildRegexpFromCucumberExpression;
+import static org.jetbrains.plugins.cucumber.CucumberUtil.isCucumberExpression;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 public class CucumberUtilTest {
   @Test
@@ -33,5 +35,13 @@ public class CucumberUtilTest {
     assertEquals("provided ([^\\s]+)", buildRegexpFromCucumberExpression("provided {word}", MapParameterTypeManager.DEFAULT));
     assertEquals("provided (?:(?:\"([^\"]*)\")|(:?'([^']*)'))",
                  buildRegexpFromCucumberExpression("provided {string}", MapParameterTypeManager.DEFAULT));
+  }
+
+  @Test
+  public void testIsCucumberExpression() {
+    assertTrue(isCucumberExpression("def {int}"));
+    assertFalse(isCucumberExpression("def {int"));
+    assertFalse(isCucumberExpression("text"));
+    assertFalse(isCucumberExpression("text (\\d)"));
   }
 }

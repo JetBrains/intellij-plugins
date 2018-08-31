@@ -7,6 +7,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.cucumber.CucumberUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +27,10 @@ public class CucumberJavaInjector implements MultiHostInjector {
         if (annotation != null &&
             (CucumberJavaUtil.isCucumberStepAnnotation(annotation) || CucumberJavaUtil.isCucumberHookAnnotation(annotation))) {
           final TextRange range = new TextRange(1, element.getTextLength() - 1);
-          registrar.startInjecting(regexpLanguage).addPlace(null, null, (PsiLanguageInjectionHost)element, range).doneInjecting();
+          String stepDefinitionPattern = range.substring(element.getText());
+          if (!CucumberUtil.isCucumberExpression(stepDefinitionPattern)) {
+            registrar.startInjecting(regexpLanguage).addPlace(null, null, (PsiLanguageInjectionHost)element, range).doneInjecting();
+          }
         }
       }
     }
@@ -34,7 +38,7 @@ public class CucumberJavaInjector implements MultiHostInjector {
 
   @NotNull
   @Override
-  public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
+  public List<Class<? extends PsiElement>> elementsToInjectIn() {
     return Collections.singletonList(PsiLiteralExpression.class);
   }
 }

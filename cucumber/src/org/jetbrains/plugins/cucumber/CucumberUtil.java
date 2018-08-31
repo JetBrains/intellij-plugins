@@ -276,6 +276,24 @@ public class CucumberUtil {
   }
 
   /**
+   * Step definition could be defined by regular expression or by Cucumber Expression (text with predefined patterns {int}, {float}, {word},
+   * {string} or defined by user). This methods helps to distinguish these two cases
+   */
+  public static boolean isCucumberExpression(@NotNull String stepDefinitionPattern) {
+    final boolean[] containsParameterTypes = {false};
+    buildRegexpFromCucumberExpression(stepDefinitionPattern, new ParameterTypeManager() {
+      @Nullable
+      @Override
+      public String getParameterTypeValue(@NotNull String name) {
+        containsParameterTypes[0] = true;
+        return null;
+      }
+    });
+
+    return containsParameterTypes[0];
+  }
+
+  /**
    * Accepts each element and checks if it has reference to some other element
    */
   private static class MyReferenceCheckingProcessor implements TextOccurenceProcessor {
