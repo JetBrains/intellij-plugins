@@ -6,6 +6,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.intellij.plugins.markdown.MarkdownBundle;
@@ -22,8 +23,7 @@ import java.util.Optional;
 
 public class MarkdownSettingsConfigurable implements SearchableConfigurable {
   static final String PLANT_UML_DIRECTORY = "plantUML";
-  static final String PLANTUML_JAR_URL =
-    "http://central.maven.org/maven2/net/sourceforge/plantuml/plantuml/6703/plantuml-6703.jar";
+  static final String PLANTUML_JAR_URL = Registry.stringValue("markdown.plantuml.download.link");
   static final String PLANTUML_JAR = "plantuml.jar";
 
   private static final String DOWNLOAD_CACHE_DIRECTORY = "download-cache";
