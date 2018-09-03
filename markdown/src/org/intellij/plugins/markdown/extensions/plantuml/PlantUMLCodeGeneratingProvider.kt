@@ -1,11 +1,6 @@
 package org.intellij.plugins.markdown.extensions.plantuml
 
-import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.util.ExecUtil
-import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.SystemInfoRt
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.util.containers.ContainerUtil
 import org.intellij.plugins.markdown.extensions.MarkdownCodeFenceCacheableProvider
 import org.intellij.plugins.markdown.settings.MarkdownSettingsConfigurable
 import org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCache.MARKDOWN_FILE_PATH_KEY
@@ -13,7 +8,7 @@ import org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCacheColl
 import org.intellij.plugins.markdown.ui.preview.MarkdownUtil
 import java.io.File
 import java.io.IOException
-import java.util.concurrent.TimeUnit
+import java.net.URLClassLoader
 
 internal class PlantUMLProvider(private var cacheCollector: MarkdownCodeFencePluginCacheCollector?) : MarkdownCodeFenceCacheableProvider {
   // this empty constructor is needed for the component initialization
@@ -48,35 +43,15 @@ internal class PlantUMLProvider(private var cacheCollector: MarkdownCodeFencePlu
                                                          && MarkdownSettingsConfigurable.isPlantUMLAvailable()
 
   companion object {
-    private val LOG = Logger.getInstance(PlantUMLCodeFenceLanguageProvider::class.java)
+    private val sourceStringReader by lazyOf(Class.forName("net.sourceforge.plantuml.SourceStringReader", false, URLClassLoader(
+      arrayOf(MarkdownSettingsConfigurable.getDownloadedJarPath()?.toURI()?.toURL()), this::class.java.classLoader)))
+
+    private val generateImageMethod by lazyOf(sourceStringReader.getDeclaredMethod("generateImage", Class.forName("java.io.File")))
+
+
     @Throws(IOException::class)
     private fun storeDiagram(source: String, fileName: String) {
-      val commandLine = GeneralCommandLine(getShellCommand() ?: run {
-        LOG.warn("Cannot find shell to generate the plantUML diagram.")
-        return
-      })
-
-      commandLine.addParameter("echo \"$source\" " +
-                               "| java -Djava.awt.headless=true -jar ${MarkdownSettingsConfigurable.getDownloadedJarPath()?.absolutePath} -pipe " +
-                               "> $fileName")
-
-      commandLine.createProcess().waitFor(5, TimeUnit.SECONDS)
-    }
-
-    private fun getShellCommand(): List<String>? {
-      if (SystemInfoRt.isWindows) return ContainerUtil.immutableList(ExecUtil.windowsShellName, "/c")
-
-      val shell = System.getenv("SHELL")
-      if (shell == null || !File(shell).canExecute()) {
-        return null
-      }
-
-      val commands = ContainerUtil.newArrayList(shell)
-      if (!shell.endsWith("/tcsh") && !shell.endsWith("/csh")) {
-        commands.add("--login")
-      }
-      commands.add("-c")
-      return commands
+      generateImageMethod.invoke(sourceStringReader.getConstructor(String::class.java).newInstance(source), File(fileName))
     }
   }
 }
