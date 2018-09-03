@@ -129,9 +129,8 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
       DownloadableFileDescription description =
         downloader.createFileDescription(MarkdownSettingsConfigurable.PLANTUML_JAR_URL, MarkdownSettingsConfigurable.PLANTUML_JAR);
 
-      ApplicationManager.getApplication().invokeAndWait(
-        () -> downloader.createDownloader(Collections.singletonList(description), MarkdownSettingsConfigurable.PLANT_UML_DIRECTORY + ".jar")
-          .downloadFilesWithProgress(MarkdownSettingsConfigurable.getDirectoryToDownload().getAbsolutePath(), null, myMainPanel));
+      downloader.createDownloader(Collections.singletonList(description), MarkdownSettingsConfigurable.PLANT_UML_DIRECTORY + ".jar")
+        .downloadFilesWithProgress(MarkdownSettingsConfigurable.getDirectoryToDownload().getAbsolutePath(), null, myMainPanel);
 
       updatePlantUMLLabel(true);
     }, null);
