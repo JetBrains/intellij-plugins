@@ -19,6 +19,9 @@ import com.intellij.util.ThreeState;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
 import com.intellij.xml.XmlElementDescriptor;
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
+import org.angular2.codeInsight.attributes.Angular2BindingDescriptor;
+import org.angular2.codeInsight.attributes.Angular2EventHandlerDescriptor;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes;
 import org.angular2.lang.html.parser.Angular2HtmlParsing;
@@ -67,7 +70,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
           if (isAngular2Attribute(name) || !directives.contains(name)) continue;
           final PsiElement declaration = applicableDirective(project, name, xmlTag, AngularDirectivesIndex.KEY);
           if (isApplicable(declaration)) {
-            for (XmlAttributeDescriptor binding : AngularAttributeDescriptor.getFieldBasedDescriptors((JSImplicitElement)declaration)) {
+            for (XmlAttributeDescriptor binding : Angular2AttributeDescriptor.getFieldBasedDescriptors((JSImplicitElement)declaration)) {
               result.put(binding.getName(), binding);
             }
           }
@@ -192,7 +195,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
         if (isAngular2Attribute(name) || name.equals(attrName)) continue;
         declaration = applicableDirective(project, name, xmlTag, AngularDirectivesIndex.KEY);
         if (isApplicable(declaration)) {
-          for (XmlAttributeDescriptor binding : AngularAttributeDescriptor.getFieldBasedDescriptors((JSImplicitElement)declaration)) {
+          for (XmlAttributeDescriptor binding : Angular2AttributeDescriptor.getFieldBasedDescriptors((JSImplicitElement)declaration)) {
             if (binding.getName().equals(attrName)) {
               return binding;
             }
@@ -206,19 +209,19 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
         for (XmlAttributeDescriptor attributeDescriptor : descriptors) {
           final String name = attributeDescriptor.getName();
           if (name.startsWith("on") && attrName.equals("(" + name.substring(2) + ")")) {
-            return new AngularBindingDescriptor(attributeDescriptor.getDeclaration(), attrName);
+            return new Angular2BindingDescriptor(attributeDescriptor.getDeclaration(), attrName);
           } else if (attrName.equals("[" + name + "]")){
-            return new AngularEventHandlerDescriptor(attributeDescriptor.getDeclaration(), attrName);
+            return new Angular2EventHandlerDescriptor(attributeDescriptor.getDeclaration(), attrName);
           }
         }
       }
 
       IElementType attrType = Angular2HtmlParsing.parseAttributeName(attrName, false).first;
       if (attrType == Angular2HtmlElementTypes.PROPERTY_BINDING) {
-        return new AngularBindingDescriptor(xmlTag, attrName);
+        return new Angular2BindingDescriptor(xmlTag, attrName);
       }
       if (attrType == Angular2HtmlElementTypes.EVENT) {
-        return new AngularEventHandlerDescriptor(xmlTag, attrName);
+        return new Angular2EventHandlerDescriptor(xmlTag, attrName);
       }
       return getAngular2Descriptor(attrName, project);
     }

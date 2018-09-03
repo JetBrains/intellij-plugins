@@ -3,6 +3,7 @@ package org.angular2.lang.expr.psi;
 
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSStatement;
+import com.intellij.lang.javascript.psi.JSVarStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,6 +17,9 @@ public interface Angular2TemplateBinding extends JSStatement {
   @Override
   @Nullable
   String getName();
+
+  @Nullable
+  JSVarStatement getVariableDefinition();
 
   @Nullable
   JSExpression getExpression();

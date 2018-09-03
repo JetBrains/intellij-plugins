@@ -19,16 +19,15 @@ import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl;
 import com.intellij.psi.impl.source.xml.XmlDescriptorUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.codeInsight.DirectiveUtil;
-import org.angularjs.codeInsight.attributes.AngularAttributeDescriptor;
 import org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
@@ -80,8 +79,8 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
     final String[] split = attributes.split(",");
     final List<XmlAttributeDescriptor> result = new ArrayList<>();
     if (context != null && Angular2LangUtil.isAngular2Context(context)) {
-      result.addAll(AngularAttributeDescriptor.getFieldBasedDescriptors(declaration));
-      result.addAll(AngularAttributeDescriptor.getExistingVarsAndRefsDescriptors(context));
+      result.addAll(Angular2AttributeDescriptor.getFieldBasedDescriptors(declaration));
+      result.addAll(Angular2AttributeDescriptor.getExistingVarsAndRefsDescriptors(context));
     } else if (split.length != 1 || !split[0].isEmpty()) {
       for (String aSplit : split) {
         result.add(new AnyXmlAttributeDescriptor(DirectiveUtil.getAttributeName(aSplit)));

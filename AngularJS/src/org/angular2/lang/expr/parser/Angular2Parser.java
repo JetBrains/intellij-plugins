@@ -194,7 +194,7 @@ public class Angular2Parser
         else {
           isVar = builder.getTokenType() == LET_KEYWORD;
           if (isVar) builder.advanceLexer();
-          rawKey = parseTemplateBindingKey();
+          rawKey = parseTemplateBindingKey(isVar);
           key = isVar ? rawKey : templateKey + StringUtil.capitalize(rawKey);
           if (builder.getTokenType() == COLON) {
             builder.advanceLexer();
@@ -205,7 +205,7 @@ public class Angular2Parser
         if (isVar) {
           if (builder.getTokenType() == EQ) {
             builder.advanceLexer();
-            name = parseTemplateBindingKey();
+            name = parseTemplateBindingKey(false);
           }
           else {
             name = "$implicit";
@@ -214,7 +214,7 @@ public class Angular2Parser
         else if (builder.getTokenType() == AS_KEYWORD) {
           builder.advanceLexer();
           name = rawKey;
-          key = parseTemplateBindingKey();
+          key = parseTemplateBindingKey(true);
           isVar = true;
         }
         else if (builder.getTokenType() != LET_KEYWORD
@@ -227,7 +227,7 @@ public class Angular2Parser
         if (builder.getTokenType() == AS_KEYWORD && !isVar) {
           final PsiBuilder.Marker localBinding = builder.mark();
           builder.advanceLexer();
-          String letName = parseTemplateBindingKey();
+          String letName = parseTemplateBindingKey(true);
           localBinding.done(createTemplateBindingStatement(letName, true, key));
         }
         if (builder.getTokenType() == SEMICOLON
@@ -238,14 +238,14 @@ public class Angular2Parser
       while (!builder.eof());
     }
 
-    private String parseTemplateBindingKey() {
+    private String parseTemplateBindingKey(boolean isVariable) {
       final PsiBuilder.Marker key = builder.mark();
       boolean operatorFound = true;
       StringBuilder result = new StringBuilder();
       do {
         if (!isIdentifierName(builder.getTokenType())) {
           if (result.length() > 0) {
-            key.done(TEMPLATE_BINDING_KEY);
+            finishKey(key, isVariable);
           }
           else {
             key.drop();
@@ -265,9 +265,18 @@ public class Angular2Parser
         builder.advanceLexer();
       }
       while (operatorFound);
-      key.done(TEMPLATE_BINDING_KEY);
+      finishKey(key, isVariable);
       return result.toString();
     }
+  }
+
+  private static void finishKey(PsiBuilder.Marker key, boolean isVariable) {
+    //TODO parse as variable definition
+    //if (isVariable) {
+    //  key.done(TEMPLATE_VARIABLE);
+    //} else {
+      key.done(TEMPLATE_BINDING_KEY);
+    //}
   }
 
   protected class Angular2ExpressionParser extends ExpressionParser<Angular2Parser> {

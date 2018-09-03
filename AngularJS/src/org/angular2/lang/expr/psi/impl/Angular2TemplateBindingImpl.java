@@ -3,6 +3,7 @@ package org.angular2.lang.expr.psi.impl;
 
 import com.intellij.lang.javascript.JSExtendedLanguagesTokenSetProvider;
 import com.intellij.lang.javascript.psi.JSExpression;
+import com.intellij.lang.javascript.psi.JSVarStatement;
 import com.intellij.lang.javascript.psi.impl.JSStatementImpl;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
@@ -49,6 +50,15 @@ public class Angular2TemplateBindingImpl extends JSStatementImpl implements Angu
   @Override
   public String getName() {
     return myName;
+  }
+
+  @Nullable
+  @Override
+  public JSVarStatement getVariableDefinition() {
+    return (JSVarStatement)Arrays.stream(getChildren())
+      .filter(node -> node instanceof JSVarStatement)
+      .findFirst()
+      .orElse(null);
   }
 
   @Override

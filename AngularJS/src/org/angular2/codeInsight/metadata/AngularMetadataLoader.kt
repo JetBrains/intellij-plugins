@@ -3,6 +3,7 @@ package org.angular2.codeInsight.metadata
 import com.google.gson.Gson
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.util.CachedValueProvider
@@ -48,10 +49,11 @@ object AngularMetadataLoader {
     val classes = mutableListOf<AngularClass>()
 
     val metadata = json["metadata"]
+    val origins = json["origins"]
     if (metadata is Map<*, *>) {
       for (clazz in metadata) {
         if (clazz.key is String && clazz.value is Map<*, *>) {
-          val parsed = parseClass(file, visited, classes, clazz.key as String, clazz.value as Map<*, *>)
+          val parsed = parseClass(file, visited, classes, clazz.key as String, clazz.value as Map<*, *>, origins)
           if (parsed != null) {
             classes.add(parsed)
           }
@@ -62,7 +64,12 @@ object AngularMetadataLoader {
     return classes
   }
 
-  private fun parseClass(file: VirtualFile, visited: MutableSet<VirtualFile>, classes: List<AngularClass>, key: String, value: Map<*, *>): AngularClass? {
+  private fun parseClass(file: VirtualFile,
+                         visited: MutableSet<VirtualFile>,
+                         classes: List<AngularClass>,
+                         key: String,
+                         value: Map<*, *>,
+                         origins: Any?): AngularClass? {
     if (value["__symbolic"] != "class") return null
     val members = value["members"]
     val inputs = mutableListOf<AngularField>()
@@ -105,6 +112,7 @@ object AngularMetadataLoader {
         }
       }
     }
+    val sourcePath = getSourcePath(file, key, origins)
     val decorator = findDecorator(value, "Component") ?: findDecorator(value, "Directive")
     if (decorator is Map<*, *>) {
       val arguments = decorator["arguments"]
@@ -115,11 +123,18 @@ object AngularMetadataLoader {
         if (selector is String) {
           parseFieldsFromDecorator(argumentsMap, inputs, "inputs")
           parseFieldsFromDecorator(argumentsMap, outputs, "outputs")
-          return AngularDirective(key, inputs.toTypedArray(), outputs.toTypedArray(), selector)
+          return AngularDirective(key, sourcePath, inputs.toTypedArray(), outputs.toTypedArray(), selector)
         }
       }
     }
-    return AngularClass(key, inputs.toTypedArray(), outputs.toTypedArray())
+    return AngularClass(key, sourcePath, inputs.toTypedArray(), outputs.toTypedArray())
+  }
+
+  private fun getSourcePath(file: VirtualFile, key: String, origins: Any?): String {
+    if (origins != null && origins is Map<*, *> && origins[key] is String) {
+      return origins[key] as String
+    }
+    return StringUtil.trimEnd(file.name, "metadata.json")
   }
 
   private fun parseFieldsFromDecorator(decorator: Map<*, *>,

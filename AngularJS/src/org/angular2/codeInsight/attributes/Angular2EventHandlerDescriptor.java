@@ -1,4 +1,5 @@
-package org.angularjs.codeInsight.attributes;
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.angular2.codeInsight.attributes;
 
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -14,15 +15,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author Dennis.Ushakov
- */
-public class AngularEventHandlerDescriptor extends AngularAttributeDescriptor {
+public class Angular2EventHandlerDescriptor extends Angular2AttributeDescriptor {
   public static final String OUTPUT = "Output";
-  public static final NotNullFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> FACTORY = AngularEventHandlerDescriptor::createEventHandler;
+  public static final NotNullFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> FACTORY = Angular2EventHandlerDescriptor::createEventHandler;
 
-  public AngularEventHandlerDescriptor(PsiElement element,
-                                  String attributeName) {
+  public Angular2EventHandlerDescriptor(PsiElement element,
+                                        String attributeName) {
     super(element.getProject(), attributeName, null, element);
   }
 
@@ -31,13 +29,13 @@ public class AngularEventHandlerDescriptor extends AngularAttributeDescriptor {
   }
 
   @NotNull
-  private static AngularEventHandlerDescriptor createEventHandler(Pair<PsiElement, String> dom) {
+  private static Angular2EventHandlerDescriptor createEventHandler(Pair<PsiElement, String> dom) {
     PsiElement element = dom.first;
     if (element instanceof TypeScriptClass) {
       JSQualifiedNamedElement declaration = findMember((JSClass)element, dom.second);
       if (declaration != null) return createEventHandler(Pair.pair(declaration, dom.second));
     }
-    return new AngularEventHandlerDescriptor(dom.first, "(" + dom.second + ")");
+    return new Angular2EventHandlerDescriptor(dom.first, "(" + dom.second + ")");
   }
 
   @Nullable

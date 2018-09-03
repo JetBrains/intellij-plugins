@@ -41,10 +41,10 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.MultiMap;
+import org.angular2.codeInsight.attributes.Angular2EventHandlerDescriptor;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angularjs.codeInsight.AngularJSProcessor;
-import org.angularjs.codeInsight.attributes.AngularEventHandlerDescriptor;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.NotNull;
@@ -328,8 +328,8 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
       return false;
     }
     XmlAttribute parent = ObjectUtils.tryCast(result.getParent(), XmlAttribute.class);
-    AngularEventHandlerDescriptor descriptor = ObjectUtils.tryCast(parent != null ? parent.getDescriptor() : null,
-                                                                   AngularEventHandlerDescriptor.class);
+    Angular2EventHandlerDescriptor descriptor = ObjectUtils.tryCast(parent != null ? parent.getDescriptor() : null,
+                                                                    Angular2EventHandlerDescriptor.class);
     PsiElement declaration = descriptor != null ? descriptor.getDeclaration() : null;
     JSType type = null;
     if (declaration instanceof JSField) {

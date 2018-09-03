@@ -63,7 +63,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgIfResolve() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("ngIf.ts", "package.json", "ngIf.ts");
+      myFixture.configureByFiles("ngIf.ts", "ng_if.ts", "package.json");
       checkVariableResolve("my_use<caret>r.last", "my_user", JSDefinitionExpression.class);
     });
   }
@@ -116,7 +116,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgForExternalResolve() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.configureByFiles("ngFor.after.html", "package.json");
+      myFixture.configureByFiles("ngFor.after.html", "ng_for_of.ts", "package.json");
       checkVariableResolve("myTo<caret>do", "myTodo", JSVariable.class);
     });
   }
@@ -128,7 +128,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgForInlineResolve() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.configureByFiles("ngFor.after.ts", "package.json");
+      myFixture.configureByFiles("ngFor.after.ts", "ng_for_of.ts", "package.json");
       checkVariableResolve("\"myTo<caret>do\"", "myTodo", JSVariable.class);
     });
   }

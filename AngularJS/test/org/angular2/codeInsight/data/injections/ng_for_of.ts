@@ -22,7 +22,7 @@ import {
     TemplateRef,
     TrackByFunction,
     ViewContainerRef
-} from './iterable_differs';
+} from '@angular/core';
 
 export class NgForOfContext<T> {
   constructor(
