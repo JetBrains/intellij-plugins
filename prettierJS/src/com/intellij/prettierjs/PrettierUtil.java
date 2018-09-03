@@ -5,13 +5,11 @@ import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.json.psi.JsonFile;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfigLangSubstitutor;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -61,10 +59,6 @@ public class PrettierUtil {
   private static final String JSX_BRACKET_SAME_LINE = "jsxBracketSameLine";
 
   private PrettierUtil() {
-  }
-
-  public static boolean isEnabled() {
-    return ApplicationManager.getApplication().isUnitTestMode() || Registry.is("prettierjs.enabled");
   }
 
   public static boolean isConfigFile(@NotNull PsiElement element) {

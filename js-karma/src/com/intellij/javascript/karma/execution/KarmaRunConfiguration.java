@@ -124,8 +124,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     if (project.isDisposed()) {
       return null;
     }
-    RunManager runManager = RunManager.getInstance(project);
-    RunnerAndConfigurationSettings templateSettings = runManager.getConfigurationTemplate(KarmaConfigurationType.getFactory());
+    RunnerAndConfigurationSettings templateSettings = RunManager.getInstance(project).getConfigurationTemplate(KarmaConfigurationType.getInstance());
     RunConfiguration rc = templateSettings.getConfiguration();
     if (rc instanceof KarmaRunConfiguration) {
       return (KarmaRunConfiguration)rc;

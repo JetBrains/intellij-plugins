@@ -1,3 +1,5 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+
 // This is a generated file. Not intended for manual editing.
 package com.jetbrains.lang.dart;
 
@@ -245,6 +247,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     else if (t == MIXIN_APPLICATION) {
       r = mixinApplication(b, 0);
     }
+    else if (t == MIXIN_DECLARATION) {
+      r = mixinDeclaration(b, 0);
+    }
     else if (t == MIXINS) {
       r = mixins(b, 0);
     }
@@ -268,6 +273,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     }
     else if (t == NORMAL_PARAMETER_TYPE) {
       r = normalParameterType(b, 0);
+    }
+    else if (t == ON_MIXINS) {
+      r = onMixins(b, 0);
     }
     else if (t == ON_PART) {
       r = onPart(b, 0);
@@ -4400,6 +4408,56 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // metadata* 'mixin' componentName typeParameters? onMixins? interfaces? classBody
+  public static boolean mixinDeclaration(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mixinDeclaration")) return false;
+    if (!nextTokenIs(b, "<mixin declaration>", AT, MIXIN)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, MIXIN_DECLARATION, "<mixin declaration>");
+    r = mixinDeclaration_0(b, l + 1);
+    r = r && consumeToken(b, MIXIN);
+    r = r && componentName(b, l + 1);
+    r = r && mixinDeclaration_3(b, l + 1);
+    r = r && mixinDeclaration_4(b, l + 1);
+    r = r && mixinDeclaration_5(b, l + 1);
+    r = r && classBody(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // metadata*
+  private static boolean mixinDeclaration_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mixinDeclaration_0")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!metadata(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "mixinDeclaration_0", c)) break;
+    }
+    return true;
+  }
+
+  // typeParameters?
+  private static boolean mixinDeclaration_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mixinDeclaration_3")) return false;
+    typeParameters(b, l + 1);
+    return true;
+  }
+
+  // onMixins?
+  private static boolean mixinDeclaration_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mixinDeclaration_4")) return false;
+    onMixins(b, l + 1);
+    return true;
+  }
+
+  // interfaces?
+  private static boolean mixinDeclaration_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mixinDeclaration_5")) return false;
+    interfaces(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
   // 'with' typeList
   public static boolean mixins(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mixins")) return false;
@@ -4889,6 +4947,20 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = !consumeToken(b, RPAREN);
     exit_section_(b, l, m, r, false, null);
     return r;
+  }
+
+  /* ********************************************************** */
+  // 'on' typeList
+  public static boolean onMixins(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "onMixins")) return false;
+    if (!nextTokenIs(b, ON)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, ON_MIXINS, null);
+    r = consumeToken(b, ON);
+    p = r; // pin = 1
+    r = r && typeList(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -5787,7 +5859,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody?
+  // superclass? mixins? interfaces? ('native' stringLiteralExpression?)? classBody?
   static boolean standardClassDeclarationTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "standardClassDeclarationTail")) return false;
     boolean r;
@@ -5796,70 +5868,60 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = r && standardClassDeclarationTail_1(b, l + 1);
     r = r && standardClassDeclarationTail_2(b, l + 1);
     r = r && standardClassDeclarationTail_3(b, l + 1);
+    r = r && standardClassDeclarationTail_4(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // (superclass mixins?)?
+  // superclass?
   private static boolean standardClassDeclarationTail_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "standardClassDeclarationTail_0")) return false;
-    standardClassDeclarationTail_0_0(b, l + 1);
+    superclass(b, l + 1);
     return true;
   }
 
-  // superclass mixins?
-  private static boolean standardClassDeclarationTail_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "standardClassDeclarationTail_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = superclass(b, l + 1);
-    r = r && standardClassDeclarationTail_0_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
   // mixins?
-  private static boolean standardClassDeclarationTail_0_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "standardClassDeclarationTail_0_0_1")) return false;
+  private static boolean standardClassDeclarationTail_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "standardClassDeclarationTail_1")) return false;
     mixins(b, l + 1);
     return true;
   }
 
   // interfaces?
-  private static boolean standardClassDeclarationTail_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "standardClassDeclarationTail_1")) return false;
+  private static boolean standardClassDeclarationTail_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "standardClassDeclarationTail_2")) return false;
     interfaces(b, l + 1);
     return true;
   }
 
   // ('native' stringLiteralExpression?)?
-  private static boolean standardClassDeclarationTail_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "standardClassDeclarationTail_2")) return false;
-    standardClassDeclarationTail_2_0(b, l + 1);
+  private static boolean standardClassDeclarationTail_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "standardClassDeclarationTail_3")) return false;
+    standardClassDeclarationTail_3_0(b, l + 1);
     return true;
   }
 
   // 'native' stringLiteralExpression?
-  private static boolean standardClassDeclarationTail_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "standardClassDeclarationTail_2_0")) return false;
+  private static boolean standardClassDeclarationTail_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "standardClassDeclarationTail_3_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, NATIVE);
-    r = r && standardClassDeclarationTail_2_0_1(b, l + 1);
+    r = r && standardClassDeclarationTail_3_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // stringLiteralExpression?
-  private static boolean standardClassDeclarationTail_2_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "standardClassDeclarationTail_2_0_1")) return false;
+  private static boolean standardClassDeclarationTail_3_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "standardClassDeclarationTail_3_0_1")) return false;
     stringLiteralExpression(b, l + 1);
     return true;
   }
 
   // classBody?
-  private static boolean standardClassDeclarationTail_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "standardClassDeclarationTail_3")) return false;
+  private static boolean standardClassDeclarationTail_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "standardClassDeclarationTail_4")) return false;
     classBody(b, l + 1);
     return true;
   }
@@ -6314,6 +6376,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   //                              | exportStatement
   //                              | partStatement
   //                              | classDefinition
+  //                              | mixinDeclaration
   //                              | enumDefinition
   //                              | functionTypeAlias
   //                              | getterOrSetterDeclaration
@@ -6330,6 +6393,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = exportStatement(b, l + 1);
     if (!r) r = partStatement(b, l + 1);
     if (!r) r = classDefinition(b, l + 1);
+    if (!r) r = mixinDeclaration(b, l + 1);
     if (!r) r = enumDefinition(b, l + 1);
     if (!r) r = functionTypeAlias(b, l + 1);
     if (!r) r = getterOrSetterDeclaration(b, l + 1);

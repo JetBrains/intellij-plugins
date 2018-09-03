@@ -29,7 +29,6 @@ import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
@@ -53,6 +52,11 @@ public class TsLintFileFixAction extends JSLinterFixAction {
   public void update(@NotNull AnActionEvent e) {
     super.update(e);
     e.getPresentation().setText(JSBundle.message("javascript.linter.action.fix.problems.file.text", TsLintBundle.message("tslint.framework.title")));
+  }
+
+  @Override
+  protected boolean isFileAccepted(@NotNull VirtualFile file) {
+    return TypeScriptUtil.TYPESCRIPT_FILE_TYPES.contains(file.getFileType());
   }
 
   @NotNull
@@ -85,10 +89,5 @@ public class TsLintFileFixAction extends JSLinterFixAction {
         completeCallback.run();
       }
     };
-  }
-
-  @Override
-  protected Collection<FileType> getFileTypes() {
-    return TypeScriptUtil.TYPESCRIPT_FILE_TYPES;
   }
 }

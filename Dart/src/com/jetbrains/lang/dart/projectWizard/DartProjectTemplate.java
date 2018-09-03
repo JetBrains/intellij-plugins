@@ -105,7 +105,7 @@ public abstract class DartProjectTemplate {
       final RunManager runManager = RunManager.getInstance(module.getProject());
       try {
         final RunnerAndConfigurationSettings settings =
-          runManager.createConfiguration("", JavascriptDebugConfigurationType.getTypeInstance().getFactory());
+          runManager.createConfiguration("", JavascriptDebugConfigurationType.getTypeInstance());
 
         ((JavaScriptDebugConfiguration)settings.getConfiguration()).setUri(url.toDecodedForm());
         settings.setName(((JavaScriptDebugConfiguration)settings.getConfiguration()).suggestedName());
