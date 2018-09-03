@@ -138,23 +138,6 @@ public class CucumberStepReference implements PsiPolyVariantReference {
     return index.findStepDefinitions(myStep.getContainingFile(), ((GherkinStepImpl)myStep));
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    CucumberStepReference element = (CucumberStepReference)o;
-
-    if (!myStep.equals(element.getElement())) return false;
-
-    return true;
-  }
-
-  @Override
-  public int hashCode() {
-    return myStep.hashCode();
-  }
-
   private static class MyResolver implements ResolveCache.PolyVariantResolver<CucumberStepReference> {
     @Override
     @NotNull
