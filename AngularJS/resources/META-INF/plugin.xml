@@ -130,6 +130,7 @@
                      groupName="Angular" enabledByDefault="true" level="WARNING" language="Angular2Html"/>
     <completion.contributor language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2ServiceCompletionContributor"
                             id="Angular2ServiceCompletionContributorHtml" order="before AngularJSXmlCompletionContributor"/>
+    <xml.attributeDescriptorsProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider" order="first"/>
 
     <!-- Angular 2 Expression Language contributions -->
     <codeInsight.template.postfixTemplateProvider language="Angular2"

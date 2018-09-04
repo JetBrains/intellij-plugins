@@ -117,7 +117,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testNgForExternalResolve() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("ngFor.after.html", "ng_for_of.ts", "package.json");
-      checkVariableResolve("myTo<caret>do", "myTodo", JSVariable.class);
+      checkVariableResolve("\"myTo<caret>do\"", "myTodo", JSVariable.class);
     });
   }
 

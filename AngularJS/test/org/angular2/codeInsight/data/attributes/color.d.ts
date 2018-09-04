@@ -21,3 +21,13 @@ export interface HasRenderer {
 export declare type ThemePalette = 'primary' | 'accent' | 'warn' | undefined;
 /** Mixin to augment a directive with a `color` property. */
 export declare function mixinColor<T extends Constructor<HasRenderer>>(base: T, defaultColor?: ThemePalette): Constructor<CanColor> & T;
+
+/** @docs-private */
+export interface CanDisable {
+    disabled: boolean;
+}
+
+/** @docs-private */
+export interface CanDisableRipple {
+    disableRipple: boolean;
+}

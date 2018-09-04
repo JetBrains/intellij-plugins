@@ -22,16 +22,23 @@ public class AngularAttributesRegistry {
   private static final List<String> CUSTOM_NG_ATTRS = Collections.singletonList("i18n");
 
   @NotNull
-  static AngularAttributeDescriptor createDescriptor(@Nullable final Project project,
-                                                     @NotNull String directiveName,
-                                                     @Nullable PsiElement declaration) {
+  public static AngularAttributeDescriptor createDescriptor(@Nullable final Project project,
+                                                            @NotNull String directiveName,
+                                                            @Nullable PsiElement declaration) {
+    return createDescriptor(project, directiveName, declaration != null ? Collections.singletonList(declaration) : Collections.emptyList());
+  }
+
+  @NotNull
+  public static AngularAttributeDescriptor createDescriptor(@Nullable final Project project,
+                                                            @NotNull String directiveName,
+                                                            @NotNull List<PsiElement> declarations) {
     if ("ng-controller".equals(directiveName)) {
-      return new AngularAttributeDescriptor(project, directiveName, AngularControllerIndex.KEY, declaration);
+      return new AngularAttributeDescriptor(project, directiveName, AngularControllerIndex.KEY, declarations);
     }
     if ("ng-app".equals(directiveName)) {
-      return new AngularAttributeDescriptor(project, directiveName, AngularModuleIndex.KEY, declaration);
+      return new AngularAttributeDescriptor(project, directiveName, AngularModuleIndex.KEY, declarations);
     }
-    return new AngularAttributeDescriptor(project, directiveName, null, declaration);
+    return new AngularAttributeDescriptor(project, directiveName, null, declarations);
   }
 
   public static boolean isAngularExpressionAttribute(XmlAttribute parent) {
@@ -54,7 +61,7 @@ public class AngularAttributesRegistry {
     final PsiElement directive = descriptor != null ? descriptor.getDeclaration() : null;
     if (directive instanceof JSImplicitElement) {
       final String restrict = ((JSImplicitElement)directive).getTypeString();
-      final String [] args = restrict != null ? restrict.split(";", -1) : null;
+      final String[] args = restrict != null ? restrict.split(";", -1) : null;
       return args != null && args.length > 2 ? args[2] : "";
     }
     return "";
@@ -64,5 +71,4 @@ public class AngularAttributesRegistry {
   public static List<String> getCustomAngularAttributes() {
     return CUSTOM_NG_ATTRS;
   }
-
 }

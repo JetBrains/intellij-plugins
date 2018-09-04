@@ -26,9 +26,9 @@ import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider;
 import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.codeInsight.DirectiveUtil;
-import org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,7 +81,8 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
     if (context != null && Angular2LangUtil.isAngular2Context(context)) {
       result.addAll(Angular2AttributeDescriptor.getFieldBasedDescriptors(declaration));
       result.addAll(Angular2AttributeDescriptor.getExistingVarsAndRefsDescriptors(context));
-    } else if (split.length != 1 || !split[0].isEmpty()) {
+    }
+    else if (split.length != 1 || !split[0].isEmpty()) {
       for (String aSplit : split) {
         result.add(new AnyXmlAttributeDescriptor(DirectiveUtil.getAttributeName(aSplit)));
       }
@@ -102,7 +103,7 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
     final XmlAttributeDescriptor descriptor = ContainerUtil.find(getAttributesDescriptors(context),
                                                                  descriptor1 -> attributeName.equals(descriptor1.getName()));
     if (descriptor != null) return descriptor;
-    return context != null ? AngularJSAttributeDescriptorsProvider.getAngular2Descriptor(attributeName, context.getProject()) : null;
+    return context != null ? Angular2AttributeDescriptorsProvider.getAngular2Descriptor(attributeName, context.getProject()) : null;
   }
 
   @Override

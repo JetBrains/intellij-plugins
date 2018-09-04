@@ -2,6 +2,7 @@
 package org.angular2.lang;
 
 import com.intellij.javascript.nodejs.PackageJsonData;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
@@ -18,7 +19,7 @@ public class Angular2LangUtil {
     if (!context.isValid()) {
       return false;
     }
-    final PsiFile psiFile = context.getContainingFile();
+    final PsiFile psiFile = InjectedLanguageManager.getInstance(context.getProject()).getTopLevelFile(context);
     if (psiFile == null) {
       return false;
     }

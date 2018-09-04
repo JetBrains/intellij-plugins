@@ -16,13 +16,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Dennis.Ushakov
  */
 public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor implements XmlAttributeDescriptorEx, PsiPresentableMetaData {
   protected final Project myProject;
-  protected final PsiElement myElement;
+  protected final PsiElement[] myElements;
   private final String myAttributeName;
   private final StubIndexKey<String, JSImplicitElementProvider> myIndex;
 
@@ -32,20 +34,20 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
    * @deprecated to be removed in 2017.3
    */
   @Deprecated
-  public AngularAttributeDescriptor(final Project project,
-                                    String attributeName,
-                                    final StubIndexKey<String, JSImplicitElementProvider> index) {
-    this(project, attributeName, index, null);
+  public AngularAttributeDescriptor(@Nullable Project project,
+                                    @NotNull String attributeName,
+                                    @Nullable StubIndexKey<String, JSImplicitElementProvider> index) {
+    this(project, attributeName, index, Collections.emptyList());
   }
 
-  public AngularAttributeDescriptor(final Project project,
-                                    String attributeName,
-                                    final StubIndexKey<String, JSImplicitElementProvider> index,
-                                    PsiElement element) {
+  public AngularAttributeDescriptor(@Nullable Project project,
+                                    @NotNull String attributeName,
+                                    @Nullable StubIndexKey<String, JSImplicitElementProvider> index,
+                                    @NotNull List<PsiElement> elements) {
     myProject = project;
     myAttributeName = attributeName;
     myIndex = index;
-    myElement = element;
+    myElements = elements.toArray(PsiElement.EMPTY_ARRAY);
   }
 
   @Override
@@ -102,7 +104,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
 
   @Override
   public PsiElement getDeclaration() {
-    return myElement;
+    return ArrayUtil.getFirstElement(myElements);
   }
 
   @Nullable

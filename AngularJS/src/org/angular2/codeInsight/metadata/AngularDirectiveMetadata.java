@@ -2,6 +2,8 @@
 package org.angular2.codeInsight.metadata;
 
 import com.intellij.json.psi.JsonFile;
+import com.intellij.json.psi.JsonObject;
+import com.intellij.json.psi.JsonProperty;
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil;
 import com.intellij.lang.javascript.ecmascript6.TypeScriptQualifiedItemProcessor;
 import com.intellij.lang.javascript.index.JSSymbolUtil;
@@ -18,12 +20,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import static java.util.Arrays.stream;
 import static java.util.Collections.unmodifiableCollection;
@@ -35,9 +37,11 @@ public abstract class AngularDirectiveMetadata {
     final JSClass context = PsiTreeUtil.getContextOfType(declaration, JSClass.class);
     if (context != null) {
       return new SourceDirectiveMetadata(context);
-    } else if (declaration.getContainingFile() instanceof JsonFile) {
+    }
+    else if (declaration.getContainingFile() instanceof JsonFile) {
       return new CompiledDirectiveMetadata(declaration);
-    } else {
+    }
+    else {
       return new EmptyDirectiveMetadata();
     }
   }
@@ -99,7 +103,6 @@ public abstract class AngularDirectiveMetadata {
     @Override
     protected void readMetadata(@NotNull Collection<PropertyInfo> inputs, @NotNull Collection<PropertyInfo> outputs) {
     }
-
   }
 
   private static class SourceDirectiveMetadata extends AngularDirectiveMetadata {
@@ -131,7 +134,10 @@ public abstract class AngularDirectiveMetadata {
         });
     }
 
-    private static void readDecorator(@NotNull JSRecordType.PropertySignature prop, @NotNull JSAttributeListOwner element, @NotNull String decoratorName, @NotNull Collection<PropertyInfo> destination) {
+    private static void readDecorator(@NotNull JSRecordType.PropertySignature prop,
+                                      @NotNull JSAttributeListOwner element,
+                                      @NotNull String decoratorName,
+                                      @NotNull Collection<PropertyInfo> destination) {
       String decoratedName = getDecoratedName(element, decoratorName);
       if (decoratedName != null) {
         destination.add(new PropertyInfo(prop, element, decoratedName));
@@ -161,7 +167,6 @@ public abstract class AngularDirectiveMetadata {
       }
       return null;
     }
-
   }
 
   private static class CompiledDirectiveMetadata extends AngularDirectiveMetadata {
@@ -185,17 +190,19 @@ public abstract class AngularDirectiveMetadata {
     @Override
     protected void readMetadata(@NotNull Collection<PropertyInfo> inputs,
                                 @NotNull Collection<PropertyInfo> outputs) {
-      VirtualFile metadataJson = myDeclaration.getContainingFile().getVirtualFile();
-      AngularMetadata metadata = AngularMetadataLoader.INSTANCE.load(metadataJson);
-
-      String directiveName = StringUtil.trimStart(myDeclaration.getName(), "*");
-      List<AngularClass> directives= metadata.findDirectives(directiveName);
-      if (directives.isEmpty()) {
+      String className = getClassName();
+      if (className == null) {
         return;
       }
-      AngularClass directive = directives.get(0);
+      VirtualFile metadataJson = myDeclaration.getContainingFile().getVirtualFile();
+      AngularMetadata metadata = AngularMetadataLoader.INSTANCE.load(metadataJson);
+      AngularClass directive = metadata.findClass(className);
+      if (directive == null) {
+        return;
+      }
       VirtualFile parentDir = metadataJson.getParent();
       String sourcePath = directive.getSourcePath();
+      sourcePath = StringUtil.trimEnd(sourcePath, ".");
       if (!sourcePath.endsWith(".d.ts")) {
         sourcePath += ".d.ts";
       }
@@ -204,7 +211,7 @@ public abstract class AngularDirectiveMetadata {
       if (definitionPsi instanceof JSFile) {
         ResolveResultSink sink = new ResolveResultSink(definitionPsi, directive.getName());
         ES6PsiUtil.processExportDeclarationInScope((JSFile)definitionPsi, new TypeScriptQualifiedItemProcessor<>(sink, definitionPsi));
-        if (sink.getResult() instanceof  JSClass) {
+        if (sink.getResult() instanceof JSClass) {
           myDirectiveClass = (JSClass)sink.getResult();
           myDirectiveClassType = TypeScriptTypeParser
             .buildTypeFromClass(myDirectiveClass, false);
@@ -212,6 +219,20 @@ public abstract class AngularDirectiveMetadata {
       }
       stream(directive.getInputs()).map(this::locateField).forEach(inputs::add);
       stream(directive.getOutputs()).map(this::locateField).forEach(outputs::add);
+    }
+
+    @Nullable
+    private String getClassName() {
+      PsiFile metadataPsi = myDeclaration.getContainingFile();
+      PsiElement element = metadataPsi.findElementAt(myDeclaration.getTextOffset());
+      JsonProperty decorators = (JsonProperty)PsiTreeUtil.findFirstParent(element, el ->
+        el instanceof JsonProperty && "decorators".equals(((JsonProperty)el).getName())
+      );
+      if (decorators == null || !(decorators.getParent() instanceof JsonObject)) {
+        return null;
+      }
+      JsonProperty classDef = ObjectUtils.tryCast(decorators.getParent().getParent(), JsonProperty.class);
+      return classDef != null ? classDef.getName() : null;
     }
 
     private PropertyInfo locateField(AngularField field) {
@@ -225,5 +246,4 @@ public abstract class AngularDirectiveMetadata {
       return new PropertyInfo(null, myDeclaration, field.getName());
     }
   }
-
 }
