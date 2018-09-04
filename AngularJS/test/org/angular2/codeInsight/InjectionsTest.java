@@ -45,16 +45,9 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testBinding2Resolve() throws Exception {
+  public void testEventHandlerPrivate2Resolve() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("binding.html", "package.json", "event.ts");
-      checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
-    });
-  }
-
-  public void testBindingPrivate2Resolve() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("binding.html", "package.json", "event_private.ts");
+      myFixture.configureByFiles("event_private.html", "package.json", "event_private.ts");
       checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
     });
   }
