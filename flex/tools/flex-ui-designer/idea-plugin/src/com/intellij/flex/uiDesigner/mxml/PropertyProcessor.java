@@ -25,7 +25,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.meta.PsiMetaData;
 import com.intellij.psi.xml.*;
-import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.util.containers.ObjectIntHashMap;
 import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.NotNull;
@@ -646,68 +645,63 @@ class PropertyProcessor implements ValueWriter {
     out.write(Amf3Types.ARRAY);
     final int lengthPosition = out.allocateShort();
     int validChildrenCount = 0;
-    final StringBuilder builder = StringBuilderSpinAllocator.alloc();
+    final StringBuilder builder = new StringBuilder();
     final String value = valueProvider.getTrimmed();
-    try {
-      char quoteChar = '\'';
-      boolean inQuotes = false;
-      for (int index = 1, length = value.length(); index < length; index++) {
-        char c = value.charAt(index);
-        switch (c) {
-          case '[':
-            if (inQuotes) {
-              builder.append(c);
-            }
-            break;
-          case '"':
-          case '\'':
-            if (inQuotes) {
-              if (quoteChar == c) {
-                inQuotes = false;
-              }
-              else {
-                builder.append(c);
-              }
-            }
-            else {
-              inQuotes = true;
-              quoteChar = c;
-            }
-            break;
-          case ',':
-          case ']':
-            if (inQuotes) {
-              builder.append(c);
-            }
-            else {
-              int beginIndex = 0;
-              int endIndex = builder.length();
-              while (beginIndex < endIndex && builder.charAt(beginIndex) <= ' ') {
-                beginIndex++;
-              }
-              while (beginIndex < endIndex && builder.charAt(endIndex - 1) <= ' ') {
-                endIndex--;
-              }
-
-              if (endIndex == 0) {
-                writer.stringReference(XmlElementValueProvider.EMPTY);
-              }
-              else {
-                out.write(Amf3Types.STRING);
-                out.writeAmfUtf(builder, false, beginIndex, endIndex);
-              }
-
-              validChildrenCount++;
-              builder.setLength(0);
-            }
-            break;
-          default:
+    char quoteChar = '\'';
+    boolean inQuotes = false;
+    for (int index = 1, length = value.length(); index < length; index++) {
+      char c = value.charAt(index);
+      switch (c) {
+        case '[':
+          if (inQuotes) {
             builder.append(c);
-        }
+          }
+          break;
+        case '"':
+        case '\'':
+          if (inQuotes) {
+            if (quoteChar == c) {
+              inQuotes = false;
+            }
+            else {
+              builder.append(c);
+            }
+          }
+          else {
+            inQuotes = true;
+            quoteChar = c;
+          }
+          break;
+        case ',':
+        case ']':
+          if (inQuotes) {
+            builder.append(c);
+          }
+          else {
+            int beginIndex = 0;
+            int endIndex = builder.length();
+            while (beginIndex < endIndex && builder.charAt(beginIndex) <= ' ') {
+              beginIndex++;
+            }
+            while (beginIndex < endIndex && builder.charAt(endIndex - 1) <= ' ') {
+              endIndex--;
+            }
+
+            if (endIndex == 0) {
+              writer.stringReference(XmlElementValueProvider.EMPTY);
+            }
+            else {
+              out.write(Amf3Types.STRING);
+              out.writeAmfUtf(builder, false, beginIndex, endIndex);
+            }
+
+            validChildrenCount++;
+            builder.setLength(0);
+          }
+          break;
+        default:
+          builder.append(c);
       }
-    }
-    finally {
-      StringBuilderSpinAllocator.dispose(builder);
     }
 
     out.putShort(validChildrenCount, lengthPosition);

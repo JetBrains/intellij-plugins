@@ -18,7 +18,6 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
@@ -139,25 +138,20 @@ public class FlexRunner extends GenericProgramRunner {
           }
           else {
             int firstSlashIndex = line.indexOf('/');
-            StringBuilder builder = StringBuilderSpinAllocator.alloc();
-            try {
-              boolean isBackSlash = firstSlashIndex == -1;
-              if (isBackSlash) {
-                firstSlashIndex = line.indexOf('\\');
-              }
-              builder.append(getAppSdkHome()).append("/frameworks/projects/").append(line, spaceIndex + 2, firstSlashIndex).append("/src/");
-              if (isBackSlash) {
-                builder.append(line.substring(firstSlashIndex + 1, commaPos).replace('\\', '/'));
-              }
-              else {
-                builder.append(line, firstSlashIndex + 1, commaPos);
-              }
+            StringBuilder builder = new StringBuilder();
+            boolean isBackSlash = firstSlashIndex == -1;
+            if (isBackSlash) {
+              firstSlashIndex = line.indexOf('\\');
+            }
+            builder.append(getAppSdkHome()).append("/frameworks/projects/").append(line, spaceIndex + 2, firstSlashIndex).append("/src/");
+            if (isBackSlash) {
+              builder.append(line.substring(firstSlashIndex + 1, commaPos).replace('\\', '/'));
+            }
+            else {
+              builder.append(line, firstSlashIndex + 1, commaPos);
+            }
 
-              fullPath = builder.toString();
-            }
-            finally {
-              StringBuilderSpinAllocator.dispose(builder);
-            }
+            fullPath = builder.toString();
           }
         }
         else if (line.startsWith("/Users/develar/Documents/flex", spaceIndex + 1)) {

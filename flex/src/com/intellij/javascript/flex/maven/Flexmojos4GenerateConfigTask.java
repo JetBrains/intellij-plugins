@@ -35,7 +35,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathsList;
-import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.util.SystemProperties;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectObjectProcedure;
@@ -226,7 +225,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
 
     @Override
     public void run() {
-      final StringBuilder stringBuilder = StringBuilderSpinAllocator.alloc();
+      final StringBuilder stringBuilder = new StringBuilder();
       int exitCode = -1;
       @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
       final InputStreamReader reader = new InputStreamReader(process.getInputStream());
@@ -276,7 +275,6 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
         process = null;
 
         final String result = stringBuilder.toString().replace('\r', '\n');
-        StringBuilderSpinAllocator.dispose(stringBuilder);
 
         if (exitCode != 0) {
           LOG.warn("Generating flex configs exited with exit code " + exitCode);

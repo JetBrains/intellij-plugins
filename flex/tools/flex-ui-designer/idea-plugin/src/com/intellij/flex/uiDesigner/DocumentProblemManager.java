@@ -10,7 +10,6 @@ import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.BalloonLayout;
 import com.intellij.ui.BrowserHyperlinkListener;
-import com.intellij.util.StringBuilderSpinAllocator;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -41,19 +40,14 @@ public class DocumentProblemManager {
 
   @SuppressWarnings("MethodMayBeStatic")
   public String toString(List<ProblemDescriptor> problems) {
-    final StringBuilder builder = StringBuilderSpinAllocator.alloc();
-    try {
-      appendTitle(builder).append("<ul>");
-      for (ProblemDescriptor problem : problems) {
-        builder.append("<li>");
-        toString(problem, builder).append("</li>");
-      }
-      builder.append("</ul>");
-      return builder.toString();
+    final StringBuilder builder = new StringBuilder();
+    appendTitle(builder).append("<ul>");
+    for (ProblemDescriptor problem : problems) {
+      builder.append("<li>");
+      toString(problem, builder).append("</li>");
     }
-    finally {
-      StringBuilderSpinAllocator.dispose(builder);
-    }
+    builder.append("</ul>");
+    return builder.toString();
   }
 
   // Notification.notify is not suitable for us -
