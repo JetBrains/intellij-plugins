@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.google.jstestdriver.idea.execution;
 
 import com.google.jstestdriver.idea.config.JstdConfigFileUtils;
@@ -8,7 +9,6 @@ import com.google.jstestdriver.idea.execution.settings.TestType;
 import com.intellij.execution.Location;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.RunConfigurationProducer;
-import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.javascript.testFramework.JstdRunElement;
 import com.intellij.javascript.testFramework.TestFileStructureManager;
@@ -94,7 +94,7 @@ public class JstdRunConfigurationProducer extends RunConfigurationProducer<JstdR
       return false;
     }
     RunConfiguration original = context.getOriginalConfiguration(null);
-    if (original != null && !ConfigurationTypeUtil.equals(original.getType(), JstdConfigurationType.getInstance())) {
+    if (original != null && original.getType() != JstdConfigurationType.getInstance()) {
       return false;
     }
     long startTimeNano = System.nanoTime();
