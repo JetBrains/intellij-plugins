@@ -67,7 +67,7 @@ public class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory 
                                              boolean staticContext,
                                              @NotNull JSClass contextClass) {
               if (DialectDetector.isTypeScript(contextClass)) {
-                if (TypeScriptCodeStyleSettings.getTypeScriptSettings(contextClass.getProject()).USE_PUBLIC_MODIFIER) {
+                if (TypeScriptCodeStyleSettings.getTypeScriptSettings(contextClass).USE_PUBLIC_MODIFIER) {
                   template.addTextSegment("public ");
                 }
                 if (staticContext) {
