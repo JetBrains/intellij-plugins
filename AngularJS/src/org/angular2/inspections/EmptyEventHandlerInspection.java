@@ -49,8 +49,7 @@ public class EmptyEventHandlerInspection extends LocalInspectionTool {
       attribute.setValue("");
       PsiNavigationSupport.getInstance().createNavigatable(project, attribute.getContainingFile().getVirtualFile(),
                                                            attribute.getValueElement().getTextRange()
-                                                                    .getStartOffset() + 1).navigate(true);
-
+                                                             .getStartOffset() + 1).navigate(true);
     }
   }
 }

@@ -130,7 +130,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
 
     SortedListModel<NodePackageBasicInfo> model = new SortedListModel<>(
       Comparator.comparing((NodePackageBasicInfo p) -> p == OTHER ? 1 : 0)
-                .thenComparing(NodePackageBasicInfo::getName)
+        .thenComparing(NodePackageBasicInfo::getName)
     );
     JBList<NodePackageBasicInfo> list = new JBList<>(model);
     list.setCellRenderer(new ColoredListCellRenderer<NodePackageBasicInfo>() {
@@ -291,7 +291,9 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
     }
   }
 
-  private static void chooseCustomPackageAndInstall(@NotNull Project project, @NotNull VirtualFile cli, @NotNull Set<String> existingPackages) {
+  private static void chooseCustomPackageAndInstall(@NotNull Project project,
+                                                    @NotNull VirtualFile cli,
+                                                    @NotNull Set<String> existingPackages) {
     SelectCustomPackageDialog dialog = new SelectCustomPackageDialog(project, existingPackages);
     if (dialog.showAndGet()) {
       runAndShowConsole(project, cli, dialog.getPackage(), false);
@@ -416,7 +418,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
     @Override
     public LookupElementBuilder createLookupBuilder(@NotNull NodePackageBasicInfo item) {
       return super.createLookupBuilder(item)
-                  .withTailText(item.getDescription() != null ? "  " + item.getDescription() : null, true);
+        .withTailText(item.getDescription() != null ? "  " + item.getDescription() : null, true);
     }
   }
 }

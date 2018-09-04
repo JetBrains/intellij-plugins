@@ -31,5 +31,4 @@ public interface Angular2Pipe extends JSExpression {
     return parent instanceof Angular2Pipe
            && referenceExpression.equals(((Angular2Pipe)parent).getNameReference());
   }
-
 }

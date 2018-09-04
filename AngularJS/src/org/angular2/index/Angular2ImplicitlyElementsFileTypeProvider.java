@@ -8,6 +8,6 @@ import com.intellij.openapi.fileTypes.FileType;
 public class Angular2ImplicitlyElementsFileTypeProvider implements JSImplicitElementsIndexFileTypeProvider {
   @Override
   public FileType[] getFileTypes() {
-    return new FileType[] {JsonFileType.INSTANCE};
+    return new FileType[]{JsonFileType.INSTANCE};
   }
 }

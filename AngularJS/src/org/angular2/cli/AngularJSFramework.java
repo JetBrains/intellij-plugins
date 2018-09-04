@@ -12,6 +12,7 @@ import javax.swing.*;
  */
 public class AngularJSFramework extends FrameworkType {
   public static final AngularJSFramework INSTANCE = new AngularJSFramework();
+
   protected AngularJSFramework() {
     super("AngularCLI");
   }

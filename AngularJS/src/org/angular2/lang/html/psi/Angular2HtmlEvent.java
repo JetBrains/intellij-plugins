@@ -29,5 +29,4 @@ public interface Angular2HtmlEvent extends Angular2HtmlBoundAttribute {
     DONE,
     INVALID
   }
-
 }

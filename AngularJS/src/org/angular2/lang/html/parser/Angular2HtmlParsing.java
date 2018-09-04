@@ -244,15 +244,15 @@ public class Angular2HtmlParsing extends HtmlParsing {
     int dot = name.indexOf('.');
     if (dot < 0) {
       return pair(EVENT, "The animation trigger output event (@" + name +
-                                   ") is missing its phase value name (start or done are currently supported)");
+                         ") is missing its phase value name (start or done are currently supported)");
     }
     else {
       @SuppressWarnings("StringToUpperCaseOrToLowerCaseWithoutLocale")
       String phase = name.substring(dot + 1).toLowerCase();
       if (!"start".equals(phase) && !"done".equals(phase)) {
         return pair(EVENT, "The provided animation output phase value '" + phase +
-                                     "' for '@" + name.substring(0, dot) +
-                                     "' is not supported (use start or done))");
+                           "' for '@" + name.substring(0, dot) +
+                           "' is not supported (use start or done))");
       }
     }
     return pair(EVENT, null);

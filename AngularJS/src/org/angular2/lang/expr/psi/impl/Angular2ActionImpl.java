@@ -29,12 +29,12 @@ public class Angular2ActionImpl extends Angular2EmbeddedExpressionImpl implement
   @Override
   @NotNull
   public JSExpressionStatement[] getStatements() {
-    for (PsiElement child: getChildren()) {
+    for (PsiElement child : getChildren()) {
       if (child instanceof Angular2Chain) {
         return ((Angular2Chain)child).getStatements();
       }
       if (child instanceof JSExpressionStatement) {
-        return new JSExpressionStatement[] {(JSExpressionStatement)child};
+        return new JSExpressionStatement[]{(JSExpressionStatement)child};
       }
     }
     return new JSExpressionStatement[0];

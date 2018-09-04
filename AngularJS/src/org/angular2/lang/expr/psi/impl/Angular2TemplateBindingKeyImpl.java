@@ -23,6 +23,7 @@ public class Angular2TemplateBindingKeyImpl extends JSExpressionImpl implements 
       super.accept(visitor);
     }
   }
+
   @NotNull
   @Override
   public String getName() {

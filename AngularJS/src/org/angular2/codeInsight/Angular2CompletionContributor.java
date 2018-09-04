@@ -54,12 +54,15 @@ public class Angular2CompletionContributor extends CompletionContributor {
     if (element instanceof JSAttributeListOwner) {
       JSAttributeListOwner attributeListOwner = (JSAttributeListOwner)element;
       return attributeListOwner.getAttributeList() != null
-        && attributeListOwner.getAttributeList().getAccessType() == JSAttributeList.AccessType.PRIVATE;
+             && attributeListOwner.getAttributeList().getAccessType() == JSAttributeList.AccessType.PRIVATE;
     }
     return false;
   }
 
-  private static boolean addPipeVariants(final CompletionResultSet result, CompletionParameters parameters, JSReferenceExpression ref, PsiElement parent) {
+  private static boolean addPipeVariants(final CompletionResultSet result,
+                                         CompletionParameters parameters,
+                                         JSReferenceExpression ref,
+                                         PsiElement parent) {
     if (Angular2Pipe.isPipeNameReference(ref)) {
       addResults(result, parameters, AngularIndexUtil.getAllKeys(AngularFilterIndex.KEY, parent.getProject()));
       return true;
@@ -74,6 +77,6 @@ public class Angular2CompletionContributor extends CompletionContributor {
   }
 
   static Language getElementLanguage(final CompletionParameters parameters) {
-    return ReadAction.compute(()->PsiUtilCore.getLanguageAtOffset(parameters.getPosition().getContainingFile(), parameters.getOffset()));
+    return ReadAction.compute(() -> PsiUtilCore.getLanguageAtOffset(parameters.getPosition().getContainingFile(), parameters.getOffset()));
   }
 }

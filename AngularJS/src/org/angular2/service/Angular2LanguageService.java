@@ -111,7 +111,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   @NotNull
   private static Collection<VirtualFile> findServiceDirectoriesImpl(@NotNull Project project) {
     if (project.isDefault() || project.isDisposed()) return ContainerUtil.emptyList();
-    
+
     ApplicationManager.getApplication().assertReadAccessAllowed();
 
     VirtualFile baseDir = project.getBaseDir();
@@ -244,5 +244,4 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
         .startsWith("ng: Parser Error:"))
       .collect(Collectors.toList());
   }
-
 }

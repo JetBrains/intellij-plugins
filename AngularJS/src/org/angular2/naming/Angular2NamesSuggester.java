@@ -72,7 +72,7 @@ public class Angular2NamesSuggester implements JSNamesSuggester {
         String finalName = StringUtil.join(parts, StringUtil::toLowerCase, "-");
         return (StringUtil.isEmpty(finalName) ? "" : finalName + ".")
                + StringUtil.toLowerCase(entityName);
-      }  
+      }
     }
 
     return null;

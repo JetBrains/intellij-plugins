@@ -75,5 +75,4 @@ public abstract class Angular2HtmlPropertyBindingBase extends Angular2HtmlBoundA
     return PsiTreeUtil.findChildrenOfType(this, Angular2Interpolation.class)
       .toArray(new Angular2Interpolation[0]);
   }
-
 }

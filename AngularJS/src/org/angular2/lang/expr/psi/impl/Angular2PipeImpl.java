@@ -52,7 +52,7 @@ public class Angular2PipeImpl extends JSExpressionImpl implements Angular2Pipe {
     while (node != null && node.getElementType() != JSElementTypes.REFERENCE_EXPRESSION) {
       node = node.getTreeNext();
     }
-    return (JSReferenceExpression) ObjectUtils.doIfNotNull(node, ASTNode::getPsi);
+    return (JSReferenceExpression)ObjectUtils.doIfNotNull(node, ASTNode::getPsi);
   }
 
   @Nullable

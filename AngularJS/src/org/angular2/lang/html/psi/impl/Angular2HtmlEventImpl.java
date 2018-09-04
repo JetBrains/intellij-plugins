@@ -69,9 +69,11 @@ public class Angular2HtmlEventImpl extends Angular2HtmlBoundAttributeImpl implem
     }
     if (name.startsWith("@")) {
       name = name.substring(1);
-    } else if (name.startsWith("animate-")) {
+    }
+    else if (name.startsWith("animate-")) {
       name = name.substring(8);
-    } else {
+    }
+    else {
       return pair(name, null);
     }
     int dot = name.indexOf('.');
@@ -98,7 +100,6 @@ public class Angular2HtmlEventImpl extends Angular2HtmlBoundAttributeImpl implem
   @Override
   public String toString() {
     return "Angular2HtmlEvent <" + getEventName() + ", " + getEventType()
-           + (getEventType() == EventType.ANIMATION ?  ", "  + getAnimationPhase() : "") + ">";
+           + (getEventType() == EventType.ANIMATION ? ", " + getAnimationPhase() : "") + ">";
   }
-
 }

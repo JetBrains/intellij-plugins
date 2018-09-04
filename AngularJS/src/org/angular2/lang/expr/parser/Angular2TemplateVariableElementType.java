@@ -41,5 +41,4 @@ public class Angular2TemplateVariableElementType extends JSVariableElementType {
   public JSVariableStub<JSVariable> deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
     return new Angular2TemplateVariableStubImpl(dataStream, parentStub, this);
   }
-
 }

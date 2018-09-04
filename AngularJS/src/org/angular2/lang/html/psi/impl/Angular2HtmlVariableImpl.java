@@ -43,5 +43,4 @@ public class Angular2HtmlVariableImpl extends Angular2HtmlBoundAttributeImpl imp
   public String toString() {
     return "Angular2HtmlVariable <" + getVariableName() + ">";
   }
-
 }

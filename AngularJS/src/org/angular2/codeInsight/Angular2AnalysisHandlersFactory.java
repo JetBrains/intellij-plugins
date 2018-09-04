@@ -60,7 +60,7 @@ public class Angular2AnalysisHandlersFactory extends JSAnalysisHandlersFactory {
                                                 JSReferenceExpression referenceExpression) {
               template.addTextSegment(JSClassUtils.createClassFunctionName(createdMethodName, anchorParent));
             }
-            
+
             @Override
             protected void addAccessModifier(Template template,
                                              JSReferenceExpression referenceExpression,

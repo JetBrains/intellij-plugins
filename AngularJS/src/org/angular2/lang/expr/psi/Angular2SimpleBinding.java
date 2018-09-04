@@ -11,5 +11,4 @@ public interface Angular2SimpleBinding extends Angular2EmbeddedExpression {
 
   @Nullable
   Angular2Quote getQuote();
-
 }

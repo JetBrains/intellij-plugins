@@ -52,5 +52,4 @@ public class Angular2HtmlPropertyBindingImpl extends Angular2HtmlPropertyBinding
   public String toString() {
     return "Angular2HtmlPropertyBinding " + getNameAndType();
   }
-
 }

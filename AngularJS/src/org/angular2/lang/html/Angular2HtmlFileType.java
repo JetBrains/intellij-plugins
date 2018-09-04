@@ -23,5 +23,4 @@ public class Angular2HtmlFileType extends HtmlFileType {
   public String getDescription() {
     return "Angular HTML Template";
   }
-
 }

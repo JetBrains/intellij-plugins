@@ -300,7 +300,5 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
       super(settings.myInterpreterRef, settings.myPackage);
       myOptions = options;
     }
-
   }
-
 }

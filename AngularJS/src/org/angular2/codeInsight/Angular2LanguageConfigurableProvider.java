@@ -22,8 +22,8 @@ public class Angular2LanguageConfigurableProvider extends JSInheritedLanguagesCo
                                                 @NotNull PsiElement element) {
     JSExpressionStatement created =
       JSChangeUtil.createStatementPsiFromTextWithContext("(" + text + ")", element, JSExpressionStatement.class);
-    JSParenthesizedExpression parenthesized = ObjectUtils.tryCast(created != null 
-                                                                  ? created.getExpression() 
+    JSParenthesizedExpression parenthesized = ObjectUtils.tryCast(created != null
+                                                                  ? created.getExpression()
                                                                   : null, JSParenthesizedExpression.class);
     return parenthesized != null ? parenthesized.getInnerExpression() : null;
   }

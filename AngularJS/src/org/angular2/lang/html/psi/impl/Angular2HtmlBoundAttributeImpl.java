@@ -20,11 +20,9 @@ public class Angular2HtmlBoundAttributeImpl extends XmlAttributeImpl implements 
   public XmlElement getNameElement() {
     XmlElement result = super.getNameElement();
     if (result == null && getFirstChild() instanceof PsiErrorElement
-      && getFirstChild().getFirstChild().getNode().getElementType() == XML_NAME) {
+        && getFirstChild().getFirstChild().getNode().getElementType() == XML_NAME) {
       return (XmlElement)getFirstChild().getFirstChild();
     }
     return result;
   }
-
-
 }

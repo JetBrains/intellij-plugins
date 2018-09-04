@@ -77,7 +77,8 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
           try {
             File schematicsCollection = getSchematicsCollection(new File(version.getPackageJson().getPath()));
             return Pair
-              .create(schematicsCollection != null && hasNgAddSchematic(schematicsCollection), version.getPackageJson().getModificationStamp());
+              .create(schematicsCollection != null && hasNgAddSchematic(schematicsCollection),
+                      version.getPackageJson().getModificationStamp());
           }
           catch (IOException e) {
             return Pair.create(false, version.getPackageJson().getModificationStamp());
@@ -116,11 +117,11 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
     JsonObject contents = (JsonObject)new JsonParser().parse(content);
     return Collections.unmodifiableList(
       contents.get("ng-add")
-              .getAsJsonObject()
-              .entrySet()
-              .stream()
-              .map(e -> new NodePackageBasicInfo(e.getKey(), e.getValue().getAsString()))
-              .collect(Collectors.toList()));
+        .getAsJsonObject()
+        .entrySet()
+        .stream()
+        .map(e -> new NodePackageBasicInfo(e.getKey(), e.getValue().getAsString()))
+        .collect(Collectors.toList()));
   }
 
   @Nullable

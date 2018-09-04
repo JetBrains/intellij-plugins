@@ -44,6 +44,4 @@ public class Angular2ElementVisitor extends JSElementVisitor {
   public void visitAngular2TemplateBindings(Angular2TemplateBindings templateBindings) {
     visitJSSourceElement(templateBindings);
   }
-
-
 }

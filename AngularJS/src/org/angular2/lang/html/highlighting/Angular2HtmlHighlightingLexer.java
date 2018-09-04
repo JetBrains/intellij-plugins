@@ -75,5 +75,4 @@ class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
       super.advance();
     }
   }
-
 }

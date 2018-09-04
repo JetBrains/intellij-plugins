@@ -19,5 +19,4 @@ public interface Angular2HtmlBananaBoxBinding extends Angular2HtmlBoundAttribute
 
   @NotNull
   PropertyBindingType getBindingType();
-
 }

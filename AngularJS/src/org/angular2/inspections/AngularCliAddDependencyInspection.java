@@ -55,7 +55,7 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
     List<JsonProperty> properties = PackageJsonMismatchedDependencyInspection.getDependencies(file);
     if (properties.isEmpty()) return;
     NodeInstalledPackageFinder finder = new NodeInstalledPackageFinder(project, packageJson);
-    for (JsonProperty property: properties) {
+    for (JsonProperty property : properties) {
       JsonStringLiteral nameLiteral = ObjectUtils.tryCast(property.getNameElement(), JsonStringLiteral.class);
       JsonStringLiteral versionLiteral = ObjectUtils.tryCast(property.getValue(), JsonStringLiteral.class);
       if (nameLiteral == null) {

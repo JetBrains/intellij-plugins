@@ -8,5 +8,4 @@ public interface Angular2HtmlVariable extends XmlAttribute {
 
   @NotNull
   String getVariableName();
-
 }

@@ -17,9 +17,10 @@ object AngularMetadataLoader {
   fun load(file: VirtualFile): AngularMetadata {
     var cachedValue = file.getUserData(KEY)
     if (cachedValue == null) {
-      cachedValue = file.putUserDataIfAbsent(KEY, CachedValueImpl({ val visited = mutableSetOf(file)
-                                                                    CachedValueProvider.Result.create(doLoad(file, visited), visited)
-                                                                  }))
+      cachedValue = file.putUserDataIfAbsent(KEY, CachedValueImpl {
+        val visited = mutableSetOf(file)
+        CachedValueProvider.Result.create(doLoad(file, visited), visited)
+      })
     }
     return cachedValue.value
   }
@@ -103,8 +104,9 @@ object AngularMetadataLoader {
             visited.add(superFile)
             superClass = superMetadata.findClass(name)
           }
-        } else {
-          superClass = classes.find { it.name == name}
+        }
+        else {
+          superClass = classes.find { it.name == name }
         }
         if (superClass != null) {
           inputs.addAll(superClass.inputs)

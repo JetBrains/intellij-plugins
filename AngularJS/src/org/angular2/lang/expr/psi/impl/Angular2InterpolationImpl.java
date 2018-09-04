@@ -30,5 +30,4 @@ public class Angular2InterpolationImpl extends Angular2EmbeddedExpressionImpl im
   public JSExpression getExpression() {
     return Angular2BindingImpl.getExpression(this);
   }
-
 }

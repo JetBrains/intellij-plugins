@@ -25,6 +25,7 @@ class Schematic {
   @SerializedName("hidden")
   @Expose
   var hidden: Boolean = false
+
   constructor()
 
   constructor(name: String, description: String?, options: List<Option>, arguments: List<Option>) {

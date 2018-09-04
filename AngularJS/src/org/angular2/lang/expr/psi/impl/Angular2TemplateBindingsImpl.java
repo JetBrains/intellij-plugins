@@ -34,5 +34,4 @@ public class Angular2TemplateBindingsImpl extends Angular2EmbeddedExpressionImpl
       .map(n -> n.getPsi(Angular2TemplateBinding.class))
       .toArray(Angular2TemplateBinding[]::new);
   }
-
 }

@@ -19,5 +19,4 @@ public class Angular2HtmlHighlighterFactory extends SyntaxHighlighterFactory {
     //noinspection ConstantConditions
     return new Angular2HtmlFileHighlighter(true, interpolationConfig);
   }
-
 }

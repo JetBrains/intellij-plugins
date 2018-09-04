@@ -12,5 +12,4 @@ public interface Angular2HtmlTemplateBindings extends Angular2HtmlBoundAttribute
 
   @Nullable
   Angular2TemplateBindings getBindings();
-
 }

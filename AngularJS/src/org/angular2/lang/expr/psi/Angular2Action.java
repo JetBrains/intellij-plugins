@@ -8,5 +8,4 @@ public interface Angular2Action extends Angular2EmbeddedExpression {
 
   @NotNull
   JSExpressionStatement[] getStatements();
-
 }

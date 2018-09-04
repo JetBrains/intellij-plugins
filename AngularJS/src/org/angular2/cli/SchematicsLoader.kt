@@ -121,7 +121,7 @@ fun loadBlueprintHelpOutput(node: NodeJsLocalInterpreter, cli: VirtualFile): Str
   val module = modules.firstOrNull() ?: return ""
   val moduleExe = "${module.virtualFile!!.path}${File.separator}bin${File.separator}ng"
   return grabCommandOutput(GeneralCommandLine(node.interpreterSystemDependentPath, moduleExe, "help", "generate"),
-                                            cli.path)
+                           cli.path)
 }
 
 fun grabCommandOutput(commandLine: GeneralCommandLine, workingDir: String?): String {

@@ -186,7 +186,7 @@ public class AngularCliUtil {
     NodeJsInterpreter interpreter = NodeJsInterpreterRef.createProjectRef().resolve(project);
     NodePackageDescriptor descr = new NodePackageDescriptor(packageName);
     return descr.listAvailable(project, interpreter, baseDir, true)
-                .stream()
-                .filter(p -> p.getSystemIndependentPath().startsWith(baseDir.getPath())).findFirst().orElse(null);
+      .stream()
+      .filter(p -> p.getSystemIndependentPath().startsWith(baseDir.getPath())).findFirst().orElse(null);
   }
 }

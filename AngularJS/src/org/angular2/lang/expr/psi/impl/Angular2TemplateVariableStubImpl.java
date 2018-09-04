@@ -13,11 +13,15 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 public class Angular2TemplateVariableStubImpl extends JSVariableStubBaseImpl<JSVariable> implements JSVariableStub<JSVariable> {
-  public Angular2TemplateVariableStubImpl(JSVariable clazz, final StubElement parent, @NotNull JSStubElementType<?, JSVariable> elementType) {
+  public Angular2TemplateVariableStubImpl(JSVariable clazz,
+                                          final StubElement parent,
+                                          @NotNull JSStubElementType<?, JSVariable> elementType) {
     super(clazz, parent, elementType);
   }
 
-  public Angular2TemplateVariableStubImpl(final StubInputStream dataStream, final StubElement parentStub, @NotNull IStubElementType elementType)
+  public Angular2TemplateVariableStubImpl(final StubInputStream dataStream,
+                                          final StubElement parentStub,
+                                          @NotNull IStubElementType elementType)
     throws IOException {
     super(dataStream, parentStub, elementType);
   }

@@ -75,7 +75,11 @@ public class Angular2Parser
     });
   }
 
-  private static void parseRoot(PsiBuilder builder, IElementType root, IElementType statementType, boolean isAction, boolean isSimpleBinding,
+  private static void parseRoot(PsiBuilder builder,
+                                IElementType root,
+                                IElementType statementType,
+                                boolean isAction,
+                                boolean isSimpleBinding,
                                 Consumer<Angular2StatementParser> parseAction) {
     final PsiBuilder.Marker rootMarker = builder.mark();
     final PsiBuilder.Marker statementMarker = builder.mark();
@@ -122,9 +126,11 @@ public class Angular2Parser
           builder.error(JSBundle.message("javascript.parser.message.expected.expression"));
           builder.advanceLexer();
           expression.drop();
-        } else if (myIsAction){
+        }
+        else if (myIsAction) {
           expression.done(EXPRESSION_STATEMENT);
-        } else {
+        }
+        else {
           expression.drop();
         }
         IElementType tokenType = builder.getTokenType();
@@ -144,7 +150,8 @@ public class Angular2Parser
         case 0:
           if (myIsAction) {
             chain.done(EMPTY_STATEMENT);
-          } else {
+          }
+          else {
             chain.done(EMPTY_EXPRESSION);
           }
           break;
@@ -154,7 +161,8 @@ public class Angular2Parser
         default:
           if (myIsAction) {
             chain.done(CHAIN_STATEMENT);
-          } else {
+          }
+          else {
             chain.drop();
           }
       }
@@ -276,7 +284,8 @@ public class Angular2Parser
       key = key.precede();
       key.done(TEMPLATE_BINDING_VARIABLE);
       key.precede().done(VAR_STATEMENT);
-    } else {
+    }
+    else {
       key.done(TEMPLATE_BINDING_KEY);
     }
   }

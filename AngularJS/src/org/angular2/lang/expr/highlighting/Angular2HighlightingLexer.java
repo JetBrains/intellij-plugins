@@ -10,5 +10,4 @@ public class Angular2HighlightingLexer extends JavaScriptHighlightingLexer {
   public Angular2HighlightingLexer(@NotNull DialectOptionHolder optionHolder) {
     super(optionHolder);
   }
-
 }

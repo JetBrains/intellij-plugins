@@ -46,5 +46,4 @@ public class Angular2HtmlReferenceImpl extends Angular2HtmlBoundAttributeImpl im
   public String toString() {
     return "Angular2HtmlRefence <" + getReferenceName() + ">";
   }
-
 }

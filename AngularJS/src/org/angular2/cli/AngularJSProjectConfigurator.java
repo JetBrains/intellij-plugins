@@ -34,7 +34,8 @@ public class AngularJSProjectConfigurator implements DirectoryProjectConfigurato
           project.save();
         });
         AngularCliUtil.createRunConfigurations(project, baseDir);
-      } else {
+      }
+      else {
         model.dispose();
       }
     }
@@ -44,5 +45,4 @@ public class AngularJSProjectConfigurator implements DirectoryProjectConfigurato
     entry.addExcludeFolder(baseDir.getUrl() + "/dist");
     entry.addExcludeFolder(baseDir.getUrl() + "/tmp");
   }
-
 }

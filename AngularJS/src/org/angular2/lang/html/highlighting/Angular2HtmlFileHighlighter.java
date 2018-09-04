@@ -76,5 +76,4 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
   public Lexer getHighlightingLexer() {
     return new Angular2HtmlHighlightingLexer(myTokenizeExpansionForms, myInterpolationConfig);
   }
-
 }

@@ -42,9 +42,10 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
     if (Angular2Pipe.isPipeNameReference(myRef)) {
       final PsiElement resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularFilterIndex.KEY, myReferencedName);
       if (resolve != null) {
-        return new JSResolveResult[] {new JSResolveResult(resolve)};
+        return new JSResolveResult[]{new JSResolveResult(resolve)};
       }
-    } else if (myQualifier == null) {
+    }
+    else if (myQualifier == null) {
       final Collection<JSPsiElementBase> localVariables = getItemsByName(myReferencedName, myRef);
       if (!localVariables.isEmpty()) {
         return ContainerUtil.map2Array(localVariables, JSResolveResult.class, item -> new JSResolveResult(item));
@@ -52,5 +53,4 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
     }
     return super.resolve(expression, incompleteCode);
   }
-
 }

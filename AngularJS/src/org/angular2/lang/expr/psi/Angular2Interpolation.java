@@ -8,5 +8,4 @@ public interface Angular2Interpolation extends Angular2EmbeddedExpression {
 
   @Nullable
   JSExpression getExpression();
-
 }

@@ -50,7 +50,8 @@ public class Angular2PsiParser implements PsiParser {
       else if (ext.equals("js")) {
         //special case for creation of AST from text
         Angular2Parser.parseJS(builder, root);
-      } else {
+      }
+      else {
         LOG.error("Invalid file name '" + containingFile.getName() + "' - unsupported extension: " + ext);
       }
     }
