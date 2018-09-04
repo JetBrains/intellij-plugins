@@ -37,27 +37,24 @@ public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
   }
 
   @Override
-  public CommonCodeStyleSettings getDefaultCommonSettings() {
-    CommonCodeStyleSettings defaultSettings = new CommonCodeStyleSettings(getLanguage());
-    CommonCodeStyleSettings.IndentOptions indentOptions = defaultSettings.initIndentOptions();
+  protected void customizeDefaults(@NotNull CommonCodeStyleSettings commonSettings,
+                                   @NotNull CommonCodeStyleSettings.IndentOptions indentOptions) {
     indentOptions.INDENT_SIZE = 2;
     indentOptions.CONTINUATION_INDENT_SIZE = 4;
     indentOptions.TAB_SIZE = 2;
-    defaultSettings.RIGHT_MARGIN = 80;
-    defaultSettings.CALL_PARAMETERS_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
-    defaultSettings.METHOD_PARAMETERS_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
-    defaultSettings.ARRAY_INITIALIZER_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
-    defaultSettings.BINARY_OPERATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
-    defaultSettings.ASSIGNMENT_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED; // TODO Remove if not needed.
-    defaultSettings.ARRAY_INITIALIZER_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
-    defaultSettings.TERNARY_OPERATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED | CommonCodeStyleSettings.WRAP_ON_EVERY_ITEM;
-    defaultSettings.TERNARY_OPERATION_SIGNS_ON_NEXT_LINE = true;
-    defaultSettings.ALIGN_MULTILINE_TERNARY_OPERATION = false;
-    defaultSettings.ALIGN_MULTILINE_PARAMETERS = false;
-    defaultSettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE = true;
-    defaultSettings.KEEP_SIMPLE_METHODS_IN_ONE_LINE = true;
-    defaultSettings.KEEP_SIMPLE_CLASSES_IN_ONE_LINE = true;
-    return defaultSettings;
+    commonSettings.RIGHT_MARGIN = 80;
+    commonSettings.CALL_PARAMETERS_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    commonSettings.METHOD_PARAMETERS_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    commonSettings.ARRAY_INITIALIZER_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    commonSettings.BINARY_OPERATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    commonSettings.ASSIGNMENT_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED; // TODO Remove if not needed.
+    commonSettings.TERNARY_OPERATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED | CommonCodeStyleSettings.WRAP_ON_EVERY_ITEM;
+    commonSettings.TERNARY_OPERATION_SIGNS_ON_NEXT_LINE = true;
+    commonSettings.ALIGN_MULTILINE_TERNARY_OPERATION = false;
+    commonSettings.ALIGN_MULTILINE_PARAMETERS = false;
+    commonSettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE = true;
+    commonSettings.KEEP_SIMPLE_METHODS_IN_ONE_LINE = true;
+    commonSettings.KEEP_SIMPLE_CLASSES_IN_ONE_LINE = true;
   }
 
   @Override

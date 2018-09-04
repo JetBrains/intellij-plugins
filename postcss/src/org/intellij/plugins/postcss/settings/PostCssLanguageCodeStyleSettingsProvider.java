@@ -41,13 +41,11 @@ public class PostCssLanguageCodeStyleSettingsProvider extends LanguageCodeStyleS
   }
 
   @Override
-  public CommonCodeStyleSettings getDefaultCommonSettings() {
-    CommonCodeStyleSettings defaultSettings = new CommonCodeStyleSettings(PostCssLanguage.INSTANCE);
-    defaultSettings.LINE_COMMENT_AT_FIRST_COLUMN = false;
-    defaultSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = false;
-    CommonCodeStyleSettings.IndentOptions indentOptions = defaultSettings.initIndentOptions();
+  protected void customizeDefaults(@NotNull CommonCodeStyleSettings commonSettings,
+                                   @NotNull CommonCodeStyleSettings.IndentOptions indentOptions) {
+    commonSettings.LINE_COMMENT_AT_FIRST_COLUMN = false;
+    commonSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = false;
     indentOptions.INDENT_SIZE = 2;
-    return defaultSettings;
   }
 
   @Override

@@ -177,11 +177,10 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
   }
 
   @Override
-  public CommonCodeStyleSettings getDefaultCommonSettings() {
-    CommonCodeStyleSettings commonSettings = new CommonCodeStyleSettings(getLanguage());
+  protected void customizeDefaults(@NotNull CommonCodeStyleSettings commonSettings,
+                                   @NotNull CommonCodeStyleSettings.IndentOptions indentOptions) {
     commonSettings.BLANK_LINES_AFTER_PACKAGE = 0;
     commonSettings.initIndentOptions();
-    return commonSettings;
   }
 
   public final static String GENERAL_CODE_SAMPLE =
