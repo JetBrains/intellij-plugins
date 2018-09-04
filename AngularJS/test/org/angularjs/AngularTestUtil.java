@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs;
 
+import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -11,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
+import static com.intellij.testFramework.UsefulTestCase.assertInstanceOf;
+import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -61,4 +64,13 @@ public class AngularTestUtil {
     TestCase.assertNotNull(ref);
     TestCase.assertNull(ref.resolve());
   }
+
+  @SuppressWarnings("unchecked")
+  public static <T extends JSElement> T checkVariableResolve(final String signature, final String varName, final Class<T> varClass, @NotNull CodeInsightTestFixture fixture) {
+    PsiElement resolve = resolveReference(signature, fixture);
+    assertInstanceOf(resolve, varClass);
+    assertEquals(varName, varClass.cast(resolve).getName());
+    return (T)resolve;
+  }
+
 }

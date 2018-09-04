@@ -26,6 +26,7 @@ import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.FileBasedTestCaseHelperEx;
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
 import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.testFramework.UsefulTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -90,9 +91,8 @@ public class Angular2ParserTest extends LightPlatformCodeInsightTestCase impleme
       final ASTNode root = definition.createParser(getProject()).parse(Angular2ElementTypes.FILE, builder);
 
       result.append(DebugUtil.psiToString(root.getPsi(), false, false));
-    }    
-
-    assertEquals(FileUtil.loadFile(new File(path, suffix.replace("js", "txt")), true), result.toString());
+    }
+    UsefulTestCase.assertSameLinesWithFile(new File(path, suffix.replace("js", "txt")).toString(), result.toString());
   }
 
   @Override

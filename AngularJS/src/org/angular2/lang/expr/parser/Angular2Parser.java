@@ -271,12 +271,14 @@ public class Angular2Parser
   }
 
   private static void finishKey(PsiBuilder.Marker key, boolean isVariable) {
-    //TODO parse as variable definition
-    //if (isVariable) {
-    //  key.done(TEMPLATE_VARIABLE);
-    //} else {
+    if (isVariable) {
+      key.collapse(IDENTIFIER);
+      key = key.precede();
+      key.done(TEMPLATE_BINDING_VARIABLE);
+      key.precede().done(VAR_STATEMENT);
+    } else {
       key.done(TEMPLATE_BINDING_KEY);
-    //}
+    }
   }
 
   protected class Angular2ExpressionParser extends ExpressionParser<Angular2Parser> {

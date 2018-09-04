@@ -18,8 +18,9 @@ HtmlFile:test.html
               Angular2TemplateBinding <something, true, $implicit>
                 PsiElement(JS:LET_KEYWORD)('let')
                 PsiWhiteSpace(' ')
-                Angular2TemplateBindingKey
-                  PsiElement(JS:IDENTIFIER)('something')
+                JSVarStatement
+                  Angular2TemplateVariable
+                    PsiElement(JS:IDENTIFIER)('something')
               PsiWhiteSpace(' ')
               Angular2TemplateBinding <ngForOf, false, null>
                 Angular2TemplateBindingKey

@@ -13,10 +13,8 @@ import com.intellij.psi.impl.source.resolve.ResolveCache;
 import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Dennis.Ushakov
- */
 public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersFactory {
+
   @NotNull
   @Override
   public ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(

@@ -10,9 +10,6 @@ import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Dennis.Ushakov
- */
 public class Angular2LanguageConfigurableProvider extends JSInheritedLanguagesConfigurableProvider {
   @Override
   public boolean isNeedToBeTerminated(@NotNull PsiElement element) {

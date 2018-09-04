@@ -130,8 +130,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <conditionResult, true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('conditionResult')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('conditionResult')
 ------
 ASTWrapperPsiElement(FILE)
   Angular2TemplateBindings
@@ -159,8 +160,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <conditionResult, true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('conditionResult')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('conditionResult')
 ------
 ASTWrapperPsiElement(FILE)
   Angular2TemplateBindings
@@ -172,8 +174,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <conditionResult, true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('conditionResult')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('conditionResult')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <ngIfElse, false, null>
@@ -193,8 +196,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <conditionResult, true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('conditionResult')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('conditionResult')
 ------
 ASTWrapperPsiElement(FILE)
   Angular2TemplateBindings
@@ -205,8 +209,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <user, true, ngIf>
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('user')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('user')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <ngIfElse, false, null>
@@ -233,8 +238,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <user, true, ngIf>
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('user')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('user')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <ngIfElse, false, null>
@@ -354,5 +360,6 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <conditionResult, true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('conditionResult')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('conditionResult')

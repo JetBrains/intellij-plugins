@@ -223,8 +223,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <todo, true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('todo')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('todo')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <expressionsOf, false, null>
       Angular2TemplateBindingKey
@@ -267,8 +268,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <of, true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('of')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('of')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <expressionsTodoService, false, null>
       Angular2TemplateBindingKey
@@ -311,8 +313,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <todo, true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('todo')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('todo')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <expressionsTodoService, false, null>
       Angular2TemplateBindingKey
@@ -355,8 +358,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <todo, true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('todo')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('todo')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <expressionsOf, false, null>
       Angular2TemplateBindingKey
@@ -372,8 +376,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <index, true, index>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('index')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('index')
       PsiElement(JS:EQ)('=')
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('index')
@@ -382,8 +387,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <last, true, last>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('last')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('last')
       PsiElement(JS:EQ)('=')
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('last')
@@ -395,8 +401,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <item, true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('item')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('item')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <expressionsOf, false, null>
       Angular2TemplateBindingKey

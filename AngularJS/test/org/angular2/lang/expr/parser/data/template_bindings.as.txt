@@ -7,8 +7,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <app, true, as>
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('app')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('app')
 ------
 ASTWrapperPsiElement(FILE)
   Angular2TemplateBindings
@@ -36,20 +37,18 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <app, true, as>
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('app')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('app')
 ------
 ASTWrapperPsiElement(FILE)
   Angular2TemplateBindings
     Angular2TemplateBinding <foo-bar-t1, true, as>
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('foo')
-        PsiElement(JS:MINUS)('-')
-        PsiElement(JS:IDENTIFIER)('bar')
-        PsiElement(JS:MINUS)('-')
-        PsiElement(JS:IDENTIFIER)('t1')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('foo-bar-t1')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <foo-, true, foo>
@@ -58,9 +57,9 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('foo')
-        PsiElement(JS:MINUS)('-')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('foo-')
       PsiErrorElement:Identifier or keyword expected
         <empty list>
       PsiElement(JS:NUMERIC_LITERAL)('2')

@@ -5,8 +5,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <foo, true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('foo')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('foo')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <ngForOf, false, null>
       Angular2TemplateBindingKey
@@ -22,8 +23,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <hero, true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('hero')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('hero')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <ngForOf, false, null>
       Angular2TemplateBindingKey
@@ -36,8 +38,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <i, true, index>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('i')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('i')
       PsiWhiteSpace(' ')
       PsiElement(JS:EQ)('=')
       PsiWhiteSpace(' ')
@@ -51,8 +54,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <item, true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('item')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('item')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <ngForOf, false, null>
       Angular2TemplateBindingKey
@@ -68,8 +72,9 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('i')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('i')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <ngForTrackBy, false, null>
@@ -87,8 +92,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <user, true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('user')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('user')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <ngForOf, false, null>
       Angular2TemplateBindingKey
@@ -108,8 +114,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <users, true, ngForOf>
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('users')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('users')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <i, true, index>
@@ -118,8 +125,9 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('i')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('i')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <isFirst, true, first>
@@ -128,8 +136,9 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('isFirst')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('isFirst')
 ------
 ASTWrapperPsiElement(FILE)
   Angular2TemplateBindings
@@ -138,8 +147,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <hero, true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('hero')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('hero')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <ngForOf, false, null>
       Angular2TemplateBindingKey
@@ -152,8 +162,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <first, true, first>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('first')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('first')
       PsiWhiteSpace(' ')
       PsiElement(JS:EQ)('=')
       PsiWhiteSpace(' ')
@@ -164,8 +175,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <last, true, last>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('last')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('last')
       PsiWhiteSpace(' ')
       PsiElement(JS:EQ)('=')
       PsiWhiteSpace(' ')
@@ -179,8 +191,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <user, true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('user')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('user')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <ngForOf, false, null>
       Angular2TemplateBindingKey
@@ -193,8 +206,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <i, true, index>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('i')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('i')
       PsiWhiteSpace(' ')
       PsiElement(JS:EQ)('=')
       PsiWhiteSpace(' ')
@@ -205,8 +219,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <e, true, even>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('e')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('e')
       PsiElement(JS:EQ)('=')
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('even')
@@ -215,8 +230,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <o, true, odd>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('o')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('o')
       PsiElement(JS:EQ)('=')
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('odd')
@@ -228,8 +244,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <let, true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:LET_KEYWORD)('let')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('let')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <as, true, as>
       Angular2TemplateBindingKey
@@ -237,8 +254,9 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:AS_KEYWORD)('as')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('as')
 ------
 ASTWrapperPsiElement(FILE)
   Angular2TemplateBindings
@@ -247,8 +265,9 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <item, true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('item')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('item')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <ngForOf, false, null>
       Angular2TemplateBindingKey
@@ -264,8 +283,9 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('i')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('i')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <isEven, true, even>
@@ -274,8 +294,9 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('isEven')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('isEven')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <isOdd, true, odd>
@@ -284,8 +305,9 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('isOdd')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('isOdd')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <isFirst, true, first>
@@ -294,8 +316,9 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('isFirst')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('isFirst')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <isLast, true, last>
@@ -304,8 +327,9 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
-      Angular2TemplateBindingKey
-        PsiElement(JS:IDENTIFIER)('isLast')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('isLast')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <ngForTrackBy, false, null>

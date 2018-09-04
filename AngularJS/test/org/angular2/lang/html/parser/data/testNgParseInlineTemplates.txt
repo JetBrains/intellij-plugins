@@ -89,8 +89,9 @@ HtmlFile:test.html
               Angular2TemplateBinding <a, true, b>
                 PsiElement(JS:LET_KEYWORD)('let')
                 PsiWhiteSpace(' ')
-                Angular2TemplateBindingKey
-                  PsiElement(JS:IDENTIFIER)('a')
+                JSVarStatement
+                  Angular2TemplateVariable
+                    PsiElement(JS:IDENTIFIER)('a')
                 PsiElement(JS:EQ)('=')
                 Angular2TemplateBindingKey
                   PsiElement(JS:IDENTIFIER)('b')
@@ -115,8 +116,9 @@ HtmlFile:test.html
               Angular2TemplateBinding <a, true, b>
                 PsiElement(JS:LET_KEYWORD)('let')
                 PsiWhiteSpace(' ')
-                Angular2TemplateBindingKey
-                  PsiElement(JS:IDENTIFIER)('a')
+                JSVarStatement
+                  Angular2TemplateVariable
+                    PsiElement(JS:IDENTIFIER)('a')
                 PsiElement(JS:EQ)('=')
                 Angular2TemplateBindingKey
                   PsiElement(JS:IDENTIFIER)('b')
@@ -143,8 +145,9 @@ HtmlFile:test.html
               Angular2TemplateBinding <local, true, ngIf>
                 PsiElement(JS:AS_KEYWORD)('as')
                 PsiWhiteSpace(' ')
-                Angular2TemplateBindingKey
-                  PsiElement(JS:IDENTIFIER)('local')
+                JSVarStatement
+                  Angular2TemplateVariable
+                    PsiElement(JS:IDENTIFIER)('local')
           XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
       XmlToken:XML_TAG_END('>')
       XmlToken:XML_END_TAG_START('</')

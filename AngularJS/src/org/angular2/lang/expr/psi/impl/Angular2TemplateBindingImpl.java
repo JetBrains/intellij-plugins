@@ -4,9 +4,11 @@ package org.angular2.lang.expr.psi.impl;
 import com.intellij.lang.javascript.JSExtendedLanguagesTokenSetProvider;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSVarStatement;
+import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.impl.JSStatementImpl;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.ArrayUtil;
 import org.angular2.lang.expr.parser.Angular2ElementTypes;
 import org.angular2.lang.expr.psi.Angular2ElementVisitor;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
@@ -54,10 +56,12 @@ public class Angular2TemplateBindingImpl extends JSStatementImpl implements Angu
 
   @Nullable
   @Override
-  public JSVarStatement getVariableDefinition() {
-    return (JSVarStatement)Arrays.stream(getChildren())
+  public JSVariable getVariableDefinition() {
+    return Arrays.stream(getChildren())
       .filter(node -> node instanceof JSVarStatement)
       .findFirst()
+      .map(s -> ((JSVarStatement)s).getVariables())
+      .map(ArrayUtil::getFirstElement)
       .orElse(null);
   }
 

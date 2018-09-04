@@ -1,7 +1,9 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
+import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 
@@ -25,6 +27,15 @@ public class NgForTest extends LightPlatformCodeInsightFixtureTestCase {
       assertTrue(variants.size() >= 2);
       assertEquals("created_at", variants.get(0));
       assertEquals("email", variants.get(1));
+    });
+  }
+
+  public void testNgForInspections() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.enableInspections(UnterminatedStatementJSInspection.class);
+      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+      myFixture.configureByFiles("NgForInspections.ts", "ng_for_of.ts", "iterable_differs.ts", "package.json");
+      myFixture.checkHighlighting();
     });
   }
 

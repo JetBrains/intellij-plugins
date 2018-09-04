@@ -3,6 +3,9 @@ package org.angular2.lang.expr.parser;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSElementTypes;
+import com.intellij.lang.javascript.psi.JSStubElementType;
+import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
 import com.intellij.lang.javascript.types.JSExpressionElementType;
 import com.intellij.lang.javascript.types.JSFileElementType;
 import com.intellij.psi.tree.ICompositeElementType;
@@ -31,6 +34,7 @@ public interface Angular2ElementTypes extends JSElementTypes {
   IElementType TEMPLATE_BINDING_STATEMENT = new Angular2ElementType("NG:TEMPLATE_BINDING_STATEMENT", (type) -> {
     throw new UnsupportedOperationException("Use createTemplateBindingStatement method instead");
   });
+  JSStubElementType<JSVariableStub<JSVariable>, JSVariable> TEMPLATE_BINDING_VARIABLE = new Angular2TemplateVariableElementType();
 
   static IElementType createTemplateBindingStatement(@NotNull String key, boolean isVar, @Nullable String name) {
     return new Angular2TemplateBindingType(key, isVar, name);

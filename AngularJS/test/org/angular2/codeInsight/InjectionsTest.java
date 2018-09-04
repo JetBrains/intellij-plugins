@@ -7,13 +7,11 @@ import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
-import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
@@ -64,18 +62,12 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testNgIfResolve() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("ngIf.ts", "ng_if.ts", "package.json");
-      checkVariableResolve("my_use<caret>r.last", "my_user", JSDefinitionExpression.class);
+      checkVariableResolve("my_use<caret>r.last", "my_user", JSVariable.class);
     });
   }
 
-  private PsiElement checkVariableResolve(final String signature, final String varName, final Class<? extends JSElement> varClass) {
-    int offsetBySignature = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
-    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-    assertNotNull(ref);
-    PsiElement resolve = ref.resolve();
-    assertInstanceOf(resolve, varClass);
-    assertEquals(varName, varClass.cast(resolve).getName());
-    return resolve;
+  private <T extends JSElement> T checkVariableResolve(final String signature, final String varName, final Class<T> varClass) {
+    return AngularTestUtil.checkVariableResolve(signature, varName, varClass, myFixture);
   }
 
   public void testStyles2() throws Exception {
@@ -116,8 +108,10 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgForExternalResolve() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.configureByFiles("ngFor.after.html", "ng_for_of.ts", "package.json");
-      checkVariableResolve("\"myTo<caret>do\"", "myTodo", JSVariable.class);
+      myFixture.configureByFiles("ngFor.after.html", "ngFor.ts", "ng_for_of.ts", "package.json");
+      JSVariable resolve = checkVariableResolve("\"myTo<caret>do\"", "myTodo", JSVariable.class);
+      //TODO support pipe type evaluation
+      //assertEquals("string", resolve.getTypeString());
     });
   }
 
