@@ -111,9 +111,7 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
               CfmlFunctionDescription javaMethodDescr =
                 new CfmlFunctionDescription(function.getName(), function.getReturnType().getPresentableText());
               final PsiParameter[] psiParameters = function.getParameterList().getParameters();
-              final int paramsNum = psiParameters.length;
-              for (int i = 0; i < paramsNum; i++) {
-                PsiParameter psiParameter = psiParameters[i];
+              for (PsiParameter psiParameter : psiParameters) {
                 javaMethodDescr.addParameter(new CfmlFunctionDescription.CfmlParameterDescription(psiParameter.getName(),
                                                                                                   psiParameter.getType()
                                                                                                     .getPresentableText(), true));

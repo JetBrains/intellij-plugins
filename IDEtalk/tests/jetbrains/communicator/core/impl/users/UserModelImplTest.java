@@ -132,8 +132,8 @@ public class UserModelImplTest extends BaseTestCase {
 
   public void testRemoveUserFromImplicitGroup() {
     User[] users = myUserModel.getUsers("group1");
-    for (int i = 0; i < users.length; i++) {
-      myUserModel.removeUser(users[i]);
+    for (User user : users) {
+      myUserModel.removeUser(user);
     }
 
     assertEquals("Implicit group should remain", Arrays.asList(new Object[]{"group1", "group2"}),

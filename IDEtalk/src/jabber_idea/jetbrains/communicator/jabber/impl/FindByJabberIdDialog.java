@@ -51,8 +51,8 @@ public class FindByJabberIdDialog extends IdeaDialog {
 
   private void setupGroups(List<String> groups) {
     ((DefaultComboBoxModel) myGroup.getModel()).addElement(UserModel.DEFAULT_GROUP);
-    for (Iterator<String> it = groups.iterator(); it.hasNext();) {
-      ((DefaultComboBoxModel) myGroup.getModel()).addElement(it.next());
+    for (String group : groups) {
+      ((DefaultComboBoxModel)myGroup.getModel()).addElement(group);
     }
   }
 

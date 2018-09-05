@@ -1202,8 +1202,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     DefaultMutableTreeNode root = myTable.getRoot();
 
     if (delta < 0) {
-      for (int i = 0; i < selectedRows.length; i++) {
-        int row = selectedRows[i];
+      for (int row : selectedRows) {
         DefaultMutableTreeNode child = (DefaultMutableTreeNode)root.getChildAt(row);
         root.remove(row);
         root.insert(child, row + delta);

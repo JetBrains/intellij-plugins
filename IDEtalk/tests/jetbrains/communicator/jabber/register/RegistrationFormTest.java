@@ -250,18 +250,17 @@ public class RegistrationFormTest extends BaseTestCase {
   }
 
   private void assertVisible(String message, boolean visible) throws NoSuchFieldException, IllegalAccessException {
-    String []fields = new String[]{
+    String []fields = {
       "myFirstNameLabel", "myFirstName",
       "myLastNameLabel", "myLastName",
       "myPasswordAgainLabel", "myPasswordAgain",
     };
 
-    for (int i = 0; i < fields.length; i++) {
-      String field = fields[i];
+    for (String field : fields) {
       Field fld = myForm.getClass().getDeclaredField(field);
       fld.setAccessible(true);
       assertEquals(message + ". Wrong visibility for " + field, visible,
-          ((JComponent) fld.get(myForm)).isVisible());
+                   ((JComponent)fld.get(myForm)).isVisible());
     }
   }
 }

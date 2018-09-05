@@ -24,7 +24,6 @@ import jetbrains.communicator.util.TreeUtils;
 
 import javax.swing.*;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -124,12 +123,11 @@ public class SelectionProcessorTest extends BaseTestCase {
 
   private void assertSelectedUsers(String[] userNames) {
 
-    Set selectedUsers = mySelectionProcessor.getSelectedUsers();
+    Set<User> selectedUsers = mySelectionProcessor.getSelectedUsers();
 
     assertEquals("Wrong number of selected users: " + selectedUsers,
         userNames.length, selectedUsers.size());
-    for (Iterator it = selectedUsers.iterator(); it.hasNext();) {
-      User user = (User) it.next();
+    for (User user : selectedUsers) {
       assertTrue("Unknown user:" + user, Arrays.asList(userNames).contains(user.getName()));
     }
   }
@@ -139,7 +137,7 @@ public class SelectionProcessorTest extends BaseTestCase {
     TreeUtils.expandAll(myTree);
   }
 
-  private User user(String userName, String project) {
+  private static User user(String userName, String project) {
     MockUser user = new MockUser(userName, null);
     if (project != null) {
       user.setProjects(new String[]{project});
