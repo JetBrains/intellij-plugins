@@ -25,7 +25,7 @@ import java.util.*;
  */
 public class AngularMessageFormatCompletion {
   public static final Comparator<AngularJSPluralCategories> PLURAL_CATEGORIES_COMPARATOR =
-    (o1, o2) -> new Integer(o1.getCompletionOrder()).compareTo(o2.getCompletionOrder());
+    Comparator.comparingInt(AngularJSPluralCategories::getCompletionOrder);
   public static final InsertHandler<LookupElement> MESSAGE_FORMAT_KEYWORD_INSERT_HANDLER = new InsertHandler<LookupElement>() {
     @Override
     public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {
