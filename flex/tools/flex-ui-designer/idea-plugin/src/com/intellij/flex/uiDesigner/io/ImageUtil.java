@@ -11,12 +11,7 @@ import java.io.IOException;
 public final class ImageUtil {
   private static final int MAX_BUFFER_LENGTH = 12288;
 
-  private static final ThreadLocal<byte[]> BUFFER = new ThreadLocal<byte[]>() {
-    @Override
-    protected byte[] initialValue() {
-      return new byte[MAX_BUFFER_LENGTH];
-    }
-  };
+  private static final ThreadLocal<byte[]> BUFFER = ThreadLocal.withInitial(() -> new byte[MAX_BUFFER_LENGTH]);
 
   public static void write(VirtualFile file, String mimeType, FileOutputStream out) throws IOException {
     Image image = Toolkit.getDefaultToolkit().createImage(file.contentsToByteArray());

@@ -10,12 +10,7 @@ import java.util.zip.Inflater;
 import java.util.zip.ZipException;
 
 abstract class SwfTranscoder extends AbcEncoder {
-  private static final ThreadLocal<Inflater> INFLATER = new ThreadLocal<Inflater>() {
-    @Override
-    protected Inflater initialValue() {
-      return new Inflater();
-    }
-  };
+  private static final ThreadLocal<Inflater> INFLATER = ThreadLocal.withInitial(Inflater::new);
 
   protected static final int PARTIAL_HEADER_LENGTH = 8;
 
