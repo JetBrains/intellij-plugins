@@ -51,7 +51,7 @@ class Multiname {
     predefined.put("http://www.adobe.com/2006/actionscript/flash/proxy", "flash_proxy");
   }
 
-  private static final String makeNsIdentifier(String ns, Traits parentTraits) {
+  private static String makeNsIdentifier(String ns, Traits parentTraits) {
     String prefix;
     String predefinedName = predefined.get(ns);
 
