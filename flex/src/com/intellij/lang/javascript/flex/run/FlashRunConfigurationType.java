@@ -27,6 +27,11 @@ public final class FlashRunConfigurationType extends SimpleConfigurationType {
     return ModuleUtil.hasModulesOfType(project, FlexModuleType.getInstance());
   }
 
+  @Override
+  public String getHelpTopic() {
+    return "reference.dialogs.rundebug.FlashRunConfigurationType";
+  }
+
   public static FlashRunConfigurationType getInstance() {
     return ConfigurationTypeUtil.findConfigurationType(FlashRunConfigurationType.class);
   }

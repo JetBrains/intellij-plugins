@@ -30,6 +30,11 @@ public final class CfmlRunConfigurationType extends ConfigurationTypeBase {
     });
   }
 
+  @Override
+  public String getHelpTopic() {
+    return "reference.dialogs.rundebug.Cold Fusion runner description";
+  }
+
   public static CfmlRunConfigurationType getInstance() {
     return ConfigurationTypeUtil.findConfigurationType(CfmlRunConfigurationType.class);
   }

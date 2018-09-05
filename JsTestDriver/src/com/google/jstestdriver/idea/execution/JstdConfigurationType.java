@@ -48,6 +48,11 @@ public final class JstdConfigurationType extends ConfigurationTypeBase implement
     });
   }
 
+  @Override
+  public String getHelpTopic() {
+    return "reference.dialogs.rundebug.JsTestDriver-test-runner";
+  }
+
   public static JstdConfigurationType getInstance() {
     return ConfigurationTypeUtil.findConfigurationType(JstdConfigurationType.class);
   }

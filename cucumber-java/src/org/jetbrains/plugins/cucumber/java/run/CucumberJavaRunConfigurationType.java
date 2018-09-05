@@ -35,6 +35,11 @@ public final class CucumberJavaRunConfigurationType extends ConfigurationTypeBas
     });
   }
 
+  @Override
+  public String getHelpTopic() {
+    return "reference.dialogs.rundebug.CucumberJavaRunConfigurationType";
+  }
+
   @NotNull
   public static CucumberJavaRunConfigurationType getInstance() {
     return ConfigurationTypeUtil.findConfigurationType(CucumberJavaRunConfigurationType.class);

@@ -22,6 +22,11 @@ public final class KarmaConfigurationType extends SimpleConfigurationType implem
     return "karma";
   }
 
+  @Override
+  public String getHelpTopic() {
+    return "reference.dialogs.rundebug.JavaScriptTestRunnerKarma";
+  }
+
   @NotNull
   @Override
   public RunConfiguration createTemplateConfiguration(@NotNull Project project) {

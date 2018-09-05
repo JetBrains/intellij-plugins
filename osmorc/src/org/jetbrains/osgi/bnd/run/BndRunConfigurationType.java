@@ -28,6 +28,11 @@ public final class BndRunConfigurationType extends ConfigurationTypeBase {
     addFactory(new TestFactory(this));
   }
 
+  @Override
+  public String getHelpTopic() {
+    return "reference.dialogs.rundebug.osgi.bnd.run";
+  }
+
   private static abstract class FactoryBase extends ConfigurationFactory {
     private final String myName;
     private final Icon myIcon;

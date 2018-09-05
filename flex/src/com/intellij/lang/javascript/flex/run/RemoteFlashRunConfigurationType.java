@@ -58,6 +58,11 @@ public final class RemoteFlashRunConfigurationType implements ConfigurationType,
   }
 
   @Override
+  public String getHelpTopic() {
+    return "reference.dialogs.rundebug.RemoteFlashRunConfigurationType";
+  }
+
+  @Override
   @NotNull
   public String getId() {
     return TYPE;

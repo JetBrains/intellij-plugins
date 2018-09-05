@@ -25,4 +25,9 @@ public final class FlexUnitRunConfigurationType extends SimpleConfigurationType 
   public boolean isApplicable(@NotNull Project project) {
     return ModuleUtil.hasModulesOfType(project, FlexModuleType.getInstance());
   }
+
+  @Override
+  public String getHelpTopic() {
+    return "reference.dialogs.rundebug.FlexUnitRunConfigurationType";
+  }
 }

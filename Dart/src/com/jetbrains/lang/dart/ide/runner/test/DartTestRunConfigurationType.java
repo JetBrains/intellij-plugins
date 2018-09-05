@@ -22,6 +22,11 @@ public final class DartTestRunConfigurationType extends ConfigurationTypeBase im
     addFactory(new DartTestConfigurationFactory(this));
   }
 
+  @Override
+  public String getHelpTopic() {
+    return "reference.dialogs.rundebug.DartTestRunConfigurationType";
+  }
+
   public static DartTestRunConfigurationType getInstance() {
     return Extensions.findExtension(CONFIGURATION_TYPE_EP, DartTestRunConfigurationType.class);
   }

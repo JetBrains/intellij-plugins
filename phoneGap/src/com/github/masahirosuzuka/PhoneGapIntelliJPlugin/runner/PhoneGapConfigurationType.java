@@ -48,6 +48,11 @@ public final class PhoneGapConfigurationType implements ConfigurationType, DumbA
     return new PhoneGapConfigurationFactory[]{myConfigurationFactory};
   }
 
+  @Override
+  public String getHelpTopic() {
+    return "reference.dialogs.rundebug.PhoneGap";
+  }
+
   public class PhoneGapConfigurationFactory extends ConfigurationFactory {
     public PhoneGapConfigurationFactory(ConfigurationType type) {
       super(type);

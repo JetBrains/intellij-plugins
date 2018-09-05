@@ -60,4 +60,9 @@ public final class OsgiConfigurationType extends ConfigurationTypeBase {
       }
     });
   }
+
+  @Override
+  public String getHelpTopic() {
+    return "reference.dialogs.rundebug.#org.osmorc.OsgiConfigurationType";
+  }
 }
