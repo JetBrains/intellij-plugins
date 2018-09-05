@@ -15,6 +15,7 @@ package org.dartlang.vm.service.element;
 
 // This is a generated file.
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 /**
@@ -31,9 +32,9 @@ public class ErrorRef extends ObjRef {
    * What kind of error is this?
    */
   public ErrorKind getKind() {
-    String name = json.get("kind").getAsString();
+    JsonElement value = json.get("kind");
     try {
-      return ErrorKind.valueOf(name);
+      return value == null ? ErrorKind.Unknown : ErrorKind.valueOf(value.getAsString());
     } catch (IllegalArgumentException e) {
       return ErrorKind.Unknown;
     }

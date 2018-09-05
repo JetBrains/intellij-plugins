@@ -16,6 +16,7 @@ package org.dartlang.vm.service.element;
 // This is a generated file.
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 /**
@@ -129,9 +130,9 @@ public class Event extends Response {
    * What kind of event is this?
    */
   public EventKind getKind() {
-    String name = json.get("kind").getAsString();
+    JsonElement value = json.get("kind");
     try {
-      return EventKind.valueOf(name);
+      return value == null ? EventKind.Unknown : EventKind.valueOf(value.getAsString());
     } catch (IllegalArgumentException e) {
       return EventKind.Unknown;
     }
