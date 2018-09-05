@@ -125,9 +125,8 @@ public abstract class AbstractDependencyFilter {
         filter.filter(filteredDependencies);
       }
 
-      for (Map.Entry<String, String> entry : (clause.getValue()).entrySet()) {
+      for (Map.Entry<String, String> attr : (clause.getValue()).entrySet()) {
         // ATTRIBUTE: KEY --> REGEXP
-        Map.Entry attr = (Map.Entry)entry;
         if ("groupId".equals(attr.getKey())) {
           filter = new DependencyFilter((String)attr.getValue()) {
             @Override
