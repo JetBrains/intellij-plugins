@@ -87,7 +87,7 @@ public class IntellijJavaMethod implements IJavaMethod {
      */
     @Override
     public String getDocumentation() {
-        StringBuffer description = new StringBuffer();
+        StringBuilder description = new StringBuilder();
 
         PsiDocComment document = _psiMethod.getDocComment();
         if (document == null) {

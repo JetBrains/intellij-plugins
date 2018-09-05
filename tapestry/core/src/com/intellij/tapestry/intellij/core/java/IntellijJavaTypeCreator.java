@@ -60,7 +60,7 @@ public class IntellijJavaTypeCreator implements IJavaTypeCreator {
      */
     @Override
     public IJavaAnnotation createFieldAnnotation(IJavaField field, String fullyQualifiedName, Map<String, String> parameters) {
-        StringBuffer annotationText = new StringBuffer();
+        StringBuilder annotationText = new StringBuilder();
         annotationText.append("@").append(fullyQualifiedName);
         if (parameters.size() > 0) {
             annotationText.append("(");

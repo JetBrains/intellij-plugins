@@ -77,7 +77,7 @@ public class IntellijJavaField implements IJavaField {
      */
     @Override
     public String getDocumentation() {
-        StringBuffer description = new StringBuffer();
+        StringBuilder description = new StringBuilder();
 
         PsiDocComment document = _psiField.getDocComment();
         if (document == null) {

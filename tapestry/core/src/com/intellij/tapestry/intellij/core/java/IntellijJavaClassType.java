@@ -205,7 +205,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
    */
   @Override
   public String getDocumentation() {
-    StringBuffer description = new StringBuffer();
+    StringBuilder description = new StringBuilder();
 
     PsiClass psiClass = getPsiClass();
     if (psiClass == null) {

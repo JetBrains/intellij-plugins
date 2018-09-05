@@ -30,7 +30,7 @@ public class PageExternalizer extends ToTemplateExternalizer {
             pageName = page.getLibrary().getId() + "/" + page.getName();
         }
 
-        StringBuffer serialized = new StringBuffer();
+        StringBuilder serialized = new StringBuilder();
 
         serialized.append("<").append(getContext().getNamespacePrefix()).append(":pagelink");
         serialized.append(" page=\"").append(pageName).append("\">");

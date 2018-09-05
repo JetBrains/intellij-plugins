@@ -30,7 +30,7 @@ public class ComponentExternalizer extends ToTemplateExternalizer {
             componentName = component.getLibrary().getId() + "." + PathUtils.pathIntoPackage(component.getName().toLowerCase(Locale.getDefault()), false);
         }
 
-        StringBuffer serialized = new StringBuffer();
+        StringBuilder serialized = new StringBuilder();
 
         serialized.append("<").append(getContext().getNamespacePrefix()).append(":").append(componentName);
         for (TapestryParameter parameter : component.getParameters().values())
