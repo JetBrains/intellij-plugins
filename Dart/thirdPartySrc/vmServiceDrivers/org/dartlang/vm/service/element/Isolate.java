@@ -16,6 +16,7 @@ package org.dartlang.vm.service.element;
 // This is a generated file.
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.util.List;
 
@@ -52,9 +53,9 @@ public class Isolate extends Response {
    * The current pause on exception mode for this isolate.
    */
   public ExceptionPauseMode getExceptionPauseMode() {
-    String name = json.get("exceptionPauseMode").getAsString();
+    JsonElement value = json.get("exceptionPauseMode");
     try {
-      return ExceptionPauseMode.valueOf(name);
+      return value == null ? ExceptionPauseMode.Unknown : ExceptionPauseMode.valueOf(value.getAsString());
     } catch (IllegalArgumentException e) {
       return ExceptionPauseMode.Unknown;
     }
