@@ -15,6 +15,7 @@ package org.dartlang.vm.service.element;
 
 // This is a generated file.
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 /**
@@ -31,9 +32,9 @@ public class Sentinel extends Response {
    * What kind of sentinel is this?
    */
   public SentinelKind getKind() {
-    String name = json.get("kind").getAsString();
+    JsonElement value = json.get("kind");
     try {
-      return SentinelKind.valueOf(name);
+      return value == null ? SentinelKind.Unknown : SentinelKind.valueOf(value.getAsString());
     } catch (IllegalArgumentException e) {
       return SentinelKind.Unknown;
     }

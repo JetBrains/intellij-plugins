@@ -16,6 +16,7 @@ package org.dartlang.vm.service.element;
 // This is a generated file.
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 @SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
@@ -40,9 +41,9 @@ public class Frame extends Response {
   public FrameKind getKind() {
     if (json.get("kind") == null) return null;
     
-    String name = json.get("kind").getAsString();
+    JsonElement value = json.get("kind");
     try {
-      return FrameKind.valueOf(name);
+      return value == null ? FrameKind.Unknown : FrameKind.valueOf(value.getAsString());
     } catch (IllegalArgumentException e) {
       return FrameKind.Unknown;
     }
