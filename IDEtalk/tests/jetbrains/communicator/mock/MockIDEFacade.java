@@ -60,7 +60,7 @@ public class MockIDEFacade implements IDEFacade {
     myDataDir = null;
   }
 
-  public MockIDEFacade(Class<? extends Object> testClass) {
+  public MockIDEFacade(Class<?> testClass) {
     try {
       myDataDir = TestFactory.createDir(testClass);
     } catch (IOException e) {
