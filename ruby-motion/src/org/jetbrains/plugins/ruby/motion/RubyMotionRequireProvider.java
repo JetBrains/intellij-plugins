@@ -16,7 +16,6 @@
 package org.jetbrains.plugins.ruby.motion;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -69,10 +68,5 @@ public class RubyMotionRequireProvider implements ImplicitRequireProvider {
       RubyVirtualFileScanner.addRubyFiles(path, result);
     }
     return result;
-  }
-
-  @Override
-  public boolean gemAutoRequireSuppressedFor(@NotNull Project project, @NotNull VirtualFile location) {
-    return false;
   }
 }
