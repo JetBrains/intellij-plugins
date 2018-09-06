@@ -31,9 +31,9 @@ import java.util.List;
 
 public class KarmaUtil {
 
-  public static final String NODE_PACKAGE_NAME = "karma";
+  public static final String KARMA_PACKAGE_NAME = "karma";
   public static final String ANGULAR_CLI__PACKAGE_NAME = "@angular/cli";
-  public static final NodePackageDescriptor PKG_DESCRIPTOR = new NodePackageDescriptor(ANGULAR_CLI__PACKAGE_NAME, NODE_PACKAGE_NAME);
+  public static final NodePackageDescriptor PKG_DESCRIPTOR = new NodePackageDescriptor(ANGULAR_CLI__PACKAGE_NAME, KARMA_PACKAGE_NAME);
   private static final String[] STARTING_PARTS = new String[] {"karma"};
   private static final String NAME_PART_DELIMITERS = ".-";
   private static final String[] BEFORE_EXT_PARTS = new String[] {"conf", "karma"};

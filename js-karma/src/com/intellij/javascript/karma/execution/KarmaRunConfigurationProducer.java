@@ -29,7 +29,7 @@ import java.util.Collections;
 
 public class KarmaRunConfigurationProducer extends JsTestRunConfigurationProducer<KarmaRunConfiguration> {
   public KarmaRunConfigurationProducer() {
-    super(KarmaConfigurationType.getInstance(), Collections.singletonList(KarmaUtil.NODE_PACKAGE_NAME));
+    super(KarmaConfigurationType.getInstance(), Collections.singletonList(KarmaUtil.KARMA_PACKAGE_NAME));
   }
 
   private boolean isTestRunnerPackageAvailableFor(@NotNull PsiElement element, @NotNull ConfigurationContext context) {

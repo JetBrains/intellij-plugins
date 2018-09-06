@@ -15,7 +15,7 @@ public class KarmaJsSourcesLocator {
 
   private final File myKarmaIntellijPackageDir;
 
-  public KarmaJsSourcesLocator() {
+  private KarmaJsSourcesLocator() {
     myKarmaIntellijPackageDir = findKarmaIntellijPackageDir();
   }
 
@@ -76,5 +76,10 @@ public class KarmaJsSourcesLocator {
     catch (IOException e) {
       throw new ExecutionException("Cannot locate intellijRunner.js", e);
     }
+  }
+
+  @NotNull
+  public File getKarmaIntellijPackageDir() {
+    return myKarmaIntellijPackageDir;
   }
 }
