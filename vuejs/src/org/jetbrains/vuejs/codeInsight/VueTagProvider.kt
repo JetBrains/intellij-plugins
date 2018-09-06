@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.completion.CompletionUtilCore
@@ -43,6 +31,7 @@ import com.intellij.xml.*
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import icons.VuejsIcons
 import org.jetbrains.vuejs.VueFileType
+import org.jetbrains.vuejs.VueLanguage
 import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.getBoundName
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.getExportedDescriptor
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isNotInLibrary
@@ -50,7 +39,7 @@ import org.jetbrains.vuejs.index.*
 
 class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
-    if (tag != null && hasVue(tag.project)) {
+    if (tag != null && tag.containingFile.language == VueLanguage.INSTANCE && hasVue(tag.project)) {
       val name = tag.name
 
       val localComponents = findLocalComponents(name, tag)

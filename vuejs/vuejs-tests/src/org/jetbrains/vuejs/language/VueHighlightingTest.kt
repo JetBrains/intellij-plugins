@@ -1153,6 +1153,12 @@ import BComponent from 'b-component'
       |</template>""".trimMargin())
     myFixture.checkHighlighting()
   }
+
+  fun testNoVueTagErrorsInPlainXml() {
+    myFixture.addFileToProject("any.vue", "") // to make sure that Vue support works for the project
+    myFixture.configureByText("foo.xml", "<component><foo/></component>".trimMargin())
+    myFixture.checkHighlighting()
+  }
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
