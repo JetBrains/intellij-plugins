@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartSetterDeclarationImpl extends AbstractDartComponentImpl implements DartSetterDeclaration {
 
-  public DartSetterDeclarationImpl(ASTNode node) {
+  public DartSetterDeclarationImpl(@NotNull ASTNode node) {
     super(node);
   }
 

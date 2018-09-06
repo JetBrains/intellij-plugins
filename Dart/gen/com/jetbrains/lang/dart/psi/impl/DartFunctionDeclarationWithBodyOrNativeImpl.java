@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartFunctionDeclarationWithBodyOrNativeImpl extends AbstractDartComponentImpl implements DartFunctionDeclarationWithBodyOrNative {
 
-  public DartFunctionDeclarationWithBodyOrNativeImpl(ASTNode node) {
+  public DartFunctionDeclarationWithBodyOrNativeImpl(@NotNull ASTNode node) {
     super(node);
   }
 

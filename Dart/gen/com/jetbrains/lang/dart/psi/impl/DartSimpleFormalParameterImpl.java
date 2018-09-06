@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartSimpleFormalParameterImpl extends AbstractDartComponentImpl implements DartSimpleFormalParameter {
 
-  public DartSimpleFormalParameterImpl(ASTNode node) {
+  public DartSimpleFormalParameterImpl(@NotNull ASTNode node) {
     super(node);
   }
 

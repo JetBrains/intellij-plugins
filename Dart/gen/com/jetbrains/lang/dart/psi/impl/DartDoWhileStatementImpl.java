@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartDoWhileStatementImpl extends DartPsiCompositeElementImpl implements DartDoWhileStatement {
 
-  public DartDoWhileStatementImpl(ASTNode node) {
+  public DartDoWhileStatementImpl(@NotNull ASTNode node) {
     super(node);
   }
 
