@@ -63,8 +63,7 @@
     <liveTemplateContext implementation="org.jetbrains.vuejs.liveTemplate.VueTopLevelLiveTemplateContextType"/>
     <defaultLiveTemplatesProvider implementation="org.jetbrains.vuejs.liveTemplate.VueTemplatesProvider"/>
 
-    <completion.contributor language="HTML" implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueAttributesCompletionContributor"/>
-    <completion.contributor language="HTML" implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueAttributeDataCompletionContributor"/>
+    <completion.contributor language="HTML" implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueCompletionContributor"/>
     <typedHandler implementation="org.jetbrains.vuejs.codeInsight.completion.VueAutoPopupHandler"/>
   </extensions>
   <actions>

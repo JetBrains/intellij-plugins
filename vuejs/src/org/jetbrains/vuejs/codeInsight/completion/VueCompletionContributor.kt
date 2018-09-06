@@ -19,6 +19,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.XmlPatterns.xmlAttribute
+import com.intellij.psi.impl.source.html.HtmlTagImpl
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
 import com.intellij.psi.xml.XmlAttribute
@@ -30,12 +31,15 @@ import icons.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider
 import org.jetbrains.vuejs.codeInsight.VueComponents
 import org.jetbrains.vuejs.codeInsight.VueElementDescriptor
+import org.jetbrains.vuejs.codeInsight.completion.vuetify.VuetifyIcons
 import org.jetbrains.vuejs.index.hasVue
 
-class VueAttributesCompletionContributor : CompletionContributor() {
+class VueCompletionContributor : CompletionContributor() {
   init {
     extend(CompletionType.BASIC, psiElement(XmlTokenType.XML_NAME).withParent(xmlAttribute()),
            VueEventAttrCompletionProvider())
+    extend(CompletionType.BASIC, psiElement(XmlTokenType.XML_DATA_CHARACTERS),
+           VueEventAttrDataCompletionProvider())
   }
 }
 
@@ -63,7 +67,6 @@ private class VueEventAttrCompletionProvider : CompletionProvider<CompletionPara
     if (!hasVue(parameters.position.project)) return
     val attr = parameters.position.parent as? XmlAttribute ?: return
     val attrName = attr.name
-
     if (attrName.startsWith("v-on:") || attrName.startsWith("@")) {
       addEventCompletions(attr, result)
       return
@@ -182,4 +185,17 @@ private class VueEventAttrCompletionProvider : CompletionProvider<CompletionPara
                              .withInsertHandler(XmlAttributeInsertHandler.INSTANCE))
     }
   }
+}
+
+private class VueEventAttrDataCompletionProvider : CompletionProvider<CompletionParameters>() {
+
+  override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+    if (!hasVue(parameters.position.project)) return
+    if ((parameters.position.parent.parent as HtmlTagImpl).name.contains("v-icon")) {
+      VuetifyIcons.materialAndFontAwesome.forEach {
+        result.addElement(LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue))
+      }
+    }
+  }
+
 }
