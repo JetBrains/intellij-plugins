@@ -4,8 +4,6 @@ package org.angular2.lang.html.parser;
 import com.intellij.codeInsight.daemon.XmlErrorMessages;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.html.HtmlParsing;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.ICustomParsingType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.ILazyParseableElementType;
@@ -13,11 +11,12 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.xml.XmlElementType;
 import com.intellij.psi.xml.XmlTokenType;
 import com.intellij.xml.util.XmlUtil;
+import org.angular2.codeInsight.Angular2Processor;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static com.intellij.openapi.util.Pair.pair;
 import static org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.*;
 import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
 
@@ -149,141 +148,29 @@ public class Angular2HtmlParsing extends HtmlParsing {
   protected void parseAttribute() {
     assert token() == XML_NAME;
     PsiBuilder.Marker att = mark();
-    final String attributeName = normalizeAttributeName(
-      Objects.requireNonNull(getBuilder().getTokenText()));
-    final Pair<IElementType, String> attributeElementTypeAndError = parseAttributeName(attributeName);
+    final AttributeInfo attributeInfo = Angular2AttributeNameParser.parse(
+      Objects.requireNonNull(getBuilder().getTokenText()),
+      Angular2Processor.NG_TEMPLATE.contentEquals(XmlUtil.getLocalName(peekTagName())));
 
-    if (attributeElementTypeAndError.second != null) {
+    if (attributeInfo.error != null) {
       PsiBuilder.Marker attrName = mark();
       advance();
-      attrName.error(attributeElementTypeAndError.second);
+      attrName.error(attributeInfo.error);
     }
     else {
       advance();
     }
-    IElementType attributeElementType = attributeElementTypeAndError.first;
+    IElementType attributeElementType = attributeInfo.elementType;
     if (token() == XML_EQ) {
       advance();
-      attributeElementType = parseAttributeValue(attributeElementType, attributeName);
+      attributeElementType = parseAttributeValue(attributeElementType, attributeInfo.name);
     }
     att.done(attributeElementType);
   }
 
-  @NotNull
-  public static String normalizeAttributeName(@NotNull String name) {
-    return StringUtil.trimStart(name, "data-");
-  }
-
-  private Pair<IElementType, String> parseAttributeName(@NotNull String name) {
-    return parseAttributeName(name, "ng-template".contentEquals(XmlUtil.getLocalName(peekTagName())));
-  }
-
-  @NotNull
-  public static Pair<IElementType, String> parseAttributeName(@NotNull String name, boolean isInTemplateTag) {
-    if (name.startsWith("bindon-")) {
-      return parseBananaBoxBinding(name.substring(7));
-    }
-    else if (name.startsWith("[(") && name.endsWith(")]")) {
-      return parseBananaBoxBinding(name.substring(2, name.length() - 2));
-    }
-    else if (name.startsWith("bind-")) {
-      return parsePropertyBinding(name.substring(5));
-    }
-    else if (name.startsWith("[") && name.endsWith("]")) {
-      return parsePropertyBinding(name.substring(1, name.length() - 1));
-    }
-    else if (name.startsWith("on-")) {
-      return parseEvent(name.substring(3));
-    }
-    else if (name.startsWith("(") && name.endsWith(")")) {
-      return parseEvent(name.substring(1, name.length() - 1));
-    }
-    else if (name.startsWith("*")) {
-      return parseTemplateBindings(name.substring(1));
-    }
-    else if (name.startsWith("let-")) {
-      return parseVariable(name.substring(4), isInTemplateTag);
-    }
-    else if (name.startsWith("#")) {
-      return parseReference(name.substring(1));
-    }
-    else if (name.startsWith("ref-")) {
-      return parseReference(name.substring(4));
-    }
-    else if (name.startsWith("@")) {
-      return parsePropertyBinding(name.substring(1));
-    }
-    return pair(XML_ATTRIBUTE, null);
-  }
-
-  @NotNull
-  private static Pair<IElementType, String> parseBananaBoxBinding(@NotNull String name) {
-    return pair(BANANA_BOX_BINDING, null);
-  }
-
-  @NotNull
-  private static Pair<IElementType, String> parsePropertyBinding(@NotNull String name) {
-    return pair(PROPERTY_BINDING, null);
-  }
-
-  @NotNull
-  private static Pair<IElementType, String> parseEvent(@NotNull String name) {
-    if (isAnimationLabel(name)) {
-      return parseAnimationEvent(name.substring(1));
-    }
-    return pair(EVENT, null);
-  }
-
-  @NotNull
-  private static Pair<IElementType, String> parseTemplateBindings(@NotNull String name) {
-    return pair(TEMPLATE_BINDINGS, null);
-  }
-
-  @NotNull
-  private static Pair<IElementType, String> parseAnimationEvent(@NotNull String name) {
-    int dot = name.indexOf('.');
-    if (dot < 0) {
-      return pair(EVENT, "The animation trigger output event (@" + name +
-                         ") is missing its phase value name (start or done are currently supported)");
-    }
-    else {
-      @SuppressWarnings("StringToUpperCaseOrToLowerCaseWithoutLocale")
-      String phase = name.substring(dot + 1).toLowerCase();
-      if (!"start".equals(phase) && !"done".equals(phase)) {
-        return pair(EVENT, "The provided animation output phase value '" + phase +
-                           "' for '@" + name.substring(0, dot) +
-                           "' is not supported (use start or done))");
-      }
-    }
-    return pair(EVENT, null);
-  }
-
-  @NotNull
-  private static Pair<IElementType, String> parseVariable(@NotNull String varName, boolean isInTemplateTag) {
-    if (!isInTemplateTag) {
-      return pair(XML_ATTRIBUTE, "\"let-\" is only supported on ng-template elements.");
-    }
-    else if (varName.contains("-")) {
-      return pair(XML_ATTRIBUTE, "\"-\" is not allowed in variable names");
-    }
-    return pair(VARIABLE, null);
-  }
-
-  @NotNull
-  private static Pair<IElementType, String> parseReference(@NotNull String refName) {
-    if (refName.contains("-")) {
-      return pair(XML_ATTRIBUTE, "\"-\" is not allowed in reference names");
-    }
-    return pair(REFERENCE, null);
-  }
-
-  private static boolean isAnimationLabel(@NotNull String name) {
-    return name.startsWith("@");
-  }
-
-  private IElementType parseAttributeValue(@NotNull IElementType attributeElementType, @NotNull String attributeName) {
+  private IElementType parseAttributeValue(@NotNull IElementType attributeElementType, @NotNull String name) {
     final PsiBuilder.Marker attValue = mark();
-    final IElementType contentType = getAttributeContentType(attributeElementType, attributeName);
+    final IElementType contentType = getAttributeContentType(attributeElementType, name);
     if (token() == XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER) {
       advance();
       final PsiBuilder.Marker contentStart = contentType != null ? mark() : null;
@@ -338,7 +225,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
     return attributeElementType;
   }
 
-  private static IElementType getAttributeContentType(IElementType type, String attributeName) {
+  private static IElementType getAttributeContentType(IElementType type, String name) {
     if (type == PROPERTY_BINDING || type == BANANA_BOX_BINDING) {
       return BINDING_EXPR;
     }
@@ -346,7 +233,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
       return ACTION_EXPR;
     }
     if (type == TEMPLATE_BINDINGS) {
-      return createTemplateBindings(attributeName.substring(1));
+      return createTemplateBindings(name);
     }
     if (type == REFERENCE || type == VARIABLE || type == XML_ATTRIBUTE) {
       return null;

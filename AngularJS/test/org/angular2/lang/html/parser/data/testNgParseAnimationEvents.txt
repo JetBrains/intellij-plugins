@@ -31,7 +31,8 @@ HtmlFile:test.html
       XmlToken:XML_NAME('b')
       PsiWhiteSpace(' ')
       Angular2HtmlEvent <click, ANIMATION, INVALID>
-        XmlToken:XML_NAME('on-animate-click')
+        PsiErrorElement:The animation trigger output event (@click) is missing its phase value name (start or done are currently supported)
+          XmlToken:XML_NAME('on-animate-click')
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')

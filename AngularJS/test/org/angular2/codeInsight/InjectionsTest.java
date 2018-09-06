@@ -6,6 +6,8 @@ import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
+import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
+import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSVariable;
@@ -49,6 +51,15 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("event_private.html", "package.json", "event_private.ts");
       checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
+    });
+  }
+
+  public void testUnusedSymbolInspection() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.enableInspections(JSUnusedGlobalSymbolsInspection.class);
+      myFixture.enableInspections(JSUnusedLocalSymbolsInspection.class);
+      myFixture.configureByFiles("unusedInspection.ts", "unusedInspection.html", "package.json");
+      myFixture.checkHighlighting();
     });
   }
 

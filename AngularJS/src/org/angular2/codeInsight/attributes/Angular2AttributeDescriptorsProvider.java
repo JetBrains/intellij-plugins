@@ -17,8 +17,8 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
 import com.intellij.xml.XmlElementDescriptor;
 import org.angular2.lang.Angular2LangUtil;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes;
-import org.angular2.lang.html.parser.Angular2HtmlParsing;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.codeInsight.attributes.AngularAttributeDescriptor;
 import org.angularjs.codeInsight.attributes.AngularAttributesRegistry;
@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.angular2.codeInsight.Angular2Processor.NG_TEMPLATE;
 import static org.angularjs.codeInsight.attributes.AngularAttributesRegistry.createDescriptor;
 
 public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescriptorsProvider {
@@ -158,7 +159,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
         }
       }
 
-      IElementType attrType = Angular2HtmlParsing.parseAttributeName(attrName, false).first;
+      IElementType attrType = Angular2AttributeNameParser.parse(attrName, NG_TEMPLATE.equals(xmlTag.getName())).elementType;
       if (attrType == Angular2HtmlElementTypes.PROPERTY_BINDING) {
         return new Angular2BindingDescriptor(xmlTag, attrName);
       }
@@ -183,7 +184,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   }
 
   protected static boolean isAngular2Attribute(String attrName) {
-    return Angular2HtmlParsing.parseAttributeName(attrName, false).first != XmlElementType.XML_ATTRIBUTE
+    return Angular2AttributeNameParser.parse(attrName, true).elementType != XmlElementType.XML_ATTRIBUTE
            || AngularAttributesRegistry.getCustomAngularAttributes().contains(attrName);
   }
 }

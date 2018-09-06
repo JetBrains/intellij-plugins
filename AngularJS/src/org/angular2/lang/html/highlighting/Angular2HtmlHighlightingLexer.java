@@ -12,12 +12,12 @@ import org.angular2.lang.expr.highlighting.Angular2SyntaxHighlighter;
 import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType;
 import org.angular2.lang.html.lexer.Angular2HtmlLexer;
 import org.angular2.lang.html.lexer._Angular2HtmlLexer;
-import org.angular2.lang.html.parser.Angular2HtmlParsing;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.jetbrains.annotations.Nullable;
 
 import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
 
-class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
+public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
 
   private static final TokenSet NG_EL_ATTRIBUTES = TokenSet.create(EVENT, BANANA_BOX_BINDING,
                                                                    PROPERTY_BINDING, TEMPLATE_BINDINGS);
@@ -51,11 +51,11 @@ class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
 
     // we need to convert attribute names according to their function
     if (tokenType == XML_NAME && (getState() & BASE_STATE_MASK) == _Angular2HtmlLexer.TAG_ATTRIBUTES) {
-      IElementType attributeType = Angular2HtmlParsing.parseAttributeName(getTokenText(), true).first;
-      if (attributeType != XML_ATTRIBUTE && attributeType != null) {
-        seenScript = NG_EL_ATTRIBUTES.contains(attributeType);
+      Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(getTokenText(), true);
+      if (info.elementType != XML_ATTRIBUTE) {
+        seenScript = NG_EL_ATTRIBUTES.contains(info.elementType);
         seenAttribute = true;
-        return attributeType;
+        return info.elementType;
       }
       seenScript = false;
     }

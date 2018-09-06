@@ -12,8 +12,6 @@ import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static org.angular2.lang.html.parser.Angular2HtmlParsing.normalizeAttributeName;
-
 public class Angular2HtmlTemplateBindingsImpl extends Angular2HtmlBoundAttributeImpl implements Angular2HtmlTemplateBindings {
 
   public Angular2HtmlTemplateBindingsImpl(@NotNull Angular2ElementType type) {
@@ -42,15 +40,7 @@ public class Angular2HtmlTemplateBindingsImpl extends Angular2HtmlBoundAttribute
   @NotNull
   @Override
   public String getTemplateName() {
-    String name = normalizeAttributeName(getName());
-    if (name.startsWith("*")) {
-      return name.substring(1);
-    }
-    throw new IllegalStateException("Bad attribute name: " + name);
+    return getAttributeInfo().name;
   }
 
-  @Override
-  public String toString() {
-    return "Angular2HtmlTemplateBindings <" + getTemplateName() + ">";
-  }
 }

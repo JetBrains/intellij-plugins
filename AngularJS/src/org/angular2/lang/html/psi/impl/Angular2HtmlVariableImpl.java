@@ -8,8 +8,6 @@ import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlVariable;
 import org.jetbrains.annotations.NotNull;
 
-import static org.angular2.lang.html.parser.Angular2HtmlParsing.normalizeAttributeName;
-
 public class Angular2HtmlVariableImpl extends Angular2HtmlBoundAttributeImpl implements Angular2HtmlVariable {
 
   public Angular2HtmlVariableImpl(@NotNull Angular2ElementType type) {
@@ -32,15 +30,7 @@ public class Angular2HtmlVariableImpl extends Angular2HtmlBoundAttributeImpl imp
   @NotNull
   @Override
   public String getVariableName() {
-    String name = normalizeAttributeName(getName());
-    if (name.startsWith("let-")) {
-      return name.substring(4);
-    }
-    throw new IllegalStateException("Bad attribute name: " + name);
+    return getAttributeInfo().name;
   }
 
-  @Override
-  public String toString() {
-    return "Angular2HtmlVariable <" + getVariableName() + ">";
-  }
 }

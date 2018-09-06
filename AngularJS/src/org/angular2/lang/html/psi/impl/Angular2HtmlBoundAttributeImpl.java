@@ -1,9 +1,12 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.psi.impl;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.impl.source.xml.XmlAttributeImpl;
 import com.intellij.psi.xml.XmlElement;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes.Angular2ElementType;
 import org.angular2.lang.html.psi.Angular2HtmlBoundAttribute;
 import org.jetbrains.annotations.NotNull;
@@ -24,5 +27,16 @@ public class Angular2HtmlBoundAttributeImpl extends XmlAttributeImpl implements 
       return (XmlElement)getFirstChild().getFirstChild();
     }
     return result;
+  }
+
+  protected AttributeInfo getAttributeInfo() {
+    AttributeInfo info = Angular2AttributeNameParser.parseBound(getName());
+    assert info.elementType == getElementType();
+    return info;
+  }
+
+  @Override
+  public String toString() {
+    return StringUtil.trimEnd(getClass().getSimpleName(), "Impl") + " " + getAttributeInfo().toString();
   }
 }

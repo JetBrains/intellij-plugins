@@ -6,7 +6,7 @@ HtmlFile:test.html
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('div')
       PsiWhiteSpace(' ')
-      Angular2HtmlRefence <a>
+      Angular2HtmlReference <a>
         XmlToken:XML_NAME('#a')
       XmlToken:XML_TAG_END('>')
       XmlToken:XML_END_TAG_START('</')
@@ -16,7 +16,7 @@ HtmlFile:test.html
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('div')
       PsiWhiteSpace(' ')
-      Angular2HtmlRefence <a>
+      Angular2HtmlReference <a>
         XmlToken:XML_NAME('ref-a')
       XmlToken:XML_TAG_END('>')
       XmlToken:XML_END_TAG_START('</')
@@ -29,7 +29,7 @@ HtmlFile:test.html
       PsiElement(XML_ATTRIBUTE)
         XmlToken:XML_NAME('a')
       PsiWhiteSpace(' ')
-      Angular2HtmlRefence <a>
+      Angular2HtmlReference <a>
         XmlToken:XML_NAME('#a')
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)

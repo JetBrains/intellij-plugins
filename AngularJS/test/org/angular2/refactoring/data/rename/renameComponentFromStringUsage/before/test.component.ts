@@ -8,6 +8,6 @@ export class TestComponent {
 }
 
 
-export class Hero {
+export class He<caret>ro {
     name: string
 }

@@ -36,7 +36,7 @@ public class RenameTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testRenameComponentFromStringUsage() throws IOException {
-    doMultiFileTest("test.component.html", "newName");
+    doMultiFileTest("test.component.ts", "newName");
   }
 
   public void testComponentFieldFromTemplate() throws IOException {
