@@ -224,7 +224,18 @@ public class Angular2Processor {
 
     @Override
     public void visitReference(Angular2HtmlReference reference) {
-      addElement(createReference(reference));
+      if (reference.getParent().getName().equalsIgnoreCase(NG_TEMPLATE)) {
+        // References on ng-template are visible within parent scope
+        prevScope().add(createReference(reference));
+      }
+      else {
+        currentScope().add(createReference(reference));
+      }
+    }
+
+    @NotNull
+    private Angular2TemplateScope prevScope() {
+      return scopes.get(scopes.size() - 2);
     }
 
     @Override

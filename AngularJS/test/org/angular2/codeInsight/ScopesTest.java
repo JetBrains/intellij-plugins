@@ -26,12 +26,15 @@ public class ScopesTest extends LightPlatformCodeInsightFixtureTestCase {
         i++;
         lastCase = offset + 8;
         char result = fileText.charAt(offset + TEST_PREFIX.length());
-        assert result == 'T' || result == 'F' : "Bad result spec for test case " + i + ": " + result;
+
+        String testCase = "test case " + i + " (`" + fileText.substring(offset, fileText.indexOf("}", offset) + 2) + "`)";
+
+        assert result == 'T' || result == 'F' : "Bad result spec for " + testCase + ": " + result;
 
         PsiReference ref = myFixture.getFile().findReferenceAt(offset + TEST_PREFIX.length() + 6);
-        assertNotNull("Ref is empty for test case " + i, ref);
+        assertNotNull("Ref is empty for " + testCase, ref);
         PsiElement resolve = ref.resolve();
-        assertEquals("Bad result for test case " + i, result == 'T', resolve != null);
+        assertEquals("Bad result for " + testCase, result == 'T', resolve != null);
       }
     });
   }

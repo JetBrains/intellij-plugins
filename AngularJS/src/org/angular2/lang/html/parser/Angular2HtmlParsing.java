@@ -339,7 +339,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
   }
 
   private static IElementType getAttributeContentType(IElementType type, String attributeName) {
-    if (type == PROPERTY_BINDING) {
+    if (type == PROPERTY_BINDING || type == BANANA_BOX_BINDING) {
       return BINDING_EXPR;
     }
     if (type == EVENT) {

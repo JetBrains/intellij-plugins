@@ -1,14 +1,19 @@
 <div #outerDiv>
-  <ng-template let-foo ngForOf="contacts">
+  <ng-template #ngRef let-foo ngForOf="contacts">
     <div #innerDiv1></div>
+    resolveRef-T {{ ngRef }}
+    resolveRef-F {{ divRef }}
     resolveRef-T {{ foo }}
     resolveRef-F {{ bar }}
     resolveRef-T {{ outerDiv }}
     resolveRef-T {{ innerDiv1 }}
     resolveRef-F {{ innerDiv2 }}
   </ng-template>
-  <div *ngFor="let bar of contacts">
+  <div #divRef *ngFor="let bar of contacts">
     <div #innerDiv2></div>
+    resolveRef-T {{ ngRef }}
+    resolveRef-T {{ ngRefInner }}
+    resolveRef-T {{ divRef }}
     resolveRef-F {{ foo }}
     resolveRef-T {{ bar }}
     resolveRef-T {{ outerDiv }}
@@ -22,7 +27,12 @@
       resolveRef-F {{ innerDiv1 }}
       resolveRef-T {{ innerDiv2 }}
     </div>
+    <ng-template #ngRefInner>
+    </ng-template>
   </div>
+  resolveRef-T {{ ngRef }}
+  resolveRef-F {{ ngRefInner }}
+  resolveRef-F {{ divRef }}
   resolveRef-F {{ foo }}
   resolveRef-F {{ bar }}
   resolveRef-T {{ outerDiv }}
