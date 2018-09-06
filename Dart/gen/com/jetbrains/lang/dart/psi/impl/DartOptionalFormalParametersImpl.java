@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartOptionalFormalParametersImpl extends DartPsiCompositeElementImpl implements DartOptionalFormalParameters {
 
-  public DartOptionalFormalParametersImpl(ASTNode node) {
+  public DartOptionalFormalParametersImpl(@NotNull ASTNode node) {
     super(node);
   }
 

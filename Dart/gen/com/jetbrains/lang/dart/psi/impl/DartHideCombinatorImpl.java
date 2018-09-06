@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartHideCombinatorImpl extends DartPsiCompositeElementImpl implements DartHideCombinator {
 
-  public DartHideCombinatorImpl(ASTNode node) {
+  public DartHideCombinatorImpl(@NotNull ASTNode node) {
     super(node);
   }
 

@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartIdImpl extends DartPsiCompositeElementImpl implements DartId {
 
-  public DartIdImpl(ASTNode node) {
+  public DartIdImpl(@NotNull ASTNode node) {
     super(node);
   }
 

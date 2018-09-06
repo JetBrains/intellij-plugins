@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartBitwiseOperatorImpl extends DartPsiCompositeElementImpl implements DartBitwiseOperator {
 
-  public DartBitwiseOperatorImpl(ASTNode node) {
+  public DartBitwiseOperatorImpl(@NotNull ASTNode node) {
     super(node);
   }
 

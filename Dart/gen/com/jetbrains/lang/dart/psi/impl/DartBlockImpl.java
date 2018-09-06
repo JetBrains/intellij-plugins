@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartBlockImpl extends DartPsiCompositeElementImpl implements DartBlock {
 
-  public DartBlockImpl(ASTNode node) {
+  public DartBlockImpl(@NotNull ASTNode node) {
     super(node);
   }
 

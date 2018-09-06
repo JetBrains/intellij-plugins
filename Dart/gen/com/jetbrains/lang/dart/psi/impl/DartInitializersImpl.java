@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartInitializersImpl extends DartPsiCompositeElementImpl implements DartInitializers {
 
-  public DartInitializersImpl(ASTNode node) {
+  public DartInitializersImpl(@NotNull ASTNode node) {
     super(node);
   }
 

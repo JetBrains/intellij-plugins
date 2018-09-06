@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartCatchPartImpl extends DartPsiCompositeElementImpl implements DartCatchPart {
 
-  public DartCatchPartImpl(ASTNode node) {
+  public DartCatchPartImpl(@NotNull ASTNode node) {
     super(node);
   }
 

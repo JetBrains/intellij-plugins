@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartComponentNameImpl extends DartNamedElementImpl implements DartComponentName {
 
-  public DartComponentNameImpl(ASTNode node) {
+  public DartComponentNameImpl(@NotNull ASTNode node) {
     super(node);
   }
 

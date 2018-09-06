@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartSimpleTypeImpl extends DartPsiCompositeElementImpl implements DartSimpleType {
 
-  public DartSimpleTypeImpl(ASTNode node) {
+  public DartSimpleTypeImpl(@NotNull ASTNode node) {
     super(node);
   }
 

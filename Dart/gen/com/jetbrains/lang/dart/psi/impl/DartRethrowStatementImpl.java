@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartRethrowStatementImpl extends DartPsiCompositeElementImpl implements DartRethrowStatement {
 
-  public DartRethrowStatementImpl(ASTNode node) {
+  public DartRethrowStatementImpl(@NotNull ASTNode node) {
     super(node);
   }
 

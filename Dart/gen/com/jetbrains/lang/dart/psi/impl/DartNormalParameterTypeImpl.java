@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartNormalParameterTypeImpl extends DartPsiCompositeElementImpl implements DartNormalParameterType {
 
-  public DartNormalParameterTypeImpl(ASTNode node) {
+  public DartNormalParameterTypeImpl(@NotNull ASTNode node) {
     super(node);
   }
 

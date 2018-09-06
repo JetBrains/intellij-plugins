@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartRedirectionImpl extends DartPsiCompositeElementImpl implements DartRedirection {
 
-  public DartRedirectionImpl(ASTNode node) {
+  public DartRedirectionImpl(@NotNull ASTNode node) {
     super(node);
   }
 

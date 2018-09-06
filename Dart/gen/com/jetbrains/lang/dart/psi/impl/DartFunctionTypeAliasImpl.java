@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartFunctionTypeAliasImpl extends AbstractDartComponentImpl implements DartFunctionTypeAlias {
 
-  public DartFunctionTypeAliasImpl(ASTNode node) {
+  public DartFunctionTypeAliasImpl(@NotNull ASTNode node) {
     super(node);
   }
 

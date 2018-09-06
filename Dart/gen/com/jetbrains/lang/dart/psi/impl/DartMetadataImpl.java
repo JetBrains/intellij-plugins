@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartMetadataImpl extends DartPsiCompositeElementImpl implements DartMetadata {
 
-  public DartMetadataImpl(ASTNode node) {
+  public DartMetadataImpl(@NotNull ASTNode node) {
     super(node);
   }
 

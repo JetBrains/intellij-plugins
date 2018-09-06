@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartTypeParameterImpl extends AbstractDartComponentImpl implements DartTypeParameter {
 
-  public DartTypeParameterImpl(ASTNode node) {
+  public DartTypeParameterImpl(@NotNull ASTNode node) {
     super(node);
   }
 

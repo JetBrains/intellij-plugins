@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartFunctionExpressionBodyImpl extends DartPsiCompositeElementImpl implements DartFunctionExpressionBody {
 
-  public DartFunctionExpressionBodyImpl(ASTNode node) {
+  public DartFunctionExpressionBodyImpl(@NotNull ASTNode node) {
     super(node);
   }
 
