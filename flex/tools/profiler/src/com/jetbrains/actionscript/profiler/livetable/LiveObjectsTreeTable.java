@@ -151,7 +151,7 @@ public class LiveObjectsTreeTable extends ColoredSortableTreeTable implements Da
   }
 
   private static abstract class AbstractSizeColumnInfo extends ColumnInfo<DefaultMutableTreeNode, String> {
-    public AbstractSizeColumnInfo(String name) {
+    AbstractSizeColumnInfo(String name) {
       super(name);
     }
 

@@ -100,7 +100,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
   }
 
   private static class Protocol extends JSLanguageServiceNodeStdProtocolBase {
-    public Protocol(@NotNull Project project, @NotNull Consumer<?> readyConsumer) {
+    Protocol(@NotNull Project project, @NotNull Consumer<?> readyConsumer) {
       super(project, readyConsumer);
     }
 
@@ -167,7 +167,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     public Integer end;
     public final boolean flushConfigCache;
 
-    public ReformatFileCommand(@NotNull String filePath,
+    ReformatFileCommand(@NotNull String filePath,
                                @NotNull String prettierPath,
                                @NotNull String content,
                                @Nullable TextRange range, 

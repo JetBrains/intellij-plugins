@@ -27,7 +27,7 @@ public class Angular2HTMLHighlighterFactory extends SingleLazyInstanceSyntaxHigh
     }
 
     private static class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
-      public Angular2HtmlHighlightingLexer() {
+      Angular2HtmlHighlightingLexer() {
         super(FileTypeRegistry.getInstance().findFileTypeByName("CSS"));
         TokenHandler value = new TokenHandler() {
           @Override

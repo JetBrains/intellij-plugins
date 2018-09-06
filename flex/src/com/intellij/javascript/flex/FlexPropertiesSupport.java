@@ -73,7 +73,7 @@ public class FlexPropertiesSupport {
   }
 
   private static class MyPropertyReference<T extends PsiElement> extends PropertyReference implements JSPropertyReference {
-    public MyPropertyReference(TextRange range, T element, PropertyReferenceInfoProvider<T> infoProvider) {
+    MyPropertyReference(TextRange range, T element, PropertyReferenceInfoProvider<T> infoProvider) {
       super(range.substring(element.getText()), element, infoProvider.getBundleName(element), infoProvider.isSoft(element), range);
     }
 
@@ -89,7 +89,7 @@ public class FlexPropertiesSupport {
   }
 
   private static class MyResourceBundleReference extends ResourceBundleReference implements EmptyResolveMessageProvider {
-    public MyResourceBundleReference(PsiElement element, boolean soft) {
+    MyResourceBundleReference(PsiElement element, boolean soft) {
       super(element, soft);
     }
 

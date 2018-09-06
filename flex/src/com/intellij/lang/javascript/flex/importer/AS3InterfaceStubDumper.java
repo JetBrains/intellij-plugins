@@ -25,7 +25,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
   private static final JSAttributeList.AccessType[] ourAccessTypes = JSAttributeList.AccessType.values();
   private static final JSAttributeList.ModifierType[] ourModifierTypes = JSAttributeList.ModifierType.values();
 
-  public AS3InterfaceStubDumper(StubElement parent) {
+  AS3InterfaceStubDumper(StubElement parent) {
     parents = new LinkedList<>();
     parents.add(parent);
   }

@@ -26,7 +26,7 @@ public class CfmlParser implements PsiParser {
     public PsiBuilder.Marker myMarkerOfBegin;
     public PsiBuilder.Marker myMarkerOfContent;
 
-    public Tag(String string, PsiBuilder.Marker marker, PsiBuilder.Marker content) {
+    Tag(String string, PsiBuilder.Marker marker, PsiBuilder.Marker content) {
       myTagName = string;
       myMarkerOfBegin = marker;
       myMarkerOfContent = content;

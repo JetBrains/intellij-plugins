@@ -28,7 +28,7 @@ import org.osmorc.i18n.OsmorcBundle;
 import java.io.File;
 
 class BndSelectProjectsStep extends SelectImportedProjectsStep<Project> {
-  public BndSelectProjectsStep(WizardContext context) {
+  BndSelectProjectsStep(WizardContext context) {
     super(context);
   }
 

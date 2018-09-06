@@ -67,7 +67,7 @@ class JpsIosPackagingOptionsImpl extends JpsAirPackagingOptionsBase<JpsIosPackag
   private static class JpsIosPackagingOptionsRole extends JpsElementChildRoleBase<JpsIosPackagingOptions>
     implements JpsElementCreator<JpsIosPackagingOptions> {
 
-    public JpsIosPackagingOptionsRole() {
+    JpsIosPackagingOptionsRole() {
       super("ios packaging options");
     }
 

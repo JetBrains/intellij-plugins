@@ -12,7 +12,7 @@ class HbTreeElementFile extends PsiTreeElementBase<HbPsiFile> {
 
   private final HbPsiFile myFile;
 
-  public HbTreeElementFile(@NotNull HbPsiFile psiFile) {
+  HbTreeElementFile(@NotNull HbPsiFile psiFile) {
     super(psiFile);
     this.myFile = psiFile;
   }

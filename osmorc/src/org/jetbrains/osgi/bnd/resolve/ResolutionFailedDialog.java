@@ -30,7 +30,7 @@ import static org.osmorc.i18n.OsmorcBundle.message;
 class ResolutionFailedDialog extends DialogWrapper {
   private final ResolutionException myResolutionException;
 
-  public ResolutionFailedDialog(Project project, ResolutionException resolutionException) {
+  ResolutionFailedDialog(Project project, ResolutionException resolutionException) {
     super(project);
     myResolutionException = resolutionException;
     init();

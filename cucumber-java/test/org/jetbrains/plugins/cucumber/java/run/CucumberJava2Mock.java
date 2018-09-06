@@ -102,7 +102,7 @@ public class CucumberJava2Mock implements EventPublisher {
 
     private final String myText;
 
-    public PickleTestStepMock(String uri, int line, String text) {
+    PickleTestStepMock(String uri, int line, String text) {
       super(uri, null, null);
       myLine = line;
       myText = text;

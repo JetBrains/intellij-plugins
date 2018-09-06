@@ -236,13 +236,13 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     public final String moduleName;
     public final String bcName;
 
-    public BCItem(@NotNull String moduleName, @NotNull String bcName) {
+    BCItem(@NotNull String moduleName, @NotNull String bcName) {
       this.moduleName = moduleName;
       this.bcName = bcName;
       this.configurable = null;
     }
 
-    public BCItem(@NotNull FlexBCConfigurable configurable) {
+    BCItem(@NotNull FlexBCConfigurable configurable) {
       this.moduleName = null;
       this.bcName = null;
       this.configurable = configurable;
@@ -347,7 +347,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     private final Project project;
 
-    public ModuleLibraryItem(@NotNull String libraryId, @Nullable LibraryOrderEntry orderEntry, @NotNull Project project) {
+    ModuleLibraryItem(@NotNull String libraryId, @Nullable LibraryOrderEntry orderEntry, @NotNull Project project) {
       this.libraryId = libraryId;
       this.orderEntry = orderEntry;
       this.project = project;
@@ -449,7 +449,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     private final Project project;
 
-    public SharedLibraryItem(@NotNull String libraryName,
+    SharedLibraryItem(@NotNull String libraryName,
                              @NotNull String libraryLevel,
                              @Nullable Library liveLibrary,
                              @NotNull Project project) {
@@ -558,7 +558,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     private final Sdk mySdk;
     private final SdkType mySdkType;
 
-    public SdkItem(Sdk sdk) {
+    SdkItem(Sdk sdk) {
       mySdk = sdk;
       mySdkType = (SdkType)sdk.getSdkType();
     }
@@ -1543,7 +1543,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   }
 
   private class AddBuildConfigurationDependencyAction extends AddItemPopupAction {
-    public AddBuildConfigurationDependencyAction(int index) {
+    AddBuildConfigurationDependencyAction(int index) {
       super(index, "Build Configuration...", null);
     }
 
@@ -1595,7 +1595,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   }
 
   private class AddFilesAction extends AddItemPopupAction {
-    public AddFilesAction(int index) {
+    AddFilesAction(int index) {
       super(index, FlexBundle.message("add.module.library.action.text"), null);
     }
 
@@ -1639,7 +1639,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
   private class AddSharedLibraryAction extends AddItemPopupAction {
 
-    public AddSharedLibraryAction(int index) {
+    AddSharedLibraryAction(int index) {
       super(index, FlexBundle.message("add.shared.library.dependency.action.text"), null);
     }
 
@@ -1870,7 +1870,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private class ChooseLibrariesDialog extends ChooseLibrariesFromTablesDialog {
     private final Condition<Library> myFilter;
 
-    public ChooseLibrariesDialog(Condition<Library> liveLibraryFilter) {
+    ChooseLibrariesDialog(Condition<Library> liveLibraryFilter) {
       super(myMainPanel, "Choose Libraries", myProject, false);
       myFilter = liveLibraryFilter;
       init();

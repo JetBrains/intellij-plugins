@@ -22,7 +22,7 @@ public class UpdateMxmlCopyrightsProvider extends UpdateCopyrightsProvider {
   }
 
   private static class UpdateMxmlFileCopyright extends UpdateXmlCopyrightsProvider.UpdateXmlFileCopyright {
-    public UpdateMxmlFileCopyright(final Project project, final Module module, final VirtualFile file, final CopyrightProfile options) {
+    UpdateMxmlFileCopyright(final Project project, final Module module, final VirtualFile file, final CopyrightProfile options) {
       super(project, module, file, options);
     }
 

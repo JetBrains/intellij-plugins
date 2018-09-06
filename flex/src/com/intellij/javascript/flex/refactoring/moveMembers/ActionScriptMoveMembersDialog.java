@@ -338,7 +338,7 @@ public class ActionScriptMoveMembersDialog extends RefactoringDialog implements 
 
   private static class ScopeAllowingFileLocalSymbols extends DelegatingGlobalSearchScope implements JSResolveUtil.AllowFileLocalSymbols {
 
-    public ScopeAllowingFileLocalSymbols(@NotNull GlobalSearchScope baseScope) {
+    ScopeAllowingFileLocalSymbols(@NotNull GlobalSearchScope baseScope) {
       super(baseScope);
     }
   }

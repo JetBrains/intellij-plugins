@@ -89,7 +89,7 @@ public class FlexRunner extends GenericProgramRunner {
   private static class MyFlexDebugProcess extends FlexDebugProcess {
     private final Callback callback;
 
-    public MyFlexDebugProcess(Callback callback, XDebugSession session, FlexBuildConfiguration buildConfiguration,
+    MyFlexDebugProcess(Callback callback, XDebugSession session, FlexBuildConfiguration buildConfiguration,
                               BCBasedRunnerParameters parameters) throws IOException {
       super(session, buildConfiguration, parameters);
       this.callback = callback;
@@ -109,7 +109,7 @@ public class FlexRunner extends GenericProgramRunner {
   }
 
   private static class MyFlexDebugProcessAbleToResolveFileDebugId extends MyFlexDebugProcess {
-    public MyFlexDebugProcessAbleToResolveFileDebugId(Callback callback, XDebugSession session, FlexBuildConfiguration buildConfiguration, BCBasedRunnerParameters parameters)
+    MyFlexDebugProcessAbleToResolveFileDebugId(Callback callback, XDebugSession session, FlexBuildConfiguration buildConfiguration, BCBasedRunnerParameters parameters)
       throws IOException {
       super(callback, session, buildConfiguration, parameters);
     }

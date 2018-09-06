@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project;
 class CreationContext {
   private final Project myProject;
 
-  public CreationContext(Project myProject) {
+  CreationContext(Project myProject) {
     this.myProject = myProject;
   }
 

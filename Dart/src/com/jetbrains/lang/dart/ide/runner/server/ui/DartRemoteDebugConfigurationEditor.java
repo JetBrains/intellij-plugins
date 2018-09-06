@@ -185,7 +185,7 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
     @Nullable private final String myName;
     @NotNull private final String myPath;
 
-    public NameAndPath(@Nullable final String name, @NotNull final String path) {
+    NameAndPath(@Nullable final String name, @NotNull final String path) {
       myName = name;
       myPath = path;
     }

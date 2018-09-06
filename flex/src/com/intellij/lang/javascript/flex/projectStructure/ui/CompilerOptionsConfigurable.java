@@ -962,7 +962,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   static class ExtensionAwareFileChooserDescriptor extends FileChooserDescriptor {
     private @Nullable String[] myAllowedExtensions;
 
-    public ExtensionAwareFileChooserDescriptor() {
+    ExtensionAwareFileChooserDescriptor() {
       super(true, false, true, true, false, false);
     }
 
@@ -990,7 +990,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   private class RestoreDefaultValueAction extends AnAction {
     private final JTree myTree;
 
-    public RestoreDefaultValueAction(final JTree tree) {
+    RestoreDefaultValueAction(final JTree tree) {
       super("Restore Default Value");
       myTree = tree;
     }

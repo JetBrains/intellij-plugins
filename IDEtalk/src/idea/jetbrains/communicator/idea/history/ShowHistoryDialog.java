@@ -133,7 +133,7 @@ public class ShowHistoryDialog extends IdeaDialog {
 
   private class Panel extends NonOpaquePanel implements DataProvider {
 
-    public Panel(JComponent wrapped) {
+    Panel(JComponent wrapped) {
       super(wrapped);
     }
 

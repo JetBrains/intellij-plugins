@@ -72,7 +72,7 @@ public class FlexBuildTargetType extends BuildTargetType<FlexBuildTarget> {
   private static class FlexBuildTargetLoader extends BuildTargetLoader<FlexBuildTarget> {
     private final JpsModel myModel;
 
-    public FlexBuildTargetLoader(final JpsModel model) {
+    FlexBuildTargetLoader(final JpsModel model) {
       myModel = model;
     }
 

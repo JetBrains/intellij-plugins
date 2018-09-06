@@ -37,7 +37,7 @@ public final class BndRunConfigurationType extends ConfigurationTypeBase {
     private final String myName;
     private final Icon myIcon;
 
-    public FactoryBase(@NotNull ConfigurationType type, @NotNull String name, @NotNull Icon icon) {
+    FactoryBase(@NotNull ConfigurationType type, @NotNull String name, @NotNull Icon icon) {
       super(type);
       myName = name;
       myIcon = icon;
@@ -67,7 +67,7 @@ public final class BndRunConfigurationType extends ConfigurationTypeBase {
   }
 
   private static class LaunchFactory extends FactoryBase {
-    public LaunchFactory(@NotNull ConfigurationType type) {
+    LaunchFactory(@NotNull ConfigurationType type) {
       super(type, message("bnd.run.configuration.name"), OsmorcIdeaIcons.BndLaunch);
     }
 
@@ -79,7 +79,7 @@ public final class BndRunConfigurationType extends ConfigurationTypeBase {
   }
 
   private static class TestFactory extends FactoryBase {
-    public TestFactory(@NotNull ConfigurationType type) {
+    TestFactory(@NotNull ConfigurationType type) {
       super(type, message("bnd.test.configuration.name"), OsmorcIdeaIcons.BndTest);
     }
 

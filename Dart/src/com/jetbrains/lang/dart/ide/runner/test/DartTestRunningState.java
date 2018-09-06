@@ -207,7 +207,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
   }
 
   private static class DartConsoleProperties extends SMTRunnerConsoleProperties implements SMCustomMessagesParsing {
-    public DartConsoleProperties(DartRunConfiguration runConfiguration, ExecutionEnvironment env) {
+    DartConsoleProperties(DartRunConfiguration runConfiguration, ExecutionEnvironment env) {
       super(runConfiguration, DART_FRAMEWORK_NAME, env.getExecutor());
       setUsePredefinedMessageFilter(false);
       setIdBasedTestTree(true);

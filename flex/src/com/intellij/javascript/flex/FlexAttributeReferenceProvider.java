@@ -210,7 +210,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     private final JSAttributeNameValuePairImpl myElement;
     private final ActionScriptReferenceSet myReferenceSet;
 
-    public ClassRefQuickFixProvider(JSAttributeNameValuePairImpl element, ActionScriptReferenceSet referenceSet) {
+    ClassRefQuickFixProvider(JSAttributeNameValuePairImpl element, ActionScriptReferenceSet referenceSet) {
       myElement = element;
       myReferenceSet = referenceSet;
     }
@@ -277,7 +277,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     private final TextRange myRange;
     private final boolean myResolveOk;
 
-    public EnumeratedAttributeValueReference(final JSAttributeNameValuePairImpl element,
+    EnumeratedAttributeValueReference(final JSAttributeNameValuePairImpl element,
                                              final TextRange range,
                                              final String[] allowedValues) {
       myElement = element;

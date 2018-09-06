@@ -246,7 +246,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
 
   private class FlexMoveInnerClassUsageViewDescriptor extends BaseUsageViewDescriptor {
 
-    public FlexMoveInnerClassUsageViewDescriptor() {
+    FlexMoveInnerClassUsageViewDescriptor() {
       super(myElement);
     }
 

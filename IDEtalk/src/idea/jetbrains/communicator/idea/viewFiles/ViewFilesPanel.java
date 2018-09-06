@@ -51,7 +51,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
   public static final String SHOW_READ_ONLY_KEY = "SHOW_READ_ONLY_KEY";
   private OpenFileAction myOpenFileAction;
 
-  public ViewFilesPanel(FileTypeManager fileTypeManager, ActionManager actionManager, IDEFacade facade) {
+  ViewFilesPanel(FileTypeManager fileTypeManager, ActionManager actionManager, IDEFacade facade) {
     super(new BorderLayout(2, 2));
     setOpaque(false);
 
@@ -180,7 +180,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
   private class MyRootNode extends KirTreeNode {
     private List<KirTreeNode> myChildren;
 
-    public MyRootNode() {
+    MyRootNode() {
       super(null);
     }
 
@@ -212,13 +212,13 @@ class ViewFilesPanel extends JPanel implements DataProvider {
     private List<FileNode> myChildren;
     private final VFile[] myProjectFiles;
 
-    public ProjectNode(TreeNode parent, String name, VFile[] projectFiles) {
+    ProjectNode(TreeNode parent, String name, VFile[] projectFiles) {
       super(parent);
       myName = name;
       myProjectFiles = projectFiles;
     }
 
-    public ProjectNode(TreeNode parent, String name) {
+    ProjectNode(TreeNode parent, String name) {
       super(parent);
       myName = name;
       myProjectFiles = myProjectsData.getProjectFiles(myName);

@@ -25,7 +25,7 @@ public class UpdateDartCopyrightsProvider extends UpdateCopyrightsProvider {
   }
 
   private static class UpdateDartFileCopyright extends UpdateJavaScriptFileCopyright {
-    public UpdateDartFileCopyright(final Project project,
+    UpdateDartFileCopyright(final Project project,
                                    final Module module,
                                    final VirtualFile file,
                                    final CopyrightProfile options) {

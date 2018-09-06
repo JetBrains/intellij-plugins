@@ -89,7 +89,7 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
   }
 
   private static class TraceLessAssertionError extends AssertionError {
-    public TraceLessAssertionError(String m) {
+    TraceLessAssertionError(String m) {
       super(m);
     }
 

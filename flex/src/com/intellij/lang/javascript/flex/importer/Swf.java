@@ -146,7 +146,7 @@ class Swf {
   };
 
 
-  public Swf(final ByteBuffer _data, final FlexByteCodeInformationProcessor _processor) {
+  Swf(final ByteBuffer _data, final FlexByteCodeInformationProcessor _processor) {
     data = _data;
     processor = _processor;
 

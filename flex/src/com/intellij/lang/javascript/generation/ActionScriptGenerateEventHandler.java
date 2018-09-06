@@ -534,7 +534,7 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
       private final TextResult myResult;
       private final LookupElement[] myLookupItems;
 
-      public MyExpression(final String... variants) {
+      MyExpression(final String... variants) {
         myResult = new TextResult(variants[0]);
         myLookupItems = variants.length == 1 ? LookupElement.EMPTY_ARRAY : new LookupElement[variants.length];
         if (variants.length > 1) {

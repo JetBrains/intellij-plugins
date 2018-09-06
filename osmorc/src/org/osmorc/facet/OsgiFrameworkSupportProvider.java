@@ -28,7 +28,7 @@ public class OsgiFrameworkSupportProvider extends FacetBasedFrameworkSupportProv
 
 
   private static class FrameworkConfigurable extends FrameworkSupportConfigurableBase implements FrameworkSupportWithLibrary {
-    public FrameworkConfigurable(FrameworkSupportProviderBase provider, FrameworkSupportModel model) {
+    FrameworkConfigurable(FrameworkSupportProviderBase provider, FrameworkSupportModel model) {
       super(provider, model);
     }
 

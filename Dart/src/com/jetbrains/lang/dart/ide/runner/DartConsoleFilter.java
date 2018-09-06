@@ -119,7 +119,7 @@ public class DartConsoleFilter implements Filter {
   private static class ObservatoryHyperlinkInfo implements HyperlinkInfo {
     private final String myUrl;
 
-    public ObservatoryHyperlinkInfo(@NotNull final String url) {
+    ObservatoryHyperlinkInfo(@NotNull final String url) {
       myUrl = StringUtil.replace(url, "http://0.0.0.0:", "http://localhost:");
     }
 

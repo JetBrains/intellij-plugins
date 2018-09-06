@@ -297,7 +297,7 @@ public class JstdRunProfileState implements RunProfileState {
   private static class JstdConsoleProperties extends SMTRunnerConsoleProperties {
     private final JstdTestProxyFilterProvider myFilterProvider;
 
-    public JstdConsoleProperties(JstdRunConfiguration configuration, Executor executor, JstdTestProxyFilterProvider filterProvider) {
+    JstdConsoleProperties(JstdRunConfiguration configuration, Executor executor, JstdTestProxyFilterProvider filterProvider) {
       super(configuration, JSTD_FRAMEWORK_NAME, executor);
       myFilterProvider = filterProvider;
       setUsePredefinedMessageFilter(false);

@@ -52,7 +52,7 @@ public class CfmlMappingsForm {
     public String myDirectoryPath;
     public String myLogicalPath;
 
-    public Item(String directoryPath, String logicalPath) {
+    Item(String directoryPath, String logicalPath) {
       myDirectoryPath = FileUtil.toSystemDependentName(directoryPath);
       myLogicalPath = logicalPath;
     }
@@ -167,7 +167,7 @@ public class CfmlMappingsForm {
   }
 
   private static class LogicalPathColumnInfo extends ColumnInfo<Item, String> implements ValidatingTableEditor.RowHeightProvider {
-    public LogicalPathColumnInfo() {
+    LogicalPathColumnInfo() {
       super(CfmlBundle.message("logical.path.column.info"));
     }
 
@@ -212,7 +212,7 @@ public class CfmlMappingsForm {
   }
 
   private class DirectoryPathColumnInfo extends ColumnInfo<Item, String> implements ValidatingTableEditor.RowHeightProvider {
-    public DirectoryPathColumnInfo() {
+    DirectoryPathColumnInfo() {
       super(CfmlBundle.message("directory.path.column.info"));
     }
 

@@ -6,7 +6,7 @@ import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 class ResourceDirectiveValueWriter extends AbstractPrimitiveValueWriter {
   private final String message;
 
-  public ResourceDirectiveValueWriter(String message) {
+  ResourceDirectiveValueWriter(String message) {
     this.message = message;
   }
 

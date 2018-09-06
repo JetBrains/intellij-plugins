@@ -38,11 +38,11 @@ abstract class DocumentTask extends Task.Backgroundable {
   protected final Module module;
   protected final PostTask postTask;
 
-  public DocumentTask(@NotNull Module module, @NotNull PostTask postTask) {
+  DocumentTask(@NotNull Module module, @NotNull PostTask postTask) {
     this(module, false, postTask);
   }
 
-  public DocumentTask(@NotNull Module module, boolean debug, @NotNull PostTask postTask) {
+  DocumentTask(@NotNull Module module, boolean debug, @NotNull PostTask postTask) {
     super(module.getProject(), DesignerApplicationManager.getOpenActionTitle(debug));
 
     this.module = module;

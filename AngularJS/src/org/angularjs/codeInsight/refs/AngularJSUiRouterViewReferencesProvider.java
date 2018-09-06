@@ -25,7 +25,7 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
   }
 
   private static class AngularJSUiRouterViewReference extends CachingPolyReferenceBase<PsiElement> {
-    public AngularJSUiRouterViewReference(PsiElement element) {
+    AngularJSUiRouterViewReference(PsiElement element) {
       super(element, ElementManipulators.getValueTextRange(element));
     }
 

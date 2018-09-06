@@ -89,7 +89,7 @@ public class FileAccessProviderTest extends BaseTestCase {
   
   private class MyProvider extends FileAccessProvider {
 
-    public MyProvider(IDEFacade ideFacade, UserModel userModel) {
+    MyProvider(IDEFacade ideFacade, UserModel userModel) {
       super(ideFacade, userModel);
     }
 

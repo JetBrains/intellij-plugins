@@ -66,7 +66,7 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
   static class FlexStructureViewElement extends JSStructureViewElement {
     private final XmlFile myFile;
 
-    public FlexStructureViewElement(@NotNull JSClass clazz) {
+    FlexStructureViewElement(@NotNull JSClass clazz) {
       super(clazz, true);
       myFile = (XmlFile)clazz.getContainingFile();
     }

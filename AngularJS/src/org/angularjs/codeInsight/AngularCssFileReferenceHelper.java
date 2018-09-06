@@ -40,7 +40,7 @@ public class AngularCssFileReferenceHelper extends WebpackCssFileReferenceHelper
   }
 
   private static class AngularCliAwareCssFileReferenceResolver extends WebpackTildeFileReferenceResolver {
-    public AngularCliAwareCssFileReferenceResolver(@NotNull final Project project, @NotNull final VirtualFile contextFile) {
+    AngularCliAwareCssFileReferenceResolver(@NotNull final Project project, @NotNull final VirtualFile contextFile) {
       super(project, contextFile);
     }
 

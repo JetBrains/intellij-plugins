@@ -32,7 +32,7 @@ public class CfmlLiteralExpressionType extends CfmlCompositeElementType {
   }
 
   class CfmlLiteralExpression extends CfmlCompositeElement implements CfmlExpression {
-    public CfmlLiteralExpression(@NotNull final ASTNode node) {
+    CfmlLiteralExpression(@NotNull final ASTNode node) {
       super(node);
     }
 

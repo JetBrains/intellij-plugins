@@ -123,7 +123,7 @@ public class MotionClassSymbol extends SymbolImpl implements MotionSymbol {
 
   private static class MySingleton extends SingletonClassSymbol {
 
-    public MySingleton(@NotNull Symbol parent) {
+    MySingleton(@NotNull Symbol parent) {
       super(parent, null);
     }
 

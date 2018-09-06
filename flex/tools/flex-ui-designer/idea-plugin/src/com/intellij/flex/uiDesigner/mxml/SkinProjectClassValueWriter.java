@@ -5,7 +5,7 @@ import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 class SkinProjectClassValueWriter extends AbstractPrimitiveValueWriter {
   private final int reference;
 
-  public SkinProjectClassValueWriter(int reference) {
+  SkinProjectClassValueWriter(int reference) {
     this.reference = reference;
   }
 

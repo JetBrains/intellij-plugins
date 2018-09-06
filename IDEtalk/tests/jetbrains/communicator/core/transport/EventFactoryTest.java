@@ -52,7 +52,7 @@ public class EventFactoryTest {
   private static class MessageEventTest extends TestCase {
     private final String[] myData;
 
-    public MessageEventTest(String name, String[] data) {
+    MessageEventTest(String name, String[] data) {
       super(name);
       myData = data;
     }

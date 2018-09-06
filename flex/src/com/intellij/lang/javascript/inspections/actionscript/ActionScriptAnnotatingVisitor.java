@@ -569,7 +569,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   private static class AddOverrideIntentionAction implements IntentionAction {
     private final JSFunction myNode;
 
-    public AddOverrideIntentionAction(final JSFunction node) {
+    AddOverrideIntentionAction(final JSFunction node) {
       myNode = node;
     }
 

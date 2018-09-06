@@ -160,7 +160,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
 
   private class FlexMoveClassUsageViewDescriptor extends BaseUsageViewDescriptor {
 
-    public FlexMoveClassUsageViewDescriptor() {
+    FlexMoveClassUsageViewDescriptor() {
       super(PsiUtilCore.toPsiElementArray(myElements));
     }
 

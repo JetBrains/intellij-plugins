@@ -33,7 +33,7 @@ class HeaderParametersProvider extends CompletionProvider<CompletionParameters> 
 
   private final String[] myNames;
 
-  public HeaderParametersProvider(String... names) {
+  HeaderParametersProvider(String... names) {
     myNames = names;
   }
 

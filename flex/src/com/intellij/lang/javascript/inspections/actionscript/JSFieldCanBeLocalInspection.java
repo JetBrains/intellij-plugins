@@ -43,7 +43,7 @@ public class JSFieldCanBeLocalInspection extends JSInspection {
   private static class MyVisitor extends JSElementVisitor {
     private final ProblemsHolder myHolder;
 
-    public MyVisitor(ProblemsHolder holder) {
+    MyVisitor(ProblemsHolder holder) {
       myHolder = holder;
     }
 

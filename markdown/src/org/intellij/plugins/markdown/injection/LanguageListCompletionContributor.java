@@ -90,7 +90,7 @@ public class LanguageListCompletionContributor extends CompletionContributor {
   private static class MyInsertHandler implements InsertHandler<LookupElement> {
     private final CompletionParameters myParameters;
 
-    public MyInsertHandler(CompletionParameters parameters) {
+    MyInsertHandler(CompletionParameters parameters) {
       myParameters = parameters;
     }
 

@@ -1130,7 +1130,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   private static class MxmlErrorReportingClient implements JSAnnotatingVisitor.ErrorReportingClient {
     private final Validator.ValidationHost myHost;
 
-    public MxmlErrorReportingClient(final Validator.ValidationHost host) {
+    MxmlErrorReportingClient(final Validator.ValidationHost host) {
       myHost = host;
     }
 

@@ -153,7 +153,7 @@ public class DartMultiHostInjector implements MultiHostInjector {
     @NotNull private final TextRange range;
     @Nullable private final String suffix;
 
-    public HtmlPlaceInfo(@NotNull final TextRange range, @Nullable final String suffix) {
+    HtmlPlaceInfo(@NotNull final TextRange range, @Nullable final String suffix) {
       this.range = range;
       this.suffix = suffix;
     }

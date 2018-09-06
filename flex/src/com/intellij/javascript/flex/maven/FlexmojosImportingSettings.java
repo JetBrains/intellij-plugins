@@ -22,7 +22,7 @@ public class FlexmojosImportingSettings implements AdditionalMavenImportingSetti
     private JPanel myMainPanel;
     private JCheckBox myGenerateFlexCompilerConfigurationCheckBox;
 
-    public FlexmojosImportingConfigurable(final Project project) {
+    FlexmojosImportingConfigurable(final Project project) {
       myConfig = FlexCompilerProjectConfiguration.getInstance(project);
     }
 

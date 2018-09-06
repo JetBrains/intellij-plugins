@@ -294,7 +294,7 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
     @NotNull
     public final String myOptions;
 
-    public AngularCLIProjectSettings(@NotNull Settings settings,
+    AngularCLIProjectSettings(@NotNull Settings settings,
                                      @NotNull String options) {
       super(settings.myInterpreterRef, settings.myPackage);
       myOptions = options;

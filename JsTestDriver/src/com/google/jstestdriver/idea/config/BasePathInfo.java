@@ -27,7 +27,7 @@ class BasePathInfo {
   private Ref<VirtualFile> myBasePath;
   private Ref<VirtualFile> myConfigDir;
 
-  public BasePathInfo(@NotNull YAMLDocument yamlDocument) {
+  BasePathInfo(@NotNull YAMLDocument yamlDocument) {
     myYAMLDocument = yamlDocument;
     Pair<YAMLKeyValue, DocumentFragment> basePathPair = extractBasePathPair(yamlDocument);
     if (basePathPair == null) {

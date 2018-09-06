@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 class SimpleProvider extends CompletionProvider<CompletionParameters> {
   private final String[] myItems;
 
-  public SimpleProvider(String... items) {
+  SimpleProvider(String... items) {
     myItems = items;
   }
 

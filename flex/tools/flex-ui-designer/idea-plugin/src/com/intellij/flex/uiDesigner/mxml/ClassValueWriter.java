@@ -10,7 +10,7 @@ import com.intellij.psi.PsiFile;
 class ClassValueWriter extends AbstractPrimitiveValueWriter {
   private final JSClass jsClass;
 
-  public ClassValueWriter(JSClass jsClass) {
+  ClassValueWriter(JSClass jsClass) {
     this.jsClass = jsClass;
   }
   

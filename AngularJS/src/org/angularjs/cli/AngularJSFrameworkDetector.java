@@ -95,7 +95,7 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
   private class AngularCLIFrameworkDescription extends DetectedFrameworkDescription {
     private final Collection<VirtualFile> myNewFiles;
 
-    public AngularCLIFrameworkDescription(Collection<VirtualFile> newFiles) {
+    AngularCLIFrameworkDescription(Collection<VirtualFile> newFiles) {
       myNewFiles = newFiles;
     }
 

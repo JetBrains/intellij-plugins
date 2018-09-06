@@ -33,7 +33,7 @@ abstract class EmbedAssetInfo {
   public final VirtualFile file;
   public final int id;
 
-  public EmbedAssetInfo(@NotNull VirtualFile file, int id) {
+  EmbedAssetInfo(@NotNull VirtualFile file, int id) {
     this.file = file;
     this.id = id;
   }

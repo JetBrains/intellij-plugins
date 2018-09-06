@@ -208,7 +208,7 @@ class SafeOpener {
   }
 
   private static class InaccessibleURLOpenedException extends IllegalArgumentException {
-    public InaccessibleURLOpenedException(String link) {
+    InaccessibleURLOpenedException(String link) {
       super(link);
     }
   }

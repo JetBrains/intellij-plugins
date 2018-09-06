@@ -56,12 +56,12 @@ public abstract class AbstractDependencyFilter {
     private final String m_defaultValue;
 
 
-    public DependencyFilter(String expression) {
+    DependencyFilter(String expression) {
       this(expression, "");
     }
 
 
-    public DependencyFilter(String expression, String defaultValue) {
+    DependencyFilter(String expression, String defaultValue) {
       m_instruction = new Instruction(expression);
       m_defaultValue = defaultValue;
     }

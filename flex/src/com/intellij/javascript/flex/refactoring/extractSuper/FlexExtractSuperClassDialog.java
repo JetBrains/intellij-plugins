@@ -86,7 +86,7 @@ public class FlexExtractSuperClassDialog extends FlexExtractSuperBaseDialog {
 
 
   private class MyMemberInfoModel extends JSUsesAndInterfacesDependencyMemberInfoModel {
-    public MyMemberInfoModel(JSClass aClass) {
+    MyMemberInfoModel(JSClass aClass) {
       super(aClass, null, false, JSInterfaceContainmentVerifier.create(myMemberInfos));
     }
   }

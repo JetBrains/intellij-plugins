@@ -80,12 +80,12 @@ public class ActionScriptGenerateDelegatesHandler extends BaseJSGenerateHandler 
       private final String name;
       @Nullable private final JSFunction.FunctionKind kind;
 
-      public MemberDescriptor(JSFunction method) {
+      MemberDescriptor(JSFunction method) {
         name = method.getName();
         kind = method.getKind();
       }
 
-      public MemberDescriptor(JSVariable field) {
+      MemberDescriptor(JSVariable field) {
         name = field.getName();
         kind = null;
       }

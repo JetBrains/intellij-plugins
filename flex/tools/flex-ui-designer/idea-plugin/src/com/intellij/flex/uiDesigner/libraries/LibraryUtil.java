@@ -110,7 +110,7 @@ final class LibraryUtil {
   private static class MyZipInputStream extends ZipInputStream {
     private boolean ignoreClose = true;
 
-    public MyZipInputStream(InputStream in) {
+    MyZipInputStream(InputStream in) {
       super(in);
     }
 
@@ -123,7 +123,7 @@ final class LibraryUtil {
   }
 
   private static class MyCharArrayReader extends CharArrayReader {
-    public MyCharArrayReader(char[] buf) {
+    MyCharArrayReader(char[] buf) {
       super(buf);
     }
 

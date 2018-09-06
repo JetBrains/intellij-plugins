@@ -14,7 +14,7 @@ class UnquotedText {
   private final PsiElement myPsiElement;
   private final TextRange myUnquotedDocumentTextRange;
 
-  public UnquotedText(@NotNull PsiElement psiElement) {
+  UnquotedText(@NotNull PsiElement psiElement) {
     myPsiElement = psiElement;
     myUnquotedDocumentTextRange = calcUnquotedDocumentTextRange(psiElement);
   }

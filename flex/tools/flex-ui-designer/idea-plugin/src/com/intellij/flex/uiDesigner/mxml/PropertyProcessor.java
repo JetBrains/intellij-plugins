@@ -311,7 +311,7 @@ class PropertyProcessor implements ValueWriter {
     private MxmlObjectReference reference;
     private final BaseWriter writer;
 
-    public ModelObjectReferenceProvider(BaseWriter writer) {
+    ModelObjectReferenceProvider(BaseWriter writer) {
       this.writer = writer;
     }
 

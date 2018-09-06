@@ -132,7 +132,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
   private static class SymlinkToLivePackageNode extends AbstractTreeNode<String> {
     @NotNull private final String mySymlinkPath;
 
-    public SymlinkToLivePackageNode(final @NotNull Project project,
+    SymlinkToLivePackageNode(final @NotNull Project project,
                                     final @NotNull String packageName,
                                     final @NotNull VirtualFile packageDir) {
       super(project, packageName);
@@ -161,7 +161,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
   }
 
   private static class DartSdkOrLibraryRootNode extends PsiDirectoryNode {
-    public DartSdkOrLibraryRootNode(final Project project, final PsiDirectory value, final ViewSettings settings) {
+    DartSdkOrLibraryRootNode(final Project project, final PsiDirectory value, final ViewSettings settings) {
       super(project, value, settings);
     }
 

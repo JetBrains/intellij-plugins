@@ -80,7 +80,7 @@ public class RubyMotionCompletionProvider extends RubyCompletionProvider {
   private static class SelectorInsertHandler extends RubyAbstractMethodInsertHandler {
     private final Function myFunction;
 
-    public SelectorInsertHandler(Function function) {
+    SelectorInsertHandler(Function function) {
       super(null);
       myFunction = function;
     }

@@ -86,7 +86,7 @@ public class DesignerApplicationManager {
   private ServiceManagerImpl serviceManager;
 
   private static class MyServiceManagerImpl extends ServiceManagerImpl {
-    public MyServiceManagerImpl(@NotNull DesignerApplication newApp) {
+    MyServiceManagerImpl(@NotNull DesignerApplication newApp) {
       super(true);
 
       installEP(SERVICES, newApp);
@@ -475,7 +475,7 @@ public class DesignerApplicationManager {
     private final XmlFile psiFile;
     private final AsyncResult<DocumentInfo> asyncResult;
 
-    public RenderDocumentTask(@NotNull XmlFile psiFile, @Nullable AsyncResult<DocumentInfo> asyncResult) {
+    RenderDocumentTask(@NotNull XmlFile psiFile, @Nullable AsyncResult<DocumentInfo> asyncResult) {
       this.psiFile = psiFile;
       this.asyncResult = asyncResult;
     }
@@ -543,7 +543,7 @@ public class DesignerApplicationManager {
     private final MxmlPreviewToolWindowManager previewToolWindowManager;
     private final MergingUpdateQueue updateQueue;
 
-    public MyPsiTreeChangeListener(Project project) {
+    MyPsiTreeChangeListener(Project project) {
       previewToolWindowManager = project.getComponent(MxmlPreviewToolWindowManager.class);
       updateQueue = new MergingUpdateQueue("FlashUIDesigner.update", 100, true, null);
     }

@@ -23,7 +23,7 @@ class DartContributedReference implements PsiPolyVariantReference {
   @NotNull private final TextRange myRefRange;
   @NotNull private final String myRefText;
 
-  public DartContributedReference(@NotNull final PsiElement element,
+  DartContributedReference(@NotNull final PsiElement element,
                                   @NotNull final DartServerData.DartNavigationRegion navigationRegion) {
     myElement = element;
     myNavigationRegion = navigationRegion;

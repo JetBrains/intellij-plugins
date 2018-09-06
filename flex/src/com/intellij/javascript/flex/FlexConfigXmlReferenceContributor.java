@@ -57,7 +57,7 @@ public class FlexConfigXmlReferenceContributor extends PsiReferenceContributor {
   }
 
   static class FlexConfigXmlReferenceSet extends ActionScriptReferenceSet {
-    public FlexConfigXmlReferenceSet(@NotNull PsiElement element, String text, int offset) {
+    FlexConfigXmlReferenceSet(@NotNull PsiElement element, String text, int offset) {
       super(element, text, offset, false, true);
     }
 

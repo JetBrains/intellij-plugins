@@ -14,11 +14,11 @@ class CallTreeNode implements FrameInfoProducer, FilePathProducer {
   private long duration;
   private final THashMap<FrameInfo, CallTreeNode> children = new THashMap<>();
 
-  public CallTreeNode() {
+  CallTreeNode() {
     frameInfo = null;
   }
 
-  public CallTreeNode(FrameInfo frameInfo, long duration) {
+  CallTreeNode(FrameInfo frameInfo, long duration) {
     this.frameInfo = frameInfo;
     this.duration = duration;
   }

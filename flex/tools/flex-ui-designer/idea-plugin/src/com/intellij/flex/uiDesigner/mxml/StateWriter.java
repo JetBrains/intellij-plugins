@@ -50,7 +50,7 @@ class StateWriter {
 
   private boolean namesInitialized;
 
-  public StateWriter(BaseWriter writer) {
+  StateWriter(BaseWriter writer) {
     this.writer = writer;
   }
 

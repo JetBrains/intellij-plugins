@@ -44,7 +44,7 @@ class MxmlPreviewPanel extends JBLayeredPane implements Disposable {
     }
   };
 
-  public MxmlPreviewPanel() {
+  MxmlPreviewPanel() {
     setBackground(JBColor.WHITE);
     setOpaque(true);
     imagePanel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, JBColor.GRAY));

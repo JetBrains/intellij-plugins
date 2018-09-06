@@ -106,7 +106,7 @@ final class PubServerService extends NetService {
     }
   }
 
-  public PubServerService(@NotNull Project project, @NotNull ConsoleManager consoleManager) {
+  PubServerService(@NotNull Project project, @NotNull ConsoleManager consoleManager) {
     super(project, consoleManager);
 
     nioClientBootstrap().handler(new ChannelInitializer() {
@@ -303,7 +303,7 @@ final class PubServerService extends NetService {
 
   @ChannelHandler.Sharable
   private class PubServeChannelHandler extends SimpleChannelInboundHandlerAdapter<HttpObject> {
-    public PubServeChannelHandler() {
+    PubServeChannelHandler() {
       super(false);
     }
 
@@ -346,7 +346,7 @@ final class PubServerService extends NetService {
     private boolean myNotificationAboutErrors;
     private Notification myNotification;
 
-    public PubServeOutputListener(final Project project) {
+    PubServeOutputListener(final Project project) {
       myProject = project;
     }
 

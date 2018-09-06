@@ -160,7 +160,7 @@ public class BndTestState extends JavaCommandLineState {
   private static class MyTestConsoleProperties extends SMTRunnerConsoleProperties implements SMCustomMessagesParsing {
     private final ServerSocket mySocket;
 
-    public MyTestConsoleProperties(@NotNull BndTestState runProfile, @NotNull Executor executor) {
+    MyTestConsoleProperties(@NotNull BndTestState runProfile, @NotNull Executor executor) {
       super(runProfile.myConfiguration, TEST_FRAMEWORK_NAME, executor);
       mySocket = runProfile.mySocket;
       setPrintTestingStartedTime(false);
@@ -185,7 +185,7 @@ public class BndTestState extends JavaCommandLineState {
     private final Object myTestLock = new Object();
     private String myCurrentTest = null;
 
-    public MyProcessOutputConsumer(@NotNull String testFrameworkName,
+    MyProcessOutputConsumer(@NotNull String testFrameworkName,
                                    @NotNull TestConsoleProperties consoleProperties,
                                    @NotNull ServerSocket socket) {
       super(testFrameworkName, consoleProperties);

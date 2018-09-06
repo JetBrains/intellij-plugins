@@ -531,7 +531,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
   private static class MyEditSourceAction extends AnAction {
     private final AnAction myAction;
 
-    public MyEditSourceAction() {
+    MyEditSourceAction() {
       super("Jump To...", "Jump To...", AllIcons.Actions.EditSource);
       myAction = ActionManager.getInstance().getAction(IdeActions.ACTION_EDIT_SOURCE);
     }

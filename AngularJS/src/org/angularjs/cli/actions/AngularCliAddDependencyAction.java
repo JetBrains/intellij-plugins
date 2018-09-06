@@ -330,7 +330,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
     private final Project myProject;
     private EditorTextField myTextEditor;
 
-    public SelectCustomPackageDialog(@NotNull Project project, @NotNull Set<String> existingPackages) {
+    SelectCustomPackageDialog(@NotNull Project project, @NotNull Set<String> existingPackages) {
       super(project);
       myProject = project;
       myExistingPackages = existingPackages;

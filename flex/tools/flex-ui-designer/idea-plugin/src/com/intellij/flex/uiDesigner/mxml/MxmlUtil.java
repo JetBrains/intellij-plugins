@@ -145,7 +145,7 @@ public final class MxmlUtil {
   private static class CustomComponentPropertyFilter implements Condition<AnnotationBackedDescriptor> {
     private final Set<PsiFile> filteredFiles;
 
-    public CustomComponentPropertyFilter(Set<PsiFile> filteredFiles) {
+    CustomComponentPropertyFilter(Set<PsiFile> filteredFiles) {
       this.filteredFiles = filteredFiles;
     }
 

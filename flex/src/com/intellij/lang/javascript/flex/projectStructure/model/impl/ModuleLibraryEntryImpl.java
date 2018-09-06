@@ -14,7 +14,7 @@ class ModuleLibraryEntryImpl implements ModifiableModuleLibraryEntry, StatefulDe
   @NotNull
   private final String myLibraryId;
 
-  public ModuleLibraryEntryImpl(@NotNull String libraryId) {
+  ModuleLibraryEntryImpl(@NotNull String libraryId) {
     myLibraryId = libraryId;
   }
 

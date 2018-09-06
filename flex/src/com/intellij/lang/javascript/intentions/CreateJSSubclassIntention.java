@@ -196,7 +196,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
   private static class MyImplementMethodsHandlerForFlex extends JavaScriptImplementMethodsHandlerForFlex {
     private final JSClass myClass;
 
-    public MyImplementMethodsHandlerForFlex(JSClass aClass) {
+    MyImplementMethodsHandlerForFlex(JSClass aClass) {
       myClass = aClass;
     }
 

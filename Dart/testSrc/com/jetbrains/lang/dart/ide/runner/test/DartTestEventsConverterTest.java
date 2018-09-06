@@ -428,7 +428,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
   private class DartTestEventsProcessor extends GeneralTestEventsProcessor {
     List<String> signals = new ArrayList<>();
 
-    public DartTestEventsProcessor(Project project, @NotNull String testFrameworkName) {
+    DartTestEventsProcessor(Project project, @NotNull String testFrameworkName) {
       super(project, testFrameworkName, new SMTestProxy.SMRootTestProxy());
     }
 

@@ -225,7 +225,7 @@ public class AngularJSProcessor {
   private static class AngularInjectedFilesVisitor extends JSResolveUtil.JSInjectedFilesVisitor {
     private final Collection<JSPsiElementBase> myResult;
 
-    public AngularInjectedFilesVisitor(Collection<JSPsiElementBase> result) {
+    AngularInjectedFilesVisitor(Collection<JSPsiElementBase> result) {
       myResult = result;
     }
 

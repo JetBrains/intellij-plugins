@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 class FxDefinitionBackedDescriptor extends ClassBackedElementDescriptor {
   private final XmlTag myXmlTag;
 
-  public FxDefinitionBackedDescriptor(Module module, XmlTag xmlTag) {
+  FxDefinitionBackedDescriptor(Module module, XmlTag xmlTag) {
     super(xmlTag.getName(), "", CodeContext.getContext(JavaScriptSupportLoader.MXML_URI3, module), module.getProject());
     myXmlTag = xmlTag;
   }

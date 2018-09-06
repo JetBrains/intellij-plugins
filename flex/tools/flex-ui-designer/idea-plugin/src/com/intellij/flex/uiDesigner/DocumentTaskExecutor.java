@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 class DocumentTaskExecutor extends DocumentTask {
-  public DocumentTaskExecutor(@NotNull final Module module, @NotNull final PostTask postTask) {
+  DocumentTaskExecutor(@NotNull final Module module, @NotNull final PostTask postTask) {
     super(module, postTask);
   }
 

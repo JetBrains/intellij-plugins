@@ -70,7 +70,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
 
   private RefreshConfigFiles postTask;
 
-  public Flexmojos4GenerateConfigTask(MavenProjectsTree tree) {
+  Flexmojos4GenerateConfigTask(MavenProjectsTree tree) {
     //noinspection NullableProblems
     super(null, tree);
   }
@@ -219,7 +219,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
   private final class OutputReader implements Runnable {
     private final Project project;
 
-    public OutputReader(Project project) {
+    OutputReader(Project project) {
       this.project = project;
     }
 
@@ -306,7 +306,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
     private final THashMap<MavenProject, List<String>> sourceRoots;
     private final Project project;
 
-    public RefreshConfigFiles(List<String> filesForRefresh, THashMap<MavenProject, List<String>> sourceRoots, Project project) {
+    RefreshConfigFiles(List<String> filesForRefresh, THashMap<MavenProject, List<String>> sourceRoots, Project project) {
       this.filesForRefresh = filesForRefresh;
       this.sourceRoots = sourceRoots;
       this.project = project;

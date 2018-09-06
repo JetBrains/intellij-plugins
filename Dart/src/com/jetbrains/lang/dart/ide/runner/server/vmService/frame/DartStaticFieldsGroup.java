@@ -19,7 +19,7 @@ class DartStaticFieldsGroup extends XValueGroup {
   @NotNull private final String myClassName;
   @NotNull private final SmartList<FieldRef> myFieldRefs;
 
-  public DartStaticFieldsGroup(@NotNull final DartVmServiceDebugProcess debugProcess,
+  DartStaticFieldsGroup(@NotNull final DartVmServiceDebugProcess debugProcess,
                                @NotNull final String isolateId,
                                @NotNull final String className,
                                @NotNull final SmartList<FieldRef> fieldsRefs) {

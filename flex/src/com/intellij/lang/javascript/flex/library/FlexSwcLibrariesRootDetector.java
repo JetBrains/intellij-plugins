@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 class FlexSwcLibrariesRootDetector extends RootFilter {
 
-  public FlexSwcLibrariesRootDetector() {
+  FlexSwcLibrariesRootDetector() {
     super(OrderRootType.CLASSES, false, FlexBundle.message("swc.libraries.root.detector.name"));
   }
 

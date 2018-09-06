@@ -31,7 +31,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
   }
 
   static class Angular2SoftFileReferenceSet extends SoftFileReferenceSet {
-    public Angular2SoftFileReferenceSet(PsiElement element) {
+    Angular2SoftFileReferenceSet(PsiElement element) {
       super(element);
     }
 

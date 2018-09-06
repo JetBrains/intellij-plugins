@@ -82,7 +82,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   private final Comparator<DartProblem> myDescriptionComparator = new DartProblemsComparator(DartProblemsComparator.MESSAGE_COLUMN_ID);
   private final Comparator<DartProblem> myLocationComparator = new DartProblemsComparator(DartProblemsComparator.LOCATION_COLUMN_ID);
 
-  public DartProblemsTableModel(@NotNull final Project project, @NotNull final DartProblemsPresentationHelper presentationHelper) {
+  DartProblemsTableModel(@NotNull final Project project, @NotNull final DartProblemsPresentationHelper presentationHelper) {
     myProject = project;
     myPresentationHelper = presentationHelper;
     myItems = new ArrayList<>();

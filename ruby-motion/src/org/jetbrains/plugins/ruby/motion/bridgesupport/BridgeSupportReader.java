@@ -174,7 +174,7 @@ public class BridgeSupportReader {
     private final StringBuilder typeBuilder;
     private int arrayLevel;
 
-    public AndroidSignatureVisitor(Function function) {
+    AndroidSignatureVisitor(Function function) {
       super(Opcodes.API_VERSION);
       myFunction = function;
       typeBuilder = new StringBuilder();
