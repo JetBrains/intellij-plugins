@@ -44,6 +44,7 @@ import com.intellij.xml.*
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import icons.VuejsIcons
 import org.jetbrains.vuejs.VueFileType
+import org.jetbrains.vuejs.VueLanguage
 import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.getBoundName
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.getExportedDescriptor
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isNotInLibrary
@@ -51,7 +52,7 @@ import org.jetbrains.vuejs.index.*
 
 class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
-    if (tag != null && hasVue(tag.project)) {
+    if (tag != null && tag.containingFile.language == VueLanguage.INSTANCE && hasVue(tag.project)) {
       val name = tag.name
 
       val localComponents = findLocalComponents(name, tag)
