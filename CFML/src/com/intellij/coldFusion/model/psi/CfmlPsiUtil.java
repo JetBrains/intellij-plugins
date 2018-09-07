@@ -43,7 +43,7 @@ import java.util.Set;
  * Created by Lera Nikolaenko
  */
 public class CfmlPsiUtil {
-  @Nullable
+  @NotNull
   public static Collection<String> findBetween(@NotNull String source, @NotNull String startMarker, @NotNull String endMarker) {
     int fromIndex = 0;
     Collection<String> collection = new LinkedList<>();
