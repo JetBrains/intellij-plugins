@@ -34,8 +34,8 @@ public class Angular2BindingDescriptor extends Angular2AttributeDescriptor {
   }
 
   public static List<XmlAttributeDescriptor> getBindingDescriptors(JSImplicitElement declaration) {
-    return ContainerUtil.concat(getFieldBasedDescriptors(declaration, INPUT, FACTORY),
-                                getFieldBasedDescriptors(declaration, INPUT, FACTORY2));
+    return ContainerUtil.concat(getDescriptors(declaration, INPUT, FACTORY),
+                                getDescriptors(declaration, INPUT, FACTORY2));
   }
 
   @NotNull

@@ -36,18 +36,18 @@ public class Angular2AttributeDescriptor extends AngularAttributeDescriptor {
   }
 
   @NotNull
-  public static List<XmlAttributeDescriptor> getFieldBasedDescriptors(JSImplicitElement declaration,
-                                                                      String decorator,
-                                                                      NullableFunction<PropertyInfo, XmlAttributeDescriptor> factory) {
+  public static List<XmlAttributeDescriptor> getDescriptors(JSImplicitElement declaration,
+                                                            String decorator,
+                                                            NullableFunction<PropertyInfo, XmlAttributeDescriptor> factory) {
     final List<XmlAttributeDescriptor> result = new ArrayList<>();
-    processFieldBasedDescriptors(declaration, decorator, info ->
+    processDescriptors(declaration, decorator, info ->
       ContainerUtil.addIfNotNull(result, factory.fun(info)));
     return result;
   }
 
-  public static void processFieldBasedDescriptors(JSImplicitElement declaration,
-                                                  String decorator,
-                                                  Consumer<? super PropertyInfo> processor) {
+  public static void processDescriptors(JSImplicitElement declaration,
+                                        String decorator,
+                                        Consumer<? super PropertyInfo> processor) {
     AngularDirectiveMetadata metadata = AngularDirectiveMetadata.create(declaration);
     if ("Input".equals(decorator)) {
       metadata.getInputs().forEach(info -> processor.consume(info));
@@ -77,7 +77,7 @@ public class Angular2AttributeDescriptor extends AngularAttributeDescriptor {
   }
 
   @NotNull
-  public static List<XmlAttributeDescriptor> getFieldBasedDescriptors(JSImplicitElement declaration) {
+  public static List<XmlAttributeDescriptor> getDescriptors(JSImplicitElement declaration) {
     return ContainerUtil.concat(Angular2BindingDescriptor.getBindingDescriptors(declaration),
                                 Angular2EventHandlerDescriptor.getEventHandlerDescriptors(declaration));
   }

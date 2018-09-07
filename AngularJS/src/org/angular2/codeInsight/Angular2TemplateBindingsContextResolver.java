@@ -33,6 +33,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_SIMPLE;
+
 public class Angular2TemplateBindingsContextResolver {
 
   @Nullable
@@ -126,7 +128,7 @@ public class Angular2TemplateBindingsContextResolver {
         continue;
       }
       JSType type = new JSCompositeTypeImpl(templateContextType.getSource(), types);
-      result.put(entry.getKey(), JSCompositeTypeImpl.optimizeTypeIfComposite(type, true));
+      result.put(entry.getKey(), JSCompositeTypeImpl.optimizeTypeIfComposite(type, OPTIMIZED_SIMPLE));
     }
     return result;
   }

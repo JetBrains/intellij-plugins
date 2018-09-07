@@ -63,7 +63,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
         if (isAngular2Attribute(name) || !directives.contains(name)) continue;
         for (PsiElement declaration : applicableDirectives(project, name, xmlTag, AngularDirectivesIndex.KEY)) {
           if (isApplicable(declaration)) {
-            for (XmlAttributeDescriptor binding : Angular2AttributeDescriptor.getFieldBasedDescriptors((JSImplicitElement)declaration)) {
+            for (XmlAttributeDescriptor binding : Angular2AttributeDescriptor.getDescriptors((JSImplicitElement)declaration)) {
               result.put(binding.getName(), binding);
             }
           }
@@ -135,7 +135,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
           .collect(Collectors.toList());
 
         for (PsiElement declaration : declarations) {
-          for (XmlAttributeDescriptor binding : Angular2AttributeDescriptor.getFieldBasedDescriptors(
+          for (XmlAttributeDescriptor binding : Angular2AttributeDescriptor.getDescriptors(
             (JSImplicitElement)declaration)) {
             if (binding.getName().equals(attrName)) {
               return binding;

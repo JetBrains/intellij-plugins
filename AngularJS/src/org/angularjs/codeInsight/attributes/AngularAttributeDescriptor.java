@@ -1,15 +1,18 @@
 package org.angularjs.codeInsight.attributes;
 
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.meta.PsiPresentableMetaData;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.util.ArrayUtil;
+import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.XmlAttributeDescriptorEx;
 import icons.AngularJSIcons;
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +51,15 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
     myAttributeName = attributeName;
     myIndex = index;
     myElements = elements.toArray(PsiElement.EMPTY_ARRAY);
+  }
+
+  /**
+   * Kept for compatibility with NativeScript.
+   */
+  @Deprecated
+  @NotNull
+  public static XmlAttributeDescriptor[] getFieldBasedDescriptors(JSImplicitElement declaration) {
+    return Angular2AttributeDescriptor.getDescriptors(declaration).toArray(XmlAttributeDescriptor.EMPTY);
   }
 
   @Override

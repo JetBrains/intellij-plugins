@@ -79,7 +79,7 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
     final String[] split = attributes.split(",");
     final List<XmlAttributeDescriptor> result = new ArrayList<>();
     if (context != null && Angular2LangUtil.isAngular2Context(context)) {
-      result.addAll(Angular2AttributeDescriptor.getFieldBasedDescriptors(declaration));
+      result.addAll(Angular2AttributeDescriptor.getDescriptors(declaration));
       result.addAll(Angular2AttributeDescriptor.getExistingVarsAndRefsDescriptors(context));
     }
     else if (split.length != 1 || !split[0].isEmpty()) {

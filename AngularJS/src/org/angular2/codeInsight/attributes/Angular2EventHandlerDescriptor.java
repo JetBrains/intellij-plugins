@@ -22,7 +22,7 @@ public class Angular2EventHandlerDescriptor extends Angular2AttributeDescriptor 
   }
 
   public static List<XmlAttributeDescriptor> getEventHandlerDescriptors(JSImplicitElement declaration) {
-    return getFieldBasedDescriptors(declaration, OUTPUT, FACTORY);
+    return getDescriptors(declaration, OUTPUT, FACTORY);
   }
 
   @NotNull
