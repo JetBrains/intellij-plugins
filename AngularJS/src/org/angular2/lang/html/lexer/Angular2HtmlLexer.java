@@ -44,6 +44,9 @@ public class Angular2HtmlLexer extends HtmlLexer {
 
   public static class Angular2HtmlMergingLexer extends MergingLexerAdapterBase {
 
+    private static final int INTERPOLATION_STATE_OFFSET = 29;
+    private static final int INTERPOLATION_STATE_MASK = 3 << INTERPOLATION_STATE_OFFSET;
+
     private final boolean myTokenizeExpansionForms;
     private final Pair<String, String> myInterpolationConfig;
 
@@ -54,6 +57,17 @@ public class Angular2HtmlLexer extends HtmlLexer {
       super(original);
       myTokenizeExpansionForms = tokenizeExpansionForms;
       myInterpolationConfig = interpolationConfig == null ? Pair.create("{{", "}}") : interpolationConfig;
+    }
+
+    @Override
+    public void start(@NotNull CharSequence buffer, int startOffset, int endOffset, int initialState) {
+      super.start(buffer, startOffset, endOffset, initialState & ~INTERPOLATION_STATE_MASK);
+      myInterpolationScanningState = (initialState & INTERPOLATION_STATE_MASK) >> INTERPOLATION_STATE_OFFSET;
+    }
+
+    @Override
+    public int getState() {
+      return super.getState() | (myInterpolationScanningState << INTERPOLATION_STATE_OFFSET);
     }
 
     @Override
@@ -76,6 +90,8 @@ public class Angular2HtmlLexer extends HtmlLexer {
     private IElementType merge(IElementType type, Lexer originalLexer) {
       if (INTERPOLATION_CONTENT_TOKENS.contains(type)) {
         switch (myInterpolationScanningState) {
+          case 3:
+            myInterpolationScanningState = 0;
           case 0:
             if (tryConsumeInterpolationBoundary(myInterpolationConfig.first)) {
               myInterpolationScanningState = 1;
@@ -88,10 +104,11 @@ public class Angular2HtmlLexer extends HtmlLexer {
               return INTERPOLATION_EXPR;
             }
           case 2:
-            myInterpolationScanningState = 0;
             if (tryConsumeInterpolationBoundary(myInterpolationConfig.second)) {
+              myInterpolationScanningState = 3;
               return INTERPOLATION_END;
             }
+            myInterpolationScanningState = 0;
             break;
         }
       }
@@ -164,7 +181,7 @@ public class Angular2HtmlLexer extends HtmlLexer {
     private final LexerPosition myOriginal;
     private final int myInterpolationScanningState;
 
-    public MyLexerPosition(@NotNull LexerPosition original, int interpolationScanningState) {
+    private MyLexerPosition(@NotNull LexerPosition original, int interpolationScanningState) {
       myOriginal = original;
       myInterpolationScanningState = interpolationScanningState;
     }

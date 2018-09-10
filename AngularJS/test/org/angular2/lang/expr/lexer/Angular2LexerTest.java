@@ -17,10 +17,8 @@ import com.intellij.lexer.Lexer;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.testFramework.LexerTestCase;
 import org.angularjs.AngularTestUtil;
+import org.jetbrains.annotations.NonNls;
 
-/**
- * @author Dennis.Ushakov
- */
 public class Angular2LexerTest extends LexerTestCase {
   public void testIdent() {
     doFileTest("js");
@@ -54,5 +52,11 @@ public class Angular2LexerTest extends LexerTestCase {
   @Override
   protected String getDirPath() {
     return AngularTestUtil.getBaseTestDataPath(Angular2LexerTest.class).substring(PathManager.getHomePath().length());
+  }
+
+  @Override
+  protected void doTest(@NonNls String text) {
+    super.doTest(text);
+    checkCorrectRestart(text);
   }
 }

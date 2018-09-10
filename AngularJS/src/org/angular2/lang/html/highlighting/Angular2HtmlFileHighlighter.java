@@ -6,6 +6,7 @@ import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.XmlHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +66,7 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
   private final boolean myTokenizeExpansionForms;
   private final Pair<String, String> myInterpolationConfig;
 
-  public Angular2HtmlFileHighlighter(boolean tokenizeExpansionForms, Pair<String, String> interpolationConfig) {
+  Angular2HtmlFileHighlighter(boolean tokenizeExpansionForms, Pair<String, String> interpolationConfig) {
     myTokenizeExpansionForms = tokenizeExpansionForms;
     myInterpolationConfig = interpolationConfig;
   }
@@ -74,6 +75,7 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
   @NotNull
   @Override
   public Lexer getHighlightingLexer() {
-    return new Angular2HtmlHighlightingLexer(myTokenizeExpansionForms, myInterpolationConfig);
+    return new Angular2HtmlHighlightingLexer(myTokenizeExpansionForms, myInterpolationConfig,
+                                             FileTypeRegistry.getInstance().findFileTypeByName("CSS"));
   }
 }

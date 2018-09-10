@@ -4,7 +4,7 @@ package org.angular2.lang.html.highlighting;
 import com.intellij.lexer.FlexAdapter;
 import com.intellij.lexer.HtmlHighlightingLexer;
 import com.intellij.lexer.Lexer;
-import com.intellij.openapi.fileTypes.FileTypeRegistry;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -24,10 +24,12 @@ public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
 
   private Lexer angular2ExpressionLexer;
 
-  public Angular2HtmlHighlightingLexer(boolean tokenizeExpansionForms, Pair<String, String> interpolationConfig) {
+  public Angular2HtmlHighlightingLexer(boolean tokenizeExpansionForms,
+                                       @Nullable Pair<String, String> interpolationConfig,
+                                       @Nullable FileType styleFileType) {
     super(new Angular2HtmlLexer.Angular2HtmlMergingLexer(
             new FlexAdapter(new _Angular2HtmlLexer()), tokenizeExpansionForms, interpolationConfig),
-          true, FileTypeRegistry.getInstance().findFileTypeByName("CSS"));
+          true, styleFileType);
     registerHandler(Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR, new ElEmbeddmentHandler());
   }
 
