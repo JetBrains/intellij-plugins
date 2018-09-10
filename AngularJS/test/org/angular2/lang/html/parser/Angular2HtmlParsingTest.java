@@ -10,14 +10,24 @@ import com.intellij.lang.css.CSSParserDefinition;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.JavascriptParserDefinition;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
+import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.pom.tree.events.TreeChangeEvent;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.css.CssElementDescriptorProvider;
 import com.intellij.psi.css.CssEmbeddedTokenTypesProvider;
 import com.intellij.psi.css.CssRulesetBlockEmbeddedTokenTypesProvider;
 import com.intellij.psi.css.impl.CssTreeElementFactory;
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2;
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl;
+import com.intellij.psi.impl.BlockSupportImpl;
+import com.intellij.psi.impl.DebugUtil;
+import com.intellij.psi.impl.DiffLog;
 import org.angularjs.AngularTestUtil;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 
 public class Angular2HtmlParsingTest extends HtmlParsingTest {
 
@@ -38,6 +48,22 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
     registerExtensionPoint(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProvider.class);
     registerExtension(CssElementDescriptorProvider.EP_NAME, new CssElementDescriptorProviderImpl());
     registerApplicationService(CssElementDescriptorFactory2.class, new CssElementDescriptorFactory2(ProgressManager.getInstance(), "css-parsing-tests.xml"));
+  }
+
+  @Override
+  protected void checkResult(@NotNull String targetDataName, @NotNull PsiFile file) throws IOException {
+    super.checkResult(targetDataName, file);
+    ensureReparsingConsistent(file);
+  }
+
+  private static void ensureReparsingConsistent(@NotNull PsiFile file) {
+    DebugUtil.performPsiModification("ensureReparsingConsistent", () -> {
+      final String fileText = file.getText();
+      final DiffLog diffLog = new BlockSupportImpl(file.getProject()).reparseRange(
+        file, file.getNode(), TextRange.allOf(fileText), fileText, new EmptyProgressIndicator(), fileText);
+      TreeChangeEvent event = diffLog.performActualPsiChange(file);
+      assertEmpty(event.getChangedElements());
+    });
   }
 
   @Override

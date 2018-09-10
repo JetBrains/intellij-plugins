@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 public class Angular2EmbeddedExprTokenType extends IElementType
@@ -72,6 +73,20 @@ public class Angular2EmbeddedExprTokenType extends IElementType
   public FlyweightCapableTreeStructure<LighterASTNode> parseContents(LighterLazyParseableNode chameleon) {
     PsiBuilder builder = doParseContents(chameleon);
     return builder.getLightTree();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Angular2EmbeddedExprTokenType type = (Angular2EmbeddedExprTokenType)o;
+    return myExpressionType == type.myExpressionType &&
+           Objects.equals(myTemplateKey, type.myTemplateKey);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), myExpressionType, myTemplateKey);
   }
 
   protected PsiBuilder doParseContents(@NotNull Object chameleon) {

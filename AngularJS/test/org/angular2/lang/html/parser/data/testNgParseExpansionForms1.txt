@@ -25,7 +25,7 @@ HtmlFile:test.html
           XmlToken:XML_DATA_CHARACTERS('=0')
           PsiWhiteSpace(' ')
           PsiElement(NG:LBRACE)('{')
-          PsiElement(NG:EXPANSION_FORM_CASE_CONTENT)
+          ASTWrapperPsiElement(NG:EXPANSION_FORM_CASE_CONTENT_TOKEN)
             XmlText
               XmlToken:XML_DATA_CHARACTERS('You')
               PsiWhiteSpace(' ')
@@ -48,7 +48,7 @@ HtmlFile:test.html
           XmlToken:XML_DATA_CHARACTERS('=1')
           PsiWhiteSpace(' ')
           PsiElement(NG:LBRACE)('{')
-          PsiElement(NG:EXPANSION_FORM_CASE_CONTENT)
+          ASTWrapperPsiElement(NG:EXPANSION_FORM_CASE_CONTENT_TOKEN)
             XmlText
               XmlToken:XML_DATA_CHARACTERS('One')
               PsiWhiteSpace(' ')
