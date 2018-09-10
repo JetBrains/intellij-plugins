@@ -133,6 +133,7 @@
     <xml.attributeDescriptorsProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider" order="first"/>
     <idIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlIdIndexer"/>
     <todoIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlTodoIndexer"/>
+    <xml.fileNSInfoProvider implementation="org.angular2.lang.html.Angular2HtmlNSInfoProvider"/>
 
     <!-- Angular 2 Expression Language contributions -->
     <codeInsight.template.postfixTemplateProvider language="Angular2"
