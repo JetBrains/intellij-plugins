@@ -169,4 +169,12 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testPrivateMembersOrder() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
+      myFixture.configureByFiles("event_private.html", "event_private.ts", "package.json");
+      myFixture.completeBasic();
+      assertEquals("Private members should be sorted after public ones", myFixture.getLookupElementStrings(),
+                   ContainerUtil.newArrayList("callSecuredApi", "callZ", "_callApi", "callA", "callAnonymousApi"));
+    });
+  }
 }

@@ -26,6 +26,7 @@ import java.util.Collection;
 
 public class Angular2CompletionContributor extends CompletionContributor {
   private static final JSLookupPriority NG_VARIABLE_PRIORITY = JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY;
+  private static final JSLookupPriority NG_PRIVATE_VARIABLE_PRIORITY = JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY_EXOTIC;
 
   @Override
   public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull final CompletionResultSet result) {
@@ -42,8 +43,9 @@ public class Angular2CompletionContributor extends CompletionContributor {
       }
       Angular2Processor.process(parameters.getPosition(), element -> {
         final String name = element.getName();
-        if (name != null && !isPrivateMember(element)) {
-          result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(element, name, NG_VARIABLE_PRIORITY, false, false));
+        if (name != null) {
+          result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(
+            element, name, isPrivateMember(element) ? NG_PRIVATE_VARIABLE_PRIORITY : NG_VARIABLE_PRIORITY, false, false));
         }
       });
       result.stopHere();

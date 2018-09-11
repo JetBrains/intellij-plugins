@@ -63,4 +63,12 @@ export class Home {
         });
     }
 
+    callZ() {
+
+    }
+
+    private callA() {
+
+    }
+
 }
