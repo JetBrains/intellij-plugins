@@ -145,6 +145,7 @@
                             order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"/>
     <lang.braceMatcher language="Angular2" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
     <annotator language="Angular2" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
+    <implicitUsageProvider implementation="org.angular2.codeInsight.refs.Angular2ImplicitUsageProvider"/>
 
   </extensions>
 

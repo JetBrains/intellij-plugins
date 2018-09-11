@@ -7,15 +7,13 @@ import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
-import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiUtilCore;
+import org.angular2.codeInsight.refs.Angular2RefUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2Pipe;
 import org.angularjs.index.AngularFilterIndex;
@@ -45,20 +43,11 @@ public class Angular2CompletionContributor extends CompletionContributor {
         final String name = element.getName();
         if (name != null) {
           result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(
-            element, name, isPrivateMember(element) ? NG_PRIVATE_VARIABLE_PRIORITY : NG_VARIABLE_PRIORITY, false, false));
+            element, name, Angular2RefUtil.isPrivateMember(element) ? NG_PRIVATE_VARIABLE_PRIORITY : NG_VARIABLE_PRIORITY, false, false));
         }
       });
       result.stopHere();
     }
-  }
-
-  private static boolean isPrivateMember(JSPsiElementBase element) {
-    if (element instanceof JSAttributeListOwner) {
-      JSAttributeListOwner attributeListOwner = (JSAttributeListOwner)element;
-      return attributeListOwner.getAttributeList() != null
-             && attributeListOwner.getAttributeList().getAccessType() == JSAttributeList.AccessType.PRIVATE;
-    }
-    return false;
   }
 
   private static boolean addPipeVariants(final CompletionResultSet result,

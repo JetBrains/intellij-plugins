@@ -15,13 +15,13 @@ export class Home {
     <warning descr="Unused field publicUnusedField">publicUnusedField</warning>: string;
 
     private <warning descr="Unused field privateUnusedField">privateUnusedField</warning>: string;
-    private <warning descr="Unused field privateUsedField">privateUsedField</warning>: string;
+    private privateUsedField: string;
 
     constructor(
         public publicUsedConstructorField: string,
         public <warning descr="Unused field publicUnusedConstructorField">publicUnusedConstructorField</warning>: string,
-        private <warning descr="Unused field privateUnusedConstructorField">privateUnusedConstructorField</warning>: string,
-        private <warning descr="Unused field privateUsedConstructorField">privateUsedConstructorField</warning>: string) {
+        private privateUsedConstructorField: string,
+        private <warning descr="Unused field privateUnusedConstructorField">privateUnusedConstructorField</warning>: string,) {
     }
 
     public publicUsedMethod() {
@@ -32,7 +32,7 @@ export class Home {
 
     }
 
-    private <warning descr="Unused method privateUsedMethod">privateUsedMethod</warning>() {
+    private privateUsedMethod() {
 
     }
 
