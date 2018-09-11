@@ -2,11 +2,10 @@
 package org.angular2.lang.html;
 
 import com.intellij.lang.html.HTMLLanguage;
-import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import org.jetbrains.annotations.Nullable;
 
-public class Angular2HtmlLanguage extends XMLLanguage {
+public class Angular2HtmlLanguage extends HTMLLanguage {
   public static final Angular2HtmlLanguage INSTANCE = new Angular2HtmlLanguage();
 
   protected Angular2HtmlLanguage() {

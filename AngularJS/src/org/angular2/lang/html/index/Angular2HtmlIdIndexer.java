@@ -19,4 +19,9 @@ public class Angular2HtmlIdIndexer implements LexingIdIndexer {
       new Angular2HtmlFilterLexer(consumer, SyntaxHighlighterFactory.getSyntaxHighlighter(
         Angular2HtmlLanguage.INSTANCE, inputData.getProject(), inputData.getFile()).getHighlightingLexer())).idMap;
   }
+
+  @Override
+  public int getVersion() {
+    return 2;
+  }
 }
