@@ -19,4 +19,9 @@ public class Angular2HtmlTodoIndexer extends VersionedTodoIndexer {
       new Angular2HtmlFilterLexer(consumer, SyntaxHighlighterFactory.getSyntaxHighlighter(
         Angular2HtmlLanguage.INSTANCE, inputData.getProject(), inputData.getFile()).getHighlightingLexer())).todoMap;
   }
+
+  @Override
+  public int getVersion() {
+    return 2;
+  }
 }
