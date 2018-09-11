@@ -63,7 +63,7 @@ public class Angular2Injector implements MultiHostInjector {
   }
 
   private static boolean injectIntoEmbeddedLiteral(@NotNull MultiHostRegistrar registrar, PsiElement context, PsiElement parent) {
-    if (parent instanceof JSEmbeddedContent) {
+    if (parent instanceof JSEmbeddedContent && !parent.getLanguage().is(Angular2Language.INSTANCE)) {
       final XmlAttribute attribute = PsiTreeUtil.getParentOfType(parent, XmlAttribute.class);
       final String expressionType;
       if (attribute != null && (expressionType = getExpressionFileExtension(context.getTextLength(), attribute.getName(), false)) != null) {

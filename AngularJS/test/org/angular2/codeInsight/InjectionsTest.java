@@ -2,6 +2,7 @@
 package org.angular2.codeInsight;
 
 import com.intellij.lang.css.CSSLanguage;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -14,7 +15,6 @@ import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.containers.ContainerUtil;
@@ -78,7 +78,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("custom.ts", "package.json");
       final int offset = AngularTestUtil.findOffsetBySignature("Helvetica <caret>Neue", myFixture.getFile());
-      final PsiElement element = InjectedLanguageUtil.findElementAtNoCommit(myFixture.getFile(), offset);
+      final PsiElement element = InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), offset);
       assertEquals(CSSLanguage.INSTANCE, element.getLanguage());
     });
   }
@@ -91,7 +91,10 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
         Pair.create("bind<caret>ing", Angular2Language.INSTANCE),
         Pair.create("at<caret>tribute", JavaScriptSupportLoader.TYPESCRIPT))) {
         final int offset = AngularTestUtil.findOffsetBySignature(signature.first, myFixture.getFile());
-        final PsiElement element = InjectedLanguageUtil.findElementAtNoCommit(myFixture.getFile(), offset);
+        PsiElement element = InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), offset);
+        if (element == null) {
+          element = myFixture.getFile().findElementAt(offset);
+        }
         assertEquals(signature.first, signature.second, element.getContainingFile().getLanguage());
       }
     });
@@ -150,9 +153,19 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
         Pair.create("color: <caret>#00aa00", CSSLanguage.INSTANCE.getID()))) {
 
         final int offset = AngularTestUtil.findOffsetBySignature(signature.first, myFixture.getFile());
-        final PsiElement element = InjectedLanguageUtil.findElementAtNoCommit(myFixture.getFile(), offset);
+        final PsiElement element = InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), offset);
         assertEquals(signature.first, signature.second, element.getContainingFile().getLanguage().getID());
       }
+    });
+  }
+
+  public void testNoInjectionInHTMLTemplateLiteral() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
+      myFixture.configureByFiles("noInjection.html", "package.json");
+      int offset = AngularTestUtil.findOffsetBySignature("b<caret>ar", myFixture.getFile());
+      assert offset > 0;
+      PsiElement injection = InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), offset);
+      assertNull("There should be no injection", injection);
     });
   }
 
