@@ -6,7 +6,7 @@ import {Component, View} from '@angular/core';
 
 @Component({
     selector: 'home',
-    templateUrl: './unusedInspection.html'
+    templateUrl: './unused.html'
 })
 export class Home {
     publicUsedField: string;

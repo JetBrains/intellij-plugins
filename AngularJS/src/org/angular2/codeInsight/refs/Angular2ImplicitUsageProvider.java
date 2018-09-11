@@ -26,10 +26,10 @@ public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
 
   @Override
   public boolean isImplicitUsage(PsiElement element) {
-    if ((element instanceof TypeScriptFunction
-         || element instanceof TypeScriptField
-         || element instanceof TypeScriptParameterImpl)
-        && isPrivateMember((JSPsiElementBase)element)) {
+    if (element instanceof TypeScriptFunction
+        || ((element instanceof TypeScriptField
+             || element instanceof TypeScriptParameterImpl)
+            && isPrivateMember((JSPsiElementBase)element))) {
       TypeScriptClass cls = getParentClass(element);
       if (cls != null && Angular2LangUtil.isAngular2Context(element)) {
         HtmlFileImpl template = Angular2RefUtil.findAngularComponentTemplate(cls);

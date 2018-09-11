@@ -7,9 +7,6 @@ import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
-import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
-import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
-import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
@@ -54,15 +51,6 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testUnusedSymbolInspection() {
-    JSTestUtils.testES6(getProject(), () -> {
-      myFixture.enableInspections(JSUnusedGlobalSymbolsInspection.class);
-      myFixture.enableInspections(JSUnusedLocalSymbolsInspection.class);
-      myFixture.configureByFiles("unusedInspection.ts", "unusedInspection.html", "package.json");
-      myFixture.checkHighlighting();
-    });
-  }
-
   public void testNgIfResolve() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("ngIf.ts", "ng_if.ts", "package.json");
@@ -97,14 +85,6 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
         }
         assertEquals(signature.first, signature.second, element.getContainingFile().getLanguage());
       }
-    });
-  }
-
-  public void testUnterminated() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.enableInspections(UnterminatedStatementJSInspection.class);
-      myFixture.configureByFiles("unterminated.ts", "package.json");
-      myFixture.checkHighlighting();
     });
   }
 
