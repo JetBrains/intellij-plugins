@@ -7,13 +7,14 @@ import com.intellij.execution.configurations.SimpleConfigurationType;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.LazyUtil;
+import com.intellij.openapi.util.NotNullLazyValue;
 import icons.FlexIcons;
 import org.jetbrains.annotations.NotNull;
 
 public final class FlashRunConfigurationType extends SimpleConfigurationType {
   public FlashRunConfigurationType() {
-    super("FlashRunConfigurationType", "Flash App", "Flash run configuration", LazyUtil.create(() -> FlexIcons.Flash_run_config));
+    super("FlashRunConfigurationType", "Flash App", "Flash run configuration",
+          NotNullLazyValue.createValue(() -> FlexIcons.Flash_run_config));
   }
 
   @Override

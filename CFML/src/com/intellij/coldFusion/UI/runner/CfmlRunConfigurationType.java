@@ -6,15 +6,16 @@ import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.SimpleConfigurationType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.LazyUtil;
 import icons.CFMLIcons;
 import org.jetbrains.annotations.NotNull;
 
 public final class CfmlRunConfigurationType extends SimpleConfigurationType {
   public CfmlRunConfigurationType() {
-    super("Cold Fusion runner description" /* yes, backward compatibility, so strange id */, "Cold Fusion", "Cold Fusion runner description", LazyUtil.create(() -> CFMLIcons.Cfml));
+    super("Cold Fusion runner description" /* yes, backward compatibility, so strange id */, "Cold Fusion", "Cold Fusion runner description",
+          NotNullLazyValue.createValue(() -> CFMLIcons.Cfml));
   }
 
   @Override

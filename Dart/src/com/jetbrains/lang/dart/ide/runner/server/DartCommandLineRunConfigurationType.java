@@ -7,9 +7,9 @@ import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.LazyUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import icons.DartIcons;
@@ -24,7 +24,7 @@ public final class DartCommandLineRunConfigurationType extends ConfigurationType
     super("DartCommandLineRunConfigurationType",
           DartBundle.message("runner.command.line.configuration.name"),
           DartBundle.message("runner.command.line.configuration.description"),
-          LazyUtil.create(() -> DartIcons.Dart_16));
+          NotNullLazyValue.createValue(() -> DartIcons.Dart_16));
     addFactory(new ConfigurationFactory(this) {
       @NotNull
       @Override

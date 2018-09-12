@@ -4,7 +4,7 @@ package org.jetbrains.osgi.bnd.run;
 import com.intellij.execution.configurations.*;
 import com.intellij.openapi.components.BaseState;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.LazyUtil;
+import com.intellij.openapi.util.NotNullLazyValue;
 import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,6 +12,7 @@ import org.jetbrains.osgi.bnd.imp.BndProjectImporter;
 
 import javax.swing.*;
 
+import static com.intellij.openapi.util.NotNullLazyValue.createValue;
 import static org.osmorc.i18n.OsmorcBundle.message;
 
 public final class BndRunConfigurationType extends ConfigurationTypeBase {
@@ -23,7 +24,7 @@ public final class BndRunConfigurationType extends ConfigurationTypeBase {
   }
 
   public BndRunConfigurationType() {
-    super(ID, message("bnd.configuration.name"), message("bnd.configuration.description"), LazyUtil.create(() -> OsmorcIdeaIcons.Bnd));
+    super(ID, message("bnd.configuration.name"), message("bnd.configuration.description"), createValue(() -> OsmorcIdeaIcons.Bnd));
     addFactory(new LaunchFactory(this));
     addFactory(new TestFactory(this));
   }
@@ -35,9 +36,9 @@ public final class BndRunConfigurationType extends ConfigurationTypeBase {
 
   private static abstract class FactoryBase extends ConfigurationFactory {
     private final String myName;
-    private final Icon myIcon;
+    private final NotNullLazyValue<? extends Icon> myIcon;
 
-    FactoryBase(@NotNull ConfigurationType type, @NotNull String name, @NotNull Icon icon) {
+    FactoryBase(@NotNull ConfigurationType type, @NotNull String name, @NotNull NotNullLazyValue<? extends Icon> icon) {
       super(type);
       myName = name;
       myIcon = icon;
@@ -51,7 +52,7 @@ public final class BndRunConfigurationType extends ConfigurationTypeBase {
 
     @Override
     public Icon getIcon() {
-      return myIcon;
+      return myIcon.getValue();
     }
 
     @Override
@@ -68,7 +69,7 @@ public final class BndRunConfigurationType extends ConfigurationTypeBase {
 
   private static class LaunchFactory extends FactoryBase {
     LaunchFactory(@NotNull ConfigurationType type) {
-      super(type, message("bnd.run.configuration.name"), OsmorcIdeaIcons.BndLaunch);
+      super(type, message("bnd.run.configuration.name"), createValue(() -> OsmorcIdeaIcons.BndLaunch));
     }
 
     @NotNull
@@ -80,7 +81,7 @@ public final class BndRunConfigurationType extends ConfigurationTypeBase {
 
   private static class TestFactory extends FactoryBase {
     TestFactory(@NotNull ConfigurationType type) {
-      super(type, message("bnd.test.configuration.name"), OsmorcIdeaIcons.BndTest);
+      super(type, message("bnd.test.configuration.name"), createValue(() -> OsmorcIdeaIcons.BndTest));
     }
 
     @NotNull

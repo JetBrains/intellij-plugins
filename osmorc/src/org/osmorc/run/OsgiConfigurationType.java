@@ -28,12 +28,13 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.SimpleConfigurationType;
 import com.intellij.facet.ProjectFacetManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.LazyUtil;
 import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacetType;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ApplicationSettings;
+
+import static com.intellij.openapi.util.NotNullLazyValue.createValue;
 
 /**
  * Configuration type for a bundle run configuration.
@@ -44,8 +45,7 @@ public final class OsgiConfigurationType extends SimpleConfigurationType {
   private static final String ID = "#org.osmorc.OsgiConfigurationType";
 
   public OsgiConfigurationType() {
-    super(ID, OsmorcBundle.message("run.configuration.name"), OsmorcBundle.message("run.configuration.description"),
-          LazyUtil.create(() -> OsmorcIdeaIcons.Osgi));
+    super(ID, OsmorcBundle.message("run.configuration.name"), OsmorcBundle.message("run.configuration.description"), createValue(() -> OsmorcIdeaIcons.Osgi));
   }
 
   @NotNull
