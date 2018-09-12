@@ -2,10 +2,7 @@
 package org.angular2.index;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
-import com.intellij.json.psi.JsonObject;
-import com.intellij.json.psi.JsonProperty;
-import com.intellij.json.psi.JsonStringLiteral;
-import com.intellij.json.psi.JsonValue;
+import com.intellij.json.psi.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSElementTypes;
@@ -24,7 +21,6 @@ import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.resolve.JSTypeInfo;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
-import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
@@ -39,6 +35,7 @@ import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.impl.source.tree.TreeUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.MultiMap;
 import org.angular2.codeInsight.attributes.Angular2EventHandlerDescriptor;
@@ -66,13 +63,13 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     if (expression instanceof JSReferenceExpression) {
       final String name = ((JSReferenceExpression)expression).getReferenceName();
       if (isDirective(name)) {
-        addImplicitElement(callExpression, (JSElementIndexingDataImpl)outData, getPropertyName(callExpression, SELECTOR));
+        addImplicitElement(callExpression, outData::addImplicitElement, getPropertyName(callExpression, SELECTOR));
       }
       if (isPipe(name)) {
-        addPipe(callExpression, (JSElementIndexingDataImpl)outData, getPropertyName(callExpression, NAME));
+        addPipe(callExpression, outData::addImplicitElement, getPropertyName(callExpression, NAME));
       }
       if (isModule(name)) {
-        addImplicitElementToModules(callExpression, (JSElementIndexingDataImpl)outData, determineModuleName(callExpression));
+        addImplicitElementToModules(callExpression, outData::addImplicitElement, determineModuleName(callExpression));
       }
     }
   }
@@ -102,23 +99,23 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   private static void addImplicitElementToModules(PsiElement decorator,
-                                                  @NotNull JSElementIndexingDataImpl outData,
+                                                  @NotNull Consumer<JSImplicitElement> processor,
                                                   String selector) {
     if (selector == null) return;
     JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(selector, decorator)
       .setUserString(AngularJSIndexingHandler.ANGULAR_MODULE_INDEX_USER_STRING);
-    outData.addImplicitElement(elementBuilder.toImplicitElement());
+    processor.consume(elementBuilder.toImplicitElement());
   }
 
-  private static JSElementIndexingDataImpl addImplicitElement(PsiElement element,
-                                                              JSElementIndexingDataImpl outData,
-                                                              String selector) {
-    if (selector == null) return outData;
+  private static void addImplicitElement(PsiElement element,
+                                         @NotNull Consumer<JSImplicitElement> processor,
+                                         String selector) {
+    if (selector == null) return;
     selector = selector.replace("\\n", "\n");
     final MultiMap<String, String> attributesToElements = MultiMap.createSet();
     PsiFile cssFile = PsiFileFactory.getInstance(element.getProject()).createFileFromText(JQueryCssLanguage.INSTANCE, selector);
     CssSelectorList selectorList = PsiTreeUtil.findChildOfType(cssFile, CssSelectorList.class);
-    if (selectorList == null) return outData;
+    if (selectorList == null) return;
     for (CssSelector cssSelector : selectorList.getSelectors()) {
       for (CssSimpleSelector simpleSelector : cssSelector.getSimpleSelectors()) {
         String elementName = simpleSelector.getElementName();
@@ -149,8 +146,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
         elementBuilder.setTypeString("AE;" + StringUtil.join(elements, ",") + ";;");
       }
       elementBuilder.setUserString(ANGULAR_DIRECTIVES_INDEX_USER_STRING);
-      if (outData == null) outData = new JSElementIndexingDataImpl();
-      outData.addImplicitElement(elementBuilder.toImplicitElement());
+      processor.consume(elementBuilder.toImplicitElement());
     }
 
     for (Map.Entry<String, Collection<String>> entry : attributesToElements.entrySet()) {
@@ -160,31 +156,34 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
         continue;
       }
       if (!added.add(attributeName)) continue;
-      if (outData == null) outData = new JSElementIndexingDataImpl();
       String elements = StringUtil.join(entry.getValue(), ",");
       if (template && elements.isEmpty()) {
         elementBuilder = new JSImplicitElementImpl.Builder(attributeName, element)
           .setType(JSImplicitElement.Type.Class).setTypeString("A;template,ng-template;;");
         elementBuilder.setUserString(ANGULAR_DIRECTIVES_INDEX_USER_STRING);
-        outData.addImplicitElement(elementBuilder.toImplicitElement());
+        processor.consume(elementBuilder.toImplicitElement());
       }
       final String prefix = template && !attributeName.startsWith("[") ? "*" : "";
       final String attr = prefix + attributeName;
       elementBuilder = new JSImplicitElementImpl.Builder(attr, element)
         .setType(JSImplicitElement.Type.Class).setTypeString("A;" + elements + ";;");
       elementBuilder.setUserString(ANGULAR_DIRECTIVES_INDEX_USER_STRING);
-      outData.addImplicitElement(elementBuilder.toImplicitElement());
+      processor.consume(elementBuilder.toImplicitElement());
     }
-    return outData;
   }
 
-  private static void addPipe(PsiElement expression, @NotNull JSElementIndexingDataImpl outData, String pipe) {
+  private static void addPipe(PsiElement expression, @NotNull Consumer<JSImplicitElement> processor, String pipe) {
     if (pipe == null) return;
-    JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(pipe, expression).setUserString(
-      ANGULAR_FILTER_INDEX_USER_STRING);
-    outData.addImplicitElement(elementBuilder.toImplicitElement());
+    JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(pipe, expression)
+      .setUserString(ANGULAR_FILTER_INDEX_USER_STRING)
+      .setType(JSImplicitElement.Type.Class)
+      .setTypeString("P;;;");
+    processor.consume(elementBuilder.toImplicitElement());
   }
 
+  public static boolean isPipeType(String type) {
+    return "P;;;".equals(type);
+  }
 
   private static boolean isTemplate(PsiElement decorator) {
     final JSClass clazz = PsiTreeUtil.getParentOfType(decorator, JSClass.class);
@@ -356,25 +355,53 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
 
   @Override
   public boolean processCustomElement(@NotNull PsiElement customElement, @NotNull JSIndexContentBuilder builder) {
-    if (customElement instanceof JsonProperty && "selector".equals(((JsonProperty)customElement).getName())) {
+    if (customElement instanceof JsonProperty
+        && "selector".equals(((JsonProperty)customElement).getName())) {
       JsonValue value = ((JsonProperty)customElement).getValue();
       if (value instanceof JsonStringLiteral) {
-        JSElementIndexingDataImpl data = addImplicitElement(value, null, ((JsonStringLiteral)value).getValue());
-        if (data != null && data.getImplicitElements() != null) {
-          for (JSImplicitElement element : data.getImplicitElements()) {
-            JSImplicitElementImpl.Builder elementBuilder = ((JSImplicitElementImpl)element).toBuilder().setProvider(null);
-            JSImplicitElementsIndex.JSElementProxy proxy =
-              new JSImplicitElementsIndex.JSElementProxy(elementBuilder, value.getTextRange().getStartOffset());
-            builder.addImplicitElement(element.getName(), proxy);
+        addImplicitElement(value, createIndexContentBuilderProcessor(builder), ((JsonStringLiteral)value).getValue());
+      }
+    }
+    else //noinspection ConstantConditions
+      if (customElement instanceof JsonProperty
+          && "name".equals(((JsonProperty)customElement).getName())
+          && ((JsonProperty)customElement).getValue() instanceof JsonStringLiteral
+          && "Pipe".equals(((JsonStringLiteral)((JsonProperty)customElement).getValue()).getValue())) {
+        JsonObject object = (JsonObject)PsiTreeUtil.findFirstParent(
+          customElement,
+          p -> p instanceof JsonObject && ((JsonObject)p).findProperty("arguments") != null);
+        if (object != null) {
+          JsonProperty args = object.findProperty("arguments");
+          assert args != null;
+          JsonArray argsArr = ObjectUtils.tryCast(args.getValue(), JsonArray.class);
+          if (argsArr != null) {
+            for (JsonElement el : argsArr.getValueList()) {
+              if (el instanceof JsonObject) {
+                JsonProperty nameProp = ((JsonObject)el).findProperty("name");
+                if (nameProp != null && nameProp.getValue() instanceof JsonStringLiteral) {
+                  final String pipeName = ((JsonStringLiteral)nameProp.getValue()).getValue();
+                  addPipe(nameProp.getValue(), createIndexContentBuilderProcessor(builder), pipeName);
+                }
+              }
+            }
           }
         }
       }
-    }
     return true;
   }
 
   @Override
   public int getVersion() {
     return AngularIndexUtil.BASE_VERSION;
+  }
+
+  @NotNull
+  private static Consumer<JSImplicitElement> createIndexContentBuilderProcessor(@NotNull JSIndexContentBuilder builder) {
+    return element -> {
+      JSImplicitElementImpl.Builder elementBuilder = ((JSImplicitElementImpl)element).toBuilder().setProvider(null);
+      JSImplicitElementsIndex.JSElementProxy proxy =
+        new JSImplicitElementsIndex.JSElementProxy(elementBuilder, element.getParent().getTextOffset());
+      builder.addImplicitElement(element.getName(), proxy);
+    };
   }
 }

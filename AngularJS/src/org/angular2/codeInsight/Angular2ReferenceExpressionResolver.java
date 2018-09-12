@@ -2,12 +2,16 @@
 package org.angular2.codeInsight;
 
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunctionSignature;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
+import org.angular2.codeInsight.metadata.AngularPipeMetadata;
 import org.angular2.lang.expr.psi.Angular2Pipe;
 import org.angularjs.index.AngularFilterIndex;
 import org.angularjs.index.AngularIndexUtil;
@@ -40,16 +44,28 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
   public ResolveResult[] resolve(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode) {
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY;
     if (Angular2Pipe.isPipeNameReference(myRef)) {
-      final PsiElement resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularFilterIndex.KEY, myReferencedName);
+      final JSImplicitElement resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularFilterIndex.KEY, myReferencedName);
       if (resolve != null) {
-        return new JSResolveResult[]{new JSResolveResult(resolve)};
+        AngularPipeMetadata pipeMetadata = AngularPipeMetadata.create(resolve);
+        if (pipeMetadata.getTransformMethod() != null) {
+          return pipeMetadata.getTransformMethod()
+            .getMemberSource()
+            .getAllSourceElements()
+            .stream()
+            .filter(e -> !(e instanceof TypeScriptFunctionSignature))
+            .map(JSResolveResult::new)
+            .toArray(ResolveResult[]::new);
+        }
+        return new ResolveResult[]{new JSResolveResult(ObjectUtils.notNull(pipeMetadata.getPipeClass(), resolve))};
       }
+      return ResolveResult.EMPTY_ARRAY;
     }
     else if (myQualifier == null) {
       final Collection<JSPsiElementBase> localVariables = getItemsByName(myReferencedName, myRef);
       if (!localVariables.isEmpty()) {
         return ContainerUtil.map2Array(localVariables, JSResolveResult.class, item -> new JSResolveResult(item));
       }
+      return ResolveResult.EMPTY_ARRAY;
     }
     return super.resolve(expression, incompleteCode);
   }

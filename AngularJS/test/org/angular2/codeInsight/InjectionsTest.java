@@ -58,8 +58,8 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  private <T extends JSElement> T checkVariableResolve(final String signature, final String varName, final Class<T> varClass) {
-    return AngularTestUtil.checkVariableResolve(signature, varName, varClass, myFixture);
+  private <T extends JSElement> void checkVariableResolve(final String signature, final String varName, final Class<T> varClass) {
+    AngularTestUtil.checkVariableResolve(signature, varName, varClass, myFixture);
   }
 
   public void testStyles2() throws Exception {
@@ -96,9 +96,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testNgForExternalResolve() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("ngFor.after.html", "ngFor.ts", "ng_for_of.ts", "package.json");
-      JSVariable resolve = checkVariableResolve("\"myTo<caret>do\"", "myTodo", JSVariable.class);
-      //TODO support pipe type evaluation
-      //assertEquals("string", resolve.getTypeString());
+      checkVariableResolve("\"myTo<caret>do\"", "myTodo", JSVariable.class);
     });
   }
 
