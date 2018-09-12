@@ -191,7 +191,7 @@ private class VueEventAttrDataCompletionProvider : CompletionProvider<Completion
 
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
     if (!hasVue(parameters.position.project)) return
-    if ((parameters.position.parent.parent as HtmlTagImpl).name.contains("v-icon")) {
+    if (parameters.position.parent.parent is HtmlTagImpl && (parameters.position.parent.parent as HtmlTagImpl).name.contains("v-icon")) {
       VuetifyIcons.materialAndFontAwesome.forEach {
         result.addElement(LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue))
       }
