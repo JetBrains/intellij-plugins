@@ -100,7 +100,7 @@ ASTWrapperPsiElement(FILE)
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('of')
       PsiWhiteSpace(' ')
-      Angular2Pipe
+      Angular2PipeExpression
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('userObservable')
         PsiWhiteSpace(' ')

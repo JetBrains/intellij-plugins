@@ -231,8 +231,8 @@ ASTWrapperPsiElement(FILE)
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('of')
       PsiWhiteSpace(' ')
-      Angular2Pipe
-        Angular2Pipe
+      Angular2PipeExpression
+        Angular2PipeExpression
           JSReferenceExpression
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('todoService')
@@ -279,8 +279,8 @@ ASTWrapperPsiElement(FILE)
         <empty list>
     Angular2TemplateBinding <expressions, false, null>
       PsiElement(JS:DOT)('.')
-      Angular2Pipe
-        Angular2Pipe
+      Angular2PipeExpression
+        Angular2PipeExpression
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('todos')
           PsiWhiteSpace(' ')
@@ -324,8 +324,8 @@ ASTWrapperPsiElement(FILE)
         <empty list>
     Angular2TemplateBinding <expressions, false, null>
       PsiElement(JS:DOT)('.')
-      Angular2Pipe
-        Angular2Pipe
+      Angular2PipeExpression
+        Angular2PipeExpression
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('todos')
           PsiWhiteSpace(' ')
@@ -411,7 +411,7 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       JSParenthesizedExpression
         PsiElement(JS:LPAR)('(')
-        Angular2Pipe
+        Angular2PipeExpression
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('ops$')
           PsiWhiteSpace(' ')

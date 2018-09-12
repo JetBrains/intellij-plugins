@@ -1,6 +1,6 @@
 ASTWrapperPsiElement(FILE)
   Angular2Binding
-    Angular2Pipe
+    Angular2PipeExpression
       JSBinaryExpression
         JSReferenceExpression
           JSReferenceExpression
@@ -27,7 +27,7 @@ ASTWrapperPsiElement(FILE)
             PsiWhiteSpace(' ')
             JSParenthesizedExpression
               PsiElement(JS:LPAR)('(')
-              Angular2Pipe
+              Angular2PipeExpression
                 JSParenthesizedExpression
                   PsiElement(JS:LPAR)('(')
                   JSBinaryExpression

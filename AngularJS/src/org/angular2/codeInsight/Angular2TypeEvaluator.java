@@ -8,7 +8,7 @@ import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor;
 import com.intellij.lang.javascript.psi.resolve.context.JSApplyCallElement;
 import com.intellij.lang.javascript.psi.resolve.context.JSApplyContextElement;
 import com.intellij.util.ArrayUtil;
-import org.angular2.lang.expr.psi.Angular2Pipe;
+import org.angular2.lang.expr.psi.Angular2PipeExpression;
 
 public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
 
@@ -19,8 +19,8 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
 
   @Override
   protected boolean evaluateDialectSpecificTypes(JSExpression rawQualifier) {
-    if (rawQualifier instanceof Angular2Pipe) {
-      Angular2Pipe pipeExpression = (Angular2Pipe)rawQualifier;
+    if (rawQualifier instanceof Angular2PipeExpression) {
+      Angular2PipeExpression pipeExpression = (Angular2PipeExpression)rawQualifier;
       JSExpression pipeName = pipeExpression.getNameReference();
       final JSApplyContextElement elementToApply = new JSApplyCallElement(
         pipeName, ArrayUtil.prepend(pipeExpression.getExpression(), pipeExpression.getArguments()));

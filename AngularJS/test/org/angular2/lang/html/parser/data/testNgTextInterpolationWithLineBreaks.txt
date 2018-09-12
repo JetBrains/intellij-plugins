@@ -5,8 +5,8 @@ HtmlFile:test.html
     PsiElement(NG:INTERPOLATION_START)('{{')
     ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
       Angular2Interpolation
-        Angular2Pipe
-          Angular2Pipe
+        Angular2PipeExpression
+          Angular2PipeExpression
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('todo')
             PsiWhiteSpace('\n            ')

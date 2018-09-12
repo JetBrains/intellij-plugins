@@ -13,22 +13,22 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ObjectUtils;
 import org.angular2.lang.expr.psi.Angular2ElementVisitor;
-import org.angular2.lang.expr.psi.Angular2Pipe;
+import org.angular2.lang.expr.psi.Angular2PipeExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static org.angular2.lang.expr.parser.Angular2ElementTypes.ARGUMENT_LIST;
 
-public class Angular2PipeImpl extends JSExpressionImpl implements Angular2Pipe {
+public class Angular2PipeExpressionImpl extends JSExpressionImpl implements Angular2PipeExpression {
 
-  public Angular2PipeImpl(IElementType elementType) {
+  public Angular2PipeExpressionImpl(IElementType elementType) {
     super(elementType);
   }
 
   @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof Angular2ElementVisitor) {
-      ((Angular2ElementVisitor)visitor).visitAngular2Pipe(this);
+      ((Angular2ElementVisitor)visitor).visitAngular2PipeExpression(this);
     }
     else {
       super.accept(visitor);

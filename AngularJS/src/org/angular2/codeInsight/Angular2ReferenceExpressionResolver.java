@@ -12,7 +12,7 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.codeInsight.metadata.AngularPipeMetadata;
-import org.angular2.lang.expr.psi.Angular2Pipe;
+import org.angular2.lang.expr.psi.Angular2PipeExpression;
 import org.angularjs.index.AngularFilterIndex;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +43,7 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
   @Override
   public ResolveResult[] resolve(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode) {
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY;
-    if (Angular2Pipe.isPipeNameReference(myRef)) {
+    if (Angular2PipeExpression.isPipeNameReference(myRef)) {
       final JSImplicitElement resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularFilterIndex.KEY, myReferencedName);
       if (resolve != null) {
         AngularPipeMetadata pipeMetadata = AngularPipeMetadata.create(resolve);

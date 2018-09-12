@@ -24,7 +24,7 @@ public class Angular2Parser
   Angular Expression AST mapping
 
   Binary            - JSBinaryExpression
-  BindingPipe       - Angular2Pipe
+  BindingPipe       - Angular2PipeExpression
   Chain             - Angular2Chain
   Conditional       - JSConditionalExpression
   FunctionCall      - JSCallExpression

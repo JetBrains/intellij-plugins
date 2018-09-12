@@ -1,6 +1,6 @@
 ASTWrapperPsiElement(FILE)
   Angular2Binding
-    Angular2Pipe
+    Angular2PipeExpression
       JSLiteralExpression
         PsiElement(JS:NUMERIC_LITERAL)('1')
       PsiWhiteSpace(' ')
@@ -13,7 +13,7 @@ ASTWrapperPsiElement(FILE)
 ------
 ASTWrapperPsiElement(FILE)
   Angular2Binding
-    Angular2Pipe
+    Angular2PipeExpression
       JSLiteralExpression
         PsiElement(JS:STRING_LITERAL)(''abcd'')
       PsiWhiteSpace(' ')
@@ -31,8 +31,8 @@ ASTWrapperPsiElement(FILE)
 ------
 ASTWrapperPsiElement(FILE)
   Angular2Binding
-    Angular2Pipe
-      Angular2Pipe
+    Angular2PipeExpression
+      Angular2PipeExpression
         JSLiteralExpression
           PsiElement(JS:STRING_LITERAL)(''abcd'')
         PsiWhiteSpace(' ')
@@ -68,7 +68,7 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       JSParenthesizedExpression
         PsiElement(JS:LPAR)('(')
-        Angular2Pipe
+        Angular2PipeExpression
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('name')
           PsiWhiteSpace(' ')
@@ -82,7 +82,7 @@ ASTWrapperPsiElement(FILE)
 ------
 ASTWrapperPsiElement(FILE)
   Angular2Binding
-    Angular2Pipe
+    Angular2PipeExpression
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('name')
       PsiWhiteSpace(' ')
@@ -97,7 +97,7 @@ ASTWrapperPsiElement(FILE)
 ------
 ASTWrapperPsiElement(FILE)
   Angular2Binding
-    Angular2Pipe
+    Angular2PipeExpression
       JSBinaryExpression
         JSReferenceExpression
           JSReferenceExpression

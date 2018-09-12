@@ -224,7 +224,7 @@ ASTWrapperPsiElement(FILE)
 ASTWrapperPsiElement(FILE)
   Angular2TemplateBindings
     Angular2TemplateBinding <ngIf, false, null>
-      Angular2Pipe
+      Angular2PipeExpression
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('userObservable')
         PsiWhiteSpace(' ')

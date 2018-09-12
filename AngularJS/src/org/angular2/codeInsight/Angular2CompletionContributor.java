@@ -15,7 +15,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiUtilCore;
 import org.angular2.codeInsight.refs.Angular2RefUtil;
 import org.angular2.lang.expr.Angular2Language;
-import org.angular2.lang.expr.psi.Angular2Pipe;
+import org.angular2.lang.expr.psi.Angular2PipeExpression;
 import org.angularjs.index.AngularFilterIndex;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +54,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
                                          CompletionParameters parameters,
                                          JSReferenceExpression ref,
                                          PsiElement parent) {
-    if (Angular2Pipe.isPipeNameReference(ref)) {
+    if (Angular2PipeExpression.isPipeNameReference(ref)) {
       addResults(result, parameters, AngularIndexUtil.getAllKeys(AngularFilterIndex.KEY, parent.getProject()));
       return true;
     }

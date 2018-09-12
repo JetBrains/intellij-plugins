@@ -21,7 +21,7 @@ public class Angular2ElementVisitor extends JSElementVisitor {
     visitJSSourceElement(interpolation);
   }
 
-  public void visitAngular2Pipe(Angular2Pipe pipe) {
+  public void visitAngular2PipeExpression(Angular2PipeExpression pipe) {
     visitJSExpression(pipe);
   }
 

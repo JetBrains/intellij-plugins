@@ -446,7 +446,7 @@ public class Angular2ParserSpecTest {
         it("should parse pipes", () -> {
           final Angular2TemplateBinding[] bindings = parseTemplateBindings("key", "value|pipe");
           final PsiElement ast = bindings[0].getExpression();
-          expect(ast).toBeInstanceOf(Angular2Pipe.class);
+          expect(ast).toBeInstanceOf(Angular2PipeExpression.class);
         });
 
         describe("spans", () -> {
@@ -654,7 +654,7 @@ public class Angular2ParserSpecTest {
   @SuppressWarnings("NewClassNamingConvention")
   static class MySingleRootFileViewProvider extends SingleRootFileViewProvider {
 
-    public MySingleRootFileViewProvider(VirtualFile file) {
+    MySingleRootFileViewProvider(VirtualFile file) {
       super(PsiManager.getInstance(getProject()), file, false, Angular2Language.INSTANCE);
     }
   }
@@ -689,7 +689,7 @@ public class Angular2ParserSpecTest {
 
     private final boolean myReportErrors;
 
-    public MyAstUnparser(boolean reportErrors) {
+    private MyAstUnparser(boolean reportErrors) {
       super();
       myReportErrors = reportErrors;
     }
@@ -761,7 +761,7 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitAngular2Pipe(Angular2Pipe pipe) {
+    public void visitAngular2PipeExpression(Angular2PipeExpression pipe) {
       result.append("(");
       printElement(pipe.getExpression());
       result.append(" | ")

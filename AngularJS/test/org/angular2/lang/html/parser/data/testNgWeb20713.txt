@@ -14,10 +14,10 @@ HtmlFile:test.html
       PsiElement(NG:INTERPOLATION_START)('{{')
       ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
         Angular2Interpolation
-          Angular2Pipe
+          Angular2PipeExpression
             JSParenthesizedExpression
               PsiElement(JS:LPAR)('(')
-              Angular2Pipe
+              Angular2PipeExpression
                 JSReferenceExpression
                   JSReferenceExpression
                     PsiElement(JS:IDENTIFIER)('viewModel')

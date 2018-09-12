@@ -22,7 +22,7 @@ public interface Angular2ElementTypes extends JSElementTypes {
 
   IFileElementType FILE = JSFileElementType.create(Angular2Language.INSTANCE);
 
-  IElementType PIPE_EXPRESSION = new Angular2ExpressionElementType("NG:PIPE_EXPRESSION", Angular2PipeImpl::new);
+  IElementType PIPE_EXPRESSION = new Angular2ExpressionElementType("NG:PIPE_EXPRESSION", Angular2PipeExpressionImpl::new);
   IElementType CHAIN_STATEMENT = new Angular2ElementType("NG:CHAIN_STATEMENT", Angular2ChainImpl::new);
   IElementType QUOTE_STATEMENT = new Angular2ElementType("NG:QUOTE_STATEMENT", Angular2QuoteImpl::new);
   IElementType ACTION_STATEMENT = new Angular2ElementType("NG:ACTION", Angular2ActionImpl::new);

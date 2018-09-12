@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface Angular2Pipe extends JSExpression {
+public interface Angular2PipeExpression extends JSExpression {
 
   @Nullable
   JSExpression getExpression();
@@ -28,7 +28,7 @@ public interface Angular2Pipe extends JSExpression {
 
   static boolean isPipeNameReference(JSReferenceExpression referenceExpression) {
     PsiElement parent = referenceExpression.getParent();
-    return parent instanceof Angular2Pipe
-           && referenceExpression.equals(((Angular2Pipe)parent).getNameReference());
+    return parent instanceof Angular2PipeExpression
+           && referenceExpression.equals(((Angular2PipeExpression)parent).getNameReference());
   }
 }
