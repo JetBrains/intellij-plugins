@@ -25,7 +25,6 @@ import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
-import com.intellij.lang.javascript.modules.NodeModuleUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.SystemInfo;
@@ -183,16 +182,7 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
     if (karmaConfig != null) {
       VirtualFile basePath = LocalFileSystem.getInstance().findFileByPath(karmaConfig.getBasePath());
       if (basePath != null && basePath.isValid()) {
-        if (karmaConfig.isWebpack()) {
-          mappings.put("webpack:///" + basePath.getPath(), basePath);
-          VirtualFile nodeModulesDir = basePath.findChild(NodeModuleUtil.NODE_MODULES);
-          if (nodeModulesDir != null && nodeModulesDir.isValid() && nodeModulesDir.isDirectory()) {
-            mappings.put(karmaServer.formatUrlWithoutUrlRoot("/base/" + NodeModuleUtil.NODE_MODULES), nodeModulesDir);
-          }
-        }
-        else {
-          mappings.put(karmaServer.formatUrlWithoutUrlRoot("/base"), basePath);
-        }
+        mappings.put(karmaServer.formatUrlWithoutUrlRoot("/base"), basePath);
       }
     }
     VirtualFile[] roots = ManagingFS.getInstance().getLocalRoots();
