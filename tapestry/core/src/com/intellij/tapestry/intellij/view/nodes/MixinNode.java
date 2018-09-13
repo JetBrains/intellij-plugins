@@ -9,6 +9,7 @@ import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.ui.treeStructure.SimpleNode;
 import icons.TapestryIcons;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A Mixin node.
@@ -24,6 +25,7 @@ public class MixinNode extends TapestryNode {
     /**
      * {@inheritDoc}
      */
+    @NotNull
     @Override
     public SimpleNode[] getChildren() {
         Mixin mixin = (Mixin) getElement();

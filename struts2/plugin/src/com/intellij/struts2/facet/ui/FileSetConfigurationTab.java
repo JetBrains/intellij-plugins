@@ -74,6 +74,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
   // GUI helpers
   private final SimpleTreeBuilder myBuilder;
   private final SimpleNode myRootNode = new SimpleNode() {
+    @NotNull
     @Override
     public SimpleNode[] getChildren() {
       final List<SimpleNode> nodes = new ArrayList<>(myBuffer.size());
@@ -112,6 +113,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
 
     // init tree
     final SimpleTreeStructure structure = new SimpleTreeStructure() {
+      @NotNull
       @Override
       public Object getRootElement() {
         return myRootNode;
@@ -376,6 +378,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       }
     }
 
+    @NotNull
     @Override
     public SimpleNode[] getChildren() {
       final List<SimpleNode> nodes = new ArrayList<>();
@@ -437,6 +440,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       }
     }
 
+    @NotNull
     @Override
     public SimpleNode[] getChildren() {
       return NO_CHILDREN;

@@ -41,6 +41,7 @@ public class RootNode extends SimpleNode {
     /**
      * {@inheritDoc}
      */
+    @NotNull
     @Override
     public SimpleNode[] getChildren() {
         if (_treeBuilder == null) {

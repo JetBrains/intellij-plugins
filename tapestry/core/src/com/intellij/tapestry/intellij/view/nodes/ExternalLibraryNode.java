@@ -9,6 +9,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.model.Library;
 import com.intellij.ui.treeStructure.SimpleNode;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ public class ExternalLibraryNode extends TapestryNode {
     /**
      * {@inheritDoc}
      */
+    @NotNull
     @Override
     public SimpleNode[] getChildren() {
         List<TapestryNode> children = new ArrayList<>();

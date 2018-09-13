@@ -8,6 +8,7 @@ import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.model.Library;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.ui.treeStructure.SimpleNode;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ public class LibrariesNode extends TapestryNode {
     /**
      * {@inheritDoc}
      */
+    @NotNull
     @Override
     public SimpleNode[] getChildren() {
         List<TapestryNode> children = new ArrayList<>();

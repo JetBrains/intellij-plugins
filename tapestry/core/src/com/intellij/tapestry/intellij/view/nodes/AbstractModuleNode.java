@@ -18,6 +18,7 @@ public abstract class AbstractModuleNode extends TapestryNode {
     /**
      * {@inheritDoc}
      */
+    @NotNull
     @Override
     public abstract SimpleNode[] getChildren();
 }

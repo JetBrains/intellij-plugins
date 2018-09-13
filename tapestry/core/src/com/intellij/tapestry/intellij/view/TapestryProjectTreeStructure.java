@@ -21,6 +21,7 @@ public class TapestryProjectTreeStructure extends SimpleTreeStructure {
     /**
      * {@inheritDoc}
      */
+    @NotNull
     @Override
     public RootNode getRootElement() {
         return _rootNode;
@@ -30,7 +31,7 @@ public class TapestryProjectTreeStructure extends SimpleTreeStructure {
      * {@inheritDoc}
      */
     @Override
-    public Object getParentElement(final Object element) {
+    public Object getParentElement(@NotNull final Object element) {
         try {
             return ((SimpleNode) element).getParent();
         } catch (ClassCastException e) {
@@ -43,9 +44,10 @@ public class TapestryProjectTreeStructure extends SimpleTreeStructure {
      */
     @Override
     @NotNull
-    public NodeDescriptor createDescriptor(Object element, NodeDescriptor parentDescriptor) {
+    public NodeDescriptor createDescriptor(@NotNull Object element, NodeDescriptor parentDescriptor) {
         if (!(element instanceof NodeDescriptor)) {
             return new SimpleNode() {
+                @NotNull
                 @Override
                 public SimpleNode[] getChildren() {
                     return new SimpleNode[0];
