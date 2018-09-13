@@ -21,5 +21,5 @@ public interface PostCssTokenTypes {
   TokenSet IDENTIFIERS = TokenSet.create(AMPERSAND, HASH_SIGN);
   // only comparison operators allowed in media feature range (see https://www.w3.org/TR/mediaqueries-4/#typedef-mf-range)
   TokenSet COMPARISON_OPERATORS = TokenSet.create(CssElementTypes.CSS_EQ, CssElementTypes.CSS_GT, LT, GE, LE);
-  TokenSet POST_CSS_COMMENTS = TokenSet.create(CssElementTypes.CSS_COMMENT, POST_CSS_COMMENT);
+  TokenSet POST_CSS_COMMENTS = TokenSet.orSet(CssElementTypes.COMMENTS, TokenSet.create(POST_CSS_COMMENT));
 }
