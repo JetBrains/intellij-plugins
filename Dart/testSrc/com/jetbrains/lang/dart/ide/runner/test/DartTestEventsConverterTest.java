@@ -13,12 +13,13 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -206,7 +207,6 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
   private SMTRunnerConsoleView myConsole;
   private DartTestEventsConverter myEventsConverter;
   private DartTestEventsProcessor myEventsProcessor;
-  private DefaultTreeModel myTreeModel;
   private DefaultMutableTreeNode myParentNode;
   private SMTestRunnerResultsForm myResultsViewer;
   private MockPrinter myMockResettablePrinter;
@@ -377,9 +377,10 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     myEventsProcessor = new DartTestEventsProcessor(consoleProperties.getProject(), DartTestRunningState.DART_FRAMEWORK_NAME);
     myEventsProcessor.addEventsListener(myResultsViewer);
     myEventsConverter.setProcessor(myEventsProcessor);
-    myTreeModel = myResultsViewer.getTreeView() == null ? null : (DefaultTreeModel)myResultsViewer.getTreeView().getModel();
-    assertNotNull(myTreeModel);
-    myParentNode = (DefaultMutableTreeNode)myTreeModel.getRoot();
+    TreeModel treeModel = myResultsViewer.getTreeView() == null ? null : myResultsViewer.getTreeView().getModel();
+    assertNotNull(treeModel);
+    PlatformTestUtil.waitWhileBusy(myResultsViewer.getTreeView());
+    myParentNode = (DefaultMutableTreeNode)treeModel.getRoot();
     myEventsProcessor.onStartTesting();
   }
 
@@ -451,7 +452,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
       if (parentId != null && !parentId.equals(TreeNodeEvent.ROOT_NODE_ID)) {
         parentNode = myNodes.get(parentId);
       }
-      myTreeModel.insertNodeInto(node, parentNode, parentNode.getChildCount());
+      node.setParent(parentNode);
       myResultsViewer.performUpdate();
     }
 
@@ -486,7 +487,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
       if (parentId != null && !parentId.equals(TreeNodeEvent.ROOT_NODE_ID)) {
         parentNode = myNodes.get(parentId);
       }
-      myTreeModel.insertNodeInto(node, parentNode, parentNode.getChildCount());
+      node.setParent(parentNode);
       myResultsViewer.performUpdate();
     }
 
