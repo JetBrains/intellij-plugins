@@ -4,12 +4,15 @@ package org.angular2.codeInsight;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JavaScriptSpecificHandlersFactory;
 import com.intellij.lang.javascript.ecmascript6.TypeScriptQualifiedItemProcessor;
+import com.intellij.lang.javascript.findUsages.JSDialectSpecificReadWriteAccessDetector;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.QualifiedItemProcessor;
 import com.intellij.lang.javascript.psi.resolve.ResultSink;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
+import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver;
+import org.angular2.findUsages.Angular2ReadWriteAccessDetector;
 import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,5 +33,11 @@ public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersF
     }
 
     return super.createQualifiedItemProcessor(sink, place);
+  }
+
+  @NotNull
+  @Override
+  public JSDialectSpecificReadWriteAccessDetector getReadWriteAccessDetector() {
+    return Angular2ReadWriteAccessDetector.INSTANCE;
   }
 }

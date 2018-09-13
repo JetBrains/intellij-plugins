@@ -26,6 +26,15 @@ public class InspectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testUnusedSetter() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.enableInspections(JSUnusedGlobalSymbolsInspection.class);
+      myFixture.enableInspections(JSUnusedLocalSymbolsInspection.class);
+      myFixture.configureByFiles("unusedSetter.ts", "unusedSetter.html", "package.json");
+      myFixture.checkHighlighting();
+    });
+  }
+
   public void testMethodCanBeStatic() {
     JSTestUtils.testES6(getProject(), () -> {
       myFixture.enableInspections(JSMethodCanBeStaticInspection.class);
@@ -41,5 +50,4 @@ public class InspectionsTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.checkHighlighting();
     });
   }
-
 }

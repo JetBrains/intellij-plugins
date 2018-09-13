@@ -177,7 +177,7 @@ public class Angular2Processor {
     private final PsiFile myTemplateFile;
     private final Stack<Angular2TemplateScope> scopes = new Stack<>();
 
-    public Angular2TemplateScopeBuilder(@NotNull PsiFile templateFile) {
+    private Angular2TemplateScopeBuilder(@NotNull PsiFile templateFile) {
       myTemplateFile = templateFile;
       scopes.add(new Angular2TemplateScope(templateFile, null));
     }
@@ -299,7 +299,7 @@ public class Angular2Processor {
 
     @NotNull private final TextRange myRange;
 
-    public Angular2TemplateScope(@NotNull PsiElement root, @Nullable Angular2TemplateScope parent) {
+    private Angular2TemplateScope(@NotNull PsiElement root, @Nullable Angular2TemplateScope parent) {
       super(parent);
       myRange = root.getTextRange();
       if (parent != null) {
@@ -364,7 +364,7 @@ public class Angular2Processor {
 
     private final JSClass myJsClass;
 
-    public Angular2ComponentScope(JSClass jsClass) {
+    private Angular2ComponentScope(JSClass jsClass) {
       super(null);
       myJsClass = jsClass;
     }
@@ -376,7 +376,8 @@ public class Angular2Processor {
         .buildTypeFromClass(myJsClass, false)
         .getProperties()
         .stream()
-        .map(prop -> prop.getMemberSource().getSingleElement())
+        .map(prop -> prop.getMemberSource().getAllSourceElements())
+        .flatMap(Collection::stream)
         .filter(el -> el instanceof JSPsiElementBase)
         .map(el -> (JSPsiElementBase)el)
         .collect(Collectors.toList());
