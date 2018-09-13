@@ -17,7 +17,7 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('tranzlate')
-      JSArgumentList
+      Angular2PipeArgumentsList
         PsiElement(JS:COLON)(':')
         JSObjectLiteralExpression
           PsiElement(JS:LBRACE)('{')
@@ -56,7 +56,7 @@ ASTWrapperPsiElement(FILE)
                 PsiWhiteSpace(' ')
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('escape')
-                JSArgumentList
+                Angular2PipeArgumentsList
                   <empty list>
               PsiElement(JS:RPAR)(')')
           PsiWhiteSpace(' ')

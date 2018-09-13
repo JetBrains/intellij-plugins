@@ -37,7 +37,7 @@ HtmlFile:test.html
                           PsiWhiteSpace(' ')
                           JSReferenceExpression
                             PsiElement(JS:IDENTIFIER)('async')
-                          JSArgumentList
+                          Angular2PipeArgumentsList
                             <empty list>
                         PsiElement(JS:RPAR)(')')
                   PsiElement(JS:RBRACE)('}')

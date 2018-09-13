@@ -338,7 +338,7 @@ public class Angular2Parser
             builder.error(JSBundle.message("javascript.parser.message.expected.expression"));
           }
         }
-        params.done(ARGUMENT_LIST);
+        params.done(PIPE_ARGUMENTS_LIST);
         pipe.done(PIPE_EXPRESSION);
         pipe = pipe.precede();
       }

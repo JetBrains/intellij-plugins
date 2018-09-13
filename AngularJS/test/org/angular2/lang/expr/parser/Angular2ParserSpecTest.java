@@ -26,6 +26,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.ArrayUtil;
 import com.mscharhag.oleaster.runner.OleasterRunner;
 import junit.framework.AssertionFailedError;
 import org.angular2.lang.OleasterTestUtil;
@@ -763,10 +764,11 @@ public class Angular2ParserSpecTest {
     @Override
     public void visitAngular2PipeExpression(Angular2PipeExpression pipe) {
       result.append("(");
-      printElement(pipe.getExpression());
+      JSExpression[] args = pipe.getArguments();
+      printElement(args[0]);
       result.append(" | ")
             .append(pipe.getName());
-      for (JSExpression expr : pipe.getArguments()) {
+      for (JSExpression expr : ArrayUtil.remove(args, 0)) {
         result.append(":");
         printElement(expr);
       }

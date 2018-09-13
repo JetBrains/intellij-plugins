@@ -11,6 +11,8 @@ import org.angularjs.AngularTestUtil;
 
 import java.util.List;
 
+import static org.angularjs.AngularTestUtil.resolveReference;
+
 public class PipesTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
@@ -20,7 +22,8 @@ public class PipesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testPipeCompletion() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("pipe.html", "package.json", "custom.ts");
-      final List<String> variants = myFixture.getCompletionVariants("pipe.html");
+      myFixture.completeBasic();
+      final List<String> variants = myFixture.getLookupElementStrings();
       assertContainsElements(variants, "filta");
     });
   }
@@ -28,7 +31,7 @@ public class PipesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testPipeResolve() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("pipeCustom.resolve.html", "package.json", "custom.ts");
-      PsiElement resolve = AngularTestUtil.resolveReference("fil<caret>ta", myFixture);
+      PsiElement resolve = resolveReference("fil<caret>ta", myFixture);
       assertEquals("custom.ts", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, TypeScriptFunction.class);
       assertInstanceOf(resolve.getParent(), TypeScriptClass.class);
@@ -39,7 +42,8 @@ public class PipesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testStandardPipesCompletion() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("pipe.html", "package.json", "common.metadata.json");
-      final List<String> variants = myFixture.getCompletionVariants("pipe.html");
+      myFixture.completeBasic();
+      final List<String> variants = myFixture.getLookupElementStrings();
       assertContainsElements(variants, "async", "date", "i18nPlural", "i18nSelect", "json", "lowercase",
                              "currency", "number", "percent", "slice", "uppercase", "titlecase", "date");
     });
@@ -48,9 +52,38 @@ public class PipesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testNormalPipeResultCompletion() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("pipeResultCompletion.html", "package.json", "common.metadata.json", "json_pipe.d.ts");
-      final List<String> variants = myFixture.getCompletionVariants("pipeResultCompletion.html");
+      myFixture.completeBasic();
+      final List<String> variants = myFixture.getLookupElementStrings();
       assertDoesntContain(variants, "wait", "wake", "year", "xml", "stack");
       assertContainsElements(variants, "big", "anchor", "substr");
     });
   }
+
+  public void testAsyncPipeResultCompletion() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
+      myFixture.configureByFiles("asyncPipe.html", "asyncPipe.ts", "package.json", "common.metadata.json", "async_pipe.d.ts", "Observable.d.ts");
+      myFixture.completeBasic();
+      final List<String> variants = myFixture.getLookupElementStrings();
+      assertDoesntContain(variants, "wait", "wake", "year", "xml", "stack");
+      assertContainsElements(variants, "username", "is_hidden", "email", "created_at", "updated_at");
+    });
+  }
+
+  public void testAsyncPipeResolution() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
+      myFixture.configureByFiles("asyncPipe.html", "asyncPipe.ts", "package.json", "common.metadata.json", "async_pipe.d.ts", "Observable.d.ts", "ng_for_of.d.ts");
+
+      PsiElement transformMethod = resolveReference("makeObservable() | as<caret>ync", myFixture);
+      assertEquals("async_pipe.d.ts", transformMethod.getContainingFile().getName());
+      assertEquals("transform<T>(obj: Observable<T> | null | undefined): T | null;", transformMethod.getText());
+
+      transformMethod = resolveReference("makePromise() | as<caret>ync", myFixture);
+      assertEquals("async_pipe.d.ts", transformMethod.getContainingFile().getName());
+      assertEquals("transform<T>(obj: Promise<T> | null | undefined): T | null;", transformMethod.getText());
+
+      PsiElement contactField = resolveReference("contact.crea<caret>ted_at", myFixture);
+      assertEquals("asyncPipe.ts", contactField.getContainingFile().getName());
+    });
+  }
+
 }

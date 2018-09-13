@@ -15,7 +15,7 @@ HtmlFile:test.html
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('started')
             PsiWhiteSpace(' ')
-            JSArgumentList
+            Angular2PipeArgumentsList
               PsiElement(JS:COLON)(':')
               PsiWhiteSpace(' ')
               JSReferenceExpression
@@ -26,7 +26,7 @@ HtmlFile:test.html
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('search')
           PsiWhiteSpace(' ')
-          JSArgumentList
+          Angular2PipeArgumentsList
             PsiElement(JS:COLON)(':')
             PsiWhiteSpace(' ')
             JSReferenceExpression

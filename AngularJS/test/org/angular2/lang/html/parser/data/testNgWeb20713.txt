@@ -28,7 +28,7 @@ HtmlFile:test.html
                 PsiWhiteSpace(' ')
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('async')
-                JSArgumentList
+                Angular2PipeArgumentsList
                   <empty list>
               PsiElement(JS:RPAR)(')')
             PsiWhiteSpace(' ')
@@ -36,7 +36,7 @@ HtmlFile:test.html
             PsiWhiteSpace(' ')
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('date')
-            JSArgumentList
+            Angular2PipeArgumentsList
               PsiElement(JS:COLON)(':')
               JSLiteralExpression
                 PsiElement(JS:STRING_LITERAL)(''mediumTime'')

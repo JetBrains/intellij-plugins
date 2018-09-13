@@ -1,6 +1,8 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
+import com.intellij.lang.javascript.ecmascript6.TypeScriptCallExpressionResolver;
+import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunctionSignature;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
@@ -44,6 +46,11 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
   public ResolveResult[] resolve(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode) {
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY;
     if (Angular2PipeExpression.isPipeNameReference(myRef)) {
+      if (!incompleteCode) {
+          ResolveResult[] results = expression.multiResolve(true);
+          //expected type evaluator uses incomplete = true results so we have to cache it and reuse inside incomplete = false
+          return new TypeScriptCallExpressionResolver((JSCallExpression)expression.getParent()).chooseSignatures(results);
+      }
       final JSImplicitElement resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularFilterIndex.KEY, myReferencedName);
       if (resolve != null) {
         AngularPipeMetadata pipeMetadata = AngularPipeMetadata.create(resolve);

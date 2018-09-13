@@ -3,12 +3,12 @@ package org.angular2.lang.expr.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSElementTypes;
-import com.intellij.lang.javascript.JSExtendedLanguagesTokenSetProvider;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.JSArgumentList;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.impl.JSExpressionImpl;
+import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ObjectUtils;
@@ -17,7 +17,7 @@ import org.angular2.lang.expr.psi.Angular2PipeExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static org.angular2.lang.expr.parser.Angular2ElementTypes.ARGUMENT_LIST;
+import static org.angular2.lang.expr.parser.Angular2ElementTypes.PIPE_ARGUMENTS_LIST;
 
 public class Angular2PipeExpressionImpl extends JSExpressionImpl implements Angular2PipeExpression {
 
@@ -37,14 +37,52 @@ public class Angular2PipeExpressionImpl extends JSExpressionImpl implements Angu
 
   @Nullable
   @Override
-  public JSExpression getExpression() {
-    final ASTNode node = findChildByType(JSExtendedLanguagesTokenSetProvider.EXPRESSIONS);
-    return node != null ? node.getPsi(JSExpression.class) : null;
+  public JSElementIndexingData getIndexingData() {
+    return null;
   }
 
   @Nullable
   @Override
-  public JSReferenceExpression getNameReference() {
+  public String getName() {
+    return ObjectUtils.doIfNotNull(getNameReference(), JSReferenceExpression::getReferenceName);
+  }
+
+  @Override
+  public JSExpression getMethodExpression() {
+    return getNameReference();
+  }
+
+  @Override
+  public JSExpression getStubSafeMethodExpression() {
+    return null;
+  }
+
+  @NotNull
+  @Override
+  public JSArgumentList getArgumentList() {
+    final ASTNode node = findChildByType(PIPE_ARGUMENTS_LIST);
+    assert node != null;
+    return node.getPsi(JSArgumentList.class);
+  }
+
+  @NotNull
+  @Override
+  public JSExpression[] getArguments() {
+    return getArgumentList().getArguments();
+  }
+
+  @Override
+  public boolean isRequireCall() {
+    return false;
+  }
+
+  @Override
+  public boolean isDefineCall() {
+    return false;
+  }
+
+  @Nullable
+  private JSReferenceExpression getNameReference() {
     ASTNode node = getFirstChildNode();
     while (node != null && node.getElementType() != JSTokenTypes.OR) {
       node = node.getTreeNext();
@@ -55,23 +93,4 @@ public class Angular2PipeExpressionImpl extends JSExpressionImpl implements Angu
     return (JSReferenceExpression)ObjectUtils.doIfNotNull(node, ASTNode::getPsi);
   }
 
-  @Nullable
-  @Override
-  public String getName() {
-    return ObjectUtils.doIfNotNull(getNameReference(), JSReferenceExpression::getReferenceName);
-  }
-
-  @Nullable
-  @Override
-  public JSArgumentList getArgumentList() {
-    final ASTNode node = findChildByType(ARGUMENT_LIST);
-    return node != null ? node.getPsi(JSArgumentList.class) : null;
-  }
-
-  @NotNull
-  @Override
-  public JSExpression[] getArguments() {
-    JSArgumentList args = getArgumentList();
-    return args != null ? args.getArguments() : JSExpression.EMPTY_ARRAY;
-  }
 }

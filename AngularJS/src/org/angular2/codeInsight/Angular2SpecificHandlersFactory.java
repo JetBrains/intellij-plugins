@@ -6,19 +6,14 @@ import com.intellij.lang.javascript.JavaScriptSpecificHandlersFactory;
 import com.intellij.lang.javascript.ecmascript6.TypeScriptQualifiedItemProcessor;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
-import com.intellij.lang.javascript.psi.resolve.*;
+import com.intellij.lang.javascript.psi.resolve.QualifiedItemProcessor;
+import com.intellij.lang.javascript.psi.resolve.ResultSink;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersFactory {
-
-  @NotNull
-  @Override
-  public JSTypeEvaluator newTypeEvaluator(JSEvaluateContext context, JSTypeProcessor processor) {
-    return new Angular2TypeEvaluator(context, processor);
-  }
 
   @NotNull
   @Override
