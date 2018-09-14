@@ -1,0 +1,8 @@
+<div #refUsedInTS></div>
+<div ref-anotherRefUsedInTS></div>
+<div #refUsedLocally></div>
+{{ refUsedLocally }}
+<div ref-anotherRefUsed></div>
+{{ anotherRefUsed }}
+<div #<warning descr="Unused local variable notUsedRef">notUsedRef</warning>></div>
+<div ref-<warning descr="Unused local variable anotherNotUsedRef">anotherNotUsedRef</warning>></div>

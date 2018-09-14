@@ -15,6 +15,6 @@ public class Angular2HtmlLanguage extends HTMLLanguage {
   @Nullable
   @Override
   public LanguageFileType getAssociatedFileType() {
-    return Angular2HtmlFileType.NG_FILE_TYPE;
+    return Angular2HtmlFileType.INSTANCE;
   }
 }

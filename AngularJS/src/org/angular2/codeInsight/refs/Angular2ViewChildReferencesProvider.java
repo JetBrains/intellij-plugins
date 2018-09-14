@@ -2,6 +2,7 @@
 package org.angular2.codeInsight.refs;
 
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
+import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.ElementManipulators;
@@ -14,7 +15,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import org.angular2.codeInsight.Angular2Processor;
-import org.angular2.lang.html.psi.Angular2HtmlReference;
+import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
 import org.angularjs.codeInsight.refs.AngularJSReferenceBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,11 +50,9 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
         final String refName = myElement.getStringValue();
         if (template != null && refName != null) {
           Angular2Processor.process(template, (el) -> {
-            if (refName.equals(el.getName())) {
-              Angular2HtmlReference reference = ObjectUtils.tryCast(el.getParent(), Angular2HtmlReference.class);
-              if (reference != null) {
-                result.set(reference.getNameElement());
-              }
+            if (el instanceof Angular2HtmlReferenceVariable
+                && refName.equals(el.getName())) {
+              result.set(el);
             }
           });
         }
@@ -66,12 +65,11 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
     public Object[] getVariants() {
       final TypeScriptClass cls = PsiTreeUtil.getParentOfType(getElement(), TypeScriptClass.class);
       if (cls != null) {
-        final List<String> result = new ArrayList<>();
+        final List<JSVariable> result = new ArrayList<>();
         final HtmlFileImpl template = findAngularComponentTemplate(cls);
         if (template != null) {
           Angular2Processor.process(template, (el) ->
-            ObjectUtils.consumeIfCast(el.getParent(), Angular2HtmlReference.class,
-                                      r -> result.add(r.getReferenceName())));
+            ObjectUtils.consumeIfCast(el, Angular2HtmlReferenceVariable.class, result::add));
         }
         return result.toArray();
       }

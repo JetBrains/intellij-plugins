@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class Angular2HtmlFileType extends HtmlFileType {
 
-  public static final Angular2HtmlFileType NG_FILE_TYPE = new Angular2HtmlFileType();
+  public static final Angular2HtmlFileType INSTANCE = new Angular2HtmlFileType();
 
   protected Angular2HtmlFileType() {
     super(Angular2HtmlLanguage.INSTANCE);

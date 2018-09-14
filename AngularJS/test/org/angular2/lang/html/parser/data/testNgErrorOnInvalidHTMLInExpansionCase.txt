@@ -19,7 +19,7 @@ HtmlFile:test.html
         XmlToken:XML_DATA_CHARACTERS('=0')
         PsiWhiteSpace(' ')
         PsiElement(NG:LBRACE)('{')
-        ASTWrapperPsiElement(NG:EXPANSION_FORM_CASE_CONTENT_TOKEN)
+        XmlASTWrapperPsiElement(NG:EXPANSION_FORM_CASE_CONTENT_TOKEN)
           HtmlTag:div
             XmlToken:XML_START_TAG_START('<')
             XmlToken:XML_NAME('div')

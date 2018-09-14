@@ -24,7 +24,7 @@ public class AngularJSHtmlExtension extends HtmlXmlExtension {
   @Override
   public boolean isAvailable(PsiFile file) {
     return (super.isAvailable(file) && AngularIndexUtil.hasAngularJS(file.getProject()))
-           || (file.getFileType() == Angular2HtmlFileType.NG_FILE_TYPE && Angular2LangUtil.isAngular2Context(file));
+           || (file.getFileType() == Angular2HtmlFileType.INSTANCE && Angular2LangUtil.isAngular2Context(file));
   }
 
   @Override

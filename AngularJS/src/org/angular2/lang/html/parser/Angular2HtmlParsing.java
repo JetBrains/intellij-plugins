@@ -157,6 +157,11 @@ public class Angular2HtmlParsing extends HtmlParsing {
       advance();
       attrName.error(attributeInfo.error);
     }
+    else if (attributeInfo.elementType == REFERENCE) {
+      PsiBuilder.Marker attrName = mark();
+      advance();
+      attrName.collapse(Angular2HtmlReferenceTokenType.INSTANCE);
+    }
     else {
       advance();
     }

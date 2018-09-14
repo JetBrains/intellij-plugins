@@ -7,7 +7,11 @@ HtmlFile:test.html
       XmlToken:XML_NAME('div')
       PsiWhiteSpace(' ')
       Angular2HtmlReference <a>
-        XmlToken:XML_NAME('#a')
+        XmlASTWrapperPsiElement(NG:REFERENCE_TOKEN)
+          XmlToken:XML_NAME('#')
+          JSVarStatement
+            Angular2HtmlReferenceVariable
+              PsiElement(JS:IDENTIFIER)('a')
       XmlToken:XML_TAG_END('>')
       XmlToken:XML_END_TAG_START('</')
       XmlToken:XML_NAME('div')
@@ -17,7 +21,11 @@ HtmlFile:test.html
       XmlToken:XML_NAME('div')
       PsiWhiteSpace(' ')
       Angular2HtmlReference <a>
-        XmlToken:XML_NAME('ref-a')
+        XmlASTWrapperPsiElement(NG:REFERENCE_TOKEN)
+          XmlToken:XML_NAME('ref-')
+          JSVarStatement
+            Angular2HtmlReferenceVariable
+              PsiElement(JS:IDENTIFIER)('a')
       XmlToken:XML_TAG_END('>')
       XmlToken:XML_END_TAG_START('</')
       XmlToken:XML_NAME('div')
@@ -30,7 +38,11 @@ HtmlFile:test.html
         XmlToken:XML_NAME('a')
       PsiWhiteSpace(' ')
       Angular2HtmlReference <a>
-        XmlToken:XML_NAME('#a')
+        XmlASTWrapperPsiElement(NG:REFERENCE_TOKEN)
+          XmlToken:XML_NAME('#')
+          JSVarStatement
+            Angular2HtmlReferenceVariable
+              PsiElement(JS:IDENTIFIER)('a')
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
@@ -47,6 +59,27 @@ HtmlFile:test.html
       PsiElement(XML_ATTRIBUTE)
         PsiErrorElement:"-" is not allowed in reference names
           XmlToken:XML_NAME('#a-b')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      PsiElement(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('#')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      PsiElement(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('ref-')
+      PsiWhiteSpace(' ')
       XmlToken:XML_TAG_END('>')
       XmlToken:XML_END_TAG_START('</')
       XmlToken:XML_NAME('div')

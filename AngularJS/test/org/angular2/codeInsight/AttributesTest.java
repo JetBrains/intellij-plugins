@@ -22,6 +22,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.xml.util.XmlInvalidIdInspection;
+import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -128,9 +129,10 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testTemplateReferenceResolve2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("binding.after.html", "package.json");
-      PsiElement resolve = resolveReference("user<caret>name");
+      PsiElement resolve = resolveReference("$event, user<caret>name");
+      assertInstanceOf(resolve, Angular2HtmlReferenceVariable.class);
       assertEquals("binding.after.html", resolve.getContainingFile().getName());
-      assertEquals("#username", resolve.getContainingFile().findElementAt(resolve.getParent().getTextOffset()).getText());
+      assertEquals("#username", resolve.getParent().getParent().getText());
     });
   }
 
@@ -151,8 +153,9 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("binding.after.ts", "package.json");
       PsiElement resolve = resolveReference("in<caret>put_el.");
+      assertInstanceOf(resolve, Angular2HtmlReferenceVariable.class);
       assertEquals("binding.after.ts", resolve.getContainingFile().getName());
-      assertEquals("#input_el", resolve.getContainingFile().findElementAt(resolve.getParent().getTextOffset()).getText());
+      assertEquals("#input_el", resolve.getParent().getParent().getText());
     });
   }
 
@@ -574,7 +577,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       assertNotNull(reference);
       PsiElement el = reference.resolve();
       assertNotNull(el);
-      assertEquals("#area", el.getText());
+      assertEquals("#area", el.getParent().getParent().getText());
     });
   }
 
@@ -593,7 +596,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       PsiElement el = reference.resolve();
       assertNotNull(el);
       assertEquals("viewChildReferenceHTML.html", el.getContainingFile().getName());
-      assertEquals("#area", el.getText());
+      assertEquals("#area", el.getParent().getParent().getText());
     });
   }
 

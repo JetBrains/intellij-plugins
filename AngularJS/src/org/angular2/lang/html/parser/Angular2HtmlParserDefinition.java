@@ -1,7 +1,6 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.parser;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiParser;
 import com.intellij.lang.html.HTMLParserDefinition;
@@ -13,7 +12,9 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.html.HtmlFileImpl;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.IStubFileElementType;
+import org.angular2.lang.Angular2EmbeddedContentTokenType;
 import org.angular2.lang.html.Angular2HtmlLanguage;
+import org.angular2.lang.html.XmlASTWrapperPsiElement;
 import org.angular2.lang.html.lexer.Angular2HtmlLexer;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,8 +47,8 @@ public class Angular2HtmlParserDefinition extends HTMLParserDefinition {
   @NotNull
   @Override
   public PsiElement createElement(ASTNode node) {
-    if (node.getElementType() == Angular2ExpansionFormCaseContentTokenType.INSTANCE) {
-      return new ASTWrapperPsiElement(node);
+    if (node.getElementType() instanceof Angular2EmbeddedContentTokenType) {
+      return new XmlASTWrapperPsiElement(node);
     }
     return super.createElement(node);
   }

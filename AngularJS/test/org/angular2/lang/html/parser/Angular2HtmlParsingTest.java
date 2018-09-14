@@ -181,7 +181,9 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
     doTestHtml("<div #a></div>" +
                "<div ref-a></div>" +
                "<div a #a='dirA'></div>" +
-               "<div #a-b></div>");
+               "<div #a-b></div>" +
+               "<div #></div>" +
+               "<div ref- ></div>");
   }
 
   public void testNgParseVariables() throws Exception {

@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
+import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecma6.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
@@ -19,7 +20,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
@@ -30,7 +30,6 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
-import com.intellij.xml.util.documentation.HtmlDescriptorsTable;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
@@ -103,7 +102,7 @@ public class Angular2Processor {
 
   @NotNull
   @NonNls
-  private static String getHtmlElementClass(@NotNull Project project, @NotNull @NonNls String tagName) {
+  public static String getHtmlElementClass(@NotNull Project project, @NotNull @NonNls String tagName) {
     if (TAG_TO_CLASS == null) {
       initTagToClassMap(project);
     }
@@ -156,19 +155,6 @@ public class Angular2Processor {
                                                   @NotNull PsiElement contributor) {
     return new JSImplicitElementImpl.Builder(name, contributor)
       .setType(JSImplicitElement.Type.Variable).toImplicitElement();
-  }
-
-  private static JSImplicitElement createReference(@NotNull Angular2HtmlReference reference) {
-    final HtmlTag tag = (HtmlTag)reference.getParent();
-    final JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(reference.getReferenceName(), reference)
-      .setType(JSImplicitElement.Type.Variable);
-
-    final String tagName = tag.getName();
-    if (HtmlDescriptorsTable.getTagDescriptor(tagName) != null
-        && reference.getValueElement() == null) {
-      elementBuilder.setTypeString(getHtmlElementClass(tag.getProject(), tagName));
-    }
-    return elementBuilder.toImplicitElement();
   }
 
   private static class Angular2TemplateScopeBuilder extends Angular2HtmlRecursiveElementVisitor {
@@ -224,12 +210,15 @@ public class Angular2Processor {
 
     @Override
     public void visitReference(Angular2HtmlReference reference) {
-      if (reference.getParent().getName().equalsIgnoreCase(NG_TEMPLATE)) {
-        // References on ng-template are visible within parent scope
-        prevScope().add(createReference(reference));
-      }
-      else {
-        currentScope().add(createReference(reference));
+      JSVariable var = reference.getVariable();
+      if (var != null) {
+        if (reference.getParent().getName().equalsIgnoreCase(NG_TEMPLATE)) {
+          // References on ng-template are visible within parent scope
+          prevScope().add(var);
+        }
+        else {
+          currentScope().add(var);
+        }
       }
     }
 

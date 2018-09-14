@@ -2,6 +2,9 @@
 package org.angular2.lang.html.parser;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.javascript.psi.JSStubElementType;
+import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
 import com.intellij.lang.javascript.types.JSFileElementType;
 import com.intellij.psi.tree.ICompositeElementType;
 import com.intellij.psi.tree.IElementType;
@@ -29,6 +32,8 @@ public interface Angular2HtmlElementTypes extends XmlElementType, Angular2HtmlTo
   IElementType REFERENCE = new Angular2ElementType("NG:REFERENCE", Angular2HtmlReferenceImpl::new);
   IElementType VARIABLE = new Angular2ElementType("NG:VARIABLE", Angular2HtmlVariableImpl::new);
   IElementType TEMPLATE_BINDINGS = new Angular2ElementType("NG:TEMPLATE_BINDINGS", Angular2HtmlTemplateBindingsImpl::new);
+
+  JSStubElementType<JSVariableStub<JSVariable>, JSVariable> REFERENCE_VARIABLE = new Angular2HtmlReferenceVariableElementType();
 
   class Angular2ElementType extends IElementType implements ICompositeElementType {
 

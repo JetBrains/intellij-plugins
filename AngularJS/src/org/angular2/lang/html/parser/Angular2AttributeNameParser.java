@@ -124,8 +124,8 @@ public class Angular2AttributeNameParser {
     int dot = name.indexOf('.');
     if (dot < 0) {
       return new EventInfo(name, AnimationPhase.INVALID,
-                                    "The animation trigger output event (@" + name +
-                                    ") is missing its phase value name (start or done are currently supported)");
+                           "The animation trigger output event (@" + name +
+                           ") is missing its phase value name (start or done are currently supported)");
     }
     String phase = name.substring(dot + 1).toLowerCase(Locale.ENGLISH);
     name = name.substring(0, dot);
@@ -136,9 +136,9 @@ public class Angular2AttributeNameParser {
       return new EventInfo(name, AnimationPhase.START);
     }
     return new EventInfo(name, AnimationPhase.INVALID,
-                                  "The provided animation output phase value '" + phase +
-                                  "' for '@" + name.substring(0, dot) +
-                                  "' is not supported (use start or done))");
+                         "The provided animation output phase value '" + phase +
+                         "' for '@" + name.substring(0, dot) +
+                         "' is not supported (use start or done))");
   }
 
   @NotNull
@@ -156,6 +156,9 @@ public class Angular2AttributeNameParser {
   private static AttributeInfo parseReference(@NotNull String refName) {
     if (refName.contains("-")) {
       return new AttributeInfo(refName, XML_ATTRIBUTE, "\"-\" is not allowed in reference names");
+    }
+    else if (refName.isEmpty()) {
+      return new AttributeInfo("", XML_ATTRIBUTE);
     }
     return new AttributeInfo(refName, REFERENCE);
   }
@@ -227,7 +230,7 @@ public class Angular2AttributeNameParser {
 
     @Override
     public String toString() {
-      return "<" + name + ", " + eventType + (eventType == EventType.ANIMATION ? ", " + animationPhase  : "") + ">";
+      return "<" + name + ", " + eventType + (eventType == EventType.ANIMATION ? ", " + animationPhase : "") + ">";
     }
   }
 }

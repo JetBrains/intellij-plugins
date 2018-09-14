@@ -15,6 +15,6 @@ public class Angular2HtmlNSInfoProvider implements XmlFileNSInfoProvider {
 
   @Override
   public boolean overrideNamespaceFromDocType(@NotNull XmlFile file) {
-    return file.getFileType() == Angular2HtmlFileType.NG_FILE_TYPE;
+    return file.getFileType() == Angular2HtmlFileType.INSTANCE;
   }
 }
