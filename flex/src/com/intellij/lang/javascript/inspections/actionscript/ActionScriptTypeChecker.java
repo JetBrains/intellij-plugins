@@ -46,21 +46,22 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
   }
 
   @Override
-  public void checkExpressionIsAssignableToVariable(JSVariable p,
-                                                    final JSExpression expr,
-                                                    PsiFile containingFile,
-                                                    @PropertyKey(resourceBundle = JSBundle.BUNDLE) String problemKey,
-                                                    boolean allowChangeVariableTypeFix) {
+  public boolean checkExpressionIsAssignableToVariable(JSVariable p,
+                                                       final JSExpression expr,
+                                                       PsiFile containingFile,
+                                                       @PropertyKey(resourceBundle = JSBundle.BUNDLE) String problemKey,
+                                                       boolean allowChangeVariableTypeFix) {
     final JSType type = p.getType();
-    boolean isAssignable = checkExpressionIsAssignableToType(expr, type, p, problemKey, allowChangeVariableTypeFix ? p : null, null, true);
+    boolean isAssignable =
+      checkExpressionIsAssignableToTypeAndReportError(expr, type, p, problemKey, allowChangeVariableTypeFix ? p : null, null, true);
 
     PsiElement _fun;
     if (isAssignable &&
         type != null && FUNCTION_CLASS_NAME.equals(type.getResolvedTypeText()) &&
         p instanceof JSParameter &&
         isAddEventListenerMethod((JSFunction)p.getParent().getParent()) &&
-        (( expr instanceof JSReferenceExpression &&
-           (_fun = ((JSReferenceExpression)expr).resolve()) instanceof JSFunction
+        ((expr instanceof JSReferenceExpression &&
+          (_fun = ((JSReferenceExpression)expr).resolve()) instanceof JSFunction
          ) ||
          (
            expr instanceof JSFunctionExpression &&
@@ -75,7 +76,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
         boolean invalidArgs = parameters.length == 0;
 
         if (!invalidArgs && parameters.length > 1) {
-          for(int i = parameters.length - 1; i > 0; --i) {
+          for (int i = parameters.length - 1; i > 0; --i) {
             if (!parameters[i].isRest() && parameters[i].getInitializer() == null) {
               invalidArgs = true;
               break;
@@ -98,7 +99,9 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
             ProblemHighlightType.WEAK_WARNING,
             getChangeSignatureFixForEventListener(fun, expr)
           );
-        } else {
+          return false;
+        }
+        else {
           final JSClass expectedEventClass = calcNontrivialExpectedEventType(expr);
           JSType paramType = parameters[0].getType();
           final String actualParameterType = paramType != null ? paramType.getResolvedTypeText() : null;
@@ -112,6 +115,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
                 ProblemHighlightType.WEAK_WARNING,
                 getChangeSignatureFixForEventListener(fun, expr)
               );
+              return false;
             }
           }
           else {
@@ -122,11 +126,13 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
                 ProblemHighlightType.WEAK_WARNING,
                 getChangeSignatureFixForEventListener(fun, expr)
               );
+              return false;
             }
           }
         }
       }
     }
+    return isAssignable;
   }
 
   @NotNull

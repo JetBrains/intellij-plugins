@@ -9,13 +9,16 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSSuperExpression;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
+import com.intellij.lang.javascript.psi.types.JSGenericTypeEvaluationFunction;
 import com.intellij.lang.javascript.psi.types.primitives.JSObjectType;
 import com.intellij.lang.javascript.validation.JSFunctionSignatureChecker;
 import com.intellij.lang.javascript.validation.JSTypeChecker;
 import com.intellij.lang.javascript.validation.ValidateTypesUtil;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateConstructorFix;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.lang.javascript.psi.JSCommonTypeNames.BOOLEAN_CLASS_NAME;
 
@@ -60,11 +63,16 @@ public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChe
   }
 
   @Override
-  protected void checkCallArgumentType(JSParameterItem p, JSExpression expression, JSCallExpression node, PsiElement resolveResult) {
+  protected boolean checkCallArgumentType(@NotNull JSParameterItem p,
+                                          @Nullable JSExpression expression,
+                                          @NotNull JSCallExpression node,
+                                          @NotNull ProcessingContext processingContext,
+                                          @NotNull JSGenericTypeEvaluationFunction function) {
     if (p instanceof JSParameter) {
-      myTypeChecker.checkExpressionIsAssignableToVariable((JSParameter)p, expression, node.getContainingFile(),
-                                                           "javascript.argument.type.mismatch", false);
+      return myTypeChecker.checkExpressionIsAssignableToVariable((JSParameter)p, expression, node.getContainingFile(),
+                                                                 "javascript.argument.type.mismatch", false);
     }
+    return true;
   }
 
   @Override
@@ -112,7 +120,7 @@ public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChe
     JSExpression[] arguments = argumentList.getArguments();
 
     if (arguments.length >= 1) {
-      myTypeChecker.checkExpressionIsAssignableToType(
+      myTypeChecker.checkExpressionIsAssignableToTypeAndReportError(
         arguments[0],
         BOOLEAN_CLASS_NAME,
         "javascript.argument.type.mismatch",
