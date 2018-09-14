@@ -3,7 +3,6 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.Executor;
 import com.intellij.execution.RunManager;
-import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.javascript.JSRunProfileWithCompileBeforeLaunchOption;
@@ -17,7 +16,6 @@ import com.intellij.javascript.nodejs.util.NodePackageDescriptor;
 import com.intellij.javascript.testFramework.PreferableRunConfiguration;
 import com.intellij.javascript.testFramework.util.JsTestFqn;
 import com.intellij.javascript.testing.JsTestRunConfigurationProducer;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.SystemInfo;
@@ -41,8 +39,6 @@ import java.io.File;
 public class KarmaRunConfiguration extends LocatableConfigurationBase implements RefactoringListenerProvider,
                                                                                  PreferableRunConfiguration,
                                                                                  JSRunProfileWithCompileBeforeLaunchOption {
-
-  private static final Logger LOG = Logger.getInstance(KarmaRunConfiguration.class);
 
   private KarmaRunSettings myRunSettings = new KarmaRunSettings.Builder().build();
 
@@ -125,7 +121,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
   }
 
   private boolean isTemplate() {
-    return getTemplateRunConfiguration(getProject()) == this;
+    return RunManager.getInstance(getProject()).isTemplate(this);
   }
 
   private static boolean isTemplate(@NotNull Element element) {
@@ -140,20 +136,6 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
         myRunSettings = myRunSettings.toBuilder().setWorkingDirectory(workingDir.getPath()).build();
       }
     }
-  }
-
-  @Nullable
-  private static KarmaRunConfiguration getTemplateRunConfiguration(@NotNull Project project) {
-    if (project.isDisposed()) {
-      return null;
-    }
-    RunnerAndConfigurationSettings templateSettings = RunManager.getInstance(project).getConfigurationTemplate(KarmaConfigurationType.getInstance());
-    RunConfiguration rc = templateSettings.getConfiguration();
-    if (rc instanceof KarmaRunConfiguration) {
-      return (KarmaRunConfiguration)rc;
-    }
-    LOG.warn("No Karma template run configuration found: " + rc);
-    return null;
   }
 
   @Nullable
