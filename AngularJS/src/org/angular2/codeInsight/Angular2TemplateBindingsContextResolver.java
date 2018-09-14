@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
-import com.intellij.lang.javascript.psi.resolve.JSGenericTypesEvaluator;
+import com.intellij.lang.javascript.psi.resolve.JSGenericTypesEvaluatorBase;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
@@ -109,7 +109,7 @@ public class Angular2TemplateBindingsContextResolver {
         JSType expressionType = JSResolveUtil.getExpressionJSType(binding.getExpression());
         JSType paramType = info.signature.getType();
         if (expressionType != null && paramType != null) {
-          JSGenericTypesEvaluator.matchGenericTypes(genericArguments, processingContext, expressionType, paramType, null);
+          JSGenericTypesEvaluatorBase.matchGenericTypes(genericArguments, processingContext, expressionType, paramType, null);
         }
       }
     });
