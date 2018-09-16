@@ -13,6 +13,7 @@ import com.intellij.openapi.util.Couple;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.intellij.plugins.markdown.lang.MarkdownLanguage;
 import org.intellij.plugins.markdown.ui.split.SplitFileEditor;
@@ -85,10 +86,17 @@ public class MarkdownActionUtil {
   public static PsiElement getCommonParentOfType(@NotNull PsiElement element1,
                                                  @NotNull PsiElement element2,
                                                  @NotNull final IElementType elementType) {
+    return getCommonParentOfTypes(element1, element2, TokenSet.create(elementType));
+  }
+
+  @Nullable
+  public static PsiElement getCommonParentOfTypes(@NotNull PsiElement element1,
+                                                  @NotNull PsiElement element2,
+                                                  @NotNull TokenSet tokenSet) {
     final PsiElement base = PsiTreeUtil.findCommonParent(element1, element2);
     return PsiTreeUtil.findFirstParent(base, false, element -> {
       final ASTNode node = element.getNode();
-      return node != null && node.getElementType() == elementType;
+      return node != null && tokenSet.contains(node.getElementType());
     });
   }
 }

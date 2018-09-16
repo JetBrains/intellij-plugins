@@ -50,4 +50,10 @@ public interface MarkdownTokenTypeSets extends MarkdownElementTypes {
     TokenSet.create(MarkdownElementTypes.PARAGRAPH,
                     MarkdownTokenTypes.ATX_CONTENT,
                     MarkdownTokenTypes.SETEXT_CONTENT);
+
+  TokenSet INLINE_HOLDING_ELEMENT_PARENTS_TYPES =
+    TokenSet.create(MarkdownTokenTypes.ATX_HEADER,
+                    MarkdownTokenTypes.SETEXT_1,
+                    MarkdownTokenTypes.SETEXT_2);
+
 }
