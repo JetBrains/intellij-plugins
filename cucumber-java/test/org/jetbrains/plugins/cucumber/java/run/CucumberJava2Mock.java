@@ -71,11 +71,12 @@ public class CucumberJava2Mock implements EventPublisher {
     TestStep hookStep = createHookStep(hookMethod);
     TestStep passingStep = createTestStep("passing", 3, "passing step");
     TestStep failingStep = createTestStep("failing", 4, "failing step");
+    TestStep specialStep = createTestStep("failing", 5, "\\bstep with \"special' symbols");
 
     PickleLocation pickleLocation = new PickleLocation(1, 1);
-    List<PickleStep> pickleSteps = Arrays.asList(passingStep.getPickleStep(), failingStep.getPickleStep());
+    List<PickleStep> pickleSteps = Arrays.asList(passingStep.getPickleStep(), failingStep.getPickleStep(), specialStep.getPickleStep());
     Pickle pickle = new Pickle("scenario", null, pickleSteps, null, Collections.singletonList(pickleLocation));
-    PickleEvent pickleEvent = new PickleEvent("feature", pickle);
+    PickleEvent pickleEvent = new PickleEvent("feature'", pickle);
 
     Result resultPassed = new Result(Result.Type.PASSED, 0L, null);
     Result resultFailed = new Result(Result.Type.FAILED, 0L, null);
@@ -92,6 +93,9 @@ public class CucumberJava2Mock implements EventPublisher {
 
     testStepStarted.receive(new TestStepStarted(0L, failingStep));
     testStepFinished.receive(new TestStepFinished(0L, failingStep, resultFailed));
+
+    testStepStarted.receive(new TestStepStarted(0L, specialStep));
+    testStepFinished.receive(new TestStepFinished(0L, specialStep, resultPassed));
 
     testCaseFinished.receive(new TestCaseFinished(0L, testCase, resultFailed));
     testRunFinished.receive(new TestRunFinished(0L));
