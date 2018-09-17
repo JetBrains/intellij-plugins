@@ -12,7 +12,8 @@ let template = require('./home.html');
 
 
 @Component({
-    selector: 'home'
+    selector: 'home',
+    templateUrl: "./event_private.html",
 })
 @View({
     styles: [ styles ],

@@ -12,8 +12,8 @@ let template = require('./home.html');
 
 
 @Component({
-    templateUrl: "./event.html",
-    selector: 'home'
+    selector: 'home',
+    templateUrl: "./event_different_name2.html"
 })
 @View({
     styles: [ styles ],
@@ -36,7 +36,7 @@ export class Home {
         this.router.parent.navigate('/login');
     }
 
-    callAnonymousApi() {
+    private callAnonymousApi() {
         this._callApi('Anonymous', 'http://localhost:3001/api/random-quote');
     }
 
@@ -62,6 +62,14 @@ export class Home {
             .catch((error) => {
             this.response = error.message;
         });
+    }
+
+    callZ() {
+
+    }
+
+    private callA() {
+
     }
 
 }

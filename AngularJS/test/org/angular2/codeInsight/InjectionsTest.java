@@ -155,4 +155,12 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
                    ContainerUtil.newArrayList("callSecuredApi", "callZ", "_callApi", "callA", "callAnonymousApi"));
     });
   }
+
+  public void testResolutionWithDifferentTemplateName() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
+      myFixture.configureByFiles("event_different_name2.html", "package.json", "event_different_name.ts");
+      checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
+    });
+  }
+
 }

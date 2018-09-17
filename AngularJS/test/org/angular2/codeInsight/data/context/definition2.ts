@@ -4,6 +4,7 @@ import {EventEmitter} from "events";
 
 @Component({
     selector: 'todo-cmp',
+    templateUrl: "./definition2.html",
     template: `<div>{{checker.check<caret>ed = 1}}</div>`,
 })
 export class TodoCmp {

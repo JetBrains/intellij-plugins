@@ -4,6 +4,7 @@ import {EventEmitter} from "events";
 
 @Component({
     selector: 'todo-cmp',
+    templateUrl: "./template.constr.html",
 })
 export class TodoCmp {
     constructor(public myCustomer:string[]) {

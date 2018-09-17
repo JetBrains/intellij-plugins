@@ -5,6 +5,7 @@ import {Customer} from "./customer";
 
 @Component({
     selector: 'todo-cmp',
+    templateUrl: "./templateMethod.html",
     template: `<div (click)="myCustomer.ca<caret>ll()"></div>`
 })
 export class TodoCmp {

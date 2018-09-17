@@ -14,7 +14,6 @@ import com.intellij.lang.javascript.index.JSImplicitElementsIndex;
 import com.intellij.lang.javascript.index.JSIndexContentBuilder;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
@@ -25,11 +24,12 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.css.*;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.impl.source.tree.TreeUtil;
@@ -47,6 +47,7 @@ import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.*;
 
 import static org.angularjs.index.AngularJSIndexingHandler.ANGULAR_DIRECTIVES_INDEX_USER_STRING;
@@ -55,7 +56,10 @@ import static org.angularjs.index.AngularJSIndexingHandler.ANGULAR_FILTER_INDEX_
 public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   public static final String TEMPLATE_REF = "TemplateRef";
   public static final String SELECTOR = "selector";
+  public static final String TEMPLATE_URL = "templateUrl";
   public static final String NAME = "name";
+
+  public static final String ANGULAR_TEMPLATE_URLS_INDEX_USER_STRING = "atui";
 
   @Override
   public void processCallExpression(JSCallExpression callExpression, @NotNull JSElementIndexingData outData) {
@@ -63,7 +67,8 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     if (expression instanceof JSReferenceExpression) {
       final String name = ((JSReferenceExpression)expression).getReferenceName();
       if (isDirective(name)) {
-        addImplicitElement(callExpression, outData::addImplicitElement, getPropertyName(callExpression, SELECTOR));
+        addDirective(callExpression, outData::addImplicitElement, getPropertyName(callExpression, SELECTOR));
+        addDirectiveTemplateRef(callExpression, outData::addImplicitElement, getPropertyName(callExpression, TEMPLATE_URL));
       }
       if (isPipe(name)) {
         addPipe(callExpression, outData::addImplicitElement, getPropertyName(callExpression, NAME));
@@ -98,18 +103,18 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     return null;
   }
 
-  private static void addImplicitElementToModules(PsiElement decorator,
+  private static void addImplicitElementToModules(@NotNull PsiElement decorator,
                                                   @NotNull Consumer<JSImplicitElement> processor,
-                                                  String selector) {
+                                                  @Nullable String selector) {
     if (selector == null) return;
     JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(selector, decorator)
       .setUserString(AngularJSIndexingHandler.ANGULAR_MODULE_INDEX_USER_STRING);
     processor.consume(elementBuilder.toImplicitElement());
   }
 
-  private static void addImplicitElement(PsiElement element,
-                                         @NotNull Consumer<JSImplicitElement> processor,
-                                         String selector) {
+  private static void addDirective(@NotNull PsiElement element,
+                                   @NotNull Consumer<JSImplicitElement> processor,
+                                   @Nullable String selector) {
     if (selector == null) return;
     selector = selector.replace("\\n", "\n");
     final MultiMap<String, String> attributesToElements = MultiMap.createSet();
@@ -170,6 +175,17 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
       elementBuilder.setUserString(ANGULAR_DIRECTIVES_INDEX_USER_STRING);
       processor.consume(elementBuilder.toImplicitElement());
     }
+  }
+
+  private static void addDirectiveTemplateRef(@NotNull JSCallExpression decorator,
+                                              @NotNull Consumer<JSImplicitElement> processor,
+                                              @Nullable String templateUrl) {
+    if (templateUrl == null) return;
+    String name = new File(templateUrl).getName();
+    JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(name, decorator)
+      .setUserString(ANGULAR_TEMPLATE_URLS_INDEX_USER_STRING)
+      .setTypeString("TU;;;");
+    processor.consume(elementBuilder.toImplicitElement());
   }
 
   private static void addPipe(PsiElement expression, @NotNull Consumer<JSImplicitElement> processor, String pipe) {
@@ -286,38 +302,42 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
              || file.getLanguage().is(Angular2Language.INSTANCE))) {
       return null;
     }
-    final PsiElement original = CompletionUtil.getOriginalOrSelf(context);
-    PsiFile hostFile = FileContextUtil.getContextFile(original != context ? original : context.getContainingFile().getOriginalFile());
-    hostFile = hostFile != null ? hostFile.getOriginalFile() : null;
+    PsiFile hostFile = getHostFile(context);
     if (hostFile == null) {
       return null;
     }
     if (!file.getOriginalFile().equals(hostFile)) {// inline template
       return PsiTreeUtil.getParentOfType(InjectedLanguageManager.getInstance(context.getProject()).getInjectionHost(file), JSClass.class);
     }
-    // template file with the same name
-    final String name = hostFile.getViewProvider().getVirtualFile().getNameWithoutExtension();
-    final PsiDirectory dir = hostFile.getParent();
-    final PsiFile directiveFile = dir != null ? dir.findFile(name + ".ts") : null;
-    if (directiveFile != null) {
-      for (PsiElement element : directiveFile.getChildren()) {
-        if (element instanceof JSClass) {
-          JSClass clazz = (JSClass)element;
-          JSAttributeList list = clazz.getAttributeList();
-          for (ES6Decorator decorator : PsiTreeUtil.getChildrenOfTypeAsList(list, ES6Decorator.class)) {
-            PsiElement[] decoratorChildren = decorator.getChildren();
-            if (decoratorChildren.length > 0 && decoratorChildren[0] instanceof JSCallExpression) {
-              JSCallExpression call = (JSCallExpression)decoratorChildren[0];
-              if (call.getMethodExpression() instanceof JSReferenceExpression &&
-                  isDirective(((JSReferenceExpression)call.getMethodExpression()).getReferenceName())) {
-                return clazz;
-              }
+    // non inline template file
+    final String name = hostFile.getViewProvider().getVirtualFile().getName();
+    final Ref<JSClass> result = new Ref<>();
+    AngularIndexUtil.multiResolve(hostFile.getProject(), Angular2TemplateUrlIndex.KEY, name, el -> {
+      if (el != null) {
+        PsiElement componentDecorator = el.getParent();
+        if (componentDecorator instanceof JSCallExpression) {
+          JSProperty templateUrl = getProperty(componentDecorator, "templateUrl");
+          if (templateUrl == null || templateUrl.getValue() == null) {
+            return true;
+          }
+          for (PsiReference ref : templateUrl.getValue().getReferences()) {
+            PsiElement templateFile = ref.resolve();
+            if (hostFile.equals(templateFile)) {
+              result.set((JSClass)PsiTreeUtil.findFirstParent(componentDecorator, JSClass.class::isInstance));
+              return false;
             }
           }
         }
       }
-    }
-    return null;
+      return true;
+    });
+    return result.get();
+  }
+
+  private static PsiFile getHostFile(PsiElement context) {
+    final PsiElement original = CompletionUtil.getOriginalOrSelf(context);
+    PsiFile hostFile = FileContextUtil.getContextFile(original != context ? original : context.getContainingFile().getOriginalFile());
+    return hostFile != null ? hostFile.getOriginalFile() : null;
   }
 
   @Override
@@ -359,7 +379,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
         && "selector".equals(((JsonProperty)customElement).getName())) {
       JsonValue value = ((JsonProperty)customElement).getValue();
       if (value instanceof JsonStringLiteral) {
-        addImplicitElement(value, createIndexContentBuilderProcessor(builder), ((JsonStringLiteral)value).getValue());
+        addDirective(value, createIndexContentBuilderProcessor(builder), ((JsonStringLiteral)value).getValue());
       }
     }
     else //noinspection ConstantConditions

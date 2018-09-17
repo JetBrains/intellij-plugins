@@ -3,6 +3,7 @@ import {Component, Input, Output, View} from 'angular2/core';
 import {EventEmitter} from "events";
 
 @Component({
+    templateUrl: "./template.html",
     selector: 'todo-cmp',
 })
 export class TodoCmp {

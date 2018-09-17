@@ -119,6 +119,7 @@
                                   order="after PlatformProjectConfigurator"/>
     <framework.detector implementation="org.angular2.cli.AngularJSFrameworkDetector"/>
     <fileTypeFactory implementation="org.angular2.AngularTypeScriptConfigFileTypeFactory"/>
+    <stubIndex implementation="org.angular2.index.Angular2TemplateUrlIndex"/>
 
     <!-- Angular 2 HTML template contributions -->
     <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="first,after JSCommentInjector" id="angular2"/>

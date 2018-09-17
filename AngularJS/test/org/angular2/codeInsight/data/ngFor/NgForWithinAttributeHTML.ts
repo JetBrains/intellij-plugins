@@ -16,7 +16,7 @@ type Contacts = Contact[];
 
 @Component({
     selector: 'my-app',
-    templateUrl: './NgForWithinAttribute.html'
+    templateUrl: './NgForWithinAttributeHTML.html'
 })
 export class AppComponent {
     public contacts: Contacts = [{
