@@ -30,7 +30,9 @@ public interface Angular2ElementTypes extends JSElementTypes {
   IElementType BINDING_STATEMENT = new Angular2ElementType("NG:BINDING", Angular2BindingImpl::new);
   IElementType INTERPOLATION_STATEMENT = new Angular2ElementType("NG:INTERPOLATION", Angular2InterpolationImpl::new);
   IElementType SIMPLE_BINDING_STATEMENT = new Angular2ElementType("NG:SIMPLE_BINDING", Angular2SimpleBindingImpl::new);
-  IElementType TEMPLATE_BINDINGS_STATEMENT = new Angular2ElementType("NG:TEMPLATE_BINDINGS_STATEMENT", Angular2TemplateBindingsImpl::new);
+  IElementType TEMPLATE_BINDINGS_STATEMENT = new Angular2ElementType("NG:TEMPLATE_BINDINGS_STATEMENT", (type) -> {
+    throw new UnsupportedOperationException("Use createTemplateBindingsStatement method instead");
+  });
   IElementType TEMPLATE_BINDING_KEY = new Angular2ElementType("NG:TEMPLATE_BINDING_KEY", Angular2TemplateBindingKeyImpl::new);
   IElementType TEMPLATE_BINDING_STATEMENT = new Angular2ElementType("NG:TEMPLATE_BINDING_STATEMENT", (type) -> {
     throw new UnsupportedOperationException("Use createTemplateBindingStatement method instead");
@@ -39,6 +41,10 @@ public interface Angular2ElementTypes extends JSElementTypes {
 
   static IElementType createTemplateBindingStatement(@NotNull String key, boolean isVar, @Nullable String name) {
     return new Angular2TemplateBindingType(key, isVar, name);
+  }
+
+  static IElementType createTemplateBindingsStatement(@NotNull String templateName) {
+    return new Angular2TemplateBindingsType(templateName);
   }
 
   class Angular2ElementType extends IElementType implements ICompositeElementType {
@@ -84,6 +90,23 @@ public interface Angular2ElementTypes extends JSElementTypes {
     @Override
     public ASTNode createCompositeNode() {
       return new Angular2TemplateBindingImpl(TEMPLATE_BINDING_STATEMENT, myKey, myVar, myName);
+    }
+  }
+
+  class Angular2TemplateBindingsType extends IElementType implements ICompositeElementType {
+
+
+    @NotNull private final String myTemplateName;
+
+    public Angular2TemplateBindingsType(@NotNull String templateName) {
+      super("NG:TEMPLATE_BINDINGS_STATEMENT", Angular2Language.INSTANCE, false);
+      myTemplateName = templateName;
+    }
+
+    @NotNull
+    @Override
+    public ASTNode createCompositeNode() {
+      return new Angular2TemplateBindingsImpl(TEMPLATE_BINDINGS_STATEMENT, myTemplateName);
     }
   }
 }

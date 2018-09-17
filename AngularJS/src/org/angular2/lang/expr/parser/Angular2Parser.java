@@ -59,7 +59,7 @@ public class Angular2Parser
   }
 
   public static void parseTemplateBindings(PsiBuilder builder, IElementType root, String templateKey) {
-    parseRoot(builder, root, TEMPLATE_BINDINGS_STATEMENT, false, false,
+    parseRoot(builder, root, createTemplateBindingsStatement(templateKey), false, false,
               parser -> parser.parseTemplateBindings(templateKey));
   }
 

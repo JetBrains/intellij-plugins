@@ -1,30 +1,30 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.ecmascript6.TypeScriptTypeEvaluator;
+import com.intellij.lang.javascript.psi.JSParameter;
+import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.JSTypeUtils;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSGenericTypesEvaluatorBase;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
+import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeComparingContextService;
 import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor;
-import com.intellij.openapi.util.Ref;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.MultiMap;
 import one.util.streamex.StreamEx;
 import org.angular2.codeInsight.metadata.AngularDirectiveMetadata;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
-import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,40 +35,31 @@ import java.util.stream.Collectors;
 
 import static com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_SIMPLE;
 
-public class Angular2TemplateBindingsContextResolver {
+public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
 
-  @Nullable
-  public static JSType getVariableType(JSVariable variable) {
-    Angular2HtmlTemplateBindings bindings = PsiTreeUtil.getParentOfType(variable, Angular2HtmlTemplateBindings.class);
-    Angular2TemplateBinding binding = PsiTreeUtil.getParentOfType(variable, Angular2TemplateBinding.class);
-    if (binding == null || binding.getName() == null
-        || bindings == null || bindings.getBindings() == null) {
-      return null;
-    }
-
-    Ref<JSRecordType> res = new Ref<>();
-    JSTypeEvaluator.processWithEvaluationGuard(
-      variable, JSEvaluateContext.JSEvaluationPlace.TYPE_GUARD, v ->
-        res.set(resolveTemplateContext(bindings.getTemplateName(), bindings.getBindings()))
-    );
-    if (res.isNull()) {
-      return null;
-    }
-    JSRecordType.PropertySignature signature = res.get().findPropertySignature(binding.getName());
-    return signature != null ? signature.getType() : null;
+  public Angular2TypeEvaluator(JSEvaluateContext context,
+                               JSTypeProcessor processor) {
+    super(context, processor);
   }
 
+  @Override
+  protected boolean addTypeFromDialectSpecificElements(PsiElement resolveResult) {
+    if (resolveResult instanceof Angular2TemplateBindings) {
+      addTypeFromAngular2TemplateBindings((Angular2TemplateBindings)resolveResult);
+      return true;
+    }
+    return super.addTypeFromDialectSpecificElements(resolveResult);
+  }
 
-  @Nullable
-  private static JSRecordType resolveTemplateContext(@NotNull String templateName, @NotNull Angular2TemplateBindings bindings) {
+  private void addTypeFromAngular2TemplateBindings(@NotNull Angular2TemplateBindings bindings) {
     JSImplicitElement templateDirective = DirectiveUtil.getAttributeDirective(
-      "*" + templateName, bindings.getProject());
+      "*" + bindings.getTemplateName(), bindings.getProject());
     if (templateDirective == null) {
-      return null;
+      return;
     }
     AngularDirectiveMetadata metadata = AngularDirectiveMetadata.create(templateDirective);
     if (!(metadata.getDirectiveClass() instanceof TypeScriptClass)) {
-      return null;
+      return;
     }
     TypeScriptClass clazz = (TypeScriptClass)metadata.getDirectiveClass();
     JSType templateRefType = null;
@@ -81,23 +72,24 @@ public class Angular2TemplateBindingsContextResolver {
       }
     }
     if (!(templateRefType instanceof JSGenericTypeImpl)) {
-      return null;
+      return;
     }
     JSGenericTypeImpl templateRefGeneric = (JSGenericTypeImpl)templateRefType;
     if (templateRefGeneric.getArguments().isEmpty()) {
-      return null;
+      return;
     }
     JSType templateContextType = templateRefGeneric.getArguments().get(0);
-    return templateContextType instanceof JSGenericTypeImpl
-           ? resolveTemplateContextTypeGeneric(metadata, (JSGenericTypeImpl)templateContextType, bindings)
-           : templateContextType.asRecordType();
+    addType(templateContextType instanceof JSGenericTypeImpl
+            ? resolveTemplateContextTypeGeneric(metadata, (JSGenericTypeImpl)templateContextType, bindings)
+            : templateContextType, bindings);
   }
 
-  private static JSRecordType resolveTemplateContextTypeGeneric(AngularDirectiveMetadata metadata,
+  private static JSType resolveTemplateContextTypeGeneric(AngularDirectiveMetadata metadata,
                                                                 @NotNull JSGenericTypeImpl templateContextType,
                                                                 @NotNull Angular2TemplateBindings bindings) {
     Map<String, Angular2TemplateBinding> bindingsMap = Arrays.stream(bindings.getBindings())
       .filter(b -> !b.keyIsVar())
+      //todo support multiple keys with the same name -> EA-127545
       .collect(Collectors.toMap(Angular2TemplateBinding::getKey, Function.identity()));
 
     MultiMap<JSTypeSubstitutor.JSTypeGenericId, JSType> genericArguments = MultiMap.createSmart();
@@ -114,8 +106,7 @@ public class Angular2TemplateBindingsContextResolver {
       }
     });
     JSTypeSubstitutor substitutor = intersectGenerics(genericArguments, templateContextType);
-    JSType resultType = JSTypeUtils.applyGenericArguments(templateContextType, substitutor, false);
-    return resultType.asRecordType();
+    return JSTypeUtils.applyGenericArguments(templateContextType, substitutor, false);
   }
 
   private static JSTypeSubstitutor intersectGenerics(MultiMap<JSTypeSubstitutor.JSTypeGenericId, JSType> arguments,
@@ -132,4 +123,5 @@ public class Angular2TemplateBindingsContextResolver {
     }
     return result;
   }
+
 }

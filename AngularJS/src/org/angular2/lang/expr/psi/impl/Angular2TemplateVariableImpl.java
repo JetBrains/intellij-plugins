@@ -2,13 +2,18 @@
 package org.angular2.lang.expr.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.javascript.psi.JSRecordType;
 import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.JSTypeEvaluationResult;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.impl.JSVariableImpl;
+import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
-import org.angular2.codeInsight.Angular2TemplateBindingsContextResolver;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.angular2.lang.expr.parser.Angular2ElementTypes;
+import org.angular2.lang.expr.psi.Angular2TemplateBinding;
+import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +30,17 @@ public class Angular2TemplateVariableImpl extends JSVariableImpl<JSVariableStub<
   @Nullable
   @Override
   protected JSType doGetType() {
-    return Angular2TemplateBindingsContextResolver.getVariableType(this);
+    Angular2TemplateBindings bindings = PsiTreeUtil.getParentOfType(this, Angular2TemplateBindings.class);
+    Angular2TemplateBinding binding = PsiTreeUtil.getParentOfType(this, Angular2TemplateBinding.class);
+    if (binding == null || binding.getName() == null || bindings == null) {
+      return null;
+    }
+    JSTypeEvaluationResult type = JSTypeEvaluator.getElementType(bindings);
+    if (type != null && type.getType() != null) {
+      JSRecordType.PropertySignature signature = type.getType().asRecordType().findPropertySignature(binding.getName());
+      return signature != null ? signature.getType() : null;
+    }
+    return null;
   }
 
   @Override

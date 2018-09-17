@@ -7,8 +7,7 @@ import com.intellij.lang.javascript.ecmascript6.TypeScriptQualifiedItemProcessor
 import com.intellij.lang.javascript.findUsages.JSDialectSpecificReadWriteAccessDetector;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
-import com.intellij.lang.javascript.psi.resolve.QualifiedItemProcessor;
-import com.intellij.lang.javascript.psi.resolve.ResultSink;
+import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver;
@@ -33,6 +32,12 @@ public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersF
     }
 
     return super.createQualifiedItemProcessor(sink, place);
+  }
+
+  @NotNull
+  @Override
+  public JSTypeEvaluator newTypeEvaluator(JSEvaluateContext context, JSTypeProcessor processor) {
+    return new Angular2TypeEvaluator(context, processor);
   }
 
   @NotNull
