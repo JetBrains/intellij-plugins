@@ -249,7 +249,7 @@ public class CucumberUtil {
           String parameterTypeName = cucumberExpression.substring(i + 1, j);
           String parameterTypeValue = parameterTypeManager.getParameterTypeValue(parameterTypeName);
           if (parameterTypeValue == null) {
-            return null;
+            return cucumberExpression;
           }
           else {
             result.append(parameterTypeValue);
@@ -259,7 +259,7 @@ public class CucumberUtil {
         }
         else {
           // unclosed parameter type
-          return null;
+          return cucumberExpression;
         }
       }
 
@@ -267,7 +267,7 @@ public class CucumberUtil {
       if (c == '\\') {
         if (i >= cucumberExpression.length() - 1) {
           // escape without following symbol;
-          return null;
+          return cucumberExpression;
         }
         i++;
         result.append(cucumberExpression.charAt(i));
