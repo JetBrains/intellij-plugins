@@ -89,8 +89,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
                                                                 @NotNull Angular2TemplateBindings bindings) {
     Map<String, Angular2TemplateBinding> bindingsMap = Arrays.stream(bindings.getBindings())
       .filter(b -> !b.keyIsVar())
-      //todo support multiple keys with the same name -> EA-127545
-      .collect(Collectors.toMap(Angular2TemplateBinding::getKey, Function.identity()));
+      .collect(Collectors.toMap(Angular2TemplateBinding::getKey, Function.identity(), (a,b) -> a));
 
     MultiMap<JSTypeSubstitutor.JSTypeGenericId, JSType> genericArguments = MultiMap.createSmart();
     final ProcessingContext processingContext = JSTypeComparingContextService.getProcessingContextWithCache(metadata.getDirectiveClass());
