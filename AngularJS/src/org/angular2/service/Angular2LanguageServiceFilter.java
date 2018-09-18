@@ -28,6 +28,6 @@ public class Angular2LanguageServiceFilter implements JSLanguageServiceFilter {
       return false;
     }
 
-    return service instanceof Angular2LanguageService == isEnabledAngularService(project);
+    return service instanceof Angular2LanguageService == isEnabledAngularService(project, file);
   }
 }

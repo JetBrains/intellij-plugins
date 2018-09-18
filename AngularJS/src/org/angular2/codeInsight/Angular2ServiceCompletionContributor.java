@@ -26,7 +26,7 @@ public class Angular2ServiceCompletionContributor extends TypeScriptLanguageServ
 
   @Override
   protected boolean isAvailableForFile(PsiFile file) {
-    if (!Angular2LanguageService.isEnabledAngularService(file.getProject())) {
+    if (!Angular2LanguageService.isEnabledAngularService(file)) {
       return false;
     }
 

@@ -14,7 +14,7 @@ public class Angular2HtmlLanguageSubstitutor extends LanguageSubstitutor {
   @Nullable
   @Override
   public Language getLanguage(@NotNull VirtualFile file, @NotNull Project project) {
-    if (Angular2LangUtil.isAngular2Context(file)) {
+    if (Angular2LangUtil.isAngular2Context(project, file)) {
       return Angular2HtmlLanguage.INSTANCE;
     }
     return null;
