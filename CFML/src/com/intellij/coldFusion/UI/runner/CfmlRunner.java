@@ -1,23 +1,8 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.UI.runner;
 
 import com.intellij.coldFusion.CfmlBundle;
 import com.intellij.coldFusion.mxunit.CfmlUnitRunConfiguration;
-import com.intellij.execution.ExecutionException;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunProfile;
@@ -39,7 +24,7 @@ import java.awt.*;
 
 public class CfmlRunner extends GenericProgramRunner {
   @Override
-  protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) throws ExecutionException {
+  protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) {
     final RunProfile runProfileRaw = env.getRunProfile();
     if (runProfileRaw instanceof CfmlRunConfiguration) {
       FileDocumentManager.getInstance().saveAllDocuments();
@@ -94,7 +79,7 @@ public class CfmlRunner extends GenericProgramRunner {
       runProfile.setFromDefaultHost(false);
       final CfmlRunnerParameters params = runProfile.getRunnerParameters();
       RunnerAndConfigurationSettings configurationTemplate =
-        RunManager.getInstance(env.getProject()).getConfigurationTemplate(runProfile.getFactory());
+        RunManager.getInstance(env.getProject()).getConfigurationTemplate(CfmlRunConfigurationType.getInstance());
       ((CfmlRunConfiguration)configurationTemplate.getConfiguration()).getRunnerParameters().setUrl(webPathField.getText());
       BrowserLauncher.getInstance().browse(params.getUrl(), params.getCustomBrowser(), env.getProject());
       db.getDialogWrapper().close(DialogWrapper.OK_EXIT_CODE);

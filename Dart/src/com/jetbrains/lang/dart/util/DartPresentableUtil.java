@@ -312,7 +312,7 @@ public class DartPresentableUtil {
   private static class DartTemplateExpression extends Expression {
     private final TextResult myResult;
 
-    public DartTemplateExpression(String text) {
+    DartTemplateExpression(String text) {
       myResult = new TextResult(text);
     }
 

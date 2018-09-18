@@ -31,7 +31,7 @@ public class MarkdownParserManager {
     @NotNull
     final ASTNode myParseResult;
 
-    public ParsingInfo(@NotNull CharSequence buffer, @NotNull ASTNode parseResult) {
+    ParsingInfo(@NotNull CharSequence buffer, @NotNull ASTNode parseResult) {
       myBuffer = buffer;
       myBufferHash = myBuffer.hashCode();
       myParseResult = parseResult;

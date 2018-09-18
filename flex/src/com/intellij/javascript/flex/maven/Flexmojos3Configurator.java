@@ -384,8 +384,7 @@ public class Flexmojos3Configurator {
     final String rbSwcUrlCommonPart = rbSwcPlaceholderUrl.substring(0, rbSwcPlaceholderUrl.length() - RB_SWC_URL_END.length());
 
     final Collection<String> result = new ArrayList<>();
-    List<String> compiledLocales = myCompiledLocales;
-    for (final String locale : compiledLocales) {
+    for (final String locale : myCompiledLocales) {
       result.add(rbSwcUrlCommonPart + "-" + locale + RB_SWC_URL_END);
     }
     return result;

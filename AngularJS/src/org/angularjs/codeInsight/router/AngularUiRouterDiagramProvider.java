@@ -456,7 +456,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
 
       @Nullable
       @Override
-      public Object getData(String dataId, List<DiagramNode<DiagramObject>> list, DiagramBuilder builder) {
+      public Object getData(@NotNull String dataId, List<DiagramNode<DiagramObject>> list, DiagramBuilder builder) {
         if (CommonDataKeys.PSI_ELEMENT.is(dataId) && list.size() == 1) {
           final SmartPsiElementPointer target = list.get(0).getIdentifyingElement().getNavigationTarget();
           return target == null ? null : target.getElement();
@@ -531,7 +531,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
   private static class MyEditSourceAction extends AnAction {
     private final AnAction myAction;
 
-    public MyEditSourceAction() {
+    MyEditSourceAction() {
       super("Jump To...", "Jump To...", AllIcons.Actions.EditSource);
       myAction = ActionManager.getInstance().getAction(IdeActions.ACTION_EDIT_SOURCE);
     }

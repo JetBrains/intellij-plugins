@@ -277,7 +277,7 @@ public class DependenciesTab {
 
     private class NavigateToUsageAction extends AnAction {
 
-        public NavigateToUsageAction() {
+        NavigateToUsageAction() {
             super("Navigate to Usage", "Navigate to part of code where the selected element is used", AllIcons.Nodes.EjbReference);
         }
 

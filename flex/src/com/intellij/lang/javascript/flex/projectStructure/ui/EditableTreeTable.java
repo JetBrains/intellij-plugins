@@ -28,7 +28,7 @@ abstract class EditableTreeTable<T> extends TreeTable {
 
   private static final Object HEIGHT_TEST_MARKER = new Object();
 
-  public EditableTreeTable(String firstColumnName, ColumnInfo... columns) {
+  EditableTreeTable(String firstColumnName, ColumnInfo... columns) {
     super(new ListTreeTableModelOnColumns(new DefaultMutableTreeNode(),
                                           ArrayUtil.mergeArrays(new ColumnInfo[]{new FirstColumnInfo(firstColumnName)}, wrap(columns))));
 
@@ -178,7 +178,7 @@ abstract class EditableTreeTable<T> extends TreeTable {
 
   private static class EditableModelAdapter extends TreeTableModelAdapter implements EditableModel {
 
-    public EditableModelAdapter(TreeTableModel treeTableModel, JTree tree, JTable table) {
+    EditableModelAdapter(TreeTableModel treeTableModel, JTree tree, JTable table) {
       super(treeTableModel, tree, table);
     }
 
@@ -201,7 +201,7 @@ abstract class EditableTreeTable<T> extends TreeTable {
   }
 
   private static class FirstColumnInfo<T> extends ColumnInfo<DefaultMutableTreeNode, T> {
-    public FirstColumnInfo(String name) {
+    FirstColumnInfo(String name) {
       super(name);
     }
 
@@ -219,7 +219,7 @@ abstract class EditableTreeTable<T> extends TreeTable {
   private static class ColumnInfoWrapper<T, Aspect> extends ColumnInfo<Object, Aspect> {
     private final ColumnInfo<T, Aspect> myDelegate;
 
-    public ColumnInfoWrapper(ColumnInfo<T, Aspect> columnInfo) {
+    ColumnInfoWrapper(ColumnInfo<T, Aspect> columnInfo) {
       super(columnInfo.getName());
       myDelegate = columnInfo;
     }

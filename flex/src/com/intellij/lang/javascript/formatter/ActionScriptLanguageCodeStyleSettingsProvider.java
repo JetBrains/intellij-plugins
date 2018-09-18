@@ -65,6 +65,12 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
       consumer.showCustomOption(JSCodeStyleSettings.class, "SPACE_BEFORE_FUNCTION_LEFT_PARENTH",
                                 JSBundle.message("space.before.function.left.parenth"),
                                 CodeStyleSettingsCustomizable.SPACES_BEFORE_PARENTHESES);
+      consumer.showCustomOption(ECMA4CodeStyleSettings.class,
+                                "SPACE_WITHIN_ARRAY_INITIALIZER_BRACKETS",
+                                JSBundle.message("spaces.within.array.initializer"),
+                                CodeStyleSettingsCustomizable.SPACES_WITHIN);
+      consumer.renameStandardOption("SPACE_WITHIN_BRACKETS", JSBundle.message("spaces.within.indexer.brackets"));
+      
       consumer
         .showCustomOption(ECMA4CodeStyleSettings.class, "SPACE_BEFORE_TYPE_COLON",
                           JSBundle.message("space.before.type.colon"),
@@ -177,11 +183,10 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
   }
 
   @Override
-  public CommonCodeStyleSettings getDefaultCommonSettings() {
-    CommonCodeStyleSettings commonSettings = new CommonCodeStyleSettings(getLanguage());
+  protected void customizeDefaults(@NotNull CommonCodeStyleSettings commonSettings,
+                                   @NotNull CommonCodeStyleSettings.IndentOptions indentOptions) {
     commonSettings.BLANK_LINES_AFTER_PACKAGE = 0;
     commonSettings.initIndentOptions();
-    return commonSettings;
   }
 
   public final static String GENERAL_CODE_SAMPLE =

@@ -48,7 +48,7 @@ public class PostCssReferenceContributor extends PsiReferenceContributor {
   }
 
   private static class PostCssReferencePattern extends PatternCondition<PsiElement> {
-    public PostCssReferencePattern() {
+    PostCssReferencePattern() {
       super("postcss reference");
     }
 

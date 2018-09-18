@@ -330,7 +330,7 @@ public class AssistUtils {
     private final String originalReplacement;
     private final String normalizedReplacement;
 
-    public SourceEditInfo(int originalOffset, int convertedOffset, int originalLength, int convertedLength,
+    SourceEditInfo(int originalOffset, int convertedOffset, int originalLength, int convertedLength,
                           String originalReplacement, String normalizedReplacement) {
       this.originalOffset = originalOffset;
       resultingOriginalOffset = originalOffset;

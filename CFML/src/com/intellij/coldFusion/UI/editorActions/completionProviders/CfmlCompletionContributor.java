@@ -159,7 +159,7 @@ public class CfmlCompletionContributor extends CompletionContributor {
   }
 
   private static class PropertyPatternCondition extends PatternCondition<PsiElement> {
-    public PropertyPatternCondition() {
+    PropertyPatternCondition() {
       super("");
     }
 

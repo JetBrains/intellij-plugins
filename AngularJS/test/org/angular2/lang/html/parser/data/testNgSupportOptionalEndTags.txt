@@ -1,0 +1,23 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+      HtmlTag:p
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('p')
+        XmlToken:XML_TAG_END('>')
+        XmlText
+          XmlToken:XML_DATA_CHARACTERS('1')
+      HtmlTag:p
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('p')
+        XmlToken:XML_TAG_END('>')
+        XmlText
+          XmlToken:XML_DATA_CHARACTERS('2')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')

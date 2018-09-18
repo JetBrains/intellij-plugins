@@ -13,6 +13,7 @@ import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptor;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptorStub;
 import com.intellij.util.ArrayUtil;
 import com.intellij.xml.util.HtmlUtil;
+import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,10 +31,10 @@ public class AngularJSCssElementDescriptionProvider extends CssElementDescriptor
     final PsiFile file = context.getContainingFile();
     if (file == null) return false;
     final Project project = context.getProject();
-    if (HtmlUtil.hasHtml(file)) return AngularIndexUtil.hasAngularJS(project);
+    if (HtmlUtil.hasHtml(file)) return AngularIndexUtil.hasAngularJS(project) || Angular2LangUtil.isAngular2Context(context);
     final VirtualFile virtualFile = file.getOriginalFile().getVirtualFile();
     final CssDialect mapping = CssDialectMappings.getInstance(project).getMapping(virtualFile);
-    return (mapping == null || mapping == CssDialect.CLASSIC) && AngularIndexUtil.hasAngularJS(project);
+    return (mapping == null || mapping == CssDialect.CLASSIC) && (AngularIndexUtil.hasAngularJS(project) || Angular2LangUtil.isAngular2Context(context));
   }
 
   @Override
@@ -45,7 +46,7 @@ public class AngularJSCssElementDescriptionProvider extends CssElementDescriptor
   @Override
   public Collection<? extends CssPseudoSelectorDescriptor> findPseudoSelectorDescriptors(@NotNull String name,
                                                                                          @Nullable PsiElement context) {
-    if (context == null || !NG_DEEP.equals(name) || !AngularIndexUtil.hasAngularJS2(context.getProject())) {
+    if (context == null || !NG_DEEP.equals(name) || !Angular2LangUtil.isAngular2Context(context)) {
       return Collections.emptySet();
     }
     return PSEUDO_SELECTORS;
@@ -54,7 +55,7 @@ public class AngularJSCssElementDescriptionProvider extends CssElementDescriptor
   @NotNull
   @Override
   public Collection<? extends CssPseudoSelectorDescriptor> getAllPseudoSelectorDescriptors(@Nullable PsiElement context) {
-    return context != null && AngularIndexUtil.hasAngularJS2(context.getProject()) ? PSEUDO_SELECTORS : Collections.emptySet();
+    return context != null && Angular2LangUtil.isAngular2Context(context) ? PSEUDO_SELECTORS : Collections.emptySet();
   }
 
   @NotNull

@@ -184,7 +184,7 @@ public class PackageAccessibilityInspection extends AbstractBaseJavaLocalInspect
   private static class ImportPackageFix extends AbstractOsgiQuickFix {
     private final String myPackageToImport;
 
-    public ImportPackageFix(String packageToImport) {
+    ImportPackageFix(String packageToImport) {
       myPackageToImport = packageToImport;
     }
 

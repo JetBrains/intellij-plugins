@@ -1,0 +1,365 @@
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <ngIf, false, null>
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfElse, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:ELSE_KEYWORD)('else')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('bar')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <ngIf, false, null>
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfElse, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:ELSE_KEYWORD)('else')
+      PsiErrorElement:expression expected
+        <empty list>
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <ngIf, false, null>
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfThen, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('then')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('foo')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfElse, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:ELSE_KEYWORD)('else')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('bar')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <ngIf, false, null>
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfThen, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('then')
+      PsiErrorElement:expression expected
+        <empty list>
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfElse, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:ELSE_KEYWORD)('else')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('bar')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <ngIf, false, null>
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfThen, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('then')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('foo')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfElse, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:ELSE_KEYWORD)('else')
+      PsiErrorElement:expression expected
+        <empty list>
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <ngIf, false, null>
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfThen, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('then')
+      PsiErrorElement:expression expected
+        <empty list>
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfElse, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:ELSE_KEYWORD)('else')
+      PsiErrorElement:expression expected
+        <empty list>
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <ngIf, false, null>
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfThen, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('then')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('foo')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfElse, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:ELSE_KEYWORD)('else')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <conditionResult, true, $implicit>
+      PsiElement(JS:LET_KEYWORD)('let')
+      PsiWhiteSpace(' ')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('conditionResult')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <ngIf, false, null>
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfElse, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:ELSE_KEYWORD)('else')
+      PsiErrorElement:expression expected
+        <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfThan, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('than')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('foo')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <conditionResult, true, $implicit>
+      PsiElement(JS:LET_KEYWORD)('let')
+      PsiWhiteSpace(' ')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('conditionResult')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <ngIf, false, null>
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <conditionResult, true, $implicit>
+      PsiElement(JS:LET_KEYWORD)('let')
+      PsiWhiteSpace(' ')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('conditionResult')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfElse, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:ELSE_KEYWORD)('else')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('bar')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <ngIf, false, null>
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <conditionResult, true, $implicit>
+      PsiElement(JS:LET_KEYWORD)('let')
+      PsiWhiteSpace(' ')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('conditionResult')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <ngIf, false, null>
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('userObservable')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <user, true, ngIf>
+      PsiElement(JS:AS_KEYWORD)('as')
+      PsiWhiteSpace(' ')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('user')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfElse, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:ELSE_KEYWORD)('else')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('loading')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <ngIf, false, null>
+      Angular2PipeExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('userObservable')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:OR)('|')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('async')
+        PsiWhiteSpace(' ')
+        Angular2PipeArgumentsList
+          <empty list>
+    Angular2TemplateBinding <user, true, ngIf>
+      PsiElement(JS:AS_KEYWORD)('as')
+      PsiWhiteSpace(' ')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('user')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfElse, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:ELSE_KEYWORD)('else')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('loading')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <ngIf, false, null>
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfThen, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('then')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('foo')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfElse, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:ELSE_KEYWORD)('else')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('bar')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <ngIf, false, null>
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfThen, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('then')
+      PsiErrorElement:expression expected
+        <empty list>
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfElse, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:ELSE_KEYWORD)('else')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('bar')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <ngIf, false, null>
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfThen, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('then')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('foo')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfElse, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:ELSE_KEYWORD)('else')
+      PsiErrorElement:expression expected
+        <empty list>
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <ngIf, false, null>
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfThen, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('then')
+      PsiErrorElement:expression expected
+        <empty list>
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfElse, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:ELSE_KEYWORD)('else')
+      PsiErrorElement:expression expected
+        <empty list>
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <ngIf, false, null>
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfThen, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('then')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('foo')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <ngIfElse, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:ELSE_KEYWORD)('else')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <conditionResult, true, $implicit>
+      PsiElement(JS:LET_KEYWORD)('let')
+      PsiWhiteSpace(' ')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('conditionResult')

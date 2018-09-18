@@ -19,7 +19,7 @@ public class SwfFileViewProviderFactory implements FileViewProviderFactory {
   }
 
   private static class SwfFileViewProvider extends SingleRootFileViewProvider {
-    public SwfFileViewProvider(PsiManager manager, VirtualFile file, boolean physical) {
+    SwfFileViewProvider(PsiManager manager, VirtualFile file, boolean physical) {
       super(manager, file, physical);
     }
 
@@ -44,7 +44,7 @@ public class SwfFileViewProviderFactory implements FileViewProviderFactory {
   static class CompiledJSFile extends JSFileImpl implements PsiCompiledFile {
     private static final JSFileCachedData EMPTY = new JSFileCachedData();
 
-    public CompiledJSFile(FileViewProvider fileViewProvider) {
+    CompiledJSFile(FileViewProvider fileViewProvider) {
       super(fileViewProvider, DialectDetector.getJSLanguage(fileViewProvider.getVirtualFile()));
     }
 

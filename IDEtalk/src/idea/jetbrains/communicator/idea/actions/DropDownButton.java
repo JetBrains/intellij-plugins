@@ -34,7 +34,7 @@ public class DropDownButton extends JButton {
     icon.addIcon(buttonIcon);
     if (hasSeveralActions()) {
 
-      icon.addIcon(AllIcons.General.ComboArrow);
+      icon.addIcon(AllIcons.General.ArrowDown);
       setModel(new MyButtonModel());
     }
 

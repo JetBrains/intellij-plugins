@@ -17,6 +17,7 @@ import com.intellij.tapestry.intellij.view.TapestryProjectViewPane;
 import com.intellij.tapestry.lang.TmlFileType;
 import com.intellij.ui.treeStructure.SimpleNode;
 import com.intellij.util.PlatformIcons;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.TreeSet;
@@ -40,6 +41,7 @@ public class PackageNode extends TapestryNode {
     /**
      * {@inheritDoc}
      */
+    @NotNull
     @Override
     public SimpleNode[] getChildren() {
         final TreeSet<TapestryNode> children = new TreeSet<>(PackageNodesComparator.getInstance());

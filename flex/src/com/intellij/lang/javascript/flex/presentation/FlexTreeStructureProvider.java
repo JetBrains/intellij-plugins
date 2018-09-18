@@ -113,7 +113,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
 
   private static class FlexFileNode extends PsiFileNode {
 
-    public FlexFileNode(final PsiFile value, final ViewSettings viewSettings) {
+    FlexFileNode(final PsiFile value, final ViewSettings viewSettings) {
       super(value.getProject(), value, viewSettings);
     }
 
@@ -189,7 +189,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
   private static class UnknownNode extends ProjectViewNode<Object> {
     private final StructureViewTreeElement myElement;
 
-    public UnknownNode(Project project,
+    UnknownNode(Project project,
                        final StructureViewTreeElement element, final ViewSettings viewSettings) {
       super(project, element.getValue(), viewSettings);
       myElement = element;

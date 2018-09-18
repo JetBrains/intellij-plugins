@@ -59,6 +59,11 @@ public final class AnyApplication implements ConfigurationType {
     return new ConfigurationFactory[]{factory};
   }
 
+  @Override
+  public String getHelpTopic() {
+    return "reference.dialogs.rundebug.com.intellij.flex.uiDesigner.testAssistant.run.AnyApplication";
+  }
+
   private static class AnyApplicationConfiguration extends RunConfigurationBase implements ModuleRunProfile {
     protected AnyApplicationConfiguration(final Project project, final ConfigurationFactory factory, final String name) {
       super(project, factory, name);

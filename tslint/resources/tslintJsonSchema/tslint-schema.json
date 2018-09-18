@@ -780,7 +780,7 @@
                 "type": "string"
               },
               "minItems": 1,
-              "maxItems": 1
+              "maxItems": 2
             }
           },
           "allOf": [
@@ -796,7 +796,7 @@
               "additionalItems": {
                 "$ref": "#/definitions/rules/properties/file-header/definitions/options/items"
               },
-              "maxItems": 2,
+              "maxItems": 3,
               "properties": {
                 "options": {
                   "description": "An option value or an array of multiple option values.",
@@ -810,6 +810,55 @@
                   ]
                 },
                 "severity": {}
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "file-name-casing": {
+          "description": "Enforces a consistent file naming convention.",
+          "definitions": {
+            "options": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "camel-case",
+                    "pascal-case",
+                    "kebab-case"
+                  ]
+                }
+              ]
+            }
+          },
+          "allOf": [
+            {
+              "$ref": "#/definitions/rule"
+            },
+            {
+              "items": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "$ref": "#/definitions/rules/properties/file-name-casing/definitions/options/items/0"
+                }
+              ],
+              "additionalItems": false,
+              "minLength": 2,
+              "properties": {
+                "options": {
+                  "description": "An option value or an array of multiple option values.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions/rules/properties/import-blacklist/definitions/options"
+                    },
+                    {
+                      "$ref": "#/definitions/rules/properties/file-name-casing/definitions/options/items/0"
+                    }
+                  ]
+                }
               },
               "additionalProperties": false
             }
@@ -1103,7 +1152,7 @@
               "items": [
                 {
                   "type": "boolean"
-                }, 
+                },
                 {
                   "$ref": "#/definitions/rules/properties/max-classes-per-file/definitions/options/items/0"
                 },
@@ -3045,6 +3094,9 @@
               "items": {
                 "type": "object",
                 "properties": {
+                  "grouped-imports": {
+                    "type": "boolean"
+                  },
                   "import-sources-order": {
                     "type": "string",
                     "enum": [
@@ -3061,6 +3113,13 @@
                       "lowercase-first",
                       "lowercase-last",
                       "any"
+                    ]
+                  },
+                  "module-source-path": {
+                    "type": "string",
+                    "enum": [
+                      "full",
+                      "basename"
                     ]
                   }
                 },
@@ -3407,6 +3466,23 @@
                 },
                 "severity": {}
               },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "prefer-while": {
+          "description": "Prefer while loops instead of for loops without an initializer and incrementor.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/rule"
+            },
+            {
+              "items": [
+                {
+                  "type": "boolean"
+                }
+              ],
+              "additionalItems": false,
               "additionalProperties": false
             }
           ]
@@ -3940,23 +4016,7 @@
                   },
                   "esSpecCompliant": {
                     "description": "Option to forbid trailing comma after rest",
-                    "allOf": [
-                      {
-                        "$ref": "#/definitions/rule"
-                      },
-                      {
-                        "items": [
-                          {
-                            "type": "boolean"
-                          }
-                        ],
-                        "additionalItems": false,
-                        "properties": {
-                          "severity": {}
-                        },
-                        "additionalProperties": false
-                      }
-                    ]
+                    "type": "boolean"
                   }
                 },
                 "additionalProperties": false

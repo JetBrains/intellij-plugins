@@ -24,7 +24,7 @@ public class AngularJSUiRouterStatesReferencesProvider extends PsiReferenceProvi
   }
 
   private static class AngularJSUiRouterStateReference extends CachingPolyReferenceBase<XmlAttributeValue> {
-    public AngularJSUiRouterStateReference(XmlAttributeValue element) {
+    AngularJSUiRouterStateReference(XmlAttributeValue element) {
       super(element, ElementManipulators.getValueTextRange(element));
     }
 

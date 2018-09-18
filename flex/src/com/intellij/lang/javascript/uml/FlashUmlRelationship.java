@@ -66,7 +66,7 @@ public interface FlashUmlRelationship extends DiagramRelationshipInfo {
       @Nullable
       private final SmartPsiElementPointer<PsiElement> myElementPointer;
 
-      public Impl(@NotNull final String type,
+      Impl(@NotNull final String type,
                   final DiagramLineType lineType,
                   @Nullable final String label,
                   @Nullable final String fromLabel,

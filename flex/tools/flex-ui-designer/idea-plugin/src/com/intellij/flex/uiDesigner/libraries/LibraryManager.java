@@ -27,7 +27,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ExceptionUtil;
-import com.intellij.util.StringBuilderSpinAllocator;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -218,22 +217,17 @@ public class LibraryManager implements Disposable {
     }
     
     Arrays.sort(files, (o1, o2) -> StringUtil.compare(o1.getPath(), o2.getPath(), false));
-    
-    final StringBuilder stringBuilder = StringBuilderSpinAllocator.alloc();
-    try {
-      if (isSdk) {
-        stringBuilder.append('_');
-      }
 
-      for (VirtualFile file : files) {
-        stringBuilder.append(file.getTimeStamp()).append(file.getPath()).append(':');
-      }
+    final StringBuilder stringBuilder = new StringBuilder();
+    if (isSdk) {
+      stringBuilder.append('_');
+    }
 
-      return stringBuilder.toString();
+    for (VirtualFile file : files) {
+      stringBuilder.append(file.getTimeStamp()).append(file.getPath()).append(':');
     }
-    finally {
-      StringBuilderSpinAllocator.dispose(stringBuilder);
-    }
+
+    return stringBuilder.toString();
   }
 
   @NotNull

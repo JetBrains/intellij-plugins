@@ -505,7 +505,7 @@ public class FlexStackFrame extends XStackFrame {
     private final XCompositeNode myNode;
     private final FlexValue.ValueType myValueType;
 
-    public MyDebuggerCommand(String text, XCompositeNode node, boolean _hasFrame, FlexValue.ValueType valueType) {
+    MyDebuggerCommand(String text, XCompositeNode node, boolean _hasFrame, FlexValue.ValueType valueType) {
       super(_hasFrame ? addFrameOffset(text):text, CommandOutputProcessingType.SPECIAL_PROCESSING);
       myNode = node;
       resultChildren = new XValueChildrenList(3);

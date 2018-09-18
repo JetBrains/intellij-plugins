@@ -1,0 +1,102 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+package org.angular2.lang.expr.parser;
+
+import com.intellij.lang.ASTNode;
+import com.intellij.lang.ParserDefinition;
+import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.PsiBuilderFactory;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.SingleRootFileViewProvider;
+import com.intellij.psi.impl.DebugUtil;
+import com.intellij.testFramework.FileBasedTestCaseHelperEx;
+import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
+import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.testFramework.UsefulTestCase;
+import org.angularjs.AngularTestUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.io.File;
+
+/**
+ * @author Dennis.Ushakov
+ */
+@RunWith(com.intellij.testFramework.Parameterized.class)
+public class Angular2ParserTest extends LightPlatformCodeInsightTestCase implements FileBasedTestCaseHelperEx {
+  @NotNull
+  @Override
+  protected String getTestDataPath() {
+    return AngularTestUtil.getBaseTestDataPath(Angular2ParserTest.class);
+  }
+
+  @Nullable
+  @Override
+  public String getFileSuffix(String fileName) {
+    return fileName.endsWith("js") ? fileName : null;
+  }
+
+  @Test
+  public void runSingle() throws Throwable {
+    final Throwable[] throwables = new Throwable[1];
+
+    invokeTestRunnable(() -> {
+      try {
+        doSingleTest(myFileSuffix, myTestDataPath);
+      }
+      catch (Throwable e) {
+        throwables[0] = e;
+      }
+    });
+
+    if (throwables[0] != null) {
+      throw throwables[0];
+    }
+  }
+
+  private static void doSingleTest(String suffix, String path) throws Throwable{
+    final String text = FileUtil.loadFile(new File(path, suffix), true);
+    final StringBuilder result = new StringBuilder();
+
+    int firstDot = suffix.indexOf('.');
+    String extension = suffix.substring(0, firstDot);
+    int secondDot = suffix.indexOf('.', firstDot +1);
+    String name = secondDot > 0 ? suffix.substring(firstDot + 1, secondDot) : "";
+
+    for (String line : StringUtil.splitByLines(text)) {
+      if (result.length() > 0) result.append("------\n");
+      VirtualFile virtualFile = new LightVirtualFile("test." + name + "." + extension, line);
+      SingleRootFileViewProvider viewProvider = new Angular2ParserSpecTest.MySingleRootFileViewProvider(virtualFile);
+      ParserDefinition parserDefinition = new Angular2ParserDefinition();
+      PsiFile psiFile = parserDefinition.createFile(viewProvider);
+
+      final Angular2ParserDefinition definition = new Angular2ParserDefinition();
+      final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(getProject(), psiFile.getNode());
+      final ASTNode root = definition.createParser(getProject()).parse(Angular2ElementTypes.FILE, builder);
+
+      result.append(DebugUtil.psiToString(root.getPsi(), false, false));
+    }
+    UsefulTestCase.assertSameLinesWithFile(new File(path, suffix.replace("js", "txt")).toString(), result.toString());
+  }
+
+  @Override
+  public String getRelativeBasePath() {
+    return "";
+  }
+}

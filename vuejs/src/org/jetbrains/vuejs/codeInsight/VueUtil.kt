@@ -25,7 +25,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 
 fun fromAsset(text: String): String {
-  val split = es6Unquote(text).split("(?=[A-Z])".toRegex()).dropLastWhile(String::isEmpty).toTypedArray()
+  val split = es6Unquote(text).split("(?=[A-Z])".toRegex()).filter { it -> !StringUtil.isEmpty(it) }.toTypedArray()
   for (i in split.indices) {
     split[i] = StringUtil.decapitalize(split[i])
   }

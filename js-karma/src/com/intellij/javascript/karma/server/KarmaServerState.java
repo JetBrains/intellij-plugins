@@ -210,7 +210,7 @@ public class KarmaServerState {
     private final File myConfigurationFileDir;
     private final NodeJsInterpreter myInterpreter;
 
-    public ConfigHandler(@NotNull File configurationFile, @NotNull NodeJsInterpreter interpreter) {
+    ConfigHandler(@NotNull File configurationFile, @NotNull NodeJsInterpreter interpreter) {
       myConfigurationFileDir = configurationFile.getParentFile();
       myInterpreter = interpreter;
     }

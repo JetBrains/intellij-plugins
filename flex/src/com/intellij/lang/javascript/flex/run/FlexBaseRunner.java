@@ -732,7 +732,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   }
 
   private static class FlexUnitConsoleProperties extends SMTRunnerConsoleProperties {
-    public FlexUnitConsoleProperties(RunConfiguration runConfiguration, ExecutionEnvironment env) {
+    FlexUnitConsoleProperties(RunConfiguration runConfiguration, ExecutionEnvironment env) {
       super(runConfiguration, "FlexUnit", env.getExecutor());
     }
 

@@ -486,7 +486,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
   private static class BuiltInCompilerListener extends CompilerMessageHandlerBase implements JpsBuiltInFlexCompilerHandler.Listener {
     private final Runnable myOnCompilationFinishedRunnable;
 
-    public BuiltInCompilerListener(final CompileContext context, final String compilerName, final Runnable onCompilationFinishedRunnable) {
+    BuiltInCompilerListener(final CompileContext context, final String compilerName, final Runnable onCompilationFinishedRunnable) {
       super(context, false, compilerName);
       myOnCompilationFinishedRunnable = onCompilationFinishedRunnable;
     }

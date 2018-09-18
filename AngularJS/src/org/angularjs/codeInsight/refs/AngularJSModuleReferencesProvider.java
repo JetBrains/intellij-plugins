@@ -56,7 +56,7 @@ public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
   }
 
   private static class AngularJSModuleReference extends CachingPolyReferenceBase<JSLiteralExpression> {
-    public AngularJSModuleReference(JSLiteralExpression element) {
+    AngularJSModuleReference(JSLiteralExpression element) {
       super(element, ElementManipulators.getValueTextRange(element));
     }
 
@@ -169,7 +169,7 @@ public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
     private static class MyCachedValueProvider implements CachedValueProvider<Pair<JSNamedElement, Integer>> {
       private final JSImplicitElement myElement;
 
-      public MyCachedValueProvider(JSImplicitElement element) {
+      MyCachedValueProvider(JSImplicitElement element) {
         myElement = element;
       }
 

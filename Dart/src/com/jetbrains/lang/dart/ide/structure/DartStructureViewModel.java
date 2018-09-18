@@ -43,7 +43,7 @@ class DartStructureViewModel extends TextEditorBasedStructureViewModel implement
   };
 
 
-  public DartStructureViewModel(@Nullable final Editor editor, @NotNull final PsiFile psiFile) {
+  DartStructureViewModel(@Nullable final Editor editor, @NotNull final PsiFile psiFile) {
     super(editor, psiFile);
     myRootElement = new DartStructureViewRootElement(psiFile);
     DartAnalysisServerService.getInstance(getPsiFile().getProject()).addOutlineListener(myListener);
@@ -121,7 +121,7 @@ class DartStructureViewModel extends TextEditorBasedStructureViewModel implement
 
   private static class DartStructureViewRootElement extends PsiTreeElementBase<PsiFile> {
 
-    public DartStructureViewRootElement(PsiFile file) {super(file);}
+    DartStructureViewRootElement(PsiFile file) {super(file);}
 
     @Nullable
     @Override

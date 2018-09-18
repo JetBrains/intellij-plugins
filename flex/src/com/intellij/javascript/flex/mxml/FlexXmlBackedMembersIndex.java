@@ -183,7 +183,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
     private final PsiElement myElement;
     private final String myName;
 
-    public TagNavigationItem(PsiElement element, String name) {
+    TagNavigationItem(PsiElement element, String name) {
       myElement = element;
       myName = name;
     }

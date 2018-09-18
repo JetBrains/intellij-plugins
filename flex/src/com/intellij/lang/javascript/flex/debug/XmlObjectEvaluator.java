@@ -40,7 +40,7 @@ public class XmlObjectEvaluator {
     private static final String XML_MARKER = " class='XML@";
     private static final String XMLLIST_MARKER = " class='XMLList'";
 
-    public FakeCompositeNode(final @NotNull XValue value, final @NotNull XFullValueEvaluator.XFullValueEvaluationCallback callback) {
+    FakeCompositeNode(final @NotNull XValue value, final @NotNull XFullValueEvaluator.XFullValueEvaluationCallback callback) {
       myValue = value;
       myCallback = callback;
       myParent = null;

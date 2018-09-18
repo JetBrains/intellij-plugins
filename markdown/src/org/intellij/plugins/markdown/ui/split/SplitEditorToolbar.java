@@ -134,7 +134,7 @@ public class SplitEditorToolbar extends JPanel implements Disposable {
 
     private int mySpacing;
 
-    public MySpacingPanel(int height) {
+    MySpacingPanel(int height) {
       myHeight = height;
       mySpacing = 0;
       setOpaque(false);

@@ -24,9 +24,8 @@
  */
 package org.osmorc.run;
 
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.configurations.SimpleConfigurationType;
 import com.intellij.facet.ProjectFacetManager;
 import com.intellij.openapi.project.Project;
 import icons.OsmorcIdeaIcons;
@@ -35,29 +34,40 @@ import org.osmorc.facet.OsmorcFacetType;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ApplicationSettings;
 
+import static com.intellij.openapi.util.NotNullLazyValue.createValue;
+
 /**
  * Configuration type for a bundle run configuration.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
-public final class OsgiConfigurationType extends ConfigurationTypeBase {
+public final class OsgiConfigurationType extends SimpleConfigurationType {
   private static final String ID = "#org.osmorc.OsgiConfigurationType";
 
   public OsgiConfigurationType() {
-    super(ID, OsmorcBundle.message("run.configuration.name"), OsmorcBundle.message("run.configuration.description"), OsmorcIdeaIcons.Osgi);
+    super(ID, OsmorcBundle.message("run.configuration.name"), OsmorcBundle.message("run.configuration.description"), createValue(() -> OsmorcIdeaIcons.Osgi));
+  }
 
-    addFactory(new ConfigurationFactory(this) {
-      @NotNull
-      @Override
-      public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
-        return new OsgiRunConfiguration(project, this, "");
-      }
+  @NotNull
+  @Override
+  public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
+    return new OsgiRunConfiguration(project, this, "");
+  }
 
-      @Override
-      public boolean isApplicable(@NotNull Project project) {
-        return !ApplicationSettings.getInstance().getFrameworkInstanceDefinitions().isEmpty()
-               && ProjectFacetManager.getInstance(project).hasFacets(OsmorcFacetType.ID);
-      }
-    });
+  @Override
+  public boolean isApplicable(@NotNull Project project) {
+    return !ApplicationSettings.getInstance().getFrameworkInstanceDefinitions().isEmpty()
+           && ProjectFacetManager.getInstance(project).hasFacets(OsmorcFacetType.ID);
+  }
+
+  @NotNull
+  @Override
+  public String getTag() {
+    return "osgi";
+  }
+
+  @Override
+  public String getHelpTopic() {
+    return "reference.dialogs.rundebug.#org.osmorc.OsgiConfigurationType";
   }
 }

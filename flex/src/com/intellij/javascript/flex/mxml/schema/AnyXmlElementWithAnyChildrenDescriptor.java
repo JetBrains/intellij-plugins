@@ -6,7 +6,7 @@ import com.intellij.xml.impl.schema.AnyXmlElementDescriptor;
 
 class AnyXmlElementWithAnyChildrenDescriptor extends AnyXmlElementDescriptor implements XmlElementDescriptorAwareAboutChildren {
 
-  public AnyXmlElementWithAnyChildrenDescriptor() {
+  AnyXmlElementWithAnyChildrenDescriptor() {
     super(null, null);
   }
 

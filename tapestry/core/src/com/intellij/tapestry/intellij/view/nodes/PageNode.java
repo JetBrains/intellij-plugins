@@ -11,6 +11,7 @@ import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.ui.treeStructure.SimpleNode;
 import icons.TapestryIcons;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,7 @@ public class PageNode extends TapestryNode {
     /**
      * {@inheritDoc}
      */
+    @NotNull
     @Override
     public SimpleNode[] getChildren() {
         Page page = (Page) getElement();

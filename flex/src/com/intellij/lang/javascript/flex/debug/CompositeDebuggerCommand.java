@@ -18,11 +18,11 @@ class CompositeDebuggerCommand extends DebuggerCommand {
   private volatile boolean myBecomeObsolete;
   private volatile boolean mySucceeded;
 
-  public CompositeDebuggerCommand(final @NotNull DebuggerCommand... commands) {
+  CompositeDebuggerCommand(final @NotNull DebuggerCommand... commands) {
     this(null, commands);
   }
   
-  public CompositeDebuggerCommand(@Nullable Obsolescent obsolescent, final @NotNull DebuggerCommand... commands) {
+  CompositeDebuggerCommand(@Nullable Obsolescent obsolescent, final @NotNull DebuggerCommand... commands) {
     super("hz");
 
     myCommands = commands;

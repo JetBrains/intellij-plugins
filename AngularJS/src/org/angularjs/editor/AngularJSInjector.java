@@ -80,7 +80,7 @@ public class AngularJSInjector implements MultiHostInjector {
 
   @NotNull
   @Override
-  public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
+  public List<Class<? extends PsiElement>> elementsToInjectIn() {
     return Arrays.asList(XmlTextImpl.class, XmlAttributeValueImpl.class);
   }
 }

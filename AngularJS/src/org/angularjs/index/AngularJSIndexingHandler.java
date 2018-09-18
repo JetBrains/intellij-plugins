@@ -42,6 +42,8 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.*;
 import com.intellij.util.containers.BidirectionalMap;
 import gnu.trove.THashSet;
+import org.angular2.index.Angular2TemplateUrlIndex;
+import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.codeInsight.AngularJSReferenceExpressionResolver;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.codeInsight.router.AngularJSUiRouterConstants;
@@ -52,6 +54,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+
+import static org.angular2.index.Angular2IndexingHandler.ANGULAR_TEMPLATE_URLS_INDEX_USER_STRING;
 
 /**
  * @author Dennis.Ushakov
@@ -120,6 +124,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     INDEXES.put("aci", AngularControllerIndex.KEY);
     INDEXES.put("addi", AngularDirectivesDocIndex.KEY);
     INDEXES.put(ANGULAR_DIRECTIVES_INDEX_USER_STRING, AngularDirectivesIndex.KEY);
+    INDEXES.put(ANGULAR_TEMPLATE_URLS_INDEX_USER_STRING, Angular2TemplateUrlIndex.KEY);
     INDEXES.put(ANGULAR_FILTER_INDEX_USER_STRING, AngularFilterIndex.KEY);
     INDEXES.put("aidi", AngularInjectionDelimiterIndex.KEY);
     INDEXES.put(ANGULAR_MODULE_INDEX_USER_STRING, AngularModuleIndex.KEY);
@@ -569,7 +574,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   @Override
   public boolean addTypeFromResolveResult(@NotNull JSTypeEvaluator evaluator,
                                           @NotNull JSEvaluateContext context, @NotNull PsiElement resolveResult) {
-    if (!AngularIndexUtil.hasAngularJS(resolveResult.getProject())) return false;
+    if (!AngularIndexUtil.hasAngularJS(resolveResult.getProject()) && !Angular2LangUtil.isAngular2Context(resolveResult)) return false;
 
     if (resolveResult instanceof JSDefinitionExpression && resolveResult.getLanguage() instanceof AngularJSLanguage) {
       final PsiElement resolveParent = resolveResult.getParent();
@@ -659,7 +664,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Nullable
-  static String unquote(PsiElement value) {
+  public static String unquote(PsiElement value) {
     return ((JSLiteralExpression)value).getStringValue();
   }
 

@@ -108,7 +108,7 @@ public class CfmlFunctionDescription {
   }
 
   public String getPresentableText() {
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     buffer.append(getName());
     buffer.append("(");
     buffer.append(getParametersListPresentableText());
@@ -122,7 +122,7 @@ public class CfmlFunctionDescription {
   }
 
   public String getParametersListPresentableText() {
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     List<CfmlParameterDescription> params = getParameters();
     int i = 0;
     for (CfmlParameterDescription param : params) {

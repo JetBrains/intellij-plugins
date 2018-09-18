@@ -165,7 +165,7 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
     @NotNull private final Set<String> myIgnoredPubspecPaths;
     @NotNull private final String myPubspecPath;
 
-    public IgnoreWarningFix(@NotNull final Set<String> ignoredPubspecPaths, @NotNull final String pubspecPath) {
+    IgnoreWarningFix(@NotNull final Set<String> ignoredPubspecPaths, @NotNull final String pubspecPath) {
       myIgnoredPubspecPaths = ignoredPubspecPaths;
       myPubspecPath = pubspecPath;
     }

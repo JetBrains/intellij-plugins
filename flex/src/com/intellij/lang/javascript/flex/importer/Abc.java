@@ -287,7 +287,7 @@ class Abc {
   int totalSize;
   final int opSizes[] = new int[256];
 
-  public Abc(final @NotNull ByteBuffer _data, @NotNull FlexByteCodeInformationProcessor _processor) {
+  Abc(final @NotNull ByteBuffer _data, @NotNull FlexByteCodeInformationProcessor _processor) {
     data = _data;
     processor = _processor;
 

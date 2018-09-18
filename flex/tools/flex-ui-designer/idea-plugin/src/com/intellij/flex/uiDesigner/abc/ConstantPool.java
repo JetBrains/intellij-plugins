@@ -14,7 +14,7 @@ class ConstantPool {
 
   int totalSize;
 
-  public ConstantPool(DataBuffer in) {
+  ConstantPool(DataBuffer in) {
     this.in = in;
 
     for (int i = 0; i < 7; i++) {
@@ -184,7 +184,7 @@ final class NSSPool extends PoolPart {
 }
 
 final class MultiNamePool extends PoolPart {
-  public MultiNamePool(int poolPartLength) {
+  MultiNamePool(int poolPartLength) {
     super(poolPartLength);
   }
 

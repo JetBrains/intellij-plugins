@@ -235,7 +235,7 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
   private static class ReferenceListFilter extends PsiFilter<JSReferenceExpression> {
     private final boolean myExtends;
 
-    public ReferenceListFilter(boolean isExtends) {
+    ReferenceListFilter(boolean isExtends) {
       super(JSReferenceExpression.class);
       myExtends = isExtends;
     }
@@ -254,7 +254,7 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
   }
 
   private static class InjectingVisitor<T extends PsiElement> extends PsiFilter.Visitor<T> {
-    public InjectingVisitor(PsiFilter<T> filter, List<T> elements) {
+    InjectingVisitor(PsiFilter<T> filter, List<T> elements) {
       super(filter, elements);
     }
 

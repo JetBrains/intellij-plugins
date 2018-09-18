@@ -53,7 +53,7 @@ public class DummyTapestryParameter extends TapestryParameter {
     private final String _name;
     private final IJavaClassType _type;
 
-    public DummyJavaField(String name, IJavaClassType type) {
+    DummyJavaField(String name, IJavaClassType type) {
       _name = name;
       _type = type;
     }

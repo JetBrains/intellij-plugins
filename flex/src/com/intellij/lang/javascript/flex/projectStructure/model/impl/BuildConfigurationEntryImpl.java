@@ -22,15 +22,15 @@ class BuildConfigurationEntryImpl implements ModifiableBuildConfigurationEntry, 
   @NotNull
   private final String myBcName;
 
-  public BuildConfigurationEntryImpl(@NotNull Module module, @NotNull String bcName) {
+  BuildConfigurationEntryImpl(@NotNull Module module, @NotNull String bcName) {
     this(ModulePointerManager.getInstance(module.getProject()).create(module), bcName);
   }
 
-  public BuildConfigurationEntryImpl(@NotNull Project project, @NotNull String moduleName, @NotNull String bcName) {
+  BuildConfigurationEntryImpl(@NotNull Project project, @NotNull String moduleName, @NotNull String bcName) {
     this(ModulePointerManager.getInstance(project).create(moduleName), bcName);
   }
 
-  public BuildConfigurationEntryImpl(ModulePointer modulePointer, @NotNull String bcName) {
+  BuildConfigurationEntryImpl(ModulePointer modulePointer, @NotNull String bcName) {
     myModulePointer = modulePointer;
     myBcName = bcName;
   }

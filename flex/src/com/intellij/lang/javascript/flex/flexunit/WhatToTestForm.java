@@ -247,7 +247,7 @@ public class WhatToTestForm {
 
     private Condition<JSClass> myCondition;
 
-    public TestClassFilter(@NotNull Project project) {
+    TestClassFilter(@NotNull Project project) {
       myProject = project;
       setSupport(null);
       setAllowSuite(false);

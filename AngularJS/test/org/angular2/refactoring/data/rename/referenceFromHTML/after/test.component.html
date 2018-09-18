@@ -1,0 +1,6 @@
+<div #newReference></div>
+{{ newReference }}
+
+  <div #differentRef></div>
+
+<div *ngIf="test; else newReference"></div>

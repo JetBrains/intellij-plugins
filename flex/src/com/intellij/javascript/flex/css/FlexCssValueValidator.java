@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 
 class FlexCssValueValidator extends CssValueValidatorImpl {
-  public FlexCssValueValidator(@NotNull FlexCssElementDescriptorProvider provider) {
+  FlexCssValueValidator(@NotNull FlexCssElementDescriptorProvider provider) {
     super(provider);
   }
 

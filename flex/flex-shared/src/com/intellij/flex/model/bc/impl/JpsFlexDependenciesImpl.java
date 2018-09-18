@@ -222,7 +222,7 @@ class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDependencie
   private static class JpsFlexDependenciesRole extends JpsElementChildRoleBase<JpsFlexDependencies>
     implements JpsElementCreator<JpsFlexDependencies> {
 
-    public JpsFlexDependenciesRole() {
+    JpsFlexDependenciesRole() {
       super("flex dependencies");
     }
 

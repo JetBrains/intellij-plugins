@@ -1,0 +1,81 @@
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSArrayLiteralExpression
+        PsiElement(JS:LBRACKET)('[')
+        PsiElement(JS:RBRACKET)(']')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSArrayLiteralExpression
+        PsiElement(JS:LBRACKET)('[')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:COMMA)(',')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+        PsiElement(JS:RBRACKET)(']')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSIndexedPropertyAccessExpression
+        JSArrayLiteralExpression
+          PsiElement(JS:LBRACKET)('[')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:RBRACKET)(']')
+        PsiElement(JS:LBRACKET)('[')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:RBRACKET)(']')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSIndexedPropertyAccessExpression
+        JSIndexedPropertyAccessExpression
+          JSArrayLiteralExpression
+            PsiElement(JS:LBRACKET)('[')
+            JSArrayLiteralExpression
+              PsiElement(JS:LBRACKET)('[')
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('1')
+              PsiElement(JS:RBRACKET)(']')
+            PsiElement(JS:RBRACKET)(']')
+          PsiElement(JS:LBRACKET)('[')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:RBRACKET)(']')
+        PsiElement(JS:LBRACKET)('[')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:RBRACKET)(']')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSReferenceExpression
+        JSArrayLiteralExpression
+          PsiElement(JS:LBRACKET)('[')
+          PsiElement(JS:RBRACKET)(']')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('length')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSReferenceExpression
+        JSArrayLiteralExpression
+          PsiElement(JS:LBRACKET)('[')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+          PsiElement(JS:RBRACKET)(']')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('length')

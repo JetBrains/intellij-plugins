@@ -33,7 +33,7 @@ public class ComponentExternalizer extends ToClassExternalizer {
         }
 
         Map<String, String> annotationParameters = new HashMap<>();
-        StringBuffer parametersParameter = new StringBuffer("{");
+        StringBuilder parametersParameter = new StringBuilder("{");
         for (TapestryParameter parameter : component.getParameters().values())
             if (parameter.isRequired()) {
                 parametersParameter.append("\"").append(parameter.getName()).append("=\",");

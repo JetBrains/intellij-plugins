@@ -293,7 +293,7 @@ public class ProfilingConnection {
     private Sample lastCreateObjectSample;
     private final FrameInfoBuilder frameInfoBuilder = new FrameInfoBuilder();
 
-    public BatchSamplesProcessor(ProfilerDataConsumer sampleProcessor) {
+    BatchSamplesProcessor(ProfilerDataConsumer sampleProcessor) {
       this.mySampleProcessor = sampleProcessor;
     }
 

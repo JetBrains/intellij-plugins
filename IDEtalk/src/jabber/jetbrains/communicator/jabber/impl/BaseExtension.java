@@ -81,7 +81,7 @@ public abstract class BaseExtension implements PacketExtension, PacketExtensionP
   }
 
   protected static String getContent(XmlPullParser parser, String tagName) {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     try {
       int event = parser.getEventType();
       // get the content

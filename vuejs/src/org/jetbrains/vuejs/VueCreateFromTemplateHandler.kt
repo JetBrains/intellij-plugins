@@ -23,18 +23,15 @@ import org.jetbrains.vuejs.CreateVueSingleFileComponentAction.Companion.VUE_TEMP
  * @author Irina.Chernushina on 10/5/2017.
  */
 class VueCreateFromTemplateHandler : DefaultCreateFromTemplateHandler() {
-  override fun handlesTemplate(template: FileTemplate?): Boolean {
-    template ?: return false
+  override fun handlesTemplate(template: FileTemplate): Boolean {
     val fileType = FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(template.extension)
     return VueFileType.INSTANCE == fileType && VUE_TEMPLATE_NAME == template.name
   }
 
   override fun isNameRequired(): Boolean = true
 
-  override fun prepareProperties(props: MutableMap<String, Any>?) {
-    if (props != null) {
-      val name = props[ATTRIBUTE_NAME] as? String ?: return
-      props.put("COMPONENT_NAME", name)
-    }
+  override fun prepareProperties(props: MutableMap<String, Any>) {
+    val name = props[ATTRIBUTE_NAME] as? String ?: return
+    props.put("COMPONENT_NAME", name)
   }
 }

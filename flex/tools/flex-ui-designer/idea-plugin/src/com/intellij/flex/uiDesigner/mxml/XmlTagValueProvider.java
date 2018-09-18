@@ -10,7 +10,6 @@ import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlTagChild;
 import com.intellij.psi.xml.XmlText;
-import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,16 +80,11 @@ class XmlTagValueProvider implements XmlElementValueProvider {
       }
     }
     else {
-      final StringBuilder consolidatedText = StringBuilderSpinAllocator.alloc();
-      try {
-        for (final XmlTagChild element : children) {
-          consolidatedText.append(element instanceof XmlText ? ((XmlText)element).getValue() : element.getText());
-        }
-        return consolidatedText.length() == 0 ? EMPTY : consolidatedText;
+      final StringBuilder consolidatedText = new StringBuilder();
+      for (final XmlTagChild element : children) {
+        consolidatedText.append(element instanceof XmlText ? ((XmlText)element).getValue() : element.getText());
       }
-      finally {
-        StringBuilderSpinAllocator.dispose(consolidatedText);
-      }
+      return consolidatedText.length() == 0 ? EMPTY : consolidatedText;
     }
   }
 }

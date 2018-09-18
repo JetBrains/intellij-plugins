@@ -34,7 +34,7 @@ public class FlexCompilerProcessHandler extends BaseOSProcessHandler {
 
   private class MyProcessListener extends CompilerMessageHandlerBase implements ProcessListener {
 
-    public MyProcessListener(final CompileContext context, final boolean asc20, final String compilerName) {
+    MyProcessListener(final CompileContext context, final boolean asc20, final String compilerName) {
       super(context, asc20, compilerName);
     }
 

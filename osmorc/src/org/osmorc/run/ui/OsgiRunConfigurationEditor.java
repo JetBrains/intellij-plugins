@@ -286,7 +286,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
   private static class RunConfigurationTableModel extends AbstractTableModel {
     private final List<SelectedBundle> mySelectedBundles;
 
-    public RunConfigurationTableModel() {
+    RunConfigurationTableModel() {
       mySelectedBundles = new ArrayList<>();
     }
 

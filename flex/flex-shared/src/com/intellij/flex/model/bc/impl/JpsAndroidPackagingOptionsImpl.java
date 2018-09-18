@@ -68,7 +68,7 @@ class JpsAndroidPackagingOptionsImpl extends JpsAirPackagingOptionsBase<JpsAndro
   private static class JpsAndroidPackagingOptionsRole extends JpsElementChildRoleBase<JpsAndroidPackagingOptions>
     implements JpsElementCreator<JpsAndroidPackagingOptions> {
 
-    public JpsAndroidPackagingOptionsRole() {
+    JpsAndroidPackagingOptionsRole() {
       super("android packaging options");
     }
 

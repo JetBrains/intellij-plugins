@@ -41,7 +41,7 @@ class ResolutionSucceedDialog extends DialogWrapper {
   private final Map<Resource, List<Wire>> myResolveResult;
   private Tree myTree;
 
-  public ResolutionSucceedDialog(Project project, Map<Resource, List<Wire>> resolveResult) {
+  ResolutionSucceedDialog(Project project, Map<Resource, List<Wire>> resolveResult) {
     super(project);
     myResolveResult = resolveResult;
     init();
@@ -72,7 +72,7 @@ class ResolutionSucceedDialog extends DialogWrapper {
     private final List<Resource> myResolveRoots;
     private final DefaultMutableTreeNode myRoot;
 
-    public MyTreeModel(Map<Resource, List<Wire>> resolveResult) {
+    MyTreeModel(Map<Resource, List<Wire>> resolveResult) {
       super();
       myResolveResult = resolveResult;
       myResolveRoots = resolveResult.keySet().stream().sorted().collect(Collectors.toList());

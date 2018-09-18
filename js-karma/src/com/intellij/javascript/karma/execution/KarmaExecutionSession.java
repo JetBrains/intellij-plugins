@@ -206,7 +206,7 @@ public class KarmaExecutionSession {
       result = patterns.get(0);
     }
     else {
-      result = "(" + StringUtil.join(patterns, ")|(") + ")";
+      result = "(" + StringUtil.join(patterns, "|") + ")";
     }
     return "^" + result + (suite ? " " : "$");
   }

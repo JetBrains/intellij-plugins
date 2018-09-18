@@ -113,7 +113,7 @@ public class UserTree extends KirTree {
       Object userObject = TreeUtils.getUserObject(pathForLocation);
       if (userObject instanceof User) {
         User user = (User) userObject;
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         if (!user.getName().equals(user.getDisplayName())) {
           result.append(StringUtil.getMsg("user.tooltip", user.getName())).append("\n");
         }

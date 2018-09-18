@@ -3,22 +3,24 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.Executor;
 import com.intellij.execution.RunManager;
-import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.javascript.JSRunProfileWithCompileBeforeLaunchOption;
 import com.intellij.javascript.karma.scope.KarmaScopeKind;
+import com.intellij.javascript.karma.server.KarmaJsSourcesLocator;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.javascript.nodejs.util.NodePackageDescriptor;
 import com.intellij.javascript.testFramework.PreferableRunConfiguration;
 import com.intellij.javascript.testFramework.util.JsTestFqn;
 import com.intellij.javascript.testing.JsTestRunConfigurationProducer;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -27,6 +29,7 @@ import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.text.SemVer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,8 +39,6 @@ import java.io.File;
 public class KarmaRunConfiguration extends LocatableConfigurationBase implements RefactoringListenerProvider,
                                                                                  PreferableRunConfiguration,
                                                                                  JSRunProfileWithCompileBeforeLaunchOption {
-
-  private static final Logger LOG = Logger.getInstance(KarmaRunConfiguration.class);
 
   private KarmaRunSettings myRunSettings = new KarmaRunSettings.Builder().build();
 
@@ -89,6 +90,9 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
       Project project = getProject();
       NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolve(project);
       pkg = KarmaUtil.PKG_DESCRIPTOR.findFirstDirectDependencyPackage(project, interpreter, null);
+      if (shouldPreferKarmaPackage(pkg)) {
+        pkg = new NodePackageDescriptor(KarmaUtil.KARMA_PACKAGE_NAME).findFirstDirectDependencyPackage(project, interpreter, null);
+      }
       if (!pkg.isEmptyPath() && !KarmaUtil.isPathUnderContentRoots(project, pkg)) {
         NodePackage projectKarmaPackage = KarmaProjectSettings.getKarmaPackage(project);
         if (projectKarmaPackage.isEmptyPath()) {
@@ -101,8 +105,23 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     return pkg;
   }
 
+  private boolean shouldPreferKarmaPackage(@NotNull NodePackage pkg) {
+    if (!SystemInfo.isWindows || !pkg.getSystemIndependentPath().endsWith("/" + KarmaUtil.ANGULAR_CLI__PACKAGE_NAME)) {
+      return false;
+    }
+    SemVer version = pkg.getVersion();
+    if (version == null || version.getMajor() >= 6) {
+      return false;
+    }
+    String path1 = getProject().getBasePath();
+    String path2 = KarmaJsSourcesLocator.getInstance().getKarmaIntellijPackageDir().getAbsolutePath();
+    // @angular/cli < 6 doesn't work when karma-intellij on a different drive ()
+    return path1 != null && FileUtil.isWindowsAbsolutePath(path1) && FileUtil.isWindowsAbsolutePath(path2) &&
+           !path1.substring(0, 1).equals(path2.substring(0, 1));
+  }
+
   private boolean isTemplate() {
-    return getTemplateRunConfiguration(getProject()) == this;
+    return RunManager.getInstance(getProject()).isTemplate(this);
   }
 
   private static boolean isTemplate(@NotNull Element element) {
@@ -117,20 +136,6 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
         myRunSettings = myRunSettings.toBuilder().setWorkingDirectory(workingDir.getPath()).build();
       }
     }
-  }
-
-  @Nullable
-  private static KarmaRunConfiguration getTemplateRunConfiguration(@NotNull Project project) {
-    if (project.isDisposed()) {
-      return null;
-    }
-    RunnerAndConfigurationSettings templateSettings = RunManager.getInstance(project).getConfigurationTemplate(KarmaConfigurationType.getInstance());
-    RunConfiguration rc = templateSettings.getConfiguration();
-    if (rc instanceof KarmaRunConfiguration) {
-      return (KarmaRunConfiguration)rc;
-    }
-    LOG.warn("No Karma template run configuration found: " + rc);
-    return null;
   }
 
   @Nullable
@@ -149,7 +154,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
 
   private void check(@NotNull NodePackage karmaPackage) throws RuntimeConfigurationException {
     NodeInterpreterUtil.checkForRunConfiguration(myRunSettings.getInterpreterRef().resolve(getProject()));
-    karmaPackage.validateForRunConfiguration(KarmaUtil.NODE_PACKAGE_NAME);
+    karmaPackage.validateForRunConfiguration(KarmaUtil.KARMA_PACKAGE_NAME);
     validatePath("configuration file", myRunSettings.getConfigPathSystemDependent(), true);
     validatePath("working directory", myRunSettings.getWorkingDirectorySystemDependent(), false);
     if (myRunSettings.getScopeKind() == KarmaScopeKind.TEST_FILE) {

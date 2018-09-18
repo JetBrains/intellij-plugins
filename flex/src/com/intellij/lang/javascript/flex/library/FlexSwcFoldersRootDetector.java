@@ -16,7 +16,7 @@ import java.util.List;
 
 class FlexSwcFoldersRootDetector extends RootDetector {
 
-  public FlexSwcFoldersRootDetector() {
+  FlexSwcFoldersRootDetector() {
     super(OrderRootType.CLASSES, true, FlexBundle.message("swc.folders.root.detector.name"));
   }
 

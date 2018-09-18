@@ -8,17 +8,17 @@ class Scope {
 
   public int referenceCounter;
 
-  public Scope(boolean staticObjectPointToScope) {
+  Scope(boolean staticObjectPointToScope) {
     this.owner = null;
     this.staticObjectPointToScope = staticObjectPointToScope;
   }
 
-  public Scope(@Nullable DynamicObjectContext owner) {
+  Scope(@Nullable DynamicObjectContext owner) {
     this.owner = owner;
     staticObjectPointToScope = false;
   }
 
-  public Scope() {
+  Scope() {
     this(null);
   }
 

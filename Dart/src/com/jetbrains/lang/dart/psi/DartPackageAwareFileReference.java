@@ -23,7 +23,7 @@ import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_PREFIX;
 class DartPackageAwareFileReference extends FileReference {
   @NotNull private final DartUrlResolver myDartResolver;
 
-  public DartPackageAwareFileReference(@NotNull final FileReferenceSet fileReferenceSet,
+  DartPackageAwareFileReference(@NotNull final FileReferenceSet fileReferenceSet,
                                        final TextRange range,
                                        final int index,
                                        final String text,

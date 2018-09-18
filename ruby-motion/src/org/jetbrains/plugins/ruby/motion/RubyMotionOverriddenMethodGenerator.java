@@ -98,7 +98,7 @@ public class RubyMotionOverriddenMethodGenerator extends OverriddenMethodGenerat
   private static class FunctionMember extends MemberChooserObjectBase implements ClassMember{
     private final FunctionSymbol myMethodSymbol;
 
-    public FunctionMember(FunctionSymbol methodSymbol) {
+    FunctionMember(FunctionSymbol methodSymbol) {
       super(methodSymbol.getFunction().getName(), AllIcons.Nodes.Method);
       myMethodSymbol = methodSymbol;
     }
@@ -130,7 +130,7 @@ public class RubyMotionOverriddenMethodGenerator extends OverriddenMethodGenerat
   private static class ObjCClass extends MemberChooserObjectBase implements ClassMember {
     private final Symbol myClazz;
 
-    public ObjCClass(Symbol clazz) {
+    ObjCClass(Symbol clazz) {
       super(clazz.getName(), AllIcons.Nodes.Class);
       myClazz = clazz;
     }

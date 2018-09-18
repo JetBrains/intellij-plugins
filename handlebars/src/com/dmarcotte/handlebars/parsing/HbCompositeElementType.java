@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * composite elements we create in the parser
  */
 class HbCompositeElementType extends IElementType {
-  public HbCompositeElementType(@NotNull @NonNls String debugName) {
+  HbCompositeElementType(@NotNull @NonNls String debugName) {
     super(debugName, HbLanguage.INSTANCE);
   }
 }

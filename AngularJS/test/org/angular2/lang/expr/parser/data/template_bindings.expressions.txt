@@ -1,0 +1,459 @@
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      JSPrefixExpression
+        PsiElement(JS:MINUS)('-')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:PLUS)('+')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2.5')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:PLUS)('+')
+        PsiWhiteSpace(' ')
+        JSPrefixExpression
+          PsiElement(JS:MINUS)('-')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2.5')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:PLUS)('+')
+        JSBinaryExpression
+          JSBinaryExpression
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('2')
+            PsiElement(JS:MULT)('*')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('3')
+          PsiElement(JS:DIV)('/')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('4')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      JSBinaryExpression
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:MINUS)('-')
+          JSPrefixExpression
+            PsiElement(JS:MINUS)('-')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:PLUS)('+')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1.5')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      JSBinaryExpression
+        JSBinaryExpression
+          JSPrefixExpression
+            PsiElement(JS:MINUS)('-')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:MINUS)('-')
+          JSPrefixExpression
+            PsiElement(JS:MINUS)('-')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:PLUS)('+')
+        JSBinaryExpression
+          JSBinaryExpression
+            JSPrefixExpression
+              PsiElement(JS:PLUS)('+')
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('2')
+            PsiElement(JS:MULT)('*')
+            JSPrefixExpression
+              PsiElement(JS:MINUS)('-')
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('3')
+          PsiElement(JS:DIV)('/')
+          JSPrefixExpression
+            PsiElement(JS:MINUS)('-')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('4')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      JSBinaryExpression
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:DIV)('/')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+        PsiElement(JS:MULT)('*')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('3')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      JSBinaryExpression
+        JSParenthesizedExpression
+          PsiElement(JS:LPAR)('(')
+          JSBinaryExpression
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('1')
+            PsiElement(JS:PLUS)('+')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('2')
+          PsiElement(JS:RPAR)(')')
+        PsiElement(JS:MULT)('*')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('3')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      JSAssignmentExpression
+        JSDefinitionExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('a')
+        PsiErrorElement:binding expressions cannot contain assignments
+          <empty list>
+        PsiElement(JS:EQ)('=')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('12')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      JSAssignmentExpression
+        JSDefinitionExpression
+          JSReferenceExpression
+            JSReferenceExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('x')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:IDENTIFIER)('y')
+            PsiElement(JS:DOT)('.')
+            PsiElement(JS:IDENTIFIER)('z')
+        PsiErrorElement:binding expressions cannot contain assignments
+          <empty list>
+        PsiElement(JS:EQ)('=')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('123')
+    PsiElement(JS:SEMICOLON)(';')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      JSAssignmentExpression
+        JSDefinitionExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('a')
+        PsiErrorElement:binding expressions cannot contain assignments
+          <empty list>
+        PsiElement(JS:EQ)('=')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('123')
+    PsiElement(JS:SEMICOLON)(';')
+    Angular2TemplateBinding <expressionsB, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('b')
+      JSAssignmentExpression
+        PsiErrorElement:expression expected
+          <empty list>
+        PsiElement(JS:EQ)('=')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('234')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      PsiErrorElement:expression expected
+        <empty list>
+    Angular2TemplateBinding <expressions, false, null>
+      PsiElement(JS:COLON)(':')
+      PsiElement(JS:COLON)(':')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('a')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      JSReferenceExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('aaa')
+        PsiElement(JS:ELVIS)('?.')
+        PsiElement(JS:IDENTIFIER)('foo')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      JSReferenceExpression
+        JSPostfixExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('aaa')
+          PsiElement(JS:EXCL)('!')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('foo')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      <empty list>
+    Angular2TemplateBinding <todo, true, $implicit>
+      PsiElement(JS:LET_KEYWORD)('let')
+      PsiWhiteSpace(' ')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('todo')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <expressionsOf, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('of')
+      PsiWhiteSpace(' ')
+      Angular2PipeExpression
+        Angular2PipeExpression
+          JSReferenceExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('todoService')
+            PsiElement(JS:DOT)('.')
+            PsiElement(JS:IDENTIFIER)('todos')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:OR)('|')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('started')
+          PsiWhiteSpace(' ')
+          Angular2PipeArgumentsList
+            PsiElement(JS:COLON)(':')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('status')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:OR)('|')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('search')
+        PsiWhiteSpace(' ')
+        Angular2PipeArgumentsList
+          PsiElement(JS:COLON)(':')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('term')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      <empty list>
+    Angular2TemplateBinding <of, true, $implicit>
+      PsiElement(JS:LET_KEYWORD)('let')
+      PsiWhiteSpace(' ')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('of')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <expressionsTodoService, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('todoService')
+      PsiErrorElement:expression expected
+        <empty list>
+    Angular2TemplateBinding <expressions, false, null>
+      PsiElement(JS:DOT)('.')
+      Angular2PipeExpression
+        Angular2PipeExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('todos')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:OR)('|')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('started')
+          PsiWhiteSpace(' ')
+          Angular2PipeArgumentsList
+            PsiElement(JS:COLON)(':')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('status')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:OR)('|')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('search')
+        PsiWhiteSpace(' ')
+        Angular2PipeArgumentsList
+          PsiElement(JS:COLON)(':')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('term')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      <empty list>
+    Angular2TemplateBinding <todo, true, $implicit>
+      PsiElement(JS:LET_KEYWORD)('let')
+      PsiWhiteSpace(' ')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('todo')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <expressionsTodoService, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('todoService')
+      PsiErrorElement:expression expected
+        <empty list>
+    Angular2TemplateBinding <expressions, false, null>
+      PsiElement(JS:DOT)('.')
+      Angular2PipeExpression
+        Angular2PipeExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('todos')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:OR)('|')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('started')
+          PsiWhiteSpace(' ')
+          Angular2PipeArgumentsList
+            PsiElement(JS:COLON)(':')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('status')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:OR)('|')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('search')
+        PsiWhiteSpace(' ')
+        Angular2PipeArgumentsList
+          PsiElement(JS:COLON)(':')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('term')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      <empty list>
+    Angular2TemplateBinding <todo, true, $implicit>
+      PsiElement(JS:LET_KEYWORD)('let')
+      PsiWhiteSpace(' ')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('todo')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <expressionsOf, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('of')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('todoService')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('todos')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <index, true, index>
+      PsiElement(JS:LET_KEYWORD)('let')
+      PsiWhiteSpace(' ')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('index')
+      PsiElement(JS:EQ)('=')
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('index')
+    PsiElement(JS:COMMA)(',')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <last, true, last>
+      PsiElement(JS:LET_KEYWORD)('let')
+      PsiWhiteSpace(' ')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('last')
+      PsiElement(JS:EQ)('=')
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('last')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      <empty list>
+    Angular2TemplateBinding <item, true, $implicit>
+      PsiElement(JS:LET_KEYWORD)('let')
+      PsiWhiteSpace(' ')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('item')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <expressionsOf, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('of')
+      PsiWhiteSpace(' ')
+      JSParenthesizedExpression
+        PsiElement(JS:LPAR)('(')
+        Angular2PipeExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('ops$')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:OR)('|')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('async')
+          Angular2PipeArgumentsList
+            <empty list>
+        PsiElement(JS:RPAR)(')')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <expressionsTrackBy, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('trackBy')
+      PsiElement(JS:COLON)(':')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('tracker')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      JSCallExpression
+        JSReferenceExpression
+          JSCallExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('fetchFromApi')
+            JSArgumentList
+              PsiElement(JS:LPAR)('(')
+              PsiElement(JS:RPAR)(')')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:IDENTIFIER)('then')
+        JSArgumentList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <expressions, false, null>
+      JSReferenceExpression
+        JSThisExpression
+          PsiElement(JS:THIS_KEYWORD)('this')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('foo')

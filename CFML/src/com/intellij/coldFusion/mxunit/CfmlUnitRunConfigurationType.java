@@ -59,6 +59,11 @@ public final class CfmlUnitRunConfigurationType implements ConfigurationType {
     return new ConfigurationFactory[]{myFactory};
   }
 
+  @Override
+  public String getHelpTopic() {
+    return "reference.dialogs.rundebug.CfmlUnitRunConfigurationType";
+  }
+
   @NotNull
   public static CfmlUnitRunConfigurationType getInstance() {
     return ConfigurationTypeUtil.findConfigurationType(CfmlUnitRunConfigurationType.class);

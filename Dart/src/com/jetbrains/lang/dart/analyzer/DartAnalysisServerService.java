@@ -2071,7 +2071,7 @@ public class DartAnalysisServerService implements Disposable {
     @NotNull private final List<CompletionSuggestion> myCompletions;
     private final boolean isLast;
 
-    public CompletionInfo(@NotNull final String completionId,
+    CompletionInfo(@NotNull final String completionId,
                           int replacementOffset,
                           int originalReplacementLength,
                           @NotNull final List<CompletionSuggestion> completions,
@@ -2092,7 +2092,7 @@ public class DartAnalysisServerService implements Disposable {
     @NotNull final List<SearchResult> results;
     final boolean isLast;
 
-    public SearchResultsSet(@NotNull String id, @NotNull List<SearchResult> results, boolean isLast) {
+    SearchResultsSet(@NotNull String id, @NotNull List<SearchResult> results, boolean isLast) {
       this.id = id;
       this.results = results;
       this.isLast = isLast;

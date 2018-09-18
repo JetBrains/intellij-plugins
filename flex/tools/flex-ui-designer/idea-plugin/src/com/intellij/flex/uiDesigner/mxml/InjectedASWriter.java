@@ -37,7 +37,7 @@ class InjectedASWriter implements ValueReferenceResolver {
     }
   };
 
-  public InjectedASWriter(BaseWriter writer, ProblemsHolder problemsHolder) {
+  InjectedASWriter(BaseWriter writer, ProblemsHolder problemsHolder) {
     this.writer = writer;
     this.problemsHolder = problemsHolder;
   }

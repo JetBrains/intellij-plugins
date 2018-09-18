@@ -481,7 +481,7 @@ public class DartVmServiceValue extends XNamedValue {
     @NotNull private final ScriptRef myScriptRef;
     private final int myTokenPos;
 
-    public LocalVarSourceLocation(@NotNull final ScriptRef scriptRef, final int tokenPos) {
+    LocalVarSourceLocation(@NotNull final ScriptRef scriptRef, final int tokenPos) {
       myScriptRef = scriptRef;
       myTokenPos = tokenPos;
     }

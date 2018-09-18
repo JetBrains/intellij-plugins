@@ -133,9 +133,8 @@ public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlComme
     int rangeEnd = document.getLineEndOffset(line);
 
     if (!data.isIsWithinCfscript()) {
-      final String commentSuffix = CFML_COMMENT_SUFFIX;
       document.deleteString(
-        rangeEnd - commentSuffix.length(),
+        rangeEnd - CFML_COMMENT_SUFFIX.length(),
         rangeEnd);
     }
 

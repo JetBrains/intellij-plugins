@@ -48,7 +48,7 @@ class LibraryCollector {
 
   private String flexSdkVersion;
 
-  public LibraryCollector(LibraryManager libraryManager, LibraryStyleInfoCollector initializer, Module module) {
+  LibraryCollector(LibraryManager libraryManager, LibraryStyleInfoCollector initializer, Module module) {
     this.libraryManager = libraryManager;
     this.initializer = initializer;
     this.module = module;

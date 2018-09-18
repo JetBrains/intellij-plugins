@@ -1,0 +1,19 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    PsiErrorElement:Unterminated expansion form. Do you have an unescaped "{" in your template? Use "{{ '{' }}") to escape it.
+      PsiElement(NG:LBRACE)('{')
+    XmlToken:XML_DATA_CHARACTERS('messages.length')
+    XmlText
+      XmlToken:XML_DATA_CHARACTERS(',')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('plural')
+    XmlText
+      XmlToken:XML_DATA_CHARACTERS(',')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('=0')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Unterminated expansion form. Do you have an unescaped "{" in your template? Use "{{ '{' }}") to escape it.
+      PsiElement(NG:LBRACE)('{')
+    XmlToken:XML_DATA_CHARACTERS('one')

@@ -1,0 +1,46 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:h5
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('h5')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        XmlToken:XML_DATA_CHARACTERS('Last')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('Updated:')
+        PsiWhiteSpace(' ')
+      PsiElement(NG:INTERPOLATION_START)('{{')
+      ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+        Angular2Interpolation
+          Angular2PipeExpression
+            JSParenthesizedExpression
+              PsiElement(JS:LPAR)('(')
+              Angular2PipeExpression
+                JSReferenceExpression
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('viewModel')
+                  PsiElement(JS:DOT)('.')
+                  PsiElement(JS:IDENTIFIER)('lastUpdated$')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:OR)('|')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('async')
+                Angular2PipeArgumentsList
+                  <empty list>
+              PsiElement(JS:RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:OR)('|')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('date')
+            Angular2PipeArgumentsList
+              PsiElement(JS:COLON)(':')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''mediumTime'')
+      PsiElement(NG:INTERPOLATION_END)('}}')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('h5')
+      XmlToken:XML_TAG_END('>')

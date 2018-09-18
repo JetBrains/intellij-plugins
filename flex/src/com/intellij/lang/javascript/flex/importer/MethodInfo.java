@@ -125,13 +125,12 @@ class MethodInfo extends MemberInfo {
           processor.append(abc.instances[readU32()].toString());
           break;
         case OP_lookupswitch:
-          int pos = start;
-          int target = pos + readS24();
+          int target = start + readS24();
           int maxindex = readU32();
           processor.append("default:" + labels.labelFor(target)); // target + "("+(target-pos)+")"
           processor.append(" maxcase:" + maxindex);
           for (i = 0; i <= maxindex; i++) {
-            target = pos + readS24();
+            target = start + readS24();
             processor.append(" " + labels.labelFor(target)); // target + "("+(target-pos)+")"
           }
           break;

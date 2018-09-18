@@ -19,10 +19,10 @@ import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.containers.ContainerUtil;
+import org.angular2.index.Angular2IndexingHandler;
 import org.angularjs.index.AngularControllerIndex;
 import org.angularjs.index.AngularFilterIndex;
 import org.angularjs.index.AngularIndexUtil;
-import org.angularjs.index.AngularJS2IndexingHandler;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
 import org.jetbrains.annotations.NotNull;
@@ -67,7 +67,7 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
       if (isAsExpression(as)) {
         if (PsiTreeUtil.isAncestor(PsiTreeUtil.getChildOfType(as, JSDefinitionExpression.class), myRef, true)) return new JSResolveResult[]{new JSResolveResult(myRef)};
       }
-      JSClass clazz = myRef.getQualifier() == null ? AngularJS2IndexingHandler.findDirectiveClass(myRef) : null;
+      JSClass clazz = myRef.getQualifier() == null ? Angular2IndexingHandler.findDirectiveClass(myRef) : null;
       if (clazz != null && DialectDetector.isTypeScript(clazz)) {
         final TypeScriptResolveProcessor localProcessor = new TypeScriptResolveProcessor(myReferencedName, myContainingFile, myRef);
         localProcessor.setToProcessHierarchy(true);

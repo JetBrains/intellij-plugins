@@ -20,7 +20,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.SmartList;
-import org.angularjs.cli.AngularCliConfigLoader;
+import org.angular2.cli.AngularCliConfigLoader;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -40,7 +40,7 @@ public class AngularCssFileReferenceHelper extends WebpackCssFileReferenceHelper
   }
 
   private static class AngularCliAwareCssFileReferenceResolver extends WebpackTildeFileReferenceResolver {
-    public AngularCliAwareCssFileReferenceResolver(@NotNull final Project project, @NotNull final VirtualFile contextFile) {
+    AngularCliAwareCssFileReferenceResolver(@NotNull final Project project, @NotNull final VirtualFile contextFile) {
       super(project, contextFile);
     }
 

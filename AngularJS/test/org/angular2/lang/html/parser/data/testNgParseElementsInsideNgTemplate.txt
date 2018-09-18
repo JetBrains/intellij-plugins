@@ -1,0 +1,18 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:ng-template
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('ng-template')
+      XmlToken:XML_TAG_END('>')
+      HtmlTag:span
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('span')
+        XmlToken:XML_TAG_END('>')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('span')
+        XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('ng-template')
+      XmlToken:XML_TAG_END('>')

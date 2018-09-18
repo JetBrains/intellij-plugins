@@ -81,7 +81,7 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
   }
 
   private static class BasePathFileReferenceSet extends FileReferenceSet {
-    public BasePathFileReferenceSet(@NotNull JSLiteralExpression literalExpression, @NotNull PsiReferenceProvider psiReferenceProvider) {
+    BasePathFileReferenceSet(@NotNull JSLiteralExpression literalExpression, @NotNull PsiReferenceProvider psiReferenceProvider) {
       super(getString(literalExpression),
             literalExpression,
             1,
@@ -129,7 +129,7 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
   private static class FilesFileReferenceSet extends FileReferenceSet {
     private boolean myPatternUsed = false;
 
-    public FilesFileReferenceSet(@NotNull JSLiteralExpression literalExpression, @NotNull PsiReferenceProvider psiReferenceProvider) {
+    FilesFileReferenceSet(@NotNull JSLiteralExpression literalExpression, @NotNull PsiReferenceProvider psiReferenceProvider) {
       super(StringUtil.unquoteString(literalExpression.getText()),
             literalExpression,
             1,

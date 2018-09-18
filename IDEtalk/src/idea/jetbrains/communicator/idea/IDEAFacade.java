@@ -60,6 +60,7 @@ import jetbrains.communicator.idea.sendMessage.IncomingStacktraceMessage;
 import jetbrains.communicator.idea.viewFiles.ViewFilesDialog;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -364,7 +365,7 @@ public class IDEAFacade implements IDEFacade {
     return null;
   }
 
-  public static Object getData(Component c, String dataId) {
+  public static Object getData(Component c, @NotNull String dataId) {
     Object result = null;
     while (c != null) {
       if (c instanceof DataProvider) {

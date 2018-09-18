@@ -37,7 +37,7 @@ public class MarkdownStructureViewFactory implements PsiStructureViewFactory {
   }
 
   private static class MarkdownStructureViewModel extends StructureViewModelBase {
-    public MarkdownStructureViewModel(@NotNull PsiFile psiFile, @Nullable Editor editor) {
+    MarkdownStructureViewModel(@NotNull PsiFile psiFile, @Nullable Editor editor) {
       super(psiFile, editor, new MarkdownStructureElement(psiFile));
     }
 

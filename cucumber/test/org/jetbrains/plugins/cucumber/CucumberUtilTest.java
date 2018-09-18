@@ -5,7 +5,11 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.jetbrains.plugins.cucumber.CucumberUtil.buildRegexpFromCucumberExpression;
+import static org.jetbrains.plugins.cucumber.CucumberUtil.isCucumberExpression;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 public class CucumberUtilTest {
   @Test
@@ -22,5 +26,22 @@ public class CucumberUtilTest {
     assertEquals(23, substitution.getOffsetInOutlineStep(20));
     assertEquals(30, substitution.getOffsetInOutlineStep(27));
     assertEquals(36, substitution.getOffsetInOutlineStep(28));
+  }
+
+  @Test
+  public void testBuildRegexpFromCucumberExpression() {
+    assertEquals("(-?\\d+) cucumbers", buildRegexpFromCucumberExpression("{int} cucumbers", MapParameterTypeManager.DEFAULT));
+    assertEquals("(-?\\d*[.,]?\\d+) cucumbers", buildRegexpFromCucumberExpression("{float} cucumbers", MapParameterTypeManager.DEFAULT));
+    assertEquals("provided ([^\\s]+)", buildRegexpFromCucumberExpression("provided {word}", MapParameterTypeManager.DEFAULT));
+    assertEquals("provided (\"(?:[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'(?:[^'\\\\]*(?:\\\\.[^'\\\\]*)*)')",
+                 buildRegexpFromCucumberExpression("provided {string}", MapParameterTypeManager.DEFAULT));
+  }
+
+  @Test
+  public void testIsCucumberExpression() {
+    assertTrue(isCucumberExpression("def {int}"));
+    assertFalse(isCucumberExpression("def {int"));
+    assertFalse(isCucumberExpression("text"));
+    assertFalse(isCucumberExpression("text (\\d)"));
   }
 }

@@ -1,0 +1,35 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    PsiElement(NG:INTERPOLATION_START)('{{')
+    ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+      Angular2Interpolation
+        Angular2PipeExpression
+          Angular2PipeExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('todo')
+            PsiWhiteSpace('\n            ')
+            PsiElement(JS:OR)('|')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('started')
+            PsiWhiteSpace(' ')
+            Angular2PipeArgumentsList
+              PsiElement(JS:COLON)(':')
+              PsiWhiteSpace(' ')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('status')
+          PsiWhiteSpace('\n            ')
+          PsiElement(JS:OR)('|')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('search')
+          PsiWhiteSpace(' ')
+          Angular2PipeArgumentsList
+            PsiElement(JS:COLON)(':')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('term')
+      PsiWhiteSpace('\n            ')
+    PsiElement(NG:INTERPOLATION_END)('}}')

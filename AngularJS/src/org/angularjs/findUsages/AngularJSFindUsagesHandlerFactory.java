@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.findUsages;
 
 import com.intellij.find.findUsages.FindUsagesHandler;
@@ -8,8 +9,8 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.psi.PsiElement;
+import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.codeInsight.DirectiveUtil;
-import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,7 +24,7 @@ public class AngularJSFindUsagesHandlerFactory extends JavaScriptFindUsagesHandl
 
   @Override
   public FindUsagesHandler createFindUsagesHandler(@NotNull PsiElement element, boolean forHighlightUsages) {
-    if (!forHighlightUsages && element instanceof JSClass && AngularIndexUtil.hasAngularJS2(element.getProject())) {
+    if ( !forHighlightUsages && element instanceof JSClass && Angular2LangUtil.isAngular2Context(element)) {
       return new JavaScriptFindUsagesHandlerFactory.JavaScriptFindUsagesHandler(element) {
         @NotNull
         @Override

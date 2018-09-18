@@ -31,7 +31,6 @@ public class MarkdownPlantUMLTest extends LightPlatformCodeInsightFixtureTestCas
   }
 
   @Override
-  @SuppressWarnings("Duplicates")
   protected void tearDown() throws Exception {
     try {
       myFixture.tearDown();

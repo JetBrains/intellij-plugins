@@ -145,7 +145,7 @@ public class FlexStackTraceFilter implements Filter {
     private final Collection<VirtualFile> myFiles;
     private final int myLine;
 
-    public OpenOneOfSeveralFilesHyperlinkInfo(@NotNull final Collection<VirtualFile> files, final int line) {
+    OpenOneOfSeveralFilesHyperlinkInfo(@NotNull final Collection<VirtualFile> files, final int line) {
       myFiles = files;
       myLine = line;
     }

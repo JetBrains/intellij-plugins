@@ -68,7 +68,7 @@ class JpsAirDesktopPackagingOptionsImpl extends JpsAirPackagingOptionsBase<JpsAi
   private static class JpsAirDesktopPackagingOptionsRole extends JpsElementChildRoleBase<JpsAirDesktopPackagingOptions>
     implements JpsElementCreator<JpsAirDesktopPackagingOptions> {
 
-    public JpsAirDesktopPackagingOptionsRole() {
+    JpsAirDesktopPackagingOptionsRole() {
       super("air desktop packaging options");
     }
 

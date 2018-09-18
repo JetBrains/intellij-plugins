@@ -149,7 +149,7 @@ public class UserTreeTransferHandler extends TransferHandler {
         return myUsers.toArray(new User[0]);
       }
       else if (flavor == DataFlavor.stringFlavor) {
-        StringBuffer sb = new StringBuffer(10 * myUsers.size());
+        StringBuilder sb = new StringBuilder(10 * myUsers.size());
         if (myUsers.size() > 0) {
           sb.append((myUsers.get(0)).getDisplayName());
           for (int i = 1; i < myUsers.size(); i++) {

@@ -1227,7 +1227,7 @@ public class FlexDebugProcess extends XDebugProcess {
     private int lastTextMarkerScanningStart;
     private final InputStream myInputStream;
 
-    public MyFdbOutputReader(final InputStream _inputStream) {
+    MyFdbOutputReader(final InputStream _inputStream) {
       myReader = FlexCommonUtils.createInputStreamReader(_inputStream);
       myInputStream = _inputStream;
     }
@@ -1362,7 +1362,7 @@ public class FlexDebugProcess extends XDebugProcess {
     private final GeneralCommandLine myAdlCommandLine;
     private final @Nullable VirtualFile myTempDirToDeleteWhenProcessFinished;
 
-    public StartAirAppDebuggingCommand(final GeneralCommandLine adlCommandLine,
+    StartAirAppDebuggingCommand(final GeneralCommandLine adlCommandLine,
                                        final @Nullable VirtualFile tempDirToDeleteWhenProcessFinished) {
       myAdlCommandLine = adlCommandLine;
       myTempDirToDeleteWhenProcessFinished = tempDirToDeleteWhenProcessFinished;
@@ -1485,7 +1485,7 @@ public class FlexDebugProcess extends XDebugProcess {
   class StartAppOnIosDeviceCommand extends StartDebuggingCommand {
     private final String myAppName;
 
-    public StartAppOnIosDeviceCommand(final String appName) {
+    StartAppOnIosDeviceCommand(final String appName) {
       myAppName = appName;
     }
 
@@ -1638,7 +1638,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
   private class SuspendResumeDebuggerCommand extends SuspendDebuggerCommand {
 
-    public SuspendResumeDebuggerCommand(final DebuggerCommand command1) {
+    SuspendResumeDebuggerCommand(final DebuggerCommand command1) {
       super(command1);
     }
 
@@ -1652,7 +1652,7 @@ public class FlexDebugProcess extends XDebugProcess {
   private class SuspendDebuggerCommand extends DebuggerCommand {
     protected final DebuggerCommand myCommand1;
 
-    public SuspendDebuggerCommand(final DebuggerCommand command1) {
+    SuspendDebuggerCommand(final DebuggerCommand command1) {
       super("suspend", CommandOutputProcessingType.SPECIAL_PROCESSING, VMState.RUNNING, VMState.SUSPENDED);
       myCommand1 = command1;
     }

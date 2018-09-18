@@ -18,7 +18,7 @@ class SharedLibraryEntryImpl implements ModifiableSharedLibraryEntry, StatefulDe
   private final String myLibraryLevel;
 
 
-  public SharedLibraryEntryImpl(@NotNull String libraryName, @NotNull String libraryLevel) {
+  SharedLibraryEntryImpl(@NotNull String libraryName, @NotNull String libraryLevel) {
     myLibraryName = libraryName;
     myLibraryLevel = libraryLevel;
   }

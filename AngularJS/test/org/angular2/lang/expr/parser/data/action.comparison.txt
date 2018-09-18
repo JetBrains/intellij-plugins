@@ -1,0 +1,171 @@
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSLiteralExpression
+        PsiElement(JS:FALSE_KEYWORD)('false')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSPrefixExpression
+        PsiElement(JS:EXCL)('!')
+        JSLiteralExpression
+          PsiElement(JS:TRUE_KEYWORD)('true')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:EQEQ)('==')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:EQEQ)('==')
+        JSLiteralExpression
+          PsiElement(JS:TRUE_KEYWORD)('true')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:EQEQEQ)('===')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:EQEQEQ)('===')
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)(''1'')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:EQEQEQ)('===')
+        JSLiteralExpression
+          PsiElement(JS:TRUE_KEYWORD)('true')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)(''true'')
+        PsiElement(JS:EQEQEQ)('===')
+        JSLiteralExpression
+          PsiElement(JS:TRUE_KEYWORD)('true')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:NEQEQ)('!==')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:NEQEQ)('!==')
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)(''1'')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:NE)('!=')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:LT)('<')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:LE)('<=')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:GT)('>')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+        PsiElement(JS:GE)('>=')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:TRUE_KEYWORD)('true')
+        PsiElement(JS:EQEQ)('==')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+          PsiElement(JS:LT)('<')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('3')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:TRUE_KEYWORD)('true')
+        PsiElement(JS:EQEQEQ)('===')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+          PsiElement(JS:LT)('<')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('3')

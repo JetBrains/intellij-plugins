@@ -36,7 +36,7 @@ final class IncrementalDocumentSynchronizer extends Update {
   private boolean isSkippedXml;
   private boolean isStyleDataChanged;
 
-  public IncrementalDocumentSynchronizer(PsiTreeChangeEvent event) {
+  IncrementalDocumentSynchronizer(PsiTreeChangeEvent event) {
     super("FlashUIDesigner.incrementalUpdate");
     this.event = event;
   }

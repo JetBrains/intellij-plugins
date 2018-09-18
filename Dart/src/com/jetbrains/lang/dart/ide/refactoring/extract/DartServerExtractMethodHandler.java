@@ -82,7 +82,7 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog<ServerExtrac
   private final JCheckBox myGetterCheckBox = new JCheckBox("Extract getter");
   private final JLabel mySignatureLabel = new JLabel();
 
-  public DartServerExtractMethodDialog(@NotNull Project project,
+  DartServerExtractMethodDialog(@NotNull Project project,
                                        @Nullable Editor editor,
                                        @NotNull ServerExtractMethodRefactoring refactoring) {
     super(project, editor, refactoring);

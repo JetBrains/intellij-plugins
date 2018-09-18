@@ -97,7 +97,7 @@ public class TemplatesNavigation extends ActionGroup implements DumbAware {
 
     private class TemplateNavigate extends AnAction {
 
-        public TemplateNavigate(IResource template) {
+        TemplateNavigate(IResource template) {
             super(template.getName().replace("_", "__"), template.getName(), null);
         }
 

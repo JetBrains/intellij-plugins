@@ -29,7 +29,7 @@ public class AngularJSNgAppReferencesProvider extends PsiReferenceProvider {
   }
 
   private static class AngularJSNgAppReference extends CachingPolyReferenceBase<XmlAttributeValue> {
-    public AngularJSNgAppReference(XmlAttributeValue element) {
+    AngularJSNgAppReference(XmlAttributeValue element) {
       super(element, ElementManipulators.getValueTextRange(element));
     }
 

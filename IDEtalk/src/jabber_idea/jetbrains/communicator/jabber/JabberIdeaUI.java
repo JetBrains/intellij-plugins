@@ -141,7 +141,7 @@ public class JabberIdeaUI implements JabberUI {
   }
 
   private String buildUserInfo(VCardInfo fromInfo) {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     sb.append(StringUtil.getMsg("nickname.info")).append(fromInfo.getNickName()).append('\n');
     sb.append(StringUtil.getMsg("first.name.info")).append(fromInfo.getFirstname()).append('\n');
     sb.append(StringUtil.getMsg("last.name.info")).append(fromInfo.getLastname());

@@ -32,7 +32,7 @@ class ViewMouseListener extends MouseInputAdapter {
     private MouseEvent _firstMouseEvent = null;
     private final TapestryProjectViewPane _tapestryProjectViewPane;
 
-    public ViewMouseListener(TapestryProjectViewPane tapestryProjectViewPane) {
+    ViewMouseListener(TapestryProjectViewPane tapestryProjectViewPane) {
         _tapestryProjectViewPane = tapestryProjectViewPane;
     }
 

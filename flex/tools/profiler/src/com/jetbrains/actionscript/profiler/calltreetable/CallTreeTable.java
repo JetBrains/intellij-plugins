@@ -131,7 +131,7 @@ public class CallTreeTable extends ColoredSortableTreeTable implements DataProvi
   private static abstract class AbstractCallColumnInfo extends ColumnInfo<DefaultMutableTreeNode, String> {
     private static final long MS_IN_MICROSECOND = 1000;
 
-    public AbstractCallColumnInfo(String name) {
+    AbstractCallColumnInfo(String name) {
       super(name);
     }
 

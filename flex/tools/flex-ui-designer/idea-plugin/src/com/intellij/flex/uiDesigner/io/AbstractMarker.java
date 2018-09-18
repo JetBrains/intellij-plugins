@@ -5,7 +5,7 @@ import gnu.trove.TLinkableAdaptor;
 abstract class AbstractMarker extends TLinkableAdaptor implements Marker {
   private final int position;
 
-  public AbstractMarker(int position) {
+  AbstractMarker(int position) {
     this.position = position;
   }
 

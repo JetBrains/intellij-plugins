@@ -100,7 +100,7 @@ URL_PREFIX_DOMAIN={U}{R}{L}|{U}{R}{L}-{P}{R}{E}{F}{I}{X}|{D}{O}{M}{A}{I}{N}
 <CSS_URI> [^] { return CssElementTypes.CSS_BAD_CHARACTER; }
 <YYINITIAL> "expression(" { yypushback(1); return CssElementTypes.CSS_EXPRESSION; }
 <YYINITIAL> "-n" { yybegin(CSS_FUNCTION_MINUS_N); yypushback(yylength()); }
-<YYINITIAL> {CSS_HACKS} { return CssElementTypes.CSS_COMMENT; }
+<YYINITIAL> {CSS_HACKS} { return CssElementTypes.CSS_HACK; }
 <YYINITIAL> "{" { return CssElementTypes.CSS_LBRACE; }
 <YYINITIAL> "}" { return CssElementTypes.CSS_RBRACE; }
 <YYINITIAL> ":" { return CssElementTypes.CSS_COLON; }

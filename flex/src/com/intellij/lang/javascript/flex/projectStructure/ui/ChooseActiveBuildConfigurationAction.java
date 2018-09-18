@@ -144,7 +144,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
 
     private final FlexBuildConfigurationManager myManager;
 
-    public SelectBcAction(final FlexBuildConfiguration bc, final FlexBuildConfigurationManager manager) {
+    SelectBcAction(final FlexBuildConfiguration bc, final FlexBuildConfigurationManager manager) {
       super(bc.getName(), getDescription(bc), bc.getIcon());
       myBc = bc;
       myManager = manager;
@@ -168,7 +168,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
   private static class EditBcsAction extends DumbAwareAction {
     private final Module myModule;
 
-    public EditBcsAction(Module module) {
+    EditBcsAction(Module module) {
       super(null);
       myModule = module;
       final AnAction a = ActionManager.getInstance().getAction("ShowProjectStructureSettings");
@@ -189,7 +189,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
   private static class MyPanel extends JPanel {
     private final SimpleColoredComponent myComponent;
 
-    public MyPanel() {
+    MyPanel() {
       super(new BorderLayout());
       setBorder(new EmptyBorder(2, 0, 2, 0));
       setOpaque(true);

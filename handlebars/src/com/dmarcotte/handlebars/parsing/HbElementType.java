@@ -13,7 +13,7 @@ class HbElementType extends IElementType {
    * @param parseExpectedMessageKey Key to the {@link HbBundle} message to show the user when the parser
    *                                expected this token, but found something else.
    */
-  public HbElementType(@NotNull @NonNls String debugName, @NotNull @NonNls String parseExpectedMessageKey) {
+  HbElementType(@NotNull @NonNls String debugName, @NotNull @NonNls String parseExpectedMessageKey) {
     super(debugName, HbLanguage.INSTANCE);
     _parseExpectedMessageKey = parseExpectedMessageKey;
   }

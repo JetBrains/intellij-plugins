@@ -106,10 +106,8 @@ public class ActionScriptClassResolver extends JSClassResolver {
     JSQualifiedNamedElement resultFromLibraries = null;
     long resultFromLibrariesTimestamp = 0;
 
-    for (JSQualifiedNamedElement classCandidate : candidates) {
-      if (!(classCandidate instanceof JSQualifiedNamedElement)) continue;
-      if (JSResolveUtil.isConstructorFunction(classCandidate)) continue;
-      JSQualifiedNamedElement clazz = classCandidate;
+    for (JSQualifiedNamedElement clazz : candidates) {
+      if (clazz == null || JSResolveUtil.isConstructorFunction(clazz)) continue;
 
       if (link.equals(clazz.getQualifiedName())) {
         PsiFile file = clazz.getContainingFile();

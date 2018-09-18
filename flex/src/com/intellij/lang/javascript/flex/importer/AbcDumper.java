@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 class AbcDumper extends AbstractDumpProcessor {
   private final boolean dumpCode;
 
-  public AbcDumper(final boolean _dumpCode) {
+  AbcDumper(final boolean _dumpCode) {
     dumpCode = _dumpCode;
   }
 

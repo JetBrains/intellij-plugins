@@ -301,7 +301,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     private final ProjectSdksModel myOriginal;
     private final JdkListConfigurable myConfigurable;
 
-    public NonCommittingWrapper(final ProjectSdksModel original, JdkListConfigurable configurable) {
+    NonCommittingWrapper(final ProjectSdksModel original, JdkListConfigurable configurable) {
       myOriginal = original;
       myConfigurable = configurable;
     }

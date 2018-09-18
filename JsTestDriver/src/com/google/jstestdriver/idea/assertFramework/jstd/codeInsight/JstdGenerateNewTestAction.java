@@ -77,7 +77,7 @@ public class JstdGenerateNewTestAction extends AbstractJsGenerateAction {
     private final JSObjectLiteralExpression myTestsObjectLiteral;
     private final GenerateActionContext myContext;
 
-    public TestGeneratorOnObjectLiteral(@NotNull JSObjectLiteralExpression testsObjectLiteral, GenerateActionContext context) {
+    TestGeneratorOnObjectLiteral(@NotNull JSObjectLiteralExpression testsObjectLiteral, GenerateActionContext context) {
       myTestsObjectLiteral = testsObjectLiteral;
       myContext = context;
     }
@@ -93,7 +93,7 @@ public class JstdGenerateNewTestAction extends AbstractJsGenerateAction {
     private final JSArgumentList myArgumentList;
     private final GenerateActionContext myContext;
 
-    public TestGeneratorOnNewlyCreatedObjectLiteral(@NotNull JSArgumentList argumentList,
+    TestGeneratorOnNewlyCreatedObjectLiteral(@NotNull JSArgumentList argumentList,
                                                     @NotNull GenerateActionContext context) {
       myArgumentList = argumentList;
       myContext = context;

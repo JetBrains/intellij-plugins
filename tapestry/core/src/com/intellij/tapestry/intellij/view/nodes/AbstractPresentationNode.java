@@ -6,6 +6,7 @@ import com.intellij.tapestry.core.model.Library;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.util.PathUtils;
 import com.intellij.ui.treeStructure.SimpleNode;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,6 +25,7 @@ public abstract class AbstractPresentationNode extends TapestryNode {
     /**
      * {@inheritDoc}
      */
+    @NotNull
     @Override
     public SimpleNode[] getChildren() {
         TreeSet<TapestryNode> children = new TreeSet<>(PackageNodesComparator.getInstance());

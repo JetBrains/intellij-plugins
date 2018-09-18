@@ -100,7 +100,7 @@ public class DartExpressionCodeFragmentImpl extends DartFile implements DartExpr
   }
 
   private static class DartFragmentElementType extends IFileElementType {
-    public DartFragmentElementType() {
+    DartFragmentElementType() {
       super("DART_CODE_FRAGMENT", DartLanguage.INSTANCE);
     }
 

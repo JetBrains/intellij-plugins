@@ -22,7 +22,7 @@ import java.util.*;
 
 public class CfmlFileReferenceSet extends FileReferenceSet implements PlatformIcons {
   private static class CfmlFileReference extends FileReference {
-    public CfmlFileReference(final CfmlFileReferenceSet set, final TextRange range, final int index, final String text) {
+    CfmlFileReference(final CfmlFileReferenceSet set, final TextRange range, final int index, final String text) {
       super(set, range, index, text);
     }
 

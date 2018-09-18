@@ -19,11 +19,9 @@ public class GherkinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleS
   }
 
   @Override
-  public CommonCodeStyleSettings getDefaultCommonSettings() {
-    CommonCodeStyleSettings defaultSettings = new CommonCodeStyleSettings(GherkinLanguage.INSTANCE);
-    CommonCodeStyleSettings.IndentOptions indentOptions = defaultSettings.initIndentOptions();
+  protected void customizeDefaults(@NotNull CommonCodeStyleSettings commonSettings,
+                                   @NotNull CommonCodeStyleSettings.IndentOptions indentOptions) {
     indentOptions.INDENT_SIZE = 2;
-    return defaultSettings;
   }
 
   @Override

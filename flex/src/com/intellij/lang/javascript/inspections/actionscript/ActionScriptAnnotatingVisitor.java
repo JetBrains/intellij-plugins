@@ -569,7 +569,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   private static class AddOverrideIntentionAction implements IntentionAction {
     private final JSFunction myNode;
 
-    public AddOverrideIntentionAction(final JSFunction node) {
+    AddOverrideIntentionAction(final JSFunction node) {
       myNode = node;
     }
 
@@ -592,7 +592,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
     @Override
     public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-      JSAttributeListWrapper w = new JSAttributeListWrapper(myNode.getAttributeList(), project);
+      JSAttributeListWrapper w = new JSAttributeListWrapper(myNode);
       w.overrideModifier(JSAttributeList.ModifierType.OVERRIDE, true);
       w.applyTo(myNode);
     }

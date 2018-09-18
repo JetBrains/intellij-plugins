@@ -150,7 +150,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
   private static class EnableDartSupportForModule implements Runnable {
     private final Module myModule;
 
-    public EnableDartSupportForModule(@NotNull final Module module) {
+    EnableDartSupportForModule(@NotNull final Module module) {
       this.myModule = module;
     }
 

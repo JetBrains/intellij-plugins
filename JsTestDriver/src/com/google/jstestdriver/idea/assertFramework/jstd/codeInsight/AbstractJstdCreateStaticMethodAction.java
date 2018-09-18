@@ -88,7 +88,7 @@ public abstract class AbstractJstdCreateStaticMethodAction extends AbstractJsGen
     private final JSObjectLiteralExpression myTestsObjectLiteral;
     private final GenerateActionContext myContext;
 
-    public StaticMethodGenerator(
+    StaticMethodGenerator(
         @NotNull JSObjectLiteralExpression testsObjectLiteral,
         @NotNull GenerateActionContext context) {
       myTestsObjectLiteral = testsObjectLiteral;
@@ -106,7 +106,7 @@ public abstract class AbstractJstdCreateStaticMethodAction extends AbstractJsGen
     private final JSArgumentList myArgumentList;
     private final GenerateActionContext myContext;
 
-    public StaticMethodGeneratorOnNewlyCreatedObjectLiteral(JSArgumentList argumentList, GenerateActionContext context) {
+    StaticMethodGeneratorOnNewlyCreatedObjectLiteral(JSArgumentList argumentList, GenerateActionContext context) {
       myArgumentList = argumentList;
       myContext = context;
     }

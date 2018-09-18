@@ -202,7 +202,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
   }
 
   private class MyDialog extends JSChangeSignatureDialog {
-    public MyDialog(JSMethodDescriptor descriptor, PsiElement context) {
+    MyDialog(JSMethodDescriptor descriptor, PsiElement context) {
       super(descriptor, context);
       setTitle(JSBundle.message("create.constructor.dialog.title"));
     }
@@ -227,7 +227,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
   }
 
   private class MyCallerChooser extends JSCallerChooser {
-    public MyCallerChooser(JSFunction method, String title, Tree treeToReuse, Consumer<Set<JSFunction>> callback) {
+    MyCallerChooser(JSFunction method, String title, Tree treeToReuse, Consumer<Set<JSFunction>> callback) {
       super(method, method.getProject(), title, treeToReuse, callback);
     }
 
@@ -240,7 +240,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
   }
 
   private class MyMethodNode extends JSMethodNode {
-    public MyMethodNode(JSFunction method, HashSet<JSFunction> called, Runnable cancelCallback) {
+    MyMethodNode(JSFunction method, HashSet<JSFunction> called, Runnable cancelCallback) {
       super(method, called, myClass.getProject(), cancelCallback);
     }
 
@@ -268,7 +268,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
 
   private class MyProcessor extends JSChangeSignatureProcessor {
 
-    public MyProcessor(JSFunction method,
+    MyProcessor(JSFunction method,
                        JSAttributeList.AccessType visibility,
                        String methodName,
                        String returnType,

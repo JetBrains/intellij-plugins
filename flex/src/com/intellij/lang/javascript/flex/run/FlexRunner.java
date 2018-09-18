@@ -234,7 +234,7 @@ public class FlexRunner extends FlexBaseRunner {
   private static class FlexUnitListener implements FlexUnitConnection.Listener {
     private final ProcessHandler myProcessHandler;
 
-    public FlexUnitListener(ProcessHandler processHandler) {
+    FlexUnitListener(ProcessHandler processHandler) {
       myProcessHandler = processHandler;
     }
 

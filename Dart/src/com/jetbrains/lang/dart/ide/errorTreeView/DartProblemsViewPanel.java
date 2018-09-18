@@ -380,7 +380,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
   }
 
   private class FilterProblemsAction extends DumbAwareAction implements Toggleable {
-    public FilterProblemsAction() {
+    FilterProblemsAction() {
       super(DartBundle.message("filter.problems"), DartBundle.message("filter.problems.description"), AllIcons.General.Filter);
     }
 

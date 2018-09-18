@@ -23,7 +23,7 @@ import java.util.List;
 class ExpressionBinding extends Binding {
   private final JSElement expression;
 
-  public ExpressionBinding(JSElement expression) {
+  ExpressionBinding(JSElement expression) {
     this.expression = expression;
   }
 

@@ -1,10 +1,12 @@
 package org.jetbrains.plugins.cucumber.steps.reference;
 
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.ResolveResult;
+import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +23,7 @@ import java.util.List;
  * @author yole
  */
 public class CucumberStepReference implements PsiPolyVariantReference {
+  private static final MyResolver RESOLVER = new MyResolver();
 
   private final PsiElement myStep;
   private final TextRange myRange;
@@ -83,6 +86,11 @@ public class CucumberStepReference implements PsiPolyVariantReference {
   @NotNull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
+    Project project = getElement().getProject();
+    return ResolveCache.getInstance(project).resolveWithCaching(this, RESOLVER, false, incompleteCode);
+  }
+
+  private ResolveResult[] multiResolveInner() {
     final List<ResolveResult> result = new ArrayList<>();
     final List<PsiElement> resolvedElements = new ArrayList<>();
 
@@ -128,5 +136,13 @@ public class CucumberStepReference implements PsiPolyVariantReference {
   public Collection<AbstractStepDefinition> resolveToDefinitions() {
     final CucumberStepsIndex index = CucumberStepsIndex.getInstance(myStep.getProject());
     return index.findStepDefinitions(myStep.getContainingFile(), ((GherkinStepImpl)myStep));
+  }
+
+  private static class MyResolver implements ResolveCache.PolyVariantResolver<CucumberStepReference> {
+    @Override
+    @NotNull
+    public ResolveResult[] resolve(@NotNull CucumberStepReference ref, boolean incompleteCode) {
+      return ref.multiResolveInner();
+    }
   }
 }

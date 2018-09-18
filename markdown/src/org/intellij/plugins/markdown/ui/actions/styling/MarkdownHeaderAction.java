@@ -12,8 +12,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Couple;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.Function;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes;
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypes;
@@ -22,8 +25,12 @@ import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElementFactory;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownHeaderImpl;
 import org.intellij.plugins.markdown.ui.actions.MarkdownActionUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+
+import static org.intellij.plugins.markdown.lang.MarkdownTokenTypeSets.INLINE_HOLDING_ELEMENT_PARENTS_TYPES;
+import static org.intellij.plugins.markdown.lang.MarkdownTokenTypeSets.INLINE_HOLDING_ELEMENT_TYPES;
 
 public abstract class MarkdownHeaderAction extends AnAction implements DumbAware {
   /**
@@ -43,15 +50,7 @@ public abstract class MarkdownHeaderAction extends AnAction implements DumbAware
     }
 
     for (Caret caret : ContainerUtil.reverse(editor.getCaretModel().getAllCarets())) {
-      final Couple<PsiElement> elements = MarkdownActionUtil.getElementsUnderCaretOrSelection(psiFile, caret);
-      if (elements == null || elements.getFirst() != elements.getSecond()) {
-        e.getPresentation().setEnabled(false);
-        return;
-      }
-
-      PsiElement element = elements.getFirst();
-      MarkdownHeaderImpl header = PsiTreeUtil.getParentOfType(element, MarkdownHeaderImpl.class, false);
-      if (header == null && element.getNode().getElementType() != MarkdownTokenTypes.TEXT) {
+      if (findParent(psiFile, caret) == null) {
         e.getPresentation().setEnabled(false);
         return;
       }
@@ -74,17 +73,43 @@ public abstract class MarkdownHeaderAction extends AnAction implements DumbAware
       }
 
       for (Caret caret : ContainerUtil.reverse(editor.getCaretModel().getAllCarets())) {
-        PsiElement element = Objects.requireNonNull(MarkdownActionUtil.getElementsUnderCaretOrSelection(psiFile, caret)).getFirst();
-        MarkdownHeaderImpl header = PsiTreeUtil.getParentOfType(element, MarkdownHeaderImpl.class, false);
+        PsiElement parent = ObjectUtils.assertNotNull(findParent(psiFile, caret));
+        MarkdownHeaderImpl header = PsiTreeUtil.getParentOfType(parent, MarkdownHeaderImpl.class, false);
 
         if (header != null) {
           header.replace(createNewLevelHeader(header));
         }
-        else if (element.getNode().getElementType() == MarkdownTokenTypes.TEXT) {
-          element.replace(createHeaderForText(element));
+        else {
+          parent.replace(createHeaderForText(parent));
         }
       }
     });
+  }
+
+  @Nullable
+  private static PsiElement findParent(@NotNull PsiFile psiFile, @NotNull Caret caret) {
+    final Couple<PsiElement> elements = MarkdownActionUtil.getElementsUnderCaretOrSelection(psiFile, caret);
+
+    if (elements == null) {
+      return null;
+    }
+
+    PsiElement first = elements.getFirst();
+    PsiElement second = elements.getSecond();
+    if (PsiUtilCore.getElementType(first) == MarkdownTokenTypes.EOL) {
+      first = PsiTreeUtil.nextVisibleLeaf(first);
+    }
+
+    if (PsiUtilCore.getElementType(second) == MarkdownTokenTypes.EOL) {
+      second = PsiTreeUtil.prevVisibleLeaf(second);
+    }
+
+    if (first == null || second == null) {
+      return null;
+    }
+
+    return MarkdownActionUtil
+      .getCommonParentOfTypes(first, second, TokenSet.orSet(INLINE_HOLDING_ELEMENT_TYPES, INLINE_HOLDING_ELEMENT_PARENTS_TYPES));
   }
 
   @NotNull

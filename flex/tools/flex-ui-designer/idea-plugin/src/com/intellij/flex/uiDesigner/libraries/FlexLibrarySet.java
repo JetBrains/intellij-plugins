@@ -35,7 +35,7 @@ public class FlexLibrarySet extends LibrarySet {
     private final Set<CharSequence> globalDefinitions;
     private final Set<CharSequence> ownDefinitions;
 
-    public ContainsCondition(Set<CharSequence> globalDefinitions, THashMap<CharSequence, Definition> definitionMap) {
+    ContainsCondition(Set<CharSequence> globalDefinitions, THashMap<CharSequence, Definition> definitionMap) {
       this.globalDefinitions = globalDefinitions;
       ownDefinitions = new THashSet<>(definitionMap.size(), AbcTranscoder.HASHING_STRATEGY);
       ownDefinitions.addAll(definitionMap.keySet());

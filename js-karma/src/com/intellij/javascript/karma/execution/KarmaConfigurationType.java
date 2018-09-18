@@ -7,19 +7,24 @@ import com.intellij.execution.configurations.RunConfigurationSingletonPolicy;
 import com.intellij.execution.configurations.SimpleConfigurationType;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.LazyUtil;
+import com.intellij.openapi.util.NotNullLazyValue;
 import icons.JSKarmaIcons;
 import org.jetbrains.annotations.NotNull;
 
 public final class KarmaConfigurationType extends SimpleConfigurationType implements DumbAware {
   public KarmaConfigurationType() {
-    super("JavaScriptTestRunnerKarma", "Karma", "Karma", LazyUtil.create(() -> JSKarmaIcons.Icons.Karma2));
+    super("JavaScriptTestRunnerKarma", "Karma", "Karma", NotNullLazyValue.createValue(() -> JSKarmaIcons.Icons.Karma2));
   }
 
   @NotNull
   @Override
   public String getTag() {
     return "karma";
+  }
+
+  @Override
+  public String getHelpTopic() {
+    return "reference.dialogs.rundebug.JavaScriptTestRunnerKarma";
   }
 
   @NotNull

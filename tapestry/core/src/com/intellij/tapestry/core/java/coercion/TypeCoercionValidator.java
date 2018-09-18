@@ -67,7 +67,7 @@ class CoercionContext extends HashMap implements Context {
     private static final String TARGET_KEY 			= "target";
     private static final String RESULT_KEY 			= "result";
 
-    public CoercionContext(TapestryProject project, IJavaType sourceType, String sourceValue, IJavaType targetType) {
+    CoercionContext(TapestryProject project, IJavaType sourceType, String sourceValue, IJavaType targetType) {
 
         put(PROJECT_KEY, project);
         put(SOURCE_KEY, sourceType);

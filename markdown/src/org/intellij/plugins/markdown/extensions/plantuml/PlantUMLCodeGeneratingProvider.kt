@@ -43,11 +43,14 @@ internal class PlantUMLProvider(private var cacheCollector: MarkdownCodeFencePlu
                                                          && MarkdownSettingsConfigurable.isPlantUMLAvailable()
 
   companion object {
-    private val sourceStringReader by lazyOf(Class.forName("net.sourceforge.plantuml.SourceStringReader", false, URLClassLoader(
-      arrayOf(MarkdownSettingsConfigurable.getDownloadedJarPath()?.toURI()?.toURL()), this::class.java.classLoader)))
+    private val sourceStringReader by lazy {
+      Class.forName("net.sourceforge.plantuml.SourceStringReader", false, URLClassLoader(
+        arrayOf(MarkdownSettingsConfigurable.getDownloadedJarPath()?.toURI()?.toURL()), this::class.java.classLoader))
+    }
 
-    private val generateImageMethod by lazyOf(sourceStringReader.getDeclaredMethod("generateImage", Class.forName("java.io.File")))
-
+    private val generateImageMethod by lazy {
+      sourceStringReader.getDeclaredMethod("generateImage", Class.forName("java.io.File"))
+    }
 
     @Throws(IOException::class)
     private fun storeDiagram(source: String, fileName: String) {
