@@ -25,11 +25,10 @@ import com.intellij.flex.resolver.ActionScriptResolveTest;
 import com.intellij.flex.resolver.FlexCssNavigationTest;
 import com.intellij.flex.uml.FlashUmlTest;
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 @SuppressWarnings({"JUnitTestClassNamingConvention", "JUnitTestCaseWithNoTests"})
-public class FlexTestSuite extends TestCase {
+public class FlexTestSuite {
 
   public static Test suite() {
     final TestSuite testSuite = new TestSuite(FlexTestSuite.class.getSimpleName());
