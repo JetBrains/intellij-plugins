@@ -120,6 +120,7 @@
     <internalFileTemplate name="Flex 4 Component"/>
     <liveTemplateContext implementation="com.intellij.lang.javascript.ActionScriptCodeContextType"/>
     <liveTemplateContext implementation="com.intellij.lang.javascript.flex.MxmlTemplateContextType"/>
+    <liveTemplateContext implementation="com.intellij.lang.javascript.ActionScriptStatementContextType"/>
     <defaultLiveTemplatesProvider implementation="com.intellij.lang.javascript.ActionScriptLiveTemplatesProvider"/>
     <liveTemplateOptionalProcessor implementation="com.intellij.lang.javascript.JSShortenFQNamesProcessor"/>
     <lang.refactoringSupport language="Mxml" implementationClass="com.intellij.lang.javascript.flex.MxmlRefactoringSupportProvider"/>
