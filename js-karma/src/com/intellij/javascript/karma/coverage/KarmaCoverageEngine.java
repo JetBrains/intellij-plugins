@@ -188,6 +188,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
                                                            final CoverageSuitesBundle suiteBundle,
                                                            CoverageViewManager.StateBean stateBean) {
     return new DirectoryCoverageViewExtension(project, getCoverageAnnotator(project), suiteBundle, stateBean) {
+      @NotNull
       @Override
       public AbstractTreeNode createRootNode() {
         VirtualFile rootDir = findRootDir(project, suiteBundle);

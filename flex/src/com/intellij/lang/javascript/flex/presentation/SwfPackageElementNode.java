@@ -21,7 +21,7 @@ public class SwfPackageElementNode extends ProjectViewNode<String> {
   private final int myTo;
 
   public SwfPackageElementNode(Project project,
-                               String aPackage,
+                               @NotNull String aPackage,
                                String displayText,
                                ViewSettings viewSettings,
                                List<JSQualifiedNamedElement> elements,

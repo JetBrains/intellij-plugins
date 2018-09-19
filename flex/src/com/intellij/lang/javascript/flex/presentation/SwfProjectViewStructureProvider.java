@@ -266,7 +266,7 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
   private static SwfPackageElementNode createSubpackageNode(List<JSQualifiedNamedElement> elements,
                                                             Project project,
                                                             ViewSettings settings,
-                                                            int from, int to, String qName) {
+                                                            int from, int to, @NotNull String qName) {
     // SWF-s don't contain empty packages, so it makes no sense to handle "flatten packages and hide empty middle packages" mode
     if (settings.isFlattenPackages()) {
       return new SwfPackageElementNode(project, qName, qName, settings, elements, from, to);
