@@ -444,7 +444,7 @@ public class MxmlWriter {
           break;
         }
 
-        if (propertyKind != null && propertyKind == PropertyKind.COMPLEX) {
+        if (propertyKind == PropertyKind.COMPLEX) {
           invalidValue = true;
           LOG.warn("Text is not expected" + child);
         }
