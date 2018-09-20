@@ -11,6 +11,7 @@ import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PsiElementPattern;
@@ -53,8 +54,9 @@ public class CucumberCompletionContributor extends CompletionContributor {
 
   private static final int SCENARIO_KEYWORD_PRIORITY = 70;
   private static final int SCENARIO_OUTLINE_KEYWORD_PRIORITY = 60;
-  public static final Pattern POSSIBLE_GROUP_PATTERN = Pattern.compile("\\(([^\\)]*)\\)");
+  public static final Pattern POSSIBLE_GROUP_PATTERN = Pattern.compile("\\(([^)]*)\\)");
   public static final Pattern QUESTION_MARK_PATTERN = Pattern.compile("([^\\\\])\\?:?");
+  public static final Pattern ARGS_INTO_BRACKETS_PATTERN = Pattern.compile("\\(\\?:[^)]*\\)");
   public static final Pattern PARAMETERS_PATTERN = Pattern.compile("<string>|<number>|<param>");
   public static final String INTELLIJ_IDEA_RULEZZZ = "IntellijIdeaRulezzz";
 
@@ -204,48 +206,113 @@ public class CucumberCompletionContributor extends CompletionContributor {
     addKeywordsToResult(gherkinFile.getStepKeywords(), result, false);
   }
 
-  private static void addStepDefinitions(CompletionResultSet result, PsiFile file) {
-    result = result.withPrefixMatcher(new CucumberPrefixMatcher(result.getPrefixMatcher().getPrefix()));
+
+  private static void addStepDefinitions(@NotNull CompletionResultSet result, @NotNull PsiFile file) {
+    CompletionResultSet cucumberResultSet = result.withPrefixMatcher(new CucumberPrefixMatcher(result.getPrefixMatcher().getPrefix()));
+    
     final List<AbstractStepDefinition> definitions = CucumberStepsIndex.getInstance(file.getProject()).getAllStepDefinitions(file);
     for (AbstractStepDefinition definition : definitions) {
-      String text = definition.getCucumberRegex();
-      if (text != null) {
+      if (definition.getCucumberRegex() == null) {
+        continue;
+      }
+      for (String stepCompletion : parseVariationsIntoBrackets(definition.getCucumberRegex())) {
         // trim regexp line start/end markers
-        text = StringUtil.trimStart(text, "^");
-        text = StringUtil.trimEnd(text, "$");
-        text = StringUtil.replace(text, "\\\"", "\"");
+        stepCompletion = StringUtil.trimStart(stepCompletion, "^");
+        stepCompletion = StringUtil.trimEnd(stepCompletion, "$");
+        stepCompletion = StringUtil.replace(stepCompletion, "\\\"", "\"");
         for (Map.Entry<String, String> group : GROUP_TYPE_MAP.entrySet()) {
-          text = StringUtil.replace(text, group.getKey(), group.getValue());
+          stepCompletion = StringUtil.replace(stepCompletion, group.getKey(), group.getValue());
         }
 
         for (Map.Entry<String, String> group : INTERPOLATION_PARAMETERS_MAP.entrySet()) {
-          text = text.replaceAll(group.getKey(), group.getValue());
+          stepCompletion = stepCompletion.replaceAll(group.getKey(), group.getValue());
         }
 
         final List<TextRange> ranges = new ArrayList<>();
-        Matcher m = QUESTION_MARK_PATTERN.matcher(text);
+        Matcher m = QUESTION_MARK_PATTERN.matcher(stepCompletion);
         if (m.find()) {
-          text = m.replaceAll("$1");
+          stepCompletion = m.replaceAll("$1");
         }
 
-        m = POSSIBLE_GROUP_PATTERN.matcher(text);
+        m = POSSIBLE_GROUP_PATTERN.matcher(stepCompletion);
         while (m.find()) {
-          text = m.replaceAll("$1");
+          stepCompletion = m.replaceAll("$1");
         }
 
-        m = PARAMETERS_PATTERN.matcher(text);
+        m = PARAMETERS_PATTERN.matcher(stepCompletion);
         while (m.find()) {
           ranges.add(new TextRange(m.start(), m.end()));
         }
 
         final PsiElement element = definition.getElement();
         final LookupElementBuilder lookup = element != null
-                                            ? LookupElementBuilder.create(element, text).bold()
-                                            : LookupElementBuilder.create(text);
-        result.addElement(lookup.withInsertHandler(new StepInsertHandler(ranges)));
+                                            ? LookupElementBuilder.create(element, stepCompletion).bold()
+                                            : LookupElementBuilder.create(stepCompletion);
+        cucumberResultSet.addElement(lookup.withInsertHandler(new StepInsertHandler(ranges)));
       }
     }
   }
+
+    /**
+     * For example: step = "^(?:user|he|) do something$" when result will be:
+     * {
+     *     "^user do something$"
+     *     "^he do something$"
+     *     "^ do something$"
+     * }
+     * @return list of steps accepted by step definition regexp
+     */
+    private static List<String> parseVariationsIntoBrackets(@NotNull String cucumberRegex) {
+      List<Pair<String, List<String>>> insertions = new ArrayList<>();
+      Matcher m = ARGS_INTO_BRACKETS_PATTERN.matcher(cucumberRegex);
+      String mainSample = cucumberRegex;
+      int k = 0;
+      while (m.find()) {
+        String key = "@key=" + k++ + "@";
+        mainSample = mainSample.replace(m.group(), key);
+        insertions.add(Pair.create(key, Arrays.asList(cucumberRegex.substring(m.start() + 3, m.end() - 1).split("\\|"))));
+      }
+
+      // Example: @sampleCounts = [2, 3] when @combinations = [1, 1], [1, 2], [1, 3], [2, 1], [2, 2], [2, 3]
+      int[] sampleCounts = new int[insertions.size()];
+      int combinationCount = 1;
+      for (int i = 0; i < insertions.size(); i++) {
+        sampleCounts[i] = insertions.get(i).getSecond().size();
+        combinationCount *= sampleCounts[i];
+      }
+      List<int[]> combinations = new ArrayList<>();
+      int[] combination = new int[sampleCounts.length];
+
+      for (int i = 0; i < sampleCounts.length; i++) {
+        combination[i] = 1;
+      }
+      combinations.add(combination);
+      for (int j = 0; j < combinationCount; j++) {
+        int[] currentCombination = Arrays.copyOf(combination, combination.length);
+        for (int i = sampleCounts.length - 1; i >= 0; i--) {
+          if (currentCombination[i] != sampleCounts[i]) {
+            currentCombination[i]++;
+            break;
+          }
+          else {
+            currentCombination[i] = 1;
+          }
+        }
+        combinations.add(combination = currentCombination);
+      }
+
+      List<String> result = new ArrayList<>();
+      for (int[] c : combinations) {
+        String stepVar = mainSample;
+        for (int i = 0; i < c.length; i++) {
+          Pair<String, List<String>> insertion = insertions.get(i);
+          String key = insertion.getFirst();
+          stepVar = stepVar.replace(key, insertion.getSecond().get(c[i] - 1));
+        }
+        result.add(stepVar);
+      }
+      return result;
+    }
 
   private static class StepInsertHandler implements InsertHandler<LookupElement> {
     private final List<TextRange> ranges;

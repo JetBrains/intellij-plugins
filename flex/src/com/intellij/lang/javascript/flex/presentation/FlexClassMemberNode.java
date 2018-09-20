@@ -19,7 +19,7 @@ import java.util.Collection;
 
 public class FlexClassMemberNode extends ProjectViewNode<JSElement> {
 
-  public FlexClassMemberNode(JSElement element, ViewSettings settings) {
+  public FlexClassMemberNode(@NotNull JSElement element, ViewSettings settings) {
     super(element.getProject(), element, settings);
   }
 

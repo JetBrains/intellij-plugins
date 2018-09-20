@@ -4,6 +4,7 @@ import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.TreeStructureProvider;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode;
+import com.intellij.ide.projectView.impl.nodes.NamedLibraryElement;
 import com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
@@ -41,20 +42,23 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
              DartSdk.DART_SDK_LIB_NAME.equals(node.getName()))) {
           final boolean isSdkRoot = DartSdk.DART_SDK_LIB_NAME.equals(node.getName());
 
-          return new NamedLibraryElementNode(node.getProject(), ((NamedLibraryElementNode)node).getValue(), settings) {
-            @Override
-            public boolean canNavigate() {
-              return isSdkRoot; // no sense to navigate anywhere in case of "Dart Packages" library
-            }
-
-            @Override
-            public void navigate(boolean requestFocus) {
-              final Project project = getProject();
-              if (project != null) {
-                DartConfigurable.openDartSettings(project);
+          NamedLibraryElement value = ((NamedLibraryElementNode)node).getValue();
+          if (value != null) {
+            return new NamedLibraryElementNode(node.getProject(), value, settings) {
+              @Override
+              public boolean canNavigate() {
+                return isSdkRoot; // no sense to navigate anywhere in case of "Dart Packages" library
               }
-            }
-          };
+
+              @Override
+              public void navigate(boolean requestFocus) {
+                final Project project = getProject();
+                if (project != null) {
+                  DartConfigurable.openDartSettings(project);
+                }
+              }
+            };
+          }
         }
 
         return node;
@@ -161,7 +165,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
   }
 
   private static class DartSdkOrLibraryRootNode extends PsiDirectoryNode {
-    DartSdkOrLibraryRootNode(final Project project, final PsiDirectory value, final ViewSettings settings) {
+    DartSdkOrLibraryRootNode(final Project project, @NotNull PsiDirectory value, final ViewSettings settings) {
       super(project, value, settings);
     }
 

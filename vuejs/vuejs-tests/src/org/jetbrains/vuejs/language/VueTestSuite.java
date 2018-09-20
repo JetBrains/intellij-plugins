@@ -14,12 +14,11 @@
 package org.jetbrains.vuejs.language;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.vuejs.language.parser.VueHighlightingLexerTest;
 import org.jetbrains.vuejs.language.parser.VueLexerTest;
 
-public class VueTestSuite extends TestCase {
+public class VueTestSuite {
   public static Test suite() {
     final TestSuite testSuite = new TestSuite(VueTestSuite.class.getSimpleName());
     testSuite.addTestSuite(VueTypedHandlerTest.class);

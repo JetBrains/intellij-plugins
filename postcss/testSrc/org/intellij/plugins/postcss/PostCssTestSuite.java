@@ -1,7 +1,6 @@
 package org.intellij.plugins.postcss;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.intellij.plugins.postcss.completion.PostCssCustomMediaCompletionTest;
 import org.intellij.plugins.postcss.completion.PostCssCustomPropertiesSetCompletionTest;
@@ -23,14 +22,14 @@ import org.intellij.plugins.postcss.smartEnter.PostCssSmartEnterTest;
 import org.intellij.plugins.postcss.usages.PostCssFindUsagesTest;
 
 @SuppressWarnings({"JUnitTestClassNamingConvention", "JUnitTestCaseWithNoTests"})
-public class PostCssTestSuite extends TestCase {
+public class PostCssTestSuite {
   public static Test suite() {
     TestSuite testSuite = new TestSuite("All PostCSS");
     testSuite.addTest(WithoutPerformance.suite());
     return testSuite;
   }
 
-  public static class WithoutPerformance extends TestCase {
+  public static class WithoutPerformance {
     public static Test suite() {
       TestSuite suite = new TestSuite("All PostCSS without performance");
       suite.addTest(Fast.suite());
@@ -43,7 +42,7 @@ public class PostCssTestSuite extends TestCase {
     }
   }
 
-  public static class Fast extends TestCase {
+  public static class Fast {
     public static Test suite() {
       TestSuite suite = new TestSuite("Fast PostCSS");
       suite.addTestSuite(PostCssLexerTest.class);
@@ -57,7 +56,7 @@ public class PostCssTestSuite extends TestCase {
     }
   }
 
-  public static class Inspections extends TestCase {
+  public static class Inspections {
     public static Test suite() {
       TestSuite suite = new TestSuite("Inspections PostCSS");
       suite.addTestSuite(PostCssCssInspectionTest.class);
@@ -76,7 +75,7 @@ public class PostCssTestSuite extends TestCase {
     }
   }
 
-  public static class Completion extends TestCase {
+  public static class Completion {
     public static Test suite() {
       TestSuite suite = new TestSuite("Completion PostCSS");
       suite.addTestSuite(PostCssNestCompletionTest.class);
@@ -87,7 +86,7 @@ public class PostCssTestSuite extends TestCase {
     }
   }
 
-  public static class Resolving extends TestCase {
+  public static class Resolving {
     public static Test suite() {
       TestSuite suite = new TestSuite("Resolving PostCSS");
       suite.addTestSuite(PostCssCustomSelectorResolveTest.class);
@@ -98,7 +97,7 @@ public class PostCssTestSuite extends TestCase {
     }
   }
 
-  public static class Refactoring extends TestCase {
+  public static class Refactoring {
     public static Test suite() {
       TestSuite suite = new TestSuite("Refactoring PostCSS");
       suite.addTestSuite(PostCssRenameTest.class);
@@ -106,7 +105,7 @@ public class PostCssTestSuite extends TestCase {
     }
   }
 
-  public static class Other extends TestCase {
+  public static class Other {
     public static Test suite() {
       TestSuite suite = new TestSuite("Other PostCSS");
       suite.addTestSuite(PostCssBreadcrumbsTest.class);

@@ -16,7 +16,7 @@ import java.util.Collection;
 
 public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNamedElement> {
 
-  public SwfQualifiedNamedElementNode(Project project, JSQualifiedNamedElement element, ViewSettings settings) {
+  public SwfQualifiedNamedElementNode(Project project, @NotNull JSQualifiedNamedElement element, ViewSettings settings) {
     super(project, element, settings);
   }
 

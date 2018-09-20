@@ -177,7 +177,7 @@ Includes the following features:</p>
               id="org.intellij.plugins.markdown.ui.actions.scrolling.AutoScrollAction"
               text="Auto-Scroll Preview"
               description="Enable/Disable preview auto scroll"
-              icon="AllIcons.General.AutoscrollFromSource">
+              icon="AllIcons.Actions.SynchronizeScrolling">
       </action>
     </group>
   </actions>

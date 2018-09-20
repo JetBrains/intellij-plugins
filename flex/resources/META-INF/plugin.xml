@@ -120,6 +120,7 @@
     <internalFileTemplate name="Flex 4 Component"/>
     <liveTemplateContext implementation="com.intellij.lang.javascript.ActionScriptCodeContextType"/>
     <liveTemplateContext implementation="com.intellij.lang.javascript.flex.MxmlTemplateContextType"/>
+    <liveTemplateContext implementation="com.intellij.lang.javascript.ActionScriptStatementContextType"/>
     <defaultLiveTemplatesProvider implementation="com.intellij.lang.javascript.ActionScriptLiveTemplatesProvider"/>
     <liveTemplateOptionalProcessor implementation="com.intellij.lang.javascript.JSShortenFQNamesProcessor"/>
     <lang.refactoringSupport language="Mxml" implementationClass="com.intellij.lang.javascript.flex.MxmlRefactoringSupportProvider"/>
@@ -129,7 +130,7 @@
     <implicitUsageProvider implementation="com.intellij.lang.javascript.flex.FlexImplicitUsageProvider"/>
     <cantBeStatic implementation="com.intellij.lang.javascript.flex.FlexImplicitUsageProvider"/>
     <refactoring.elementListenerProvider implementation="com.intellij.lang.javascript.flex.FlexRefactoringListenerProvider"/>
-    <langCodeStyleSettingsProvider implementation="com.intellij.lang.javascript.formatter.ActionScriptLanguageCodeStyleSettingsProvider"/>
+    <langCodeStyleSettingsProvider implementation="com.intellij.lang.javascript.formatter.ActionScriptLanguageCodeStyleSettingsProvider" order="before js"/>
 
     <treeStructureProvider implementation="com.intellij.lang.javascript.flex.presentation.SwfProjectViewStructureProvider"/>
     <testFinder implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitTestFinder"/>

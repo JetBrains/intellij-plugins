@@ -132,12 +132,8 @@ public class DartClosingLabelManager {
   }
 
   private static void clearEditorInlays(@NotNull Editor editor) {
-    List<Inlay> existingInlays = editor.getInlayModel().getInlineElementsInRange(0, editor.getDocument().getTextLength());
-    for (Inlay inlay : existingInlays) {
-      if (inlay.getRenderer() instanceof TextLabelCustomElementRenderer) {
-        Disposer.dispose(inlay);
-      }
-    }
+    editor.getInlayModel().getInlineElementsInRange(0, editor.getDocument().getTextLength(), TextLabelCustomElementRenderer.class)
+      .forEach(Disposer::dispose);
   }
 
   private static void clearAllInlays() {
@@ -147,12 +143,8 @@ public class DartClosingLabelManager {
       for (FileEditor fileEditor : editors) {
         if (fileEditor instanceof TextEditor) {
           Editor editor = ((TextEditor)fileEditor).getEditor();
-          List<Inlay> existingInlays = editor.getInlayModel().getInlineElementsInRange(0, editor.getDocument().getTextLength());
-          for (Inlay inlay : existingInlays) {
-            if (inlay.getRenderer() instanceof TextLabelCustomElementRenderer) {
-              Disposer.dispose(inlay);
-            }
-          }
+          editor.getInlayModel().getInlineElementsInRange(0, editor.getDocument().getTextLength(), TextLabelCustomElementRenderer.class)
+            .forEach(Disposer::dispose);
         }
       }
     }
@@ -179,13 +171,14 @@ class TextLabelCustomElementRenderer implements EditorCustomElementRenderer {
   }
 
   @Override
-  public int calcWidthInPixels(@NotNull Editor editor) {
-    FontInfo fontInfo = getFontInfo(editor);
+  public int calcWidthInPixels(@NotNull Inlay inlay) {
+    FontInfo fontInfo = getFontInfo(inlay.getEditor());
     return fontInfo.fontMetrics().stringWidth(label);
   }
 
   @Override
-  public void paint(@NotNull Editor editor, @NotNull Graphics g, @NotNull Rectangle r, @NotNull TextAttributes textAttributes) {
+  public void paint(@NotNull Inlay inlay, @NotNull Graphics g, @NotNull Rectangle r, @NotNull TextAttributes textAttributes) {
+    Editor editor = inlay.getEditor();
     TextAttributes attributes = editor.getColorsScheme().getAttributes(TEXT_ATTRIBUTES);
     if (attributes == null) return;
     Color fgColor = attributes.getForegroundColor();
