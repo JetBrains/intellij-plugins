@@ -1,6 +1,7 @@
 package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
@@ -125,6 +126,29 @@ public class CucumberJavaUtil {
           isCucumberStepAnnotation(annotation)) {
         return annotation;
       }
+    }
+    return null;
+  }
+
+  /**
+   * Computes value of Step Definition Annotation. If {@code annotationClassName provided} value of the annotation with corresponding class
+   * will be returned. Operations with string constants handled.
+   */
+  @Nullable
+  public static String getStepAnnotationValue(@NotNull PsiMethod method, @Nullable String annotationClassName) {
+    final PsiAnnotation stepAnnotation = getCucumberStepAnnotation(method, annotationClassName);
+    if (stepAnnotation == null) {
+      return null;
+    }
+    final PsiElement annotationValue = getAnnotationValue(stepAnnotation);
+    if (annotationValue == null) {
+      return null;
+    }
+    Project project = method.getProject();
+    final PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(project).getConstantEvaluationHelper();
+    final Object constantValue = evaluationHelper.computeConstantExpression(annotationValue, false);
+    if (constantValue != null) {
+      return constantValue.toString();
     }
     return null;
   }

@@ -43,25 +43,12 @@ public class JavaStepDefinition extends AbstractJavaStepDefinition {
     if (!(element instanceof PsiMethod)) {
       return null;
     }
-    final PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation((PsiMethod)element, myAnnotationClassName);
-    if (stepAnnotation == null) {
-      return null;
-    }
-    final PsiElement annotationValue = CucumberJavaUtil.getAnnotationValue(stepAnnotation);
-    if (annotationValue == null) {
-      return null;
-    }
-    Project project = element.getProject();
-    final PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(project).getConstantEvaluationHelper();
-    final Object constantValue = evaluationHelper.computeConstantExpression(annotationValue, false);
-    if (constantValue != null) {
-      String patternText = constantValue.toString();
-      if (patternText.length() > 1) {
-        final Module module = ModuleUtilCore.findModuleForPsiElement(element);
-        if (module != null) {
-          ParameterTypeManager parameterTypes = getAllParameterTypes(module);
-          return buildRegexpFromCucumberExpression(patternText.replace("\\\\", "\\").replace("\\\"", "\""), parameterTypes);
-        }
+    String patternText = CucumberJavaUtil.getStepAnnotationValue((PsiMethod)element, myAnnotationClassName);
+    if (patternText != null &&patternText.length() > 1) {
+      final Module module = ModuleUtilCore.findModuleForPsiElement(element);
+      if (module != null) {
+        ParameterTypeManager parameterTypes = getAllParameterTypes(module);
+        return buildRegexpFromCucumberExpression(patternText.replace("\\\\", "\\").replace("\\\"", "\""), parameterTypes);
       }
     }
 
