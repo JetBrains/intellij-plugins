@@ -14,6 +14,7 @@
 package org.jetbrains.plugins.cucumber;
 
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -226,10 +227,36 @@ public class CucumberUtil {
    * @param parameterTypeManager provides mapping from ParameterTypes name to its value
    * @return regular expression defined by Cucumber Expression and ParameterTypes value
    */
-  @Nullable
+  @NotNull
   public static String buildRegexpFromCucumberExpression(@NotNull String cucumberExpression,
                                                          @NotNull ParameterTypeManager parameterTypeManager) {
-    StringBuilder result = new StringBuilder();
+    List<Pair<TextRange, String>> parameterTypeValues = new ArrayList<>();
+    processParameterTypesInCucumberExpression(cucumberExpression, range -> {
+      String parameterTypeName = cucumberExpression.substring(range.getStartOffset(), range.getEndOffset());
+      String parameterTypeValue = parameterTypeManager.getParameterTypeValue(parameterTypeName);
+      parameterTypeValues.add(Pair.create(range, parameterTypeValue));
+      return true;
+    });
+
+    StringBuilder result = new StringBuilder(cucumberExpression);
+    Collections.reverse(parameterTypeValues);
+    for (Pair<TextRange, String> rangeAndValue : parameterTypeValues) {
+      String value = rangeAndValue.getSecond();
+      if (value == null) {
+        return cucumberExpression;
+      }
+      int startOffset = rangeAndValue.first.getStartOffset();
+      int endOffset = rangeAndValue.first.getEndOffset();
+      result.replace(startOffset, endOffset, value);
+    }
+    return result.toString();
+  }
+
+  /**
+   * Processes text ranges of every Parameter Type in Cucumber Expression
+   */
+  public static void processParameterTypesInCucumberExpression(@NotNull String cucumberExpression,
+                                                         @NotNull Processor<? super TextRange> processor) {
     int i = 0;
     while (i < cucumberExpression.length()) {
       char c = cucumberExpression.charAt(i);
@@ -246,35 +273,25 @@ public class CucumberUtil {
           j++;
         }
         if (j < cucumberExpression.length()) {
-          String parameterTypeName = cucumberExpression.substring(i + 1, j);
-          String parameterTypeValue = parameterTypeManager.getParameterTypeValue(parameterTypeName);
-          if (parameterTypeValue == null) {
-            return cucumberExpression;
-          }
-          else {
-            result.append(parameterTypeValue);
-          }
+          processor.process(TextRange.create(i + 1, j));
           i = j + 1;
           continue;
         }
         else {
           // unclosed parameter type
-          return cucumberExpression;
+          return;
         }
       }
 
-      result.append(c);
       if (c == '\\') {
         if (i >= cucumberExpression.length() - 1) {
           // escape without following symbol;
-          return cucumberExpression;
+          return;
         }
         i++;
-        result.append(cucumberExpression.charAt(i));
       }
       i++;
     }
-    return result.toString();
   }
 
   /**
