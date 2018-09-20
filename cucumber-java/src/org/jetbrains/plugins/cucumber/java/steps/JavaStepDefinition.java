@@ -60,7 +60,7 @@ public class JavaStepDefinition extends AbstractJavaStepDefinition {
     PsiManager manager = PsiManager.getInstance(project);
 
     VirtualFile projectDir = ProjectUtil.guessProjectDir(project);
-    PsiDirectory psiDirectory = manager.findDirectory(projectDir);
+    PsiDirectory psiDirectory = projectDir != null ? manager.findDirectory(projectDir) : null;
     if (psiDirectory != null) {
       return CachedValuesManager.getCachedValue(psiDirectory, () ->
         CachedValueProvider.Result.create(doGetAllParameterTypes(module), PsiModificationTracker.MODIFICATION_COUNT));
