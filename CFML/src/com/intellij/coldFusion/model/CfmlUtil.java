@@ -133,7 +133,7 @@ public class CfmlUtil {
     return false;
   }
 
-  private static CfmlLangInfo getCfmlLangInfo(Project project) {
+  public static CfmlLangInfo getCfmlLangInfo(Project project) {
     if (ApplicationManager.getApplication() == null) return CfmlLangInfo.getInstance(null);
     return CfmlLangInfo.getInstance(anyProject(project));
   }
@@ -174,29 +174,12 @@ public class CfmlUtil {
   }
 
   public static String getTagDescription(String tagName, Project project) {
-    if (!getCfmlLangInfo(project).getTagAttributes().containsKey(tagName)) {
-      return null;
-    }
-    CfmlTagDescription a = getCfmlLangInfo(project).getTagAttributes().get(tagName);
-    return "<div>Name: " +
-           tagName +
-           "</div>" +
-           "<div>IsEndTagRequired: " +
-           a.isEndTagRequired() +
-           "</div>" +
-           "<div>Descriprion: " +
-           a.getDescription() +
-           "</div>" +
-           "<div>For more information visit <a href = \"http://livedocs.adobe.com/coldfusion/8/htmldocs/Tags-pt0_01.html\">" +
-           "\"http://livedocs.adobe.com/coldfusion/8/htmldocs/Tags-pt0_01.html\"</div>";
+    return CfmlDocUtil.tagDescription(tagName, project);
   }
 
   public static String getAttributeDescription(String tagName, String attributeName, Project project) {
-    CfmlAttributeDescription af = getAttribute(tagName, attributeName, project);
-    if (af == null) {
-      return "";
-    }
-    return af.toString();
+    CfmlAttributeDescription cfmlAttributeDescription = getAttribute(tagName, attributeName, project);
+    return CfmlDocUtil.attributeDescription(tagName, cfmlAttributeDescription, project);
   }
 
   @Nullable

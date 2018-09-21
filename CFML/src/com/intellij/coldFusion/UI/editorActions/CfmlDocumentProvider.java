@@ -4,16 +4,21 @@ package com.intellij.coldFusion.UI.editorActions;
 import com.intellij.coldFusion.model.CfmlUtil;
 import com.intellij.coldFusion.model.psi.CfmlTag;
 import com.intellij.coldFusion.model.psi.impl.CfmlAttributeImpl;
-import com.intellij.lang.documentation.DocumentationProvider;
+import com.intellij.coldFusion.model.psi.impl.CfmlTagImpl;
+import com.intellij.lang.documentation.DocumentationProviderEx;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 /**
  * Created by Lera Nikolaenko
  */
-public class CfmlDocumentProvider implements DocumentationProvider {
+public class CfmlDocumentProvider extends DocumentationProviderEx {
   @Override
   public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
     return null;
@@ -47,5 +52,18 @@ public class CfmlDocumentProvider implements DocumentationProvider {
   @Override
   public PsiElement getDocumentationElementForLink(PsiManager psiManager, String link, PsiElement context) {
     return null;
+  }
+
+  @Nullable
+  @Override
+  public PsiElement getCustomDocumentationElement(@NotNull Editor editor,
+                                                  @NotNull PsiFile file,
+                                                  @Nullable PsiElement contextElement) {
+    if (contextElement == null) return null;
+    if (contextElement.getParent() instanceof CfmlTagImpl) return contextElement.getParent();
+    if (contextElement.getParent() instanceof CfmlAttributeImpl) return contextElement.getParent();
+    else {
+      return super.getCustomDocumentationElement(editor, file, contextElement);
+    }
   }
 }

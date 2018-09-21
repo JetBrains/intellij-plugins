@@ -70,4 +70,9 @@ public class CfmlTypesInfo {
     }
     return ANY_TYPE;
   }
+
+  public static String typeFromInt(int index) {
+    if (index >= ourTypeNames.length) return "unknown type";
+    return ourTypeNames[index];
+  }
 }

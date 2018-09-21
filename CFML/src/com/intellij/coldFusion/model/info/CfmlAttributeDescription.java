@@ -14,7 +14,7 @@ public class CfmlAttributeDescription implements Comparable<CfmlAttributeDescrip
   // private String myName;
   private final int myType;
   private final boolean myRequired;
-  private final String myDescription;
+  private String myDescription;
   private String myCompletionExample = null;
   private String[] myValues = null;
 
@@ -35,6 +35,10 @@ public class CfmlAttributeDescription implements Comparable<CfmlAttributeDescrip
       myValues = ArrayUtil.EMPTY_STRING_ARRAY;
     }
     myValues = ArrayUtil.append(myValues, value);
+  }
+
+  public void setDescription(String description) {
+    myDescription = description;
   }
 
   @Nullable

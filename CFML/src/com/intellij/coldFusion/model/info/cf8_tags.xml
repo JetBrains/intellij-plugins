@@ -26,6 +26,7 @@
 	]>
  -->
 <dictionary xmlns="http://www.cfeclipse.org/version1/dictionary">
+	<doc link="https://cfdocs.org/cf8"/>
 	<tags>
 <!--
 	cfabort

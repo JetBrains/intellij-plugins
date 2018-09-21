@@ -80,6 +80,7 @@ public class CfmlLangInfo {
       myPredefinedFunctions = cfmlTagsParser.getFunctionsList();
       myPredefinedFunctionsInLowCase = cfmlTagsParser.getFunctionsListLowerCased();
       myPredefinedVariables = cfmlTagsParser.getPredefinedVariables();
+      myOnlineDocumentationLink = cfmlTagsParser.getOnlineDocumentationLink();
     }
 
     public String[] myPredefinedFunctions;
@@ -88,6 +89,7 @@ public class CfmlLangInfo {
     public String[] myVariableScopes;
     public Map<String, CfmlTagDescription> myTagAttributes;
     public Map<String, CfmlFunctionDescription> myFunctionParameters;
+    public String myOnlineDocumentationLink;
   }
 
   private CfmlLangDictionary getProjectDictionary() {
@@ -143,6 +145,10 @@ public class CfmlLangInfo {
 
   public Map<String, CfmlFunctionDescription> getFunctionParameters() {
     return getProjectDictionary().myFunctionParameters;
+  }
+
+  public String getOnlineDocumentationLink() {
+    return getProjectDictionary().myOnlineDocumentationLink;
   }
 
   private static final Logger LOG = Logger.getInstance(CfmlLangInfo.class.getName());

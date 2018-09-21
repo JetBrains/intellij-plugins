@@ -58,7 +58,7 @@ public class CfmlAttributeNameImpl extends CfmlAttributeImpl {
   @Override
   @NotNull
   public String getName() {
-    final String name = getPureAttributeValue();
+    final String name = getAttributeName();
     return name != null ? name : "";
   }
 }

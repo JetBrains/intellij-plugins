@@ -15,6 +15,7 @@
   ~ limitations under the License.
   -->
 <dictionary>
+  <doc link="https://helpx.adobe.com/coldfusion/cfml-reference/new-and-changed-tags-functions-in-coldfusion-11.html"/>
     <tags>
       <!-- <cfhtmltopdf
     encryption = "AES_128|RC4_40|RC4_128|RC4_128M|None"

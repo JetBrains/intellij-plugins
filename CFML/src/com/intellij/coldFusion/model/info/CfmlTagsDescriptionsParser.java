@@ -16,11 +16,11 @@ import java.util.regex.Pattern;
 /**
  * @author vnikolaenko
  */
-// TODO: parse attributes descriptions
 // TODO: parse functions' parameters descriptions
 // TODO: parse predefined variables
 public class CfmlTagsDescriptionsParser extends DefaultHandler {
   private boolean myIsTagHelpSection = false;
+  private boolean myIsAttributeHelpSection = false;
   private boolean myIsFunctionHelpSection = false;
   private Map<String, CfmlTagDescription> myTags;
   private Map<String, CfmlFunctionDescription> myFunctions;
@@ -29,14 +29,18 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
   private CfmlFunctionDescription myCurrentFunction = null;
   private CfmlAttributeDescription myCurrentAttribute = null;
   private final List<String> myFunctionUpperCased = new LinkedList<>();
+  private String myOnlineDocumentationLink = "https://helpx.adobe.com/support/coldfusion.html"; //as default online documentation link
   private String myCurrentScope = "";
 
   private static final int TAG_STATE = 0;
   private static final int FUNCTION_STATE = 1;
   private static final int SCOPE_STATE = 2;
   private static final int PREDEFINED_VARIABLE_STATE = 3;
+  private static final int ONLINE_DOC_LINK_STATE = 4;
+  private static final int TAG_PARAMETER_STATE = 5;
 
   private int myState;
+
 
   @Override
   public void startDocument() throws SAXException {
@@ -49,21 +53,27 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
   }
 
   private final Pattern myPattern = Pattern.compile("\\s{2,}");
+
   @Override
   public void characters(char[] ch, int start, int length) throws SAXException {
-    if (!myIsTagHelpSection && !myIsFunctionHelpSection) return;
+    if (!myIsTagHelpSection &&  !myIsAttributeHelpSection && !myIsFunctionHelpSection) return;
     String description = new String(ch, start, length);
     description = myPattern.matcher(description).replaceAll(" ");
 
     if (myIsTagHelpSection && myCurrentTag != null) {
       String previousDescription = myCurrentTag.getDescription();
       myCurrentTag.setDescription(
-        StringUtil.isEmpty(previousDescription) ?description:previousDescription + "\n" + description);
+        StringUtil.isEmpty(previousDescription) ? description : previousDescription + "\n" + description);
+    }
+    if (myIsAttributeHelpSection && myCurrentAttribute != null) {
+      String previousDescription = myCurrentAttribute.getDescription();
+      myCurrentAttribute.setDescription(
+        StringUtil.isEmpty(previousDescription) ? description : previousDescription + "\n" + description);
     }
     else if (myIsFunctionHelpSection && myCurrentFunction != null) {
       String previousDescription = myCurrentFunction.getDescription();
       myCurrentFunction.setDescription(
-        StringUtil.isEmpty(previousDescription) ?description:previousDescription + "\n" + description);
+        StringUtil.isEmpty(previousDescription) ? description : previousDescription + "\n" + description);
     }
   }
 
@@ -82,18 +92,31 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
     else if (localName.equals("scopes")) {
       myState = PREDEFINED_VARIABLE_STATE;
     }
-    else if (myState == TAG_STATE) {
+    else if (localName.equals("doc")) {
+      myState = ONLINE_DOC_LINK_STATE;
+      String link = attr.getValue("link");
+      if (link != null) myOnlineDocumentationLink = link;
+    }
+    else if (myState == TAG_STATE || myState == TAG_PARAMETER_STATE) {
       myIsTagHelpSection = false;
       if (localName.equals("tag")) {
+        myState = TAG_STATE;
         final String isSingle = attr.getValue("single");
-        final String isEndtagrequired = attr.getValue("endtagrequired");
+        final String endTagRequired = attr.getValue("endtagrequired");
         myCurrentTag = new CfmlTagDescription(attr.getValue("name"),
-                                              Boolean.valueOf(isSingle), Boolean.valueOf(isEndtagrequired));
+                                              Boolean.valueOf(isSingle), Boolean.valueOf(endTagRequired));
       }
       else if (localName.equals("help")) {
-        myIsTagHelpSection = true;
+        if (myState == TAG_STATE) {
+          myIsTagHelpSection = true;
+        }
+        else {
+          myIsAttributeHelpSection = true;
+        }
       }
       else if (localName.equals("parameter")) {
+        myIsAttributeHelpSection = false;
+        myState = TAG_PARAMETER_STATE;
         String aName = attr.getValue("name");
         int aType = CfmlTypesInfo.getTypeByString(attr.getValue("type"));
         boolean aRequired = Boolean.valueOf(attr.getValue("required"));
@@ -190,5 +213,9 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
 
   public Map<String, CfmlTagDescription> getTags() {
     return myTags;
+  }
+
+  public String getOnlineDocumentationLink() {
+    return myOnlineDocumentationLink;
   }
 }

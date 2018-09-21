@@ -123,6 +123,10 @@ public class CfmlMappingsForm {
           //noinspection SpellCheckingInspection
           setText("Railo");
         }
+        else if (CfmlLanguage.LUCEE.equals(value)) {
+          //noinspection SpellCheckingInspection
+          setText("Lucee");
+        }
       }
     });
     myLanguageLevel.addItem(CfmlLanguage.CF8);
@@ -130,6 +134,7 @@ public class CfmlMappingsForm {
     myLanguageLevel.addItem(CfmlLanguage.CF10);
     myLanguageLevel.addItem(CfmlLanguage.CF11);
     myLanguageLevel.addItem(CfmlLanguage.RAILO);
+    myLanguageLevel.addItem(CfmlLanguage.LUCEE);
 
     myMessageLabel.setIcon(UIUtil.getBalloonWarningIcon());
     myMessageLabel.setVisible(false);
