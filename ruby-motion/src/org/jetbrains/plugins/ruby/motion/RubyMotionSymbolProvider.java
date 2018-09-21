@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.ruby.motion.bridgesupport.Class;
 import org.jetbrains.plugins.ruby.motion.bridgesupport.*;
 import org.jetbrains.plugins.ruby.motion.symbols.*;
+import org.jetbrains.plugins.ruby.ruby.codeInsight.resolve.scope.RElementWithFQN;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.RubySymbolProviderBase;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Type;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.TypeSet;
@@ -144,14 +145,14 @@ public class RubyMotionSymbolProvider extends RubySymbolProviderBase {
 
   @Nullable
   @Override
-  protected Symbol getSpecificSymbol(PsiElement element, RContainer context) {
+  protected Symbol getSpecificSymbol(PsiElement element, RElementWithFQN context) {
     if (context instanceof RClass || context instanceof RModule) {
       final boolean isObject = CoreTypes.Object.equals(context.getFQN().getFullPath());
       final RubyMotionSymbol symbol = isObject ? new RubyMotionSymbol((RFile)context.getContainingFile()) : null;
-      final Symbol nsObject = SymbolUtil.findConstantByFQN(element.getProject(), Type.CLASS, getParentName(context), element);
+      final Symbol nsObject = SymbolUtil.findConstantByFQN(element.getProject(), Type.CLASS, getParentName((RContainer)context), element);
       final List<Symbol> includes = isObject ? Collections.singletonList(symbol) : Collections.emptyList();
       final List<Symbol> superclasses = nsObject != null ? Collections.singletonList(nsObject) : Collections.emptyList();
-      return new MotionEnabledClassModuleSymbol(context, includes, Collections.emptyList(), superclasses);
+      return new MotionEnabledClassModuleSymbol((RContainer)context, includes, Collections.emptyList(), superclasses);
     }
     return null;
   }
