@@ -36,7 +36,7 @@ import static com.intellij.lang.javascript.psi.JSCommonTypeNames.*;
 /**
  * @author Konstantin.Ulitin
  */
-public class ActionScriptClassResolver extends JSClassResolver {
+public final class ActionScriptClassResolver extends JSClassResolver {
 
   private static ActionScriptClassResolver INSTANCE = null;
 
