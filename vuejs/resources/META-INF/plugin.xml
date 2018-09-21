@@ -62,7 +62,8 @@
     <liveTemplateContext implementation="org.jetbrains.vuejs.liveTemplate.VueInsideTagLiveTemplateContextType"/>
     <liveTemplateContext implementation="org.jetbrains.vuejs.liveTemplate.VueTopLevelLiveTemplateContextType"/>
     <defaultLiveTemplatesProvider implementation="org.jetbrains.vuejs.liveTemplate.VueTemplatesProvider"/>
-
+    <renamePsiElementProcessor implementation="org.jetbrains.vuejs.refactoring.VuejsComponentRenameProcessor"/>
+    <referencesSearch implementation="org.jetbrains.vuejs.findUsages.VueJSReferenceSearcher"/>
     <completion.contributor language="HTML" implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueCompletionContributor"/>
     <typedHandler implementation="org.jetbrains.vuejs.codeInsight.completion.VueAutoPopupHandler"/>
   </extensions>

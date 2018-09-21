@@ -34,7 +34,7 @@ fun fromAsset(text: String): String {
 
 fun toAsset(name: String): String {
   val words = name.split("-".toRegex()).dropLastWhile(String::isEmpty).toTypedArray()
-  for (i in 1..words.size - 1) {
+  for (i in 1 until words.size) {
     words[i] = StringUtil.capitalize(words[i])
   }
   return StringUtil.join(*words)
@@ -57,14 +57,15 @@ val EMPTY_FILTER : (String, PsiElement) -> Boolean  = { _, _ -> true}
 fun getStringLiteralsFromInitializerArray(holder: PsiElement,
                                           filter: (String, PsiElement) -> Boolean): List<JSLiteralExpression> {
   return JSStubBasedPsiTreeUtil.findDescendants<JSLiteralExpression>(holder,
-                                                TokenSet.create(JSStubElementTypes.LITERAL_EXPRESSION, JSStubElementTypes.STRING_TEMPLATE_EXPRESSION))
-    .filter({
-              val context = it.context
-              !it.significantValue.isNullOrBlank() &&
-              QUOTES.contains(it.significantValue!![0]) &&
-              filter(es6Unquote(it.significantValue!!), it) &&
-              ((context is JSArrayLiteralExpression) && (context.parent == holder) || context == holder)
-            })
+                                                                     TokenSet.create(JSStubElementTypes.LITERAL_EXPRESSION,
+                                                                                     JSStubElementTypes.STRING_TEMPLATE_EXPRESSION))
+    .filter {
+      val context = it.context
+      !it.significantValue.isNullOrBlank() &&
+      QUOTES.contains(it.significantValue!![0]) &&
+      filter(es6Unquote(it.significantValue!!), it) &&
+      ((context is JSArrayLiteralExpression) && (context.parent == holder) || context == holder)
+    }
 }
 
 fun getTextIfLiteral(holder: PsiElement?): String? {

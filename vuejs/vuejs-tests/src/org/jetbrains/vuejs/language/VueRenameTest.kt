@@ -49,9 +49,31 @@ class VueRenameTest : LightPlatformCodeInsightFixtureTestCase() {
     doTest("newName")
   }
 
+  fun testComponentNameFromDeclaration() {
+    val testFile1 = getTestName(true) + "1.vue"
+    val testFile2 = getTestName(true) + "2.vue"
+    val testFile3 = getTestName(true) + ".html"
+    val testFile4 = getTestName(true) + ".ts"
+    val testFile5 = getTestName(true) + ".js"
+    val testFileAfter1 = getTestName(true) + "1_after.vue"
+    val testFileAfter2 = getTestName(true) + "2_after.vue"
+    myFixture.configureByFile(testFile5)
+    myFixture.configureByFile(testFile4)
+    myFixture.configureByFile(testFile3)
+    myFixture.configureByFile(testFile2)
+    myFixture.configureByFile(testFile1)
+    myFixture.testRename(testFileAfter1, "AfterComponent")
+    myFixture.checkResultByFile(testFile1, testFileAfter1, true)
+    myFixture.checkResultByFile(testFile2, testFileAfter2, true)
+    myFixture.checkResultByFile(testFile3, testFile3, true)
+    myFixture.checkResultByFile(testFile4, testFile4, true)
+    myFixture.checkResultByFile(testFile5, testFile5, true)
+  }
+
   private fun doTest(newName: String) {
     myFixture.configureByFile(getTestName(true) + ".vue")
     myFixture.renameElementAtCaret(newName)
     myFixture.checkResultByFile(getTestName(true) + "_after.vue")
   }
+
 }
