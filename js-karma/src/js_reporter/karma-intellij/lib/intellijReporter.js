@@ -17,7 +17,11 @@ function addBrowserErrorNode(tree, browser, error) {
   var browserNode = getOrCreateBrowserNode(tree, browser);
   var browserErrorNode = browserNode.addChild('Error', false, 'browserError', null);
   browserErrorNode.writeStartMessage();
-  browserErrorNode.setStatus(3, null, error);
+  if (intellijUtil.isString(error)) {
+    error = {stack: error};
+  }
+  const normalizedError = normalizeAssertionError(error.stack, error);
+  browserErrorNode.setStatus(3, null, error.message || '', error.stack, null, null);
   browserErrorNode.writeFinishMessage();
 }
 
@@ -213,6 +217,7 @@ function normalizeAssertionError(stack, assertionError) {
   if (!assertionError) {
     return {stack: stack};
   }
+  stack = stack || '';
   var assertionMessage = assertionError.message;
   var assertionName = assertionError.name;
   var stackLeftTrimmed = stack.trimLeft();
