@@ -5,8 +5,6 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.refactoring.JSDefaultRenameProcessor
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.ElementDescriptionLocation
-import com.intellij.psi.ElementDescriptionProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.html.HtmlTagImpl
@@ -48,14 +46,5 @@ class VueJSComponentRenameProcessor : JSDefaultRenameProcessor() {
     return element as? JSImplicitElement ?: JSImplicitElementImpl.Builder(element.text, element)
       .setUserString(VueComponentsIndex.JS_KEY)
       .toImplicitElement()
-  }
-
-  class VueJSComponentElementDescriptor : ElementDescriptionProvider {
-    override fun getElementDescription(element: PsiElement, location: ElementDescriptionLocation): String? {
-      when {
-        VueRefactoringUtils.isComponentName(element) -> return "component"
-        else -> return null
-      }
-    }
   }
 }

@@ -56,8 +56,9 @@ class VueJSReferenceContributor : PsiReferenceContributor() {
           if (element !is PsiElement) return false
           if (element.containingFile.fileType != VueFileType.INSTANCE) return false
           val content = findModule(element) ?: return false
-          val defaultExport = ES6PsiUtil.findDefaultExport(content) as PsiElement
-          return ((element.parent as? JSPropertyImpl)?.name == "name" && defaultExport == element.parent.parent.parent)
+          val defaultExport = ES6PsiUtil.findDefaultExport(content)
+          if (defaultExport == null) return false
+          return ((element.parent as? JSPropertyImpl)?.name == "name" && defaultExport as PsiElement == element.parent.parent.parent)
         }
 
         override fun isClassAcceptable(hintClass: Class<*>?): Boolean {
