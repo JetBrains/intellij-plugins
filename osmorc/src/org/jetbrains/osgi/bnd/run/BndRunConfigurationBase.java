@@ -9,14 +9,14 @@ import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.i18n.OsmorcBundle;
 
 import java.io.File;
 
-public abstract class BndRunConfigurationBase extends LocatableConfigurationBase implements ModuleRunProfile, PersistentStateComponent<Element> {
+public abstract class BndRunConfigurationBase extends LocatableConfigurationBase<BndRunConfigurationOptions>
+  implements ModuleRunProfile, PersistentStateComponent<BndRunConfigurationOptions> {
   public BndRunConfigurationBase(Project project, @NotNull ConfigurationFactory factory, String name) {
     super(project, factory, name);
   }
@@ -24,13 +24,6 @@ public abstract class BndRunConfigurationBase extends LocatableConfigurationBase
   @Override
   protected BndRunConfigurationOptions getOptions() {
     return (BndRunConfigurationOptions)super.getOptions();
-  }
-
-  @Override
-  public Element getState() {
-    Element element = new Element("state");
-    super.writeExternal(element);
-    return element;
   }
 
   @NotNull
