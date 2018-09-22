@@ -21,6 +21,7 @@ public abstract class BndRunConfigurationBase extends LocatableConfigurationBase
     super(project, factory, name);
   }
 
+  @NotNull
   @Override
   protected BndRunConfigurationOptions getOptions() {
     return (BndRunConfigurationOptions)super.getOptions();

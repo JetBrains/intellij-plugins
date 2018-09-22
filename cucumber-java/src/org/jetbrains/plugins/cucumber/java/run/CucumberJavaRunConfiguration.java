@@ -168,6 +168,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
     super.checkConfiguration();
   }
 
+  @NotNull
   @Override
   protected CucumberJavaConfigurationOptions getOptions() {
     return (CucumberJavaConfigurationOptions)super.getOptions();
