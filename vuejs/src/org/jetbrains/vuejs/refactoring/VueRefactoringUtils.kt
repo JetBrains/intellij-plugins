@@ -19,7 +19,7 @@ object VueRefactoringUtils {
   }
 
   fun isComponentName(element: PsiElement): Boolean {
-    if(element.containingFile == null) return false
+    if (element.containingFile == null) return false
     if (element.containingFile.fileType != VueFileType.INSTANCE) return false
     return ((element.parent.parent as? JSPropertyImpl)?.name == "name")
   }

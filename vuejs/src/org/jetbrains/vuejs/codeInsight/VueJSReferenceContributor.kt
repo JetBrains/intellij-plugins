@@ -1,10 +1,12 @@
 package org.jetbrains.vuejs.codeInsight
 
+import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.javascript.psi.JSFunction
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
+import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils.isArrowFunction
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.CachingPolyReferenceBase
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
@@ -22,7 +24,7 @@ import org.jetbrains.vuejs.VueFileType
 /**
  * @author Irina.Chernushina on 8/1/2017.
  */
-class VueInsideScriptReferenceContributor : PsiReferenceContributor() {
+class VueJSReferenceContributor : PsiReferenceContributor() {
   companion object {
     private val FUNCTION_INSIDE_SCRIPT: ElementPattern<out PsiElement> = createFunctionInsideScript()
     private val COMPONENT_NAME: ElementPattern<out PsiElement> = createComponentName()
@@ -38,7 +40,7 @@ class VueInsideScriptReferenceContributor : PsiReferenceContributor() {
 
             val pair = findScriptWithExport(element) ?: return false
             // lexical this for arrow functions => must be in-place
-            val isArrowFunction = com.intellij.lang.javascript.psi.impl.JSPsiImplUtils.isArrowFunction(function)
+            val isArrowFunction = isArrowFunction(function)
             return isAncestor(pair.first, element, true) && (!isArrowFunction || isAncestor(pair.second, element, true))
           }
 
@@ -53,7 +55,9 @@ class VueInsideScriptReferenceContributor : PsiReferenceContributor() {
         override fun isAcceptable(element: Any?, context: PsiElement?): Boolean {
           if (element !is PsiElement) return false
           if (element.containingFile.fileType != VueFileType.INSTANCE) return false
-          return ((element.parent as? JSPropertyImpl)?.name == "name")
+          val content = findModule(element) ?: return false
+          val defaultExport = ES6PsiUtil.findDefaultExport(content) as PsiElement
+          return ((element.parent as? JSPropertyImpl)?.name == "name" && defaultExport == element.parent.parent.parent)
         }
 
         override fun isClassAcceptable(hintClass: Class<*>?): Boolean {
@@ -86,7 +90,7 @@ private class VueComponentLocalReference(reference: JSReferenceExpressionImpl,
   override fun resolveInner(): Array<ResolveResult> {
     getParentOfType(element, JSFunction::class.java, true) ?: return emptyArray()
     // let function context around the expression be enough to think it is used somewhere in assembling the exported object
-    return org.jetbrains.vuejs.codeInsight.VueJSReferenceExpressionResolver(element, false).resolveInCurrentComponentDefinition(element)
+    return VueJSReferenceExpressionResolver(element, false).resolveInCurrentComponentDefinition(element)
            ?: emptyArray()
   }
 }
