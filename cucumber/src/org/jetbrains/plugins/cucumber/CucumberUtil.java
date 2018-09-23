@@ -232,7 +232,7 @@ public class CucumberUtil {
                                                          @NotNull ParameterTypeManager parameterTypeManager) {
     List<Pair<TextRange, String>> parameterTypeValues = new ArrayList<>();
     processParameterTypesInCucumberExpression(cucumberExpression, range -> {
-      String parameterTypeName = cucumberExpression.substring(range.getStartOffset(), range.getEndOffset());
+      String parameterTypeName = cucumberExpression.substring(range.getStartOffset() + 1, range.getEndOffset() - 1);
       String parameterTypeValue = parameterTypeManager.getParameterTypeValue(parameterTypeName);
       parameterTypeValues.add(Pair.create(range, parameterTypeValue));
       return true;
@@ -247,7 +247,7 @@ public class CucumberUtil {
       }
       int startOffset = rangeAndValue.first.getStartOffset();
       int endOffset = rangeAndValue.first.getEndOffset();
-      result.replace(startOffset, endOffset, value);
+      result.replace(startOffset, endOffset, "(" + value + ")");
     }
     return result.toString();
   }
@@ -273,7 +273,7 @@ public class CucumberUtil {
           j++;
         }
         if (j < cucumberExpression.length()) {
-          processor.process(TextRange.create(i + 1, j));
+          processor.process(TextRange.create(i, j + 1));
           i = j + 1;
           continue;
         }
@@ -305,6 +305,11 @@ public class CucumberUtil {
       @Override
       public String getParameterTypeValue(@NotNull String name) {
         containsParameterTypes[0] = true;
+        return null;
+      }
+
+      @Override
+      public PsiElement getParameterTypeDeclaration(@NotNull String name) {
         return null;
       }
     });

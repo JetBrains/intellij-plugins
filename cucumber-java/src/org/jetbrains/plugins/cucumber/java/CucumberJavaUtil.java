@@ -72,7 +72,7 @@ public class CucumberJavaUtil {
   }
 
   @Nullable
-  public static PsiAnnotationMemberValue getAnnotationValue(@NotNull final PsiAnnotation stepAnnotation) {
+  public static PsiAnnotationMemberValue getAnnotationMemberValue(@NotNull final PsiAnnotation stepAnnotation) {
     final PsiNameValuePair[] attributes = stepAnnotation.getParameterList().getAttributes();
     PsiNameValuePair valuePair = null;
     if (attributes.length > 0) {
@@ -140,11 +140,17 @@ public class CucumberJavaUtil {
     if (stepAnnotation == null) {
       return null;
     }
-    final PsiElement annotationValue = getAnnotationValue(stepAnnotation);
+
+    return getAnnotationValue(stepAnnotation);
+  }
+
+  @Nullable
+  public static String getAnnotationValue(@NotNull PsiAnnotation stepAnnotation) {
+    final PsiElement annotationValue = getAnnotationMemberValue(stepAnnotation);
     if (annotationValue == null) {
       return null;
     }
-    Project project = method.getProject();
+    Project project = annotationValue.getProject();
     final PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(project).getConstantEvaluationHelper();
     final Object constantValue = evaluationHelper.computeConstantExpression(annotationValue, false);
     if (constantValue != null) {

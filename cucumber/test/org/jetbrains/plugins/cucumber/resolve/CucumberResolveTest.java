@@ -1,20 +1,15 @@
 package org.jetbrains.plugins.cucumber.resolve;
 
 import com.intellij.openapi.application.PathManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.ResolveResult;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
-import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 
 public abstract class CucumberResolveTest extends CucumberCodeInsightTestCase {
-  protected void checkReference(@NotNull final String step, @Nullable final String stepDefinitionName) {
-    final CucumberStepReference ref = (CucumberStepReference)findReferenceBySignature(step);
-    assert ref != null;
-
-    final ResolveResult[] result = ref.multiResolve(true);
+  protected void checkReference(@NotNull final String element, @Nullable final String stepDefinitionName) {
+    final ResolveResult[] result = getResolveResult(element);
     boolean ok = stepDefinitionName == null;
     for (ResolveResult rr : result) {
       final PsiElement resolvedElement = rr.getElement();
@@ -31,6 +26,14 @@ public abstract class CucumberResolveTest extends CucumberCodeInsightTestCase {
       }
     }
     assertTrue(ok);
+  }
+
+  private ResolveResult[] getResolveResult(@NotNull String step) {
+    final PsiReference reference = findReferenceBySignature(step);
+    if (reference instanceof PsiPolyVariantReference) {
+      return ((PsiPolyVariantReference) reference).multiResolve(true);
+    }
+    return new ResolveResult[] {new PsiElementResolveResult(reference.resolve())};
   }
 
   public void doTest(@NotNull final String folder, @NotNull final String step, @Nullable final String stepDefinitionName) {

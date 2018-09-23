@@ -55,7 +55,8 @@ public class JavaStepDefinition extends AbstractJavaStepDefinition {
     return null;
   }
 
-  private static MapParameterTypeManager getAllParameterTypes(@NotNull Module module) {
+  // ToDo: move to CucumberJavaUtil
+  public static MapParameterTypeManager getAllParameterTypes(@NotNull Module module) {
     Project project = module.getProject();
     PsiManager manager = PsiManager.getInstance(project);
 
@@ -82,7 +83,9 @@ public class JavaStepDefinition extends AbstractJavaStepDefinition {
       }
     }
 
-    Map<String, String> result = new HashMap<>();
+    SmartPointerManager smartPointerManager = SmartPointerManager.getInstance(module.getProject());
+    Map<String, String> values = new HashMap<>();
+    Map<String, SmartPsiElementPointer<PsiElement>> declarations = new HashMap<>();
     for (UsageInfo ui: processor.getResults()) {
       PsiElement element = ui.getElement();
       if (element != null && element.getParent() instanceof PsiNewExpression) {
@@ -104,14 +107,16 @@ public class JavaStepDefinition extends AbstractJavaStepDefinition {
               continue;
             }
             String value = constantValue.toString();
-            
-            result.put(name, value);
+            values.put(name, value);
+
+            SmartPsiElementPointer<PsiElement> smartPointer = smartPointerManager.createSmartPsiElementPointer(expressions[0]);
+            declarations.put(name, smartPointer);
           }
         }
       }
     }
 
-    result.putAll(STANDARD_PARAMETER_TYPES);
-    return new MapParameterTypeManager(result);
+    values.putAll(STANDARD_PARAMETER_TYPES);
+    return new MapParameterTypeManager(values, declarations);
   }
 }
