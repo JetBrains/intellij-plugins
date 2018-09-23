@@ -57,7 +57,7 @@ class VueJSReferenceContributor : PsiReferenceContributor() {
           if (element.containingFile.fileType != VueFileType.INSTANCE) return false
           val content = findModule(element) ?: return false
           val defaultExport = ES6PsiUtil.findDefaultExport(content)
-          if (defaultExport == null) return false
+          if (defaultExport == null || element.parent.parent.parent == null) return false
           return ((element.parent as? JSPropertyImpl)?.name == "name" && defaultExport as PsiElement == element.parent.parent.parent)
         }
 

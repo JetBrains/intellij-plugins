@@ -11,7 +11,6 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.PairProcessor
 import com.intellij.util.Processor
 import org.jetbrains.vuejs.codeInsight.findModule
-import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.refactoring.VueRefactoringUtils
 
@@ -31,7 +30,9 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
       queryParameters.optimizer.searchQuery(
         QuerySearchRequest(ReferencesSearch.search(defaultExport, queryParameters.effectiveSearchScope), collector,
                            false, PairProcessor { reference, _ -> consumer.process(reference) }))
-      val names = setOf(component.name, toAsset(component.name), fromAsset(component.name))
+      //We are searching for <component-a> and <ComponentA> tags
+      //Original component name can't be fromAsset (name: "component-a")
+      val names = setOf(component.name, toAsset(component.name))
       for (name in names) {
         queryParameters.optimizer.searchWord(name, queryParameters.effectiveSearchScope, false,
                                              component)
