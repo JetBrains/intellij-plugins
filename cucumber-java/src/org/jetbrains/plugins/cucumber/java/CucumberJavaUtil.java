@@ -25,10 +25,7 @@ import org.jetbrains.plugins.cucumber.java.config.CucumberConfigUtil;
 import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaAnnotationProvider;
 import org.jetbrains.plugins.cucumber.psi.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.intellij.psi.util.PsiTreeUtil.getChildOfType;
 import static com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList;
@@ -40,6 +37,20 @@ public class CucumberJavaUtil {
   public static final String CUCUMBER_STEP_ANNOTATION_PREFIX_1_1 = "cucumber.api.java.";
 
   private static final String PARAMETER_TYPE_CLASS = "io.cucumber.cucumberexpressions.ParameterType";
+
+  private static final Map<String, String> JAVA_PARAMETER_TYPES;
+  
+  static {
+    Map<String, String> javaParameterTypes = new HashMap<>();
+    javaParameterTypes.put("short", STANDARD_PARAMETER_TYPES.get("int"));
+    javaParameterTypes.put("biginteger", STANDARD_PARAMETER_TYPES.get("int"));
+    javaParameterTypes.put("bigdecimal", "(-?\\d*[.,]\\d+)");
+    javaParameterTypes.put("byte", STANDARD_PARAMETER_TYPES.get("int"));
+    javaParameterTypes.put("double", STANDARD_PARAMETER_TYPES.get("float"));
+    javaParameterTypes.put("long", STANDARD_PARAMETER_TYPES.get("int"));
+
+    JAVA_PARAMETER_TYPES = Collections.unmodifiableMap(javaParameterTypes);
+  }
 
   private static String getCucumberAnnotationSuffix(@NotNull String name) {
     if (name.startsWith(CUCUMBER_STEP_ANNOTATION_PREFIX_1_0)) {
@@ -342,6 +353,7 @@ public class CucumberJavaUtil {
     }
 
     values.putAll(STANDARD_PARAMETER_TYPES);
+    values.putAll(JAVA_PARAMETER_TYPES);
     return new MapParameterTypeManager(values, declarations);
   }
 }

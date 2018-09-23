@@ -6,3 +6,10 @@ Feature: Parameter Type test
     When 10.0 is float
     When word is word
     When "text with space" is string
+
+    When There is biginteger 10
+    When There is bigdecimal 10.0
+    When There is long 10
+    When There is short 10
+    When There is byte 10
+    When There is double 10.0

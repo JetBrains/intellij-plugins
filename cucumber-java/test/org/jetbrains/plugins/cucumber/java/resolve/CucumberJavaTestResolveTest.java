@@ -59,6 +59,16 @@ public class CucumberJavaTestResolveTest extends BaseCucumberJavaResolveTest {
     checkReference("strin<caret>g", "step_string_method");
   }
 
+  public void testResolveOfStepWithAdditionalParameterType() {
+    init("stepResolve_ParameterType");
+    checkReference("bigin<caret>teger", "step_method");
+    checkReference("bigde<caret>cimal", "step_method");
+    checkReference("sho<caret>rt", "step_method");
+    checkReference("by<caret>te", "step_method");
+    checkReference("lo<caret>ng", "step_method");
+    checkReference("dou<caret>ble", "step_method");
+  }
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumberJava8ProjectDescriptor();

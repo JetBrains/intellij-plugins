@@ -48,4 +48,27 @@ public class ParameterTypeSteps {
     ));
   }
 
+  @And("There is bigdecimal {bigdecimal}")
+  public void step_method(BigDecimal param) throws Throwable {
+  }
+
+  @And("There is short {short}")
+  public void step_method(short arg1) throws Throwable {
+  }
+
+  @And("There is biginteger {biginteger}")
+  public void step_method(BigInteger param) throws Throwable {
+  }
+
+  @And("There is long {long}")
+  public void step_method(Long arg1) throws Throwable {
+  }
+
+  @And("There is byte {byte}")
+  public void step_method(byte arg1) throws Throwable {
+  }
+
+  @And("There is double {double}")
+  public void step_method(double arg1) throws Throwable {
+  }
 }
