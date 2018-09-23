@@ -57,7 +57,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
   public static final Pattern POSSIBLE_GROUP_PATTERN = Pattern.compile("\\(([^)]*)\\)");
   public static final Pattern QUESTION_MARK_PATTERN = Pattern.compile("([^\\\\])\\?:?");
   public static final Pattern ARGS_INTO_BRACKETS_PATTERN = Pattern.compile("\\(\\?:[^)]*\\)");
-  public static final Pattern PARAMETERS_PATTERN = Pattern.compile("<string>|<number>|<param>");
+  public static final Pattern PARAMETERS_PATTERN = Pattern.compile("<string>|<number>|<param>|\\{[^}]+}");
   public static final String INTELLIJ_IDEA_RULEZZZ = "IntellijIdeaRulezzz";
 
   public CucumberCompletionContributor() {
