@@ -15,7 +15,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
-import org.jetbrains.plugins.cucumber.java.steps.JavaStepDefinition;
+import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 /**
  * Provides reference from Cucumber Expression to its definition. For example, from "iso-date" in step definition:
@@ -67,7 +67,7 @@ public class CucumberJavaParameterTypeReference implements PsiReference {
     String parameterTypeName = getParameterTypeName();
     final Module module = ModuleUtilCore.findModuleForPsiElement(myElement);
     if (module != null) {
-      MapParameterTypeManager manager = JavaStepDefinition.getAllParameterTypes(module);
+      MapParameterTypeManager manager = CucumberJavaUtil.getAllParameterTypes(module);
 
       PsiElement declaration = manager.getParameterTypeDeclaration(parameterTypeName);
       if (declaration != null) {
