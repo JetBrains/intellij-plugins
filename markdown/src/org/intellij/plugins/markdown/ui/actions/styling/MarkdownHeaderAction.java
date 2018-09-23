@@ -6,10 +6,12 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Caret;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Couple;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.TokenSet;
@@ -29,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+import static org.intellij.plugins.markdown.lang.MarkdownElementTypes.PARAGRAPH;
 import static org.intellij.plugins.markdown.lang.MarkdownTokenTypeSets.INLINE_HOLDING_ELEMENT_PARENTS_TYPES;
 import static org.intellij.plugins.markdown.lang.MarkdownTokenTypeSets.INLINE_HOLDING_ELEMENT_TYPES;
 
@@ -108,8 +111,22 @@ public abstract class MarkdownHeaderAction extends AnAction implements DumbAware
       return null;
     }
 
-    return MarkdownActionUtil
+    PsiElement parent = MarkdownActionUtil
       .getCommonParentOfTypes(first, second, TokenSet.orSet(INLINE_HOLDING_ELEMENT_TYPES, INLINE_HOLDING_ELEMENT_PARENTS_TYPES));
+
+    if (parent == null || PsiUtilCore.getElementType(parent) != PARAGRAPH) {
+      return parent;
+    }
+
+    Document document = PsiDocumentManager.getInstance(psiFile.getProject()).getDocument(psiFile);
+    assert document != null;
+
+
+    if (document.getLineNumber(parent.getTextRange().getStartOffset()) == document.getLineNumber(parent.getTextRange().getEndOffset())) {
+      return parent;
+    }
+
+    return null;
   }
 
   @NotNull
