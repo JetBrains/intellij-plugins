@@ -60,7 +60,7 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
                           CodeStyleSettingsCustomizable.SPACES_OTHER);
       consumer
         .showCustomOption(ECMA4CodeStyleSettings.class, "SPACE_AFTER_DOTS_IN_REST_PARAMETER",
-                          JSBundle.message("space.after.dots.in.rest.parameter"),
+                          JSBundle.message("actionscript.space.after.dots.in.rest.parameter"),
                           CodeStyleSettingsCustomizable.SPACES_OTHER);
       consumer.showCustomOption(JSCodeStyleSettings.class, "SPACE_BEFORE_FUNCTION_LEFT_PARENTH",
                                 JSBundle.message("space.before.function.left.parenth"),
@@ -86,15 +86,14 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
                                 CodeStyleSettingsCustomizable.SPACES_WITHIN);
     }
     else if (settingsType == SettingsType.BLANK_LINES_SETTINGS) {
-      List<String> blankLinesOptions = new ArrayList<>();
-      blankLinesOptions.addAll(Arrays.asList("KEEP_BLANK_LINES_IN_CODE",
-                                             "BLANK_LINES_AFTER_IMPORTS",
-                                             "BLANK_LINES_BEFORE_IMPORTS",
-                                             "BLANK_LINES_AROUND_METHOD",
-                                             "KEEP_BLANK_LINES_IN_CODE",
-                                             "BLANK_LINES_BEFORE_PACKAGE",
-                                             "BLANK_LINES_AFTER_PACKAGE"));
-      consumer.showStandardOptions(ArrayUtil.toStringArray(blankLinesOptions));
+      String[] blankLinesOptions = new String[]{"KEEP_BLANK_LINES_IN_CODE",
+        "BLANK_LINES_AFTER_IMPORTS",
+        "BLANK_LINES_BEFORE_IMPORTS",
+        "BLANK_LINES_AROUND_METHOD",
+        "KEEP_BLANK_LINES_IN_CODE",
+        "BLANK_LINES_BEFORE_PACKAGE",
+        "BLANK_LINES_AFTER_PACKAGE"};
+      consumer.showStandardOptions(blankLinesOptions);
       consumer.showCustomOption(ECMA4CodeStyleSettings.class, "BLANK_LINES_AROUND_FUNCTION",
                                 JSBundle.message("js.blank.lines.around.function"), CodeStyleSettingsCustomizable.BLANK_LINES);
     }
