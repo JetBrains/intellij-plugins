@@ -19,6 +19,8 @@ import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angularjs.AngularTestUtil;
 
+import static org.angularjs.AngularTestUtil.findOffsetBySignature;
+
 public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
@@ -65,7 +67,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testStyles2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("custom.ts", "package.json");
-      final int offset = AngularTestUtil.findOffsetBySignature("Helvetica <caret>Neue", myFixture.getFile());
+      final int offset = findOffsetBySignature("Helvetica <caret>Neue", myFixture.getFile());
       final PsiElement element = InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), offset);
       assertEquals(CSSLanguage.INSTANCE, element.getLanguage());
     });
@@ -78,7 +80,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
         Pair.create("eve<caret>nt", Angular2Language.INSTANCE),
         Pair.create("bind<caret>ing", Angular2Language.INSTANCE),
         Pair.create("at<caret>tribute", JavaScriptSupportLoader.TYPESCRIPT))) {
-        final int offset = AngularTestUtil.findOffsetBySignature(signature.first, myFixture.getFile());
+        final int offset = findOffsetBySignature(signature.first, myFixture.getFile());
         PsiElement element = InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), offset);
         if (element == null) {
           element = myFixture.getFile().findElementAt(offset);
@@ -130,7 +132,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
         Pair.create("$text<caret>-color", "SCSS"), //fails if correct order of injectors is not ensured
         Pair.create("color: <caret>#00aa00", CSSLanguage.INSTANCE.getID()))) {
 
-        final int offset = AngularTestUtil.findOffsetBySignature(signature.first, myFixture.getFile());
+        final int offset = findOffsetBySignature(signature.first, myFixture.getFile());
         final PsiElement element = InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), offset);
         assertEquals(signature.first, signature.second, element.getContainingFile().getLanguage().getID());
       }
@@ -140,7 +142,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testNoInjectionInHTMLTemplateLiteral() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("noInjection.html", "package.json");
-      int offset = AngularTestUtil.findOffsetBySignature("b<caret>ar", myFixture.getFile());
+      int offset = findOffsetBySignature("b<caret>ar", myFixture.getFile());
       assert offset > 0;
       PsiElement injection = InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), offset);
       assertNull("There should be no injection", injection);
@@ -160,6 +162,21 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("event_different_name2.html", "package.json", "event_different_name.ts");
       checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
+    });
+  }
+
+  public void testIntermediateFoldersWithPackageJson1() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
+      myFixture.configureByFiles("inner/event.html", "package.json", "inner/package.json", "inner/event.ts");
+      checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
+    });
+  }
+
+  public void testIntermediateFoldersWithPackageJson2() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
+      myFixture.configureByFiles("inner/event.html", "inner/package.json", "inner/event.ts");
+      int offsetBySignature = findOffsetBySignature("callAnonymous<caret>Api()", myFixture.getFile());
+      assertNull(myFixture.getFile().findReferenceAt(offsetBySignature));
     });
   }
 
