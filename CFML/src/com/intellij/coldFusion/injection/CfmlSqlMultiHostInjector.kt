@@ -106,7 +106,7 @@ class CfmlSqlMultiHostInjector(project: Project) : MultiHostInjector {
                                 registrar: MultiHostRegistrar): Boolean {
     var injectionStarted = false
     for ((head, host, textRange) in injectionList) {
-      if (host.containingFile !== finalContainingFile) continue
+      if (host.containingFile !== finalContainingFile || !host.isValidHost) continue
 
       if (!injectionStarted) {
         registrar.startInjecting(lang)
