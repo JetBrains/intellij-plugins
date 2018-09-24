@@ -30,6 +30,8 @@ import java.util.List;
 
 public class Angular2DecoratorUtil {
 
+  public static final String COMPONENT_DEC = "Component";
+
   @Nullable
   public static TypeScriptClass getParentClass(@Nullable PsiElement element) {
     if (element instanceof TypeScriptParameterImpl) {

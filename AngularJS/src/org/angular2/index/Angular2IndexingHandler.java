@@ -24,11 +24,9 @@ import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.css.*;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.impl.source.tree.TreeUtil;
@@ -47,7 +45,6 @@ import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.*;
 
 import static org.angular2.Angular2DecoratorUtil.*;
@@ -184,7 +181,13 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
                                               @NotNull Consumer<JSImplicitElement> processor,
                                               @Nullable String templateUrl) {
     if (templateUrl == null) return;
-    String name = new File(templateUrl).getName();
+    int lastSlash = templateUrl.lastIndexOf('/');
+    String name = templateUrl.substring(lastSlash + 1);
+    //don't index if HTML file name matches TS file name and is in the same directory
+    if ((lastSlash <=0 || (lastSlash == 1 && templateUrl.charAt(0) == '.'))
+        && name.equals(FileUtil.getNameWithoutExtension(decorator.getContainingFile().getOriginalFile().getName()) + ".html")) {
+      return;
+    }
     JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(name, decorator)
       .setUserString(ANGULAR_TEMPLATE_URLS_INDEX_USER_STRING)
       .setTypeString("TU;;;");
@@ -254,32 +257,63 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     if (hostFile == null) {
       return null;
     }
-    if (!file.getOriginalFile().equals(hostFile)) {// inline template
+    if (!file.getOriginalFile().equals(hostFile)) {
+      // inline template
       return PsiTreeUtil.getParentOfType(InjectedLanguageManager.getInstance(context.getProject()).getInjectionHost(file), JSClass.class);
     }
     // non inline template file
-    final String name = hostFile.getViewProvider().getVirtualFile().getName();
+    JSClass result = resolveComponentWithSameName(hostFile);
+    if (result != null) {
+      return result;
+    }
+    return resolveComponentFromIndex(hostFile);
+  }
+
+  @Nullable
+  private static JSClass resolveComponentWithSameName(@NotNull PsiFile templateFile) {
+    final String name = templateFile.getViewProvider().getVirtualFile().getNameWithoutExtension();
+    final PsiDirectory dir = templateFile.getParent();
+    final PsiFile directiveFile = dir != null ? dir.findFile(name + ".ts") : null;
+    if (directiveFile != null) {
+      for (PsiElement element : directiveFile.getChildren()) {
+        if (element instanceof JSClass
+            && hasTemplateReference(getDecorator((JSClass)element, COMPONENT_DEC), templateFile)) {
+          return (JSClass)element;
+        }
+      }
+    }
+    return null;
+  }
+
+  private static JSClass resolveComponentFromIndex(@NotNull PsiFile templateFile) {
+    final String name = templateFile.getViewProvider().getVirtualFile().getName();
     final Ref<JSClass> result = new Ref<>();
-    AngularIndexUtil.multiResolve(hostFile.getProject(), Angular2TemplateUrlIndex.KEY, name, el -> {
+    AngularIndexUtil.multiResolve(templateFile.getProject(), Angular2TemplateUrlIndex.KEY, name, el -> {
       if (el != null) {
         PsiElement componentDecorator = el.getParent();
-        if (componentDecorator instanceof JSCallExpression) {
-          JSProperty templateUrl = getProperty(componentDecorator, "templateUrl");
-          if (templateUrl == null || templateUrl.getValue() == null) {
-            return true;
-          }
-          for (PsiReference ref : templateUrl.getValue().getReferences()) {
-            PsiElement templateFile = ref.resolve();
-            if (hostFile.equals(templateFile)) {
-              result.set((JSClass)PsiTreeUtil.findFirstParent(componentDecorator, JSClass.class::isInstance));
-              return false;
-            }
-          }
+        if (componentDecorator instanceof JSCallExpression
+            && hasTemplateReference((JSCallExpression)componentDecorator, templateFile)) {
+          result.set(PsiTreeUtil.getParentOfType(componentDecorator, JSClass.class));
+          return false;
         }
       }
       return true;
     });
     return result.get();
+  }
+
+  private static boolean hasTemplateReference(@Nullable JSCallExpression componentDecorator, @NotNull PsiFile templateFile) {
+    JSProperty templateUrl = getProperty(componentDecorator, "templateUrl");
+    if (templateUrl == null || templateUrl.getValue() == null) {
+      return false;
+    }
+    for (PsiReference ref : templateUrl.getValue().getReferences()) {
+      PsiElement resolvedFile = ref.resolve();
+      if (templateFile.equals(resolvedFile)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private static PsiFile getHostFile(PsiElement context) {
