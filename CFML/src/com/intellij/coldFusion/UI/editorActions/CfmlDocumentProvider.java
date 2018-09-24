@@ -4,9 +4,11 @@ package com.intellij.coldFusion.UI.editorActions;
 import com.intellij.coldFusion.model.CfmlUtil;
 import com.intellij.coldFusion.model.psi.CfmlTag;
 import com.intellij.coldFusion.model.psi.impl.CfmlAttributeImpl;
+import com.intellij.coldFusion.model.psi.impl.CfmlAttributeNameImpl;
 import com.intellij.coldFusion.model.psi.impl.CfmlTagImpl;
 import com.intellij.lang.documentation.DocumentationProviderEx;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -14,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Lera Nikolaenko
@@ -32,11 +35,14 @@ public class CfmlDocumentProvider extends DocumentationProviderEx {
   @Override
   public String generateDoc(PsiElement element, PsiElement originalElement) {
     if (element instanceof CfmlAttributeImpl && element.getParent() instanceof CfmlTag) {
-      return CfmlUtil.getAttributeDescription(((CfmlTag)element.getParent()).getTagName().toLowerCase(),
-                                                       ((CfmlAttributeImpl)element).getName().toLowerCase(), element.getProject());
+      String tagName = ((CfmlTag)element.getParent()).getTagName().toLowerCase(Locale.ENGLISH);
+      String attributeName = (element instanceof CfmlAttributeNameImpl) ?
+                             "name" :
+                             StringUtil.notNullize(((CfmlAttributeImpl)element).getName());
+      return CfmlUtil.getAttributeDescription(tagName, attributeName, element.getProject());
     }
     else if (element instanceof CfmlTag) {
-      String name = ((CfmlTag)element).getTagName().toLowerCase();
+      String name = ((CfmlTag)element).getTagName().toLowerCase(Locale.ENGLISH);
       if (CfmlUtil.isStandardTag(name, element.getProject())) {
         return CfmlUtil.getTagDescription(name, element.getProject());
       }
@@ -61,7 +67,9 @@ public class CfmlDocumentProvider extends DocumentationProviderEx {
                                                   @Nullable PsiElement contextElement) {
     if (contextElement == null) return null;
     if (contextElement.getParent() instanceof CfmlTagImpl) return contextElement.getParent();
-    if (contextElement.getParent() instanceof CfmlAttributeImpl) return contextElement.getParent();
+    if (contextElement.getParent() instanceof CfmlAttributeImpl) {
+      return contextElement.getParent();
+    }
     else {
       return super.getCustomDocumentationElement(editor, file, contextElement);
     }
