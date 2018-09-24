@@ -8,7 +8,9 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptParameterImpl;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.html.HtmlFileImpl;
@@ -19,7 +21,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import org.angular2.lang.Angular2LangUtil;
 
-import static org.angular2.Angular2DecoratorUtil.*;
+import static org.angular2.Angular2DecoratorUtil.findAngularComponentTemplate;
+import static org.angular2.Angular2DecoratorUtil.isPrivateMember;
 
 public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
 
@@ -29,9 +32,9 @@ public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
         || ((element instanceof TypeScriptField
              || element instanceof TypeScriptParameterImpl)
             && isPrivateMember((JSPsiElementBase)element))) {
-      TypeScriptClass cls = getParentClass(element);
-      if (cls != null && Angular2LangUtil.isAngular2Context(element)) {
-        HtmlFileImpl template = findAngularComponentTemplate(cls);
+      JSClass cls = JSUtils.getMemberContainingClass(element);
+      if (cls instanceof TypeScriptClass && Angular2LangUtil.isAngular2Context(element)) {
+        HtmlFileImpl template = findAngularComponentTemplate((TypeScriptClass)cls);
         if (template != null) {
           return isReferencedInTemplate(element, template);
         }

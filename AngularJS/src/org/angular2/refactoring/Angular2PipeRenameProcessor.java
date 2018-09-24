@@ -91,7 +91,7 @@ public class Angular2PipeRenameProcessor extends JSDefaultRenameProcessor {
       if (pipeClass.getContainingFile().getName().equals(getDefaultPipeFileName(((JSImplicitElement)element).getName()))) {
         allRenames.put(pipeClass.getContainingFile(), getDefaultPipeFileName(newName));
         VirtualFile specFile = pipeClass.getContainingFile().getVirtualFile()
-          .findFileByRelativePath("../" + getDefaultPipeSpecFileName(((JSImplicitElement)element).getName()));
+          .getParent().findFileByRelativePath(getDefaultPipeSpecFileName(((JSImplicitElement)element).getName()));
         if (specFile != null) {
           PsiFile specPsiFile = pipeClass.getManager().findFile(specFile);
           if (specPsiFile != null) {

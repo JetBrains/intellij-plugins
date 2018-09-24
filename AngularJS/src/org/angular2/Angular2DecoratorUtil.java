@@ -8,9 +8,6 @@ import com.intellij.lang.javascript.JSInjectionController;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
-import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptParameterImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -31,20 +28,6 @@ import java.util.List;
 public class Angular2DecoratorUtil {
 
   public static final String COMPONENT_DEC = "Component";
-
-  @Nullable
-  public static TypeScriptClass getParentClass(@Nullable PsiElement element) {
-    if (element instanceof TypeScriptParameterImpl) {
-      element = PsiTreeUtil.getParentOfType(element, TypeScriptFunction.class);
-    }
-    if (element instanceof TypeScriptField && element.getParent() != null) {
-      return ObjectUtils.tryCast(element.getParent().getParent(), TypeScriptClass.class);
-    }
-    else if (element instanceof TypeScriptFunction) {
-      return ObjectUtils.tryCast(element.getParent(), TypeScriptClass.class);
-    }
-    return null;
-  }
 
   @Nullable
   public static String getDecoratorName(@Nullable JSCallExpression decorator) {
