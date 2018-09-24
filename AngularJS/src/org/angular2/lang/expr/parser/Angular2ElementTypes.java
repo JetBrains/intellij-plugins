@@ -24,6 +24,8 @@ public interface Angular2ElementTypes extends JSElementTypes {
 
   IElementType PIPE_EXPRESSION = new Angular2ExpressionElementType("NG:PIPE_EXPRESSION", Angular2PipeExpressionImpl::new);
   IElementType PIPE_ARGUMENTS_LIST = new Angular2ExpressionElementType("NG:PIPE_ARGUMENTS_LIST", Angular2PipeArgumentsListImpl::new);
+  IElementType PIPE_REFERENCE_EXPRESSION =
+    new Angular2ExpressionElementType("NG:PIPE_REFERENCE_EXPRESSION", Angular2PipeReferenceExpressionImpl::new);
   IElementType CHAIN_STATEMENT = new Angular2ElementType("NG:CHAIN_STATEMENT", Angular2ChainImpl::new);
   IElementType QUOTE_STATEMENT = new Angular2ElementType("NG:QUOTE_STATEMENT", Angular2QuoteImpl::new);
   IElementType ACTION_STATEMENT = new Angular2ElementType("NG:ACTION", Angular2ActionImpl::new);

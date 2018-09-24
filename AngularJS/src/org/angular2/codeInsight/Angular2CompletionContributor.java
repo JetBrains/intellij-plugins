@@ -13,9 +13,9 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiUtilCore;
-import org.angular2.codeInsight.refs.Angular2RefUtil;
+import org.angular2.Angular2DecoratorUtil;
 import org.angular2.lang.expr.Angular2Language;
-import org.angular2.lang.expr.psi.Angular2PipeExpression;
+import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
 import org.angularjs.index.AngularFilterIndex;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +43,8 @@ public class Angular2CompletionContributor extends CompletionContributor {
         final String name = element.getName();
         if (name != null) {
           result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(
-            element, name, Angular2RefUtil.isPrivateMember(element) ? NG_PRIVATE_VARIABLE_PRIORITY : NG_VARIABLE_PRIORITY, false, false));
+            element, name, Angular2DecoratorUtil.isPrivateMember(element) ? NG_PRIVATE_VARIABLE_PRIORITY : NG_VARIABLE_PRIORITY, false,
+            false));
         }
       });
       result.stopHere();
@@ -54,7 +55,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
                                          CompletionParameters parameters,
                                          JSReferenceExpression ref,
                                          PsiElement parent) {
-    if (Angular2PipeExpression.isPipeNameReference(ref)) {
+    if (ref instanceof Angular2PipeReferenceExpression) {
       addResults(result, parameters, AngularIndexUtil.getAllKeys(AngularFilterIndex.KEY, parent.getProject()));
       return true;
     }

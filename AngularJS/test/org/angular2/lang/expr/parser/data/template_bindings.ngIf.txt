@@ -230,7 +230,7 @@ ASTWrapperPsiElement(FILE)
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
+        Angular2PipeReferenceExpression
           PsiElement(JS:IDENTIFIER)('async')
         PsiWhiteSpace(' ')
         Angular2PipeArgumentsList

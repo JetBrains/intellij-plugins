@@ -12,7 +12,7 @@ HtmlFile:test.html
             PsiWhiteSpace('\n            ')
             PsiElement(JS:OR)('|')
             PsiWhiteSpace(' ')
-            JSReferenceExpression
+            Angular2PipeReferenceExpression
               PsiElement(JS:IDENTIFIER)('started')
             PsiWhiteSpace(' ')
             Angular2PipeArgumentsList
@@ -23,7 +23,7 @@ HtmlFile:test.html
           PsiWhiteSpace('\n            ')
           PsiElement(JS:OR)('|')
           PsiWhiteSpace(' ')
-          JSReferenceExpression
+          Angular2PipeReferenceExpression
             PsiElement(JS:IDENTIFIER)('search')
           PsiWhiteSpace(' ')
           Angular2PipeArgumentsList

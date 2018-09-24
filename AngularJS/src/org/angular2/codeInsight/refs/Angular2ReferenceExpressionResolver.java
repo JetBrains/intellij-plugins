@@ -21,7 +21,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
 import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.codeInsight.metadata.AngularPipeMetadata;
-import org.angular2.lang.expr.psi.Angular2PipeExpression;
+import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
 import org.angularjs.index.AngularFilterIndex;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
   @Override
   public ResolveResult[] resolve(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode) {
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY;
-    if (Angular2PipeExpression.isPipeNameReference(myRef)) {
+    if (myRef instanceof Angular2PipeReferenceExpression) {
       return resolvePipeNameReference(expression, incompleteCode);
     }
     else if (myQualifier == null) {

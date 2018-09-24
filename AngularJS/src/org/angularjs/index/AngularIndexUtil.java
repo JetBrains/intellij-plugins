@@ -38,7 +38,7 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
-import org.angular2.index.Angular2IndexingHandler;
+import org.angular2.codeInsight.Angular2PipeUtil;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,7 +51,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 60;
+  public static final int BASE_VERSION = 61;
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
@@ -214,7 +214,7 @@ public class AngularIndexUtil {
         if (psiFile instanceof JsonFile) {
           for (JSImplicitElementsIndex.JSElementProxy proxy : value) {
             JSOffsetBasedImplicitElement element = proxy.toOffsetBasedImplicitElement(psiFile);
-            if (Angular2IndexingHandler.isPipeType(element.getTypeString()) && !processor.process(element)) return false;
+            if (Angular2PipeUtil.isPipeType(element.getTypeString()) && !processor.process(element)) return false;
           }
         }
         return true;

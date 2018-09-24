@@ -26,7 +26,7 @@ HtmlFile:test.html
                 PsiWhiteSpace(' ')
                 PsiElement(JS:OR)('|')
                 PsiWhiteSpace(' ')
-                JSReferenceExpression
+                Angular2PipeReferenceExpression
                   PsiElement(JS:IDENTIFIER)('async')
                 Angular2PipeArgumentsList
                   <empty list>
@@ -34,7 +34,7 @@ HtmlFile:test.html
             PsiWhiteSpace(' ')
             PsiElement(JS:OR)('|')
             PsiWhiteSpace(' ')
-            JSReferenceExpression
+            Angular2PipeReferenceExpression
               PsiElement(JS:IDENTIFIER)('date')
             Angular2PipeArgumentsList
               PsiElement(JS:COLON)(':')

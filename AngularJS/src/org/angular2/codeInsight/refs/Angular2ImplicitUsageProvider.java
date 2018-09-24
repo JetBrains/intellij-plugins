@@ -19,8 +19,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import org.angular2.lang.Angular2LangUtil;
 
-import static org.angular2.codeInsight.refs.Angular2RefUtil.getParentClass;
-import static org.angular2.codeInsight.refs.Angular2RefUtil.isPrivateMember;
+import static org.angular2.Angular2DecoratorUtil.*;
 
 public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
 
@@ -32,7 +31,7 @@ public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
             && isPrivateMember((JSPsiElementBase)element))) {
       TypeScriptClass cls = getParentClass(element);
       if (cls != null && Angular2LangUtil.isAngular2Context(element)) {
-        HtmlFileImpl template = Angular2RefUtil.findAngularComponentTemplate(cls);
+        HtmlFileImpl template = findAngularComponentTemplate(cls);
         if (template != null) {
           return isReferencedInTemplate(element, template);
         }

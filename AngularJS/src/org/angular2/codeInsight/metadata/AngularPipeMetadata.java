@@ -53,6 +53,7 @@ public abstract class AngularPipeMetadata {
   @Nullable
   public final JSRecordType.PropertySignature getTransformMethod() {
     readMetadataIfNeeded();
+    readTransformMethodIfNeeded();
     return myTransformMethod;
   }
 
@@ -60,16 +61,19 @@ public abstract class AngularPipeMetadata {
     if (!metadataLoaded) {
       metadataLoaded = true;
       readMetadata();
-      if (myPipeClass != null) {
-        myTransformMethod = TypeScriptTypeParser
-          .buildTypeFromClass(myPipeClass, false)
-          .getProperties()
-          .stream()
-          .filter(prop -> "transform".equals(prop.getMemberName())
-                          && prop.getMemberSource().getSingleElement() instanceof TypeScriptFunction)
-          .findFirst()
-          .orElse(null);
-      }
+    }
+  }
+
+  protected final void readTransformMethodIfNeeded() {
+    if (myTransformMethod == null && myPipeClass != null) {
+      myTransformMethod = TypeScriptTypeParser
+        .buildTypeFromClass(myPipeClass, false)
+        .getProperties()
+        .stream()
+        .filter(prop -> "transform".equals(prop.getMemberName())
+                        && prop.getMemberSource().getSingleElement() instanceof TypeScriptFunction)
+        .findFirst()
+        .orElse(null);
     }
   }
 

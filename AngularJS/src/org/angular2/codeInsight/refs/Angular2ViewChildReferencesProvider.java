@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.angular2.codeInsight.refs.Angular2RefUtil.findAngularComponentTemplate;
+import static org.angular2.Angular2DecoratorUtil.findAngularComponentTemplate;
 
 public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
 

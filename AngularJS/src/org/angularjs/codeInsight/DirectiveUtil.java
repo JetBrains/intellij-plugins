@@ -12,6 +12,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.util.Processor;
+import org.angular2.codeInsight.Angular2PipeUtil;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularDirectivesIndex;
 import org.angularjs.index.AngularIndexUtil;
@@ -126,6 +127,9 @@ public class DirectiveUtil {
   @Nullable
   public static JSImplicitElement getDirective(@Nullable PsiElement element) {
     if (element instanceof JSImplicitElement) {
+      if (Angular2PipeUtil.isPipeType(((JSImplicitElement)element).getTypeString())) {
+        return null;
+      }
       return isAngular2Directive(element) ? (JSImplicitElement)element : getDirective(element, ((JSImplicitElement)element).getName());
     }
     if (element instanceof JSLiteralExpression && ((JSLiteralExpression)element).isQuotedLiteral()) {

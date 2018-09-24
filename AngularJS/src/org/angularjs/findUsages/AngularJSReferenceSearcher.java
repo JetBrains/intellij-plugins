@@ -19,23 +19,32 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Processor;
+import org.angular2.codeInsight.Angular2PipeUtil;
+import org.angular2.codeInsight.metadata.AngularPipeMetadata;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Dennis.Ushakov
- */
 public class AngularJSReferenceSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
   protected AngularJSReferenceSearcher() {
     super(true);
   }
 
   @Override
-  public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull final Processor<? super PsiReference> consumer) {
+  public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters,
+                           @NotNull final Processor<? super PsiReference> consumer) {
+    final JSImplicitElement directive;
+    final JSImplicitElement pipe;
     final PsiElement element = queryParameters.getElementToSearch();
-    final JSImplicitElement directive = DirectiveUtil.getDirective(element);
-    if (directive == null) return;
-
-    queryParameters.getOptimizer().searchWord(directive.getName(), queryParameters.getEffectiveSearchScope(), true, directive);
+    if ((directive = DirectiveUtil.getDirective(element)) != null) {
+      queryParameters.getOptimizer().searchWord(directive.getName(), queryParameters.getEffectiveSearchScope(), true, directive);
+    }
+    else if ((pipe = Angular2PipeUtil.getPipe(element)) != null) {
+      AngularPipeMetadata metadata = AngularPipeMetadata.create(pipe);
+      if (metadata.getTransformMethod() != null) {
+        for (PsiElement el : metadata.getTransformMethod().getMemberSource().getAllSourceElements()) {
+          queryParameters.getOptimizer().searchWord(pipe.getName(), queryParameters.getEffectiveSearchScope(), true, el);
+        }
+      }
+    }
   }
 }

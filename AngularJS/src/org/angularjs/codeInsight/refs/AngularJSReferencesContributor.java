@@ -18,6 +18,8 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
+import org.angular2.Angular2DecoratorUtil;
+import org.angular2.codeInsight.refs.Angular2PipeNameReferencesProvider;
 import org.angular2.codeInsight.refs.Angular2ViewChildReferencesProvider;
 import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.index.AngularIndexUtil;
@@ -36,6 +38,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
   public static final PsiElementPattern.Capture<XmlAttributeValue> NG_APP_REF = xmlAttributePattern("ng-app");
   public static final PsiElementPattern.Capture<JSLiteralExpression> MODULE_PATTERN = modulePattern();
   public static final PsiElementPattern.Capture<JSLiteralExpression> MODULE_DEPENDENCY_PATTERN = moduleDependencyPattern();
+  public static final PsiElementPattern.Capture<JSLiteralExpression> PIPE_NAME_PATTERN = ng2LiteralInDecoratorProperty("name", "Pipe");
 
   private static final PsiElementPattern.Capture<JSLiteralExpression> NG_INCLUDE_PATTERN =
     PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
@@ -141,6 +144,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
     registrar.registerReferenceProvider(NG_APP_REF, new AngularJSNgAppReferencesProvider());
     registrar.registerReferenceProvider(MODULE_PATTERN, new AngularJSModuleReferencesProvider());
     registrar.registerReferenceProvider(VIEW_CHILD_PATTERN, new Angular2ViewChildReferencesProvider());
+    registrar.registerReferenceProvider(PIPE_NAME_PATTERN, new Angular2PipeNameReferencesProvider());
   }
 
   private static PsiElementPattern.Capture<JSLiteralExpression> modulePattern() {
@@ -219,6 +223,22 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
           }
         }
         return false;
+      }
+
+      @Override
+      public boolean isClassAcceptable(Class hintClass) {
+        return true;
+      }
+    }));
+  }
+
+  private static PsiElementPattern.Capture<JSLiteralExpression> ng2LiteralInDecoratorProperty(final String propertyName, final String decoratorName) {
+    return PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
+      @Override
+      public boolean isAcceptable(Object element, @Nullable PsiElement context) {
+        return element instanceof PsiElement
+               && Angular2DecoratorUtil.isLiteralInNgDecorator((PsiElement)element, propertyName, decoratorName)
+               && Angular2LangUtil.isAngular2Context((PsiElement)element);
       }
 
       @Override

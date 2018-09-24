@@ -2,8 +2,6 @@
 package org.angular2.lang.expr.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.javascript.JSElementTypes;
-import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.JSArgumentList;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
@@ -12,6 +10,7 @@ import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ObjectUtils;
+import org.angular2.lang.expr.parser.Angular2ElementTypes;
 import org.angular2.lang.expr.psi.Angular2ElementVisitor;
 import org.angular2.lang.expr.psi.Angular2PipeExpression;
 import org.jetbrains.annotations.NotNull;
@@ -83,14 +82,6 @@ public class Angular2PipeExpressionImpl extends JSExpressionImpl implements Angu
 
   @Nullable
   private JSReferenceExpression getNameReference() {
-    ASTNode node = getFirstChildNode();
-    while (node != null && node.getElementType() != JSTokenTypes.OR) {
-      node = node.getTreeNext();
-    }
-    while (node != null && node.getElementType() != JSElementTypes.REFERENCE_EXPRESSION) {
-      node = node.getTreeNext();
-    }
-    return (JSReferenceExpression)ObjectUtils.doIfNotNull(node, ASTNode::getPsi);
+    return (JSReferenceExpression)findPsiChildByType(Angular2ElementTypes.PIPE_REFERENCE_EXPRESSION);
   }
-
 }

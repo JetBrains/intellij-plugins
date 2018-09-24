@@ -6,7 +6,7 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
+      Angular2PipeReferenceExpression
         PsiElement(JS:IDENTIFIER)('nonexistent')
       Angular2PipeArgumentsList
         <empty list>
@@ -19,7 +19,7 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
+      Angular2PipeReferenceExpression
         PsiElement(JS:IDENTIFIER)('substring')
       Angular2PipeArgumentsList
         PsiElement(JS:COLON)(':')
@@ -38,7 +38,7 @@ ASTWrapperPsiElement(FILE)
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
+        Angular2PipeReferenceExpression
           PsiElement(JS:IDENTIFIER)('substring')
         Angular2PipeArgumentsList
           PsiElement(JS:COLON)(':')
@@ -50,7 +50,7 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
+      Angular2PipeReferenceExpression
         PsiElement(JS:IDENTIFIER)('uppercase')
       Angular2PipeArgumentsList
         <empty list>
@@ -74,7 +74,7 @@ ASTWrapperPsiElement(FILE)
           PsiWhiteSpace(' ')
           PsiElement(JS:OR)('|')
           PsiWhiteSpace(' ')
-          JSReferenceExpression
+          Angular2PipeReferenceExpression
             PsiElement(JS:IDENTIFIER)('lowercase')
           Angular2PipeArgumentsList
             <empty list>
@@ -88,7 +88,7 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
+      Angular2PipeReferenceExpression
         PsiElement(JS:IDENTIFIER)('uppercase')
       Angular2PipeArgumentsList
         PsiElement(JS:COLON)(':')
@@ -112,7 +112,7 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
+      Angular2PipeReferenceExpression
         PsiElement(JS:IDENTIFIER)('translate')
       Angular2PipeArgumentsList
         <empty list>

@@ -241,7 +241,7 @@ ASTWrapperPsiElement(FILE)
           PsiWhiteSpace(' ')
           PsiElement(JS:OR)('|')
           PsiWhiteSpace(' ')
-          JSReferenceExpression
+          Angular2PipeReferenceExpression
             PsiElement(JS:IDENTIFIER)('started')
           PsiWhiteSpace(' ')
           Angular2PipeArgumentsList
@@ -252,7 +252,7 @@ ASTWrapperPsiElement(FILE)
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
+        Angular2PipeReferenceExpression
           PsiElement(JS:IDENTIFIER)('search')
         PsiWhiteSpace(' ')
         Angular2PipeArgumentsList
@@ -286,7 +286,7 @@ ASTWrapperPsiElement(FILE)
           PsiWhiteSpace(' ')
           PsiElement(JS:OR)('|')
           PsiWhiteSpace(' ')
-          JSReferenceExpression
+          Angular2PipeReferenceExpression
             PsiElement(JS:IDENTIFIER)('started')
           PsiWhiteSpace(' ')
           Angular2PipeArgumentsList
@@ -297,7 +297,7 @@ ASTWrapperPsiElement(FILE)
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
+        Angular2PipeReferenceExpression
           PsiElement(JS:IDENTIFIER)('search')
         PsiWhiteSpace(' ')
         Angular2PipeArgumentsList
@@ -331,7 +331,7 @@ ASTWrapperPsiElement(FILE)
           PsiWhiteSpace(' ')
           PsiElement(JS:OR)('|')
           PsiWhiteSpace(' ')
-          JSReferenceExpression
+          Angular2PipeReferenceExpression
             PsiElement(JS:IDENTIFIER)('started')
           PsiWhiteSpace(' ')
           Angular2PipeArgumentsList
@@ -342,7 +342,7 @@ ASTWrapperPsiElement(FILE)
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
+        Angular2PipeReferenceExpression
           PsiElement(JS:IDENTIFIER)('search')
         PsiWhiteSpace(' ')
         Angular2PipeArgumentsList
@@ -417,7 +417,7 @@ ASTWrapperPsiElement(FILE)
           PsiWhiteSpace(' ')
           PsiElement(JS:OR)('|')
           PsiWhiteSpace(' ')
-          JSReferenceExpression
+          Angular2PipeReferenceExpression
             PsiElement(JS:IDENTIFIER)('async')
           Angular2PipeArgumentsList
             <empty list>

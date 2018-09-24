@@ -96,7 +96,6 @@
     <elementDescriptionProvider order="first"
                                 implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor$AngularJSDirectiveElementDescriptor"/>
 
-    <findUsagesHandlerFactory implementation="org.angularjs.findUsages.AngularJSFindUsagesHandlerFactory" order="before JavaScript"/>
     <referencesSearch implementation="org.angularjs.findUsages.AngularJSReferenceSearcher"/>
 
     <directoryProjectGenerator implementation="org.angularjs.AngularJSProjectGenerator"/>
@@ -120,6 +119,9 @@
     <framework.detector implementation="org.angular2.cli.AngularJSFrameworkDetector"/>
     <fileTypeFactory implementation="org.angular2.AngularTypeScriptConfigFileTypeFactory"/>
     <stubIndex implementation="org.angular2.index.Angular2TemplateUrlIndex"/>
+    <findUsagesHandlerFactory implementation="org.angular2.findUsages.Angular2FindUsagesHandlerFactory" order="before JavaScript"/>
+    <elementDescriptionProvider order="first"
+                                implementation="org.angular2.refactoring.Angular2PipeRenameProcessor$Angular2PipeElementDescriptor"/>
 
     <!-- Angular 2 HTML template contributions -->
     <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="first,after JSCommentInjector" id="angular2"/>
@@ -148,7 +150,7 @@
     <lang.braceMatcher language="Angular2" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
     <annotator language="Angular2" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
     <implicitUsageProvider implementation="org.angular2.codeInsight.refs.Angular2ImplicitUsageProvider"/>
-
+    <renamePsiElementProcessor implementation="org.angular2.refactoring.Angular2PipeRenameProcessor" order="first"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

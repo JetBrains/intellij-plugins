@@ -55,6 +55,18 @@ public class RenameTest extends LightPlatformCodeInsightFixtureTestCase {
     doMultiFileTest("test.component.html", "newReference");
   }
 
+  public void testPipeFromHTML() throws IOException {
+    doMultiFileTest("test.component.html", "bar");
+  }
+
+  public void testPipeFromTS() throws IOException {
+    doMultiFileTest("foo.pipe.ts", "bar");
+  }
+
+  public void testPipeFromTS2() throws IOException {
+    doMultiFileTest("foo.pipe.ts", "bar");
+  }
+
   public void testComponentWithRelatedFiles() throws Exception {
     Messages.setTestDialog(TestDialog.OK);
     JSTestUtils.testWithTempCodeStyleSettings(getProject(), t -> {
