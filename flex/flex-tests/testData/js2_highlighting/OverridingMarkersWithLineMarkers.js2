@@ -1,4 +1,4 @@
-class <lineMarker descr="Has subclasses"><info>AAA</info></lineMarker> {
+class <lineMarker descr="<html>Has subclasses</html>"><info>AAA</info></lineMarker> {
   function <lineMarker descr="Is overridden"><info descr="instance method">bbb</info></lineMarker>() {}
   function <lineMarker descr="Is overridden"><info descr="instance method">bbb2</info></lineMarker>(<info descr="parameter">x</info>) {  }
   private function <info descr="instance method">bbb3</info>() {}

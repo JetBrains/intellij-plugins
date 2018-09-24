@@ -6,7 +6,7 @@ public interface <error><lineMarker descr="Has implementations">IFoo</lineMarker
 }
 
 public class <error><lineMarker descr="Has subclasses">Foo</lineMarker></error> implements <info>IFoo</info> {
-    public function <info><lineMarker descr="Is overridden"><lineMarker descr="Implements method 'foo' in IFoo">foo</lineMarker></lineMarker></info>() {}
+    public function <info><lineMarker descr="<html>Is overridden<hr size=1 noshade>Implements method 'foo' in IFoo</html>">foo</lineMarker></info>() {}
 }
 
 public class <error>FooEx</error> extends <info>Foo</info> {

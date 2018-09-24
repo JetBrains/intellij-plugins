@@ -1,5 +1,5 @@
 package <error>bar</error> {
-public class <lineMarker descr="Has subclasses"><error>ClassB</error></lineMarker> {
+public class <lineMarker descr="<html>Has subclasses</html>"><error>ClassB</error></lineMarker> {
     function <info descr="instance method">foo</info>() {}
 }
 }
