@@ -17,7 +17,6 @@ package com.intellij.lang.ognl.psi.resolve;
 
 import com.intellij.lang.ognl.psi.resolve.variable.OgnlVariableReference;
 import com.intellij.lang.ognl.psi.resolve.variable.OgnlVariableReferencesContributor;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Processor;
@@ -29,7 +28,7 @@ public class OgnlResolveUtil {
 
   public static void processVariables(PsiElement element, Processor<OgnlVariableReference> processor) {
     PsiFile ognlFile = element.getContainingFile();
-    for (OgnlVariableReferencesContributor provider : Extensions.getExtensions(OgnlVariableReferencesContributor.EXTENSION_POINT_NAME)) {
+    for (OgnlVariableReferencesContributor provider : OgnlVariableReferencesContributor.EXTENSION_POINT_NAME.getExtensionList()) {
       if (!provider.process(element, ognlFile, processor)) {
         return;
       }

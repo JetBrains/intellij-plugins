@@ -15,8 +15,6 @@
 
 package com.intellij.struts2.dom.struts.impl.path;
 
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.util.Condition;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -78,8 +76,7 @@ public class ResultTypeResolver {
     }
 
     // find extensions
-    final StrutsResultContributor[] contributors = Extensions.getExtensions(StrutsResultContributor.EP_NAME);
-    return ContainerUtil.find(contributors, strutsResultContributor -> strutsResultContributor.matchesResultType(resultType)) != null;
+    return ContainerUtil.find(StrutsResultContributor.EP_NAME.getExtensionList(), strutsResultContributor -> strutsResultContributor.matchesResultType(resultType)) != null;
   }
 
 }

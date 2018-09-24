@@ -13,7 +13,6 @@ import com.intellij.lang.Language;
 import com.intellij.lang.LanguageBraceMatching;
 import com.intellij.lang.PairedBraceMatcher;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeExtensionPoint;
 import com.intellij.openapi.fileTypes.StdFileTypes;
@@ -80,7 +79,7 @@ public class CfmlBraceMatcher implements BraceMatcher {
     if (!tokenType.getLanguage().equals(CfmlLanguage.INSTANCE)) {
       FileType tokenFileType = iterator.getTokenType().getLanguage().getAssociatedFileType();
       if (tokenFileType != null && tokenFileType != CfmlFileType.INSTANCE) {
-        for (FileTypeExtensionPoint<BraceMatcher> ext : Extensions.getExtensions(BraceMatcher.EP_NAME)) {
+        for (FileTypeExtensionPoint<BraceMatcher> ext : BraceMatcher.EP_NAME.getExtensionList()) {
           if (ext.filetype != null && ext.filetype.equals(tokenFileType.getName())) {
             return ext.getInstance().isLBraceToken(iterator, fileText,
                                                    tokenFileType instanceof XmlFileType ? StdFileTypes.HTML : tokenFileType);
@@ -113,7 +112,7 @@ public class CfmlBraceMatcher implements BraceMatcher {
     if (!tokenType.getLanguage().equals(CfmlLanguage.INSTANCE)) {
       FileType tokenFileType = iterator.getTokenType().getLanguage().getAssociatedFileType();
       if (tokenFileType != null && tokenFileType != CfmlFileType.INSTANCE) {
-        for (FileTypeExtensionPoint<BraceMatcher> ext : Extensions.getExtensions(BraceMatcher.EP_NAME)) {
+        for (FileTypeExtensionPoint<BraceMatcher> ext : BraceMatcher.EP_NAME.getExtensionList()) {
           if (ext.filetype != null && ext.filetype.equals(tokenFileType.getName())) {
             return ext.getInstance().isRBraceToken(iterator, fileText,
                                                    tokenFileType instanceof XmlFileType ? StdFileTypes.HTML : tokenFileType);
@@ -148,7 +147,7 @@ public class CfmlBraceMatcher implements BraceMatcher {
       return false;
     }
     if (tokenFileType1 != CfmlFileType.INSTANCE && tokenFileType1 != null) {
-      for (FileTypeExtensionPoint<BraceMatcher> ext : Extensions.getExtensions(BraceMatcher.EP_NAME)) {
+      for (FileTypeExtensionPoint<BraceMatcher> ext : BraceMatcher.EP_NAME.getExtensionList()) {
         if (ext.filetype.equals(tokenFileType1.getName())) {
           return ext.getInstance().isPairBraces(tokenType1, tokenType2);
         }

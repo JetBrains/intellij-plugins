@@ -1,8 +1,8 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.intellij.plugins.markdown.injection;
 
 import com.intellij.lang.Language;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.ClearableLazyValue;
 import com.intellij.openapi.util.NotNullLazyValue;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ public enum LanguageGuesser {
       @NotNull
       @Override
       protected List<EmbeddedTokenTypesProvider> compute() {
-        return Arrays.asList(Extensions.getExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME));
+        return EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME.getExtensionList();
       }
     };
 
@@ -28,7 +28,7 @@ public enum LanguageGuesser {
       @NotNull
       @Override
       protected List<CodeFenceLanguageProvider> compute() {
-        return Arrays.asList(Extensions.getExtensions(CodeFenceLanguageProvider.EP_NAME));
+        return CodeFenceLanguageProvider.EP_NAME.getExtensionList();
       }
     };
 

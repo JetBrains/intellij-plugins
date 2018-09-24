@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.dom.struts.impl.path;
 
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.paths.PathReferenceManager;
@@ -63,7 +62,7 @@ public class StrutsPathReferenceConverterImpl extends StrutsPathReferenceConvert
   }
 
   private static StrutsResultContributor[] getResultContributors() {
-    return Extensions.getExtensions(StrutsResultContributor.EP_NAME);
+    return StrutsResultContributor.EP_NAME.getExtensions();
   }
 
 }

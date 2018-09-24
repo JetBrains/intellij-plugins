@@ -52,7 +52,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
@@ -78,7 +77,7 @@ public class FrameworkDefinitionsEditorComponent {
     myFrameworkInstances.getEmptyText().setText(OsmorcBundle.message("frameworks.empty"));
     myFrameworkInstances.setCellRenderer(new OsgiUiUtil.FrameworkInstanceRenderer());
 
-    List<AddAction> addActions = Stream.of(FrameworkIntegratorRegistry.getInstance().getFrameworkIntegrators())
+    List<AddAction> addActions = FrameworkIntegratorRegistry.getInstance().getFrameworkIntegrators().stream()
       .map(AddAction::new)
       .sorted()
       .collect(Collectors.toList());

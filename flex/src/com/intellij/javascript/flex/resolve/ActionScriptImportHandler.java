@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -12,7 +13,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.resolve.*;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.UserDataCache;
@@ -260,7 +260,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
       if (jsClass != null && !resolveProcessor.execute(jsClass, ResolveState.initial())) return false;
 
     }
-    for (JSResolveHelper helper : Extensions.getExtensions(JSResolveHelper.EP_NAME)) {
+    for (JSResolveHelper helper : JSResolveHelper.EP_NAME.getExtensionList()) {
       if (!helper.resolveTypeNameUsingImports(resolveProcessor, parent)) {
         return false;
       }
@@ -304,7 +304,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
 
   public static boolean importClassViaHelper(final PsiScopeProcessor processor,
                                              final PsiNamedElement file) {
-    for(JSResolveHelper helper: Extensions.getExtensions(JSResolveHelper.EP_NAME)) {
+    for(JSResolveHelper helper: JSResolveHelper.EP_NAME.getExtensionList()) {
       if (!helper.importClass(processor, file)) return false;
     }
     return true;

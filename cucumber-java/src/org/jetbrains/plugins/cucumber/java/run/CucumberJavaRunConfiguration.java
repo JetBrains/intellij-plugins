@@ -15,7 +15,6 @@ import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties
 import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.util.JavaParametersUtil;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorGroup;
 import com.intellij.openapi.project.Project;
@@ -74,7 +73,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         }
 
         params.setMainClass(getMainClassName());
-        for (RunConfigurationExtension ext : Extensions.getExtensions(RunConfigurationExtension.EP_NAME)) {
+        for (RunConfigurationExtension ext : RunConfigurationExtension.EP_NAME.getExtensionList()) {
           ext.updateJavaParameters(CucumberJavaRunConfiguration.this, params, getRunnerSettings());
         }
 

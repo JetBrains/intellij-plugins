@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.DialectOptionHolder;
@@ -13,7 +14,6 @@ import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -178,7 +178,7 @@ public final class ActionScriptClassResolver extends JSClassResolver {
                                                       final Project project,
                                                       final String className,
                                                       final GlobalSearchScope scope) {
-    for (JSResolveHelper helper : Extensions.getExtensions(JSResolveHelper.EP_NAME)) {
+    for (JSResolveHelper helper : JSResolveHelper.EP_NAME.getExtensionList()) {
       PsiElement result = helper.findClassByQName(link, project, className, scope);
       if (result != null) return result;
     }

@@ -1,6 +1,6 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.steps.reference;
 
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -94,8 +94,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
     final List<ResolveResult> result = new ArrayList<>();
     final List<PsiElement> resolvedElements = new ArrayList<>();
 
-    final CucumberJvmExtensionPoint[] extensionList = Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME);
-    for (CucumberJvmExtensionPoint e : extensionList) {
+    for (CucumberJvmExtensionPoint e : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
       final List<PsiElement> extensionResult = e.resolveStep(myStep);
       for (final PsiElement element : extensionResult) {
         if (element != null && !resolvedElements.contains(element)) {

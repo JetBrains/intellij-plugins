@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.inspections;
 
 import com.intellij.codeInspection.LocalQuickFix;
@@ -7,7 +8,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
@@ -189,7 +189,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
 
     Map<BDDFrameworkType, String> supportedFileTypesAndDefaultFileNames = new HashMap<>();
     Map<BDDFrameworkType, PsiDirectory> fileTypeToDefaultDirectoryMap = new HashMap<>();
-    for (CucumberJvmExtensionPoint e : Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME)) {
+    for (CucumberJvmExtensionPoint e : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
       if (e instanceof OptionalStepDefinitionExtensionPoint) {
         // Skip if framework file creation support is optional
         if (!((OptionalStepDefinitionExtensionPoint)e).participateInStepDefinitionCreation(step)) {

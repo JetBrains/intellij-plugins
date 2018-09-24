@@ -16,7 +16,6 @@
 package com.intellij.struts2.model.constant.contributor;
 
 import com.intellij.codeInsight.CodeInsightBundle;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -81,7 +80,7 @@ class ConstantValueClassConverter extends ResolvingConverter<PsiClass> implement
 
     // 2. first non-null result from extension point contributor (currently only Spring)
     for (final ConstantValueConverterClassContributor converterClassContributor :
-      Extensions.getExtensions(ConstantValueConverterClassContributor.EP_NAME)) {
+      ConstantValueConverterClassContributor.EP_NAME.getExtensionList()) {
       final PsiClass contributorClass = converterClassContributor.fromString(s, convertContext);
       if (contributorClass != null) {
         return contributorClass;

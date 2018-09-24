@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
@@ -54,7 +53,7 @@ public class ExtendableClassConverterImpl extends ExtendableClassConverter {
 
     final ExtendClass extendClass = getExtendsAnnotation(context.getInvocationElement());
 
-    for (final ExtendableClassConverterContributor contributor : Extensions.getExtensions(EP_NAME)) {
+    for (final ExtendableClassConverterContributor contributor : EP_NAME.getExtensionList()) {
       if (contributor.isSuitable(context)) {
         final PsiReference[] add = contributor.getReferences(context, element, extendClass);
         if (add.length == 1) {
@@ -97,7 +96,7 @@ public class ExtendableClassConverterImpl extends ExtendableClassConverter {
     @NonNls String[] referenceTypes = allowInterface ? new String[]{"class", "interface"} : new String[]{"class"};
 
     // 2. additional resolvers
-    for (final ExtendableClassConverterContributor contributor : Extensions.getExtensions(EP_NAME)) {
+    for (final ExtendableClassConverterContributor contributor : EP_NAME.getExtensionList()) {
       if (contributor.isSuitable(context)) {
         final PsiReference[] additionalReferences = contributor.getReferences(context, element, extendClass);
         javaClassReferences = ArrayUtil.mergeArrays(javaClassReferences,

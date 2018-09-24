@@ -22,7 +22,6 @@ import com.intellij.javaee.web.WebUtil;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.lang.properties.IProperty;
 import com.intellij.lang.properties.PropertiesImplUtil;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -78,7 +77,7 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
   @Override
   public List<StrutsConstant> getConstants(@NotNull final Module module) {
     return ContainerUtil.concat(
-        Extensions.getExtensions(EP_NAME),
+      EP_NAME.getExtensionList(),
         contributor -> {
           if (!contributor.isAvailable(module)) {
             return Collections.emptyList();
