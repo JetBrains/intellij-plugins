@@ -117,7 +117,7 @@ public class SwcCatalogXmlUtil {
     }
 
     @Override
-    public void error(final String message, final int start, final int end) {
+    public void error(@NotNull final String message, final int start, final int end) {
     }
   }
 
