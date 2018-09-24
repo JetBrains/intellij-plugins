@@ -119,7 +119,7 @@
     <framework.detector implementation="org.angular2.cli.AngularJSFrameworkDetector"/>
     <fileTypeFactory implementation="org.angular2.AngularTypeScriptConfigFileTypeFactory"/>
     <stubIndex implementation="org.angular2.index.Angular2TemplateUrlIndex"/>
-    <findUsagesHandlerFactory implementation="org.angular2.findUsages.Angular2FindUsagesHandlerFactory" order="before JavaScript"/>
+    <findUsagesHandlerFactory implementation="org.angularjs.findUsages.AngularJSFindUsagesHandlerFactory" order="before JavaScript"/>
     <elementDescriptionProvider order="first"
                                 implementation="org.angular2.refactoring.Angular2PipeRenameProcessor$Angular2PipeElementDescriptor"/>
 

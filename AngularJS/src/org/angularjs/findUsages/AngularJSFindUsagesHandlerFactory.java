@@ -1,5 +1,5 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.findUsages;
+package org.angularjs.findUsages;
 
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.lang.javascript.findUsages.JavaScriptFindUsagesHandlerFactory;
@@ -16,7 +16,7 @@ import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class Angular2FindUsagesHandlerFactory extends JavaScriptFindUsagesHandlerFactory {
+public class AngularJSFindUsagesHandlerFactory extends JavaScriptFindUsagesHandlerFactory {
 
   @Override
   public boolean canFindUsages(@NotNull PsiElement element) {
