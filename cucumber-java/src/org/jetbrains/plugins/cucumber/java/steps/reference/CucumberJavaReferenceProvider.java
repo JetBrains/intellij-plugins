@@ -24,6 +24,11 @@ public class CucumberJavaReferenceProvider extends PsiReferenceProvider {
     if (!(element instanceof PsiLiteralExpression)) {
       return PsiReference.EMPTY_ARRAY;
     }
+    Object value = ((PsiLiteralExpression)element).getValue();
+    if (!(value instanceof String)) {
+      return PsiReference.EMPTY_ARRAY;
+    }
+    String stringValue = (String)value;
 
     PsiNewExpression newExp = PsiTreeUtil.getParentOfType(element, PsiNewExpression.class);
     if (newExp != null) {
@@ -34,30 +39,26 @@ public class CucumberJavaReferenceProvider extends PsiReferenceProvider {
       if (classReference != null) {
         String constructorName = classReference.getQualifiedName();
         if (constructorName != null && constructorName.equals(PARAMETER_TYPE_CLASS)) {
-          Object value = ((PsiLiteralExpression)element).getValue();
-          if (value != null) {
-            String parameterTypeName = value.toString();
-            CucumberJavaParameterPomTargetPsiElement target = new CucumberJavaParameterPomTargetPsiElement(element, parameterTypeName);
-            PsiElement pomTargetPsiElement = new PomTargetPsiElementImpl(element.getProject(), target) {
-              @Nullable
-              @Override
-              public String getText() {
-                return element.getText();
-              }
+          CucumberJavaParameterPomTargetPsiElement target = new CucumberJavaParameterPomTargetPsiElement(element, stringValue);
+          PsiElement pomTargetPsiElement = new PomTargetPsiElementImpl(element.getProject(), target) {
+            @Nullable
+            @Override
+            public String getText() {
+              return element.getText();
+            }
 
-              @Override
-              public int getTextLength() {
-                return element.getTextLength();
-              }
+            @Override
+            public int getTextLength() {
+              return element.getTextLength();
+            }
 
-              @Nullable
-              @Override
-              public TextRange getTextRange() {
-                return element.getTextRange();
-              }
-            };
-            return new PsiReference[] {new CucumberParameterTypeSelfReference(pomTargetPsiElement)};
-          }
+            @Nullable
+            @Override
+            public TextRange getTextRange() {
+              return element.getTextRange();
+            }
+          };
+          return new PsiReference[] {new CucumberParameterTypeSelfReference(pomTargetPsiElement)};
         }
       }
     }

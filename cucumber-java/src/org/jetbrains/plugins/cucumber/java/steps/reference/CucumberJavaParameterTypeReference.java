@@ -10,8 +10,7 @@ import com.intellij.pom.PomTargetPsiElement;
 import com.intellij.pom.references.PomService;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.util.IncorrectOperationException;
+import com.intellij.psi.PsiReferenceBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
@@ -37,29 +36,12 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
  *   ));
  * </code></pre>
  */
-public class CucumberJavaParameterTypeReference implements PsiReference {
-  @NotNull
-  private final PsiElement myElement;
-
-  @NotNull
-  private final TextRange myTextRange;
-
+public class CucumberJavaParameterTypeReference extends PsiReferenceBase<PsiElement> {
   public CucumberJavaParameterTypeReference(@NotNull PsiElement element, @NotNull TextRange range) {
-    myElement = element;
-    myTextRange = TextRange.create(range.getStartOffset() + 1, range.getEndOffset() - 1); // Exclude { and }
+    // Exclude { and }
+    super(element, TextRange.create(range.getStartOffset() + 1, range.getEndOffset() - 1), false);
   }
 
-  @NotNull
-  @Override
-  public PsiElement getElement() {
-    return myElement;
-  }
-
-  @NotNull
-  @Override
-  public TextRange getRangeInElement() {
-    return myTextRange;
-  }
 
   @Nullable
   @Override
@@ -84,27 +66,12 @@ public class CucumberJavaParameterTypeReference implements PsiReference {
   }
 
   @Override
-  public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
-    return null;
-  }
-
-  @Override
-  public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
-    return null;
-  }
-
-  @Override
   public boolean isReferenceTo(@NotNull PsiElement element) {
     if (!(element instanceof PsiNamedElement) || !(element instanceof PomTargetPsiElement)) {
       return false;
     }
     String parameterTypeName = getParameterTypeName();
     return StringUtil.equals(((PsiNamedElement)element).getName(), parameterTypeName);
-  }
-
-  @Override
-  public boolean isSoft() {
-    return false;
   }
 
   @NotNull
