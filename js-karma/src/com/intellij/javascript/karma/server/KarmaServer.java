@@ -198,15 +198,8 @@ public class KarmaServer {
       commandLineFolder.addPlaceholderTexts("ng", "test");
       File configFile = KarmaJsSourcesLocator.getInstance().getIntellijConfigFile();
       File workingDir = new File(serverSettings.getWorkingDirectorySystemDependent());
-      if (shouldUseOldConfigCliOption(pkg)) {
-        String configPath = FileUtil.getRelativePath(workingDir, configFile);
-        if (configPath == null) {
-          configPath = configFile.getAbsolutePath();
-        }
-        commandLine.addParameters("--config", configPath);
-        commandLineFolder.addPlaceholderText("--config=" + userConfigFileName);
-      }
-      else {
+      SemVer version = pkg.getVersion();
+      if (version == null || version.isGreaterOrEqualThan(6, 0, 0)) {
         AngularCliConfig config = AngularCliConfig.findProjectConfig(workingDir);
         VirtualFile karmaConfFile = LocalFileSystem.getInstance().findFileByPath(serverSettings.getConfigurationFilePath());
         String defaultProject = config != null ? config.getProjectContainingFileOrDefault(karmaConfFile) : null;
@@ -217,7 +210,15 @@ public class KarmaServer {
         commandLine.addParameters("--karma-config", configFile.getAbsolutePath());
         commandLineFolder.addPlaceholderText("--karma-config=" + userConfigFileName);
 
-        commandLine.addParameter("--source-map"); // added in version 6.0.0
+        commandLine.addParameter("--source-map");
+      }
+      else {
+        String configPath = FileUtil.getRelativePath(workingDir, configFile);
+        if (configPath == null) {
+          configPath = configFile.getAbsolutePath();
+        }
+        commandLine.addParameters("--config", configPath);
+        commandLineFolder.addPlaceholderText("--config=" + userConfigFileName);
       }
     }
     else {
@@ -246,11 +247,6 @@ public class KarmaServer {
     commandLine.setCharset(CharsetToolkit.UTF8_CHARSET);
     configurator.configure(commandLine);
     return commandLine;
-  }
-
-  private static boolean shouldUseOldConfigCliOption(@NotNull NodePackage pkg) {
-    SemVer version = pkg.getVersion();
-    return version != null && !version.isGreaterOrEqualThan(6, 0, 0);
   }
 
   private static void setIntellijParameter(@NotNull GeneralCommandLine commandLine,
