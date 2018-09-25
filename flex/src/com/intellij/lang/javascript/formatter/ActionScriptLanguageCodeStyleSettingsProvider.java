@@ -4,7 +4,6 @@ import com.intellij.application.options.IndentOptionsEditor;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.openapi.options.Configurable;
 import com.intellij.psi.codeStyle.*;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +30,7 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
 
   @NotNull
   @Override
-  public Configurable createSettingsPage(CodeStyleSettings settings, CodeStyleSettings modelSettings) {
+  public CodeStyleConfigurable createConfigurable(@NotNull CodeStyleSettings settings, @NotNull CodeStyleSettings modelSettings) {
     return new ActionScriptCodeStyleSettingsConfigurable(settings, modelSettings);
   }
 
