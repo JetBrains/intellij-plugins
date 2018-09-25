@@ -12,7 +12,6 @@ import com.intellij.psi.impl.source.html.HtmlFileImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 public class Angular2HighlightingPassFactory extends JSLanguageServiceHighlightingPassFactory {
@@ -34,7 +33,7 @@ public class Angular2HighlightingPassFactory extends JSLanguageServiceHighlighti
   @Nullable
   @Override
   protected JSLanguageService getService(@NotNull PsiFile file) {
-    return myProvider != null ? myProvider.getService() : null;
+    return myProvider != null ? myProvider.getService(file.getVirtualFile()) : null;
   }
 
   @Override
