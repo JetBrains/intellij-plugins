@@ -276,7 +276,7 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
                                 "ImplementThisType",
                                 "ImplementationWithGenerics",
                                 "ImplementsInClassExpression",
-                                "ImplementsMarkerForClass",
+                                //"ImplementsMarkerForClass",
                                 "ImplicitIndexers",
                                 "ImplicitIndexersNoError",
                                 "Import",

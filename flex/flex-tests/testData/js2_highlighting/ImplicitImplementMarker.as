@@ -1,4 +1,4 @@
-interface <lineMarker descr="<html>Has implementations</html>"><info>IFoo</info></lineMarker> {
+interface <lineMarker descr="Has implementations"><info>IFoo</info></lineMarker> {
     function <lineMarker descr="Is implemented"><info descr="instance method">foo</info></lineMarker>();
 }
 
