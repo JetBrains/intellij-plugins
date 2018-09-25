@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CucumberJavaReferenceProvider extends PsiReferenceProvider {
-  public static final String PARAMETER_TYPE_CLASS = "io.cucumber.cucumberexpressions.ParameterType";
+  private static final String PARAMETER_TYPE_CLASS = "io.cucumber.cucumberexpressions.ParameterType";
 
   @NotNull
   @Override
@@ -37,8 +37,8 @@ public class CucumberJavaReferenceProvider extends PsiReferenceProvider {
       }
       PsiJavaCodeReferenceElement classReference = newExp.getClassReference();
       if (classReference != null) {
-        String constructorName = classReference.getQualifiedName();
-        if (constructorName != null && constructorName.equals(PARAMETER_TYPE_CLASS)) {
+        String fqn = classReference.getQualifiedName();
+        if (PARAMETER_TYPE_CLASS.equals(fqn)) {
           CucumberJavaParameterPomTargetPsiElement target = new CucumberJavaParameterPomTargetPsiElement(element, stringValue);
           PsiElement pomTargetPsiElement = new PomTargetPsiElementImpl(element.getProject(), target) {
             @Nullable
