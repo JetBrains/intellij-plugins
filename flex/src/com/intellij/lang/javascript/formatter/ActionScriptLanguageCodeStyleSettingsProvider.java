@@ -4,11 +4,11 @@ import com.intellij.application.options.IndentOptionsEditor;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable;
-import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
+import com.intellij.openapi.options.Configurable;
+import com.intellij.psi.codeStyle.*;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +27,24 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
   @Override
   public IndentOptionsEditor getIndentOptionsEditor() {
     return new ActionScriptIndentOptionsEditor();
+  }
+
+  @NotNull
+  @Override
+  public Configurable createSettingsPage(CodeStyleSettings settings, CodeStyleSettings modelSettings) {
+    return new ActionScriptCodeStyleSettingsConfigurable(settings, modelSettings);
+  }
+
+  @Nullable
+  @Override
+  public CustomCodeStyleSettings createCustomSettings(CodeStyleSettings settings) {
+    return new ECMA4CodeStyleSettings(settings);
+  }
+
+  @Nullable
+  @Override
+  public String getConfigurableDisplayName() {
+    return "ActionScript";
   }
 
   @Override

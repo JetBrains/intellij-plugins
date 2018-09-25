@@ -136,7 +136,6 @@
     <testFinder implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitTestFinder"/>
     <testCreator language="JavaScript" implementationClass="com.intellij.lang.javascript.flex.flexunit.FlexUnitTestCreator"/>
     <testCreator language="Mxml" implementationClass="com.intellij.lang.javascript.flex.flexunit.FlexUnitTestCreator"/>
-    <codeStyleSettingsProvider implementation="com.intellij.lang.javascript.formatter.ActionScriptCodeStyleSettingsProvider"/>
     <colorSettingsPage implementation="com.intellij.lang.javascript.colors.page.ActionScriptColorsAndFontsPage"/>
     <projectStructureDetector implementation="com.intellij.lang.javascript.flex.projectStructure.detection.FlexProjectStructureDetector"/>
     <configurationType implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfigurationType"/>
