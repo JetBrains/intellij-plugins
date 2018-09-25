@@ -12,18 +12,7 @@ var intellijParameters = require('./karma-intellij-parameters')
  */
 function preconfigureCoverage(config) {
   if (intellijParameters.isWithCoverage()) {
-    configureAngularCliCoverage(config);
   }
-}
-
-function configureAngularCliCoverage(config) {
-  var angularCli = config.angularCli;
-  if (!angularCli) {
-    angularCli = {};
-    config.angularCli = angularCli;
-  }
-  angularCli.codeCoverage = true;
-  angularCli.sourcemaps = true;
 }
 
 /**
