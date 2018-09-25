@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.types.JSFileElementType;
 import com.intellij.psi.tree.ICompositeElementType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.xml.XmlElementType;
 import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes;
@@ -16,6 +17,8 @@ import org.angular2.lang.html.psi.impl.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
+
+import static com.intellij.psi.tree.TokenSet.create;
 
 public interface Angular2HtmlElementTypes extends XmlElementType, Angular2HtmlTokenTypes {
 
@@ -34,6 +37,15 @@ public interface Angular2HtmlElementTypes extends XmlElementType, Angular2HtmlTo
   IElementType TEMPLATE_BINDINGS = new Angular2ElementType("NG:TEMPLATE_BINDINGS", Angular2HtmlTemplateBindingsImpl::new);
 
   JSStubElementType<JSVariableStub<JSVariable>, JSVariable> REFERENCE_VARIABLE = new Angular2HtmlReferenceVariableElementType();
+
+  TokenSet ALL_ATTRIBUTES = create(
+    EVENT,
+    BANANA_BOX_BINDING,
+    PROPERTY_BINDING,
+    TEMPLATE_BINDINGS,
+    VARIABLE,
+    REFERENCE
+  );
 
   class Angular2ElementType extends IElementType implements ICompositeElementType {
 

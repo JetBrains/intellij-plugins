@@ -27,7 +27,8 @@ import java.util.Set;
 
 import static com.intellij.psi.tree.TokenSet.create;
 import static com.intellij.psi.tree.TokenSet.orSet;
-import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
+import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.ALL_ATTRIBUTES;
+import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.XML_ATTRIBUTE;
 
 public class Angular2HtmlFilterLexer extends BaseFilterLexer {
 
@@ -40,16 +41,7 @@ public class Angular2HtmlFilterLexer extends BaseFilterLexer {
   );
 
   private static final TokenSet IDENTIFIERS = orSet(
-    JSKeywordSets.IDENTIFIER_TOKENS_SET
-  );
-
-  private static final TokenSet ANGULAR_ATTRIBUTES = create(
-    EVENT,
-    BANANA_BOX_BINDING,
-    PROPERTY_BINDING,
-    TEMPLATE_BINDINGS,
-    VARIABLE,
-    REFERENCE
+    JSKeywordSets.IDENTIFIER_NAMES
   );
 
   private static final TokenSet COMMENTS = orSet(
@@ -99,7 +91,8 @@ public class Angular2HtmlFilterLexer extends BaseFilterLexer {
       }
       else if (LITERALS.contains(tokenType)) {
         scanWordsInToken(UsageSearchContext.IN_STRINGS, false, false);
-      } else if (ANGULAR_ATTRIBUTES.contains(tokenType)) {
+      }
+      else if (ALL_ATTRIBUTES.contains(tokenType)) {
         Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(myDelegate.getTokenText(), true);
         if (info.elementType != XML_ATTRIBUTE) {
           addOccurrenceInToken(UsageSearchContext.IN_CODE, getTokenText().lastIndexOf(info.name), info.name.length());
@@ -113,7 +106,8 @@ public class Angular2HtmlFilterLexer extends BaseFilterLexer {
           false);
 
         if (inComments) advanceTodoItemCountsInToken();
-      } else {
+      }
+      else {
         scanWordsInToken(UsageSearchContext.IN_PLAIN_TEXT, false, false);
       }
     }

@@ -138,6 +138,7 @@
     <todoIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlTodoIndexer"/>
     <xml.fileNSInfoProvider implementation="org.angular2.lang.html.Angular2HtmlNSInfoProvider"/>
     <stubElementTypeHolder class="org.angular2.lang.html.parser.Angular2HtmlElementTypes"/>
+    <lang.formatter language="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlFormattingModelBuilder"/>
 
     <!-- Angular 2 Expression Language contributions -->
     <codeInsight.template.postfixTemplateProvider language="Angular2"
@@ -190,4 +191,5 @@
       <implementation-class>org.angular2.service.Angular2HighlightingPassFactory</implementation-class>
     </component>
   </project-components>
+  <version/>
 </idea-plugin>

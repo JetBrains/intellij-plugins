@@ -50,7 +50,7 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
     keys2.put(INTERPOLATION_START, NG_SCRIPT_DELIMITERS);
     keys2.put(INTERPOLATION_END, NG_SCRIPT_DELIMITERS);
 
-    Stream.of(BANANA_BOX_BINDING, EVENT, PROPERTY_BINDING, REFERENCE, TEMPLATE_BINDINGS, VARIABLE)
+    Stream.of(ALL_ATTRIBUTES.getTypes())
       .forEach(type -> keys1.put(type, XmlHighlighterColors.HTML_ATTRIBUTE_NAME));
 
     keys2.put(BANANA_BOX_BINDING, NG_BANANA_BINDING_ATTR_NAME);
