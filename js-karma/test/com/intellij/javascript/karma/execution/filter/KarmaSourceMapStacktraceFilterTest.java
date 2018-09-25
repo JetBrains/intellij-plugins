@@ -70,6 +70,23 @@ public class KarmaSourceMapStacktraceFilterTest extends CodeInsightFixtureTestCa
            new FileHyperlinkRawData("node_modules/@angular/core/@angular/core/testing.es5.js", 48, -1, 8, 68));
   }
 
+  public void testHttpLink() {
+    KarmaSourceMapStacktraceFilter filter = new KarmaSourceMapStacktraceFilter(
+      getProject(),
+      null,
+      BrowserStacktraceFilters.createFilter("chrome", getProject(), null)
+    );
+    doTest("\t    at UserContext.<anonymous> (http://localhost:9876/src/app/app.component.spec.ts?:14:17)\n",
+           filter,
+           new FileHyperlinkRawData("src/app/app.component.spec.ts", 13, 16, 33, 91));
+    doTest("\t    at UserContext.<anonymous> (http://localhost:9876/base/src/app/app.component.spec.ts?:14:17)\n",
+           filter,
+           new FileHyperlinkRawData("src/app/app.component.spec.ts", 13, 16, 33, 96));
+    doTest("\t    at UserContext.<anonymous> (http://localhost:9876/absolute/src/app/app.component.spec.ts?:14:17)\n",
+           filter,
+           new FileHyperlinkRawData("/src/app/app.component.spec.ts", 13, 16, 33, 100));
+  }
+
   private static void doTest(@NotNull String line,
                              @NotNull AbstractFileHyperlinkFilter filter,
                              @NotNull FileHyperlinkRawData expected) {
