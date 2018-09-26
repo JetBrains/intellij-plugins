@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.linter.tslint.execution;
 
 import com.intellij.lang.annotation.HighlightSeverity;
-import com.intellij.lang.javascript.integration.JSAnnotationRangeError;
 import com.intellij.lang.javascript.linter.JSLinterError;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintFixInfo;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Irina.Chernushina on 6/4/2015.
  */
-public final class TsLinterError extends JSLinterError implements JSAnnotationRangeError {
+public final class TsLinterError extends JSLinterError {
   @Nullable
   private final String myPath;
   private final int myEndLine;
@@ -46,18 +45,15 @@ public final class TsLinterError extends JSLinterError implements JSAnnotationRa
     myIsGlobal = true;
   }
 
-  @Override
   public int getEndLine() {
     return myEndLine;
   }
 
-  @Override
   public int getEndColumn() {
     return myEndColumn;
   }
 
   @Nullable
-  @Override
   public String getAbsoluteFilePath() {
     return myPath;
   }
