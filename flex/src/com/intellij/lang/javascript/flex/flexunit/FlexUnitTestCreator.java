@@ -60,7 +60,7 @@ public class FlexUnitTestCreator implements TestCreator {
       targetDirectory = jsClass.getContainingFile().getContainingDirectory();
       generateSetUp = true;
       generateTearDown = true;
-      selectedMemberInfos = new JSMemberInfo[0];
+      selectedMemberInfos = JSMemberInfo.EMPTY_ARRAY;
     }
     else {
       final CreateFlexUnitTestDialog dialog = new CreateFlexUnitTestDialog(ModuleUtilCore.findModuleForPsiElement(jsClass), jsClass);

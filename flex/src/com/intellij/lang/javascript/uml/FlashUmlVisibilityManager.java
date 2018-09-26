@@ -39,7 +39,7 @@ public class FlashUmlVisibilityManager extends AbstractUmlVisibilityManager {
 
   @Override
   public VisibilityLevel[] getVisibilityLevels() {
-    return predefinedLevels.toArray(new VisibilityLevel[0]);
+    return predefinedLevels.toArray(VisibilityLevel.EMPTY_ARRAY);
   }
 
   @Override
