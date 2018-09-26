@@ -4,11 +4,11 @@ package org.angular2.lang.expr.psi.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.psi.JSRecordType;
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSTypeEvaluationResult;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.impl.JSVariableImpl;
-import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
+import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.angular2.lang.expr.parser.Angular2ElementTypes;
@@ -35,9 +35,9 @@ public class Angular2TemplateVariableImpl extends JSVariableImpl<JSVariableStub<
     if (binding == null || binding.getName() == null || bindings == null) {
       return null;
     }
-    JSTypeEvaluationResult type = JSTypeEvaluator.getElementType(bindings);
-    if (type != null && type.getType() != null) {
-      JSRecordType.PropertySignature signature = type.getType().asRecordType().findPropertySignature(binding.getName());
+    JSType type = JSResolveUtil.getElementJSType(bindings, JSEvaluateContext.JSEvaluationPlace.DEFAULT);
+    if (type != null ) {
+      JSRecordType.PropertySignature signature = type.asRecordType().findPropertySignature(binding.getName());
       return signature != null ? signature.getType() : null;
     }
     return null;
