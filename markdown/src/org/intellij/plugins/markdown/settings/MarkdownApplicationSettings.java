@@ -9,6 +9,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Property;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,6 +82,14 @@ public class MarkdownApplicationSettings implements PersistentStateComponent<Mar
     return myState.myPreviewSettings;
   }
 
+  public void setDisableInjections(boolean disableInjections) {
+    myState.myDisableInjections = disableInjections;
+  }
+
+  public boolean isDisableInjections() {
+    return myState.myDisableInjections;
+  }
+
 
   public static class State {
     @Property(surroundWithTag = false)
@@ -90,6 +99,9 @@ public class MarkdownApplicationSettings implements PersistentStateComponent<Mar
     @Property(surroundWithTag = false)
     @NotNull
     private MarkdownPreviewSettings myPreviewSettings = MarkdownPreviewSettings.DEFAULT;
+
+    @Attribute("DisableInjections")
+    private boolean myDisableInjections = false;
   }
 
   public interface SettingsChangedListener {

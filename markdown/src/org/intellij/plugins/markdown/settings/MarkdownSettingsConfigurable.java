@@ -81,7 +81,8 @@ public class MarkdownSettingsConfigurable implements SearchableConfigurable {
       return false;
     }
     return !form.getMarkdownCssSettings().equals(myMarkdownApplicationSettings.getMarkdownCssSettings()) ||
-           !form.getMarkdownPreviewSettings().equals(myMarkdownApplicationSettings.getMarkdownPreviewSettings());
+           !form.getMarkdownPreviewSettings().equals(myMarkdownApplicationSettings.getMarkdownPreviewSettings()) ||
+           form.isDisableInjections() != myMarkdownApplicationSettings.isDisableInjections();
   }
 
   @Override
@@ -95,6 +96,7 @@ public class MarkdownSettingsConfigurable implements SearchableConfigurable {
 
     myMarkdownApplicationSettings.setMarkdownCssSettings(form.getMarkdownCssSettings());
     myMarkdownApplicationSettings.setMarkdownPreviewSettings(form.getMarkdownPreviewSettings());
+    myMarkdownApplicationSettings.setDisableInjections(form.isDisableInjections());
 
     ApplicationManager.getApplication().getMessageBus().syncPublisher(MarkdownApplicationSettings.SettingsChangedListener.TOPIC)
       .settingsChanged(myMarkdownApplicationSettings);
@@ -108,6 +110,7 @@ public class MarkdownSettingsConfigurable implements SearchableConfigurable {
     }
     form.setMarkdownCssSettings(myMarkdownApplicationSettings.getMarkdownCssSettings());
     form.setMarkdownPreviewSettings(myMarkdownApplicationSettings.getMarkdownPreviewSettings());
+    form.setDisableInjections(myMarkdownApplicationSettings.isDisableInjections());
   }
 
   @Override

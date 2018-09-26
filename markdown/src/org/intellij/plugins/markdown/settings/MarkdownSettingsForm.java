@@ -67,6 +67,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   private JBRadioButton myVerticalLayout;
   private JBRadioButton myHorizontalLayout;
   private JBLabel myVerticalSplitLabel;
+  private JBCheckBox myDisableInjections;
 
   private static final Color SUCCESS_COLOR = new JBColor(0x008000, 0x6A8759);
 
@@ -391,5 +392,13 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
                                        myUseGrayscaleRenderingForJBCheckBox.isSelected(),
                                        myAutoScrollCheckBox.isSelected(),
                                        myVerticalLayout.isSelected());
+  }
+
+  public void setDisableInjections(boolean disableInjections) {
+    myDisableInjections.setSelected(disableInjections);
+  }
+
+  public boolean isDisableInjections() {
+    return myDisableInjections.isSelected();
   }
 }
