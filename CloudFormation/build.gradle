@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = "1.2.30"
+    ext.kotlin_version = "1.2.71"
     repositories {
         mavenCentral()
     }
@@ -10,7 +10,7 @@ buildscript {
 }
 
 plugins {
-    id "org.jetbrains.intellij" version "0.3.5"
+    id "org.jetbrains.intellij" version "0.3.11"
 }
 
 // Workaround too long command line for JavaExec
@@ -84,6 +84,6 @@ task printVersion {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.9'
+    gradleVersion = '4.10.2'
     distributionUrl = "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
 }
