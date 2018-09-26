@@ -1,4 +1,3 @@
-Menu
 [Amazon Web Services] <http://aws.amazon.com>
 Sign In to the Console <https://console.aws.amazon.com/console/home>
 <http://www.amazon.com/dp/B07641FR9Q>
@@ -19,7 +18,7 @@ User Guide (API Version 2010-05-15)
           o Logging API Calls
           o Limits
           o Endpoints
-          o AWS CloudFormation and VPC Endpoints
+          o Setting Up VPC Endpoints for AWS CloudFormation
     * Getting Started
           o Get Started
           o Learn Template Basics
@@ -85,6 +84,7 @@ User Guide (API Version 2010-05-15)
                 + Description
                 + Metadata
                 + Parameters
+                      # Using Dynamic References to Specify Template Values
                 + Mappings
                 + Conditions
                 + Transform
@@ -143,6 +143,8 @@ User Guide (API Version 2010-05-15)
                             * Create
                             * Delete
                             * Update
+          o Template Macros
+                + Macro Example: Creating and Using a Macro
           o Using Regular Expressions
           o Using CloudFormer to Create Templates
     * Working with AWS CloudFormation StackSets
@@ -207,6 +209,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::CloudFormation::CustomResource
                 + AWS::CloudFormation::Init
                 + AWS::CloudFormation::Interface
+                + AWS::CloudFormation::Macro
                 + AWS::CloudFormation::Stack
                 + AWS::CloudFormation::WaitCondition
                 + AWS::CloudFormation::WaitConditionHandle
@@ -357,6 +360,9 @@ User Guide (API Version 2010-05-15)
                 + AWS::IoT::Thing
                 + AWS::IoT::ThingPrincipalAttachment
                 + AWS::IoT::TopicRule
+                + AWS::IoT1Click::Device
+                + AWS::IoT1Click::Placement
+                + AWS::IoT1Click::Project
                 + AWS::Kinesis::Stream
                 + AWS::KinesisAnalytics::Application
                 + AWS::KinesisAnalytics::ApplicationOutput
@@ -467,9 +473,13 @@ User Guide (API Version 2010-05-15)
                 + AWS::WorkSpaces::Workspace
           o Resource Property Types
                 + Amazon MQ Broker ConfigurationId
+                + Amazon MQ Broker LogsConfiguration
                 + Amazon MQ Broker MaintenanceWindow
                 + Amazon MQ Broker User
                 + API Gateway ApiKey StageKey
+                + API Gateway Deployment AccessLogSetting
+                + API Gateway Deployment CanarySetting
+                + API Gateway Deployment DeploymentCanarySettings
                 + API Gateway Deployment StageDescription
                 + API Gateway Deployment MethodSetting
                 + API Gateway DocumentationPart Location
@@ -479,6 +489,8 @@ User Guide (API Version 2010-05-15)
                 + API Gateway Method MethodResponse
                 + API Gateway RestApi S3Location
                 + API Gateway RestApi EndpointConfiguration
+                + API Gateway Stage AccessLogSetting
+                + API Gateway Stage CanarySetting
                 + API Gateway Stage MethodSetting
                 + API Gateway UsagePlan ApiStage
                 + API Gateway UsagePlan QuotaSettings
@@ -591,11 +603,14 @@ User Guide (API Version 2010-05-15)
                 + CloudWatch Logs MetricFilter MetricTransformation
                   Property
                 + AWS CodeBuild Project Artifacts
+                + AWS CodeBuild Project CloudWatch Logs
                 + AWS CodeBuild Project Environment
                 + AWS CodeBuild Project EnvironmentVariable
+                + AWS CodeBuild Project LogsConfig
                 + AWS CodeBuild Project ProjectCache
                 + AWS CodeBuild Project Source
                 + AWS CodeBuild Project SourceAuth
+                + AWS CodeBuild Project S3Logs
                 + AWS CodeBuild Project ProjectTriggers
                 + AWS CodeBuild Project VpcConfig
                 + AWS CodeCommit Repository Trigger
@@ -614,8 +629,11 @@ User Guide (API Version 2010-05-15)
                 + AWS CodeDeploy DeploymentGroup Deployment Revision
                   S3Location
                 + AWS CodeDeploy DeploymentGroup Ec2TagFilters
-                + AWS CodeDeploy DeploymentGroup
-                  OnPremisesInstanceTagFilters
+                + AWS CodeDeploy DeploymentGroup EC2TagSet
+                + AWS CodeDeploy DeploymentGroup EC2TagSetListObject
+                + AWS CodeDeploy DeploymentGroup OnPremisesTagSet
+                + AWS CodeDeploy DeploymentGroup OnPremisesTagSetListObject
+                + AWS CodeDeploy DeploymentGroup TagFilters
                 + AWS CodeDeploy DeploymentGroup TriggerConfig
                 + AWS CodePipeline CustomActionType ArtifactDetails
                 + AWS CodePipeline CustomActionType ConfigurationProperties
@@ -714,17 +732,22 @@ User Guide (API Version 2010-05-15)
                 + Amazon EC2 SpotFleet SpotFleetRequestConfigData
                 + Amazon EC2 SpotFleet LaunchSpecifications
                 + Amazon EC2 SpotFleet BlockDeviceMappings
+                + Amazon EC2 SpotFleet ClassicLoadBalancer
+                + Amazon EC2 SpotFleet ClassicLoadBalancersConfig
                 + Amazon EC2 SpotFleet Ebs
                 + Amazon EC2 SpotFleet FleetLaunchTemplateSpecification
                 + Amazon EC2 SpotFleet IamInstanceProfile
                 + Amazon EC2 SpotFleet LaunchTemplateConfig
                 + Amazon EC2 SpotFleet LaunchTemplateOverrides
+                + Amazon EC2 SpotFleet LoadBalancersConfig
                 + Amazon EC2 SpotFleet Monitoring
                 + Amazon EC2 SpotFleet NetworkInterfaces
                 + Amazon EC2 SpotFleet PrivateIpAddresses
                 + Amazon EC2 SpotFleet Placement
                 + Amazon EC2 SpotFleet SecurityGroups
                 + Amazon EC2 SpotFleet SpotFleetTagSpecification
+                + Amazon EC2 SpotFleet TargetGroup
+                + Amazon EC2 SpotFleet TargetGroupsConfig
                 + EC2 VPNConnection VpnTunnelOptionsSpecification
                 + Amazon ECS Service AwsVpcConfiguration
                 + Amazon ECR Repository LifecyclePolicy
@@ -734,6 +757,7 @@ User Guide (API Version 2010-05-15)
                 + Amazon ECS Service PlacementStrategies
                 + Amazon ECS Service LoadBalancers
                 + Amazon ECS Service ServiceRegistry
+                + Amazon ECS TaskDefinition DockerVolumeConfiguration
                 + Amazon ECS TaskDefinition HealthCheck
                 + Amazon ECS TaskDefinition ContainerDefinition
                 + Amazon ECS TaskDefinition Device
@@ -748,6 +772,8 @@ User Guide (API Version 2010-05-15)
                 + Amazon ECS TaskDefinition Ulimit
                 + Amazon ECS TaskDefinition VolumeFrom
                 + Amazon ECS Service PlacementConstraint
+                + Amazon ECS TaskDefinition RepositoryCredentials
+                + Amazon ECS TaskDefinition Tmpfs
                 + Amazon ECS TaskDefinition Volumes
                 + Amazon ECS TaskDefinition Volumes Host
                 + Amazon Elastic File System FileSystem FileSystemTags
@@ -810,6 +836,7 @@ User Guide (API Version 2010-05-15)
                 + Amazon EMR Cluster ScriptBootstrapActionConfig
                 + Amazon EMR Cluster SimpleScalingPolicyConfiguration
                 + Amazon EMR Cluster SpotProvisioningSpecification
+                + Amazon EMR Cluster KerberosAttributes
                 + Amazon EMR EbsConfiguration
                 + Amazon EMR EbsConfiguration EbsBlockDeviceConfigs
                 + Amazon EMR EbsConfiguration EbsBlockDeviceConfig
@@ -838,6 +865,8 @@ User Guide (API Version 2010-05-15)
                 + GameLift Build StorageLocation
                 + GameLift Fleet EC2InboundPermission
                 + AWS Glue Classifier GrokClassifier
+                + AWS Glue Classifier JsonClassifier
+                + AWS Glue Classifier XMLClassifier
                 + AWS Glue Connection ConnectionInput
                 + AWS Glue Connection PhysicalConnectionRequirements
                 + AWS Glue Crawler JdbcTarget
@@ -868,6 +897,7 @@ User Guide (API Version 2010-05-15)
                 + GuardDuty Filter Condition
                 + IAM Policies
                 + IAM User LoginProfile
+                + AWS IoT 1-Click Project PlacementTemplate
                 + AWS IoT TopicRule Action
                 + AWS IoT TopicRule CloudwatchAlarmAction
                 + AWS IoT TopicRule CloudwatchMetricAction
@@ -979,6 +1009,7 @@ User Guide (API Version 2010-05-15)
                 + Amazon Redshift Parameter Type
                 + Amazon Redshift Cluster LoggingProperties
                 + AWS CloudFormation Resource Tags
+                + Amazon RDS DBCluster ScalingConfiguration
                 + Amazon RDS OptionGroup OptionConfiguration
                 + Amazon RDS OptionGroup OptionSetting
                 + RDS Security Group Rule
@@ -1106,7 +1137,7 @@ User Guide (API Version 2010-05-15)
                 + AWS WAF XssMatchSet XssMatchTuple
                 + AWS WAF XssMatchSet XssMatchTuple FieldToMatch
                 + AWS WAF WebACL Action
-                + AWS WAF WebACL Rules
+                + AWS WAF WebACL ActivatedRule
                 + AWS WAF Regional ByteMatchSet ByteMatchTuples
                 + AWS WAF Regional ByteMatchSet ByteMatchTuples
                   FieldToMatch
@@ -1144,6 +1175,7 @@ User Guide (API Version 2010-05-15)
                 + Fn::Select
                 + Fn::Split
                 + Fn::Sub
+                + Fn::Transform
                 + Ref
           o Pseudo Parameters
           o CloudFormation Helper Scripts
@@ -1215,9 +1247,7 @@ User Guide (API Version 2010-05-15)
           o Release History for Helper Scripts
     * AWS Glossary
     *  <http://www.amazon.com/dp/B07641FR9Q>
-AWS Documentation <http://aws.amazon.com/documentation> » AWS 
-CloudFormation <http://aws.amazon.com/documentation/cloudformation> » User 
-Guide » Release History
+AWS Documentation » AWS CloudFormation » User Guide » Release History
 
 
 Release History
@@ -1227,75 +1257,434 @@ CloudFormation User Guide after May 2018. For notification about updates to
 this documentation, you can subscribe to an RSS feed.
 
 Change 	Description 	Date
-Updated resource 	
+
+UseOnlineResharding update policy now available.
+
+To modify a replication group's shards by adding or removing shards, rather 
+than replacing the entire AWS::ElastiCache::ReplicationGroup resource, use 
+the UseOnlineResharding update policy.
+
+For more information, see UseOnlineResharding Policy.
+
+September 20, 2018
+
+Updated resources
+
+The following resources have been updated: AWS::ApiGateway::Deployment, 
+AWS::ApiGateway::Method, AWS::ApiGateway::Stage, 
+AWS::ApiGateway::UsagePlan, AWS::CodeBuild::Project, 
+AWS::CodeDeploy::DeploymentGroup, AWS::EC2::FlowLog, AWS::EC2::SpotFleet, 
+AWS::EC2::VPCEndpoint, AWS::ECS::Service, AWS::ECS::TaskDefinition, and 
+AWS::RDS::DBCluster.
+
+AWS::ApiGateway::Deployment
+
+    Use the DeploymentCanarySettings property to specify settings for the
+    canary deployment.
+
+    In the API Gateway Deployment StageDescription property type:
+
+        * Use the AccessLogSetting property to specify settings for logging
+          access in this stage.
+
+        * Use the CanarySetting property to specify settings for the canary
+          deployment in this stage.
+
+AWS::ApiGateway::Method
+
+    Use the AuthorizationScopes property to specify a list of authorization
+    scopes configured on the method.
+
+    In the API Gateway Method Integration:
+
+        * Use the ConnectionId property to specify the ID of the VpcLink
+          used for the integration when connectionType=VPC_LINK.
+
+        * Use the ConnectionType property to specify the type of the
+          network connection to the integration endpoint.
+
+        * Use the TimeoutInMillis property to specify a custom timeout
+          between 50 and 29,000 milliseconds.
+
+AWS::ApiGateway::Stage
+
+    Use the AccessLogSetting property to specify settings for logging
+    access in this stage.
+
+    Use the CanarySetting property to specify settings for the canary
+    deployment in this stage.
+
+AWS::ApiGateway::UsagePlan
+
+    In the property type, use the Throttle property to specify a map
+    containing method-level throttling information for API stage in a usage
+    plan.
+
+AWS::CodeBuild::Project
+
+    Use the LogsConfig property specify logs for a project. Logs can be
+    CloudWatch Logs, uploaded to a specified S3 bucket, or both.
+
+    In the AWS CodeBuild Project LogsConfig property type:
+
+        * Use the CloudWatchLogs property to specify details about
+          CloudWatch Logs.
+
+        * Use the S3Logs property to specify details about logs that are
+          uploaded to an S3 bucket.
+
+AWS::CodeDeploy::DeploymentGroup
+
+    Use the Ec2TagSet property to specify information about groups of tags
+    applied to EC2 instances. The deployment group will include only EC2
+    instances identified by all the tag groups.
+
+    Use the OnPremisesInstanceTagSet property to specify information about
+    groups of tags applied to on-premises instances. The deployment group
+    will include only on-premises instances identified by all the tag
+    groups.
+
+    The DeliverLogsPermissionArn and LogGroupName properties are no longer
+    required.
+
+AWS::EC2::FlowLog
+
+    Use the LogDestination property to specify the destination to which the
+    flow log data is to be published.
+
+    Use the LogDestinationType property to specify the type of destination
+    to which the flow log data is to be published. Flow log data can be
+    published to CloudWatch Logs or Amazon S3.
+
+AWS::EC2::SpotFleet
+
+    In the SpotFleetRequestConfigData property type, use the 
+    InstanceInterruptionBehavior property to specify the behavior when a
+    Spot Instance is interrupted.
+
+    In the SpotFleetRequestConfigData property type, use the 
+    LoadBalancersConfig property to specify one or more Classic Load
+    Balancers and target groups to attach to the Spot Fleet request. Spot
+    Fleet registers the running Spot Instances with the specified Classic
+    Load Balancers and target groups.
+
+    In the Placement property type, use the Tenancy property to specify the
+    tenancy of the instance (if the instance is running in a VPC). An
+    instance with a tenancy of dedicated runs on single-tenant hardware.
+    The host tenancy is not supported for Spot Instances.
+
+AWS::EC2::VPCEndpoint
+
+    Use the following attributes with the Fn::GetAtt function to return
+    attribute values.
+
+        * Use CreationTimestamp to return the date and time the VPC
+          endpoint was created.
+
+        * Use DnsEntries to return the DNS entries for the endpoint.
+
+        * Use NetworkInterfaceIds to return the network interfaces for the
+          endpoint.
+
+AWS::ECS::Service
+
+    The ServiceRegistries property now requires replacement upon update.
+
+    Use the SchedulingStrategy property to specify the scheduling strategy
+    to use for the service.
+
+    In the Amazon ECS Service ServiceRegistry property type:
+
+        * Use the ContainerName property to specify the container name
+          value, already specified in the task definition, to be used for
+          your service discovery service.
+
+        * Use the ContainerPort property to specify the port value, already
+          specified in the task definition, to be used for your service
+          discovery service.
+
+AWS::ECS::TaskDefinition
+
+    In the Amazon ECS TaskDefinition LinuxParameters property type:
+
+        * Use the Tmpfs property to specify the container path, mount
+          options, and size of the tmpfs mount.
+
+        * Use the SharedMemorySize property to specify the size (in MiB) of
+          the /dev/shm volume.
+
+    In the Amazon ECS TaskDefinition Volumes property type, use the 
+    DockerVolumeConfiguration property to specify the configuration of a
+    Docker volume.
+
+    In the Amazon ECS TaskDefinition ContainerDefinition property type, use
+    the RepositoryCredentials property to specify the repository
+    credentials for private registry authentication.
+
+AWS::ElastiCache::ReplicationGroup
+
+    The NodeGroupConfiguration and NumNodeGroups properties are now
+    conditional for some update operations.
+
+    In the ElastiCache ReplicationGroup NodeGroupConfiguration property
+    type, use the NodeGroupId property to specify either the ElastiCache
+    for Redis supplied 4-digit id or a user supplied id for the node group
+    these configuration values apply to.
+
+AWS::RDS::DBCluster
+
+    Use the EngineMode property to specify the DB engine mode of the DB
+    cluster.
+
+    Use the ScalingConfiguration property to specify the scaling properties
+    of the DB cluster, for DB clusters in serverless DB engine mode.
+
+September 20, 2018
+
+New resources
+
+The following resources were added: AWS::IoT1Click::Device, 
+AWS::IoT1Click::Placement, and AWS::IoT1Click::Project.
+
+AWS::IoT1Click::Device
+
+    Use the AWS::IoT1Click::Device resource to change the enabled state of
+    an AWS IoT 1-Click compatible device.
+
+AWS::IoT1Click::Placement
+
+    Use the AWS::IoT1Click::Placement resource to create an empty AWS IoT
+    1-Click placement.
+
+AWS::IoT1Click::Project
+
+    Use the AWS::IoT1Click::Project resource to create an empty project
+    with a placement template.
+
+September 20, 2018
+
+New resource
+
+Added the AWS::CloudFormation::Macro resource.
+
+AWS::CloudFormation::Macro
+
+    Use the AWS::CloudFormation::Macro resource to create a template macro
+    to perform custom processing on AWS CloudFormation templates.
+
+September 6, 2018
+
+Macros now available
+
+Use macros to to perform custom processing on templates, from simple 
+actions like find-and-replace operations to extensive transformations of 
+entire templates.
+
+See Using AWS CloudFormation Macros to Perform Custom Processing on 
+Templates for more information.
+
+September 6, 2018
+
+Updated resources
+
+Added the Logs property to AWS::AmazonMQ::Broker. Added the 
+SecondaryArtifacts and SecondarySources properties to 
+AWS::CodeBuild::Project.
+
+AWS::AmazonMQ::Broker
+
+    Use the Logs property to enable general or audit logging for an Amazon
+    MQ broker.
+
+AWS::CodeBuild::Project
+
+    In the AWS CodeBuild Project Artifacts property type, you can use the 
+    SecondaryArtifacts property to specify secondary artifacts for a build
+    project. You can use the SecondarySources property to specify secondary
+    inputs for a build project.
+
+August 30, 2018
+
+Updated resources
+
+Added the Configuration property to AWS::Glue::Crawler. Added the 
+JsonClassifier and XMLClassifier properties to AWS::Glue::Classifier.
+
+AWS::Glue::Crawler
+
+    Use the Configuration property to specify crawler configuration
+    information. This versioned JSON string allows users to specify aspects
+    of a crawler's behavior.
+
+AWS::Glue::Classifier
+
+    Use the JsonClassifier property to specify AWS Glue classifier for
+    JSON.
+
+    Use the XMLClassifier property to specify AWS Glue classifier for XML
+    content.
+
+August 23, 2018
+
+AWS CloudFormation now supports VPC endpoints powered by PrivateLink.
+
+You can use a VPC endpoint to create a private connection between your VPC 
+and AWS CloudFormation without requiring access over the Internet, through 
+a NAT instance, a VPN connection, or AWS Direct Connect.
+
+For more information, see Setting Up VPC Endpoints for AWS CloudFormation.
+
+August 22, 2018
+
+Dynamic references support secure strings
+
+Use new dynamic references to specify values that are stored and managed in 
+other services, including Systems Manager Parameter Store SecureString type 
+parameters, in your stack templates.
+
+For more information, see Using Dynamic References to Specify Template 
+ValuesSpecifying Dynamic References in Stack Templates.
+
+August 16, 2018
+
+Updated resources
+
+The following resources were updated: AWS::ApiGateway::DomainName, 
+AWS::CertificateManager::Certificate, AWS::EC2::VPCPeeringConnection, 
+AWS::EFS::FileSystem, AWS::EMR::Cluster, AWS::RDS::DBClusterParameterGroup, 
+AWS::SNS::Subscription, and AWS::SQS::Queue.
+
+AWS::ApiGateway::DomainName
+
+    Use the following attributes with the Fn::GetAtt intrinsic function:
+
+        * The DistributionHostedZoneId attribute returns the
+          region-agnostic Amazon Route 53 Hosted Zone ID of the
+          edge-optimized endpoint.
+
+        * The RegionalDomainName attribute returns the domain name
+          associated with the regional endpoint for this custom domain
+          name.
+
+        * The RegionalHostedZoneId attribute returns the region-specific
+          Amazon Route 53 Hosted Zone ID of the regional endpoint.
+
+AWS::CertificateManager::Certificate
+
+    Use the ValidationMethod property to specify the method you want to use
+    if you are requesting a public certificate to validate that you own or
+    control a domain.
+
+AWS::EC2::VPCPeeringConnection
+
+    Use the PeerRegion property to specify the region code for the accepter
+    VPC, if the accepter VPC is located in a region other than the region
+    in which you make the request.
+
+AWS::EFS::FileSystem
+        * Use the ProvisionedThroughputInMibps property to specify the
+          throughput, measured in MiB/s, that you want to provision for a
+          file system that you're creating.
+
+        * Use the ThroughputMode property to specify the throughput mode
+          for the file system to be created.
+
+AWS::EMR::Cluster
+
+    Use the KerberosAttributes property to specify attributes for Kerberos
+    configuration when Kerberos authentication is enabled using a security
+    configuration.
+
+AWS::RDS::DBClusterParameterGroup
+
+    The Tags property now requires no interruption to update.
+
+AWS::SNS::Subscription
+        * Use the DeliveryPolicy property to specify the JSON serialization
+          of the subscription's delivery policy.
+
+        * Use the FilterPolicy property to specify the filter policy JSON
+          that is assigned to the subscription.
+
+        * Use the RawMessageDelivery property to specify if raw message
+          delivery is enabled for the subscription.
+
+        * Use the Region property to specify the region in which the topic
+          resides.
+
+AWS::SQS::Queue
+
+    Use the Tags property to specify the tags that you want to attach to
+    this queue.
+
+August 15, 2018
+
+Updated resource
 
 Added the SSESpecification property to AWS::DAX::Cluster.
 
 AWS::DAX::Cluster
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-dax-cluster.html>
 
     Use the SSESpecification property to specify the settings to enable
     server-side encryption.
 
 August 9, 2018
-New resource 	
+
+New resource
 
 Added the AWS::EC2::VPCEndpointServicePermissions resource.
 
 AWS::EC2::VPCEndpointServicePermissions
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpcendpointservicepermissions.html>
 
     Grant or revoke permissions for service consumers to connect the VPC
     endpoint service.
 
 August 9, 2018
-Updated resource 	
+
+Updated resource
 
 Added the OverrideArtifactName property to AWS::CodeBuild::Project.
 
 AWS::CodeBuild::Project
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codebuild-project.html>
 
-    In the Artifacts
-    <http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-artifacts.html> 
-    property type, set the OverrideArtifactName property to true to
-    override the artifact name with a name specified in the buildspec file.
-    The name specified in a buildspec file is calculated at build time and
-    uses the Shell command language. For example, you can append a date and
-    time to your artifact name so that it is always unique.
+    In the AWS CodeBuild Project Artifacts property type, set the 
+    OverrideArtifactName property to true to override the artifact name
+    with a name specified in the buildspec file. The name specified in a
+    buildspec file is calculated at build time and uses the Shell command
+    language. For example, you can append a date and time to your artifact
+    name so that it is always unique.
 
 August 7, 2018
-Updated resource 	
+
+Updated resource
 
 Added the EncryptionDisabled property to AWS::CodeBuild::Project.
 
 AWS::CodeBuild::Project
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codebuild-project.html>
 
-    In the Artifacts
-    <http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-artifacts.html> 
-    property type, set the EncryptionDisabled property to true to disable
-    encryption for build output artifacts. This option is only valid if
-    your artifact type is Amazon S3. If this is set to true with another
-    artifact type, an invalidInputException will be thrown.
+    In the AWS CodeBuild Project Artifacts property type, set the 
+    EncryptionDisabled property to true to disable encryption for build
+    output artifacts. This option is only valid if your artifact type is
+    Amazon S3. If this is set to true with another artifact type, an
+    invalidInputException will be thrown.
 
 July 26, 2018
-Updated resource 	
+
+Updated resource
 
 Added the Timeout property to AWS::Batch::JobDefinition.
 
 AWS::Batch::JobDefinition
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-batch-jobdefinition.html>
 
     Use the Timeout property type to specify a job timeout configuration.
 
 July 19, 2018
-New resource 	
+
+New resource
 
 The following resource was added: AWS::IAM::ServiceLinkedRole.
 
 AWS::IAM::ServiceLinkedRole
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-servicelinkedrole.html>
 
     Use the AWS::IAM::ServiceLinkedRole resource to create a service-linked
     role in IAM. A service-linked role is a unique type of IAM role that is
@@ -1304,54 +1693,51 @@ AWS::IAM::ServiceLinkedRole
     requires to call other AWS services on your behalf.
 
 July 19, 2018
-Updated resources 	
+
+Updated resources
 
 Added the FieldLevelEncryptionId property to AWS::CloudFront::Distribution 
 property types.
 
 AWS::CloudFront::Distribution
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cloudfront-distribution.html>
 
-    In the Distribution CacheBehavior
-    <http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution-cachebehavior.html> 
-    and Distribution DefaultCacheBehavior
-    <http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution-defaultcachebehavior.html> 
-    property types, use the FieldLevelEncryptionId property to specify the
-    ID for the field-level encryption configuration that you want
-    CloudFront to use for encrypting specific fields of data for a cache
-    behavior or for the default cache behavior.
+    In the CloudFront Distribution CacheBehavior and CloudFront
+    Distribution DefaultCacheBehavior property types, use the 
+    FieldLevelEncryptionId property to specify the ID for the field-level
+    encryption configuration that you want CloudFront to use for encrypting
+    specific fields of data for a cache behavior or for the default cache
+    behavior.
 
 July 18, 2018
-Updated resource 	
+
+Updated resource
 
 Added the HttpConfig property to AWS::AppSync::DataSource.
 
 AWS::AppSync::DataSource
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-datasource.html>
 
     Use the HttpConfig property type to specify HttpConfig for an AWS
     AppSync data source.
 
 July 12, 2018
-Updated resource 	
+
+Updated resource
 
 Added the ReportBuildStatus property to AWS::CodeBuild::Project.
 
 AWS::CodeBuild::Project
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codebuild-project.html>
 
-    In the Source
-    <http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-source.html> 
-    property type, use the ReportBuildStatus property to specify whether to
-    send your source provider the status of a build's start and completion.
+    In the AWS CodeBuild Project Source property type, use the 
+    ReportBuildStatus property to specify whether to send your source
+    provider the status of a build's start and completion.
 
 July 10, 2018
-New resource 	
+
+New resource
 
 The following resource was added: AWS::CodePipeline::Webhook.
 
 AWS::CodePipeline::Webhook
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codepipeline-webhook.html>
 
     Use the AWS::CodePipeline::Webhook resource to create a webhook that
     connects your pipeline to an external event, such as a GitHub source
@@ -1359,13 +1745,13 @@ AWS::CodePipeline::Webhook
     external event occurs.
 
 July 5, 2018
-Updated resource 	
+
+Updated resource
 
 Added the following properties to AWS::EC2::VPCEndpoint: PrivateDnsEnabled, 
 SecurityGroupIds, SubnetIds, and VpcEndpointType.
 
 AWS::EC2::VPCEndpoint
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpcendpoint.html>
 
     Use the PrivateDnsEnabled property to indicate whether to associate a
     private hosted zone with the specified VPC.
@@ -1379,65 +1765,63 @@ AWS::EC2::VPCEndpoint
     Use the VpcEndpointType property to specify the type of endpoint.
 
 June 21, 2018
-New resources 	
+
+New resources
 
 The following resources were added: 
 AWS::EC2::VPCEndpointConnectionNotification and 
 AWS::EC2::VPCEndpointService.
 
 AWS::EC2::VPCEndpointConnectionNotification
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpcendpointconnectionnotification.html>
 
     Use the AWS::EC2::VPCEndpointConnectionNotification resource to create
     a connection notification for the specified VPC endpoint or VPC
     endpoint service.
 
 AWS::EC2::VPCEndpointService
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpcendpointservice.html>
 
     Use the AWS::EC2::VPCEndpointService resource to create a VPC endpoint
     service configuration to which service consumers (AWS accounts, IAM
     users, and IAM roles) can connect.
 
 June 21, 2018
-Updated resource 	
+
+Updated resource
 
 Added the following property to AWS::ServiceDiscovery::Service: 
 HealthCheckCustomConfig.
 
 AWS::ServiceDiscovery::Service
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-servicediscovery-service.html>
 
     Use the HealthCheckCustomConfig property to specify information about
     an optional custom health check.
 
 June 14, 2018
-New resources 	
+
+New resources
 
 The following new resources were released: AWS::AmazonMQ::Broker and 
 AWS::AmazonMQ::Configuration.
 
 AWS::AmazonMQ::Broker
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-amazonmq-broker.html>
 
     Use the AWS::AmazonMQ::Broker resource to create a broker, add
     configuration changes or modify users for the specified broker, return
     information about the specified broker, or delete the specified broker.
 
 AWS::AmazonMQ::Configuration
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-amazonmq-configuration.html>
 
     Use the AWS::AmazonMQ::Configuration resource to create a
     configuration, update the specified configuration, or return
     information about the specified configuration.
 
 June 14, 2018
-New resource 	
+
+New resource
 
 The following resource was released: : AWS::SSM::ResourceDataSync.
 
 AWS::SSM::ResourceDataSync
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ssm-resourcedatasync.html>
 
     Use the AWS::SSM::ResourceDataSync resource to create or delete a
     Resource Data Sync for Systems Manager Inventory. You can use Resource
@@ -1445,28 +1829,29 @@ AWS::SSM::ResourceDataSync
     Manager managed instances to a single Amazon S3 bucket.
 
 June 11, 2018
-New resource 	
+
+New resource
 
 The following resource was released: AWS::EKS::Cluster.
 
 AWS::EKS::Cluster
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-eks-cluster.html>
 
     Use the AWS::EKS::Cluster resource to create Amazon EKS clusters.
 
 June 5, 2018
-Updated resource 	
+
+Updated resource
 
 For the AWS::GuardDuty::Master resource, the InvitationId property is now 
 optional.
 
 AWS::GuardDuty::Master
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-guardduty-master.html>
 
     The InvitationId property is now optional.
 
 May 31, 2018
-New resources 	
+
+New resources
 
 The following new resources were released: AWS::SageMaker::Endpoint, 
 AWS::SageMaker::EndpointConfig, AWS::SageMaker::Model, 
@@ -1474,96 +1859,89 @@ AWS::SageMaker::NotebookInstance, and
 AWS::SageMaker::NotebookInstanceLifecycleConfig.
 
 AWS::SageMaker::Endpoint
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-sagemaker-endpoint.html>
 
     Use the AWS::SageMaker::Endpoint resource to create a SageMaker
     endpoint to host trained models.
 
 AWS::SageMaker::EndpointConfig
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-sagemaker-endpointconfig.html>
 
     Use the AWS::SageMaker::EndpointConfig resource to create a
     configuration for an endpoint.
 
 AWS::SageMaker::Model
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-sagemaker-model.html>
 
     Use the AWS::SageMaker::Model resource to create a model to host at an
     Amazon SageMaker endpoint.
 
 AWS::SageMaker::NotebookInstance
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-sagemaker-notebookinstance.html>
 
     Use the AWS::SageMaker::NotebookInstance resource to create an Amazon
     SageMaker notebook instance.
 
 AWS::SageMaker::NotebookInstanceLifecycleConfig
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-sagemaker-notebookinstancelifecycleconfig.html>
 
     Use the AWS::SageMaker::NotebookInstanceLifecycleConfig resource to
     specify shell scripts that run when you create or start a notebook
     instance.
 
 May 31, 2018
-Stack sets now support customized execution roles 	
+
+Stack sets now support customized execution roles
 
 Use customized execution roles in target accounts to control the stack 
 resources that users or groups can include in their stack sets.
 
-For more information, see Granting Permissions for Stack Set Operations
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-prereqs.html> 
-.
+For more information, see Prerequisites: Granting Permissions for Stack Set 
+Operations.
 
 May 30, 2018
-Selective updates of stack instances 	
+
+Selective updates of stack instances
 
 Use the optional Accounts and Regions parameters to specify the accounts 
 and regions in which to update stack instances during a stack set update 
 operation.
 
 For more information, see UpdateStackSet
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_UpdateStackSet.html> 
+<https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_UpdateStackSet.html> 
 in the AWS CloudFormation API Reference.
 
 May 30, 2018
-New resources 	
+
+New resources
 
 The following new resources were released: AWS::Neptune::DBCluster, 
 AWS::Neptune::DBClusterParameterGroup, AWS::Neptune::DBInstance, 
 AWS::Neptune::DBParameterGroup, and AWS::Neptune::DBSubnetGroup.
 
 AWS::Neptune::DBCluster
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-neptune-dbcluster.html>
 
     Use the AWS::Neptune::DBCluster resource to create an Amazon Neptune DB
     cluster.
 
 AWS::Neptune::DBClusterParameterGroup
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-neptune-dbclusterparametergroup.html>
 
     Use the AWS::Neptune::DBClusterParameterGroup resource to create a DB
     cluster parameter group.
 
 AWS::Neptune::DBInstance
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-neptune-dbinstance.html>
 
     Use the AWS::Neptune::DBInstance resource to create an Amazon Neptune
     database instance.
 
 AWS::Neptune::DBParameterGroup
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-neptune-dbparametergroup.html>
 
     Use the AWS::Neptune::DBParameterGroup resource to create a custom
     parameter group for Amazon Neptune.
 
 AWS::Neptune::DBSubnetGroup
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-neptune-dbsubnetgroup.html>
 
     Use the AWS::Neptune::DBSubnetGroup resource to create an Amazon
     Neptune database subnet group that contains subnets.
 
 May 30, 2018
-Updated resources 	
+
+Updated resources
 
 The following resources were updated: AWS::ApiGateway::RestApi, 
 AWS::AutoScaling::AutoScalingGroup, AWS::AutoScaling::LaunchConfiguration, 
@@ -1574,62 +1952,52 @@ AWS::KinesisFirehose::DeliveryStream, AWS::Lambda::EventSourceMapping,
 AWS::Logs::MetricFilter, and AWS::SSM::Association.
 
 AWS::ApiGateway::RestApi
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-restapi.html>
 
     Use the Policy property to specify a policy document that contains the
     permissions for the specified RestAPI.
 
 AWS::AutoScaling::AutoScalingGroup
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html>
 
     Use the ServiceLinkedRoleARN property to specify the Amazon Resource
     Name (ARN) of the service-linked role that the Auto Scaling group uses
     to call other AWS services on your behalf.
 
 AWS::AutoScaling::LaunchConfiguration
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig.html>
 
     Use the LaunchConfigurationName property to specify the name of the
     launch configuration.
 
 AWS::DirectoryService::MicrosoftAD
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-directoryservice-microsoftad.html>
 
     Use the Edition property to specify the AWS Microsoft AD edition to
     use.
 
 AWS::DynamoDB::Table
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-dynamodb-table.html>
 
     Use the PointInTimeRecoverySpecification property to specify the
     settings used to enable point in time recovery.
 
 AWS::EC2::Instance
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-instance.html>
 
     Use the LaunchTemplate property to specify the launch template to use
     for an Amazon EC2 instance.
 
 AWS::ECS::Service
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-service.html>
 
     Use the ServiceRegistry property type to specify the details of the
     service registry.
 
 AWS::ECS::TaskDefinition
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-taskdefinition.html>
 
     Use the HealthCheck property type to specify a container health check.
 
 AWS::Elasticsearch::Domain
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticsearch-domain.html>
 
     Use the EncryptionAtRestOptions property type to specify whether the
     domain should encrypt data at rest, and if so, the AWS Key Management
     Service (KMS) key to use.
 
 AWS::IAM::Role
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html>
 
     Use the RoleId attribute to have Fn::GetAtt return the stable and
     unique string identifying the role.
@@ -1638,33 +2006,29 @@ AWS::IAM::Role
     duration (in seconds) for the specified role.
 
 AWS::KinesisFirehose::DeliveryStream
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-kinesisfirehose-deliverystream.html>
 
     Use the SplunkDestinationConfiguration property to specify the
     configuration of a destination in Splunk for a Kinesis Data Firehose
     delivery stream.
 
 AWS::Lambda::EventSourceMapping
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-eventsourcemapping.html>
 
     The StartingPosition property is no longer required.
 
 AWS::Logs::MetricFilter
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-logs-metricfilter.html>
 
-    In the CloudWatch Logs MetricFilter MetricTransformation Property
-    <http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-logs-metricfilter-metrictransformation.html> 
+    In the CloudWatch Logs MetricFilter MetricTransformation Property 
     property type, use the DefaultValue property to specify the value to
     emit when a filter pattern does not match a log event.
 
 AWS::SSM::Association
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ssm-association.html>
 
     Use the OutputLocation property to specify an Amazon S3 bucket where
     you want to store the results of an association request.
 
 May 24, 2018
-New resources 	
+
+New resources
 
 The following new resources were released: 
 AWS::ServiceCatalog::AcceptedPortfolioShare, 
@@ -1679,141 +2043,129 @@ AWS::ServiceCatalog::PortfolioShare, AWS::ServiceCatalog::TagOption, and
 AWS::ServiceCatalog::TagOptionAssociation.
 
 AWS::ServiceCatalog::AcceptedPortfolioShare
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-servicecatalog-acceptedportfolioshare.html>
 
     Use the AWS::ServiceCatalog::AcceptedPortfolioShare resource to accept
     an offer to share the specified portfolio for AWS Service Catalog.
 
 AWS::ServiceCatalog::CloudFormationProduct
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-servicecatalog-cloudformationproduct.html>
 
     Use the AWS::ServiceCatalog::CloudFormationProduct resource to create a
     product for AWS Service Catalog.
 
 AWS::ServiceCatalog::LaunchNotificationConstraint
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-servicecatalog-launchnotificationconstraint.html>
 
     Use the AWS::ServiceCatalog::LaunchNotificationConstraint resource to
     create a notification constraint for AWS Service Catalog.
 
 AWS::ServiceCatalog::LaunchRoleConstraint
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-servicecatalog-launchroleconstraint.html>
 
     Use the AWS::ServiceCatalog::LaunchRoleConstraint resource to create a
     launch constraint for AWS Service Catalog.
 
 AWS::ServiceCatalog::LaunchTemplateConstraint
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-servicecatalog-launchtemplateconstraint.html>
 
     Use the AWS::ServiceCatalog::LaunchTemplateConstraint resource to
     create a template constraint for AWS Service Catalog.
 
 AWS::ServiceCatalog::Portfolio
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-servicecatalog-portfolio.html>
 
     Use the AWS::ServiceCatalog::Portfolio resource to create a portfolio
     for AWS Service Catalog.
 
 AWS::ServiceCatalog::PortfolioPrincipalAssociation
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-servicecatalog-portfolioprincipalassociation.html>
 
     Use the AWS::ServiceCatalog::PortfolioPrincipalAssociation resource to
     associate a principal with a portfolio for AWS Service Catalog.
 
 AWS::ServiceCatalog::PortfolioProductAssociation
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-servicecatalog-portfolioproductassociation.html>
 
     Use the AWS::ServiceCatalog::PortfolioProductAssociation resource to
     associate a product with a portfolio for AWS Service Catalog.
 
 AWS::ServiceCatalog::PortfolioShare
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-servicecatalog-portfolioshare.html>
 
     Use the AWS::ServiceCatalog::PortfolioShare resource to share a
     portfolio for AWS Service Catalog.
 
 AWS::ServiceCatalog::TagOption
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-servicecatalog-tagoption.html>
 
     Use the AWS::ServiceCatalog::TagOption resource to create a TagOption.
 
 AWS::ServiceCatalog::TagOptionAssociation
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-servicecatalog-tagoptionassociation.html>
 
     Use the AWS::ServiceCatalog::TagOptionAssociation resource to associate
     a TagOption with a resource for AWS Service Catalog.
 
 May 24, 2018
-AWS CloudFormation now creates S3 buckets with encryption enabled 	
+
+AWS CloudFormation now creates S3 buckets with encryption enabled
 
 For Amazon S3 buckets that AWS CloudFormation creates to store uploaded 
 stack templates, server-side encryption is now enabled by default, thereby 
 encrypting all objects stored in those buckets.
 
-For more information, see Selecting a Stack Template
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-using-console-create-stack-template.html> 
-.
+For more information, see Selecting a Stack Template.
 
 May 24, 2018
-New resource 	
+
+New resource
 
 The following resource was released: AWS::Budgets::Budget.
 
 AWS::Budgets::Budget
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-budgets-budget.html>
 
     Use the AWS::Budgets::Budget resource to create a budget.
 
 May 22, 2018
-FIPS endpoints added 	
+
+FIPS endpoints added
 
 AWS CloudFormation now offers new endpoints which use FIPS 140-2 validated 
 cryptographic modules in the following public US regions: US-East-1, 
 US-East-2, US-West-1, and US-West-2.
 
 See Regions and Endpoints
-<http://docs.aws.amazon.com/general/latest/gr/rande.html#cfn_region> in the 
-Amazon Web Services General Reference
-<http://docs.aws.amazon.com/general/latest/gr/> for the new FIPS-compliant 
+<https://docs.aws.amazon.com/general/latest/gr/rande.html#cfn_region> in 
+the Amazon Web Services General Reference
+<https://docs.aws.amazon.com/general/latest/gr/> for the new FIPS-compliant 
 endpoint URLs.
 
 May 17, 2018
-New resource 	
+
+New resource
 
 The following resource was released: AWS::AutoScalingPlans::ScalingPlan.
 
 AWS::AutoScalingPlans::ScalingPlan
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-autoscalingplans-scalingplan.html>
 
     Use the AWS::AutoScalingPlans::ScalingPlan resource to create a scaling
     plan for the scalable resources for your application.
 
 May 9, 2018
-New resource 	
+
+New resource
 
 The following resource was released: AWS::GuardDuty::Filter.
 
 AWS::GuardDuty::Filter
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-guardduty-filter.html>
 
     Use the AWS::GuardDuty::Filter resource to create a filter for your
     GuardDuty findings.
 
 May 8, 2018
-Updated resources 	
+
+Updated resources
 
 The following resources were updated: AWS::AppSync::GraphQLApi and 
 AWS::GuardDuty::Member.
 
 AWS::AppSync::GraphQLApi
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appsync-graphqlapi.html>
 
     Use the OpenIDConnectConfig property to specify the authorization
     configuration for using an OpenId Connect compliant service with your
     GraphQL endpoint.
 
 AWS::GuardDuty::Member
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-guardduty-member.html>
 
     Use the DisableEmailNotification property to specify whether an email
     notification is to be sent to the accounts that you want to invite to
@@ -1821,13 +2173,13 @@ AWS::GuardDuty::Member
     sent to the invitees.
 
 May 1, 2018
-New resource 	
+
+New resource
 
 The following resource was released: 
 AWS::ServiceCatalog::CloudFormationProvisionedProduct.
 
 AWS::ServiceCatalog::CloudFormationProvisionedProduct
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-servicecatalog-cloudformationprovisionedproduct.html>
 
     Use the AWS::ServiceCatalog::CloudFormationProvisionedProduct resource
     to provision the specified product for AWS Service Catalog.
@@ -2019,7 +2371,7 @@ March 6, 2018
 
 AWS::AutoScaling::AutoScalingGroup
 
-    Use the AutoScalingGroup property to specify the name of the Auto
+    Use the AutoScalingGroupName property to specify the name of the Auto
     Scaling group.
 
 AWS::ApiGateway::RestApi
@@ -2220,7 +2572,7 @@ of your application during stack creation and updating, and to roll back
 that operation if the application breaches the threshold of any of the 
 alarms you've specified. For more information, see Monitor and Roll Back 
 Stack Operations
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-rollback-triggers.html> 
+<https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-rollback-triggers.html> 
 .
 
 2010-05-15
@@ -2423,7 +2775,7 @@ November 21, 2017
 
 The ResolvedValue field returns the value that's used in the stack 
 definition for an SSM parameter. For more information, see the Parameter
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_Parameter.html> 
+<https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_Parameter.html> 
 data type in the AWS CloudFormation API Reference.
 
 2010-05-15
@@ -2525,7 +2877,7 @@ resource. For more information, see Custom Resource Response Objects.
 
 The corresponding noEcho parameter is supported by the send method. For 
 more information, see cfn-response Module
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-lambda-function-code.html#cfn-lambda-function-code-cfnresponsemodule> 
+<https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-lambda-function-code.html#cfn-lambda-function-code-cfnresponsemodule> 
 .
 
 2010-05-15
@@ -2876,7 +3228,7 @@ Rollback triggers enable you to have AWS CloudFormation monitor the state
 of your application during stack creation and updating, and to roll back 
 that operation if the application breaches the threshold of any of the 
 alarms you've specified. For more information, see RollbackConfiguration
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_RollbackConfiguration.html> 
+<https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_RollbackConfiguration.html> 
 in the AWS CloudFormation API Reference.
 
 2010-05-15
@@ -3164,7 +3516,7 @@ In the console, stack operations display the client request token on the
 Events tab. All events triggered by a given stack operation are assigned 
 the same client request token, which you can use to track operations. For 
 more information, see Viewing Stack Data and Resources and StackEvent
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_StackEvent.html> 
+<https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_StackEvent.html> 
 in the AWS CloudFormation API Reference.
 
 2010-05-15
@@ -5775,7 +6127,7 @@ More information is available in the following topics:
     * Canceling a Stack Update
 
     * aws cloudformation cancel-update-stack
-      <http://docs.aws.amazon.com/cli/latest/reference/cloudformation/cancel-update-stack.html>
+      <https://docs.aws.amazon.com/cli/latest/reference/cloudformation/cancel-update-stack.html>
 
     * CancelUpdateStack
       <http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_CancelUpdateStack.html> 
