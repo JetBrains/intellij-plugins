@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.intellij.flex.completion;
 
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
@@ -11,10 +24,7 @@ import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
-import com.intellij.lang.javascript.BaseJSCompletionTestCase;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
-import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.ReferenceSupport;
@@ -27,6 +37,7 @@ import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -51,10 +62,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
@@ -1442,5 +1450,21 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     finally {
       if (doProfiling) ProfilingUtil.captureCPUSnapshot();
     }
+  }
+
+  public void testOnlyValidPackageNamesInCompletion() {
+    configureByText(ActionScriptFileType.INSTANCE, "var a: String = new <caret>");
+
+    VirtualFile srcRoot = ModuleRootManager.getInstance(myModule).getSourceRoots(false)[0];
+    createChildDirectory(srcRoot, ".idea");
+    createChildDirectory(srcRoot, ".foo");
+    createChildDirectory(srcRoot, "a b");
+    createChildDirectory(srcRoot, "###");
+    createChildDirectory(srcRoot, "abc123");
+
+    complete();
+    List<String> items = ContainerUtil.map(myItems, (e) -> e.getLookupString());
+    assertDoesntContain(items, "", "\"\"", "a b", "###");
+    assertContainsElements(items, "abc123");
   }
 }
