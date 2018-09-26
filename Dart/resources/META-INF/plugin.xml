@@ -93,8 +93,6 @@
     <codeInsight.parameterInfo language="Dart"
                                implementationClass="com.jetbrains.lang.dart.ide.info.DartParameterInfoHandler"/>
 
-    <codeStyleSettingsProvider implementation="com.jetbrains.lang.dart.ide.formatter.settings.DartCodeStyleSettingsProvider"/>
-
     <langCodeStyleSettingsProvider implementation="com.jetbrains.lang.dart.ide.formatter.settings.DartLanguageCodeStyleSettingsProvider"/>
     <lang.importOptimizer language="Dart" implementationClass="com.jetbrains.lang.dart.ide.imports.DartImportOptimizer"/>
 
