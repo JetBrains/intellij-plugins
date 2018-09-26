@@ -6,11 +6,13 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.pom.PomTarget;
 import com.intellij.pom.PomTargetPsiElement;
 import com.intellij.pom.references.PomService;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiReferenceBase;
+import com.intellij.psi.impl.PomTargetPsiElementImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
@@ -68,6 +70,10 @@ public class CucumberJavaParameterTypeReference extends PsiReferenceBase<PsiElem
   @Override
   public boolean isReferenceTo(@NotNull PsiElement element) {
     if (!(element instanceof PsiNamedElement) || !(element instanceof PomTargetPsiElement)) {
+      return false;
+    }
+    PomTarget pomTarget = ((PomTargetPsiElement)element).getTarget();
+    if (!(pomTarget instanceof CucumberJavaParameterPomTargetPsiElement)) {
       return false;
     }
     String parameterTypeName = getParameterTypeName();
