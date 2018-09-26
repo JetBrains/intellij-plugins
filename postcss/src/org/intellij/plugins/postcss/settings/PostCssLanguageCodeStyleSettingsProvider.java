@@ -1,8 +1,12 @@
 package org.intellij.plugins.postcss.settings;
 
+import com.intellij.application.options.CodeStyleAbstractConfigurable;
+import com.intellij.application.options.CodeStyleAbstractPanel;
 import com.intellij.application.options.IndentOptionsEditor;
 import com.intellij.application.options.SmartIndentOptionsEditor;
 import com.intellij.lang.Language;
+import com.intellij.psi.codeStyle.CodeStyleConfigurable;
+import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
 import org.intellij.plugins.postcss.PostCssLanguage;
@@ -51,5 +55,22 @@ public class PostCssLanguageCodeStyleSettingsProvider extends LanguageCodeStyleS
   @Override
   public IndentOptionsEditor getIndentOptionsEditor() {
     return new SmartIndentOptionsEditor();
+  }
+
+  @NotNull
+  @Override
+  public CodeStyleConfigurable createConfigurable(@NotNull CodeStyleSettings baseSettings, @NotNull CodeStyleSettings modelSettings) {
+    return new CodeStyleAbstractConfigurable(baseSettings, modelSettings, getConfigurableDisplayName()) {
+      @Override
+      protected CodeStyleAbstractPanel createPanel(CodeStyleSettings settings) {
+        return new PostCssCodeStylePanel(getCurrentSettings(), settings);
+      }
+
+      @NotNull
+      @Override
+      public String getHelpTopic() {
+        return "reference.settingsdialog.codestyle.postcss";
+      }
+    };
   }
 }
