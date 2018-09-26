@@ -36,7 +36,7 @@ public class CucumberJavaUtil {
   public static final String CUCUMBER_STEP_ANNOTATION_PREFIX_1_0 = "cucumber.annotation.";
   public static final String CUCUMBER_STEP_ANNOTATION_PREFIX_1_1 = "cucumber.api.java.";
 
-  private static final String PARAMETER_TYPE_CLASS = "io.cucumber.cucumberexpressions.ParameterType";
+  public static final String PARAMETER_TYPE_CLASS = "io.cucumber.cucumberexpressions.ParameterType";
 
   private static final Map<String, String> JAVA_PARAMETER_TYPES;
   

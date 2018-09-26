@@ -3,8 +3,7 @@ package org.jetbrains.plugins.cucumber.steps.reference;
 
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.util.IncorrectOperationException;
+import com.intellij.psi.PsiReferenceBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,55 +17,14 @@ import org.jetbrains.annotations.Nullable;
  * </pre></blockquote>
  * Necessary to find usages of Cucumber Parameter Type
  */
-public class CucumberParameterTypeSelfReference implements PsiReference {
-  @NotNull
-  private final PsiElement myElement;
-
+public class CucumberParameterTypeSelfReference extends PsiReferenceBase<PsiElement> {
   public CucumberParameterTypeSelfReference(@NotNull PsiElement element) {
-    myElement = element;
-  }
-
-  @NotNull
-  @Override
-  public PsiElement getElement() {
-    return myElement;
-  }
-
-  @NotNull
-  @Override
-  public TextRange getRangeInElement() {
-    return new TextRange(1, getElement().getTextLength() - 1);
+    super(element, TextRange.create(1, element.getTextLength() - 1));
   }
 
   @Nullable
   @Override
   public PsiElement resolve() {
-    return myElement;
-  }
-
-  @NotNull
-  @Override
-  public String getCanonicalText() {
-    return myElement.getText();
-  }
-
-  @Override
-  public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
-    return null;
-  }
-
-  @Override
-  public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
-    return null;
-  }
-
-  @Override
-  public boolean isReferenceTo(@NotNull PsiElement element) {
-    return element == myElement;
-  }
-
-  @Override
-  public boolean isSoft() {
-    return false;
+    return getElement();
   }
 }
