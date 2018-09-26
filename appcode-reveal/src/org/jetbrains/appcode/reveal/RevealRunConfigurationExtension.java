@@ -112,13 +112,13 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   }
 
   @Override
-  protected boolean isApplicableFor(@NotNull AppCodeRunConfiguration configuration) {
+  public boolean isApplicableFor(@NotNull AppCodeRunConfiguration configuration) {
     if (ApplicationManager.getApplication().isUnitTestMode()) return false;
     return configuration instanceof AppCodeAppRunConfiguration;
   }
 
   @Override
-  protected boolean isEnabledFor(@NotNull AppCodeRunConfiguration config, @Nullable RunnerSettings runnerSettings) {
+  public boolean isEnabledFor(@NotNull AppCodeRunConfiguration config, @Nullable RunnerSettings runnerSettings) {
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
     if (appBundle == null) return false;
 
