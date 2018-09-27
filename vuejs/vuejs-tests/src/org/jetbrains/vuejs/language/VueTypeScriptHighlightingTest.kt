@@ -220,7 +220,6 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
                                 "GenericIndirectConstructorAssignment",
                                 "GenericIndirectNewSignature",
                                 "GenericIndirectParameterCallSignature",
-                                "GenericSeveralSignaturesWithConstraint",
                                 "GenericWithNewSignature",
                                 "Generics",
                                 "Generics3",
