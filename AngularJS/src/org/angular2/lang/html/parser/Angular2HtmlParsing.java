@@ -22,8 +22,10 @@ import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
 
 public class Angular2HtmlParsing extends HtmlParsing {
 
-  private static final TokenSet CUSTOM_CONTENT = TokenSet.create(LBRACE, RBRACE, INTERPOLATION_START, XML_COMMA, XML_DATA_CHARACTERS);
+  private static final TokenSet CUSTOM_CONTENT = TokenSet.create(EXPANSION_FORM_START, RBRACE, INTERPOLATION_START, XML_COMMA,
+                                                                 XML_DATA_CHARACTERS);
   private static final TokenSet DATA_TOKENS = TokenSet.create(RBRACE, XML_COMMA, XML_DATA_CHARACTERS);
+  private static final TokenSet VALID_INTERPOLATION_TOKENS = TokenSet.create(INTERPOLATION_EXPR, INTERPOLATION_END);
 
   public Angular2HtmlParsing(@NotNull PsiBuilder builder) {
     super(builder);
@@ -102,7 +104,8 @@ public class Angular2HtmlParsing extends HtmlParsing {
   @Override
   protected PsiBuilder.Marker parseCustomTagContent(PsiBuilder.Marker xmlText) {
     final IElementType tt = token();
-    if (tt == INTERPOLATION_START) {
+    if (tt == INTERPOLATION_START
+        && VALID_INTERPOLATION_TOKENS.contains(getBuilder().lookAhead(1))) {
       xmlText = terminateText(xmlText);
       final PsiBuilder.Marker interpolation = mark();
       advance();
@@ -117,7 +120,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
         interpolation.error("Unterminated interpolation");
       }
     }
-    else if (tt == LBRACE) {
+    else if (tt == EXPANSION_FORM_START) {
       xmlText = terminateText(xmlText);
       parseExpansionForm();
     }
@@ -126,10 +129,13 @@ public class Angular2HtmlParsing extends HtmlParsing {
       getBuilder().remapCurrentToken(XML_DATA_CHARACTERS);
       advance();
     }
-    else if (tt == XML_DATA_CHARACTERS) {
+    else if (tt == XML_DATA_CHARACTERS
+             || tt == INTERPOLATION_START) {
       xmlText = startText(xmlText);
       PsiBuilder.Marker dataStart = mark();
-      while (DATA_TOKENS.contains(token())) {
+      advance();
+      while (DATA_TOKENS.contains(token())
+             || (token() == INTERPOLATION_START && !VALID_INTERPOLATION_TOKENS.contains(getBuilder().lookAhead(1)))) {
         advance();
       }
       dataStart.collapse(XML_DATA_CHARACTERS);
@@ -181,6 +187,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
       final PsiBuilder.Marker contentStart = contentType != null ? mark() : null;
       while (true) {
         final IElementType tt = token();
+
         if (tt == null || tt == XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER || tt == XmlTokenType.XML_END_TAG_START || tt == XmlTokenType
           .XML_EMPTY_ELEMENT_END ||
             tt == XmlTokenType.XML_START_TAG_START) {
@@ -247,7 +254,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
   }
 
   private void parseExpansionForm() {
-    assert token() == LBRACE;
+    assert token() == EXPANSION_FORM_START;
     PsiBuilder.Marker expansionForm = mark();
 
     advance();
@@ -260,7 +267,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
 
     skipRealWhiteSpaces();
     boolean first = true;
-    while (token() == XML_DATA_CHARACTERS || token() == LBRACE) {
+    while (token() == XML_DATA_CHARACTERS || token() == EXPANSION_FORM_CASE_START) {
       if (!parseExpansionFormCaseContent() && first) {
         markCriticalExpansionFormProblem(expansionForm);
         return;
@@ -268,7 +275,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
       first = false;
       skipRealWhiteSpaces();
     }
-    if (token() != RBRACE) {
+    if (token() != EXPANSION_FORM_END) {
       expansionForm
         .error("Unterminated expansion form.");
       expansionForm = expansionForm.precede();
@@ -283,7 +290,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
     // critical problem, most likely not an expansion form at all
     expansionForm.rollbackTo();
     expansionForm = mark();
-    assert token() == LBRACE;
+    assert token() == EXPANSION_FORM_START;
     advance(); //consume LBRACE
     expansionForm
       .error("Unterminated expansion form. Do you have an unescaped \"{\" in your template? Use \"{{ '{' }}\") to escape it.");
@@ -308,13 +315,13 @@ public class Angular2HtmlParsing extends HtmlParsing {
     if (token() == XML_DATA_CHARACTERS) {
       advance(); // value
       skipRealWhiteSpaces();
-      if (token() != LBRACE) {
+      if (token() != EXPANSION_FORM_CASE_START) {
         expansionFormCase.error("Invalid ICU message. Missing '{'.");
         expansionFormCase.precede().done(EXPANSION_FORM_CASE);
         return false;
       }
     }
-    else if (token() == LBRACE) {
+    else if (token() == EXPANSION_FORM_CASE_START) {
       advance();
       expansionFormCase.error("Invalid ICU message. Missing case value.");
       expansionFormCase = expansionFormCase.precede();
@@ -326,11 +333,11 @@ public class Angular2HtmlParsing extends HtmlParsing {
     PsiBuilder.Marker content = mark();
     int level = 1;
     IElementType tt;
-    while ((tt = token()) != RBRACE || level > 1) {
-      if (tt == LBRACE) {
+    while ((tt = token()) != EXPANSION_FORM_CASE_END || level > 1) {
+      if (tt == EXPANSION_FORM_CASE_START) {
         level++;
       }
-      else if (tt == RBRACE) {
+      else if (tt == EXPANSION_FORM_CASE_END) {
         level--;
       }
       else if (tt == null) {

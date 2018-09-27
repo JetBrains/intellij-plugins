@@ -1,0 +1,21 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    XmlToken:XML_DATA_CHARACTERS('this')
+    PsiWhiteSpace(' ')
+    XmlText
+      XmlToken:XML_DATA_CHARACTERS('{{')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('is')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('{{')
+    PsiWhiteSpace(' ')
+    HtmlTag:ignored
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('ignored')
+      XmlToken:XML_EMPTY_ELEMENT_END('/>')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('interpolation')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('}}')

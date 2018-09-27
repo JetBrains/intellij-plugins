@@ -18,23 +18,12 @@ import static com.intellij.psi.xml.XmlTokenType.XML_TAG_CHARACTERS;
 import static com.intellij.psi.xml.XmlTokenType.XML_WHITE_SPACE;
 import static org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR;
 import static org.angular2.lang.html.lexer.Angular2HtmlTokenTypes.*;
-import static org.angular2.lang.html.lexer.Angular2HtmlTokenTypes.XML_CHAR_ENTITY_REF;
-import static org.angular2.lang.html.lexer.Angular2HtmlTokenTypes.XML_ENTITY_REF_TOKEN;
 
 public class Angular2HtmlLexer extends HtmlLexer {
 
   private static final TokenSet TOKENS_TO_MERGE =
     TokenSet.create(XML_COMMENT_CHARACTERS, XML_WHITE_SPACE, XML_REAL_WHITE_SPACE,
                     XML_ATTRIBUTE_VALUE_TOKEN, XML_DATA_CHARACTERS, XML_TAG_CHARACTERS);
-
-  private static final TokenSet EXPANSION_TOKENS =
-    TokenSet.create(XML_COMMA, LBRACE, RBRACE);
-
-  private static final TokenSet INTERPOLATION_CONTENT_TOKENS =
-    TokenSet.orSet(TokenSet.create(XML_REAL_WHITE_SPACE, XML_ATTRIBUTE_VALUE_TOKEN,
-                                   XML_CHAR_ENTITY_REF, XML_ENTITY_REF_TOKEN,
-                                   XML_DATA_CHARACTERS),
-                   EXPANSION_TOKENS);
 
   public Angular2HtmlLexer(boolean tokenizeExpansionForms,
                            @Nullable Pair<String, String> interpolationConfig) {
@@ -44,13 +33,29 @@ public class Angular2HtmlLexer extends HtmlLexer {
 
   public static class Angular2HtmlMergingLexer extends MergingLexerAdapterBase {
 
-    private static final int INTERPOLATION_STATE_OFFSET = 29;
-    private static final int INTERPOLATION_STATE_MASK = 3 << INTERPOLATION_STATE_OFFSET;
+    public static boolean isLexerWithinInterpolationOrExpansion(int state) {
+      int scanningState = ((state & STATE_MASK) >> STATE_SHIFT) & 0x7;
+      return scanningState == STATE_SCAN_EXPANSION_FORM_CONTENT
+        || scanningState == STATE_SCAN_INTERPOLATION_CONTENT
+        || scanningState == STATE_SCAN_UNTERMINATED_INTERPOLATION_CONTENT;
+    }
+
+    private static final int STATE_SHIFT = BASE_STATE_SHIFT + 3;
+    private static final int STATE_MASK = 0x7ff << STATE_SHIFT;
+
+    private static final int STATE_INITIAL = 0;
+    private static final int STATE_SCAN_EXPANSION_FORM_CONTENT = 1;
+    private static final int STATE_EXPANSION_FORM_END = 2;
+    private static final int STATE_SCAN_INTERPOLATION_CONTENT = 3;
+    private static final int STATE_SCAN_UNTERMINATED_INTERPOLATION_CONTENT = 4;
+    private static final int STATE_SCAN_INTERPOLATION_END = 5;
+    private static final int STATE_INTERPOLATION_END = 6;
 
     private final boolean myTokenizeExpansionForms;
     private final Pair<String, String> myInterpolationConfig;
 
-    private int myInterpolationScanningState;
+    private int myScanningState;
+    private int myExpansionFormNestingLevel;
 
     public Angular2HtmlMergingLexer(@NotNull Lexer original, boolean tokenizeExpansionForms,
                                     @Nullable Pair<String, String> interpolationConfig) {
@@ -61,13 +66,14 @@ public class Angular2HtmlLexer extends HtmlLexer {
 
     @Override
     public void start(@NotNull CharSequence buffer, int startOffset, int endOffset, int initialState) {
-      super.start(buffer, startOffset, endOffset, initialState & ~INTERPOLATION_STATE_MASK);
-      myInterpolationScanningState = (initialState & INTERPOLATION_STATE_MASK) >> INTERPOLATION_STATE_OFFSET;
+      super.start(buffer, startOffset, endOffset, initialState & ~STATE_MASK);
+      myScanningState = ((initialState & STATE_MASK) >> STATE_SHIFT) & 0x7;
+      myExpansionFormNestingLevel = ((initialState & STATE_MASK) >> STATE_SHIFT) >> 3;
     }
 
     @Override
     public int getState() {
-      return super.getState() | (myInterpolationScanningState << INTERPOLATION_STATE_OFFSET);
+      return super.getState() | ((((myExpansionFormNestingLevel & 0xFF) << 3) | myScanningState) << STATE_SHIFT);
     }
 
     @Override
@@ -78,42 +84,80 @@ public class Angular2HtmlLexer extends HtmlLexer {
     @Override
     public void restore(@NotNull LexerPosition position) {
       super.restore(((MyLexerPosition)position).getOriginal());
-      myInterpolationScanningState = ((MyLexerPosition)position).getInterpolationScanningState();
+      myScanningState = ((MyLexerPosition)position).getScanningState();
+      myExpansionFormNestingLevel = ((MyLexerPosition)position).getExpansionFormNestingLevel();
     }
 
     @NotNull
     @Override
     public LexerPosition getCurrentPosition() {
-      return new MyLexerPosition(super.getCurrentPosition(), myInterpolationScanningState);
+      return new MyLexerPosition(super.getCurrentPosition(), myScanningState, myExpansionFormNestingLevel);
     }
 
     private IElementType merge(IElementType type, Lexer originalLexer) {
-      if (INTERPOLATION_CONTENT_TOKENS.contains(type)) {
-        switch (myInterpolationScanningState) {
-          case 3:
-            myInterpolationScanningState = 0;
-          case 0:
-            if (tryConsumeInterpolationBoundary(myInterpolationConfig.first)) {
-              myInterpolationScanningState = 1;
-              return INTERPOLATION_START;
-            }
+      switch (myScanningState) {
+        case STATE_EXPANSION_FORM_END:
+        case STATE_INTERPOLATION_END:
+        case STATE_INITIAL:
+          if (INTERPOLATION_CONTENT_TOKENS.contains(type)
+              && tryConsumeInterpolationBoundary(myInterpolationConfig.first)) {
+            myScanningState = STATE_SCAN_INTERPOLATION_CONTENT;
+            return INTERPOLATION_START;
+          }
+          else if (myTokenizeExpansionForms && type == LBRACE) {
+            myScanningState = STATE_SCAN_EXPANSION_FORM_CONTENT;
+            return EXPANSION_FORM_START;
+          }
+          else if (type == RBRACE && myExpansionFormNestingLevel > 0) {
+            myScanningState = STATE_SCAN_EXPANSION_FORM_CONTENT;
+            myExpansionFormNestingLevel--;
+            return EXPANSION_FORM_CASE_END;
+          }
+          myScanningState = STATE_INITIAL;
+          break;
+        case STATE_SCAN_EXPANSION_FORM_CONTENT:
+          if (type == LBRACE) {
+            myScanningState = STATE_INITIAL;
+            myExpansionFormNestingLevel++;
+            return EXPANSION_FORM_CASE_START;
+          }
+          else if (type == RBRACE) {
+            myScanningState = STATE_EXPANSION_FORM_END;
+            return EXPANSION_FORM_END;
+          }
+          break;
+        case STATE_SCAN_INTERPOLATION_CONTENT:
+          if (!INTERPOLATION_CONTENT_TOKENS.contains(type)) {
+            myScanningState = STATE_INTERPOLATION_END;
             break;
-          case 1:
-            if (tryConsumeInterpolationContent()) {
-              myInterpolationScanningState = 2;
-              return INTERPOLATION_EXPR;
-            }
-          case 2:
-            if (tryConsumeInterpolationBoundary(myInterpolationConfig.second)) {
-              myInterpolationScanningState = 3;
-              return INTERPOLATION_END;
-            }
-            myInterpolationScanningState = 0;
+          }
+          if (tryConsumeInterpolationBoundary(myInterpolationConfig.second)) {
+            myScanningState = STATE_INTERPOLATION_END;
+            return INTERPOLATION_END;
+          }
+          LexerPosition position = getOriginal().getCurrentPosition();
+          if (tryConsumeInterpolationContent()) {
+            myScanningState = STATE_SCAN_INTERPOLATION_END;
+            return INTERPOLATION_EXPR;
+          }
+          else {
+            getOriginal().restore(position);
+            myScanningState = STATE_SCAN_UNTERMINATED_INTERPOLATION_CONTENT;
+          }
+          break;
+        case STATE_SCAN_UNTERMINATED_INTERPOLATION_CONTENT:
+          if (!INTERPOLATION_CONTENT_TOKENS.contains(type)) {
+            myScanningState = STATE_INTERPOLATION_END;
             break;
-        }
-      }
-      else {
-        myInterpolationScanningState = 0;
+          }
+          break;
+        case STATE_SCAN_INTERPOLATION_END:
+          if (tryConsumeInterpolationBoundary(myInterpolationConfig.second)) {
+            myScanningState = STATE_INTERPOLATION_END;
+            return INTERPOLATION_END;
+          }
+          myScanningState = STATE_INTERPOLATION_END;
+          break;
       }
       type = convertType(type);
       if (!TOKENS_TO_MERGE.contains(type)) {
@@ -123,7 +167,8 @@ public class Angular2HtmlLexer extends HtmlLexer {
         final IElementType tokenType = convertType(originalLexer.getTokenType());
         if (tokenType != type
             || (INTERPOLATION_CONTENT_TOKENS.contains(tokenType)
-                && inBuffer(myInterpolationConfig.first, 0))) {
+                && ((myScanningState != STATE_SCAN_INTERPOLATION_CONTENT && inBuffer(myInterpolationConfig.first, 0))
+                    || (myScanningState == STATE_SCAN_INTERPOLATION_CONTENT && inBuffer(myInterpolationConfig.second, 0))))) {
           break;
         }
         originalLexer.advance();
@@ -133,8 +178,25 @@ public class Angular2HtmlLexer extends HtmlLexer {
 
     @Contract("null -> null; !null -> !null")
     private IElementType convertType(@Nullable IElementType tokenType) {
-      return !myTokenizeExpansionForms && EXPANSION_TOKENS.contains(tokenType) ?
-             XML_DATA_CHARACTERS : tokenType;
+      if (tokenType == XML_COMMA) {
+        return myScanningState != STATE_SCAN_EXPANSION_FORM_CONTENT
+               ? XML_DATA_CHARACTERS : XML_COMMA;
+      }
+      if (tokenType == LBRACE) {
+        return myTokenizeExpansionForms
+               && myScanningState != STATE_SCAN_INTERPOLATION_CONTENT
+               && myScanningState != STATE_SCAN_UNTERMINATED_INTERPOLATION_CONTENT
+               ? LBRACE : XML_DATA_CHARACTERS;
+      }
+      if (tokenType == RBRACE) {
+        return (myScanningState == STATE_SCAN_EXPANSION_FORM_CONTENT
+                || (myExpansionFormNestingLevel > 0
+                    && (myScanningState == STATE_INTERPOLATION_END
+                        || myScanningState == STATE_EXPANSION_FORM_END
+                        || myScanningState == STATE_INITIAL))) ?
+               RBRACE : XML_DATA_CHARACTERS;
+      }
+      return tokenType;
     }
 
     private boolean tryConsumeInterpolationBoundary(String boundary) {
@@ -151,19 +213,12 @@ public class Angular2HtmlLexer extends HtmlLexer {
     }
 
     private boolean tryConsumeInterpolationContent() {
-      if (inBuffer(myInterpolationConfig.second, -1)) {
-        return false;
-      }
       final Lexer originalLexer = getOriginal();
-      while (true) {
-        final IElementType tokenType = originalLexer.getTokenType();
-        if (!INTERPOLATION_CONTENT_TOKENS.contains(tokenType)
-            || inBuffer(myInterpolationConfig.second, 0)) {
-          break;
-        }
+      while (INTERPOLATION_CONTENT_TOKENS.contains(originalLexer.getTokenType())
+             && !inBuffer(myInterpolationConfig.second, 0)) {
         originalLexer.advance();
       }
-      return true;
+      return INTERPOLATION_CONTENT_TOKENS.contains(originalLexer.getTokenType());
     }
 
     private boolean inBuffer(@NotNull String text, int offset) {
@@ -179,15 +234,21 @@ public class Angular2HtmlLexer extends HtmlLexer {
   private static class MyLexerPosition implements LexerPosition {
 
     private final LexerPosition myOriginal;
-    private final int myInterpolationScanningState;
+    private final int myScanningState;
+    private final int myExpansionFormNestingLevel;
 
-    private MyLexerPosition(@NotNull LexerPosition original, int interpolationScanningState) {
+    private MyLexerPosition(@NotNull LexerPosition original, int scanningState, int expansionFormNestingLevel) {
       myOriginal = original;
-      myInterpolationScanningState = interpolationScanningState;
+      myScanningState = scanningState;
+      myExpansionFormNestingLevel = expansionFormNestingLevel;
     }
 
-    public int getInterpolationScanningState() {
-      return myInterpolationScanningState;
+    public int getExpansionFormNestingLevel() {
+      return myExpansionFormNestingLevel;
+    }
+
+    public int getScanningState() {
+      return myScanningState;
     }
 
     @NotNull

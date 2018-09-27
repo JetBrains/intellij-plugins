@@ -65,6 +65,14 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
     doTest("{{test}} !=bbb {{foo() - bar()}}");
   }
 
+  public void testInterpolationIgnored() {
+    doTest("<div> this is {{ ignored <interpolation> }}");
+  }
+
+  public void testInterpolationIgnored2() {
+    doTest("this {{ is {{ <ignored/> interpolation }}");
+  }
+
   public void testComplex() {
     doTest("<div *ngFor=\"let contact of value; index as i\"\n" +
            "  (click)=\"contact\"\n" +
@@ -77,6 +85,34 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
            "<tr [style]=\"{'visible': con}\" *ngFor=\"let contact of contacts; index as i\">\n" +
            "  <td>{{i + 1}}</td>\n" +
            "</tr>\n");
+  }
+
+  public void testExpansionForm() {
+    doTest("{one.two, three, =4 {four} =5 {five} foo {bar} }");
+  }
+
+  public void testExpansionFormWithTextElementsAround() {
+    doTest("before{one.two, three, =4 {four}}after");
+  }
+
+  public void testExpansionFormTagSingleChild() {
+    doTest("<div><span>{a, b, =4 {c}}</span></div>");
+  }
+
+  public void testExpansionFormWithTagsInIt() {
+    doTest("{one.two, three, =4 {four <b>a</b>}}");
+  }
+
+  public void testExpansionFormWithInterpolation() {
+    doTest("{one.two, three, =4 {four {{a}}}}");
+  }
+
+  public void testExpansionFormNested() {
+    doTest("{one.two, three, =4 {{xx, yy, =x {one}} }}");
+  }
+
+  public void testExpansionFormComplex() {
+    doTest("<div>Text{ form, open, =23 {{{{foo: 12} }} is {inner, open, =34{{{\"test\"}} cool } =12{<tag test='12'></tag>}}}}}} {}");
   }
 
   @Override

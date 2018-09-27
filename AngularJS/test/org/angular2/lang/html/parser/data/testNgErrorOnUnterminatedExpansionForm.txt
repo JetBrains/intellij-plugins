@@ -4,7 +4,7 @@ HtmlFile:test.html
       <empty list>
     PsiElement(NG:EXPANSION_FORM)
       PsiErrorElement:Unterminated expansion form.
-        PsiElement(NG:LBRACE)('{')
+        PsiElement(NG:EXPANSION_FORM_START)('{')
         ASTWrapperPsiElement(NG:BINDING_EXPR)
           Angular2Binding
             JSReferenceExpression
@@ -19,8 +19,8 @@ HtmlFile:test.html
         PsiElement(NG:EXPANSION_FORM_CASE)
           XmlToken:XML_DATA_CHARACTERS('=0')
           PsiWhiteSpace(' ')
-          PsiElement(NG:LBRACE)('{')
+          PsiElement(NG:EXPANSION_FORM_CASE_START)('{')
           XmlASTWrapperPsiElement(NG:EXPANSION_FORM_CASE_CONTENT_TOKEN)
             XmlText
               XmlToken:XML_DATA_CHARACTERS('one')
-          PsiElement(NG:RBRACE)('}')
+          PsiElement(NG:EXPANSION_FORM_CASE_END)('}')

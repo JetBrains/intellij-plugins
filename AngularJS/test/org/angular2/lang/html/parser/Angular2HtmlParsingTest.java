@@ -138,6 +138,14 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
     doTestHtml("{messages.length, plural, =0 {<div>}}");
   }
 
+  public void testNgWhitespacesInExpansionCase() throws Exception {
+    doTestHtml("{ messages . length,  plural ,  =0   {  <div> } }");
+  }
+
+  public void testExpansionFormComplex() throws Exception {
+    doTestHtml("<div>Text{ form, open, =23 {{{{foo: 12} }} is {inner, open, =34{{{\"test\"}} cool } =12{<tag test='12'></tag>}}}}}} {}");
+  }
+
   public void testNgReportUnexpectedClosingTag() throws Exception {
     doTestHtml("<div></p></div>");
   }
@@ -240,6 +248,18 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
                "            | started : status\n" +
                "            | search : term\n" +
                "            }}");
+  }
+
+  public void testNgIgnoredInterpolation() throws Exception {
+    doTestHtml("this {{ is {{ <ignored/> interpolation }}");
+  }
+
+  public void testNgIgnoredInterpolationInTag() throws Exception {
+    doTestHtml("<div>this{{is{{<ignored/> interpolation}}</div>another{{ignored{{<interpolation/>");
+  }
+
+  public void testNgInterpolationEmpty() throws Exception {
+    doTestHtml("empty {{}} interpolation");
   }
 
 }

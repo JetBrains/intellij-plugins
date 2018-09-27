@@ -3,7 +3,7 @@ HtmlFile:test.html
     PsiElement(XML_PROLOG)
       <empty list>
     PsiElement(NG:EXPANSION_FORM)
-      PsiElement(NG:LBRACE)('{')
+      PsiElement(NG:EXPANSION_FORM_START)('{')
       ASTWrapperPsiElement(NG:BINDING_EXPR)
         Angular2Binding
           JSReferenceExpression
@@ -18,12 +18,12 @@ HtmlFile:test.html
       PsiElement(NG:EXPANSION_FORM_CASE)
         XmlToken:XML_DATA_CHARACTERS('=0')
         PsiWhiteSpace(' ')
-        PsiElement(NG:LBRACE)('{')
+        PsiElement(NG:EXPANSION_FORM_CASE_START)('{')
         XmlASTWrapperPsiElement(NG:EXPANSION_FORM_CASE_CONTENT_TOKEN)
           XmlText
             PsiWhiteSpace(' ')
           PsiElement(NG:EXPANSION_FORM)
-            PsiElement(NG:LBRACE)('{')
+            PsiElement(NG:EXPANSION_FORM_START)('{')
             ASTWrapperPsiElement(NG:BINDING_EXPR)
               Angular2Binding
                 JSReferenceExpression
@@ -38,13 +38,13 @@ HtmlFile:test.html
             PsiElement(NG:EXPANSION_FORM_CASE)
               XmlToken:XML_DATA_CHARACTERS('male')
               PsiWhiteSpace(' ')
-              PsiElement(NG:LBRACE)('{')
+              PsiElement(NG:EXPANSION_FORM_CASE_START)('{')
               XmlASTWrapperPsiElement(NG:EXPANSION_FORM_CASE_CONTENT_TOKEN)
                 XmlText
                   XmlToken:XML_DATA_CHARACTERS('m')
-              PsiElement(NG:RBRACE)('}')
-            PsiElement(NG:RBRACE)('}')
+              PsiElement(NG:EXPANSION_FORM_CASE_END)('}')
+            PsiElement(NG:EXPANSION_FORM_END)('}')
           XmlText
             PsiWhiteSpace(' ')
-        PsiElement(NG:RBRACE)('}')
-      PsiElement(NG:RBRACE)('}')
+        PsiElement(NG:EXPANSION_FORM_CASE_END)('}')
+      PsiElement(NG:EXPANSION_FORM_END)('}')

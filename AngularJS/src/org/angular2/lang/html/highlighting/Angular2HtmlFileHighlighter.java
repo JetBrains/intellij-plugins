@@ -28,6 +28,9 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
   public static final TextAttributesKey NG_SCRIPT_DELIMITERS = TextAttributesKey.createTextAttributesKey(
     "NG.SCRIPT_DELIMITERS", DefaultLanguageHighlighterColors.SEMICOLON);
 
+  public static final TextAttributesKey NG_EXPANSION_FORM_DELIMITERS = TextAttributesKey.createTextAttributesKey(
+    "NG.EXPANSION_FORM_DELIMITERS", DefaultLanguageHighlighterColors.SEMICOLON);
+
   public static final TextAttributesKey NG_PROPERTY_BINDING_ATTR_NAME = TextAttributesKey.createTextAttributesKey(
     "NG.PROPERTY_BINDING_ATTR_NAME", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
 
@@ -49,6 +52,11 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
 
     keys2.put(INTERPOLATION_START, NG_SCRIPT_DELIMITERS);
     keys2.put(INTERPOLATION_END, NG_SCRIPT_DELIMITERS);
+
+    keys2.put(EXPANSION_FORM_START, NG_EXPANSION_FORM_DELIMITERS);
+    keys2.put(EXPANSION_FORM_CASE_START, NG_EXPANSION_FORM_DELIMITERS);
+    keys2.put(EXPANSION_FORM_END, NG_EXPANSION_FORM_DELIMITERS);
+    keys2.put(EXPANSION_FORM_CASE_END, NG_EXPANSION_FORM_DELIMITERS);
 
     Stream.of(ALL_ATTRIBUTES.getTypes())
       .forEach(type -> keys1.put(type, XmlHighlighterColors.HTML_ATTRIBUTE_NAME));

@@ -1,20 +1,19 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.highlighting;
 
-import com.intellij.lexer.FlexAdapter;
-import com.intellij.lexer.HtmlHighlightingLexer;
-import com.intellij.lexer.Lexer;
+import com.intellij.lexer.*;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.angular2.lang.expr.highlighting.Angular2SyntaxHighlighter;
-import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType;
 import org.angular2.lang.html.lexer.Angular2HtmlLexer;
 import org.angular2.lang.html.lexer._Angular2HtmlLexer;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.jetbrains.annotations.Nullable;
 
+import static org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR;
+import static org.angular2.lang.html.lexer.Angular2HtmlLexer.Angular2HtmlMergingLexer.isLexerWithinInterpolationOrExpansion;
 import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
 
 public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
@@ -22,15 +21,14 @@ public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
   private static final TokenSet NG_EL_ATTRIBUTES = TokenSet.create(EVENT, BANANA_BOX_BINDING,
                                                                    PROPERTY_BINDING, TEMPLATE_BINDINGS);
 
-  private Lexer angular2ExpressionLexer;
-
   public Angular2HtmlHighlightingLexer(boolean tokenizeExpansionForms,
                                        @Nullable Pair<String, String> interpolationConfig,
                                        @Nullable FileType styleFileType) {
-    super(new Angular2HtmlLexer.Angular2HtmlMergingLexer(
-            new FlexAdapter(new _Angular2HtmlLexer()), tokenizeExpansionForms, interpolationConfig),
+    super(new Angular2HtmlHighlightingMergingLexer(
+            new Angular2HtmlLexer.Angular2HtmlMergingLexer(
+              new FlexAdapter(new _Angular2HtmlLexer()), tokenizeExpansionForms, interpolationConfig)),
           true, styleFileType);
-    registerHandler(Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR, new ElEmbeddmentHandler());
+    registerHandler(INTERPOLATION_EXPR, new ElEmbeddmentHandler());
   }
 
   @Override
@@ -46,9 +44,6 @@ public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
 
   @Override
   public IElementType getTokenType() {
-    if (angular2ExpressionLexer != null) {
-      return angular2ExpressionLexer.getTokenType();
-    }
     IElementType tokenType = super.getTokenType();
 
     // we need to convert attribute names according to their function
@@ -61,20 +56,30 @@ public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
       }
       seenScript = false;
     }
+    if (tokenType == TAG_WHITE_SPACE && isLexerWithinInterpolationOrExpansion(getState())) {
+      return XML_REAL_WHITE_SPACE;
+    }
     return tokenType;
   }
 
-  @Override
-  public void advance() {
-    if (angular2ExpressionLexer != null) {
-      angular2ExpressionLexer.advance();
-      if (angular2ExpressionLexer.getTokenType() == null) {
-        angular2ExpressionLexer = null;
-      }
+  private static class Angular2HtmlHighlightingMergingLexer extends MergingLexerAdapterBase {
+
+    private Angular2HtmlHighlightingMergingLexer(Lexer original) {
+      super(original);
     }
 
-    if (angular2ExpressionLexer == null) {
-      super.advance();
+    @Override
+    public MergeFunction getMergeFunction() {
+      return (type, original) -> {
+        if (type == INTERPOLATION_START) {
+          IElementType nextType = original.getTokenType();
+          if (nextType != INTERPOLATION_EXPR
+              && nextType != INTERPOLATION_END) {
+            return XML_DATA_CHARACTERS;
+          }
+        }
+        return type;
+      };
     }
   }
 }
