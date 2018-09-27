@@ -59,8 +59,10 @@ public class Angular2HtmlFilterLexer extends BaseFilterLexer {
     create(
       Angular2HtmlTokenTypes.INTERPOLATION_START,
       Angular2HtmlTokenTypes.INTERPOLATION_END,
-      Angular2HtmlTokenTypes.LBRACE,
-      Angular2HtmlTokenTypes.RBRACE,
+      Angular2HtmlTokenTypes.EXPANSION_FORM_START,
+      Angular2HtmlTokenTypes.EXPANSION_FORM_END,
+      Angular2HtmlTokenTypes.EXPANSION_FORM_CASE_END,
+      Angular2HtmlTokenTypes.EXPANSION_FORM_CASE_START,
       XmlTokenType.XML_COMMA,
       Angular2TokenTypes.ESCAPE_SEQUENCE
     )

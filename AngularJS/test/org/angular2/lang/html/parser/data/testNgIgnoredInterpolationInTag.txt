@@ -19,8 +19,7 @@ HtmlFile:test.html
       XmlToken:XML_NAME('div')
       XmlToken:XML_TAG_END('>')
     XmlToken:XML_DATA_CHARACTERS('another')
-    XmlText
-      XmlToken:XML_DATA_CHARACTERS('{{ignored{{')
+    XmlToken:XML_DATA_CHARACTERS('{{ignored{{')
     HtmlTag:interpolation
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('interpolation')

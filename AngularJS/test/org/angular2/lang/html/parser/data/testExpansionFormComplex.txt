@@ -10,13 +10,14 @@ HtmlFile:test.html
         XmlToken:XML_DATA_CHARACTERS('Text')
       PsiElement(NG:EXPANSION_FORM)
         PsiElement(NG:EXPANSION_FORM_START)('{')
+        PsiWhiteSpace(' ')
         ASTWrapperPsiElement(NG:BINDING_EXPR)
-          PsiWhiteSpace(' ')
           Angular2Binding
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('form')
         XmlToken:XML_COMMA(',')
-        XmlToken:XML_DATA_CHARACTERS(' open')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('open')
         XmlToken:XML_COMMA(',')
         PsiWhiteSpace(' ')
         PsiElement(NG:EXPANSION_FORM_CASE)
@@ -49,7 +50,8 @@ HtmlFile:test.html
                   JSReferenceExpression
                     PsiElement(JS:IDENTIFIER)('inner')
               XmlToken:XML_COMMA(',')
-              XmlToken:XML_DATA_CHARACTERS(' open')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('open')
               XmlToken:XML_COMMA(',')
               PsiWhiteSpace(' ')
               PsiElement(NG:EXPANSION_FORM_CASE)

@@ -4,8 +4,8 @@ HtmlFile:test.html
       <empty list>
     PsiElement(NG:EXPANSION_FORM)
       PsiElement(NG:EXPANSION_FORM_START)('{')
+      PsiWhiteSpace(' ')
       ASTWrapperPsiElement(NG:BINDING_EXPR)
-        PsiWhiteSpace(' ')
         Angular2Binding
           JSReferenceExpression
             JSReferenceExpression
@@ -15,7 +15,9 @@ HtmlFile:test.html
             PsiWhiteSpace(' ')
             PsiElement(JS:IDENTIFIER)('length')
       XmlToken:XML_COMMA(',')
-      XmlToken:XML_DATA_CHARACTERS('  plural ')
+      PsiWhiteSpace('  ')
+      XmlToken:XML_DATA_CHARACTERS('plural')
+      PsiWhiteSpace(' ')
       XmlToken:XML_COMMA(',')
       PsiWhiteSpace('  ')
       PsiElement(NG:EXPANSION_FORM_CASE)

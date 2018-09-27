@@ -4,8 +4,7 @@ HtmlFile:test.html
       <empty list>
     XmlToken:XML_DATA_CHARACTERS('this')
     PsiWhiteSpace(' ')
-    XmlText
-      XmlToken:XML_DATA_CHARACTERS('{{')
+    XmlToken:XML_DATA_CHARACTERS('{{')
     PsiWhiteSpace(' ')
     XmlToken:XML_DATA_CHARACTERS('is')
     PsiWhiteSpace(' ')

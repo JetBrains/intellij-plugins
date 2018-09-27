@@ -638,7 +638,7 @@ public class Angular2HtmlLexerSpecTest {
 
         it("should parse valid start tag in interpolation", () -> {
           expect(tokenizeAndHumanizeParts("{{ a <b && c > d }}")).toEqual(newArrayList(
-            newArrayList(INTERPOLATION_START, "{{"),
+            newArrayList(XML_DATA_CHARACTERS, "{{"),
             newArrayList(XML_REAL_WHITE_SPACE, " "),
             newArrayList(XML_DATA_CHARACTERS, "a"),
             newArrayList(XML_REAL_WHITE_SPACE, " "),
@@ -656,7 +656,7 @@ public class Angular2HtmlLexerSpecTest {
             newArrayList(XML_DATA_CHARACTERS, "}}")
           ));
           expect(tokenizeAndHumanizeParts("{{<b>}}")).toEqual(newArrayList(
-            newArrayList(INTERPOLATION_START, "{{"),
+            newArrayList(XML_DATA_CHARACTERS, "{{"),
             newArrayList(XML_START_TAG_START, "<"),
             newArrayList(XML_NAME, "b"),
             newArrayList(XML_TAG_END, ">"),

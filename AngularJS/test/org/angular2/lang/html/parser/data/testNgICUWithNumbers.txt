@@ -9,7 +9,8 @@ HtmlFile:test.html
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('sex')
       XmlToken:XML_COMMA(',')
-      XmlToken:XML_DATA_CHARACTERS(' select')
+      PsiWhiteSpace(' ')
+      XmlToken:XML_DATA_CHARACTERS('select')
       XmlToken:XML_COMMA(',')
       PsiWhiteSpace(' ')
       PsiElement(NG:EXPANSION_FORM_CASE)

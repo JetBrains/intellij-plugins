@@ -1,17 +1,90 @@
 package org.angular2.lang.html.lexer;
 
 import com.intellij.lexer.FlexLexer;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.xml.*;
-
+import com.intellij.psi.xml.XmlTokenType;
+import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType;
+import org.jetbrains.annotations.Nullable;
 %%
 
 %unicode
 
 %{
-  public _Angular2HtmlLexer() {
+  private String interpolationStart;
+  private String interpolationEnd;
+  private boolean tokenizeExpansionForms;
+
+  private int expansionFormNestingLevel;
+  private int interpolationStartPos;
+
+  public _Angular2HtmlLexer(boolean tokenizeExpansionForms, @Nullable Pair<String, String> interpolationConfig) {
     this(null);
+    if (interpolationConfig == null) {
+      interpolationStart = "{{";
+      interpolationEnd = "}}";
+    } else {
+      interpolationStart = interpolationConfig.first;
+      interpolationEnd = interpolationConfig.second;
+    }
+    this.tokenizeExpansionForms = tokenizeExpansionForms;
   }
+
+  private boolean tryConsumeInterpolationBoundary(String boundary) {
+    if (inBuffer(boundary, 0)) {
+      zzMarkedPos += boundary.length() - 1;
+      interpolationStartPos = -1;
+      return true;
+    }
+    return false;
+  }
+
+  private boolean inBuffer(String text, int offset) {
+    int curPos = zzMarkedPos - 1 + offset;
+    if (text.length() > zzBuffer.length() - curPos) {
+      return false;
+    }
+    for (int i = 0; i < text.length(); i++) {
+      if (zzBuffer.charAt(i + curPos) != text.charAt(i)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private boolean tryRollbackInterpolation() {
+    if (yystate() == INTERPOLATION) {
+      rollbackInterpolation();
+      yybegin(UNTERMINATED_INTERPOLATION);
+      return true;
+    }
+    return false;
+  }
+
+  private void rollbackInterpolation() {
+    if (interpolationStartPos > 0) {
+      zzStartRead = interpolationStartPos - 1;
+      zzMarkedPos = interpolationStartPos - 1;
+      interpolationStartPos = -1;
+    } else {
+      yypushback(yylength());
+    }
+  }
+
+  private boolean isWithinInterpolation() {
+    return zzLexicalState == INTERPOLATION
+      || zzLexicalState == INTERPOLATION_DQ
+      || zzLexicalState == INTERPOLATION_SQ;
+  }
+
+  public int getExpansionFormNestingLevel() {
+    return expansionFormNestingLevel;
+  }
+
+  public void setExpansionFormNestingLevel(int level) {
+    expansionFormNestingLevel = level;
+  }
+
 %}
 
 %class _Angular2HtmlLexer
@@ -34,7 +107,18 @@ import com.intellij.psi.xml.*;
 %state TAG_CHARACTERS
 %state C_COMMENT_START
 %state C_COMMENT_END
-/* IMPORTANT! number of states should not exceed 16. See JspHighlightingLexer. */
+
+%state EXPANSION_FORM_CONTENT
+%state EXPANSION_FORM_CASE_END
+%state INTERPOLATION
+%state UNTERMINATED_INTERPOLATION
+%state INTERPOLATION_END
+%state INTERPOLATION_SQ
+%state INTERPOLATION_DQ
+%state UNTERMINATED_INTERPOLATION_SQ
+%state UNTERMINATED_INTERPOLATION_DQ
+%state INTERPOLATION_END_SQ
+%state INTERPOLATION_END_DQ
 
 ALPHA=[:letter:]
 DIGIT=[0-9]
@@ -53,24 +137,53 @@ END_COMMENT="-->"
 CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|"("|")"|"|"|"!"|"&")*
 %%
 
-<YYINITIAL> "<?" { yybegin(PROCESSING_INSTRUCTION); return XmlTokenType.XML_PI_START; }
+<YYINITIAL, INTERPOLATION, UNTERMINATED_INTERPOLATION> "<?" {
+  if (!tryRollbackInterpolation()) {
+    yybegin(PROCESSING_INSTRUCTION);
+    return XmlTokenType.XML_PI_START;
+  }
+}
 <PROCESSING_INSTRUCTION> "?"? ">" { yybegin(YYINITIAL); return XmlTokenType.XML_PI_END; }
 <PROCESSING_INSTRUCTION> ([^\?\>] | (\?[^\>]))* { return XmlTokenType.XML_PI_TARGET; }
 
-<YYINITIAL> {DOCTYPE} { yybegin(DOC_TYPE); return XmlTokenType.XML_DOCTYPE_START; }
+<YYINITIAL, INTERPOLATION, UNTERMINATED_INTERPOLATION> {DOCTYPE} {
+  if (!tryRollbackInterpolation()) {
+    yybegin(DOC_TYPE);
+    return XmlTokenType.XML_DOCTYPE_START;
+  }
+}
 <DOC_TYPE> {HTML} { return XmlTokenType.XML_NAME; }
 <DOC_TYPE> {PUBLIC} { return XmlTokenType.XML_DOCTYPE_PUBLIC; }
 <DOC_TYPE> {DTD_REF} { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;}
 <DOC_TYPE> ">" { yybegin(YYINITIAL); return XmlTokenType.XML_DOCTYPE_END; }
-<YYINITIAL> {WHITE_SPACE_CHARS} { return XmlTokenType.XML_REAL_WHITE_SPACE; }
+<YYINITIAL, UNTERMINATED_INTERPOLATION> {WHITE_SPACE_CHARS} { return XmlTokenType.XML_REAL_WHITE_SPACE; }
+<INTERPOLATION> {WHITE_SPACE_CHARS} {}
 <DOC_TYPE,TAG_ATTRIBUTES,ATTRIBUTE_VALUE_START,PROCESSING_INSTRUCTION, START_TAG_NAME, END_TAG_NAME, TAG_CHARACTERS> {WHITE_SPACE_CHARS} { return XmlTokenType.XML_WHITE_SPACE; }
-<YYINITIAL> "<" {TAG_NAME} { yybegin(START_TAG_NAME); yypushback(yylength()); }
+<YYINITIAL, INTERPOLATION, UNTERMINATED_INTERPOLATION> "<" {TAG_NAME} {
+  if (!tryRollbackInterpolation()) {
+    yybegin(START_TAG_NAME);
+    yypushback(yylength());
+  }
+}
 <START_TAG_NAME, TAG_CHARACTERS> "<" { return XmlTokenType.XML_START_TAG_START; }
 
-<YYINITIAL> "</" {TAG_NAME} { yybegin(END_TAG_NAME); yypushback(yylength()); }
-<YYINITIAL, END_TAG_NAME> "</" { return XmlTokenType.XML_END_TAG_START; }
+<YYINITIAL, INTERPOLATION, UNTERMINATED_INTERPOLATION> "</" {TAG_NAME} {
+  if (!tryRollbackInterpolation()) {
+    yybegin(END_TAG_NAME); yypushback(yylength());
+  }
+}
+<YYINITIAL, END_TAG_NAME, INTERPOLATION, UNTERMINATED_INTERPOLATION> "</" {
+  if (!tryRollbackInterpolation()) {
+    return XmlTokenType.XML_END_TAG_START;
+  }
+}
 
-<YYINITIAL> "<!--" { yybegin(COMMENT); return XmlTokenType.XML_COMMENT_START; }
+<YYINITIAL, INTERPOLATION, UNTERMINATED_INTERPOLATION> "<!--" {
+  if (!tryRollbackInterpolation()) {
+    yybegin(COMMENT);
+    return XmlTokenType.XML_COMMENT_START;
+  }
+}
 <COMMENT> "[" { yybegin(C_COMMENT_START); return XmlTokenType.XML_CONDITIONAL_COMMENT_START; }
 <COMMENT> "<![" { yybegin(C_COMMENT_END); return XmlTokenType.XML_CONDITIONAL_COMMENT_END_START; }
 <COMMENT> {END_COMMENT} | "<!-->" { yybegin(YYINITIAL); return XmlTokenType.XML_COMMENT_END; }
@@ -97,10 +210,6 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
 <C_COMMENT_END> "]" { yybegin(COMMENT); return XmlTokenType.XML_CONDITIONAL_COMMENT_END; }
 <C_COMMENT_END> [^] { yybegin(COMMENT); return XmlTokenType.XML_COMMENT_CHARACTERS; }
 
-<YYINITIAL> \\\$ {
-  return XmlTokenType.XML_DATA_CHARACTERS;
-}
-
 <START_TAG_NAME, END_TAG_NAME> {TAG_NAME} { yybegin(BEFORE_TAG_ATTRIBUTES); return XmlTokenType.XML_NAME; }
 
 <BEFORE_TAG_ATTRIBUTES, TAG_ATTRIBUTES, TAG_CHARACTERS> ">" { yybegin(YYINITIAL); return XmlTokenType.XML_TAG_END; }
@@ -119,17 +228,81 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
 <ATTRIBUTE_VALUE_START> "\"" { yybegin(ATTRIBUTE_VALUE_DQ); return XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER; }
 <ATTRIBUTE_VALUE_START> "'" { yybegin(ATTRIBUTE_VALUE_SQ); return XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER; }
 
-<ATTRIBUTE_VALUE_DQ> {
+<ATTRIBUTE_VALUE_DQ, UNTERMINATED_INTERPOLATION_DQ> {
   "\"" { yybegin(TAG_ATTRIBUTES); return XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER; }
-  \\\$ { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN; }
-  [^] { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;}
+  [^] {
+  if (yystate() == ATTRIBUTE_VALUE_DQ
+      && tryConsumeInterpolationBoundary(interpolationStart)) {
+    if (inBuffer(interpolationEnd, 1)) {
+      yybegin(INTERPOLATION_END_DQ);
+    } else {
+      yybegin(INTERPOLATION_DQ);
+    }
+    return Angular2HtmlTokenTypes.INTERPOLATION_START;
+  }
+  return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;}
 }
 
-<ATTRIBUTE_VALUE_SQ> {
+<ATTRIBUTE_VALUE_SQ, UNTERMINATED_INTERPOLATION_SQ> {
   "'" { yybegin(TAG_ATTRIBUTES); return XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER; }
-  \\\$ { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN; }
-  [^] { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;}
+  [^] {
+  if (yystate() == ATTRIBUTE_VALUE_SQ
+            && tryConsumeInterpolationBoundary(interpolationStart)) {
+    if (inBuffer(interpolationEnd, 1)) {
+      yybegin(INTERPOLATION_END_SQ);
+    } else {
+      yybegin(INTERPOLATION_SQ);
+    }
+    return Angular2HtmlTokenTypes.INTERPOLATION_START;
+  }
+  return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;}
 }
+
+<INTERPOLATION_DQ> "\"" {
+  rollbackInterpolation();
+  yybegin(UNTERMINATED_INTERPOLATION_DQ);
+}
+
+<INTERPOLATION_SQ> "'" {
+  rollbackInterpolation();
+  yybegin(UNTERMINATED_INTERPOLATION_SQ);
+}
+
+<INTERPOLATION_DQ, INTERPOLATION_SQ>   [^] {
+  if (inBuffer(interpolationEnd, 0)) {
+    yybegin(yystate() == INTERPOLATION_DQ ? INTERPOLATION_END_DQ : INTERPOLATION_END_SQ);
+    yypushback(1);
+    return Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR;
+  }
+  if (interpolationStartPos <= 0) {
+    interpolationStartPos = zzStartRead;
+  }
+}
+
+<INTERPOLATION_END_DQ, INTERPOLATION_END_SQ> [^] {
+  yybegin(yystate() == INTERPOLATION_END_DQ ? ATTRIBUTE_VALUE_DQ : ATTRIBUTE_VALUE_SQ);
+  if (tryConsumeInterpolationBoundary(interpolationEnd)) {
+    return Angular2HtmlTokenTypes.INTERPOLATION_END;
+  }
+  return XmlTokenType.XML_BAD_CHARACTER;
+}
+<EXPANSION_FORM_CASE_END> [^] {
+  expansionFormNestingLevel--;
+  yypushback(1);
+  yybegin(EXPANSION_FORM_CONTENT);
+}
+<EXPANSION_FORM_CONTENT> "," { return XmlTokenType.XML_COMMA; }
+<EXPANSION_FORM_CONTENT> "{" {
+  expansionFormNestingLevel++;
+  yybegin(YYINITIAL);
+  return Angular2HtmlTokenTypes.EXPANSION_FORM_CASE_START;
+}
+<EXPANSION_FORM_CONTENT> "}" {
+  yybegin(YYINITIAL);
+  return Angular2HtmlTokenTypes.EXPANSION_FORM_END;
+}
+<EXPANSION_FORM_CONTENT> {WHITE_SPACE_CHARS} { return XmlTokenType.XML_WHITE_SPACE; }
+<EXPANSION_FORM_CONTENT> [^ \n\r\t\f\u2028\u2029\u0085,{}] { return XmlTokenType.XML_DATA_CHARACTERS; }
 
 "&lt;" |
 "&gt;" |
@@ -138,12 +311,49 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
 "&nbsp;" |
 "&amp;" |
 "&#"{DIGIT}+";" |
-"&#"(x|X)({DIGIT}|[a-fA-F])+";" { return XmlTokenType.XML_CHAR_ENTITY_REF; }
-"&"{TAG_NAME}";" { return XmlTokenType.XML_ENTITY_REF_TOKEN; }
+"&#"(x|X)({DIGIT}|[a-fA-F])+";" { if (!isWithinInterpolation()) return XmlTokenType.XML_CHAR_ENTITY_REF; }
+"&"{TAG_NAME}";" { if (!isWithinInterpolation()) return XmlTokenType.XML_ENTITY_REF_TOKEN; }
 
-<YYINITIAL> "{" { return Angular2HtmlTokenTypes.LBRACE; }
-<YYINITIAL> "}" { return Angular2HtmlTokenTypes.RBRACE; }
-<YYINITIAL> "," { return XmlTokenType.XML_COMMA; }
-<YYINITIAL> ([^<&\$# \n\r\t\f{},]|(\\\$)|(\\#)) { return XmlTokenType.XML_DATA_CHARACTERS; }
-<YYINITIAL> [^] { return XmlTokenType.XML_DATA_CHARACTERS; }
+<INTERPOLATION> [^] {
+  if (inBuffer(interpolationEnd, 0)) {
+    yybegin(INTERPOLATION_END);
+    yypushback(1);
+    return Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR;
+  }
+  if (interpolationStartPos <= 0) {
+    interpolationStartPos = zzStartRead;
+  }
+}
+<INTERPOLATION_END> [^] {
+  yybegin(YYINITIAL);
+  if (tryConsumeInterpolationBoundary(interpolationEnd)) {
+    return Angular2HtmlTokenTypes.INTERPOLATION_END;
+  }
+  return XmlTokenType.XML_BAD_CHARACTER;
+}
+<UNTERMINATED_INTERPOLATION> ([^<&\$# \n\r\t\f]|(\\#)) { return XmlTokenType.XML_DATA_CHARACTERS; }
+<YYINITIAL> ([^<&\$# \n\r\t\f]|(\\#)) {
+  if (tryConsumeInterpolationBoundary(interpolationStart)) {
+    if (inBuffer(interpolationEnd, 1)) {
+      yybegin(INTERPOLATION_END);
+    } else {
+      yybegin(INTERPOLATION);
+    }
+    return Angular2HtmlTokenTypes.INTERPOLATION_START;
+  }
+  switch (zzBuffer.charAt(zzStartRead)) {
+    case '{':
+      if (tokenizeExpansionForms) {
+        yybegin(EXPANSION_FORM_CONTENT);
+        return Angular2HtmlTokenTypes.EXPANSION_FORM_START;
+      }
+    case '}':
+      if (expansionFormNestingLevel > 0) {
+        yybegin(EXPANSION_FORM_CASE_END);
+        return Angular2HtmlTokenTypes.EXPANSION_FORM_CASE_END;
+      }
+  }
+  return XmlTokenType.XML_DATA_CHARACTERS;
+}
+<YYINITIAL, UNTERMINATED_INTERPOLATION> [^] { return XmlTokenType.XML_DATA_CHARACTERS; }
 [^] { return XmlTokenType.XML_BAD_CHARACTER; }

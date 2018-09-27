@@ -1,7 +1,9 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.highlighting;
 
-import com.intellij.lexer.*;
+import com.intellij.lexer.FlexAdapter;
+import com.intellij.lexer.HtmlHighlightingLexer;
+import com.intellij.lexer.Lexer;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
@@ -24,9 +26,8 @@ public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
   public Angular2HtmlHighlightingLexer(boolean tokenizeExpansionForms,
                                        @Nullable Pair<String, String> interpolationConfig,
                                        @Nullable FileType styleFileType) {
-    super(new Angular2HtmlHighlightingMergingLexer(
-            new Angular2HtmlLexer.Angular2HtmlMergingLexer(
-              new FlexAdapter(new _Angular2HtmlLexer()), tokenizeExpansionForms, interpolationConfig)),
+    super(new Angular2HtmlLexer.Angular2HtmlMergingLexer(
+            new FlexAdapter(new _Angular2HtmlLexer(tokenizeExpansionForms, interpolationConfig))),
           true, styleFileType);
     registerHandler(INTERPOLATION_EXPR, new ElEmbeddmentHandler());
   }
@@ -60,26 +61,5 @@ public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
       return XML_REAL_WHITE_SPACE;
     }
     return tokenType;
-  }
-
-  private static class Angular2HtmlHighlightingMergingLexer extends MergingLexerAdapterBase {
-
-    private Angular2HtmlHighlightingMergingLexer(Lexer original) {
-      super(original);
-    }
-
-    @Override
-    public MergeFunction getMergeFunction() {
-      return (type, original) -> {
-        if (type == INTERPOLATION_START) {
-          IElementType nextType = original.getTokenType();
-          if (nextType != INTERPOLATION_EXPR
-              && nextType != INTERPOLATION_END) {
-            return XML_DATA_CHARACTERS;
-          }
-        }
-        return type;
-      };
-    }
   }
 }

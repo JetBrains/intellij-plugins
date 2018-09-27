@@ -50,7 +50,7 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
   }
 
   public void testInterpolation1() {
-    doTest("<t a=\"{{v}}\" b=\"s{{m}}e\" c=\"s{{m//c}}e\">");
+    doTest("<t a=\"{{v}}\" b=\"s{{m}}e\" c='s{{m//c}}e'>");
   }
 
   public void testInterpolation2() {
@@ -66,11 +66,31 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
   }
 
   public void testInterpolationIgnored() {
-    doTest("<div> this is {{ ignored <interpolation> }}");
+    doTest("<div> this is ignored {{<interpolation> }}");
   }
 
   public void testInterpolationIgnored2() {
     doTest("this {{ is {{ <ignored/> interpolation }}");
+  }
+
+  public void testInterpolationIgnored3() {
+    doTest("<div foo=\"This {{ is {{ ignored interpolation\"> }}<a foo=\"{{\">");
+  }
+
+  public void testInterpolationIgnored4() {
+    doTest("<div foo='This {{ is {{ ignored interpolation'> }}<a foo='{{'>");
+  }
+
+  public void testInterpolationEmpty() {
+    doTest("{{}}<div foo='{{}}' foo='a{{}}b' bar=\"{{}}\" bar=\"a{{}}b\">{{}}</div>a{{}}b<div>a{{}}b</div>");
+  }
+
+  public void testInterpolationCharEntityRefs() {
+    doTest("&nbsp;{{foo&nbsp;bar}}{{&nbsp;}}<div foo='&nbsp;{{foo&nbsp;bar}}{{&nbsp;}}' bar=\"&nbsp;{{foo&nbsp;bar}}{{&nbsp;}}\">");
+  }
+
+  public void testInterpolationEntityRefs() {
+    doTest("&foo;{{foo&foo;bar}}{{&foo;}}<div foo='&foo;{{foo&foo;bar}}{{&foo;}}' bar=\"&foo;{{foo&foo;bar}}{{&foo;}}\">");
   }
 
   public void testComplex() {

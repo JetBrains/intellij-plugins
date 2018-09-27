@@ -22,10 +22,10 @@ import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
 
 public class Angular2HtmlParsing extends HtmlParsing {
 
-  private static final TokenSet CUSTOM_CONTENT = TokenSet.create(EXPANSION_FORM_START, RBRACE, INTERPOLATION_START, XML_COMMA,
-                                                                 XML_DATA_CHARACTERS);
-  private static final TokenSet DATA_TOKENS = TokenSet.create(RBRACE, XML_COMMA, XML_DATA_CHARACTERS);
-  private static final TokenSet VALID_INTERPOLATION_TOKENS = TokenSet.create(INTERPOLATION_EXPR, INTERPOLATION_END);
+  private static final TokenSet CUSTOM_CONTENT = TokenSet.create(EXPANSION_FORM_START, INTERPOLATION_START,
+                                                                 XML_DATA_CHARACTERS, XML_COMMA);
+
+  private static final TokenSet DATA_TOKENS = TokenSet.create(XML_COMMA, XML_DATA_CHARACTERS);
 
   public Angular2HtmlParsing(@NotNull PsiBuilder builder) {
     super(builder);
@@ -104,8 +104,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
   @Override
   protected PsiBuilder.Marker parseCustomTagContent(PsiBuilder.Marker xmlText) {
     final IElementType tt = token();
-    if (tt == INTERPOLATION_START
-        && VALID_INTERPOLATION_TOKENS.contains(getBuilder().lookAhead(1))) {
+    if (tt == INTERPOLATION_START) {
       xmlText = terminateText(xmlText);
       final PsiBuilder.Marker interpolation = mark();
       advance();
@@ -124,18 +123,15 @@ public class Angular2HtmlParsing extends HtmlParsing {
       xmlText = terminateText(xmlText);
       parseExpansionForm();
     }
-    else if (tt == RBRACE || tt == XML_COMMA) {
+    else if (tt == XML_COMMA) {
       xmlText = startText(xmlText);
       getBuilder().remapCurrentToken(XML_DATA_CHARACTERS);
       advance();
     }
-    else if (tt == XML_DATA_CHARACTERS
-             || tt == INTERPOLATION_START) {
+    else if (tt == XML_DATA_CHARACTERS) {
       xmlText = startText(xmlText);
       PsiBuilder.Marker dataStart = mark();
-      advance();
-      while (DATA_TOKENS.contains(token())
-             || (token() == INTERPOLATION_START && !VALID_INTERPOLATION_TOKENS.contains(getBuilder().lookAhead(1)))) {
+      while (DATA_TOKENS.contains(token())) {
         advance();
       }
       dataStart.collapse(XML_DATA_CHARACTERS);
