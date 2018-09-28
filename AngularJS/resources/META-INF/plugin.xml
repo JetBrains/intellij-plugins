@@ -139,6 +139,8 @@
     <xml.fileNSInfoProvider implementation="org.angular2.lang.html.Angular2HtmlNSInfoProvider"/>
     <stubElementTypeHolder class="org.angular2.lang.html.parser.Angular2HtmlElementTypes"/>
     <lang.formatter language="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlFormattingModelBuilder"/>
+    <gotoDeclarationHandler implementation="org.angular2.editor.Angular2GotoDeclarationHandler" order="first"/>
+    <typeDeclarationProvider implementation="org.angular2.editor.Angular2TypeDeclarationProvider" order="first"/>
 
     <!-- Angular 2 Expression Language contributions -->
     <codeInsight.template.postfixTemplateProvider language="Angular2"

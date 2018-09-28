@@ -57,6 +57,12 @@ public class DirectiveUtil {
                                                       directive.getParent() instanceof JsonElement);
   }
 
+  public static boolean isComponentDeclaration(@Nullable final PsiElement element) {
+    return element instanceof JSImplicitElement
+           && ((JSImplicitElement)element).getType() != JSImplicitElement.Type.Function
+           && "E;;;".equals(((JSImplicitElement)element).getTypeString());
+  }
+
   public static String attributeToDirective(final PsiElement directive, final String name) {
     if (isAngular2Directive(directive)) {
       return name;
