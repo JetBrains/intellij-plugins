@@ -32,8 +32,9 @@ public class Angular2TypeDeclarationProvider implements TypeDeclarationProvider 
     return null;
   }
 
+  @Nullable
   @Override
-  public String getActionText(DataContext context) {
+  public String getActionText(@NotNull DataContext context) {
     if (DirectiveUtil.isComponentDeclaration(context.getData(CommonDataKeys.PSI_ELEMENT))) {
       return "Component &Template";
     }
