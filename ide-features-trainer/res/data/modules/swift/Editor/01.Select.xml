@@ -28,7 +28,7 @@ class Select: UIViewController {
     <Try action="EditorNextWordWithSelection" trigger="EditorNextWordWithSelection">Place the caret before any word. Press <action>EditorNextWordWithSelection</action> to move the caret to the next word and select everything in between.</Try>
     <Try action="EditorSelectWord" trigger="EditorSelectWord">Press <action>EditorSelectWord</action> to extend the selection to the next code block.</Try>
     <Try trigger="EditorSelectWord">Try increasing your selection with <action>EditorSelectWord</action> until your whole file is selected.</Try>
-    <Try action="EditorUnSelectWord" trigger="EditorUnSelectWord"><action>EditorUnSelectWord</action> shrinks selection. Try pressing it.</Try>
+    <Try action="EditorUnSelectWord" trigger="EditorUnSelectWord"><action>EditorUnSelectWord</action> shrinks the current selection. Try pressing it.</Try>
     <Try action="$SelectAll" trigger="$SelectAll">Now select the whole file instantly with <action>$SelectAll</action>.</Try>
     <Win/>
 </xml>

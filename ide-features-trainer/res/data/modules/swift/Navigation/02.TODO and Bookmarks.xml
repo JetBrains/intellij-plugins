@@ -85,13 +85,13 @@ class Navigation: UITableViewController {
 
 
 }]]></CopyText>
-    <Try trigger="ActivateTODOToolWindow">Have you ever wondered, how many todos are here in your code? In <ide/> there a separate <strong>TODO</strong> toolwindow for them. Activate it using <action>ActivateTODOToolWindow</action></Try>
-    <Try trigger="com.intellij.ide.todo.SetTodoFilterAction">You can define you own custom <strong>TODO</strong> filters. Open TODO filters dialog using<icon>AllIcons.General.Filter</icon> → <strong>Edit Filters</strong> and try adding your own filters using RegExps.</Try>
+    <Try trigger="ActivateTODOToolWindow">Have you ever wondered how many todos there are in your code? In <ide/>, there is a dedicated <strong>TODO</strong> toolwindow for them. Activate it by using <action>ActivateTODOToolWindow</action>.</Try>
+    <Try trigger="com.intellij.ide.todo.SetTodoFilterAction">You can define your own custom <strong>TODO</strong> filters. Open the TODO filters dialog with <icon>AllIcons.General.Filter</icon> → <strong>Edit Filters</strong> and then try adding your own filters using RegExps.</Try>
     <Text>Press <action>EditorEscape</action> to return to editor window.</Text>
     <MoveCaret position="20:9" />
-    <Try trigger="ToggleBookmark">Now press <action>ToggleBookmark</action>. This shortcut toggles a bookmark in your code. They are saved in the project directory and are useful if you want to point your colleague to the specific place in your code.</Try>
-    <Try trigger="ShowBookmarks">View all the bookmarks using <action>ShowBookmarks</action> shortcut.</Try>
-    <Try trigger="com.intellij.ide.bookmarks.actions.EditBookmarkDescriptionAction">You can change the name of Bookmark. Press <action>EditorSplitLine</action> and enter some new name for bookmark. </Try>
-    <Try trigger="ActivateFavoritesToolWindow">Close <strong>Bookmarks</strong> dialog using <action>EditorEscape</action>. Press <action>ActivateFavoritesToolWindow</action>. The <strong>Favorites</strong> tool window you see aggregates bookmarks, breakpoints, and favorites.</Try>
+    <Try trigger="ToggleBookmark">Now press <action>ToggleBookmark</action>. This shortcut toggles a bookmark in your code. Bookmarks are saved in the project directory and are useful if you want to point your colleague to a specific place in your code.</Try>
+    <Try trigger="ShowBookmarks">View all the bookmarks by using the <action>ShowBookmarks</action> shortcut.</Try>
+    <Try trigger="com.intellij.ide.bookmarks.actions.EditBookmarkDescriptionAction">You can change the name of a bookmark. Press <action>EditorSplitLine</action> and enter a new name for it.</Try>
+    <Try trigger="ActivateFavoritesToolWindow">Close the <strong>Bookmarks</strong> dialog by using <action>EditorEscape</action>. Press <action>ActivateFavoritesToolWindow</action>. The <strong>Favorites</strong> tool window you see aggregates bookmarks, breakpoints, and favorites.</Try>
     <Win/>
 </xml>
