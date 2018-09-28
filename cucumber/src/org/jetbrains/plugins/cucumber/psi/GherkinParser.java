@@ -7,14 +7,10 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author yole
- */
 public class GherkinParser implements PsiParser {
-
   @Override
   @NotNull
-  public ASTNode parse(IElementType root, PsiBuilder builder) {
+  public ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder builder) {
     final PsiBuilder.Marker marker = builder.mark();
     parseFileTopLevel(builder);
     marker.done(GherkinElementTypes.GHERKIN_FILE);
@@ -96,12 +92,12 @@ public class GherkinParser implements PsiParser {
       IElementType startTokenType = builder.getTokenType();
       final boolean outline = startTokenType == GherkinTokenTypes.SCENARIO_OUTLINE_KEYWORD;
       builder.advanceLexer();
-      parseScenario(builder, outline);
+      parseScenario(builder);
       marker.done(outline ? GherkinElementTypes.SCENARIO_OUTLINE : GherkinElementTypes.SCENARIO);
     }
   }
 
-  private static void parseScenario(PsiBuilder builder, boolean outline) {
+  private static void parseScenario(PsiBuilder builder) {
     while (!atScenarioEnd(builder)) {
       if (builder.getTokenType() == GherkinTokenTypes.TAG) {
         final PsiBuilder.Marker marker = builder.mark();
@@ -121,7 +117,7 @@ public class GherkinParser implements PsiParser {
       if (builder.getTokenType() == GherkinTokenTypes.STEP_KEYWORD) {
         parseStep(builder);
       }
-      else if (builder.getTokenType() == GherkinTokenTypes.EXAMPLES_KEYWORD && outline) {
+      else if (builder.getTokenType() == GherkinTokenTypes.EXAMPLES_KEYWORD) {
         parseExamplesBlock(builder);
       }
       else {

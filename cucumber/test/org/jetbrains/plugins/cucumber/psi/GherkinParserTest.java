@@ -99,6 +99,10 @@ public class GherkinParserTest extends ParsingTestCase {
   public void testScenario_outline_param() {
     doTest(true);
   }
+
+  public void testScenario_with_examples() {
+    doTest(true);
+  }
 }
 
 
