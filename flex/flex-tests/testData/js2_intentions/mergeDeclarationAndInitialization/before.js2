@@ -1,4 +1,4 @@
 function() {
-var x<caret>4:int, y4:int = 2;
-x4 = 1;
+    var x<caret>4:int, y4:int = 2;
+    x4 = 1;
 }
