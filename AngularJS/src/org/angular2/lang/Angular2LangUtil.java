@@ -51,6 +51,9 @@ public class Angular2LangUtil {
         return false;
       }
     }
+    if (context.getParent() == null) {
+      return false;
+    }
     return CachedValuesManager.getManager(project).getParameterizedCachedValue(project, ANGULAR2_CONTEXT_KEY, dir ->
       new CachedValueProvider.Result<>(isAngular2ContextDir(project, dir),
                                        PackageJsonFileManager.getInstance(project).getModificationTracker()), false, context.getParent());
