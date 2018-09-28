@@ -1,0 +1,19 @@
+<xml type="Scenario" name="Generate" id="swift.codegeneration.generate" subtype="aimless" projectTree="hide" lang="Swift">
+    <CopyText><![CDATA[import Foundation
+
+class Action {
+    var name: String?
+}
+
+class IDE: Hashable {
+    let version = 2018
+    let build = "123"
+    var codeGenerationActions:Array<Action>
+    var name = "AppCode"
+}]]></CopyText>
+    <MoveCaret position="12:1"/>
+    <Text>You can generate <code>equals</code>, <code>hashValue</code>, <code>description</code>, and <code>debugDescription</code> properties, as well as initializers by using the <strong>Generate</strong> action.</Text>
+    <Try triggers="Generate;Swift.Generate.Init">Press <action>Generate</action> and select <strong>Initializer</strong> action in the in the <strong>Generate</strong> popup. Select properties to include into the initializer signature and press <action>EditorEnter</action></Try>
+    <Try triggers="Generate;Swift.Generate.Description;Swift.Generate.DebugDescription;Swift.Generate.EqualsHashValue">Now generate <code>equals</code>, <code>hashValue</code>, <code>description</code>, and <code>debugDescription</code> using other <strong>Generate</strong> actions.</Try>
+    <Win/>
+</xml>
