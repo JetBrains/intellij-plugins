@@ -26,8 +26,8 @@ class Move: UIViewController {
     <ShowLineNumber/>
     </MouseBlock>
     <MoveCaret position="18:9"/>
-    <Try triggers="MoveLineDown;MoveLineDown">Rearranging lines usually takes two actions: cut and paste. In <ide/>, you can do it with just one: pressing <action>MoveLineDown</action> will pull down the current line. Move the current line to the end of the <code>viewDidLoad</code> function.</Try>
+    <Try triggers="MoveLineDown;MoveLineDown">Rearranging lines usually takes two actions: cut and paste. In <ide/>, you can do it with just one, as pressing <action>MoveLineDown</action> will pull the current line down. Move the current line to the end of the <code>viewDidLoad</code> function.</Try>
     <MoveCaret position="16:9"/>
-    <Try triggers="MoveLineUp;MoveLineUp">Similarly, to pull a line up, use <action>MoveLineUp</action>. Move <code>header</code> declaration before it's setup.</Try>
+    <Try triggers="MoveLineUp;MoveLineUp">Similarly, to pull a line up, use <action>MoveLineUp</action>. Move the <code>header</code> declaration so it precedes its setup.</Try>
     <Win/>
 </xml>

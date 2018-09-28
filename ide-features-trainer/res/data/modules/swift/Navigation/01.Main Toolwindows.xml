@@ -86,30 +86,31 @@ class Navigation: UITableViewController {
 
 }]]></CopyText>
     <Text>There are plenty of navigation views in <ide/>. Knowing which one to call in a given situation will help you use the IDE more efficiently.</Text>
-    <Try trigger="ActivateProjectToolWindow">The <strong>Project</strong> view is analogous to the Project navigator in Xcode. It shows all the projects included into the particular workspace and all the files and groups inside them. Open the <strong>Project</strong> view by pressing  (<action>ActivateProjectToolWindow</action>).</Try>
+    <Try trigger="ActivateProjectToolWindow">The <strong>Project</strong> view is similar to the Project navigator in Xcode. It shows all the projects included in a particular workspace, and all the files and groups inside them. Open the <strong>Project</strong> view by pressing (<action>ActivateProjectToolWindow</action>).</Try>
     <Text>By default, the <strong>Project</strong> view in <ide/> shows files and folders in the same order as they are stored on the filesystem.</Text>
-    <Try trigger="com.intellij.ide.projectView.impl.ProjectViewImpl$ManualOrderAction">Press on the <icon>AllIcons.General.Gear</icon> icon in project view options menu and select <strong>Xcode order</strong> to set the same order of files as in Xcode (if you selected Xcode behavior when setting up <ide/>, this option will be enabled automatically)</Try>
-    <Text>There are also the <strong>Autoscroll from source</strong> and <strong>Autoscroll to source</strong> options. The former allows you to automatically open the code of a file when selecting it, while the latter automatically sets the focus on the file name in the <strong>Project</strong> view when the editor area is in focus.</Text>
-    <Text><strong>Files</strong> view is an additional helpful mode for <ide/>’s <strong>Project</strong> view. It shows all the files inside the directory where <code>.xcworkspace</code> or <code>.xcproject</code> is located. Using this view, you can easily open any file which is not included into your project and view it.</Text>
-    <Try triggers="com.intellij.ui.content.tabs.TabbedContentAction$MyNextTabAction">Activate <strong>Files</strong> view by pressing <action>NextTab</action>.</Try>
+    <Try trigger="com.intellij.ide.projectView.impl.ProjectViewImpl$ManualOrderAction">Click the <icon>AllIcons.General.Gear</icon> icon in the project view options menu, and then select <strong>Xcode order</strong> to set the same order of files as in Xcode (if you selected Xcode behavior when setting up <ide/>, this option will be enabled automatically).</Try>
+    <Text>Other features include <strong>Autoscroll from source</strong> and <strong>Autoscroll to source</strong>. The former allows you to automatically open the code of a file when selecting it, while the latter automatically sets the focus on the file name in the <strong>Project</strong> view when the editor area is in focus.</Text>
+    <Text>The <strong>Files</strong> view is an additional helpful mode for <ide/>’s <strong>Project</strong> view. It shows all the files inside the directory where <code>.xcworkspace</code> or <code>.xcproject</code> is located. With this view, you can easily open any file not included in your project and view it.</Text>
+    <Try triggers="com.intellij.ui.content.tabs.TabbedContentAction$MyNextTabAction">Activate the <strong>Files</strong> view by pressing <action>NextTab</action>.</Try>
     <MoveCaret position="1:1" />
-    <Text>Press <action>EditorEscape</action> to return to editor window.</Text>
-    <Text><strong>Structure</strong> view and <strong>Structure</strong> popup show you the structure of a particular file together with all the <code>//TODO</code>, <code>//FIXME</code> and <code>#pragma mark</code> or <code>//MARK</code> comments in your code. They work similarly to the <strong>Symbol</strong> navigator in Xcode.</Text>
+    <Text>Press <action>EditorEscape</action> to return to the editor window.</Text>
+    <Text>The <strong>Structure</strong> view and the <strong>Structure</strong> popup show you the structure of a particular file together with all the <code>//TODO</code>, <code>//FIXME</code> and <code>#pragma mark</code> or <code>//MARK</code> comments in your code. They work similarly to the <strong>Symbol</strong> navigator in Xcode.</Text>
     <Try trigger="ActivateStructureToolWindow">Activate the <strong>Structure</strong> view by pressing <action>ActivateStructureToolWindow</action>.</Try>
-    <Text>Using ↑/↓ keys you can select any code construct here and press <action>EditSource</action> to jump to some place in your code.</Text>
-    <Try trigger="FileStructurePopup">Now activate the <strong>Structure</strong> popup by pressing <action>FileStructurePopup</action></Try>
+    <Text>By using ↑ and ↓ keys, you can select any code construct here and press <action>EditSource</action> to jump to some place in your code.</Text>
+    <Try trigger="FileStructurePopup">Now activate the <strong>Structure</strong> popup by pressing <action>FileStructurePopup</action>.</Try>
     <Text>Dismiss this popup using <action>EditorEscape</action> or press ⏎ to jump to some place in your code.</Text>
-    <Try trigger="FindInPath">The <strong>Find in Path</strong> (<action>FindInPath</action>) dialog provides the same functionality as <strong>Find</strong> navigator in Xcode. Try using it for full-text search now.</Try>
-    <Try trigger="Build">Let's build our project by invoking <action>Build</action> to see it.</Try>
-    <Text>The <strong>Build messages</strong> tool window shows compiler output and allows you to filter build messages by their type (see the <strong>Filter messages</strong> button on the left-hand side). You can always activate this toolwindow by pressing <action>ActivateMessagesToolWindow</action></Text>
-    <Try trigger="Run">Now let's run our project on the simulator to see the <strong>Run</strong> tool window. Press <action>Run</action> to do it.</Try>
-    <Text>This tool window shows the console where you can view the output of your application (or <strong>Tests runner</strong> if you are running the <strong>Test</strong> Run Configuration). You can always activate it via (<action>ActivateRunToolWindow</action>)</Text>
-    <Text>The <strong>Debug</strong> tool window (<action>ActivateDebugToolWindow</action>) is similar to Xcode <strong>Debug</strong> navigator. It shows all the watches, local variables on the right-hand side, and the list of threads on the left-hand side. Let's see it by running our application in <strong>Debug</strong> mode.</Text>
-    <MoveCaret position="15:9" />
-    <Try triggers="ToggleLineBreakpoint;Debug">Let's switch back from the emulator window to the IDE. Toggle a breakpoint using <action>ToggleLineBreakpoint</action> and press <action>Debug</action></Try>
+    <Try trigger="FindInPath">The <strong>Find in Path</strong> (<action>FindInPath</action>) dialog provides the same functionality as <strong>Find</strong> navigator in Xcode. Try using it to run a full-text search now.</Try>
+    <Try trigger="Build">Let's build our project by invoking <action>Build</action>.</Try>
+    <Text>The <strong>Build messages</strong> tool window shows compiler output and allows you to filter build messages by their type (see the <strong>Filter messages</strong> button on the left-hand side). You can always activate this toolwindow by pressing <action>ActivateMessagesToolWindow</action>.</Text>
+    <Try trigger="Run">Now let's run our project on the simulator to see the <strong>Run</strong> tool window. Press <action>Run</action>.</Try>
+    <Text>This tool window shows the console, where you can view the output of your application (or <strong>Tests runner</strong> if you are running the <strong>Test</strong> Run Configuration). You can always activate it via (<action>ActivateRunToolWindow</action>).</Text>
+    <Text>The <strong>Debug</strong> tool window (<action>ActivateDebugToolWindow</action>) is similar to Xcode's <strong>Debug</strong> navigator. It shows all the watches, local variables on the right-hand side, and the list of threads on the left-hand side. Let's see it by running our application in the <strong>Debug</strong> mode.</Text>
+    <Try triggers="GotoFile;MasterViewController.swift">Let's switch back from the emulator window to the IDE and navigate to <code>MasterViewController.swift</code> by pressing <action>GotoFile</action>.</Try>
     <MoveCaret position="16:9" />
-    <Try trigger="ViewBreakpoints">The <strong>Breakpoints</strong> dialog has the same functionality as <strong>Breakpoint</strong> navigator in Xcode - it shows the list of all breakpoints in your project. Activate it using <action>ViewBreakpoints</action></Try>
-    <Try trigger="ActivateVersionControlToolWindow">Init the GIT repository via <action>Vcs.QuickListPopupAction</action>→3. Now activate the <strong>VCS</strong> toolwindow using <action>ActivateVersionControlToolWindow</action> shortcut.</Try>
-    <Text>The <strong>VCS</strong> tool window provides everything you need to work with version control systems, including the <strong>Changes</strong> view, <strong>VCS log</strong> and more.</Text>
+    <Try triggers="ToggleLineBreakpoint;Debug">Toggle a breakpoint using <action>ToggleLineBreakpoint</action> and then press <action>Debug</action>.</Try>
+    <MoveCaret position="17:9" />
+    <Try trigger="ViewBreakpoints">The <strong>Breakpoints</strong> dialog has the same functionality as <strong>Breakpoint</strong> navigator in Xcode - it shows the list of all breakpoints in your project. Activate it by using <action>ViewBreakpoints</action>.</Try>
+    <Try trigger="ActivateVersionControlToolWindow">Init the GIT repository via <action>Vcs.QuickListPopupAction</action>→3. Now activate the <strong>VCS</strong> toolwindow with the <action>ActivateVersionControlToolWindow</action> shortcut.</Try>
+    <Text>The <strong>VCS</strong> tool window provides everything you need to work with version control systems, including the <strong>Changes</strong> view, the <strong>VCS log</strong>, and more.</Text>
     <Win/>
 </xml>
