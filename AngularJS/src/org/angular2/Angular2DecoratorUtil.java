@@ -54,7 +54,7 @@ public class Angular2DecoratorUtil {
       return null;
     }
     JSAttributeList list = cls.getAttributeList();
-    for (ES6Decorator decorator : PsiTreeUtil.getChildrenOfTypeAsList(list, ES6Decorator.class)) {
+    for (ES6Decorator decorator : PsiTreeUtil.getStubChildrenOfTypeAsList(list, ES6Decorator.class)) {
       JSCallExpression call = ObjectUtils.tryCast(decorator.getExpression(), JSCallExpression.class);
       if (call != null
           && name.equals(getDecoratorName(call))
