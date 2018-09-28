@@ -76,6 +76,7 @@ public class AngularAttributesRegistry {
   /**
    * @deprecated Kept for compatibility with NativeScript. Use Psi element visitor to determine attribute type.
    */
+  @Deprecated
   public static boolean isEventAttribute(String name, Project project) {
     return name.startsWith("(") && name.endsWith(")") && AngularIndexUtil.hasAngularJS2(project);
   }
@@ -83,6 +84,7 @@ public class AngularAttributesRegistry {
   /**
    * @deprecated Kept for compatibility with NativeScript. Use Psi element visitor to determine attribute type.
    */
+  @Deprecated
   public static boolean isTagReferenceAttribute(String name, Project project) {
     return name.startsWith("#") && AngularIndexUtil.hasAngularJS2(project);
   }
@@ -90,6 +92,7 @@ public class AngularAttributesRegistry {
   /**
    * @deprecated Kept for compatibility with NativeScript. Use Psi element visitor to determine attribute type.
    */
+  @Deprecated
   public static boolean isVariableAttribute(String name, Project project) {
     return name.startsWith("let-") && AngularIndexUtil.hasAngularJS2(project);
   }
@@ -97,6 +100,7 @@ public class AngularAttributesRegistry {
   /**
    * @deprecated Kept for compatibility with NativeScript. Use Psi element visitor to determine attribute type.
    */
+  @Deprecated
   public static boolean isBindingAttribute(String name, Project project) {
     return name.startsWith("[") && name.endsWith("]") && AngularIndexUtil.hasAngularJS2(project);
   }

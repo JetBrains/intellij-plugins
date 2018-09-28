@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @deprecated Kept for compatibility with NativeScript
  */
+@Deprecated
 public class AngularBindingDescriptor extends Angular2BindingDescriptor {
   public AngularBindingDescriptor(@NotNull PsiElement element,
                                   @NotNull String attributeName) {

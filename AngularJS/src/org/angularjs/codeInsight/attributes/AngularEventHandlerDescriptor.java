@@ -7,6 +7,7 @@ import org.angular2.codeInsight.attributes.Angular2EventHandlerDescriptor;
 /**
  * @deprecated Kept for compatibility with NativeScript
  */
+@Deprecated
 public class AngularEventHandlerDescriptor extends Angular2EventHandlerDescriptor {
   public AngularEventHandlerDescriptor(PsiElement element, String attributeName) {
     super(element, attributeName);

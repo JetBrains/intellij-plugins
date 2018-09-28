@@ -62,6 +62,7 @@ public class Angular2LangUtil {
   /**
    * @deprecated kept for compatibility with NativeScript
    */
+  @Deprecated
   public static boolean isAngular2Context(@NotNull Project project) {
     if (project.getBaseDir() != null) {
       return isAngular2Context(project, project.getBaseDir());
