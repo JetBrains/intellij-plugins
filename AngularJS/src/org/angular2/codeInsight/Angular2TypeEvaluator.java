@@ -105,7 +105,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
       }
     });
     JSTypeSubstitutor substitutor = intersectGenerics(genericArguments, templateContextType);
-    return JSTypeUtils.applyGenericArguments(templateContextType, substitutor, false);
+    return JSTypeUtils.applyGenericArguments(templateContextType, substitutor);
   }
 
   private static JSTypeSubstitutor intersectGenerics(MultiMap<JSTypeSubstitutor.JSTypeGenericId, JSType> arguments,
