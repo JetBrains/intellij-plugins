@@ -5,7 +5,7 @@ class Action {
     var name: String?
 }
 
-class IDE: Hashable {
+class IDE {
     let version = 2018
     let build = "123"
     var codeGenerationActions:Array<Action>
