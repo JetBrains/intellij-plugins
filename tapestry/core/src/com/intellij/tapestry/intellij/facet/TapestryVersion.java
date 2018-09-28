@@ -6,7 +6,7 @@ public enum TapestryVersion {
 
   private final String _name;
 
-  private TapestryVersion(String name) {
+  TapestryVersion(String name) {
     _name = name;
   }
 

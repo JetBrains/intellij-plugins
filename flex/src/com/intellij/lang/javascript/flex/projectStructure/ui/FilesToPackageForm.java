@@ -71,7 +71,7 @@ public class FilesToPackageForm {
 
     private final Class myColumnClass;
 
-    private Column(final String columnName, final Class columnClass) {
+    Column(final String columnName, final Class columnClass) {
       myColumnName = columnName;
       myColumnClass = columnClass;
     }
