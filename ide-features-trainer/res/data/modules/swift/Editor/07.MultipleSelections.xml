@@ -42,11 +42,11 @@ SIX
     <Try trigger="SelectNextOccurrence">Press <action>SelectNextOccurrence</action> again to select the next occurrence of this symbol.</Try>
     <Try trigger="UnselectPreviousOccurrence">Press <action>UnselectPreviousOccurrence</action> to deselect the last occurrence.</Try>
     <Try trigger="SelectAllOccurrences">Press <action>SelectAllOccurrences</action> to select all occurrences in the file.</Try>
-    <Try trigger="EditorEscape">Type <code>td</code> to replace all occurrences of <code>th</code> with <code>td</code> and press <action>EditorEscape</action>.</Try>
+    <Try trigger="EditorEscape">Type <code>td</code> to replace all occurrences of <code>th</code> with <code>td</code>, and then press <action>EditorEscape</action>.</Try>
         <MoveCaret position="29:1" />
-    <Try triggers="EditorToggleColumnMode;EditorDownWithSelection;EditorDownWithSelection;EditorDownWithSelection;EditorDownWithSelection;EditorDownWithSelection">Toggle Column Selection using <action>EditorToggleColumnMode</action> and select all the lines from <code>ONE</code> to <code>SIX</code></Try>
+    <Try triggers="EditorToggleColumnMode;EditorDownWithSelection;EditorDownWithSelection;EditorDownWithSelection;EditorDownWithSelection;EditorDownWithSelection">Toggle Column Selection using <action>EditorToggleColumnMode</action> and select all the lines from <code>ONE</code> to <code>SIX</code>.</Try>
     <Try triggers="EditorNextWordWithSelection">Now type <code>case</code> and select all case names with <action>EditorNextWordWithSelection</action></Try>
-    <Try triggers="EditorToggleCase;EditorToggleColumnMode">Press <action>EditorToggleCase</action> to toggle the case and exit Column Selection  mode by pressing <action>EditorToggleColumnMode</action> again.</Try>
-    <Try triggers="ReformatCode">Press <action>EditorEscape</action>, reformat the code using <action>ReformatCode</action> and that's it!</Try>
+    <Try triggers="EditorToggleCase;EditorToggleColumnMode">Press <action>EditorToggleCase</action> to toggle the case, and then exit the Column Selection mode by pressing <action>EditorToggleColumnMode</action> again.</Try>
+    <Try triggers="ReformatCode">Press <action>EditorEscape</action>, reformat the code with <action>ReformatCode</action> and that's it!</Try>
     <Win/>
 </xml>
