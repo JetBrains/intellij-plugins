@@ -175,7 +175,7 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
         JSLanguageInjector.injectToXmlText(registrar, host, JavaScriptSupportLoader.ECMA_SCRIPT_L4, prefix, suffix);
       }
       else {
-        if (JSCommonTypeNames.FUNCTION_CLASS_NAME.equals(type) && host.textContains('{')) {
+        if (JSCommonTypeNames.FUNCTION_CLASS_NAMES.contains(type) && host.textContains('{')) {
           final String text = StringUtil.stripQuotesAroundValue(host.getText());
           if (text.startsWith("{") && text.endsWith("}")) {
             prefix = FUNCTION_CALL_PREFIX;

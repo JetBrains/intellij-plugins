@@ -200,7 +200,7 @@ final class IncrementalDocumentSynchronizer extends Update {
     if (type == null) {
       return !typeName.equals(FlexAnnotationNames.EFFECT);
     }
-    else if (type.equals(JSCommonTypeNames.FUNCTION_CLASS_NAME) || typeName.equals(FlexAnnotationNames.EVENT)) {
+    else if (JSCommonTypeNames.FUNCTION_CLASS_NAMES.contains(type) || typeName.equals(FlexAnnotationNames.EVENT)) {
       return true;
     }
 

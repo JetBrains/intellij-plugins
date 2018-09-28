@@ -120,7 +120,7 @@ class PropertyProcessor implements ValueWriter {
         return null;
       }
     }
-    else if (type.equals(JSCommonTypeNames.FUNCTION_CLASS_NAME)) {
+    else if (JSCommonTypeNames.FUNCTION_CLASS_NAMES.contains(type)) {
       if (name.equals("itemRendererFunction")) {
         // AS-135
         if (MxmlUtil.isPropertyOfSparkDataGroup(descriptor)) {

@@ -57,7 +57,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
 
     PsiElement _fun;
     if (isAssignable &&
-        type != null && FUNCTION_CLASS_NAME.equals(type.getResolvedTypeText()) &&
+        type != null && FUNCTION_CLASS_NAMES.contains(type.getResolvedTypeText()) &&
         p instanceof JSParameter &&
         isAddEventListenerMethod((JSFunction)p.getParent().getParent()) &&
         ((expr instanceof JSReferenceExpression &&

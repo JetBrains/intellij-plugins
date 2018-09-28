@@ -169,7 +169,7 @@ public final class ActionScriptClassResolver extends JSClassResolver {
   private static boolean isBuiltInClassName(final String className) {
     return OBJECT_CLASS_NAME.equals(className) ||
            BOOLEAN_CLASS_NAME.equals(className) ||
-           FUNCTION_CLASS_NAME.equals(className) ||
+           FUNCTION_CLASS_NAMES.contains(className) ||
            STRING_CLASS_NAME.equals(className);
   }
 
