@@ -12,7 +12,6 @@ import com.intellij.pom.references.PomService;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiReferenceBase;
-import com.intellij.psi.impl.PomTargetPsiElementImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
@@ -55,7 +54,7 @@ public class CucumberJavaParameterTypeReference extends PsiReferenceBase<PsiElem
 
       PsiElement declaration = manager.getParameterTypeDeclaration(parameterTypeName);
       if (declaration != null) {
-        return PomService.convertToPsi(new CucumberJavaParameterPomTargetPsiElement(declaration, parameterTypeName));
+        return PomService.convertToPsi(new CucumberJavaParameterPomTarget(declaration, parameterTypeName));
       }
     }
     return null;
@@ -73,11 +72,15 @@ public class CucumberJavaParameterTypeReference extends PsiReferenceBase<PsiElem
       return false;
     }
     PomTarget pomTarget = ((PomTargetPsiElement)element).getTarget();
-    if (!(pomTarget instanceof CucumberJavaParameterPomTargetPsiElement)) {
+    if (!(pomTarget instanceof CucumberJavaParameterPomTarget)) {
       return false;
     }
     String parameterTypeName = getParameterTypeName();
-    return StringUtil.equals(((PsiNamedElement)element).getName(), parameterTypeName);
+    if (!StringUtil.equals(((PsiNamedElement)element).getName(), parameterTypeName)) {
+      return false;
+    }
+    PsiElement resolved = resolve();
+    return resolved != null && resolved.equals(element);
   }
 
   @NotNull

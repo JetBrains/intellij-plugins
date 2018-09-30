@@ -8,11 +8,11 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CucumberJavaParameterPomTargetPsiElement extends DelegatePsiTarget implements PomRenameableTarget, PsiDeclaredTarget {
+public class CucumberJavaParameterPomTarget extends DelegatePsiTarget implements PomRenameableTarget, PsiDeclaredTarget {
   @NotNull
   private final String myName;
 
-  public CucumberJavaParameterPomTargetPsiElement(@NotNull PsiElement element, @NotNull String name) {
+  public CucumberJavaParameterPomTarget(@NotNull PsiElement element, @NotNull String name) {
     super(element);
     myName = name;
   }

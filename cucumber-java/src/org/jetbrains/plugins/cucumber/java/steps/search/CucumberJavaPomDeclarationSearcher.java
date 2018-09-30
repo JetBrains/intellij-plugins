@@ -8,7 +8,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
-import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameterPomTargetPsiElement;
+import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameterPomTarget;
 
 public class CucumberJavaPomDeclarationSearcher extends PomDeclarationSearcher {
   @Override
@@ -32,7 +32,7 @@ public class CucumberJavaPomDeclarationSearcher extends PomDeclarationSearcher {
       if (classReference != null) {
         String fqn = classReference.getQualifiedName();
         if (CucumberJavaUtil.PARAMETER_TYPE_CLASS.equals(fqn)) {
-          consumer.consume(new CucumberJavaParameterPomTargetPsiElement(element, stringValue));
+          consumer.consume(new CucumberJavaParameterPomTarget(element, stringValue));
         }
       }
     }

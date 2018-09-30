@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.cucumber.java.steps.reference;
 
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.resolve.reference.impl.manipulators.StringLiteralManipulator;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +19,8 @@ public class CucumberJavaReferenceProvider extends PsiReferenceProvider {
     if (!(element instanceof PsiLiteralExpression)) {
       return PsiReference.EMPTY_ARRAY;
     }
-    Object value = ((PsiLiteralExpression)element).getValue();
+    PsiLiteralExpression literalExpression = (PsiLiteralExpression)element;
+    Object value = literalExpression.getValue();
     if (!(value instanceof String)) {
       return PsiReference.EMPTY_ARRAY;
     }
@@ -32,8 +34,8 @@ public class CucumberJavaReferenceProvider extends PsiReferenceProvider {
 
       List<CucumberJavaParameterTypeReference> result = new ArrayList<>();
       CucumberUtil.processParameterTypesInCucumberExpression(cucumberExpression, range -> {
-        range = range.shiftRight(1); // Skip " in the begin of the String Literal
-
+        // Skip " in the begin of the String Literal
+        range = range.shiftRight(StringLiteralManipulator.getValueRange(literalExpression).getStartOffset());
         result.add(new CucumberJavaParameterTypeReference(element, range));
         return true;
       });

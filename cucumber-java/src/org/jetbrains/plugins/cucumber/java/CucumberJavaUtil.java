@@ -1,5 +1,6 @@
 package org.jetbrains.plugins.cucumber.java;
 
+import com.intellij.codeInsight.AnnotationUtil;
 import com.intellij.find.findUsages.JavaFindUsagesHelper;
 import com.intellij.find.findUsages.JavaMethodFindUsagesOptions;
 import com.intellij.openapi.application.ApplicationManager;
@@ -101,26 +102,6 @@ public class CucumberJavaUtil {
     return CucumberJavaAnnotationProvider.HOOK_MARKERS.contains(annotationSuffix);
   }
 
-  @Nullable
-  public static PsiAnnotationMemberValue getAnnotationMemberValue(@NotNull final PsiAnnotation stepAnnotation) {
-    final PsiNameValuePair[] attributes = stepAnnotation.getParameterList().getAttributes();
-    PsiNameValuePair valuePair = null;
-    if (attributes.length > 0) {
-      for (int i = 1; i < attributes.length; i++) {
-        PsiNameValuePair pair = attributes[i];
-        final String pairName = pair.getName();
-        if (pairName != null && pairName.equals("value")) {
-          valuePair = pair;
-          break;
-        }
-      }
-      if (valuePair == null) {
-        valuePair = attributes[0];
-      }
-    }
-    return valuePair != null ? valuePair.getValue() : null;
-  }
-
   public static boolean isStepDefinition(@NotNull final PsiMethod method) {
     final PsiAnnotation stepAnnotation = getCucumberStepAnnotation(method);
     return stepAnnotation != null && getAnnotationValue(stepAnnotation) != null;
@@ -176,17 +157,7 @@ public class CucumberJavaUtil {
 
   @Nullable
   public static String getAnnotationValue(@NotNull PsiAnnotation stepAnnotation) {
-    final PsiElement annotationValue = getAnnotationMemberValue(stepAnnotation);
-    if (annotationValue == null) {
-      return null;
-    }
-    Project project = annotationValue.getProject();
-    final PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(project).getConstantEvaluationHelper();
-    final Object constantValue = evaluationHelper.computeConstantExpression(annotationValue, false);
-    if (constantValue != null) {
-      return constantValue.toString();
-    }
-    return null;
+    return AnnotationUtil.getDeclaredStringAttributeValue(stepAnnotation, "value");
   }
 
   @Nullable
