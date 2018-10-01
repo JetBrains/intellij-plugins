@@ -1,10 +1,10 @@
-interface <lineMarker descr="<html>Has implementations</html>"><info>IAAA</info></lineMarker> {
+interface <lineMarker descr="<html>Inner interface 'IAAA' has implementations</html>"><info>IAAA</info></lineMarker> {
   function get <lineMarker descr="Is implemented"><info descr="instance method">bbb</info></lineMarker>():int
   function set <lineMarker descr="Is implemented"><info descr="instance method">bbb</info></lineMarker>(<info descr="parameter">v</info>:int):void
 }
 class <lineMarker descr="Has subclasses"><info>AAA</info></lineMarker> implements <info>IAAA</info> {
-  public function get <lineMarker descr="<html>Implements property 'bbb' in IAAA<hr size=1 noshade>Is overridden</html>"><info descr="instance method">bbb</info></lineMarker>():int {}
-  public function set <lineMarker descr="<html>Implements property 'bbb' in IAAA<hr size=1 noshade>Is overridden</html>"><info descr="instance method">bbb</info></lineMarker>(<info descr="parameter">v</info>:int):void {}
+  public function get <lineMarker descr="Is overridden"><lineMarker descr="Implements property 'bbb' in IAAA"><info descr="instance method">bbb</info></lineMarker></lineMarker>():int {}
+  public function set <lineMarker descr="Is overridden"><lineMarker descr="Implements property 'bbb' in IAAA"><info descr="instance method">bbb</info></lineMarker></lineMarker>(<info descr="parameter">v</info>:int):void {}
 }
 
 class <info>BBB</info> extends <info>AAA</info> {
