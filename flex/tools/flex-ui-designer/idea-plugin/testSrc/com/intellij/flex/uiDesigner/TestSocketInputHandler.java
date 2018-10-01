@@ -63,28 +63,24 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
       return;
     }
 
-    switch (command) {
-      case ServerMethod.SHOW_ERROR:
-        final String errorMessage = reader.readUTF();
-        if (expectedError == null) {
-          throw new TraceLessAssertionError(errorMessage);
+    if (command == ServerMethod.SHOW_ERROR) {
+      final String errorMessage = reader.readUTF();
+      if (expectedError == null) {
+        throw new TraceLessAssertionError(errorMessage);
+      }
+      else {
+        if (!errorMessage.startsWith(expectedError)) {
+          throw new TraceLessAssertionError("Expected error message " + expectedError + ", but got " + errorMessage);
         }
-        else {
-          if (!errorMessage.startsWith(expectedError)) {
-            throw new TraceLessAssertionError("Expected error message " + expectedError + ", but got " + errorMessage);
-          }
-          expectedError = null;
-        }
-        break;
-
-      default:
-        if (customMessageHandler != null && customMessageHandler.getExpectedCommand() == command) {
-          customMessageHandler.process();
-          customMessageHandler = null;
-        }
-        else {
-          throw new TraceLessAssertionError("Unexpected server command: " + command);
-        }
+        expectedError = null;
+      }
+    }
+    else if (customMessageHandler != null && customMessageHandler.getExpectedCommand() == command) {
+      customMessageHandler.process();
+      customMessageHandler = null;
+    }
+    else {
+      throw new TraceLessAssertionError("Unexpected server command: " + command);
     }
   }
 

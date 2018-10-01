@@ -88,34 +88,33 @@ public class ObrSearchPanel extends ProgressIndicatorBase {
       final Obr selectedObr = (Obr)_obrBox.getSelectedItem();
       if (selectedObr != null) {
         start();
-        switch (_queryType) {
-          case Maven:
-            List result = null;
-            try {
-              result = Arrays.asList(selectedObr.queryForMavenArtifact(_queryString.getText(), this));
-              setResults(result);
-            }
-            catch (final IOException e1) {
-              SwingUtilities.invokeLater(() -> {
-                // dialog must be run on the event dispatch thread
-                // TODO: icon
-                int dialogResult = Messages
-                  .showDialog(_rootPanel, "Could not connect to " + selectedObr.getDisplayName() + ".\n" + e1.getMessage() + ".",
-                              "Connection error", new String[]{"Retry", "Cancel", "Proxy Settings"}, 0, null);
-                switch (dialogResult) {
-                  case 2:
-                    // show proxy settings
-                    HttpConfigurable.editConfigurable(_rootPanel);
-                    // fall through..
-                  case 0:
-                    search();
-                    break;
-                  default:
-                    // cancel
-                    break;
-                }
-              });
-            }
+        if (_queryType == QueryType.Maven) {
+          List result = null;
+          try {
+            result = Arrays.asList(selectedObr.queryForMavenArtifact(_queryString.getText(), this));
+            setResults(result);
+          }
+          catch (final IOException e1) {
+            SwingUtilities.invokeLater(() -> {
+              // dialog must be run on the event dispatch thread
+              // TODO: icon
+              int dialogResult = Messages
+                .showDialog(_rootPanel, "Could not connect to " + selectedObr.getDisplayName() + ".\n" + e1.getMessage() + ".",
+                            "Connection error", new String[]{"Retry", "Cancel", "Proxy Settings"}, 0, null);
+              switch (dialogResult) {
+                case 2:
+                  // show proxy settings
+                  HttpConfigurable.editConfigurable(_rootPanel);
+                  // fall through..
+                case 0:
+                  search();
+                  break;
+                default:
+                  // cancel
+                  break;
+              }
+            });
+          }
         }
         stop();
       }
@@ -163,11 +162,8 @@ public class ObrSearchPanel extends ProgressIndicatorBase {
     Obr[] obrs = provider.getAvailableObrs();
     DefaultComboBoxModel model = new DefaultComboBoxModel();
     for (Obr obr : obrs) {
-      switch (_queryType) {
-        case Maven:
-          if (obr.supportsMaven()) {
-            model.addElement(obr);
-          }
+      if (_queryType == QueryType.Maven && obr.supportsMaven()) {
+        model.addElement(obr);
       }
     }
     _obrBox.setModel(model);

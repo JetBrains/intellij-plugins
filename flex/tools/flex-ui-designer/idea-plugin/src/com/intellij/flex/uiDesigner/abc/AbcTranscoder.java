@@ -156,18 +156,15 @@ abstract public class AbcTranscoder extends SwfTranscoder {
     byte[] array = buffer.array();
     int lastSlashPosition = -1;
     byte c;
-    @SuppressWarnings("MismatchedReadAndWriteOfArray")
     final char[] chars = transientNameString.chars;
     int index = 0;
     while ((c = array[end++]) != 0) {
-      switch (c) {
-        case '/':
-          lastSlashPosition = index;
-          chars[index] = '.';
-          break;
-
-        default:
-          chars[index] = (char)c;
+      if (c == '/') {
+        lastSlashPosition = index;
+        chars[index] = '.';
+      }
+      else {
+        chars[index] = (char)c;
       }
 
       index++;
