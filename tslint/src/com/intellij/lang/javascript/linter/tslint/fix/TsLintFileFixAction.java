@@ -40,7 +40,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Future;
 
-@SuppressWarnings("ComponentNotRegistered")
 public class TsLintFileFixAction extends JSLinterFixAction {
 
   public TsLintFileFixAction() {

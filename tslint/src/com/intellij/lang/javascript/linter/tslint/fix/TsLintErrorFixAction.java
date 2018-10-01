@@ -15,6 +15,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.util.text.StringUtilRt;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.util.Consumer;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.Nls;
@@ -30,9 +32,10 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
   @NotNull
   private final TsLinterError myError;
   private final long myModificationStamp;
+  private final SmartPsiElementPointer<PsiFile> myPsiFilePointer;
 
-
-  public TsLintErrorFixAction(@NotNull TsLinterError error, long modificationStamp) {
+  public TsLintErrorFixAction(@NotNull PsiFile file, @NotNull TsLinterError error, long modificationStamp) {
+    myPsiFilePointer = SmartPointerManager.getInstance(file.getProject()).createSmartPsiElementPointer(file);
     myError = error;
     myModificationStamp = modificationStamp;
   }
@@ -58,7 +61,11 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
 
   @Override
   public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-    return editor != null && editor.getDocument().getModificationStamp() == myModificationStamp && myError.getFixInfo() != null;
+    return editor != null 
+           && editor.getDocument().getModificationStamp() == myModificationStamp
+           && myError.getFixInfo() != null
+           ///to choose top-level file if fix ('e.g. "quotes"') is invoked on string with injection.
+           && file == myPsiFilePointer.getElement();
   }
 
   @Override

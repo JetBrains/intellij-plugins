@@ -209,7 +209,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
       if (errorBase instanceof TsLinterError && ((TsLinterError)errorBase).hasFix()) {
         ArrayList<IntentionAction> result = ContainerUtil.newArrayList();
         if (document != null && isOnTheFly()) {
-          result.add(new TsLintErrorFixAction((TsLinterError)errorBase, document.getModificationStamp()));
+          result.add(new TsLintErrorFixAction(file, (TsLinterError)errorBase, document.getModificationStamp()));
         }
         result.add(fixAllFileIntention);
         return result;
