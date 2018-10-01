@@ -19,6 +19,7 @@ import org.osmorc.facet.OsmorcFacetType;
 import java.io.File;
 
 import static com.intellij.project.IntelliJProjectConfiguration.getModuleLibrary;
+import static com.intellij.project.IntelliJProjectConfiguration.getProjectLibrary;
 
 public abstract class LightOsgiFixtureTestCase extends LightCodeInsightFixtureTestCase {
   private static final DefaultLightProjectDescriptor OSGi_DESCRIPTOR = new DefaultLightProjectDescriptor() {
@@ -27,7 +28,7 @@ public abstract class LightOsgiFixtureTestCase extends LightCodeInsightFixtureTe
       super.configureModule(module, model, contentEntry);
 
       PsiTestUtil.addProjectLibrary(model, "bndlib-repository", getModuleLibrary("intellij.osgi.jps", "bndlib-repository").getClassesPaths());
-      PsiTestUtil.addProjectLibrary(model, "plexus-utils", getModuleLibrary("intellij.osgi.jps", "plexus-utils").getClassesPaths());
+      PsiTestUtil.addProjectLibrary(model, "plexus-utils", getProjectLibrary("plexus-utils").getClassesPaths());
 
       String annotationsPath = PathManager.getJarPathForClass(NotNull.class);
       assertNotNull(annotationsPath);

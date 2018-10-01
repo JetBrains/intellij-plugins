@@ -175,7 +175,7 @@
 
     <standardResourceProvider implementation="org.jetbrains.osgi.xml.OsgiResourceProvider"/>
 
-    <compileServer.plugin classpath="osmorc-jps-plugin.jar;biz.aQute.bndlib-4.0.0.jar;biz.aQute.repository-4.0.0.jar;biz.aQute.resolve-4.0.0.jar;plexus-utils-3.0.10.jar;bundlor-all.jar"/>
+    <compileServer.plugin classpath="osmorc-jps-plugin.jar;biz.aQute.bndlib-4.0.0.jar;biz.aQute.repository-4.0.0.jar;biz.aQute.resolve-4.0.0.jar;bundlor-all.jar"/>
 
     <refactoring.elementListenerProvider implementation="org.osmorc.facet.OsmorcFacetRefactoringListenerProvider"/>
 
