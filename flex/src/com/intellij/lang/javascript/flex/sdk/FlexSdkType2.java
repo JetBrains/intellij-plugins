@@ -54,6 +54,7 @@ public class FlexSdkType2 extends SdkType {
     return FlexSdkUtils.doReadFlexSdkVersion(sdkHome) != null || FlexSdkUtils.doReadAirSdkVersion(sdkHome) != null;
   }
 
+  @NotNull
   @Override
   public String suggestSdkName(final String currentSdkName, final String sdkHome) {
     return PathUtil.getFileName(sdkHome);

@@ -282,6 +282,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
       return false;
     }
 
+    @NotNull
     @Override
     public String suggestSdkName(final String currentSdkName, final String sdkHome) {
       return currentSdkName;
