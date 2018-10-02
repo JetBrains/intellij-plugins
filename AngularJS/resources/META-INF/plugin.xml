@@ -193,5 +193,4 @@
       <implementation-class>org.angular2.service.Angular2HighlightingPassFactory</implementation-class>
     </component>
   </project-components>
-  <version/>
 </idea-plugin>
