@@ -30,7 +30,7 @@
                                                             <mx:Component className="MyEditor3">
                                                                 <mx:VBox backgroundColor="yellow">
                                                                     <mx:Script><![CDATA[
-                                                                      var t : MyEditor3<caret>
+                                                                      var t : MyEditor
                                                                     ]]></mx:Script>
                                                                 </mx:VBox>
                                                             </mx:Component>

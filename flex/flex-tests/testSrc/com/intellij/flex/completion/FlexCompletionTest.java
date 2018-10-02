@@ -780,9 +780,9 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     doTest("", "mxml");
     LookupElement[] elements = doTest("", "mxml");
     assertEquals(3, elements.length);
-    assertEquals("MyEditor3", elements[0].getLookupString());
-    assertEquals("MyEditor", elements[1].getLookupString());
-    assertEquals("MyEditor2", elements[2].getLookupString());
+    assertEquals("MyEditor", elements[0].getLookupString());
+    assertEquals("MyEditor2", elements[1].getLookupString());
+    assertEquals("MyEditor3", elements[2].getLookupString());
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
