@@ -48,7 +48,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="library" name="plexus-utils" level="project"  exported="" />
+    <orderEntry type="library" exported="" name="plexus-utils" level="project" />
     <orderEntry type="module-library">
       <library name="bundlor">
         <CLASSES>
