@@ -122,7 +122,13 @@ public abstract class MarkdownHeaderAction extends AnAction implements DumbAware
     assert document != null;
 
 
-    if (document.getLineNumber(parent.getTextRange().getStartOffset()) == document.getLineNumber(parent.getTextRange().getEndOffset())) {
+    int startOffset = parent.getTextRange().getStartOffset();
+    int endOffset = parent.getTextRange().getEndOffset();
+    if (startOffset < 0 || endOffset > document.getTextLength()) {
+      return null;
+    }
+
+    if (document.getLineNumber(startOffset) == document.getLineNumber(endOffset)) {
       return parent;
     }
 
