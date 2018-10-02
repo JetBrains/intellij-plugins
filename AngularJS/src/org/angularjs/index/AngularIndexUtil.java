@@ -21,10 +21,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.ResolveResult;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
@@ -196,6 +193,18 @@ public class AngularIndexUtil {
       return CachedValueProvider.Result
         .create(version, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, ProjectRootModificationTracker.getInstance(project));
     });
+  }
+
+  public static boolean hasFileReference(@NotNull PsiElement element, @NotNull PsiFile file) {
+    VirtualFile vf = file.getOriginalFile().getViewProvider().getVirtualFile();
+    for (PsiReference ref : element.getReferences()) {
+      PsiElement resolvedFile = ref.resolve();
+      if (resolvedFile instanceof PsiFile
+          && ((PsiFile)resolvedFile).getOriginalFile().getViewProvider().getVirtualFile().equals(vf)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public static String convertRestrictions(final Project project, String restrictions) {

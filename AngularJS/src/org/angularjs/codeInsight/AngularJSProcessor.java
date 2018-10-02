@@ -3,22 +3,21 @@ package org.angularjs.codeInsight;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
-import com.intellij.lang.javascript.psi.JSDefinitionExpression;
-import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.psi.JSPsiElementBase;
-import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl;
+import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
+import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
-import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
-import com.intellij.lang.typescript.library.TypeScriptLibraryProvider;
-import com.intellij.lang.typescript.resolve.TypeScriptClassResolver;
+import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory;
+import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl;
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.html.HtmlEmbeddedContentImpl;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.util.CachedValueProvider;
@@ -26,16 +25,21 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.*;
-import com.intellij.util.Consumer;
+import com.intellij.util.containers.ContainerUtil;
+import org.angularjs.index.AngularIndexUtil;
+import org.angularjs.index.AngularJSIndexingHandler;
+import org.angularjs.index.AngularTemplateUrlIndex;
 import org.angularjs.lang.parser.AngularJSElementTypes;
 import org.angularjs.lang.psi.AngularJSRecursiveVisitor;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Consumer;
+
+import static org.angularjs.index.AngularIndexUtil.hasFileReference;
+import static org.angularjs.index.AngularJSIndexingHandler.unquote;
 
 /**
  * @author Dennis.Ushakov
@@ -43,7 +47,13 @@ import java.util.Map;
 public class AngularJSProcessor {
   private static final Map<String, String> NG_REPEAT_IMPLICITS = new HashMap<>();
 
+  private static final Set<String> COMPONENT_LIFECYCLE_EVENTS = ContainerUtil.newHashSet(
+    "$onInit", "$onChanges", "$doCheck", "$onDestroy", "$postLink"
+  );
+
   public static final String $EVENT = "$event";
+
+  private static final String $CTRL = "$ctrl";
 
   static {
     NG_REPEAT_IMPLICITS.put("$index", "Number");
@@ -54,7 +64,7 @@ public class AngularJSProcessor {
     NG_REPEAT_IMPLICITS.put("$odd", "Boolean");
   }
 
-  public static void process(final PsiElement element, final Consumer<JSPsiElementBase> consumer) {
+  public static void process(final PsiElement element, final Consumer<? super JSPsiElementBase> consumer) {
     final PsiElement original = CompletionUtil.getOriginalOrSelf(element);
     PsiFile hostFile = FileContextUtil.getContextFile(original != element ? original : element.getContainingFile().getOriginalFile());
     if (!(hostFile instanceof XmlFile)) {
@@ -68,13 +78,130 @@ public class AngularJSProcessor {
       final Collection<JSPsiElementBase> result = new ArrayList<>();
       processDocument(file.getDocument(), result);
 
+      JSObjectLiteralExpression component = getReferencingComponentInitializer(file);
+      if (component != null) {
+        processComponentInitializer(file, component, result);
+      }
       return CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT);
     });
     for (JSPsiElementBase namedElement : cache) {
-      if (scopeMatches(original, namedElement)){
-        consumer.consume(namedElement);
+      if (scopeMatches(original, namedElement)) {
+        consumer.accept(namedElement);
       }
     }
+  }
+
+  private static void processComponentInitializer(final XmlFile file,
+                                                  @NotNull JSObjectLiteralExpression componentInitializer,
+                                                  @NotNull Collection<JSPsiElementBase> result) {
+
+    result.add(new JSLocalImplicitElementImpl(
+      getCtrlVarName(componentInitializer),
+      getComponentScopeType(file, componentInitializer.findProperty(AngularJSIndexingHandler.CONTROLLER),
+                            componentInitializer.findProperty(AngularJSIndexingHandler.BINDINGS)),
+      componentInitializer, JSImplicitElement.Type.Class));
+  }
+
+  private static String getCtrlVarName(@NotNull JSObjectLiteralExpression componentInitializer) {
+    String ctrlName = null;
+    JSProperty ctrlAs = componentInitializer.findProperty(AngularJSIndexingHandler.CONTROLLER_AS);
+    if (ctrlAs != null && ctrlAs.getValue() instanceof JSLiteralExpression && ((JSLiteralExpression)ctrlAs.getValue()).isQuotedLiteral()) {
+      ctrlName = unquote(ctrlAs.getValue());
+    }
+    return ctrlName != null ? ctrlName : $CTRL;
+  }
+
+  @NotNull
+  private static JSType getComponentScopeType(final XmlFile file,
+                                              @Nullable JSProperty controllerProperty,
+                                              @Nullable JSProperty bindingsProperty) {
+    List<JSRecordType.TypeMember> memberList = new ArrayList<>();
+    Set<String> names = new HashSet<>();
+    Consumer<JSRecordType.PropertySignature> processor = member -> {
+      if (!COMPONENT_LIFECYCLE_EVENTS.contains(member.getMemberName()) && names.add(member.getMemberName())) {
+        memberList.add(member);
+      }
+    };
+    contributeBindingProperties(bindingsProperty, processor);
+    contributeControllerProperties(controllerProperty, processor);
+    return new JSRecordTypeImpl(
+      JSTypeSourceFactory.createTypeSource(file, true), memberList);
+  }
+
+  private static void contributeBindingProperties(@Nullable JSProperty bindingsProperty,
+                                                  @NotNull Consumer<JSRecordType.PropertySignature> processor) {
+    if (bindingsProperty != null && (bindingsProperty.getValue() instanceof JSObjectLiteralExpression)) {
+      JSObjectLiteralExpression bindings = (JSObjectLiteralExpression)bindingsProperty.getValue();
+      for (JSProperty binding : bindings.getProperties()) {
+        if (binding.getName() != null) {
+          processor.accept(new JSRecordTypeImpl.PropertySignatureImpl(binding.getName(), null, true));
+        }
+      }
+    }
+  }
+
+  private static void contributeControllerProperties(@Nullable JSProperty controllerProperty,
+                                                     @NotNull Consumer<JSRecordType.PropertySignature> processor) {
+    if (controllerProperty != null && controllerProperty.getValue() != null) {
+      PsiElement controller = controllerProperty.getValue();
+      if (controller instanceof JSLiteralExpression && ((JSLiteralExpression)controller).isQuotedLiteral()) {
+        for (PsiReference ref : controller.getReferences()) {
+          PsiElement resolved = ref.resolve();
+          if (resolved instanceof JSImplicitElement) {
+            resolved = resolved.getParent();
+          }
+          if (resolved instanceof JSLiteralExpression
+              && resolved.getParent() instanceof JSArgumentList) {
+            JSArgumentList args = (JSArgumentList)resolved.getParent();
+            if (args.getArguments().length >= 2) {
+              controller = args.getArguments()[1];
+            }
+          }
+        }
+      }
+      if (controller instanceof JSReferenceExpression) {
+        PsiElement resolved = ((JSReferenceExpression)controller).resolve();
+        if (resolved != null) {
+          controller = resolved;
+        }
+      }
+      JSNamespace namespace = null;
+      if (controller instanceof JSFunctionExpression) {
+        JSType type = JSResolveUtil.getExpressionJSType((JSExpression)controller);
+        if (type instanceof JSNamespace) {
+          namespace = (JSNamespace)type;
+        }
+      }
+      else if (controller instanceof JSFunction) {
+        namespace = JSNamedTypeFactory.buildProvidedNamespace((JSFunction)controller, true);
+      }
+      if (namespace != null && namespace.getQualifiedName() != null) {
+        JSClassResolver.getInstance()
+          .findNamespaceMembers(namespace.getQualifiedName().getQualifiedName(), controller.getResolveScope())
+          .stream()
+          .filter(el -> el.getName() != null)
+          .map(el -> new JSRecordTypeImpl.PropertySignatureImpl(
+            el.getName(), JSResolveUtil.getElementJSType(el, JSEvaluateContext.JSEvaluationPlace.DEFAULT),
+            true, el))
+          .forEach(processor);
+      }
+    }
+  }
+
+  private static JSObjectLiteralExpression getReferencingComponentInitializer(PsiFile templateFile) {
+    final String name = templateFile.getViewProvider().getVirtualFile().getName();
+    final Ref<JSObjectLiteralExpression> result = new Ref<>();
+    AngularIndexUtil.multiResolve(templateFile.getProject(), AngularTemplateUrlIndex.KEY, name, el -> {
+      if (el.getParent() instanceof JSProperty && el.getParent().getParent() instanceof JSObjectLiteralExpression) {
+        JSExpression value = ((JSProperty)el.getParent()).getValue();
+        if (value != null && hasFileReference(value, templateFile)) {
+          result.set((JSObjectLiteralExpression)el.getParent().getParent());
+          return false;
+        }
+      }
+      return true;
+    });
+    return result.get();
   }
 
   private static void processDocument(XmlDocument document, final Collection<JSPsiElementBase> result) {
@@ -83,7 +210,7 @@ public class AngularJSProcessor {
 
     for (XmlTag tag : PsiTreeUtil.getChildrenOfTypeAsList(document, XmlTag.class)) {
       ProgressIndicatorProvider.checkCanceled();
-      new XmlBackedJSClassImpl.InjectedScriptsVisitor(tag, null, true, true, visitor, true){
+      new XmlBackedJSClassImpl.InjectedScriptsVisitor(tag, null, true, true, visitor, true) {
         @Override
         public boolean execute(@NotNull PsiElement element) {
           ProgressIndicatorProvider.checkCanceled();

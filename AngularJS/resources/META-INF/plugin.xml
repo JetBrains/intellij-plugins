@@ -57,6 +57,7 @@
     <stubIndex implementation="org.angularjs.index.AngularSymbolIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularUiRouterStatesIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularUiRouterGenericStatesIndex"/>
+    <stubIndex implementation="org.angularjs.index.AngularTemplateUrlIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularGenericModulesIndex"/>
     <fileBasedIndex implementation="org.angularjs.index.AngularTemplateCacheIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularInjectionDelimiterIndex"/>

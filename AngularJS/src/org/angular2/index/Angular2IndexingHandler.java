@@ -26,7 +26,10 @@ import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.css.*;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.impl.source.tree.TreeUtil;
@@ -48,6 +51,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static org.angular2.Angular2DecoratorUtil.*;
+import static org.angularjs.index.AngularIndexUtil.hasFileReference;
 import static org.angularjs.index.AngularJSIndexingHandler.ANGULAR_DIRECTIVES_INDEX_USER_STRING;
 import static org.angularjs.index.AngularJSIndexingHandler.ANGULAR_FILTER_INDEX_USER_STRING;
 
@@ -307,13 +311,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     if (templateUrl == null || templateUrl.getValue() == null) {
       return false;
     }
-    for (PsiReference ref : templateUrl.getValue().getReferences()) {
-      PsiElement resolvedFile = ref.resolve();
-      if (templateFile.equals(resolvedFile)) {
-        return true;
-      }
-    }
-    return false;
+    return hasFileReference(templateUrl.getValue(), templateFile);
   }
 
   private static PsiFile getHostFile(PsiElement context) {

@@ -53,6 +53,7 @@ import org.angularjs.lang.psi.AngularJSRepeatExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.*;
 
 import static org.angular2.index.Angular2IndexingHandler.ANGULAR_TEMPLATE_URLS_INDEX_USER_STRING;
@@ -75,6 +76,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public static final String DIRECTIVE = "directive";
   public static final String COMPONENT = "component";
   public static final String BINDINGS = "bindings";
+  public static final String TEMPLATE_URL = "templateUrl";
+  public static final String CONTROLLER_AS = "controllerAs";
   public static final String MODULE = "module";
   public static final String FILTER = "filter";
   public static final String STATE = "state";
@@ -132,6 +135,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     INDEXES.put("arsi", AngularUiRouterStatesIndex.KEY);
     INDEXES.put("arsgi", AngularUiRouterGenericStatesIndex.KEY);
     INDEXES.put("agmi", AngularGenericModulesIndex.KEY);
+    INDEXES.put("ajtui", AngularTemplateUrlIndex.KEY);
 
     for (String key : INDEXES.keySet()) {
       JSImplicitElement.ourUserStringsRegistry.registerUserString(key);
@@ -213,7 +217,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
             final String argumentText = unquote(argument);
             addImplicitElements(argument, command, index, argumentText, data, outIndexingData);
           }
-        } else if (INJECTABLE_METHODS.contains(command)) { // INTERESTING_METHODS are contained in INJECTABLE_METHODS
+        }
+        else if (INJECTABLE_METHODS.contains(command)) { // INTERESTING_METHODS are contained in INJECTABLE_METHODS
           if (argument.isQuotedLiteral()) {
             generateNamespace(argument, outIndexingData);
           }
@@ -255,7 +260,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       if (arguments.length == 1 && arguments[0] instanceof JSReferenceExpression) {
         addImplicitElements(callExpression, null, AngularUiRouterGenericStatesIndex.KEY, STATE, null, outData);
       }
-    } else if (JSSymbolUtil.isAccurateReferenceExpressionName(reference, "angular", MODULE)) {
+    }
+    else if (JSSymbolUtil.isAccurateReferenceExpressionName(reference, "angular", MODULE)) {
       final JSExpression[] arguments = callExpression.getArguments();
       if (arguments.length > 1 && arguments[0] instanceof JSReferenceExpression) {
         addImplicitElements(callExpression, null, AngularGenericModulesIndex.KEY, MODULE, null, outData);
@@ -280,7 +286,11 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public JSElementIndexingData processAnyProperty(@NotNull JSProperty property, @Nullable JSElementIndexingData outData) {
     final String name = property.getName();
     if (name == null) return outData;
-
+    JSElementIndexingData localOutData;
+    if (TEMPLATE_URL.equals(name) && processTemplateUrlProperty(
+      property, localOutData = (outData == null ? new JSElementIndexingDataImpl() : outData))) {
+      return localOutData;
+    }
     final Pair<JSCallExpression, Integer> pair = findImmediatelyWrappingCall(property);
     if (pair == null) return outData;
     final JSCallExpression callExpression = pair.getFirst();
@@ -292,9 +302,9 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     }
     final String command = ((JSReferenceExpression)methodExpression).getReferenceName();
     final PairProcessor<JSProperty, JSElementIndexingData> customProcessor = CUSTOM_PROPERTY_PROCESSORS.get(command);
-    JSElementIndexingData localOutData;
     if (customProcessor != null && customProcessor.process(property,
-                                                           (localOutData = (outData == null ? new JSElementIndexingDataImpl() : outData)))) {
+                                                           (localOutData =
+                                                              (outData == null ? new JSElementIndexingDataImpl() : outData)))) {
       return localOutData;
     }
     // for 'standard' properties, keep indexing only for properties - immediate children of function calls parameters
@@ -353,7 +363,9 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     JSDocTag ngdocTag = null;
     JSDocTag nameTag = null;
     for (JSDocTag tag : comment.getTags()) {
-      if ("ngdoc".equals(tag.getName())) ngdocTag = tag;
+      if ("ngdoc".equals(tag.getName())) {
+        ngdocTag = tag;
+      }
       else if ("name".equals(tag.getName())) nameTag = tag;
     }
     if (ngdocTag != null && nameTag != null) {
@@ -467,7 +479,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       for (String string : strings) {
         adder.consume(new JSImplicitElementImpl.Builder(string, elementProvider));
       }
-    } else {
+    }
+    else {
       adder.consume(new JSImplicitElementImpl.Builder(JSQualifiedNameImpl.fromQualifiedName(name), elementProvider));
     }
 
@@ -498,7 +511,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
               final String unquoted = unquote(value);
               if (unquoted != null) restrict.set(unquoted);
             }
-          } else if ("scope".equals(name)) {
+          }
+          else if ("scope".equals(name)) {
             if (value instanceof JSObjectLiteralExpression) {
               scope.set(StringUtil.join(((JSObjectLiteralExpression)value).getProperties(), PsiNamedElement::getName, ","));
             }
@@ -631,12 +645,14 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         final String unquotedValue = unquote(value);
         if (AngularJSUiRouterConstants.controllerAs.equals(property.getName())) {
           return recordControllerAs(property, outData, value, unquotedValue);
-        } else if (CONTROLLER.equals(property.getName())) {
+        }
+        else if (CONTROLLER.equals(property.getName())) {
           final int idx = unquotedValue != null ? unquotedValue.indexOf(AS_CONNECTOR_WITH_SPACES) : 0;
           if (idx > 0 && (idx + AS_CONNECTOR_WITH_SPACES.length()) < (unquotedValue.length() - 1)) {
             return recordControllerAs(property, outData, value, unquotedValue.substring(idx + AS_CONNECTOR_WITH_SPACES.length()));
           }
-        } else if ("name".equals(property.getName())) {
+        }
+        else if ("name".equals(property.getName())) {
           addImplicitElements(value, STATE, INDEXERS.get(STATE), unquotedValue, null, outData);
           return true;
         }
@@ -668,6 +684,28 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return ((JSLiteralExpression)value).getStringValue();
   }
 
+  private static boolean processTemplateUrlProperty(JSProperty property, JSElementIndexingData data) {
+    PsiElement parent = property.getParent();
+    if (!(parent instanceof JSObjectLiteralExpression) ||
+        ((JSObjectLiteralExpression)parent).findProperty(CONTROLLER) == null) {
+      return false;
+    }
+    JSExpression value = property.getValue();
+    if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()) {
+      String url = unquote(value);
+      if (url != null) {
+        String fileName = new File(url).getName();
+        data.addImplicitElement(
+          new JSImplicitElementImpl.Builder(fileName, property)
+            .setTypeString("TU;;;")
+            .setUserString(Objects.requireNonNull(INDEXES.getKeysByValue(AngularTemplateUrlIndex.KEY)).get(0))
+            .toImplicitElement());
+        return true;
+      }
+    }
+    return false;
+  }
+
   private static boolean bindingsProcessor(JSProperty property, JSElementIndexingData data) {
     PsiElement parent = property.getParent();
     if (parent instanceof JSObjectLiteralExpression && parent.getParent() instanceof JSProperty &&
@@ -677,7 +715,9 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       JSExpression[] arguments = call.first.getArguments();
       if (arguments.length < 2 ||
           !(arguments[0] instanceof JSLiteralExpression) ||
-          !((JSLiteralExpression)arguments[0]).isQuotedLiteral()) return false;
+          !((JSLiteralExpression)arguments[0]).isQuotedLiteral()) {
+        return false;
+      }
 
       final String componentName = unquote(arguments[0]);
       addImplicitElements(property, BINDINGS, AngularDirectivesDocIndex.KEY, DirectiveUtil.getAttributeName(property.getName()),

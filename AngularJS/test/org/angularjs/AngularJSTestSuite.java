@@ -32,6 +32,7 @@ public class AngularJSTestSuite {
     testSuite.addTestSuite(AngularMessageFormatAnnotatorTest.class);
     testSuite.addTestSuite(DirectiveRenameTest.class);
     testSuite.addTestSuite(AngularUiRouterTest.class);
+    testSuite.addTestSuite(ControllerTest.class);
     return testSuite;
   }
 }

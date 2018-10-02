@@ -34,6 +34,11 @@ public class AngularTestUtil {
     return homePath;
   }
 
+  public static void moveToOffsetBySignature(@NotNull String signature,  @NotNull CodeInsightTestFixture fixture) {
+    int offset = AngularTestUtil.findOffsetBySignature(signature, fixture.getFile());
+    fixture.getEditor().getCaretModel().moveToOffset(offset);
+  }
+
   public static int findOffsetBySignature(String signature, final PsiFile psiFile) {
     final String caretSignature = "<caret>";
     int caretOffset = signature.indexOf(caretSignature);
