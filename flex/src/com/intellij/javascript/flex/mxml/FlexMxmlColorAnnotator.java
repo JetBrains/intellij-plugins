@@ -175,7 +175,7 @@ public class FlexMxmlColorAnnotator implements Annotator {
           if (editor != null) {
             Color currentColor = getColor(myColorValue);
             final Color color = ColorChooser
-              .chooseColor(editor.getComponent(), FlexBundle.message("flex.choose.color.dialog.title"), currentColor);
+              .chooseColor(editor.getProject(), editor.getComponent(), FlexBundle.message("flex.choose.color.dialog.title"), currentColor);
             if (color != null && !color.equals(currentColor)) {
               final PsiFile psiFile = myAttribute.getContainingFile();
               if (!FileModificationService.getInstance().prepareFileForWrite(psiFile)) return;
