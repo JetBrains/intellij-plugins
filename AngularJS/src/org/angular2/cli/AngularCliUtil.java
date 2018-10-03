@@ -8,11 +8,8 @@ import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.javascript.nodejs.packageJson.PackageJsonGetDependenciesAction;
-import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.javascript.nodejs.util.NodePackageDescriptor;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
@@ -159,9 +156,7 @@ public class AngularCliUtil {
                                                     @NotNull String label) {
     ObjectUtils.doIfNotNull(
       AngularCliConfigLoader.load(project, baseDir).getProtractorConfigFile(),
-      file -> createIfNoSimilar("protractor", project, label, null, file.getPath(), ContainerUtil.newHashMap(
-        pair("global-package", findPackage(project, baseDir, "protractor"))
-      ))
+      file -> createIfNoSimilar("protractor", project, label, null, file.getPath(), Collections.emptyMap())
     );
   }
 
@@ -178,14 +173,5 @@ public class AngularCliUtil {
         builder.findSimilarRunConfiguration(baseDir, configPath, options),
         () -> builder.createRunConfiguration(label, baseDir, configPath, options))
     );
-  }
-
-  @Nullable
-  private static NodePackage findPackage(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull String packageName) {
-    NodeJsInterpreter interpreter = NodeJsInterpreterRef.createProjectRef().resolve(project);
-    NodePackageDescriptor descr = new NodePackageDescriptor(packageName);
-    return descr.listAvailable(project, interpreter, baseDir, true)
-      .stream()
-      .filter(p -> p.getSystemIndependentPath().startsWith(baseDir.getPath())).findFirst().orElse(null);
   }
 }
