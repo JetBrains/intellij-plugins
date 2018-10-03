@@ -39,7 +39,7 @@ public class Angular2PipeUtil {
     }
     if (element instanceof TypeScriptFunction
         && TRANSFORM_METHOD.equals(((TypeScriptFunction)element).getName())
-        && element.getParent() instanceof TypeScriptClass) {
+        && element.getContext() instanceof TypeScriptClass) {
       element = element.getContext();
     }
     if (element instanceof TypeScriptClass
