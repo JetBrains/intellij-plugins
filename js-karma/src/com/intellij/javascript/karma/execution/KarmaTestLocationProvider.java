@@ -105,7 +105,7 @@ public class KarmaTestLocationProvider implements SMTestLocator {
   private static PsiElement findJasmineElement(Project project, @NotNull List<String> suiteNames, @Nullable String testName) {
     String key = JsTestFileByTestNameIndex.createJasmineKey(suiteNames);
     GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
-    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(key, scope);
+    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findFilesByKey(key, scope);
 
     JasmineFileStructureBuilder builder = JasmineFileStructureBuilder.getInstance();
     for (VirtualFile file : jsTestVirtualFiles) {
@@ -126,7 +126,7 @@ public class KarmaTestLocationProvider implements SMTestLocator {
   private static PsiElement findQUnitElement(Project project, @NotNull String moduleName, @Nullable String testName) {
     String key = JsTestFileByTestNameIndex.createQUnitKey(moduleName, testName);
     GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
-    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(key, scope);
+    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findFilesByKey(key, scope);
 
     QUnitFileStructureBuilder builder = QUnitFileStructureBuilder.getInstance();
     for (VirtualFile file : jsTestVirtualFiles) {
