@@ -10,7 +10,6 @@ import com.intellij.javascript.karma.scope.KarmaScopeKind;
 import com.intellij.javascript.karma.server.KarmaJsSourcesLocator;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.nodejs.util.NodePackageDescriptor;
 import com.intellij.javascript.testFramework.PreferableRunConfiguration;
@@ -22,6 +21,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -88,10 +88,10 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     NodePackage pkg = myRunSettings.getKarmaPackage();
     if (pkg == null) {
       Project project = getProject();
-      NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolve(project);
-      pkg = KarmaUtil.PKG_DESCRIPTOR.findFirstDirectDependencyPackage(project, interpreter, null);
+      VirtualFile contextFile = getContextFile();
+      pkg = KarmaUtil.PKG_DESCRIPTOR.findFirstDirectDependencyPackage(project, null, contextFile);
       if (shouldPreferKarmaPackage(pkg)) {
-        pkg = new NodePackageDescriptor(KarmaUtil.KARMA_PACKAGE_NAME).findFirstDirectDependencyPackage(project, interpreter, null);
+        pkg = new NodePackageDescriptor(KarmaUtil.KARMA_PACKAGE_NAME).findFirstDirectDependencyPackage(project, null, contextFile);
       }
       if (!pkg.isEmptyPath() && !KarmaUtil.isPathUnderContentRoots(project, pkg)) {
         NodePackage projectKarmaPackage = KarmaProjectSettings.getKarmaPackage(project);
@@ -106,7 +106,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
   }
 
   private boolean shouldPreferKarmaPackage(@NotNull NodePackage pkg) {
-    if (!SystemInfo.isWindows || !pkg.getSystemIndependentPath().endsWith("/" + KarmaUtil.ANGULAR_CLI__PACKAGE_NAME)) {
+    if (!SystemInfo.isWindows || !pkg.nameMatches(KarmaUtil.ANGULAR_CLI__PACKAGE_NAME)) {
       return false;
     }
     SemVer version = pkg.getVersion();
@@ -118,6 +118,23 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     // @angular/cli < 6 doesn't work when karma-intellij on a different drive ()
     return path1 != null && FileUtil.isWindowsAbsolutePath(path1) && FileUtil.isWindowsAbsolutePath(path2) &&
            !path1.substring(0, 1).equals(path2.substring(0, 1));
+  }
+
+  @Nullable
+  private VirtualFile getContextFile() {
+    VirtualFile f = findFile(myRunSettings.getTestFileSystemDependentPath());
+    if (f == null) {
+      f = findFile(myRunSettings.getConfigPathSystemDependent());
+    }
+    if (f == null) {
+      f = findFile(myRunSettings.getWorkingDirectorySystemDependent());
+    }
+    return f;
+  }
+
+  @Nullable
+  private static VirtualFile findFile(@NotNull String path) {
+    return FileUtil.isAbsolute(path) ? LocalFileSystem.getInstance().findFileByPath(path) : null;
   }
 
   private boolean isTemplate() {
