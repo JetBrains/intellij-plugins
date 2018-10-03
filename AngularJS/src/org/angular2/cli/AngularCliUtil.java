@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -149,9 +150,7 @@ public class AngularCliUtil {
                                                @NotNull String label) {
     ObjectUtils.doIfNotNull(
       AngularCliConfigLoader.load(project, baseDir).getKarmaConfigFile(),
-      file -> createIfNoSimilar("karma", project, label, baseDir, file.getPath(), ContainerUtil.newHashMap(
-        pair("package", findPackage(project, baseDir, "@angular/cli"))
-      ))
+      file -> createIfNoSimilar("karma", project, label, baseDir, file.getPath(), Collections.emptyMap())
     );
   }
 

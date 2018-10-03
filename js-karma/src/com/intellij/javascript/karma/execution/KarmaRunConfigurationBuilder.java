@@ -14,7 +14,6 @@
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.javascript.JSRunConfigurationBuilderBase;
-import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -24,8 +23,6 @@ import java.util.Map;
 import java.util.Objects;
 
 public class KarmaRunConfigurationBuilder extends JSRunConfigurationBuilderBase<KarmaRunConfiguration, KarmaRunSettings> {
-
-  public static final String PACKAGE = "package";
 
   public KarmaRunConfigurationBuilder(@NotNull Project project) {
     super(project, "karma", KarmaConfigurationType.getInstance(),
@@ -39,7 +36,6 @@ public class KarmaRunConfigurationBuilder extends JSRunConfigurationBuilderBase<
                                                @NotNull Map<String, Object> options) {
     assert baseDir != null && configPath != null;
     return new KarmaRunSettings.Builder()
-      .setKarmaPackage((NodePackage)options.get(PACKAGE))
       .setConfigPath(configPath)
       .setWorkingDirectory(baseDir.getPath())
       .build();
