@@ -85,8 +85,10 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
             try {
                 let fullTypescriptVersion = require(tsPath);
                 for (let prop in fullTypescriptVersion) {
-                    if (fullTypescriptVersion.hasOwnProperty(prop)) {
-                        ts_impl[prop] = fullTypescriptVersion[prop];
+                    //typescript package doesn't have all required methods from "server" package
+                    if (fullTypescriptVersion.hasOwnProperty(prop) && prop !== "server") {
+                        let merged =  fullTypescriptVersion[prop];
+                        ts_impl[prop] = merged;
                     }
                 }
 
