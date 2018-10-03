@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.linter.tslint.highlight;
 
-import com.intellij.codeInsight.daemon.HighlightDisplayKey;
 import com.intellij.codeInspection.SuppressQuickFix;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.linter.JSLinterInspection;
@@ -23,10 +22,6 @@ public final class TsLintInspection extends JSLinterInspection {
   @Override
   protected TsLintExternalAnnotator getExternalAnnotatorForBatchInspection() {
     return TsLintExternalAnnotator.getInstanceForBatchInspection();
-  }
-
-  public static HighlightDisplayKey getHighlightDisplayKey() {
-    return JSLinterInspection.getHighlightDisplayKeyByClass(TsLintInspection.class);
   }
 
   @Override
