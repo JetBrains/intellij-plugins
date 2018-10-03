@@ -82,7 +82,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
 
   @Nullable
   @Override
-  protected JSLanguageServiceProtocol createProtocol(Consumer<?> readyConsumer) {
+  protected JSLanguageServiceProtocol createProtocol(Consumer<?> readyConsumer, @NotNull String tsServicePath) {
     ApplicationManager.getApplication().assertReadAccessAllowed();
     VirtualFile directory = getServiceDirectory(myProject);
     if (directory == null) {
@@ -93,7 +93,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
     if (path == null) {
       return null;
     }
-    return new Angular2LanguageServiceProtocol(myProject, path, mySettings, readyConsumer, createEventConsumer());
+    return new Angular2LanguageServiceProtocol(myProject, path, mySettings, readyConsumer, createEventConsumer(), tsServicePath);
   }
 
   public static VirtualFile getServiceDirectory(@NotNull Project project) {

@@ -25,8 +25,9 @@ public class Angular2LanguageServiceProtocol extends TypeScriptServiceStandardOu
                                          @NotNull String ngServicePath,
                                          @NotNull TypeScriptCompilerSettings settings,
                                          @NotNull Consumer<?> readyConsumer,
-                                         @NotNull Consumer<JSLanguageServiceAnswer> eventConsumer) {
-    super(project, settings, readyConsumer, eventConsumer);
+                                         @NotNull Consumer<JSLanguageServiceAnswer> eventConsumer,
+                                         @NotNull String tsServicePath) {
+    super(project, settings, readyConsumer, eventConsumer, tsServicePath);
     myNgServicePath = ngServicePath;
   }
 
