@@ -36,9 +36,10 @@ class CfmlLeafPsiElement(cfmlLeafElementType: CfmlLeafElementType, leafText: Cha
                                                                                                             leafText), PsiLanguageInjectionHost {
 
   override fun isValidHost(): Boolean {
-    if (this.parent !is CfmlTagImpl) return false
-    val isCfquery = (this.parent as CfmlTagImpl).name?.toLowerCase() == "cfquery"
-    val isCfifInCfquery = (this.parent as CfmlTagImpl).name?.toLowerCase() == "cfif" && (this.parent?.parent as CfmlTagImpl).name?.toLowerCase() == "cfquery"
+    val parent = this.parent ?: return false
+    if (parent !is CfmlTagImpl) return false
+    val isCfquery = parent.name?.toLowerCase() == "cfquery"
+    val isCfifInCfquery = parent.name?.toLowerCase() == "cfif" && (parent.parent is CfmlTagImpl) && (parent.parent as CfmlTagImpl).name?.toLowerCase() == "cfquery"
     return isCfquery || isCfifInCfquery
   }
 
