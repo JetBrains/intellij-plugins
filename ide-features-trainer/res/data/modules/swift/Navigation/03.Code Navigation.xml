@@ -1,17 +1,31 @@
 <xml type="Scenario" name="Code Navigation" id="swift.navigation.code" subtype="aimless" projectTree="hide" lang="Swift">
     <CopyText><![CDATA[import Foundation
 
-protocol Protocol {
-
+class Feature {
+    var name = ""
 }
 
-class Class : Protocol {
-
+protocol IDEProtocol {
+    func navigation() -> Feature
+    func assistance() -> Feature
+    func generation() -> Feature
 }
 
-class Subclass: Class {
+class JetBrainsIDE: IDEProtocol {
+    func navigation() -> Feature {
+        return Feature()
+    }
 
-}]]></CopyText>
+    func assistance() -> Feature {
+        return Feature()
+    }
+
+    func generation() -> Feature {
+        return Feature()
+    }
+}
+
+class AppCode: JetBrainsIDE {}]]></CopyText>
     <Text>When working on your project, you often need to open and edit a specific class, file, or symbol. The fastest way to do this is to use the main navigation triple: <strong>Go to Class/File/Symbol</strong>.</Text>
     <Try triggers="GotoClass;DetailViewController.swift">Let's navigate to the <code>DetailViewController</code> class. Press <action>GotoClass</action>, type <code>dvc</code>, and then press <action>EditorEnter</action>.</Try>
     <Text>Each of the <strong>Go to...</strong> dialogs allows using fuzzy matching, so you can type only a part of the name of a class, file, or symbol in order to find it.</Text>
@@ -23,10 +37,9 @@ class Subclass: Class {
     <MoveCaret position="3:33" />
     <Try trigger="GotoImplementation">If a method or class has several implementations, <action>GotoDeclaration</action> will get you to the first one. Try using <action>GotoImplementation</action> to see all the definitions of <code>UIViewController</code>.</Try>
     <Try triggers="GotoFile;Navigation.swift">Let's navigate back to <code>Navigation.swift</code> via <action>GotoFile</action>.</Try>
-    <MoveCaret position="11:12" />
-    <Try trigger="GotoSuperMethod"><strong>Go to Super Definition</strong> navigates you to the parent class declaration. Press <action>GotoSuperMethod</action> to jump to the <code>Item</code> class.</Try>
-    <Try trigger="GotoSuperMethod">Now press <action>GotoSuperMethod</action> again to jump to the <code>Serializable</code> protocol declaration.</Try>
-    <MoveCaret position="3:33" />
+    <MoveCaret position="27:10" />
+    <Try trigger="GotoSuperMethod"><strong>Go to Super Definition</strong> navigates you to the parent class declaration. Press <action>GotoSuperMethod</action> to jump to the <code>JetBrainsIDE</code> class.</Try>
+    <Try trigger="GotoSuperMethod">Now press <action>GotoSuperMethod</action> again to jump to the <code>IDEProtocol</code> protocol declaration.</Try>
     <Try trigger="RecentFiles">Finally, there are two very useful and frequently used navigation actions that can help you quickly switch between recent files and toolwindows. First up is the <string>Recent files</string> popup. Open it via <action>RecentFiles</action> and select what you need using the arrow keys on the keyboard.</Try>
     <Try triggers="Switcher">The second is <strong>Switcher</strong>, which looks the same but immediately disappears after you select something. Hold the <action>⌃</action> key while pressing <action>Switcher</action>, and press it again to switch to select some file or toolwindow. Release the <action>⌃</action> key after you've selected what you wanted.</Try>
     <Win/>
