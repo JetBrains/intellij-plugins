@@ -29,6 +29,8 @@ public class Func extends Obj {
 
   /**
    * The compiled code associated with this function.
+   *
+   * Can return <code>null</code>.
    */
   public CodeRef getCode() {
     return json.get("code") == null ? null : new CodeRef((JsonObject) json.get("code"));
@@ -36,6 +38,8 @@ public class Func extends Obj {
 
   /**
    * The location of this function in the source code.
+   *
+   * Can return <code>null</code>.
    */
   public SourceLocation getLocation() {
     return json.get("location") == null ? null : new SourceLocation((JsonObject) json.get("location"));

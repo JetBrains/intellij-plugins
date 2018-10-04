@@ -39,6 +39,8 @@ public class SourceReportRange extends Element {
   /**
    * Code coverage information for this range.  Provided only when the Coverage report has been
    * requested and the range has been compiled.
+   *
+   * Can return <code>null</code>.
    */
   public SourceReportCoverage getCoverage() {
     return json.get("coverage") == null ? null : new SourceReportCoverage((JsonObject) json.get("coverage"));
@@ -54,6 +56,8 @@ public class SourceReportRange extends Element {
   /**
    * The error while attempting to compile this range, if this report was generated with
    * forceCompile=true.
+   *
+   * Can return <code>null</code>.
    */
   public ErrorRef getError() {
     return json.get("error") == null ? null : new ErrorRef((JsonObject) json.get("error"));
@@ -63,6 +67,8 @@ public class SourceReportRange extends Element {
    * Possible breakpoint information for this range, represented as a sorted list of token
    * positions.  Provided only when the when the PossibleBreakpoint report has been requested and
    * the range has been compiled.
+   *
+   * Can return <code>null</code>.
    */
   public List<Integer> getPossibleBreakpoints() {
     return getListInt("possibleBreakpoints");

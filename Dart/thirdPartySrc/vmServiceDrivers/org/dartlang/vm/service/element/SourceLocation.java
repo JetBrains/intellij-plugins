@@ -29,6 +29,8 @@ public class SourceLocation extends Response {
 
   /**
    * The last token of the location if this is a range.
+   *
+   * Can return <code>null</code>.
    */
   public int getEndTokenPos() {
     return json.get("endTokenPos") == null ? -1 : json.get("endTokenPos").getAsInt();
