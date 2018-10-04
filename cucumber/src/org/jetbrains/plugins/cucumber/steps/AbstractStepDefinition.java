@@ -157,4 +157,9 @@ public abstract class AbstractStepDefinition {
     }
     return results;
   }
+
+  @Nullable
+  public String getStepDefinitionText() {
+    return getCucumberRegex();
+  }
 }

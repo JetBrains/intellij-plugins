@@ -24,22 +24,37 @@ public class JavaStepDefinition extends AbstractJavaStepDefinition {
   @Nullable
   @Override
   protected String getCucumberRegexFromElement(PsiElement element) {
+    String definitionText = getStepDefinitionText();
+    if (definitionText == null) {
+      return null;
+    }
+    final Module module = ModuleUtilCore.findModuleForPsiElement(element);
+    if (module != null) {
+      ParameterTypeManager parameterTypes = getAllParameterTypes(module);
+      if (!isCucumberExpression(definitionText)) {
+        return definitionText;
+      }
+      return buildRegexpFromCucumberExpression(definitionText, parameterTypes);
+    }
+
+    return definitionText;
+  }
+
+  @Nullable
+  @Override
+  public String getStepDefinitionText() {
+    PsiElement element = getElement();
+    if (element == null) {
+      return null;
+    }
+
     if (!(element instanceof PsiMethod)) {
       return null;
     }
     String patternText = CucumberJavaUtil.getStepAnnotationValue((PsiMethod)element, myAnnotationClassName);
-    if (patternText != null &&patternText.length() > 1) {
-      final Module module = ModuleUtilCore.findModuleForPsiElement(element);
-      if (module != null) {
-        ParameterTypeManager parameterTypes = getAllParameterTypes(module);
-        String escapedPattern = patternText.replace("\\\\", "\\").replace("\\\"", "\"");
-        if (!isCucumberExpression(escapedPattern)) {
-          return escapedPattern;
-        }
-        return buildRegexpFromCucumberExpression(escapedPattern, parameterTypes);
-      }
+    if (patternText != null && patternText.length() > 1) {
+      return patternText.replace("\\\\", "\\").replace("\\\"", "\"");
     }
-
     return null;
   }
 }
