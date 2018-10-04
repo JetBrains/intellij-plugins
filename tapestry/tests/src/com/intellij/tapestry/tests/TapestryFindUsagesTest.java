@@ -1,6 +1,5 @@
 package com.intellij.tapestry.tests;
 
-import com.intellij.lang.findUsages.FindUsagesProvider;
 import com.intellij.lang.findUsages.LanguageFindUsages;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
@@ -37,9 +36,8 @@ public class TapestryFindUsagesTest extends TapestryBaseTestCase {
 
   private PsiReference[] findUsagesOfElementAtCaret() {
 
-    FindUsagesProvider handler = LanguageFindUsages.INSTANCE.forLanguage(myFixture.getFile().getLanguage());
     PsiElement referenceTo = resolveReferenceAtCaretPosition();
-    assertTrue("Wrong FindUsagesProvider", handler.canFindUsagesFor(referenceTo));
+    assertTrue("Wrong FindUsagesProvider", LanguageFindUsages.canFindUsagesFor(referenceTo));
     final GlobalSearchScope scope = GlobalSearchScope.projectScope(myFixture.getProject());
     Query<PsiReference> query = referenceTo instanceof PsiMethod
                                 ? MethodReferencesSearch.search((PsiMethod)referenceTo, scope, false)
