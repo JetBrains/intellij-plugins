@@ -7,6 +7,7 @@ import java.util.Map;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.buildRegexpFromCucumberExpression;
 import static org.jetbrains.plugins.cucumber.CucumberUtil.isCucumberExpression;
+import static org.jetbrains.plugins.cucumber.CucumberUtil.replaceNotNecessaryTextTemplateByRegexp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
@@ -43,5 +44,11 @@ public class CucumberUtilTest {
     assertFalse(isCucumberExpression("def {int"));
     assertFalse(isCucumberExpression("text"));
     assertFalse(isCucumberExpression("text (\\d)"));
+  }
+
+  @Test
+  public void testReplaceNotNecessaryTextTemplateByRegexp() {
+    String actual = replaceNotNecessaryTextTemplateByRegexp("I have {short}  cucumber(s) in my belly");
+    assertEquals("I have {short}  cucumber(?:s)? in my belly", actual);
   }
 }

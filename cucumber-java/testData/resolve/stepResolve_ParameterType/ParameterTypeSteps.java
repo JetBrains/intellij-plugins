@@ -71,4 +71,8 @@ public class ParameterTypeSteps {
   @And("There is double {double}")
   public void step_method(double arg1) throws Throwable {
   }
+
+  @And("I have {int} cucumber(s) in my belly")
+  public void iHaveCucumbersInMyBelly(int arg1) throws Throwable {
+  }
 }

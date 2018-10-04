@@ -10,6 +10,7 @@ import org.jetbrains.plugins.cucumber.ParameterTypeManager;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.buildRegexpFromCucumberExpression;
+import static org.jetbrains.plugins.cucumber.CucumberUtil.isCucumberExpression;
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.getAllParameterTypes;
 
 public class JavaStepDefinition extends AbstractJavaStepDefinition {
@@ -31,7 +32,11 @@ public class JavaStepDefinition extends AbstractJavaStepDefinition {
       final Module module = ModuleUtilCore.findModuleForPsiElement(element);
       if (module != null) {
         ParameterTypeManager parameterTypes = getAllParameterTypes(module);
-        return buildRegexpFromCucumberExpression(patternText.replace("\\\\", "\\").replace("\\\"", "\""), parameterTypes);
+        String escapedPattern = patternText.replace("\\\\", "\\").replace("\\\"", "\"");
+        if (!isCucumberExpression(escapedPattern)) {
+          return escapedPattern;
+        }
+        return buildRegexpFromCucumberExpression(escapedPattern, parameterTypes);
       }
     }
 

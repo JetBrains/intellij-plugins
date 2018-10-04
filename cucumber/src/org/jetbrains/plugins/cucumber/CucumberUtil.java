@@ -230,24 +230,67 @@ public class CucumberUtil {
   @NotNull
   public static String buildRegexpFromCucumberExpression(@NotNull String cucumberExpression,
                                                          @NotNull ParameterTypeManager parameterTypeManager) {
+
+    String cucumberExpression2 = replaceNotNecessaryTextTemplateByRegexp(cucumberExpression);
+
     List<Pair<TextRange, String>> parameterTypeValues = new ArrayList<>();
-    processParameterTypesInCucumberExpression(cucumberExpression, range -> {
-      String parameterTypeName = cucumberExpression.substring(range.getStartOffset() + 1, range.getEndOffset() - 1);
+    processParameterTypesInCucumberExpression(cucumberExpression2, range -> {
+      String parameterTypeName = cucumberExpression2.substring(range.getStartOffset() + 1, range.getEndOffset() - 1);
       String parameterTypeValue = parameterTypeManager.getParameterTypeValue(parameterTypeName);
       parameterTypeValues.add(Pair.create(range, parameterTypeValue));
       return true;
     });
 
-    StringBuilder result = new StringBuilder(cucumberExpression);
+    StringBuilder result = new StringBuilder(cucumberExpression2);
     Collections.reverse(parameterTypeValues);
     for (Pair<TextRange, String> rangeAndValue : parameterTypeValues) {
       String value = rangeAndValue.getSecond();
       if (value == null) {
-        return cucumberExpression;
+        return cucumberExpression2;
       }
       int startOffset = rangeAndValue.first.getStartOffset();
       int endOffset = rangeAndValue.first.getEndOffset();
       result.replace(startOffset, endOffset, "(" + value + ")");
+    }
+    return result.toString();
+  }
+
+  /**
+   * Replaces pattern (text) with regexp {@code (text)?}
+   * For example Cucumber Expression:
+   * {@code I have {int} cucumber(s) in my belly} is equal to regexp
+   * {@code I have \d+ cucumber(?:s)? in my belly}
+   */
+  public static String replaceNotNecessaryTextTemplateByRegexp(@NotNull String cucumberExpression) {
+    StringBuilder result = new StringBuilder();
+    int i = 0;
+    while (i < cucumberExpression.length()) {
+      char c = cucumberExpression.charAt(i);
+      if (c == '(') {
+        int j = i;
+        while (j < cucumberExpression.length()) {
+          if (cucumberExpression.charAt(j) == ')'){
+            break;
+          }
+          if (cucumberExpression.charAt(j) == '\\') {
+            break;
+          }
+          j++;
+        }
+        if (j >= cucumberExpression.length()) {
+          // Error: not closed parenthesis
+          return cucumberExpression;
+        }
+        result.append("(?:").append(cucumberExpression, i + 1, j + 1).append('?');
+        i = j + 1;
+        continue;
+      }
+      result.append(c);
+      if (c == '\\') {
+        i++;
+        result.append(cucumberExpression.charAt(i));
+      }
+      i++;
     }
     return result.toString();
   }

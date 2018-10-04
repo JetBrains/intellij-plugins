@@ -69,6 +69,13 @@ public class CucumberJavaTestResolveTest extends BaseCucumberJavaResolveTest {
     checkReference("dou<caret>ble", "step_method");
   }
 
+  public void testResolveOfExpressionWithNotNecessaryGroup() {
+    init("stepResolve_ParameterType");
+
+    checkReference("I have 10 cucum<caret>bers in my belly", "iHaveCucumbersInMyBelly");
+    checkReference("I have 1 cucumb<caret>er in my belly", "iHaveCucumbersInMyBelly");
+  }
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumberJava8ProjectDescriptor();
