@@ -34,6 +34,8 @@ public class Instance extends Obj {
    *
    * Provided for instance kinds:
    *  - Map
+   *
+   * Can return <code>null</code>.
    */
   public ElementList<MapAssociation> getAssociations() {
     if (json.get("associations") == null) return null;
@@ -54,6 +56,8 @@ public class Instance extends Obj {
    * Provided for instance kinds:
    *  - BoundedType
    *  - TypeParameter
+   *
+   * Can return <code>null</code>.
    */
   public InstanceRef getBound() {
     return json.get("bound") == null ? null : new InstanceRef((JsonObject) json.get("bound"));
@@ -79,9 +83,11 @@ public class Instance extends Obj {
    *  - Int32x4List
    *  - Float32x4List
    *  - Float64x2List
+   *
+   * Can return <code>null</code>.
    */
   public String getBytes() {
-    return json.get("bytes").getAsString();
+    return json.get("bytes") == null ? null : json.get("bytes").getAsString();
   }
 
   /**
@@ -96,6 +102,8 @@ public class Instance extends Obj {
    *
    * Provided for instance kinds:
    *  - Closure
+   *
+   * Can return <code>null</code>.
    */
   public ContextRef getClosureContext() {
     return json.get("closureContext") == null ? null : new ContextRef((JsonObject) json.get("closureContext"));
@@ -106,6 +114,8 @@ public class Instance extends Obj {
    *
    * Provided for instance kinds:
    *  - Closure
+   *
+   * Can return <code>null</code>.
    */
   public FuncRef getClosureFunction() {
     return json.get("closureFunction") == null ? null : new FuncRef((JsonObject) json.get("closureFunction"));
@@ -133,6 +143,8 @@ public class Instance extends Obj {
    *  - Int32x4List
    *  - Float32x4List
    *  - Float64x2List
+   *
+   * Can return <code>null</code>.
    */
   public int getCount() {
     return json.get("count") == null ? -1 : json.get("count").getAsInt();
@@ -145,6 +157,8 @@ public class Instance extends Obj {
    *  - List
    *
    * @return one of <code>ElementList<InstanceRef></code> or <code>ElementList<Sentinel></code>
+   *
+   * Can return <code>null</code>.
    */
   public ElementList<InstanceRef> getElements() {
     if (json.get("elements") == null) return null;
@@ -159,6 +173,8 @@ public class Instance extends Obj {
 
   /**
    * The fields of this Instance.
+   *
+   * Can return <code>null</code>.
    */
   public ElementList<BoundField> getFields() {
     if (json.get("fields") == null) return null;
@@ -176,6 +192,8 @@ public class Instance extends Obj {
    *
    * Provided for instance kinds:
    *  - RegExp
+   *
+   * Can return <code>null</code>.
    */
   public boolean getIsCaseSensitive() {
     return json.get("isCaseSensitive") == null ? false : json.get("isCaseSensitive").getAsBoolean();
@@ -186,6 +204,8 @@ public class Instance extends Obj {
    *
    * Provided for instance kinds:
    *  - RegExp
+   *
+   * Can return <code>null</code>.
    */
   public boolean getIsMultiLine() {
     return json.get("isMultiLine") == null ? false : json.get("isMultiLine").getAsBoolean();
@@ -225,6 +245,8 @@ public class Instance extends Obj {
    *  - Int32x4List
    *  - Float32x4List
    *  - Float64x2List
+   *
+   * Can return <code>null</code>.
    */
   public int getLength() {
     return json.get("length") == null ? -1 : json.get("length").getAsInt();
@@ -235,6 +257,8 @@ public class Instance extends Obj {
    *
    * Provided for instance kinds:
    *  - MirrorReference
+   *
+   * Can return <code>null</code>.
    */
   public InstanceRef getMirrorReferent() {
     return json.get("mirrorReferent") == null ? null : new InstanceRef((JsonObject) json.get("mirrorReferent"));
@@ -245,9 +269,11 @@ public class Instance extends Obj {
    *
    * Provided for instance kinds:
    *  - Type
+   *
+   * Can return <code>null</code>.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return json.get("name") == null ? null : json.get("name").getAsString();
   }
 
   /**
@@ -272,6 +298,8 @@ public class Instance extends Obj {
    *  - Int32x4List
    *  - Float32x4List
    *  - Float64x2List
+   *
+   * Can return <code>null</code>.
    */
   public int getOffset() {
     return json.get("offset") == null ? -1 : json.get("offset").getAsInt();
@@ -282,6 +310,8 @@ public class Instance extends Obj {
    *
    * Provided for instance kinds:
    *  - TypeParameter
+   *
+   * Can return <code>null</code>.
    */
   public int getParameterIndex() {
     return json.get("parameterIndex") == null ? -1 : json.get("parameterIndex").getAsInt();
@@ -292,6 +322,8 @@ public class Instance extends Obj {
    *
    * Provided for instance kinds:
    *  - TypeParameter
+   *
+   * Can return <code>null</code>.
    */
   public ClassRef getParameterizedClass() {
     return json.get("parameterizedClass") == null ? null : new ClassRef((JsonObject) json.get("parameterizedClass"));
@@ -302,9 +334,11 @@ public class Instance extends Obj {
    *
    * Provided for instance kinds:
    *  - RegExp
+   *
+   * Can return <code>null</code>.
    */
   public String getPattern() {
-    return json.get("pattern").getAsString();
+    return json.get("pattern") == null ? null : json.get("pattern").getAsString();
   }
 
   /**
@@ -312,6 +346,8 @@ public class Instance extends Obj {
    *
    * Provided for instance kinds:
    *  - WeakProperty
+   *
+   * Can return <code>null</code>.
    */
   public InstanceRef getPropertyKey() {
     return json.get("propertyKey") == null ? null : new InstanceRef((JsonObject) json.get("propertyKey"));
@@ -322,6 +358,8 @@ public class Instance extends Obj {
    *
    * Provided for instance kinds:
    *  - WeakProperty
+   *
+   * Can return <code>null</code>.
    */
   public InstanceRef getPropertyValue() {
     return json.get("propertyValue") == null ? null : new InstanceRef((JsonObject) json.get("propertyValue"));
@@ -335,6 +373,8 @@ public class Instance extends Obj {
    * Provided for instance kinds:
    *  - BoundedType
    *  - TypeRef
+   *
+   * Can return <code>null</code>.
    */
   public InstanceRef getTargetType() {
     return json.get("targetType") == null ? null : new InstanceRef((JsonObject) json.get("targetType"));
@@ -345,6 +385,8 @@ public class Instance extends Obj {
    *
    * Provided for instance kinds:
    *  - Type
+   *
+   * Can return <code>null</code>.
    */
   public TypeArgumentsRef getTypeArguments() {
     return json.get("typeArguments") == null ? null : new TypeArgumentsRef((JsonObject) json.get("typeArguments"));
@@ -355,6 +397,8 @@ public class Instance extends Obj {
    *
    * Provided for instance kinds:
    *  - Type
+   *
+   * Can return <code>null</code>.
    */
   public ClassRef getTypeClass() {
     return json.get("typeClass") == null ? null : new ClassRef((JsonObject) json.get("typeClass"));
@@ -368,9 +412,11 @@ public class Instance extends Obj {
    *  - Double (suitable for passing to Double.parse())
    *  - Int (suitable for passing to int.parse())
    *  - String (value may be truncated)
+   *
+   * Can return <code>null</code>.
    */
   public String getValueAsString() {
-    return json.get("valueAsString").getAsString();
+    return json.get("valueAsString") == null ? null : json.get("valueAsString").getAsString();
   }
 
   /**
@@ -378,6 +424,8 @@ public class Instance extends Obj {
    * the value 'true'.
    *
    * New code should use 'length' and 'count' instead.
+   *
+   * Can return <code>null</code>.
    */
   public boolean getValueAsStringIsTruncated() {
     JsonElement elem = json.get("valueAsStringIsTruncated");

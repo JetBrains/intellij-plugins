@@ -25,6 +25,9 @@ public class Stack extends Response {
     super(json);
   }
 
+  /**
+   * Can return <code>null</code>.
+   */
   public ElementList<Frame> getAsyncCausalFrames() {
     if (json.get("asyncCausalFrames") == null) return null;
     
@@ -36,6 +39,9 @@ public class Stack extends Response {
     };
   }
 
+  /**
+   * Can return <code>null</code>.
+   */
   public ElementList<Frame> getAwaiterFrames() {
     if (json.get("awaiterFrames") == null) return null;
     

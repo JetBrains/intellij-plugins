@@ -37,6 +37,8 @@ public class Breakpoint extends Obj {
   /**
    * Is this a breakpoint that was added synthetically as part of a step OverAsyncSuspension resume
    * command?
+   *
+   * Can return <code>null</code>.
    */
   public boolean getIsSyntheticAsyncContinuation() {
     return json.get("isSyntheticAsyncContinuation") == null ? false : json.get("isSyntheticAsyncContinuation").getAsBoolean();
