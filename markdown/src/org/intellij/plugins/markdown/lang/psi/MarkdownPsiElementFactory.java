@@ -14,11 +14,14 @@
 package org.intellij.plugins.markdown.lang.psi;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.ObjectUtils;
 import org.intellij.plugins.markdown.lang.MarkdownLanguage;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownCodeFenceImpl;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownFile;
@@ -71,9 +74,33 @@ public class MarkdownPsiElementFactory {
     return (MarkdownHeaderImpl)createFile(project, text + "\n" + StringUtil.repeat(symbol, count)).getFirstChild().getFirstChild();
   }
 
-
   @NotNull
   public static MarkdownHeaderImpl createHeader(@NotNull Project project, @NotNull String text, int level) {
     return (MarkdownHeaderImpl)createFile(project, StringUtil.repeat("#", level) + " " + text).getFirstChild().getFirstChild();
+  }
+
+  @NotNull
+  public static PsiElement createNewLine(@NotNull Project project) {
+    return createFile(project, "\n").getFirstChild().getFirstChild();
+  }
+
+  /**
+   * Returns pair of the link reference and its declaration
+   */
+  @NotNull
+  public static Pair<PsiElement, PsiElement> createLinkReference(@NotNull Project project,
+                                                                 @NotNull String url,
+                                                                 @Nullable String text,
+                                                                 @Nullable String title) {
+    text = ObjectUtils.notNull(text, "link");
+    title = title == null ? "" : title;
+
+    String linkReference = text.contains("[") || text.contains("]")
+                           ? "[link]" + ": " + url + " " + title + "\n" + "[" + text + "][link]"
+                           : ("[" + text + "]") + ": " + url + " " + title + "\n" + ("[" + text + "]");
+
+    PsiElement linkReferenceElement = createFile(project, linkReference).getFirstChild();
+
+    return Pair.create(linkReferenceElement.getFirstChild(), linkReferenceElement.getLastChild());
   }
 }
