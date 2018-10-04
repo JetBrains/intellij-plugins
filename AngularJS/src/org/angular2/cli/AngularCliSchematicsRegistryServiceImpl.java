@@ -196,7 +196,6 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
     private T myCachedValue;
     private final Callable<T> myValueSupplier;
 
-    @SuppressWarnings("BoundedWildcard")
     CachedValue(Callable<T> valueSupplier) {
       this.myValueSupplier = valueSupplier;
     }

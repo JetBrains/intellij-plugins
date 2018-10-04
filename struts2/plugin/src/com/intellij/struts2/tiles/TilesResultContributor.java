@@ -130,7 +130,6 @@ public class TilesResultContributor extends StrutsResultContributor {
 
         if (psiFile != null &&
             StringUtil.isNotEmpty(definitionName)) {
-          //noinspection ConstantConditions
           final LookupElementBuilder builder =
             LookupElementBuilder.create(definition, definitionName)
               .withIcon(StrutsApiIcons.Tiles.Tile)

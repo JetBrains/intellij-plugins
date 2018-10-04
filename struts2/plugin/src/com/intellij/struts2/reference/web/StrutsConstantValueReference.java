@@ -51,7 +51,6 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
   }
 
   @Override
-  @SuppressWarnings({"unchecked"})
   public PsiElement resolve() {
     if (elementConverterPair == null) {
       return myElement;
@@ -173,7 +172,6 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
 
     final StrutsConstantManager constantManager = StrutsConstantManager.getInstance(myElement.getProject());
 
-    @SuppressWarnings({"ConstantConditions"})
     final Converter converter = constantManager.findConverter(myElement, StrutsConstantKey.create(paramName));
     if (converter == null) {
       return null;

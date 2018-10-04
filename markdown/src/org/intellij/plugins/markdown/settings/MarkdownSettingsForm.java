@@ -254,7 +254,6 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     myApplyCustomCssText.setSelected(settings.isTextEnabled());
     resetEditor(settings.getStylesheetText());
 
-    //noinspection ConstantConditions
     myCssURIListener.actionPerformed(null);
     myCustomCssTextListener.actionPerformed(null);
   }
@@ -303,7 +302,6 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   }
 
   private void createMultipleProvidersSettings() {
-    //noinspection unchecked
     final List<MarkdownHtmlPanelProvider.ProviderInfo> providerInfos =
       ContainerUtil.mapNotNull(MarkdownHtmlPanelProvider.getProviders(),
                                provider -> {

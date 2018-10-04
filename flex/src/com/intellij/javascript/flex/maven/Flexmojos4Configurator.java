@@ -48,7 +48,6 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
   }
 
   public static String getCompilerConfigsDir(final Project project) {
-    //noinspection ConstantConditions
     return project.getBasePath() + "/.idea/flexmojos";
   }
 
@@ -81,7 +80,6 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
     }
 
     final List<RLMInfo> result = new ArrayList<>();
-    //noinspection unchecked
     for (final Element moduleElement : modulesElement.getChildren()) {
       if (moduleElement.getChildren().size() > 0) {
         final String mainClassRelativePath = moduleElement.getChildTextNormalize("sourceFile", moduleElement.getNamespace());

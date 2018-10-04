@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-@SuppressWarnings("TestMethodWithIncorrectSignature")
 @Flex(version="4.5")
 public class MxmlTest extends MxmlTestBase {
   @Flex(platform=TargetPlatform.Mobile, version="4.6")
@@ -150,7 +149,6 @@ public class MxmlTest extends MxmlTestBase {
       @Override
       public boolean visitFile(@NotNull VirtualFile file) {
         String name = file.getName();
-        //noinspection StatementWithEmptyBody
         if (name.charAt(0) == '.') {
           // skip
         }

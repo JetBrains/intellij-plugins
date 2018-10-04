@@ -121,14 +121,12 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
 
     final Converter<T> converter = findConverter(context, strutsConstantKey);
     if (converter == null) {
-      //noinspection unchecked
       return (T) stringValue;
     }
 
     final DomFileElement<StrutsRoot> first = strutsModel.getRoots().iterator().next();
 
     final ConvertContext convertContext = ConvertContextFactory.createConvertContext(first);
-    //noinspection unchecked
     return converter.fromString(stringValue, convertContext);
   }
 

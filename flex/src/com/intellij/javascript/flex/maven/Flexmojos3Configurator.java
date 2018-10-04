@@ -514,7 +514,6 @@ public class Flexmojos3Configurator {
     }
 
     final List<RLMInfo> result = new ArrayList<>();
-    //noinspection unchecked
     for (final Element moduleFilePathElement : (Iterable<Element>)moduleFilesElement.getChildren()) {
       final String path = moduleFilePathElement.getTextNormalize();
       if (path.endsWith(".mxml") || path.endsWith(".as")) {

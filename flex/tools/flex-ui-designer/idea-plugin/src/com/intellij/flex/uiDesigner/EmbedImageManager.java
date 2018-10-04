@@ -22,7 +22,6 @@ public class EmbedImageManager extends EmbedAssetManager<ImageAssetInfo> {
     return id;
   }
 
-  @SuppressWarnings("MethodOverloadsMethodOfSuperclass")
   public void remove(@NotNull VirtualFile file) {
     for (ImageAssetInfo asset : assets) {
       if (asset.file.equals(file)) {

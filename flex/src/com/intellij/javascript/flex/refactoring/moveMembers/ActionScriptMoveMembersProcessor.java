@@ -215,7 +215,6 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
     final MultiMap<PsiElement, String> conflicts = new MultiMap<>();
     JSRefactoringConflictsUtil.checkMembersAlreadyExist(myMembersToMove, myTargetClass, conflicts);
     for (JSAttributeListOwner member : myMembersToMove) {
-      //noinspection unchecked
       JSRefactoringConflictsUtil.checkOutgoingReferencesAccessibility(member, myMembersToMove, myTargetClass, true, conflicts,
                                                                       Conditions.alwaysTrue(), JSVisibilityUtil.DEFAULT_OPTIONS);
     }

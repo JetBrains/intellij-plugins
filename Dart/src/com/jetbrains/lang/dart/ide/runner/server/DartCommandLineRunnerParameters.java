@@ -119,7 +119,7 @@ public class DartCommandLineRunnerParameters implements Cloneable {
     return myEnvs;
   }
 
-  public void setEnvs(@SuppressWarnings("NullableProblems") final Map<String, String> envs) {
+  public void setEnvs(final Map<String, String> envs) {
     if (envs != null) { // null comes from old projects or if storage corrupted
       myEnvs = envs;
     }

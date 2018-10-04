@@ -84,7 +84,6 @@ class FlexCssValueValidator extends CssValueValidatorImpl {
 
   private static boolean isInteger(@NotNull String s) {
     try {
-      //noinspection ResultOfMethodCallIgnored
       Integer.parseInt(s, 16);
     }
     catch (NumberFormatException e) {

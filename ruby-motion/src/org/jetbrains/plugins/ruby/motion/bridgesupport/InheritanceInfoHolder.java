@@ -42,7 +42,6 @@ public class InheritanceInfoHolder {
   }
 
   public InheritanceInfoHolder() {
-    //noinspection ConstantConditions
     final Stream<Path> childrenStream;
     try {
       childrenStream = Files.list(getScriptsDir());

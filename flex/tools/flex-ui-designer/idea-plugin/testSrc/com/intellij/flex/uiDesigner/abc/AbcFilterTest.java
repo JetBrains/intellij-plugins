@@ -52,7 +52,6 @@ public class AbcFilterTest {
     Assertions.assertThat((int)out.length()).isEqualTo(252500);
   }
 
-  @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
   @Test
   public void fxg() throws IOException {
     File fxgFile = new File(DesignerTests.getTestDataPath(), "src/common/star.fxg");

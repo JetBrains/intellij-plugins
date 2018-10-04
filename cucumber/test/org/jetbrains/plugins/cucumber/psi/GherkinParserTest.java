@@ -8,7 +8,6 @@ import org.jetbrains.plugins.cucumber.CucumberTestUtil;
  * @author yole
  */
 public class GherkinParserTest extends ParsingTestCase {
-  @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
   public GherkinParserTest() {
     super("", "feature", new GherkinParserDefinition());
   }

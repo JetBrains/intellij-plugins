@@ -143,7 +143,6 @@ public class DartConsoleFolding extends ConsoleFolding {
     if (line.charAt(8) == ' ') return false;
 
     try {
-      //noinspection ResultOfMethodCallIgnored
       Integer.parseInt(line.substring(1, 8).trim());
       return true;
     }

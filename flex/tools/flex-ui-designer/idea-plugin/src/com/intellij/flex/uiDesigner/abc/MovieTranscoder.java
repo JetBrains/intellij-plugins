@@ -35,7 +35,6 @@ abstract class MovieTranscoder extends SwfTranscoder {
     transcode(in.getInputStream(), in.getLength(), out, true);
   }
 
-  @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
   protected void transcode(InputStream inputStream, long inputLength, File outFile, boolean writeBounds) throws IOException {
     out = new DataOutputStream(new BufferedOutputStream(readSourceAndCreateFileOut(inputStream, inputLength, outFile)));
     data = buffer.array();

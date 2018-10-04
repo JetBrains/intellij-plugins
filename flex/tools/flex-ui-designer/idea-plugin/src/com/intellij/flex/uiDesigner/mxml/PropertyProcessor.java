@@ -788,7 +788,6 @@ class PropertyProcessor implements ValueWriter {
       return;
     }
 
-    //noinspection UnusedCatchParameter
     try {
       out.writeAmfInt(Integer.parseInt(s));
     }

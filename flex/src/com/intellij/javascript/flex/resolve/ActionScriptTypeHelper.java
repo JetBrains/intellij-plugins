@@ -27,7 +27,6 @@ public final class ActionScriptTypeHelper extends JSTypeHelper {
   protected ActionScriptTypeHelper() {
   }
 
-  @SuppressWarnings("MethodOverridesStaticMethodOfSuperclass")
   public static JSTypeHelper getInstance() {
     return ourTypeHelper;
   }

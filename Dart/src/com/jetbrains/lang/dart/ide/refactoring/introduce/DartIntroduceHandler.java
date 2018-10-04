@@ -36,7 +36,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-@SuppressWarnings("MethodMayBeStatic")
 public abstract class DartIntroduceHandler implements RefactoringActionHandler {
   @Nullable
   protected static PsiElement findAnchor(PsiElement occurrence) {

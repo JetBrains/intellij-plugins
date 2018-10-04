@@ -331,7 +331,6 @@ public class LibraryManager implements Disposable {
 
     //noinspection ConstantConditions
     VirtualFile file = library.getFile().findChild("locale").findChild(locale).findChild(bundleName + PROPERTIES_EXTENSION);
-    //noinspection ConstantConditions
     return virtualFileToProperties(project, file);
   }
 

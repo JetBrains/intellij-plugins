@@ -37,7 +37,6 @@ class AbcMerger extends AbcTranscoder {
     this.definitionMap = definitionMap;
     this.definitionProcessor = definitionProcessor;
 
-    //noinspection IOResourceOpenedButNotSafelyClosed
     out = new FileOutputStream(outFile);
     channel = out.getChannel();
     channel.position(SwfUtil.getWrapHeaderLength());

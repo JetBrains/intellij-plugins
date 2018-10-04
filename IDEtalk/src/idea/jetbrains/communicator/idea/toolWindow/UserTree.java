@@ -135,7 +135,6 @@ public class UserTree extends KirTree {
   }
 
   @Override
-  @SuppressWarnings({"RefusedBequest"})
   protected void onDblClick(TreePath path, Object pathComponent, MouseEvent e) {
     Object userObject = TreeUtils.getUserObject(path);
     if (userObject instanceof User && !myDelivered) {

@@ -173,7 +173,6 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
         VirtualFile directory = psiDirectory.getVirtualFile();
         if (projectFileIndex.isInContent(directory)) {
           VirtualFile sourceRoot = projectFileIndex.getSourceRootForFile(directory);
-          //noinspection ConstantConditions
           final Module module = projectFileIndex.getModuleForFile(featureFile.getVirtualFile());
           if (module != null) {
             final VirtualFile[] sourceRoots = ModuleRootManager.getInstance(module).getSourceRoots();

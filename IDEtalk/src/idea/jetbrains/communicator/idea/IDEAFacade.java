@@ -97,7 +97,6 @@ public class IDEAFacade implements IDEFacade {
 
   @Override
   public File getCacheDir() {
-    //noinspection HardCodedStringLiteral
     File file = new File(PathManager.getSystemPath(), "ideTalk");
     file.mkdir();
     return file;
@@ -320,17 +319,14 @@ public class IDEAFacade implements IDEFacade {
     final LocalMessage[] result = new LocalMessage[1];
     event.accept(new EventVisitor(){
 
-      @SuppressWarnings({"RefusedBequest"})
       @Override public void visitStacktraceEvent(StacktraceEvent event) {
         result[0] = new IncomingStacktraceMessage(event);
       }
 
-      @SuppressWarnings({"RefusedBequest"})
       @Override public void visitCodePointerEvent(CodePointerEvent event) {
         result[0] = new IncomingCodePointerMessage(event, IDEAFacade.this);
       }
 
-      @SuppressWarnings({"RefusedBequest"})
       @Override public void visitMessageEvent(MessageEvent event) {
         result[0] = new IncomingLocalMessage(event);
       }

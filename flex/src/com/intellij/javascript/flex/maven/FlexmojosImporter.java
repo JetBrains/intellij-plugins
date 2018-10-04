@@ -217,7 +217,6 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
 
   private static List<String> getChildrenValues(final Element element) {
     final List<String> result = new ArrayList<>();
-    //noinspection unchecked
     for (Element child : (Iterable<Element>)element.getChildren()) {
       final String childValue = child.getTextNormalize();
       if (!StringUtil.isEmptyOrSpaces(childValue)) {

@@ -164,7 +164,6 @@ public class JstdCoverageEngine extends CoverageEngine {
     for (CoverageSuite suite : currentSuiteBundle.getSuites()) {
       ProjectData projectData = suite.getCoverageData(CoverageDataManager.getInstance(project));
       if (projectData != null) {
-        @SuppressWarnings("unchecked")
         Map<String, ClassData> classDataMap = projectData.getClasses();
         for (Map.Entry<String, ClassData> classDataEntry : classDataMap.entrySet()) {
           String fileName = classDataEntry.getKey();

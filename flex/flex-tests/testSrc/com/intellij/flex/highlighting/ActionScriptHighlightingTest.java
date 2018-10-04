@@ -1141,7 +1141,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doCreateClassOrInterfaceTest("Abc", false, false, true);
   }
 
-  @SuppressWarnings({"ConstantConditions"})
   private void doCreateClassOrInterfaceTestWithCheck(String name, boolean assertNoErrors) throws Exception {
     JSTestUtils.disableFileHeadersInTemplates(getProject());
     doCreateClassOrInterfaceTest(name, true, false, assertNoErrors);

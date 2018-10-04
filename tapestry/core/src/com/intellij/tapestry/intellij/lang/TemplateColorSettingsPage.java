@@ -117,7 +117,6 @@ public class TemplateColorSettingsPage implements ColorSettingsPage {
     Logger logger = Logger.getInstance(TemplateColorSettingsPage.class);
     String template = "";
     try {
-      //noinspection IOResourceOpenedButNotSafelyClosed
       template = FileUtil.loadTextAndClose(TemplateColorSettingsPage.class.getResourceAsStream("templateColorSettingsText.html"));
       if (template.isEmpty()) {
         logger.warn("Template color settings demo text is empty");

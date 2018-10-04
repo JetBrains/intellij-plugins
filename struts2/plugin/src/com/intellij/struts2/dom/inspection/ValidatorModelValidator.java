@@ -61,7 +61,7 @@ public class ValidatorModelValidator extends ValidatorBase {
     final ValidatorManager validatorManager = ValidatorManager.getInstance(project);
 
     // cache S2facet/validation settings per module
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") final Map<Module, Boolean> enabledForModule =
+    final Map<Module, Boolean> enabledForModule =
       FactoryMap.create(module1 -> isEnabledForModule(module1) &&
                                    StrutsFacet.getInstance(module1) != null);
 

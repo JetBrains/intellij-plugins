@@ -59,7 +59,6 @@ import java.util.List;
 
 import static com.intellij.flex.uiDesigner.LogMessageUtil.createAttachment;
 
-@SuppressWarnings("StaticFieldReferencedViaSubclass")
 public class SocketInputHandlerImpl extends SocketInputHandler {
   protected static final Logger LOG = Logger.getInstance(SocketInputHandlerImpl.class.getName());
 
@@ -94,7 +93,6 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   protected void createReader(InputStream inputStream) {
-    //noinspection IOResourceOpenedButNotSafelyClosed
     reader = new Reader(new BufferedInputStream(inputStream));
   }
 
@@ -518,7 +516,6 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
                                ? EmbedSwfManager.getInstance().getInfo(assetId)
                                : EmbedImageManager.getInstance().getInfo(assetId);
     ByteArrayOutputStreamEx byteOut = new ByteArrayOutputStreamEx(1024);
-    //noinspection IOResourceOpenedButNotSafelyClosed
     PrimitiveAmfOutputStream out = new PrimitiveAmfOutputStream(byteOut);
     Client.writeVirtualFile(assetInfo.file, out);
     out.writeNullableString(assetInfo instanceof SwfAssetInfo ? ((SwfAssetInfo)assetInfo).symbolName : null);

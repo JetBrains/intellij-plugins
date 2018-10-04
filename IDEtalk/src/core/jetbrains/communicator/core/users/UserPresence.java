@@ -62,7 +62,6 @@ public final class UserPresence {
     return new UserPresence(PresenceMode.valueOf(userPresence.get(0).toString()));
   }
 
-  @SuppressWarnings({"CollectionDeclaredAsConcreteClass"})
   public Vector toVector() {
     Vector result = new Vector();
     result.add(myPresenceMode.toString());

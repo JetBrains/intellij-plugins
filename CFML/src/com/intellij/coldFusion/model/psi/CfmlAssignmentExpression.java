@@ -123,7 +123,6 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
 
     @Override
     public PsiElement getParent() {
-      //noinspection ConstantConditions
       return getAssignedVariableElement();
     }
 

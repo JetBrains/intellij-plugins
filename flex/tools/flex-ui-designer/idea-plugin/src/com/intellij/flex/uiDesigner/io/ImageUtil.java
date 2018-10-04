@@ -42,7 +42,6 @@ public final class ImageUtil {
       byteBuffer[bufferLength++] = (byte)(pixel & 0xff);
 
       if (bufferLength == MAX_BUFFER_LENGTH) {
-        //noinspection ConstantConditions
         out.write(byteBuffer, 0, bufferLength);
         bufferLength = 0;
       }

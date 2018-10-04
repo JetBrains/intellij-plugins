@@ -352,7 +352,6 @@ public final class Decoder {
       }
     }
 
-    @SuppressWarnings("ConstantConditions")
     public void decode(int start, int length, Encoder v, boolean stopAfterConstructSuper, DataBuffer in) throws DecoderException {
       int originalPos = in.position();
       in.seek(start);

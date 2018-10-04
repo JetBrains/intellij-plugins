@@ -54,7 +54,6 @@ public class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
         return getQualifiedNameStatic(JSPsiImplUtils.findQualifiedElement((JSFile)element));
       }
       else if (element instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)element)) {
-        //noinspection ConstantConditions
         return getQualifiedNameStatic(XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element));
       }
       else if (element instanceof PsiDirectory) {

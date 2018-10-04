@@ -235,7 +235,6 @@ public class AddAdapterSupportDialog extends DialogWrapper {
     List<VirtualFile> copiedFiles = Lists.newArrayList();
     for (VirtualFile virtualFile : myAdapterSourceFiles) {
       try {
-        //noinspection NullableProblems
         copiedFiles.add(VfsUtilCore.copyFile(null, virtualFile, targetDir));
       } catch (IOException e) {
         Messages.showErrorDialog("Extract operation failed!\nUnable to copy " + virtualFile.getPath() + " to " + targetDir.getPath(),

@@ -28,7 +28,6 @@ public class PrettierCodeStyleEditorNotificationProvider
   private final PropertiesComponent myPropertiesComponent;
   private final EditorNotifications myEditorNotifications;
 
-  @SuppressWarnings("Unused")
   public PrettierCodeStyleEditorNotificationProvider(PropertiesComponent propertiesComponent,
                                                      Project project,
                                                      EditorNotifications editorNotifications, 

@@ -179,7 +179,7 @@ public class CfmlUnitRunConfiguration extends LocatableConfigurationBase {
     return myRunnerParameters;
   }
 
-  @SuppressWarnings({"CloneDoesntDeclareCloneNotSupportedException", "CloneDoesntCallSuperClone"})
+  @SuppressWarnings({"CloneDoesntCallSuperClone"})
   @Override
   public CfmlUnitRunConfiguration clone() {
     Element element = new Element("tmp");

@@ -43,7 +43,6 @@ public class TapestryPropertyNamingUtil {
     return method.getParameterList().getParametersCount() == 0;
   }
 
-  @SuppressWarnings("HardCodedStringLiteral")
   public static boolean isPropertySetter(@NotNull PsiMethod method) {
     if (method.isConstructor()) {
       return false;
@@ -77,7 +76,6 @@ public class TapestryPropertyNamingUtil {
     return methodName.substring(prefixLength);
   }
 
-  @SuppressWarnings({"HardCodedStringLiteral"})
   private static String getPropertyNameFromSetter(@NotNull PsiMethod setter) {
     return setter.getName().substring("set".length());
   }

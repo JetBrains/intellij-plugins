@@ -75,7 +75,6 @@ class InjectedASWriter implements ValueReferenceResolver {
     final InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, type, problemsHolder);
     InjectedLanguageManager.getInstance(host.getProject()).enumerate(host, visitor);
 
-    //noinspection ThrowableResultOfMethodCallIgnored
     if (visitor.getInvalidPropertyException() != null) {
       throw visitor.getInvalidPropertyException();
     }

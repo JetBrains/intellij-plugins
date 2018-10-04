@@ -77,7 +77,6 @@ public class JstdRunSettingsSerializationUtils {
     return builder.build();
   }
 
-  @SuppressWarnings("unchecked")
   private static List<String> readFilesExcludedFromCoverage(@NotNull Element root) {
     List<String> excludedPaths = Lists.newArrayList();
     Element coverageElement = root.getChild(Key.COVERAGE.getKey());
@@ -132,7 +131,6 @@ public class JstdRunSettingsSerializationUtils {
     builder.setJSFilePath(FileUtil.toSystemDependentName(jsFile));
   }
 
-  @SuppressWarnings({"unchecked"})
   @NotNull
   private static <E extends Enum<E>> E readEnumByName(@NotNull Element element, @NotNull Key key, @NotNull E defaultValue) {
     String str = readString(element, key, "");

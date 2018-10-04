@@ -232,7 +232,6 @@ class MessageHistory {
 
   @NonNls
   private String getFileNameForDate(Date date) {
-    //noinspection HardCodedStringLiteral
     return HISTORY + '/' + DATE_FORMAT.format(date) + ".xml";
   }
 

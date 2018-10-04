@@ -28,7 +28,6 @@ public class GherkinTypedHandler extends TypedHandlerDelegate {
    */
   @Nullable
   private static GherkinTable getTable(@NotNull PsiElement element) {
-    //noinspection ConstantConditions
     while (element != null) {
       if (element instanceof GherkinTable) {
         break;

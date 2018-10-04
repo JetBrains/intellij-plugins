@@ -58,7 +58,6 @@ public class ActionNameCustomReferenceConverter implements CustomReferenceConver
     final PsiReferenceBase<PsiElement> ref = new PsiReferenceBase<PsiElement>(psiElement) {
 
       @Override
-      @SuppressWarnings({"ConstantConditions"})
       public PsiElement resolve() {
         return genericDomValue.getParent().getXmlTag();
       }

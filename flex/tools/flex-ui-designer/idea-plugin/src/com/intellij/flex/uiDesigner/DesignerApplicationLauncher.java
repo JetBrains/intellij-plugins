@@ -311,7 +311,6 @@ public class DesignerApplicationLauncher extends DocumentTask {
     }
     else {
       ClassLoader classLoader = DesignerApplicationLauncher.class.getClassLoader();
-      //noinspection unchecked
       for (Pair<String, String> file : files) {
         IOUtil.saveStream(classLoader.getResource(file.first), new File(DesignerApplicationManager.APP_DIR, file.first));
       }

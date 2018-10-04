@@ -164,7 +164,6 @@ public class SwcCatalogXmlUtil {
     return timestamp;
   }
 
-  @SuppressWarnings({"unchecked"})
   private static THashMap<String, TObjectLongHashMap<String>> parseTimestampsFromCatalogXml(final @NotNull VirtualFile catalogFile) {
     //  <swc xmlns="http://www.adobe.com/flash/swccatalog/9">
     //    <libraries>

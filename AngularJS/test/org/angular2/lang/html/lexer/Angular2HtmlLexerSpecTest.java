@@ -37,7 +37,7 @@ import static java.util.stream.Collectors.toList;
 import static org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR;
 import static org.angular2.lang.html.lexer.Angular2HtmlTokenTypes.*;
 
-@SuppressWarnings({"CodeBlock2Expr", "JUnitTestCaseWithNoTests", "JUnitTestCaseWithNonTrivialConstructors"})
+@SuppressWarnings({"CodeBlock2Expr", "JUnitTestCaseWithNoTests"})
 @RunWith(OleasterRunner.class)
 public class Angular2HtmlLexerSpecTest {
 

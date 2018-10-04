@@ -334,7 +334,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         }
         initToolWindow();
         // idea inspection bug
-        //noinspection ConstantConditions
         assert toolWindow != null;
       }
 

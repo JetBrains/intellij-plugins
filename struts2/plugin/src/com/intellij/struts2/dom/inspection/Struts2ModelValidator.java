@@ -55,7 +55,7 @@ public class Struts2ModelValidator extends ValidatorBase {
     final PsiManager psiManager = PsiManager.getInstance(project);
 
     // cache validation settings per module
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") final Map<Module, Boolean> enabledForModule =
+    final Map<Module, Boolean> enabledForModule =
       FactoryMap.create(module1 -> isEnabledForModule(module1));
 
     final Set<VirtualFile> files = new THashSet<>();

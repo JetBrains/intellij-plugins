@@ -46,7 +46,6 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
   @Override
   public String getFamilyName() {
     if (mySuppressActionDelegate != null) {
-      //noinspection DialogTitleCapitalization
       return mySuppressActionDelegate.getFamilyName();
     }
 

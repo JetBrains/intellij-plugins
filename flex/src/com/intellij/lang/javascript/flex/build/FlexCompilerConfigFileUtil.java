@@ -77,7 +77,6 @@ public class FlexCompilerConfigFileUtil {
       try {
         final NamespacesXmlBuilder builder = new NamespacesXmlBuilder();
         if (cachedDocument != null) {
-          //noinspection IOResourceOpenedButNotSafelyClosed
           NanoXmlUtil.parse(new CharSequenceReader(cachedDocument.getCharsSequence()), builder);
         }
         else {

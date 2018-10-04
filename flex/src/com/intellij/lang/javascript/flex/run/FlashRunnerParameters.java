@@ -286,7 +286,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
   }
 
   // parameter can be null if there's some new enum constant in workspace.xml (like OtherAndroidDevice), but user downgraded IntelliJ IDEA
-  public void setEmulator(@SuppressWarnings("NullableProblems") final Emulator emulator) {
+  public void setEmulator(final Emulator emulator) {
     if (Emulator.ALL_EMULATORS.contains(emulator)) {
       myEmulator = emulator;
     }
@@ -384,7 +384,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     return myAppDescriptorForEmulator;
   }
 
-  @SuppressWarnings("NullableProblems") // compatibility (AppDescriptorForEmulator.Generated enum constant removed)
+  // compatibility (AppDescriptorForEmulator.Generated enum constant removed)
   public void setAppDescriptorForEmulator(final AppDescriptorForEmulator appDescriptorForEmulator) {
     if (appDescriptorForEmulator != null) {
       myAppDescriptorForEmulator = appDescriptorForEmulator;

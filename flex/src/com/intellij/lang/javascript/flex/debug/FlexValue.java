@@ -732,7 +732,6 @@ class FlexValue extends XValue {
 
   private static boolean isInteger(final String s) {
     try {
-      //noinspection ResultOfMethodCallIgnored
       Integer.parseInt(s);
       return true;
     }

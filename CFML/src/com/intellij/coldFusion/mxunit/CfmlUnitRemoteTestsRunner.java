@@ -56,7 +56,6 @@ public class CfmlUnitRemoteTestsRunner {
 
     ApplicationManager.getApplication().invokeAndWait(runnable);
     if (!error.isNull()) {
-      //noinspection ThrowableResultOfMethodCallIgnored
       throw new ExecutionException(error.get().getMessage());
     }
   }
@@ -84,7 +83,6 @@ public class CfmlUnitRemoteTestsRunner {
     ApplicationManager.getApplication().invokeAndWait(runnable);
 
     if (!error.isNull()) {
-      //noinspection ThrowableResultOfMethodCallIgnored
       throw new ExecutionException(error.get().getMessage());
     }
   }

@@ -71,7 +71,6 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
   private RefreshConfigFiles postTask;
 
   Flexmojos4GenerateConfigTask(MavenProjectsTree tree) {
-    //noinspection NullableProblems
     super(null, tree);
   }
 
@@ -182,7 +181,6 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
 
     programParametersList.add(mavenGeneralSettings.getEffectiveLocalRepository().getAbsolutePath());
     programParametersList.add(mavenGeneralSettings.isWorkOffline() ? "t" : "f");
-    //noinspection ConstantConditions
     programParametersList.add(project.getBasePath() + "/.idea/flexmojos");
 
     configureMavenClassPath(mavenGeneralSettings, params.getClassPath());
@@ -203,7 +201,6 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
     process = commandLine.createProcess();
     ApplicationManager.getApplication().executeOnPooledThread(new OutputReader(project));
 
-    //noinspection IOResourceOpenedButNotSafelyClosed
     out = new DataOutputStream(new BufferedOutputStream(process.getOutputStream()));
     writeExplicitProfiles(mavenProjectsManager.getExplicitProfiles().getEnabledProfiles());
     writeWorkspaceMap(myTree.getProjects());

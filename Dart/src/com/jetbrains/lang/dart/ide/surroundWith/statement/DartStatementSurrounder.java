@@ -61,7 +61,6 @@ public abstract class DartStatementSurrounder implements Surrounder {
     return TextRange.create(endOffset, endOffset);
   }
 
-  @SuppressWarnings("MethodMayBeStatic")
   protected void afterAdd(PsiElement elementToAdd) {
     final PsiElement newLineNode = PsiParserFacade.SERVICE.getInstance(elementToAdd.getProject()).createWhiteSpaceFromText("\n");
     elementToAdd.add(newLineNode);

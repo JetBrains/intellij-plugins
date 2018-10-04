@@ -106,7 +106,6 @@ public class DartConsoleFilter implements Filter {
 
     final String port = url.substring(colonIndex + 1);
     try {
-      //noinspection ResultOfMethodCallIgnored
       Integer.parseInt(port);
       final int startOffset = lineStartOffset + OBSERVATORY_LISTENING_ON.length();
       return new Result(startOffset, startOffset + url.length(), new ObservatoryHyperlinkInfo(url));

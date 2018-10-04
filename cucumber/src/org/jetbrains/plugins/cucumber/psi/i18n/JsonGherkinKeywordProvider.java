@@ -26,7 +26,6 @@ public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
     if (myKeywordProvider == null) {
       final ClassLoader classLoader = JsonGherkinKeywordProvider.class.getClassLoader();
       if (classLoader != null) {
-        @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
         final InputStream inputStream = classLoader.getResourceAsStream("i18n.json");
         if (inputStream != null) {
           myKeywordProvider = new JsonGherkinKeywordProvider(inputStream);

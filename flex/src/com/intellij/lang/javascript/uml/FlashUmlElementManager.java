@@ -207,7 +207,6 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
       return JSPsiImplUtils.findQualifiedElement((JSFile)element).getName();
     }
     else if (element instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)element)) {
-      //noinspection ConstantConditions
       return ((XmlFile)element).getVirtualFile().getNameWithoutExtension();
     }
     else {

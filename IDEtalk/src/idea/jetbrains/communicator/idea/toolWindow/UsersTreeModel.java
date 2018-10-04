@@ -21,7 +21,6 @@ import javax.swing.tree.TreePath;
 /**
  * @author Kir Maximov
  */
-@SuppressWarnings({"RefusedBequest"})
 public class UsersTreeModel extends DefaultTreeModel implements Disposable {
 
   private final UserModel myUserModel;

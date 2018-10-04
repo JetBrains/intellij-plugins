@@ -252,7 +252,7 @@ public class FlexTestUtils {
   }
 
   public static FlexProjectConfigurationEditor createConfigEditor(final Module... modules) {
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") final Map<Module, ModifiableRootModel> models =
+    final Map<Module, ModifiableRootModel> models =
       FactoryMap.create(module -> {
         final ModifiableRootModel result1 = ModuleRootManager.getInstance(module).getModifiableModel();
         Disposer.register(module, new Disposable() {

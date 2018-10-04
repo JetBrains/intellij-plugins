@@ -21,7 +21,7 @@ import org.intellij.plugins.postcss.resolve.PostCssCustomSelectorResolveTest;
 import org.intellij.plugins.postcss.smartEnter.PostCssSmartEnterTest;
 import org.intellij.plugins.postcss.usages.PostCssFindUsagesTest;
 
-@SuppressWarnings({"JUnitTestClassNamingConvention", "JUnitTestCaseWithNoTests"})
+@SuppressWarnings({"JUnitTestClassNamingConvention"})
 public class PostCssTestSuite {
   public static Test suite() {
     TestSuite testSuite = new TestSuite("All PostCSS");

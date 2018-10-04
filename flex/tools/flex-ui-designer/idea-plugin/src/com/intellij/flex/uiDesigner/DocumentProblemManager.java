@@ -38,7 +38,6 @@ public class DocumentProblemManager {
     return builder;
   }
 
-  @SuppressWarnings("MethodMayBeStatic")
   public String toString(List<ProblemDescriptor> problems) {
     final StringBuilder builder = new StringBuilder();
     appendTitle(builder).append("<ul>");

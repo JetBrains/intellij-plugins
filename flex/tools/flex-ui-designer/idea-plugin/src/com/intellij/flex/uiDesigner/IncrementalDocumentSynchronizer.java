@@ -205,7 +205,6 @@ final class IncrementalDocumentSynchronizer extends Update {
     }
 
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
-    //noinspection IOResourceOpenedButNotSafelyClosed
     final PrimitiveAmfOutputStream dataOut = new PrimitiveAmfOutputStream(new ByteArrayOutputStreamEx(16));
     PrimitiveWriter writer = new PrimitiveWriter(dataOut, stringWriter);
     boolean needRollbackStringWriter = true;

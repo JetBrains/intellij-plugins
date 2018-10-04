@@ -27,7 +27,7 @@ import com.intellij.flex.uml.FlashUmlTest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-@SuppressWarnings({"JUnitTestClassNamingConvention", "JUnitTestCaseWithNoTests"})
+@SuppressWarnings({"JUnitTestCaseWithNoTests"})
 public class FlexTestSuite {
 
   public static Test suite() {

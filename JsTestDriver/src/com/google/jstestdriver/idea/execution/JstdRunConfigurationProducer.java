@@ -98,7 +98,6 @@ public class JstdRunConfigurationProducer extends RunConfigurationProducer<JstdR
       return false;
     }
     long startTimeNano = System.nanoTime();
-    @SuppressWarnings({"unchecked"})
     JstdRunSettings settings = buildRunSettingsContext(context.getLocation());
     if (settings == null) {
       logDoneCreateConfigurationByElement(startTimeNano, "1");

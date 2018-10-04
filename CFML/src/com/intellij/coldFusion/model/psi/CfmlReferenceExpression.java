@@ -375,7 +375,6 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
       else {
         newElement = CfmlPsiUtil.createIdentifier(newElementName, getProject());
       }
-      //noinspection ConstantConditions
       getNode().replaceChild(referenceNode, newElement.getNode());
     }
 

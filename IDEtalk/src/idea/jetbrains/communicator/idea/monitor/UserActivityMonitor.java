@@ -58,7 +58,6 @@ public class UserActivityMonitor implements Disposable, Runnable, BaseComponent 
     activity();
 
     ProjectUtil.runWhenProjectOpened(project -> {
-      //noinspection HardCodedStringLiteral
       Thread t = new Thread(this, getComponentName() + " thread");
       t.setDaemon(true);
       t.start();

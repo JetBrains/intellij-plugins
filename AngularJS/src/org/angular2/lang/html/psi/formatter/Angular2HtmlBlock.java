@@ -72,7 +72,6 @@ public class Angular2HtmlBlock extends XmlBlock {
            || super.isLeaf();
   }
 
-  @SuppressWarnings("Duplicates")
   @Override
   public Spacing getSpacing(Block child1, @NotNull Block child2) {
     if (!(child1 instanceof AbstractBlock) || !(child2 instanceof AbstractBlock)) {

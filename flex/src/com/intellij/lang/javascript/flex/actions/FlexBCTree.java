@@ -32,7 +32,6 @@ public class FlexBCTree extends CheckboxTree {
   private final EventDispatcher<ChangeListener> myDispatcher = EventDispatcher.create(ChangeListener.class);
 
   public FlexBCTree(final Project project) {
-    //noinspection unchecked
     this(project, Conditions.alwaysTrue());
   }
 

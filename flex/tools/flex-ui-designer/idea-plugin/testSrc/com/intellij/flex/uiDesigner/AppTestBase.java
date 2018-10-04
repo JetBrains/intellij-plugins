@@ -109,7 +109,6 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     FlexSdkType2.addFlexSdkSwcRoots(sdkModificator, frameworksDir);
   }
 
-  @SuppressWarnings("ConstantConditions")
   protected void addLibrary(SdkModificator sdkModificator, String path) {
     VirtualFile virtualFile = path.charAt(0) != '/' ? DesignerTests.getFile("lib", path) : DesignerTests.getFile(path);
     VirtualFile jarFile = JarFileSystem.getInstance().getJarRootForLocalFile(virtualFile);

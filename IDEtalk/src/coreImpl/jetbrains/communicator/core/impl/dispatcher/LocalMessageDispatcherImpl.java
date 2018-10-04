@@ -138,7 +138,6 @@ public class LocalMessageDispatcherImpl extends AbstractMessageDispatcher implem
 
     @Override
     public void afterChange(IDEtalkEvent event) {
-      //noinspection RefusedBequest
       event.accept(new EventVisitor() {
         @Override
         public void visitTransportEvent(TransportEvent event) {

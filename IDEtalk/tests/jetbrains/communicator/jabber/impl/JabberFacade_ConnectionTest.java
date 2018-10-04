@@ -70,7 +70,6 @@ public class JabberFacade_ConnectionTest extends BaseTestCase {
 
   @Override
   protected void tearDown() throws Exception {
-//noinspection EmptyCatchBlock
     try {
       myFacade.getConnection().getAccountManager().deleteAccount();
       myFacade.disconnect();

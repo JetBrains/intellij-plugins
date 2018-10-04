@@ -330,7 +330,6 @@ public class CompilerOptionInfo {
       assert rootElement != null;
       assert "options".equals(rootElement.getName());
 
-      //noinspection unchecked
       for (Element element : rootElement.getChildren()) {
         final CompilerOptionInfo info;
         if ("group".equals(element.getName())) {
@@ -373,7 +372,6 @@ public class CompilerOptionInfo {
 
     final List<CompilerOptionInfo> infos = new ArrayList<>();
 
-    //noinspection unchecked
     for (final Element element : groupElement.getChildren()) {
       final CompilerOptionInfo info;
       if ("group".equals(element.getName())) {
@@ -438,7 +436,6 @@ public class CompilerOptionInfo {
   private static ListElement[] readListElements(final Element element) {
     final List<ListElement> result = new LinkedList<>();
 
-    //noinspection unchecked
     for (final Element childElement : element.getChildren("listElement")) {
       final String name = childElement.getAttributeValue("name");
       final String displayName = childElement.getAttributeValue("displayName");

@@ -121,13 +121,10 @@ public class FlexCompilerConfigFileUtilBase {
 
     final Collection<String> result = new ArrayList<>();
 
-    //noinspection unchecked
     for (Element compilerElement : rootElement.getChildren(COMPILER, namespace)) {
       if (removeExternal) {
-        //noinspection unchecked
         for (Element externalLibraryPathElement : compilerElement.getChildren(EXTERNAL_LIBRARY_PATH, namespace)) {
           final Collection<Element> pathElementsToRemove = new ArrayList<>();
-          //noinspection unchecked
           for (Element pathElement : externalLibraryPathElement.getChildren(PATH_ELEMENT, namespace)) {
             final String path = pathElement.getText();
             final String fileName = path.substring(FileUtil.toSystemIndependentName(path).lastIndexOf("/") + 1);
@@ -146,10 +143,8 @@ public class FlexCompilerConfigFileUtilBase {
       }
 
       if (removeIncluded) {
-        //noinspection unchecked
         for (Element includeLibrariesElement : compilerElement.getChildren(INCLUDE_LIBRARIES, namespace)) {
           final Collection<Element> libraryElementsToRemove = new ArrayList<>();
-          //noinspection unchecked
           for (Element libraryElement : includeLibrariesElement.getChildren(LIBRARY, namespace)) {
             result.add(libraryElement.getText());
             libraryElementsToRemove.add(libraryElement);
@@ -174,7 +169,6 @@ public class FlexCompilerConfigFileUtilBase {
       }
     }
 
-    //noinspection unchecked
     for (final Element otherElement : otherRootElement.getChildren()) {
       rootElement.addContent(otherElement.clone());
     }
@@ -184,10 +178,8 @@ public class FlexCompilerConfigFileUtilBase {
   private static Collection<Element> findDuplicateElementsRecursively(final Element existingElement, final Element otherElement) {
     final Collection<Element> result = new THashSet<>();
 
-    //noinspection unchecked
     for (Element potentialChild : otherElement.getChildren()) {
       final List existingChildren = existingElement.getChildren(potentialChild.getName(), existingElement.getNamespace());
-      //noinspection unchecked
       for (Element existingChild : (Iterable<Element>)existingChildren) {
         final String potentialChildContent = potentialChild.getTextTrim();
         if (potentialChildContent.isEmpty()) {
