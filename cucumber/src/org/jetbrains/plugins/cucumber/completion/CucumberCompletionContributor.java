@@ -208,14 +208,13 @@ public class CucumberCompletionContributor extends CompletionContributor {
 
 
   private static void addStepDefinitions(@NotNull CompletionResultSet result, @NotNull PsiFile file) {
-    CompletionResultSet cucumberResultSet = result.withPrefixMatcher(new CucumberPrefixMatcher(result.getPrefixMatcher().getPrefix()));
-    
     final List<AbstractStepDefinition> definitions = CucumberStepsIndex.getInstance(file.getProject()).getAllStepDefinitions(file);
     for (AbstractStepDefinition definition : definitions) {
-      if (definition.getCucumberRegex() == null) {
+      String definitionText = definition.getStepDefinitionText();
+      if (definitionText == null) {
         continue;
       }
-      for (String stepCompletion : parseVariationsIntoBrackets(definition.getCucumberRegex())) {
+      for (String stepCompletion : parseVariationsIntoBrackets(definitionText)) {
         // trim regexp line start/end markers
         stepCompletion = StringUtil.trimStart(stepCompletion, "^");
         stepCompletion = StringUtil.trimEnd(stepCompletion, "$");
@@ -248,7 +247,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
         final LookupElementBuilder lookup = element != null
                                             ? LookupElementBuilder.create(element, stepCompletion).bold()
                                             : LookupElementBuilder.create(stepCompletion);
-        cucumberResultSet.addElement(lookup.withInsertHandler(new StepInsertHandler(ranges)));
+        result.addElement(lookup.withInsertHandler(new StepInsertHandler(ranges)));
       }
     }
   }
