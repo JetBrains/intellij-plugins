@@ -300,18 +300,9 @@ public class CucumberUtil {
    */
   public static boolean isCucumberExpression(@NotNull String stepDefinitionPattern) {
     final boolean[] containsParameterTypes = {false};
-    buildRegexpFromCucumberExpression(stepDefinitionPattern, new ParameterTypeManager() {
-      @Nullable
-      @Override
-      public String getParameterTypeValue(@NotNull String name) {
-        containsParameterTypes[0] = true;
-        return null;
-      }
-
-      @Override
-      public PsiElement getParameterTypeDeclaration(@NotNull String name) {
-        return null;
-      }
+    processParameterTypesInCucumberExpression(stepDefinitionPattern, textRange -> {
+      containsParameterTypes[0] = true;
+      return false;
     });
 
     return containsParameterTypes[0];
