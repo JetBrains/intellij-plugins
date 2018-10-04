@@ -1,0 +1,15 @@
+Makefile
+  MakefileRuleImpl(RULE)
+    MakefileTargetLineImpl(TARGET_LINE)
+      MakefileTargetsImpl(TARGETS)
+        MakefileTargetImpl(TARGET)
+          PsiElement(identifier)('help')
+      PsiElement(:)(':')
+      MakefilePrerequisitesImpl(PREREQUISITES)
+        MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
+          <empty list>
+      PsiElement(EOL)('\n')
+    MakefileRecipeImpl(RECIPE)
+      MakefileCommandImpl(COMMAND)
+        PsiElement(\t)('\t')
+        PsiElement(line)('@grep -E '^[a-zA-Z_-]+:.*?=!##'')
