@@ -43,7 +43,7 @@ Prerequisites:
 
 4. Open intellij-community project, compile it.
    Open File | Project Structure | Modules | `[+]` | Import Module, select intellij-plugins/Dart/Dart-community.iml.
-   In the same Project Structure dialog open the Dependencies tab of the `intellij.idea.community.main` module,
+   In the same Project Structure dialog open the Dependencies tab of the `intellij` > `idea.community` > `main` module,
    click `[+]` at the bottom (Mac) or right (Win/Linux) to add a module dependency on the `Dart-community` module.
 
 5. Open Settings (Preferences) | Version Control and make sure that intellij-plugins is configured as a 4th Git root.
