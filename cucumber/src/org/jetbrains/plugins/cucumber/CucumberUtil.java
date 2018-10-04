@@ -75,10 +75,10 @@ public class CucumberUtil {
 
   static {
     Map<String, String> standardParameterTypes = new HashMap<>();
-    standardParameterTypes.put("int", "(-?\\d+)");
-    standardParameterTypes.put("float", "(-?\\d*[.,]?\\d+)");
-    standardParameterTypes.put("word", "([^\\s]+)");
-    standardParameterTypes.put("string", "(\"(?:[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'(?:[^'\\\\]*(?:\\\\.[^'\\\\]*)*)')");
+    standardParameterTypes.put("int", "-?\\d+");
+    standardParameterTypes.put("float", "-?\\d*[.,]?\\d+");
+    standardParameterTypes.put("word", "[^\\s]+");
+    standardParameterTypes.put("string", "\"(?:[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'(?:[^'\\\\]*(?:\\\\.[^'\\\\]*)*)'");
 
     STANDARD_PARAMETER_TYPES = Collections.unmodifiableMap(standardParameterTypes);
   }

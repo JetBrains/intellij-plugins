@@ -45,7 +45,7 @@ public class CucumberJavaUtil {
     Map<String, String> javaParameterTypes = new HashMap<>();
     javaParameterTypes.put("short", STANDARD_PARAMETER_TYPES.get("int"));
     javaParameterTypes.put("biginteger", STANDARD_PARAMETER_TYPES.get("int"));
-    javaParameterTypes.put("bigdecimal", "(-?\\d*[.,]\\d+)");
+    javaParameterTypes.put("bigdecimal", "-?\\d*[.,]\\d+");
     javaParameterTypes.put("byte", STANDARD_PARAMETER_TYPES.get("int"));
     javaParameterTypes.put("double", STANDARD_PARAMETER_TYPES.get("float"));
     javaParameterTypes.put("long", STANDARD_PARAMETER_TYPES.get("int"));
