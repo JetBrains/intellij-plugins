@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.typescript.psi.impl.ES6DecoratorImpl;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -29,13 +30,6 @@ public class Angular2DecoratorUtil {
 
   public static final String COMPONENT_DEC = "Component";
 
-  @Nullable
-  public static String getDecoratorName(@Nullable JSCallExpression decorator) {
-    return decorator != null && decorator.getMethodExpression() instanceof JSReferenceExpression
-           ? ((JSReferenceExpression)decorator.getMethodExpression()).getReferenceName()
-           : null;
-  }
-
   public static boolean isLiteralInNgDecorator(PsiElement element, String propertyName, String decoratorName) {
     if (element instanceof JSLiteralExpression) {
       final JSLiteralExpression literal = (JSLiteralExpression)element;
@@ -43,7 +37,7 @@ public class Angular2DecoratorUtil {
       return literal.isQuotedLiteral()
              && (parent = literal.getParent()) instanceof JSProperty
              && propertyName.equals(((JSProperty)parent).getName())
-             && decoratorName.equals(getDecoratorName(PsiTreeUtil.getParentOfType(parent, JSCallExpression.class)));
+             && decoratorName.equals(ES6Decorator.getDecoratorName(PsiTreeUtil.getParentOfType(parent, JSCallExpression.class)));
     }
     return false;
   }
@@ -55,12 +49,14 @@ public class Angular2DecoratorUtil {
     }
     JSAttributeList list = cls.getAttributeList();
     for (ES6Decorator decorator : PsiTreeUtil.getStubChildrenOfTypeAsList(list, ES6Decorator.class)) {
-      JSCallExpression call = ObjectUtils.tryCast(decorator.getExpression(), JSCallExpression.class);
-      if (call != null
-          && name.equals(getDecoratorName(call))
-          && call.getArguments().length == 1
-          && call.getArguments()[0] instanceof JSObjectLiteralExpression) {
-        return call;
+      String decoratorName = decorator.getDecoratorName();
+      if (name.equals(decoratorName)) {
+        JSCallExpression call = ObjectUtils.tryCast(decorator.getExpression(), JSCallExpression.class);
+        if (call != null
+            && call.getArguments().length == 1
+            && call.getArguments()[0] instanceof JSObjectLiteralExpression) {
+          return call;
+        }
       }
     }
     return null;
