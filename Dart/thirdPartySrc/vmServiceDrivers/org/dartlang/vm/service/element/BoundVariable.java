@@ -15,7 +15,6 @@ package org.dartlang.vm.service.element;
 
 // This is a generated file.
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 /**
@@ -55,14 +54,16 @@ public class BoundVariable extends Element {
   }
 
   /**
-   * @return one of <code>InstanceRef</code> or <code>Sentinel</code>
+   * @return one of <code>InstanceRef</code>, <code>TypeArgumentsRef</code> or
+   * <code>Sentinel</code>
    */
-  public InstanceRef getValue() {
-    JsonElement elem = json.get("value");
-    if (!elem.isJsonObject()) return null;
-    JsonObject child = elem.getAsJsonObject();
-    String type = child.get("type").getAsString();
-    if ("Sentinel".equals(type)) return null;
-    return new InstanceRef(child);
+  public Object getValue() {
+    JsonObject elem = (JsonObject)json.get("value");
+    if (elem == null) return null;
+
+    if (elem.get("type").getAsString().equals("@Instance")) return new InstanceRef(elem);
+    if (elem.get("type").getAsString().equals("@TypeArguments")) return new TypeArgumentsRef(elem);
+    if (elem.get("type").getAsString().equals("Sentinel")) return new Sentinel(elem);
+    return null;
   }
 }

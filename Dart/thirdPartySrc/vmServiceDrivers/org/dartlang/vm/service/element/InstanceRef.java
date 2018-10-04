@@ -69,6 +69,8 @@ public class InstanceRef extends ObjRef {
    *  - Int32x4List
    *  - Float32x4List
    *  - Float64x2List
+   *
+   * Can return <code>null</code>.
    */
   public int getLength() {
     return json.get("length") == null ? -1 : json.get("length").getAsInt();
@@ -79,9 +81,11 @@ public class InstanceRef extends ObjRef {
    *
    * Provided for instance kinds:
    *  - Type
+   *
+   * Can return <code>null</code>.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return json.get("name") == null ? null : json.get("name").getAsString();
   }
 
   /**
@@ -89,6 +93,8 @@ public class InstanceRef extends ObjRef {
    *
    * Provided for instance kinds:
    *  - TypeParameter
+   *
+   * Can return <code>null</code>.
    */
   public ClassRef getParameterizedClass() {
     return json.get("parameterizedClass") == null ? null : new ClassRef((JsonObject) json.get("parameterizedClass"));
@@ -101,6 +107,8 @@ public class InstanceRef extends ObjRef {
    *
    * Provided for instance kinds:
    *  - RegExp
+   *
+   * Can return <code>null</code>.
    */
   public InstanceRef getPattern() {
     return json.get("pattern") == null ? null : new InstanceRef((JsonObject) json.get("pattern"));
@@ -111,6 +119,8 @@ public class InstanceRef extends ObjRef {
    *
    * Provided for instance kinds:
    *  - Type
+   *
+   * Can return <code>null</code>.
    */
   public ClassRef getTypeClass() {
     return json.get("typeClass") == null ? null : new ClassRef((JsonObject) json.get("typeClass"));
@@ -129,9 +139,11 @@ public class InstanceRef extends ObjRef {
    *  - Float64x2
    *  - Int32x4
    *  - StackTrace
+   *
+   * Can return <code>null</code>.
    */
   public String getValueAsString() {
-    return json.get("valueAsString").getAsString();
+    return json.get("valueAsString") == null ? null : json.get("valueAsString").getAsString();
   }
 
   /**
@@ -139,6 +151,8 @@ public class InstanceRef extends ObjRef {
    * the value 'true'.
    *
    * New code should use 'length' and 'count' instead.
+   *
+   * Can return <code>null</code>.
    */
   public boolean getValueAsStringIsTruncated() {
     JsonElement elem = json.get("valueAsStringIsTruncated");

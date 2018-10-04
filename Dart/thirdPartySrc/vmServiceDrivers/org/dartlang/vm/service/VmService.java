@@ -77,7 +77,7 @@ public class VmService extends VmServiceBase {
   /**
    * The minor version number of the protocol supported by this client.
    */
-  public static final int versionMinor = 6;
+  public static final int versionMinor = 9;
 
   /**
    * The [addBreakpoint] RPC is used to add a breakpoint at a specific line of some script.
@@ -368,6 +368,30 @@ public class VmService extends VmServiceBase {
   }
 
   /**
+   * The [invoke] RPC is used to perform regular method invocation on some receiver, as if by
+   * dart:mirror's ObjectMirror.invoke. Note this does not provide a way to perform getter, setter
+   * or constructor invocation.
+   */
+  public void invoke(String isolateId, String targetId, String selector, List<String> argumentIds, InvokeConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    params.addProperty("targetId", targetId);
+    params.addProperty("selector", selector);
+    params.add("argumentIds", convertIterableToJsonArray(argumentIds));
+    request("invoke", params, consumer);
+  }
+
+  /**
+   * The [kill] RPC is used to kill an isolate as if by dart:isolate's
+   * <code>Isolate.kill(IMMEDIATE)</code>Isolate.kill(IMMEDIATE).
+   */
+  public void kill(String isolateId, SuccessConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    request("kill", params, consumer);
+  }
+
+  /**
    * The [pause] RPC is used to interrupt a running isolate. The RPC enqueues the interrupt request
    * and potentially returns before the isolate is paused.
    */
@@ -467,6 +491,17 @@ public class VmService extends VmServiceBase {
     params.addProperty("isolateId", isolateId);
     params.addProperty("mode", mode.name());
     request("setExceptionPauseMode", params, consumer);
+  }
+
+  /**
+   * The [setFlag] RPC is used to set a VM flag at runtime. Returns an error if the named flag does
+   * not exist, the flag may not be set at runtime, or the value is of the wrong type for the flag.
+   */
+  public void setFlag(String name, String value, SuccessConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("name", name);
+    params.addProperty("value", value);
+    request("setFlag", params, consumer);
   }
 
   /**
@@ -667,6 +702,24 @@ public class VmService extends VmServiceBase {
       }
       if (responseType.equals("TypeArguments")) {
         ((GetObjectConsumer) consumer).received(new TypeArguments(json));
+        return;
+      }
+    }
+    if (consumer instanceof InvokeConsumer) {
+      if (responseType.equals("@Error")) {
+        ((InvokeConsumer) consumer).received(new ErrorRef(json));
+        return;
+      }
+      if (responseType.equals("@Instance")) {
+        ((InvokeConsumer) consumer).received(new InstanceRef(json));
+        return;
+      }
+      if (responseType.equals("@Null")) {
+        ((InvokeConsumer) consumer).received(new NullRef(json));
+        return;
+      }
+      if (responseType.equals("Sentinel")) {
+        ((InvokeConsumer) consumer).received(new Sentinel(json));
         return;
       }
     }

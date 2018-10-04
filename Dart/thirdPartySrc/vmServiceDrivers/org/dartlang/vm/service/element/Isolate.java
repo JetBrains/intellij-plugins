@@ -44,6 +44,8 @@ public class Isolate extends Response {
 
   /**
    * The error that is causing this isolate to exit, if applicable.
+   *
+   * Can return <code>null</code>.
    */
   public ErrorObj getError() {
     return json.get("error") == null ? null : new ErrorObj((JsonObject) json.get("error"));
@@ -63,9 +65,11 @@ public class Isolate extends Response {
 
   /**
    * The list of service extension RPCs that are registered for this isolate, if any.
+   *
+   * Can return <code>null</code>.
    */
   public List<String> getExtensionRPCs() {
-    return getListString("extensionRPCs");
+    return json.get("extensionRPCs") == null ? null : getListString("extensionRPCs");
   }
 
   /**
@@ -129,6 +133,8 @@ public class Isolate extends Response {
    * The root library for this isolate.
    *
    * Guaranteed to be initialized when the IsolateRunnable event fires.
+   *
+   * Can return <code>null</code>.
    */
   public LibraryRef getRootLib() {
     return json.get("rootLib") == null ? null : new LibraryRef((JsonObject) json.get("rootLib"));

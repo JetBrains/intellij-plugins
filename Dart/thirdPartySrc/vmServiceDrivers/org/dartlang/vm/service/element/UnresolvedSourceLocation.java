@@ -32,6 +32,8 @@ public class UnresolvedSourceLocation extends Response {
   /**
    * An approximate column number for the source location. This may change when the location is
    * resolved.
+   *
+   * Can return <code>null</code>.
    */
   public int getColumn() {
     return json.get("column") == null ? -1 : json.get("column").getAsInt();
@@ -40,6 +42,8 @@ public class UnresolvedSourceLocation extends Response {
   /**
    * An approximate line number for the source location. This may change when the location is
    * resolved.
+   *
+   * Can return <code>null</code>.
    */
   public int getLine() {
     return json.get("line") == null ? -1 : json.get("line").getAsInt();
@@ -47,6 +51,8 @@ public class UnresolvedSourceLocation extends Response {
 
   /**
    * The script containing the source location if the script has been loaded.
+   *
+   * Can return <code>null</code>.
    */
   public ScriptRef getScript() {
     return json.get("script") == null ? null : new ScriptRef((JsonObject) json.get("script"));
@@ -54,14 +60,18 @@ public class UnresolvedSourceLocation extends Response {
 
   /**
    * The uri of the script containing the source location if the script has yet to be loaded.
+   *
+   * Can return <code>null</code>.
    */
   public String getScriptUri() {
-    return json.get("scriptUri").getAsString();
+    return json.get("scriptUri") == null ? null : json.get("scriptUri").getAsString();
   }
 
   /**
    * An approximate token position for the source location. This may change when the location is
    * resolved.
+   *
+   * Can return <code>null</code>.
    */
   public int getTokenPos() {
     return json.get("tokenPos") == null ? -1 : json.get("tokenPos").getAsInt();
