@@ -15,4 +15,9 @@ public abstract class MakefileNamedElementImpl extends StubBasedPsiElementBase<M
     public MakefileNamedElementImpl(@NotNull MakefileTargetStubElement stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }
+
+    @Override
+    public String toString() {
+        return "MakefileTargetImpl(TARGET)";
+    }
 }
