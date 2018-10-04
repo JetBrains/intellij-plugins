@@ -543,8 +543,11 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     final Script script = myVmServiceWrapper.getScriptSync(isolateId, scriptRef.getId());
     if (script == null) return null;
 
+    String scriptSource = script.getSource();
+    if (scriptSource == null) return null;
+
     if (file == null) {
-      file = new LightVirtualFile(PathUtil.getFileName(script.getUri()), DartFileType.INSTANCE, script.getSource());
+      file = new LightVirtualFile(PathUtil.getFileName(script.getUri()), DartFileType.INSTANCE, scriptSource);
       ((LightVirtualFile)file).setWritable(false);
       myScriptIdToContentMap.put(scriptRef.getId(), (LightVirtualFile)file);
     }
