@@ -238,7 +238,7 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
 
   public static JSAttributeListOwner doMove(@NotNull JSAttributeListOwner member,
                                             @NotNull JSClass targetClass,
-                                            List<FormatFixer> formatters) {
+                                            List<? super FormatFixer> formatters) {
     final PsiElement insert;
     if (member instanceof JSFunction) {
       insert = member.copy();

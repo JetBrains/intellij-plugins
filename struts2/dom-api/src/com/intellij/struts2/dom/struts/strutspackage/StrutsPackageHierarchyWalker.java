@@ -27,10 +27,10 @@ import java.util.List;
 public class StrutsPackageHierarchyWalker {
 
   private final StrutsPackage start;
-  private final Processor<StrutsPackage> processor;
+  private final Processor<? super StrutsPackage> processor;
 
   public StrutsPackageHierarchyWalker(final StrutsPackage start,
-                                      final Processor<StrutsPackage> processor) {
+                                      final Processor<? super StrutsPackage> processor) {
     this.start = start;
     this.processor = processor;
   }

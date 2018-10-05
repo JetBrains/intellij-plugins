@@ -11,15 +11,15 @@ import java.util.List;
 
 public class DartResolveProcessor extends DartPsiScopeProcessor {
 
-  private final List<DartComponentName> myResult;
+  private final List<? super DartComponentName> myResult;
   private final String myName;
   private final boolean myLValue;
 
-  public DartResolveProcessor(List<DartComponentName> result, @NotNull String name) {
+  public DartResolveProcessor(List<? super DartComponentName> result, @NotNull String name) {
     this(result, name, false);
   }
 
-  public DartResolveProcessor(List<DartComponentName> result, @NotNull String name, boolean lookForLValue) {
+  public DartResolveProcessor(List<? super DartComponentName> result, @NotNull String name, boolean lookForLValue) {
     this.myResult = result;
     this.myName = name;
     this.myLValue = lookForLValue;

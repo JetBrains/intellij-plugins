@@ -78,7 +78,7 @@ public class NodeClassInfo {
   }
 
   private static void fillMapsForSupersRecursively(final JSClass jsClass,
-                                                   final THashSet<JSClass> visited,
+                                                   final THashSet<? super JSClass> visited,
                                                    final Map<String, Icon> inheritedStaticFields,
                                                    final Map<String, Icon> inheritedStaticProperties,
                                                    final Map<String, Icon> inheritedFields,
@@ -138,7 +138,7 @@ public class NodeClassInfo {
     }
   }
 
-  public static void processSubtagsRecursively(final XmlTag tag, final Processor<XmlTag> processor) {
+  public static void processSubtagsRecursively(final XmlTag tag, final Processor<? super XmlTag> processor) {
     for (XmlTag subTag : tag.getSubTags()) {
       if (processor.process(subTag)) {
         processSubtagsRecursively(subTag, processor);

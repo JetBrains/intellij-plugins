@@ -32,16 +32,16 @@ class CatalogXmlBuilder extends IXMLBuilderAdapter {
   @Nullable
   private LibrarySetItem library;
   private final Map<CharSequence, Definition> definitionMap;
-  private final Condition<String> skipDependency;
-  private final Condition<String> skipDefinition;
+  private final Condition<? super String> skipDependency;
+  private final Condition<? super String> skipDefinition;
 
-  CatalogXmlBuilder(Map<CharSequence, Definition> definitionMap, Condition<String> skipDependency, Condition<String> skipDefinition) {
+  CatalogXmlBuilder(Map<CharSequence, Definition> definitionMap, Condition<? super String> skipDependency, Condition<? super String> skipDefinition) {
     this.definitionMap = definitionMap;
     this.skipDependency = skipDependency;
     this.skipDefinition = skipDefinition;
   }
 
-  CatalogXmlBuilder(Map<CharSequence, Definition> definitionMap, Condition<String> skip) {
+  CatalogXmlBuilder(Map<CharSequence, Definition> definitionMap, Condition<? super String> skip) {
     this(definitionMap, skip, skip);
   }
 

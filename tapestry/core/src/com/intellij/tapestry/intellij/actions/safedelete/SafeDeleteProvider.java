@@ -151,7 +151,7 @@ public class SafeDeleteProvider implements DeleteProvider {
      * @param elementsList the list for add the elements to delete
      * @return the list of elements to delete
      */
-    public static List addElementToDelete(DefaultMutableTreeNode child, List<PsiElement> elementsList) {
+    public static List addElementToDelete(DefaultMutableTreeNode child, List<? super PsiElement> elementsList) {
         PsiFile elementClass = ((IntellijResource) ((PresentationLibraryElement) ((TapestryNode) child.getUserObject()).getElement()).getElementClass().getFile()).getPsiFile();
 
         elementsList.add(IdeaUtils.findPublicClass(elementClass));

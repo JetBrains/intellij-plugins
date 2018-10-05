@@ -6,14 +6,14 @@ import java.util.List;
 
 public class OutlineStepSubstitution {
   private final String substitution;
-  private final List<Pair<Integer, Integer>> offsets;
+  private final List<? extends Pair<Integer, Integer>> offsets;
 
   public OutlineStepSubstitution(String substitution) {
     this(substitution, null);
   }
 
   public OutlineStepSubstitution(String substitution,
-                                 List<Pair<Integer, Integer>> offsets) {
+                                 List<? extends Pair<Integer, Integer>> offsets) {
     this.substitution = substitution;
     this.offsets = offsets;
   }

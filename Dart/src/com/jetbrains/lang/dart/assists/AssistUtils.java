@@ -118,7 +118,7 @@ public class AssistUtils {
   public static List<SourceEditInfo> applySourceEdits(@NotNull final Project project,
                                                       @NotNull final VirtualFile file,
                                                       @NotNull final Document document,
-                                                      @NotNull final List<SourceEdit> edits,
+                                                      @NotNull final List<? extends SourceEdit> edits,
                                                       @NotNull final Set<String> excludedIds) {
     final List<SourceEditInfo> result = new ArrayList<>(edits.size());
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance(project);
@@ -212,7 +212,7 @@ public class AssistUtils {
   private static int getLinkedEditConvertedOffset(@NotNull final Project project,
                                                   @NotNull final VirtualFile file,
                                                   final int linkedEditOffset,
-                                                  @NotNull final List<SourceEditInfo> editInfos) {
+                                                  @NotNull final List<? extends SourceEditInfo> editInfos) {
     // first check if linkedEditOffset is inside of some SourceEdit
     for (SourceEditInfo info : editInfos) {
       if (linkedEditOffset >= info.resultingOriginalOffset &&
@@ -276,7 +276,7 @@ public class AssistUtils {
   private static void runLinkedEdits(@NotNull final Project project,
                                      @NotNull final SourceChange sourceChange,
                                      @NotNull final ChangeTarget target,
-                                     @NotNull final List<SourceEditInfo> sourceEditInfos) {
+                                     @NotNull final List<? extends SourceEditInfo> sourceEditInfos) {
     final int caretOffset = getLinkedEditConvertedOffset(project, target.virtualFile, target.originalOffset, sourceEditInfos);
     final Editor editor = navigate(project, target.virtualFile, caretOffset);
     if (editor == null) {
@@ -346,9 +346,9 @@ public class AssistUtils {
 
 class DartLookupExpression extends Expression {
   private final @NotNull String myText;
-  private final @NotNull List<LinkedEditSuggestion> mySuggestions;
+  private final @NotNull List<? extends LinkedEditSuggestion> mySuggestions;
 
-  DartLookupExpression(@NotNull String text, @NotNull List<LinkedEditSuggestion> suggestions) {
+  DartLookupExpression(@NotNull String text, @NotNull List<? extends LinkedEditSuggestion> suggestions) {
     myText = text;
     mySuggestions = suggestions;
   }

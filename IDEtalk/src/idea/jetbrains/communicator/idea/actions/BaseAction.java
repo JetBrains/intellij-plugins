@@ -22,9 +22,9 @@ import java.awt.*;
  */
 public class BaseAction<T extends UserCommand> extends AnAction {
   private static final Logger LOG = Logger.getLogger(BaseAction.class);
-  private final Class<T> myCommandClass;
+  private final Class<? extends T> myCommandClass;
 
-  public BaseAction(Class<T> commandClass) {
+  public BaseAction(Class<? extends T> commandClass) {
     myCommandClass = commandClass;
   }
 

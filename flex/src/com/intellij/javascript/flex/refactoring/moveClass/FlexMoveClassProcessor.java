@@ -34,10 +34,10 @@ import java.util.*;
 
 public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
 
-  private final Collection<JSQualifiedNamedElement> myElements;
+  private final Collection<? extends JSQualifiedNamedElement> myElements;
   private final String myTargetPackage;
 
-  public FlexMoveClassProcessor(Collection<JSQualifiedNamedElement> elements,
+  public FlexMoveClassProcessor(Collection<? extends JSQualifiedNamedElement> elements,
                                 PsiDirectory targetDirectory,
                                 String targetPackage,
                                 boolean searchInComments,

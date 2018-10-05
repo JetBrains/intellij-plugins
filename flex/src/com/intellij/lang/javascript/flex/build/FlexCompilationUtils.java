@@ -74,7 +74,7 @@ public class FlexCompilationUtils {
     return result;
   }
 
-  private static void addIfANE(final Collection<VirtualFile> result, final VirtualFile libFile) {
+  private static void addIfANE(final Collection<? super VirtualFile> result, final VirtualFile libFile) {
     final VirtualFile realFile = getRealFile(libFile);
     if (realFile != null && !realFile.isDirectory() && "ane".equalsIgnoreCase(realFile.getExtension())) {
       result.add(realFile);
@@ -105,7 +105,7 @@ public class FlexCompilationUtils {
     }
   }
 
-  public static void unzipANEFiles(final Collection<VirtualFile> aneFiles, final ProgressIndicator indicator) {
+  public static void unzipANEFiles(final Collection<? extends VirtualFile> aneFiles, final ProgressIndicator indicator) {
     final File baseDir = new File(getPathToUnzipANE());
     if (!baseDir.exists()) {
       if (!baseDir.mkdir()) {

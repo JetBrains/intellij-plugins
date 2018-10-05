@@ -103,7 +103,7 @@ public class RubyMotionSymbolProvider extends RubySymbolProviderBase {
   }
 
   @Nullable
-  public static Symbol findClassOrStruct(Module module, Collection<Framework> frameworks, List<String> name) {
+  public static Symbol findClassOrStruct(Module module, Collection<? extends Framework> frameworks, List<String> name) {
     final List<Class> classes = new ArrayList<>();
     for (Framework framework : frameworks) {
       final Class clazz = framework.getClass(name);

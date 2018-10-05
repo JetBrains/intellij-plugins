@@ -256,7 +256,7 @@ public class DartSdkLibUtil {
     return ()->{};
   }
 
-  public static void disableDartSdk(@NotNull final Collection<Module> modules) {
+  public static void disableDartSdk(@NotNull final Collection<? extends Module> modules) {
     if (modules.isEmpty()) return;
 
     final List<ModifiableRootModel> models = new SmartList<>();

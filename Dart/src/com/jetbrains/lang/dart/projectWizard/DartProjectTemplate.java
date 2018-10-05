@@ -59,7 +59,7 @@ public abstract class DartProjectTemplate {
   /**
    * Must be called in pooled thread without read action; {@code templatesConsumer} will be invoked in EDT
    */
-  public static void loadTemplatesAsync(final String sdkRoot, @NotNull final Consumer<List<DartProjectTemplate>> templatesConsumer) {
+  public static void loadTemplatesAsync(final String sdkRoot, @NotNull final Consumer<? super List<DartProjectTemplate>> templatesConsumer) {
     if (ApplicationManager.getApplication().isReadAccessAllowed()) {
       LOG.error("DartProjectTemplate.loadTemplatesAsync() must be called in pooled thread without read action");
     }

@@ -178,7 +178,7 @@ public class MotionSymbolUtil {
     return names;
   }
 
-  public static void getSelectorNames(List<String> names, String name, int argsSize) {
+  public static void getSelectorNames(List<? super String> names, String name, int argsSize) {
     if (argsSize == 2 && name.startsWith("set") && name.endsWith(":forKey:")) {
       names.add("[]=");
     } else if (argsSize == 1 && name.endsWith("ForKey:")) {

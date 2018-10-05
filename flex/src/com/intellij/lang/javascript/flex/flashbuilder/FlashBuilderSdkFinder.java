@@ -37,7 +37,7 @@ public class FlashBuilderSdkFinder {
 
   private final Project myProject;
   private final String myInitiallySelectedPath;
-  private final List<FlashBuilderProject> myAllProjects;
+  private final List<? extends FlashBuilderProject> myAllProjects;
 
   private String myWorkspacePath;
   private final Map<String, String> mySdkNameToRootPath = new HashMap<>();
@@ -55,7 +55,7 @@ public class FlashBuilderSdkFinder {
 
   public FlashBuilderSdkFinder(final Project project,
                                final String initiallySelectedPath,
-                               final List<FlashBuilderProject> allProjects) {
+                               final List<? extends FlashBuilderProject> allProjects) {
     myProject = project;
     myInitiallySelectedPath = initiallySelectedPath;
     myAllProjects = allProjects;

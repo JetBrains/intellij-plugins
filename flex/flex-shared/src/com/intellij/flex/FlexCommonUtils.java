@@ -370,7 +370,7 @@ public class FlexCommonUtils {
   /**
    * @param processor (namespace, relative path with no leading slash)
    */
-  public static void processStandardNamespaces(final JpsFlexBuildConfiguration bc, final PairConsumer<String, String> processor) {
+  public static void processStandardNamespaces(final JpsFlexBuildConfiguration bc, final PairConsumer<? super String, ? super String> processor) {
     final JpsSdk<?> sdk = bc.getSdk();
     if (bc.isPureAs() || sdk == null || sdk.getSdkType() != JpsFlexSdkType.INSTANCE) return;
 
@@ -958,7 +958,7 @@ public class FlexCommonUtils {
     return null;
   }
 
-  public static void parseAirVersionFromAdtOutput(String adtOutput, final Ref<String> versionRef) {
+  public static void parseAirVersionFromAdtOutput(String adtOutput, final Ref<? super String> versionRef) {
     // adt version "1.5.0.7220"
     // 13.0.0.36
 

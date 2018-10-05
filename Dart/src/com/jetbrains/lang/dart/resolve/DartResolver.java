@@ -129,7 +129,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
    * Returns the found region or null.
    */
   @Nullable
-  public static DartNavigationRegion findRegion(@NotNull final List<DartServerData.DartNavigationRegion> regions,
+  public static DartNavigationRegion findRegion(@NotNull final List<? extends DartNavigationRegion> regions,
                                                 final int offset,
                                                 final int length) {
     int i = findOffsetIndex(regions, offset);
@@ -140,13 +140,13 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     return null;
   }
 
-  static int findOffsetIndex(@NotNull List<DartNavigationRegion> regions, int offset) {
+  static int findOffsetIndex(@NotNull List<? extends DartNavigationRegion> regions, int offset) {
     return ObjectUtils.binarySearch(0, regions.size(), mid -> Integer.compare(regions.get(mid).getOffset(), offset));
   }
 
-  public static void processRegionsInRange(@NotNull final List<DartServerData.DartNavigationRegion> regions,
+  public static void processRegionsInRange(@NotNull final List<? extends DartNavigationRegion> regions,
                                            @NotNull final TextRange range,
-                                           @NotNull final Consumer<DartNavigationRegion> processor) {
+                                           @NotNull final Consumer<? super DartNavigationRegion> processor) {
     if (regions.isEmpty()) return;
 
     // first find the first region that has minimal allowed offset

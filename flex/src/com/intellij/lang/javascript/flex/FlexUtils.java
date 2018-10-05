@@ -405,10 +405,10 @@ public class FlexUtils {
     return builder.toString();
   }
 
-  public static <T> boolean equalLists(final List<T> list1, final List<T> list2) {
+  public static <T> boolean equalLists(final List<? extends T> list1, final List<? extends T> list2) {
     if (list1.size() != list2.size()) return false;
 
-    final Iterator<T> iterator = list1.iterator();
+    final Iterator<? extends T> iterator = list1.iterator();
     for (final T element : list2) {
       if (!iterator.next().equals(element)) return false;
     }

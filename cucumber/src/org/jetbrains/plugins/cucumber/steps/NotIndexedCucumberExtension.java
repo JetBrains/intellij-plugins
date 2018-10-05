@@ -221,7 +221,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
     return result;
   }
 
-  public static void collectDependencies(Module module, Set<Module> modules) {
+  public static void collectDependencies(Module module, Set<? super Module> modules) {
     if (modules.contains(module)) return;
     final Module[] dependencies = ModuleRootManager.getInstance(module).getDependencies();
     for (Module dependency : dependencies) {
@@ -295,7 +295,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
   }
 
   protected static void addStepDefsRootIfNecessary(final VirtualFile root,
-                                                @NotNull final List<PsiDirectory> newStepDefinitionsRoots,
+                                                @NotNull final List<? super PsiDirectory> newStepDefinitionsRoots,
                                                 @NotNull final Set<String> processedStepDirectories,
                                                 @NotNull final Project project) {
     if (root == null || !root.isValid()) {

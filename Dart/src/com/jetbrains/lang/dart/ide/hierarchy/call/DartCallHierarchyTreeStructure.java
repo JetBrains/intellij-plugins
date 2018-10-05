@@ -33,7 +33,7 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
     return new DartServerFindUsagesHandler(element);
   }
 
-  public static void collectDeclarations(@Nullable final PsiElement element, @NotNull final List<PsiElement> results) {
+  public static void collectDeclarations(@Nullable final PsiElement element, @NotNull final List<? super PsiElement> results) {
     if (element != null) {
       Condition<PsiElement> isExecutable = object -> {
         if (object == null) return false;

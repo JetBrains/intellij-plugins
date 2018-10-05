@@ -380,7 +380,7 @@ public class DesignerApplicationManager {
     notifyUser(debug, text, module.getProject(), null);
   }
 
-  static void notifyUser(boolean debug, @NotNull String text, @NotNull Project project, @Nullable final Consumer<String> handler) {
+  static void notifyUser(boolean debug, @NotNull String text, @NotNull Project project, @Nullable final Consumer<? super String> handler) {
     Notification notification = new Notification(FlashUIDesignerBundle.message("plugin.name"), getOpenActionTitle(debug), text,
                                                  NotificationType.ERROR, handler == null ? null : new NotificationListener() {
       @Override
@@ -473,9 +473,9 @@ public class DesignerApplicationManager {
 
   private static class RenderDocumentTask extends DesignerApplicationLauncher.PostTask {
     private final XmlFile psiFile;
-    private final AsyncResult<DocumentInfo> asyncResult;
+    private final AsyncResult<? super DocumentInfo> asyncResult;
 
-    RenderDocumentTask(@NotNull XmlFile psiFile, @Nullable AsyncResult<DocumentInfo> asyncResult) {
+    RenderDocumentTask(@NotNull XmlFile psiFile, @Nullable AsyncResult<? super DocumentInfo> asyncResult) {
       this.psiFile = psiFile;
       this.asyncResult = asyncResult;
     }

@@ -259,7 +259,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   }
 
   public static void initAppDescriptorForEmulatorCombo(final JComboBox appDescriptorForEmulatorCombo,
-                                                       final NullableComputable<FlexBuildConfiguration> bcComputable) {
+                                                       final NullableComputable<? extends FlexBuildConfiguration> bcComputable) {
     appDescriptorForEmulatorCombo.setModel(new DefaultComboBoxModel(AppDescriptorForEmulator.values()));
     appDescriptorForEmulatorCombo
       .setRenderer(new ListCellRendererWrapper<AppDescriptorForEmulator>() {

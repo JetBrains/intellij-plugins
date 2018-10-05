@@ -55,7 +55,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
 
   public static final String BC_SDK_KEY = "BC SDK";
 
-  private final Condition<Sdk> mySdkFilter;
+  private final Condition<? super Sdk> mySdkFilter;
 
   private final BCSdk myBCSdk = new BCSdk();
   private boolean myShowBCSdk = false;
@@ -64,7 +64,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     this(FLEX_SDK);
   }
 
-  public FlexSdkComboBoxWithBrowseButton(final Condition<Sdk> sdkFilter) {
+  public FlexSdkComboBoxWithBrowseButton(final Condition<? super Sdk> sdkFilter) {
     mySdkFilter = sdkFilter;
     rebuildSdkListAndSelectSdk(null); // if SDKs exist first will be selected automatically
 

@@ -38,7 +38,7 @@ public class Angular2AttributeDescriptor extends AngularAttributeDescriptor {
   @NotNull
   public static List<XmlAttributeDescriptor> getDescriptors(JSImplicitElement declaration,
                                                             String decorator,
-                                                            NullableFunction<PropertyInfo, XmlAttributeDescriptor> factory) {
+                                                            NullableFunction<? super PropertyInfo, ? extends XmlAttributeDescriptor> factory) {
     final List<XmlAttributeDescriptor> result = new ArrayList<>();
     processDescriptors(declaration, decorator, info ->
       ContainerUtil.addIfNotNull(result, factory.fun(info)));

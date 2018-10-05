@@ -145,7 +145,7 @@ class DescriptorUtil {
   @Nullable
   public static XmlAttributeDescriptor getAttributeDescriptor(@NotNull String attributeName,
                                                               @Nullable ParameterReceiverElement component,
-                                                              List<Mixin> mixins) {
+                                                              List<? extends Mixin> mixins) {
     XmlAttributeDescriptor descriptor = getAttributeDescriptor(attributeName, component);
     if (descriptor != null) {
       return descriptor;
@@ -181,7 +181,7 @@ class DescriptorUtil {
     return ArrayUtil.mergeArrays(namespaceElements, parameterElements);
   }
 
-  private static XmlElementDescriptor[] getElementDescriptors(@NotNull Collection<PresentationLibraryElement> elements,
+  private static XmlElementDescriptor[] getElementDescriptors(@NotNull Collection<? extends PresentationLibraryElement> elements,
                                                               String namespacePrefix,
                                                               TapestryNamespaceDescriptor descriptor,
                                                               XmlTag context) {
@@ -196,7 +196,7 @@ class DescriptorUtil {
 
   private static XmlElementDescriptor[] getParameterDescriptors(@NotNull final Component component,
                                                                 final String namespacePrefix,
-                                                                List<Mixin> mixins, final TapestryNamespaceDescriptor descriptor) {
+                                                                List<? extends Mixin> mixins, final TapestryNamespaceDescriptor descriptor) {
     final Function<TapestryParameter, XmlElementDescriptor> mapping =
       parameter -> new TapestryParameterDescriptor(component, parameter, namespacePrefix, descriptor);
     final List<XmlElementDescriptor> result =

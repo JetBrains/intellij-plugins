@@ -73,11 +73,11 @@ public class StrutsFileSet implements Disposable {
     removed = original.removed;
   }
 
-  public static String getUniqueId(final Set<StrutsFileSet> list) {
+  public static String getUniqueId(final Set<? extends StrutsFileSet> list) {
     return UniqueNameGenerator.generateUniqueName(ID_PREFIX, ContainerUtil.map2List(list, FILESET_ID_FUNCTION));
   }
 
-  public static String getUniqueName(final String prefix, final Set<StrutsFileSet> list) {
+  public static String getUniqueName(final String prefix, final Set<? extends StrutsFileSet> list) {
     return UniqueNameGenerator.generateUniqueName(prefix + " ", ContainerUtil.map2List(list, FILESET_NAME_FUNCTION));
   }
 

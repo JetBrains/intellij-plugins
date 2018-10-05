@@ -103,15 +103,15 @@ public class UsefulPsiTreeUtil {
 
   @Nullable
   private static PsiElement getPrevSiblingSkippingCondition(@Nullable PsiElement sibling,
-                                                            Condition<PsiElement> condition,
+                                                            Condition<? super PsiElement> condition,
                                                             boolean strictly) {
     return getSiblingSkippingCondition(sibling, PsiElement::getPrevSibling, condition, strictly);
   }
 
   @Nullable
   private static PsiElement getSiblingSkippingCondition(@Nullable PsiElement sibling,
-                                                        Function<PsiElement, PsiElement> nextSibling,
-                                                        Condition<PsiElement> condition,
+                                                        Function<? super PsiElement, ? extends PsiElement> nextSibling,
+                                                        Condition<? super PsiElement> condition,
                                                         boolean strictly) {
     if (sibling == null) return null;
     if (sibling instanceof PsiFile) return sibling;
@@ -122,7 +122,7 @@ public class UsefulPsiTreeUtil {
     return result;
   }
 
-  public static boolean isAncestor(@NotNull PsiElement element, List<PsiElement> children, boolean strict) {
+  public static boolean isAncestor(@NotNull PsiElement element, List<? extends PsiElement> children, boolean strict) {
     for (PsiElement child : children) {
       if (child != null && !PsiTreeUtil.isAncestor(element, child, strict)) {
         return false;

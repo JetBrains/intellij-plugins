@@ -49,10 +49,10 @@ import java.util.List;
 public class ShowHistoryDialog extends IdeaDialog {
   private final ConsoleView myConsole;
   private final User myUser;
-  private final List<LocalMessage> myFoundMessages;
+  private final List<? extends LocalMessage> myFoundMessages;
   private final Project myProject;
 
-  public ShowHistoryDialog(Project project, List<LocalMessage> foundMessages, User user) {
+  public ShowHistoryDialog(Project project, List<? extends LocalMessage> foundMessages, User user) {
     super(project, true);
     setModal(false);
 

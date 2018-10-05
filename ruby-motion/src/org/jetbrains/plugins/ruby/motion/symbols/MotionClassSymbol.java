@@ -36,10 +36,10 @@ import java.util.List;
  */
 public class MotionClassSymbol extends SymbolImpl implements MotionSymbol {
   @NotNull private final Module myModule;
-  @NotNull private final List<Class> myClasses;
+  @NotNull private final List<? extends Class> myClasses;
 
   public MotionClassSymbol(@NotNull Module module,
-                           @NotNull List<Class> classes) {
+                           @NotNull List<? extends Class> classes) {
     super(module.getProject(), classes.get(0).getName(), Type.CLASS, null);
     myModule = module;
     myClasses = classes;

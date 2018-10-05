@@ -20,7 +20,7 @@ public class ResolveUtil {
   private ResolveUtil() {
   }
 
-  public static List<FrameInfo> filterByScope(Collection<FrameInfo> traces, final GlobalSearchScope scope) {
+  public static List<FrameInfo> filterByScope(Collection<? extends FrameInfo> traces, final GlobalSearchScope scope) {
     if (scope == null || scope instanceof EverythingGlobalScope) {
       return new ArrayList<>(traces);
     }

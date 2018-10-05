@@ -16,7 +16,7 @@ public class JTreeUtil {
   private JTreeUtil() {
   }
 
-  public static boolean isSorted(List<TreePath> paths, Comparator<TreeNode> comparator, TreeTableModel model) {
+  public static boolean isSorted(List<? extends TreePath> paths, Comparator<? super TreeNode> comparator, TreeTableModel model) {
     for (TreePath path : paths) {
       Object node = path.getLastPathComponent();
       if (node instanceof DefaultMutableTreeNode && !isSorted((DefaultMutableTreeNode)node, comparator, model)) {
@@ -26,12 +26,12 @@ public class JTreeUtil {
     return true;
   }
 
-  private static boolean isSorted(DefaultMutableTreeNode node, Comparator<TreeNode> comparator, TreeTableModel model) {
+  private static boolean isSorted(DefaultMutableTreeNode node, Comparator<? super TreeNode> comparator, TreeTableModel model) {
     List<TreeNode> children = childrenToArray(node, 0, model.getChildCount(node));
     return isNodesSorted(children, comparator);
   }
 
-  private static boolean isNodesSorted(List<TreeNode> nodes, Comparator<TreeNode> comparator) {
+  private static boolean isNodesSorted(List<? extends TreeNode> nodes, Comparator<? super TreeNode> comparator) {
     TreeNode prev = null;
     for (TreeNode node : nodes) {
       if (prev != null && comparator.compare(prev, node) > 0) {

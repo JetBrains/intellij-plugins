@@ -42,13 +42,13 @@ public class WhatToTestForm {
   private TextFieldWithBrowseButton.NoPathCompletion myMethodField;
 
   private final Project myProject;
-  private final ThrowableComputable<Module, RuntimeConfigurationError> myModuleComputable;
-  private final ThrowableComputable<FlexUnitSupport, RuntimeConfigurationError> myFlexUnitSupportComputable;
+  private final ThrowableComputable<? extends Module, ? extends RuntimeConfigurationError> myModuleComputable;
+  private final ThrowableComputable<? extends FlexUnitSupport, ? extends RuntimeConfigurationError> myFlexUnitSupportComputable;
   private TestClassFilter myMainClassFilter;
 
   public WhatToTestForm(final Project project,
-                        final ThrowableComputable<Module, RuntimeConfigurationError> moduleComputable,
-                        final ThrowableComputable<FlexUnitSupport, RuntimeConfigurationError> flexUnitSupportComputable) {
+                        final ThrowableComputable<? extends Module, ? extends RuntimeConfigurationError> moduleComputable,
+                        final ThrowableComputable<? extends FlexUnitSupport, ? extends RuntimeConfigurationError> flexUnitSupportComputable) {
     myProject = project;
     myModuleComputable = moduleComputable;
     myFlexUnitSupportComputable = flexUnitSupportComputable;

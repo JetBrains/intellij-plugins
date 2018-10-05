@@ -73,7 +73,7 @@ public class AngularIndexUtil {
   public static void multiResolve(Project project,
                                   final StubIndexKey<String, JSImplicitElementProvider> index,
                                   final String lookupKey,
-                                  final Processor<JSImplicitElement> processor) {
+                                  final Processor<? super JSImplicitElement> processor) {
     final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     StubIndex.getInstance().processElements(
       index, lookupKey, project, scope, JSImplicitElementProvider.class, provider -> {
@@ -105,7 +105,7 @@ public class AngularIndexUtil {
 
   private static boolean processDirectivesMetadata(@NotNull Project project,
                                                    @NotNull String lookupKey,
-                                                   @NotNull Processor<JSImplicitElement> processor,
+                                                   @NotNull Processor<? super JSImplicitElement> processor,
                                                    @NotNull GlobalSearchScope scope) {
     FileBasedIndex.ValueProcessor<Collection<JSImplicitElementsIndex.JSElementProxy>> implicitElementsProcessor =
       (virtualFile, value) -> {
@@ -124,7 +124,7 @@ public class AngularIndexUtil {
   public static ResolveResult[] multiResolveAngularNamedDefinitionIndex(@NotNull final Project project,
                                                                         @NotNull final ID<String, AngularNamedItemDefinition> INDEX,
                                                                         @NotNull final String id,
-                                                                        @NotNull final Condition<VirtualFile> filter,
+                                                                        @NotNull final Condition<? super VirtualFile> filter,
                                                                         boolean dirtyResolve) {
     final FileBasedIndex instance = FileBasedIndex.getInstance();
     Collection<VirtualFile> files = instance.getContainingFiles(INDEX, id, GlobalSearchScope.allScope(project));
@@ -216,7 +216,7 @@ public class AngularIndexUtil {
 
   private static boolean processPipesMetadata(@NotNull Project project,
                                               @NotNull String lookupKey,
-                                              @NotNull Processor<JSImplicitElement> processor,
+                                              @NotNull Processor<? super JSImplicitElement> processor,
                                               @NotNull GlobalSearchScope scope) {
     FileBasedIndex.ValueProcessor<Collection<JSImplicitElementsIndex.JSElementProxy>> implicitElementsProcessor =
       (virtualFile, value) -> {

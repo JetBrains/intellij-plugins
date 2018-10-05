@@ -127,7 +127,7 @@ public class MarkdownFoldingBuilder extends CustomFoldingBuilder implements Dumb
 
   public static void addDescriptors(@NotNull MarkdownPsiElement element,
                                     @NotNull TextRange range,
-                                    @NotNull List<FoldingDescriptor> descriptors,
+                                    @NotNull List<? super FoldingDescriptor> descriptors,
                                     @NotNull Document document) {
     if (document.getLineNumber(range.getStartOffset()) != document.getLineNumber(range.getEndOffset() - 1)) {
       descriptors.add(new FoldingDescriptor(element, range));

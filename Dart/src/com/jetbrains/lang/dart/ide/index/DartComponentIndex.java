@@ -65,8 +65,8 @@ public class DartComponentIndex extends FileBasedIndexExtension<String, DartComp
   }
 
   public static void processAllComponents(@NotNull final GlobalSearchScope scope,
-                                          @Nullable final Condition<String> nameFilter,
-                                          @NotNull final PairProcessor<String, DartComponentInfo> processor) {
+                                          @Nullable final Condition<? super String> nameFilter,
+                                          @NotNull final PairProcessor<? super String, ? super DartComponentInfo> processor) {
     final Processor<String> keysProcessor = componentName -> {
       if (nameFilter != null && !nameFilter.value(componentName)) return true;
 
@@ -78,7 +78,7 @@ public class DartComponentIndex extends FileBasedIndexExtension<String, DartComp
 
   public static boolean processComponentsByName(@NotNull final String componentName,
                                                 @NotNull final GlobalSearchScope scope,
-                                                @NotNull final Processor<DartComponentInfo> processor) {
+                                                @NotNull final Processor<? super DartComponentInfo> processor) {
     final FileBasedIndex.ValueProcessor<DartComponentInfo> valueProcessor = (file, value) -> {
       if (!processor.process(value)) return false;
       return true;

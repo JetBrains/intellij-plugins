@@ -32,7 +32,7 @@ public class DartSdkLibraryPresentationProvider extends LibraryPresentationProvi
   }
 
   @Nullable
-  public static VirtualFile findDartCoreRoot(@NotNull final List<VirtualFile> classesRoots) {
+  public static VirtualFile findDartCoreRoot(@NotNull final List<? extends VirtualFile> classesRoots) {
     for (VirtualFile root : classesRoots) {
       if (root.isInLocalFileSystem() &&
           root.isDirectory() &&

@@ -52,7 +52,7 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
                                                                       @Nullable String labelText,
                                                                       Project project,
                                                                       boolean allowEmptySelection,
-                                                                      Condition<FlexBCConfigurable> filter) {
+                                                                      Condition<? super FlexBCConfigurable> filter) {
     Map<Module, List<FlexBCConfigurable>> treeItems = new HashMap<>();
     FlexBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
     for (Module module : ModuleStructureConfigurable.getInstance(project).getModules()) {

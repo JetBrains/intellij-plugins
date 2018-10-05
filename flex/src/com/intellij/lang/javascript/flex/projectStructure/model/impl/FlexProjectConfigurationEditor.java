@@ -700,7 +700,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
     dependant.getModifiableEntries().addAll(newEntries);
   }
 
-  private static boolean libraryIsUsed(final String libraryId, final List<Editor> editors) {
+  private static boolean libraryIsUsed(final String libraryId, final List<? extends Editor> editors) {
     for (Editor editor : editors) {
       for (ModifiableDependencyEntry entry : editor.getDependencies().getModifiableEntries()) {
         if (entry instanceof ModuleLibraryEntry && libraryId.equals(((ModuleLibraryEntry)entry).getLibraryId())) {
@@ -779,7 +779,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
   }
 
   public static void makeNonStructuralModification(final FlexBuildConfiguration bc,
-                                                   final Consumer<NonStructuralModifiableBuildConfiguration> consumer) {
+                                                   final Consumer<? super NonStructuralModifiableBuildConfiguration> consumer) {
     consumer.consume(new NonStructuralModifiableBuildConfiguration((FlexBuildConfigurationImpl)bc));
   }
 }

@@ -217,7 +217,7 @@ public class SwcCatalogXmlUtil {
     return swfNameToQnameWithTimestampMap;
   }
 
-  public static void processComponentsFromCatalogXml(final VirtualFile catalogFile, final Consumer<ComponentFromCatalogXml> consumer) {
+  public static void processComponentsFromCatalogXml(final VirtualFile catalogFile, final Consumer<? super ComponentFromCatalogXml> consumer) {
     Pair<Long, ComponentFromCatalogXml[]> modStampAndComponents = catalogFile.getUserData(MOD_STAMP_AND_COMPONENTS_FROM_CATALOG_XML);
 
     if (modStampAndComponents == null || modStampAndComponents.first != catalogFile.getModificationStamp()) {
@@ -298,7 +298,7 @@ public class SwcCatalogXmlUtil {
     return result.toArray(new ComponentFromCatalogXml[0]);
   }
 
-  public static void processManifestFile(final VirtualFile manifestFile, final Consumer<ComponentFromManifest> consumer) {
+  public static void processManifestFile(final VirtualFile manifestFile, final Consumer<? super ComponentFromManifest> consumer) {
     Pair<Long, ComponentFromManifest[]> modStampAndComponents = manifestFile.getUserData(MOD_STAMP_AND_COMPONENTS_FROM_MANIFEST);
 
     if (modStampAndComponents == null || modStampAndComponents.first != manifestFile.getModificationStamp()) {

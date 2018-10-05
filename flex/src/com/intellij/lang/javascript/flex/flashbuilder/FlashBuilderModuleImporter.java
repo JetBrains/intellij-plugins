@@ -58,14 +58,14 @@ public class FlashBuilderModuleImporter {
 
   private final Project myIdeaProject;
   private final FlexProjectConfigurationEditor myFlexConfigEditor;
-  private final Collection<FlashBuilderProject> myAllFBProjects;
+  private final Collection<? extends FlashBuilderProject> myAllFBProjects;
   private final FlashBuilderSdkFinder mySdkFinder;
   private final Set<String> myPathVariables;
   private boolean myPathVariablesInitialized = false;
 
   public FlashBuilderModuleImporter(final Project ideaProject,
                                     final FlexProjectConfigurationEditor flexConfigEditor,
-                                    final Collection<FlashBuilderProject> allFBProjects,
+                                    final Collection<? extends FlashBuilderProject> allFBProjects,
                                     final FlashBuilderSdkFinder sdkFinder) {
     myIdeaProject = ideaProject;
     myFlexConfigEditor = flexConfigEditor;

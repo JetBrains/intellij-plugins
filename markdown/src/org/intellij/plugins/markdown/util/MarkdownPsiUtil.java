@@ -41,8 +41,8 @@ public class MarkdownPsiUtil {
    * nextHeaderConsumer 'null' means reaching EOF
    */
   public static void processContainer(@Nullable PsiElement myElement,
-                                      @NotNull Consumer<PsiElement> consumer,
-                                      @NotNull NullableConsumer<PsiElement> nextHeaderConsumer) {
+                                      @NotNull Consumer<? super PsiElement> consumer,
+                                      @NotNull NullableConsumer<? super PsiElement> nextHeaderConsumer) {
     if (myElement == null) return;
 
     final PsiElement structureContainer = myElement instanceof MarkdownFile ? myElement.getFirstChild()
@@ -57,7 +57,7 @@ public class MarkdownPsiUtil {
                                        @Nullable PsiElement sameLevelRestriction,
                                        @Nullable MarkdownPsiElement from,
                                        @NotNull Consumer<? super PsiElement> resultConsumer,
-                                       @NotNull NullableConsumer<PsiElement> nextHeaderConsumer) {
+                                       @NotNull NullableConsumer<? super PsiElement> nextHeaderConsumer) {
     PsiElement nextSibling = from == null ? container.getFirstChild() : from.getNextSibling();
     PsiElement maxContentLevel = null;
     while (nextSibling != null) {

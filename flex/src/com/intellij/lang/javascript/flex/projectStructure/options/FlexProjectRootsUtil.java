@@ -61,7 +61,7 @@ public class FlexProjectRootsUtil {
     return !transitive || dependencyEntry.getDependencyType().getLinkageType() == LinkageType.Include;
   }
 
-  public static boolean dependOnLibrary(Iterable<FlexBuildConfiguration> bcs,
+  public static boolean dependOnLibrary(Iterable<? extends FlexBuildConfiguration> bcs,
                                         @NotNull final Library library,
                                         final boolean transitive, final boolean productionOnly) {
     return !ContainerUtil.process(bcs, configuration -> !dependsOnLibrary(configuration, library, transitive, productionOnly));

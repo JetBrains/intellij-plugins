@@ -30,9 +30,9 @@ public class KarmaProcessOutputManager {
   private final List<ArchivedOutputListener> myOutputListeners = new CopyOnWriteArrayList<>();
   private final List<StreamEventListener> myStdOutStreamEventListeners = new CopyOnWriteArrayList<>();
   private final List<Pair<String, Key>> myStdOutCurrentLineChunks = ContainerUtil.newArrayList();
-  private final Consumer<String> myStdOutLineConsumer;
+  private final Consumer<? super String> myStdOutLineConsumer;
 
-  public KarmaProcessOutputManager(@NotNull ProcessHandler processHandler, @NotNull Consumer<String> stdOutLineConsumer) {
+  public KarmaProcessOutputManager(@NotNull ProcessHandler processHandler, @NotNull Consumer<? super String> stdOutLineConsumer) {
     myProcessHandler = processHandler;
     myStdOutLineConsumer = stdOutLineConsumer;
   }

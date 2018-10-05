@@ -578,7 +578,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     }
   }
 
-  static boolean processClassBackedTagsWithIdAttribute(final @NotNull XmlTag tag, final Processor<Pair<XmlAttribute, String>> processor) {
+  static boolean processClassBackedTagsWithIdAttribute(final @NotNull XmlTag tag, final Processor<? super Pair<XmlAttribute, String>> processor) {
     boolean toContinue = true;
     final XmlElementDescriptor tagDescriptor = tag.getDescriptor();
 
@@ -897,7 +897,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     return tag.getAttribute("implements").getValueElement().getChildren()[1].getNode();
   }
 
-  private static <T extends XmlElement & PsiNamedElement> void collectLowerCasedElements(final List<XmlElement> elements, final T[] xmlAttributes) {
+  private static <T extends XmlElement & PsiNamedElement> void collectLowerCasedElements(final List<? super XmlElement> elements, final T[] xmlAttributes) {
     for(T a: xmlAttributes) {
       if (a instanceof XmlAttribute && FlexMxmlLanguageAttributeNames.ID.equals(a.getName())) continue;
 

@@ -111,12 +111,12 @@ public class BndProjectImporter {
 
   private final com.intellij.openapi.project.Project myProject;
   private final Workspace myWorkspace;
-  private final Collection<Project> myProjects;
+  private final Collection<? extends Project> myProjects;
   private final Map<String, String> mySourcesMap = ContainerUtil.newTroveMap(FileUtil.PATH_HASHING_STRATEGY);
 
   public BndProjectImporter(@NotNull com.intellij.openapi.project.Project project,
                             @NotNull Workspace workspace,
-                            @NotNull Collection<Project> toImport) {
+                            @NotNull Collection<? extends Project> toImport) {
     myProject = project;
     myWorkspace = workspace;
     myProjects = toImport;

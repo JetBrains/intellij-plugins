@@ -7,7 +7,7 @@ import com.intellij.psi.search.SearchScope;
 import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
 public class CucumberStepSearchUtil {
-  public static SearchScope restrictScopeToGherkinFiles(final Computable<SearchScope> originalScopeComputation) {
+  public static SearchScope restrictScopeToGherkinFiles(final Computable<? extends SearchScope> originalScopeComputation) {
     return ReadAction.compute(() -> {
       final SearchScope originalScope = originalScopeComputation.compute();
       if (originalScope instanceof GlobalSearchScope) {

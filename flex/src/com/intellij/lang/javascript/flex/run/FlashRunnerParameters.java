@@ -53,7 +53,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
   public static void checkAirVersionIfCustomDescriptor(final Module module,
                                                        final Sdk sdk,
                                                        final AirPackagingOptions packagingOptions,
-                                                       final Consumer<FlashProjectStructureProblem> errorConsumer,
+                                                       final Consumer<? super FlashProjectStructureProblem> errorConsumer,
                                                        final boolean errorMessageForRunConfigValidation,
                                                        final String bcName) {
     if (packagingOptions.isUseGeneratedDescriptor()) return;

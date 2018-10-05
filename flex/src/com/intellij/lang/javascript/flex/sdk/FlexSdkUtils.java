@@ -57,7 +57,7 @@ public class FlexSdkUtils {
   private FlexSdkUtils() {
   }
 
-  public static void processPlayerglobalSwcFiles(final VirtualFile playerDir, final Processor<VirtualFile> processor) {
+  public static void processPlayerglobalSwcFiles(final VirtualFile playerDir, final Processor<? super VirtualFile> processor) {
     VirtualFile playerglobalSwcFile;
     VirtualFile[] children = playerDir.getChildren();
     VirtualFile[] sorted = Arrays.copyOf(children, children.length);
@@ -410,7 +410,7 @@ public class FlexSdkUtils {
   /**
    * @param processor (namespace, relative path with no leading slash)
    */
-  public static void processStandardNamespaces(FlexBuildConfiguration bc, PairConsumer<String, String> processor) {
+  public static void processStandardNamespaces(FlexBuildConfiguration bc, PairConsumer<? super String, ? super String> processor) {
     final Sdk sdk = bc.getSdk();
     if (bc.isPureAs() || sdk == null || sdk.getSdkType() == FlexmojosSdkType.getInstance()) return;
 

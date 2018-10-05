@@ -48,7 +48,7 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
 
   private final Module myModule;
   private final String myMainConfigFilePath;
-  private final Collection<RLMInfo> myRlmInfos;
+  private final Collection<? extends RLMInfo> myRlmInfos;
 
   // compilation of modules should not overwrtite report files produced by main application compilation so some compiler options should be excluded
   private static final String[] ELEMENTS_TO_REMOVE = {"dump-config", "link-report", "resource-bundle-list"};
@@ -60,7 +60,7 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
                                           final MavenProject mavenProject,
                                           final MavenProjectsTree mavenProjectsTree,
                                           final String mainConfigFilePath,
-                                          final Collection<RLMInfo> rlmInfos) {
+                                          final Collection<? extends RLMInfo> rlmInfos) {
     super(mavenProject, mavenProjectsTree);
     myModule = module;
     myMainConfigFilePath = mainConfigFilePath;

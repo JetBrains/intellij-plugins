@@ -44,10 +44,10 @@ public abstract class AbstractDependencyFilter {
   /**
    * Dependency artifacts.
    */
-  private final Collection<MavenArtifact> m_dependencyArtifacts;
+  private final Collection<? extends MavenArtifact> m_dependencyArtifacts;
 
 
-  public AbstractDependencyFilter(Collection<MavenArtifact> dependencyArtifacts) {
+  public AbstractDependencyFilter(Collection<? extends MavenArtifact> dependencyArtifacts) {
     m_dependencyArtifacts = dependencyArtifacts;
   }
 

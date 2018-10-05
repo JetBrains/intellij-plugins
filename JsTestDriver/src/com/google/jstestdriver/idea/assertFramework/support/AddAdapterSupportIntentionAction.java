@@ -17,11 +17,11 @@ import java.util.List;
 public class AddAdapterSupportIntentionAction implements IntentionAction {
 
   private final String myAssertionFrameworkName;
-  private final NotNullProducer<List<VirtualFile>> myAdapterSourceFilesProvider;
+  private final NotNullProducer<? extends List<VirtualFile>> myAdapterSourceFilesProvider;
   private final String myAdapterHomePageUrl;
 
   public AddAdapterSupportIntentionAction(@NotNull String assertionFrameworkName,
-                                          @NotNull NotNullProducer<List<VirtualFile>> adapterSourceFilesProvider,
+                                          @NotNull NotNullProducer<? extends List<VirtualFile>> adapterSourceFilesProvider,
                                           @Nullable String adapterHomePageUrl) {
     myAssertionFrameworkName = assertionFrameworkName;
     myAdapterSourceFilesProvider = adapterSourceFilesProvider;
