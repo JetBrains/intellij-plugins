@@ -35,9 +35,11 @@ public class Event extends Response {
    *
    * This is provided for the event kinds:
    *  - ServiceRegistered
+   *
+   * Can return <code>null</code>.
    */
   public String getAlias() {
-    return json.get("alias").getAsString();
+    return json.get("alias") == null ? null : json.get("alias").getAsString();
   }
 
   /**
@@ -46,6 +48,8 @@ public class Event extends Response {
    * This is provided for the event kinds:
    *  - PauseBreakpoint
    *  - PauseInterrupted
+   *
+   * Can return <code>null</code>.
    */
   public boolean getAtAsyncSuspension() {
     return json.get("atAsyncSuspension") == null ? false : json.get("atAsyncSuspension").getAsBoolean();
@@ -59,6 +63,8 @@ public class Event extends Response {
    *  - BreakpointAdded
    *  - BreakpointRemoved
    *  - BreakpointResolved
+   *
+   * Can return <code>null</code>.
    */
   public Breakpoint getBreakpoint() {
     return json.get("breakpoint") == null ? null : new Breakpoint((JsonObject) json.get("breakpoint"));
@@ -68,13 +74,17 @@ public class Event extends Response {
    * An array of bytes, encoded as a base64 string.
    *
    * This is provided for the WriteEvent event.
+   *
+   * Can return <code>null</code>.
    */
   public String getBytes() {
-    return json.get("bytes").getAsString();
+    return json.get("bytes") == null ? null : json.get("bytes").getAsString();
   }
 
   /**
    * The exception associated with this event, if this is a PauseException event.
+   *
+   * Can return <code>null</code>.
    */
   public InstanceRef getException() {
     return json.get("exception") == null ? null : new InstanceRef((JsonObject) json.get("exception"));
@@ -84,6 +94,8 @@ public class Event extends Response {
    * The extension event data.
    *
    * This is provided for the Extension event.
+   *
+   * Can return <code>null</code>.
    */
   public ExtensionData getExtensionData() {
     return json.get("extensionData") == null ? null : new ExtensionData((JsonObject) json.get("extensionData"));
@@ -93,24 +105,30 @@ public class Event extends Response {
    * The extension event kind.
    *
    * This is provided for the Extension event.
+   *
+   * Can return <code>null</code>.
    */
   public String getExtensionKind() {
-    return json.get("extensionKind").getAsString();
+    return json.get("extensionKind") == null ? null : json.get("extensionKind").getAsString();
   }
 
   /**
    * The RPC name of the extension that was added.
    *
    * This is provided for the ServiceExtensionAdded event.
+   *
+   * Can return <code>null</code>.
    */
   public String getExtensionRPC() {
-    return json.get("extensionRPC").getAsString();
+    return json.get("extensionRPC") == null ? null : json.get("extensionRPC").getAsString();
   }
 
   /**
    * The argument passed to dart:developer.inspect.
    *
    * This is provided for the Inspect event.
+   *
+   * Can return <code>null</code>.
    */
   public InstanceRef getInspectee() {
     return json.get("inspectee") == null ? null : new InstanceRef((JsonObject) json.get("inspectee"));
@@ -121,6 +139,8 @@ public class Event extends Response {
    *
    * This is provided for all event kinds except for:
    *  - VMUpdate
+   *
+   * Can return <code>null</code>.
    */
   public IsolateRef getIsolate() {
     return json.get("isolate") == null ? null : new IsolateRef((JsonObject) json.get("isolate"));
@@ -144,9 +164,11 @@ public class Event extends Response {
    * This is provided for the event kinds:
    *  - ServiceRegistered
    *  - ServiceUnregistered
+   *
+   * Can return <code>null</code>.
    */
   public String getMethod() {
-    return json.get("method").getAsString();
+    return json.get("method") == null ? null : json.get("method").getAsString();
   }
 
   /**
@@ -160,6 +182,8 @@ public class Event extends Response {
    *
    * This is provided for the event kinds:
    *  - PauseBreakpoint
+   *
+   * Can return <code>null</code>.
    */
   public ElementList<Breakpoint> getPauseBreakpoints() {
     if (json.get("pauseBreakpoints") == null) return null;
@@ -178,24 +202,30 @@ public class Event extends Response {
    * This is provided for the event kinds:
    *  - ServiceRegistered
    *  - ServiceUnregistered
+   *
+   * Can return <code>null</code>.
    */
   public String getService() {
-    return json.get("service").getAsString();
+    return json.get("service") == null ? null : json.get("service").getAsString();
   }
 
   /**
    * The status (success or failure) related to the event. This is provided for the event kinds:
    *  - IsolateReloaded
    *  - IsolateSpawn
+   *
+   * Can return <code>null</code>.
    */
   public String getStatus() {
-    return json.get("status").getAsString();
+    return json.get("status") == null ? null : json.get("status").getAsString();
   }
 
   /**
    * An array of TimelineEvents
    *
    * This is provided for the TimelineEvents event.
+   *
+   * Can return <code>null</code>.
    */
   public ElementList<TimelineEvent> getTimelineEvents() {
     if (json.get("timelineEvents") == null) return null;
@@ -230,6 +260,8 @@ public class Event extends Response {
    *
    * For the Resume event, the top frame is provided at all times except for the initial resume
    * event that is delivered when an isolate begins execution.
+   *
+   * Can return <code>null</code>.
    */
   public Frame getTopFrame() {
     return json.get("topFrame") == null ? null : new Frame((JsonObject) json.get("topFrame"));
@@ -240,6 +272,8 @@ public class Event extends Response {
    *
    * This is provided for the event kind:
    *  - VMUpdate
+   *
+   * Can return <code>null</code>.
    */
   public VMRef getVm() {
     return json.get("vm") == null ? null : new VMRef((JsonObject) json.get("vm"));

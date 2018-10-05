@@ -26,10 +26,16 @@ public class Frame extends Response {
     super(json);
   }
 
+  /**
+   * Can return <code>null</code>.
+   */
   public CodeRef getCode() {
     return json.get("code") == null ? null : new CodeRef((JsonObject) json.get("code"));
   }
 
+  /**
+   * Can return <code>null</code>.
+   */
   public FuncRef getFunction() {
     return json.get("function") == null ? null : new FuncRef((JsonObject) json.get("function"));
   }
@@ -38,6 +44,9 @@ public class Frame extends Response {
     return json.get("index") == null ? -1 : json.get("index").getAsInt();
   }
 
+  /**
+   * Can return <code>null</code>.
+   */
   public FrameKind getKind() {
     if (json.get("kind") == null) return null;
     
@@ -49,10 +58,16 @@ public class Frame extends Response {
     }
   }
 
+  /**
+   * Can return <code>null</code>.
+   */
   public SourceLocation getLocation() {
     return json.get("location") == null ? null : new SourceLocation((JsonObject) json.get("location"));
   }
 
+  /**
+   * Can return <code>null</code>.
+   */
   public ElementList<BoundVariable> getVars() {
     if (json.get("vars") == null) return null;
     

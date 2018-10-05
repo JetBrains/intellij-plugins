@@ -37,6 +37,8 @@ public class Context extends Obj {
 
   /**
    * The enclosing context for this context.
+   *
+   * Can return <code>null</code>.
    */
   public Context getParent() {
     return json.get("parent") == null ? null : new Context((JsonObject) json.get("parent"));
