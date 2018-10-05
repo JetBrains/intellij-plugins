@@ -16,6 +16,7 @@ class LearnToolWindowFactory : ToolWindowFactory, DumbAware {
     learnToolWindow.init(project)
     val contentManager = toolWindow.contentManager
     val content = contentManager.factory.createContent(learnToolWindow, null, false)
+    content.isCloseable = false
     contentManager.addContent(content)
     learnWindowPerProject.put(project, learnToolWindow)
     Disposer.register(project, learnToolWindow)
