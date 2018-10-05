@@ -24,7 +24,7 @@ import java.util.Set;
 public class DartCoverageEngine extends CoverageEngine {
 
   public static DartCoverageEngine getInstance() {
-    return CoverageEngine.EP_NAME.getExtension(DartCoverageEngine.class);
+    return CoverageEngine.EP_NAME.findExtensionOrFail(DartCoverageEngine.class);
   }
 
   @Override
