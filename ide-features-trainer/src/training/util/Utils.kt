@@ -4,7 +4,12 @@ import com.intellij.ide.DataManager
 import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.popup.Balloon
+import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.util.ui.UIUtil
+import java.awt.Point
 import java.io.File
 import java.io.FileFilter
 
@@ -108,3 +113,20 @@ fun findLanguageByID(id: String?): Language? {
 fun getCurrentProject(): Project? {
   return CommonDataKeys.PROJECT.getData(DataManager.getInstance().dataContext)
 }
+
+fun editorPointForBalloon(myEditor: Editor): Point {
+  val offset = myEditor.caretModel.currentCaret.offset
+  val position = myEditor.offsetToVisualPosition(offset)
+  val point = myEditor.visualPositionToXY(position)
+  return point
+}
+fun createBalloon(text: String): Balloon = createBalloon(text, 3000)
+fun createBalloon(text: String, delay: Long): Balloon =
+    JBPopupFactory.getInstance()
+        .createHtmlTextBalloonBuilder(text, null, UIUtil.getToolTipBackground(), null)
+        .setHideOnClickOutside(true)
+        .setCloseButtonEnabled(true)
+        .setHideOnKeyOutside(true)
+        .setAnimationCycle(0)
+        .setFadeoutTime(delay)
+        .createBalloon()
