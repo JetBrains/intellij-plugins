@@ -4,15 +4,17 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.popup.Balloon
+import com.intellij.ui.awt.RelativePoint
 import training.editor.MouseListenerHolder
 import training.editor.actions.BlockCaretAction
 import training.editor.actions.LearnActions
 import training.learn.ActionsRecorder
 import training.learn.CourseManager
 import training.learn.LearnBundle
-import training.ui.LearnBalloonBuilder
-import training.ui.Message
-import training.ui.UiManager
+import training.ui.*
+import training.util.createBalloon
+import training.util.editorPointForBalloon
 import java.util.*
 
 /**
@@ -21,14 +23,11 @@ import java.util.*
 class LessonManager {
 
   private var myCurrentLesson: Lesson? = null
-  private var learnBalloonBuilder: LearnBalloonBuilder? = null
-  private val balloonDelay = 3000
 
   constructor(lesson: Lesson, editor: Editor) {
     myCurrentLesson = lesson
     mouseBlocked = false
     if (myLearnActions == null) myLearnActions = ArrayList<LearnActions>()
-    learnBalloonBuilder = null
     lastEditor = editor
     mouseListenerHolder = null
   }
@@ -58,9 +57,6 @@ class LessonManager {
     clearEditor(editor)
     clearLessonPanel()
     removeActionsRecorders()
-
-    learnBalloonBuilder = LearnBalloonBuilder(editor, balloonDelay, LearnBundle
-        .message("learn.ui.balloon.blockCaret.message"))
 
     if (mouseListenerHolder != null) mouseListenerHolder!!.restoreMouseActions(editor)
 
@@ -236,7 +232,9 @@ class LessonManager {
 
   @Throws(InterruptedException::class)
   private fun showCaretBlockedBalloon() {
-    learnBalloonBuilder!!.showBalloon()
+    val balloon = createBalloon(LearnBundle
+        .message("learn.ui.balloon.blockCaret.message"))
+    balloon.show(RelativePoint(lastEditor?.contentComponent!!, editorPointForBalloon(lastEditor!!)), Balloon.Position.above)
   }
 
   private fun cleanEditor() {

@@ -15,6 +15,7 @@ import training.learn.Module
 import training.ui.LearnIcons
 import training.ui.UISettings
 import training.util.DataLoader
+import training.util.createBalloon
 import java.awt.*
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
@@ -104,13 +105,7 @@ class ModulesPanel : JPanel() {
                 val project = guessCurrentProject(lessonPanel)
                 val dumbService = DumbService.getInstance(project)
                 if (dumbService.isDumb) {
-                    val balloon = JBPopupFactory.getInstance()
-                        .createHtmlTextBalloonBuilder(LearnBundle.message("indexing.message"), null, UIUtil.getLabelBackground(), null)
-                        .setHideOnClickOutside(true)
-                        .setCloseButtonEnabled(true)
-                        .setHideOnKeyOutside(true)
-                        .setAnimationCycle(0)
-                        .createBalloon()
+                    val balloon = createBalloon(LearnBundle.message("indexing.message"))
                     balloon.showInCenterOf(module2linklabel!![module])
                     return@setListener
                 }
