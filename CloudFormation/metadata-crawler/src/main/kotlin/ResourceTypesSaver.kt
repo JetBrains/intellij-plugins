@@ -16,6 +16,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL
 import java.util.ArrayList
+import java.util.TreeMap
 import java.util.regex.Pattern
 
 object ResourceTypesSaver {
@@ -70,7 +71,9 @@ object ResourceTypesSaver {
     val allBuilders = resourceTypes + awsServerless20161031ResourceTypes.map { it.toResourceTypeBuilder() }
 
     val metadata = CloudFormationMetadata(
-        resourceTypes = allBuilders.map { Pair(it.name, it.toResourceType()) }.toMap(),
+        resourceTypes = TreeMap(allBuilders
+            .map { Pair(it.name, it.toResourceType()) }
+            .toMap()),
         predefinedParameters = predefinedParameters,
         limits = limits
     )

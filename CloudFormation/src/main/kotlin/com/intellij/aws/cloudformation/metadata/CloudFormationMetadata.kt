@@ -1,9 +1,10 @@
 package com.intellij.aws.cloudformation.metadata
 
 import com.intellij.aws.cloudformation.model.CfnRootNode
+import java.util.TreeMap
 
 data class CloudFormationMetadata(
-    val resourceTypes: Map<String, CloudFormationResourceType>,
+    val resourceTypes: TreeMap<String, CloudFormationResourceType>,
     val predefinedParameters: List<String>,
     val limits: CloudFormationLimits) {
 

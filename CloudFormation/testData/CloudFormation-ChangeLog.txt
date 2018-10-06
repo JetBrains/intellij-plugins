@@ -589,7 +589,6 @@ User Guide (API Version 2010-05-15)
                 + CloudFront StreamingDistribution S3Origin
                 + CloudFront StreamingDistribution
                   StreamingDistributionConfig
-                + CloudFront StreamingDistribution Tag
                 + CloudFront StreamingDistribution TrustedSigners
                 + CloudTrail Trail EventSelector
                 + CloudTrail Trail DataResource
@@ -1008,7 +1007,7 @@ User Guide (API Version 2010-05-15)
                 + AWS OpsWorks VolumeConfiguration Type
                 + Amazon Redshift Parameter Type
                 + Amazon Redshift Cluster LoggingProperties
-                + AWS CloudFormation Resource Tags
+                + Resource Tag
                 + Amazon RDS DBCluster ScalingConfiguration
                 + Amazon RDS OptionGroup OptionConfiguration
                 + Amazon RDS OptionGroup OptionSetting
@@ -1064,14 +1063,10 @@ User Guide (API Version 2010-05-15)
                   Rule Property
                 + Amazon S3 Website Configuration Routing Rules Routing
                   Rule Condition Property
-                + Amazon SageMaker Endpoint Tag
                 + Amazon SageMaker EndpointConfig ProductionVariant
-                + Amazon SageMaker EndpointConfig Tag
-                + Amazon SageMaker NotebookInstance Tag
                 + Amazon SageMaker NotebookInstanceLifecycleConfig
                   NotebookInstanceLifecycleHook
                 + Amazon SageMaker Model ContainerDefinition
-                + Amazon SageMaker Model Tag
                 + Amazon SageMaker Model VpcConfig
                 + AWS Service Catalog CloudFormationProduct
                   ProvisioningArtifactProperties
@@ -1316,9 +1311,9 @@ AWS::ApiGateway::Stage
 
 AWS::ApiGateway::UsagePlan
 
-    In the property type, use the Throttle property to specify a map
-    containing method-level throttling information for API stage in a usage
-    plan.
+    In the Amazon API Gateway UsagePlan ApiStage property type, use the 
+    Throttle property to specify a map containing method-level throttling
+    information for API stage in a usage plan.
 
 AWS::CodeBuild::Project
 
