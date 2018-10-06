@@ -96,5 +96,7 @@
     <defaultLiveTemplatesProvider implementation="com.intellij.aws.cloudformation.CloudFormationDefaultLiveTemplateProvider"/>
 
     <errorHandler implementation="com.intellij.aws.cloudformation.CloudFormationReportSubmitter"/>
+
+    <json.catalog.exclusion implementation="com.intellij.aws.cloudformation.CloudFormationJsonCatalogExclusion" />
   </extensions>
 </idea-plugin>
