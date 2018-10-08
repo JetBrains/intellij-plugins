@@ -2,10 +2,10 @@ package com.intellij.lang.javascript.flex.importer;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.InputStream;
-import java.io.IOException;
 import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.InflaterInputStream;
 
 /**
@@ -21,7 +21,7 @@ class ByteBuffer {
       bytes = readStream(inputStream);
     }
     finally {
-      if (inputStream != null) inputStream.close();
+      inputStream.close();
     }
   }
 
@@ -115,17 +115,12 @@ class ByteBuffer {
   }
 
   public String readUTFBytes(int i) {
-    try {
-      final byte[] buf = new byte[i];
-      while (i > 0) {
-        buf[buf.length - i] = (byte)readByte();
-        --i;
-      }
-      return new String(buf, "utf-8");
+    final byte[] buf = new byte[i];
+    while (i > 0) {
+      buf[buf.length - i] = (byte)readByte();
+      --i;
     }
-    catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
-    }
+    return new String(buf, StandardCharsets.UTF_8);
   }
 
   public double readDouble() {
