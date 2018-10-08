@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.typescript.psi.impl.ES6DecoratorImpl;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -37,7 +36,7 @@ public class Angular2DecoratorUtil {
       return literal.isQuotedLiteral()
              && (parent = literal.getParent()) instanceof JSProperty
              && propertyName.equals(((JSProperty)parent).getName())
-             && decoratorName.equals(ES6Decorator.getDecoratorName(PsiTreeUtil.getParentOfType(parent, JSCallExpression.class)));
+             && decoratorName.equals(ObjectUtils.doIfNotNull(PsiTreeUtil.getParentOfType(parent, ES6Decorator.class), ES6Decorator::getDecoratorName));
     }
     return false;
   }
