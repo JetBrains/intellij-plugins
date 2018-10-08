@@ -41,7 +41,6 @@
     <internalFileTemplate name="PostCSS File"/>
     <lang.syntaxHighlighterFactory language="PostCSS" implementationClass="org.intellij.plugins.postcss.highlighting.PostCssSyntaxHighlighterFactory"/>
     <colorSettingsPage implementation="org.intellij.plugins.postcss.highlighting.PostCssColorsPage"/>
-    <langCodeStyleSettingsProvider implementation="org.intellij.plugins.postcss.settings.PostCssLanguageCodeStyleSettingsProvider"/>
     <css.structureViewChildrenProvider implementation="org.intellij.plugins.postcss.fileStructure.PostCssStructureViewElementsProvider"/>
     <completion.contributor language="CSS" implementationClass="org.intellij.plugins.postcss.completion.PostCssDumbAwareCompletionContributor"
                             order="before cssDumbCompletion"/>
