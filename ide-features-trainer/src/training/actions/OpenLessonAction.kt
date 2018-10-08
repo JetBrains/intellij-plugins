@@ -91,7 +91,7 @@ class OpenLessonAction : AnAction() {
         vf = getScratchFile(projectWhereToStartLesson, lesson, scratchFileName)
       } else { //if this file should be opened in LearnProject
         //0. learnProject == null but this project is LearnProject then just getFileInLearnProject
-        if (learnProject == null && projectWhereToStartLesson.name == langSupport.defaultProjectName) {
+        if ((learnProject == null || learnProject.isDisposed) && projectWhereToStartLesson.name == langSupport.defaultProjectName) {
           LOG.debug("${projectWhereToStartLesson.name}: 0. learnProject is null but the current project (${projectWhereToStartLesson.name}) is LearnProject then just getFileInLearnProject")
           CourseManager.instance.learnProject = projectWhereToStartLesson
           vf = getFileInLearnProject(lesson)
