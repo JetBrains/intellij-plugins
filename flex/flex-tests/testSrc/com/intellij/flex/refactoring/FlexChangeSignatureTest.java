@@ -1,9 +1,9 @@
 package com.intellij.flex.refactoring;
 
+import com.intellij.flex.base.FlexChangeSignatureTestBase;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
-import com.intellij.lang.javascript.JSChangeSignatureTestBase;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.dialects.ECMAL4LanguageDialect;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
-public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
+public class FlexChangeSignatureTest extends FlexChangeSignatureTestBase {
   @Override
   public void setUp() throws Exception {
     VfsRootAccess.allowRootAccess(getTestRootDisposable(),

@@ -1,5 +1,6 @@
 package com.intellij.flex.refactoring;
 
+import com.intellij.flex.base.FlexExtractFunctionBaseTest;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
@@ -8,7 +9,8 @@ import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
-import com.intellij.lang.javascript.refactoring.extractMethod.*;
+import com.intellij.lang.javascript.refactoring.extractMethod.DefaultJSExtractFunctionSettings;
+import com.intellij.lang.javascript.refactoring.extractMethod.JSExtractFunctionSettings;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -17,7 +19,7 @@ import com.intellij.util.containers.ContainerUtil;
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
-public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
+public class FlexExtractFunctionTest extends FlexExtractFunctionBaseTest {
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("refactoring/flexExtractFunction/");
