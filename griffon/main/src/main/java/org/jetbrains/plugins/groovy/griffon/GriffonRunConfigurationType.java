@@ -11,7 +11,7 @@ import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
-import icons.JetgroovyIcons;
+import icons.GriffonIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,7 +51,7 @@ public final class GriffonRunConfigurationType implements ConfigurationType {
 
   @Override
   public Icon getIcon() {
-    return JetgroovyIcons.Griffon.Griffon;
+    return GriffonIcons.Griffon;
   }
 
   @Override

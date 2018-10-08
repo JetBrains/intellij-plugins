@@ -25,7 +25,7 @@ import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import icons.JetgroovyIcons;
+import icons.GriffonIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -154,7 +154,7 @@ public class GriffonLibraryPresentationProvider extends GroovyLibraryPresentatio
   @NotNull
   @Override
   public Icon getIcon(GroovyLibraryProperties properties) {
-    return JetgroovyIcons.Griffon.Griffon;
+    return GriffonIcons.Griffon;
   }
 
   @Nls

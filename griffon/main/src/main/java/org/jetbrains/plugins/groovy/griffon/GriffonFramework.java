@@ -43,7 +43,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.containers.MultiMap;
 import gnu.trove.TIntArrayList;
-import icons.JetgroovyIcons;
+import icons.GriffonIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -338,12 +338,12 @@ public class GriffonFramework extends MvcFramework {
 
   @Override
   public Icon getIcon() {
-    return JetgroovyIcons.Griffon.Griffon;
+    return GriffonIcons.Griffon;
   }
 
   @Override
   public Icon getToolWindowIcon() {
-    return JetgroovyIcons.Griffon.GriffonToolWindow;
+    return GriffonIcons.GriffonToolWindow;
   }
 
   @Override

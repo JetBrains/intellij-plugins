@@ -1,6 +1,6 @@
 package org.jetbrains.plugins.groovy.griffon;
 
-import icons.JetgroovyIcons;
+import icons.GriffonIcons;
 import org.jetbrains.plugins.groovy.mvc.MvcModuleBuilder;
 
 import javax.swing.*;
@@ -15,6 +15,6 @@ public class GriffonModuleBuilder extends MvcModuleBuilder {
 
   @Override
   public Icon getNodeIcon() {
-    return JetgroovyIcons.Griffon.Griffon;
+    return GriffonIcons.Griffon;
   }
 }

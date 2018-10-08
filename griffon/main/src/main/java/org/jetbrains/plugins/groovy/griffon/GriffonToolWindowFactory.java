@@ -29,6 +29,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.hash.LinkedHashMap;
+import icons.GriffonIcons;
 import icons.JetgroovyIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.groovy.mvc.projectView.*;
@@ -125,7 +126,7 @@ public class GriffonToolWindowFactory extends MvcToolWindowDescriptor {
 
   @Override
   public Icon getModuleNodeIcon() {
-    return JetgroovyIcons.Griffon.Griffon;
+    return GriffonIcons.Griffon;
   }
 
   @NotNull
