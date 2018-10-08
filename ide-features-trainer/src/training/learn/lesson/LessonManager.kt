@@ -46,7 +46,8 @@ class LessonManager {
 
   @Throws(Exception::class)
   internal fun initLesson(editor: Editor) {
-    cleanEditor() //remove mouse blocks and action recorders from last editor
+    clearAllListeners()
+   //remove mouse blocks and action recorders from last editor
     lastEditor = editor //rearrange last editor
     val cLesson = myCurrentLesson ?: throw Exception("Current lesson is null")
     UiManager.setLessonNameOnLearnPanels(cLesson.name)
@@ -56,7 +57,6 @@ class LessonManager {
     UiManager.initLessonOnLearnPanels(cLesson)
     clearEditor(editor)
     clearLessonPanel()
-    removeActionsRecorders()
 
     if (mouseListenerHolder != null) mouseListenerHolder!!.restoreMouseActions(editor)
 
@@ -237,7 +237,7 @@ class LessonManager {
     balloon.show(RelativePoint(lastEditor?.contentComponent!!, editorPointForBalloon(lastEditor!!)), Balloon.Position.above)
   }
 
-  private fun cleanEditor() {
+  fun clearAllListeners() {
     if (lastEditor == null) return
     if (mouseListenerHolder != null) mouseListenerHolder!!.restoreMouseActions(lastEditor!!)
     removeActionsRecorders()
@@ -269,7 +269,7 @@ class LessonManager {
     private var lastEditor: Editor? = null
     private var mouseListenerHolder: MouseListenerHolder? = null
 
-    private val instance: LessonManager
+    val instance: LessonManager
       get() = ServiceManager.getService(LessonManager::class.java)
 
     fun getInstance(lesson: Lesson): LessonManager {
