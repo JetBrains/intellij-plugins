@@ -60,12 +60,12 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   private fun findLocalComponents(name: String, contextElement: PsiElement): List<JSImplicitElement> {
     val localComponents = mutableListOf<JSImplicitElement>()
     val decapitalized = name.decapitalize()
-    processLocalComponents(contextElement, { foundName, element ->
+    processLocalComponents(contextElement) { foundName, element ->
       if (foundName == decapitalized || foundName == toAsset(decapitalized) || foundName == toAsset(decapitalized).capitalize()) {
         localComponents.add(element)
       }
       return@processLocalComponents true
-    })
+    }
     return localComponents
   }
 
@@ -173,11 +173,11 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     val scriptLanguage = detectVueScriptLanguage(tag.containingFile)
     val files:MutableList<PsiFile> = mutableListOf()
     val localLookups = mutableListOf<LookupElement>()
-    processLocalComponents(tag, { foundName, element ->
+    processLocalComponents(tag) { foundName, element ->
       addLookupVariants(localLookups, tag, scriptLanguage, element, foundName!!, true)
       files.add(element.containingFile)
       return@processLocalComponents true
-    })
+    }
     elements.addAll(localLookups.map { PrioritizedLookupElement.withPriority((it as LookupElementBuilder).bold(), 100.0) })
 
     if (hasVue(tag.project)) {

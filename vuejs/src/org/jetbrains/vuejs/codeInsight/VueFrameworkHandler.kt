@@ -74,7 +74,11 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE, "mixin", "component", "extends", "directive", "delimiters")
     private val COMPONENT_INDICATOR_PROPS = setOf("template", "render", "mixins", "components", "props")
     fun hasComponentIndicatorProperties(obj: JSObjectLiteralExpression): Boolean =
-      obj.properties.any { Companion.COMPONENT_INDICATOR_PROPS.contains(it.name) }
+      obj.properties.any { COMPONENT_INDICATOR_PROPS.contains(it.name) }
+
+    fun isDefaultExports(expression: JSExpression?): Boolean =
+      expression is JSReferenceExpression && JSSymbolUtil.isAccurateReferenceExpressionName(expression as JSReferenceExpression?,
+                                                                                                   JSSymbolUtil.EXPORTS, "default")
   }
 
   override fun findModule(result: PsiElement): PsiElement? = org.jetbrains.vuejs.codeInsight.findModule(result)
@@ -111,11 +115,13 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
     val firstProperty = obj.firstProperty ?: return outData
     if (firstProperty == property) {
-      if (obj.parent is JSExportAssignment) {
+      val parent = obj.parent
+      if (parent is JSExportAssignment ||
+          (parent is JSAssignmentExpression && isDefaultExports(parent.definitionExpression?.expression))) {
         if (obj.containingFile.fileType == VueFileType.INSTANCE || obj.containingFile is JSFile && hasComponentIndicatorProperties(obj)) {
           out.addImplicitElement(createImplicitElement(getComponentNameFromDescriptor(obj), property, VueComponentsIndex.JS_KEY))
         }
-      } else if (((obj.parent as? JSProperty) == null) && isDescriptorOfLinkedInstanceDefinition(obj)) {
+      } else if (((parent as? JSProperty) == null) && isDescriptorOfLinkedInstanceDefinition(obj)) {
         val binding = (obj.findProperty("el")?.value as? JSLiteralExpression)?.stringValue
         out.addImplicitElement(createImplicitElement(binding ?: "", property, VueOptionsIndex.JS_KEY))
       }

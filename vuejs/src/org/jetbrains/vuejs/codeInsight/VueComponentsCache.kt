@@ -17,28 +17,27 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.vuejs.index.GLOBAL_BINDING_MARK
 import org.jetbrains.vuejs.index.getVueIndexData
 
-/**
- * @author Irina.Chernushina on 1/12/2018.
- */
 class VueComponentsCache {
   companion object {
+    private val PACKAGES_WITH_GLOBAL_COMPONENTS = arrayOf("vuetify")
+
     // returns module: (component: (navigation-element, isGlobal))
     fun getAllComponentsGroupedByModules(project: Project, filter: ((String) -> Boolean)?, onlyGlobal: Boolean):
       Map<String, Map<String, Pair<PsiElement, Boolean>>> {
       val result: MutableMap<String, Map<String, Pair<PsiElement, Boolean>>> = mutableMapOf()
-      result.put("", getOnlyProjectComponents(project).map)
+      result[""] = getOnlyProjectComponents(project).map
 
       getLibraryPackageJsons(project).forEach {
         val moduleComponents = getModuleComponents(it, project)
         if (moduleComponents != null) {
           val name = PackageJsonUtil.getOrCreateData(it).name ?: it.parent.name
-          result.put(name, moduleComponents.map)
+          result[name] = moduleComponents.map
         }
       }
 
       if (onlyGlobal || filter != null) {
-        return result.map {
-          Pair(it.key, it.value.filter { (!onlyGlobal || it.value.second) && (filter == null || filter.invoke(it.key)) })
+        return result.map { entry ->
+          Pair(entry.key, entry.value.filter { (!onlyGlobal || it.value.second) && (filter == null || filter.invoke(it.key)) })
         }.toMap()
       }
       return result
@@ -86,26 +85,26 @@ class VueComponentsCache {
         val directoryFile = psiDirectory.virtualFile
         
         val scope = GlobalSearchScopesCore.directoryScope(psiDirectory.project, directoryFile, true)
-        CachedValueProvider.Result(VueComponentsCalculation.calculateScopeComponents(scope), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+        val globalize = PACKAGES_WITH_GLOBAL_COMPONENTS.contains(psiDirectory.name)
+        CachedValueProvider.Result(VueComponentsCalculation.calculateScopeComponents(scope, globalize), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
       }
       return CachedValuesManager.getCachedValue(psiDirectory, provider)
     }
 
     private fun getOnlyProjectComponents(project: Project): ComponentsData {
-      return CachedValuesManager.getManager(project).getCachedValue(project, {
-        val componentsData = VueComponentsCalculation.calculateScopeComponents(GlobalSearchScope.projectScope(project))
+      return CachedValuesManager.getManager(project).getCachedValue(project) {
+        val componentsData = VueComponentsCalculation.calculateScopeComponents(GlobalSearchScope.projectScope(project), false)
         CachedValueProvider.Result(componentsData, PsiManager.getInstance(project).modificationTracker)
-      })
+      }
     }
 
     private fun resolveComponentsCollection(component: JSImplicitElement): Map<String, Pair<PsiElement, Boolean>> {
       val virtualFile = component.containingFile.viewProvider.virtualFile
       val variants = mutableListOf<VirtualFile>()
-      PackageJsonUtil.processUpPackageJsonFilesInAllScope(virtualFile,
-                                                          {
-                                                            if (packageJsonForLibraryAndHasVue(it)) variants.add(it)
-                                                            true
-                                                          })
+      PackageJsonUtil.processUpPackageJsonFilesInAllScope(virtualFile) {
+        if (packageJsonForLibraryAndHasVue(it)) variants.add(it)
+        true
+      }
       val project = component.project
       @Suppress("LoopToCallChain") // we do not want to convert them all and then search
       for (variant in variants) {
