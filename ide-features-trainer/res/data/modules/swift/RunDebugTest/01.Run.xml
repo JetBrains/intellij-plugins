@@ -22,6 +22,8 @@ class RunExample: UIViewController {
 }]]></CopyText>
     <MoveCaret position="6:10"/>
     <Try triggers="Run"><ide/> has two different actions for running the project and for debugging it (because in general, debugging is slower). Try running your application by pressing <action>Run</action>.</Try>
+    <Try triggers="Stop">Stop your application by pressing <action>Stop</action>.</Try>
     <Try triggers="ChooseRunConfiguration">Great! To select another Run Configuration or simulator for the current run configuration and quickly run your application, press <action>ChooseRunConfiguration</action>, select needed Run Configuration or simulator, and then press <action>EditorEnter</action>.</Try>
+    <Try triggers="Stop">Stop your application by pressing <action>Stop</action>.</Try>
     <Win/>
 </xml>

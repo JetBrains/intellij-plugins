@@ -30,6 +30,8 @@ class TestExample: UIViewController {
     <Try triggers="RunClass">Use the same <action>RunClass</action> shortcut to run a single test.</Try>
     <MoveCaret position="13:9"/>
     <Try triggers="ToggleLineBreakpoint;DebugClass">Now let's debug our test. Toggle the line breakpoint by using <action>ToggleLineBreakpoint</action> and then debug the test with <action>DebugClass</action>.</Try>
+    <Try triggers="Resume">Press <action>Resume</action> to continue execution.</Try>
+    <Try triggers="Stop">Press <action>Stop</action> to stop debugging.</Try>
     <MoveCaret position="18:97"/>
     <TypeText>
         XCTAssert(false)
