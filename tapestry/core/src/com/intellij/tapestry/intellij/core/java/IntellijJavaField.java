@@ -115,7 +115,7 @@ public class IntellijJavaField implements IJavaField {
     }
 
     public boolean equals(Object obj) {
-        return !(!(obj instanceof IntellijJavaField)) && getName().equals(((IntellijJavaField) obj).getName());
+        return obj instanceof IntellijJavaField && getName().equals(((IntellijJavaField) obj).getName());
     }
 
     public int hashCode() {

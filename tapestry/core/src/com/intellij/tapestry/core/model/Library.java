@@ -119,7 +119,7 @@ public class Library implements Comparable {
    * {@inheritDoc}
    */
   public boolean equals(Object object) {
-    return !(!(object instanceof Library)) && getBasePackage().equals(((Library)object).getBasePackage());
+    return object instanceof Library && getBasePackage().equals(((Library)object).getBasePackage());
   }
 
   /**

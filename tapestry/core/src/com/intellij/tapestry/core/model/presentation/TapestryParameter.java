@@ -138,7 +138,7 @@ public class TapestryParameter implements Comparable {
      * {@inheritDoc}
      */
     public boolean equals(Object obj) {
-        return !(!(obj instanceof TapestryParameter)) && getName().equals(((TapestryParameter) obj).getName());
+        return obj instanceof TapestryParameter && getName().equals(((TapestryParameter) obj).getName());
     }
 
     /**
