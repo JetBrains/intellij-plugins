@@ -155,7 +155,7 @@ public class MarkdownIntroduceLinkReferenceAction extends AnAction implements Du
         PsiTreeUtil.collectElements(myFile, new PsiElementFilter() {
           @Override
           public boolean isAccepted(PsiElement element) {
-            return MarkdownTokenTypeSets.AUTO_LINKS.contains(PsiUtilCore.getElementType(element))
+            return MarkdownTokenTypeSets.LINKS.contains(PsiUtilCore.getElementType(element))
                    && myUrl.equals(MarkdownActionUtil.getUrl(element))
                    //inside inline links
                    && PsiTreeUtil.findFirstParent(element, true, element1 ->  PsiUtilCore.getElementType(element1) == INLINE_LINK) == null
