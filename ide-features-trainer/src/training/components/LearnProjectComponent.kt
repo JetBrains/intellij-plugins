@@ -25,6 +25,7 @@ import com.intellij.util.ui.UIUtil
 import training.lang.LangManager
 import training.learn.CourseManager
 import training.learn.LearnBundle
+import training.learn.lesson.LessonManager
 import training.statistic.ActivityManager
 import training.ui.LearnIcons
 import training.ui.LearnToolWindowFactory
@@ -50,7 +51,10 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
 
   }
 
-  override fun projectClosed() {}
+  override fun projectClosed() {
+    LessonManager.instance.clearAllListeners()
+  }
+
 
   override fun initComponent() {}
 
