@@ -88,16 +88,15 @@ public class MarkdownPsiElementFactory {
    * Returns pair of the link reference and its declaration
    */
   @NotNull
-  public static Pair<PsiElement, PsiElement> createLinkReference(@NotNull Project project,
-                                                                 @NotNull String url,
-                                                                 @Nullable String text,
-                                                                 @Nullable String title) {
-    text = ObjectUtils.notNull(text, "link");
-    title = title == null ? "" : title;
+  public static Pair<PsiElement, PsiElement> createLinkDeclarationAndReference(@NotNull Project project,
+                                                                               @NotNull String url,
+                                                                               @NotNull String text,
+                                                                               @Nullable String title,
+                                                                               @NotNull String reference) {
+    text = ObjectUtils.notNull(text, reference);
+    title = title == null ? "" : " " + title;
 
-    String linkReference = text.contains("[") || text.contains("]")
-                           ? "[link]" + ": " + url + " " + title + "\n" + "[" + text + "][link]"
-                           : ("[" + text + "]") + ": " + url + " " + title + "\n" + ("[" + text + "]");
+    String linkReference = "[" + text + "][" + reference + "]" + "\n\n" + "[" + reference + "]" + ": " + url + title;
 
     PsiElement linkReferenceElement = createFile(project, linkReference).getFirstChild();
 

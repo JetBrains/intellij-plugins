@@ -6,11 +6,11 @@ import org.intellij.plugins.markdown.MarkdownTestingUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class MarkdownIntroduceLinkReferenceTest extends LightPlatformCodeInsightTestCase {
-  public void testAutolink() {
+  public void testAutoLink() {
     doTest();
   }
 
-  public void testGfmAutolink() {
+  public void testGfmAutoLink() {
     doTest();
   }
 
@@ -35,6 +35,14 @@ public class MarkdownIntroduceLinkReferenceTest extends LightPlatformCodeInsight
   }
 
   public void testComplexTitle() {
+    doTest();
+  }
+
+  public void testDuplicateGfm() {
+    doTest();
+  }
+
+  public void testDuplicateAutoLink() {
     doTest();
   }
 

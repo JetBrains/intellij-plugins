@@ -1,3 +1,3 @@
-[link]
+[link][reference]
 
-[link]: /url "title"
+[reference]: /url "title"

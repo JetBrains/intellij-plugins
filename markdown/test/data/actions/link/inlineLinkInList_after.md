@@ -1,3 +1,3 @@
-[What is this repository for]
+[What is this repository for][reference]
 
-[What is this repository for]: #what-is-this-repository-for
+[reference]: #what-is-this-repository-for

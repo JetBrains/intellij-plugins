@@ -1,3 +1,0 @@
-[]
-
-[]: http://jetbrains.com
