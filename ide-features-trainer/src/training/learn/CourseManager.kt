@@ -164,11 +164,10 @@ class CourseManager internal constructor() {
     val lessons = module.lessons
     val size = lessons.size
     if (size == 1) return null
-    return (0..size - 1)
-        .filter { lessons[it] == currentLesson }
-        .takeWhile { it + 1 < size }
-        .firstOrNull()
-        ?.let { lessons[it + 1] }
+    return lessons.firstOrNull {
+      lessons.indexOf(it) > lessons.indexOf(currentLesson) &&
+          lessons.indexOf(it) < lessons.size && !it.passed }
+        ?.let { lessons[lessons.indexOf(it)] }
   }
 
   fun giveNextModule(currentLesson: Lesson): Module? {
