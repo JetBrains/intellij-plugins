@@ -1,5 +1,6 @@
 package training.ui;
 
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
@@ -70,6 +71,8 @@ public class Message {
                         final KeyStroke shortcutByActionId = KeymapUtil.INSTANCE.getShortcutByActionId(text);
                         if (shortcutByActionId != null) {
                             text = KeymapUtil.INSTANCE.getKeyStrokeText(shortcutByActionId);
+                        }else{
+                            text = KeymapUtil.INSTANCE.getKeyStrokeText(KeymapUtil.INSTANCE.getShortcutByActionId("GotoAction")) + " → "+ ActionManager.getInstance().getAction(text).getTemplatePresentation().getText();
                         }
                         break;
                     case "ide":
