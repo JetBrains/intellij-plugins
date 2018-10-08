@@ -34,7 +34,7 @@ import java.util.Objects;
 import static org.intellij.plugins.markdown.lang.MarkdownElementTypes.FULL_REFERENCE_LINK;
 import static org.intellij.plugins.markdown.lang.MarkdownElementTypes.INLINE_LINK;
 
-public class IntroduceLinkReferenceAction extends AnAction implements DumbAware {
+public class MarkdownIntroduceLinkReferenceAction extends AnAction implements DumbAware {
   private static final String VAR_NAME = "reference";
 
   @SuppressWarnings("Duplicates")

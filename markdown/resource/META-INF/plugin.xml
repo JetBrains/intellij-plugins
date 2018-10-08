@@ -143,8 +143,8 @@ Includes the following features:</p>
               icon="MarkdownIcons.EditorActions.Header_level_up">
       </action>
 
-      <action class="org.intellij.plugins.markdown.ui.actions.styling.IntroduceLinkReferenceAction"
-              id="org.intellij.plugins.markdown.ui.actions.styling.IntroduceLinkReferenceAction"
+      <action class="org.intellij.plugins.markdown.ui.actions.styling.MarkdownIntroduceLinkReferenceAction"
+              id="org.intellij.plugins.markdown.ui.actions.styling.MarkdownIntroduceLinkReferenceAction"
               text="Introduce link from text"
               description="Creates link from text and replaces it with a reference"
               icon="MarkdownIcons.EditorActions.Link">
