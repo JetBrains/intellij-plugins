@@ -46,6 +46,10 @@ public class MarkdownIntroduceLinkReferenceTest extends LightPlatformCodeInsight
     doTest();
   }
 
+  public void testDuplicateInlineLink() {
+    doTest();
+  }
+
   private void doTest() {
     configureByFile(getTestName(true) + "_before.md");
     executeAction("org.intellij.plugins.markdown.ui.actions.styling.MarkdownIntroduceLinkReferenceAction");
