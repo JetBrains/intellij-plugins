@@ -16,7 +16,6 @@
 package com.intellij.struts2.dom.struts.action;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomElement;
@@ -25,7 +24,6 @@ import com.intellij.util.xml.converters.DelimitedListConverter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,12 +53,7 @@ public class AllowedMethodsConverter extends DelimitedListConverter<String> {
   protected Object[] getReferenceVariants(final ConvertContext convertContext,
                                           final GenericDomValue<? extends List<String>> listGenericDomValue) {
     final Action action = getActionElement(convertContext);
-    final List<Object> variants = new ArrayList<>();
-    for (final PsiMethod psiMethod : action.getActionMethods()) {
-      variants.add(psiMethod);
-    }
-
-    return ArrayUtil.toObjectArray(variants);
+    return ArrayUtil.toObjectArray(action.getActionMethods());
   }
 
   @Override

@@ -42,7 +42,6 @@ public class Page extends PresentationLibraryElement implements ExternalizableTo
             return _templateCache;
         }
 
-        List<IResource> templates = new ArrayList<>();
         String packageName = getElementClass().getFullyQualifiedName().substring(0, getElementClass().getFullyQualifiedName().lastIndexOf('.'));
 
         // Search in the classpath
@@ -52,17 +51,11 @@ public class Page extends PresentationLibraryElement implements ExternalizableTo
                         "." + TapestryConstants.TEMPLATE_FILE_EXTENSION, true
         );
 
-        if (resources.size() > 0) {
-            for (IResource template : resources)
-                templates.add(template);
-        }
+        List<IResource> templates = new ArrayList<>(resources);
 
         // Search in web application context
         resources = getProject().getResourceFinder().findLocalizedContextResource(getName() + "." + TapestryConstants.TEMPLATE_FILE_EXTENSION);
-        if (resources.size() > 0) {
-            for (IResource template : resources)
-                templates.add(template);
-        }
+        templates.addAll(resources);
 
         _templateCache = templates.toArray(IResource.EMPTY_ARRAY);
 

@@ -340,9 +340,8 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
   public void reset() {
     myBuffer.clear();
     final Set<StrutsFileSet> sets = StrutsManager.getInstance(module.getProject()).getAllConfigFileSets(module);
-    for (final StrutsFileSet fileSet : sets) {
-      myBuffer.add(/*new StrutsFileSet(fileSet)*/fileSet);
-    }
+    /*new StrutsFileSet(fileSet)*/
+    myBuffer.addAll(sets);
 
     myBuilder.updateFromRoot();
     myTree.setSelectionRow(0);

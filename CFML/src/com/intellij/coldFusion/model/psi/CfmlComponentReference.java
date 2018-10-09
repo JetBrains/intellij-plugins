@@ -131,17 +131,13 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
             componentQualifiedName, searchScope);
           components.addAll(CfmlIndex.getInstance(project).getInterfacesByNameInScope(
             componentQualifiedName, searchScope));
-          for (CfmlComponent component : components) {
-            result.add(component);
-          }
+          result.addAll(components);
         }
         else {
           final Collection<CfmlComponent> components = CfmlIndex.getInstance(project).getComponentsByName(
             componentQualifiedName);
           components.addAll(CfmlIndex.getInstance(project).getInterfacesByName(componentQualifiedName));
-          for (CfmlComponent component : components) {
-            result.add(component);
-          }
+          result.addAll(components);
         }
       }
     }
@@ -198,9 +194,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
               componentsFromGlobalScope.addAll(CfmlIndex.getInstance(project).getInterfacesByNameInScope(
                 componentName, searchScope));
 
-              for (CfmlComponent component : componentsFromGlobalScope) {
-                result.add(component);
-              }
+              result.addAll(componentsFromGlobalScope);
             }
           }
         }
@@ -233,8 +227,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
       else {
         componentQualifiedName = getComponentQualifiedName(getText());
       }
-      PsiFile containingFile = getContainingFile();
-      containingFile = containingFile == null ? null : containingFile.getOriginalFile();
+      PsiFile containingFile = getContainingFile().getOriginalFile();
       if (containingFile instanceof CfmlFile) {
         return CfmlResolveResult.create(resolveFromQualifiedName(componentQualifiedName, ((CfmlFile)containingFile)));
       }
@@ -368,7 +361,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
     containingFile = containingFile == null ? null : containingFile.getOriginalFile();
     if (containingFile instanceof CfmlFile) {
       CfmlFile cfmlContainingFile = (CfmlFile)containingFile;
-      if (directoryName.length() == 0) {
+      if (directoryName.isEmpty()) {
         PsiDirectory directory = cfmlContainingFile.getParent();
         if (directory != null) {
           addVariantsFromPath(variants, "", directory.getVirtualFile().getPresentableUrl());
@@ -399,9 +392,9 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
           VirtualFile element = (VirtualFile)object;
           String elementNameWithoutExtension = element.getNameWithoutExtension();
           String name = forceQualify ?
-                        finalDirectoryName + (finalDirectoryName.length() == 0 ? "" : ".") + elementNameWithoutExtension :
+                        finalDirectoryName + (finalDirectoryName.isEmpty() ? "" : ".") + elementNameWithoutExtension :
                         elementNameWithoutExtension;
-          if (name.length() == 0) name = element.getName();
+          if (name.isEmpty()) name = element.getName();
           if (element.isDirectory()) {
             return LookupElementBuilder.create(name).withIcon(FOLDER_ICON)
               .withInsertHandler(new DotInsertHandler()).withCaseSensitivity(false);
@@ -429,7 +422,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
   }
 
   private static void adjustMappingsIfEmpty(CfmlMappingsConfig mappings, Project project) {
-    if (mappings.getServerMappings().size() != 0) {
+    if (!mappings.getServerMappings().isEmpty()) {
       return;
     }
 
@@ -480,7 +473,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
   public String getName() {
     final String referenceText = getCanonicalText();
     final int index = referenceText.lastIndexOf(".");
-    return referenceText != null ? referenceText.substring(index >= 0 ? (index + 1) : 0) : "";
+    return referenceText.substring(index >= 0 ? (index + 1) : 0);
   }
 
   @Override

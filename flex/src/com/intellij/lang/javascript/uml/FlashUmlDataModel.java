@@ -88,9 +88,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
       initialPackage = (String)element;
 
       final GlobalSearchScope searchScope = GlobalSearchScope.allScope(project);
-      for (String aPackage : getSubPackages(initialPackage, searchScope)) {
-        packages.add(aPackage);
-      }
+      packages.addAll(getSubPackages(initialPackage, searchScope));
 
       for (JSClass jsClass : getClasses(initialPackage, searchScope)) {
         classesAddedByUser.put(jsClass.getQualifiedName(), spManager.createSmartPsiElementPointer(jsClass));
@@ -464,14 +462,11 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
     final GlobalSearchScope searchScope = GlobalSearchScope.allScope(getProject());
     if (initialPackage == null || FlashUmlElementManager.packageExists(getProject(), initialPackage, searchScope)) return;
 
-    final Set<String> psiPackages = new HashSet<>();
-    for (String sub : getSubPackages(initialPackage, searchScope)) {
-      psiPackages.add(sub);
-    }
+    final Set<String> psiPackages = new HashSet<>(getSubPackages(initialPackage, searchScope));
     for (String fqn : packages) psiPackages.remove(fqn);
     for (String fqn : packagesRemovedByUser) psiPackages.remove(fqn);
 
-    if (psiPackages.size() > 0) {
+    if (!psiPackages.isEmpty()) {
       packages.addAll(psiPackages);
     }
   }
@@ -754,7 +749,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
     return false;
   }
 
-  private boolean isValid(Object element) {
+  private static boolean isValid(Object element) {
     if (element instanceof PsiElement) return ((PsiElement)element).isValid();
     return false;
   }

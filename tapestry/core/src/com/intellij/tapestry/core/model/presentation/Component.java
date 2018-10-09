@@ -11,9 +11,7 @@ import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.core.util.PathUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * A Tapestry component.
@@ -58,16 +56,7 @@ public class Component extends ParameterReceiverElement implements Externalizabl
       "." +
       TapestryConstants.TEMPLATE_FILE_EXTENSION, true);
 
-    if (resources.size() > 0) {
-      List<IResource> templates = new ArrayList<>();
-      for (IResource template : resources) {
-        templates.add(template);
-      }
-      _templateCache = templates.toArray(IResource.EMPTY_ARRAY);
-    }
-    else {
-      _templateCache = IResource.EMPTY_ARRAY;
-    }
+    _templateCache = resources.toArray(IResource.EMPTY_ARRAY);
 
     return _templateCache;
   }
