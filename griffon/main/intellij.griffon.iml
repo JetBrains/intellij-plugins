@@ -17,5 +17,6 @@
     <orderEntry type="module" module-name="intellij.java.execution.impl" />
     <orderEntry type="module" module-name="intellij.java.debugger.impl" />
     <orderEntry type="module" module-name="intellij.groovy" />
+    <orderEntry type="module" module-name="intellij.griffon.jps" scope="RUNTIME" />
   </component>
 </module>
