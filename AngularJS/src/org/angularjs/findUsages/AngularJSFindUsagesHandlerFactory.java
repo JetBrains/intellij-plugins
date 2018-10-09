@@ -11,7 +11,7 @@ import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.psi.PsiElement;
 import org.angular2.codeInsight.Angular2PipeUtil;
-import org.angular2.codeInsight.metadata.AngularPipeMetadata;
+import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +29,7 @@ public class AngularJSFindUsagesHandlerFactory extends JavaScriptFindUsagesHandl
   public FindUsagesHandler createFindUsagesHandler(@NotNull PsiElement element, boolean forHighlightUsages) {
     final JSImplicitElement pipe;
     if (!forHighlightUsages && (pipe = Angular2PipeUtil.getPipe(element)) != null) {
-      JSClass cls = AngularPipeMetadata.create(pipe).getPipeClass();
+      JSClass cls = Angular2EntitiesProvider.getPipe(pipe).getTypeScriptClass();
       return new JavaScriptFindUsagesHandlerFactory.JavaScriptFindUsagesHandler(
         element != cls ? pipe : cls, element == cls ? new PsiElement[]{pipe} : PsiElement.EMPTY_ARRAY);
     }

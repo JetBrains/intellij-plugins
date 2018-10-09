@@ -19,9 +19,10 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
+import org.angular2.entities.Angular2Component;
+import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2LangUtil;
 
-import static org.angular2.Angular2DecoratorUtil.findAngularComponentTemplate;
 import static org.angular2.Angular2DecoratorUtil.isPrivateMember;
 
 public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
@@ -34,9 +35,12 @@ public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
             && isPrivateMember((JSPsiElementBase)element))) {
       JSClass cls = JSUtils.getMemberContainingClass(element);
       if (cls instanceof TypeScriptClass && Angular2LangUtil.isAngular2Context(element)) {
-        HtmlFileImpl template = findAngularComponentTemplate((TypeScriptClass)cls);
-        if (template != null) {
-          return isReferencedInTemplate(element, template);
+        Angular2Component component = Angular2EntitiesProvider.getComponent((TypeScriptClass)cls);
+        if (component != null) {
+          HtmlFileImpl template = component.getHtmlTemplate();
+          if (template != null) {
+            return isReferencedInTemplate(element, template);
+          }
         }
       }
       return false;

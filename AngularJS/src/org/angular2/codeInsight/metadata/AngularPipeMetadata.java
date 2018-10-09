@@ -6,10 +6,13 @@ import com.intellij.json.psi.JsonObject;
 import com.intellij.json.psi.JsonProperty;
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil;
 import com.intellij.lang.javascript.ecmascript6.TypeScriptQualifiedItemProcessor;
+import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSRecordType;
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunctionSignature;
 import com.intellij.lang.javascript.psi.resolve.ResolveResultSink;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
@@ -17,37 +20,78 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ObjectUtils;
+import org.angular2.Angular2DecoratorUtil;
+import org.angular2.entities.Angular2Module;
+import org.angular2.entities.Angular2Pipe;
+import org.angular2.entities.impl.Angular2SourcePipe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AngularPipeMetadata {
+import java.util.Collection;
+import java.util.stream.Collectors;
+
+public abstract class AngularPipeMetadata implements Angular2Pipe {
+
 
   @NotNull
-  public static AngularPipeMetadata create(@NotNull JSImplicitElement declaration) {
-    final JSClass context = PsiTreeUtil.getContextOfType(declaration, JSClass.class);
+  public static Angular2Pipe create(@NotNull JSImplicitElement declaration) {
+    final TypeScriptClass context = PsiTreeUtil.getContextOfType(declaration, TypeScriptClass.class);
     if (context != null) {
-      return new SourcePipeMetadata(context);
+      ES6Decorator dec = PsiTreeUtil.getParentOfType(Angular2DecoratorUtil.getDecorator(context, "Pipe"), ES6Decorator.class);
+      if (dec != null) {
+        String name = declaration.getName();
+        return CachedValuesManager.getCachedValue(dec, () ->
+          CachedValueProvider.Result.create(new Angular2SourcePipe(dec, name), dec));
+      }
     }
     else if (declaration.getContainingFile() instanceof JsonFile) {
       return new CompiledPipeMetadata(declaration);
     }
-    else {
-      return new EmptyPipeMetadata();
-    }
+    return new EmptyPipeMetadata(declaration);
   }
 
   private boolean metadataLoaded;
   @Nullable
-  protected JSClass myPipeClass;
+  protected TypeScriptClass myPipeClass;
   @Nullable
   protected JSRecordType.PropertySignature myTransformMethod;
 
+  @Override
   @Nullable
-  public final JSClass getPipeClass() {
+  public final TypeScriptClass getTypeScriptClass() {
     readMetadataIfNeeded();
     return myPipeClass;
+  }
+
+  @Nullable
+  @Override
+  public Collection<? extends TypeScriptFunction> getTransformMethods() {
+    if (getTransformMethod() != null) {
+      //noinspection unchecked,RedundantCast
+      return (Collection<? extends TypeScriptFunction>)(Collection)getTransformMethod()
+        .getMemberSource()
+        .getAllSourceElements()
+        .stream()
+        .filter(fun -> fun instanceof TypeScriptFunction && !(fun instanceof TypeScriptFunctionSignature))
+        .collect(Collectors.toList());
+    }
+    return null;
+  }
+
+  @Nullable
+  @Override
+  public Angular2Module getModule() {
+    return null;
+  }
+
+  @Nullable
+  @Override
+  public ES6Decorator getDecorator() {
+    return null;
   }
 
   @Nullable
@@ -81,19 +125,26 @@ public abstract class AngularPipeMetadata {
 
   private static class EmptyPipeMetadata extends AngularPipeMetadata {
 
-    @Override
-    protected void readMetadata() {
-    }
-  }
+    private final JSImplicitElement myDeclaration;
 
-  private static class SourcePipeMetadata extends AngularPipeMetadata {
-
-    private SourcePipeMetadata(@NotNull JSClass aClass) {
-      myPipeClass = aClass;
+    private EmptyPipeMetadata(@NotNull JSImplicitElement declaration) {
+      myDeclaration = declaration;
     }
 
     @Override
     protected void readMetadata() {
+    }
+
+    @NotNull
+    @Override
+    public String getName() {
+      return myDeclaration.getName();
+    }
+
+    @NotNull
+    @Override
+    public JSElement getNavigableElement() {
+      return myDeclaration;
     }
   }
 
@@ -104,6 +155,18 @@ public abstract class AngularPipeMetadata {
 
     private CompiledPipeMetadata(@NotNull JSImplicitElement declaration) {
       myDeclaration = declaration;
+    }
+
+    @NotNull
+    @Override
+    public String getName() {
+      return myDeclaration.getName();
+    }
+
+    @NotNull
+    @Override
+    public JSElement getNavigableElement() {
+      return getTypeScriptClass() != null ? getTypeScriptClass() : myDeclaration;
     }
 
     @Override
@@ -130,8 +193,8 @@ public abstract class AngularPipeMetadata {
       if (definitionPsi instanceof JSFile) {
         ResolveResultSink sink = new ResolveResultSink(definitionPsi, pipe.getName());
         ES6PsiUtil.processExportDeclarationInScope((JSFile)definitionPsi, new TypeScriptQualifiedItemProcessor<>(sink, definitionPsi));
-        if (sink.getResult() instanceof JSClass) {
-          myPipeClass = (JSClass)sink.getResult();
+        if (sink.getResult() instanceof TypeScriptClass) {
+          myPipeClass = (TypeScriptClass)sink.getResult();
         }
       }
     }

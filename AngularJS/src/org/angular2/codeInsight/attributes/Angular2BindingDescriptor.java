@@ -13,7 +13,7 @@ import com.intellij.util.NotNullFunction;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
-import org.angular2.codeInsight.metadata.AngularDirectiveMetadata.PropertyInfo;
+import org.angular2.entities.Angular2DirectiveProperty;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -24,8 +24,8 @@ import java.util.List;
 public class Angular2BindingDescriptor extends Angular2AttributeDescriptor {
   public static final JSType STRING_TYPE = new JSStringType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE);
   public static final String INPUT = "Input";
-  public static final NotNullFunction<PropertyInfo, XmlAttributeDescriptor> FACTORY = Angular2BindingDescriptor::createBinding;
-  public static final NullableFunction<PropertyInfo, XmlAttributeDescriptor> FACTORY2 =
+  public static final NotNullFunction<Angular2DirectiveProperty, XmlAttributeDescriptor> FACTORY = Angular2BindingDescriptor::createBinding;
+  public static final NullableFunction<Angular2DirectiveProperty, XmlAttributeDescriptor> FACTORY2 =
     Angular2BindingDescriptor::createOneTimeBinding;
 
   public Angular2BindingDescriptor(@NotNull PsiElement element,
@@ -39,15 +39,15 @@ public class Angular2BindingDescriptor extends Angular2AttributeDescriptor {
   }
 
   @NotNull
-  private static Angular2BindingDescriptor createBinding(PropertyInfo info) {
-    return new Angular2BindingDescriptor(info.source, "[" + info.name + "]");
+  private static Angular2BindingDescriptor createBinding(Angular2DirectiveProperty info) {
+    return new Angular2BindingDescriptor(info.getNavigableElement(), "[" + info.getName() + "]");
   }
 
   @Nullable
-  private static Angular2BindingDescriptor createOneTimeBinding(PropertyInfo info) {
-    return info.signature != null && info.signature.getType() != null
-           && expandStringLiteralTypes(info.signature.getType()).isDirectlyAssignableType(STRING_TYPE, null) ?
-           new Angular2BindingDescriptor(info.source, info.name) : null;
+  private static Angular2BindingDescriptor createOneTimeBinding(Angular2DirectiveProperty info) {
+    return info.getType() != null
+           && expandStringLiteralTypes(info.getType()).isDirectlyAssignableType(STRING_TYPE, null) ?
+           new Angular2BindingDescriptor(info.getNavigableElement(), info.getName()) : null;
   }
 
   @Contract("null->null")
