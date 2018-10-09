@@ -126,7 +126,9 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     myTree.getEmptyText().setText(StrutsBundle.message("facet.fileset.no.filesets.defined"), SimpleTextAttributes.ERROR_ATTRIBUTES);
     myTreeExpander = new DefaultTreeExpander(myTree);
 
-    myBuilder = new SimpleTreeBuilder(myTree, (DefaultTreeModel)myTree.getModel(), structure, null);
+    myBuilder = new SimpleTreeBuilder(myTree, (DefaultTreeModel)myTree.getModel(), structure, null) {
+      // unique class to simplify search through the logs
+    };
     myBuilder.initRoot();
 
     final DumbService dumbService = DumbService.getInstance(facetEditorContext.getProject());
