@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.ecmascript6.TypeScriptTypeEvaluator;
 import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.JSTypeUtils;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSGenericTypesEvaluatorBase;
@@ -20,7 +19,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.MultiMap;
 import one.util.streamex.StreamEx;
-import org.angular2.codeInsight.metadata.AngularDirectiveMetadata;
+import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angularjs.codeInsight.DirectiveUtil;
@@ -57,13 +57,12 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
     if (templateDirective == null) {
       return;
     }
-    AngularDirectiveMetadata metadata = AngularDirectiveMetadata.create(templateDirective);
-    if (!(metadata.getDirectiveClass() instanceof TypeScriptClass)) {
+    Angular2Directive metadata = Angular2EntitiesProvider.getDirective(templateDirective);
+    if (metadata.getTypeScriptClass() == null) {
       return;
     }
-    TypeScriptClass clazz = (TypeScriptClass)metadata.getDirectiveClass();
     JSType templateRefType = null;
-    for (TypeScriptFunction fun : clazz.getConstructors()) {
+    for (TypeScriptFunction fun : metadata.getTypeScriptClass().getConstructors()) {
       for (JSParameter param : fun.getParameterVariables()) {
         if (param.getType() != null && param.getType().getTypeText().startsWith("TemplateRef<")) {
           templateRefType = param.getType();
@@ -84,23 +83,23 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
             : templateContextType, bindings);
   }
 
-  private static JSType resolveTemplateContextTypeGeneric(AngularDirectiveMetadata metadata,
-                                                                @NotNull JSGenericTypeImpl templateContextType,
-                                                                @NotNull Angular2TemplateBindings bindings) {
+  private static JSType resolveTemplateContextTypeGeneric(Angular2Directive metadata,
+                                                          @NotNull JSGenericTypeImpl templateContextType,
+                                                          @NotNull Angular2TemplateBindings bindings) {
     Map<String, Angular2TemplateBinding> bindingsMap = Arrays.stream(bindings.getBindings())
       .filter(b -> !b.keyIsVar())
-      .collect(Collectors.toMap(Angular2TemplateBinding::getKey, Function.identity(), (a,b) -> a));
+      .collect(Collectors.toMap(Angular2TemplateBinding::getKey, Function.identity(), (a, b) -> a));
 
     MultiMap<JSTypeSubstitutor.JSTypeGenericId, JSType> genericArguments = MultiMap.createSmart();
-    final ProcessingContext processingContext = JSTypeComparingContextService.getProcessingContextWithCache(metadata.getDirectiveClass());
+    final ProcessingContext processingContext = JSTypeComparingContextService.getProcessingContextWithCache(metadata.getTypeScriptClass());
 
-    metadata.getInputs().forEach(info -> {
-      Angular2TemplateBinding binding = bindingsMap.get(info.name);
-      if (binding != null && info.signature != null) {
+    metadata.getInputs().forEach(property -> {
+      Angular2TemplateBinding binding = bindingsMap.get(property.getName());
+      if (binding != null && property.getType() != null) {
         JSType expressionType = JSResolveUtil.getExpressionJSType(binding.getExpression());
-        JSType paramType = info.signature.getType();
-        if (expressionType != null && paramType != null) {
-          JSGenericTypesEvaluatorBase.matchGenericTypes(genericArguments, processingContext, expressionType, paramType, null);
+        if (expressionType != null) {
+          JSGenericTypesEvaluatorBase.matchGenericTypes(genericArguments, processingContext,
+                                                        expressionType, property.getType(), null);
         }
       }
     });
@@ -122,5 +121,4 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
     }
     return result;
   }
-
 }

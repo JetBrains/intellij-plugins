@@ -2,15 +2,13 @@
 package org.angular2.editor;
 
 import com.intellij.codeInsight.navigation.actions.TypeDeclarationProvider;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.html.HtmlFileImpl;
-import org.angular2.Angular2DecoratorUtil;
-import org.angular2.codeInsight.metadata.AngularDirectiveMetadata;
+import org.angular2.entities.Angular2Component;
+import org.angular2.entities.Angular2EntitiesProvider;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,9 +19,9 @@ public class Angular2TypeDeclarationProvider implements TypeDeclarationProvider 
   @Override
   public PsiElement[] getSymbolTypeDeclarations(@NotNull PsiElement symbol) {
     if (DirectiveUtil.isComponentDeclaration(symbol)) {
-      JSClass cls = AngularDirectiveMetadata.create((JSImplicitElement)symbol).getDirectiveClass();
-      if (cls instanceof TypeScriptClass) {
-        HtmlFileImpl htmlFile = Angular2DecoratorUtil.findAngularComponentTemplate((TypeScriptClass)cls);
+      Angular2Component component = Angular2EntitiesProvider.getComponent((JSImplicitElement)symbol);
+      if (component != null) {
+        HtmlFileImpl htmlFile = component.getHtmlTemplate();
         if (htmlFile != null) {
           return new PsiElement[]{htmlFile};
         }

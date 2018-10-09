@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunctionSignature;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
@@ -20,7 +19,8 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
 import org.angular2.codeInsight.Angular2Processor;
-import org.angular2.codeInsight.metadata.AngularPipeMetadata;
+import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.entities.Angular2Pipe;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
 import org.angularjs.index.AngularFilterIndex;
 import org.angularjs.index.AngularIndexUtil;
@@ -58,17 +58,14 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
     }
     final JSImplicitElement resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularFilterIndex.KEY, myReferencedName);
     if (resolve != null) {
-      AngularPipeMetadata pipeMetadata = AngularPipeMetadata.create(resolve);
-      if (pipeMetadata.getTransformMethod() != null) {
-        return pipeMetadata.getTransformMethod()
-          .getMemberSource()
-          .getAllSourceElements()
+      Angular2Pipe pipeMetadata = Angular2EntitiesProvider.getPipe(resolve);
+      if (pipeMetadata.getTransformMethods() != null) {
+        return pipeMetadata.getTransformMethods()
           .stream()
-          .filter(e -> !(e instanceof TypeScriptFunctionSignature))
           .map(JSResolveResult::new)
           .toArray(ResolveResult[]::new);
       }
-      return new ResolveResult[]{new JSResolveResult(ObjectUtils.notNull(pipeMetadata.getPipeClass(), resolve))};
+      return new ResolveResult[]{new JSResolveResult(ObjectUtils.notNull(pipeMetadata.getTypeScriptClass(), resolve))};
     }
     return ResolveResult.EMPTY_ARRAY;
   }

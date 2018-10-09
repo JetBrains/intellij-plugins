@@ -21,7 +21,8 @@ import com.intellij.usageView.UsageViewTypeLocation;
 import com.intellij.util.IncorrectOperationException;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.codeInsight.Angular2PipeUtil;
-import org.angular2.codeInsight.metadata.AngularPipeMetadata;
+import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.entities.Angular2Pipe;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -84,9 +85,9 @@ public class Angular2PipeRenameProcessor extends JSDefaultRenameProcessor {
   @Override
   public void prepareRenaming(@NotNull PsiElement element, @NotNull String newName, @NotNull Map<PsiElement, String> allRenames) {
     assert element instanceof JSImplicitElement;
-    AngularPipeMetadata metadata = AngularPipeMetadata.create((JSImplicitElement)element);
-    if (metadata.getPipeClass() != null) {
-      JSClass pipeClass = metadata.getPipeClass();
+    Angular2Pipe metadata = Angular2EntitiesProvider.getPipe((JSImplicitElement)element);
+    if (metadata.getTypeScriptClass() != null) {
+      JSClass pipeClass = metadata.getTypeScriptClass();
       allRenames.put(pipeClass, getDefaultPipeClassName(newName));
       if (pipeClass.getContainingFile().getName().equals(getDefaultPipeFileName(((JSImplicitElement)element).getName()))) {
         allRenames.put(pipeClass.getContainingFile(), getDefaultPipeFileName(newName));

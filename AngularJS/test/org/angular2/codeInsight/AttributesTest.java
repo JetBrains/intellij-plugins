@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.resolve.JSSimpleTypeProcessor;
@@ -21,12 +22,18 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.util.XmlInvalidIdInspection;
+import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2DirectiveProperty;
+import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
@@ -173,6 +180,24 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       PsiElement resolve = resolveReference("[mod<caret>el]");
       assertEquals("object.ts", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, JSField.class);
+    });
+  }
+
+  public void testBindingResolve2TypeScriptInputInDecorator() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("object_binding.after.html", "package.json", "object_in_dec.ts");
+      PsiElement resolve = resolveReference("[mod<caret>el]");
+      assertEquals("object_in_dec.ts", resolve.getContainingFile().getName());
+      assertInstanceOf(resolve, JSField.class);
+
+      TypeScriptClass cls = PsiTreeUtil.getContextOfType(resolve, TypeScriptClass.class);
+      assert cls != null;
+      Angular2Directive component = Angular2EntitiesProvider.getComponent(cls);
+      assert component != null;
+      assertEquals(ContainerUtil.newHashSet("model", "id", "oneTime", "oneTimeList"),
+                   component.getInputs().stream().map(Angular2DirectiveProperty::getName).collect(Collectors.toSet()));
+      assertEquals(Collections.singleton("complete"),
+                   component.getOutputs().stream().map(Angular2DirectiveProperty::getName).collect(Collectors.toSet()));
     });
   }
 

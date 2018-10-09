@@ -18,7 +18,8 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import org.angular2.Angular2DecoratorUtil;
-import org.angular2.codeInsight.metadata.AngularPipeMetadata;
+import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.entities.Angular2Pipe;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,8 +73,8 @@ public class Angular2PipeUtil {
                 if (pipeName != null) {
                   JSImplicitElement pipeElement =
                     implicitElement.toBuilder().setName(pipeName).setTypeString(createTypeString(null)).toImplicitElement();
-                  AngularPipeMetadata metadata = AngularPipeMetadata.create(pipeElement);
-                  if (metadata.getPipeClass() == pipeClass) {
+                  Angular2Pipe metadata = Angular2EntitiesProvider.getPipe(pipeElement);
+                  if (metadata.getTypeScriptClass() == pipeClass) {
                     result.set(pipeElement);
                     return false;
                   }
