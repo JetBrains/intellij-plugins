@@ -6,12 +6,12 @@ import com.intellij.json.psi.JsonObject;
 import com.intellij.json.psi.JsonProperty;
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil;
 import com.intellij.lang.javascript.ecmascript6.TypeScriptQualifiedItemProcessor;
-import com.intellij.lang.javascript.index.JSSymbolUtil;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSCallExpression;
+import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.psi.JSRecordType;
+import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.resolve.ResolveResultSink;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
@@ -19,8 +19,16 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ObjectUtils;
+import org.angular2.Angular2DecoratorUtil;
+import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2DirectiveProperty;
+import org.angular2.entities.Angular2Module;
+import org.angular2.entities.impl.Angular2SourceComponent;
+import org.angular2.entities.impl.Angular2SourceDirective;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,38 +38,86 @@ import java.util.Collection;
 import static java.util.Arrays.stream;
 import static java.util.Collections.unmodifiableCollection;
 
-public abstract class AngularDirectiveMetadata {
+public abstract class AngularDirectiveMetadata implements Angular2Directive {
 
   @NotNull
-  public static AngularDirectiveMetadata create(@NotNull JSImplicitElement declaration) {
-    final JSClass context = PsiTreeUtil.getContextOfType(declaration, JSClass.class);
+  public static Angular2Directive create(@NotNull JSImplicitElement declaration) {
+    final TypeScriptClass context = PsiTreeUtil.getContextOfType(declaration, TypeScriptClass.class);
     if (context != null) {
-      return new SourceDirectiveMetadata(context);
+      Angular2Directive result = create(context);
+      if (result != null) {
+        return result;
+      }
     }
     else if (declaration.getContainingFile() instanceof JsonFile) {
       return new CompiledDirectiveMetadata(declaration);
     }
-    else {
-      return new EmptyDirectiveMetadata();
+    return new EmptyDirectiveMetadata(declaration);
+  }
+
+  @Nullable
+  public static Angular2Directive create(@NotNull TypeScriptClass context) {
+    JSCallExpression call = Angular2DecoratorUtil.getDecorator(context, "Component");
+    if (call != null) {
+      ES6Decorator dec = PsiTreeUtil.getParentOfType(call, ES6Decorator.class);
+      if (dec != null) {
+        return CachedValuesManager.getCachedValue(dec, () ->
+          CachedValueProvider.Result.create(new Angular2SourceComponent(dec), dec));
+      }
     }
+    else {
+      ES6Decorator dec = PsiTreeUtil.getParentOfType(Angular2DecoratorUtil.getDecorator(context, "Directive"), ES6Decorator.class);
+      if (dec != null) {
+        return CachedValuesManager.getCachedValue(dec, () ->
+          CachedValueProvider.Result.create(new Angular2SourceDirective(dec), dec));
+      }
+    }
+    return null;
   }
 
   private Collection<PropertyInfo> myInputs;
   private Collection<PropertyInfo> myOutputs;
 
+  @Override
   @Nullable
-  public abstract JSClass getDirectiveClass();
+  public abstract TypeScriptClass getTypeScriptClass();
 
+  @Override
   @NotNull
-  public Collection<PropertyInfo> getInputs() {
+  public Collection<? extends Angular2DirectiveProperty> getInputs() {
     readMetadataIfNeeded();
     return myInputs;
   }
 
+  @Override
   @NotNull
-  public Collection<PropertyInfo> getOutputs() {
+  public Collection<? extends Angular2DirectiveProperty> getOutputs() {
     readMetadataIfNeeded();
     return myOutputs;
+  }
+
+  @Nullable
+  @Override
+  public String getSelector() {
+    return null;
+  }
+
+  @Nullable
+  @Override
+  public String getExportAs() {
+    return null;
+  }
+
+  @Nullable
+  @Override
+  public Angular2Module getModule() {
+    return null;
+  }
+
+  @Nullable
+  @Override
+  public ES6Decorator getDecorator() {
+    return null;
   }
 
   protected final void readMetadataIfNeeded() {
@@ -77,7 +133,7 @@ public abstract class AngularDirectiveMetadata {
   protected abstract void readMetadata(@NotNull Collection<PropertyInfo> inputs,
                                        @NotNull Collection<PropertyInfo> outputs);
 
-  public static class PropertyInfo {
+  public static class PropertyInfo implements Angular2DirectiveProperty {
     @Nullable
     public final JSRecordType.PropertySignature signature;
     @NotNull
@@ -90,82 +146,49 @@ public abstract class AngularDirectiveMetadata {
       this.source = source;
       this.name = name;
     }
+
+    @NotNull
+    @Override
+    public String getName() {
+      return name;
+    }
+
+    @Nullable
+    @Override
+    public JSType getType() {
+      return signature != null ? signature.getType() : null;
+    }
+
+    @NotNull
+    @Override
+    public PsiElement getNavigableElement() {
+      return source;
+    }
   }
 
   private static class EmptyDirectiveMetadata extends AngularDirectiveMetadata {
 
+    private final JSImplicitElement myDeclaration;
+
+    private EmptyDirectiveMetadata(@NotNull JSImplicitElement declaration) {
+      super();
+      myDeclaration = declaration;
+    }
+
     @Nullable
     @Override
-    public JSClass getDirectiveClass() {
+    public TypeScriptClass getTypeScriptClass() {
       return null;
     }
 
     @Override
     protected void readMetadata(@NotNull Collection<PropertyInfo> inputs, @NotNull Collection<PropertyInfo> outputs) {
     }
-  }
-
-  private static class SourceDirectiveMetadata extends AngularDirectiveMetadata {
-
-    @NotNull
-    private final JSClass myDirectiveClass;
-
-    private SourceDirectiveMetadata(@NotNull JSClass aClass) {
-      myDirectiveClass = aClass;
-    }
 
     @NotNull
     @Override
-    public JSClass getDirectiveClass() {
-      return myDirectiveClass;
-    }
-
-    @Override
-    protected void readMetadata(@NotNull Collection<PropertyInfo> inputs,
-                                @NotNull Collection<PropertyInfo> outputs) {
-      TypeScriptTypeParser
-        .buildTypeFromClass(myDirectiveClass, false)
-        .getProperties()
-        .forEach(prop -> {
-          if (prop.getMemberSource().getSingleElement() instanceof JSAttributeListOwner) {
-            readDecorator(prop, (JSAttributeListOwner)prop.getMemberSource().getSingleElement(), "Input", inputs);
-            readDecorator(prop, (JSAttributeListOwner)prop.getMemberSource().getSingleElement(), "Output", outputs);
-          }
-        });
-    }
-
-    private static void readDecorator(@NotNull JSRecordType.PropertySignature prop,
-                                      @NotNull JSAttributeListOwner element,
-                                      @NotNull String decoratorName,
-                                      @NotNull Collection<PropertyInfo> destination) {
-      String decoratedName = getDecoratedName(element, decoratorName);
-      if (decoratedName != null) {
-        destination.add(new PropertyInfo(prop, element, decoratedName));
-      }
-    }
-
-    private static String getDecoratedName(@NotNull JSAttributeListOwner field, @NotNull String name) {
-      final JSAttributeList list = field.getAttributeList();
-      if (list != null) {
-        for (PsiElement candidate : list.getChildren()) {
-          if (candidate instanceof ES6Decorator) {
-            final PsiElement child = candidate.getLastChild();
-            if (child instanceof JSCallExpression) {
-              final JSExpression expression = ((JSCallExpression)child).getMethodExpression();
-              if (expression instanceof JSReferenceExpression &&
-                  JSSymbolUtil.isAccurateReferenceExpressionName((JSReferenceExpression)expression, name)) {
-                JSExpression[] arguments = ((JSCallExpression)child).getArguments();
-                if (arguments.length > 0 && arguments[0] instanceof JSLiteralExpression) {
-                  String value = ((JSLiteralExpression)arguments[0]).getStringValue();
-                  if (value != null) return value;
-                }
-                return field.getName();
-              }
-            }
-          }
-        }
-      }
-      return null;
+    public PsiElement getNavigableElement() {
+      return myDeclaration;
     }
   }
 
@@ -173,7 +196,7 @@ public abstract class AngularDirectiveMetadata {
 
     @NotNull
     private final JSImplicitElement myDeclaration;
-    private JSClass myDirectiveClass;
+    private TypeScriptClass myDirectiveClass;
     private JSRecordType myDirectiveClassType;
 
     private CompiledDirectiveMetadata(@NotNull JSImplicitElement declaration) {
@@ -182,9 +205,15 @@ public abstract class AngularDirectiveMetadata {
 
     @Nullable
     @Override
-    public JSClass getDirectiveClass() {
+    public TypeScriptClass getTypeScriptClass() {
       readMetadataIfNeeded();
       return myDirectiveClass;
+    }
+
+    @NotNull
+    @Override
+    public PsiElement getNavigableElement() {
+      return myDirectiveClass != null ? myDirectiveClass : myDeclaration;
     }
 
     @Override
@@ -211,8 +240,8 @@ public abstract class AngularDirectiveMetadata {
       if (definitionPsi instanceof JSFile) {
         ResolveResultSink sink = new ResolveResultSink(definitionPsi, directive.getName());
         ES6PsiUtil.processExportDeclarationInScope((JSFile)definitionPsi, new TypeScriptQualifiedItemProcessor<>(sink, definitionPsi));
-        if (sink.getResult() instanceof JSClass) {
-          myDirectiveClass = (JSClass)sink.getResult();
+        if (sink.getResult() instanceof TypeScriptClass) {
+          myDirectiveClass = (TypeScriptClass)sink.getResult();
           myDirectiveClassType = TypeScriptTypeParser
             .buildTypeFromClass(myDirectiveClass, false);
         }

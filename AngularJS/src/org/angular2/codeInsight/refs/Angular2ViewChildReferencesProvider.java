@@ -15,6 +15,8 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import org.angular2.codeInsight.Angular2Processor;
+import org.angular2.entities.Angular2Component;
+import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
 import org.angularjs.codeInsight.refs.AngularJSReferenceBase;
 import org.jetbrains.annotations.NotNull;
@@ -22,8 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.angular2.Angular2DecoratorUtil.findAngularComponentTemplate;
 
 public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
 
@@ -44,11 +44,10 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
     @Override
     public PsiElement resolveInner() {
       Ref<PsiElement> result = new Ref<>();
-      final TypeScriptClass cls = PsiTreeUtil.getParentOfType(getElement(), TypeScriptClass.class);
-      if (cls != null) {
-        final HtmlFileImpl template = findAngularComponentTemplate(cls);
+      final HtmlFileImpl template = getTemplate();
+      if (template != null) {
         final String refName = myElement.getStringValue();
-        if (template != null && refName != null) {
+        if (refName != null) {
           Angular2Processor.process(template, (el) -> {
             if (el instanceof Angular2HtmlReferenceVariable
                 && refName.equals(el.getName())) {
@@ -63,17 +62,26 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
     @NotNull
     @Override
     public Object[] getVariants() {
-      final TypeScriptClass cls = PsiTreeUtil.getParentOfType(getElement(), TypeScriptClass.class);
-      if (cls != null) {
+      final HtmlFileImpl template = getTemplate();
+      if (template != null) {
         final List<JSVariable> result = new ArrayList<>();
-        final HtmlFileImpl template = findAngularComponentTemplate(cls);
-        if (template != null) {
-          Angular2Processor.process(template, (el) ->
-            ObjectUtils.consumeIfCast(el, Angular2HtmlReferenceVariable.class, result::add));
-        }
+        Angular2Processor.process(template, (el) ->
+          ObjectUtils.consumeIfCast(el, Angular2HtmlReferenceVariable.class, result::add));
         return result.toArray();
       }
       return ArrayUtil.EMPTY_OBJECT_ARRAY;
+    }
+
+    @Nullable
+    private HtmlFileImpl getTemplate() {
+      final TypeScriptClass cls = PsiTreeUtil.getContextOfType(getElement(), TypeScriptClass.class);
+      if (cls != null) {
+        Angular2Component component = Angular2EntitiesProvider.getComponent(cls);
+        if (component != null) {
+          return component.getHtmlTemplate();
+        }
+      }
+      return null;
     }
   }
 }

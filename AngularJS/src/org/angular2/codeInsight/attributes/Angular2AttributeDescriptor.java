@@ -11,8 +11,9 @@ import com.intellij.util.Consumer;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
-import org.angular2.codeInsight.metadata.AngularDirectiveMetadata;
-import org.angular2.codeInsight.metadata.AngularDirectiveMetadata.PropertyInfo;
+import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2DirectiveProperty;
+import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlReference;
 import org.angular2.lang.html.psi.Angular2HtmlVariable;
@@ -38,7 +39,7 @@ public class Angular2AttributeDescriptor extends AngularAttributeDescriptor {
   @NotNull
   public static List<XmlAttributeDescriptor> getDescriptors(JSImplicitElement declaration,
                                                             String decorator,
-                                                            NullableFunction<? super PropertyInfo, ? extends XmlAttributeDescriptor> factory) {
+                                                            NullableFunction<? super Angular2DirectiveProperty, ? extends XmlAttributeDescriptor> factory) {
     final List<XmlAttributeDescriptor> result = new ArrayList<>();
     processDescriptors(declaration, decorator, info ->
       ContainerUtil.addIfNotNull(result, factory.fun(info)));
@@ -47,8 +48,8 @@ public class Angular2AttributeDescriptor extends AngularAttributeDescriptor {
 
   public static void processDescriptors(JSImplicitElement declaration,
                                         String decorator,
-                                        Consumer<? super PropertyInfo> processor) {
-    AngularDirectiveMetadata metadata = AngularDirectiveMetadata.create(declaration);
+                                        Consumer<? super Angular2DirectiveProperty> processor) {
+    Angular2Directive metadata = Angular2EntitiesProvider.getDirective(declaration);
     if ("Input".equals(decorator)) {
       metadata.getInputs().forEach(info -> processor.consume(info));
     }
