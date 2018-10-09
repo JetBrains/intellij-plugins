@@ -13,6 +13,7 @@
 // limitations under the License.
 package org.jetbrains.vuejs.index
 
+import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.javascript.nodejs.packageJson.PackageJsonDependencies
 import com.intellij.javascript.nodejs.packages.NodePackageUtil
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
@@ -79,15 +80,14 @@ fun resolve(name:String, scope:GlobalSearchScope, key:StubIndexKey<String, JSImp
 fun hasVue(project: Project): Boolean {
   if (DumbService.isDumb(project)) return false
 
-  return CachedValuesManager.getManager(project).getCachedValue(project, {
+  return CachedValuesManager.getManager(project).getCachedValue(project) {
     var hasVue = false
-    var packageJson:VirtualFile? = null
+    var packageJson: VirtualFile? = null
     if (project.baseDir != null) {
       packageJson = project.baseDir.findChild(PackageJsonUtil.FILE_NAME)
       if (packageJson != null) {
-        val dependencies = PackageJsonDependencies.getOrCreate(project, packageJson)
-        if (dependencies != null &&
-            (dependencies.dependencies.containsKey(VUE) || dependencies.devDependencies.containsKey(VUE))) {
+        val packageJsonData = PackageJsonData.getOrCreate(packageJson)
+        if (packageJsonData.isDependencyOfAnyType(VUE)) {
           hasVue = true
         }
       }
@@ -95,11 +95,13 @@ fun hasVue(project: Project): Boolean {
 
     if (hasVue) {
       CachedValueProvider.Result.create(true, packageJson)
-    } else {
-      val result = FileTypeIndex.containsFileOfType(VueFileType.INSTANCE, GlobalSearchScope.projectScope(project))
-      CachedValueProvider.Result.create(result, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, ProjectRootModificationTracker.getInstance(project))
     }
-  })
+    else {
+      val result = FileTypeIndex.containsFileOfType(VueFileType.INSTANCE, GlobalSearchScope.projectScope(project))
+      CachedValueProvider.Result.create(result, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
+                                        ProjectRootModificationTracker.getInstance(project))
+    }
+  }
 }
 
 fun hasVueClassComponentLibrary(project: Project): Boolean {
