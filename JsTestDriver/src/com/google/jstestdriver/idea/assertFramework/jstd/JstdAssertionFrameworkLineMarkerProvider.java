@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.google.jstestdriver.idea.assertFramework.library.JstdLibraryUtil;
@@ -39,7 +40,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -97,11 +97,6 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
       return createLineMarkerFromElement(element, testElementName);
     }
     return null;
-  }
-
-  @Override
-  public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
-    // does nothing
   }
 
   private static LineMarkerInfo createLineMarkerFromElement(@NotNull PsiElement testElement,

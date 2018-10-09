@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.groovy.steps;
 
 import com.intellij.codeHighlighting.Pass;
@@ -12,14 +13,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall;
 
-import java.util.Collection;
-import java.util.List;
-
 /**
  * @author Max Medvedev
  */
 public class GrCucumberLineMarkerProvider implements LineMarkerProvider {
-
   @Nullable
   @Override
   public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
@@ -38,9 +35,5 @@ public class GrCucumberLineMarkerProvider implements LineMarkerProvider {
     else {
       return null;
     }
-  }
-
-  @Override
-  public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
   }
 }
