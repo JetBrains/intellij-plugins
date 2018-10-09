@@ -263,6 +263,9 @@
             text="Sort members in Dart File" description="Sort members in your Dart code">
       <add-to-group group-id="CodeFormatGroup" anchor="after" relative-to-action="Dart.DartStyle"/>
     </action>
+    <action id="OpenSiblingAngularDartFile" class="com.jetbrains.lang.dart.ide.actions.OpenSiblingAngularDartFile"
+            text="Open Sibling Angular Dart File">
+    </action>
     <action id="Generate.Constructor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateConstructorAction"
             text="Constructor">
       <add-to-group anchor="first" group-id="GenerateGroup"/>
