@@ -22,9 +22,11 @@ import com.intellij.patterns.XmlPatterns.xmlAttribute
 import com.intellij.psi.impl.source.html.HtmlTagImpl
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlTokenType
+import com.intellij.util.ArrayUtil
 import com.intellij.util.ProcessingContext
 import com.intellij.util.SmartList
 import icons.VuejsIcons
@@ -40,7 +42,38 @@ class VueCompletionContributor : CompletionContributor() {
            VueEventAttrCompletionProvider())
     extend(CompletionType.BASIC, psiElement(XmlTokenType.XML_DATA_CHARACTERS),
            VueEventAttrDataCompletionProvider())
+    extend(CompletionType.BASIC, psiElement(XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN),
+           VueTagAttributeCompletionProvider())
+
   }
+}
+
+private class VueTagAttributeCompletionProvider : CompletionProvider<CompletionParameters>() {
+  private val VUE_SCRIPT_LANGUAGE = arrayOf("js", "ts", "Flow JS")
+  private val VUE_STYLE_LANGUAGE = arrayOf("scss", "sass", "stylus", "css", "less", "postcss")
+  private val VUE_TEMPLATE_LANGUAGE = arrayOf("html", "pug")
+
+  override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+    val xmlTag = PsiTreeUtil.getParentOfType(parameters.position, XmlTag::class.java, false)
+    val xmlAttribute =   PsiTreeUtil.getParentOfType(parameters.position, XmlAttribute::class.java, false)
+    if (xmlTag == null || xmlAttribute == null) return
+    for (completion in listOfCompletions(xmlTag, xmlAttribute)) {
+      result.addElement(LookupElementBuilder.create(completion))
+    }
+
+  }
+
+  private fun listOfCompletions(xmlTag: XmlTag, xmlAttribute: XmlAttribute): Array<String> {
+    if(xmlAttribute.name == "lang") {
+      when (xmlTag.name) {
+        "script" -> return VUE_SCRIPT_LANGUAGE
+        "style" -> return VUE_STYLE_LANGUAGE
+        "template" -> return VUE_TEMPLATE_LANGUAGE
+      }
+    }
+    return ArrayUtil.EMPTY_STRING_ARRAY
+  }
+
 }
 
 private class VueEventAttrCompletionProvider : CompletionProvider<CompletionParameters>() {
