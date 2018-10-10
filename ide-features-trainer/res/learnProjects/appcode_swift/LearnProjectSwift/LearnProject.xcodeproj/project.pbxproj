@@ -18,6 +18,7 @@
 		2CA2B84C2018BBB300DD1EA2 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA2B84B2018BBB300DD1EA2 /* Navigation.swift */; };
 		2CA2B84E2018BBBD00DD1EA2 /* Refactorings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA2B84D2018BBBD00DD1EA2 /* Refactorings.swift */; };
 		2CB9B37420E6A5E0009B264D /* CodeGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB9B37320E6A5E0009B264D /* CodeGeneration.swift */; };
+		2CECFA65216CFC1B0097372F /* Editor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CECFA64216CFC1B0097372F /* Editor.swift */; };
 		2CF2336520A5C8B700B72688 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF2336420A5C8B700B72688 /* MasterViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -56,6 +57,7 @@
 		2CA2B84B2018BBB300DD1EA2 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
 		2CA2B84D2018BBBD00DD1EA2 /* Refactorings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Refactorings.swift; sourceTree = "<group>"; };
 		2CB9B37320E6A5E0009B264D /* CodeGeneration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeGeneration.swift; sourceTree = "<group>"; };
+		2CECFA64216CFC1B0097372F /* Editor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Editor.swift; sourceTree = "<group>"; };
 		2CF2336420A5C8B700B72688 /* MasterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -114,6 +116,7 @@
 				2CA2B81F2018BBA300DD1EA2 /* DetailViewController.swift */,
 				2CB9B37320E6A5E0009B264D /* CodeGeneration.swift */,
 				2C1DA99E20EAAA360072F4DF /* RunDebugTest.swift */,
+				2CECFA64216CFC1B0097372F /* Editor.swift */,
 				2CA2B8212018BBA300DD1EA2 /* Main.storyboard */,
 				2CA2B8242018BBA300DD1EA2 /* Assets.xcassets */,
 				2CA2B8262018BBA300DD1EA2 /* LaunchScreen.storyboard */,
@@ -280,6 +283,7 @@
 				2C1DA99F20EAAA360072F4DF /* RunDebugTest.swift in Sources */,
 				2CA2B84E2018BBBD00DD1EA2 /* Refactorings.swift in Sources */,
 				2CA2B81C2018BBA200DD1EA2 /* AppDelegate.swift in Sources */,
+				2CECFA65216CFC1B0097372F /* Editor.swift in Sources */,
 				2CA2B84C2018BBB300DD1EA2 /* Navigation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
