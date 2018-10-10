@@ -77,4 +77,9 @@ public class StructSymbol extends SymbolImpl implements MotionSymbol {
   public Module getModule() {
     return myModule;
   }
+
+  @Override
+  public boolean isSynthetic() {
+    return true;
+  }
 }
