@@ -1,6 +1,5 @@
 package training.learn
 
-import com.intellij.ide.impl.NewProjectUtil
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
@@ -39,8 +38,9 @@ object NewLearnProjectUtil {
     if (!unitTestMode) newProject.save()
 
     //close previous project if needed
-    if (newProject !== projectToClose && !unitTestMode && projectToClose != null)
-      NewProjectUtil.closePreviousProject(projectToClose)
+    if (newProject !== projectToClose && !unitTestMode && projectToClose != null) {
+      ProjectUtil.closeAndDispose(projectToClose)
+    }
 
     if (newProject !== projectToClose) {
       ProjectUtil.updateLastProjectLocation(projectFilePath)
