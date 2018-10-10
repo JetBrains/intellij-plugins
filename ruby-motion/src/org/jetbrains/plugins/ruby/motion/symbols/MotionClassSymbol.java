@@ -120,6 +120,10 @@ public class MotionClassSymbol extends SymbolImpl implements MotionSymbol {
     return new MySingleton(this);
   }
 
+  @Override
+  public boolean isSynthetic() {
+    return true;
+  }
 
   private static class MySingleton extends SingletonClassSymbol {
 
@@ -131,7 +135,5 @@ public class MotionClassSymbol extends SymbolImpl implements MotionSymbol {
     public boolean processChildrenInner(SymbolPsiProcessor processor, PsiElement invocationPoint) {
       return getParentSymbol().getChildren().processChildren(processor, invocationPoint);
     }
-
-
   }
 }
