@@ -59,6 +59,9 @@ public class Message {
                     case "code":
                         type = MessageType.CODE;
                         break;
+                    case "shortcut":
+                        type = MessageType.SHORTCUT;
+                        break;
                     case "strong":
                         type = MessageType.TEXT_BOLD;
                         break;

@@ -32,7 +32,7 @@ class AnotherTest: Test {
     <Try trigger="FindUsages">Now let's find all usages of the method <code>test(containsTest test: Int, anotherContainingTest test1: String)</code>. Press <action>EditorEscape</action> → <action>FindUsages</action> again.</Try>
     <Text>The simple rule is: think which symbol you need to find, instead of which piece of text you need to find. <strong>Find Usages</strong> works for any code construct in the project context, so you will find all the usages in the whole codebase.</Text>
     <Text>Of course, sometimes you don't know what exactly you're looking for, and you want to find as many matches as possible by searching for some text. In this case, use <action>Find</action> to search in the current file, or use <action>FindInPath</action> to search in the whole project.</Text>
-    <Try triggers="SearchEverywhere">What if you want to search for some text in symbols, file names, or even IDE settings and menu items? Press <action>Double⇧</action> to open the <strong>Search Everywhere</strong> dialog.</Try>
+    <Try triggers="SearchEverywhere">What if you want to search for some text in symbols, file names, or even IDE settings and menu items? Press <shortcut>Double⇧</shortcut> to open the <strong>Search Everywhere</strong> dialog.</Try>
     <Try trigger="GotoAction">Finally, try using <strong>Find Action</strong> (<action>GotoAction</action>) to quickly find an IDE action and execute it. For example, type 'plugins' to open <strong>Preferences | Plugins</strong>.</Try>
     <Win/>
 </xml>
