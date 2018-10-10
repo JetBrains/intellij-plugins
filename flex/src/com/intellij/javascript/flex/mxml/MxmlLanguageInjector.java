@@ -5,7 +5,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
-import com.intellij.lang.javascript.JSLanguageInjector;
+import com.intellij.lang.javascript.JSInXmlLanguagesInjector;
 import com.intellij.lang.javascript.JSTargetedInjector;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
@@ -107,10 +107,10 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
         if ((XmlBackedJSClassImpl.SCRIPT_TAG_NAME.equals(localName) ||
              FlexPredefinedTagNames.METADATA.equals(localName)) &&
             tag.getAttributeValue("source") == null) {
-          JSLanguageInjector.injectToXmlText(registrar, host, JavaScriptSupportLoader.ECMA_SCRIPT_L4, null, null);
+          JSInXmlLanguagesInjector.injectToXmlText(registrar, host, JavaScriptSupportLoader.ECMA_SCRIPT_L4, null, null);
         }
         else if (FlexPredefinedTagNames.STYLE.equals(localName) && FlexUtils.isMxmlNs(tag.getNamespace()) && cssLanguage != null) {
-          JSLanguageInjector.injectToXmlText(registrar, host, cssLanguage, null, null);
+          JSInXmlLanguagesInjector.injectToXmlText(registrar, host, cssLanguage, null, null);
         }
         else if (tag.getSubTags().length == 0) {
           injectInMxmlFile(registrar, host, tag.getDescriptor(), tag);
@@ -172,7 +172,7 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
       @NonNls String suffix = "})(null);";
 
       if (host instanceof XmlText) {
-        JSLanguageInjector.injectToXmlText(registrar, host, JavaScriptSupportLoader.ECMA_SCRIPT_L4, prefix, suffix);
+        JSInXmlLanguagesInjector.injectToXmlText(registrar, host, JavaScriptSupportLoader.ECMA_SCRIPT_L4, prefix, suffix);
       }
       else {
         if (JSCommonTypeNames.FUNCTION_CLASS_NAMES.contains(type) && host.textContains('{')) {
