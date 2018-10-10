@@ -41,6 +41,6 @@ class AppCode: JetBrainsIDE {}]]></CopyText>
     <Try trigger="GotoSuperMethod"><strong>Go to Super Definition</strong> navigates you to the parent class declaration. Press <action>GotoSuperMethod</action> to jump to the <code>JetBrainsIDE</code> class.</Try>
     <Try trigger="GotoSuperMethod">Now press <action>GotoSuperMethod</action> again to jump to the <code>IDEProtocol</code> protocol declaration.</Try>
     <Try trigger="RecentFiles">Finally, there are two very useful and frequently used navigation actions that can help you quickly switch between recent files and toolwindows. First up is the <string>Recent files</string> popup. Open it via <action>RecentFiles</action> and select what you need using the arrow keys on the keyboard.</Try>
-    <Try triggers="Switcher">The second is <strong>Switcher</strong>, which looks the same but immediately disappears after you select something. Hold the <action>⌃</action> key while pressing <action>Switcher</action>, and press it again to switch to select some file or toolwindow. Release the <action>⌃</action> key after you've selected what you wanted.</Try>
+    <Try triggers="Switcher">The second is <strong>Switcher</strong>, which looks the same but immediately disappears after you select something. Hold the <shortcut>⌃</shortcut> key while pressing <action>Switcher</action>, and press it again to switch to select some file or toolwindow. Release the <shortcut>⌃</shortcut> key after you've selected what you wanted.</Try>
     <Win/>
 </xml>
