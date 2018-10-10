@@ -49,7 +49,7 @@ class VueCompletionContributor : CompletionContributor() {
 }
 
 private class VueTagAttributeCompletionProvider : CompletionProvider<CompletionParameters>() {
-  private val VUE_SCRIPT_LANGUAGE = arrayOf("js", "ts", "Flow JS")
+  private val VUE_SCRIPT_LANGUAGE = arrayOf("js", "ts")
   private val VUE_STYLE_LANGUAGE = arrayOf("scss", "sass", "stylus", "css", "less", "postcss")
   private val VUE_TEMPLATE_LANGUAGE = arrayOf("html", "pug")
 
