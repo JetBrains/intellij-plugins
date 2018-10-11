@@ -32,7 +32,7 @@ class AppCode: JetBrainsIDE {}]]></CopyText>
     <Try triggers="GotoFile;AppDelegate.swift">Nice! Now let's open the <code>AppDelegate.swift</code> file: press <action>GotoFile</action>, type <code>ad</code> and press <action>EditorEnter</action>.</Try>
     <Try triggers="GotoSymbol;MasterViewController.swift">Let's jump directly to the <code>detailViewController</code> declaration in the <code>MasterViewController</code> class. Press <action>GotoSymbol</action>, type <code>dvc</code>, and then press <action>EditorEnter</action>.</Try>
     <Text>If you also need to include standard libraries and other non-project files, symbols, or classes, just press the shortcut twice.</Text>
-    <MoveCaret position="13:41" />
+    <MoveCaret position="5:20" />
     <Try triggers="GotoDeclaration;DetailViewController.swift">Another important action from the <strong>Go to...</strong> family is <strong>Go to Declaration</strong>. Place the caret at <code>DetailViewController?</code> and press <action>GotoDeclaration</action> to jump to its declaration.</Try>
     <MoveCaret position="3:33" />
     <Try trigger="GotoImplementation">If a method or class has several implementations, <action>GotoDeclaration</action> will get you to the first one. Try using <action>GotoImplementation</action> to see all the definitions of <code>UIViewController</code>.</Try>
