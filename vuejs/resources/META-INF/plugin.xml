@@ -7,10 +7,10 @@
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
   <depends optional="true" config-file="js-debugger.xml">JavaScriptDebugger</depends>
-  <depends optional="true" config-file="css-support.xml">com.intellij.css</depends>
   <depends optional="true" config-file="vue-copyright.xml">com.intellij.copyright</depends>
-
   <extensions defaultExtensionNs="com.intellij">
+    <css.embeddedCssProvider implementation="org.jetbrains.vuejs.codeInsight.VueEmbeddedCssProvider"/>
+    <css.inclusionContext implementation="org.jetbrains.vuejs.codeInsight.VueCssInclusionContext"/>
     <fileTypeFactory implementation="org.jetbrains.vuejs.VueFileTypeFactory" />
     <lang.parserDefinition language="Vue" implementationClass="org.jetbrains.vuejs.language.VueParserDefinition" />
     <lang.parserDefinition language="VueJS" implementationClass="org.jetbrains.vuejs.language.VueJSParserDefinition" />
@@ -51,7 +51,7 @@
 
     <internalFileTemplate name="Vue Single File Component"/>
     <createFromTemplateHandler implementation="org.jetbrains.vuejs.VueCreateFromTemplateHandler"/>
-    
+
     <spellchecker.bundledDictionaryProvider implementation="org.jetbrains.vuejs.spellchecker.VueSpellcheckingDictionaryProvider"/>
     <spellchecker.support language="Vue" implementationClass="org.jetbrains.vuejs.spellchecker.VueSpellcheckingStrategy"/>
 
