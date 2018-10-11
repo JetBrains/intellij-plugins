@@ -25,9 +25,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.refactoring.changeSignature.CallerChooserBase;
 import com.intellij.refactoring.changeSignature.MemberNodeBase;
@@ -42,15 +40,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionAction {
 
-  @NotNull private final JSClass myClass;
-  private final JSReferenceExpression myRefExpr;
-  private final JSCallExpression myNode;
+  @NotNull private final SmartPsiElementPointer<JSClass> myClass;
+  @NotNull private final SmartPsiElementPointer<JSReferenceExpression> myRefExpr;
+  @NotNull private final SmartPsiElementPointer<JSCallExpression> myNode;
+  @NotNull private final String myName;
 
-  private ActionScriptCreateConstructorFix(@NotNull JSClass clazz, JSReferenceExpression refExpr, JSCallExpression node) {
+  private ActionScriptCreateConstructorFix(@NotNull JSClass clazz, 
+                                           @NotNull JSReferenceExpression refExpr, 
+                                           @NotNull JSCallExpression node) {
     super(clazz.getName(), true, false);
-    myClass = clazz;
-    myRefExpr = refExpr;
-    myNode = node;
+    SmartPointerManager manager = SmartPointerManager.getInstance(clazz.getProject());
+    myClass = manager.createSmartPsiElementPointer(clazz);
+    myRefExpr = manager.createSmartPsiElementPointer(refExpr);
+    myNode = manager.createSmartPsiElementPointer(node);
+    myName = StringUtil.notNullize(clazz.getName());
   }
 
   @Override
@@ -58,7 +61,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
   }
 
   @Nullable
-  public static ActionScriptCreateConstructorFix createIfApplicable(final JSCallExpression node) {
+  public static ActionScriptCreateConstructorFix createIfApplicable(@NotNull JSCallExpression node) {
     final JSClass clazz;
     final JSReferenceExpression reference;
     if (node instanceof JSNewExpression) {
@@ -95,47 +98,54 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
   @NotNull
   @Override
   protected Pair<JSReferenceExpression, PsiElement> calculateAnchors(PsiElement psiElement) {
-    ASTNode lbrace = myClass.getNode().findChildByType(JSTokenTypes.LBRACE);
-    return Pair.create(myRefExpr, lbrace.getPsi());
+    JSClass element = myClass.getElement();
+    if (element == null) return Pair.create(null, null);
+    
+    ASTNode lbrace = element.getNode().findChildByType(JSTokenTypes.LBRACE);
+    return Pair.create(myRefExpr.getElement(), lbrace.getPsi());
   }
 
   @Override
   protected void applyFix(final Project project, final PsiElement psiElement, PsiFile file, Editor editor) {
     final AtomicInteger count = new AtomicInteger();
-    ReferencesSearch.search(myClass, myClass.getUseScope()).forEach(
+    JSClass jsClass = myClass.getElement();
+    JSCallExpression node = myNode.getElement();
+    if (jsClass == null || node == null) return;
+    
+    ReferencesSearch.search(jsClass, jsClass.getUseScope()).forEach(
       psiReference -> !isClassInstantiation(psiReference) || count.incrementAndGet() < 2);
 
     int usages = count.get();
     if (usages < 2) {
-      usages += JSInheritanceUtil.findSuperConstructorCalls(myClass).size();
+      usages += JSInheritanceUtil.findSuperConstructorCalls(jsClass).size();
     }
 
     if (usages < 2) {
       final Collection<String> toImport = new ArrayList<>();
-      for (JSExpression argument : myNode.getArguments()) {
+      for (JSExpression argument : node.getArguments()) {
         String type = JSResolveUtil.getQualifiedExpressionType(argument, argument.getContainingFile());
-        if (StringUtil.isNotEmpty(type) && ImportUtils.needsImport(myClass, StringUtil.getPackageName(type))) {
+        if (StringUtil.isNotEmpty(type) && ImportUtils.needsImport(jsClass, StringUtil.getPackageName(type))) {
           toImport.add(type);
         }
       }
-      if (!FileModificationService.getInstance().preparePsiElementForWrite(myClass)) return;
-      final Editor finalEditor = getEditor(myClass.getProject(), myClass.getContainingFile());
+      if (!FileModificationService.getInstance().preparePsiElementForWrite(jsClass)) return;
+      final Editor finalEditor = getEditor(jsClass.getProject(), jsClass.getContainingFile());
       WriteAction.run(() -> {
         if (!toImport.isEmpty()) {
-          FormatFixer formatFixer = ImportUtils.insertImportStatements(myClass, toImport);
+          FormatFixer formatFixer = ImportUtils.insertImportStatements(jsClass, toImport);
           if (formatFixer != null) {
             formatFixer.fixFormat();
           }
         }
-        super.applyFix(project, psiElement, myClass.getContainingFile(), finalEditor);
+        super.applyFix(project, psiElement, jsClass.getContainingFile(), finalEditor);
       });
     }
     else {
-      String text = "function " + myClass.getName() + "(){}";
+      String text = "function " + jsClass.getName() + "(){}";
       JSFunction fakeFunction = (JSFunction)JSChangeUtil.createStatementFromText(project, text, JavaScriptSupportLoader.ECMA_SCRIPT_L4)
         .getPsi();
 
-      new JSChangeSignatureFix(fakeFunction, myNode.getArgumentList()) {
+      new JSChangeSignatureFix(fakeFunction, node.getArgumentList()) {
         @Override
         protected Pair<Boolean, List<JSParameterInfo>> handleCall(@NotNull JSFunction function, @NotNull JSExpression[] arguments, boolean dryRun) {
           List<JSParameterInfo> parameterInfos = super.handleCall(function, arguments, dryRun).second;
@@ -159,7 +169,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
                                                              @NotNull JSFunction function) {
           return new MyProcessor(function,
                                  attributeList != null ? attributeList.getAccessType() : JSAttributeList.AccessType.PACKAGE_LOCAL,
-                                 myClass.getName(),
+                                 jsClass.getName(),
                                  "",
                                  paramInfos.toArray(JSParameterInfo.EMPTY_ARRAY), Collections.emptySet());
         }
@@ -179,10 +189,14 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
     if (constructorShouldBePublic()) {
       template.addTextSegment("public ");
     }
-
-    writeFunctionAndName(template, myClass.getName(), myClass, myClass, referenceExpression);
+    JSClass jsClass = myClass.getElement();
+    assert jsClass != null;
+    JSCallExpression node = myNode.getElement();
+    assert node != null;
+    
+    writeFunctionAndName(template, jsClass.getName(), jsClass, jsClass, referenceExpression);
     template.addTextSegment("(");
-    addParameters(template, myNode.getArguments(), myNode, myClass);
+    addParameters(template, node.getArguments(), node, jsClass);
     template.addTextSegment("){");
     addBody(template, referenceExpression, anchorParent);
     template.addTextSegment("}");
@@ -190,15 +204,16 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
 
   private boolean constructorShouldBePublic() {
     JSClass contextClass;
-    return myClass.getAttributeList().getAccessType() == JSAttributeList.AccessType.PUBLIC ||
-           (contextClass = JSResolveUtil.getClassOfContext(myNode)) != null &&
-           JSPsiImplUtils.differentPackageName(JSResolveUtil.getPackageName(myClass), JSResolveUtil.getPackageName(contextClass));
+    JSClass jsClass = myClass.getElement();
+    return jsClass.getAttributeList().getAccessType() == JSAttributeList.AccessType.PUBLIC ||
+           (contextClass = JSResolveUtil.getClassOfContext(myNode.getElement())) != null &&
+           JSPsiImplUtils.differentPackageName(JSResolveUtil.getPackageName(jsClass), JSResolveUtil.getPackageName(contextClass));
   }
 
   @NotNull
   @Override
   public String getName() {
-    return JSBundle.message("actionscript.create.constructor.intention.name", myClass.getName());
+    return JSBundle.message("actionscript.create.constructor.intention.name", myName);
   }
 
   private class MyDialog extends JSChangeSignatureDialog {
@@ -218,7 +233,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
     protected JSChangeSignatureProcessor createRefactoringProcessor() {
       List<JSParameterInfo> parameters = getParameters();
       return new MyProcessor(myMethod.getMethod(),
-                             JSAttributeList.AccessType.valueOf(getVisibility()), myClass.getName(), "",
+                             JSAttributeList.AccessType.valueOf(getVisibility()), myClass.getElement().getName(), "",
                              parameters.toArray(JSParameterInfo.EMPTY_ARRAY),
                              myMethodsToPropagateParameters != null
                              ? myMethodsToPropagateParameters
@@ -247,7 +262,10 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
     @Override
     protected List<JSFunction> computeCallers() {
       final Collection<PsiReference> refs = Collections.synchronizedCollection(new ArrayList<PsiReference>());
-      ReferencesSearch.search(myClass, myClass.getUseScope(), true).forEach(psiReference -> {
+      JSClass jsClass = myClass.getElement();
+      assert jsClass != null;
+      
+      ReferencesSearch.search(jsClass, jsClass.getUseScope(), true).forEach(psiReference -> {
         if (isClassInstantiation(psiReference)) {
           refs.add(psiReference);
         }
@@ -259,7 +277,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
         addCallExpression((JSNewExpression)reference.getElement().getParent(), result);
       }
 
-      for (JSCallExpression superCall : JSInheritanceUtil.findSuperConstructorCalls(myClass)) {
+      for (JSCallExpression superCall : JSInheritanceUtil.findSuperConstructorCalls(jsClass)) {
         addCallExpression(superCall, result);
       }
       return new ArrayList<>(result);
@@ -279,10 +297,13 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
     @NotNull
     @Override
     protected UsageInfo[] findUsages() {
-      final Collection<UsageInfo> declarations = Collections.synchronizedCollection(new HashSet<UsageInfo>());
-      final Collection<OtherUsageInfo> usages = Collections.synchronizedCollection(new HashSet<OtherUsageInfo>());
+      final Collection<UsageInfo> declarations = Collections.synchronizedCollection(new HashSet<>());
+      final Collection<OtherUsageInfo> usages = Collections.synchronizedCollection(new HashSet<>());
 
-      ReferencesSearch.search(myClass, myClass.getUseScope()).forEach(psiReference -> {
+      JSClass jsClass = myClass.getElement();
+      assert jsClass != null;
+      
+      ReferencesSearch.search(jsClass, jsClass.getUseScope()).forEach(psiReference -> {
         if (isClassInstantiation(psiReference)) {
           PsiElement element = psiReference.getElement();
           usages.add(new OtherUsageInfo(element, null, myParameters, shouldPropagate(element), 0, 0));
@@ -290,7 +311,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
         return true;
       });
 
-      for (JSCallExpression superCall : JSInheritanceUtil.findSuperConstructorCalls(myClass)) {
+      for (JSCallExpression superCall : JSInheritanceUtil.findSuperConstructorCalls(jsClass)) {
         usages.add(new OtherUsageInfo(superCall.getMethodExpression(), null, myParameters, shouldPropagate(superCall), 0, 0));
       }
 
@@ -303,9 +324,14 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
     @Override
     protected void performRefactoring(@NotNull UsageInfo[] usageInfos) {
       final Collection<String> toImport = new ArrayList<>();
-      for (JSExpression argument : myNode.getArguments()) {
+      JSCallExpression node = myNode.getElement();
+      assert node != null;
+      JSClass jsClass = myClass.getElement();
+      assert jsClass != null;
+      
+      for (JSExpression argument : node.getArguments()) {
         String type = JSResolveUtil.getQualifiedExpressionType(argument, argument.getContainingFile());
-        if (StringUtil.isNotEmpty(type) && ImportUtils.needsImport(myClass, StringUtil.getPackageName(type))) {
+        if (StringUtil.isNotEmpty(type) && ImportUtils.needsImport(jsClass, StringUtil.getPackageName(type))) {
           toImport.add(type);
         }
       }
@@ -314,19 +340,20 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
       if (constructorShouldBePublic()) {
         newConstuctorText.append("public ");
       }
-      newConstuctorText.append("function ").append(myClass.getName());
-      JSChangeSignatureDialog.buildParameterListText(Arrays.asList(myParameters), newConstuctorText, true, DialectDetector.dialectOfElement(myClass));
+      newConstuctorText.append("function ").append(jsClass.getName());
+      JSChangeSignatureDialog.buildParameterListText(Arrays.asList(myParameters), newConstuctorText, true, DialectDetector.dialectOfElement(
+        jsClass));
       newConstuctorText.append("{}");
       JSFunction constructorPrototype = (JSFunction)JSChangeUtil.createStatementFromText(myProject, newConstuctorText.toString(),
                                                                                  JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi();
-      PsiElement newConstuctor = myClass.add(constructorPrototype); // TODO anchor
+      PsiElement newConstuctor = jsClass.add(constructorPrototype); // TODO anchor
       FormatFixer.create(newConstuctor, FormatFixer.Mode.Reformat).fixFormat();
       if (!toImport.isEmpty()) {
-        FormatFixer formatFixer = ImportUtils.insertImportStatements(myClass, toImport);
+        FormatFixer formatFixer = ImportUtils.insertImportStatements(jsClass, toImport);
         if (formatFixer != null) {
           formatFixer.fixFormat();
         }
-        List<FormatFixer> fixers = ECMAScriptImportOptimizer.executeNoFormat(myClass.getContainingFile());
+        List<FormatFixer> fixers = ECMAScriptImportOptimizer.executeNoFormat(jsClass.getContainingFile());
         FormatFixer.fixAll(fixers);
       }
       super.performRefactoring(usageInfos);

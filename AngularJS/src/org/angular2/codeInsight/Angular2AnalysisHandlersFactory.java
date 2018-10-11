@@ -15,9 +15,7 @@ import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.ResolveResult;
+import com.intellij.psi.*;
 import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,6 +36,8 @@ public class Angular2AnalysisHandlersFactory extends JSAnalysisHandlersFactory {
 
         JSClass directive = Angular2IndexingHandler.findDirectiveClass(methodExpression);
         if (directive != null) {
+          SmartPsiElementPointer<JSReferenceExpression> refExpressionPointer = createPointerFor(methodExpression);
+
           quickFixes.add(new CreateJSFunctionIntentionAction(methodExpression.getReferencedName(), true, false) {
             @Override
             protected void applyFix(Project project, PsiElement psiElement, PsiFile file, Editor editor) {
@@ -49,7 +49,7 @@ public class Angular2AnalysisHandlersFactory extends JSAnalysisHandlersFactory {
             @NotNull
             @Override
             protected Pair<JSReferenceExpression, PsiElement> calculateAnchors(PsiElement psiElement) {
-              return Pair.create(methodExpression, psiElement.getLastChild());
+              return Pair.create(refExpressionPointer.getElement(), psiElement.getLastChild());
             }
 
             @Override
@@ -89,6 +89,7 @@ public class Angular2AnalysisHandlersFactory extends JSAnalysisHandlersFactory {
 
         JSClass directive = Angular2IndexingHandler.findDirectiveClass(referenceExpression);
         if (directive != null) {
+          SmartPsiElementPointer<JSReferenceExpression> refExpressionPointer = createPointerFor(referenceExpression);
           quickFixes.add(new CreateJSVariableIntentionAction(referenceExpression.getReferencedName(), true, false, false) {
             @Override
             protected void applyFix(Project project, PsiElement psiElement, PsiFile file, Editor editor) {
@@ -100,7 +101,7 @@ public class Angular2AnalysisHandlersFactory extends JSAnalysisHandlersFactory {
             @NotNull
             @Override
             protected Pair<JSReferenceExpression, PsiElement> calculateAnchors(PsiElement psiElement) {
-              return Pair.create(referenceExpression, psiElement.getLastChild());
+              return Pair.create(refExpressionPointer.getElement(), psiElement.getLastChild());
             }
 
             @Override
@@ -115,5 +116,10 @@ public class Angular2AnalysisHandlersFactory extends JSAnalysisHandlersFactory {
         return inTypeContext;
       }
     };
+  }
+
+  @NotNull
+  private static SmartPsiElementPointer<JSReferenceExpression> createPointerFor(@NotNull JSReferenceExpression methodExpression) {
+    return SmartPointerManager.getInstance(methodExpression.getProject()).createSmartPsiElementPointer(methodExpression);
   }
 }
