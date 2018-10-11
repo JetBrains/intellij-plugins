@@ -3,6 +3,7 @@ package org.angular2.codeInsight.attributes;
 
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl;
@@ -41,7 +42,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   public XmlAttributeDescriptor[] getAttributeDescriptors(XmlTag xmlTag) {
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
-      if (!Angular2LangUtil.isAngular2Context(xmlTag)) return XmlAttributeDescriptor.EMPTY;
+      if (DumbService.isDumb(project) || !Angular2LangUtil.isAngular2Context(xmlTag)) return XmlAttributeDescriptor.EMPTY;
 
       final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<>();
       final XmlElementDescriptor descriptor = xmlTag.getDescriptor();
@@ -113,9 +114,9 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
 
   static XmlAttributeDescriptor getDescriptor(String attrName, XmlTag xmlTag) {
     if (xmlTag != null) {
-      if (!Angular2LangUtil.isAngular2Context(xmlTag)) return null;
-
       final Project project = xmlTag.getProject();
+      if (DumbService.isDumb(project) || !Angular2LangUtil.isAngular2Context(xmlTag)) return null;
+      
       final String attributeName = DirectiveUtil.normalizeAttributeName(attrName);
       List<PsiElement> declarations = applicableDirectives(project, attributeName, xmlTag, AngularDirectivesDocIndex.KEY);
       if (declarations.isEmpty()) {
