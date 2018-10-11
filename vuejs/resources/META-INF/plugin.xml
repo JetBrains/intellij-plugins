@@ -1,7 +1,36 @@
 <idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/vuejs">
   <name>Vue.js</name>
   <id>org.jetbrains.plugins.vue</id>
-  <description>Support for Vue.js</description>
+  <description><![CDATA[
+Support for <a href="https://vuejs.org">Vue.js</a> projects.
+
+Getting started
+
+<ul>
+    <li>Open your Vue.js project.</li>
+    <li>Make sure that you have Vue.js library files in your project (for example, in the node_modules folder).</li>
+    <li>Now, you will get Vue-specific code completion, navigation, and many other features in .vue files.</li>
+</ul>
+
+Features
+
+<ul>
+    <li>Completion for components, directives, props and methods in templates</li>
+    <li>Navigation from the component, directives and event handlers to their definition</li>
+    <li>Coding assistance for different languages inside template, script and style tags in .vue files</li>
+    <li>Extract component and rename component refactorings</li>
+    <li>Collection of code snippets for Vue.js</li>
+    <li>Create new projects from the IDE Welcome screen using Vue CLI</li>
+</ul>
+
+
+Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/webstorm/vue-js.html">IDE
+    documentation</a>.
+
+Limitations
+The IDE uses its own TypeScript support instead of the TypeScript language service inside the script tag in .vue files:
+<a href="https://youtrack.jetbrains.com/issue/WEB-33130">WEB-33130</a>.
+  ]]></description>
   <vendor>JetBrains</vendor>
 
   <depends>JavaScript</depends>
