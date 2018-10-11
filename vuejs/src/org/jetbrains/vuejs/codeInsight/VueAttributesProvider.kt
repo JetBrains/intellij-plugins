@@ -15,6 +15,7 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.openapi.project.DumbService
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
 import com.intellij.psi.meta.PsiPresentableMetaData
@@ -63,7 +64,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
   }
 
   override fun getAttributeDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
-    if (context == null || !org.jetbrains.vuejs.index.hasVue(context.project)) return emptyArray()
+    if (context == null || DumbService.isDumb(context.project) || !org.jetbrains.vuejs.index.hasVue(context.project)) return emptyArray()
     val result = mutableListOf<XmlAttributeDescriptor>()
     result.addAll(getDefaultVueAttributes())
 
@@ -85,7 +86,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
   }
 
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
-    if (context == null || !org.jetbrains.vuejs.index.hasVue(context.project) || attributeName == null) return null
+    if (context == null || DumbService.isDumb(context.project) || !org.jetbrains.vuejs.index.hasVue(context.project) || attributeName == null) return null
     if (isTopLevelTemplateTag(context) && attributeName == FUNCTIONAL_ATTR ||
         isTopLevelStyleTag(context) && attributeName in arrayOf(SCOPED_ATTR, SRC_ATTR, MODULE_ATTR)) {
       return VueAttributeDescriptor(attributeName)
