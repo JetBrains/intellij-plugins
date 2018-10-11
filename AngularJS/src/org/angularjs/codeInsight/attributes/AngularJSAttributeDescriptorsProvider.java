@@ -37,7 +37,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   public XmlAttributeDescriptor[] getAttributeDescriptors(XmlTag xmlTag) {
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
-      if (DumbService.isDumb(project) || !AngularIndexUtil.hasAngularJS(xmlTag.getProject())) return XmlAttributeDescriptor.EMPTY;
+      if (!AngularIndexUtil.hasAngularJS(xmlTag.getProject())) return XmlAttributeDescriptor.EMPTY;
 
       final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<>();
       final Collection<String> directives = AngularIndexUtil.getAllKeys(AngularDirectivesIndex.KEY, project);
@@ -147,7 +147,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   static XmlAttributeDescriptor getDescriptor(String attrName, XmlTag xmlTag) {
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
-      if (DumbService.isDumb(project)) return null;
+      if (!AngularIndexUtil.hasAngularJS(xmlTag.getProject())) return null;
       
       final String attributeName = DirectiveUtil.normalizeAttributeName(attrName);
       PsiElement declaration = applicableDirective(project, attributeName, xmlTag, AngularDirectivesDocIndex.KEY);
