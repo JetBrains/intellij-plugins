@@ -16,6 +16,7 @@ package org.jetbrains.vuejs.codeInsight.completion
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.lang.css.CSSLanguage
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.XmlPatterns.xmlAttribute
@@ -26,9 +27,9 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlTokenType
-import com.intellij.util.ArrayUtil
 import com.intellij.util.ProcessingContext
 import com.intellij.util.SmartList
+import com.intellij.util.containers.ContainerUtil
 import icons.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider
 import org.jetbrains.vuejs.codeInsight.VueComponents
@@ -49,31 +50,40 @@ class VueCompletionContributor : CompletionContributor() {
 }
 
 private class VueTagAttributeCompletionProvider : CompletionProvider<CompletionParameters>() {
-  private val VUE_SCRIPT_LANGUAGE = arrayOf("js", "ts")
-  private val VUE_STYLE_LANGUAGE = arrayOf("scss", "sass", "stylus", "css", "less", "postcss")
-  private val VUE_TEMPLATE_LANGUAGE = arrayOf("html", "pug")
+  private val VUE_SCRIPT_LANGUAGE = ContainerUtil.immutableSet("js", "ts")
+  private val VUE_STYLE_LANGUAGE = vueStyleLanguages()
+  private val VUE_TEMPLATE_LANGUAGE = ContainerUtil.immutableSet("html", "pug")
 
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
     val xmlTag = PsiTreeUtil.getParentOfType(parameters.position, XmlTag::class.java, false)
-    val xmlAttribute =   PsiTreeUtil.getParentOfType(parameters.position, XmlAttribute::class.java, false)
+    val xmlAttribute = PsiTreeUtil.getParentOfType(parameters.position, XmlAttribute::class.java, false)
     if (xmlTag == null || xmlAttribute == null) return
     for (completion in listOfCompletions(xmlTag, xmlAttribute)) {
       result.addElement(LookupElementBuilder.create(completion))
     }
-
   }
 
-  private fun listOfCompletions(xmlTag: XmlTag, xmlAttribute: XmlAttribute): Array<String> {
-    if(xmlAttribute.name == "lang") {
+  private fun listOfCompletions(xmlTag: XmlTag, xmlAttribute: XmlAttribute): Set<String> {
+    if (xmlAttribute.name == "lang") {
       when (xmlTag.name) {
         "script" -> return VUE_SCRIPT_LANGUAGE
         "style" -> return VUE_STYLE_LANGUAGE
         "template" -> return VUE_TEMPLATE_LANGUAGE
       }
     }
-    return ArrayUtil.EMPTY_STRING_ARRAY
+    return ContainerUtil.immutableSet()
   }
 
+  private fun vueStyleLanguages(): Set<String> {
+    val result = mutableListOf<String>()
+    result.add("css")
+    CSSLanguage.INSTANCE.dialects.forEach {
+      if (it.displayName != "JQuery-CSS") {
+        result.add(it.displayName.toLowerCase())
+      }
+    }
+    return result.toSet()
+  }
 }
 
 private class VueEventAttrCompletionProvider : CompletionProvider<CompletionParameters>() {
