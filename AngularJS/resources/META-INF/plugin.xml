@@ -20,10 +20,6 @@
 <li>For AngularJS apps that use ui-router, see state diagram</li>
 </ul>
 <p>Here you can find more information on using <a href="https://www.jetbrains.com/help/webstorm/angular.html">Angular</a> and <a href="https://www.jetbrains.com/help/webstorm/angularjs.html">AngularJS</a> in the IDE.</p>
-<h2>Limitations</h2>
-<ul>
-<li>It’s not possible to create new Angular project from the Welcome screen when using @angular/cli 1.7+ (see <a href="https://github.com/angular/angular-cli/issues/9655#issuecomment-370491452">angular-cli/9655</a>)</li>
-</ul>
 <p>Please report any issues on the <a href="https://youtrack.jetbrains.com/issues/WEB">tracker</a>.</p>
   ]]></description>
   <vendor>johnlindquist, JetBrains</vendor>
