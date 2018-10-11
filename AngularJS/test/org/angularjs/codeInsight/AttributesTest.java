@@ -118,7 +118,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testCustomAttributesResolve() {
-    myFixture.configureByFiles("custom.after.html", "custom.js");
+    myFixture.configureByFiles("custom.after.html", "custom.js", "angular.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
     assertNotNull(ref);
@@ -129,7 +129,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testCustomAttributesTemplateResolve() {
-    myFixture.configureByFiles("custom.after.html", "custom_template.js");
+    myFixture.configureByFiles("custom.after.html", "custom_template.js", "angular.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
     assertNotNull(ref);
@@ -140,7 +140,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testCustomAttributesResolve15() {
-    myFixture.configureByFiles("custom.after.html", "custom15.js");
+    myFixture.configureByFiles("custom.after.html", "custom15.js", "angular.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
     assertNotNull(ref);
