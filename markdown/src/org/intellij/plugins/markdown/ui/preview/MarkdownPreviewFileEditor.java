@@ -79,6 +79,8 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   @Nullable
   private MarkdownHtmlPanelProvider.ProviderInfo myLastPanelProviderInfo = null;
   @NotNull
+  private final Project myProject;
+  @NotNull
   private final VirtualFile myFile;
   @Nullable
   private final Document myDocument;
@@ -98,6 +100,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   private String myLastRenderedHtml = "";
 
   public MarkdownPreviewFileEditor(@NotNull Project project, @NotNull VirtualFile file) {
+    myProject = project;
     myFile = file;
     myDocument = FileDocumentManager.getInstance().getDocument(myFile);
 
@@ -302,7 +305,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       return;
     }
 
-    final String html = MarkdownUtil.generateMarkdownHtml(myFile, myDocument.getText());
+    final String html = MarkdownUtil.generateMarkdownHtml(myFile, myDocument.getText(), myProject);
 
     // EA-75860: The lines to the top may be processed slowly; Since we're in pooled thread, we can be disposed already.
     if (!myFile.isValid() || Disposer.isDisposed(this)) {

@@ -59,7 +59,7 @@ public class MarkdownPlantUMLTest extends LightPlatformCodeInsightFixtureTestCas
 
     VirtualFile mdVFile = myFixture.getFile(PLANTUML_TARGET_DIR + "/" + getTestName(true) + ".md");
     try {
-      assertTrue(MarkdownUtil.generateMarkdownHtml(mdVFile, VfsUtilCore.loadText(mdVFile)).contains(
+      assertTrue(MarkdownUtil.generateMarkdownHtml(mdVFile, VfsUtilCore.loadText(mdVFile), getProject()).contains(
         "<img src=\"file:" + PathManager.getSystemPath()));
     }
     catch (IOException e) {
