@@ -22,13 +22,11 @@ class DebugExample: UIViewController {
 }]]></CopyText>
     <Text>Now let's learn some debug basics.</Text>
     <Try triggers="GotoFile;MasterViewController.swift">Navigate to <code>MasterViewController.swift</code> by pressing <action>GotoFile</action>.</Try>
-    <MoveCaret position="12:9"/>
-    <Try triggers="ToggleLineBreakpoint;Debug">Toggle a breakpoint with <action>ToggleLineBreakpoint</action> and then press <action>Debug</action>.</Try>
+    <MoveCaret position="11:9"/>
+    <Try triggers="ToggleLineBreakpoint;Debug">Toggle a breakpoint at line 11 with <action>ToggleLineBreakpoint</action> and then press <action>Debug</action>.</Try>
     <Try triggers="StepInto;StepOver">Try to step into, by using <action>StepInto</action>, and then step over with <action>StepOver</action>.</Try>
-    <MoveCaret position="18:37"/>
-    <Try triggers="RunToCursor">Now, set the caret to line 17 and execute <strong>Run to cursor</strong> - <action>RunToCursor</action>.</Try>
+    <Try triggers="RunToCursor">Now, set the caret to line 21 and execute <strong>Run to cursor</strong> - <action>RunToCursor</action>.</Try>
     <Try triggers="StepOver">Step over to the next line.</Try>
-    <MoveCaret position="18:37"/>
     <SetSelection start-string="controllers[" end-string="count-1]" />
     <Try triggers="EditorSelectWord;EditorSelectWord;EvaluateExpression">Select <code>controllers[controllers.count-1]</code> and use <strong>Evaluate Expression</strong> (<action>EvaluateExpression</action> → <action>EditorEnter</action>).</Try>
     <Try triggers="EditorChooseLookupItem">Enter the dot symbol, select some property, and then press <action>EditorEnter</action> to evaluate it without switching to LLDB console.</Try>
