@@ -6,8 +6,11 @@ import training.lang.LangManager
 import training.lang.LangSupport
 import training.learn.exceptons.BadLessonException
 import training.learn.exceptons.BadModuleException
-import training.learn.lesson.Lesson
+import training.learn.interfaces.Lesson
+import training.learn.interfaces.Module
+import training.learn.interfaces.ModuleType
 import training.learn.lesson.Scenario
+import training.learn.lesson.XmlLesson
 import training.util.DataLoader
 import training.util.GenModuleXml
 import training.util.GenModuleXml.*
@@ -19,22 +22,21 @@ import java.util.function.Consumer
 /**
  * @author Sergey Karashevich
  */
-class Module(val name: String, moduleXmlPath: String, private val root: Element) {
+class XmlModule(override val name: String, moduleXmlPath: String, private val root: Element): Module {
 
-  val description: String?
-
-  enum class ModuleType {
-    SCRATCH, PROJECT
-  }
+  override val description: String?
 
   //used for lessons filtered by LangManger chosen lang
-  var lessons: MutableList<Lesson> = ArrayList<Lesson>()
+  override var lessons: MutableList<Lesson> = ArrayList<Lesson>()
+  override val sanitizedName: String
+    get() = name.replace("[^\\dA-Za-z ]".toRegex(), "").replace("\\s+".toRegex(), "")
+  override var id: String? = null
+  override lateinit var moduleType: ModuleType
+
   private val allLessons = ArrayList<Lesson>()
   private val moduleUpdateListeners = ArrayList<ModuleUpdateListener>()
 
   val answersPath: String?
-  var id: String?
-  var moduleType: ModuleType
   var sdkType: ModuleSdkType?
 
   enum class ModuleSdkType {
@@ -59,6 +61,37 @@ class Module(val name: String, moduleXmlPath: String, private val root: Element)
     initLessons(modulePath)
   }
 
+  fun setMySdkType(mySdkType: ModuleSdkType?) {
+    this.sdkType = mySdkType
+  }
+
+  private fun filterLessonsByCurrentLang(): MutableList<Lesson> {
+    val langManager = LangManager.getInstance()
+    if (langManager.isLangUndefined()) return allLessons
+    return filterLessonByLang(langManager.getLangSupport())
+  }
+
+  override fun filterLessonByLang(langSupport: LangSupport): MutableList<Lesson> {
+    return allLessons.filter { langSupport.acceptLang(it.lang) }.toMutableList()
+  }
+
+  override fun giveNotPassedLesson(): Lesson? {
+    return lessons.firstOrNull { !it.passed }
+  }
+
+  override fun giveNotPassedAndNotOpenedLesson(): Lesson? {
+    return lessons.firstOrNull { !it.passed && !it.isOpen }
+  }
+
+  override fun hasNotPassedLesson(): Boolean {
+    return lessons.any { !it.passed }
+  }
+
+  override fun update() {
+    lessons = filterLessonsByCurrentLang()
+    moduleUpdateListeners.forEach(Consumer<ModuleUpdateListener> { it.onUpdate() })
+  }
+
   private fun initLessons(modulePath: String) {
 
     if (root.getAttribute(MODULE_LESSONS_PATH_ATTR) != null) {
@@ -68,19 +101,19 @@ class Module(val name: String, moduleXmlPath: String, private val root: Element)
 
       for (lessonElement in root.children) {
         if (lessonElement.name != MODULE_LESSON_ELEMENT)
-          throw BadModuleException("Module file is corrupted or cannot be read properly")
+          throw BadModuleException("XmlModule file is corrupted or cannot be read properly")
 
         val lessonFilename = lessonElement.getAttributeValue(MODULE_LESSON_FILENAME_ATTR)
         val lessonPath = lessonsPath + lessonFilename
         try {
           val scenario = Scenario(lessonPath)
-          val lesson = Lesson(scenario = scenario, lang = scenario.lang, module = this)
+          val lesson = XmlLesson(scenario = scenario, lang = scenario.lang, module = this)
           allLessons.add(lesson)
         } catch (e: JDOMException) {
-          //Lesson file is corrupted
+          //XmlLesson file is corrupted
           throw BadLessonException("Probably lesson file is corrupted: $lessonPath JDOMException:$e")
         } catch (e: IOException) {
-          //Lesson file cannot be read
+          //XmlLesson file cannot be read
           throw BadLessonException("Probably lesson file cannot be read: " + lessonPath)
         }
       }
@@ -88,51 +121,11 @@ class Module(val name: String, moduleXmlPath: String, private val root: Element)
     lessons = filterLessonsByCurrentLang()
   }
 
-  fun setMySdkType(mySdkType: ModuleSdkType?) {
-    this.sdkType = mySdkType
-  }
-
-  fun addLesson(lesson: Lesson) {
-    if (lessons.any { it.id == lesson.id && it.hashCode() == lesson.hashCode()}) return // do not add lesson twice
-    lesson.module = this
-    lessons.add(lesson)
-  }
-
-  private fun filterLessonsByCurrentLang(): MutableList<Lesson> {
-    val langManager = LangManager.getInstance()
-    if (langManager.isLangUndefined()) return allLessons
-    return filterLessonByLang(langManager.getLangSupport())
-  }
-
-  fun filterLessonByLang(langSupport: LangSupport): MutableList<Lesson> {
-    return allLessons.filter { langSupport.acceptLang(it.lang) }.toMutableList()
-  }
-
-  fun giveNotPassedLesson(): Lesson? {
-    return lessons.firstOrNull { !it.passed }
-  }
-
-  fun giveNotPassedAndNotOpenedLesson(): Lesson? {
-    return lessons.firstOrNull { !it.passed && !it.isOpen }
-  }
-
-  fun hasNotPassedLesson(): Boolean {
-    return lessons.any { !it.passed }
-  }
-
-  val sanitizedName: String
-    get() = name.replace("[^\\dA-Za-z ]".toRegex(), "").replace("\\s+".toRegex(), "")
-
-  fun update() {
-    lessons = filterLessonsByCurrentLang()
-    moduleUpdateListeners.forEach(Consumer<ModuleUpdateListener> { it.onUpdate() })
-  }
-
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (javaClass != other?.javaClass) return false
 
-    other as Module
+    other as XmlModule
 
     if (name != other.name) return false
     if (id != other.id) return false
@@ -153,15 +146,15 @@ class Module(val name: String, moduleXmlPath: String, private val root: Element)
   companion object {
 
     @Throws(BadModuleException::class, BadLessonException::class, JDOMException::class, IOException::class, URISyntaxException::class)
-    fun initModule(modulePath: String): Module? {
+    fun initModule(modulePath: String): XmlModule? {
       //load xml with lessons
 
-      //Check DOM with Module
+      //Check DOM with XmlModule
       val root = getRootFromPath(modulePath)
       if (root.getAttribute(GenModuleXml.MODULE_NAME_ATTR) == null) return null
       val name = root.getAttribute(GenModuleXml.MODULE_NAME_ATTR).value
 
-      return Module(name, modulePath, root)
+      return XmlModule(name, modulePath, root)
 
     }
 

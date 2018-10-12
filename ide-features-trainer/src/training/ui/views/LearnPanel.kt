@@ -8,7 +8,7 @@ import com.intellij.util.containers.BidirectionalMap
 import com.intellij.util.ui.UIUtil
 import training.learn.CourseManager
 import training.learn.LearnBundle
-import training.learn.lesson.Lesson
+import training.learn.interfaces.Lesson
 import training.ui.*
 import java.awt.*
 import java.awt.event.ActionEvent
@@ -26,7 +26,7 @@ class LearnPanel : JPanel() {
 
     private val boxLayout: BoxLayout
 
-    //Lesson panel items
+    //XmlLesson panel items
     private var lessonPanel: JPanel? = null
     private var moduleNameLabel: JLabel? = null
     private var allTopicsLabel: LinkLabel<Any>? = null
@@ -37,7 +37,7 @@ class LearnPanel : JPanel() {
     private var button: JButton? = null
 
 
-    //Module panel stuff
+    //XmlModule panel stuff
     var modulePanel: ModulePanel? = null
         private set
     private var moduleNamePanel: JPanel? = null //contains moduleNameLabel and allTopicsLabel
@@ -337,9 +337,6 @@ class LearnPanel : JPanel() {
             val module = lesson.module
             val myLessons = module!!.lessons
 
-            //if module contains one lesson only
-            if (myLessons.size == 1) return
-
             //create ModuleLessons region
             val moduleLessons = JLabel()
             moduleLessons.name = "moduleLessons"
@@ -356,7 +353,7 @@ class LearnPanel : JPanel() {
             moduleNamePanel!!.add(Box.createHorizontalGlue())
             moduleNamePanel!!.add(allTopicsLabel)
 
-            moduleLessons.text = lesson.module!!.name
+            moduleLessons.text = lesson.module.name
             moduleLessons.font = UISettings.instance.boldFont
             moduleLessons.isFocusable = false
 
