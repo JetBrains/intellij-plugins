@@ -2,17 +2,25 @@
 package org.jetbrains.plugins.cucumber.java.resolve;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.PomTargetPsiElementImpl;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
+import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameterTypeReference;
 
 public class CucumberJavaParameterTypeResolveTest extends BaseCucumberJavaResolveTest {
   public void testParameterTypeResolve() {
     init("stepResolve_ParameterType", "ParameterTypeSteps.java");
 
     checkReference("{iso-<caret>date}", "iso-date");
+  }
+
+  public void testNoReferenceInStringLiteralOutsideAnnotations() {
+    init("stepResolve_ParameterType", "ParameterTypeSteps.java");
+    final PsiReference reference = findReferenceBySignature("System.out.println(\"te<caret>xt\")");
+    assertTrue(reference == null || !(reference instanceof CucumberJavaParameterTypeReference));
   }
 
   @Override

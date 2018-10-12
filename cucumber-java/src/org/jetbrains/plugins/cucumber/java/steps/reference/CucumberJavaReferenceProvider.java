@@ -25,23 +25,28 @@ public class CucumberJavaReferenceProvider extends PsiReferenceProvider {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    PsiMethod method = PsiTreeUtil.getParentOfType(element, PsiMethod.class);
-    if (method != null) {
-      String cucumberExpression = CucumberJavaUtil.getStepAnnotationValue(method, null);
-      if (cucumberExpression == null) {
-        return PsiReference.EMPTY_ARRAY;
-      }
-
-      List<CucumberJavaParameterTypeReference> result = new ArrayList<>();
-      CucumberUtil.processParameterTypesInCucumberExpression(cucumberExpression, range -> {
-        // Skip " in the begin of the String Literal
-        range = range.shiftRight(StringLiteralManipulator.getValueRange(literalExpression).getStartOffset());
-        result.add(new CucumberJavaParameterTypeReference(element, range));
-        return true;
-      });
-      return result.toArray(new CucumberJavaParameterTypeReference[0]);
+    PsiAnnotation annotation = PsiTreeUtil.getParentOfType(element, PsiAnnotation.class);
+    if (annotation == null) {
+      return PsiReference.EMPTY_ARRAY;
     }
 
-    return PsiReference.EMPTY_ARRAY;
+    PsiMethod method = PsiTreeUtil.getParentOfType(annotation, PsiMethod.class);
+    if (method == null) {
+      return PsiReference.EMPTY_ARRAY;
+    }
+
+    String cucumberExpression = CucumberJavaUtil.getStepAnnotationValue(method, null);
+    if (cucumberExpression == null) {
+      return PsiReference.EMPTY_ARRAY;
+    }
+
+    List<CucumberJavaParameterTypeReference> result = new ArrayList<>();
+    CucumberUtil.processParameterTypesInCucumberExpression(cucumberExpression, range -> {
+      // Skip " in the begin of the String Literal
+      range = range.shiftRight(StringLiteralManipulator.getValueRange(literalExpression).getStartOffset());
+      result.add(new CucumberJavaParameterTypeReference(element, range));
+      return true;
+    });
+    return result.toArray(new CucumberJavaParameterTypeReference[0]);
   }
 }

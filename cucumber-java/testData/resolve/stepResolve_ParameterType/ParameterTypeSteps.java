@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 public class ParameterTypeSteps {
   @And("today is {iso-date}")
   public void step_method(Date arg1) throws Throwable {
+    System.out.println("text");
   }
 
   @And("{int} is int")
