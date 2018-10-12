@@ -9,19 +9,26 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.TestDataProvider;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.java.JavaResourceRootType;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
 public class CucumberJavaRunConfigurationTest extends CucumberJavaCodeInsightTestCase {
   public void testScenarioOutlineNameFilter() {
-    doTest("^a few cukes$");
+    doTest("^a few cukes$", true);
   }
 
   public void testScenarioOutlineWithPatternNameFilter() {
-    doTest("^a .* few cukes$");
+    doTest("^a .* few cukes$", true);
+  }
+
+  public void testSkipCconfigurationCreationFromSourceFolder() {
+    doTest(null, false);
   }
 
   public void testProgramArguments() {
@@ -45,9 +52,12 @@ public class CucumberJavaRunConfigurationTest extends CucumberJavaCodeInsightTes
     return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "run";
   }
 
-  private void doTest(@NotNull String expectedFilter) {
+  private void doTest(@Nullable String expectedFilter, boolean inResourceRoot) {
     myFixture.copyDirectoryToProject(getTestName(true), "");
     myFixture.configureByFile("test.feature");
+    if (inResourceRoot) {
+      PsiTestUtil.addSourceRoot(myModule, myFixture.getFile().getVirtualFile(), JavaResourceRootType.TEST_RESOURCE);
+    }
 
     ConfigurationFactory configurationFactory = CucumberJavaRunConfigurationType.getInstance().getConfigurationFactories()[0];
     CucumberJavaRunConfiguration runConfiguration = new CucumberJavaRunConfiguration("", myFixture.getProject(), configurationFactory);
@@ -57,9 +67,11 @@ public class CucumberJavaRunConfigurationTest extends CucumberJavaCodeInsightTes
 
     CucumberJavaScenarioRunConfigurationProducer producer = new CucumberJavaScenarioRunConfigurationProducer();
     PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
-    producer.setupConfigurationFromContext(runConfiguration, configurationContext, new Ref<>(elementAtCaret));
+    assertEquals(inResourceRoot, producer.setupConfigurationFromContext(runConfiguration, configurationContext, new Ref<>(elementAtCaret)));
 
-    assertEquals(expectedFilter, runConfiguration.getNameFilter());
+    if (inResourceRoot) {
+      assertEquals(expectedFilter, runConfiguration.getNameFilter());
+    }
   }
 
   @Override
