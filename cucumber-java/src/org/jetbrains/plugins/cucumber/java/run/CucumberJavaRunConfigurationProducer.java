@@ -9,10 +9,14 @@ import com.intellij.execution.junit2.info.LocationUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.SourceFolder;
+import com.intellij.openapi.roots.impl.ProjectFileIndexImpl;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -21,6 +25,8 @@ import com.intellij.util.Query;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.java.JavaSourceRootType;
+import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 import java.util.Collection;
@@ -81,6 +87,10 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
 
     final Module module = ModuleUtilCore.findModuleForFile(virtualFile, project);
     if (module == null) return false;
+
+    if (isInSourceFolder(module, virtualFile)) {
+      return false;
+    }
 
     String mainClassName = null;
     String formatterOptions = null;
@@ -187,6 +197,22 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     }
 
     return packages;
+  }
+
+  /**
+   * Checks whether the file located under folder marked as Source Root or Test Source Root
+   */
+  private static boolean isInSourceFolder(@NotNull Module module, @NotNull VirtualFile virtualFile) {
+    final ProjectFileIndexImpl index = ((ProjectFileIndexImpl)ProjectRootManager.getInstance(module.getProject()).getFileIndex());
+    SourceFolder sourceFolder = index.getSourceFolder(virtualFile);
+    if (sourceFolder != null) {
+      VirtualFile sourceFolderDirectory = sourceFolder.getFile();
+      if (sourceFolderDirectory != null && VfsUtilCore.isAncestor(sourceFolderDirectory, virtualFile, true)) {
+        JpsModuleSourceRootType<?> rootType = sourceFolder.getRootType();
+        return rootType == JavaSourceRootType.SOURCE || rootType == JavaSourceRootType.TEST_SOURCE;
+      }
+    }
+    return false;
   }
 
   private static void addPackagesOfMethods(final Collection<PsiMethod> psiMethods, final Set<String> packages) {
