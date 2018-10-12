@@ -8,7 +8,7 @@ Getting started
 
 <ul>
     <li>Open your Vue.js project.</li>
-    <li>Make sure that you have Vue.js library files in your project (for example, in the node_modules folder).</li>
+    <li>Make sure you have Vue.js listed in your project dependencies in package.json and it is installed.</li>
     <li>Now, you will get Vue-specific code completion, navigation, and many other features in .vue files.</li>
 </ul>
 
