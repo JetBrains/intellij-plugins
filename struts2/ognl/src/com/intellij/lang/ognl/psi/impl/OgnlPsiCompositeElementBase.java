@@ -29,6 +29,7 @@ abstract class OgnlPsiCompositeElementBase extends ASTWrapperPsiElement implemen
     super(node);
   }
 
+  @Override
   public String toString() {
     return getNode().getElementType().toString();
   }

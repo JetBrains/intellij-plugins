@@ -86,6 +86,7 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
     return StdFileTypes.JS.getLanguage();
   }
 
+  @Override
   public String toString() {
     return "Package:" + getQualifiedName();
   }

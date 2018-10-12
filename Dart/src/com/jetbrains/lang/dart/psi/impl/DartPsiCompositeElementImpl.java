@@ -30,6 +30,7 @@ public class DartPsiCompositeElementImpl extends ASTWrapperPsiElement implements
     return getNode().getElementType();
   }
 
+  @Override
   public String toString() {
     return getTokenType().toString();
   }

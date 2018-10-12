@@ -68,6 +68,7 @@ public class CfmlImplicitVariable extends RenameableFakePsiElement implements Cf
     return "Type name variable";
   }
 
+  @Override
   public String toString() {
     return "ImplicitVariable " + myName;
   }

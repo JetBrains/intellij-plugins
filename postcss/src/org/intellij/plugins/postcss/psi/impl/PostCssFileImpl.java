@@ -19,6 +19,7 @@ public class PostCssFileImpl extends StylesheetFileBase implements PostCssFile {
     return PostCssFileType.POST_CSS;
   }
 
+  @Override
   public String toString() {
     return "PostCSS File:" + getName();
   }

@@ -149,6 +149,7 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
       return expressions[1];
     }
 
+    @Override
     public String toString() {
       return "AssignedVariable " + getName();
     }

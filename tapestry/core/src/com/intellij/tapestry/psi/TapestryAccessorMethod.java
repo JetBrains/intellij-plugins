@@ -246,6 +246,7 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
       }
     }
 
+    @Override
     public String toString() {
       return "Light Parameter";
     }
@@ -299,6 +300,7 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
       return getParameters().length;
     }
 
+    @Override
     public String toString() {
       return "Light Parameter List";
     }

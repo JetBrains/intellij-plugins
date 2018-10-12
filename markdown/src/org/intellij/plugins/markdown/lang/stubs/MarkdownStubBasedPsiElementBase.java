@@ -17,6 +17,7 @@ public abstract class MarkdownStubBasedPsiElementBase<Stub extends MarkdownStubE
     super(node);
   }
 
+  @Override
   public String toString() {
     return getElementType().toString();
   }
